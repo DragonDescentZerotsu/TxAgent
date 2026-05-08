@@ -1,0 +1,98 @@
+from __future__ import annotations
+
+import time
+from typing import Iterable
+
+from tools.service.config import ServiceSettings
+from tools.service.errors import ToolError
+from tools.service.schemas import (
+    ToolErrorPayload,
+    ToolInfo,
+    ToolRequest,
+    ToolResponse,
+    ToolResponseMetadata,
+    utc_now,
+)
+from tools.service.tools.base import BaseTool
+
+
+class ToolRegistry:
+    def __init__(self, tools: Iterable[BaseTool] = ()):
+        self._tools: dict[str, BaseTool] = {}
+        for tool in tools:
+            self.register(tool)
+
+    def register(self, tool: BaseTool) -> None:
+        if tool.name in self._tools:
+            raise ValueError(f"Duplicate tool registered: {tool.name}")
+        self._tools[tool.name] = tool
+
+    def initialize_all(self, settings: ServiceSettings) -> None:
+        for tool in self._tools.values():
+            try:
+                tool.initialize(settings)
+            except Exception as exc:
+                tool.initialized = False
+                tool.initialization_error = f"{type(exc).__name__}: {exc}"
+
+    def list_tools(self) -> list[ToolInfo]:
+        return [ToolInfo(**tool.info()) for tool in self._tools.values()]
+
+    def get(self, name: str) -> BaseTool:
+        try:
+            return self._tools[name]
+        except KeyError as exc:
+            raise ToolError("UNKNOWN_TOOL", f"Unknown tool: {name}", recoverable=True) from exc
+
+    def invoke(self, request: ToolRequest) -> ToolResponse:
+        started_at = utc_now()
+        start = time.perf_counter()
+        warnings: list[str] = []
+        output = None
+        errors: list[ToolErrorPayload] = []
+        status = "ok"
+
+        try:
+            tool = self.get(request.tool_name)
+            if request.version != tool.version:
+                raise ToolError(
+                    "UNSUPPORTED_TOOL_VERSION",
+                    f"{tool.name} supports {tool.version}, got {request.version}",
+                    recoverable=True,
+                )
+            if tool.initialization_error:
+                warnings.append(f"Tool initialization warning: {tool.initialization_error}")
+            output = tool.invoke(request.input, return_debug=request.options.return_debug)
+            tool_warnings = output.pop("_warnings", None)
+            if isinstance(tool_warnings, list):
+                warnings.extend(str(item) for item in tool_warnings)
+        except ToolError as exc:
+            status = "error"
+            errors.append(ToolErrorPayload(code=exc.code, message=exc.message, recoverable=exc.recoverable))
+        except Exception as exc:
+            status = "error"
+            errors.append(
+                ToolErrorPayload(
+                    code="TOOL_RUNTIME_ERROR",
+                    message=f"{type(exc).__name__}: {exc}",
+                    recoverable=False,
+                )
+            )
+
+        finished_at = utc_now()
+        return ToolResponse(
+            request_id=request.request_id,
+            tool_name=request.tool_name,
+            version=request.version,
+            status=status,
+            output=output,
+            warnings=warnings,
+            errors=errors,
+            metadata=ToolResponseMetadata(
+                started_at=started_at,
+                finished_at=finished_at,
+                latency_ms=int((time.perf_counter() - start) * 1000),
+                model_or_index_version=request.version,
+            ),
+        )
+
