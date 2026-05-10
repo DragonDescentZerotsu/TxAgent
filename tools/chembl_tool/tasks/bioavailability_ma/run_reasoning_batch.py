@@ -1,4 +1,4 @@
-"""Run BBB Martins reasoning for many query molecules and summarize metrics."""
+"""Run Bioavailability_Ma reasoning for many query molecules and summarize metrics."""
 
 from __future__ import annotations
 
@@ -14,9 +14,9 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
-DEFAULT_BATCH_ROOT = "outputs/chembl_tool/tasks/bbb_martins/reasoning/batches"
-DEFAULT_RUN_ROOT = "outputs/chembl_tool/tasks/bbb_martins/reasoning/runs"
+DEFAULT_INPUT = "data/processed/Bioavailability_Ma/test.jsonl"
+DEFAULT_BATCH_ROOT = "outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches"
+DEFAULT_RUN_ROOT = "outputs/chembl_tool/tasks/bioavailability_ma/reasoning/runs"
 DEFAULT_MODEL = "deepseek-v4-pro"
 
 
@@ -30,7 +30,7 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     records = _read_jsonl(Path(args.input_jsonl))
     indices = _select_indices(args, len(records))
-    batch_id = args.batch_id or time.strftime("bbb_batch_%Y%m%d_%H%M%S")
+    batch_id = args.batch_id or time.strftime("bioavailability_batch_%Y%m%d_%H%M%S")
     batch_dir = _ensure_dir(Path(args.batch_root) / batch_id)
     logs_dir = _ensure_dir(batch_dir / "logs")
     run_root = _ensure_dir(Path(args.out_root))
@@ -80,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
             results.append(result)
             _log(
                 f"progress {len(results)}/{len(items)} done; index={item.index} "
-                f"status={result.get('status')} prediction={result.get('bbb_prediction')} "
+                f"status={result.get('status')} prediction={result.get('bioavailability_prediction')} "
                 f"correct={result.get('correct')} latency_s={result.get('latency_s')}"
             )
 
@@ -162,7 +162,7 @@ def _single_run_command(args: argparse.Namespace, query_index: int, run_id: str)
     command = [
         args.python_executable,
         "-m",
-        "tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline",
+        "tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline",
         "--input-jsonl",
         args.input_jsonl,
         "--query-index",
@@ -272,7 +272,7 @@ def _collect_result(
     final_output = _read_json(final_path) if final_path.exists() else {}
     manifest = _read_json(manifest_path) if manifest_path.exists() else {}
     content = ((final_output.get("llm") or {}).get("content") or {}) if isinstance(final_output, dict) else {}
-    prediction = _normalize_prediction(content.get("bbb_prediction"))
+    prediction = _normalize_prediction(content.get("bioavailability_prediction"))
     pred_label = prediction_to_label(prediction)
     true_label = _parse_label(item.record.get(args.label_field))
     correct = bool(pred_label == true_label) if pred_label is not None and true_label is not None else False
@@ -282,7 +282,7 @@ def _collect_result(
         "run_dir": str(run_dir),
         "smiles": item.record.get(args.smiles_field, ""),
         "label": true_label,
-        "bbb_prediction": prediction,
+        "bioavailability_prediction": prediction,
         "pred_label": pred_label,
         "confidence": content.get("confidence"),
         "correct": correct,
@@ -323,19 +323,19 @@ def _class_metrics(rows: list[dict[str, Any]], label: int) -> dict[str, Any]:
 
 
 def prediction_to_label(prediction: str | None) -> int | None:
-    if prediction == "pass":
+    if prediction == "high":
         return 1
-    if prediction == "fail":
+    if prediction == "low":
         return 0
     return None
 
 
 def _normalize_prediction(value: Any) -> str:
     text = str(value or "").strip().lower()
-    if text in {"pass", "positive", "bbb+", "bbb_positive", "1"}:
-        return "pass"
-    if text in {"fail", "negative", "bbb-", "bbb_negative", "0"}:
-        return "fail"
+    if text in {"high", "pass", "positive", "bioavailability_positive", "1"}:
+        return "high"
+    if text in {"low", "fail", "negative", "bioavailability_negative", "0"}:
+        return "low"
     return text or "missing"
 
 
@@ -380,7 +380,7 @@ def _error_result(args: argparse.Namespace, item: BatchItem, batch_id: str, erro
         "status": "error",
         "smiles": item.record.get(args.smiles_field, ""),
         "label": _parse_label(item.record.get(args.label_field)),
-        "bbb_prediction": "missing",
+        "bioavailability_prediction": "missing",
         "pred_label": None,
         "correct": False,
         "error": error,
@@ -400,7 +400,7 @@ def _combine_traces(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def _write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any], rows: list[dict[str, Any]]) -> None:
     lines = [
-        f"# BBB Martins Batch Report: {manifest['batch_id']}",
+        f"# Bioavailability_Ma Batch Report: {manifest['batch_id']}",
         "",
         f"- input_jsonl: `{manifest['input_jsonl']}`",
         f"- n_items: {metrics['n_total']}",
@@ -415,11 +415,11 @@ def _write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any],
     ]
     for row in rows:
         lines.append(
-            "| {query_index} | {label} | {bbb_prediction} | {pred_label} | {correct} | {confidence} | {run_id} |".format(
+            "| {query_index} | {label} | {bioavailability_prediction} | {pred_label} | {correct} | {confidence} | {run_id} |".format(
                 **{key: row.get(key, "") for key in [
                     "query_index",
                     "label",
-                    "bbb_prediction",
+                    "bioavailability_prediction",
                     "pred_label",
                     "correct",
                     "confidence",
@@ -458,7 +458,7 @@ def _now() -> str:
 
 
 def _log(message: str) -> None:
-    print(f"[bbb_reasoning_batch] {message}", file=sys.stderr, flush=True)
+    print(f"[bioavailability_reasoning_batch] {message}", file=sys.stderr, flush=True)
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
@@ -466,7 +466,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--input-jsonl", default=DEFAULT_INPUT)
     parser.add_argument("--smiles-field", default="drug")
     parser.add_argument("--label-field", default="Y")
-    parser.add_argument("--index", default="outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl")
+    parser.add_argument("--index", default="outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/bioavailability_neighbor_index.pkl")
     parser.add_argument("--out-root", default=DEFAULT_RUN_ROOT)
     parser.add_argument("--batch-root", default=DEFAULT_BATCH_ROOT)
     parser.add_argument("--batch-id", default="")

@@ -66,7 +66,7 @@ tools/chembl_tool/common/
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
   --chembl-sqlite tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db \
-  --out-dir outputs/chembl_bbb \
+  --out-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw \
   --min-score 40 \
   --progress-every 10000 \
   --export-activities
@@ -75,10 +75,10 @@ python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
 主要输出：
 
 ```text
-outputs/chembl_bbb/bbb_assay_candidates.csv
-outputs/chembl_bbb/bbb_assay_candidates.jsonl
-outputs/chembl_bbb/bbb_assay_report.md
-outputs/chembl_bbb/bbb_activity_evidence.csv
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_candidates.csv
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_candidates.jsonl
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_report.md
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_activity_evidence.csv
 ```
 
 说明：
@@ -118,8 +118,8 @@ bbb_activity_evidence.csv: 候选 assay 下的 molecule-level activity evidence
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.rescore_outputs \
-  --in-dir outputs/chembl_bbb \
-  --out-dir outputs/chembl_bbb_cleaned_v6 \
+  --in-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw \
+  --out-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6 \
   --min-score 40 \
   --filter-activities
 ```
@@ -140,8 +140,8 @@ rescore_outputs.py 只能处理已有候选。
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.summarize_outputs \
-  --out-dir outputs/chembl_bbb_cleaned_v6 \
-  --report-path outputs/chembl_bbb_cleaned_v6/bbb_health_check.md
+  --out-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6 \
+  --report-path outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/bbb_health_check.md
 ```
 
 输出：
@@ -169,9 +169,9 @@ tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz
 当前主要输出：
 
 ```text
-outputs/bbb_martins/evidence_library/bbb_molecule_evidence.jsonl
-outputs/bbb_martins/evidence_library/bbb_neighbor_index.pkl
-outputs/bbb_martins/evidence_library/bbb_neighbor_index.meta.json
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_molecule_evidence.jsonl
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.meta.json
 ```
 
 ### `retrieve_neighbors.py`
@@ -216,7 +216,7 @@ BBB_Martins 端到端 reasoning 入口。当前流程：
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
-  --resume-final-from-run-dir outputs/bbb_martins/reasoning_runs/<run_id>
+  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>
 ```
 
 ### `run_reasoning_batch.py`
@@ -245,11 +245,11 @@ python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
 批量输出：
 
 ```text
-outputs/bbb_martins/reasoning_batches/<batch_id>/predictions.jsonl
-outputs/bbb_martins/reasoning_batches/<batch_id>/metrics.json
-outputs/bbb_martins/reasoning_batches/<batch_id>/report.md
-outputs/bbb_martins/reasoning_batches/<batch_id>/trace_messages.jsonl
-outputs/bbb_martins/reasoning_runs/<batch_id>_combined/trace_messages.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/predictions.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/metrics.json
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/report.md
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/trace_messages.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<batch_id>_combined/trace_messages.jsonl
 ```
 
 `<batch_id>_combined` 会被当前 trace viewer 自动扫到；打开后可通过 `Molecule package`
@@ -292,7 +292,7 @@ scored_row(row, min_score=40)
 当前推荐使用：
 
 ```text
-outputs/chembl_bbb_cleaned_v6/
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/
 ```
 
 其中：
@@ -316,7 +316,22 @@ Tier 3: 10,752
 Tier 4: 702
 ```
 
-旧的 `outputs/chembl_bbb_cleaned*` 中间版本只用于调试对比。确认 v6 后，可以清理中间版本。
+`assay_screening/raw/` 是全量筛选原始输出；`assay_screening/v1/` 到 `v5/` 是历史重打分中间版本，只用于调试对比。确认 v6 后，可以清理中间版本。
+
+reasoning 和 batch 产物统一放在：
+
+```text
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/
+```
+
+通用 trace viewer 不再放在 task 输出目录中，统一使用：
+
+```bash
+bash tools/chembl_tool/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/bbb_martins/reasoning/runs \
+  8776
+```
 
 ---
 
@@ -486,14 +501,14 @@ tools/chembl_tool/utils/BBB_Martins/monitor_chembl_assay.sh
 
 ```bash
 tmux new-session -d -s chembl_assay_monitor \
-  'tools/chembl_tool/utils/BBB_Martins/monitor_chembl_assay.sh chembl_assay outputs/chembl_bbb 5400 /tmp/chembl_assay_monitor.log'
+  'tools/chembl_tool/utils/BBB_Martins/monitor_chembl_assay.sh chembl_assay outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw 5400 /tmp/chembl_assay_monitor.log'
 ```
 
 参数：
 
 ```text
 chembl_assay: 被监控的 tmux session
-outputs/chembl_bbb: 输出目录
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw: 输出目录
 5400: 检查间隔秒数，即 90 分钟
 /tmp/chembl_assay_monitor.log: monitor 日志
 ```

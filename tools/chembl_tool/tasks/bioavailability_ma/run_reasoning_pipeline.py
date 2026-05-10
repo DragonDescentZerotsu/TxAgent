@@ -1,4 +1,4 @@
-"""Run BBB Martins analog reasoning with group-level parallel LLM calls."""
+"""Run Bioavailability_Ma analog reasoning with group-level parallel LLM calls."""
 
 from __future__ import annotations
 
@@ -16,16 +16,17 @@ from openai import OpenAI
 import requests
 
 from tools.chembl_tool.common.export import ensure_dir
-from tools.chembl_tool.tasks.bbb_martins.chembl_exact_context import (
+from tools.chembl_tool.tasks.bioavailability_ma.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
 )
-from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index, retrieve_neighbors
+from tools.chembl_tool.tasks.bioavailability_ma.constants import BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT
+from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import load_index, retrieve_neighbors
 
 
-DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
-DEFAULT_INDEX = "outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl"
-DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bbb_martins/reasoning/runs"
+DEFAULT_INPUT = "data/processed/Bioavailability_Ma/test.jsonl"
+DEFAULT_INDEX = "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/bioavailability_neighbor_index.pkl"
+DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bioavailability_ma/reasoning/runs"
 DEFAULT_MODEL = "deepseek-v4-pro"
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
@@ -66,7 +67,7 @@ GROUP_REASONING_TOOLS = [
             "name": "properties_compare",
             "description": (
                 "Compare query and neighbor molecule properties, including RDKit descriptors and MolGpKa/logD "
-                "features. Use this to assess whether property changes affect BBB evidence transferability."
+                "features. Use this to assess whether property changes affect oral bioavailability evidence transferability."
             ),
             "parameters": {
                 "type": "object",
@@ -131,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return _resume_final_from_run_dir(Path(args.resume_final_from_run_dir), client)
 
-    run_id = args.run_id or time.strftime("bbb_reasoning_%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
+    run_id = args.run_id or time.strftime("bioavailability_reasoning_%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
     out_dir = ensure_dir(Path(args.out_root) / run_id)
     _log(f"run_id={run_id}")
 
@@ -497,7 +498,7 @@ def _reason_single_molecule(
         {
             "role": "system",
             "content": (
-                "You are a medicinal chemistry BBB single-molecule analyst. "
+                "You are a medicinal chemistry oral bioavailability single-molecule analyst. "
                 "Only analyze the query molecule itself, without analog evidence. "
                 "You may call exactly one tool: molecule_properties. Return only valid JSON."
             ),
@@ -506,19 +507,21 @@ def _reason_single_molecule(
             "role": "user",
             "content": json.dumps(
                 {
-                    "task": "Single-molecule BBB plausibility analysis.",
+                    "task": "Single-molecule oral bioavailability plausibility analysis.",
                     "query": query,
                     "instructions": [
                         "Call molecule_properties for the query molecule before analysis.",
-                        "Assess passive BBB plausibility from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
+                        "Assess oral bioavailability prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
                         "Do not use ChEMBL neighbor evidence in this analysis.",
-                        "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL BBB evidence from the physicochemical prior.",
-                        "Return JSON with passive_bbb_plausibility, efflux_or_transporter_prior, confidence, reasoning_summary, property_drivers, caveats.",
+                        "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL bioavailability evidence from the physicochemical prior.",
+                        "Return JSON with oral_bioavailability_prior, absorption_prior, solubility_or_dissolution_prior, metabolism_or_clearance_prior, confidence, reasoning_summary, property_drivers, caveats.",
                     ],
                     "exact_query_chembl_context": chembl_context or {"status": "not_available"},
                     "required_json_schema": {
-                        "passive_bbb_plausibility": "high | moderate | low | uncertain",
-                        "efflux_or_transporter_prior": "high | moderate | low | uncertain",
+                        "oral_bioavailability_prior": "high | low | mixed_or_unclear",
+                        "absorption_prior": "favorable | unfavorable | mixed_or_unclear",
+                        "solubility_or_dissolution_prior": "favorable | unfavorable | mixed_or_unclear",
+                        "metabolism_or_clearance_prior": "favorable | unfavorable | mixed_or_unclear",
                         "exact_chembl_evidence_assessment": "string",
                         "confidence": "high | moderate | low",
                         "reasoning_summary": "string",
@@ -548,7 +551,7 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
         {
             "role": "system",
             "content": (
-                "You are a medicinal chemistry BBB analog evidence analyst. "
+                "You are a medicinal chemistry oral bioavailability analog evidence analyst. "
                 "Reason about whether analog evidence in one endpoint group is transferable to the query molecule. "
                 "You may call the provided molecule comparison tools when structural or property differences matter. "
                 "Return only valid JSON."
@@ -580,7 +583,7 @@ def _run_final_reasoning(
         {
             "role": "system",
             "content": (
-                "You are a senior BBB reasoning model. Integrate group-level analog evidence into one final BBB assessment. "
+                "You are a senior oral bioavailability reasoning model. Integrate group-level analog evidence into one final oral bioavailability assessment. "
                 "Return only valid JSON."
             ),
         },
@@ -588,7 +591,7 @@ def _run_final_reasoning(
             "role": "user",
             "content": json.dumps(
                 {
-                    "task": "Final BBB prediction from analog evidence.",
+                    "task": "Final oral bioavailability prediction from analog evidence.",
                         "query": _llm_query_payload(retrieval["query"]),
                     "retrieval_coverage": retrieval["coverage"],
                     "single_molecule_analysis": {
@@ -605,22 +608,23 @@ def _run_final_reasoning(
                     ],
                     "instructions": [
                         "Return compact complete JSON.",
-                        "Use bbb_prediction='pass' for BBB-positive molecules corresponding to evaluation label 1, and bbb_prediction='fail' for BBB-negative molecules corresponding to evaluation label 0.",
+                        f"Use bioavailability_prediction='high' for oral bioavailability F >= {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (Bioavailability_Ma label 1), and bioavailability_prediction='low' for F < {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (label 0).",
                         "Use the single-molecule analysis as the physicochemical prior.",
                         "Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.",
-                        "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
+                        "Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
                         "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
-                        "You must choose exactly one bbb_prediction: pass or fail. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",
+                        "You must choose exactly one bioavailability_prediction: high or low. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",
                     ],
                     "required_json_schema": {
-                        "bbb_prediction": "pass | fail",
+                        "bioavailability_prediction": "high | low",
                         "confidence": "high | moderate | low",
                         "main_reasons": ["string"],
                         "single_molecule_assessment": "string",
-                        "passive_permeability_assessment": "string",
-                        "direct_brain_exposure_analog_assessment": "string",
-                        "efflux_risk_assessment": "string",
-                        "influx_support_assessment": "string",
+                        "absorption_and_permeability_assessment": "string",
+                        "solubility_and_dissolution_assessment": "string",
+                        "metabolism_first_pass_and_clearance_assessment": "string",
+                        "transporter_efflux_assessment": "string",
+                        "direct_oral_bioavailability_analog_assessment": "string",
                         "conflicting_evidence": ["string"],
                         "evidence_gaps": ["string"],
                         "final_summary": "string",
@@ -636,7 +640,7 @@ def _run_final_reasoning(
 
 def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     return {
-        "task": "Group-level BBB analog transferability analysis.",
+        "task": "Group-level oral bioavailability analog transferability analysis.",
         "query": query,
         "group": {
             "group_id": group["group_id"],
@@ -659,24 +663,25 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "Use only this group's evidence.",
             "Assess structural transferability from neighbors to the query.",
             "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
-            "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
+            "Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
             "Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.",
-            "Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, or logP could affect BBB transferability.",
+            "Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, logP, molecular size, or polarity could affect oral bioavailability transferability.",
             "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
             "Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.",
             "Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.",
-            "Distinguish direct BBB exposure, passive permeability, efflux substrate risk, influx support, and weak inhibition/binding evidence.",
-            "Do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
+            "Distinguish direct oral bioavailability, in vivo oral exposure/absorption, in vitro permeability, solubility/dissolution, metabolism/clearance, formulation/food-effect context, and weak inhibition/binding evidence.",
+            "Do not convert CYP IC50/inhibition into metabolic instability, and do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
-            "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bbb_reasoning yourself.",
-            "Return JSON with useful_for_bbb_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
+            "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.",
+            "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
         "required_json_schema": {
-            "useful_for_bbb_reasoning": "boolean",
+            "useful_for_bioavailability_reasoning": "boolean",
             "transferability": "high | moderate | low | not_applicable",
             "evidence_direction": (
-                "supports_bbb_crossing | argues_against_bbb_crossing | efflux_risk | "
-                "influx_support | neutral_or_unclear"
+                "supports_high_bioavailability | argues_against_high_bioavailability | absorption_support | "
+                "permeability_support | solubility_support | solubility_risk | metabolic_stability_support | "
+                "first_pass_or_clearance_risk | transporter_efflux_risk | neutral_or_unclear"
             ),
             "confidence": "high | moderate | low",
             "reasoning_summary": "string",
@@ -689,7 +694,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
                     "activity_values": ["string"],
                     "tool_summary": "string",
                     "transferability": "high | moderate | low | not_applicable",
-                    "effect_on_bbb_reasoning": "string",
+                    "effect_on_bioavailability_reasoning": "string",
                 }
             ],
             "caveats": ["string"],
@@ -733,8 +738,8 @@ def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
         "status": "found",
         "selected_molecule_chembl_id": context.get("selected_molecule_chembl_id", ""),
         "exact_matches": [_clean_exact_match(match) for match in context.get("exact_matches", [])],
-        "bbb_relevant_evidence_rows": [
-            _clean_evidence_row(row) for row in context.get("bbb_relevant_evidence_rows", [])
+        "bioavailability_relevant_evidence_rows": [
+            _clean_evidence_row(row) for row in context.get("bioavailability_relevant_evidence_rows", [])
         ],
     }
 
@@ -918,7 +923,7 @@ def _trace_record(
         "smiles": smiles,
         "label": query_record.get("Y"),
         "status": output.get("status"),
-        "prediction": content.get("bbb_prediction") if isinstance(content, dict) else None,
+        "prediction": content.get("bioavailability_prediction") if isinstance(content, dict) else None,
         "response_text": json.dumps(content, ensure_ascii=False, indent=2) if content is not None else output.get("error"),
         "messages": llm.get("messages") or [],
         "tool_count": len(llm.get("tool_calls") or []),
@@ -1029,7 +1034,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
 
 
 def _log(message: str) -> None:
-    print(f"[bbb_reasoning_pipeline] {message}", file=sys.stderr, flush=True)
+    print(f"[bioavailability_reasoning_pipeline] {message}", file=sys.stderr, flush=True)
 
 
 if __name__ == "__main__":

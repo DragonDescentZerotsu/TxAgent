@@ -1,4 +1,4 @@
-"""Build a molecule-level BBB evidence library and neighbor index."""
+"""Build a molecule-level oral bioavailability evidence library and neighbor index."""
 
 from __future__ import annotations
 
@@ -18,12 +18,12 @@ from rdkit import Chem, DataStructs, RDLogger
 from rdkit.Chem import AllChem, inchi
 
 from tools.chembl_tool.common.export import ensure_dir
-from tools.chembl_tool.tasks.bbb_martins.endpoint_groups import assign_endpoint_group
+from tools.chembl_tool.tasks.bioavailability_ma.endpoint_groups import assign_endpoint_group
 
 
-DEFAULT_ASSAYS_CSV = "outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/bbb_assay_candidates.csv"
-DEFAULT_ACTIVITIES_CSV = "outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/bbb_activity_evidence.csv"
-DEFAULT_OUT_DIR = "outputs/chembl_tool/tasks/bbb_martins/evidence_library"
+DEFAULT_ASSAYS_CSV = "outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/v4/bioavailability_assay_candidates.csv"
+DEFAULT_ACTIVITIES_CSV = "outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/v4/bioavailability_activity_evidence.csv"
+DEFAULT_OUT_DIR = "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library"
 DEFAULT_CHEMBL_FPS = "tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz"
 
 FP_RADIUS = 2
@@ -64,9 +64,9 @@ def main(argv: list[str] | None = None) -> int:
         f"molecules={len(index['molecules']):,} groups={len(index['group_to_molecule_indices']):,}"
     )
 
-    evidence_jsonl = out_dir / "bbb_molecule_evidence.jsonl"
-    index_pkl = out_dir / "bbb_neighbor_index.pkl"
-    meta_json = out_dir / "bbb_neighbor_index.meta.json"
+    evidence_jsonl = out_dir / "bioavailability_molecule_evidence.jsonl"
+    index_pkl = out_dir / "bioavailability_neighbor_index.pkl"
+    meta_json = out_dir / "bioavailability_neighbor_index.meta.json"
 
     _write_jsonl(evidence_jsonl, evidence_rows)
     with index_pkl.open("wb") as handle:
@@ -168,7 +168,7 @@ def build_neighbor_index(
         evidence_by_molecule_group[molecule_id] = {group_id: group_rows[group_id] for group_id in group_rows}
 
     return {
-        "version": "bbb_neighbor_index.v1",
+        "version": "bioavailability_ma_neighbor_index.v1",
         "fingerprint": {
             "type": "RDKit-Morgan",
             "radius": FP_RADIUS,

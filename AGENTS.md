@@ -8,10 +8,10 @@
 
 ```text
 assay candidates:
-  outputs/chembl_bbb_cleaned_v6/bbb_assay_candidates.csv
+  outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/bbb_assay_candidates.csv
 
 activity evidence:
-  outputs/chembl_bbb_cleaned_v6/bbb_activity_evidence.csv
+  outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/bbb_activity_evidence.csv
 
 ChEMBL fingerprints:
   tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz
@@ -140,12 +140,12 @@ tools/chembl_tool/tasks/bbb_martins/run_reasoning_batch.py
   BBB_Martins 批量 reasoning 入口。按 query_index 调用单分子 pipeline，支持 molecule 级并行、
   可选 trace 保存/合并、prediction report、accuracy 和 macro-F1 评估。
 
-outputs/bbb_martins/reasoning_runs/viewer.html
+tools/chembl_tool/trace_viewer/viewer.html
   本地 trace 可视化页面。支持选择 run、选择 molecule trace package、查看单个分子的
   single/group/final messages、reasoning、tool calls 和 parsed JSON response。
 
-outputs/bbb_martins/reasoning_runs/start_viewer.sh
-  启动 trace viewer 的静态 HTTP server。
+tools/chembl_tool/trace_viewer/start_viewer.sh
+  启动通用 trace viewer 的静态 HTTP server，可指向任意 task 的 reasoning/runs 目录。
 
 tools/chembl_tool/tasks/bbb_martins/
   其他 BBB evidence 清洗、打分、报告和输出汇总脚本。
@@ -602,7 +602,7 @@ final_summary
 每次 reasoning run 输出到：
 
 ```text
-outputs/bbb_martins/reasoning_runs/<run_id>/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/
 ```
 
 当前文件：
@@ -648,13 +648,15 @@ raw_output
 viewer 启动：
 
 ```bash
-bash outputs/bbb_martins/reasoning_runs/start_viewer.sh 8776
+bash tools/chembl_tool/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/bbb_martins/reasoning/runs \
+  8776
 ```
 
 然后打开：
 
 ```text
-http://localhost:8776/viewer.html
+http://localhost:8776/.trace_viewer.html
 ```
 
 常用 pipeline 命令：
@@ -674,7 +676,7 @@ http://localhost:8776/viewer.html
 
 # 只重跑已有 run 的 final summary
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
-  --resume-final-from-run-dir outputs/bbb_martins/reasoning_runs/<run_id> \
+  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id> \
   --timeout-s 300 \
   --max-tokens 8192 \
   --model deepseek-v4-pro
@@ -695,25 +697,25 @@ http://localhost:8776/viewer.html
 
 默认会把每个单分子 run 的 stderr 进度实时打印到控制台，例如
 `[idx00003 stderr] [bbb_reasoning_pipeline] group done: ...`，同时完整保存到
-`reasoning_batches/<batch_id>/logs/`。如果只想写日志文件、不想在控制台显示进度，可加
+`outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/logs/`。如果只想写日志文件、不想在控制台显示进度，可加
 `--no-stream-logs`。
 
 批量输出：
 
 ```text
-outputs/bbb_martins/reasoning_batches/<batch_id>/manifest.json
-outputs/bbb_martins/reasoning_batches/<batch_id>/predictions.jsonl
-outputs/bbb_martins/reasoning_batches/<batch_id>/metrics.json
-outputs/bbb_martins/reasoning_batches/<batch_id>/report.md
-outputs/bbb_martins/reasoning_batches/<batch_id>/trace_messages.jsonl
-outputs/bbb_martins/reasoning_batches/<batch_id>/logs/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/manifest.json
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/predictions.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/metrics.json
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/report.md
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/trace_messages.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/logs/
 ```
 
 每个 molecule 仍保留独立 run：
 
 ```text
-outputs/bbb_martins/reasoning_runs/<batch_id>_idx00000/
-outputs/bbb_martins/reasoning_runs/<batch_id>_idx00001/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<batch_id>_idx00000/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<batch_id>_idx00001/
 ...
 ```
 
@@ -721,7 +723,7 @@ outputs/bbb_martins/reasoning_runs/<batch_id>_idx00001/
 batch 脚本还会写：
 
 ```text
-outputs/bbb_martins/reasoning_runs/<batch_id>_combined/trace_messages.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<batch_id>_combined/trace_messages.jsonl
 ```
 
 viewer 可以选择 `<batch_id>_combined`，再通过 `Molecule package` 下拉框切换分子。
@@ -1110,7 +1112,7 @@ reasoning_effort=high
 
 ```text
 已完成单分子端到端 smoke runs，输出目录：
-outputs/bbb_martins/reasoning_runs/<run_id>/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/
 ```
 
 已验证的示例：
@@ -1145,6 +1147,15 @@ query_index=9:
 ```text
 tools/<domain_tool>/tasks/<task_name>/
 tools/service/tasks/<task_name>.py
+```
+
+对应输出统一放在：
+
+```text
+outputs/<domain_tool>/tasks/<task_name>/
+  assay_screening/
+  evidence_library/
+  reasoning/
 ```
 
 如果需要新模型或新索引，则新增：

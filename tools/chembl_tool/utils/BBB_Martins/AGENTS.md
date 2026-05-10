@@ -37,12 +37,21 @@ group-level DeepSeek 只能调用 mmp_structure_compare 和 properties_compare�
 single-molecule DeepSeek 只能调用 molecule_properties。
 ```
 
-最终输出：
+`screen_assays.py` 的 raw screening 输出：
 
 ```text
-outputs/chembl_bbb/bbb_assay_candidates.csv
-outputs/chembl_bbb/bbb_assay_candidates.jsonl
-outputs/chembl_bbb/bbb_assay_report.md
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_candidates.csv
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_candidates.jsonl
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_report.md
+```
+
+当前正式 BBB_Martins task 输出已经按 pipeline stage 归档：
+
+```text
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/
 ```
 
 不要训练模型。只做 deterministic assay 检索、打分、分层、导出。
@@ -54,7 +63,7 @@ outputs/chembl_bbb/bbb_assay_report.md
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
   --chembl-sqlite /data1/tianang/Projects/TxAgent/tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db \
-  --out-dir outputs/chembl_bbb \
+  --out-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw \
   --min-score 40 \
   --progress-every 10000
 ```
@@ -854,7 +863,7 @@ FROM docs;
 如果开启，对候选 assay 额外导出：
 
 ```text
-outputs/chembl_bbb/bbb_activity_evidence.csv
+outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_activity_evidence.csv
 ```
 
 字段：
@@ -985,18 +994,18 @@ python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
-  --resume-final-from-run-dir outputs/bbb_martins/reasoning_runs/<run_id>
+  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>
 ```
 
 当前 reasoning run 输出：
 
 ```text
-outputs/bbb_martins/reasoning_runs/<run_id>/retrieval.json
-outputs/bbb_martins/reasoning_runs/<run_id>/single_molecule_reasoning_output.json
-outputs/bbb_martins/reasoning_runs/<run_id>/group_reasoning_outputs.jsonl
-outputs/bbb_martins/reasoning_runs/<run_id>/final_reasoning_output.json
-outputs/bbb_martins/reasoning_runs/<run_id>/trace_messages.jsonl
-outputs/bbb_martins/reasoning_runs/<run_id>/manifest.json
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/retrieval.json
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/single_molecule_reasoning_output.json
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/group_reasoning_outputs.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/final_reasoning_output.json
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/trace_messages.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/manifest.json
 ```
 
 ---
@@ -1028,7 +1037,7 @@ glucose uptake 只有在 GLUT1/SLC2A1 target context 下才可作为 influx evid
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
   --chembl-sqlite /data1/tianang/Projects/TxAgent/tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db \
-  --out-dir outputs/chembl_bbb \
+  --out-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw \
   --min-score 40 \
   --progress-every 10000
 ```

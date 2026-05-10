@@ -1,4 +1,4 @@
-"""Re-score existing BBB Martins output files after rule changes."""
+"""Re-score existing Bioavailability Ma output files after rule changes."""
 
 from __future__ import annotations
 
@@ -9,10 +9,10 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.export import write_csv, write_jsonl
-from tools.chembl_tool.tasks.bbb_martins.report import write_report
-from tools.chembl_tool.tasks.bbb_martins.scoring import scored_row
-from tools.chembl_tool.tasks.bbb_martins.screen_assays import OUTPUT_FIELDS
-from tools.chembl_tool.tasks.bbb_martins.summarize_outputs import summarize_rows
+from tools.chembl_tool.tasks.bioavailability_ma.report import write_report
+from tools.chembl_tool.tasks.bioavailability_ma.scoring import scored_row
+from tools.chembl_tool.tasks.bioavailability_ma.screen_assays import OUTPUT_FIELDS
+from tools.chembl_tool.tasks.bioavailability_ma.summarize_outputs import summarize_rows
 
 
 LIST_FIELDS = {
@@ -33,12 +33,12 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    input_candidates = in_dir / "bbb_assay_candidates.csv"
+    input_candidates = in_dir / "bioavailability_assay_candidates.csv"
     rows = _read_candidate_rows(input_candidates)
     rescored: list[dict[str, Any]] = []
     for row in rows:
         scored = scored_row(_row_for_scoring(row), min_score=args.min_score)
-        if scored["keep_for_bbb_reasoning"]:
+        if scored["keep_for_bioavailability_reasoning"]:
             output_row = dict(row)
             for field in OUTPUT_FIELDS:
                 output_row.setdefault(field, "")
@@ -46,25 +46,25 @@ def main(argv: list[str] | None = None) -> int:
             rescored.append(output_row)
 
     rescored.sort(key=lambda row: (str(row["tier"]), -int(row["score"]), str(row["assay_chembl_id"])))
-    write_csv(out_dir / "bbb_assay_candidates.csv", rescored, OUTPUT_FIELDS)
-    write_jsonl(out_dir / "bbb_assay_candidates.jsonl", rescored)
+    write_csv(out_dir / "bioavailability_assay_candidates.csv", rescored, OUTPUT_FIELDS)
+    write_jsonl(out_dir / "bioavailability_assay_candidates.jsonl", rescored)
     write_report(
-        out_dir / "bbb_assay_report.md",
+        out_dir / "bioavailability_assay_report.md",
         total_assays=args.total_assays,
         candidates=rescored,
         min_score=args.min_score,
         chembl_sqlite=args.chembl_sqlite,
     )
-    (out_dir / "bbb_health_check.md").write_text(
-        "\n".join(summarize_rows(_rows_for_summary(rescored), candidates_path=out_dir / "bbb_assay_candidates.csv")) + "\n",
+    (out_dir / "bioavailability_health_check.md").write_text(
+        "\n".join(summarize_rows(_rows_for_summary(rescored), candidates_path=out_dir / "bioavailability_assay_candidates.csv")) + "\n",
         encoding="utf-8",
     )
 
-    activity_in = in_dir / "bbb_activity_evidence.csv"
+    activity_in = in_dir / "bioavailability_activity_evidence.csv"
     if args.filter_activities and activity_in.exists():
         _filter_activity_evidence(
             activity_in,
-            out_dir / "bbb_activity_evidence.csv",
+            out_dir / "bioavailability_activity_evidence.csv",
             {str(row["assay_chembl_id"]) for row in rescored},
         )
 
@@ -131,8 +131,8 @@ def _as_int(value: object) -> int:
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--in-dir", default="outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw")
-    parser.add_argument("--out-dir", default="outputs/chembl_tool/tasks/bbb_martins/assay_screening/v1")
+    parser.add_argument("--in-dir", default="outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/raw")
+    parser.add_argument("--out-dir", default="outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/v1")
     parser.add_argument("--min-score", type=int, default=40)
     parser.add_argument("--total-assays", type=int, default=1890749)
     parser.add_argument("--chembl-sqlite", default="tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db")

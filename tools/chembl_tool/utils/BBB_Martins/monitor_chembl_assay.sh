@@ -2,7 +2,7 @@
 set -u
 
 SESSION="${1:-chembl_assay}"
-OUT_DIR="${2:-outputs/chembl_bbb}"
+OUT_DIR="${2:-outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw}"
 INTERVAL_SECONDS="${3:-5400}"
 LOG="${4:-/tmp/chembl_assay_monitor.log}"
 

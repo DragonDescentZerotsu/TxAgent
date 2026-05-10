@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reasoning Trace Viewer</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #f7f8fa; color: #1f2937; }
+  header { position: sticky; top: 0; z-index: 5; background: #1f2937; color: white; padding: 12px 18px; box-shadow: 0 2px 8px rgba(0,0,0,.16); }
+  h1 { margin: 0 0 10px; font-size: 18px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  label { font-size: 12px; color: #d1d5db; margin-right: 4px; }
+  select, input, button { font: inherit; font-size: 13px; border-radius: 5px; }
+  select, input { background: #374151; color: white; border: 1px solid #566174; padding: 6px 8px; }
+  input[type="text"] { width: min(560px, 90vw); }
+  button { border: 0; padding: 7px 12px; background: #2563eb; color: white; cursor: pointer; }
+  main { max-width: 1500px; margin: 0 auto; padding: 16px; }
+  .layout { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 16px; }
+  .panel { background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .panel-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; background: #eef1f5; border-bottom: 1px solid #e1e5eb; font-weight: 650; font-size: 13px; }
+  .panel-body { padding: 12px; }
+  .filters { display: grid; gap: 8px; margin-bottom: 10px; }
+  .filters input, .filters select { width: 100%; background: white; color: #111827; border: 1px solid #d1d5db; }
+  .list { max-height: calc(100vh - 245px); overflow: auto; }
+  .item { width: 100%; text-align: left; background: white; color: #111827; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px; margin-bottom: 7px; cursor: pointer; }
+  .item.active { border-color: #2563eb; box-shadow: inset 3px 0 0 #2563eb; }
+  .item-title { display: flex; justify-content: space-between; gap: 8px; font-weight: 650; font-size: 13px; }
+  .item-sub { margin-top: 4px; color: #5b6472; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ok { color: #047857; font-weight: 750; }
+  .bad { color: #b91c1c; font-weight: 750; }
+  .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+  .field { border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px; min-width: 0; }
+  .response-full { margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 7px; overflow: hidden; background: white; }
+  .response-full > .block { border-top: 0; }
+  .k { color: #697386; text-transform: uppercase; font-size: 10px; font-weight: 750; letter-spacing: .05em; }
+  .v { margin-top: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; word-break: break-word; white-space: pre-wrap; }
+  .trace { display: grid; gap: 12px; }
+  .message { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: white; }
+  .message-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; background: #f8fafc; border-bottom: 1px solid #e5e7eb; }
+  .role { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 750; text-transform: uppercase; letter-spacing: .04em; }
+  .role-system { background: #e5e7eb; color: #374151; }
+  .role-user { background: #dbeafe; color: #1e40af; }
+  .role-assistant { background: #d1fae5; color: #065f46; }
+  .role-tool { background: #ffedd5; color: #9a3412; }
+  .tag { color: #566174; font: 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .block { padding: 10px; border-top: 1px solid #f0f2f5; }
+  .block:first-child { border-top: 0; }
+  .block-title { margin-bottom: 6px; color: #4b5563; font-size: 11px; font-weight: 750; text-transform: uppercase; letter-spacing: .05em; }
+  .reasoning { background: #fff7ed; border-left: 3px solid #f97316; }
+  .tool-call { background: #f5f3ff; border-left: 3px solid #8b5cf6; }
+  .tool-result { background: #fefce8; border-left: 3px solid #eab308; }
+  .json-view { display: grid; gap: 10px; }
+  .json-section { border: 1px solid #e5e7eb; border-radius: 7px; overflow: hidden; background: #ffffff; }
+  .json-section > .json-title { padding: 7px 9px; background: #f3f4f6; border-bottom: 1px solid #e5e7eb; font-weight: 750; font-size: 12px; color: #374151; }
+  .json-body { padding: 9px; display: grid; gap: 7px; }
+  .kv { display: grid; grid-template-columns: minmax(110px, 230px) minmax(0, 1fr); gap: 8px; align-items: start; }
+  .kv-key { color: #6b7280; font-weight: 700; font-size: 12px; }
+  .kv-val { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
+  .json-list { margin: 0; padding-left: 20px; display: grid; gap: 5px; }
+  .neighbor-card { border: 1px solid #dbe3ef; border-radius: 7px; padding: 8px; background: #f8fafc; display: grid; gap: 7px; }
+  .key-evidence-card { background: #ffffff; border-color: #cbd5e1; }
+  .evidence-card { border-left: 3px solid #94a3b8; padding: 6px 8px; background: white; }
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 999px; background: #e0e7ff; color: #3730a3; font-size: 11px; font-weight: 750; margin-right: 5px; }
+  pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12.5px/1.52 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  details summary { cursor: pointer; color: #4b5563; font-size: 12px; }
+  .empty { padding: 28px; text-align: center; color: #6b7280; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .list { max-height: 320px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Reasoning Trace Viewer</h1>
+  <div class="bar">
+    <div><label>run</label><select id="runSelect"><option>Scanning...</option></select></div>
+    <button id="loadBtn">Load trace</button>
+    <button id="refreshBtn">Refresh</button>
+    <div><label>path</label><input id="pathInput" type="text" placeholder="run_id/trace_messages.jsonl"><button id="pathBtn">Load</button></div>
+    <div><label>file</label><input id="fileInput" type="file" accept=".jsonl,.txt"></div>
+  </div>
+</header>
+<main>
+  <div class="layout">
+    <aside class="panel">
+      <div class="panel-title"><span>Analyses</span><span id="count" class="tag">0 shown</span></div>
+      <div class="panel-body">
+        <div class="filters">
+          <select id="moleculeFilter">
+            <option value="">All molecule packages</option>
+          </select>
+          <input id="search" type="text" placeholder="Search task, message, tool result">
+          <select id="toolFilter">
+            <option value="">All records</option>
+            <option value="tools">Has tool calls</option>
+            <option value="no-tools">No tool calls</option>
+          </select>
+        </div>
+        <div id="list" class="list"></div>
+      </div>
+    </aside>
+    <section id="detail"></section>
+  </div>
+</main>
+<script>
+const state = { records: [], filtered: [], selected: 0, runs: [], moleculeKey: "" };
+const els = {
+  runSelect: document.getElementById("runSelect"),
+  loadBtn: document.getElementById("loadBtn"),
+  refreshBtn: document.getElementById("refreshBtn"),
+  pathInput: document.getElementById("pathInput"),
+  pathBtn: document.getElementById("pathBtn"),
+  fileInput: document.getElementById("fileInput"),
+  moleculeFilter: document.getElementById("moleculeFilter"),
+  search: document.getElementById("search"),
+  toolFilter: document.getElementById("toolFilter"),
+  list: document.getElementById("list"),
+  detail: document.getElementById("detail"),
+  count: document.getElementById("count"),
+};
+function esc(v){ return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
+function str(v){ if(v==null) return ""; if(typeof v==="string") return v; try{return JSON.stringify(v,null,2)}catch{return String(v)} }
+function parseJsonl(text, source){ return text.split(/\r?\n/).filter(x=>x.trim()).map((line,i)=>{ const r=JSON.parse(line); r.__source=source; r.__id=`${source}:${i}:${r.task}`; return r; }); }
+function moleculeKey(r){ return r.molecule_key || `index:${r.index ?? r.sample_id ?? "unknown"}|${r.smiles || ""}`; }
+function moleculeLabel(key, records){
+  const r = records[0] || {};
+  const index = r.index ?? r.sample_id ?? "unknown";
+  const label = r.label == null ? "" : ` label=${r.label}`;
+  const pred = records.find(x=>x.prediction)?.prediction;
+  const predText = pred ? ` prediction=${pred}` : "";
+  const smiles = r.smiles ? ` ${String(r.smiles).slice(0, 72)}` : "";
+  return `molecule #${index}${label}${predText} · ${records.length} traces${smiles}`;
+}
+function moleculeGroups(){
+  const groups = new Map();
+  for(const r of state.records){
+    const key = moleculeKey(r);
+    if(!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(r);
+  }
+  return groups;
+}
+function updateMoleculeFilter(){
+  const groups = moleculeGroups();
+  const options = ['<option value="">All molecule packages</option>'];
+  for(const [key, records] of groups.entries()) options.push(`<option value="${esc(key)}">${esc(moleculeLabel(key, records))}</option>`);
+  els.moleculeFilter.innerHTML = options.join("");
+  if(state.moleculeKey && groups.has(state.moleculeKey)) {
+    els.moleculeFilter.value = state.moleculeKey;
+  } else {
+    state.moleculeKey = "";
+    els.moleculeFilter.value = "";
+  }
+}
+async function scanRuns(){
+  const res = await fetch("./"); const html = await res.text();
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const runs = [];
+  for(const a of doc.querySelectorAll("a[href]")){
+    const href = a.getAttribute("href");
+    if(!href || href === "../" || !href.endsWith("/")) continue;
+    const name = decodeURIComponent(href.replace(/\/$/,""));
+    if(name.startsWith(".") || name === "__pycache__") continue;
+    try {
+      const head = await fetch(`${href}trace_messages.jsonl`, {method:"HEAD"});
+      if(head.ok) runs.push({name, path:`${href}trace_messages.jsonl`});
+    } catch {}
+  }
+  state.runs = runs.sort((a,b)=>b.name.localeCompare(a.name));
+  els.runSelect.innerHTML = state.runs.length ? state.runs.map(r=>`<option value="${esc(r.path)}">${esc(r.name)}</option>`).join("") : "<option>No traces found</option>";
+}
+async function loadPath(path){
+  const clean = path.trim().replace(/^\/+/,"");
+  const res = await fetch(clean); if(!res.ok) throw new Error(`HTTP ${res.status}: ${clean}`);
+  state.records = parseJsonl(await res.text(), clean);
+  state.selected = 0; state.moleculeKey = ""; updateMoleculeFilter(); apply();
+}
+function addRecords(records){ state.records = records; state.selected = 0; state.moleculeKey = ""; updateMoleculeFilter(); apply(); }
+function recordText(r){ return [r.task,r.smiles,r.response_text,str(r.messages)].join("\n").toLowerCase(); }
+function hasTools(r){ return Number(r.tool_count||0)>0 || (Array.isArray(r.messages) && r.messages.some(m=>m.role==="tool" || (m.tool_calls||[]).length)); }
+function apply(){
+  const q = els.search.value.trim().toLowerCase(), tf = els.toolFilter.value;
+  const mk = state.moleculeKey;
+  state.filtered = state.records.filter(r => (!mk || moleculeKey(r) === mk) && (!q || recordText(r).includes(q)) && (tf !== "tools" || hasTools(r)) && (tf !== "no-tools" || !hasTools(r)));
+  if(!state.filtered.includes(state.records[state.selected])) state.selected = state.records.indexOf(state.filtered[0]);
+  renderList(); renderDetail(); els.count.textContent = `${state.filtered.length} shown`;
+}
+function renderList(){
+  if(!state.filtered.length){ els.list.innerHTML = '<div class="empty">No records loaded.</div>'; return; }
+  els.list.innerHTML = state.filtered.map(r=>{
+    const active = state.records[state.selected]?.__id === r.__id ? " active" : "";
+    return `<button class="item${active}" data-id="${esc(r.__id)}">
+      <div class="item-title"><span>${esc(r.task)}</span><span class="${r.status==="ok"?"ok":"bad"}">${esc(r.status)}</span></div>
+      <div class="item-sub">molecule=${esc(r.index ?? r.sample_id ?? "")} · tools=${esc(r.tool_count)} · usage=${esc(formatUsage(r.usage))}</div>
+      <div class="item-sub">${esc(r.smiles)}</div>
+    </button>`;
+  }).join("");
+  els.list.querySelectorAll(".item").forEach(btn => btn.onclick = () => { state.selected = state.records.findIndex(r=>r.__id===btn.dataset.id); renderList(); renderDetail(); });
+}
+function renderDetail(){
+  const r = state.records[state.selected];
+  if(!r){ els.detail.innerHTML = '<div class="panel"><div class="empty">Load trace_messages.jsonl to begin.</div></div>'; return; }
+  els.detail.innerHTML = `<div class="panel"><div class="panel-title"><span>${esc(r.task)}</span><span class="tag">${esc(r.__source)}</span></div>
+    <div class="panel-body"><div class="meta">
+      ${field("SMILES", r.smiles)}${field("Label", r.label)}${field("Prediction", r.prediction)}${field("Tools", r.tool_count)}${field("Usage", formatUsage(r.usage))}
+    </div>${r.response_text ? `<div class="response-full">${blockSmart("Parsed Response", r.response_text, "")}</div>` : ""}</div></div>
+    <div class="panel"><div class="panel-title"><span>Messages</span><span class="tag">${(r.messages||[]).length} items</span></div>
+    <div class="panel-body"><div class="trace">${renderMessages(r.messages)}</div></div></div>`;
+}
+function field(k,v){ return `<div class="field"><div class="k">${esc(k)}</div><div class="v">${esc(str(v))}</div></div>`; }
+function formatUsage(u){ if(!u) return ""; return ["prompt_tokens","completion_tokens","total_tokens","reasoning_tokens"].filter(k=>u[k]!=null).map(k=>`${k}=${u[k]}`).join(", "); }
+function renderMessages(messages){ if(!Array.isArray(messages)||!messages.length) return '<div class="empty">No messages.</div>'; return messages.map(renderMessage).join(""); }
+function renderMessage(m,i){
+  const role = m.role || "item", blocks = [];
+  if(m.reasoning) blocks.push(block("Reasoning", m.reasoning, "reasoning"));
+  if(m.content && role !== "tool") blocks.push(blockSmart("Content", m.content, ""));
+  if(Array.isArray(m.tool_calls)) m.tool_calls.forEach((tc,j)=>blocks.push(block(`Tool call ${j+1}: ${tc.function?.name || tc.name || tc.id}`, tc, "tool-call")));
+  if(role === "tool") blocks.push(block("Tool result", m.content || m, "tool-result"));
+  blocks.push(`<div class="block"><details><summary>Raw JSON</summary><pre>${esc(JSON.stringify(m,null,2))}</pre></details></div>`);
+  return `<article class="message"><div class="message-head"><span class="role role-${esc(role)}">${esc(role)}</span><span class="tag">#${i+1}</span>${m.name?`<span class="tag">${esc(m.name)}</span>`:""}</div>${blocks.join("")}</article>`;
+}
+function block(title,value,cls){ return `<div class="block ${cls}"><div class="block-title">${esc(title)}</div><pre>${esc(str(value))}</pre></div>`; }
+function blockSmart(title,value,cls){
+  const parsed = parseMaybeJson(value);
+  const body = parsed ? renderJsonReadable(parsed) : `<pre>${esc(str(value))}</pre>`;
+  return `<div class="block ${cls}"><div class="block-title">${esc(title)}</div>${body}</div>`;
+}
+function parseMaybeJson(value){
+  if(typeof value !== "string") return value && typeof value === "object" ? value : null;
+  const t = value.trim();
+  if(!t || !["{","["].includes(t[0])) return null;
+  try { return JSON.parse(t); } catch { return null; }
+}
+function renderJsonReadable(value){
+  if(Array.isArray(value)) return `<div class="json-view">${value.map((v,i)=>section(`#${i+1}`, renderJsonValue(v))).join("")}</div>`;
+  if(!value || typeof value !== "object") return `<pre>${esc(str(value))}</pre>`;
+  const known = [];
+  if(value.task) known.push(section("Task", `<div class="json-body">${kv("task", value.task)}</div>`));
+  const summary = renderSummaryFields(value);
+  if(summary) known.push(section("Summary", summary));
+  if(value.query) known.push(section("Query", `<div class="json-body">${renderObjectFields(value.query)}</div>`));
+  if(value.group) known.push(section("Group", `<div class="json-body">${renderObjectFields(value.group)}</div>`));
+  if(value.retrieval_coverage) known.push(section("Retrieval Coverage", `<div class="json-body">${renderObjectFields(value.retrieval_coverage)}</div>`));
+  if(value.single_molecule_analysis) known.push(section("Single-Molecule Analysis", renderJsonValue(value.single_molecule_analysis)));
+  if(Array.isArray(value.neighbors)) known.push(section(`Neighbors (${value.neighbors.length})`, `<div class="json-body">${value.neighbors.map(renderNeighbor).join("")}</div>`));
+  if(Array.isArray(value.group_reasoning_outputs)) known.push(section(`Group Reasoning Outputs (${value.group_reasoning_outputs.length})`, `<div class="json-body">${value.group_reasoning_outputs.map(renderGroupSummary).join("")}</div>`));
+  if(Array.isArray(value.key_evidence)) known.push(section(`Key Evidence (${value.key_evidence.length})`, `<div class="json-body">${value.key_evidence.map(renderKeyEvidence).join("")}</div>`));
+  if(Array.isArray(value.key_neighbors)) known.push(section(`Key Neighbors - Legacy (${value.key_neighbors.length})`, renderJsonList(value.key_neighbors)));
+  if(Array.isArray(value.main_reasons)) known.push(section("Main Reasons", renderJsonList(value.main_reasons)));
+  if(Array.isArray(value.conflicting_evidence)) known.push(section("Conflicting Evidence", renderJsonList(value.conflicting_evidence)));
+  if(Array.isArray(value.evidence_gaps)) known.push(section("Evidence Gaps", renderJsonList(value.evidence_gaps)));
+  if(Array.isArray(value.property_drivers)) known.push(section("Property Drivers", renderJsonList(value.property_drivers)));
+  if(Array.isArray(value.caveats)) known.push(section("Caveats", renderJsonList(value.caveats)));
+  if(Array.isArray(value.instructions)) known.push(section("Instructions", renderJsonList(value.instructions)));
+  if(value.required_json_schema) known.push(section("Required JSON Schema", renderJsonValue(value.required_json_schema)));
+  const handled = new Set([
+    "task","query","group","retrieval_coverage","single_molecule_analysis","neighbors","group_reasoning_outputs",
+    "key_evidence","key_neighbors","main_reasons","conflicting_evidence","evidence_gaps","property_drivers","caveats",
+    "instructions","required_json_schema",
+    ...summaryFieldNames()
+  ]);
+  const rest = Object.fromEntries(Object.entries(value).filter(([k])=>!handled.has(k)));
+  if(Object.keys(rest).length) known.push(section("Other Fields", renderJsonValue(rest)));
+  return `<div class="json-view">${known.join("")}</div>`;
+}
+function summaryFieldNames(){
+  return [
+    "bbb_prediction","bioavailability_prediction","confidence",
+    "useful_for_bbb_reasoning","useful_for_bioavailability_reasoning",
+    "transferability","evidence_direction","reasoning_summary",
+    "passive_bbb_plausibility","efflux_or_transporter_prior",
+    "oral_bioavailability_prior","absorption_prior","solubility_or_dissolution_prior","metabolism_or_clearance_prior",
+    "single_molecule_assessment",
+    "passive_permeability_assessment","direct_brain_exposure_analog_assessment",
+    "efflux_risk_assessment","influx_support_assessment",
+    "direct_oral_bioavailability_analog_assessment",
+    "absorption_and_permeability_assessment",
+    "solubility_and_dissolution_assessment",
+    "metabolism_first_pass_and_clearance_assessment",
+    "transporter_efflux_assessment",
+    "final_summary"
+  ];
+}
+function renderSummaryFields(value){
+  const entries = summaryFieldNames().filter(k=>value[k] != null).map(k=>kv(k, value[k]));
+  return entries.length ? `<div class="json-body">${entries.join("")}</div>` : "";
+}
+function section(title, body){ return `<div class="json-section"><div class="json-title">${esc(title)}</div>${body}</div>`; }
+function kv(k,v){ return `<div class="kv"><div class="kv-key">${esc(k)}</div><div class="kv-val">${esc(formatInline(v))}</div></div>`; }
+function renderObjectFields(obj){ return Object.entries(obj || {}).map(([k,v])=>kv(k,v)).join(""); }
+function formatInline(v){
+  if(v == null) return "";
+  if(typeof v === "string" || typeof v === "number" || typeof v === "boolean") return String(v);
+  return JSON.stringify(v, null, 2);
+}
+function renderJsonList(items){ return `<div class="json-body"><ol class="json-list">${items.map(x=>`<li>${esc(formatInline(x))}</li>`).join("")}</ol></div>`; }
+function renderNeighbor(n){
+  return `<div class="neighbor-card">
+    <div><span class="badge">rank ${esc(n.rank)}</span><span class="badge">${esc(n.similarity_bucket)}</span><strong>${esc(n.molecule_chembl_id)}</strong></div>
+    ${kv("similarity", n.similarity)}
+    ${kv("SMILES", n.canonical_smiles)}
+    ${Array.isArray(n.evidence_rows) ? `<details open><summary>Evidence rows (${n.evidence_rows.length})</summary>${n.evidence_rows.map(renderEvidence).join("")}</details>` : ""}
+  </div>`;
+}
+function renderEvidence(e){
+  const tags = [e.assay_chembl_id, e.target_pref_name, e.organism].filter(Boolean).map(esc).join(" · ");
+  return `<div class="evidence-card">
+    <div><strong>${esc(e.standard_type || "")}</strong> ${esc(e.standard_relation || "")} ${esc(e.standard_value || "")} ${esc(e.standard_units || "")}</div>
+    <div class="kv-val">${esc(e.assay_description || "")}</div>
+    <div class="tag">${tags}</div>
+  </div>`;
+}
+function renderKeyEvidence(e){
+  const activity = Array.isArray(e.activity_values) && e.activity_values.length
+    ? `<div>${kv("activity_values", e.activity_values.join("\n"))}</div>`
+    : "";
+  const effect = e.effect_on_bioavailability_reasoning ?? e.effect_on_bbb_reasoning ?? e.effect_on_reasoning;
+  return `<div class="neighbor-card key-evidence-card">
+    <div>
+      ${e.similarity != null ? `<span class="badge">sim ${esc(e.similarity)}</span>` : ""}
+      ${e.similarity_bucket ? `<span class="badge">${esc(e.similarity_bucket)}</span>` : ""}
+      ${e.transferability ? `<span class="badge">transfer ${esc(e.transferability)}</span>` : ""}
+      <strong>${esc(e.molecule_chembl_id || "evidence")}</strong>
+    </div>
+    ${kv("assay_signal", e.assay_signal)}
+    ${activity}
+    ${kv("tool_summary", e.tool_summary)}
+    ${kv("effect_on_reasoning", effect)}
+  </div>`;
+}
+function renderGroupSummary(item){
+  const c = item.content || item;
+  return `<div class="neighbor-card">
+    <div><strong>${esc(item.group_id || "group")}</strong> <span class="badge">${esc(item.status || "")}</span></div>
+    ${typeof c === "object" ? renderJsonReadable(c) : `<div class="kv-val">${esc(c)}</div>`}
+  </div>`;
+}
+function renderJsonValue(v){
+  if(Array.isArray(v)) return renderJsonList(v);
+  if(v && typeof v === "object") return `<div class="json-body">${renderObjectFields(v)}</div>`;
+  return `<div class="json-body">${esc(formatInline(v))}</div>`;
+}
+els.loadBtn.onclick = () => loadPath(els.runSelect.value).catch(e=>alert(e.message));
+els.refreshBtn.onclick = () => scanRuns().catch(e=>alert(e.message));
+els.pathBtn.onclick = () => loadPath(els.pathInput.value).catch(e=>alert(e.message));
+els.fileInput.onchange = async e => { const f=e.target.files[0]; if(f) addRecords(parseJsonl(await f.text(), f.name)); };
+els.moleculeFilter.onchange = () => { state.moleculeKey = els.moleculeFilter.value; state.selected = 0; apply(); };
+els.search.oninput = apply; els.toolFilter.onchange = apply;
+scanRuns().then(()=>{ if(state.runs[0]) loadPath(state.runs[0].path).catch(()=>{}); });
+</script>
+</body>
+</html>

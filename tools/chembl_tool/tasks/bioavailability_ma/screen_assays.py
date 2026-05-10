@@ -1,4 +1,4 @@
-"""CLI for screening ChEMBL assays relevant to BBB reasoning."""
+"""CLI for screening ChEMBL assays relevant to oral bioavailability reasoning."""
 
 from __future__ import annotations
 
@@ -19,8 +19,8 @@ from tools.chembl_tool.common.assay_loader import (
 )
 from tools.chembl_tool.common.export import ensure_dir, write_csv, write_jsonl
 from tools.chembl_tool.common.sqlite import connect_sqlite
-from tools.chembl_tool.tasks.bbb_martins.report import write_report
-from tools.chembl_tool.tasks.bbb_martins.scoring import scored_row
+from tools.chembl_tool.tasks.bioavailability_ma.report import write_report
+from tools.chembl_tool.tasks.bioavailability_ma.scoring import scored_row
 
 
 OUTPUT_FIELDS = [
@@ -48,7 +48,7 @@ OUTPUT_FIELDS = [
     "negative_flags",
     "weak_context_flags",
     "reason",
-    "keep_for_bbb_reasoning",
+    "keep_for_bioavailability_reasoning",
 ]
 
 
@@ -83,7 +83,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
         scan_start = time.monotonic()
-        _log_stage("Scanning assays and applying BBB rules")
+        _log_stage("Scanning assays and applying oral bioavailability rules")
         total_assays = 0
         candidates: list[dict[str, Any]] = []
         candidate_assay_ids: list[int] = []
@@ -97,7 +97,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             row["organism"] = row.get("target_organism") or row.get("assay_organism")
             scored = scored_row(row, min_score=args.min_score)
-            if scored["keep_for_bbb_reasoning"]:
+            if scored["keep_for_bioavailability_reasoning"]:
                 candidates.append(_candidate_output_row(scored))
                 candidate_assay_ids.append(assay_id)
             if args.progress_every and total_assays % args.progress_every == 0:
@@ -110,9 +110,9 @@ def main(argv: list[str] | None = None) -> int:
         export_start = time.monotonic()
         _log_stage("Writing output files")
         candidates.sort(key=lambda row: (str(row["tier"]), -int(row["score"]), str(row["assay_chembl_id"])))
-        csv_path = out_dir / "bbb_assay_candidates.csv"
-        jsonl_path = out_dir / "bbb_assay_candidates.jsonl"
-        report_path = out_dir / "bbb_assay_report.md"
+        csv_path = out_dir / "bioavailability_assay_candidates.csv"
+        jsonl_path = out_dir / "bioavailability_assay_candidates.jsonl"
+        report_path = out_dir / "bioavailability_assay_report.md"
         write_csv(csv_path, candidates, OUTPUT_FIELDS)
         write_jsonl(jsonl_path, candidates)
         write_report(
@@ -124,11 +124,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         if args.export_activities:
             _log_stage("Exporting candidate activity evidence")
-            export_activity_evidence(conn, candidate_assay_ids, out_dir / "bbb_activity_evidence.csv")
+            export_activity_evidence(conn, candidate_assay_ids, out_dir / "bioavailability_activity_evidence.csv")
         _log_done("Wrote output files", export_start, f"out_dir={out_dir}")
 
         _log_done(
-            "Finished BBB assay screening",
+            "Finished oral bioavailability assay screening",
             run_start,
             f"scanned={total_assays:,} retained={len(candidates):,}",
         )
@@ -193,7 +193,7 @@ def _candidate_output_row(row: dict[str, Any]) -> dict[str, Any]:
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--chembl-sqlite", required=True, help="Path to ChEMBL SQLite database.")
-    parser.add_argument("--out-dir", default="outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw", help="Output directory.")
+    parser.add_argument("--out-dir", default="outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/raw", help="Output directory.")
     parser.add_argument("--min-score", type=int, default=40, help="Minimum score to retain an assay.")
     parser.add_argument("--export-activities", action="store_true", help="Export candidate activity evidence as CSV.")
     parser.add_argument("--limit", type=int, default=0, help="Optional assay scan limit for smoke tests.")
