@@ -16,7 +16,6 @@ from typing import Any
 
 DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
 DEFAULT_BATCH_ROOT = "outputs/chembl_tool/tasks/bbb_martins/reasoning/batches"
-DEFAULT_RUN_ROOT = "outputs/chembl_tool/tasks/bbb_martins/reasoning/runs"
 DEFAULT_MODEL = "deepseek-v4-pro"
 
 
@@ -33,7 +32,7 @@ def main(argv: list[str] | None = None) -> int:
     batch_id = args.batch_id or time.strftime("bbb_batch_%Y%m%d_%H%M%S")
     batch_dir = _ensure_dir(Path(args.batch_root) / batch_id)
     logs_dir = _ensure_dir(batch_dir / "logs")
-    run_root = _ensure_dir(Path(args.out_root))
+    batch_run_root = _ensure_dir(batch_dir / "runs")
 
     items = [BatchItem(index=i, record=records[i]) for i in indices]
     manifest = {
@@ -55,8 +54,8 @@ def main(argv: list[str] | None = None) -> int:
             "predictions": str(batch_dir / "predictions.jsonl"),
             "metrics": str(batch_dir / "metrics.json"),
             "report": str(batch_dir / "report.md"),
+            "molecule_runs": str(batch_run_root),
             "combined_trace": str(batch_dir / "trace_messages.jsonl"),
-            "viewer_combined_trace": str(run_root / f"{batch_id}_combined" / "trace_messages.jsonl"),
             "logs": str(logs_dir),
         },
     }
@@ -68,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
     results: list[dict[str, Any]] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallelism) as executor:
         future_to_item = {
-            executor.submit(_run_one, args, item, batch_id, run_root, logs_dir): item
+            executor.submit(_run_one, args, item, batch_id, batch_run_root, logs_dir): item
             for item in items
         }
         for future in concurrent.futures.as_completed(future_to_item):
@@ -85,24 +84,14 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     results.sort(key=lambda row: row["query_index"])
-    _write_jsonl(batch_dir / "predictions.jsonl", results)
-    metrics = compute_metrics(results)
-    metrics["finished_at"] = _now()
-    _write_json(batch_dir / "metrics.json", metrics)
-    _write_report(batch_dir / "report.md", manifest, metrics, results)
     if args.save_trace and args.combine_traces:
         _combine_traces(batch_dir / "trace_messages.jsonl", results)
-        viewer_trace_dir = _ensure_dir(run_root / f"{batch_id}_combined")
-        _combine_traces(viewer_trace_dir / "trace_messages.jsonl", results)
-        _write_json(
-            viewer_trace_dir / "manifest.json",
-            {
-                "run_id": f"{batch_id}_combined",
-                "batch_id": batch_id,
-                "source_batch_dir": str(batch_dir),
-                "trace_messages": str(viewer_trace_dir / "trace_messages.jsonl"),
-            },
-        )
+
+    metrics = compute_metrics(results)
+    metrics["finished_at"] = _now()
+    _write_jsonl(batch_dir / "predictions.jsonl", results)
+    _write_json(batch_dir / "metrics.json", metrics)
+    _write_report(batch_dir / "report.md", manifest, metrics, results)
 
     manifest["finished_at"] = metrics["finished_at"]
     _write_json(batch_dir / "manifest.json", manifest)
@@ -128,7 +117,7 @@ def _run_one(
         stdout_path.write_text("", encoding="utf-8")
         stderr_path.write_text("skipped existing run\n", encoding="utf-8")
     else:
-        command = _single_run_command(args, item.index, run_id)
+        command = _single_run_command(args, item.index, run_id, run_root)
         _log(f"start index={item.index} run_id={run_id}")
         returncode = _run_subprocess_with_logs(
             command,
@@ -158,7 +147,12 @@ def _run_one(
     return result
 
 
-def _single_run_command(args: argparse.Namespace, query_index: int, run_id: str) -> list[str]:
+def _single_run_command(
+    args: argparse.Namespace,
+    query_index: int,
+    run_id: str,
+    run_root: Path,
+) -> list[str]:
     command = [
         args.python_executable,
         "-m",
@@ -172,7 +166,7 @@ def _single_run_command(args: argparse.Namespace, query_index: int, run_id: str)
         "--index",
         args.index,
         "--out-root",
-        args.out_root,
+        str(run_root),
         "--run-id",
         run_id,
         "--env-file",
@@ -467,7 +461,6 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--smiles-field", default="drug")
     parser.add_argument("--label-field", default="Y")
     parser.add_argument("--index", default="outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl")
-    parser.add_argument("--out-root", default=DEFAULT_RUN_ROOT)
     parser.add_argument("--batch-root", default=DEFAULT_BATCH_ROOT)
     parser.add_argument("--batch-id", default="")
     parser.add_argument("--python-executable", default=sys.executable)

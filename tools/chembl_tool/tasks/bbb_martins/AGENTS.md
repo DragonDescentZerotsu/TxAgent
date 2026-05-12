@@ -216,7 +216,7 @@ BBB_Martins 端到端 reasoning 入口。当前流程：
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
-  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>
+  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id>
 ```
 
 ### `run_reasoning_batch.py`
@@ -249,11 +249,11 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/predictions.j
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/metrics.json
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/report.md
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/trace_messages.jsonl
-outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<batch_id>_combined/trace_messages.jsonl
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/
 ```
 
-`<batch_id>_combined` 会被当前 trace viewer 自动扫到；打开后可通过 `Molecule package`
-下拉框切换不同分子的 trace。
+查看 batch trace 时把 trace viewer 指向 `reasoning/batches`，选择 `<batch_id>`，再通过
+`Molecule package` 下拉框切换不同分子的 trace。
 
 ### `report.py`
 
@@ -321,15 +321,23 @@ Tier 4: 702
 reasoning 和 batch 产物统一放在：
 
 ```text
-outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/
 ```
 
-通用 trace viewer 不再放在 task 输出目录中，统一使用：
+查看 standalone trace：
 
 ```bash
-bash tools/chembl_tool/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bbb_martins/reasoning/runs \
+bash tools/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs \
+  8776
+```
+
+查看 batch trace：
+
+```bash
+bash tools/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/bbb_martins/reasoning/batches \
   8776
 ```
 

@@ -140,12 +140,13 @@ tools/chembl_tool/tasks/bbb_martins/run_reasoning_batch.py
   BBB_Martins 批量 reasoning 入口。按 query_index 调用单分子 pipeline，支持 molecule 级并行、
   可选 trace 保存/合并、prediction report、accuracy 和 macro-F1 评估。
 
-tools/chembl_tool/trace_viewer/viewer.html
+tools/trace_viewer/viewer.html
   本地 trace 可视化页面。支持选择 run、选择 molecule trace package、查看单个分子的
   single/group/final messages、reasoning、tool calls 和 parsed JSON response。
 
-tools/chembl_tool/trace_viewer/start_viewer.sh
-  启动通用 trace viewer 的静态 HTTP server，可指向任意 task 的 reasoning/runs 目录。
+tools/trace_viewer/start_viewer.sh
+  启动通用 trace viewer 的静态 HTTP server。查看 standalone 单分子 run 时指向
+  reasoning/single_runs；查看 batch run 时指向 reasoning/batches。
 
 tools/chembl_tool/tasks/bbb_martins/
   其他 BBB evidence 清洗、打分、报告和输出汇总脚本。
@@ -602,7 +603,7 @@ final_summary
 每次 reasoning run 输出到：
 
 ```text
-outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id>/
 ```
 
 当前文件：
@@ -648,8 +649,8 @@ raw_output
 viewer 启动：
 
 ```bash
-bash tools/chembl_tool/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bbb_martins/reasoning/runs \
+bash tools/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs \
   8776
 ```
 
@@ -676,7 +677,7 @@ http://localhost:8776/.trace_viewer.html
 
 # 只重跑已有 run 的 final summary
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
-  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id> \
+  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id> \
   --timeout-s 300 \
   --max-tokens 8192 \
   --model deepseek-v4-pro
@@ -709,26 +710,28 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/metrics.json
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/report.md
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/trace_messages.jsonl
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/logs/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/
 ```
 
-每个 molecule 仍保留独立 run：
+batch 中每个 molecule 的独立 run 保留在 batch 目录内部：
 
 ```text
-outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<batch_id>_idx00000/
-outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<batch_id>_idx00001/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/<batch_id>_idx00000/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/<batch_id>_idx00001/
 ...
 ```
 
-`trace_messages.jsonl` 会合并每个 molecule 的 trace。为了兼容当前 viewer 的自动扫描，
-batch 脚本还会写：
+`trace_messages.jsonl` 会合并每个 molecule 的 trace。查看 batch trace 时启动 viewer 指向
+`reasoning/batches`，然后选择 `<batch_id>`：
 
-```text
-outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<batch_id>_combined/trace_messages.jsonl
+```bash
+bash tools/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/bbb_martins/reasoning/batches \
+  8776
 ```
 
-viewer 可以选择 `<batch_id>_combined`，再通过 `Molecule package` 下拉框切换分子。
-若传 `--no-save-trace`，单分子 trace 会在评估后删除，batch 目录和 viewer combined run
-都不会生成 combined trace。
+viewer 可以选择 `<batch_id>`，再通过 `Molecule package` 下拉框切换分子。
+若传 `--no-save-trace`，不会生成 batch combined trace。
 
 ## FastAPI 常驻服务标准
 
@@ -1112,7 +1115,7 @@ reasoning_effort=high
 
 ```text
 已完成单分子端到端 smoke runs，输出目录：
-outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/
+outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id>/
 ```
 
 已验证的示例：

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DEFAULT_TRACE_ROOT="outputs/chembl_tool/tasks/bbb_martins/reasoning/runs"
+DEFAULT_TRACE_ROOT="outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs"
 
 if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
   TRACE_ROOT="$DEFAULT_TRACE_ROOT"

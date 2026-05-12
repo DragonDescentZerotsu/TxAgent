@@ -255,15 +255,23 @@ outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/bioavailability_ne
 reasoning 产物统一放在：
 
 ```text
-outputs/chembl_tool/tasks/bioavailability_ma/reasoning/runs/
+outputs/chembl_tool/tasks/bioavailability_ma/reasoning/single_runs/
 outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
 ```
 
-查看 trace 使用通用 viewer：
+查看 standalone trace 使用通用 viewer：
 
 ```bash
-bash tools/chembl_tool/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/runs \
+bash tools/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/single_runs \
+  8776
+```
+
+查看 batch trace 时指向：
+
+```bash
+bash tools/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches \
   8776
 ```
 
