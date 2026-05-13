@@ -120,6 +120,152 @@ ToolResponse.output.text
 
 BBB evidence library 内部可以保留 `evidence_direction`、`evidence_strength`、`endpoint_group_reason`、`assay_reason` 等规则派生字段，方便 debug 和审计；但这些字段不要发送给 reasoning LLM。LLM payload 中的 activity evidence row 应只包含原始 ChEMBL assay/activity 字段和必要 metadata，例如 assay id、tier、description、target、standard_type/value/units、activity_comment、confidence_score、relationship_type。分组层可以保留 `tier` / `endpoint_group`，因为并行分析本身按这个分组运行。
 
+## ChEMBL task workflow 目录
+
+具体任务放在：
+
+```text
+tools/chembl_tool/tasks/<task_name>/
+```
+
+每个 task 目录只维护 task-specific 规则、scoring、endpoint assignment、默认路径、输出文件名和
+reasoning prompt / final schema。跨 task 共享的 workflow 不放在 `tasks/` 目录下，而是放在：
+
+```text
+tools/chembl_tool/common/task_workflows/
+  screen_assays.py
+  rescore_outputs.py
+  summarize_outputs.py
+  assay_report.py
+  evidence_library.py
+  retrieve_neighbors.py
+  chembl_exact_context.py
+  reasoning_batch.py
+```
+
+这些公共 workflow 的职责：
+
+```text
+screen_assays.py
+  扫描 ChEMBL assays，调用 task-specific scoring.scored_row，导出 assay candidates、
+  activity evidence 和 report。
+
+rescore_outputs.py
+  对已有 candidate CSV 重打分，适合规则变严、重排 tier 或调整阈值；如果规则变宽，
+  需要重新跑 screen_assays.py。
+
+summarize_outputs.py / assay_report.py
+  生成 health check 和 Markdown report。
+
+evidence_library.py
+  从 assay candidates + activity evidence 构建 molecule-level evidence rows、RDKit fingerprint
+  和 neighbor index。task 只配置输入路径、输出文件名、index version 和 assign_endpoint_group。
+
+retrieve_neighbors.py
+  对每个 Tier.endpoint_group 做 analog retrieval，包含 exact-molecule 排除、Tanimoto ranking、
+  similarity bucket 和 JSONL batch retrieval CLI。
+
+chembl_exact_context.py
+  可选 exact-query ChEMBL context 和 shared-assay enrichment。默认 benchmark 不开启，
+  避免 prospective evaluation 数据泄漏。
+
+reasoning_batch.py
+  多分子 batch orchestration，包括 molecule 级并行、日志、trace 合并、断点续跑、
+  predictions/metrics/report 输出。
+```
+
+典型 task wrapper 文件：
+
+```text
+screen_assays.py
+rescore_outputs.py
+summarize_outputs.py
+report.py
+build_evidence_library.py
+retrieve_neighbors.py
+chembl_exact_context.py
+run_reasoning_batch.py
+```
+
+这些 wrapper 应该保持很薄，只配置 task-specific 参数；不要在多个 task 下复制公共实现。
+
+通用命令模板：
+
+```bash
+# 全量扫描 ChEMBL assays
+python -m tools.chembl_tool.tasks.<task_name>.screen_assays \
+  --chembl-sqlite tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db \
+  --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/raw \
+  --min-score 40 \
+  --progress-every 10000 \
+  --export-activities
+
+# 对已有候选重打分
+python -m tools.chembl_tool.tasks.<task_name>.rescore_outputs \
+  --in-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/raw \
+  --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/<version> \
+  --min-score 40 \
+  --filter-activities
+
+# 生成 health check
+python -m tools.chembl_tool.tasks.<task_name>.summarize_outputs \
+  --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/<version>
+
+# 构建 evidence library 和 neighbor index
+python -m tools.chembl_tool.tasks.<task_name>.build_evidence_library
+
+# 检索 analog neighbors
+python -m tools.chembl_tool.tasks.<task_name>.retrieve_neighbors \
+  --query-smiles '<SMILES>' \
+  --top-k-per-group 3 \
+  --min-similarity 0.3
+
+# 批量 reasoning
+python -m tools.chembl_tool.tasks.<task_name>.run_reasoning_batch \
+  --input-jsonl <input.jsonl> \
+  --parallelism 1 \
+  --group-workers 4 \
+  --batch-id <batch_id>
+```
+
+断点续跑统一使用：
+
+```bash
+python -m tools.chembl_tool.tasks.<task_name>.run_reasoning_batch \
+  --input-jsonl <input.jsonl> \
+  --batch-id <batch_id> \
+  --skip-existing
+```
+
+`--skip-existing` 会跳过已经存在
+`reasoning/batches/<batch_id>/runs/<batch_id>_idxNNNNN/final_reasoning_output.json`
+的 molecule；已有 stdout/stderr log 不覆盖，没有 final 输出的 partial run 会重新运行。
+
+输出目录统一为：
+
+```text
+outputs/chembl_tool/tasks/<task_name>/
+  assay_screening/
+  evidence_library/
+  reasoning/
+    single_runs/
+    batches/
+```
+
+查看 trace：
+
+```bash
+# standalone single runs
+bash tools/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/<task_name>/reasoning/single_runs \
+  8776
+
+# batch runs
+bash tools/trace_viewer/start_viewer.sh \
+  outputs/chembl_tool/tasks/<task_name>/reasoning/batches \
+  8776
+```
+
 ## BBB 代码入口
 
 ```text
@@ -127,10 +273,12 @@ tools/chembl_tool/tasks/bbb_martins/endpoint_groups.py
   BBB endpoint_group、evidence_direction、evidence_strength 的规则。
 
 tools/chembl_tool/tasks/bbb_martins/build_evidence_library.py
-  从 assay candidates 和 activity evidence 构建 molecule-level evidence library。
+  BBB_Martins evidence library 构建入口。只保留 task 默认路径、输出文件名和 endpoint assignment
+  配置；公共构建逻辑在 tools/chembl_tool/common/task_workflows/evidence_library.py。
 
 tools/chembl_tool/tasks/bbb_martins/retrieve_neighbors.py
-  按 Tier.endpoint_group 检索 BBB evidence neighbors。
+  BBB_Martins neighbor retrieval 入口。只保留默认 index 路径；公共检索逻辑在
+  tools/chembl_tool/common/task_workflows/retrieve_neighbors.py。
 
 tools/chembl_tool/tasks/bbb_martins/run_reasoning_pipeline.py
   BBB_Martins reasoning pipeline 入口。负责 neighbor retrieval、single-molecule analysis、
@@ -701,6 +849,13 @@ http://localhost:8776/.trace_viewer.html
 `outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/logs/`。如果只想写日志文件、不想在控制台显示进度，可加
 `--no-stream-logs`。
 
+batch 断点续跑使用 `--skip-existing`。用同一个 `--batch-id` 重新运行时，脚本会检查
+`reasoning/batches/<batch_id>/runs/<batch_id>_idxNNNNN/final_reasoning_output.json`：
+存在则认为该 molecule 已完成并跳过，不覆盖已有 stdout/stderr log；不存在则重新运行该 molecule。
+因此中断后的 partial run 会自动补跑，已完成结果会进入新的 predictions、metrics、report 和
+batch `trace_messages.jsonl` 汇总。这个逻辑由 `tools/chembl_tool/common/task_workflows/reasoning_batch.py`
+统一实现，BBB_Martins 和 Bioavailability_Ma 共用。
+
 批量输出：
 
 ```text
@@ -732,6 +887,92 @@ bash tools/trace_viewer/start_viewer.sh \
 
 viewer 可以选择 `<batch_id>`，再通过 `Molecule package` 下拉框切换分子。
 若传 `--no-save-trace`，不会生成 batch combined trace。
+
+### LLM usage 与成本估算
+
+DeepSeek API response 会返回 token usage，但不会在每次 response 中直接返回美元费用。
+估算 batch 费用时用 trace 中保存的 usage 汇总 token，再乘以 DeepSeek 官方 pricing。
+价格会变，生产估算前必须先查官方页面：
+
+```text
+https://api-docs.deepseek.com/quick_start/pricing/
+```
+
+`tools/trace_viewer` 会在页面中按当前填写的 token 单价估算费用：左侧显示 loaded trace
+总费用和当前筛选结果费用，每条 trace item 显示单条估算费用，详情页显示 cache hit、
+cache miss 和 output 三部分拆分。viewer 默认价格使用下面的 `deepseek-v4-pro` 当前折扣价；
+价格变化时直接在 viewer 页面改三个 USD / 1M tokens 输入框。
+
+截至 2026-05-12，官方页面显示 `deepseek-v4-pro` 当前折扣价为：
+
+```text
+input cache hit:  $0.003625 / 1M tokens
+input cache miss: $0.435    / 1M tokens
+output:           $0.87     / 1M tokens
+```
+
+折扣截至 2026-05-31 15:59 UTC；原价为：
+
+```text
+input cache hit:  $0.0145 / 1M tokens
+input cache miss: $1.74   / 1M tokens
+output:           $3.48   / 1M tokens
+```
+
+从一个 run 或 batch 的 `trace_messages.jsonl` 汇总 usage：
+
+```bash
+jq -s 'reduce .[] as $r (
+  {calls:0,prompt:0,completion:0,total:0,cache_hit:0,cache_miss:0,reasoning:0};
+  .calls += (if ($r.usage//null) then 1 else 0 end) |
+  .prompt += (($r.usage.prompt_tokens // 0) | tonumber) |
+  .completion += (($r.usage.completion_tokens // 0) | tonumber) |
+  .total += (($r.usage.total_tokens // 0) | tonumber) |
+  .cache_hit += (($r.usage.prompt_cache_hit_tokens // $r.usage.prompt_tokens_details.cached_tokens // 0) | tonumber) |
+  .cache_miss += (($r.usage.prompt_cache_miss_tokens // 0) | tonumber) |
+  .reasoning += (($r.usage.completion_tokens_details.reasoning_tokens // 0) | tonumber)
+)' outputs/chembl_tool/tasks/<task_name>/reasoning/batches/<batch_id>/trace_messages.jsonl
+```
+
+如果估算 standalone 单分子 run，把路径替换为：
+
+```text
+outputs/chembl_tool/tasks/<task_name>/reasoning/single_runs/<run_id>/trace_messages.jsonl
+```
+
+其中 `output_tokens` 使用 usage 中的 `completion_tokens`。
+
+费用公式：
+
+```text
+cost =
+  cache_hit_tokens  / 1,000,000 * cache_hit_price
++ cache_miss_tokens / 1,000,000 * cache_miss_price
++ output_tokens     / 1,000,000 * output_price
+```
+
+当前 BBB_Martins smoke 估算基线：
+
+```text
+single molecule example:
+  14 LLM calls
+  prompt 186,050 tokens
+  completion 54,562 tokens
+  cache_hit 121,088
+  cache_miss 64,962
+  estimated discounted cost: ~$0.076 / molecule
+
+3 molecule parallelism=3 smoke:
+  40 LLM calls
+  prompt 459,509 tokens
+  completion 152,893 tokens
+  cache_hit 340,352
+  cache_miss 119,157
+  estimated discounted cost: ~$0.186 total, ~$0.062 / molecule
+```
+
+这些只用于粗估。不同 molecule 的 endpoint group 覆盖、tool rounds、final prompt 长度会变化；
+全量预算应先抽样 3-10 个 molecule，按平均成本乘以 molecule 数量，并留出余量。
 
 ## FastAPI 常驻服务标准
 
@@ -1099,6 +1340,11 @@ thinking enabled
 reasoning_effort=high
 ```
 
+API key 默认从 `--env-file .env` 中读取 `DEEPSEEK_API_KEY`。`run_reasoning_pipeline.py`
+会让 `.env` 中的值覆盖当前 shell 已存在的同名环境变量；这是为了保证直接从 shell 跑 batch
+时仍以项目 `.env` 为准。若要临时切换 key，应显式传 `--api-key-env <ENV_NAME>`，并在 `.env`
+中配置对应变量。
+
 当前 trace 验收：
 
 ```text
@@ -1140,7 +1386,7 @@ query_index=9:
 对 test_efflux.jsonl 批量运行 retrieval + reasoning。
 评估时只在最后对照 Y，不把 Y 传给工具或 LLM。
 报告 coverage、prediction accuracy、uncertain rate、典型成功/失败案例。
-支持一个 run 中包含多个 molecule trace package，viewer 按 molecule_key 分组浏览。
+batch trace 支持多个 molecule package，viewer 按 molecule_key 分组浏览。
 ```
 
 ### Phase 6: 扩展到其他任务
@@ -1159,6 +1405,8 @@ outputs/<domain_tool>/tasks/<task_name>/
   assay_screening/
   evidence_library/
   reasoning/
+    single_runs/
+    batches/
 ```
 
 如果需要新模型或新索引，则新增：
@@ -1167,7 +1415,33 @@ outputs/<domain_tool>/tasks/<task_name>/
 tools/service/tools/<tool_name>.py
 ```
 
-不要复制已有服务框架、tool schema、request/response 标准。
+不要复制已有服务框架、tool schema、request/response 标准。下面这些 task workflow helper 也不要复制：
+
+```text
+tools/chembl_tool/common/task_workflows/screen_assays.py
+tools/chembl_tool/common/task_workflows/rescore_outputs.py
+tools/chembl_tool/common/task_workflows/summarize_outputs.py
+tools/chembl_tool/common/task_workflows/assay_report.py
+tools/chembl_tool/common/task_workflows/evidence_library.py
+tools/chembl_tool/common/task_workflows/retrieve_neighbors.py
+tools/chembl_tool/common/task_workflows/chembl_exact_context.py
+tools/chembl_tool/common/task_workflows/reasoning_batch.py
+```
+
+新 task 的 `run_reasoning_batch.py` 应作为薄 wrapper 调用
+`tools/chembl_tool/common/task_workflows/reasoning_batch.py`，只配置：
+
+```text
+default_input
+default_batch_root
+default_index
+pipeline_module
+prediction_field
+positive/negative label mapping
+```
+
+task-specific pipeline、retrieval、prompt 和 final schema 可以继续放在各自 task 目录中；
+当这些部分也稳定到足够通用时，再抽取公共模块。
 
 ## 当前不做的事情
 
@@ -1189,7 +1463,6 @@ tools/service/tools/<tool_name>.py
 ```text
 1. 批量评估 test_efflux.jsonl，形成 prediction/label 对照表和错误分析。
 2. 继续审计 final summary 的证据加权，必要时增加 explicit adjudication fields。
-3. 将 reasoning run 的多分子输出组织成更稳定的 batch run layout。
-4. 如果需要让其他系统复用 retrieval，再把 chembl_neighbors 包装为 service tool 或 task endpoint；当前 BBB pipeline 继续把它作为内部 evidence prefetch。
-5. 后续接入更多常驻 ML tools，例如更慢的 pKa/logD、solubility、PK 或 toxicity 模型。
+3. 如果需要让其他系统复用 retrieval，再把 chembl_neighbors 包装为 service tool 或 task endpoint；当前 BBB pipeline 继续把它作为内部 evidence prefetch。
+4. 后续接入更多常驻 ML tools，例如更慢的 pKa/logD、solubility、PK 或 toxicity 模型。
 ```

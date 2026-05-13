@@ -1,29 +1,12 @@
-# Bioavailability_Ma ChEMBL 工具说明
+# Bioavailability_Ma task notes
 
-本目录用于实现 Bioavailability_Ma 任务的 ChEMBL evidence 筛选、molecule-level evidence
-library、neighbor retrieval 和 reasoning pipeline。
+本文件只记录 Bioavailability_Ma 的 task-specific 语义：label、当前数据版本、oral bioavailability evidence tier、endpoint group、过滤规则和 reasoning schema。通用 ChEMBL workflow、wrapper 结构、batch/resume、viewer、cost 和目录规范统一记录在仓库根 `AGENTS.md`。
 
-目标不是训练 oral bioavailability classifier，而是构建一个可审计的 oral bioavailability
-evidence library：给定 query molecule，先预取相似分子的体内 oral bioavailability、口服暴露、
-吸收/通透、溶解度/溶出、代谢/清除和肠道转运体相关 evidence，再交给 reasoning LLM 判断这些
-analog evidence 是否能 transfer 到 query molecule。
+## Task 定义
 
-当前边界：
+目标不是训练 oral bioavailability classifier，而是构建可审计的 oral bioavailability evidence library：给定 query molecule，先预取相似分子的体内 oral bioavailability、口服暴露、吸收/通透、溶解度/溶出、代谢/清除和肠道转运体相关 evidence，再交给 reasoning LLM 判断 analog evidence 是否能 transfer 到 query molecule。
 
-```text
-ChEMBL neighbor retrieval 不是 DeepSeek 可调用 tool。
-ChEMBL neighbor retrieval 也不是当前 FastAPI service tool。
-它是 run_reasoning_pipeline.py 内部的 evidence prefetch / context assembly 步骤。
-
-DeepSeek group-level analysis 可调用的工具只有：
-  mmp_structure_compare
-  properties_compare
-
-DeepSeek single-molecule analysis 可调用的工具只有：
-  molecule_properties
-```
-
-Bioavailability_Ma 当前本地数据：
+当前本地数据：
 
 ```text
 data/processed/Bioavailability_Ma/test.jsonl
@@ -40,193 +23,64 @@ Y=1 -> high / acceptable oral bioavailability, defined as F >= 20%
 Y=0 -> low / poor oral bioavailability, defined as F < 20%
 ```
 
-这个阈值在代码中统一记录为 `BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT = 20.0`。
-
----
-
-## 目录结构
+这个阈值在代码中统一记录为：
 
 ```text
-tools/chembl_tool/tasks/bioavailability_ma/
-  __init__.py
-  AGENTS.md
-  endpoint_groups.py
-  build_evidence_library.py
-  retrieve_neighbors.py
-  run_reasoning_pipeline.py
-  run_reasoning_batch.py
-  rules.py
-  scoring.py
-  screen_assays.py
-  rescore_outputs.py
-  summarize_outputs.py
-  report.py
+BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT = 20.0
 ```
 
-依赖的通用工具在：
+final summary 必须在 `bioavailability_prediction=high` 和 `bioavailability_prediction=low` 中二选一；不要在 batch accuracy 和 macro-F1 中输出 uncertain。如果需要保留模型不确定性，用独立字段 `confidence`。
+
+当前边界：
 
 ```text
-tools/chembl_tool/common/
-  assay_loader.py
-  export.py
-  schema.py
-  sqlite.py
-  text.py
+ChEMBL neighbor retrieval 不是 DeepSeek 可调用 tool。
+ChEMBL neighbor retrieval 也不是当前 FastAPI service tool。
+它是 run_reasoning_pipeline.py 内部的 evidence prefetch / context assembly 步骤。
+
+DeepSeek group-level analysis 可调用的工具只有：
+  mmp_structure_compare
+  properties_compare
+
+DeepSeek single-molecule analysis 可调用的工具只有：
+  molecule_properties
 ```
 
-通用层负责 SQLite 连接、ChEMBL 表读取、assay/activity/target 聚合、文本标准化和 CSV/JSONL
-导出。任务层只放 Bioavailability_Ma 专属规则和 CLI。
-
----
-
-## 核心脚本
-
-### `screen_assays.py`
-
-全量筛选入口。读取 ChEMBL SQLite，按统一 Bioavailability_Ma scoring 逻辑筛出候选 assay，
-并生成候选表、报告和可选 activity evidence。
-
-推荐命令：
-
-```bash
-python -m tools.chembl_tool.tasks.bioavailability_ma.screen_assays \
-  --chembl-sqlite tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db \
-  --out-dir outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/raw \
-  --min-score 40 \
-  --progress-every 10000 \
-  --export-activities
-```
-
-主要输出：
+## Task-specific 文件
 
 ```text
-outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/raw/bioavailability_assay_candidates.csv
-outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/raw/bioavailability_assay_candidates.jsonl
-outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/raw/bioavailability_assay_report.md
-outputs/chembl_tool/tasks/bioavailability_ma/assay_screening/raw/bioavailability_activity_evidence.csv
+constants.py
+  Bioavailability_Ma label cutoff。
+
+endpoint_groups.py
+  Bioavailability_Ma Tier.endpoint_group、evidence_direction、evidence_strength 规则。
+
+rules.py
+  Bioavailability_Ma assay screening 关键词、negative keywords、weak terms、transporter target genes。
+
+scoring.py
+  Bioavailability_Ma assay 保留/剔除和打分统一入口。screen_assays.py 和 rescore_outputs.py 都调用 scored_row()。
+
+run_reasoning_pipeline.py
+  Bioavailability_Ma prompt、single/group/final schema、retrieval/prompt assembly 和 final-only rerun。
 ```
 
-说明：
+下面这些文件是 task-specific 配置 wrapper，公共实现见根 `AGENTS.md` 的 `tools/chembl_tool/common/task_workflows/` 说明：
 
 ```text
-bioavailability_assay_candidates.*: assay-level 候选结果
-bioavailability_assay_report.md: Top examples 和 Tier 统计
-bioavailability_activity_evidence.csv: 候选 assay 下的 molecule-level activity evidence
+screen_assays.py
+rescore_outputs.py
+summarize_outputs.py
+report.py
+build_evidence_library.py
+retrieve_neighbors.py
+chembl_exact_context.py
+run_reasoning_batch.py
 ```
 
-`--export-activities` 会额外导出每个候选 assay 对应的分子实验记录，包括 molecule ChEMBL ID、
-canonical SMILES、standard_type、standard_value、units 等。这个文件是后续相似分子 evidence
-retrieval 的基础。
+不要在 wrapper 中新增业务规则；Bioavailability_Ma assay 保留/剔除逻辑应只放在 `rules.py` 和 `scoring.py`，endpoint-group 语义应只放在 `endpoint_groups.py`。
 
-### `rescore_outputs.py`
-
-旧结果重打分工具。它不包含独立业务规则，只读取已有
-`bioavailability_assay_candidates.csv`，调用统一的 `scoring.scored_row()` 重新打分并过滤。
-
-用途：
-
-```text
-1. scoring/rules 更新后，不想重新扫描全量 ChEMBL assay 时，快速重算旧候选。
-2. 尝试不同 --min-score。
-3. 同步过滤已有 bioavailability_activity_evidence.csv。
-```
-
-注意：
-
-```text
-rescore_outputs.py 只能处理已有候选。
-如果新规则变宽，可能发现原候选表之外的新 assay，这种情况必须重新跑 screen_assays.py。
-如果新规则变严、重排 Tier 或调整分数，rescore_outputs.py 通常足够。
-```
-
-### `summarize_outputs.py`
-
-健康检查报告生成工具。读取候选 CSV，统计 Tier 分布、matched keywords/endpoints、negative
-flags，并列出每个 Tier 的 top examples。
-
-### `endpoint_groups.py`
-
-定义第二阶段的 `Tier.endpoint_group` 规则，并为 evidence library 内部审计生成：
-
-```text
-evidence_direction
-evidence_strength
-endpoint_group_reason
-```
-
-这些派生字段可以保留在 library/debug 文件中，但不要发送给 reasoning LLM。Bioavailability
-evidence 的方向经常依赖数值、单位和实验上下文；如果无法可靠解释 `standard_value`，不要仅凭
-endpoint 名称强行标成支持或反对 high bioavailability。
-
-### `build_evidence_library.py`
-
-把 `bioavailability_assay_candidates.csv` 和 `bioavailability_activity_evidence.csv` 构建成
-molecule-level evidence library 和 query-time neighbor index。应复用预计算 ChEMBL fingerprints：
-
-```text
-tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz
-```
-
-推荐输出：
-
-```text
-outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/bioavailability_molecule_evidence.jsonl
-outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/bioavailability_neighbor_index.pkl
-outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/bioavailability_neighbor_index.meta.json
-```
-
-### `retrieve_neighbors.py`
-
-给定 query SMILES，按 `Tier.endpoint_group` 从 Bioavailability_Ma evidence molecule subset 中
-检索 top-k non-identical neighbors。默认建议：
-
-```text
-top_k_per_group: 3
-min_similarity: 0.3
-exclude_exact: true
-```
-
-保留的低相似度 analog 会带上 `similarity_bucket`，交给 LLM 判断 transferability。`distant_analog`
-和 `very_distant_analog` 不能作为正负 bioavailability evidence，除非共享 scaffold、同类 ADME
-机制和 assay context 有很强的药化理由。
-
-### `run_reasoning_pipeline.py`
-
-Bioavailability_Ma 端到端 reasoning 入口。建议流程：
-
-```text
-1. 读取 Bioavailability_Ma test.jsonl 的 query molecule。
-2. 调用 retrieve_neighbors.py 预取每个 group 的 ChEMBL neighbor evidence。
-3. 并发执行 single-molecule analysis；DeepSeek 只可调用 molecule_properties。
-4. 并发执行 group-level analysis；DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
-5. final summary 读取 single + all group outputs，不暴露任何 tool。
-6. 保存 retrieval/single/group/final/trace/manifest。
-```
-
-### `run_reasoning_batch.py`
-
-批量 reasoning 入口。按 query index 调用 `run_reasoning_pipeline.py`，负责 molecule 级并行、
-日志、trace 合并和评估报告。
-
-当前建议 label 约定：
-
-```text
-Y=1 -> bioavailability_prediction=high
-Y=0 -> bioavailability_prediction=low
-final summary 必须在 high/low 中二选一；不要在 batch accuracy 和 macro-F1 中输出 uncertain。
-其中 high 对应 oral bioavailability F >= 20%，low 对应 F < 20%。
-```
-
-如果需要保留模型不确定性，用独立字段：
-
-```text
-confidence:
-  high
-  moderate
-  low
-```
-
-### 当前输出目录
+## 当前数据和输出
 
 当前推荐使用的 assay screening 结果：
 
@@ -259,52 +113,20 @@ outputs/chembl_tool/tasks/bioavailability_ma/reasoning/single_runs/
 outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
 ```
 
-查看 standalone trace 使用通用 viewer：
-
-```bash
-bash tools/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/single_runs \
-  8776
-```
-
-查看 batch trace 时指向：
-
-```bash
-bash tools/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches \
-  8776
-```
-
-### `rules.py`
-
-定义 Bioavailability_Ma 专属 assay screening 规则：
+## Bioavailability_Ma reasoning pipeline
 
 ```text
-Tier 1: direct absolute oral bioavailability
-Tier 2: in vivo oral exposure and in vivo/in situ absorption
-Tier 3: in vitro intestinal permeability and efflux
-Tier 4: solubility, dissolution and GI stability
-Tier 5: metabolism, first-pass and clearance
-Tier 6: formulation, food-effect and relative bioavailability context
-negative keywords
-weak terms
-transporter target genes
+1. 读取 Bioavailability_Ma test.jsonl 的 query molecule。
+2. 调用 retrieve_neighbors.py 预取每个 Tier.endpoint_group 的 ChEMBL neighbor evidence。
+3. 并发执行 single-molecule analysis；DeepSeek 只可调用 molecule_properties。
+4. 并发执行 group-level analysis；DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
+5. final summary 读取 single + all group outputs，不暴露任何 tool。
+6. 保存 retrieval/single/group/final/trace/manifest。
 ```
 
-不要在脚本各处散落硬编码规则；新增或调整关键词优先改这里和 `scoring.py`。
+## Exact ChEMBL context
 
-### `scoring.py`
-
-统一业务逻辑入口。全量筛选和旧结果重打分都调用：
-
-```python
-scored_row(row, min_score=40)
-```
-
-当前所有 Bioavailability_Ma assay 保留/剔除逻辑都应在 `rules.py` 和 `scoring.py` 中维护。
-不要在 `rescore_outputs.py` 里新增另一套 postprocess 规则。
-
----
+`chembl_exact_context.py` 是可选 evidence-rich 增强。它会用 query full InChIKey 查 ChEMBL exact molecule，并在 retrieved neighbor 涉及的 assay 中查 query activity。默认 benchmark 不开启，避免 prospective evaluation 数据泄漏；只有显式传 `--enable-chembl-exact-context` 时才用于 retrospective / evidence-rich case study。
 
 ## Evidence 类型解释
 

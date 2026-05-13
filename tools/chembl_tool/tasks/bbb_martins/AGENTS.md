@@ -1,8 +1,18 @@
-# BBB_Martins ChEMBL 工具说明
+# BBB_Martins task notes
 
-本目录实现 BBB_Martins 任务的 ChEMBL evidence 筛选、molecule-level evidence library、neighbor retrieval 和 reasoning pipeline。
+本文件只记录 BBB_Martins 的 task-specific 语义：label、当前数据版本、BBB evidence tier、过滤规则和 reasoning 边界。通用 ChEMBL workflow、wrapper 结构、batch/resume、viewer、cost 和目录规范统一记录在仓库根 `AGENTS.md`。
 
-目标不是训练模型，而是构建一个可审计的 BBB evidence library，并在 query-time 先预取相似分子 evidence，再交给 reasoning LLM 判断 analog evidence 是否能 transfer 到 query molecule。
+## Task 定义
+
+目标不是训练 BBB classifier，而是构建可审计的 BBB evidence library：给定 query molecule，先预取相似分子的 BBB / permeability / transporter evidence，再交给 reasoning LLM 判断 analog evidence 是否能 transfer 到 query molecule。
+
+当前评估约定：
+
+```text
+Y=1 -> bbb_prediction=pass
+Y=0 -> bbb_prediction=fail
+final summary 必须在 pass/fail 中二选一；不再允许 uncertain prediction
+```
 
 当前边界：
 
@@ -19,275 +29,38 @@ DeepSeek single-molecule analysis 可调用的工具只有：
   molecule_properties
 ```
 
----
-
-## 目录结构
+## Task-specific 文件
 
 ```text
-tools/chembl_tool/tasks/bbb_martins/
-  __init__.py
-  AGENTS.md
-  endpoint_groups.py
-  build_evidence_library.py
-  retrieve_neighbors.py
-  run_reasoning_pipeline.py
-  run_reasoning_batch.py
-  rules.py
-  scoring.py
-  screen_assays.py
-  rescore_outputs.py
-  summarize_outputs.py
-  report.py
+endpoint_groups.py
+  BBB Tier.endpoint_group、evidence_direction、evidence_strength 规则。
+
+rules.py
+  BBB assay screening 关键词、negative keywords、weak terms、transporter target genes。
+
+scoring.py
+  BBB assay 保留/剔除和打分统一入口。screen_assays.py 和 rescore_outputs.py 都调用 scored_row()。
+
+run_reasoning_pipeline.py
+  BBB_Martins prompt、single/group/final schema、retrieval/prompt assembly 和 final-only rerun。
 ```
 
-依赖的通用工具在：
+下面这些文件是 task-specific 配置 wrapper，公共实现见根 `AGENTS.md` 的 `tools/chembl_tool/common/task_workflows/` 说明：
 
 ```text
-tools/chembl_tool/common/
-  assay_loader.py
-  export.py
-  schema.py
-  sqlite.py
-  text.py
+screen_assays.py
+rescore_outputs.py
+summarize_outputs.py
+report.py
+build_evidence_library.py
+retrieve_neighbors.py
+chembl_exact_context.py
+run_reasoning_batch.py
 ```
 
-通用层负责 SQLite 连接、ChEMBL 表读取、assay/activity/target 聚合、文本标准化和 CSV/JSONL 导出。任务层只放 BBB_Martins 专属规则和 CLI。
+不要在 wrapper 中新增业务规则；BBB assay 保留/剔除逻辑应只放在 `rules.py` 和 `scoring.py`，endpoint-group 语义应只放在 `endpoint_groups.py`。
 
----
-
-## 核心脚本
-
-### `screen_assays.py`
-
-全量筛选入口。读取 ChEMBL SQLite，按统一 BBB scoring 逻辑筛出候选 assay，并生成候选表、报告和可选 activity evidence。
-
-推荐命令：
-
-```bash
-python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
-  --chembl-sqlite tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db \
-  --out-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw \
-  --min-score 40 \
-  --progress-every 10000 \
-  --export-activities
-```
-
-主要输出：
-
-```text
-outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_candidates.csv
-outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_candidates.jsonl
-outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_report.md
-outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_activity_evidence.csv
-```
-
-说明：
-
-```text
-bbb_assay_candidates.*: assay-level 候选结果
-bbb_assay_report.md: Top examples 和 Tier 统计
-bbb_activity_evidence.csv: 候选 assay 下的 molecule-level activity evidence
-```
-
-`--export-activities` 会额外导出每个候选 assay 对应的分子实验记录，包括 molecule ChEMBL ID、canonical SMILES、standard_type、standard_value、units 等。这个文件是后续相似分子 evidence retrieval 的基础。
-
-常用参数：
-
-```text
---chembl-sqlite      ChEMBL SQLite 数据库路径
---out-dir            输出目录
---min-score          保留阈值，默认 40
---progress-every     每扫描 N 个 assay 输出一次进度；设为 0 可关闭
---export-activities  导出候选 assay 对应的 activity evidence
---limit              只扫描前 N 个 assay，用于 smoke test
-```
-
-### `rescore_outputs.py`
-
-旧结果重打分工具。它不包含独立业务规则，只读取已有 `bbb_assay_candidates.csv`，调用统一的 `scoring.scored_row()` 重新打分并过滤。
-
-用途：
-
-```text
-1. scoring/rules 更新后，不想重新扫描 189 万 assay 时，快速重算旧候选。
-2. 尝试不同 --min-score。
-3. 同步过滤已有 bbb_activity_evidence.csv。
-```
-
-推荐命令：
-
-```bash
-python -m tools.chembl_tool.tasks.bbb_martins.rescore_outputs \
-  --in-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw \
-  --out-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6 \
-  --min-score 40 \
-  --filter-activities
-```
-
-注意：
-
-```text
-rescore_outputs.py 只能处理已有候选。
-如果新规则变宽，可能发现原候选表之外的新 assay，这种情况必须重新跑 screen_assays.py。
-如果新规则变严、重排 Tier 或调整分数，rescore_outputs.py 通常足够。
-```
-
-### `summarize_outputs.py`
-
-健康检查报告生成工具。读取候选 CSV，统计 Tier 分布、matched keywords/endpoints、negative flags，并列出每个 Tier 的 top examples。
-
-命令：
-
-```bash
-python -m tools.chembl_tool.tasks.bbb_martins.summarize_outputs \
-  --out-dir outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6 \
-  --report-path outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/bbb_health_check.md
-```
-
-输出：
-
-```text
-bbb_health_check.md
-```
-
-### `endpoint_groups.py`
-
-定义第二阶段的 `Tier.endpoint_group` 规则，并为 BBB evidence library 内部审计生成
-`evidence_direction`、`evidence_strength`、`endpoint_group_reason` 等派生字段。
-
-这些派生字段可以保留在 library/debug 文件中，但不要发送给 reasoning LLM。
-
-### `build_evidence_library.py`
-
-把 `bbb_assay_candidates.csv` 和 `bbb_activity_evidence.csv` 构建成 molecule-level evidence
-library 和 query-time neighbor index。当前会使用预计算 ChEMBL fingerprints：
-
-```text
-tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz
-```
-
-当前主要输出：
-
-```text
-outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_molecule_evidence.jsonl
-outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl
-outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.meta.json
-```
-
-### `retrieve_neighbors.py`
-
-给定 query SMILES，按 `Tier.endpoint_group` 从 BBB evidence molecule subset 中检索 top-k
-non-identical neighbors。当前默认 `top_k_per_group=3`、`min_similarity=0.3`，过滤 very distant analog；
-保留的低相似度 analog 会带上 `similarity_bucket`，交给 LLM 判断 transferability。
-
-这是 pipeline 内部 evidence retrieval / context assembly，不是 DeepSeek tool。
-
-### `chembl_exact_context.py`
-
-可选 evidence-rich 增强。它会用 query full InChIKey 查 ChEMBL exact molecule，并在 retrieved
-neighbor 涉及的 assay 中查 query activity，生成：
-
-```text
-same_endpoint_activity:
-  same assay_chembl_id + same normalized standard_type
-
-same_assay_different_endpoint_activity:
-  same assay_chembl_id + different standard_type
-```
-
-这会使用 query molecule 的已知 ChEMBL 实验记录，可能造成 prospective benchmark 的数据泄漏。
-因此默认关闭；只有显式传 `--enable-chembl-exact-context` 时才用于 retrospective / evidence-rich
-case study。默认批量评估不要开启。
-
-### `run_reasoning_pipeline.py`
-
-BBB_Martins 端到端 reasoning 入口。当前流程：
-
-```text
-1. 读取 test_efflux.jsonl 的 query molecule。
-2. 调用 retrieve_neighbors.py 预取每个 group 的 ChEMBL neighbor evidence。
-3. 并发执行 single-molecule analysis；DeepSeek 只可调用 molecule_properties。
-4. 并发执行 group-level analysis；DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
-5. final summary 读取 single + all group outputs，不暴露任何 tool。
-6. 保存 retrieval/single/group/final/trace/manifest。
-```
-
-支持只重跑 final summary：
-
-```bash
-python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
-  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id>
-```
-
-### `run_reasoning_batch.py`
-
-批量 reasoning 入口。它按 query index 调用 `run_reasoning_pipeline.py`，负责 molecule 级并行、
-日志、trace 合并和评估报告。
-
-当前 label 约定：
-
-```text
-Y=1 -> bbb_prediction=pass
-Y=0 -> bbb_prediction=fail
-final summary 必须在 pass/fail 中二选一；不再允许 uncertain prediction
-```
-
-推荐命令：
-
-```bash
-python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
-  --input-jsonl data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl \
-  --parallelism 1 \
-  --group-workers 4 \
-  --batch-id <batch_id>
-```
-
-批量输出：
-
-```text
-outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/predictions.jsonl
-outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/metrics.json
-outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/report.md
-outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/trace_messages.jsonl
-outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/
-```
-
-查看 batch trace 时把 trace viewer 指向 `reasoning/batches`，选择 `<batch_id>`，再通过
-`Molecule package` 下拉框切换不同分子的 trace。
-
-### `report.py`
-
-供 `screen_assays.py` 和 `rescore_outputs.py` 调用的 Markdown 报告生成模块。通常不直接运行。
-
-### `rules.py`
-
-定义 BBB_Martins 专属规则：
-
-```text
-Tier 1: direct BBB / brain exposure
-Tier 2: passive permeability / barrier model
-Tier 3: efflux transporter
-Tier 4: influx transporter
-negative keywords
-weak terms
-transporter target genes
-```
-
-不要在脚本各处散落硬编码规则；新增或调整关键词优先改这里和 `scoring.py`。
-
-### `scoring.py`
-
-统一业务逻辑入口。全量筛选和旧结果重打分都调用：
-
-```python
-scored_row(row, min_score=40)
-```
-
-当前所有 BBB assay 保留/剔除逻辑都应在 `rules.py` 和 `scoring.py` 中维护。不要在 `rescore_outputs.py` 里新增另一套 postprocess 规则。
-
----
-
-## 当前最终结果目录
+## 当前数据和输出
 
 当前推荐使用：
 
@@ -316,32 +89,62 @@ Tier 3: 10,752
 Tier 4: 702
 ```
 
-`assay_screening/raw/` 是全量筛选原始输出；`assay_screening/v1/` 到 `v5/` 是历史重打分中间版本，只用于调试对比。确认 v6 后，可以清理中间版本。
+当前 evidence library 和 neighbor index：
 
-reasoning 和 batch 产物统一放在：
+```text
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_molecule_evidence.jsonl
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.meta.json
+```
+
+当前 test set：
+
+```text
+data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl
+
+fields:
+  drug: query SMILES
+  Y: BBB label
+```
+
+reasoning 产物统一放在：
 
 ```text
 outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/
 ```
 
-查看 standalone trace：
+## BBB reasoning pipeline
 
-```bash
-bash tools/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs \
-  8776
+```text
+1. 读取 test_efflux.jsonl 的 query molecule。
+2. 调用 retrieve_neighbors.py 预取每个 Tier.endpoint_group 的 ChEMBL neighbor evidence。
+3. 并发执行 single-molecule analysis；DeepSeek 只可调用 molecule_properties。
+4. 并发执行 group-level analysis；DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
+5. final summary 读取 single + all group outputs，不暴露任何 tool。
+6. 保存 retrieval/single/group/final/trace/manifest。
 ```
 
-查看 batch trace：
+final-only rerun：
 
 ```bash
-bash tools/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bbb_martins/reasoning/batches \
-  8776
+python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
+  --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id>
 ```
 
----
+## Exact ChEMBL context
+
+`chembl_exact_context.py` 是可选 evidence-rich 增强。它会用 query full InChIKey 查 ChEMBL exact molecule，并在 retrieved neighbor 涉及的 assay 中查 query activity，生成：
+
+```text
+same_endpoint_activity:
+  same assay_chembl_id + same normalized standard_type
+
+same_assay_different_endpoint_activity:
+  same assay_chembl_id + different standard_type
+```
+
+这会使用 query molecule 的已知 ChEMBL 实验记录，可能造成 prospective benchmark 的数据泄漏。因此默认关闭；只有显式传 `--enable-chembl-exact-context` 时才用于 retrospective / evidence-rich case study。默认批量评估不要开启。
 
 ## Evidence 类型解释
 

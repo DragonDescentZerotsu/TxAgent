@@ -22,6 +22,12 @@
   .panel-body { padding: 12px; }
   .filters { display: grid; gap: 8px; margin-bottom: 10px; }
   .filters input, .filters select { width: 100%; background: white; color: #111827; border: 1px solid #d1d5db; }
+  .cost-controls { border: 1px solid #e5e7eb; border-radius: 7px; padding: 8px; background: #f8fafc; display: grid; gap: 7px; }
+  .cost-title { display: flex; justify-content: space-between; gap: 8px; color: #374151; font-size: 12px; font-weight: 750; }
+  .cost-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .cost-grid label { display: grid; gap: 3px; color: #4b5563; font-size: 10px; font-weight: 700; }
+  .cost-grid input { width: 100%; padding: 5px 6px; font-size: 12px; }
+  .cost-summary { color: #4b5563; font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   .list { max-height: calc(100vh - 245px); overflow: auto; }
   .item { width: 100%; text-align: left; background: white; color: #111827; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px; margin-bottom: 7px; cursor: pointer; }
   .item.active { border-color: #2563eb; box-shadow: inset 3px 0 0 #2563eb; }
@@ -94,6 +100,15 @@
             <option value="tools">Has tool calls</option>
             <option value="no-tools">No tool calls</option>
           </select>
+          <div class="cost-controls">
+            <div class="cost-title"><span>Cost estimate</span><span>USD / 1M tokens</span></div>
+            <div class="cost-grid">
+              <label>cache hit<input id="priceCacheHit" type="number" step="0.000001" value="0.003625"></label>
+              <label>cache miss<input id="priceCacheMiss" type="number" step="0.001" value="0.435"></label>
+              <label>output<input id="priceOutput" type="number" step="0.001" value="0.87"></label>
+            </div>
+            <div id="costSummary" class="cost-summary">Load trace to estimate cost.</div>
+          </div>
         </div>
         <div id="list" class="list"></div>
       </div>
@@ -113,6 +128,10 @@ const els = {
   moleculeFilter: document.getElementById("moleculeFilter"),
   search: document.getElementById("search"),
   toolFilter: document.getElementById("toolFilter"),
+  priceCacheHit: document.getElementById("priceCacheHit"),
+  priceCacheMiss: document.getElementById("priceCacheMiss"),
+  priceOutput: document.getElementById("priceOutput"),
+  costSummary: document.getElementById("costSummary"),
   list: document.getElementById("list"),
   detail: document.getElementById("detail"),
   count: document.getElementById("count"),
@@ -182,7 +201,7 @@ function apply(){
   const mk = state.moleculeKey;
   state.filtered = state.records.filter(r => (!mk || moleculeKey(r) === mk) && (!q || recordText(r).includes(q)) && (tf !== "tools" || hasTools(r)) && (tf !== "no-tools" || !hasTools(r)));
   if(!state.filtered.includes(state.records[state.selected])) state.selected = state.records.indexOf(state.filtered[0]);
-  renderList(); renderDetail(); els.count.textContent = `${state.filtered.length} shown`;
+  renderList(); renderDetail(); renderCostSummary(); els.count.textContent = `${state.filtered.length} shown`;
 }
 function renderList(){
   if(!state.filtered.length){ els.list.innerHTML = '<div class="empty">No records loaded.</div>'; return; }
@@ -190,7 +209,7 @@ function renderList(){
     const active = state.records[state.selected]?.__id === r.__id ? " active" : "";
     return `<button class="item${active}" data-id="${esc(r.__id)}">
       <div class="item-title"><span>${esc(r.task)}</span><span class="${r.status==="ok"?"ok":"bad"}">${esc(r.status)}</span></div>
-      <div class="item-sub">molecule=${esc(r.index ?? r.sample_id ?? "")} · tools=${esc(r.tool_count)} · usage=${esc(formatUsage(r.usage))}</div>
+      <div class="item-sub">molecule=${esc(r.index ?? r.sample_id ?? "")} · tools=${esc(r.tool_count)} · cost=${esc(formatCost(estimateCost(r.usage).total))} · usage=${esc(formatUsage(r.usage))}</div>
       <div class="item-sub">${esc(r.smiles)}</div>
     </button>`;
   }).join("");
@@ -199,15 +218,74 @@ function renderList(){
 function renderDetail(){
   const r = state.records[state.selected];
   if(!r){ els.detail.innerHTML = '<div class="panel"><div class="empty">Load trace_messages.jsonl to begin.</div></div>'; return; }
+  const cost = estimateCost(r.usage);
   els.detail.innerHTML = `<div class="panel"><div class="panel-title"><span>${esc(r.task)}</span><span class="tag">${esc(r.__source)}</span></div>
     <div class="panel-body"><div class="meta">
-      ${field("SMILES", r.smiles)}${field("Label", r.label)}${field("Prediction", r.prediction)}${field("Tools", r.tool_count)}${field("Usage", formatUsage(r.usage))}
+      ${field("SMILES", r.smiles)}${field("Label", r.label)}${field("Prediction", r.prediction)}${field("Tools", r.tool_count)}${field("Usage", formatUsage(r.usage))}${field("Estimated cost", formatCostBreakdown(cost))}
     </div>${r.response_text ? `<div class="response-full">${blockSmart("Parsed Response", r.response_text, "")}</div>` : ""}</div></div>
     <div class="panel"><div class="panel-title"><span>Messages</span><span class="tag">${(r.messages||[]).length} items</span></div>
     <div class="panel-body"><div class="trace">${renderMessages(r.messages)}</div></div></div>`;
 }
 function field(k,v){ return `<div class="field"><div class="k">${esc(k)}</div><div class="v">${esc(str(v))}</div></div>`; }
-function formatUsage(u){ if(!u) return ""; return ["prompt_tokens","completion_tokens","total_tokens","reasoning_tokens"].filter(k=>u[k]!=null).map(k=>`${k}=${u[k]}`).join(", "); }
+function priceConfig(){
+  return {
+    cacheHit: Number(els.priceCacheHit.value || 0),
+    cacheMiss: Number(els.priceCacheMiss.value || 0),
+    output: Number(els.priceOutput.value || 0),
+  };
+}
+function usageValue(u, key){ return Number(u?.[key] ?? 0) || 0; }
+function usageCacheHit(u){ return Number(u?.prompt_cache_hit_tokens ?? u?.prompt_tokens_details?.cached_tokens ?? 0) || 0; }
+function usageCacheMiss(u){
+  if(!u) return 0;
+  if(u.prompt_cache_miss_tokens != null) return Number(u.prompt_cache_miss_tokens) || 0;
+  return Math.max(usageValue(u, "prompt_tokens") - usageCacheHit(u), 0);
+}
+function estimateCost(u){
+  const prices = priceConfig();
+  const cacheHitTokens = usageCacheHit(u);
+  const cacheMissTokens = usageCacheMiss(u);
+  const outputTokens = usageValue(u, "completion_tokens");
+  const cacheHit = cacheHitTokens / 1_000_000 * prices.cacheHit;
+  const cacheMiss = cacheMissTokens / 1_000_000 * prices.cacheMiss;
+  const output = outputTokens / 1_000_000 * prices.output;
+  return {cacheHitTokens, cacheMissTokens, outputTokens, cacheHit, cacheMiss, output, total: cacheHit + cacheMiss + output};
+}
+function sumCosts(records){
+  return records.reduce((acc, r)=>{
+    const c = estimateCost(r.usage);
+    acc.cacheHitTokens += c.cacheHitTokens; acc.cacheMissTokens += c.cacheMissTokens; acc.outputTokens += c.outputTokens;
+    acc.cacheHit += c.cacheHit; acc.cacheMiss += c.cacheMiss; acc.output += c.output; acc.total += c.total;
+    acc.calls += r.usage ? 1 : 0;
+    return acc;
+  }, {calls:0, cacheHitTokens:0, cacheMissTokens:0, outputTokens:0, cacheHit:0, cacheMiss:0, output:0, total:0});
+}
+function formatCost(v){ return v ? `$${v.toFixed(v < 0.01 ? 4 : 3)}` : "$0"; }
+function formatCostBreakdown(c){
+  return [
+    `total=${formatCost(c.total)}`,
+    `cache_hit=${formatCost(c.cacheHit)} (${c.cacheHitTokens})`,
+    `cache_miss=${formatCost(c.cacheMiss)} (${c.cacheMissTokens})`,
+    `output=${formatCost(c.output)} (${c.outputTokens})`,
+  ].join("\n");
+}
+function renderCostSummary(){
+  if(!state.records.length){ els.costSummary.textContent = "Load trace to estimate cost."; return; }
+  const all = sumCosts(state.records);
+  const shown = sumCosts(state.filtered);
+  els.costSummary.textContent = [
+    `loaded total: ${formatCost(all.total)} (${all.calls} calls)`,
+    `shown total: ${formatCost(shown.total)} (${shown.calls} calls)`,
+    `tokens: hit=${all.cacheHitTokens}, miss=${all.cacheMissTokens}, output=${all.outputTokens}`,
+  ].join("\n");
+}
+function formatUsage(u){
+  if(!u) return "";
+  const values = ["prompt_tokens","completion_tokens","total_tokens","reasoning_tokens"].filter(k=>u[k]!=null).map(k=>`${k}=${u[k]}`);
+  const hit = usageCacheHit(u), miss = usageCacheMiss(u);
+  if(hit || miss) values.push(`cache_hit=${hit}`, `cache_miss=${miss}`);
+  return values.join(", ");
+}
 function renderMessages(messages){ if(!Array.isArray(messages)||!messages.length) return '<div class="empty">No messages.</div>'; return messages.map(renderMessage).join(""); }
 function renderMessage(m,i){
   const role = m.role || "item", blocks = [];
@@ -345,6 +423,9 @@ els.pathBtn.onclick = () => loadPath(els.pathInput.value).catch(e=>alert(e.messa
 els.fileInput.onchange = async e => { const f=e.target.files[0]; if(f) addRecords(parseJsonl(await f.text(), f.name)); };
 els.moleculeFilter.onchange = () => { state.moleculeKey = els.moleculeFilter.value; state.selected = 0; apply(); };
 els.search.oninput = apply; els.toolFilter.onchange = apply;
+els.priceCacheHit.oninput = apply;
+els.priceCacheMiss.oninput = apply;
+els.priceOutput.oninput = apply;
 scanRuns().then(()=>{ if(state.runs[0]) loadPath(state.runs[0].path).catch(()=>{}); });
 </script>
 </body>

@@ -2,64 +2,38 @@
 
 from __future__ import annotations
 
-from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from tools.chembl_tool.common.task_workflows.assay_report import AssayReportConfig, write_report as write_common_report
 
-def write_report(
-    path: str | Path,
-    *,
-    total_assays: int,
-    candidates: list[dict[str, Any]],
-    min_score: int,
-    chembl_sqlite: str,
-) -> None:
-    tier_counts = Counter(row["tier"] for row in candidates)
-    lines: list[str] = [
-        "# ChEMBL Oral Bioavailability Assay Screening Report",
-        "",
-        f"- ChEMBL SQLite: `{chembl_sqlite}`",
-        f"- Minimum score: `{min_score}`",
-        f"- Total assays scanned: `{total_assays}`",
-        f"- Candidate assays retained: `{len(candidates)}`",
-        "",
-        "## Tier Counts",
-        "",
-    ]
-    for tier, count in sorted(tier_counts.items()):
-        lines.append(f"- {tier}: {count}")
 
-    sections = [
+CONFIG = AssayReportConfig(
+    title="ChEMBL Oral Bioavailability Assay Screening Report",
+    sections=(
         ("Direct absolute oral bioavailability", "Tier 1"),
         ("In vivo oral exposure and absorption", "Tier 2"),
         ("In vitro intestinal permeability and efflux", "Tier 3"),
         ("Solubility, dissolution and GI stability", "Tier 4"),
         ("Metabolism, first-pass and clearance", "Tier 5"),
         ("Formulation, food-effect and relative bioavailability context", "Tier 6"),
-    ]
-    for title, tier in sections:
-        lines.extend(["", f"## Top 50 {title}", ""])
-        rows = [row for row in candidates if row["tier"] == tier]
-        rows.sort(key=lambda row: int(row["score"]), reverse=True)
-        if not rows:
-            lines.append("No candidates retained.")
-            continue
-        lines.append("| score | assay | target | n mols | reason |")
-        lines.append("| ---: | --- | --- | ---: | --- |")
-        for row in rows[:50]:
-            lines.append(
-                "| {score} | {assay} | {target} | {n_mols} | {reason} |".format(
-                    score=row.get("score", ""),
-                    assay=_escape(row.get("assay_chembl_id", "")),
-                    target=_escape(row.get("target_pref_name", "")),
-                    n_mols=row.get("n_unique_molecules", 0),
-                    reason=_escape(row.get("reason", "")),
-                )
-            )
-
-    Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    ),
+)
 
 
-def _escape(value: object) -> str:
-    return str(value or "").replace("|", "\\|").replace("\n", " ")
+def write_report(
+    path: Path,
+    *,
+    total_assays: int,
+    candidates: list[dict[str, Any]],
+    min_score: int,
+    chembl_sqlite: str,
+) -> None:
+    write_common_report(
+        CONFIG,
+        path,
+        total_assays=total_assays,
+        candidates=candidates,
+        min_score=min_score,
+        chembl_sqlite=chembl_sqlite,
+    )

@@ -988,7 +988,8 @@ def _load_env(path: Path) -> None:
         key, value = line.split("=", 1)
         key = key.strip()
         value = value.strip().strip('"').strip("'")
-        os.environ.setdefault(key, value)
+        # The explicit --env-file is the run configuration source of truth.
+        os.environ[key] = value
 
 
 def _write_json(path: Path, data: Any) -> None:
