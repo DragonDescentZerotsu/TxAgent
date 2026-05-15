@@ -212,6 +212,9 @@ def _single_run_command(
     ]
     if args.max_groups:
         command.extend(["--max-groups", str(args.max_groups)])
+    if args.groups:
+        command.append("--groups")
+        command.extend(args.groups)
     if args.disable_group_tools:
         command.append("--disable-group-tools")
     return command
@@ -313,6 +316,17 @@ def compute_metrics(config: BatchConfig, rows: list[dict[str, Any]]) -> dict[str
     correct = sum(1 for row in successful if row.get("correct"))
     per_class = {str(label): _class_metrics(successful, label) for label in (0, 1)}
     macro_f1 = round(sum(per_class[str(label)]["f1"] for label in (0, 1)) / 2, 6) if successful else 0.0
+    prediction_distribution: dict[str, int] = {}
+    for row in successful:
+        prediction = str(row.get(config.prediction_field) or "missing")
+        prediction_distribution[prediction] = prediction_distribution.get(prediction, 0) + 1
+    confusion_matrix = {
+        "tn": sum(1 for row in successful if row.get("label") == 0 and row.get("pred_label") == 0),
+        "fp": sum(1 for row in successful if row.get("label") == 0 and row.get("pred_label") == 1),
+        "fn": sum(1 for row in successful if row.get("label") == 1 and row.get("pred_label") == 0),
+        "tp": sum(1 for row in successful if row.get("label") == 1 and row.get("pred_label") == 1),
+    }
+    positive_class = per_class["1"]
     return {
         "n_total": len(rows),
         "n_evaluable": len(evaluable),
@@ -322,6 +336,11 @@ def compute_metrics(config: BatchConfig, rows: list[dict[str, Any]]) -> dict[str
         "accuracy_including_failed": _safe_div(correct, len(evaluable)),
         "macro_f1": macro_f1,
         "per_class": per_class,
+        "positive_class_precision": positive_class["precision"],
+        "positive_class_recall": positive_class["recall"],
+        "positive_class_f1": positive_class["f1"],
+        "confusion_matrix": confusion_matrix,
+        "prediction_distribution": prediction_distribution,
     }
 
 
@@ -435,6 +454,11 @@ def _write_report(
         f"- accuracy: {metrics['accuracy']}",
         f"- accuracy_including_failed: {metrics['accuracy_including_failed']}",
         f"- macro_f1: {metrics['macro_f1']}",
+        f"- positive_class_precision: {metrics['positive_class_precision']}",
+        f"- positive_class_recall: {metrics['positive_class_recall']}",
+        f"- positive_class_f1: {metrics['positive_class_f1']}",
+        f"- confusion_matrix: `{json.dumps(metrics['confusion_matrix'], ensure_ascii=False)}`",
+        f"- prediction_distribution: `{json.dumps(metrics['prediction_distribution'], ensure_ascii=False)}`",
         "",
         "| index | label | prediction | pred_label | correct | confidence | run_id |",
         "| --- | --- | --- | --- | --- | --- | --- |",
@@ -520,6 +544,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
+    parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     parser.add_argument("--max-groups", type=int, default=0)
     parser.add_argument("--disable-group-tools", action="store_true")
     return parser.parse_args(argv)

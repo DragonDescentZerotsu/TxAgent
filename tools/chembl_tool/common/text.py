@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable
+from functools import lru_cache
 
 
 _SEPARATOR_RE = re.compile(r"[-/_,;:()\[\]{}]+")
@@ -24,19 +25,32 @@ def normalize_text(value: object) -> str:
 def contains_phrase(text: str, phrase: str) -> bool:
     """Return true when normalized phrase occurs as token-bounded text."""
     normalized_text = normalize_text(text)
-    normalized_phrase = normalize_text(phrase)
-    if not normalized_phrase:
+    pattern = _phrase_pattern(phrase)
+    if pattern is None:
         return False
-    pattern = r"(?<![a-z0-9])" + re.escape(normalized_phrase) + r"(?![a-z0-9])"
-    return re.search(pattern, normalized_text) is not None
+    return pattern.search(normalized_text) is not None
 
 
 def match_phrases(text: str, phrases: Iterable[str]) -> list[str]:
     """Return original phrases whose normalized form occurs in text."""
     normalized_text = normalize_text(text)
-    return [phrase for phrase in phrases if contains_phrase(normalized_text, phrase)]
+    hits: list[str] = []
+    for phrase in phrases:
+        pattern = _phrase_pattern(phrase)
+        if pattern is not None and pattern.search(normalized_text):
+            hits.append(phrase)
+    return hits
 
 
 def join_text_parts(*parts: object) -> str:
     """Normalize and join multiple text fields for rule matching."""
     return normalize_text(" ".join(str(part) for part in parts if part is not None))
+
+
+@lru_cache(maxsize=4096)
+def _phrase_pattern(phrase: str) -> re.Pattern[str] | None:
+    normalized_phrase = normalize_text(phrase)
+    if not normalized_phrase:
+        return None
+    pattern = r"(?<![a-z0-9])" + re.escape(normalized_phrase) + r"(?![a-z0-9])"
+    return re.compile(pattern)

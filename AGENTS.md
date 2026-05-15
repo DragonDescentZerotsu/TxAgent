@@ -2,7 +2,19 @@
 
 ## 当前目标
 
-本项目要构建一个可复用的分子证据检索与 reasoning 系统。BBB_Martins 是第一个概念验证任务：给定一个 query molecule，先通过常驻 FastAPI 工具服务计算分子属性、结构差异和属性差异，再从 ChEMBL BBB evidence library 中检索相似分子的实验读数，最后把工具输出和 assay evidence 交给 reasoning LLM，综合判断该分子是否可能通过 BBB。
+本项目要构建一个可复用的分子证据检索与 reasoning 系统。BBB_Martins 是第一个概念验证任务；
+当前同一套 workflow 已扩展到 Bioavailability_Ma 和 ClinTox。整体流程是：给定一个 query molecule，
+先通过常驻 FastAPI 工具服务计算分子属性、结构差异和属性差异，再从 task-specific ChEMBL evidence
+library 中检索相似分子的实验读数，最后把工具输出和 assay evidence 交给 reasoning LLM，综合判断该
+task 的目标 label。
+
+当前已实现的 ChEMBL reasoning tasks：
+
+```text
+tools/chembl_tool/tasks/bbb_martins/
+tools/chembl_tool/tasks/bioavailability_ma/
+tools/chembl_tool/tasks/clintox/
+```
 
 当前 BBB 数据基础：
 
@@ -93,7 +105,7 @@ properties_compare
 mmp_structure_compare
 ```
 
-之前规划里的 `rdkit_properties`、`ml_pka` 不再作为独立 service tool 暴露；它们已经合并进 `molecule_properties`。`chembl_neighbors` 当前也不是常驻 service tool，也不是 DeepSeek 可调用 tool。BBB neighbor retrieval 仍在 `tools/chembl_tool/tasks/bbb_martins/retrieve_neighbors.py` 中，由 `run_reasoning_pipeline.py` 在调用 LLM 前预取并注入为 group evidence context；后续需要时再包装成 service tool 或 task endpoint。
+之前规划里的 `rdkit_properties`、`ml_pka` 不再作为独立 service tool 暴露；它们已经合并进 `molecule_properties`。`chembl_neighbors` 当前也不是常驻 service tool，也不是 DeepSeek 可调用 tool。ChEMBL neighbor retrieval 仍由各 task 的 `retrieve_neighbors.py` / `run_reasoning_pipeline.py` 在调用 LLM 前预取并注入为 group evidence context；后续需要时再包装成 service tool 或 task endpoint。
 
 ## LLM 可见输出约定
 
@@ -152,7 +164,8 @@ screen_assays.py
 
 rescore_outputs.py
   对已有 candidate CSV 重打分，适合规则变严、重排 tier 或调整阈值；如果规则变宽，
-  需要重新跑 screen_assays.py。
+  需要重新跑 screen_assays.py。支持 `--only-filter-activities`，用于 candidate 已经确定、
+  只需要按现有 candidate 重新过滤 activity evidence 的场景。
 
 summarize_outputs.py / assay_report.py
   生成 health check 和 Markdown report。
@@ -160,6 +173,7 @@ summarize_outputs.py / assay_report.py
 evidence_library.py
   从 assay candidates + activity evidence 构建 molecule-level evidence rows、RDKit fingerprint
   和 neighbor index。task 只配置输入路径、输出文件名、index version 和 assign_endpoint_group。
+  支持 `--workers` 并行标准化 molecule / 构建 index，长任务进度会打印 elapsed、rate 和 ETA。
 
 retrieve_neighbors.py
   对每个 Tier.endpoint_group 做 analog retrieval，包含 exact-molecule 排除、Tanimoto ranking、
@@ -171,7 +185,9 @@ chembl_exact_context.py
 
 reasoning_batch.py
   多分子 batch orchestration，包括 molecule 级并行、日志、trace 合并、断点续跑、
-  predictions/metrics/report 输出。
+  predictions/metrics/report 输出。支持 `--groups` 透传给 task pipeline，用于 targeted
+  group smoke test；metrics 包含 positive-class precision/recall/F1、confusion matrix 和
+  prediction distribution。
 ```
 
 典型 task wrapper 文件：
@@ -184,6 +200,7 @@ report.py
 build_evidence_library.py
 retrieve_neighbors.py
 chembl_exact_context.py
+run_reasoning_pipeline.py
 run_reasoning_batch.py
 ```
 
@@ -207,12 +224,20 @@ python -m tools.chembl_tool.tasks.<task_name>.rescore_outputs \
   --min-score 40 \
   --filter-activities
 
+# candidate 已经确定时，只重新过滤 activity evidence
+python -m tools.chembl_tool.tasks.<task_name>.rescore_outputs \
+  --in-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/raw \
+  --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/<version> \
+  --only-filter-activities
+
 # 生成 health check
 python -m tools.chembl_tool.tasks.<task_name>.summarize_outputs \
   --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/<version>
 
 # 构建 evidence library 和 neighbor index
-python -m tools.chembl_tool.tasks.<task_name>.build_evidence_library
+python -m tools.chembl_tool.tasks.<task_name>.build_evidence_library \
+  --workers 128 \
+  --progress-every 50000
 
 # 检索 analog neighbors
 python -m tools.chembl_tool.tasks.<task_name>.retrieve_neighbors \
@@ -226,6 +251,12 @@ python -m tools.chembl_tool.tasks.<task_name>.run_reasoning_batch \
   --parallelism 1 \
   --group-workers 4 \
   --batch-id <batch_id>
+```
+
+需要只跑少数 endpoint groups 做 debug / smoke 时，给 pipeline 或 batch 加：
+
+```bash
+--groups "Tier 3.some_endpoint_group" "Tier 4.another_endpoint_group"
 ```
 
 断点续跑统一使用：
@@ -266,6 +297,156 @@ bash tools/trace_viewer/start_viewer.sh \
   8776
 ```
 
+新增 task 时必须检查 `tools/trace_viewer/viewer.html` 是否已经适配该 task 的 structured output。
+尤其要确认 final prediction 字段、`key_evidence` 中 task-specific effect 字段
+（例如 `effect_on_bbb_reasoning`、`effect_on_bioavailability_reasoning`、
+`effect_on_clintox_reasoning`）和新增 summary 字段会被正确渲染；否则 trace 原始 JSON 有值，
+viewer 页面也可能显示为空。
+
+## ChEMBL assay activity transfer benchmark
+
+这个独立 benchmark 用来研究：在同一个 ChEMBL assay endpoint 中，只根据两个分子的结构相似度，
+能否判断 activity 是否可以从 neighbor transfer 到 query。第一版不调用 LLM，只建立
+Tanimoto threshold baseline，作为后续 DeepSeek / 其他 LLM assay-transfer 推理的最低对照。
+
+代码入口：
+
+```text
+tools/chembl_tool/activity_transfer_benchmark/
+  __init__.py
+  benchmark_mcs_runtime.py
+  run_benchmark.py
+```
+
+`run_benchmark.py` 的功能：
+
+```text
+1. 从 tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db 读取 ChEMBL activities。
+2. 连续值主分析只使用 pchembl_value，筛选 standard_relation='='、standard_flag=1，
+   默认排除 data_validity_comment 非空和 potential_duplicate=1 的记录。
+3. 在同一个 assay_id + standard_type 内聚合同一 molecule 的重复 pChEMBL 均值。
+4. 从 tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz 读取 Morgan fingerprint。
+5. 在每个 assay endpoint 内采样 molecule pairs，计算 Tanimoto 和 |delta pChEMBL|。
+6. 标签规则：|delta pChEMBL| <= 0.5 为 similar；>= 1.0 为 different；中间为 ambiguous。
+7. 扫描 Tanimoto threshold，输出 accuracy、macro-F1、balanced accuracy、precision/recall。
+8. 计算 assay-specific enrichment：每个 assay endpoint 内先算随机 pair 背景率，
+   再比较各 similarity bucket 的 similar-rate lift、fold lift 和 median-delta reduction。
+9. 可选 dynamic range filter：按 molecule-level pChEMBL range 和 IQR 过滤低信息量 assay endpoint。
+10. 辅助分析保守处理 binary activity_comment，只映射明确 active / inactive 类 comment。
+11. 生成 TSV/GZ 数据、metrics、SVG 图表和中文 report。
+```
+
+`benchmark_mcs_runtime.py` 的功能：
+
+```text
+从 continuous_pairs.tsv.gz 按 similarity bucket 抽样 pair，用 RDKit FindMCS 计算
+MCS atom coverage，并在多进程下估算全量 pair 的 MCS 计算耗时。worker 会把
+OMP_NUM_THREADS / MKL_NUM_THREADS / OPENBLAS_NUM_THREADS / RDKIT_NUM_THREADS 等设为 1，
+避免 RDKit 或底层库内部线程和外层进程并行互相争抢。长任务会向 stderr 输出进度：
+completed、rate、elapsed、ETA 和 timeout 数。
+全量 MCS 应使用 `--full-scan` 流式读取和写出结果，避免把全部 pair、task 和 result 都留在内存中。
+```
+
+MCS runtime 当前测试结果：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/mcs_runtime/
+
+dynamic_v1 continuous pairs: 1,989,152
+timeout=1s, workers=128, chunksize=1:
+  sampled 6,000 pairs, throughput ~490 pairs/s, full estimate ~1.1 h,
+  timeout rate ~16%.
+
+timeout=2s, workers=128, chunksize=1:
+  sampled 3,000 pairs, throughput ~285 pairs/s, full estimate ~1.9 h,
+  timeout rate ~13%.
+
+workers=256 did not materially improve over 128 in the sampled test, likely due to process scheduling
+and timeout-tail overhead. Prefer 128 workers first for full MCS runs.
+
+推荐全量命令：
+
+python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
+  --run-id dynamic_v1_mcs_full_t2_w128_stream \
+  --full-scan \
+  --workers 128 \
+  --timeout-s 2 \
+  --chunksize 1 \
+  --progress-every 10000
+```
+
+典型全量 baseline 命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.run_benchmark \
+  --run-id chembl36_activity_transfer_v1 \
+  --max-total-pairs 2000000 \
+  --max-pairs-per-assay 5000 \
+  --binary-max-total-pairs 500000 \
+  --workers 32
+```
+
+推荐 dynamic-range filtered 命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.run_benchmark \
+  --run-id chembl36_activity_transfer_dynamic_v1 \
+  --min-pchembl-range 2.0 \
+  --min-pchembl-iqr 0.75 \
+  --max-total-pairs 2000000 \
+  --max-pairs-per-assay 5000 \
+  --binary-max-total-pairs 500000 \
+  --workers 32
+```
+
+输出目录：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/<run_id>/
+  continuous_pairs.tsv.gz
+  continuous_assay_endpoint_summary.tsv
+  continuous_threshold_metrics.tsv
+  continuous_similarity_bucket_summary.tsv
+  continuous_assay_bucket_enrichment.tsv
+  continuous_enrichment_summary.tsv
+  binary_pairs.tsv.gz
+  binary_assay_endpoint_summary.tsv
+  binary_threshold_metrics.tsv
+  binary_similarity_bucket_summary.tsv
+  binary_assay_bucket_enrichment.tsv
+  binary_enrichment_summary.tsv
+  manifest.json
+  report_zh.md
+  figures/
+    threshold_metrics.svg
+    label_rates_by_bucket.svg
+    median_delta_by_bucket.svg
+    pair_counts_by_bucket.svg
+    delta_lift_similar_rate_by_bucket.svg
+    fold_lift_similar_rate_by_bucket.svg
+    median_delta_reduction_by_bucket.svg
+    binary_threshold_metrics.svg
+    binary_label_rates_by_bucket.svg
+    binary_delta_lift_similar_rate_by_bucket.svg
+```
+
+当前完整结果：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/chembl36_activity_transfer_v1/
+outputs/chembl_tool/activity_transfer_benchmark/chembl36_activity_transfer_dynamic_v1/
+```
+
+未过滤 v1 的连续值主分析包含约 40k assay-endpoints、约 198 万 sampled pairs。最佳单一
+Tanimoto threshold 约为 0.45，macro-F1 约 0.56。assay-specific enrichment 显示 close analog
+相对各自 assay 背景的 macro similar-rate lift 约为 +0.13，distant / very_distant 为负；
+结构相似度有弱到中等的 transfer 信号，但不应单独作为 activity transfer 判据。
+
+dynamic_v1 使用 `pchembl_range >= 2.0` 且 `pchembl_iqr >= 0.75`，连续值主分析保留约 20k
+assay-endpoints、约 199 万 sampled pairs。相比未过滤 v1，similar/different 标签更平衡，
+median |delta pChEMBL| 更高，close analog 的 macro similar-rate lift 约为 +0.16；
+这个版本更适合作为后续 LLM assay-transfer benchmark 的主数据。
+
 ## BBB 代码入口
 
 ```text
@@ -290,7 +471,8 @@ tools/chembl_tool/tasks/bbb_martins/run_reasoning_batch.py
 
 tools/trace_viewer/viewer.html
   本地 trace 可视化页面。支持选择 run、选择 molecule trace package、查看单个分子的
-  single/group/final messages、reasoning、tool calls 和 parsed JSON response。
+  single/group/final messages、reasoning、tool calls 和 parsed JSON response。新增 task
+  或新增 task-specific structured field 时，需要同步检查 viewer 渲染逻辑。
 
 tools/trace_viewer/start_viewer.sh
   启动通用 trace viewer 的静态 HTTP server。查看 standalone 单分子 run 时指向
@@ -298,6 +480,47 @@ tools/trace_viewer/start_viewer.sh
 
 tools/chembl_tool/tasks/bbb_martins/
   其他 BBB evidence 清洗、打分、报告和输出汇总脚本。
+```
+
+## ClinTox 代码入口
+
+ClinTox 的 task-specific 细节记录在：
+
+```text
+tools/chembl_tool/tasks/clintox/AGENTS.md
+```
+
+主要入口：
+
+```text
+tools/chembl_tool/tasks/clintox/constants.py
+  ClinTox label 和 prediction mapping。当前约定：Y=1 -> toxic，Y=0 -> non_toxic。
+
+tools/chembl_tool/tasks/clintox/rules.py
+  ClinTox assay screening 关键词、negative keywords、weak/context-dependent terms、
+  toxicology target genes 和 assay family 配置。
+
+tools/chembl_tool/tasks/clintox/scoring.py
+  ClinTox assay 保留/剔除和打分入口。screen_assays.py 和 rescore_outputs.py 都调用 scored_row()。
+
+tools/chembl_tool/tasks/clintox/endpoint_groups.py
+  ClinTox Tier.endpoint_group、evidence_direction、evidence_strength 和 endpoint assignment 规则。
+
+tools/chembl_tool/tasks/clintox/build_evidence_library.py
+  ClinTox evidence library 构建入口。默认读取 assay_screening/v6，输出
+  clintox_molecule_evidence.jsonl、clintox_neighbor_index.pkl 和 meta。
+
+tools/chembl_tool/tasks/clintox/retrieve_neighbors.py
+  ClinTox analog retrieval 入口。默认 top-k-per-group=3、min-similarity=0.3。
+
+tools/chembl_tool/tasks/clintox/run_reasoning_pipeline.py
+  ClinTox 单分子 reasoning pipeline：retrieval prefetch、single-molecule branch、group-level
+  并发 reasoning、final summary、trace 保存，以及 final-only rerun。支持 `--groups` 做 targeted
+  endpoint-group smoke test。
+
+tools/chembl_tool/tasks/clintox/run_reasoning_batch.py
+  ClinTox 批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、
+  report、logs、runs 和 combined trace。
 ```
 
 ## BBB evidence 分组标准
@@ -854,7 +1077,7 @@ batch 断点续跑使用 `--skip-existing`。用同一个 `--batch-id` 重新运
 存在则认为该 molecule 已完成并跳过，不覆盖已有 stdout/stderr log；不存在则重新运行该 molecule。
 因此中断后的 partial run 会自动补跑，已完成结果会进入新的 predictions、metrics、report 和
 batch `trace_messages.jsonl` 汇总。这个逻辑由 `tools/chembl_tool/common/task_workflows/reasoning_batch.py`
-统一实现，BBB_Martins 和 Bioavailability_Ma 共用。
+统一实现，BBB_Martins、Bioavailability_Ma 和 ClinTox 共用。
 
 批量输出：
 
@@ -887,6 +1110,10 @@ bash tools/trace_viewer/start_viewer.sh \
 
 viewer 可以选择 `<batch_id>`，再通过 `Molecule package` 下拉框切换分子。
 若传 `--no-save-trace`，不会生成 batch combined trace。
+
+注意：viewer 对常见字段有专门渲染逻辑。新增 task 时要同步适配
+`tools/trace_viewer/viewer.html`，至少检查 prediction 字段、final summary 字段和
+`key_evidence` 里的 task-specific effect 字段；否则后台 trace 正常保存，页面仍可能把对应列显示为空。
 
 ### LLM usage 与成本估算
 
@@ -1442,6 +1669,10 @@ positive/negative label mapping
 
 task-specific pipeline、retrieval、prompt 和 final schema 可以继续放在各自 task 目录中；
 当这些部分也稳定到足够通用时，再抽取公共模块。
+
+新增 task 的 trace schema 如果引入 task-specific 字段，也要同步检查
+`tools/trace_viewer/viewer.html`，确保 viewer 能显示新的 prediction、summary 和 key evidence
+effect 字段。
 
 ## 当前不做的事情
 

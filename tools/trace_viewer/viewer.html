@@ -391,7 +391,11 @@ function renderKeyEvidence(e){
   const activity = Array.isArray(e.activity_values) && e.activity_values.length
     ? `<div>${kv("activity_values", e.activity_values.join("\n"))}</div>`
     : "";
-  const effect = e.effect_on_bioavailability_reasoning ?? e.effect_on_bbb_reasoning ?? e.effect_on_reasoning;
+  const effect =
+    e.effect_on_clintox_reasoning ??
+    e.effect_on_bioavailability_reasoning ??
+    e.effect_on_bbb_reasoning ??
+    e.effect_on_reasoning;
   return `<div class="neighbor-card key-evidence-card">
     <div>
       ${e.similarity != null ? `<span class="badge">sim ${esc(e.similarity)}</span>` : ""}

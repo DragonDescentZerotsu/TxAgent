@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import csv
 import gzip
 import json
@@ -52,7 +53,12 @@ def main(config: EvidenceLibraryConfig, argv: list[str] | None = None) -> int:
     _log(f"loaded assay metadata rows={len(assays):,}")
 
     _log(f"building evidence rows: {args.activities_csv}")
-    evidence_rows = build_evidence_rows(Path(args.activities_csv), assays, config.assign_endpoint_group)
+    evidence_rows = build_evidence_rows(
+        Path(args.activities_csv),
+        assays,
+        config.assign_endpoint_group,
+        progress_every=args.progress_every,
+    )
     _log(f"built evidence rows={len(evidence_rows):,}")
 
     needed_molecule_ids = {row["molecule_chembl_id"] for row in evidence_rows if row.get("molecule_chembl_id")}
@@ -61,13 +67,19 @@ def main(config: EvidenceLibraryConfig, argv: list[str] | None = None) -> int:
         fps_path = Path(args.chembl_fps)
         if fps_path.exists():
             _log(f"loading precomputed ChEMBL fps for evidence molecules: {fps_path}")
-            fps_by_molecule = _load_fps_subset(fps_path, needed_molecule_ids)
+            fps_by_molecule = _load_fps_subset(fps_path, needed_molecule_ids, progress_every=args.progress_every)
             _log(f"loaded precomputed fps={len(fps_by_molecule):,}")
         else:
             _log(f"precomputed fps path does not exist; falling back to SMILES fingerprints: {fps_path}")
 
     _log("building neighbor index")
-    index = build_neighbor_index(evidence_rows, fps_by_molecule=fps_by_molecule, index_version=config.index_version)
+    index = build_neighbor_index(
+        evidence_rows,
+        fps_by_molecule=fps_by_molecule,
+        index_version=config.index_version,
+        progress_every=args.progress_every,
+        workers=args.workers,
+    )
     _log(
         "built neighbor index "
         f"molecules={len(index['molecules']):,} groups={len(index['group_to_molecule_indices']):,}"
@@ -88,6 +100,7 @@ def main(config: EvidenceLibraryConfig, argv: list[str] | None = None) -> int:
         "n_index_molecules": len(index["molecules"]),
         "n_groups": len(index["group_to_molecule_indices"]),
         "fingerprint": fingerprint_metadata(),
+        "workers": args.workers,
         "elapsed_s": round(time.monotonic() - started, 3),
     }
     meta_json.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -102,10 +115,14 @@ def build_evidence_rows(
     activities_csv: Path,
     assays: dict[str, dict[str, Any]],
     assign_endpoint_group: Callable[[dict[str, Any]], Any],
+    *,
+    progress_every: int = 0,
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    total_rows = max(0, _line_count(activities_csv) - 1) if progress_every else 0
+    started = time.monotonic()
     with activities_csv.open(newline="", encoding="utf-8", errors="replace") as handle:
-        for activity in csv.DictReader(handle):
+        for i, activity in enumerate(csv.DictReader(handle), start=1):
             assay = assays.get(activity.get("assay_chembl_id", ""), {})
             row = _merged_evidence_row(activity, assay)
             assignment = assign_endpoint_group(row)
@@ -120,6 +137,10 @@ def build_evidence_rows(
                 }
             )
             rows.append(row)
+            if progress_every and i % progress_every == 0:
+                _log(_progress_message("evidence rows", i, total_rows, started, extra=f"kept={len(rows):,}"))
+    if progress_every and rows:
+        _log(_progress_message("evidence rows", len(rows), total_rows, started, extra=f"kept={len(rows):,}"))
     return rows
 
 
@@ -128,6 +149,8 @@ def build_neighbor_index(
     fps_by_molecule: dict[str, DataStructs.ExplicitBitVect] | None = None,
     *,
     index_version: str,
+    progress_every: int = 0,
+    workers: int = 1,
 ) -> dict[str, Any]:
     fps_by_molecule = fps_by_molecule or {}
     molecule_rows: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -143,14 +166,22 @@ def build_neighbor_index(
     evidence_by_molecule_group: dict[str, dict[str, list[dict[str, Any]]]] = {}
     group_to_molecule_indices: dict[str, list[int]] = defaultdict(list)
 
-    for molecule_id in sorted(molecule_rows):
+    molecule_ids = sorted(molecule_rows)
+    standardized = _standardize_molecules_for_index(
+        molecule_ids,
+        molecule_rows,
+        fps_by_molecule,
+        workers=workers,
+        progress_every=progress_every,
+    )
+    for molecule_id in molecule_ids:
         rows = molecule_rows[molecule_id]
         smiles = _first_nonempty(row.get("canonical_smiles") for row in rows)
-        canonical_smiles, inchi_key = standardize_smiles(smiles)
+        canonical_smiles, inchi_key, fallback_fp = standardized.get(molecule_id, ("", "", None))
         if molecule_id in fps_by_molecule:
             fp = fps_by_molecule[molecule_id]
         else:
-            _, _, fp = standardize_smiles_and_fp(smiles)
+            fp = fallback_fp
         if fp is None:
             continue
         for row in rows:
@@ -183,6 +214,57 @@ def build_neighbor_index(
         "group_to_molecule_indices": dict(group_to_molecule_indices),
         "evidence_by_molecule_group": evidence_by_molecule_group,
     }
+
+
+def _standardize_molecules_for_index(
+    molecule_ids: list[str],
+    molecule_rows: dict[str, list[dict[str, Any]]],
+    fps_by_molecule: dict[str, DataStructs.ExplicitBitVect],
+    *,
+    workers: int,
+    progress_every: int,
+) -> dict[str, tuple[str, str, DataStructs.ExplicitBitVect | None]]:
+    tasks = [
+        (
+            molecule_id,
+            _first_nonempty(row.get("canonical_smiles") for row in molecule_rows[molecule_id]),
+            molecule_id not in fps_by_molecule,
+        )
+        for molecule_id in molecule_ids
+    ]
+    total = len(tasks)
+    started = time.monotonic()
+    results: dict[str, tuple[str, str, DataStructs.ExplicitBitVect | None]] = {}
+    workers = max(1, int(workers or 1))
+    if workers == 1 or total < 2:
+        for i, task in enumerate(tasks, start=1):
+            molecule_id, canonical_smiles, inchi_key, fp = _standardize_molecule_task(task)
+            results[molecule_id] = (canonical_smiles, inchi_key, fp)
+            if progress_every and i % progress_every == 0:
+                _log(_progress_message("index molecule standardization", i, total, started))
+    else:
+        chunksize = max(1, min(1000, total // (workers * 4) if total >= workers * 4 else 1))
+        _log(f"standardizing index molecules with workers={workers} chunksize={chunksize}")
+        with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
+            for i, result in enumerate(executor.map(_standardize_molecule_task, tasks, chunksize=chunksize), start=1):
+                molecule_id, canonical_smiles, inchi_key, fp = result
+                results[molecule_id] = (canonical_smiles, inchi_key, fp)
+                if progress_every and i % progress_every == 0:
+                    _log(_progress_message("index molecule standardization", i, total, started))
+    if progress_every:
+        _log(_progress_message("index molecule standardization", total, total, started))
+    return results
+
+
+def _standardize_molecule_task(
+    task: tuple[str, str, bool],
+) -> tuple[str, str, DataStructs.ExplicitBitVect | None]:
+    molecule_id, smiles, needs_fp = task
+    if needs_fp:
+        canonical_smiles, inchi_key, fp = standardize_smiles_and_fp(smiles)
+        return molecule_id, canonical_smiles, inchi_key, fp
+    canonical_smiles, inchi_key = standardize_smiles(smiles)
+    return molecule_id, canonical_smiles, inchi_key, None
 
 
 def fingerprint_metadata() -> dict[str, Any]:
@@ -277,11 +359,17 @@ def _merged_evidence_row(activity: dict[str, Any], assay: dict[str, Any]) -> dic
     return row
 
 
-def _load_fps_subset(path: Path, molecule_ids: set[str]) -> dict[str, DataStructs.ExplicitBitVect]:
+def _load_fps_subset(
+    path: Path,
+    molecule_ids: set[str],
+    *,
+    progress_every: int = 0,
+) -> dict[str, DataStructs.ExplicitBitVect]:
     fps: dict[str, DataStructs.ExplicitBitVect] = {}
     opener = gzip.open if path.suffix == ".gz" else open
+    started = time.monotonic()
     with opener(path, "rt", encoding="utf-8", errors="replace") as handle:
-        for line in handle:
+        for i, line in enumerate(handle, start=1):
             if not line or line.startswith("#"):
                 continue
             parts = line.rstrip("\n").split("\t")
@@ -292,6 +380,10 @@ def _load_fps_subset(path: Path, molecule_ids: set[str]) -> dict[str, DataStruct
                 fps[molecule_id] = DataStructs.CreateFromFPSText(fps_text)
                 if len(fps) == len(molecule_ids):
                     break
+            if progress_every and i % progress_every == 0:
+                _log(_fps_progress_message(i, len(fps), len(molecule_ids), started))
+    if progress_every:
+        _log(_fps_progress_message(i if "i" in locals() else 0, len(fps), len(molecule_ids), started))
     return fps
 
 
@@ -302,6 +394,63 @@ def _write_jsonl(path: Path, rows: Iterable[dict[str, Any]]) -> int:
             handle.write(json.dumps(row, ensure_ascii=False, default=str) + "\n")
             count += 1
     return count
+
+
+def _line_count(path: Path) -> int:
+    with path.open("rb") as handle:
+        return sum(1 for _ in handle)
+
+
+def _progress_message(
+    label: str,
+    done: int,
+    total: int | None,
+    started: float,
+    *,
+    extra: str = "",
+) -> str:
+    elapsed = max(0.001, time.monotonic() - started)
+    rate = done / elapsed
+    parts = [f"{label} processed={done:,}"]
+    if total:
+        pct = 100 * done / total
+        remaining = max(0, total - done)
+        eta_s = remaining / rate if rate > 0 else 0
+        parts.append(f"total={total:,} pct={pct:.1f}% eta={_format_duration(eta_s)}")
+    parts.append(f"elapsed={_format_duration(elapsed)} rate={rate:,.1f}/s")
+    if extra:
+        parts.append(extra)
+    return " ".join(parts)
+
+
+def _format_duration(seconds: float) -> str:
+    seconds = max(0, int(seconds))
+    hours, rem = divmod(seconds, 3600)
+    minutes, secs = divmod(rem, 60)
+    if hours:
+        return f"{hours:d}h{minutes:02d}m{secs:02d}s"
+    if minutes:
+        return f"{minutes:d}m{secs:02d}s"
+    return f"{secs:d}s"
+
+
+def _fps_progress_message(scanned: int, matched: int, needed: int, started: float) -> str:
+    elapsed = max(0.001, time.monotonic() - started)
+    scan_rate = scanned / elapsed
+    match_rate = matched / elapsed
+    parts = [
+        f"fps scan lines={scanned:,}",
+        f"matched={matched:,}/{needed:,}",
+        f"elapsed={_format_duration(elapsed)}",
+        f"scan_rate={scan_rate:,.1f}/s",
+        f"match_rate={match_rate:,.1f}/s",
+    ]
+    if needed and matched:
+        remaining = max(0, needed - matched)
+        parts.append(f"eta_by_match_rate={_format_duration(remaining / match_rate)}")
+    else:
+        parts.append("eta_by_match_rate=unknown")
+    return " ".join(parts)
 
 
 def _first_nonempty(values: Iterable[Any]) -> str:
@@ -319,6 +468,8 @@ def _parse_args(config: EvidenceLibraryConfig, argv: list[str] | None) -> argpar
     parser.add_argument("--out-dir", default=config.default_out_dir)
     parser.add_argument("--chembl-fps", default=DEFAULT_CHEMBL_FPS)
     parser.add_argument("--no-chembl-fps", action="store_true", help="Compute all fingerprints from SMILES.")
+    parser.add_argument("--progress-every", type=int, default=100000, help="Print progress every N rows; 0 disables.")
+    parser.add_argument("--workers", type=int, default=1, help="Parallel workers for RDKit molecule standardization/indexing.")
     return parser.parse_args(argv)
 
 

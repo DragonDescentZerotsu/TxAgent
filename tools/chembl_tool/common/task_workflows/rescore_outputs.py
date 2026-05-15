@@ -48,6 +48,24 @@ def main(config: RescoreConfig, argv: list[str] | None = None) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     input_candidates = in_dir / config.candidates_filename
+    if args.only_filter_activities:
+        activity_in = in_dir / config.activity_evidence_filename
+        existing_candidates = out_dir / config.candidates_filename
+        if not existing_candidates.exists():
+            raise SystemExit(f"Missing existing candidates for --only-filter-activities: {existing_candidates}")
+        if not activity_in.exists():
+            raise SystemExit(f"Missing input activity evidence: {activity_in}")
+        assay_ids = _candidate_assay_ids(existing_candidates)
+        count = _filter_activity_evidence(
+            activity_in,
+            out_dir / config.activity_evidence_filename,
+            assay_ids,
+        )
+        print(f"candidate_assays={len(assay_ids)}")
+        print(f"filtered_activity_rows={count}")
+        print(f"out_dir={out_dir}")
+        return 0
+
     rows = _read_candidate_rows(input_candidates)
     rescored: list[dict[str, Any]] = []
     for row in rows:
@@ -138,6 +156,11 @@ def _filter_activity_evidence(input_path: Path, output_path: Path, assay_ids: se
     return count
 
 
+def _candidate_assay_ids(path: Path) -> set[str]:
+    with path.open(newline="", encoding="utf-8") as handle:
+        return {str(row.get("assay_chembl_id") or "") for row in csv.DictReader(handle) if row.get("assay_chembl_id")}
+
+
 def _split_multi(value: object) -> list[str]:
     return [item.strip() for item in str(value or "").split("|") if item.strip()]
 
@@ -157,4 +180,9 @@ def _parse_args(config: RescoreConfig, argv: list[str] | None) -> argparse.Names
     parser.add_argument("--total-assays", type=int, default=1890749)
     parser.add_argument("--chembl-sqlite", default="tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db")
     parser.add_argument("--filter-activities", action="store_true")
+    parser.add_argument(
+        "--only-filter-activities",
+        action="store_true",
+        help="Reuse existing candidates in --out-dir and only filter activity evidence from --in-dir.",
+    )
     return parser.parse_args(argv)
