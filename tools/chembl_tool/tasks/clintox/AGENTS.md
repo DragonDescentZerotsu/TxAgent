@@ -11,6 +11,81 @@ batch/resume、viewer、cost 和目录规范统一记录在仓库根 `AGENTS.md`
 cellular stress、general cytotoxicity 和 safety-relevant off-target evidence，再交给 reasoning LLM
 判断 analog evidence 是否能 transfer 到 query molecule。
 
+当前 ClinTox 已进入归档状态。代码、evidence library、reasoning batch、trace 和 audit 工具保留，
+用于复现与案例分析；不再把 ClinTox macro-F1 作为当前 workflow 的主优化目标。
+
+归档结论：
+
+```text
+ClinTox 不太适合当前 setting 直接作为主 benchmark 分类任务。
+
+当前 workflow 擅长做 toxicity evidence retrieval 和 mechanistic risk explanation；
+但 ClinTox label 是高层 clinical toxicity / clinical failure 二分类，而 ChEMBL 中检索到的
+evidence 多数是 heterogeneous safety liability：
+  hERG / QT / 5-HT2B / receptor binding
+  CYP / transporter / DDI / exposure liability
+  generic cell viability / cytotoxicity
+  DILI / BSEP / mitochondrial hepatocyte stress
+  LD50 / MTD / NOAEL / repeat-dose toxicology
+
+这些 evidence 与 clinical toxicity 有关系，但很多不是 ClinTox-positive 的充分条件。
+因此系统容易把机制性 liability 或 broad medicinal-chemistry toxicity risk 上升为 toxic，
+导致 FP 偏多；同时部分 positive examples 需要很窄的 clinical-label ontology 才能稳定判中。
+```
+
+已归档的主要评估结果：
+
+```text
+v7 full final-only + missing rerun 合并估计:
+  batch: outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_full_prompt_v7_final_only_from_v2
+  fill:  outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_full_prompt_v7_missing_rerun_from_v2
+  TN=220 FP=48 FN=12 TP=6
+  macro-F1 ~0.523
+  positive F1 ~0.167
+
+v8 keygroups smoke:
+  batch: outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_group_prompt_v8_keygroups_smoke
+  indices: 22 40 56 65 73 84 124 170 250
+  TN=1 FP=3 FN=1 TP=4
+  macro-F1=0.50
+  positive recall=0.80
+```
+
+`keygroups` 是一次受控 smoke test，不是正式默认流程。它手动只选择更接近 ClinTox label 的
+high-value endpoint groups，例如：
+
+```text
+Tier 1 clinical_toxicity_or_trial_failure
+Tier 1 human_maximum_tolerated_dose_or_safety_margin
+Tier 2 in_vivo_acute_or_repeat_dose_toxicity
+Tier 2 in_vivo_ld50_lc50_mtd_noael_loael
+Tier 3 hepatic_dili_or_liver_injury
+Tier 3 hepatic_cell_injury_or_steatosis
+Tier 3 hepatic_mitochondrial_or_oxidative_stress
+Tier 3 hepatic_bile_acid_transport_or_bsep
+Tier 3 cardiac_herg_or_ikr_block
+Tier 4 dna_damage_response
+Tier 6 general_cytotoxicity_or_viability
+Tier 7 cardiac_or_cns_offtarget_binding
+Tier 7 cytochrome_p450_inhibition_or_induction
+Tier 7 transporter_ddi_or_exposure_liability
+```
+
+keygroups 实验说明 final 输入选择/压缩有价值：它救回了 `idx73` 和 `idx250`，保住了
+`idx84` 和 `idx170`，并把 `idx22` 从 FP 修成 TN。但它没有稳定解决 `idx40`、`idx56`、
+`idx65` 的 FP，也没有救回 `idx124`。后续如果重启 ClinTox，优先做自动 final-context
+compression/filter，而不是继续堆 final prompt：
+
+```text
+direct severe clinical anchor
+in vivo dose-limiting anchor
+mechanistic liability
+weak/background context
+```
+
+其中 hERG、5-HT2B、CYP、transporter、DDI、generic cytotoxicity 等机制性 liability
+应主要作为 risk explanation 或 uncertainty，不应单独决定 `clintox_prediction=toxic`。
+
 当前本地数据：
 
 ```text
@@ -119,6 +194,11 @@ run_reasoning_pipeline.py
 run_reasoning_batch.py
   ClinTox 批量 reasoning wrapper。复用 common reasoning_batch.py，配置 input、batch root、
   neighbor index、pipeline module、prediction field 和 toxic/non_toxic label mapping。
+
+audit_reasoning_batch.py
+  ClinTox batch error audit。读取已有 batch 输出并生成 `audit/report.md`、`audit/audit_summary.json`、
+  `audit/error_cases.csv` 和 `audit/group_direction_by_confusion.csv`；支持用 `--fill-missing-from`
+  把 missing/error final-only 补跑 batch 按 query_index 合并进诊断，不修改原 batch 结果。
 ```
 
 下面这些文件应是 task-specific 配置 wrapper，公共实现见根 `AGENTS.md` 的
@@ -208,6 +288,14 @@ safety-relevant off-target pharmacology:
    和 assay mechanism 都有很强药化理由。
 4. "inhibition"、"activity"、"viability"、"growth"、"ratio" 等 endpoint 必须结合 assay
    context 解释，不能单独决定 evidence_direction。
+5. hERG/QT、5-HT2B、AChE、GABA/NMDA、sodium/calcium channel、CYP 和 transporter evidence
+   应先解释为 pharmacology / DDI / exposure / monitoring liability；只有同一 group 内有明确的严重
+   clinical 或 in vivo toxicity endpoint 且 transferability 足够强时，才可上升为 clinical toxicity。
+6. animal LD50/TD50/MTD/NOAEL 必须报告 species、route、dose、duration 和 endpoint severity；
+   class pharmacology 或 therapeutic mechanism 本身不能替代 ClinTox 正类证据。
+7. generic cytotoxicity / cell viability 必须区分 intended antiproliferative/anti-infective efficacy、
+   nonspecific cell stress 和 safety cytotoxicity。缺少正常细胞/安全 counterscreen 或强 toxicophore
+   解释时，不应直接作为 clinical toxicity。
 ```
 
 ## Evidence library 字段
@@ -1461,12 +1549,30 @@ final prompt 规则：
 Return compact complete JSON.
 Use clintox_prediction='toxic' for ClinTox-positive molecules corresponding to evaluation label 1,
 and clintox_prediction='non_toxic' for ClinTox-negative molecules corresponding to evaluation label 0.
-Use the single-molecule analysis as a structural/physicochemical prior.
+Use the single-molecule analysis only as a physicochemical plausibility prior; it cannot by itself determine
+clintox_prediction.
 Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.
-Do not use distant_analog or very_distant_analog neighbors as positive or negative toxicity evidence unless
-the shared scaffold, toxicophore and assay mechanism make a strong medicinal chemistry case.
-Use only the provided single-molecule analysis and group evidence. If you recognize the molecule,
-ignore that recognition.
+Interpret ClinTox-positive as severe or development-relevant clinical toxicity, not broad
+medicinal-chemistry toxicity risk.
+Distinguish severe clinical toxicity evidence from ordinary adverse-effect, safety-liability, or mechanistic
+concern. Safety-liability signals can support toxic only when they are strong, transferable, clinically
+consequential, and not contradicted by more direct evidence.
+Severe human toxicity, clinical trial toxicity or termination, withdrawal/black-box-level toxicity, fatal or
+severe in vivo toxicity, strong genotoxic/carcinogenic liability, or close-analog evidence of severe organ
+injury can support clintox_prediction='toxic'.
+Do not treat ordinary adverse effects, routine liver enzyme elevation, weak or moderate DILI concern, mild
+animal toxicity, generic in vitro cytotoxicity, or broad safety warnings as sufficient for
+clintox_prediction='toxic' by themselves.
+hERG block, transporter inhibition, CYP inhibition, receptor binding, nuclear receptor activity, and indirect
+mechanistic assays are safety-liability concerns unless the group analysis explains why potency,
+transferability, and clinical relevance are strong enough to support clinical toxicity.
+Do not convert drug_interaction_or_exposure_risk or mechanistic_context into clintox_prediction='toxic' by itself.
+When evidence is mixed, weigh severity, directness, transferability, and assay relevance together. Do not let
+many low-severity liability signals outvote more direct negative or non-severe evidence.
+Do not use distant_analog or very_distant_analog neighbors as positive or negative clinical toxicity evidence
+unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.
+Use only the provided single-molecule analysis and group evidence. If you recognize the molecule or therapeutic
+class, ignore that recognition.
 ```
 
 ## Exact ChEMBL context

@@ -314,6 +314,7 @@ Tanimoto threshold baseline，作为后续 DeepSeek / 其他 LLM assay-transfer 
 ```text
 tools/chembl_tool/activity_transfer_benchmark/
   __init__.py
+  analyze_mcs_results.py
   benchmark_mcs_runtime.py
   run_benchmark.py
 ```
@@ -345,6 +346,17 @@ OMP_NUM_THREADS / MKL_NUM_THREADS / OPENBLAS_NUM_THREADS / RDKIT_NUM_THREADS 等
 避免 RDKit 或底层库内部线程和外层进程并行互相争抢。长任务会向 stderr 输出进度：
 completed、rate、elapsed、ETA 和 timeout 数。
 全量 MCS 应使用 `--full-scan` 流式读取和写出结果，避免把全部 pair、task 和 result 都留在内存中。
+如果 RDKit FindMCS 在最后少数 pair 上不返回，进程可能卡在 tail pending futures；
+此时先终止卡住进程，保留 `.tmp`，再用 `--finalize-existing` 从已有结果生成 summary/report
+和 `missing_result_indices.tsv`。
+```
+
+`analyze_mcs_results.py` 的功能：
+
+```text
+读取全量或 partial MCS TSV，排除 ambiguous label，扫描 mean MCS coverage threshold，
+并在同一批 observed pair 上重新扫描 Tanimoto threshold，输出 threshold metrics、
+MCS coverage bucket summary、Tanimoto x MCS heatmap、SVG 图表和中文报告。
 ```
 
 MCS runtime 当前测试结果：
@@ -373,6 +385,49 @@ python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
   --timeout-s 2 \
   --chunksize 1 \
   --progress-every 10000
+
+卡住后收尾命令：
+
+python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
+  --run-id dynamic_v1_mcs_full_t2_w128_stream \
+  --finalize-existing \
+  --workers 128 \
+  --timeout-s 2
+
+MCS threshold 分析命令：
+
+python -m tools.chembl_tool.activity_transfer_benchmark.analyze_mcs_results \
+  --run-id dynamic_v1_mcs_t2_analysis
+```
+
+当前 MCS full-scan partial 结果：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/mcs_runtime/dynamic_v1_mcs_full_t2_w128_stream/
+  mcs_sample_results.tsv.tmp
+  missing_result_indices.tsv
+  summary.json
+  report_zh.md
+
+完成 1,987,665 / 1,989,152 pairs，completion rate 99.9252%，missing 1,487。
+timeout=2s 的 observed timeout count 为 218,664，约 11.0%。
+```
+
+当前 MCS threshold 分析结果：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/mcs_analysis/dynamic_v1_mcs_t2_analysis/
+
+non-ambiguous usable pairs: 1,500,676
+best mean MCS coverage threshold: 0.70
+best MCS macro-F1: 0.5538
+best MCS balanced accuracy: 0.5542
+best Tanimoto threshold on same subset: 0.48
+best Tanimoto macro-F1 on same subset: 0.5688
+best Tanimoto balanced accuracy on same subset: 0.5689
+
+结论：mean MCS coverage 有 activity-transfer 信号，但单独做全局 threshold 时没有超过
+Tanimoto。它更适合后续作为 LLM / learned classifier 的补充特征，而不是替代 Tanimoto。
 ```
 
 典型全量 baseline 命令：
@@ -490,6 +545,60 @@ ClinTox 的 task-specific 细节记录在：
 tools/chembl_tool/tasks/clintox/AGENTS.md
 ```
 
+当前 ClinTox 状态是归档 / stress-test，而不是继续优化的主线任务。结论：
+
+```text
+ClinTox 可以复用当前 ChEMBL evidence retrieval + reasoning workflow，但不适合作为该系统的
+主要 benchmark 分类任务。
+
+核心原因是 label ontology 和 ChEMBL evidence ontology 不完全匹配：
+  ClinTox 的 Y=1/Y=0 是高层 clinical toxicity / clinical failure 类二分类；
+  ChEMBL 检索到的 evidence 更多是 heterogeneous toxicity liability，包括 hERG、5-HT2B、
+  CYP/transporter/DDI、cell viability、DILI、LD50、MTD、organ stress 等。
+
+这些 evidence 对 toxicity risk explanation 有价值，但很多并不等价于 ClinTox-positive。
+因此系统容易把机制性 liability 或 broad medicinal-chemistry risk 解释成 toxic，导致 FP 偏多。
+同时一些 ClinTox label 本身有边界噪声，例如 test set 中存在同 InChIKey connectivity
+但 label 相反的分子对。
+```
+
+已归档的主要结果：
+
+```text
+v7 full final-only, missing rerun 合并估计：
+  batch: outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_full_prompt_v7_final_only_from_v2
+  fill:  outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_full_prompt_v7_missing_rerun_from_v2
+  estimate: TN=220 FP=48 FN=12 TP=6, macro-F1 ~0.523, positive F1 ~0.167
+
+v8 keygroups smoke:
+  batch: outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_group_prompt_v8_keygroups_smoke
+  targeted 9 examples: TN=1 FP=3 FN=1 TP=4, macro-F1=0.50, positive recall=0.80
+
+keygroups 的含义：
+  手动只选择更接近 ClinTox label 的 high-value endpoint groups 进入 targeted smoke，
+  例如 clinical toxicity/MTD、in vivo toxicity/LD50/NOAEL、DILI、hepatic injury、
+  mitochondrial stress、DNA damage、general cytotoxicity，以及少量 off-target/CYP/transporter
+  作为背景。
+
+实验结论：
+  keygroups 能救回部分 positive examples（例如 idx73、idx250）并保住部分 TP
+  （例如 idx84、idx170），说明 final context selection/compression 是有效方向；
+  但 FP 仍然顽固（例如 idx40、idx56、idx65），idx124 仍不稳定。
+```
+
+后续维护原则：
+
+```text
+1. 保留 ClinTox 代码、AGENTS.md、audit 脚本和已产出的 batch 结果用于复现和案例分析。
+2. 不再继续围绕 ClinTox macro-F1 做 prompt 迭代，除非明确把目标改成 dataset-specific calibration。
+3. 如果未来重启 ClinTox，应优先做 final-context compression/filter，而不是继续堆 final prompt：
+   把 evidence 分成 direct severe clinical anchor、in vivo dose-limiting anchor、
+   mechanistic liability、weak/background context；机制性 liability 不能单独决定 toxic。
+4. ClinTox 更适合作为 toxicity evidence retrieval / mechanistic risk explanation 的 stress test，
+   不适合作为证明通用 workflow 有效性的主任务。主线任务应优先选择 label 与 ChEMBL evidence
+   语义更一致的 endpoint。
+```
+
 主要入口：
 
 ```text
@@ -521,6 +630,11 @@ tools/chembl_tool/tasks/clintox/run_reasoning_pipeline.py
 tools/chembl_tool/tasks/clintox/run_reasoning_batch.py
   ClinTox 批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、
   report、logs、runs 和 combined trace。
+
+tools/chembl_tool/tasks/clintox/audit_reasoning_batch.py
+  ClinTox batch 诊断入口。读取已有 predictions/final/group 输出，不重跑 LLM；汇总 FP/FN/TP/TN、
+  evidence category、group evidence direction/confidence/transferability、service/group errors，以及
+  test set 中同 InChIKey connectivity 但 label 相反的分子对。默认输出到目标 batch 的 `audit/`。
 ```
 
 ## BBB evidence 分组标准

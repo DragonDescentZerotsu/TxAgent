@@ -65,6 +65,42 @@ def main(argv: list[str] | None = None) -> int:
     pair_path = out_dir / "mcs_sample_results.tsv"
     summary_path = out_dir / "summary.json"
     report_path = out_dir / "report_zh.md"
+    missing_path = out_dir / "missing_result_indices.tsv"
+
+    if args.finalize_existing:
+        result_path = pair_path if pair_path.exists() else pair_path.with_suffix(pair_path.suffix + ".tmp")
+        if not result_path.exists():
+            raise FileNotFoundError(f"No existing result TSV found at {pair_path} or {result_path}")
+        log(f"finalizing existing result file: {result_path}")
+        started = time.perf_counter()
+        rows, observed_indices = read_result_rows(result_path)
+        bucket_totals, total_pairs = scan_pair_bucket_totals(Path(args.pairs), max_scan_pairs=args.max_scan_pairs)
+        missing_indices = write_missing_indices(missing_path, observed_indices, total_pairs)
+        wall_s = time.perf_counter() - started
+        summary = summarize_results(rows, bucket_totals, total_pairs, args.workers, wall_s)
+        summary["completion"] = {
+            "mode": "finalize_existing",
+            "result_file_is_partial": str(result_path).endswith(".tmp") or len(rows) < total_pairs,
+            "result_rows": len(rows),
+            "expected_pairs": total_pairs,
+            "missing_result_count": len(missing_indices),
+            "completion_rate": safe_div(len(rows), total_pairs),
+        }
+        summary["files"] = {
+            "sample_results": str(result_path),
+            "missing_result_indices": str(missing_path),
+            "summary": str(summary_path),
+            "report": str(report_path),
+        }
+        summary["parameters"] = vars(args)
+        summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8")
+        write_report(report_path, summary)
+        log(
+            "finalized existing results "
+            f"rows={len(rows):,}/{total_pairs:,} missing={len(missing_indices):,} "
+            f"report={report_path}"
+        )
+        return 0
 
     if args.full_scan:
         log(f"streaming all pairs from {args.pairs}")
@@ -142,6 +178,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--progress-every", type=int, default=10000)
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--max-scan-pairs", type=int, default=0, help="Optional scan limit for smoke tests.")
+    parser.add_argument(
+        "--finalize-existing",
+        action="store_true",
+        help="Build summary/report from an existing mcs_sample_results.tsv or .tmp file without running MCS.",
+    )
     return parser.parse_args(argv)
 
 
@@ -176,6 +217,57 @@ def sample_pairs(
     for bucket in SIMILARITY_BUCKETS:
         sampled.extend(reservoirs.get(bucket, []))
     return sampled, bucket_totals, total_pairs
+
+
+def scan_pair_bucket_totals(path: Path, *, max_scan_pairs: int) -> tuple[Counter, int]:
+    bucket_totals: Counter = Counter()
+    total_pairs = 0
+    with gzip.open(path, "rt", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            total_pairs += 1
+            bucket_totals[row["similarity_bucket"]] += 1
+            if max_scan_pairs and total_pairs >= max_scan_pairs:
+                break
+    return bucket_totals, total_pairs
+
+
+def read_result_rows(path: Path) -> tuple[list[dict[str, Any]], set[int]]:
+    rows: list[dict[str, Any]] = []
+    indices: set[int] = set()
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            normalized = normalize_result_row(row)
+            normalized["index"] = int(normalized["index"])
+            normalized["tanimoto"] = float(normalized["tanimoto"])
+            normalized["timed_out"] = parse_bool(normalized["timed_out"])
+            normalized["elapsed_s"] = float(normalized["elapsed_s"] or 0.0)
+            normalized["query_heavy_atoms"] = int(float(normalized["query_heavy_atoms"] or 0))
+            normalized["reference_heavy_atoms"] = int(float(normalized["reference_heavy_atoms"] or 0))
+            normalized["mcs_atoms"] = int(float(normalized["mcs_atoms"] or 0))
+            normalized["query_mcs_coverage"] = float(normalized["query_mcs_coverage"] or 0.0)
+            normalized["reference_mcs_coverage"] = float(normalized["reference_mcs_coverage"] or 0.0)
+            normalized["mean_mcs_coverage"] = float(normalized["mean_mcs_coverage"] or 0.0)
+            rows.append(normalized)
+            indices.add(int(normalized["index"]))
+    return rows, indices
+
+
+def write_missing_indices(path: Path, observed_indices: set[int], total_pairs: int) -> list[int]:
+    missing = [index for index in range(total_pairs) if index not in observed_indices]
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle, delimiter="\t")
+        writer.writerow(["index"])
+        for index in missing:
+            writer.writerow([index])
+    return missing
+
+
+def parse_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() in {"1", "true", "yes", "y"}
 
 
 def run_mcs_jobs(
@@ -431,7 +523,7 @@ def error_row(index: int, bucket: str, tanimoto: str, label: str, start: float, 
 
 def normalize_result_row(row: dict[str, Any]) -> dict[str, Any]:
     normalized = {field: row.get(field, "") for field in RESULT_FIELDS}
-    normalized["timed_out"] = bool(normalized["timed_out"])
+    normalized["timed_out"] = parse_bool(normalized["timed_out"])
     return normalized
 
 
@@ -562,6 +654,7 @@ def summarize_subset(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 def write_report(path: Path, summary: dict[str, Any]) -> None:
     overall = summary["overall"]
+    completion = summary.get("completion", {})
     lines = [
         "# MCS runtime benchmark 报告",
         "",
@@ -575,12 +668,27 @@ def write_report(path: Path, summary: dict[str, Any]) -> None:
         f"- observed-throughput full estimate: {format_seconds(float(overall['estimated_full_wall_s_observed_throughput']))}",
         f"- bucket-weighted ideal parallel estimate: {format_seconds(float(overall['bucket_weighted_estimated_parallel_s']))}",
         f"- timeout count: {int(overall['timeouts']):,}",
-        "",
-        "## By Bucket",
-        "",
-        "| bucket | sample n | total pairs | mean s/pair | p90 s | p99 s | timeout | mean MCS coverage |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
+    if completion:
+        lines.extend(
+            [
+                f"- completion mode: {completion.get('mode', 'unknown')}",
+                f"- result file is partial: {completion.get('result_file_is_partial', False)}",
+                f"- result rows / expected pairs: {int(completion['result_rows']):,} / {int(completion['expected_pairs']):,}",
+                f"- missing result count: {int(completion['missing_result_count']):,}",
+                f"- completion rate: {100.0 * float(completion['completion_rate']):.4f}%",
+                "- note: wall time and observed throughput are for finalizing existing TSV, not the original MCS run.",
+            ]
+        )
+    lines.extend(
+        [
+            "",
+            "## By Bucket",
+            "",
+            "| bucket | sample n | total pairs | mean s/pair | p90 s | p99 s | timeout | mean MCS coverage |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        ]
+    )
     for bucket in SIMILARITY_BUCKETS:
         stats = summary["by_bucket"][bucket]
         lines.append(
