@@ -316,7 +316,9 @@ tools/chembl_tool/activity_transfer_benchmark/
   __init__.py
   analyze_mcs_results.py
   benchmark_mcs_runtime.py
+  build_llm_eval_set.py
   run_benchmark.py
+  run_llm_benchmark.py
 ```
 
 `run_benchmark.py` 的功能：
@@ -357,6 +359,26 @@ completed、rate、elapsed、ETA 和 timeout 数。
 读取全量或 partial MCS TSV，排除 ambiguous label，扫描 mean MCS coverage threshold，
 并在同一批 observed pair 上重新扫描 Tanimoto threshold，输出 threshold metrics、
 MCS coverage bucket summary、Tanimoto x MCS heatmap、SVG 图表和中文报告。
+```
+
+`build_llm_eval_set.py` 的功能：
+
+```text
+从 dynamic_v1 continuous_pairs.tsv.gz 中抽取 LLM 小规模评估集。默认读取已有 MCS full-scan
+partial 结果，只保留有 observed MCS 的 non-ambiguous pairs，并按 label x Tanimoto bucket
+分层抽样。默认输出 3,000 pairs，similar/different 各 1,500，每个 similarity bucket 各 500。
+输出 JSONL/TSV、summary.json 和中文 report，供 LLM benchmark 复用。
+```
+
+`run_llm_benchmark.py` 的功能：
+
+```text
+用 OpenAI-compatible endpoint 跑 assay activity transfer LLM benchmark。默认模型为本地 vLLM
+host 的 gpt-oss-120b，也可跑 DeepSeek/OpenAI-compatible hosted endpoint；默认输入
+dynamic_v1_llm_3k/eval_pairs.jsonl。prompt 隐藏 query pChEMBL，只暴露 reference molecule 的
+pChEMBL、assay context、Tanimoto、bucket 和 MCS coverage。可选调用当前 tool server 中的
+mmp_structure_compare / properties_compare；输出 per-sample run JSON、predictions.jsonl、
+metrics.json、中文 report、model-vs-baseline SVG 图和 trace_viewer 可读的 trace_messages.jsonl。
 ```
 
 MCS runtime 当前测试结果：
@@ -428,6 +450,148 @@ best Tanimoto balanced accuracy on same subset: 0.5689
 
 结论：mean MCS coverage 有 activity-transfer 信号，但单独做全局 threshold 时没有超过
 Tanimoto。它更适合后续作为 LLM / learned classifier 的补充特征，而不是替代 Tanimoto。
+```
+
+当前 3K LLM eval set：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/llm_eval_sets/dynamic_v1_llm_3k/
+  eval_pairs.jsonl
+  eval_pairs.tsv
+  summary.json
+  report_zh.md
+
+samples: 3,000
+assay endpoints: 2,463
+label counts: similar 1,500 / different 1,500
+similarity buckets: 每个 bucket 500 pairs
+baseline on this intentionally balanced set:
+  Tanimoto>=0.50 macro-F1 0.4977, balanced accuracy 0.5020
+  Tanimoto>=0.48 macro-F1 0.4903, balanced accuracy 0.4963
+  MCS>=0.70 macro-F1 0.4941, balanced accuracy 0.4963
+```
+
+当前 gpt-oss-120b 3K LLM benchmark：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/llm_runs/gpt_oss_120b_dynamic_v1_llm_3k_tools/
+  manifest.json
+  predictions.jsonl
+  metrics.json
+  report_zh.md
+  figures/model_vs_baselines.svg
+  runs/
+
+model: gpt-oss-120b via local vLLM
+tool service: http://127.0.0.1:8765
+vLLM base URLs used: http://127.0.0.1:8001-8004/v1
+api key used for this local vLLM server: EMPTY
+n: 3,000, failed: 0, tool calls: 1,017
+wall time: ~15.2 min with --parallelism 16 across 4 vLLM ports
+usage: prompt_tokens 4,725,225; completion_tokens 1,651,970; total_tokens 6,377,195
+
+LLM metrics:
+  accuracy 0.5310
+  balanced accuracy 0.5310
+  macro-F1 0.5309
+
+same-set baselines:
+  Tanimoto>=0.50 macro-F1 0.4977
+  Tanimoto>=0.48 macro-F1 0.4903
+  MCS>=0.70 macro-F1 0.4941
+
+gray zone subset, Tanimoto 0.40-0.70:
+  n=818
+  LLM macro-F1 0.5390
+  Tanimoto>=0.50 macro-F1 0.4683
+
+结论：在这个刻意按 label 和 similarity bucket 平衡的 3K stress-test 上，
+gpt-oss-120b + tools 明显超过同集合里的简单 threshold baseline，但绝对性能仍然偏弱。
+这个 3K set 不是 full dynamic_v1 分布，不应直接和 full-data best Tanimoto macro-F1 ~0.569
+做一比一比较；它更适合作为 LLM 能否在困难样本上补充结构阈值的初版测试。
+```
+
+当前 DeepSeek-v4-pro 3K LLM benchmark：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/llm_runs/deepseek_v4_pro_dynamic_v1_llm_3k_tools_thinking/
+  manifest.json
+  predictions.jsonl
+  metrics.json
+  report_zh.md
+  trace_messages.jsonl
+  runs/
+
+model: deepseek-v4-pro via https://api.deepseek.com
+api key source: DEEPSEEK_API_KEY from .env
+tool service: http://127.0.0.1:8765
+n: 3,000, ok: 2,994, failed: 6, tool calls: 6,009
+wall time: ~81.8 min with --parallelism 60
+usage: prompt_tokens 13,141,595; completion_tokens 6,991,635; total_tokens 20,133,230
+reasoning_content saved: 2,994 / 2,994 ok samples
+
+LLM metrics:
+  accuracy 0.5471
+  balanced accuracy 0.5472
+  macro-F1 0.5378
+  similar recall 0.4052
+  different recall 0.6892
+
+same-success-subset baselines:
+  Tanimoto>=0.50 macro-F1 0.4981
+  MCS>=0.70 macro-F1 0.4941
+
+gray zone subset, Tanimoto 0.40-0.70:
+  n=818
+  LLM macro-F1 0.5090
+  Tanimoto>=0.50 macro-F1 0.4683
+
+结论：DeepSeek-v4-pro 是当前 3K stress-test overall 指标最高的 LLM run，
+macro-F1 0.5378 高于 gpt-oss-120b no-thinking 的 0.5309 和 thinking 的 0.5253。
+但提升很小，并且主要来自更保守地预测 different；similar recall 偏低。
+在更关键的 Tanimoto 0.40-0.70 灰区，DeepSeek 低于两个 gpt-oss run。
+考虑 tool calls、token 和耗时，当前性价比不如本地 gpt-oss。
+```
+
+构建 3K eval set 命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.build_llm_eval_set \
+  --run-id dynamic_v1_llm_3k
+```
+
+运行本地 gpt-oss-120b LLM benchmark 命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
+  --run-id gpt_oss_120b_dynamic_v1_llm_3k_tools \
+  --parallelism 16 \
+  --base-urls http://127.0.0.1:8001/v1,http://127.0.0.1:8002/v1,http://127.0.0.1:8003/v1,http://127.0.0.1:8004/v1 \
+  --max-tool-rounds 1 \
+  --max-tokens 1024 \
+  --timeout-s 180 \
+  --skip-existing \
+  --api-key EMPTY \
+  --progress-every 100
+```
+
+运行 DeepSeek-v4-pro thinking LLM benchmark / 断点续跑命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
+  --run-id deepseek_v4_pro_dynamic_v1_llm_3k_tools_thinking \
+  --model deepseek-v4-pro \
+  --base-url https://api.deepseek.com \
+  --env-file .env \
+  --api-key-env DEEPSEEK_API_KEY \
+  --parallelism 60 \
+  --max-tool-rounds 3 \
+  --max-tokens 20480 \
+  --timeout-s 300 \
+  --skip-existing \
+  --reasoning-effort high \
+  --enable-thinking \
+  --progress-every 100
 ```
 
 典型全量 baseline 命令：
