@@ -108,6 +108,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--embedding-cache-dir", type=Path, default=None)
     parser.add_argument("--minimol-source", type=Path, default=DEFAULT_MINIMOL_SOURCE)
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--embedding-batch-size", type=int, default=100)
@@ -210,8 +211,14 @@ def cache_path(output_dir: Path, split_name: str) -> Path:
     return output_dir / "embeddings" / f"{split_name}.pt"
 
 
+def embedding_cache_path(args: argparse.Namespace, split_name: str) -> Path:
+    if args.embedding_cache_dir is not None:
+        return args.embedding_cache_dir / f"{split_name}.pt"
+    return cache_path(args.output_dir, split_name)
+
+
 def featurize_split(split_name: str, split: SplitData, args: argparse.Namespace) -> torch.Tensor:
-    path = cache_path(args.output_dir, split_name)
+    path = embedding_cache_path(args, split_name)
     if path.exists() and not args.force_embed:
         payload = torch.load(path, map_location="cpu")
         if payload["smiles"] == split.smiles:

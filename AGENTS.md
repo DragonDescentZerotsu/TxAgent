@@ -3,7 +3,7 @@
 ## 当前目标
 
 本项目要构建一个可复用的分子证据检索与 reasoning 系统。BBB_Martins 是第一个概念验证任务；
-当前同一套 workflow 已扩展到 Bioavailability_Ma 和 ClinTox。整体流程是：给定一个 query molecule，
+当前同一套 workflow 已扩展到 Bioavailability_Ma、ClinTox 和 Skin_Reaction。整体流程是：给定一个 query molecule，
 先通过常驻 FastAPI 工具服务计算分子属性、结构差异和属性差异，再从 task-specific ChEMBL evidence
 library 中检索相似分子的实验读数，最后把工具输出和 assay evidence 交给 reasoning LLM，综合判断该
 task 的目标 label。
@@ -14,6 +14,7 @@ task 的目标 label。
 tools/chembl_tool/tasks/bbb_martins/
 tools/chembl_tool/tasks/bioavailability_ma/
 tools/chembl_tool/tasks/clintox/
+tools/chembl_tool/tasks/skin_reaction/
 ```
 
 当前 BBB 数据基础：
@@ -302,6 +303,157 @@ bash tools/trace_viewer/start_viewer.sh \
 （例如 `effect_on_bbb_reasoning`、`effect_on_bioavailability_reasoning`、
 `effect_on_clintox_reasoning`）和新增 summary 字段会被正确渲染；否则 trace 原始 JSON 有值，
 viewer 页面也可能显示为空。
+
+## MiniMol baseline
+
+MiniMol baseline 代码放在：
+
+```text
+baselines/minimol/
+  run_bioavailability_ma.py
+  run_direct_gpu_sweep.sh
+  run_hparam_sweep.py
+```
+
+`run_bioavailability_ma.py` 名字保留自第一次 Bioavailability_Ma 实验，但实际是通用 JSONL
+二分类 runner。输入 split 约定：
+
+```text
+train.jsonl / valid.jsonl / test.jsonl
+字段:
+  drug: SMILES
+  Y: 0/1 label
+```
+
+运行环境和实现注意事项：
+
+```text
+conda env: intern
+MiniMol 源码参考: /data1/tianang/Projects/minimol
+
+实际运行优先使用 intern 环境已安装的 minimol 包。源码目录中的
+minimol/ckpts/minimol_v1/state_dict.pth 当前是 Git LFS pointer，不是可直接 torch.load 的权重。
+
+runner 内部做了两个兼容 patch：
+  1. Graphium CPU/fake-graph featurization 默认 float16 会触发 scipy.sparse dtype 错误，
+     runner 在进程内强制用 float32 adjacency/pyg graph。
+  2. MiniMol checkpoint 早于 PyTorch 2.6 weights_only=True 默认值，初始化 MiniMol 时临时
+     以 weights_only=False 调用 torch.load。
+
+MiniMol featurization 设置 featurization_n_jobs=1，避免 joblib 子进程丢失上述进程内 patch。
+```
+
+评估口径：
+
+```text
+MiniMol embeddings + leaderboard-style TaskHead。
+每个 ensemble member 只用 train 训练，用 valid BCE loss 选 best epoch。
+默认 ensemble_size=5, epochs=25, threshold=0.5。
+accuracy / macro-F1 用 threshold=0.5；AUROC 用 probability score。
+valid-tuned threshold 指标也会写入 metrics.json，但主报告使用 fixed 0.5。
+```
+
+单任务 baseline 命令模板：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
+  --data-dir data/processed/<TaskName> \
+  --output-dir outputs/baselines/minimol/<task_name>
+```
+
+BBB_Martins 使用 MiniMol 原 `SWEEP_RESULTS['bbb_martins']` 超参：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
+  --data-dir data/processed/BBB_Martins \
+  --output-dir outputs/baselines/minimol/bbb_martins \
+  --hidden-dim 2048 \
+  --depth 3 \
+  --lr 0.0001
+```
+
+需要 GPU 状态或指定 GPU 时，必须在 sandbox 外运行；sandbox 内可能看不到 NVML / CUDA，
+导致 runner 退回 CPU。可靠做法是直接用 shell 显式绑定 GPU：
+
+```bash
+env CUDA_VISIBLE_DEVICES=4 /data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
+  --data-dir data/processed/ClinTox \
+  --output-dir outputs/baselines/minimol/clintox
+```
+
+ClinTox / Skin_Reaction 不在 MiniMol 原 `SWEEP_RESULTS` 表中。当前对这两个 task 的超参搜索使用
+MiniMol ADMET sweep 表里出现过的 11 个唯一 head 配置：
+
+```text
+(hidden_dim, depth, lr)
+(512, 3, 0.0001)
+(512, 3, 0.0003)
+(512, 4, 0.0003)
+(512, 4, 0.0005)
+(1024, 3, 0.0003)
+(1024, 3, 0.0005)
+(1024, 4, 0.0001)
+(1024, 4, 0.0005)
+(2048, 3, 0.0001)
+(2048, 4, 0.0003)
+(2048, 4, 0.0005)
+```
+
+GPU sweep 的可靠入口是直接 shell 脚本；它会复用已有 embedding cache，并用 `env CUDA_VISIBLE_DEVICES=<gpu>`
+直接启动每个训练 job：
+
+```bash
+baselines/minimol/run_direct_gpu_sweep.sh \
+  clintox \
+  data/processed/ClinTox \
+  outputs/baselines/minimol/clintox/embeddings \
+  outputs/baselines/minimol_sweeps_gpu \
+  4,5,6,7
+
+baselines/minimol/run_direct_gpu_sweep.sh \
+  skin_reaction \
+  data/processed/Skin_Reaction \
+  outputs/baselines/minimol/skin_reaction/embeddings \
+  outputs/baselines/minimol_sweeps_gpu \
+  4,5,6,7
+```
+
+`run_hparam_sweep.py` 是 stdlib Python launcher，但在当前环境里嵌套 `conda run` 时曾出现 CUDA
+不可见 / 退回 CPU 的情况；需要 GPU sweep 时优先用 `run_direct_gpu_sweep.sh`。
+
+当前 MiniMol baseline / sweep 结果：
+
+```text
+Bioavailability_Ma, fixed h=512 d=3 lr=0.0003:
+  output: outputs/baselines/minimol/bioavailability_ma/
+  test macro-F1 0.5674, accuracy 0.7813, AUROC 0.6721
+  MiniMol paper/README reports Bioavailability Ma AUROC 0.689 +/- 0.020, so this is close.
+
+BBB_Martins, MiniMol sweep config h=2048 d=3 lr=0.0001:
+  output: outputs/baselines/minimol/bbb_martins/
+  test macro-F1 0.8186, accuracy 0.8878, AUROC 0.9322
+
+ClinTox, default h=512 d=3 lr=0.0003:
+  output: outputs/baselines/minimol/clintox/
+  test macro-F1 0.5651, accuracy 0.9301, AUROC 0.6770
+
+ClinTox, 11-config GPU sweep selected by valid AUROC:
+  summary: outputs/baselines/minimol_sweeps_gpu/clintox/sweep_summary.json
+  selected h=512 d=3 lr=0.0001
+  valid AUROC 0.6969
+  test macro-F1 0.5745, accuracy 0.9371, AUROC 0.6347
+  Note: default h=512 d=3 lr=0.0003 has higher observed test AUROC 0.6770; do not use test to select config.
+
+Skin_Reaction, default h=512 d=3 lr=0.0003:
+  output: outputs/baselines/minimol/skin_reaction/
+  test macro-F1 0.4864, accuracy 0.5854, AUROC 0.5872
+
+Skin_Reaction, 11-config GPU sweep selected by valid AUROC:
+  summary: outputs/baselines/minimol_sweeps_gpu/skin_reaction/sweep_summary.json
+  selected h=1024 d=4 lr=0.0001
+  valid AUROC 0.7475
+  test macro-F1 0.5795, accuracy 0.6098, AUROC 0.6055
+```
 
 ## ChEMBL assay activity transfer benchmark
 
@@ -799,6 +951,63 @@ tools/chembl_tool/tasks/clintox/audit_reasoning_batch.py
   ClinTox batch 诊断入口。读取已有 predictions/final/group 输出，不重跑 LLM；汇总 FP/FN/TP/TN、
   evidence category、group evidence direction/confidence/transferability、service/group errors，以及
   test set 中同 InChIKey connectivity 但 label 相反的分子对。默认输出到目标 batch 的 `audit/`。
+```
+
+## Skin_Reaction 代码入口
+
+Skin_Reaction 的 task-specific 细节记录在：
+
+```text
+tools/chembl_tool/tasks/skin_reaction/AGENTS.md
+```
+
+当前状态：
+
+```text
+已完成 task wrapper、assay scoring、endpoint grouping、evidence library、neighbor retrieval、
+single/group/final reasoning pipeline 和 batch wrapper。
+
+当前 label mapping:
+  Y=1 -> risk
+  Y=0 -> no_risk
+
+当前 v1 benchmark batch:
+  outputs/chembl_tool/tasks/skin_reaction/reasoning/batches/skin_reaction_calib_50_v1
+  n=82, failed=0
+  accuracy=0.682927, macro-F1=0.678140
+  positive precision=0.733333, recall=0.702128, F1=0.717391
+  confusion matrix: TN=23 FP=12 FN=14 TP=33
+```
+
+主要入口：
+
+```text
+tools/chembl_tool/tasks/skin_reaction/constants.py
+  Skin_Reaction label 和 prediction mapping。
+
+tools/chembl_tool/tasks/skin_reaction/rules.py
+  skin sensitization、direct skin reaction、phototoxicity、irritation/corrosion、skin exposure
+  和 weak/context evidence 的筛选关键词与排除规则。
+
+tools/chembl_tool/tasks/skin_reaction/scoring.py
+  assay 保留/剔除和打分入口。screen_assays.py 和 rescore_outputs.py 都调用 scored_row()。
+
+tools/chembl_tool/tasks/skin_reaction/endpoint_groups.py
+  Tier.endpoint_group、evidence_direction、evidence_strength 和 endpoint assignment 规则。
+
+tools/chembl_tool/tasks/skin_reaction/build_evidence_library.py
+  evidence library 构建入口。默认读取 assay_screening/v1，输出 molecule evidence、neighbor index 和 meta。
+
+tools/chembl_tool/tasks/skin_reaction/retrieve_neighbors.py
+  analog retrieval 入口。当前 benchmark 使用 top-k-per-group=3、min-similarity=0.35。
+
+tools/chembl_tool/tasks/skin_reaction/run_reasoning_pipeline.py
+  单分子 reasoning pipeline：retrieval prefetch、single-molecule branch、group-level 并发 reasoning、
+  final summary、trace 保存，以及 final-only rerun。
+
+tools/chembl_tool/tasks/skin_reaction/run_reasoning_batch.py
+  批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、report、logs、
+  runs 和 combined trace。
 ```
 
 ## BBB evidence 分组标准
@@ -1355,7 +1564,7 @@ batch 断点续跑使用 `--skip-existing`。用同一个 `--batch-id` 重新运
 存在则认为该 molecule 已完成并跳过，不覆盖已有 stdout/stderr log；不存在则重新运行该 molecule。
 因此中断后的 partial run 会自动补跑，已完成结果会进入新的 predictions、metrics、report 和
 batch `trace_messages.jsonl` 汇总。这个逻辑由 `tools/chembl_tool/common/task_workflows/reasoning_batch.py`
-统一实现，BBB_Martins、Bioavailability_Ma 和 ClinTox 共用。
+统一实现，BBB_Martins、Bioavailability_Ma、ClinTox 和 Skin_Reaction 共用。
 
 批量输出：
 
