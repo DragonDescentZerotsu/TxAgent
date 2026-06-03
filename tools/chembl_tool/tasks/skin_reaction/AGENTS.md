@@ -871,6 +871,11 @@ off by default for benchmark runs. Only enable exact-query context for retrospec
 --enable-chembl-exact-context
 ```
 
+By default the single-molecule prompt contains no ChEMBL-specific payload or instruction. Only when exact context is enabled and
+query exact context is found should the single-molecule payload include `exact_query_chembl_context`, with an instruction to
+distinguish direct same-molecule ChEMBL skin-reaction evidence from the physicochemical prior. ChEMBL neighbor evidence still
+belongs only in group-level context.
+
 ## Initial references used for ontology design
 
 The evidence ontology above follows the regulatory skin-safety assay landscape:

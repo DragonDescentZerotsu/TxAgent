@@ -493,6 +493,37 @@ def _reason_single_molecule(
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    instructions = [
+        "Call molecule_properties for the query molecule before analysis.",
+        "Assess reactive/haptenation prior from electrophilic groups, Michael acceptors, aldehydes, acylating groups, oxidizable anilines/phenols, thiol/GSH reactivity plausibility, and functional groups.",
+        "Assess skin exposure plausibility from logP/logD, ionization, charge, TPSA, HBD/HBA, molecular size, and lipophilicity.",
+        "Assess phototoxicity structural prior from aromatic chromophores, extended conjugation, halogenated aromatics, quinones, psoralens-like motifs, or other UV-absorbing alerts when apparent.",
+        "Assess irritation/corrosion prior from strong acids/bases, surfactant-like amphiphiles, reactive electrophiles, and local cytotoxicity alerts.",
+        "Return JSON with skin_reaction_prior, reactive_or_haptenation_prior, skin_permeation_prior, phototoxicity_structural_prior, irritation_or_corrosion_structural_prior, confidence, reasoning_summary, property_drivers, caveats.",
+    ]
+    payload: dict[str, Any] = {
+        "task": "Single-molecule Skin_Reaction plausibility analysis.",
+        "query": query,
+        "instructions": instructions,
+        "required_json_schema": {
+            "skin_reaction_prior": "risk | no_risk | mixed_or_unclear",
+            "reactive_or_haptenation_prior": "concerning | not_apparent | mixed_or_unclear",
+            "skin_permeation_prior": "high | low | mixed_or_unclear",
+            "phototoxicity_structural_prior": "concerning | not_apparent | mixed_or_unclear",
+            "irritation_or_corrosion_structural_prior": "concerning | not_apparent | mixed_or_unclear",
+            "physicochemical_exposure_prior": "favorable_for_skin_exposure | unfavorable_for_skin_exposure | mixed_or_unclear",
+            "exact_chembl_evidence_assessment": "string",
+            "confidence": "high | moderate | low",
+            "reasoning_summary": "string",
+            "property_drivers": ["string"],
+            "caveats": ["string"],
+        },
+    }
+    if chembl_context:
+        instructions.append(
+            "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL Skin_Reaction evidence from the structural/physicochemical prior."
+        )
+        payload["exact_query_chembl_context"] = chembl_context
     messages = [
         {
             "role": "system",
@@ -504,37 +535,7 @@ def _reason_single_molecule(
         },
         {
             "role": "user",
-            "content": json.dumps(
-                {
-                    "task": "Single-molecule Skin_Reaction plausibility analysis.",
-                    "query": query,
-                    "instructions": [
-                        "Call molecule_properties for the query molecule before analysis.",
-                        "Assess reactive/haptenation prior from electrophilic groups, Michael acceptors, aldehydes, acylating groups, oxidizable anilines/phenols, thiol/GSH reactivity plausibility, and functional groups.",
-                        "Assess skin exposure plausibility from logP/logD, ionization, charge, TPSA, HBD/HBA, molecular size, and lipophilicity.",
-                        "Assess phototoxicity structural prior from aromatic chromophores, extended conjugation, halogenated aromatics, quinones, psoralens-like motifs, or other UV-absorbing alerts when apparent.",
-                        "Assess irritation/corrosion prior from strong acids/bases, surfactant-like amphiphiles, reactive electrophiles, and local cytotoxicity alerts.",
-                        "Do not use ChEMBL neighbor evidence in this analysis.",
-                        "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL Skin_Reaction evidence from the structural/physicochemical prior.",
-                        "Return JSON with skin_reaction_prior, reactive_or_haptenation_prior, skin_permeation_prior, phototoxicity_structural_prior, irritation_or_corrosion_structural_prior, confidence, reasoning_summary, property_drivers, caveats.",
-                    ],
-                    "exact_query_chembl_context": chembl_context or {"status": "not_available"},
-                    "required_json_schema": {
-                        "skin_reaction_prior": "risk | no_risk | mixed_or_unclear",
-                        "reactive_or_haptenation_prior": "concerning | not_apparent | mixed_or_unclear",
-                        "skin_permeation_prior": "high | low | mixed_or_unclear",
-                        "phototoxicity_structural_prior": "concerning | not_apparent | mixed_or_unclear",
-                        "irritation_or_corrosion_structural_prior": "concerning | not_apparent | mixed_or_unclear",
-                        "physicochemical_exposure_prior": "favorable_for_skin_exposure | unfavorable_for_skin_exposure | mixed_or_unclear",
-                        "exact_chembl_evidence_assessment": "string",
-                        "confidence": "high | moderate | low",
-                        "reasoning_summary": "string",
-                        "property_drivers": ["string"],
-                        "caveats": ["string"],
-                    },
-                },
-                ensure_ascii=False,
-            ),
+            "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
     response = client.chat_json_with_tools(

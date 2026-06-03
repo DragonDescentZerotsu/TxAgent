@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import json
+import shutil
 import subprocess
 import sys
 import threading
@@ -61,6 +62,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "combine_traces": args.combine_traces,
         "stream_logs": args.stream_logs,
         "model": args.model,
+        "final_only_source_batch": args.final_only_source_batch,
         "started_at": _now(),
         "paths": {
             "batch_dir": str(batch_dir),
@@ -134,7 +136,11 @@ def _run_one(
         if not stderr_path.exists():
             stderr_path.write_text("skipped existing run\n", encoding="utf-8")
     else:
-        command = _single_run_command(config, args, item.index, run_id, run_root)
+        if args.final_only_source_batch:
+            _prepare_final_only_run_dir(args, item.index, run_id, run_dir)
+            command = _final_only_command(config, args, run_dir)
+        else:
+            command = _single_run_command(config, args, item.index, run_id, run_root)
         _log(config, f"start index={item.index} run_id={run_id}")
         returncode = _run_subprocess_with_logs(
             command,
@@ -162,6 +168,68 @@ def _run_one(
     if returncode != 0:
         result["error"] = _tail_text(stderr_path, stdout_path)
     return result
+
+
+def _prepare_final_only_run_dir(args: argparse.Namespace, query_index: int, run_id: str, run_dir: Path) -> None:
+    source_batch_dir = Path(args.final_only_source_batch)
+    if not source_batch_dir.exists():
+        raise FileNotFoundError(f"Final-only source batch does not exist: {source_batch_dir}")
+    source_runs_dir = source_batch_dir / "runs"
+    matches = sorted(source_runs_dir.glob(f"*_idx{query_index:05d}"))
+    if not matches:
+        raise FileNotFoundError(f"No source run for query index {query_index}: {source_runs_dir}")
+    if len(matches) > 1:
+        raise RuntimeError(f"Ambiguous source runs for query index {query_index}: {matches}")
+    source_run_dir = matches[0]
+    run_dir.mkdir(parents=True, exist_ok=True)
+    for name in ("retrieval.json", "single_molecule_reasoning_output.json", "group_reasoning_outputs.jsonl"):
+        source_path = source_run_dir / name
+        if not source_path.exists():
+            raise FileNotFoundError(f"Missing source artifact for final-only rerun: {source_path}")
+        shutil.copy2(source_path, run_dir / name)
+
+    manifest_path = source_run_dir / "manifest.json"
+    manifest = _read_json(manifest_path) if manifest_path.exists() else {}
+    manifest["run_id"] = run_id
+    manifest["final_only_source_run_dir"] = str(source_run_dir)
+    manifest["final_only_source_batch"] = str(source_batch_dir)
+    manifest.setdefault("paths", {})
+    manifest["paths"].update(
+        {
+            "retrieval": str(run_dir / "retrieval.json"),
+            "single_molecule_reasoning_output": str(run_dir / "single_molecule_reasoning_output.json"),
+            "group_reasoning_outputs": str(run_dir / "group_reasoning_outputs.jsonl"),
+            "final_reasoning_output": str(run_dir / "final_reasoning_output.json"),
+            "trace_messages": str(run_dir / "trace_messages.jsonl"),
+        }
+    )
+    _write_json(run_dir / "manifest.json", manifest)
+
+
+def _final_only_command(config: BatchConfig, args: argparse.Namespace, run_dir: Path) -> list[str]:
+    return [
+        args.python_executable,
+        "-m",
+        config.pipeline_module,
+        "--resume-final-from-run-dir",
+        str(run_dir),
+        "--env-file",
+        args.env_file,
+        "--api-key-env",
+        args.api_key_env,
+        "--base-url",
+        args.base_url,
+        "--tool-service-url",
+        args.tool_service_url,
+        "--model",
+        args.model,
+        "--timeout-s",
+        str(args.timeout_s),
+        "--max-tokens",
+        str(args.max_tokens),
+        "--max-tool-rounds",
+        str(args.max_tool_rounds),
+    ]
 
 
 def _single_run_command(
@@ -521,6 +589,11 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--index", default=config.default_index)
     parser.add_argument("--batch-root", default=config.default_batch_root)
     parser.add_argument("--batch-id", default="")
+    parser.add_argument(
+        "--final-only-source-batch",
+        default="",
+        help="Existing batch directory whose retrieval/single/group artifacts should be reused for final-only reruns.",
+    )
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--indices", nargs="*", default=None, help="Indices or inclusive ranges, e.g. 0 3 5-8.")
     parser.add_argument("--start", type=int, default=0)

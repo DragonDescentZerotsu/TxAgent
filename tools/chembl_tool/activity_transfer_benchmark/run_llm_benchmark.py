@@ -9,6 +9,7 @@ import os
 import sys
 import threading
 import time
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -81,7 +82,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     load_env(Path(args.env_file))
     api_key = resolve_api_key(args)
-    records = read_jsonl(Path(args.input_jsonl))
+    records = prepare_input_records(read_jsonl(Path(args.input_jsonl)))
     selected_indices = select_indices(args, len(records))
 
     run_id = args.run_id or time.strftime("gpt_oss_120b_llm_%Y%m%d_%H%M%S")
@@ -100,6 +101,7 @@ def main(argv: list[str] | None = None) -> int:
         "base_urls": parse_base_urls(args),
         "tool_service_url": args.tool_service_url,
         "enable_tools": not args.disable_tools,
+        "input_format": infer_input_format(records),
         "n_selected": len(selected_indices),
         "selected_indices": selected_indices,
         "started_at": now(),
@@ -205,13 +207,92 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--skip-existing", action="store_true")
     parser.add_argument("--timeout-s", type=int, default=180)
     parser.add_argument("--max-tokens", type=int, default=1024)
-    parser.add_argument("--max-tool-rounds", type=int, default=2)
+    parser.add_argument("--max-tool-rounds", type=int, default=3)
     parser.add_argument("--disable-tools", action="store_true")
     parser.add_argument("--disable-response-format", action="store_true")
     parser.add_argument("--reasoning-effort", default="", help="Optional OpenAI-compatible reasoning_effort value.")
     parser.add_argument("--enable-thinking", action="store_true", help="Send extra_body thinking enabled.")
     parser.add_argument("--progress-every", type=int, default=25)
     return parser.parse_args(argv)
+
+
+def prepare_input_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not records:
+        return records
+    if not all(is_hf_prompt_completion_record(record) for record in records):
+        return records
+    global_majority = majority_label(label for label in (hf_completion_to_label(row.get("completion")) for row in records) if label)
+    bucket_majorities = hf_bucket_majorities(records, global_majority)
+    prepared = []
+    for index, record in enumerate(records):
+        metadata = record.get("metadata") or {}
+        label = hf_completion_to_label(record.get("completion"))
+        tanimoto = parse_float(metadata.get("weighted_tanimoto"))
+        bucket_key = str(metadata.get("similarity_bucket"))
+        row = dict(record)
+        row.update(
+            {
+                "input_format": "hf_prompt_completion",
+                "pair_index": index,
+                "label": label,
+                "tanimoto": tanimoto,
+                "similarity_bucket": metadata.get("similarity_bucket"),
+                "baseline_tanimoto_0_50_prediction": "similar" if tanimoto >= 0.50 else "different",
+                "baseline_tanimoto_0_48_prediction": "similar" if tanimoto >= 0.48 else "different",
+                "baseline_mcs_0_70_prediction": "",
+                "baseline_similarity_bucket_majority_prediction": bucket_majorities.get(bucket_key, global_majority),
+                "baseline_assay_type_tanimoto_0_50_prediction": "similar" if tanimoto >= 0.50 else "different",
+            }
+        )
+        prepared.append(row)
+    return prepared
+
+
+def is_hf_prompt_completion_record(record: dict[str, Any]) -> bool:
+    return "prompt" in record and "completion" in record and isinstance(record.get("metadata"), dict)
+
+
+def infer_input_format(records: list[dict[str, Any]]) -> str:
+    if records and all(record.get("input_format") == "hf_prompt_completion" for record in records):
+        return "hf_prompt_completion"
+    return "activity_transfer_eval_pairs"
+
+
+def hf_completion_to_label(value: Any) -> str:
+    text = str(value or "").strip().upper()
+    if text == "A":
+        return "similar"
+    if text == "B":
+        return "different"
+    return normalize_prediction(value)
+
+
+def hf_bucket_majorities(records: list[dict[str, Any]], default_label: str) -> dict[str, str]:
+    counts: dict[str, Counter] = {}
+    for record in records:
+        metadata = record.get("metadata") or {}
+        label = hf_completion_to_label(record.get("completion"))
+        if not label:
+            continue
+        bucket = str(metadata.get("similarity_bucket"))
+        counts.setdefault(bucket, Counter())[label] += 1
+    return {bucket: majority_label(counter.elements(), default_label=default_label) for bucket, counter in counts.items()}
+
+
+def majority_label(labels: Any, default_label: str = "similar") -> str:
+    counter = Counter(labels)
+    if counter["similar"] > counter["different"]:
+        return "similar"
+    if counter["different"] > counter["similar"]:
+        return "different"
+    return default_label
+
+
+def parse_float(value: Any, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
 
 
 class LlmClient:
@@ -416,9 +497,15 @@ def run_one(
         "tool_results": response["tool_results"],
         "latency_s": round(time.monotonic() - started, 3),
         "input_record": compact_input_record(record),
-        "baseline_tanimoto_0_50_prediction": record["baseline_tanimoto_0_50_prediction"],
-        "baseline_tanimoto_0_48_prediction": record["baseline_tanimoto_0_48_prediction"],
-        "baseline_mcs_0_70_prediction": record["baseline_mcs_0_70_prediction"],
+        "baseline_tanimoto_0_50_prediction": record.get("baseline_tanimoto_0_50_prediction", ""),
+        "baseline_tanimoto_0_48_prediction": record.get("baseline_tanimoto_0_48_prediction", ""),
+        "baseline_mcs_0_70_prediction": record.get("baseline_mcs_0_70_prediction", ""),
+        "baseline_similarity_bucket_majority_prediction": record.get(
+            "baseline_similarity_bucket_majority_prediction", ""
+        ),
+        "baseline_assay_type_tanimoto_0_50_prediction": record.get(
+            "baseline_assay_type_tanimoto_0_50_prediction", ""
+        ),
     }
     if not prediction:
         result["error"] = "Missing or invalid predicted_transferability."
@@ -427,6 +514,72 @@ def run_one(
 
 
 def build_messages(record: dict[str, Any]) -> list[dict[str, str]]:
+    if record.get("input_format") == "hf_prompt_completion":
+        system = (
+            "You are evaluating analog assay activity transferability for medicinal chemistry. "
+            "Return only compact JSON. Use predicted_transferability='similar' for answer A/transfer, "
+            "and predicted_transferability='different' for answer B/not transfer."
+        )
+        user = (
+            str(record["prompt"]).rstrip()
+            + "\n\nReturn exactly one compact JSON object with keys: "
+            "predicted_transferability, confidence, should_transfer_activity, "
+            "reasoning_summary, key_factors, rationale. "
+            "Use predicted_transferability as either `similar` or `different`."
+        )
+        return [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ]
+
+    label_mode = str(record.get("label_mode") or "pchembl_delta")
+    if label_mode in {"raw_robust_z", "log_raw_robust_z"}:
+        activity_name = "log10(raw endpoint value)" if label_mode == "log_raw_robust_z" else "raw endpoint value"
+        task_text = (
+            "Predict whether the query molecule's endpoint activity is similar to the reference molecule's "
+            "activity in this same ChEMBL assay endpoint. Use predicted_transferability='similar' when the "
+            "expected absolute activity difference is within 0.5 assay-internal robust sigma, and 'different' "
+            "when it is at least 1.0 robust sigma. The hidden query activity is not provided."
+        )
+        reference_activity = {
+            "chembl_id": record["reference_molecule_chembl_id"],
+            "smiles": record["reference_smiles"],
+            "known_activity_value": record.get("reference_activity_value"),
+            "activity_scale": activity_name,
+            "raw_units": record.get("raw_units", ""),
+        }
+        query_activity = {
+            "chembl_id": record["query_molecule_chembl_id"],
+            "smiles": record["query_smiles"],
+            "activity_value": "hidden_for_evaluation",
+            "activity_scale": activity_name,
+            "raw_units": record.get("raw_units", ""),
+        }
+        activity_context = {
+            "label_mode": label_mode,
+            "raw_units": record.get("raw_units", ""),
+            "robust_sigma": record.get("robust_sigma"),
+            "similar_threshold_sigma": 0.5,
+            "different_threshold_sigma": 1.0,
+        }
+    else:
+        task_text = (
+            "Predict whether the query molecule's pChEMBL activity is similar to the reference molecule's "
+            "activity in this same ChEMBL assay endpoint. Use predicted_transferability='similar' when "
+            "|delta pChEMBL| is expected to be <= 0.5, and 'different' when it is expected to be >= 1.0."
+        )
+        reference_activity = {
+            "chembl_id": record["reference_molecule_chembl_id"],
+            "smiles": record["reference_smiles"],
+            "known_pchembl_value": record.get("reference_pchembl_value", record.get("reference_activity_value")),
+        }
+        query_activity = {
+            "chembl_id": record["query_molecule_chembl_id"],
+            "smiles": record["query_smiles"],
+            "pchembl_value": "hidden_for_evaluation",
+        }
+        activity_context = {"label_mode": label_mode}
+
     system = (
         "You are evaluating analog assay activity transferability for medicinal chemistry. "
         "Return only compact JSON. The hidden query activity is not provided. "
@@ -434,14 +587,13 @@ def build_messages(record: dict[str, Any]) -> list[dict[str, str]]:
         "is likely transferable to the query molecule in the same assay endpoint."
     )
     user = {
-        "task": (
-            "Predict whether the query molecule's pChEMBL activity is similar to the reference molecule's "
-            "activity in this same ChEMBL assay endpoint. Use predicted_transferability='similar' when "
-            "|delta pChEMBL| is expected to be <= 0.5, and 'different' when it is expected to be >= 1.0."
-        ),
+        "task": task_text,
+        "task_dataset": record.get("task_name", ""),
         "assay": {
             "assay_chembl_id": record["assay_chembl_id"],
             "standard_type": record["standard_type"],
+            "raw_units": record.get("raw_units", ""),
+            "assay_tier": record.get("assay_tier", ""),
             "target_chembl_id": record.get("target_chembl_id", ""),
             "target_pref_name": record.get("target_pref_name", ""),
             "target_type": record.get("target_type", ""),
@@ -453,23 +605,16 @@ def build_messages(record: dict[str, Any]) -> list[dict[str, str]]:
             "relationship_type": record.get("relationship_type", ""),
             "description": truncate(str(record.get("assay_description", "")), 1200),
         },
-        "reference_molecule": {
-            "chembl_id": record["reference_molecule_chembl_id"],
-            "smiles": record["reference_smiles"],
-            "known_pchembl_value": record["reference_pchembl_value"],
-        },
-        "query_molecule": {
-            "chembl_id": record["query_molecule_chembl_id"],
-            "smiles": record["query_smiles"],
-            "pchembl_value": "hidden_for_evaluation",
-        },
+        "activity_label_context": activity_context,
+        "reference_molecule": reference_activity,
+        "query_molecule": query_activity,
         "precomputed_similarity": {
             "morgan_tanimoto": record["tanimoto"],
             "similarity_bucket": record["similarity_bucket"],
-            "mean_mcs_coverage": record["mean_mcs_coverage"],
-            "query_mcs_coverage": record["query_mcs_coverage"],
-            "reference_mcs_coverage": record["reference_mcs_coverage"],
-            "mcs_timed_out": record["mcs_timed_out"],
+            "mean_mcs_coverage": record.get("mean_mcs_coverage"),
+            "query_mcs_coverage": record.get("query_mcs_coverage"),
+            "reference_mcs_coverage": record.get("reference_mcs_coverage"),
+            "mcs_timed_out": record.get("mcs_timed_out"),
         },
         "output_schema": {
             "predicted_transferability": "similar or different",
@@ -516,15 +661,22 @@ def response_to_result(
 
 def compute_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
     ok_results = [row for row in results if row.get("status") == "ok"]
+    baseline_keys = {
+        "tanimoto_0_50": "baseline_tanimoto_0_50_prediction",
+        "tanimoto_0_48": "baseline_tanimoto_0_48_prediction",
+        "mcs_0_70": "baseline_mcs_0_70_prediction",
+        "similarity_bucket_majority": "baseline_similarity_bucket_majority_prediction",
+        "assay_type_tanimoto_0_50": "baseline_assay_type_tanimoto_0_50_prediction",
+    }
     metrics = {
         "n": len(results),
         "n_ok": len(ok_results),
         "n_failed": len(results) - len(ok_results),
         "llm": metrics_for_predictions(ok_results, "prediction"),
         "baselines": {
-            "tanimoto_0_50": metrics_for_predictions(ok_results, "baseline_tanimoto_0_50_prediction"),
-            "tanimoto_0_48": metrics_for_predictions(ok_results, "baseline_tanimoto_0_48_prediction"),
-            "mcs_0_70": metrics_for_predictions(ok_results, "baseline_mcs_0_70_prediction"),
+            name: metrics_for_predictions(ok_results, key)
+            for name, key in baseline_keys.items()
+            if any(row.get(key) for row in ok_results)
         },
         "subsets": {},
         "usage": sum_usage_dicts([row.get("usage") or {} for row in ok_results]),
@@ -536,7 +688,7 @@ def compute_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
         if 0.40 <= float((row.get("input_record") or {}).get("tanimoto", 0.0)) < 0.70
     ]
     baseline_wrong = [
-        row for row in ok_results if row["baseline_tanimoto_0_50_prediction"] != row["label"]
+        row for row in ok_results if row.get("baseline_tanimoto_0_50_prediction") != row["label"]
     ]
     metrics["subsets"]["tanimoto_0_40_to_0_70"] = {
         "n": len(gray),
@@ -550,7 +702,61 @@ def compute_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
             len(baseline_wrong),
         ),
     }
+    task_names = sorted(
+        {
+            str((row.get("input_record") or {}).get("task_name") or "")
+            for row in ok_results
+            if (row.get("input_record") or {}).get("task_name")
+        }
+    )
+    if task_names:
+        metrics["per_task"] = {}
+        for task_name in task_names:
+            task_rows = [
+                row
+                for row in ok_results
+                if str((row.get("input_record") or {}).get("task_name") or "") == task_name
+            ]
+            metrics["per_task"][task_name] = {
+                "n": len(task_rows),
+                "llm": metrics_for_predictions(task_rows, "prediction"),
+                "baselines": {
+                    name: metrics_for_predictions(task_rows, key)
+                    for name, key in baseline_keys.items()
+                    if any(row.get(key) for row in task_rows)
+                },
+                "label_counts": dict(Counter(row.get("label") for row in task_rows)),
+            }
+    add_metadata_group_metrics(metrics, ok_results, baseline_keys)
     return metrics
+
+
+def add_metadata_group_metrics(
+    metrics: dict[str, Any],
+    ok_results: list[dict[str, Any]],
+    baseline_keys: dict[str, str],
+) -> None:
+    group_specs = {
+        "per_assay_type": lambda row: ((row.get("input_record") or {}).get("hf_metadata") or {}).get("assay_type"),
+        "per_similarity_bucket": lambda row: str(((row.get("input_record") or {}).get("hf_metadata") or {}).get("similarity_bucket")),
+    }
+    for output_key, key_fn in group_specs.items():
+        groups = sorted({str(key_fn(row)) for row in ok_results if key_fn(row) not in (None, "", "None")})
+        if not groups:
+            continue
+        metrics[output_key] = {}
+        for group in groups:
+            rows = [row for row in ok_results if str(key_fn(row)) == group]
+            metrics[output_key][group] = {
+                "n": len(rows),
+                "llm": metrics_for_predictions(rows, "prediction"),
+                "baselines": {
+                    name: metrics_for_predictions(rows, key)
+                    for name, key in baseline_keys.items()
+                    if any(row.get(key) for row in rows)
+                },
+                "label_counts": dict(Counter(row.get("label") for row in rows)),
+            }
 
 
 def metrics_for_predictions(rows: list[dict[str, Any]], prediction_key: str) -> dict[str, Any]:
@@ -611,6 +817,8 @@ def write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any]) 
         metric_line("LLM", metrics["llm"]),
     ]
     for name, values in metrics["baselines"].items():
+        if values.get("n", 0) == 0:
+            continue
         lines.append(metric_line(name, values))
     gray = metrics["subsets"]["tanimoto_0_40_to_0_70"]
     lines.extend(
@@ -625,6 +833,42 @@ def write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any]) 
             f"{metrics['subsets']['tanimoto_0_50_wrong']['llm_accuracy_on_baseline_errors']:.4f}",
         ]
     )
+    if metrics.get("per_task"):
+        lines.extend(
+            [
+                "",
+                "## Per Task",
+                "",
+                "| task | n | LLM macro-F1 | Tanimoto 0.50 macro-F1 | Tanimoto 0.48 macro-F1 |",
+                "| --- | ---: | ---: | ---: | ---: |",
+            ]
+        )
+        for task_name, task_metrics in metrics["per_task"].items():
+            lines.append(
+                f"| {task_name} | {task_metrics['n']:,} | "
+                f"{task_metrics['llm']['macro_f1']:.4f} | "
+                f"{task_metrics['baselines'].get('tanimoto_0_50', {}).get('macro_f1', 0.0):.4f} | "
+                f"{task_metrics['baselines'].get('tanimoto_0_48', {}).get('macro_f1', 0.0):.4f} |"
+            )
+    for group_key, title in (("per_assay_type", "Per Assay Type"), ("per_similarity_bucket", "Per Similarity Bucket")):
+        if not metrics.get(group_key):
+            continue
+        lines.extend(
+            [
+                "",
+                f"## {title}",
+                "",
+                "| group | n | LLM macro-F1 | Tanimoto 0.50 macro-F1 | Bucket-majority macro-F1 |",
+                "| --- | ---: | ---: | ---: | ---: |",
+            ]
+        )
+        for group, group_metrics in metrics[group_key].items():
+            lines.append(
+                f"| {group} | {group_metrics['n']:,} | "
+                f"{group_metrics['llm']['macro_f1']:.4f} | "
+                f"{group_metrics['baselines'].get('tanimoto_0_50', {}).get('macro_f1', 0.0):.4f} | "
+                f"{group_metrics['baselines'].get('similarity_bucket_majority', {}).get('macro_f1', 0.0):.4f} |"
+            )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -638,15 +882,26 @@ def plot_metrics(path: Path, metrics: dict[str, Any]) -> None:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    names = ["LLM", "Tanimoto 0.50", "Tanimoto 0.48", "MCS 0.70"]
-    values = [
-        metrics["llm"]["macro_f1"],
-        metrics["baselines"]["tanimoto_0_50"]["macro_f1"],
-        metrics["baselines"]["tanimoto_0_48"]["macro_f1"],
-        metrics["baselines"]["mcs_0_70"]["macro_f1"],
-    ]
+    names = ["LLM"]
+    values = [metrics["llm"]["macro_f1"]]
+    colors = ["#4c78a8"]
+    baseline_labels = {
+        "tanimoto_0_50": ("Tanimoto 0.50", "#f58518"),
+        "tanimoto_0_48": ("Tanimoto 0.48", "#e45756"),
+        "mcs_0_70": ("MCS 0.70", "#72b7b2"),
+        "similarity_bucket_majority": ("Bucket majority", "#54a24b"),
+        "assay_type_tanimoto_0_50": ("Assay-type Tanimoto 0.50", "#b279a2"),
+    }
+    fallback_colors = ["#9d755d", "#bab0ac", "#4c78a8"]
+    for index, (key, baseline) in enumerate(metrics["baselines"].items()):
+        label, color = baseline_labels.get(key, (key, fallback_colors[index % len(fallback_colors)]))
+        if baseline.get("n", 0) == 0:
+            continue
+        names.append(label)
+        values.append(baseline["macro_f1"])
+        colors.append(color)
     fig, ax = plt.subplots(figsize=(7, 4.2))
-    ax.bar(names, values, color=["#4c78a8", "#f58518", "#e45756", "#72b7b2"])
+    ax.bar(names, values, color=colors)
     ax.set_ylabel("macro-F1")
     ax.set_ylim(0, 1)
     ax.tick_params(axis="x", rotation=20)
@@ -670,6 +925,12 @@ def error_result(record: dict[str, Any], sample_index: int, error: str) -> dict[
         "baseline_tanimoto_0_50_prediction": record.get("baseline_tanimoto_0_50_prediction", ""),
         "baseline_tanimoto_0_48_prediction": record.get("baseline_tanimoto_0_48_prediction", ""),
         "baseline_mcs_0_70_prediction": record.get("baseline_mcs_0_70_prediction", ""),
+        "baseline_similarity_bucket_majority_prediction": record.get(
+            "baseline_similarity_bucket_majority_prediction", ""
+        ),
+        "baseline_assay_type_tanimoto_0_50_prediction": record.get(
+            "baseline_assay_type_tanimoto_0_50_prediction", ""
+        ),
     }
 
 
@@ -709,6 +970,12 @@ def trace_record(result: dict[str, Any]) -> dict[str, Any]:
             "baseline_tanimoto_0_50_prediction": result.get("baseline_tanimoto_0_50_prediction"),
             "baseline_tanimoto_0_48_prediction": result.get("baseline_tanimoto_0_48_prediction"),
             "baseline_mcs_0_70_prediction": result.get("baseline_mcs_0_70_prediction"),
+            "baseline_similarity_bucket_majority_prediction": result.get(
+                "baseline_similarity_bucket_majority_prediction"
+            ),
+            "baseline_assay_type_tanimoto_0_50_prediction": result.get(
+                "baseline_assay_type_tanimoto_0_50_prediction"
+            ),
         },
     }
 
@@ -726,22 +993,51 @@ def trace_messages(result: dict[str, Any]) -> list[dict[str, Any]]:
 
 def compact_input_record(record: dict[str, Any]) -> dict[str, Any]:
     keys = [
+        "task_name",
+        "label_mode",
+        "activity_scale",
         "assay_chembl_id",
         "standard_type",
+        "raw_units",
+        "assay_tier",
         "target_pref_name",
         "query_smiles",
         "reference_smiles",
         "query_molecule_chembl_id",
         "reference_molecule_chembl_id",
+        "reference_activity_value",
+        "hidden_query_activity_value",
+        "reference_raw_activity_value",
+        "hidden_query_raw_activity_value",
+        "reference_log_raw_activity_value",
+        "hidden_query_log_raw_activity_value",
         "reference_pchembl_value",
         "hidden_query_pchembl_value",
         "abs_activity_delta",
+        "normalized_delta",
+        "robust_sigma",
         "tanimoto",
         "similarity_bucket",
         "mean_mcs_coverage",
         "mcs_timed_out",
+        "input_format",
+        "hf_completion",
+        "hf_sample_id",
+        "hf_pair_id",
+        "hf_metadata",
     ]
-    return {key: record.get(key) for key in keys}
+    compact = {key: record.get(key) for key in keys}
+    if record.get("input_format") == "hf_prompt_completion":
+        metadata = record.get("metadata") or {}
+        compact.update(
+            {
+                "hf_completion": record.get("completion"),
+                "hf_sample_id": metadata.get("sample_id"),
+                "hf_pair_id": metadata.get("pair_id"),
+                "hf_metadata": metadata,
+            }
+        )
+    return compact
 
 
 def normalize_prediction(value: Any) -> str:

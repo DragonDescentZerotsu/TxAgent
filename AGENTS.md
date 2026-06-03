@@ -1,5 +1,8 @@
 # TxAgent 当前系统：常驻分子工具服务与证据检索推理
 
+## Env instruction
+If you are on `node002` or `node001`, default to the `vllm` conda environment when you need RDKit or the local project dependencies. conda is at: /data1/tianang/anaconda3/condabin/conda
+
 ## 当前目标
 
 本项目要构建一个可复用的分子证据检索与 reasoning 系统。BBB_Martins 是第一个概念验证任务；
@@ -469,8 +472,11 @@ tools/chembl_tool/activity_transfer_benchmark/
   analyze_mcs_results.py
   benchmark_mcs_runtime.py
   build_llm_eval_set.py
+  build_task_llm_eval_set.py
+  plot_llm_run_comparison.py
   run_benchmark.py
   run_llm_benchmark.py
+  run_task_assay_benchmark.py
 ```
 
 `run_benchmark.py` 的功能：
@@ -531,6 +537,17 @@ dynamic_v1_llm_3k/eval_pairs.jsonl。prompt 隐藏 query pChEMBL，只暴露 ref
 pChEMBL、assay context、Tanimoto、bucket 和 MCS coverage。可选调用当前 tool server 中的
 mmp_structure_compare / properties_compare；输出 per-sample run JSON、predictions.jsonl、
 metrics.json、中文 report、model-vs-baseline SVG 图和 trace_viewer 可读的 trace_messages.jsonl。
+当前也支持 HF prompt/completion/metadata 格式：completion A/B 映射为 similar/different，
+原始 metadata 保留在 input_record.hf_metadata，并按 similarity_bucket、assay_type 输出分组指标。
+默认 max-tool-rounds=3，断点续跑使用 --skip-existing。
+```
+
+`plot_llm_run_comparison.py` 的功能：
+
+```text
+汇总两个 LLM run 与 full-valid baseline，输出 overall、similarity_bucket、assay_type 三层
+macro-F1 对比图、TSV 和 Markdown report。comparison 产物放在
+outputs/chembl_tool/activity_transfer_benchmark/comparisons/，不要放进 llm_runs/。
 ```
 
 MCS runtime 当前测试结果：
@@ -1308,7 +1325,8 @@ same_assay_different_endpoint_activity:
 ```
 
 这类信息使用了 query molecule 的已知 ChEMBL 实验记录。为避免 prospective evaluation 中的数据泄漏，
-默认必须关闭，不进入 retrieval、single-molecule prompt、group prompt 或 batch 评估。只有显式传：
+默认必须关闭，因此不会添加 `query_chembl_context` / `exact_query_chembl_context`，也不会把 query
+的 ChEMBL exact evidence 注入 single-molecule prompt、group prompt 或 batch 评估。只有显式传：
 
 ```bash
 --enable-chembl-exact-context
@@ -1388,12 +1406,14 @@ output:
 ```text
 input:
   query molecule
+  exact_query_chembl_context only when --enable-chembl-exact-context is enabled and exact context is found
 
 available tools:
   molecule_properties
 
-not used:
+not sent by default:
   ChEMBL neighbor evidence
+  exact_query_chembl_context
   mmp_structure_compare
   properties_compare
 
@@ -1406,7 +1426,11 @@ output:
   caveats
 ```
 
-这个分支只能看到 `molecule_properties`，不能看到 ChEMBL neighbor evidence 或分子比较工具。
+默认情况下这个分支只看到 query molecule 和 `molecule_properties`，不会出现 ChEMBL neighbor
+evidence，也不会出现任何 `exact_query_chembl_context` 相关 payload 或 prompt instruction。
+只有显式开启 exact ChEMBL context 且命中 query exact context 时，才会把
+`exact_query_chembl_context` 放入 single-molecule payload，并提示模型区分 direct same-molecule
+ChEMBL evidence 和 physicochemical prior。ChEMBL neighbor evidence 仍只进入 group-level context。
 
 ### Final reasoning
 

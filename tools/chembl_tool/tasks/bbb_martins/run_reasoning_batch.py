@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
-from tools.chembl_tool.common.task_workflows.reasoning_batch import BatchConfig, main as run_batch
+from tools.chembl_tool.common.task_workflows.reasoning_batch import (
+    BatchConfig,
+    compute_metrics as _compute_metrics,
+    main as run_batch,
+    prediction_to_label as _prediction_to_label,
+)
 
 
 CONFIG = BatchConfig(
@@ -21,6 +26,14 @@ CONFIG = BatchConfig(
     positive_predictions=frozenset({"pass", "positive", "bbb+", "bbb_positive", "1"}),
     negative_predictions=frozenset({"fail", "negative", "bbb-", "bbb_negative", "0"}),
 )
+
+
+def compute_metrics(rows: list[dict]) -> dict:
+    return _compute_metrics(CONFIG, rows)
+
+
+def prediction_to_label(prediction: str | None) -> int | None:
+    return _prediction_to_label(CONFIG, prediction)
 
 
 def main(argv: list[str] | None = None) -> int:

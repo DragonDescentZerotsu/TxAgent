@@ -494,6 +494,32 @@ def _reason_single_molecule(
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    instructions = [
+        "Call molecule_properties for the query molecule before analysis.",
+        "Assess oral bioavailability prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
+        "Return JSON with oral_bioavailability_prior, absorption_prior, solubility_or_dissolution_prior, metabolism_or_clearance_prior, confidence, reasoning_summary, property_drivers, caveats.",
+    ]
+    payload: dict[str, Any] = {
+        "task": "Single-molecule oral bioavailability plausibility analysis.",
+        "query": query,
+        "instructions": instructions,
+        "required_json_schema": {
+            "oral_bioavailability_prior": "high | low | mixed_or_unclear",
+            "absorption_prior": "favorable | unfavorable | mixed_or_unclear",
+            "solubility_or_dissolution_prior": "favorable | unfavorable | mixed_or_unclear",
+            "metabolism_or_clearance_prior": "favorable | unfavorable | mixed_or_unclear",
+            "exact_chembl_evidence_assessment": "string",
+            "confidence": "high | moderate | low",
+            "reasoning_summary": "string",
+            "property_drivers": ["string"],
+            "caveats": ["string"],
+        },
+    }
+    if chembl_context:
+        instructions.append(
+            "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL bioavailability evidence from the physicochemical prior."
+        )
+        payload["exact_query_chembl_context"] = chembl_context
     messages = [
         {
             "role": "system",
@@ -505,32 +531,7 @@ def _reason_single_molecule(
         },
         {
             "role": "user",
-            "content": json.dumps(
-                {
-                    "task": "Single-molecule oral bioavailability plausibility analysis.",
-                    "query": query,
-                    "instructions": [
-                        "Call molecule_properties for the query molecule before analysis.",
-                        "Assess oral bioavailability prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
-                        "Do not use ChEMBL neighbor evidence in this analysis.",
-                        "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL bioavailability evidence from the physicochemical prior.",
-                        "Return JSON with oral_bioavailability_prior, absorption_prior, solubility_or_dissolution_prior, metabolism_or_clearance_prior, confidence, reasoning_summary, property_drivers, caveats.",
-                    ],
-                    "exact_query_chembl_context": chembl_context or {"status": "not_available"},
-                    "required_json_schema": {
-                        "oral_bioavailability_prior": "high | low | mixed_or_unclear",
-                        "absorption_prior": "favorable | unfavorable | mixed_or_unclear",
-                        "solubility_or_dissolution_prior": "favorable | unfavorable | mixed_or_unclear",
-                        "metabolism_or_clearance_prior": "favorable | unfavorable | mixed_or_unclear",
-                        "exact_chembl_evidence_assessment": "string",
-                        "confidence": "high | moderate | low",
-                        "reasoning_summary": "string",
-                        "property_drivers": ["string"],
-                        "caveats": ["string"],
-                    },
-                },
-                ensure_ascii=False,
-            ),
+            "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
     response = client.chat_json_with_tools(

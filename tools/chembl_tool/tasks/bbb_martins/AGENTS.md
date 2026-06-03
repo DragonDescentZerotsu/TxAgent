@@ -146,6 +146,8 @@ same_assay_different_endpoint_activity:
 
 这会使用 query molecule 的已知 ChEMBL 实验记录，可能造成 prospective benchmark 的数据泄漏。因此默认关闭；只有显式传 `--enable-chembl-exact-context` 时才用于 retrospective / evidence-rich case study。默认批量评估不要开启。
 
+默认 single-molecule prompt 不包含任何 ChEMBL 相关 payload 或 instruction。只有开启 exact context 且命中 query exact context 时，single-molecule payload 才包含 `exact_query_chembl_context`，并提示模型区分 direct same-molecule ChEMBL BBB evidence 和 physicochemical prior。ChEMBL neighbor evidence 仍只进入 group-level context。
+
 ## Evidence 类型解释
 
 ### Tier 1

@@ -31,10 +31,13 @@ outputs/chembl_tool/activity_transfer_benchmark/
 ```text
 tools/chembl_tool/activity_transfer_benchmark/
   run_benchmark.py
+  run_task_assay_benchmark.py
   benchmark_mcs_runtime.py
   analyze_mcs_results.py
   build_llm_eval_set.py
+  build_task_llm_eval_set.py
   run_llm_benchmark.py
+  plot_llm_run_comparison.py
 ```
 
 脚本职责：
@@ -44,6 +47,10 @@ run_benchmark.py
   从 ChEMBL 读取 assay activity，构建同 assay endpoint 内的 molecule pairs。
   连续值主分析使用 pchembl_value，计算 Tanimoto、|delta pChEMBL|、标签、threshold metrics、
   assay-specific enrichment、binary comment 辅助分析，并生成 TSV/GZ、SVG 和中文 report。
+
+run_task_assay_benchmark.py
+  从 data/processed 四个任务 pipeline 的 assay evidence 出发，构建 task-scoped transfer benchmark。
+  支持 raw_robust_z、log_raw_robust_z、pchembl_delta 三套标签；raw/log raw 标签会做单位归一化和 assay 内 robust sigma。
 
 benchmark_mcs_runtime.py
   对已有 continuous_pairs 计算 RDKit FindMCS mean atom coverage。
@@ -57,27 +64,65 @@ build_llm_eval_set.py
   从 dynamic_v1 pairs 中构建 LLM 小评估集。默认 3,000 pairs，按 label x Tanimoto bucket 分层平衡，
   并只保留有 observed MCS 的 non-ambiguous pairs。
 
+build_task_llm_eval_set.py
+  从 task-scoped pairs 中构建小规模 LLM 评估集。默认 3,000 pairs，先按 task 平衡，再按 label 和
+  Tanimoto bucket 分层，并限制每个 assay endpoint 的样本数。
+
 run_llm_benchmark.py
   用 OpenAI-compatible endpoint 跑 LLM activity-transfer 判断。
   默认支持本地 vLLM gpt-oss-120b，也可跑 DeepSeek/OpenAI-compatible hosted endpoint。
   可选调用 tool server 的 mmp_structure_compare 和 properties_compare。
-  输出 per-sample JSON、predictions、metrics、report、SVG 和 trace_messages.jsonl。
+  支持原 dynamic_v1/task-assay JSONL，也支持 HF prompt/completion/metadata 格式：
+  completion A/B 映射为 similar/different，metadata 原样保留到 input_record.hf_metadata。
+  HF metadata 中的 similarity_bucket、assay_type 会进入 metrics/report 的分组指标。
+  默认 max-tool-rounds=3；使用 --skip-existing 断点续跑。
+  输出 per-sample JSON、predictions、metrics、report、SVG 和 trace_messages.jsonl；当输入含 task_name 时，
+  metrics/report 会额外输出 per-task performance；当输入含 HF metadata 时，会额外输出 per-assay_type
+  和 per-similarity_bucket performance。
   trace_messages.jsonl 使用 tools/trace_viewer/viewer.html 可识别的格式，
   每个 sample 一行，并把 reasoning_content 放进 assistant message 的 reasoning 字段供 viewer 展示。
+
+plot_llm_run_comparison.py
+  对两个 LLM run 和 full-valid baseline 做汇总可视化。
+  默认比较 HF assay-mol-disjoint no-tanimoto valid10k 上的 gpt-oss-120b 与 DeepSeek-v4-pro，
+  输出 overall、similarity_bucket、assay_type 三层 macro-F1 对比图和 TSV/report。
+  还输出 true-label subset recall：true similar recall 用于看 positive transfer / scaffold-hop，
+  true different recall 用于看 negative transfer / activity-cliff；label-specific 图的 x-axis
+  用 S=<true similar count>、D=<true different count> 标出每组 full-valid 样本量。
+```
+
+## 输出组织约定
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/
+  hf_jiosephlee_valid10k/<hf-dataset-name>/
+    validation.jsonl
+    summary.json
+  llm_runs/<run_id>/
+    manifest.json
+    predictions.jsonl
+    metrics.json
+    report_zh.md
+    trace_messages.jsonl
+    runs/
+  comparisons/hf_jiosephlee_valid10k/<hf-dataset-name>/
+    comparison_report.md
+    comparison_metrics.tsv
+    figures/
+      comparison_dashboard.*
+      label_recall_by_similarity_bucket.*
+      label_recall_by_assay_type.*
+```
+
+说明：
+
+```text
+smoke/debug 结果不作为长期产物保留；正式 run、输入数据和 comparison 分开存放。
+HF valid10k 的原始 metadata 必须保留，后续分析会用到 similarity_bucket、assay_type、
+weighted_tanimoto 等字段。
 ```
 
 ## 版本索引
-
-### smoke runs
-
-历史 smoke / debug 输出，用于检查流程和图表，不作为正式结论：
-
-```text
-outputs/chembl_tool/activity_transfer_benchmark/smoke/
-outputs/chembl_tool/activity_transfer_benchmark/smoke_binary/
-outputs/chembl_tool/activity_transfer_benchmark/smoke_dynamic_filter/
-outputs/chembl_tool/activity_transfer_benchmark/smoke_enrichment/
-```
 
 ### chembl36_activity_transfer_v1
 
@@ -205,6 +250,100 @@ similarity buckets: 6 buckets，每个 500 pairs
 Tanimoto>=0.50 macro-F1 0.4977, balanced accuracy 0.5020
 Tanimoto>=0.48 macro-F1 0.4903, balanced accuracy 0.4963
 MCS>=0.70      macro-F1 0.4941, balanced accuracy 0.4963
+```
+
+### task_assay_raw_robust_z_llm_3k
+
+当前推荐的 task-scoped LLM 小评估集，用于比较四个 data/processed task 的 pipeline 表现和
+同 task assay 上的 transfer performance。
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/llm_eval_sets/task_assay_raw_robust_z_llm_3k/
+  eval_pairs.jsonl
+  eval_pairs.tsv
+  summary.json
+  report_zh.md
+```
+
+构建命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.build_task_llm_eval_set \
+  --run-id task_assay_raw_robust_z_llm_3k \
+  --n-total 3000 \
+  --label-mode raw_robust_z \
+  --max-per-endpoint 6
+```
+
+构成：
+
+```text
+samples: 3,000
+assay endpoint groups: 1,889
+labels: similar 1,500 / different 1,500
+tasks: bbb_martins 750 / bioavailability_ma 750 / clintox 750 / skin_reaction 750
+each task label split: similar 375 / different 375
+```
+
+同集合 baseline：
+
+```text
+Tanimoto>=0.50 macro-F1 0.4991, balanced accuracy 0.5043
+Tanimoto>=0.48 macro-F1 0.4962, balanced accuracy 0.5030
+
+Per-task Tanimoto>=0.50 macro-F1:
+bbb_martins 0.4962
+bioavailability_ma 0.5013
+clintox 0.5106
+skin_reaction 0.4881
+```
+
+### HF jiosephlee valid10k
+
+当前只 materialize 四个 HF dataset 的 validation 10k split；不要默认下载全量 split。
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid10k/
+  chembl-mol12-stdsep-assay-mol-disjoint-no-props/
+  chembl-mol12-stdsep-assay-mol-disjoint-no-props-no-tanimoto/
+  chembl-mol12-stdsep-mol-disjoint-no-props/
+  chembl-mol12-stdsep-mol-disjoint-no-props-no-tanimoto/
+```
+
+已完成 full LLM run 的 setting：
+
+```text
+input:
+  hf_jiosephlee_valid10k/chembl-mol12-stdsep-assay-mol-disjoint-no-props-no-tanimoto/validation.jsonl
+runs:
+  llm_runs/gpt_oss_120b_hf_assay_mol_disjoint_no_tanimoto_valid10k_tools/
+  llm_runs/deepseek_v4_pro_hf_assay_mol_disjoint_no_tanimoto_valid10k_tools/
+comparison:
+  comparisons/hf_jiosephlee_valid10k/chembl-mol12-stdsep-assay-mol-disjoint-no-props-no-tanimoto/
+```
+
+当前 overall macro-F1：
+
+```text
+gpt-oss-120b:     0.5365
+DeepSeek-v4-pro:  0.5068
+Tanimoto >= 0.5:  0.5364
+Bucket majority:  0.3606
+```
+
+LLM 运行示例：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
+  --input-jsonl outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid10k/chembl-mol12-stdsep-assay-mol-disjoint-no-props-no-tanimoto/validation.jsonl \
+  --run-id gpt_oss_120b_hf_assay_mol_disjoint_no_tanimoto_valid10k_tools \
+  --base-urls http://127.0.0.1:8001/v1,http://127.0.0.1:8002/v1,http://127.0.0.1:8003/v1,http://127.0.0.1:8004/v1 \
+  --model gpt-oss-120b \
+  --api-key EMPTY \
+  --tool-service-url http://127.0.0.1:8765 \
+  --parallelism 16 \
+  --max-tool-rounds 3 \
+  --skip-existing
 ```
 
 ### gpt_oss_120b_dynamic_v1_llm_3k_tools
@@ -450,6 +589,34 @@ python -m tools.chembl_tool.activity_transfer_benchmark.analyze_mcs_results \
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.build_llm_eval_set \
   --run-id dynamic_v1_llm_3k
+```
+
+构建 task-scoped assay transfer benchmark：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.run_task_assay_benchmark \
+  --run-id task_assay_transfer_v2 \
+  --workers 256 \
+  --max-pairs-per-endpoint 5000 \
+  --max-total-pairs-per-mode 2000000 \
+  --progress-every-endpoints 250
+```
+
+说明：
+
+```text
+run_task_assay_benchmark.py
+  只使用四个 task pipeline 已筛出的 assay/activity evidence：
+  BBB_Martins v6、Bioavailability_Ma v4、ClinTox v6、Skin_Reaction v1。
+  默认输出三套 label mode：
+    raw_robust_z:     在同 task + assay + endpoint + normalized units 内，用 raw standard_value 的 robust sigma 标注。
+    log_raw_robust_z: 同上，但用 log10(raw standard_value)，更适合 IC50/EC50/Ki 等数量级型 endpoint。
+    pchembl_delta:    兼容旧规则，|delta pChEMBL| <= 0.5 为 similar，>= 1.0 为 different。
+  单位归一化会把 nM/uM/mM/M 统一到 nM，把常见通透率单位统一到 cm/s，
+  并把常见 clearance 单位统一到 mL/min 系列；无法安全跨分子量换算的单位
+  （如 ug/mL）保留为独立 normalized unit，避免混合 endpoint。
+  raw/log robust sigma 使用 IQR/1.349，IQR 为 0 时 fallback 到 MAD*1.4826；
+  sigma 仍为 0 的 endpoint 不进入 raw/log label mode。
 ```
 
 运行本地 gpt-oss-120b LLM benchmark：

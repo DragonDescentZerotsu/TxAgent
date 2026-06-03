@@ -1471,6 +1471,8 @@ ADME/exposure prior:
 
 这些 single-molecule priors 只是先验，不应替代 ChEMBL evidence。
 
+默认 single-molecule prompt 不包含任何 ChEMBL 相关 payload 或 instruction。只有开启 exact context 且命中 query exact context 时，single-molecule payload 才包含 `exact_query_chembl_context`，并提示模型区分 direct same-molecule ChEMBL clinical-toxicity evidence 和 physicochemical prior。ChEMBL neighbor evidence 仍只进入 group-level context。
+
 ## Group-level reasoning output schema
 
 建议 group output：

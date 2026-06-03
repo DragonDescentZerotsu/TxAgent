@@ -493,6 +493,30 @@ def _reason_single_molecule(
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    instructions = [
+        "Call molecule_properties for the query molecule before analysis.",
+        "Assess passive BBB plausibility from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
+        "Return JSON with passive_bbb_plausibility, efflux_or_transporter_prior, confidence, reasoning_summary, property_drivers, caveats.",
+    ]
+    payload: dict[str, Any] = {
+        "task": "Single-molecule BBB plausibility analysis.",
+        "query": query,
+        "instructions": instructions,
+        "required_json_schema": {
+            "passive_bbb_plausibility": "high | moderate | low | uncertain",
+            "efflux_or_transporter_prior": "high | moderate | low | uncertain",
+            "exact_chembl_evidence_assessment": "string",
+            "confidence": "high | moderate | low",
+            "reasoning_summary": "string",
+            "property_drivers": ["string"],
+            "caveats": ["string"],
+        },
+    }
+    if chembl_context:
+        instructions.append(
+            "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL BBB evidence from the physicochemical prior."
+        )
+        payload["exact_query_chembl_context"] = chembl_context
     messages = [
         {
             "role": "system",
@@ -504,30 +528,7 @@ def _reason_single_molecule(
         },
         {
             "role": "user",
-            "content": json.dumps(
-                {
-                    "task": "Single-molecule BBB plausibility analysis.",
-                    "query": query,
-                    "instructions": [
-                        "Call molecule_properties for the query molecule before analysis.",
-                        "Assess passive BBB plausibility from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
-                        "Do not use ChEMBL neighbor evidence in this analysis.",
-                        "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL BBB evidence from the physicochemical prior.",
-                        "Return JSON with passive_bbb_plausibility, efflux_or_transporter_prior, confidence, reasoning_summary, property_drivers, caveats.",
-                    ],
-                    "exact_query_chembl_context": chembl_context or {"status": "not_available"},
-                    "required_json_schema": {
-                        "passive_bbb_plausibility": "high | moderate | low | uncertain",
-                        "efflux_or_transporter_prior": "high | moderate | low | uncertain",
-                        "exact_chembl_evidence_assessment": "string",
-                        "confidence": "high | moderate | low",
-                        "reasoning_summary": "string",
-                        "property_drivers": ["string"],
-                        "caveats": ["string"],
-                    },
-                },
-                ensure_ascii=False,
-            ),
+            "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
     response = client.chat_json_with_tools(
@@ -606,8 +607,14 @@ def _run_final_reasoning(
                     "instructions": [
                         "Return compact complete JSON.",
                         "Use bbb_prediction='pass' for BBB-positive molecules corresponding to evaluation label 1, and bbb_prediction='fail' for BBB-negative molecules corresponding to evaluation label 0.",
+                        "Interpret BBB-positive as sufficient or detectable BBB/CNS access under the benchmark label ontology; it does not require ideal passive diffusion, high unbound brain exposure, or absence of every efflux signal.",
                         "Use the single-molecule analysis as the physicochemical prior.",
+                        "Treat passive_bbb_plausibility as a passive-diffusion prior, not as the final label. Ionization, high polarity, high lipophilicity, or efflux liability should reduce confidence or exposure quality, but should not become a hard fail rule when other evidence supports meaningful BBB/CNS access.",
                         "Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.",
+                        "Direct brain/plasma, unbound brain, CSF, brain uptake/perfusion, credible influx/prodrug context, or close same-scaffold evidence can support a pass prediction even when passive-property heuristics are imperfect; explain the uncertainty through confidence and evidence_gaps.",
+                        "For basic CNS-like amines with otherwise favorable MW, TPSA, HBD/HBA, logD/logP, and scaffold evidence, do not predict fail solely because the amine is mostly protonated at pH 7.4.",
+                        "Do not predict pass merely because BBB-positive labels can include non-ideal mechanisms. If the molecule has severe passive-property liabilities and no direct/close analog/mechanistic evidence for CNS access, fail remains the better-supported class.",
+                        "When evidence is weak or mixed, distinguish 'poor passive permeability' from 'no meaningful BBB access'. Choose fail only when the integrated evidence better supports insufficient BBB/CNS access, not merely because of one isolated drug-likeness heuristic.",
                         "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
                         "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
                         "You must choose exactly one bbb_prediction: pass or fail. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",

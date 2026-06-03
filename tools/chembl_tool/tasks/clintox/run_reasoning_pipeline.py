@@ -500,6 +500,32 @@ def _reason_single_molecule(
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    instructions = [
+        "Call molecule_properties for the query molecule before analysis.",
+        "Assess clinical toxicity prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, electrophilic/reactive functional groups, cationic amphiphilicity, and structural alerts.",
+        "Return JSON with clinical_toxicity_prior, physicochemical_risk_prior, reactive_or_structural_alert_prior, exposure_accumulation_prior, confidence, reasoning_summary, property_drivers, caveats.",
+    ]
+    payload: dict[str, Any] = {
+        "task": "Single-molecule clinical toxicity plausibility analysis.",
+        "query": query,
+        "instructions": instructions,
+        "required_json_schema": {
+            "clinical_toxicity_prior": "high_risk | low_risk | mixed_or_unclear",
+            "physicochemical_risk_prior": "favorable | concerning | mixed_or_unclear",
+            "reactive_or_structural_alert_prior": "concerning | not_apparent | mixed_or_unclear",
+            "exposure_accumulation_prior": "concerning | not_apparent | mixed_or_unclear",
+            "exact_chembl_evidence_assessment": "string",
+            "confidence": "high | moderate | low",
+            "reasoning_summary": "string",
+            "property_drivers": ["string"],
+            "caveats": ["string"],
+        },
+    }
+    if chembl_context:
+        instructions.append(
+            "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL clintox evidence from the physicochemical prior."
+        )
+        payload["exact_query_chembl_context"] = chembl_context
     messages = [
         {
             "role": "system",
@@ -511,32 +537,7 @@ def _reason_single_molecule(
         },
         {
             "role": "user",
-            "content": json.dumps(
-                {
-                    "task": "Single-molecule clinical toxicity plausibility analysis.",
-                    "query": query,
-                    "instructions": [
-                        "Call molecule_properties for the query molecule before analysis.",
-                        "Assess clinical toxicity prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, electrophilic/reactive functional groups, cationic amphiphilicity, and structural alerts.",
-                        "Do not use ChEMBL neighbor evidence in this analysis.",
-                        "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL clintox evidence from the physicochemical prior.",
-                        "Return JSON with clinical_toxicity_prior, physicochemical_risk_prior, reactive_or_structural_alert_prior, exposure_accumulation_prior, confidence, reasoning_summary, property_drivers, caveats.",
-                    ],
-                    "exact_query_chembl_context": chembl_context or {"status": "not_available"},
-                    "required_json_schema": {
-                        "clinical_toxicity_prior": "high_risk | low_risk | mixed_or_unclear",
-                        "physicochemical_risk_prior": "favorable | concerning | mixed_or_unclear",
-                        "reactive_or_structural_alert_prior": "concerning | not_apparent | mixed_or_unclear",
-                        "exposure_accumulation_prior": "concerning | not_apparent | mixed_or_unclear",
-                        "exact_chembl_evidence_assessment": "string",
-                        "confidence": "high | moderate | low",
-                        "reasoning_summary": "string",
-                        "property_drivers": ["string"],
-                        "caveats": ["string"],
-                    },
-                },
-                ensure_ascii=False,
-            ),
+            "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
     response = client.chat_json_with_tools(

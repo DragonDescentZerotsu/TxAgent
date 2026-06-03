@@ -128,6 +128,8 @@ outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
 
 `chembl_exact_context.py` 是可选 evidence-rich 增强。它会用 query full InChIKey 查 ChEMBL exact molecule，并在 retrieved neighbor 涉及的 assay 中查 query activity。默认 benchmark 不开启，避免 prospective evaluation 数据泄漏；只有显式传 `--enable-chembl-exact-context` 时才用于 retrospective / evidence-rich case study。
 
+默认 single-molecule prompt 不包含任何 ChEMBL 相关 payload 或 instruction。只有开启 exact context 且命中 query exact context 时，single-molecule payload 才包含 `exact_query_chembl_context`，并提示模型区分 direct same-molecule ChEMBL bioavailability evidence 和 physicochemical prior。ChEMBL neighbor evidence 仍只进入 group-level context。
+
 ## Evidence 类型解释
 
 Bioavailability_Ma 关注的是口服给药后进入 systemic circulation 的程度和速度。Tier 不需要照搬
@@ -824,12 +826,14 @@ Bioavailability_Ma reasoning 分为并发 evidence branches 和 final summary。
 ```text
 input:
   query molecule
+  exact_query_chembl_context only when --enable-chembl-exact-context is enabled and exact context is found
 
 available tools:
   molecule_properties
 
-not used:
+not sent by default:
   ChEMBL neighbor evidence
+  exact_query_chembl_context
   mmp_structure_compare
   properties_compare
 
@@ -859,7 +863,11 @@ output:
   caveats
 ```
 
-这个分支只能看到 `molecule_properties`，不能看到 ChEMBL neighbor evidence 或分子比较工具。
+默认情况下这个分支只看到 query molecule 和 `molecule_properties`，不会出现 ChEMBL neighbor
+evidence，也不会出现任何 `exact_query_chembl_context` 相关 payload 或 prompt instruction。
+只有显式开启 exact ChEMBL context 且命中 query exact context 时，才会把
+`exact_query_chembl_context` 放入 single-molecule payload，并提示模型区分 direct same-molecule
+ChEMBL evidence 和 physicochemical prior。ChEMBL neighbor evidence 仍只进入 group-level context。
 
 ### Group-level reasoning
 
