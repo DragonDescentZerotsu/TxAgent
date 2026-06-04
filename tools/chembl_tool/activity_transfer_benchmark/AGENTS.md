@@ -36,6 +36,7 @@ tools/chembl_tool/activity_transfer_benchmark/
   analyze_mcs_results.py
   build_llm_eval_set.py
   build_task_llm_eval_set.py
+  materialize_hf_valid_split.py
   run_llm_benchmark.py
   plot_llm_run_comparison.py
 ```
@@ -68,6 +69,13 @@ build_task_llm_eval_set.py
   从 task-scoped pairs 中构建小规模 LLM 评估集。默认 3,000 pairs，先按 task 平衡，再按 label 和
   Tanimoto bucket 分层，并限制每个 assay endpoint 的样本数。
 
+materialize_hf_valid_split.py
+  将 HF prompt/completion/metadata 数据集的 validation split 落盘到
+  outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/<dataset>/。
+  默认用于 proper_assay_transfer 两个 dataset，limit=20000；实际 full validation 为 19,986 行。
+  不默认下载 train/test 全量 split；summary.json 记录 label、bucket、
+  assay_type 和 weighted_tanimoto 分布。
+
 run_llm_benchmark.py
   用 OpenAI-compatible endpoint 跑 LLM activity-transfer 判断。
   默认支持本地 vLLM gpt-oss-120b，也可跑 DeepSeek/OpenAI-compatible hosted endpoint。
@@ -75,6 +83,11 @@ run_llm_benchmark.py
   支持原 dynamic_v1/task-assay JSONL，也支持 HF prompt/completion/metadata 格式：
   completion A/B 映射为 similar/different，metadata 原样保留到 input_record.hf_metadata。
   HF metadata 中的 similarity_bucket、assay_type 会进入 metrics/report 的分组指标。
+  --model 可直接传本地 vLLM 暴露的模型名，例如 gpt-oss-120b、qwen3-4b、qwen3-8b。
+  默认 --output-mode json；小模型可用 --output-mode choice，让模型只输出 A/B，
+  choice 模式未显式传 --max-tokens 时默认 max_tokens=1，且不会追加 JSON 输出指令。
+  reasoning 默认不强制开启；--enable-thinking 会按模型名对 Qwen 发送 chat_template_kwargs enable_thinking=true，
+  对非 Qwen 发送 thinking enabled；--disable-thinking 会对 Qwen/vLLM 发送 enable_thinking=false。
   默认 max-tool-rounds=3；使用 --skip-existing 断点续跑。
   输出 per-sample JSON、predictions、metrics、report、SVG 和 trace_messages.jsonl；当输入含 task_name 时，
   metrics/report 会额外输出 per-task performance；当输入含 HF metadata 时，会额外输出 per-assay_type
@@ -96,6 +109,7 @@ plot_llm_run_comparison.py
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/
   hf_jiosephlee_valid10k/<hf-dataset-name>/
+  hf_jiosephlee_valid20k/<hf-dataset-name>/
     validation.jsonl
     summary.json
   llm_runs/<run_id>/
@@ -300,7 +314,7 @@ skin_reaction 0.4881
 
 ### HF jiosephlee valid10k
 
-当前只 materialize 四个 HF dataset 的 validation 10k split；不要默认下载全量 split。
+旧的四个 chembl-mol12 dataset 只 materialize validation 10k split；不要默认下载全量 split。
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid10k/
@@ -310,7 +324,30 @@ outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid10k/
   chembl-mol12-stdsep-mol-disjoint-no-props-no-tanimoto/
 ```
 
-已完成 full LLM run 的 setting：
+### HF jiosephlee valid20k proper assay transfer
+
+两个 proper_assay_transfer dataset 已 materialize 完整 validation split；实际每个 split 为 19,986 行。
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/
+  proper_assay_transfer_no_prop_no_tanimoto/
+  proper_assay_transfer_no_tanimoto/
+```
+
+两者 schema 仍是 prompt/completion/metadata，可直接输入 run_llm_benchmark.py。
+`proper_assay_transfer_no_prop_no_tanimoto` 不含 properties / Tanimoto；
+`proper_assay_transfer_no_tanimoto` 含 molecule properties，但不含 Tanimoto。
+
+当前 full-validation baseline：
+
+```text
+rows: 19,986
+labels: similar 10,893 / different 9,093
+Tanimoto>=0.50 macro-F1: 0.5335
+Bucket-majority macro-F1: 0.4799
+```
+
+旧 valid10k 已完成 full LLM run 的 setting：
 
 ```text
 input:

@@ -6,6 +6,7 @@ import argparse
 import concurrent.futures
 import json
 import os
+import re
 import sys
 import threading
 import time
@@ -22,6 +23,7 @@ DEFAULT_OUT_ROOT = "outputs/chembl_tool/activity_transfer_benchmark/llm_runs"
 DEFAULT_BASE_URL = "http://127.0.0.1:8001/v1"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
 DEFAULT_MODEL = "gpt-oss-120b"
+DEFAULT_MAX_TOKENS = 1024
 
 TRANSFER_TOOLS = [
     {
@@ -80,10 +82,14 @@ TRANSFER_TOOLS = [
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.enable_thinking and args.disable_thinking:
+        raise SystemExit("Use only one of --enable-thinking or --disable-thinking.")
     load_env(Path(args.env_file))
     api_key = resolve_api_key(args)
     records = prepare_input_records(read_jsonl(Path(args.input_jsonl)))
     selected_indices = select_indices(args, len(records))
+    max_tokens = effective_max_tokens(args)
+    response_format = should_use_response_format(args)
 
     run_id = args.run_id or time.strftime("gpt_oss_120b_llm_%Y%m%d_%H%M%S")
     out_dir = Path(args.out_root) / run_id
@@ -102,6 +108,11 @@ def main(argv: list[str] | None = None) -> int:
         "tool_service_url": args.tool_service_url,
         "enable_tools": not args.disable_tools,
         "input_format": infer_input_format(records),
+        "output_mode": args.output_mode,
+        "max_tokens": max_tokens,
+        "response_format": response_format,
+        "enable_thinking": args.enable_thinking,
+        "disable_thinking": args.disable_thinking,
         "n_selected": len(selected_indices),
         "selected_indices": selected_indices,
         "started_at": now(),
@@ -123,13 +134,15 @@ def main(argv: list[str] | None = None) -> int:
             base_url=base_url,
             model=args.model,
             timeout_s=args.timeout_s,
-            max_tokens=args.max_tokens,
+            max_tokens=max_tokens,
             tool_service_url=args.tool_service_url,
             enable_tools=not args.disable_tools,
             max_tool_rounds=args.max_tool_rounds,
-            response_format=not args.disable_response_format,
+            response_format=response_format,
             reasoning_effort=args.reasoning_effort,
             enable_thinking=args.enable_thinking,
+            disable_thinking=args.disable_thinking,
+            output_mode=args.output_mode,
         )
         for base_url in parse_base_urls(args)
     ]
@@ -147,6 +160,7 @@ def main(argv: list[str] | None = None) -> int:
                 index,
                 runs_dir,
                 args.skip_existing,
+                args.output_mode,
             ): index
             for position, index in enumerate(selected_indices)
         }
@@ -160,10 +174,16 @@ def main(argv: list[str] | None = None) -> int:
             completed += 1
             if completed % max(1, args.progress_every) == 0 or completed == len(futures):
                 metrics = compute_metrics(results)
+                elapsed_s = time.monotonic() - started
+                rate = completed / elapsed_s if elapsed_s > 0 else 0.0
+                eta_s = (len(futures) - completed) / rate if rate > 0 else None
                 with lock:
                     print(
                         "[activity_transfer_llm] "
                         f"progress {completed}/{len(futures)} "
+                        f"elapsed={format_duration(elapsed_s)} "
+                        f"eta={format_duration(eta_s)} "
+                        f"rate={rate:.2f}/s "
                         f"macro_f1={metrics['llm'].get('macro_f1', 0):.4f} "
                         f"failed={metrics['n_failed']}",
                         file=sys.stderr,
@@ -182,6 +202,22 @@ def main(argv: list[str] | None = None) -> int:
     write_json(out_dir / "manifest.json", manifest)
     print(json.dumps({"manifest": manifest, "metrics": metrics}, ensure_ascii=False, indent=2), flush=True)
     return 0 if metrics["n_failed"] == 0 else 1
+
+
+def format_duration(seconds: float | None) -> str:
+    if seconds is None:
+        return "unknown"
+    total_seconds = max(0, int(round(seconds)))
+    days, remainder = divmod(total_seconds, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, secs = divmod(remainder, 60)
+    if days:
+        return f"{days}d{hours:02d}h{minutes:02d}m{secs:02d}s"
+    if hours:
+        return f"{hours}h{minutes:02d}m{secs:02d}s"
+    if minutes:
+        return f"{minutes}m{secs:02d}s"
+    return f"{secs}s"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -206,14 +242,42 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--indices", type=int, nargs="*", default=[])
     parser.add_argument("--skip-existing", action="store_true")
     parser.add_argument("--timeout-s", type=int, default=180)
-    parser.add_argument("--max-tokens", type=int, default=1024)
+    parser.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
     parser.add_argument("--max-tool-rounds", type=int, default=3)
+    parser.add_argument(
+        "--output-mode",
+        choices=("json", "choice"),
+        default="json",
+        help="json asks for predicted_transferability JSON; choice asks for a one-letter A/B answer.",
+    )
     parser.add_argument("--disable-tools", action="store_true")
     parser.add_argument("--disable-response-format", action="store_true")
     parser.add_argument("--reasoning-effort", default="", help="Optional OpenAI-compatible reasoning_effort value.")
     parser.add_argument("--enable-thinking", action="store_true", help="Send extra_body thinking enabled.")
+    parser.add_argument(
+        "--disable-thinking",
+        action="store_true",
+        help="Send Qwen/vLLM chat_template_kwargs enable_thinking=false.",
+    )
     parser.add_argument("--progress-every", type=int, default=25)
     return parser.parse_args(argv)
+
+
+def effective_max_tokens(args: argparse.Namespace) -> int:
+    if args.output_mode == "choice" and args.max_tokens == DEFAULT_MAX_TOKENS:
+        return 1
+    return args.max_tokens
+
+
+def should_use_response_format(args: argparse.Namespace) -> bool:
+    if args.output_mode != "json" or args.disable_response_format:
+        return False
+    # Qwen3 thinking is returned by vLLM as visible <think>...</think> text
+    # unless the server is launched with a reasoning parser. JSON response
+    # format suppresses those tags, so disable it when Qwen thinking is needed.
+    if args.enable_thinking and "qwen" in str(args.model).lower():
+        return False
+    return True
 
 
 def prepare_input_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -310,6 +374,8 @@ class LlmClient:
         response_format: bool,
         reasoning_effort: str,
         enable_thinking: bool,
+        disable_thinking: bool,
+        output_mode: str,
     ) -> None:
         self.client = OpenAI(api_key=api_key, base_url=base_url.rstrip("/"), timeout=timeout_s)
         self.model = model
@@ -320,6 +386,8 @@ class LlmClient:
         self.response_format = response_format
         self.reasoning_effort = reasoning_effort
         self.enable_thinking = enable_thinking
+        self.disable_thinking = disable_thinking
+        self.output_mode = output_mode
 
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         if not self.enable_tools:
@@ -357,7 +425,7 @@ class LlmClient:
         working_messages.append(
             {
                 "role": "user",
-                "content": "Return the required compact JSON now. Do not call more tools.",
+                "content": final_answer_instruction(self.output_mode),
             }
         )
         response = self.create_completion(working_messages)
@@ -384,8 +452,9 @@ class LlmClient:
             kwargs["response_format"] = {"type": "json_object"}
         if self.reasoning_effort:
             kwargs["reasoning_effort"] = self.reasoning_effort
-        if self.enable_thinking:
-            kwargs["extra_body"] = {"thinking": {"type": "enabled"}}
+        extra_body = self.extra_body()
+        if extra_body:
+            kwargs["extra_body"] = extra_body
         if tools is not None:
             kwargs["tools"] = tools
         if tool_choice is not None:
@@ -397,6 +466,17 @@ class LlmClient:
                 kwargs.pop("response_format", None)
                 return self.client.chat.completions.create(**kwargs)
             raise
+
+    def extra_body(self) -> dict[str, Any]:
+        extra: dict[str, Any] = {}
+        if self.enable_thinking:
+            if "qwen" in self.model.lower():
+                extra["chat_template_kwargs"] = {"enable_thinking": True}
+            else:
+                extra["thinking"] = {"type": "enabled"}
+        if self.disable_thinking:
+            extra["chat_template_kwargs"] = {"enable_thinking": False}
+        return extra
 
 
 class ToolServiceClient:
@@ -451,12 +531,13 @@ def run_one(
     sample_index: int,
     runs_dir: Path,
     skip_existing: bool,
+    output_mode: str,
 ) -> dict[str, Any]:
     run_path = runs_dir / f"sample_{sample_index:05d}.json"
     if skip_existing and run_path.exists():
         return json.loads(run_path.read_text(encoding="utf-8"))
     started = time.monotonic()
-    messages = build_messages(record)
+    messages = build_messages(record, output_mode=output_mode)
     response = client.chat_json(messages)
     content = response["content"]
     prediction = extract_prediction(content)
@@ -464,13 +545,7 @@ def run_one(
         retry_messages = messages + [
             {
                 "role": "user",
-                "content": (
-                    "Your previous answer was invalid or missing `predicted_transferability`. "
-                    "Return exactly one compact JSON object with keys: "
-                    "predicted_transferability, confidence, should_transfer_activity, "
-                    "reasoning_summary, key_factors, rationale. "
-                    "Use predicted_transferability as either `similar` or `different`."
-                ),
+                "content": retry_instruction(output_mode),
             }
         ]
         response = client.chat_json_no_tools(retry_messages)
@@ -484,6 +559,7 @@ def run_one(
         "label": record["label"],
         "correct": bool(prediction == record["label"]) if prediction else False,
         "confidence": content.get("confidence", "") if isinstance(content, dict) else "",
+        "output_mode": output_mode,
         "raw_content": response["raw_content"],
         "parsed_content": content,
         "reasoning_content": response.get("reasoning_content", ""),
@@ -513,20 +589,28 @@ def run_one(
     return result
 
 
-def build_messages(record: dict[str, Any]) -> list[dict[str, str]]:
+def retry_instruction(output_mode: str) -> str:
+    if output_mode == "choice":
+        return "Your previous answer was invalid. Return exactly one letter: A or B."
+    return (
+        "Your previous answer was invalid or missing `predicted_transferability`. "
+        "Return exactly one compact JSON object with keys: "
+        "predicted_transferability, confidence, should_transfer_activity, "
+        "reasoning_summary, key_factors, rationale. "
+        "Use predicted_transferability as either `similar` or `different`."
+    )
+
+
+def final_answer_instruction(output_mode: str) -> str:
+    if output_mode == "choice":
+        return "Return exactly one letter now: A or B. Do not call more tools."
+    return "Return the required compact JSON now. Do not call more tools."
+
+
+def build_messages(record: dict[str, Any], *, output_mode: str = "json") -> list[dict[str, str]]:
     if record.get("input_format") == "hf_prompt_completion":
-        system = (
-            "You are evaluating analog assay activity transferability for medicinal chemistry. "
-            "Return only compact JSON. Use predicted_transferability='similar' for answer A/transfer, "
-            "and predicted_transferability='different' for answer B/not transfer."
-        )
-        user = (
-            str(record["prompt"]).rstrip()
-            + "\n\nReturn exactly one compact JSON object with keys: "
-            "predicted_transferability, confidence, should_transfer_activity, "
-            "reasoning_summary, key_factors, rationale. "
-            "Use predicted_transferability as either `similar` or `different`."
-        )
+        system = hf_system_prompt(output_mode)
+        user = hf_user_prompt(record, output_mode)
         return [
             {"role": "system", "content": system},
             {"role": "user", "content": user},
@@ -582,7 +666,9 @@ def build_messages(record: dict[str, Any]) -> list[dict[str, str]]:
 
     system = (
         "You are evaluating analog assay activity transferability for medicinal chemistry. "
-        "Return only compact JSON. The hidden query activity is not provided. "
+        +
+        ("Return only compact JSON. " if output_mode == "json" else "Return only one letter: A or B. ")
+        + "The hidden query activity is not provided. "
         "Use assay context and structural/property similarity to decide whether the reference activity "
         "is likely transferable to the query molecule in the same assay endpoint."
     )
@@ -616,7 +702,9 @@ def build_messages(record: dict[str, Any]) -> list[dict[str, str]]:
             "reference_mcs_coverage": record.get("reference_mcs_coverage"),
             "mcs_timed_out": record.get("mcs_timed_out"),
         },
-        "output_schema": {
+    }
+    if output_mode == "json":
+        user["output_schema"] = {
             "predicted_transferability": "similar or different",
             "confidence": "high, moderate, or low",
             "should_transfer_activity": "boolean",
@@ -625,12 +713,43 @@ def build_messages(record: dict[str, Any]) -> list[dict[str, str]]:
             ],
             "key_factors": ["short strings"],
             "rationale": "one concise paragraph",
-        },
-    }
+        }
+    else:
+        user["output_options"] = {
+            "A": "transfer / predicted_transferability=similar",
+            "B": "not transfer / predicted_transferability=different",
+        }
+        user["instruction"] = "Return exactly one letter: A or B."
     return [
         {"role": "system", "content": system},
         {"role": "user", "content": json.dumps(user, ensure_ascii=False)},
     ]
+
+
+def hf_system_prompt(output_mode: str) -> str:
+    if output_mode == "choice":
+        return (
+            "You are evaluating analog assay activity transferability for medicinal chemistry. "
+            "Return exactly one letter: A or B."
+        )
+    return (
+        "You are evaluating analog assay activity transferability for medicinal chemistry. "
+        "Return only compact JSON. Use predicted_transferability='similar' for answer A/transfer, "
+        "and predicted_transferability='different' for answer B/not transfer."
+    )
+
+
+def hf_user_prompt(record: dict[str, Any], output_mode: str) -> str:
+    prompt = str(record["prompt"]).rstrip()
+    if output_mode == "choice":
+        return prompt + "\n\nOutput exactly one letter: A or B."
+    return (
+        prompt
+        + "\n\nReturn exactly one compact JSON object with keys: "
+        "predicted_transferability, confidence, should_transfer_activity, "
+        "reasoning_summary, key_factors, rationale. "
+        "Use predicted_transferability as either `similar` or `different`."
+    )
 
 
 def response_to_result(
@@ -646,10 +765,14 @@ def response_to_result(
     trace_messages = [json_safe_message(item) for item in messages]
     if not trace_messages or trace_messages[-1] != final_message:
         trace_messages.append(final_message)
+    reasoning_content = extract_reasoning_content(final_message)
+    if not reasoning_content:
+        reasoning_content = extract_think_content(content)
+    content_for_parse = strip_think_blocks(content)
     return {
-        "content": parse_json_content(content),
+        "content": parse_json_content(content_for_parse),
         "raw_content": content,
-        "reasoning_content": extract_reasoning_content(final_message),
+        "reasoning_content": reasoning_content,
         "final_message": final_message,
         "messages": trace_messages,
         "usage": sum_usage(responses or [response]),
@@ -1041,7 +1164,16 @@ def compact_input_record(record: dict[str, Any]) -> dict[str, Any]:
 
 
 def normalize_prediction(value: Any) -> str:
-    text = str(value or "").strip().lower()
+    raw_text = str(value or "").strip()
+    compact = raw_text.upper().strip(" .:;()[]{}")
+    if compact == "A":
+        return "similar"
+    if compact == "B":
+        return "different"
+    match = re.search(r"(?:^|\b)(?:ANSWER\s*[:\-]?\s*)?([AB])(?:\b|$)", raw_text.upper())
+    if match:
+        return "similar" if match.group(1) == "A" else "different"
+    text = raw_text.lower()
     if text in {"similar", "transferable", "yes", "true"}:
         return "similar"
     if text in {"different", "not_similar", "not transferable", "not_transferable", "no", "false"}:
@@ -1051,7 +1183,7 @@ def normalize_prediction(value: Any) -> str:
 
 def extract_prediction(content: Any) -> str:
     if not isinstance(content, dict):
-        return ""
+        return normalize_prediction(content)
     for key in (
         "predicted_transferability",
         "prediction",
@@ -1062,6 +1194,9 @@ def extract_prediction(content: Any) -> str:
         prediction = normalize_prediction(content.get(key))
         if prediction:
             return prediction
+    prediction = normalize_prediction(content.get("unparsed_text"))
+    if prediction:
+        return prediction
     return ""
 
 
@@ -1077,6 +1212,15 @@ def parse_json_content(content: str) -> Any:
             except json.JSONDecodeError:
                 pass
         return {"unparsed_text": content}
+
+
+def extract_think_content(content: str) -> str:
+    matches = re.findall(r"<think>\s*(.*?)\s*</think>", content or "", flags=re.IGNORECASE | re.DOTALL)
+    return "\n\n".join(match.strip() for match in matches if match.strip())
+
+
+def strip_think_blocks(content: str) -> str:
+    return re.sub(r"<think>\s*.*?\s*</think>", "", content or "", flags=re.IGNORECASE | re.DOTALL).strip()
 
 
 def json_safe_message(message: Any) -> dict[str, Any]:
