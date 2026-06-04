@@ -38,7 +38,9 @@ tools/chembl_tool/activity_transfer_benchmark/
   build_task_llm_eval_set.py
   materialize_hf_valid_split.py
   run_llm_benchmark.py
+  run_qwen3_4b_valid20k_four_settings.sh
   plot_llm_run_comparison.py
+  plot_llm_multi_run_comparison.py
 ```
 
 脚本职责：
@@ -89,11 +91,19 @@ run_llm_benchmark.py
   reasoning 默认不强制开启；--enable-thinking 会按模型名对 Qwen 发送 chat_template_kwargs enable_thinking=true，
   对非 Qwen 发送 thinking enabled；--disable-thinking 会对 Qwen/vLLM 发送 enable_thinking=false。
   默认 max-tool-rounds=3；使用 --skip-existing 断点续跑。
+  progress 输出包含 completed/total、elapsed、ETA、rate、macro-F1 和 failed。
   输出 per-sample JSON、predictions、metrics、report、SVG 和 trace_messages.jsonl；当输入含 task_name 时，
   metrics/report 会额外输出 per-task performance；当输入含 HF metadata 时，会额外输出 per-assay_type
-  和 per-similarity_bucket performance。
+  per-similarity_bucket 和 per-eval_subset performance。
   trace_messages.jsonl 使用 tools/trace_viewer/viewer.html 可识别的格式，
   每个 sample 一行，并把 reasoning_content 放进 assistant message 的 reasoning 字段供 viewer 展示。
+
+run_qwen3_4b_valid20k_four_settings.sh
+  顺序跑 qwen3-4b proper valid20k 四个标准 setting：no-props choice/no-thinking、
+  no-props json/thinking、props choice/no-thinking、props json/thinking；每步都用
+  --skip-existing 支持断点续跑，最后调用 plot_llm_multi_run_comparison.py 生成 qwen3-4b comparison。
+  可用环境变量覆盖 PYTHON_BIN、MODEL、BASE_URL、API_KEY、PARALLELISM、TIMEOUT_S、
+  PROGRESS_EVERY、MAX_TOKENS_THINK、OUT_ROOT、COMPARISON_DIR。
 
 plot_llm_run_comparison.py
   对两个 LLM run 和 full-valid baseline 做汇总可视化。
@@ -102,6 +112,13 @@ plot_llm_run_comparison.py
   还输出 true-label subset recall：true similar recall 用于看 positive transfer / scaffold-hop，
   true different recall 用于看 negative transfer / activity-cliff；label-specific 图的 x-axis
   用 S=<true similar count>、D=<true different count> 标出每组 full-valid 样本量。
+
+plot_llm_multi_run_comparison.py
+  plot_llm_run_comparison.py 的通用多 run 版本。用重复的 --run label=path 传入任意多个
+  llm_runs，和 full-valid baseline 一起输出同样格式的 dashboard、overall、similarity_bucket、
+  assay_type、eval_subset、label-specific recall 图、TSV 和 report。读取旧 run 时如果 metrics.json
+  缺 per_eval_subset，会从 predictions.jsonl 重新计算。后续新模型/新 prompt setting 优先用这个入口；
+  旧的 two-run 脚本暂时保留用于一键复现 valid10k gpt-oss/DeepSeek 图。
 ```
 
 ## 输出组织约定
@@ -120,6 +137,7 @@ outputs/chembl_tool/activity_transfer_benchmark/
     trace_messages.jsonl
     runs/
   comparisons/hf_jiosephlee_valid10k/<hf-dataset-name>/
+  comparisons/hf_jiosephlee_valid20k/<comparison-name>/
     comparison_report.md
     comparison_metrics.tsv
     figures/
@@ -345,6 +363,87 @@ rows: 19,986
 labels: similar 10,893 / different 9,093
 Tanimoto>=0.50 macro-F1: 0.5335
 Bucket-majority macro-F1: 0.4799
+```
+
+当前 qwen3-8b full-validation runs（排除 1-sample smoke；两个旧的误导性 properties/json run 已删除）：
+
+```text
+llm_runs/qwen3_8b_proper_no_prop_no_tanimoto_valid20k_choice_no_thinking/
+  no properties, choice/no-thinking, macro-F1 0.5120
+
+llm_runs/qwen3_8b_proper_no_prop_no_tanimoto_valid20k_choice_with_thinking/
+  no properties, json/thinking trace, macro-F1 0.5069
+
+llm_runs/qwen3_8b_proper_no_tanimoto_valid20k_choice_no_thinking_fixed/
+  properties, choice/no-thinking, macro-F1 0.4603
+
+llm_runs/qwen3_8b_proper_no_tanimoto_valid20k_json_with_thinking_trace/
+  properties, fixed json/thinking trace, macro-F1 0.5349
+```
+
+当前 qwen3-8b valid20k comparison：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid20k/qwen3_8b_proper_valid20k/
+  comparison_report.md
+  comparison_metrics.tsv
+  figures/
+    comparison_dashboard.*
+    overall_metrics.*
+    label_recall_by_similarity_bucket.*
+    label_recall_by_assay_type.*
+    label_recall_by_eval_subset.*
+```
+
+当前 qwen3-4b full-validation runs：
+
+```text
+llm_runs/qwen3_4b_proper_no_prop_no_tanimoto_valid20k_choice_no_thinking/
+  no properties, choice/no-thinking, macro-F1 0.5273
+
+llm_runs/qwen3_4b_proper_no_prop_no_tanimoto_valid20k_json_with_thinking_trace/
+  no properties, json/thinking trace, macro-F1 0.4708
+
+llm_runs/qwen3_4b_proper_no_tanimoto_valid20k_choice_no_thinking/
+  properties, choice/no-thinking, macro-F1 0.4888
+
+llm_runs/qwen3_4b_proper_no_tanimoto_valid20k_json_with_thinking_trace/
+  properties, json/thinking trace, macro-F1 0.5236
+```
+
+当前 qwen3-4b valid20k comparison：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid20k/qwen3_4b_proper_valid20k/
+  comparison_report.md
+  comparison_metrics.tsv
+  figures/
+    comparison_dashboard.*
+    overall_metrics.*
+    label_recall_by_similarity_bucket.*
+    label_recall_by_assay_type.*
+    label_recall_by_eval_subset.*
+```
+
+当前 gpt-oss-120b valid20k run：
+
+```text
+llm_runs/gpt_oss_120b_proper_no_tanimoto_valid20k_json_with_thinking_trace/
+  properties, json/thinking trace, macro-F1 0.5434
+  reasoning_content present in sampled run JSON and trace_messages.jsonl.
+```
+
+当前 gpt-oss-120b valid20k comparison：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid20k/gpt_oss_120b_proper_valid20k/
+  comparison_report.md
+  comparison_metrics.tsv
+  figures/
+    comparison_dashboard.*
+    overall_metrics.*
+    label_recall_by_similarity_bucket.*
+    label_recall_by_assay_type.*
 ```
 
 旧 valid10k 已完成 full LLM run 的 setting：

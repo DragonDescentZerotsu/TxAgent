@@ -862,6 +862,7 @@ def add_metadata_group_metrics(
     group_specs = {
         "per_assay_type": lambda row: ((row.get("input_record") or {}).get("hf_metadata") or {}).get("assay_type"),
         "per_similarity_bucket": lambda row: str(((row.get("input_record") or {}).get("hf_metadata") or {}).get("similarity_bucket")),
+        "per_eval_subset": lambda row: ((row.get("input_record") or {}).get("hf_metadata") or {}).get("eval_subset"),
     }
     for output_key, key_fn in group_specs.items():
         groups = sorted({str(key_fn(row)) for row in ok_results if key_fn(row) not in (None, "", "None")})
@@ -973,7 +974,11 @@ def write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any]) 
                 f"{task_metrics['baselines'].get('tanimoto_0_50', {}).get('macro_f1', 0.0):.4f} | "
                 f"{task_metrics['baselines'].get('tanimoto_0_48', {}).get('macro_f1', 0.0):.4f} |"
             )
-    for group_key, title in (("per_assay_type", "Per Assay Type"), ("per_similarity_bucket", "Per Similarity Bucket")):
+    for group_key, title in (
+        ("per_assay_type", "Per Assay Type"),
+        ("per_similarity_bucket", "Per Similarity Bucket"),
+        ("per_eval_subset", "Per Eval Subset"),
+    ):
         if not metrics.get(group_key):
             continue
         lines.extend(
