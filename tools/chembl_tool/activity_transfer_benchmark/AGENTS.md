@@ -37,6 +37,7 @@ tools/chembl_tool/activity_transfer_benchmark/
   build_llm_eval_set.py
   build_task_llm_eval_set.py
   materialize_hf_valid_split.py
+  prepare_hf_mlp_features.py
   run_llm_benchmark.py
   run_qwen3_4b_valid20k_four_settings.sh
   plot_llm_run_comparison.py
@@ -77,6 +78,16 @@ materialize_hf_valid_split.py
   默认用于 proper_assay_transfer 两个 dataset，limit=20000；实际 full validation 为 19,986 行。
   不默认下载 train/test 全量 split；summary.json 记录 label、bucket、
   assay_type 和 weighted_tanimoto 分布。
+
+prepare_hf_mlp_features.py
+  为 trained MLP baseline 准备 HF assay-transfer 特征缓存。输入 HF prompt/completion/metadata
+  JSONL，解析 endpoint 完整描述和 Molecule A/B SMILES；endpoint 用 Qwen3-Embedding-8B
+  计算 semantic embedding；molecule 用 RDKit 计算 Morgan fingerprint 和全量 RDKit descriptors；
+  输出 clean_splits、endpoints/molecules metadata、endpoint_embeddings.npy、molecule_features.npz
+  和 row_indices/*.npz。实现使用 streaming 清洗 train JSONL，避免 1200 万行 full train 一次性驻留内存；
+  RDKit worker 会将 OMP/MKL/OPENBLAS/RDKIT 线程设为 1，防止外层多进程和内部线程互相争抢。
+  GPU embedding 必须在 sandbox 外运行；sandbox 内可能 CUDA 不可见。当前只支持从头构建统一
+  train/validation cache，尚未实现 test/incremental append mode。
 
 run_llm_benchmark.py
   用 OpenAI-compatible endpoint 跑 LLM activity-transfer 判断。
@@ -129,6 +140,18 @@ outputs/chembl_tool/activity_transfer_benchmark/
   hf_jiosephlee_valid20k/<hf-dataset-name>/
     validation.jsonl
     summary.json
+  hf_jiosephlee_train/<hf-dataset-name>/
+    train.jsonl
+    summary.json
+  mlp_baselines/qwen3_embedding_rdkit_v1/
+    preprocessed/
+      clean_splits/
+      endpoints.jsonl
+      endpoint_embeddings.npy
+      molecules.jsonl
+      molecule_features.npz
+      row_indices/
+      manifest.json
   llm_runs/<run_id>/
     manifest.json
     predictions.jsonl
@@ -444,6 +467,109 @@ outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid2
     overall_metrics.*
     label_recall_by_similarity_bucket.*
     label_recall_by_assay_type.*
+```
+
+### HF proper assay-transfer MLP baseline preprocessing
+
+当前已为 `jiosephlee/proper_assay_transfer_no_prop_no_tanimoto` 建立 trained MLP baseline 的
+train/validation 特征缓存。这个缓存只包含 train 和 validation；test split 尚未 append。
+
+本地 full train 已 materialize：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_train/proper_assay_transfer_no_prop_no_tanimoto/
+  train.jsonl
+  summary.json
+
+rows: 12,327,157
+labels: A/similar 6,957,330; B/different 5,369,827
+```
+
+Qwen3-Embedding-8B 已下载到：
+
+```text
+/data1/tianang/cache/hub/models--Qwen--Qwen3-Embedding-8B/snapshots/1d8ad4ca9b3dd8059ad90a75d4983776a23d44af
+```
+
+正式 preprocessed cache：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_v1/preprocessed/
+  clean_splits/train.jsonl
+  clean_splits/validation.jsonl
+  clean_splits/train_invalid_rows.jsonl
+  clean_splits/validation_invalid_rows.jsonl
+  endpoints.jsonl
+  endpoint_embeddings.npy
+  molecules.jsonl
+  molecule_features.npz
+  row_indices/train.npz
+  row_indices/validation.npz
+  manifest.json
+```
+
+当前 full cache 统计：
+
+```text
+train rows: 12,327,157
+validation rows: 19,986
+invalid rows: 0
+unique endpoints: 154,370
+unique molecules: 1,337,289
+invalid molecules: 0
+
+endpoint_embeddings.npy: (154370, 4096) float16
+molecule_features.npz:
+  fingerprints: (1337289, 2048) uint8
+  descriptors:  (1337289, 217) float32
+row_indices/train.npz labels:
+  different 5,369,827; similar 6,957,330
+row_indices/validation.npz labels:
+  different 9,093; similar 10,893
+```
+
+正式构建命令模板：
+
+```bash
+env CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
+  OMP_NUM_THREADS=1 \
+  MKL_NUM_THREADS=1 \
+  OPENBLAS_NUM_THREADS=1 \
+  RDKIT_NUM_THREADS=1 \
+  TOKENIZERS_PARALLELISM=false \
+  /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.activity_transfer_benchmark.prepare_hf_mlp_features \
+    --train-jsonl outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_train/proper_assay_transfer_no_prop_no_tanimoto/train.jsonl \
+    --validation-jsonl outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/proper_assay_transfer_no_prop_no_tanimoto/validation.jsonl \
+    --out-dir outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_v1/preprocessed \
+    --embedding-model /data1/tianang/cache/hub/models--Qwen--Qwen3-Embedding-8B/snapshots/1d8ad4ca9b3dd8059ad90a75d4983776a23d44af \
+    --embedding-batch-size 32 \
+    --devices auto \
+    --rdkit-workers 256 \
+    --progress-every 50000
+```
+
+运行说明：
+
+```text
+1. `clean_records` 阶段只做 JSONL streaming 解析和 clean split 写出，不使用 GPU。
+2. `endpoint_embedding_start` 后才会加载 Qwen3-Embedding-8B 并使用 GPU。
+3. `rdkit_features` 阶段使用 CPU 多进程计算 Morgan fingerprint 和 RDKit descriptors。
+4. `TOKENIZERS_PARALLELISM=false` 是为了避免 tokenizer 内部线程和多进程/GPU worker 抢 CPU；
+   不影响 GPU 并行。
+5. sentence-transformers 的 `encode_multi_process` deprecation warning 和 multiprocessing
+   resource_tracker semaphore warning 不影响已写出的 cache；以 manifest、array shape 和 row count
+   为准。
+```
+
+后续需要给 test split 加特征时，优先实现 incremental append mode：
+
+```text
+输入现有 preprocessed/ + test JSONL；
+只解析 test；
+只补算 missing endpoint embeddings 和 missing molecule RDKit features；
+重写 endpoints/molecules/feature arrays；
+新增 row_indices/test.npz；
+不重算已有 154,370 endpoints 和 1,337,289 molecules。
 ```
 
 旧 valid10k 已完成 full LLM run 的 setting：
