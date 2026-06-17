@@ -36,8 +36,17 @@ tools/chembl_tool/activity_transfer_benchmark/
   analyze_mcs_results.py
   build_llm_eval_set.py
   build_task_llm_eval_set.py
+  build_dynamic_v1_mlp_splits.py
+  build_oral_bioavailability_transfer_dataset.py
+  build_oral_bioavailability_pair_splits.py
+  export_oral_bioavailability_hf_upload.py
+  export_oral_bioavailability_clean_hf_upload.py
+  build_single_endpoint_raw_transfer_splits.py
+  build_single_endpoint_exhaustive_raw_pairs.py
+  sample_exhaustive_compact_pairs_to_jsonl.py
   materialize_hf_valid_split.py
   prepare_hf_mlp_features.py
+  train_hf_mlp_baseline.py
   run_llm_benchmark.py
   run_qwen3_4b_valid20k_four_settings.sh
   plot_llm_run_comparison.py
@@ -72,6 +81,55 @@ build_task_llm_eval_set.py
   从 task-scoped pairs 中构建小规模 LLM 评估集。默认 3,000 pairs，先按 task 平衡，再按 label 和
   Tanimoto bucket 分层，并限制每个 assay endpoint 的样本数。
 
+build_dynamic_v1_mlp_splits.py
+  将 chembl36_activity_transfer_dynamic_v1 的 continuous_pairs.tsv.gz 转换成 HF prompt/completion/
+  metadata JSONL split，供 prepare_hf_mlp_features.py 和 train_hf_mlp_baseline.py 复用。
+  默认 endpoint-disjoint split；也支持更严格的 pChEMBL delta 标签阈值。这个脚本仍是 pChEMBL
+  endpoint benchmark，不用于 raw `% inhibition` 单 endpoint 版本。
+
+build_oral_bioavailability_transfer_dataset.py
+  从 HuggingFace `starling-labs/Oral_Bioavailability` 构建 clean oral bioavailability evidence。
+  默认保留 absolute；当前主版本保留 absolute、unspecified、systemic_availability，只要
+  oral_bioavailability_value 能安全解析成 numeric F%。输出 line-level clean rows、dropped rows、
+  aggregate molecule records、pair candidates、eval pairs、HF prompt/completion JSONL 和 value 分布图。
+
+build_oral_bioavailability_pair_splits.py
+  从 oral bioavailability aggregate_molecules.jsonl 构建大规模 HF prompt/completion transfer split。
+  支持 unordered_pair_random 和 molecule_disjoint；molecule_disjoint 会按 canonical SMILES 全局分配
+  split，并只写 split 内部 pair，保证同一个 molecule 不跨 train/validation/test。
+
+export_oral_bioavailability_hf_upload.py
+  将 Oral_Bioavailability transfer/direction molecule-disjoint split 包装成 Hugging Face dataset repo
+  目录。只读取现有 split，不修改本地训练/评估用原始 JSONL。输出 data/{train,validation,test}.jsonl.gz、
+  README.md、export_summary.json 和 source_summary.json。导出时统一 metadata 字段，例如
+  completion_a_label、completion_b_label、label_text、benchmark_version、source_dataset 和 split_mode。
+
+export_oral_bioavailability_clean_hf_upload.py
+  将 Oral_Bioavailability clean numeric data 包装成 Hugging Face dataset repo 目录。只读取
+  absolute_unspecified_systemic_broad_condition_full_text_v1，不修改本地 clean/pair/prompt 数据。
+  输出 data/aggregate_molecules.jsonl.gz、data/molecule_records.jsonl.gz、README.md、export_summary.json、
+  source_summary.json、source_report_zh.md 和 value_distribution figure。README 中明确 upstream
+  starling-labs/Oral_Bioavailability 未在 HF metadata 中检测到显式 license 字段。
+
+build_single_endpoint_raw_transfer_splits.py
+  面向没有 pChEMBL 的单个 assay endpoint 构建 raw-value transfer JSONL。当前默认 endpoint 是
+  CHEMBL4513218 / inhibition；标签按 raw standard_value 的 endpoint sample std 定义：
+  similar <= 0.5 std，different >= 1.5 std，中间 ambiguous 排除。支持 full_range 和
+  no_lt_minus_100 两个 value version，支持 molecule_disjoint split，并在 sampled 200k 版本中
+  计算 Tanimoto / similarity_bucket metadata。
+
+build_single_endpoint_exhaustive_raw_pairs.py
+  为 CHEMBL4513218 / inhibition 生成 split 内部 exhaustive non-ambiguous raw-value pairs。
+  输出是 compact TSV.GZ shards，不是 prompt/completion JSONL；保留 molecule-disjoint split，
+  只写同一 split 内部 pair，避免 train/validation/test molecule 混用。为节省时间和空间，
+  compact shards 不包含 Tanimoto。
+
+sample_exhaustive_compact_pairs_to_jsonl.py
+  从 build_single_endpoint_exhaustive_raw_pairs.py 的 compact shards 流式采样 HF prompt/completion
+  JSONL。默认采样 20,000,000 pairs，按 7:1:2 输出 train/validation/test。采样是 split 内部、
+  无放回、按源 shard 顺序 exact sequential sampling；metadata 保留 activity_a/activity_b/delta，
+  但 prompt 不暴露 raw activity，当前 MLP feature pipeline 也不使用 metadata activity。
+
 materialize_hf_valid_split.py
   将 HF prompt/completion/metadata 数据集的 validation split 落盘到
   outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/<dataset>/。
@@ -86,8 +144,18 @@ prepare_hf_mlp_features.py
   输出 clean_splits、endpoints/molecules metadata、endpoint_embeddings.npy、molecule_features.npz
   和 row_indices/*.npz。实现使用 streaming 清洗 train JSONL，避免 1200 万行 full train 一次性驻留内存；
   RDKit worker 会将 OMP/MKL/OPENBLAS/RDKIT 线程设为 1，防止外层多进程和内部线程互相争抢。
-  GPU embedding 必须在 sandbox 外运行；sandbox 内可能 CUDA 不可见。当前只支持从头构建统一
-  train/validation cache，尚未实现 test/incremental append mode。
+  支持 --test-jsonl 从头构建 train/validation/test 统一 cache；尚未实现对已有 cache 的
+  incremental append mode。GPU embedding 必须在 sandbox 外运行；sandbox 内可能 CUDA 不可见。
+
+train_hf_mlp_baseline.py
+  读取 prepare_hf_mlp_features.py 的 preprocessed cache，训练 Qwen endpoint embedding +
+  RDKit molecule feature 的 Lightning MLP baseline。模型使用 endpoint tower、molecule/pair tower
+  和 fusion head；输入包括 endpoint embedding、Mol A/B Morgan fingerprint、fingerprint XOR、
+  Mol A/B standardized descriptors 和 descriptor absolute difference。训练支持 A100 bf16-mixed、
+  DDP 多 GPU、W&B 记录、Lightning 进度条、定期 full validation、按 similarity_bucket/assay_type/
+  eval_subset 的分组指标、predictions.jsonl/metrics.json/report_zh.md 输出，以及 best/final/last
+  checkpoint 保存。full validation callback 在 DDP 下会用 barrier 同步所有 rank；best/final checkpoint
+  是 rank0-only 的 torch state_dict checkpoint，last.ckpt 由 Lightning ModelCheckpoint 保存。
 
 run_llm_benchmark.py
   用 OpenAI-compatible endpoint 跑 LLM activity-transfer 判断。
@@ -143,6 +211,20 @@ outputs/chembl_tool/activity_transfer_benchmark/
   hf_jiosephlee_train/<hf-dataset-name>/
     train.jsonl
     summary.json
+  dynamic_v1_mlp_splits/<split-id>/
+    train.jsonl
+    validation.jsonl
+    test.jsonl
+    summary.json
+  single_endpoint_raw_transfer/
+    <single-endpoint-sampled-run-id>/
+      train.jsonl
+      validation.jsonl
+      test.jsonl
+      summary.json
+    exhaustive_compact/<single-endpoint-compact-run-id>/
+      summary.json
+      shards/*.tsv.gz
   mlp_baselines/qwen3_embedding_rdkit_v1/
     preprocessed/
       clean_splits/
@@ -167,6 +249,7 @@ outputs/chembl_tool/activity_transfer_benchmark/
       comparison_dashboard.*
       label_recall_by_similarity_bucket.*
       label_recall_by_assay_type.*
+      label_recall_by_eval_subset.*
 ```
 
 说明：
@@ -572,6 +655,401 @@ env CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
 不重算已有 154,370 endpoints 和 1,337,289 molecules。
 ```
 
+MLP 训练入口：
+
+```bash
+env CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
+  OMP_NUM_THREADS=1 \
+  MKL_NUM_THREADS=1 \
+  OPENBLAS_NUM_THREADS=1 \
+  TOKENIZERS_PARALLELISM=false \
+  /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.activity_transfer_benchmark.train_hf_mlp_baseline \
+    --preprocessed-dir outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_v1/preprocessed \
+    --run-id qwen3_embedding_rdkit_mlp_v1 \
+    --batch-size 4096 \
+    --eval-batch-size 8192 \
+    --num-workers 8 \
+    --eval-num-workers 4 \
+    --devices auto \
+    --strategy ddp \
+    --precision bf16-mixed \
+    --max-steps 5000 \
+    --val-every-steps 250 \
+    --checkpoint-every-steps 1000 \
+    --wandb-mode online
+```
+
+训练输出目录：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_v1/runs/<run_id>/
+  config.json
+  descriptor_stats.npz
+  predictions.jsonl
+  metrics.json
+  best_predictions.jsonl
+  best_metrics.json
+  report_zh.md
+  manifest.json
+  checkpoints/
+    best.ckpt
+    final.ckpt
+    last.ckpt
+```
+
+训练实现注意事项：
+
+```text
+1. endpoint embedding 已经 L2-normalized，训练时用 LayerNorm，不额外 z-score。
+2. Morgan fingerprint 是 uint8 0/1，训练 collate 时转 float；不输入 Tanimoto scalar。
+3. RDKit descriptors 用 train molecule set 计算 mean/std，NaN/inf 填 0，z-score 后 clip 到 [-10, 10]。
+4. validation full metrics 复用 run_llm_benchmark.compute_metrics 的字段形状，`llm` key 表示 MLP prediction。
+5. W&B 会记录 overall macro-F1/accuracy/recall，以及 similarity_bucket、assay_type、eval_subset
+   下的 macro-F1 和 label-specific recall。
+6. 当前推荐命令的 `--max-steps 5000` 在 8 GPU、per-GPU batch size 4096 下约等于 13.3 epochs；
+   Lightning 进度条中的 `Epoch N/-2` 是 max_steps 模式下的显示占位，训练停止条件看 global_step。
+7. full validation 在 rank0 上生成 metrics/report/predictions 并更新 best checkpoint；其他 DDP rank
+   会在 barrier 等待，避免 validation 后继续训练时出现 NCCL allreduce timeout。
+```
+
+### dynamic_v1 endpoint-disjoint MLP train-eval v1
+
+用途：
+
+```text
+把 chembl36_activity_transfer_dynamic_v1 的 pChEMBL-delta non-ambiguous pairs
+转换成 HF prompt/completion/metadata 兼容格式，复用 Qwen endpoint embedding +
+RDKit molecule feature 的 MLP baseline，评估 trained classifier 是否超过 Tanimoto threshold。
+```
+
+数据与 split：
+
+```text
+source pairs:
+  outputs/chembl_tool/activity_transfer_benchmark/chembl36_activity_transfer_dynamic_v1/continuous_pairs.tsv.gz
+endpoint context:
+  outputs/chembl_tool/activity_transfer_benchmark/chembl36_activity_transfer_dynamic_v1/continuous_assay_endpoint_summary.tsv
+split output:
+  outputs/chembl_tool/activity_transfer_benchmark/dynamic_v1_mlp_splits/endpoint_disjoint_7_1_2/
+
+label rule:
+  similar:   |delta pChEMBL| <= 0.5
+  different: |delta pChEMBL| >= 1.0
+  ambiguous: excluded
+split mode:
+  endpoint_disjoint by assay_id + standard_type
+counts:
+  train 1,051,257 rows; validation 150,180 rows; test 300,359 rows
+  indexed train rows after RDKit filtering: 1,051,253
+  validation/test indexed rows: all rows
+```
+
+构建 split：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.build_dynamic_v1_mlp_splits \
+  --out-dir outputs/chembl_tool/activity_transfer_benchmark/dynamic_v1_mlp_splits/endpoint_disjoint_7_1_2 \
+  --progress-every 500000
+```
+
+特征 cache：
+
+```text
+output:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_dynamic_v1/preprocessed/
+endpoint_embeddings.npy:
+  (19987, 4096) float16
+molecule_features.npz:
+  fingerprints (569058, 2048) uint8
+  descriptors  (569058, 217) float32
+invalid molecule:
+  1 invalid SMILES with [Ar], causing 4 train pairs skipped
+descriptor handling:
+  abs(descriptor) > 1e12 is stored as NaN; prevents RDKit Ipc outliers from overflowing train mean/std.
+```
+
+特征构建命令：
+
+```bash
+env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RDKIT_NUM_THREADS=1 \
+  TOKENIZERS_PARALLELISM=false \
+  /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.activity_transfer_benchmark.prepare_hf_mlp_features \
+    --train-jsonl outputs/chembl_tool/activity_transfer_benchmark/dynamic_v1_mlp_splits/endpoint_disjoint_7_1_2/train.jsonl \
+    --validation-jsonl outputs/chembl_tool/activity_transfer_benchmark/dynamic_v1_mlp_splits/endpoint_disjoint_7_1_2/validation.jsonl \
+    --test-jsonl outputs/chembl_tool/activity_transfer_benchmark/dynamic_v1_mlp_splits/endpoint_disjoint_7_1_2/test.jsonl \
+    --out-dir outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_dynamic_v1/preprocessed \
+    --embedding-model /data1/tianang/cache/hub/models--Qwen--Qwen3-Embedding-8B/snapshots/1d8ad4ca9b3dd8059ad90a75d4983776a23d44af \
+    --embedding-batch-size 64 \
+    --devices auto \
+    --rdkit-workers 200
+```
+
+训练与结果：
+
+```text
+run:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_dynamic_v1/runs/dynamic_v1_endpoint_disjoint_7_1_2_mlp_v1/
+recommended setting:
+  max_steps 100; val_every_steps 25; batch_size 4096; precision bf16-mixed; strategy ddp
+best checkpoint:
+  step 50 selected by validation macro-F1
+validation:
+  MLP macro-F1 0.5856
+  Tanimoto>=0.50 macro-F1 0.5715
+test:
+  MLP macro-F1 0.5989; accuracy 0.5992; balanced accuracy 0.5992
+  Tanimoto>=0.50 macro-F1 0.5798
+notes:
+  final checkpoint at step 100 overfits and is worse; report best checkpoint.
+  valid-tuned threshold around 0.524 does not improve test macro-F1 over fixed 0.5.
+  W&B keys include best/validation/*, test/best/*, and test/final/*.
+```
+
+### dynamic_v1 strict pChEMBL split candidate
+
+用途：
+
+```text
+更干净标签版 activity-transfer data，用于判断原 0.5/1.0 pChEMBL delta 标签是否过噪。
+只重定义 label/split data，尚未训练 MLP。
+```
+
+配置与输出：
+
+```text
+source:
+  chembl36_activity_transfer_dynamic_v1/continuous_pairs.tsv.gz
+label rule:
+  similar:   |delta pChEMBL| <= 0.3
+  different: |delta pChEMBL| >= 1.2
+  middle: excluded
+split mode:
+  endpoint_disjoint by assay_id + standard_type, 7:1:2
+output:
+  outputs/chembl_tool/activity_transfer_benchmark/dynamic_v1_mlp_splits/endpoint_disjoint_7_1_2_strict_pchembl_0p3_1p2/
+counts:
+  total 1,083,804
+  train 758,663; validation 108,381; test 216,760
+  validation labels: different 60,605; similar 47,776
+  test labels: different 123,707; similar 93,053
+same-set Tanimoto baseline:
+  validation best threshold ~0.57, macro-F1 0.5940
+  test best threshold ~0.55, macro-F1 0.5958
+  test Tanimoto>=0.50 macro-F1 0.5906
+```
+
+构建命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.build_dynamic_v1_mlp_splits \
+  --similar-delta 0.3 \
+  --different-delta 1.2 \
+  --out-dir outputs/chembl_tool/activity_transfer_benchmark/dynamic_v1_mlp_splits/endpoint_disjoint_7_1_2_strict_pchembl_0p3_1p2 \
+  --progress-every 500000
+```
+
+### CHEMBL4513218 / inhibition raw-value single endpoint
+
+用途：
+
+```text
+研究没有 pChEMBL 的大规模 publication assay endpoint 是否能构造 raw-value activity-transfer benchmark。
+该 endpoint 是 CHEMBL4513218 / inhibition，standard_units 为 %，来自 DOI 10.1021/acsinfecdis.9b00482，
+assay 描述为 P. berghei liver stage luciferase screen at 10uM。
+```
+
+重要数据事实：
+
+```text
+pChEMBL rows: 0
+molecules with fingerprints used by benchmark: 68,570
+raw standard_value range:
+  min -336.0
+  median 18.6
+  max 100.0
+  sample std 33.705262
+label rule:
+  similar   abs(delta raw %) <= 0.5 std = 16.852631
+  different abs(delta raw %) >= 1.5 std = 50.557893
+  ambiguous middle region excluded
+negative inhibition values are valid noisy assay readouts; do not clip to 0-100 by default.
+```
+
+200k sampled HF JSONL versions:
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/single_endpoint_raw_transfer/
+  CHEMBL4513218_inhibition_full_range_raw_std_sim_le_0p5_diff_ge_1p5_molecule_disjoint_7_1_2_n200000/
+    train.jsonl      140,000
+    validation.jsonl  20,000
+    test.jsonl        40,000
+    summary.json
+
+  CHEMBL4513218_inhibition_no_lt_minus_100_raw_std_sim_le_0p5_diff_ge_1p5_molecule_disjoint_7_1_2_n200000/
+    train.jsonl      140,000
+    validation.jsonl  20,000
+    test.jsonl        40,000
+    summary.json
+```
+
+200k 构建命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.build_single_endpoint_raw_transfer_splits \
+  --n-pairs 200000 \
+  --split-mode molecule_disjoint \
+  --versions full_range,no_lt_minus_100
+```
+
+200k full_range 结果：
+
+```text
+MLP best test:
+  macro-F1 0.5292
+  accuracy 0.5483
+  balanced accuracy 0.5333
+Tanimoto>=0.50 baseline on same test:
+  macro-F1 0.3101
+  accuracy 0.4489
+  balanced accuracy 0.5000
+reason:
+  molecule-disjoint random pairs are overwhelmingly low-Tanimoto, so Tanimoto>=0.5 predicts almost all pairs
+  as different. MLP is better than this baseline, but absolute performance is still weak.
+```
+
+Exhaustive compact full_range pairs:
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/single_endpoint_raw_transfer/exhaustive_compact/
+  CHEMBL4513218_inhibition_full_range_raw_std_sim_le_0p5_diff_ge_1p5_molecule_disjoint_7_1_2_exhaustive_nonambig_compact/
+    summary.json
+    shards/*.tsv.gz
+```
+
+Planned non-ambiguous split-internal pair counts:
+
+```text
+train:
+  molecules 47,999
+  non-ambiguous pairs 644,570,479
+  similar 351,118,893
+  different 293,451,586
+validation:
+  molecules 6,857
+  non-ambiguous pairs 13,190,178
+  similar 7,144,196
+  different 6,045,982
+test:
+  molecules 13,714
+  non-ambiguous pairs 52,544,847
+  similar 28,957,144
+  different 23,587,703
+total non-ambiguous pairs: 710,305,504
+```
+
+Exhaustive compact 命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.build_single_endpoint_exhaustive_raw_pairs \
+  --value-version full_range \
+  --progress-every 5000000
+```
+
+20M sampled full_range JSONL:
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/single_endpoint_raw_transfer/
+  CHEMBL4513218_inhibition_full_range_raw_std_sim_le_0p5_diff_ge_1p5_molecule_disjoint_7_1_2_n20000000/
+    train.jsonl       14,000,000
+    validation.jsonl   2,000,000
+    test.jsonl         4,000,000
+    summary.json
+
+directory size: about 44G
+labels:
+  train      similar 7,626,387; different 6,373,613
+  validation similar 1,082,960; different   917,040
+  test       similar 2,203,617; different 1,796,383
+```
+
+20M sampling command:
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.sample_exhaustive_compact_pairs_to_jsonl \
+  --n-pairs 20000000 \
+  --out-root outputs/chembl_tool/activity_transfer_benchmark/single_endpoint_raw_transfer \
+  --progress-every 1000000
+```
+
+20M preprocessing and MLP run:
+
+```text
+preprocessed:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/CHEMBL4513218_full_range_20m/preprocessed/
+  rows train/validation/test: 14,000,000 / 2,000,000 / 4,000,000
+  unique endpoints: 1
+  unique molecules: 68,570
+
+run:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/CHEMBL4513218_full_range_20m/runs/molecule_disjoint_20m_mlp_v2/
+setting:
+  max_steps 10,000
+  batch_size 4,096
+  val_every_steps 2,000
+  precision bf16-mixed
+  strategy ddp
+best checkpoint:
+  step 6,000 selected by validation macro-F1
+validation:
+  macro-F1 0.5375
+  accuracy 0.5910
+  balanced accuracy 0.5667
+  similar recall 0.8598
+  different recall 0.2736
+test:
+  macro-F1 0.5439
+  accuracy 0.5995
+  balanced accuracy 0.5699
+  similar recall 0.8611
+  different recall 0.2787
+valid-tuned threshold:
+  default threshold 0.5 is poorly calibrated; score distribution is saturated near 1.
+  valid best threshold is about 0.99, giving valid macro-F1 about 0.565.
+  applying threshold 0.99 to test gives macro-F1 0.5717 and balanced accuracy 0.5811.
+AUROC:
+  validation about 0.602
+  test about 0.607
+```
+
+20M caveats:
+
+```text
+1. Compact/exhaustive 20M data does not contain Tanimoto. Do not report a 20M Tanimoto>=0.50 baseline
+   unless Tanimoto is recomputed for those pairs. The 200k sampled full_range set is the same-endpoint set
+   where Tanimoto metadata exists.
+2. The prompt and current MLP features do not expose Molecule A/reference raw activity. Metadata contains
+   activity_a/activity_b for audit, but prepare_hf_mlp_features.py only parses endpoint text and Mol A/B SMILES.
+   Therefore this 20M task is closer to pairwise raw-activity prediction than to strict transferability
+   ("known reference activity transfers to query").
+3. 20M pairs are not 20M independent SAR observations. They are dense combinations of 68,570 molecules from
+   one endpoint; endpoint embedding is constant, and pair labels are highly correlated through molecule activities.
+4. A 300k validation sample showed Tanimoto has almost no same-set signal for this construction:
+   median Tanimoto about 0.13, Tanimoto AUROC for similar about 0.506, and mean Tanimoto is nearly identical
+   for similar and different pairs.
+5. Interpretation: MLP learns weak structure/activity signal and beats the trivial Tanimoto>=0.5 rule on
+   the 200k set, but CHEMBL4513218 raw `% inhibition` is a noisy phenotypic HTS endpoint; current formulation
+   should not be used as evidence that a reference-activity-aware transfer model cannot work.
+```
+
+Recommended next experiment:
+
+```text
+Build a reference-activity-aware version: expose Molecule A raw activity in the prompt and add it as a scalar
+feature to the MLP. That matches the intended transfer question: given reference activity, decide whether it
+transfers to Molecule B. If that version still performs near macro-F1 0.55, then the assay's SAR transfer
+signal is likely genuinely weak.
+```
+
 旧 valid10k 已完成 full LLM run 的 setting：
 
 ```text
@@ -800,6 +1278,493 @@ macro-F1 0.5378，高于 gpt-oss-120b no-thinking 的 0.5309 和 thinking 的 0.
 在 Tanimoto 0.40-0.70 的灰区，DeepSeek macro-F1 0.5090，低于两个 gpt-oss run。
 因此它是 overall 最好，但不是 gray-zone 最好；考虑 tool calls、token 和 wall time 后，
 当前性价比不如本地 gpt-oss。
+```
+
+### starling-labs Oral_Bioavailability transfer dataset
+
+非 ChEMBL/Joseph Lee 来源的 oral bioavailability transfer benchmark。
+
+源数据：
+
+```text
+HuggingFace: starling-labs/Oral_Bioavailability
+split: train
+rows: 163,815
+columns:
+  pmid, support_text, molecule_name, oral_bioavailability_value,
+  bioavailability_report_type, species_or_population, dose,
+  oral_exposure_mode, qualifying_conditions, comparator, extra_details, smiles
+```
+
+清洗规则：
+
+```text
+主版本保留 report types:
+  absolute, unspecified, systemic_availability
+丢弃:
+  relative_comparison、不能安全解析成 numeric explicit value 的行、RDKit invalid SMILES、
+  默认 0-1000% 范围外值。
+value parser:
+  about/~approximately: 取主 numeric value
+  per cent/percent: 统一成 %
+  mean/average/median: 优先取对应值
+  x ± y: 取 x
+  x to y / x-y range: 取 midpoint
+  无 % 且 0<=value<=1.5: 按 fraction 转成 percent
+  AUC-only、fold/higher/lower/comparable 等 relative 描述: 丢弃
+condition_text:
+  写入所有实验条件字段和值；空值写 not specified。
+  字段包括 species_or_population, dose, oral_exposure_mode,
+  qualifying_conditions, comparator, extra_details。
+metadata:
+  原始 source row 完整保存，方便后续重清洗。
+```
+
+clean evidence 主输出：
+
+```text
+outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf/
+  absolute_unspecified_systemic_broad_condition_full_text_v1/
+    molecule_records.jsonl
+    dropped_rows.jsonl
+    aggregate_molecules.jsonl
+    eval_pairs.jsonl
+    hf_prompt_completion.jsonl
+    summary.json
+    report_zh.md
+    figures/value_distribution.svg
+
+clean numeric rows: 82,496
+aggregate molecule-condition records: 66,154
+unique condition groups: 37,883
+value median/mean/max: 42.0 / 46.1 / 942.0 %
+```
+
+构建 clean evidence：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.activity_transfer_benchmark.build_oral_bioavailability_transfer_dataset \
+  --run-id absolute_unspecified_systemic_broad_condition_full_text_v1 \
+  --allowed-report-types absolute,unspecified,systemic_availability
+```
+
+pair label：
+
+```text
+similar:   |delta oral bioavailability percentage points| <= 10
+different: |delta oral bioavailability percentage points| >= 30
+ambiguous: excluded
+Pairs are generated within the same condition_key.
+```
+
+condition_key 注意事项：
+
+```text
+主版本使用 broad_condition:
+  species_or_population | oral_exposure_mode | qualifying_conditions | comparator
+dose 和 extra_details 不进 key，但一定保留在 condition_text/prompt/metadata。
+```
+
+#### Oral Bioavailability MLP: non-molecule-disjoint diagnostic
+
+先做过 directed max / unordered-pair split 版本，结果很高但不代表 molecule 泛化。
+
+```text
+split:
+  outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/
+    absolute_unspecified_systemic_directed_max_7_1_2_v2_same_unordered_split/
+rows:
+  train 3,391,750; validation 484,534; test 969,068
+rule:
+  同一个 unordered pair 的 A->B/B->A 保持同 split，但 molecule 可跨 split。
+preprocessed:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_directed_max_qwen3_embedding_rdkit_v2_same_unordered_split/preprocessed/
+run:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_directed_max_qwen3_embedding_rdkit_v2_same_unordered_split/runs/
+    oral_bioavailability_directed_max_mlp_v2_same_unordered_split/
+best validation:
+  step 5000 macro-F1 0.9830, accuracy 0.9861
+best test:
+  macro-F1 0.9821, accuracy 0.9854
+interpretation:
+  这是 leakage-prone diagnostic，不作为 prospective 泛化结果。
+```
+
+#### Oral Bioavailability MLP: molecule-disjoint main result
+
+严格 molecule-disjoint 版本：按 canonical SMILES 全局分配 split，同一个 SMILES 不跨 split；
+只写 split 内部 pair。为了让 pair 数接近 7:1:2，用 molecule split ratio 约
+0.522774/0.197629/0.279597，因为同 split pair 数近似随 molecule fraction 平方缩放。
+
+```text
+split:
+  outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/
+    absolute_unspecified_systemic_directed_molecule_disjoint_pairratio_7_1_2_v1/
+molecule split counts:
+  train 7,089; validation 2,680; test 3,791
+SMILES overlap check:
+  train∩validation 0; train∩test 0; validation∩test 0
+max directed non-ambiguous pairs after molecule-disjoint filtering:
+  1,890,486
+rows:
+  train 1,312,272; validation 177,854; test 400,360
+label counts:
+  train similar 382,160 / different 930,112
+  validation similar 51,266 / different 126,588
+  test similar 112,510 / different 287,850
+preprocessed:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_pairratio_7_1_2_qwen3_embedding_rdkit_v1/preprocessed/
+cache:
+  unique endpoints 2,563; unique molecules 9,859; invalid rows/molecules 0
+run:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_pairratio_7_1_2_qwen3_embedding_rdkit_v1/runs/
+    oral_bioavailability_molecule_disjoint_mlp_v1/
+best validation:
+  step 4000 macro-F1 0.5404, accuracy 0.6429, balanced accuracy 0.5397
+  similar recall 0.2961, different recall 0.7833
+best test:
+  macro-F1 0.5528, accuracy 0.6700, balanced accuracy 0.5516
+  similar recall 0.2812, different recall 0.8220
+conclusion:
+  Strict molecule-disjoint 泛化很弱，明显低于 non-molecule-disjoint 的约 0.98 macro-F1。
+  该结果说明前者的高分主要来自 molecule/pair overlap；后续报告应使用 molecule-disjoint 版本。
+```
+
+构建 molecule-disjoint split：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.activity_transfer_benchmark.build_oral_bioavailability_pair_splits \
+  --run-id absolute_unspecified_systemic_directed_molecule_disjoint_pairratio_7_1_2_v1 \
+  --split-mode molecule_disjoint \
+  --ratios 0.522774,0.197629,0.279597 \
+  --target-pairs 30000000
+```
+
+预处理：
+
+```bash
+env CUDA_VISIBLE_DEVICES=4 \
+  /data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.activity_transfer_benchmark.prepare_hf_mlp_features \
+  --train-jsonl outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/absolute_unspecified_systemic_directed_molecule_disjoint_pairratio_7_1_2_v1/train.jsonl \
+  --validation-jsonl outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/absolute_unspecified_systemic_directed_molecule_disjoint_pairratio_7_1_2_v1/validation.jsonl \
+  --test-jsonl outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/absolute_unspecified_systemic_directed_molecule_disjoint_pairratio_7_1_2_v1/test.jsonl \
+  --out-dir outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/oral_bioavailability_hf_molecule_disjoint_pairratio_7_1_2_qwen3_embedding_rdkit_v1/preprocessed \
+  --embedding-model Qwen/Qwen3-Embedding-8B \
+  --embedding-batch-size 64 \
+  --devices auto \
+  --rdkit-workers 128
+```
+
+训练：
+
+```bash
+env CUDA_VISIBLE_DEVICES=4 \
+  /data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.activity_transfer_benchmark.train_hf_mlp_baseline \
+  --preprocessed-dir outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/oral_bioavailability_hf_molecule_disjoint_pairratio_7_1_2_qwen3_embedding_rdkit_v1/preprocessed \
+  --out-root outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/oral_bioavailability_hf_molecule_disjoint_pairratio_7_1_2_qwen3_embedding_rdkit_v1/runs \
+  --run-id oral_bioavailability_molecule_disjoint_mlp_v1 \
+  --accelerator gpu \
+  --devices 1 \
+  --strategy auto \
+  --precision bf16-mixed \
+  --batch-size 4096 \
+  --eval-batch-size 8192 \
+  --num-workers 8 \
+  --eval-num-workers 4 \
+  --max-steps 5000 \
+  --val-every-steps 500 \
+  --full-eval-every-n-validation 1 \
+  --checkpoint-every-steps 1000 \
+  --wandb-mode disabled
+```
+
+#### Oral Bioavailability MLP: molecule-disjoint higher/lower ordered result
+
+有向 ordered 版本不再判断 transfer similar/different，而是判断 Molecule B/query 的 F% 是否高于
+Molecule A/reference。每个可用 unordered pair 写两个方向：A->B 和 B->A；因此只要两者 F%
+不完全相等，就会成对贡献 `query_higher` 和 `query_lower`。`completion A=query_higher`，
+`completion B=query_lower`，训练中正类概率表示 `query_higher`。
+
+```text
+split:
+  outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/
+    absolute_unspecified_systemic_directed_molecule_disjoint_higher_lower_pairratio_7_1_2_v1/
+label rule:
+  query_higher: Molecule B F% > Molecule A F%
+  query_lower:  Molecule B F% < Molecule A F%
+  ties: exact equal values excluded; min_ordered_delta default 0.0
+molecule split counts:
+  train 7,089; validation 2,680; test 3,791
+SMILES overlap check:
+  train∩validation 0; train∩test 0; validation∩test 0
+max directed pairs after molecule-disjoint filtering:
+  2,607,910
+rows:
+  train 1,813,174; validation 247,026; test 547,710
+label balance:
+  train query_higher 906,587 / query_lower 906,587
+  validation query_higher 123,513 / query_lower 123,513
+  test query_higher 273,855 / query_lower 273,855
+preprocessed:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_embedding_rdkit_v1/preprocessed/
+cache:
+  unique endpoints 2,908; unique molecules 10,208; invalid rows/molecules 0
+run:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_embedding_rdkit_v1/runs/
+    oral_bioavailability_molecule_disjoint_higher_lower_mlp_v1/
+best validation:
+  step 500 macro-F1 0.6614, accuracy 0.6617, balanced accuracy 0.6617
+  query_higher recall 0.6311, query_lower recall 0.6924
+test with best checkpoint:
+  macro-F1 0.6721, accuracy 0.6724, balanced accuracy 0.6724
+  query_higher recall 0.6446, query_lower recall 0.7002
+test with final checkpoint:
+  macro-F1 0.6757, accuracy 0.6757, balanced accuracy 0.6757
+  query_higher recall 0.6791, query_lower recall 0.6723
+note:
+  manifest selects best checkpoint by validation macro-F1, so canonical reported test metric is best-checkpoint
+  macro-F1 0.6721. Final checkpoint has slightly higher observed test macro-F1 but should not be selected by test.
+```
+
+LLM benchmark support:
+
+```text
+run_llm_benchmark.py 支持该 ordered HF prompt/completion 格式。它会从 metadata 读取：
+  completion_a_label=query_higher
+  completion_b_label=query_lower
+然后自动切换到 ordered prompt/schema：
+  predicted_direction: query_higher or query_lower
+而不是旧 transfer benchmark 的 predicted_transferability=similar/different。
+
+Tool calling 仍复用同一个 OpenAI-compatible runner，允许 LLM 调用：
+  mmp_structure_compare
+  properties_compare
+工具服务入口仍是 http://127.0.0.1:8765。
+
+注意：
+  对 higher/lower ordered task，不再使用 Tanimoto>=0.50 作为 meaningful baseline；
+  report 中主要看 LLM 和 bucket-majority 等可用 baseline。
+```
+
+Ordered LLM smoke/test 命令：
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
+  --input-jsonl outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/absolute_unspecified_systemic_directed_molecule_disjoint_higher_lower_pairratio_7_1_2_v1/test.jsonl \
+  --run-id oral_bioavailability_higher_lower_llm_tools_smoke \
+  --output-mode json \
+  --limit 100 \
+  --parallelism 8 \
+  --max-tool-rounds 1 \
+  --tool-service-url http://127.0.0.1:8765
+```
+
+构建 ordered molecule-disjoint split：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.activity_transfer_benchmark.build_oral_bioavailability_pair_splits \
+  --run-id absolute_unspecified_systemic_directed_molecule_disjoint_higher_lower_pairratio_7_1_2_v1 \
+  --split-mode molecule_disjoint \
+  --label-mode higher_lower \
+  --ratios 0.522774,0.197629,0.279597 \
+  --target-pairs 30000000
+```
+
+预处理时必须显式传入 ordered label mapping：
+
+```bash
+env CUDA_VISIBLE_DEVICES=4 \
+  /data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.activity_transfer_benchmark.prepare_hf_mlp_features \
+  --train-jsonl outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/absolute_unspecified_systemic_directed_molecule_disjoint_higher_lower_pairratio_7_1_2_v1/train.jsonl \
+  --validation-jsonl outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/absolute_unspecified_systemic_directed_molecule_disjoint_higher_lower_pairratio_7_1_2_v1/validation.jsonl \
+  --test-jsonl outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/absolute_unspecified_systemic_directed_molecule_disjoint_higher_lower_pairratio_7_1_2_v1/test.jsonl \
+  --out-dir outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_embedding_rdkit_v1/preprocessed \
+  --embedding-model Qwen/Qwen3-Embedding-8B \
+  --embedding-batch-size 64 \
+  --devices auto \
+  --rdkit-workers 128 \
+  --completion-a-label query_higher \
+  --completion-b-label query_lower
+```
+
+ordered MLP 训练 / W&B 入口：
+
+```bash
+env CUDA_VISIBLE_DEVICES=4 \
+  /data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.activity_transfer_benchmark.train_hf_mlp_baseline \
+  --preprocessed-dir outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_embedding_rdkit_v1/preprocessed \
+  --out-root outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_embedding_rdkit_v1/runs \
+  --run-id oral_bioavailability_molecule_disjoint_higher_lower_mlp_wandb_v1 \
+  --accelerator gpu \
+  --devices 1 \
+  --strategy auto \
+  --precision bf16-mixed \
+  --batch-size 4096 \
+  --eval-batch-size 8192 \
+  --num-workers 8 \
+  --eval-num-workers 4 \
+  --max-steps 5000 \
+  --val-every-steps 500 \
+  --full-eval-every-n-validation 1 \
+  --checkpoint-every-steps 1000 \
+  --wandb-mode online \
+  --wandb-project txagent-assay-transfer-mlp
+```
+
+W&B rerun:
+
+```text
+output:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_embedding_rdkit_v1/runs/
+    oral_bioavailability_molecule_disjoint_higher_lower_mlp_wandb_v1/
+wandb:
+  https://wandb.ai/reasonv/txagent-assay-transfer-mlp/runs/482gdneb
+logged:
+  train/loss, val/loss, val_macro_f1, validation class recalls, best/test metrics.
+observation:
+  val macro-F1 was already near plateau at step 500; later steps mainly changed class-bias/calibration.
+  Train loss kept dropping while val loss increased, so report macro-F1 from full validation rather than val loss.
+```
+
+MLP feature contract:
+
+```text
+prepare_hf_mlp_features.py embeds only the endpoint/context block, not Molecule A and Molecule B
+condition text separately. The endpoint text is the prompt section between `## Endpoint` and
+`## Molecule A`; for oral higher/lower this section contains both reference and query experimental
+contexts. Qwen3-Embedding-8B produces one normalized endpoint embedding per endpoint_key.
+
+Molecule features are RDKit-only:
+  fp_A
+  fp_B
+  fp_A XOR fp_B
+  descriptor_A
+  descriptor_B
+  abs(descriptor_A - descriptor_B)
+
+The MLP has an endpoint tower and a pair tower, then concatenates both representations before
+the final fusion MLP. It does not separately encode Molecule A text or Molecule B text.
+```
+
+Ordered full-validation LLM run:
+
+```text
+run:
+  outputs/chembl_tool/activity_transfer_benchmark/llm_runs/
+    oral_bioavailability_higher_lower_gpt_oss_120b_9001_validation_full_tools/
+input:
+  validation.jsonl from absolute_unspecified_systemic_directed_molecule_disjoint_higher_lower_pairratio_7_1_2_v1
+model/base_url:
+  gpt-oss-120b via http://127.0.0.1:9001/v1, api key EMPTY
+tool service:
+  http://127.0.0.1:8765
+command shape:
+  --parallelism 64 --max-tool-rounds 3 --max-tokens 10240 --output-mode json --skip-existing
+state as of 2026-06-14:
+  still running; manifest exists but final metrics.json is not written yet.
+  User-observed progress around 108,800/247,026 reported macro-F1 about 0.6565.
+  A local same-index snapshot over 107,496 ok saved samples gave LLM macro-F1 0.6564.
+same-index MLP comparison on those 107,496 samples:
+  MLP final macro-F1 0.6706
+  MLP best-valid macro-F1 0.6729
+interpretation:
+  LLM is close to the MLP baseline but still slightly lower in the fair same-index comparison.
+  Current LLM predictions are biased toward query_lower, with query_higher recall about 0.50 and
+  query_lower recall about 0.83 in that snapshot.
+metric caveat:
+  progress macro-F1 is ok-only. Failed samples are counted in progress logs but do not necessarily
+  enter the saved per-sample JSON metric until final merge/reporting, so final strict metrics should
+  check how failures are handled.
+trace viewer:
+  run_llm_benchmark.py writes trace_messages.jsonl at finalization. View with:
+  bash tools/trace_viewer/start_viewer.sh outputs/chembl_tool/activity_transfer_benchmark/llm_runs 8776
+```
+
+Hugging Face exports:
+
+```text
+export root:
+  outputs/chembl_tool/activity_transfer_benchmark/hf_upload_exports/
+
+clean numeric repo:
+  https://huggingface.co/datasets/Kiria-Nozan/Starling-bioavailability-clean
+  local export: hf_upload_exports/clean/
+  tables:
+    aggregate_molecules: 66,154 rows
+    molecule_records: 82,496 rows
+  files:
+    README.md
+    source_summary.json
+    source_report_zh.md
+    export_summary.json
+    data/aggregate_molecules.jsonl.gz
+    data/molecule_records.jsonl.gz
+    figures/value_distribution.svg
+    figures/value_distribution.png
+
+transfer repo:
+  https://huggingface.co/datasets/Kiria-Nozan/Starling-bioavailability-transfer
+  local export: hf_upload_exports/transfer/
+  rows: train 1,312,272; validation 177,854; test 400,360
+  labels: A=similar, B=different
+
+direction repo:
+  https://huggingface.co/datasets/Kiria-Nozan/Starling-bioavailability-direction
+  local export: hf_upload_exports/direction/
+  rows: train 1,813,174; validation 247,026; test 547,710
+  labels: A=query_higher, B=query_lower
+
+HF upload status:
+  transfer and direction repos were created and uploaded on 2026-06-14.
+  clean numeric repo was created and uploaded on 2026-06-15.
+```
+
+Export command:
+
+```bash
+python -m tools.chembl_tool.activity_transfer_benchmark.export_oral_bioavailability_clean_hf_upload \
+  --progress-every 25000
+
+python -m tools.chembl_tool.activity_transfer_benchmark.export_oral_bioavailability_hf_upload \
+  --datasets transfer direction \
+  --progress-every 250000
+```
+
+Upload commands:
+
+```bash
+hf repo create Kiria-Nozan/Starling-bioavailability-clean --repo-type dataset --exist-ok
+hf repo create Kiria-Nozan/Starling-bioavailability-transfer --repo-type dataset --exist-ok
+hf repo create Kiria-Nozan/Starling-bioavailability-direction --repo-type dataset --exist-ok
+
+hf upload Kiria-Nozan/Starling-bioavailability-clean \
+  outputs/chembl_tool/activity_transfer_benchmark/hf_upload_exports/clean . \
+  --repo-type dataset \
+  --commit-message "Add clean numeric oral bioavailability tables"
+
+hf upload Kiria-Nozan/Starling-bioavailability-transfer \
+  outputs/chembl_tool/activity_transfer_benchmark/hf_upload_exports/transfer . \
+  --repo-type dataset \
+  --commit-message "Add molecule-disjoint oral bioavailability transfer benchmark"
+
+hf upload Kiria-Nozan/Starling-bioavailability-direction \
+  outputs/chembl_tool/activity_transfer_benchmark/hf_upload_exports/direction . \
+  --repo-type dataset \
+  --commit-message "Add molecule-disjoint oral bioavailability direction benchmark"
 ```
 
 ## 常用命令

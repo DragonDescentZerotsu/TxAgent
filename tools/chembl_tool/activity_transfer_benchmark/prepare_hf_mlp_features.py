@@ -36,8 +36,9 @@ DEFAULT_OUT_DIR = (
 )
 DEFAULT_EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-8B"
 
-LABEL_TO_ID = {"different": 0, "similar": 1}
-COMPLETION_TO_LABEL = {"A": "similar", "B": "different"}
+DEFAULT_LABEL_TO_ID = {"different": 0, "similar": 1}
+DEFAULT_COMPLETION_TO_LABEL = {"A": "similar", "B": "different"}
+MAX_DESCRIPTOR_ABS_VALUE = 1.0e12
 
 ENDPOINT_RE = re.compile(
     r"## Endpoint\s*(?P<endpoint>.*?)\s*## Molecule A\b",
@@ -85,8 +86,14 @@ def main(argv: list[str] | None = None) -> int:
     else:
         train_records = load_hf_records(args.hf_repo, args.train_split, args.limit_train)
     log_stage("load_validation_start", source=args.validation_jsonl)
-    validation_records = read_jsonl(Path(args.validation_jsonl), args.limit_validation)
+    validation_records = iter_jsonl(Path(args.validation_jsonl), args.limit_validation)
+    test_records = None
+    if args.test_jsonl:
+        log_stage("load_test_start", source=args.test_jsonl)
+        test_records = iter_jsonl(Path(args.test_jsonl), args.limit_test)
 
+    completion_label_map = {"A": args.completion_a_label, "B": args.completion_b_label}
+    label_to_id = {args.completion_b_label: 0, args.completion_a_label: 1}
     endpoint_by_key: dict[str, dict[str, Any]] = {}
     raw_smiles: set[str] = set()
     clean_dir = out_dir / "clean_splits"
@@ -96,6 +103,8 @@ def main(argv: list[str] | None = None) -> int:
         clean_dir,
         endpoint_by_key=endpoint_by_key,
         raw_smiles=raw_smiles,
+        completion_label_map=completion_label_map,
+        label_to_id=label_to_id,
         progress_every=args.progress_every,
     )
     validation_stats, validation_invalid = clean_records_to_disk(
@@ -104,14 +113,30 @@ def main(argv: list[str] | None = None) -> int:
         clean_dir,
         endpoint_by_key=endpoint_by_key,
         raw_smiles=raw_smiles,
+        completion_label_map=completion_label_map,
+        label_to_id=label_to_id,
         progress_every=args.progress_every,
-        total=len(validation_records),
     )
     clean_stats_by_split = {"train": train_stats, "validation": validation_stats}
     invalid_rows_by_split = {
         "train": train_invalid,
         "validation": validation_invalid,
     }
+    splits = ["train", "validation"]
+    if test_records is not None:
+        test_stats, test_invalid = clean_records_to_disk(
+            "test",
+            test_records,
+            clean_dir,
+            endpoint_by_key=endpoint_by_key,
+            raw_smiles=raw_smiles,
+            completion_label_map=completion_label_map,
+            label_to_id=label_to_id,
+            progress_every=args.progress_every,
+        )
+        clean_stats_by_split["test"] = test_stats
+        invalid_rows_by_split["test"] = test_invalid
+        splits.append("test")
 
     log_stage("collect_endpoints_start")
     endpoints = list(endpoint_by_key.values())
@@ -156,7 +181,7 @@ def main(argv: list[str] | None = None) -> int:
     row_index_stats = write_row_indices_from_clean_files(
         out_dir / "row_indices",
         clean_dir,
-        ["train", "validation"],
+        splits,
         endpoints,
         molecule_features,
     )
@@ -169,8 +194,10 @@ def main(argv: list[str] | None = None) -> int:
             "train_split": args.train_split,
             "train_jsonl": str(args.train_jsonl) if args.train_jsonl else None,
             "validation_jsonl": str(args.validation_jsonl),
+            "test_jsonl": str(args.test_jsonl) if args.test_jsonl else None,
             "limit_train": args.limit_train,
             "limit_validation": args.limit_validation,
+            "limit_test": args.limit_test,
         },
         "outputs": {
             "out_dir": str(out_dir),
@@ -189,6 +216,13 @@ def main(argv: list[str] | None = None) -> int:
             "unique_molecules": len(molecule_features["records"]),
             "invalid_molecules": len(molecule_features["invalid_molecules"]),
         },
+        "label_mapping": {
+            "completion_to_label": completion_label_map,
+            "label_to_id": label_to_id,
+            "id_to_label": {str(value): key for key, value in label_to_id.items()},
+            "positive_label": args.completion_a_label,
+            "negative_label": args.completion_b_label,
+        },
         "endpoint_embedding": {
             "backend": args.embedding_backend,
             "model": args.embedding_model,
@@ -206,6 +240,7 @@ def main(argv: list[str] | None = None) -> int:
                 "names": descriptor_names,
                 "dtype_on_disk": "float32",
                 "missing_value": "NaN",
+                "max_abs_value": MAX_DESCRIPTOR_ABS_VALUE,
             },
             "rdkit_workers": args.rdkit_workers,
             "thread_env": rdkit_thread_env(),
@@ -224,6 +259,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--train-split", default="train")
     parser.add_argument("--train-jsonl", default="", help="Optional local train JSONL override for smoke tests.")
     parser.add_argument("--validation-jsonl", default=DEFAULT_VALIDATION_JSONL)
+    parser.add_argument("--test-jsonl", default="", help="Optional local test JSONL.")
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
     parser.add_argument("--embedding-model", default=DEFAULT_EMBEDDING_MODEL)
     parser.add_argument(
@@ -237,6 +273,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--rdkit-workers", type=int, default=min(256, os.cpu_count() or 1))
     parser.add_argument("--limit-train", type=int, default=0, help="0 means no limit.")
     parser.add_argument("--limit-validation", type=int, default=0, help="0 means no limit.")
+    parser.add_argument("--limit-test", type=int, default=0, help="0 means no limit.")
+    parser.add_argument("--completion-a-label", default="similar")
+    parser.add_argument("--completion-b-label", default="different")
     parser.add_argument("--progress-every", type=int, default=50000)
     return parser.parse_args(argv)
 
@@ -313,10 +352,11 @@ def normalize_endpoint_text(text: str) -> str:
     return "\n".join(lines)
 
 
-def completion_to_label(value: Any) -> str:
+def completion_to_label(value: Any, completion_label_map: dict[str, str] | None = None) -> str:
+    mapping = completion_label_map or DEFAULT_COMPLETION_TO_LABEL
     text = str(value or "").strip().upper()
     try:
-        return COMPLETION_TO_LABEL[text]
+        return mapping[text]
     except KeyError as exc:
         raise ValueError(f"Unsupported completion label: {value!r}") from exc
 
@@ -325,6 +365,7 @@ def clean_records(
     split: str,
     records: Iterable[dict[str, Any]],
     *,
+    completion_label_map: dict[str, str] | None = None,
     progress_every: int = 0,
     total: int | None = None,
 ) -> tuple[list[CleanRow], list[dict[str, Any]]]:
@@ -335,7 +376,7 @@ def clean_records(
         metadata = dict(record.get("metadata") or {})
         try:
             parsed = parse_prompt(str(record.get("prompt") or ""))
-            label = completion_to_label(record.get("completion"))
+            label = completion_to_label(record.get("completion"), completion_label_map)
         except Exception as exc:
             invalid.append(
                 {
@@ -389,6 +430,8 @@ def clean_records_to_disk(
     *,
     endpoint_by_key: dict[str, dict[str, Any]],
     raw_smiles: set[str],
+    completion_label_map: dict[str, str],
+    label_to_id: dict[str, int],
     progress_every: int = 0,
     total: int | None = None,
 ) -> tuple[dict[str, int], list[dict[str, Any]]]:
@@ -403,7 +446,7 @@ def clean_records_to_disk(
             metadata = dict(record.get("metadata") or {})
             try:
                 parsed = parse_prompt(str(record.get("prompt") or ""))
-                label = completion_to_label(record.get("completion"))
+                label = completion_to_label(record.get("completion"), completion_label_map)
             except Exception as exc:
                 invalid_row = {
                     "split": split,
@@ -442,7 +485,7 @@ def clean_records_to_disk(
                 molecule_b_smiles=parsed.molecule_b_smiles,
                 metadata=metadata,
             )
-            clean_handle.write(json.dumps(clean_row_to_json(clean_row), ensure_ascii=False, sort_keys=True) + "\n")
+            clean_handle.write(json.dumps(clean_row_to_json(clean_row, label_to_id), ensure_ascii=False, sort_keys=True) + "\n")
             clean_count += 1
 
             completed = source_index + 1
@@ -485,10 +528,14 @@ def collect_endpoints(clean_by_split: dict[str, list[CleanRow]]) -> list[dict[st
     return list(by_key.values())
 
 
-def write_clean_splits(out_dir: Path, clean_by_split: dict[str, list[CleanRow]]) -> None:
+def write_clean_splits(
+    out_dir: Path,
+    clean_by_split: dict[str, list[CleanRow]],
+    label_to_id: dict[str, int] | None = None,
+) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     for split, rows in clean_by_split.items():
-        write_jsonl(out_dir / f"{split}.jsonl", [clean_row_to_json(row) for row in rows])
+        write_jsonl(out_dir / f"{split}.jsonl", [clean_row_to_json(row, label_to_id) for row in rows])
 
 
 def write_invalid_rows(out_dir: Path, invalid_rows_by_split: dict[str, list[dict[str, Any]]]) -> None:
@@ -496,12 +543,13 @@ def write_invalid_rows(out_dir: Path, invalid_rows_by_split: dict[str, list[dict
         write_jsonl(out_dir / f"{split}_invalid_rows.jsonl", rows)
 
 
-def clean_row_to_json(row: CleanRow) -> dict[str, Any]:
+def clean_row_to_json(row: CleanRow, label_to_id: dict[str, int] | None = None) -> dict[str, Any]:
+    mapping = label_to_id or DEFAULT_LABEL_TO_ID
     return {
         "split": row.split,
         "source_index": row.source_index,
         "label": row.label,
-        "label_id": LABEL_TO_ID[row.label],
+        "label_id": mapping[row.label],
         "endpoint_key": row.endpoint_key,
         "endpoint_text_hash": row.endpoint_text_hash,
         "endpoint_text": row.endpoint_text,
@@ -771,7 +819,10 @@ def compute_one_rdkit_feature(raw_smiles: str) -> dict[str, Any]:
             value = float(func(mol))
         except Exception:
             value = math.nan
-        descriptor_values[index] = value if math.isfinite(value) else math.nan
+        if math.isfinite(value) and abs(value) <= MAX_DESCRIPTOR_ABS_VALUE:
+            descriptor_values[index] = value
+        else:
+            descriptor_values[index] = math.nan
 
     try:
         inchi_key = Chem.MolToInchiKey(mol)
@@ -793,10 +844,12 @@ def write_row_indices(
     clean_by_split: dict[str, list[CleanRow]],
     endpoints: list[dict[str, Any]],
     molecule_features: dict[str, Any],
+    label_to_id: dict[str, int] | None = None,
 ) -> dict[str, dict[str, int]]:
     out_dir.mkdir(parents=True, exist_ok=True)
     endpoint_to_index = {row["endpoint_key"]: int(row["endpoint_index"]) for row in endpoints}
     molecule_to_index = molecule_features["raw_to_index"]
+    mapping = label_to_id or DEFAULT_LABEL_TO_ID
     stats = {}
     for split, rows in clean_by_split.items():
         endpoint_indices = []
@@ -814,7 +867,7 @@ def write_row_indices(
             endpoint_indices.append(endpoint_to_index[row.endpoint_key])
             molecule_a_indices.append(mol_a_index)
             molecule_b_indices.append(mol_b_index)
-            label_ids.append(LABEL_TO_ID[row.label])
+            label_ids.append(mapping[row.label])
             source_indices.append(row.source_index)
         np.savez_compressed(
             out_dir / f"{split}.npz",

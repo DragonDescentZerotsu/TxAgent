@@ -32,7 +32,8 @@ TRANSFER_TOOLS = [
             "name": "mmp_structure_compare",
             "description": (
                 "Compare the query molecule to the reference molecule using Morgan Tanimoto, MCS coverage, "
-                "and mmpdb matched-pair transformation. Use this to judge structural activity transferability."
+                "and mmpdb matched-pair transformation. Use this to judge structural similarity and changes "
+                "that may affect endpoint behavior."
             ),
             "parameters": {
                 "type": "object",
@@ -60,7 +61,7 @@ TRANSFER_TOOLS = [
             "name": "properties_compare",
             "description": (
                 "Compare query and reference molecule properties, including RDKit descriptors and MolGpKa/logD "
-                "features. Use this to assess whether property changes affect assay activity transferability."
+                "features. Use this to assess whether property changes may affect endpoint behavior."
             ),
             "parameters": {
                 "type": "object",
@@ -285,14 +286,19 @@ def prepare_input_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]
         return records
     if not all(is_hf_prompt_completion_record(record) for record in records):
         return records
-    global_majority = majority_label(label for label in (hf_completion_to_label(row.get("completion")) for row in records) if label)
+    default_label = hf_label_map(records[0])["A"]
+    global_majority = majority_label(
+        (label for label in (hf_completion_to_label(row.get("completion"), row) for row in records) if label),
+        default_label=default_label,
+    )
     bucket_majorities = hf_bucket_majorities(records, global_majority)
     prepared = []
     for index, record in enumerate(records):
         metadata = record.get("metadata") or {}
-        label = hf_completion_to_label(record.get("completion"))
+        label = hf_completion_to_label(record.get("completion"), record)
         tanimoto = parse_float(metadata.get("weighted_tanimoto"))
         bucket_key = str(metadata.get("similarity_bucket"))
+        is_transfer = is_transfer_label_pair(record)
         row = dict(record)
         row.update(
             {
@@ -301,11 +307,11 @@ def prepare_input_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]
                 "label": label,
                 "tanimoto": tanimoto,
                 "similarity_bucket": metadata.get("similarity_bucket"),
-                "baseline_tanimoto_0_50_prediction": "similar" if tanimoto >= 0.50 else "different",
-                "baseline_tanimoto_0_48_prediction": "similar" if tanimoto >= 0.48 else "different",
+                "baseline_tanimoto_0_50_prediction": "similar" if is_transfer and tanimoto >= 0.50 else ("different" if is_transfer else ""),
+                "baseline_tanimoto_0_48_prediction": "similar" if is_transfer and tanimoto >= 0.48 else ("different" if is_transfer else ""),
                 "baseline_mcs_0_70_prediction": "",
                 "baseline_similarity_bucket_majority_prediction": bucket_majorities.get(bucket_key, global_majority),
-                "baseline_assay_type_tanimoto_0_50_prediction": "similar" if tanimoto >= 0.50 else "different",
+                "baseline_assay_type_tanimoto_0_50_prediction": "similar" if is_transfer and tanimoto >= 0.50 else ("different" if is_transfer else ""),
             }
         )
         prepared.append(row)
@@ -322,20 +328,32 @@ def infer_input_format(records: list[dict[str, Any]]) -> str:
     return "activity_transfer_eval_pairs"
 
 
-def hf_completion_to_label(value: Any) -> str:
+def hf_label_map(record: dict[str, Any] | None) -> dict[str, str]:
+    metadata = (record or {}).get("metadata") or {}
+    return {
+        "A": str(metadata.get("completion_a_label") or "similar"),
+        "B": str(metadata.get("completion_b_label") or "different"),
+    }
+
+
+def is_transfer_label_pair(record: dict[str, Any] | None) -> bool:
+    labels = set(hf_label_map(record).values())
+    return labels == {"similar", "different"}
+
+
+def hf_completion_to_label(value: Any, record: dict[str, Any] | None = None) -> str:
+    label_map = hf_label_map(record)
     text = str(value or "").strip().upper()
-    if text == "A":
-        return "similar"
-    if text == "B":
-        return "different"
-    return normalize_prediction(value)
+    if text in label_map:
+        return label_map[text]
+    return normalize_prediction(value, label_map=label_map)
 
 
 def hf_bucket_majorities(records: list[dict[str, Any]], default_label: str) -> dict[str, str]:
     counts: dict[str, Counter] = {}
     for record in records:
         metadata = record.get("metadata") or {}
-        label = hf_completion_to_label(record.get("completion"))
+        label = hf_completion_to_label(record.get("completion"), record)
         if not label:
             continue
         bucket = str(metadata.get("similarity_bucket"))
@@ -345,10 +363,10 @@ def hf_bucket_majorities(records: list[dict[str, Any]], default_label: str) -> d
 
 def majority_label(labels: Any, default_label: str = "similar") -> str:
     counter = Counter(labels)
-    if counter["similar"] > counter["different"]:
-        return "similar"
-    if counter["different"] > counter["similar"]:
-        return "different"
+    if counter:
+        top = counter.most_common()
+        if len(top) == 1 or top[0][1] > top[1][1]:
+            return str(top[0][0])
     return default_label
 
 
@@ -540,17 +558,17 @@ def run_one(
     messages = build_messages(record, output_mode=output_mode)
     response = client.chat_json(messages)
     content = response["content"]
-    prediction = extract_prediction(content)
+    prediction = extract_prediction(content, record)
     if not prediction:
         retry_messages = messages + [
             {
                 "role": "user",
-                "content": retry_instruction(output_mode),
+                "content": retry_instruction(record, output_mode),
             }
         ]
         response = client.chat_json_no_tools(retry_messages)
         content = response["content"]
-        prediction = extract_prediction(content)
+        prediction = extract_prediction(content, record)
     result = {
         "sample_index": sample_index,
         "pair_index": record["pair_index"],
@@ -584,14 +602,21 @@ def run_one(
         ),
     }
     if not prediction:
-        result["error"] = "Missing or invalid predicted_transferability."
+        result["error"] = "Missing or invalid predicted_direction." if is_ordered_direction_record(record) else "Missing or invalid predicted_transferability."
     write_json(run_path, result)
     return result
 
 
-def retry_instruction(output_mode: str) -> str:
+def retry_instruction(record: dict[str, Any], output_mode: str) -> str:
     if output_mode == "choice":
         return "Your previous answer was invalid. Return exactly one letter: A or B."
+    if is_ordered_direction_record(record):
+        return (
+            "Your previous answer was invalid or missing `predicted_direction`. "
+            "Return exactly one compact JSON object with keys: "
+            "predicted_direction, confidence, reasoning_summary, key_factors, rationale. "
+            "Use predicted_direction as either `query_higher` or `query_lower`."
+        )
     return (
         "Your previous answer was invalid or missing `predicted_transferability`. "
         "Return exactly one compact JSON object with keys: "
@@ -609,7 +634,7 @@ def final_answer_instruction(output_mode: str) -> str:
 
 def build_messages(record: dict[str, Any], *, output_mode: str = "json") -> list[dict[str, str]]:
     if record.get("input_format") == "hf_prompt_completion":
-        system = hf_system_prompt(output_mode)
+        system = hf_system_prompt(record, output_mode)
         user = hf_user_prompt(record, output_mode)
         return [
             {"role": "system", "content": system},
@@ -726,7 +751,23 @@ def build_messages(record: dict[str, Any], *, output_mode: str = "json") -> list
     ]
 
 
-def hf_system_prompt(output_mode: str) -> str:
+def is_ordered_direction_record(record: dict[str, Any]) -> bool:
+    labels = set(hf_label_map(record).values())
+    return labels == {"query_higher", "query_lower"}
+
+
+def hf_system_prompt(record: dict[str, Any], output_mode: str) -> str:
+    if is_ordered_direction_record(record):
+        if output_mode == "choice":
+            return (
+                "You are evaluating relative oral bioavailability for medicinal chemistry. "
+                "Return exactly one letter: A or B."
+            )
+        return (
+            "You are evaluating relative oral bioavailability for medicinal chemistry. "
+            "Return only compact JSON. Use predicted_direction='query_higher' for answer A/higher, "
+            "and predicted_direction='query_lower' for answer B/lower."
+        )
     if output_mode == "choice":
         return (
             "You are evaluating analog assay activity transferability for medicinal chemistry. "
@@ -743,6 +784,13 @@ def hf_user_prompt(record: dict[str, Any], output_mode: str) -> str:
     prompt = str(record["prompt"]).rstrip()
     if output_mode == "choice":
         return prompt + "\n\nOutput exactly one letter: A or B."
+    if is_ordered_direction_record(record):
+        return (
+            prompt
+            + "\n\nReturn exactly one compact JSON object with keys: "
+            "predicted_direction, confidence, reasoning_summary, key_factors, rationale. "
+            "Use predicted_direction as either `query_higher` or `query_lower`."
+        )
     return (
         prompt
         + "\n\nReturn exactly one compact JSON object with keys: "
@@ -784,6 +832,7 @@ def response_to_result(
 
 def compute_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
     ok_results = [row for row in results if row.get("status") == "ok"]
+    positive_label, negative_label = infer_binary_labels(ok_results)
     baseline_keys = {
         "tanimoto_0_50": "baseline_tanimoto_0_50_prediction",
         "tanimoto_0_48": "baseline_tanimoto_0_48_prediction",
@@ -795,9 +844,11 @@ def compute_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
         "n": len(results),
         "n_ok": len(ok_results),
         "n_failed": len(results) - len(ok_results),
-        "llm": metrics_for_predictions(ok_results, "prediction"),
+        "positive_label": positive_label,
+        "negative_label": negative_label,
+        "llm": metrics_for_predictions(ok_results, "prediction", positive_label=positive_label, negative_label=negative_label),
         "baselines": {
-            name: metrics_for_predictions(ok_results, key)
+            name: metrics_for_predictions(ok_results, key, positive_label=positive_label, negative_label=negative_label)
             for name, key in baseline_keys.items()
             if any(row.get(key) for row in ok_results)
         },
@@ -808,15 +859,23 @@ def compute_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
     gray = [
         row
         for row in ok_results
-        if 0.40 <= float((row.get("input_record") or {}).get("tanimoto", 0.0)) < 0.70
+        if 0.40 <= parse_float((row.get("input_record") or {}).get("tanimoto"), default=-1.0) < 0.70
     ]
     baseline_wrong = [
-        row for row in ok_results if row.get("baseline_tanimoto_0_50_prediction") != row["label"]
+        row
+        for row in ok_results
+        if normalize_prediction(row.get("baseline_tanimoto_0_50_prediction"))
+        and row.get("baseline_tanimoto_0_50_prediction") != row["label"]
     ]
     metrics["subsets"]["tanimoto_0_40_to_0_70"] = {
         "n": len(gray),
-        "llm": metrics_for_predictions(gray, "prediction"),
-        "tanimoto_0_50": metrics_for_predictions(gray, "baseline_tanimoto_0_50_prediction"),
+        "llm": metrics_for_predictions(gray, "prediction", positive_label=positive_label, negative_label=negative_label),
+        "tanimoto_0_50": metrics_for_predictions(
+            gray,
+            "baseline_tanimoto_0_50_prediction",
+            positive_label=positive_label,
+            negative_label=negative_label,
+        ),
     }
     metrics["subsets"]["tanimoto_0_50_wrong"] = {
         "n": len(baseline_wrong),
@@ -842,15 +901,15 @@ def compute_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
             ]
             metrics["per_task"][task_name] = {
                 "n": len(task_rows),
-                "llm": metrics_for_predictions(task_rows, "prediction"),
+                "llm": metrics_for_predictions(task_rows, "prediction", positive_label=positive_label, negative_label=negative_label),
                 "baselines": {
-                    name: metrics_for_predictions(task_rows, key)
+                    name: metrics_for_predictions(task_rows, key, positive_label=positive_label, negative_label=negative_label)
                     for name, key in baseline_keys.items()
                     if any(row.get(key) for row in task_rows)
                 },
                 "label_counts": dict(Counter(row.get("label") for row in task_rows)),
             }
-    add_metadata_group_metrics(metrics, ok_results, baseline_keys)
+    add_metadata_group_metrics(metrics, ok_results, baseline_keys, positive_label, negative_label)
     return metrics
 
 
@@ -858,6 +917,8 @@ def add_metadata_group_metrics(
     metrics: dict[str, Any],
     ok_results: list[dict[str, Any]],
     baseline_keys: dict[str, str],
+    positive_label: str,
+    negative_label: str,
 ) -> None:
     group_specs = {
         "per_assay_type": lambda row: ((row.get("input_record") or {}).get("hf_metadata") or {}).get("assay_type"),
@@ -873,9 +934,9 @@ def add_metadata_group_metrics(
             rows = [row for row in ok_results if str(key_fn(row)) == group]
             metrics[output_key][group] = {
                 "n": len(rows),
-                "llm": metrics_for_predictions(rows, "prediction"),
+                "llm": metrics_for_predictions(rows, "prediction", positive_label=positive_label, negative_label=negative_label),
                 "baselines": {
-                    name: metrics_for_predictions(rows, key)
+                    name: metrics_for_predictions(rows, key, positive_label=positive_label, negative_label=negative_label)
                     for name, key in baseline_keys.items()
                     if any(row.get(key) for row in rows)
                 },
@@ -883,47 +944,83 @@ def add_metadata_group_metrics(
             }
 
 
-def metrics_for_predictions(rows: list[dict[str, Any]], prediction_key: str) -> dict[str, Any]:
+def infer_binary_labels(rows: list[dict[str, Any]]) -> tuple[str, str]:
+    labels = {str(row.get("label") or "") for row in rows if row.get("label")}
+    if {"query_higher", "query_lower"}.issubset(labels):
+        return "query_higher", "query_lower"
+    if {"similar", "different"}.issubset(labels):
+        return "similar", "different"
+    ordered = sorted(label for label in labels if label)
+    if len(ordered) >= 2:
+        return ordered[0], ordered[1]
+    if len(ordered) == 1:
+        return ordered[0], "not_" + ordered[0]
+    return "similar", "different"
+
+
+def metrics_for_predictions(
+    rows: list[dict[str, Any]],
+    prediction_key: str,
+    *,
+    positive_label: str,
+    negative_label: str,
+) -> dict[str, Any]:
     tp = fp = tn = fn = 0
     for row in rows:
-        pred = normalize_prediction(row.get(prediction_key))
+        pred = normalize_prediction(row.get(prediction_key), label_map={"A": positive_label, "B": negative_label})
         label = row.get("label")
-        if not pred or label not in {"similar", "different"}:
+        if not pred or label not in {positive_label, negative_label}:
             continue
-        pred_similar = pred == "similar"
-        true_similar = label == "similar"
-        if pred_similar and true_similar:
+        pred_positive = pred == positive_label
+        true_positive = label == positive_label
+        if pred_positive and true_positive:
             tp += 1
-        elif pred_similar and not true_similar:
+        elif pred_positive and not true_positive:
             fp += 1
-        elif not pred_similar and true_similar:
+        elif not pred_positive and true_positive:
             fn += 1
         else:
             tn += 1
-    precision_similar = safe_div(tp, tp + fp)
-    recall_similar = safe_div(tp, tp + fn)
-    precision_different = safe_div(tn, tn + fn)
-    recall_different = safe_div(tn, tn + fp)
-    f1_similar = safe_div(2 * precision_similar * recall_similar, precision_similar + recall_similar)
-    f1_different = safe_div(2 * precision_different * recall_different, precision_different + recall_different)
+    precision_positive = safe_div(tp, tp + fp)
+    recall_positive = safe_div(tp, tp + fn)
+    precision_negative = safe_div(tn, tn + fn)
+    recall_negative = safe_div(tn, tn + fp)
+    f1_positive = safe_div(2 * precision_positive * recall_positive, precision_positive + recall_positive)
+    f1_negative = safe_div(2 * precision_negative * recall_negative, precision_negative + recall_negative)
     total = tp + fp + tn + fn
-    return {
+    metrics = {
         "n": total,
         "tp": tp,
         "fp": fp,
         "tn": tn,
         "fn": fn,
         "accuracy": safe_div(tp + tn, total),
-        "balanced_accuracy": (recall_similar + recall_different) / 2.0,
-        "macro_f1": (f1_similar + f1_different) / 2.0,
-        "precision_similar": precision_similar,
-        "recall_similar": recall_similar,
-        "precision_different": precision_different,
-        "recall_different": recall_different,
+        "balanced_accuracy": (recall_positive + recall_negative) / 2.0,
+        "macro_f1": (f1_positive + f1_negative) / 2.0,
+        "precision_positive": precision_positive,
+        "recall_positive": recall_positive,
+        "precision_negative": precision_negative,
+        "recall_negative": recall_negative,
+        f"precision_{safe_metric_key(positive_label)}": precision_positive,
+        f"recall_{safe_metric_key(positive_label)}": recall_positive,
+        f"precision_{safe_metric_key(negative_label)}": precision_negative,
+        f"recall_{safe_metric_key(negative_label)}": recall_negative,
     }
+    if {positive_label, negative_label} == {"similar", "different"}:
+        metrics["precision_similar"] = precision_positive if positive_label == "similar" else precision_negative
+        metrics["recall_similar"] = recall_positive if positive_label == "similar" else recall_negative
+        metrics["precision_different"] = precision_positive if positive_label == "different" else precision_negative
+        metrics["recall_different"] = recall_positive if positive_label == "different" else recall_negative
+    return metrics
+
+
+def safe_metric_key(label: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", str(label)).strip("_") or "label"
 
 
 def write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any]) -> None:
+    positive_label = str(metrics.get("positive_label") or "positive")
+    negative_label = str(metrics.get("negative_label") or "negative")
     lines = [
         "# Activity-transfer LLM benchmark",
         "",
@@ -933,6 +1030,8 @@ def write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any]) 
         f"- ok / failed: {metrics['n_ok']:,} / {metrics['n_failed']:,}",
         f"- tool calls: {metrics['tool_calls']:,}",
         f"- total usage: {metrics['usage']}",
+        f"- positive label: `{positive_label}`",
+        f"- negative label: `{negative_label}`",
         "",
         "## Metrics",
         "",
@@ -944,35 +1043,36 @@ def write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any]) 
         if values.get("n", 0) == 0:
             continue
         lines.append(metric_line(name, values))
-    gray = metrics["subsets"]["tanimoto_0_40_to_0_70"]
-    lines.extend(
-        [
-            "",
-            "## Key Subsets",
-            "",
-            f"- Tanimoto 0.40-0.70 subset n={gray['n']:,}: "
-            f"LLM macro-F1={gray['llm']['macro_f1']:.4f}, "
-            f"Tanimoto>=0.50 macro-F1={gray['tanimoto_0_50']['macro_f1']:.4f}",
-            f"- On Tanimoto>=0.50 baseline errors, LLM accuracy="
-            f"{metrics['subsets']['tanimoto_0_50_wrong']['llm_accuracy_on_baseline_errors']:.4f}",
-        ]
-    )
+    if metrics["baselines"].get("tanimoto_0_50", {}).get("n", 0):
+        gray = metrics["subsets"]["tanimoto_0_40_to_0_70"]
+        lines.extend(
+            [
+                "",
+                "## Key Subsets",
+                "",
+                f"- Tanimoto 0.40-0.70 subset n={gray['n']:,}: "
+                f"LLM macro-F1={gray['llm']['macro_f1']:.4f}, "
+                f"Tanimoto>=0.50 macro-F1={gray['tanimoto_0_50']['macro_f1']:.4f}",
+                f"- On Tanimoto>=0.50 baseline errors, LLM accuracy="
+                f"{metrics['subsets']['tanimoto_0_50_wrong']['llm_accuracy_on_baseline_errors']:.4f}",
+            ]
+        )
     if metrics.get("per_task"):
         lines.extend(
             [
                 "",
                 "## Per Task",
                 "",
-                "| task | n | LLM macro-F1 | Tanimoto 0.50 macro-F1 | Tanimoto 0.48 macro-F1 |",
-                "| --- | ---: | ---: | ---: | ---: |",
+                "| task | n | LLM macro-F1 | baseline macro-F1 |",
+                "| --- | ---: | ---: | ---: |",
             ]
         )
         for task_name, task_metrics in metrics["per_task"].items():
+            baseline_value = best_available_baseline_macro_f1(task_metrics["baselines"])
             lines.append(
                 f"| {task_name} | {task_metrics['n']:,} | "
                 f"{task_metrics['llm']['macro_f1']:.4f} | "
-                f"{task_metrics['baselines'].get('tanimoto_0_50', {}).get('macro_f1', 0.0):.4f} | "
-                f"{task_metrics['baselines'].get('tanimoto_0_48', {}).get('macro_f1', 0.0):.4f} |"
+                f"{baseline_value:.4f} |"
             )
     for group_key, title in (
         ("per_assay_type", "Per Assay Type"),
@@ -986,15 +1086,16 @@ def write_report(path: Path, manifest: dict[str, Any], metrics: dict[str, Any]) 
                 "",
                 f"## {title}",
                 "",
-                "| group | n | LLM macro-F1 | Tanimoto 0.50 macro-F1 | Bucket-majority macro-F1 |",
+                "| group | n | LLM macro-F1 | baseline macro-F1 | Bucket-majority macro-F1 |",
                 "| --- | ---: | ---: | ---: | ---: |",
             ]
         )
         for group, group_metrics in metrics[group_key].items():
+            baseline_value = best_available_baseline_macro_f1(group_metrics["baselines"])
             lines.append(
                 f"| {group} | {group_metrics['n']:,} | "
                 f"{group_metrics['llm']['macro_f1']:.4f} | "
-                f"{group_metrics['baselines'].get('tanimoto_0_50', {}).get('macro_f1', 0.0):.4f} | "
+                f"{baseline_value:.4f} | "
                 f"{group_metrics['baselines'].get('similarity_bucket_majority', {}).get('macro_f1', 0.0):.4f} |"
             )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -1004,11 +1105,20 @@ def metric_line(name: str, values: dict[str, Any]) -> str:
     return f"| {name} | {values['accuracy']:.4f} | {values['balanced_accuracy']:.4f} | {values['macro_f1']:.4f} |"
 
 
-def plot_metrics(path: Path, metrics: dict[str, Any]) -> None:
-    import matplotlib
+def best_available_baseline_macro_f1(baselines: dict[str, dict[str, Any]]) -> float:
+    values = [float(value.get("macro_f1", 0.0)) for value in baselines.values() if value.get("n", 0)]
+    return max(values) if values else 0.0
 
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
+
+def plot_metrics(path: Path, metrics: dict[str, Any]) -> None:
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except Exception as exc:  # noqa: BLE001 - plotting should not fail a completed benchmark.
+        path.with_suffix(".plot_error.txt").write_text(f"{type(exc).__name__}: {exc}\n", encoding="utf-8")
+        return
 
     names = ["LLM"]
     values = [metrics["llm"]["macro_f1"]]
@@ -1168,38 +1278,58 @@ def compact_input_record(record: dict[str, Any]) -> dict[str, Any]:
     return compact
 
 
-def normalize_prediction(value: Any) -> str:
+def normalize_prediction(value: Any, *, label_map: dict[str, str] | None = None) -> str:
+    label_map = label_map or {"A": "similar", "B": "different"}
+    allowed_labels = set(label_map.values())
     raw_text = str(value or "").strip()
     compact = raw_text.upper().strip(" .:;()[]{}")
-    if compact == "A":
-        return "similar"
-    if compact == "B":
-        return "different"
-    match = re.search(r"(?:^|\b)(?:ANSWER\s*[:\-]?\s*)?([AB])(?:\b|$)", raw_text.upper())
-    if match:
-        return "similar" if match.group(1) == "A" else "different"
+    if compact in label_map:
+        return label_map[compact]
     text = raw_text.lower()
-    if text in {"similar", "transferable", "yes", "true"}:
+    for key in ("predicted_direction", "predicted_transferability", "prediction", "predicted_label", "label"):
+        field_match = re.search(
+            rf'["\']?{re.escape(key)}["\']?\s*:\s*["\']?([A-Za-z_ -]+)["\']?',
+            raw_text,
+            flags=re.IGNORECASE,
+        )
+        if field_match:
+            field_prediction = normalize_prediction(field_match.group(1), label_map=label_map)
+            if field_prediction:
+                return field_prediction
+    if text in allowed_labels:
+        return text
+    if {"query_higher", "query_lower"}.issubset(allowed_labels):
+        if text in {"query_higher", "higher", "b_higher", "molecule_b_higher", "b higher", "molecule b higher"}:
+            return "query_higher"
+        if text in {"query_lower", "lower", "b_lower", "molecule_b_lower", "b lower", "molecule b lower"}:
+            return "query_lower"
+    if text in {"similar", "transferable", "yes", "true"} and "similar" in allowed_labels:
         return "similar"
-    if text in {"different", "not_similar", "not transferable", "not_transferable", "no", "false"}:
+    if text in {"different", "not_similar", "not transferable", "not_transferable", "no", "false"} and "different" in allowed_labels:
         return "different"
+    if len(raw_text) <= 80 and "\n" not in raw_text:
+        match = re.search(r"(?:^|\b)(?:ANSWER\s*[:\-]?\s*)?([AB])(?:\b|$)", raw_text.upper())
+        if match:
+            return label_map[match.group(1)]
     return ""
 
 
-def extract_prediction(content: Any) -> str:
+def extract_prediction(content: Any, record: dict[str, Any] | None = None) -> str:
+    label_map = hf_label_map(record) if record and record.get("input_format") == "hf_prompt_completion" else None
     if not isinstance(content, dict):
-        return normalize_prediction(content)
+        return normalize_prediction(content, label_map=label_map)
     for key in (
+        "predicted_direction",
         "predicted_transferability",
         "prediction",
         "transferability",
         "predicted_label",
         "label",
     ):
-        prediction = normalize_prediction(content.get(key))
+        prediction = normalize_prediction(content.get(key), label_map=label_map)
         if prediction:
             return prediction
-    prediction = normalize_prediction(content.get("unparsed_text"))
+    prediction = normalize_prediction(content.get("unparsed_text"), label_map=label_map)
     if prediction:
         return prediction
     return ""
