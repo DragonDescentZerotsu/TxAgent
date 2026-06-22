@@ -89,6 +89,7 @@ def retrieve_neighbors(
 
     return {
         "status": "ok",
+        "evidence_source": index.get("source", {}),
         "query": {
             "input_smiles": query_smiles,
             "canonical_smiles": canonical_smiles,

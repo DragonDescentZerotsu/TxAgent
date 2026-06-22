@@ -3,7 +3,7 @@
 The input format is the prompt/completion/metadata JSONL used by the
 activity-transfer LLM benchmark. This script extracts endpoint text and two
 molecule SMILES strings, computes endpoint semantic embeddings, computes
-deduplicated RDKit molecule features, and writes compact index arrays for
+deduplicated molecule features, and writes compact index arrays for
 training/evaluation.
 """
 
@@ -35,6 +35,7 @@ DEFAULT_OUT_DIR = (
     "qwen3_embedding_rdkit_v1/preprocessed"
 )
 DEFAULT_EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-8B"
+DEFAULT_MOLFORMER_MODEL = "ibm-research/MoLFormer-XL-both-10pct"
 
 DEFAULT_LABEL_TO_ID = {"different": 0, "similar": 1}
 DEFAULT_COMPLETION_TO_LABEL = {"A": "similar", "B": "different"}
@@ -159,20 +160,33 @@ def main(argv: list[str] | None = None) -> int:
     np.save(out_dir / "endpoint_embeddings.npy", endpoint_embeddings.astype(np.float16, copy=False))
     log_stage("endpoint_embedding_done", shape=list(endpoint_embeddings.shape))
 
-    log_stage("rdkit_features_start", workers=args.rdkit_workers)
+    molecule_devices = [] if args.molecule_feature_backend == "rdkit" else resolve_devices(args.molformer_devices)
+    log_stage(
+        "molecule_features_start",
+        backend=args.molecule_feature_backend,
+        rdkit_workers=args.rdkit_workers,
+        molformer_model=args.molformer_model if args.molecule_feature_backend == "molformer" else None,
+        molformer_devices=molecule_devices or ["not_applicable"],
+    )
     molecule_features, descriptor_names = build_molecule_feature_table_from_smiles(
         sorted(raw_smiles),
+        backend=args.molecule_feature_backend,
         workers=args.rdkit_workers,
         progress_every=args.progress_every,
+        molformer_model=args.molformer_model,
+        molformer_batch_size=args.molformer_batch_size,
+        molformer_devices=molecule_devices,
+        molformer_dtype=args.molformer_dtype,
+        molformer_max_length=args.molformer_max_length,
+        molformer_normalize=not args.no_molformer_normalize,
+        molformer_random_seed=args.molformer_random_seed,
+        work_dir=out_dir,
     )
     write_jsonl(out_dir / "molecules.jsonl", molecule_features["records"])
-    np.savez_compressed(
-        out_dir / "molecule_features.npz",
-        fingerprints=molecule_features["fingerprints"],
-        descriptors=molecule_features["descriptors"],
-    )
+    save_molecule_features_npz(out_dir / "molecule_features.npz", molecule_features)
     log_stage(
-        "rdkit_features_done",
+        "molecule_features_done",
+        backend=args.molecule_feature_backend,
         unique_molecules=len(molecule_features["records"]),
         invalid_molecules=len(molecule_features["invalid_molecules"]),
     )
@@ -234,20 +248,45 @@ def main(argv: list[str] | None = None) -> int:
             "resolved_devices": embedding_devices,
         },
         "molecule_features": {
-            "fingerprint": {"type": "Morgan", "radius": 2, "n_bits": 2048, "dtype_on_disk": "uint8"},
-            "descriptors": {
-                "source": "rdkit.Chem.Descriptors._descList",
-                "names": descriptor_names,
-                "dtype_on_disk": "float32",
-                "missing_value": "NaN",
-                "max_abs_value": MAX_DESCRIPTOR_ABS_VALUE,
-            },
+            "backend": args.molecule_feature_backend,
             "rdkit_workers": args.rdkit_workers,
             "thread_env": rdkit_thread_env(),
         },
         "invalid_molecules": molecule_features["invalid_molecules"][:1000],
         "invalid_rows": {split: rows[:1000] for split, rows in invalid_rows_by_split.items()},
     }
+    if args.molecule_feature_backend == "rdkit":
+        manifest["molecule_features"].update(
+            {
+                "fingerprint": {"type": "Morgan", "radius": 2, "n_bits": 2048, "dtype_on_disk": "uint8"},
+                "descriptors": {
+                    "source": "rdkit.Chem.Descriptors._descList",
+                    "names": descriptor_names,
+                    "dtype_on_disk": "float32",
+                    "missing_value": "NaN",
+                    "max_abs_value": MAX_DESCRIPTOR_ABS_VALUE,
+                },
+            }
+        )
+    else:
+        manifest["molecule_features"].update(
+            {
+                "molformer": {
+                    "model": args.molformer_model,
+                    "source": "outputs.pooler_output from Hugging Face AutoModel",
+                    "shape": list(molecule_features["molformer_embeddings"].shape),
+                    "dtype_on_disk": "float16",
+                    "normalized": not args.no_molformer_normalize,
+                    "batch_size": args.molformer_batch_size,
+                    "devices": args.molformer_devices,
+                    "resolved_devices": molecule_devices,
+                    "dtype": args.molformer_dtype,
+                    "max_length": args.molformer_max_length,
+                    "random_seed": args.molformer_random_seed,
+                    "trust_remote_code": True,
+                },
+            }
+        )
     (out_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"out_dir": str(out_dir), "counts": manifest["counts"]}, ensure_ascii=False, indent=2), flush=True)
     return 0
@@ -270,6 +309,28 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--embedding-batch-size", type=int, default=16)
     parser.add_argument("--devices", default="auto", help="'auto', 'cpu', or comma-separated cuda device ids.")
+    parser.add_argument(
+        "--molecule-feature-backend",
+        choices=["rdkit", "molformer"],
+        default="rdkit",
+        help="rdkit keeps the legacy fingerprint+descriptor features; molformer replaces them with frozen MolFormer embeddings.",
+    )
+    parser.add_argument("--molformer-model", default=DEFAULT_MOLFORMER_MODEL)
+    parser.add_argument("--molformer-batch-size", type=int, default=1)
+    parser.add_argument("--molformer-devices", default="auto", help="'auto' uses every visible CUDA GPU.")
+    parser.add_argument("--molformer-max-length", type=int, default=202)
+    parser.add_argument(
+        "--molformer-dtype",
+        choices=["auto", "float32", "float16", "bfloat16"],
+        default="float32",
+    )
+    parser.add_argument(
+        "--molformer-random-seed",
+        type=int,
+        default=2,
+        help="Seed for MolFormer's non-persistent random feature-map buffers; shared by all GPU workers.",
+    )
+    parser.add_argument("--no-molformer-normalize", action="store_true")
     parser.add_argument("--rdkit-workers", type=int, default=min(256, os.cpu_count() or 1))
     parser.add_argument("--limit-train", type=int, default=0, help="0 means no limit.")
     parser.add_argument("--limit-validation", type=int, default=0, help="0 means no limit.")
@@ -679,11 +740,26 @@ def build_molecule_feature_table(
 def build_molecule_feature_table_from_smiles(
     raw_smiles: list[str],
     *,
+    backend: str = "rdkit",
     workers: int,
     progress_every: int,
+    molformer_model: str = DEFAULT_MOLFORMER_MODEL,
+    molformer_batch_size: int = 1,
+    molformer_devices: list[str] | None = None,
+    molformer_dtype: str = "float32",
+    molformer_max_length: int = 202,
+    molformer_normalize: bool = True,
+    molformer_random_seed: int = 2,
+    work_dir: Path | None = None,
 ) -> tuple[dict[str, Any], list[str]]:
-    results = compute_rdkit_features_parallel(raw_smiles, workers=workers, progress_every=progress_every)
-    descriptor_names = results[0]["descriptor_names"] if results else descriptor_names_for_current_rdkit()
+    if backend == "rdkit":
+        results = compute_rdkit_features_parallel(raw_smiles, workers=workers, progress_every=progress_every)
+        descriptor_names = results[0]["descriptor_names"] if results else descriptor_names_for_current_rdkit()
+    elif backend == "molformer":
+        results = compute_molecule_identities_parallel(raw_smiles, workers=workers, progress_every=progress_every)
+        descriptor_names = []
+    else:
+        raise ValueError(f"Unsupported molecule feature backend: {backend}")
 
     records: list[dict[str, Any]] = []
     fingerprints = []
@@ -708,22 +784,57 @@ def build_molecule_feature_table_from_smiles(
                     "inchi_key": result.get("inchi_key"),
                 }
             )
-            fingerprints.append(result["fingerprint"])
-            descriptors.append(result["descriptors"])
+            if backend == "rdkit":
+                fingerprints.append(result["fingerprint"])
+                descriptors.append(result["descriptors"])
         raw_to_index[raw] = canonical_to_index[canonical]
 
     feature_table = {
         "records": records,
-        "fingerprints": np.asarray(fingerprints, dtype=np.uint8)
-        if fingerprints
-        else np.zeros((0, 2048), dtype=np.uint8),
-        "descriptors": np.asarray(descriptors, dtype=np.float32)
-        if descriptors
-        else np.zeros((0, len(descriptor_names)), dtype=np.float32),
         "raw_to_index": raw_to_index,
         "invalid_molecules": invalid_molecules,
+        "backend": backend,
     }
+    if backend == "rdkit":
+        feature_table["fingerprints"] = (
+            np.asarray(fingerprints, dtype=np.uint8) if fingerprints else np.zeros((0, 2048), dtype=np.uint8)
+        )
+        feature_table["descriptors"] = (
+            np.asarray(descriptors, dtype=np.float32)
+            if descriptors
+            else np.zeros((0, len(descriptor_names)), dtype=np.float32)
+        )
+    else:
+        smiles_for_embedding = [str(record["canonical_smiles"]) for record in records]
+        feature_table["molformer_embeddings"] = compute_molformer_embeddings_parallel(
+            smiles_for_embedding,
+            model_name_or_path=molformer_model,
+            batch_size=molformer_batch_size,
+            devices=molformer_devices or ["cpu"],
+            dtype=molformer_dtype,
+            max_length=molformer_max_length,
+            normalize=molformer_normalize,
+            random_seed=molformer_random_seed,
+            progress_every=progress_every,
+            work_dir=work_dir,
+        )
     return feature_table, descriptor_names
+
+
+def save_molecule_features_npz(path: Path, molecule_features: dict[str, Any]) -> None:
+    if molecule_features.get("backend") == "molformer":
+        np.savez_compressed(
+            path,
+            molformer_embeddings=molecule_features["molformer_embeddings"],
+            backend=np.asarray(["molformer"]),
+        )
+        return
+    np.savez_compressed(
+        path,
+        fingerprints=molecule_features["fingerprints"],
+        descriptors=molecule_features["descriptors"],
+        backend=np.asarray(["rdkit"]),
+    )
 
 
 def compute_rdkit_features_parallel(raw_smiles: list[str], *, workers: int, progress_every: int) -> list[dict[str, Any]]:
@@ -749,6 +860,41 @@ def compute_rdkit_features_parallel(raw_smiles: list[str], *, workers: int, prog
                     json.dumps(
                         {
                             "stage": "rdkit_features",
+                            "completed": count,
+                            "total": len(raw_smiles),
+                            "rate_per_s": round(rate, 2),
+                            "elapsed_s": round(elapsed, 1),
+                            "eta_s": round(eta, 1),
+                        }
+                    ),
+                    flush=True,
+                )
+    return results
+
+
+def compute_molecule_identities_parallel(raw_smiles: list[str], *, workers: int, progress_every: int) -> list[dict[str, Any]]:
+    if not raw_smiles:
+        return []
+    workers = max(1, min(int(workers), len(raw_smiles)))
+    if workers == 1:
+        init_rdkit_worker()
+        return [compute_one_molecule_identity(smiles) for smiles in raw_smiles]
+
+    results = []
+    started = time.time()
+    ctx = get_context("spawn")
+    with ctx.Pool(processes=workers, initializer=init_rdkit_worker) as pool:
+        for count, result in enumerate(pool.imap(compute_one_molecule_identity, raw_smiles, chunksize=256), start=1):
+            results.append(result)
+            if progress_every > 0 and count % progress_every == 0:
+                elapsed = max(time.time() - started, 1e-9)
+                rate = count / elapsed
+                remaining = len(raw_smiles) - count
+                eta = remaining / rate if rate > 0 else math.inf
+                print(
+                    json.dumps(
+                        {
+                            "stage": "molecule_identity",
                             "completed": count,
                             "total": len(raw_smiles),
                             "rate_per_s": round(rate, 2),
@@ -837,6 +983,436 @@ def compute_one_rdkit_feature(raw_smiles: str) -> dict[str, Any]:
         "descriptors": descriptor_values,
         "descriptor_names": descriptor_names,
     }
+
+
+def compute_one_molecule_identity(raw_smiles: str) -> dict[str, Any]:
+    from rdkit import Chem
+
+    mol = Chem.MolFromSmiles(raw_smiles)
+    if mol is None:
+        return {
+            "raw_smiles": raw_smiles,
+            "valid": False,
+            "error": "RDKit could not parse SMILES",
+        }
+    try:
+        canonical = Chem.MolToSmiles(mol, canonical=True, isomericSmiles=True)
+    except Exception as exc:
+        return {
+            "raw_smiles": raw_smiles,
+            "valid": False,
+            "error": f"canonicalization failed: {type(exc).__name__}: {exc}",
+        }
+    try:
+        inchi_key = Chem.MolToInchiKey(mol)
+    except Exception:
+        inchi_key = None
+    return {
+        "raw_smiles": raw_smiles,
+        "valid": True,
+        "canonical_smiles": canonical,
+        "inchi_key": inchi_key,
+    }
+
+
+def compute_molformer_embeddings_parallel(
+    smiles: list[str],
+    *,
+    model_name_or_path: str,
+    batch_size: int,
+    devices: list[str],
+    dtype: str,
+    max_length: int,
+    normalize: bool,
+    random_seed: int,
+    progress_every: int,
+    work_dir: Path | None,
+) -> np.ndarray:
+    if not smiles:
+        return np.zeros((0, 0), dtype=np.float16)
+    devices = devices or ["cpu"]
+    log_stage("molformer_multi_gpu_start", n_smiles=len(smiles), devices=devices, batch_size=batch_size)
+    ctx = get_context("spawn")
+    chunks = split_contiguous(smiles, len(devices))
+    tasks = []
+    for worker_id, (device, chunk) in enumerate(zip(devices, chunks)):
+        if not chunk:
+            continue
+        tasks.append(
+            (
+                worker_id,
+                chunk,
+                model_name_or_path,
+                batch_size,
+                device,
+                dtype,
+                max_length,
+                normalize,
+                random_seed,
+                progress_every,
+            )
+        )
+    with ctx.Pool(processes=len(tasks)) as pool:
+        chunk_embeddings = pool.starmap(molformer_embed_worker, tasks)
+    embeddings = np.concatenate(chunk_embeddings, axis=0).astype(np.float16, copy=False)
+    log_stage("molformer_multi_gpu_done", shape=list(embeddings.shape), dtype=str(embeddings.dtype))
+    return embeddings
+
+
+def split_contiguous(values: list[str], n_chunks: int) -> list[list[str]]:
+    n_chunks = max(1, n_chunks)
+    chunk_size = int(math.ceil(len(values) / n_chunks))
+    return [values[index : index + chunk_size] for index in range(0, len(values), chunk_size)]
+
+
+def molformer_embed_worker(
+    worker_id: int,
+    smiles: list[str],
+    model_name_or_path: str,
+    batch_size: int,
+    device: str,
+    dtype: str,
+    max_length: int,
+    normalize: bool,
+    random_seed: int,
+    progress_every: int,
+) -> np.ndarray:
+    device = isolate_worker_cuda_device(device)
+    import torch
+    from transformers import AutoModel, AutoTokenizer
+
+    install_transformers_onnx_compat()
+    install_transformers_pruning_compat(torch)
+    torch.manual_seed(random_seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(random_seed)
+    torch_dtype = molformer_torch_dtype(dtype, torch)
+    model_kwargs: dict[str, Any] = {"trust_remote_code": True, "deterministic_eval": True}
+    if torch_dtype is not None:
+        model_kwargs["torch_dtype"] = torch_dtype
+    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, trust_remote_code=True)
+    try:
+        model = AutoModel.from_pretrained(model_name_or_path, **model_kwargs)
+    except TypeError:
+        model_kwargs.pop("deterministic_eval", None)
+        model = AutoModel.from_pretrained(model_name_or_path, **model_kwargs)
+    install_molformer_model_method_compat(model, torch)
+    model.to(device)
+    reset_molformer_rotary_embeddings(model, torch, device)
+    model.eval()
+
+    outputs = []
+    started = time.time()
+    hidden_fallback_count = 0
+    for start in range(0, len(smiles), batch_size):
+        batch = smiles[start : start + batch_size]
+        inputs = tokenizer(
+            batch,
+            padding=True,
+            truncation=True,
+            max_length=max_length,
+            return_tensors="pt",
+        )
+        inputs = {key: value.to(device) for key, value in inputs.items()}
+        # MolFormer remote-code can produce NaNs for some molecules under
+        # torch.no_grad() in the current stack. We keep grad mode enabled,
+        # never backpropagate, and immediately detach the pooled embeddings.
+        model_output = model(**inputs, output_hidden_states=True)
+        pooled = getattr(model_output, "pooler_output", None)
+        if pooled is None:
+            pooled = molformer_fallback_pool(model_output, inputs)
+        elif not torch.isfinite(pooled).all():
+            fallback, fallback_layer = molformer_last_finite_hidden_pool(model_output, inputs)
+            if fallback is not None and torch.isfinite(fallback).all():
+                hidden_fallback_count += 1
+                if hidden_fallback_count <= 5 or hidden_fallback_count % 500 == 0:
+                    print(
+                        json.dumps(
+                            {
+                                "stage": "molformer_hidden_state_fallback",
+                                "worker_id": worker_id,
+                                "device": device,
+                                "batch_start": start,
+                                "batch_size": len(batch),
+                                "hidden_state_index": fallback_layer,
+                                "fallback_count": hidden_fallback_count,
+                            }
+                        ),
+                        flush=True,
+                    )
+                pooled = fallback
+            else:
+                fallback = molformer_fallback_pool(model_output, inputs)
+                if torch.isfinite(fallback).all():
+                    hidden_fallback_count += 1
+                    if hidden_fallback_count <= 5 or hidden_fallback_count % 500 == 0:
+                        print(
+                            json.dumps(
+                                {
+                                    "stage": "molformer_last_hidden_fallback",
+                                    "worker_id": worker_id,
+                                    "device": device,
+                                    "batch_start": start,
+                                    "batch_size": len(batch),
+                                    "fallback_count": hidden_fallback_count,
+                                }
+                            ),
+                            flush=True,
+                        )
+                    pooled = fallback
+        if pooled is None:
+            pooled, fallback_layer = molformer_last_finite_hidden_pool(model_output, inputs)
+            if pooled is not None:
+                hidden_fallback_count += 1
+                if hidden_fallback_count <= 5 or hidden_fallback_count % 500 == 0:
+                    print(
+                        json.dumps(
+                            {
+                                "stage": "molformer_missing_pooler_hidden_fallback",
+                                "worker_id": worker_id,
+                                "device": device,
+                                "batch_start": start,
+                                "batch_size": len(batch),
+                                "hidden_state_index": fallback_layer,
+                                "fallback_count": hidden_fallback_count,
+                            }
+                        ),
+                        flush=True,
+                    )
+            if pooled is None:
+                pooled = molformer_fallback_pool(model_output, inputs)
+        if normalize:
+            pooled = torch.nn.functional.normalize(pooled.float(), p=2, dim=1)
+        else:
+            pooled = pooled.float()
+        if not torch.isfinite(pooled).all():
+            token_lengths = inputs["attention_mask"].sum(dim=1).detach().cpu().tolist() if "attention_mask" in inputs else []
+            log_stage(
+                "molformer_nonfinite_batch",
+                worker_id=worker_id,
+                device=device,
+                batch_start=start,
+                batch_size=len(batch),
+                token_lengths=token_lengths,
+                smiles=batch,
+            )
+            raise FloatingPointError(
+                f"MolFormer produced non-finite embeddings on {device} with dtype={dtype}. "
+                "Retry with --molformer-dtype float32 or inspect the logged molformer_nonfinite_batch SMILES."
+            )
+        outputs.append(pooled.detach().cpu().to(torch.float16).numpy())
+        del model_output, pooled, inputs
+        completed = min(start + len(batch), len(smiles))
+        if progress_every > 0 and completed % progress_every < len(batch):
+            elapsed = max(time.time() - started, 1e-9)
+            rate = completed / elapsed
+            remaining = len(smiles) - completed
+            eta = remaining / rate if rate > 0 else math.inf
+            print(
+                json.dumps(
+                    {
+                        "stage": "molformer_embeddings",
+                        "worker_id": worker_id,
+                        "device": device,
+                        "completed": completed,
+                        "total": len(smiles),
+                        "rate_per_s": round(rate, 2),
+                        "elapsed_s": round(elapsed, 1),
+                        "eta_s": round(eta, 1),
+                    }
+                ),
+                flush=True,
+            )
+    if hidden_fallback_count:
+        log_stage(
+            "molformer_hidden_fallback_done",
+            worker_id=worker_id,
+            device=device,
+            fallback_count=hidden_fallback_count,
+            total=len(smiles),
+        )
+    return np.concatenate(outputs, axis=0) if outputs else np.zeros((0, 0), dtype=np.float16)
+
+
+def isolate_worker_cuda_device(device: str) -> str:
+    """Expose one physical CUDA device per MolFormer worker and use it as cuda:0.
+
+    In the current MolFormer remote-code stack, some molecules can produce NaNs
+    when a worker targets nonzero device ids such as cuda:6 directly. Remapping
+    the selected physical GPU to process-local cuda:0 keeps multi-GPU parallelism
+    while avoiding that device-index-sensitive numerical path.
+    """
+
+    if not device.startswith("cuda"):
+        return device
+    if ":" in device:
+        try:
+            logical_index = int(device.split(":", 1)[1])
+        except ValueError:
+            logical_index = 0
+    else:
+        logical_index = 0
+    visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+    if visible:
+        visible_ids = [item.strip() for item in visible.split(",") if item.strip()]
+        physical_id = visible_ids[logical_index] if logical_index < len(visible_ids) else str(logical_index)
+    else:
+        physical_id = str(logical_index)
+    os.environ["CUDA_VISIBLE_DEVICES"] = physical_id
+    return "cuda:0"
+
+
+def install_transformers_onnx_compat() -> None:
+    """Provide the old transformers.onnx.OnnxConfig symbol required by MolFormer remote code.
+
+    Newer/minimal Transformers installs can omit the `transformers.onnx` module.
+    MolFormer's config imports OnnxConfig only to declare ONNX dynamic axes, which
+    is irrelevant for feature extraction. A small shim is enough for AutoConfig.
+    """
+
+    import sys
+    import types
+
+    if "transformers.onnx" in sys.modules:
+        return
+    module = types.ModuleType("transformers.onnx")
+
+    class OnnxConfig:  # pragma: no cover - compatibility shim for remote code imports.
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            self.task = kwargs.get("task", "default")
+
+    module.OnnxConfig = OnnxConfig
+    sys.modules["transformers.onnx"] = module
+
+
+def install_transformers_pruning_compat(torch_module: Any) -> None:
+    import transformers.pytorch_utils as pytorch_utils
+
+    if hasattr(pytorch_utils, "find_pruneable_heads_and_indices"):
+        return
+
+    def find_pruneable_heads_and_indices(
+        heads: Any,
+        n_heads: int,
+        head_size: int,
+        already_pruned_heads: set[int],
+    ) -> tuple[set[int], Any]:
+        heads = set(heads) - already_pruned_heads
+        mask = torch_module.ones(n_heads, head_size)
+        for head in sorted(heads):
+            adjusted_head = head - sum(1 for pruned_head in already_pruned_heads if pruned_head < head)
+            mask[adjusted_head] = 0
+        mask = mask.view(-1).contiguous().eq(1)
+        index = torch_module.arange(len(mask), dtype=torch_module.long)[mask].long()
+        return heads, index
+
+    pytorch_utils.find_pruneable_heads_and_indices = find_pruneable_heads_and_indices
+
+
+def install_molformer_model_method_compat(model: Any, torch_module: Any) -> None:
+    import types
+
+    def get_head_mask(self: Any, head_mask: Any, num_hidden_layers: int, is_attention_chunked: bool = False) -> Any:
+        if head_mask is None:
+            return [None] * num_hidden_layers
+        if head_mask.dim() == 1:
+            head_mask = head_mask.unsqueeze(0).unsqueeze(0).unsqueeze(-1).unsqueeze(-1)
+            head_mask = head_mask.expand(num_hidden_layers, -1, -1, -1, -1)
+        elif head_mask.dim() == 2:
+            head_mask = head_mask.unsqueeze(1).unsqueeze(-1).unsqueeze(-1)
+        if is_attention_chunked:
+            head_mask = head_mask.unsqueeze(-1)
+        return head_mask.to(dtype=next(self.parameters()).dtype)
+
+    def get_extended_attention_mask(self: Any, attention_mask: Any, input_shape: Any, device: Any = None) -> Any:
+        if device is None:
+            device = attention_mask.device
+        if attention_mask.dim() == 3:
+            extended_attention_mask = attention_mask[:, None, :, :]
+        elif attention_mask.dim() == 2:
+            extended_attention_mask = attention_mask[:, None, None, :]
+        else:
+            raise ValueError(f"Unsupported attention_mask shape: {tuple(attention_mask.shape)}")
+        dtype = next(self.parameters()).dtype
+        extended_attention_mask = extended_attention_mask.to(device=device, dtype=dtype)
+        return (1.0 - extended_attention_mask) * -10000.0
+
+    if not hasattr(model, "get_head_mask"):
+        model.get_head_mask = types.MethodType(get_head_mask, model)
+    model.get_extended_attention_mask = types.MethodType(get_extended_attention_mask, model)
+
+
+def reset_molformer_rotary_embeddings(model: Any, torch_module: Any, device: str) -> None:
+    target_device = torch_module.device(device)
+    dtype = next(model.parameters()).dtype
+    reset_count = 0
+    for module in model.modules():
+        if hasattr(module, "_set_cos_sin_cache") and hasattr(module, "max_position_embeddings"):
+            if hasattr(module, "dim") and hasattr(module, "base"):
+                inv_freq = 1.0 / (
+                    float(module.base)
+                    ** (torch_module.arange(0, int(module.dim), 2, device=target_device).float() / int(module.dim))
+                )
+                module.register_buffer("inv_freq", inv_freq, persistent=False)
+            module._set_cos_sin_cache(
+                seq_len=int(module.max_position_embeddings),
+                device=target_device,
+                dtype=dtype,
+            )
+            reset_count += 1
+        if hasattr(module, "feature_map") and hasattr(module.feature_map, "deterministic"):
+            module.feature_map.deterministic = True
+    if reset_count:
+        log_stage("molformer_rotary_cache_reset", device=device, count=reset_count, dtype=str(dtype))
+
+
+def molformer_torch_dtype(dtype: str, torch_module: Any) -> Any:
+    if dtype == "auto":
+        return None
+    if dtype == "float32":
+        return torch_module.float32
+    if dtype == "float16":
+        return torch_module.float16
+    if dtype == "bfloat16":
+        return torch_module.bfloat16
+    raise ValueError(f"Unsupported MolFormer dtype: {dtype}")
+
+
+def molformer_fallback_pool(model_output: Any, inputs: dict[str, Any]) -> Any:
+    import torch
+
+    hidden = getattr(model_output, "last_hidden_state", None)
+    if hidden is None and isinstance(model_output, (tuple, list)) and model_output:
+        hidden = model_output[0]
+    if hidden is None:
+        raise RuntimeError("MolFormer output does not include pooler_output or last_hidden_state.")
+    attention_mask = inputs.get("attention_mask")
+    if attention_mask is None:
+        return hidden[:, 0]
+    mask = attention_mask.to(hidden.device).unsqueeze(-1).to(hidden.dtype)
+    summed = (hidden * mask).sum(dim=1)
+    denom = mask.sum(dim=1).clamp_min(torch.tensor(1.0, device=hidden.device, dtype=hidden.dtype))
+    return summed / denom
+
+
+def molformer_last_finite_hidden_pool(model_output: Any, inputs: dict[str, Any]) -> tuple[Any | None, int | None]:
+    hidden_states = getattr(model_output, "hidden_states", None)
+    if not hidden_states:
+        return None, None
+    import torch
+
+    for index in range(len(hidden_states) - 1, -1, -1):
+        hidden = hidden_states[index]
+        if hidden is None or not torch.isfinite(hidden).all():
+            continue
+        attention_mask = inputs.get("attention_mask")
+        if attention_mask is None:
+            return hidden[:, 0], index
+        mask = attention_mask.to(hidden.device).unsqueeze(-1).to(hidden.dtype)
+        summed = (hidden * mask).sum(dim=1)
+        denom = mask.sum(dim=1).clamp_min(torch.tensor(1.0, device=hidden.device, dtype=hidden.dtype))
+        return summed / denom, index
+    return None, None
 
 
 def write_row_indices(

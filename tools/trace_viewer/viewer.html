@@ -3,12 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Reasoning Trace Viewer</title>
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #f7f8fa; color: #1f2937; }
   header { position: sticky; top: 0; z-index: 5; background: #1f2937; color: white; padding: 12px 18px; box-shadow: 0 2px 8px rgba(0,0,0,.16); }
   h1 { margin: 0 0 10px; font-size: 18px; }
+  .viewer-build { margin-left: 8px; color: #93c5fd; font: 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   label { font-size: 12px; color: #d1d5db; margin-right: 4px; }
   select, input, button { font: inherit; font-size: 13px; border-radius: 5px; }
@@ -66,7 +70,14 @@
   .json-list { margin: 0; padding-left: 20px; display: grid; gap: 5px; }
   .neighbor-card { border: 1px solid #dbe3ef; border-radius: 7px; padding: 8px; background: #f8fafc; display: grid; gap: 7px; }
   .key-evidence-card { background: #ffffff; border-color: #cbd5e1; }
-  .evidence-card { border-left: 3px solid #94a3b8; padding: 6px 8px; background: white; }
+  .evidence-card { border-left: 3px solid #94a3b8; padding: 9px 10px; background: white; display: grid; gap: 8px; }
+  .evidence-measurement { display: flex; flex-wrap: wrap; gap: 7px; align-items: baseline; }
+  .evidence-measurement strong { font-size: 14px; }
+  .evidence-summary { padding: 8px; border-radius: 6px; background: #eefbf5; border: 1px solid #ccebdd; }
+  .evidence-summary-title { color: #166534; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  .evidence-provenance { padding: 8px; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; display: grid; gap: 6px; }
+  .evidence-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.48; }
+  .evidence-subtitle { color: #64748b; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
   .badge { display: inline-block; padding: 1px 6px; border-radius: 999px; background: #e0e7ff; color: #3730a3; font-size: 11px; font-weight: 750; margin-right: 5px; }
   pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12.5px/1.52 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   details summary { cursor: pointer; color: #4b5563; font-size: 12px; }
@@ -76,7 +87,7 @@
 </head>
 <body>
 <header>
-  <h1>Reasoning Trace Viewer</h1>
+  <h1>Reasoning Trace Viewer <span class="viewer-build">build 20260618-starling-evidence-v3</span></h1>
   <div class="bar">
     <div><label>run</label><select id="runSelect"><option>Scanning...</option></select></div>
     <button id="loadBtn">Load trace</button>
@@ -381,10 +392,77 @@ function renderNeighbor(n){
 }
 function renderEvidence(e){
   const tags = [e.assay_chembl_id, e.target_pref_name, e.organism].filter(Boolean).map(esc).join(" · ");
+  const measurement = [e.standard_relation, e.standard_value, e.standard_units]
+    .filter(v=>v !== null && v !== undefined && v !== "")
+    .map(esc).join(" ");
+  const sourceStats = [
+    ["source records (total)", e.source_record_count],
+    ["numeric records", e.source_numeric_record_count],
+    ["qualitative/contextual records", e.source_qualitative_record_count],
+    ["minimum", formatPercent(e.source_value_min_percent)],
+    ["median", formatPercent(e.source_value_median_percent)],
+    ["maximum", formatPercent(e.source_value_max_percent)],
+  ].filter(([,v])=>v !== null && v !== undefined && v !== "");
+  const aggregation = sourceStats.length ? `<div class="evidence-summary">
+    <div class="evidence-summary-title">Aggregated Starling evidence</div>
+    ${sourceStats.map(([k,v])=>kv(k,v)).join("")}
+  </div>` : "";
+  const provenance = [
+    renderSourceRecordExamples(e.source_record_examples),
+    renderQualitativeSourceExamples(e.source_qualitative_examples),
+    renderEvidenceList("source_molecule_names", e.source_molecule_names),
+    renderEvidenceList("source_report_types", e.source_report_types),
+    renderEvidenceList("source_support_texts", e.source_support_texts),
+  ].filter(Boolean).join("");
+  const context = e.assay_description ? `<div>
+    <div class="evidence-subtitle">Assay / condition description</div>
+    <div class="evidence-text">${esc(e.assay_description)}</div>
+  </div>` : "";
+  const comment = e.activity_comment ? `<div>
+    <div class="evidence-subtitle">Activity comment</div>
+    <div class="evidence-text">${esc(e.activity_comment)}</div>
+  </div>` : "";
   return `<div class="evidence-card">
-    <div><strong>${esc(e.standard_type || "")}</strong> ${esc(e.standard_relation || "")} ${esc(e.standard_value || "")} ${esc(e.standard_units || "")}</div>
-    <div class="kv-val">${esc(e.assay_description || "")}</div>
-    <div class="tag">${tags}</div>
+    <div class="evidence-measurement"><strong>${esc(e.standard_type ?? "")}</strong><span>${measurement}</span></div>
+    ${comment}
+    ${aggregation}
+    ${context}
+    ${provenance ? `<div class="evidence-provenance">${provenance}</div>` : ""}
+    ${tags ? `<div class="tag">${tags}</div>` : ""}
+    <details><summary>All evidence fields exactly as sent</summary><pre>${esc(JSON.stringify(e,null,2))}</pre></details>
+  </div>`;
+}
+function formatPercent(v){
+  return v === null || v === undefined || v === "" ? "" : `${v}%`;
+}
+function renderEvidenceList(label, values){
+  if(!Array.isArray(values) || !values.length) return "";
+  return `<div>
+    <div class="evidence-subtitle">${esc(label)} (${values.length})</div>
+    <ol class="json-list">${values.map(v=>`<li class="evidence-text">${esc(formatInline(v))}</li>`).join("")}</ol>
+  </div>`;
+}
+function renderSourceRecordExamples(examples){
+  if(!Array.isArray(examples) || !examples.length) return "";
+  return `<div>
+    <div class="evidence-subtitle">Condition-linked source records (${examples.length})</div>
+    ${examples.map((example, index)=>`<div class="neighbor-card">
+      <div><span class="badge">record ${index + 1}</span><strong>Oral bioavailability ${esc(formatPercent(example.oral_bioavailability_value_percent))}</strong></div>
+      ${example.condition_text ? `<div class="evidence-text">${esc(example.condition_text)}</div>` : ""}
+      ${example.support_text ? kv("support_text", example.support_text) : ""}
+    </div>`).join("")}
+  </div>`;
+}
+function renderQualitativeSourceExamples(examples){
+  if(!Array.isArray(examples) || !examples.length) return "";
+  return `<div>
+    <div class="evidence-subtitle">Qualitative / contextual source records (${examples.length})</div>
+    ${examples.map((example, index)=>`<div class="neighbor-card">
+      <div><span class="badge">context ${index + 1}</span><strong>${esc(example.oral_bioavailability_value_text || "non-numeric oral bioavailability statement")}</strong></div>
+      ${example.condition_text ? `<div class="evidence-text">${esc(example.condition_text)}</div>` : ""}
+      ${example.support_text ? kv("support_text", example.support_text) : ""}
+      ${example.bioavailability_report_type ? kv("report_type", example.bioavailability_report_type) : ""}
+    </div>`).join("")}
   </div>`;
 }
 function renderKeyEvidence(e){

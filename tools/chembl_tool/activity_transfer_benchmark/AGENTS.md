@@ -140,18 +140,32 @@ materialize_hf_valid_split.py
 prepare_hf_mlp_features.py
   为 trained MLP baseline 准备 HF assay-transfer 特征缓存。输入 HF prompt/completion/metadata
   JSONL，解析 endpoint 完整描述和 Molecule A/B SMILES；endpoint 用 Qwen3-Embedding-8B
-  计算 semantic embedding；molecule 用 RDKit 计算 Morgan fingerprint 和全量 RDKit descriptors；
+  计算 semantic embedding；molecule 默认用 RDKit 计算 Morgan fingerprint 和全量 RDKit descriptors，
+  也支持 `--molecule-feature-backend molformer` 用 HuggingFace
+  `ibm-research/MoLFormer-XL-both-10pct` 的 `AutoModel(...).pooler_output` 替换 RDKit feature；
   输出 clean_splits、endpoints/molecules metadata、endpoint_embeddings.npy、molecule_features.npz
   和 row_indices/*.npz。实现使用 streaming 清洗 train JSONL，避免 1200 万行 full train 一次性驻留内存；
   RDKit worker 会将 OMP/MKL/OPENBLAS/RDKIT 线程设为 1，防止外层多进程和内部线程互相争抢。
+  MolFormer 使用 `--molformer-devices auto` 时会把所有可见 CUDA GPU 都作为 worker 使用，即使单 GPU
+  也通过 spawn 子进程隔离 RDKit 和 MolFormer runtime；当前 vllm env 的 transformers 需要脚本内
+  compatibility shim、rotary cache rebuild 和 grad-enabled forward 后立即 detach，manifest 会记录
+  molformer model、dtype、max_length、random_seed 和 resolved_devices。当前环境下 MolFormer
+  remote code 的 rotary `inv_freq` 是 non-persistent buffer，加载后可能是未初始化/非有限值；
+  脚本会先重建 `inv_freq`，再重建 cos/sin cache，并强制 feature_map eval deterministic。这个修复后
+  多 seed 小样本和 256 molecule 抽样的官方 `pooler_output` 均为 finite。每个 MolFormer worker 会把分配到的 physical GPU
+  remap 成进程内 `cuda:0`；这是为了避免直接使用 `cuda:6` 等非零 device id 时的 NaN，同时仍然
+  并行使用所有 visible GPUs。如果 `pooler_output` 非有限，脚本会使用最深的 finite hidden_state
+  做 masked mean pooling，并记录 `molformer_hidden_state_fallback` / `molformer_hidden_fallback_done`。
   支持 --test-jsonl 从头构建 train/validation/test 统一 cache；尚未实现对已有 cache 的
   incremental append mode。GPU embedding 必须在 sandbox 外运行；sandbox 内可能 CUDA 不可见。
 
 train_hf_mlp_baseline.py
   读取 prepare_hf_mlp_features.py 的 preprocessed cache，训练 Qwen endpoint embedding +
-  RDKit molecule feature 的 Lightning MLP baseline。模型使用 endpoint tower、molecule/pair tower
-  和 fusion head；输入包括 endpoint embedding、Mol A/B Morgan fingerprint、fingerprint XOR、
-  Mol A/B standardized descriptors 和 descriptor absolute difference。训练支持 A100 bf16-mixed、
+  molecule feature 的 Lightning MLP baseline。模型使用 endpoint tower、molecule/pair tower
+  和 fusion head；RDKit backend 输入包括 endpoint embedding、Mol A/B Morgan fingerprint、
+  fingerprint XOR、Mol A/B standardized descriptors 和 descriptor absolute difference；
+  MolFormer backend 输入包括 Mol A embedding、Mol B embedding 和 absolute embedding difference。
+  训练支持 A100 bf16-mixed、
   DDP 多 GPU、W&B 记录、Lightning 进度条、定期 full validation、按 similarity_bucket/assay_type/
   eval_subset 的分组指标、predictions.jsonl/metrics.json/report_zh.md 输出，以及 best/final/last
   checkpoint 保存。full validation callback 在 DDP 下会用 barrier 同步所有 rank；best/final checkpoint
@@ -1536,6 +1550,73 @@ note:
   macro-F1 0.6721. Final checkpoint has slightly higher observed test macro-F1 but should not be selected by test.
 ```
 
+MolFormer pooler-fix molecule embedding run:
+
+```text
+preprocessed:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_endpoint_molformer_poolerfix_v1/preprocessed/
+cache:
+  endpoint embeddings 2,908 x 4,096
+  MolFormer molecule embeddings 10,208 x 768, float16, finite, L2-normalized
+  invalid rows/molecules 0
+  MolFormer batch size 64, random_seed 2, all 8 visible A100 GPUs used
+  no hidden-state fallback logged after rebuilding rotary inv_freq + cos/sin cache
+run:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_endpoint_molformer_poolerfix_v1/runs/
+    oral_bioavailability_molecule_disjoint_higher_lower_molformer_poolerfix_mlp_v1/
+wandb:
+  https://wandb.ai/reasonv/txagent-assay-transfer-mlp/runs/twv8678e
+best validation:
+  step 1000 macro-F1 0.6427, accuracy 0.6427, balanced accuracy 0.6427
+  query_higher recall 0.6562, query_lower recall 0.6292
+test with best checkpoint:
+  macro-F1 0.6671, accuracy 0.6672, balanced accuracy 0.6672
+  query_higher recall 0.6818, query_lower recall 0.6526
+test with final checkpoint:
+  macro-F1 0.6669, accuracy 0.6669, balanced accuracy 0.6669
+  query_higher recall 0.6720, query_lower recall 0.6618
+note:
+  Fixing MolFormer pooler extraction removes the large gap to RDKit: canonical best-checkpoint
+  test macro-F1 is 0.6671 vs RDKit 0.6721. RDKit final checkpoint remains highest observed
+  test macro-F1 at 0.6757, but final checkpoint is not selected by validation.
+```
+
+MolFormer molecule embedding run below was generated before the rotary `inv_freq` rebuild fix; it is finite because
+the script fell back to hidden-state pooling for many molecules, but should be regenerated before treating
+`pooler_output` as the molecule feature source.
+
+MolFormer molecule embedding run:
+
+```text
+preprocessed:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_endpoint_molformer_v1/preprocessed/
+cache:
+  endpoint embeddings 2,908 x 4,096
+  MolFormer molecule embeddings 10,208 x 768, float16, finite, L2-normalized
+  invalid rows/molecules 0
+run:
+  outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
+    oral_bioavailability_hf_molecule_disjoint_higher_lower_pairratio_7_1_2_qwen3_endpoint_molformer_v1/runs/
+    oral_bioavailability_molecule_disjoint_higher_lower_molformer_mlp_v1/
+wandb:
+  https://wandb.ai/reasonv/txagent-assay-transfer-mlp/runs/l2jsdbma
+best validation:
+  step 1500 macro-F1 0.5868, accuracy 0.5874, balanced accuracy 0.5874
+  query_higher recall 0.5503, query_lower recall 0.6245
+test with best checkpoint:
+  macro-F1 0.6061, accuracy 0.6066, balanced accuracy 0.6066
+  query_higher recall 0.5733, query_lower recall 0.6398
+test with final checkpoint:
+  macro-F1 0.6058, accuracy 0.6058, balanced accuracy 0.6058
+  query_higher recall 0.6038, query_lower recall 0.6078
+note:
+  MolFormer embedding underperforms the RDKit fingerprint+descriptor baseline on this ordered
+  molecule-disjoint benchmark. Canonical best-checkpoint test macro-F1 is 0.6061 vs RDKit 0.6721.
+```
+
 LLM benchmark support:
 
 ```text
@@ -1554,19 +1635,6 @@ Tool calling 仍复用同一个 OpenAI-compatible runner，允许 LLM 调用：
 注意：
   对 higher/lower ordered task，不再使用 Tanimoto>=0.50 作为 meaningful baseline；
   report 中主要看 LLM 和 bucket-majority 等可用 baseline。
-```
-
-Ordered LLM smoke/test 命令：
-
-```bash
-python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
-  --input-jsonl outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf_pair_splits/absolute_unspecified_systemic_directed_molecule_disjoint_higher_lower_pairratio_7_1_2_v1/test.jsonl \
-  --run-id oral_bioavailability_higher_lower_llm_tools_smoke \
-  --output-mode json \
-  --limit 100 \
-  --parallelism 8 \
-  --max-tool-rounds 1 \
-  --tool-service-url http://127.0.0.1:8765
 ```
 
 构建 ordered molecule-disjoint split：
@@ -1648,13 +1716,18 @@ condition text separately. The endpoint text is the prompt section between `## E
 `## Molecule A`; for oral higher/lower this section contains both reference and query experimental
 contexts. Qwen3-Embedding-8B produces one normalized endpoint embedding per endpoint_key.
 
-Molecule features are RDKit-only:
+Default RDKit molecule pair features:
   fp_A
   fp_B
   fp_A XOR fp_B
   descriptor_A
   descriptor_B
   abs(descriptor_A - descriptor_B)
+
+Optional MolFormer molecule pair features (`--molecule-feature-backend molformer`):
+  molformer_emb_A
+  molformer_emb_B
+  abs(molformer_emb_A - molformer_emb_B)
 
 The MLP has an endpoint tower and a pair tower, then concatenates both representations before
 the final fusion MLP. It does not separately encode Molecule A text or Molecule B text.

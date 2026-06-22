@@ -149,6 +149,7 @@ def main(argv: list[str] | None = None) -> int:
         index,
         top_k_per_group=args.top_k_per_group,
         min_similarity=args.min_similarity,
+        groups=args.groups,
     )
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
@@ -216,6 +217,8 @@ def main(argv: list[str] | None = None) -> int:
         "input_jsonl": args.input_jsonl,
         "query_index": args.query_index,
         "smiles_field": args.smiles_field,
+        "neighbor_index": args.index,
+        "retrieval_evidence_source": retrieval.get("evidence_source", {}),
         "model": args.model,
         "base_url": args.base_url,
         "tool_service_url": args.tool_service_url,
@@ -647,6 +650,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "group_id": group["group_id"],
             "tier": group["tier"],
             "endpoint_group": group["endpoint_group"],
+            "evidence_source": _group_evidence_source(group),
         },
         "neighbors": [
             {
@@ -673,6 +677,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "Distinguish direct oral bioavailability, in vivo oral exposure/absorption, in vitro permeability, solubility/dissolution, metabolism/clearance, formulation/food-effect context, and weak inhibition/binding evidence.",
             "Do not convert CYP IC50/inhibition into metabolic instability, and do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
+            "For Starling evidence, source_record_examples preserve the exact pairing between each displayed condition, its oral bioavailability percentage, and support text. source_qualitative_examples contain useful non-numeric or contextual statements and must not be treated as exact F% measurements.",
             "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.",
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
@@ -727,8 +732,66 @@ def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
         "organism",
         "confidence_score",
         "relationship_type",
+        "evidence_source",
+        "source_molecule_names",
+        "source_record_count",
+        "source_numeric_record_count",
+        "source_qualitative_record_count",
+        "source_value_min_percent",
+        "source_value_median_percent",
+        "source_value_max_percent",
+        "source_report_types",
+        "source_support_texts",
+        "source_molecule_id",
+        "source_group_id",
+        "source_canonical_smiles",
+        "combined_molecule_sources",
+        "combined_merge_key",
     ]
-    return {field: row.get(field, "") for field in fields}
+    cleaned = {field: row.get(field, "") for field in fields}
+    cleaned["source_record_examples"] = [
+        _clean_starling_source_example(example, numeric=True)
+        for example in row.get("source_record_examples", [])
+    ]
+    cleaned["source_qualitative_examples"] = [
+        _clean_starling_source_example(example, numeric=False)
+        for example in row.get("source_qualitative_examples", [])
+    ]
+    return cleaned
+
+
+def _clean_starling_source_example(example: dict[str, Any], *, numeric: bool) -> dict[str, Any]:
+    fields = [
+        "molecule_name",
+        "condition_text",
+        "species_or_population",
+        "dose",
+        "oral_exposure_mode",
+        "qualifying_conditions",
+        "comparator",
+        "extra_details",
+        "support_text",
+        "bioavailability_report_type",
+    ]
+    if numeric:
+        fields.extend(["oral_bioavailability_value_percent", "parse_modifier"])
+    else:
+        fields.extend(["oral_bioavailability_value_text", "source_drop_reason"])
+    return {field: example.get(field, "") for field in fields}
+
+
+def _group_evidence_source(group: dict[str, Any]) -> str:
+    sources: list[str] = []
+    for neighbor in group.get("neighbors", []):
+        for row in neighbor.get("evidence_rows", []):
+            source = str(row.get("evidence_source") or "").strip()
+            if source and source not in sources:
+                sources.append(source)
+    if len(sources) > 1:
+        return " + ".join(sources)
+    if sources:
+        return sources[0]
+    return "ChEMBL"
 
 
 def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
@@ -1032,6 +1095,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
+    parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     return parser.parse_args(argv)
 
 

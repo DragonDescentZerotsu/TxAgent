@@ -1,5 +1,6 @@
 from tools.chembl_tool.tasks.bioavailability_ma.build_evidence_library import build_neighbor_index
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import retrieve_neighbors, similarity_bucket
+from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import _parse_args
 
 
 def test_retrieve_neighbors_returns_top_per_group_and_excludes_exact_query():
@@ -29,6 +30,17 @@ def test_similarity_bucket_ranges():
     assert similarity_bucket(0.40) == "weak_analog"
     assert similarity_bucket(0.20) == "distant_analog"
     assert similarity_bucket(0.19) == "very_distant_analog"
+
+
+def test_pipeline_accepts_group_filter():
+    groups = [
+        "Tier 1.direct_absolute_bioavailability",
+        "Tier 1.context_dependent",
+    ]
+
+    args = _parse_args(["--groups", *groups])
+
+    assert args.groups == groups
 
 
 def _row(molecule_id: str, smiles: str, group_id: str, standard_type: str) -> dict:

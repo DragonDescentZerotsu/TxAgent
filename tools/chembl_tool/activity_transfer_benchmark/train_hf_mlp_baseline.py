@@ -258,6 +258,8 @@ class DescriptorStats:
 
     @classmethod
     def from_feature_store(cls, store: "FeatureStore", path: Path) -> "DescriptorStats":
+        if store.molecule_backend != "rdkit":
+            return cls(mean=np.zeros((0,), dtype=np.float32), std=np.ones((0,), dtype=np.float32))
         if path.exists():
             data = np.load(path)
             return cls(mean=data["mean"].astype(np.float32), std=data["std"].astype(np.float32))
@@ -279,8 +281,18 @@ class FeatureStore:
         self.manifest = json.loads((preprocessed_dir / "manifest.json").read_text(encoding="utf-8"))
         self.endpoint_embeddings = np.load(preprocessed_dir / "endpoint_embeddings.npy", mmap_mode="r")
         molecule_npz = np.load(preprocessed_dir / "molecule_features.npz")
-        self.fingerprints = molecule_npz["fingerprints"]
-        self.descriptors = molecule_npz["descriptors"].astype(np.float32, copy=False)
+        molecule_manifest = self.manifest.get("molecule_features") or {}
+        self.molecule_backend = str(molecule_manifest.get("backend") or infer_molecule_backend(molecule_npz))
+        self.fingerprints = None
+        self.descriptors = None
+        self.molformer_embeddings = None
+        if self.molecule_backend == "rdkit":
+            self.fingerprints = molecule_npz["fingerprints"]
+            self.descriptors = molecule_npz["descriptors"].astype(np.float32, copy=False)
+        elif self.molecule_backend == "molformer":
+            self.molformer_embeddings = molecule_npz["molformer_embeddings"]
+        else:
+            raise ValueError(f"Unsupported molecule feature backend: {self.molecule_backend}")
         self.row_indices = {
             split_path.stem: load_row_index_npz(split_path)
             for split_path in sorted((preprocessed_dir / "row_indices").glob("*.npz"))
@@ -302,9 +314,26 @@ class FeatureStore:
         self.positive_label = str(label_mapping.get("positive_label") or self.id_to_label.get(1, "similar"))
         self.validation_bucket_majorities = validation_bucket_majorities(self.validation_rows)
         self.endpoint_dim = int(self.endpoint_embeddings.shape[1])
-        self.fingerprint_dim = int(self.fingerprints.shape[1])
-        self.descriptor_dim = int(self.descriptors.shape[1])
-        self.pair_dim = self.fingerprint_dim * 3 + self.descriptor_dim * 3
+        if self.molecule_backend == "rdkit":
+            assert self.fingerprints is not None
+            assert self.descriptors is not None
+            self.fingerprint_dim = int(self.fingerprints.shape[1])
+            self.descriptor_dim = int(self.descriptors.shape[1])
+            self.molecule_embedding_dim = 0
+            self.pair_dim = self.fingerprint_dim * 3 + self.descriptor_dim * 3
+        else:
+            assert self.molformer_embeddings is not None
+            self.fingerprint_dim = 0
+            self.descriptor_dim = 0
+            self.molecule_embedding_dim = int(self.molformer_embeddings.shape[1])
+            self.pair_dim = self.molecule_embedding_dim * 3
+
+
+def infer_molecule_backend(molecule_npz: Any) -> str:
+    files = set(molecule_npz.files)
+    if "molformer_embeddings" in files:
+        return "molformer"
+    return "rdkit"
 
 
 def load_row_index_npz(path: Path) -> dict[str, np.ndarray]:
@@ -345,6 +374,21 @@ class FeatureCollator:
         endpoint_idx, mol_a_idx, mol_b_idx, labels, source_idx = map(np.asarray, zip(*batch))
         endpoint = np.asarray(self.store.endpoint_embeddings[endpoint_idx], dtype=np.float32)
 
+        if self.store.molecule_backend == "molformer":
+            assert self.store.molformer_embeddings is not None
+            emb_a = np.asarray(self.store.molformer_embeddings[mol_a_idx], dtype=np.float32)
+            emb_b = np.asarray(self.store.molformer_embeddings[mol_b_idx], dtype=np.float32)
+            emb_diff = np.abs(emb_a - emb_b).astype(np.float32, copy=False)
+            pair = np.concatenate([emb_a, emb_b, emb_diff], axis=1).astype(np.float32, copy=False)
+            return {
+                "endpoint": torch.from_numpy(endpoint),
+                "pair": torch.from_numpy(pair),
+                "label": torch.as_tensor(labels, dtype=torch.float32),
+                "source_index": torch.as_tensor(source_idx, dtype=torch.long),
+            }
+
+        assert self.store.fingerprints is not None
+        assert self.store.descriptors is not None
         fp_a_u8 = self.store.fingerprints[mol_a_idx]
         fp_b_u8 = self.store.fingerprints[mol_b_idx]
         fp_a = fp_a_u8.astype(np.float32, copy=False)
@@ -928,8 +972,12 @@ def build_manifest(
         "best_step": callback.best_step,
         "feature_shapes": {
             "endpoint_embeddings": list(store.endpoint_embeddings.shape),
-            "fingerprints": list(store.fingerprints.shape),
-            "descriptors": list(store.descriptors.shape),
+            "molecule_backend": store.molecule_backend,
+            "fingerprints": list(store.fingerprints.shape) if store.fingerprints is not None else [],
+            "descriptors": list(store.descriptors.shape) if store.descriptors is not None else [],
+            "molformer_embeddings": list(store.molformer_embeddings.shape)
+            if store.molformer_embeddings is not None
+            else [],
             "train_rows": int(store.row_indices["train"]["label"].shape[0]),
             "validation_rows": int(store.row_indices["validation"]["label"].shape[0]),
             "test_rows": int(store.row_indices["test"]["label"].shape[0]) if "test" in store.row_indices else 0,
