@@ -24,7 +24,7 @@ fi
 ln -sf "$SCRIPT_DIR/viewer.html" "$TRACE_ROOT/.trace_viewer.html"
 
 echo "Serving trace root: $TRACE_ROOT"
-echo "Open: http://127.0.0.1:$PORT/.trace_viewer.html?v=20260618-starling-evidence-v3"
+echo "Open: http://127.0.0.1:$PORT/.trace_viewer.html?v=20260622-bioavailability-v2-final-prompt"
 
 cd "$TRACE_ROOT"
 python3 -m http.server "$PORT" --bind 127.0.0.1

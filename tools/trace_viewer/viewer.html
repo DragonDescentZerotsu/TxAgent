@@ -46,6 +46,21 @@
   .k { color: #697386; text-transform: uppercase; font-size: 10px; font-weight: 750; letter-spacing: .05em; }
   .v { margin-top: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; word-break: break-word; white-space: pre-wrap; }
   .trace { display: grid; gap: 12px; }
+  .package-grid { display: grid; gap: 12px; margin-bottom: 14px; }
+  .stage-strip { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stage-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; background: #f1f5f9; border: 1px solid #dbe3ef; color: #334155; font-size: 11px; font-weight: 750; }
+  .stage-pill.ok { background: #ecfdf5; border-color: #bbf7d0; color: #047857; }
+  .stage-pill.bad { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+  .stage-panel { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #ffffff; }
+  .stage-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 11px; background: #f8fafc; border-bottom: 1px solid #e5e7eb; font-size: 13px; font-weight: 750; }
+  .stage-body { padding: 10px; display: grid; gap: 10px; }
+  .stage-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+  .compact-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .compact-table th, .compact-table td { text-align: left; vertical-align: top; border-bottom: 1px solid #edf0f4; padding: 6px 7px; }
+  .compact-table th { color: #64748b; background: #f8fafc; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  .group-output-card { border: 1px solid #dbe3ef; border-radius: 7px; background: #f8fafc; overflow: hidden; }
+  .group-output-head { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 8px; border-bottom: 1px solid #e2e8f0; }
+  .raw-details { border-top: 1px solid #eef2f7; padding-top: 7px; }
   .message { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: white; }
   .message-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; background: #f8fafc; border-bottom: 1px solid #e5e7eb; }
   .role { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 750; text-transform: uppercase; letter-spacing: .04em; }
@@ -87,7 +102,7 @@
 </head>
 <body>
 <header>
-  <h1>Reasoning Trace Viewer <span class="viewer-build">build 20260618-starling-evidence-v3</span></h1>
+  <h1>Reasoning Trace Viewer <span class="viewer-build">build 20260622-bioavailability-v2-final-prompt</span></h1>
   <div class="bar">
     <div><label>run</label><select id="runSelect"><option>Scanning...</option></select></div>
     <button id="loadBtn">Load trace</button>
@@ -128,7 +143,7 @@
   </div>
 </main>
 <script>
-const state = { records: [], filtered: [], selected: 0, runs: [], moleculeKey: "" };
+const state = { records: [], filtered: [], selected: 0, runs: [], moleculeKey: "", packageCache: new Map() };
 const els = {
   runSelect: document.getElementById("runSelect"),
   loadBtn: document.getElementById("loadBtn"),
@@ -202,10 +217,10 @@ async function loadPath(path){
   const clean = path.trim().replace(/^\/+/,"");
   const res = await fetch(clean); if(!res.ok) throw new Error(`HTTP ${res.status}: ${clean}`);
   state.records = parseJsonl(await res.text(), clean);
-  state.selected = 0; state.moleculeKey = ""; updateMoleculeFilter(); apply();
+  state.selected = 0; state.moleculeKey = ""; state.packageCache = new Map(); updateMoleculeFilter(); apply();
 }
-function addRecords(records){ state.records = records; state.selected = 0; state.moleculeKey = ""; updateMoleculeFilter(); apply(); }
-function recordText(r){ return [r.task,r.smiles,r.response_text,str(r.messages)].join("\n").toLowerCase(); }
+function addRecords(records){ state.records = records; state.selected = 0; state.moleculeKey = ""; state.packageCache = new Map(); updateMoleculeFilter(); apply(); }
+function recordText(r){ return [r.task,r.smiles,r.response_text,str(r.messages),str(r.raw_output)].join("\n").toLowerCase(); }
 function hasTools(r){ return Number(r.tool_count||0)>0 || (Array.isArray(r.messages) && r.messages.some(m=>m.role==="tool" || (m.tool_calls||[]).length)); }
 function apply(){
   const q = els.search.value.trim().toLowerCase(), tf = els.toolFilter.value;
@@ -230,14 +245,289 @@ function renderDetail(){
   const r = state.records[state.selected];
   if(!r){ els.detail.innerHTML = '<div class="panel"><div class="empty">Load trace_messages.jsonl to begin.</div></div>'; return; }
   const cost = estimateCost(r.usage);
-  els.detail.innerHTML = `<div class="panel"><div class="panel-title"><span>${esc(r.task)}</span><span class="tag">${esc(r.__source)}</span></div>
-    <div class="panel-body"><div class="meta">
+  const packageRecords = recordsForMolecule(r);
+  const packageView = renderMoleculePackage(r, packageRecords);
+  els.detail.innerHTML = `${packageView}<details class="stage-panel"><summary class="stage-head"><span>Selected Raw Trace Record</span><span class="tag">${esc(r.task)} · ${esc(r.__source)}</span></summary>
+    <div class="stage-body"><div class="meta">
       ${field("SMILES", r.smiles)}${field("Label", r.label)}${field("Prediction", r.prediction)}${field("Tools", r.tool_count)}${field("Usage", formatUsage(r.usage))}${field("Estimated cost", formatCostBreakdown(cost))}
-    </div>${r.response_text ? `<div class="response-full">${blockSmart("Parsed Response", r.response_text, "")}</div>` : ""}</div></div>
-    <div class="panel"><div class="panel-title"><span>Messages</span><span class="tag">${(r.messages||[]).length} items</span></div>
-    <div class="panel-body"><div class="trace">${renderMessages(r.messages)}</div></div></div>`;
+    </div>${r.response_text ? `<div class="response-full">${blockSmart("Parsed Response", r.response_text, "")}</div>` : ""}
+    <div class="trace">${renderMessages(r.messages)}</div></div></details>`;
 }
 function field(k,v){ return `<div class="field"><div class="k">${esc(k)}</div><div class="v">${esc(str(v))}</div></div>`; }
+function recordsForMolecule(record){
+  const key = moleculeKey(record);
+  return state.records.filter(r=>moleculeKey(r) === key);
+}
+function packageCacheKey(record){ return `${record.__source || ""}|${moleculeKey(record)}`; }
+function renderMoleculePackage(record, packageRecords){
+  const key = packageCacheKey(record);
+  const cached = state.packageCache.get(key);
+  if(!cached) {
+    state.packageCache.set(key, {status:"loading"});
+    loadMoleculePackage(record, key).then(pkg=>{
+      state.packageCache.set(key, pkg);
+      if(state.records[state.selected]?.__id === record.__id) renderDetail();
+    }).catch(err=>{
+      state.packageCache.set(key, {status:"error", error:String(err?.message || err)});
+      if(state.records[state.selected]?.__id === record.__id) renderDetail();
+    });
+  }
+  const pkg = state.packageCache.get(key) || {status:"loading"};
+  const finalRecord = packageRecords.find(r=>r.task === "final_summary") || packageRecords.find(r=>r.prediction);
+  const packageCost = sumCosts(packageRecords);
+  const stagePills = renderStagePills(packageRecords, pkg);
+  return `<div class="package-grid">
+    <div class="panel"><div class="panel-title"><span>Molecule Package</span><span class="tag">${esc(moleculeKey(record))}</span></div>
+      <div class="panel-body">
+        <div class="meta">
+          ${field("Index", record.index ?? record.sample_id)}
+          ${field("Label", record.label)}
+          ${field("Final prediction", finalRecord?.prediction ?? "")}
+          ${field("Trace calls", packageRecords.length)}
+          ${field("Package usage", formatCostBreakdown(packageCost))}
+        </div>
+        <div style="margin-top:10px" class="stage-strip">${stagePills}</div>
+        ${pkg.status === "loading" ? '<div class="empty">Loading v2 sidecar files for this molecule...</div>' : ""}
+        ${pkg.status === "error" ? `<div class="empty">Could not load sidecar package: ${esc(pkg.error)}</div>` : ""}
+      </div>
+    </div>
+    ${pkg.status === "ok" ? renderSelectedPackageStage(pkg, record, packageRecords) + renderCompletePackageDetails(pkg, packageRecords) : renderTraceCallOverview(packageRecords)}
+  </div>`;
+}
+function renderStagePills(records, pkg){
+  const stages = [];
+  const byTask = new Map(records.map(r=>[r.task, r]));
+  stages.push(stagePill("retrieval", pkg?.retrieval?.status || pkg?.status));
+  stages.push(stagePill("single", byTask.get("single_molecule")?.status || pkg?.single?.status));
+  const groupCount = records.filter(r=>String(r.task || "").startsWith("Tier ")).length || (pkg?.groups?.length ?? 0);
+  stages.push(`<span class="stage-pill">${esc(groupCount)} groups</span>`);
+  stages.push(stagePill("compiler", pkg?.final?.compiled_evidence_summary ? "ok" : ""));
+  stages.push(stagePill("final", byTask.get("final_summary")?.status || pkg?.final?.status));
+  return stages.join("");
+}
+function stagePill(label, status){
+  const cls = status === "ok" ? " ok" : (status && status !== "loading" ? " bad" : "");
+  return `<span class="stage-pill${cls}">${esc(label)}${status ? `: ${esc(status)}` : ""}</span>`;
+}
+async function loadMoleculePackage(record, key){
+  const candidates = candidateRunDirs(record);
+  let best = null;
+  for(const runDir of candidates) {
+    const pkg = await loadPackageFromDir(runDir);
+    if(pkg.retrieval || pkg.single || pkg.final || (Array.isArray(pkg.groups) && pkg.groups.length)) {
+      best = pkg;
+      break;
+    }
+    best = best || pkg;
+  }
+  const pkg = best || await loadPackageFromDir(candidates[0] || "");
+  return {status:"ok", key, ...pkg};
+}
+async function loadPackageFromDir(runDir){
+  const [manifest, retrieval, single, groups, final] = await Promise.all([
+    fetchJsonMaybe(`${runDir}/manifest.json`),
+    fetchJsonMaybe(`${runDir}/retrieval.json`),
+    fetchJsonMaybe(`${runDir}/single_molecule_reasoning_output.json`),
+    fetchJsonlMaybe(`${runDir}/group_reasoning_outputs.jsonl`),
+    fetchJsonMaybe(`${runDir}/final_reasoning_output.json`),
+  ]);
+  const missing = [];
+  for(const [name, value] of Object.entries({manifest, retrieval, single, groups, final})) {
+    if(value == null) missing.push(name);
+  }
+  return {runDir, manifest, retrieval, single, groups: groups || [], final, missing};
+}
+function candidateRunDirs(record){
+  const source = String(record.__source || "").replace(/\/trace_messages\.jsonl$/,"");
+  if(/\/runs\/[^/]+$/.test(source)) return [source];
+  const batchName = basename(source);
+  const index = record.index ?? record.sample_id;
+  if(index == null || batchName === "") return [source];
+  return [source, `${source}/runs/${batchName}_idx${String(index).padStart(5,"0")}`];
+}
+function basename(path){ return String(path || "").split("/").filter(Boolean).pop() || ""; }
+async function fetchJsonMaybe(path){
+  try {
+    const res = await fetch(path);
+    if(!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+async function fetchJsonlMaybe(path){
+  try {
+    const res = await fetch(path);
+    if(!res.ok) return null;
+    const text = await res.text();
+    return text.split(/\r?\n/).filter(x=>x.trim()).map(line=>JSON.parse(line));
+  } catch { return null; }
+}
+function renderSidecarPackage(pkg, packageRecords){
+  return [
+    renderPackageManifest(pkg),
+    renderRetrievalStage(pkg.retrieval),
+    renderSingleStage(pkg.single, packageRecords.find(r=>r.task === "single_molecule")),
+    renderGroupStage(pkg.groups, packageRecords.filter(r=>String(r.task || "").startsWith("Tier "))),
+    renderCompiledEvidenceStage(pkg.final?.compiled_evidence_summary),
+    renderFinalStage(pkg.final, packageRecords.find(r=>r.task === "final_summary")),
+    renderTraceCallOverview(packageRecords),
+  ].filter(Boolean).join("");
+}
+function renderSelectedPackageStage(pkg, record, packageRecords){
+  const task = String(record.task || "");
+  if(task === "single_molecule") return renderSingleStage(pkg.single, record);
+  if(task === "final_summary") {
+    return [
+      renderCompiledEvidenceStage(pkg.final?.compiled_evidence_summary),
+      renderFinalStage(pkg.final, record),
+    ].join("");
+  }
+  if(task.startsWith("Tier ")) {
+    const group = (pkg.groups || []).find(g=>g.group_id === task);
+    return renderGroupStage(group ? [group] : [], [record]);
+  }
+  return renderSelectedTraceRecordStage(record);
+}
+function renderCompletePackageDetails(pkg, packageRecords){
+  return `<details class="stage-panel">
+    <summary class="stage-head"><span>Complete Molecule Package</span><span class="tag">${esc(packageRecords.length)} trace records</span></summary>
+    <div class="stage-body">${renderSidecarPackage(pkg, packageRecords)}</div>
+  </details>`;
+}
+function renderSelectedTraceRecordStage(record){
+  const parsed = parseMaybeJson(record.response_text);
+  const body = `${parsed ? section("Parsed Response", renderJsonValue(parsed)) : (record.response_text ? section("Response Text", `<div class="json-body"><pre>${esc(record.response_text)}</pre></div>`) : "")}
+    ${record.usage ? section("Usage", `<div class="json-body">${renderObjectFields(record.usage)}</div>`) : ""}
+    ${Array.isArray(record.messages) ? section(`Trace Messages (${record.messages.length})`, `<div class="trace">${renderMessages(record.messages)}</div>`) : ""}
+    <details class="raw-details"><summary>Raw trace record</summary><pre>${esc(JSON.stringify(record,null,2))}</pre></details>`;
+  return stagePanel("Selected Trace Record", record.task || "record", body);
+}
+function renderPackageManifest(pkg){
+  const manifest = pkg.manifest || {};
+  const values = {
+    run_dir: pkg.runDir,
+    pipeline_variant: pkg.final?.pipeline_variant,
+    model: manifest.model,
+    base_url: manifest.base_url,
+    tool_service_url: manifest.tool_service_url,
+    group_tools_enabled: manifest.group_tools_enabled,
+    chembl_exact_context_enabled: manifest.chembl_exact_context_enabled,
+    top_k_per_group: manifest.top_k_per_group,
+    min_similarity: manifest.min_similarity,
+    missing_sidecar_files: pkg.missing?.join(", "),
+  };
+  return stagePanel("Run Manifest", "v2 sidecar metadata", `<div class="json-body">${renderObjectFields(values)}</div>`);
+}
+function renderRetrievalStage(retrieval){
+  if(!retrieval) return stagePanel("Retrieval", "missing", '<div class="empty">No retrieval.json sidecar found.</div>');
+  const groups = Array.isArray(retrieval.groups) ? retrieval.groups : [];
+  const withNeighbors = groups.filter(g=>(g.neighbors || []).length);
+  const body = `<div class="stage-columns">
+      ${section("Query", `<div class="json-body">${renderObjectFields(retrieval.query || {})}</div>`)}
+      ${section("Coverage", `<div class="json-body">${renderObjectFields(retrieval.coverage || {})}</div>`)}
+    </div>
+    ${section(`Endpoint Groups (${groups.length}; ${withNeighbors.length} with neighbors)`, `<div class="json-body">${groups.map(renderRetrievalGroup).join("")}</div>`)}
+    <details class="raw-details"><summary>Raw retrieval.json</summary><pre>${esc(JSON.stringify(retrieval,null,2))}</pre></details>`;
+  return stagePanel("Retrieval", retrieval.status || "loaded", body);
+}
+function renderRetrievalGroup(group){
+  const neighbors = Array.isArray(group.neighbors) ? group.neighbors : [];
+  const open = neighbors.length ? " open" : "";
+  return `<details${open} class="neighbor-card">
+    <summary><strong>${esc(group.group_id || `${group.tier || ""}.${group.endpoint_group || ""}`)}</strong>
+      <span class="badge">${esc(neighbors.length)} neighbors</span>
+      ${group.n_candidate_molecules != null ? `<span class="badge">${esc(group.n_candidate_molecules)} candidates</span>` : ""}
+    </summary>
+    ${neighbors.length ? neighbors.map(renderNeighbor).join("") : '<div class="tag">No retrieved neighbors.</div>'}
+  </details>`;
+}
+function renderSingleStage(single, traceRecord){
+  const llm = single?.llm || {};
+  const body = single ? renderLlmOutput("Single molecule LLM", llm, traceRecord) +
+    `<details class="raw-details"><summary>Raw single_molecule_reasoning_output.json</summary><pre>${esc(JSON.stringify(single,null,2))}</pre></details>`
+    : '<div class="empty">No single_molecule_reasoning_output.json sidecar found.</div>';
+  return stagePanel("Single-Molecule Stage", single?.status || traceRecord?.status || "missing", body);
+}
+function renderGroupStage(groups, traceRecords){
+  const rows = Array.isArray(groups) ? groups : [];
+  const byTask = new Map(traceRecords.map(r=>[r.task, r]));
+  const body = rows.length ? rows.map(g=>renderGroupOutput(g, byTask.get(g.group_id))).join("") : '<div class="empty">No group_reasoning_outputs.jsonl sidecar found.</div>';
+  return stagePanel("Group Reasoning Stage", `${rows.length || traceRecords.length} groups`, body);
+}
+function renderGroupOutput(groupOutput, traceRecord){
+  const llm = groupOutput.llm || {};
+  const content = llm.content || {};
+  const tags = [
+    groupOutput.status,
+    groupOutput.tier,
+    groupOutput.endpoint_group,
+    groupOutput.n_neighbors != null ? `${groupOutput.n_neighbors} neighbors` : null,
+    content.transferability ? `transfer=${content.transferability}` : null,
+    content.confidence ? `confidence=${content.confidence}` : null,
+    content.evidence_direction ? `direction=${content.evidence_direction}` : null,
+  ].filter(Boolean);
+  return `<div class="group-output-card">
+    <div class="group-output-head"><strong>${esc(groupOutput.group_id || traceRecord?.task || "group")}</strong>${tags.map(t=>`<span class="badge">${esc(t)}</span>`).join("")}</div>
+    <div class="stage-body">
+      ${renderLlmOutput("Group LLM", llm, traceRecord)}
+      <details class="raw-details"><summary>Raw group output JSON</summary><pre>${esc(JSON.stringify(groupOutput,null,2))}</pre></details>
+    </div>
+  </div>`;
+}
+function renderCompiledEvidenceStage(compiled){
+  if(!compiled) return stagePanel("Evidence Compiler", "missing", '<div class="empty">No compiled_evidence_summary found in final_reasoning_output.json.</div>');
+  const decision = compiled.llm_decision_view || {};
+  const body = `<div class="stage-columns">
+      ${section("Decision View", renderJsonValue(decision))}
+      ${section("Factor Summary", renderJsonValue(compiled.factor_summary || {}))}
+    </div>
+    ${Array.isArray(compiled.direct_label_votes) ? section(`Direct Label Votes (${compiled.direct_label_votes.length})`, renderJsonValue(compiled.direct_label_votes)) : ""}
+    ${Array.isArray(compiled.transferability_blocked_direct_or_numeric_evidence) ? section(`Blocked Numeric Evidence (${compiled.transferability_blocked_direct_or_numeric_evidence.length})`, renderJsonValue(compiled.transferability_blocked_direct_or_numeric_evidence)) : ""}
+    ${Array.isArray(compiled.proxy_evidence_cards) ? section(`Proxy Evidence Cards (${compiled.proxy_evidence_cards.length})`, renderJsonValue(compiled.proxy_evidence_cards)) : ""}
+    ${Array.isArray(compiled.group_cards) ? section(`All Group Cards (${compiled.group_cards.length})`, renderJsonValue(compiled.group_cards)) : ""}
+    ${Array.isArray(compiled.decision_guardrails) ? section("Decision Guardrails", renderJsonList(compiled.decision_guardrails)) : ""}
+    <details class="raw-details"><summary>Raw compiled_evidence_summary</summary><pre>${esc(JSON.stringify(compiled,null,2))}</pre></details>`;
+  return stagePanel("Evidence Compiler", compiled.compiler_version || "loaded", body);
+}
+function renderFinalStage(finalOutput, traceRecord){
+  const llm = finalOutput?.llm || {};
+  const body = finalOutput ? renderLlmOutput("Final LLM", llm, traceRecord) +
+    `<details class="raw-details"><summary>Raw final_reasoning_output.json</summary><pre>${esc(JSON.stringify(finalOutput,null,2))}</pre></details>`
+    : '<div class="empty">No final_reasoning_output.json sidecar found.</div>';
+  return stagePanel("Final Summary Stage", finalOutput?.status || traceRecord?.status || "missing", body);
+}
+function renderLlmOutput(title, llm, traceRecord){
+  const parts = [];
+  const content = llm?.content ?? parseMaybeJson(traceRecord?.response_text) ?? traceRecord?.response_text;
+  if(content != null) parts.push(section(`${title} Parsed Content`, renderJsonValue(content)));
+  if(llm?.reasoning_content) parts.push(section(`${title} Reasoning Content`, `<div class="json-body"><pre>${esc(llm.reasoning_content)}</pre></div>`));
+  if(llm?.usage || traceRecord?.usage) parts.push(section("Usage", `<div class="json-body">${renderObjectFields(llm?.usage || traceRecord?.usage || {})}</div>`));
+  if(Array.isArray(llm?.tool_calls) && llm.tool_calls.length) parts.push(section(`Tool Calls (${llm.tool_calls.length})`, renderJsonValue(llm.tool_calls)));
+  if(Array.isArray(llm?.tool_results) && llm.tool_results.length) parts.push(section(`Tool Results (${llm.tool_results.length})`, renderJsonValue(llm.tool_results)));
+  if(Array.isArray(llm?.messages) && llm.messages.length) parts.push(section(`LLM Messages (${llm.messages.length})`, `<div class="trace">${renderMessages(llm.messages)}</div>`));
+  if(traceRecord && Array.isArray(traceRecord.messages) && traceRecord.messages.length && !Array.isArray(llm?.messages)) {
+    parts.push(section(`Trace Messages (${traceRecord.messages.length})`, `<div class="trace">${renderMessages(traceRecord.messages)}</div>`));
+  }
+  if(llm?.raw_content) parts.push(section("Raw Content", `<div class="json-body"><pre>${esc(llm.raw_content)}</pre></div>`));
+  return parts.join("");
+}
+function renderTraceCallOverview(records){
+  const sorted = [...records].sort((a,b)=>stageOrder(a.task)-stageOrder(b.task) || String(a.task).localeCompare(String(b.task)));
+  const rows = sorted.map((r,i)=>`<tr>
+    <td>${esc(i+1)}</td><td>${esc(r.task)}</td><td>${esc(r.status)}</td><td>${esc(r.prediction ?? "")}</td>
+    <td>${esc(r.tool_count ?? 0)}</td><td>${esc(formatUsage(r.usage))}</td>
+  </tr>`).join("");
+  const table = `<table class="compact-table"><thead><tr><th>#</th><th>stage</th><th>status</th><th>prediction</th><th>tools</th><th>usage</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return stagePanel("Trace Call Index", `${records.length} records`, table);
+}
+function stageOrder(task){
+  if(task === "single_molecule") return 1;
+  if(String(task || "").startsWith("Tier ")) return 2;
+  if(task === "final_summary") return 3;
+  return 9;
+}
+function stagePanel(title, subtitle, body){
+  return `<div class="stage-panel"><div class="stage-head"><span>${esc(title)}</span><span class="tag">${esc(subtitle || "")}</span></div><div class="stage-body">${body}</div></div>`;
+}
 function priceConfig(){
   return {
     cacheHit: Number(els.priceCacheHit.value || 0),
@@ -326,12 +616,28 @@ function renderJsonReadable(value){
   if(value.task) known.push(section("Task", `<div class="json-body">${kv("task", value.task)}</div>`));
   const summary = renderSummaryFields(value);
   if(summary) known.push(section("Summary", summary));
+  if(value.pipeline_variant) known.push(section("Pipeline Variant", `<div class="json-body">${kv("pipeline_variant", value.pipeline_variant)}</div>`));
   if(value.query) known.push(section("Query", `<div class="json-body">${renderObjectFields(value.query)}</div>`));
   if(value.group) known.push(section("Group", `<div class="json-body">${renderObjectFields(value.group)}</div>`));
+  if(value.task_threshold) known.push(section("Task Threshold", `<div class="json-body">${renderObjectFields(value.task_threshold)}</div>`));
   if(value.retrieval_coverage) known.push(section("Retrieval Coverage", `<div class="json-body">${renderObjectFields(value.retrieval_coverage)}</div>`));
   if(value.single_molecule_analysis) known.push(section("Single-Molecule Analysis", renderJsonValue(value.single_molecule_analysis)));
+  if(value.single_molecule_prior) known.push(section("Single-Molecule Prior", renderJsonValue(value.single_molecule_prior)));
+  if(value.evidence_state) known.push(section("Evidence State", `<div class="json-body">${renderObjectFields(value.evidence_state)}</div>`));
+  if(value.compiled_evidence_summary) known.push(section("Compiled Evidence Summary Sent To Final LLM", renderJsonReadable(value.compiled_evidence_summary)));
   if(Array.isArray(value.neighbors)) known.push(section(`Neighbors (${value.neighbors.length})`, `<div class="json-body">${value.neighbors.map(renderNeighbor).join("")}</div>`));
   if(Array.isArray(value.group_reasoning_outputs)) known.push(section(`Group Reasoning Outputs (${value.group_reasoning_outputs.length})`, `<div class="json-body">${value.group_reasoning_outputs.map(renderGroupSummary).join("")}</div>`));
+  if(Array.isArray(value.direct_label_votes)) known.push(section(`Direct Label Votes (${value.direct_label_votes.length})`, renderJsonValue(value.direct_label_votes)));
+  if(value.blocked_numeric_evidence_policy) known.push(section("Blocked Numeric Evidence Policy", renderJsonValue(value.blocked_numeric_evidence_policy)));
+  if(value.proxy_evidence_policy) known.push(section("Proxy Evidence Policy", renderJsonValue(value.proxy_evidence_policy)));
+  if(Array.isArray(value.duplicate_or_correlated_source_summary)) known.push(section(`Duplicate / Correlated Source Summary (${value.duplicate_or_correlated_source_summary.length})`, renderJsonValue(value.duplicate_or_correlated_source_summary)));
+  if(Array.isArray(value.decision_rules)) known.push(section("Decision Rules", renderJsonList(value.decision_rules)));
+  if(Array.isArray(value.endpoint_hierarchy)) known.push(section("Endpoint Hierarchy", renderJsonList(value.endpoint_hierarchy)));
+  if(Array.isArray(value.group_cards)) known.push(section(`Group Cards (${value.group_cards.length})`, renderJsonValue(value.group_cards)));
+  if(Array.isArray(value.transferability_blocked_direct_or_numeric_evidence)) known.push(section(`Transferability-Blocked Numeric Evidence (${value.transferability_blocked_direct_or_numeric_evidence.length})`, renderJsonValue(value.transferability_blocked_direct_or_numeric_evidence)));
+  if(Array.isArray(value.proxy_evidence_cards)) known.push(section(`Proxy Evidence Cards (${value.proxy_evidence_cards.length})`, renderJsonValue(value.proxy_evidence_cards)));
+  if(value.factor_summary) known.push(section("Factor Summary", renderJsonValue(value.factor_summary)));
+  if(value.source_policy) known.push(section("Source Policy", `<div class="json-body">${kv("source_policy", value.source_policy)}</div>`));
   if(Array.isArray(value.key_evidence)) known.push(section(`Key Evidence (${value.key_evidence.length})`, `<div class="json-body">${value.key_evidence.map(renderKeyEvidence).join("")}</div>`));
   if(Array.isArray(value.key_neighbors)) known.push(section(`Key Neighbors - Legacy (${value.key_neighbors.length})`, renderJsonList(value.key_neighbors)));
   if(Array.isArray(value.main_reasons)) known.push(section("Main Reasons", renderJsonList(value.main_reasons)));
@@ -342,7 +648,11 @@ function renderJsonReadable(value){
   if(Array.isArray(value.instructions)) known.push(section("Instructions", renderJsonList(value.instructions)));
   if(value.required_json_schema) known.push(section("Required JSON Schema", renderJsonValue(value.required_json_schema)));
   const handled = new Set([
-    "task","query","group","retrieval_coverage","single_molecule_analysis","neighbors","group_reasoning_outputs",
+    "task","pipeline_variant","query","group","task_threshold","retrieval_coverage","single_molecule_analysis",
+    "single_molecule_prior","evidence_state","compiled_evidence_summary","neighbors","group_reasoning_outputs",
+    "direct_label_votes","blocked_numeric_evidence_policy","proxy_evidence_policy",
+    "duplicate_or_correlated_source_summary","decision_rules","endpoint_hierarchy","group_cards",
+    "transferability_blocked_direct_or_numeric_evidence","proxy_evidence_cards","factor_summary","source_policy",
     "key_evidence","key_neighbors","main_reasons","conflicting_evidence","evidence_gaps","property_drivers","caveats",
     "instructions","required_json_schema",
     ...summaryFieldNames()
@@ -383,8 +693,10 @@ function formatInline(v){
 }
 function renderJsonList(items){ return `<div class="json-body"><ol class="json-list">${items.map(x=>`<li>${esc(formatInline(x))}</li>`).join("")}</ol></div>`; }
 function renderNeighbor(n){
+  const moleculeId = n.molecule_chembl_id || n.source_molecule_id || n.molecule_id || n.id || "neighbor";
   return `<div class="neighbor-card">
-    <div><span class="badge">rank ${esc(n.rank)}</span><span class="badge">${esc(n.similarity_bucket)}</span><strong>${esc(n.molecule_chembl_id)}</strong></div>
+    <div><span class="badge">rank ${esc(n.rank)}</span><span class="badge">${esc(n.similarity_bucket)}</span><strong>${esc(moleculeId)}</strong></div>
+    ${n.source ? kv("source", n.source) : ""}
     ${kv("similarity", n.similarity)}
     ${kv("SMILES", n.canonical_smiles)}
     ${Array.isArray(n.evidence_rows) ? `<details open><summary>Evidence rows (${n.evidence_rows.length})</summary>${n.evidence_rows.map(renderEvidence).join("")}</details>` : ""}
@@ -479,7 +791,7 @@ function renderKeyEvidence(e){
       ${e.similarity != null ? `<span class="badge">sim ${esc(e.similarity)}</span>` : ""}
       ${e.similarity_bucket ? `<span class="badge">${esc(e.similarity_bucket)}</span>` : ""}
       ${e.transferability ? `<span class="badge">transfer ${esc(e.transferability)}</span>` : ""}
-      <strong>${esc(e.molecule_chembl_id || "evidence")}</strong>
+      <strong>${esc(e.molecule_chembl_id || e.source_molecule_id || e.molecule_id || "evidence")}</strong>
     </div>
     ${kv("assay_signal", e.assay_signal)}
     ${activity}

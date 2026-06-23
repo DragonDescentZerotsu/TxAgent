@@ -129,7 +129,15 @@ def _run_one(
     stderr_path = logs_dir / f"{run_id}.stderr.log"
     started = time.monotonic()
 
-    if args.skip_existing and (run_dir / "final_reasoning_output.json").exists():
+    existing_final_path = run_dir / "final_reasoning_output.json"
+    should_skip_existing = False
+    if args.skip_existing and existing_final_path.exists():
+        existing_result = _collect_result(config, args, item, run_id, run_dir)
+        should_skip_existing = existing_result.get("final_status") == "ok" and existing_result.get("pred_label") is not None
+        if not should_skip_existing:
+            _log(config, f"rerun invalid existing final index={item.index} run_id={run_id}")
+
+    if should_skip_existing:
         returncode = 0
         if not stdout_path.exists():
             stdout_path.write_text("", encoding="utf-8")
@@ -158,7 +166,11 @@ def _run_one(
     result = _collect_result(config, args, item, run_id, run_dir)
     result.update(
         {
-            "status": "ok" if returncode == 0 and result.get("final_status") == "ok" else "error",
+            "status": (
+                "ok"
+                if returncode == 0 and result.get("final_status") == "ok" and result.get("pred_label") is not None
+                else "error"
+            ),
             "returncode": returncode,
             "latency_s": round(time.monotonic() - started, 3),
             "stdout_log": str(stdout_path),

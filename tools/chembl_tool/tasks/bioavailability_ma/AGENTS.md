@@ -64,6 +64,22 @@ scoring.py
 run_reasoning_pipeline.py
   Bioavailability_Ma prompt、single/group/final schema、retrieval/prompt assembly 和 final-only rerun。
 
+evidence_compiler.py
+  Bioavailability_Ma v2 final-stage source-agnostic evidence compiler。它不直接预测 label，而是把
+  retrieval + single/group outputs 转成 role-aware evidence cards、direct_label_votes、
+  blocked_numeric_evidence_policy、proxy_evidence_policy 和 llm_decision_view。compiler 规则不能依赖
+  evidence provider 是 ChEMBL、Starling 或其它 source。
+
+run_reasoning_pipeline_v2.py
+  复用 run_reasoning_pipeline.py 的 retrieval、single 和 group stage，只替换 final synthesis。
+  当前保留的 v2 final prompt policy 是 threshold/salt/active-moiety：
+  F >= 20% 必须按 high 处理；salt/free-base 或 same-active-molecule 证据不能仅因记录形式不同被丢弃；
+  prodrug/active-moiety evidence 要区分 query 给药后的 active-moiety exposure 和非 query metabolite context。
+
+run_reasoning_batch_v2.py
+  Bioavailability_Ma v2 batch wrapper。公共 batch orchestration 仍在
+  tools/chembl_tool/common/task_workflows/reasoning_batch.py。
+
 build_starling_evidence_library.py
   从 clean numeric records 和 dropped qualitative/contextual records 构建独立 evidence/index。
   同一 canonical molecule 的 numeric F% 聚合为 median/range/count；最多选择 6 条覆盖 F% 分布的
@@ -75,6 +91,12 @@ build_combined_tier1_starling_evidence_library.py
   neighbor rank，但 evidence rows 同时保留两个 source 的原始证据。Combined group prompt 的
   顶层 `evidence_source` 会收集所有实际出现的 source；mixed group 显示为
   `ChEMBL + starling-labs/Oral_Bioavailability`，不能只取第一条 evidence row 的来源。
+
+merge_final_source_batches.py
+  将已完成的 Bioavailability_Ma batch artifacts 合并成 final-only source batch。典型用途是把
+  ChEMBL all-tier batch 的 retrieval/single/group outputs 与 Starling v2 batch 的 retrieval/group
+  outputs 合并，然后只用 run_reasoning_batch_v2.py 重跑 final compiler / final LLM。它只合并
+  source artifacts，不复制旧 final prediction；重复 group_id 默认报错，避免同一 group 被静默覆盖。
 
 plot_retrieval_experiments.py
   将 no-retrieval、ChEMBL、Starling v1/v2 和 combined v1/v2 retrieval 结果画成性能对比
@@ -521,10 +543,224 @@ ChEMBL Tier 1 + Starling combined v2:
     initial full-run wall time about 14 min 24 s; idx102 was a 660 s tail outlier
 ```
 
-当前单次 run 中，direct oral-F analog evidence 是主要有效 retrieval signal。Starling-only v2、
-combined v1 和 combined v2 的 accuracy 都是 0.7656；Starling-only v2 的 macro-F1 最高
-（0.7342），combined v2 的 positive recall 更高但 negative recall 更低。不能再表述为 combined
-取得唯一最高 overall performance。这些差异尚未做 repeated-run 方差估计。
+上述 combined v1/v2 是早期 Tier 1 + Starling single-group retrieval ablation。该阶段 direct
+oral-F analog evidence 是主要有效 signal；Starling-only v2、combined v1 和 combined v2 的
+accuracy 都是 0.7656，Starling-only v2 的 macro-F1 最高（0.7342），combined v2 的 positive recall
+更高但 negative recall 更低。不能把这组早期 ablation 表述为 combined 取得最高 overall performance。
+这些差异尚未做 repeated-run 方差估计。
+
+## Starling v2 完整 pipeline 当前推荐结果
+
+为测试 Starling v2 加入完整 ChEMBL all-tier pipeline 后是否超过旧 Starling-only v2，当前推荐
+流程是：
+
+```text
+1. 分别保留已完成的 ChEMBL all-tier batch 和 Starling v2 batch 的 retrieval/single/group artifacts。
+2. 用 merge_final_source_batches.py 合并成 final-only source batch：
+   ChEMBL all-tier groups + Starling.direct_oral_bioavailability。
+3. 用 run_reasoning_batch_v2.py 的 source-agnostic final compiler 和 threshold/salt/active-moiety
+   final prompt，只重跑 final stage。
+```
+
+source batch 构建命令模板：
+
+```bash
+python -m tools.chembl_tool.tasks.bioavailability_ma.merge_final_source_batches \
+  --primary-batch outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_full_20260512 \
+  --extra-batch outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_starling_v2_20260618 \
+  --out-batch outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_full_plus_starling_v2_source_20260622
+```
+
+v2 final-only rerun 命令模板：
+
+```bash
+python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch_v2 \
+  --input-jsonl data/processed/Bioavailability_Ma/test.jsonl \
+  --parallelism 64 \
+  --group-workers 4 \
+  --batch-id bioavailability_ma_test_full_plus_starling_v2_complete_v2_thresholdsalt_final_20260622 \
+  --final-only-source-batch \
+    outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_full_plus_starling_v2_source_20260622 \
+  --skip-existing
+```
+
+当前最佳 run：
+
+```text
+batch:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    bioavailability_ma_test_full_plus_starling_v2_complete_v2_thresholdsalt_final_20260622
+
+source batch:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    bioavailability_ma_test_full_plus_starling_v2_source_20260622
+
+retrieval/group source:
+  ChEMBL all-tier + Starling v2
+
+accuracy: 0.796875
+macro-F1: 0.748792
+confusion matrix: TN=23 FP=8 FN=18 TP=79
+prediction distribution: high=87 low=41
+successful/evaluable: 128 / 128
+```
+
+相对旧 Starling-only v2 baseline：
+
+```text
+old Starling-only v2:
+  batch: bioavailability_ma_test_starling_v2_20260618
+  accuracy 0.765625
+  macro-F1 0.734220
+  confusion matrix: TN=27 FP=4 FN=26 TP=71
+
+current complete merged v2:
+  accuracy +0.031250
+  macro-F1 +0.014572
+```
+
+同一 v2 policy 下的关键对照：
+
+```text
+ChEMBL all-tier only, threshold/salt:
+  batch: bioavailability_ma_test_full_v2_thresholdsalt_final_20260622
+  accuracy 0.734375
+  macro-F1 0.686546
+  confusion matrix: TN=22 FP=9 FN=25 TP=72
+
+Starling v2 only, threshold/salt:
+  batch: bioavailability_ma_test_starling_v2_complete_v2_thresholdsalt_final_20260622
+  accuracy 0.781250
+  macro-F1 0.741861
+  confusion matrix: TN=25 FP=6 FN=22 TP=75
+
+ChEMBL all-tier + Starling v2, threshold/salt:
+  batch: bioavailability_ma_test_full_plus_starling_v2_complete_v2_thresholdsalt_final_20260622
+  accuracy 0.796875
+  macro-F1 0.748792
+  confusion matrix: TN=23 FP=8 FN=18 TP=79
+```
+
+因此当前证据支持：Starling v2 direct evidence 是主要 anchor；ChEMBL all-tier evidence 在 v2
+source-agnostic final compiler 和 threshold/salt/active-moiety policy 下可以提供额外增益。
+这不是 source-specific prompt：compiler 和 final prompt 不依赖 provider 名称，只依赖 endpoint role、
+transferability、direct-label gate、proxy-vs-F gate 和 source correlation。
+
+当前已测试并拒绝的 prompt 扩展：
+
+```text
+contextgates:
+  batch: bioavailability_ma_test_full_plus_starling_v2_complete_v2_contextgates_final_20260622
+  accuracy 0.796875
+  macro-F1 0.744393
+  confusion matrix: TN=22 FP=9 FN=17 TP=80
+  decision: rejected; macro-F1 below current threshold/salt best.
+
+chargedprior:
+  batch: bioavailability_ma_test_full_plus_starling_v2_complete_v2_chargedprior_final_20260622
+  accuracy 0.789062
+  macro-F1 0.741298
+  confusion matrix: TN=23 FP=8 FN=19 TP=78
+  decision: rejected; prompt reverted.
+```
+
+当前代码只保留已验证最高的 threshold/salt/active-moiety policy 和 batch validity fix。不要在没有重新
+完整测试 128-molecule benchmark 的情况下保留 contextgates、chargedprior 或其它更长 prompt policy。
+
+当前结果和错误分析报告：
+
+```text
+outputs/chembl_tool/tasks/bioavailability_ma/analysis/starling_v2_complete_pipeline_20260622/
+  thresholdsalt_iteration_report_zh.md
+  residual_error_literature_audit_round1_zh.md
+  current_iteration_metrics_summary.json
+  rejected_prompt_iterations_summary.json
+  merged_thresholdsalt_residual_errors.tsv
+  merged_thresholdsalt_residual_errors.json
+```
+
+最佳 merged threshold/salt run 剩余 26 / 128 个错误。文献核查后的最可疑或 threshold/formulation
+sensitive labels：
+
+```text
+idx113 progesterone: TDC high 可能是 oral clinical/formulation 口径，不一定是 parent absolute F >=20%。
+idx121 naltrexone: reported F range 约 5-40%，跨越 20% threshold。
+idx77 pirenzepine: healthy-subject F 约 14%，ICU/部分 SmPC 约 26-28%。
+idx7 rifabutin: reported F 常见 12-20% / about 20%，cutoff convention 影响 label。
+idx41 vincamine: free-base vs HCl/formulated source 可能改变 label。
+idx94 lorcainide: dose/steady-state saturation 可跨越 threshold。
+idx46 nafcillin: 临床 poor oral use 与 numeric F source >20% 冲突。
+```
+
+文献核查支持的通用改进方向，但尚未带来更高已验证 macro-F1：
+
+```text
+same molecule human/label ordinary oral absolute F
+> same molecule special population / dose / fed / formulation context
+> same-active salt/freebase/formulation
+> close analog human direct F
+> animal direct F
+> weak analog direct F
+> Fa / AUC / Cmax / permeability / solubility / clearance proxies
+> single-molecule prior
+
+High Fa / high permeability / high oral exposure 不能单独证明 systemic F >= 20%。
+"low bioavailability" / "poor oral drug" / "not usually administered orally" 必须映射回 numeric F threshold。
+Parent F、active metabolite exposure after parent dosing 和 active parent exposure after prodrug dosing
+必须作为不同 endpoint roles 处理。
+```
+
+后续如果继续优化，应优先把这些方向做成 compiler 侧结构化 evidence ranking / endpoint-role schema，
+而不是在 final prompt 里继续堆 molecule-specific 或 source-specific 规则。
+
+### Pipeline evolution archive and cleanup
+
+`pipeline_evolution_memory.md` 是本轮 Bioavailability_Ma pipeline evolve 的过程 reference，记录了从
+ChEMBL-only v2 compiler、unit-fix、decision-view、redaction/directguard rejected runs，到
+Starling v2 complete pipeline 的主要尝试和性能。后续如果需要恢复当时为什么保留或拒绝某个策略，
+先看：
+
+```text
+tools/chembl_tool/tasks/bioavailability_ma/pipeline_evolution_memory.md
+```
+
+2026-06-23 清理后，reasoning batch traces 只保留每个主要 evolve 阶段的代表 / 最佳结果：
+
+```text
+Original ChEMBL all-tier v1 baseline:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_full_20260512
+  accuracy 0.718750, macro-F1 0.676208
+
+Best ChEMBL-only v2 final compiler:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_full_v2_decisionview_final_20260622
+  accuracy 0.757812, macro-F1 0.712109
+
+Old Starling-only v2 retrieval baseline:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_starling_v2_20260618
+  accuracy 0.765625, macro-F1 0.734220
+
+Best Starling-only complete v2 final compiler:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_starling_v2_complete_v2_thresholdsalt_final_20260622
+  accuracy 0.781250, macro-F1 0.741861
+
+Best ChEMBL all-tier + Starling v2 complete pipeline:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_full_plus_starling_v2_complete_v2_thresholdsalt_final_20260622
+  accuracy 0.796875, macro-F1 0.748792
+
+Merged final-only source artifacts for the best ChEMBL + Starling v2 run:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_full_plus_starling_v2_source_20260622
+```
+
+Intermediate smoke tests, final-only reruns, rejected prompt/policy runs, and lower-performing Starling/combined
+retrieval attempts were removed from `reasoning/batches/` to keep trace storage manageable. Their performance
+and rejection rationale remain summarized in `pipeline_evolution_memory.md` and in:
+
+```text
+outputs/chembl_tool/tasks/bioavailability_ma/analysis/starling_v2_complete_pipeline_20260622/
+  thresholdsalt_iteration_report_zh.md
+  rejected_prompt_iterations_summary.json
+  current_iteration_metrics_summary.json
+```
 
 ### No-retrieval baseline provenance
 
