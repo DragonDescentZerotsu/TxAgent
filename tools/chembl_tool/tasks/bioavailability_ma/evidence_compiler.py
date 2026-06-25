@@ -205,6 +205,7 @@ def _compile_group_card(
     confidence = _norm_lower(llm_content.get("confidence") or "low")
     useful = bool(llm_content.get("useful_for_bioavailability_reasoning"))
     evidence_direction = _norm_lower(llm_content.get("evidence_direction") or "neutral_or_unclear")
+    factor_effect = _norm_lower(llm_content.get("factor_effect") or "")
     n_unique, top_neighbors, source_keys = _neighbor_summary(retrieval_group)
     direct_allowed, block_reason = _direct_vote_gate(
         role=role,
@@ -230,6 +231,7 @@ def _compile_group_card(
         "transferability": transferability,
         "confidence": confidence,
         "llm_evidence_direction": evidence_direction,
+        "factor_effect": factor_effect,
         "direct_label_vote_allowed": direct_allowed,
         "direct_vote_block_reason": block_reason,
         "reasoning_summary": llm_content.get("reasoning_summary") or "",
@@ -324,12 +326,15 @@ def _threshold_evidence(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         cards.append(
             {
                 "source_molecule": _source_molecule_key_from_row(row),
+                "source_merge_key": _source_merge_key_from_row(row),
+                "source_inchi_key": str(row.get("standard_inchi_key") or "").strip(),
+                "canonical_smiles": str(row.get("canonical_smiles") or "").strip(),
                 "assay_or_source_id": row.get("assay_chembl_id") or row.get("source_group_id") or "",
                 "standard_type": row.get("standard_type") or "",
                 "relation": relation,
                 "value_percent": round(value, 3),
+                **_source_value_range(row, value),
                 "threshold_relation": threshold_relation,
-                "borderline_to_20_percent": BORDERLINE_LOW_PERCENT <= value <= BORDERLINE_HIGH_PERCENT,
                 "evidence_source": row.get("evidence_source") or "",
             }
         )
@@ -340,7 +345,7 @@ def _threshold_summary(cards: list[dict[str, Any]]) -> dict[str, Any]:
     row_counts = Counter(card["threshold_relation"] for card in cards)
     source_to_cards: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for i, card in enumerate(cards):
-        source_key = str(card.get("source_molecule") or f"row:{i}")
+        source_key = str(card.get("source_merge_key") or card.get("source_molecule") or f"row:{i}")
         source_to_cards[source_key].append(card)
     source_directions = Counter(_source_threshold_direction(source_cards) for source_cards in source_to_cards.values())
 
@@ -373,6 +378,8 @@ def _threshold_summary(cards: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _source_threshold_direction(cards: list[dict[str, Any]]) -> str:
+    if any(card.get("range_crosses_20_percent") for card in cards):
+        return "mixed_numeric_evidence_balanced"
     counts = Counter(card["threshold_relation"] for card in cards)
     n_above = counts.get("above_or_equal_high_threshold", 0)
     n_below = counts.get("below_high_threshold", 0)
@@ -408,13 +415,44 @@ def _best_percent_value(row: dict[str, Any]) -> float | None:
     if standard_value is not None:
         standard_type = str(row.get("standard_type") or "").lower()
         standard_units = str(row.get("standard_units") or "").lower()
-        if "fraction" in standard_type and 0 <= standard_value <= 1:
+        if not _is_f_percent_standard_type(standard_type):
+            return None
+        if ("fraction" in standard_type or standard_units in {"fraction", "ratio"}) and 0 <= standard_value <= 1:
             return standard_value * 100
-        if standard_units in {"fraction", "ratio"} and 0 <= standard_value <= 1:
-            return standard_value * 100
-        if 0 <= standard_value <= 150:
+        if standard_units in {"%", "percent", "percentage"} and 0 <= standard_value <= 150:
+            return standard_value
+        if not standard_units and 0 <= standard_value <= 150:
             return standard_value
     return None
+
+
+def _source_value_range(row: dict[str, Any], fallback_value: float) -> dict[str, Any]:
+    min_value = _parse_float(row.get("source_value_min_percent"))
+    max_value = _parse_float(row.get("source_value_max_percent"))
+    if min_value is None:
+        min_value = fallback_value
+    if max_value is None:
+        max_value = fallback_value
+    if min_value > max_value:
+        min_value, max_value = max_value, min_value
+    range_crosses_20 = min_value < BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT <= max_value
+    borderline = (
+        BORDERLINE_LOW_PERCENT <= fallback_value <= BORDERLINE_HIGH_PERCENT
+        or min_value <= BORDERLINE_HIGH_PERCENT and max_value >= BORDERLINE_LOW_PERCENT
+    )
+    return {
+        "source_value_min_percent": round(min_value, 3),
+        "source_value_max_percent": round(max_value, 3),
+        "range_crosses_20_percent": range_crosses_20,
+        "borderline_to_20_percent": borderline,
+    }
+
+
+def _is_f_percent_standard_type(standard_type: str) -> bool:
+    normalized = standard_type.replace("_", " ").replace("-", " ").strip()
+    if normalized in {"f", "f percent", "f fraction", "%f", "f%", "fa", "fabs"}:
+        return True
+    return "bioavailability" in normalized or "fraction absorbed" in normalized or "percent absorbed" in normalized
 
 
 def _all_rows(group: dict[str, Any]) -> list[dict[str, Any]]:
@@ -475,6 +513,7 @@ def _factor_summary(group_cards: list[dict[str, Any]]) -> dict[str, Any]:
                     "transferability": card["transferability"],
                     "confidence": card["confidence"],
                     "evidence_direction": card["llm_evidence_direction"],
+                    "factor_effect": card.get("factor_effect") or "",
                 }
             )
     return {
@@ -490,6 +529,7 @@ def _slim_vote_card(card: dict[str, Any]) -> dict[str, Any]:
         "transferability": card["transferability"],
         "confidence": card["confidence"],
         "llm_evidence_direction": card["llm_evidence_direction"],
+        "factor_effect": card.get("factor_effect") or "",
         "compiler_threshold_direction": card["threshold_summary"]["compiler_threshold_direction"],
         "threshold_evidence": card["threshold_evidence"][:6],
         "threshold_summary": card["threshold_summary"],
@@ -506,6 +546,7 @@ def _slim_proxy_card(card: dict[str, Any]) -> dict[str, Any]:
         "transferability": card["transferability"],
         "confidence": card["confidence"],
         "llm_evidence_direction": card["llm_evidence_direction"],
+        "factor_effect": card.get("factor_effect") or "",
         "reasoning_summary": card["reasoning_summary"],
         "caveats": card["caveats"],
     }
@@ -521,6 +562,14 @@ def _source_molecule_key_from_neighbor(neighbor: dict[str, Any]) -> str:
 
 def _source_molecule_key_from_row(row: dict[str, Any]) -> str:
     for key in ("combined_merge_key", "source_molecule_id", "molecule_chembl_id", "standard_inchi_key", "canonical_smiles"):
+        value = str(row.get(key) or "").strip()
+        if value:
+            return value
+    return ""
+
+
+def _source_merge_key_from_row(row: dict[str, Any]) -> str:
+    for key in ("standard_inchi_key", "canonical_smiles", "combined_merge_key", "source_molecule_id", "molecule_chembl_id"):
         value = str(row.get(key) or "").strip()
         if value:
             return value

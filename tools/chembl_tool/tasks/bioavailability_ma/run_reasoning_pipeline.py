@@ -160,6 +160,25 @@ def main(argv: list[str] | None = None) -> int:
             index,
             chembl_sqlite=args.chembl_sqlite,
         )
+    starling_transfer_summary: dict[str, Any] | None = None
+    if args.enable_starling_transfer_tool:
+        _log("annotating Starling retrieval with transfer model")
+        from tools.chembl_tool.tasks.bioavailability_ma.starling_transfer_tool import (
+            StarlingTransferConfig,
+            annotate_retrieval_with_starling_transfer,
+        )
+
+        retrieval, starling_transfer_summary = annotate_retrieval_with_starling_transfer(
+            retrieval,
+            config=StarlingTransferConfig(
+                model_name_or_path=args.starling_transfer_model,
+                device=args.starling_transfer_device,
+                batch_size=args.starling_transfer_batch_size,
+                max_examples_per_row=args.starling_transfer_max_examples_per_row,
+                query_metadata_mode=args.starling_transfer_query_metadata_mode,
+            ),
+        )
+        _log(f"Starling transfer annotation: {json.dumps(starling_transfer_summary, ensure_ascii=False)}")
 
     retrieval_path = out_dir / "retrieval.json"
     _write_json(retrieval_path, retrieval)
@@ -226,6 +245,8 @@ def main(argv: list[str] | None = None) -> int:
         "group_tools_enabled": not args.disable_group_tools,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
+        "starling_transfer_tool_enabled": args.enable_starling_transfer_tool,
+        "starling_transfer_tool_summary": starling_transfer_summary or {},
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
         if not args.disable_group_tools
         else [],
@@ -678,6 +699,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "Do not convert CYP IC50/inhibition into metabolic instability, and do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
             "For Starling evidence, source_record_examples preserve the exact pairing between each displayed condition, its oral bioavailability percentage, and support text. source_qualitative_examples contain useful non-numeric or contextual statements and must not be treated as exact F% measurements.",
+            "If starling_transfer_tool is present, treat it as an auxiliary source-specific analog-transfer model for source molecule A to query molecule B. High P(transfer) supports using that source F% as transferable; low P(transfer) is a warning to downweight the source value. It is not an automatic final high/low label.",
             "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.",
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
@@ -757,6 +779,8 @@ def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
         _clean_starling_source_example(example, numeric=False)
         for example in row.get("source_qualitative_examples", [])
     ]
+    if row.get("starling_transfer_tool"):
+        cleaned["starling_transfer_tool"] = row.get("starling_transfer_tool")
     return cleaned
 
 
@@ -1093,6 +1117,21 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
+    parser.add_argument("--enable-starling-transfer-tool", action="store_true")
+    parser.add_argument(
+        "--starling-transfer-model",
+        default="jiosephlee/starling-transfer-ssv2-srcval",
+        help="HuggingFace model path or local directory for Starling transfer scoring.",
+    )
+    parser.add_argument("--starling-transfer-device", default="auto", help="auto, cpu, cuda, cuda:0, etc.")
+    parser.add_argument("--starling-transfer-batch-size", type=int, default=16)
+    parser.add_argument("--starling-transfer-max-examples-per-row", type=int, default=6)
+    parser.add_argument(
+        "--starling-transfer-query-metadata-mode",
+        choices=["same_source_context", "missing"],
+        default="same_source_context",
+        help="Metadata for query molecule B when scoring transfer from source molecule A.",
+    )
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")

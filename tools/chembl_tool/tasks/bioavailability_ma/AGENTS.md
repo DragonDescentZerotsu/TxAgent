@@ -80,6 +80,44 @@ run_reasoning_batch_v2.py
   Bioavailability_Ma v2 batch wrapper。公共 batch orchestration 仍在
   tools/chembl_tool/common/task_workflows/reasoning_batch.py。
 
+specific_evidence_compiler.py
+  Bioavailability_Ma specific final compiler。它复用 v2 `compile_final_evidence()` 的 source-agnostic
+  cards，但把 final LLM view 重排成 parent direct F + `F = Fa * Fg * Fh` 三层结构，并显式标记
+  prodrug/active-metabolite、species、dose/steady-state、food/formulation/salt/route 和
+  threshold-sensitive context。这个文件是新 specific pipeline 的主要优化点，不改变 v1/v2 行为。
+
+specific_retrieval.py
+  Bioavailability_Ma specific retrieval regrouping。它保留 ChEMBL / Starling / merged source index 的
+  原始 retrieval 能力，但在 specific pipeline 内把旧 Tier.endpoint_group row 重组为
+  `Observed.direct_parent_f_and_systemic_exposure`、`Fa.absorption_solubility_permeability`、
+  `Fg.gut_wall_efflux_intestinal_metabolism`、`Fh.hepatic_clearance_metabolic_stability` 四个 typed
+  reasoning groups。direct-F 和 oral-exposure rows 是 terminal Observed assignments，不能再复制进
+  Fa/Fg/Fh，避免同一 Starling/ChEMBL direct-F source 在 factor groups 中被重复计票。
+
+run_reasoning_pipeline_specific.py
+  复用 run_reasoning_pipeline.py 的服务/tool 基础设施，但替换 specific pipeline 的 retrieval、
+  single、group 和 final synthesis 口径。retrieval 使用 `specific_retrieval.py` 的 typed regrouping；
+  single-molecule prompt 只允许 property/tool 输出，不允许药名或已知 clinical PK 先验；
+  group prompts 分别分析 Observed/Fa/Fg/Fh；final prompt 必须先读 `evidence_gate_summary`，
+  再按 Fa、Fg、Fh 分层综合，不再把所有 endpoint group 当成扁平 high/low votes。
+
+run_reasoning_batch_specific.py
+  Bioavailability_Ma specific Fa/Fg/Fh batch wrapper。用于从 best merged ChEMBL + Starling v2 source
+  batch 做 final-only rerun，并与
+  `bioavailability_ma_test_full_plus_starling_v2_complete_v2_thresholdsalt_final_20260622` 对比。
+
+specific_fallback_policy.py
+  v12 之后的 fallback_uncertain 诊断 / 校准候选入口。它读取 batch predictions 和每个
+  final_reasoning_output.json，从 compiled_evidence_summary 抽取 source-level direct-F、Starling/ChEMBL
+  direct-F source direction、Fa/Fg/Fh factor signal、single-molecule prior 和 deterministic policy
+  特征，并输出 features.jsonl / features.tsv / rule_metrics.json。这个文件只做可复用特征抽取和
+  diagnostic candidate-rule 评估；不能直接用 test diagnostic rule 替代 valid 校准。
+
+specific_pipeline_evolution_memory.md
+  Bioavailability-specific Fa/Fg/Fh 长程优化记录本。新的 specific pipeline 迭代、metrics、
+  failure audits、rejected experiments 和 stop criterion 都记录在这里；不要写回旧的 general/v2
+  pipeline memory。
+
 build_starling_evidence_library.py
   从 clean numeric records 和 dropped qualitative/contextual records 构建独立 evidence/index。
   同一 canonical molecule 的 numeric F% 聚合为 median/range/count；最多选择 6 条覆盖 F% 分布的
@@ -646,6 +684,215 @@ source-agnostic final compiler 和 threshold/salt/active-moiety policy 下可以
 这不是 source-specific prompt：compiler 和 final prompt 不依赖 provider 名称，只依赖 endpoint role、
 transferability、direct-label gate、proxy-vs-F gate 和 source correlation。
 
+## 当前推荐 Bioavailability-specific Fa/Fg/Fh pipeline
+
+2026-06-24 起，Bioavailability_Ma 继续保留通用 v1/v2 pipeline，但当前 best observed
+Bioavailability-specific 版本是独立的 Fa/Fg/Fh pipeline：
+
+```text
+code path:
+  tools/chembl_tool/tasks/bioavailability_ma/specific_retrieval.py
+  tools/chembl_tool/tasks/bioavailability_ma/specific_evidence_compiler.py
+  tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_pipeline_specific.py
+  tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_batch_specific.py
+  tools/chembl_tool/tasks/bioavailability_ma/specific_fallback_policy.py
+  tools/chembl_tool/tasks/bioavailability_ma/specific_postprocess_policy.py
+
+active live compiler:
+  bioavailability_specific_fa_fg_fh_v16_mechanism_alert_view
+
+active live pipeline:
+  bioavailability_ma_specific_fa_fg_fh_v16_mechanism_alert_view
+
+accepted final scoring layer:
+  valid-selected deterministic postprocess
+  rule: force_state_or_valid_selected_high_rescues
+  components:
+    1. force_state_or_starling_soft_high_anchor
+    2. force_state_or_no_evidence_high_fallback
+```
+
+Pipeline semantics:
+
+```text
+1. retrieve_specific_neighbors() reuses the existing ChEMBL / Starling retrieval assets but regroups
+   rows into typed Bioavailability_Ma groups:
+     Observed.direct_parent_f_and_systemic_exposure
+     Fa.absorption_solubility_permeability
+     Fg.gut_wall_efflux_intestinal_metabolism
+     Fh.hepatic_clearance_metabolic_stability
+
+2. single-molecule reasoning is property-only. It may call molecule_properties, but must not use drug
+   identity, known clinical PK, or molecule name recall.
+
+3. group reasoning analyzes exactly one typed group at a time. Observed direct-F evidence can only
+   support the 20% label threshold when parent/analyte, route, formulation/salt, species/population,
+   and source-transfer scope are clean enough. Fa/Fg/Fh groups are factor evidence, not flat label votes.
+
+4. specific_evidence_compiler.py rewrites the final LLM view into:
+     parent direct-F analog evidence
+     source-level de-correlated direct-F summary
+     Fa/Fg/Fh factor cards and summaries
+     prodrug / active-metabolite / active-moiety / formulation / route / species scope flags
+     mechanism transfer alerts
+     deterministic admissibility policy
+
+5. final reasoning must first respect parent oral F scope, then synthesize F = Fa * Fg * Fh. It must not
+   aggregate old Tier.endpoint_group outputs as a flat high/low vote.
+
+6. specific_postprocess_policy.py applies the accepted deterministic low-to-high rescue after a completed
+   batch. This postprocess does not call the LLM again; it is selected on valid features and then applied
+   unchanged to the full test batch.
+```
+
+Current best specific outputs:
+
+```text
+best full/test output:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    bioavailability_ma_specific_fa_fg_fh_v16_valid_selected_postprocess_v2_full_20260624
+
+best valid output:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    bioavailability_ma_specific_fa_fg_fh_v16_valid_selected_postprocess_v2_valid_20260624
+
+underlying full trace/source artifacts:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    bioavailability_ma_specific_fa_fg_fh_v16_mechanism_alert_full_finalonly_20260624
+
+underlying valid trace/source artifacts:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    bioavailability_ma_specific_fa_fg_fh_v16_mechanism_alert_valid_finalonly_20260624
+    bioavailability_ma_specific_fa_fg_fh_v16_mechanism_alert_valid_idx15_rerun_20260624
+    bioavailability_ma_specific_fa_fg_fh_v16_mechanism_alert_valid_combined_idx15_20260624
+
+required diagnostics / selected-rule artifacts:
+  outputs/chembl_tool/tasks/bioavailability_ma/fallback_policy_diagnostics/
+    v16_mechanism_alert_full_20260624
+    v16_mechanism_alert_valid_combined_20260624
+    v16_valid_selected_postprocess_v2_full_20260624
+```
+
+Current best observed full/test performance:
+
+```text
+Specific Fa/Fg/Fh v16 + valid-selected postprocess v2:
+  accuracy: 0.804688
+  macro-F1: 0.764273
+  confusion matrix: TN=25 FP=6 FN=19 TP=78
+  prediction distribution: high=84 low=44
+
+Specific Fa/Fg/Fh v16 live output before postprocess:
+  accuracy: 0.781250
+  macro-F1: 0.741861
+  confusion matrix: TN=25 FP=6 FN=22 TP=75
+
+Previous best complete Starling v2 pipeline:
+  batch: bioavailability_ma_test_full_plus_starling_v2_complete_v2_thresholdsalt_final_20260622
+  accuracy: 0.796875
+  macro-F1: 0.748792
+  confusion matrix: TN=23 FP=8 FN=18 TP=79
+```
+
+Interpretation caveat: the specific pipeline is the current best observed test score, but the improvement over
+the previous best complete Starling v2 run is small in absolute accuracy terms (+1 correct case on the 128-molecule
+test set). Treat it as the current best task-local artifact and a better Bioavailability-specific factorization,
+not as a statistically strong generalization claim without additional calibration data.
+
+The full optimization history for the specific pipeline, including rejected v17/v18 attempts, valid/test metrics,
+failure audits, and stopping rationale, is recorded in:
+
+```text
+tools/chembl_tool/tasks/bioavailability_ma/specific_pipeline_evolution_memory.md
+```
+
+### Starling transfer tool ablation
+
+2026-06-23 测试了 HuggingFace tool：
+
+```text
+jiosephlee/starling-transfer-ssv2-srcval
+```
+
+Model card 输入约定：
+
+```text
+smiles_a: retrieved Starling source molecule
+smiles_b: query molecule
+metadata_a / metadata_b fields:
+  molecule_name, species_or_population, dose, oral_exposure_mode,
+  qualifying_conditions, comparator, extra_details
+source_value: molecule A raw oral_bioavailability_value percent
+```
+
+当前 pipeline 实现为可选 retrieval annotation，不加入常驻 FastAPI service。开启
+`--enable-starling-transfer-tool` 后，pipeline 会先正常 Starling retrieval，再对每个 numeric
+`source_record_examples` 运行 transfer model，并把 compact `starling_transfer_tool` 摘要写入
+对应 Starling evidence row，供 group-level DeepSeek 判断 analog transferability。query 端
+metadata 默认使用 `same_source_context`：复用 source study context，但不复制 source molecule name。
+这个 score 是辅助 transferability evidence，不是自动 final label。
+
+运行命令：
+
+```bash
+env CUDA_VISIBLE_DEVICES=4 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
+  --input-jsonl data/processed/Bioavailability_Ma/test.jsonl \
+  --index outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling/starling_oral_bioavailability_neighbor_index.pkl \
+  --groups Starling.direct_oral_bioavailability \
+  --parallelism 8 \
+  --group-workers 4 \
+  --top-k-per-group 3 \
+  --min-similarity 0.3 \
+  --max-tool-rounds 10 \
+  --timeout-s 300 \
+  --enable-starling-transfer-tool \
+  --starling-transfer-device cuda \
+  --starling-transfer-batch-size 16 \
+  --starling-transfer-max-examples-per-row 6 \
+  --batch-id bioavailability_ma_test_starling_v2_transfer_tool_20260623 \
+  --skip-existing
+```
+
+结果：
+
+```text
+batch: outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_starling_v2_transfer_tool_20260623
+accuracy 0.773438
+macro-F1 0.730683
+confusion matrix: TN=24 FP=7 FN=22 TP=75
+prediction distribution: high=82 low=46
+successful/evaluable: 128 / 128
+```
+
+Annotation coverage:
+
+```text
+runs without scored pairs: 4 / 128
+annotated rows: 292
+annotated neighbors: 292
+scored source-example pairs: 1,152
+rows with any likely_transfer source example: 235
+transfer probability median: 0.93425
+```
+
+Comparison:
+
+```text
+old Starling-only v2:
+  accuracy 0.765625, macro-F1 0.734220
+  transfer-tool ablation has slightly higher accuracy but lower macro-F1.
+
+Starling-only complete v2 threshold/salt:
+  accuracy 0.781250, macro-F1 0.741861
+
+Best ChEMBL all-tier + Starling v2 complete:
+  accuracy 0.796875, macro-F1 0.748792
+```
+
+Conclusion: this first transfer-tool ablation should not replace the current best pipeline. It may be useful
+as an auxiliary signal, but the direct injection made predictions more positive overall and reduced negative-class
+recall relative to old Starling-only v2.
+
 当前已测试并拒绝的 prompt 扩展：
 
 ```text
@@ -715,13 +962,13 @@ Parent F、active metabolite exposure after parent dosing 和 active parent expo
 
 ### Pipeline evolution archive and cleanup
 
-`pipeline_evolution_memory.md` 是本轮 Bioavailability_Ma pipeline evolve 的过程 reference，记录了从
+`general_pipeline_evolution_memory.md` 是本轮 Bioavailability_Ma pipeline evolve 的过程 reference，记录了从
 ChEMBL-only v2 compiler、unit-fix、decision-view、redaction/directguard rejected runs，到
 Starling v2 complete pipeline 的主要尝试和性能。后续如果需要恢复当时为什么保留或拒绝某个策略，
 先看：
 
 ```text
-tools/chembl_tool/tasks/bioavailability_ma/pipeline_evolution_memory.md
+tools/chembl_tool/tasks/bioavailability_ma/general_pipeline_evolution_memory.md
 ```
 
 2026-06-23 清理后，reasoning batch traces 只保留每个主要 evolve 阶段的代表 / 最佳结果：
@@ -753,7 +1000,7 @@ Merged final-only source artifacts for the best ChEMBL + Starling v2 run:
 
 Intermediate smoke tests, final-only reruns, rejected prompt/policy runs, and lower-performing Starling/combined
 retrieval attempts were removed from `reasoning/batches/` to keep trace storage manageable. Their performance
-and rejection rationale remain summarized in `pipeline_evolution_memory.md` and in:
+and rejection rationale remain summarized in `general_pipeline_evolution_memory.md` and in:
 
 ```text
 outputs/chembl_tool/tasks/bioavailability_ma/analysis/starling_v2_complete_pipeline_20260622/
@@ -1686,6 +1933,7 @@ tests/chembl_tool/tasks/bioavailability_ma/test_neighbor_retrieval.py
 tests/chembl_tool/tasks/bioavailability_ma/test_starling_evidence_library.py
 tests/chembl_tool/tasks/bioavailability_ma/test_combined_tier1_starling_evidence_library.py
 tests/chembl_tool/tasks/bioavailability_ma/test_starling_v1_knn_baseline.py
+tests/chembl_tool/tasks/bioavailability_ma/test_starling_transfer_tool.py
 ```
 
 需要覆盖：

@@ -359,3 +359,105 @@ Post-revert verification:
 ```
 
 Both passed after reverting the redaction code.
+
+- 2026-06-23: Added and tested a Starling-specific HuggingFace transfer model as an auxiliary
+  retrieval annotation for Starling-only v2.
+
+Model:
+
+```text
+jiosephlee/starling-transfer-ssv2-srcval
+```
+
+Model card usage requirements:
+
+```text
+smiles_a: retrieved Starling source molecule
+smiles_b: query molecule
+metadata_a / metadata_b fields:
+  molecule_name, species_or_population, dose, oral_exposure_mode,
+  qualifying_conditions, comparator, extra_details
+source_value: molecule A raw oral_bioavailability_value percent
+```
+
+Implementation:
+
+```text
+tools/chembl_tool/tasks/bioavailability_ma/starling_transfer_tool.py
+```
+
+The implementation is opt-in via `--enable-starling-transfer-tool`. It annotates Starling evidence rows
+after neighbor retrieval and before group-level DeepSeek reasoning. It does not modify the frozen FastAPI
+service tool set. query molecule B uses `same_source_context` by default: source study metadata is reused,
+but the source molecule name is not copied to the query metadata.
+
+Verification:
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm python -m pytest \
+  tests/chembl_tool/tasks/bioavailability_ma/test_starling_transfer_tool.py \
+  tests/chembl_tool/tasks/bioavailability_ma/test_starling_evidence_library.py -q
+
+/data1/tianang/anaconda3/condabin/conda run -n vllm python -m py_compile \
+  tools/chembl_tool/tasks/bioavailability_ma/starling_transfer_tool.py \
+  tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_pipeline.py \
+  tools/chembl_tool/common/task_workflows/reasoning_batch.py
+```
+
+Both passed.
+
+Full ablation run:
+
+```text
+batch: outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/bioavailability_ma_test_starling_v2_transfer_tool_20260623
+retrieval source: Starling.direct_oral_bioavailability
+model: DeepSeek-v4-pro
+tool model: jiosephlee/starling-transfer-ssv2-srcval
+top-k: 3
+min similarity: 0.3
+successful/evaluable: 128 / 128
+accuracy: 0.773438
+macro-F1: 0.730683
+confusion: TN 24 / FP 7 / FN 22 / TP 75
+prediction_distribution: high 82 / low 46
+```
+
+The first full pass produced two parsed-prediction failures (`idx00003`, `idx00117`); rerunning the same
+batch with `--skip-existing` correctly skipped 126 valid runs and reran those two invalid finals.
+
+Annotation coverage:
+
+```text
+runs without scored pairs: 4 / 128
+annotated rows: 292
+annotated neighbors: 292
+scored source-example pairs: 1,152
+rows with any likely_transfer source example: 235
+transfer probability median: 0.93425
+```
+
+Comparison:
+
+```text
+old Starling-only v2:
+  accuracy 0.765625
+  macro-F1 0.734220
+  flips vs transfer-tool run: 19, corrected 10, regressed 9
+
+Starling-only complete v2 threshold/salt:
+  accuracy 0.781250
+  macro-F1 0.741861
+  flips vs transfer-tool run: 13, corrected 6, regressed 7
+
+Best ChEMBL all-tier + Starling v2 complete:
+  accuracy 0.796875
+  macro-F1 0.748792
+```
+
+Conclusion:
+
+- Do not promote this transfer-tool ablation as the current best pipeline.
+- The tool increased positive predictions relative to old Starling-only v2, improving some positive-label
+  cases but reducing negative-class recall enough that macro-F1 fell slightly.
+- Keep the implementation as an opt-in experiment path; future work should test calibrated use in the
+  source-agnostic v2 compiler or a stricter transfer-probability gate rather than direct prompt injection alone.
