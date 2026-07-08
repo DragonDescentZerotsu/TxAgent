@@ -62,7 +62,22 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "combine_traces": args.combine_traces,
         "stream_logs": args.stream_logs,
         "model": args.model,
+        "tier1_replacement_index": args.tier1_replacement_index,
+        "tier1_replacement_groups": args.tier1_replacement_groups or [],
         "final_only_source_batch": args.final_only_source_batch,
+        "starling_transfer_tool_enabled": args.enable_starling_transfer_tool,
+        "starling_transfer_model": args.starling_transfer_model if args.enable_starling_transfer_tool else "",
+        "starling_transfer_device": args.starling_transfer_device if args.enable_starling_transfer_tool else "",
+        "starling_transfer_batch_size": args.starling_transfer_batch_size if args.enable_starling_transfer_tool else 0,
+        "starling_transfer_max_examples_per_row": (
+            args.starling_transfer_max_examples_per_row if args.enable_starling_transfer_tool else 0
+        ),
+        "starling_transfer_select_top_k": (
+            args.starling_transfer_select_top_k if args.enable_starling_transfer_tool else 0
+        ),
+        "starling_transfer_query_metadata_mode": (
+            args.starling_transfer_query_metadata_mode if args.enable_starling_transfer_tool else ""
+        ),
         "started_at": _now(),
         "paths": {
             "batch_dir": str(batch_dir),
@@ -219,7 +234,7 @@ def _prepare_final_only_run_dir(args: argparse.Namespace, query_index: int, run_
 
 
 def _final_only_command(config: BatchConfig, args: argparse.Namespace, run_dir: Path) -> list[str]:
-    return [
+    command = [
         args.python_executable,
         "-m",
         config.pipeline_module,
@@ -241,7 +256,14 @@ def _final_only_command(config: BatchConfig, args: argparse.Namespace, run_dir: 
         str(args.max_tokens),
         "--max-tool-rounds",
         str(args.max_tool_rounds),
+        "--reasoning-effort",
+        args.reasoning_effort,
     ]
+    if not args.enable_thinking:
+        command.append("--disable-thinking")
+    else:
+        command.append("--enable-thinking")
+    return command
 
 
 def _single_run_command(
@@ -285,18 +307,47 @@ def _single_run_command(
         str(args.max_tokens),
         "--max-tool-rounds",
         str(args.max_tool_rounds),
+        "--reasoning-effort",
+        args.reasoning_effort,
         "--top-k-per-group",
         str(args.top_k_per_group),
         "--min-similarity",
         str(args.min_similarity),
     ]
+    if not args.enable_thinking:
+        command.append("--disable-thinking")
+    else:
+        command.append("--enable-thinking")
     if args.max_groups:
         command.extend(["--max-groups", str(args.max_groups)])
     if args.groups:
         command.append("--groups")
         command.extend(args.groups)
+    if args.tier1_replacement_index:
+        command.extend(["--tier1-replacement-index", args.tier1_replacement_index])
+        if args.tier1_replacement_groups:
+            command.append("--tier1-replacement-groups")
+            command.extend(args.tier1_replacement_groups)
     if args.disable_group_tools:
         command.append("--disable-group-tools")
+    if args.enable_starling_transfer_tool:
+        command.extend(
+            [
+                "--enable-starling-transfer-tool",
+                "--starling-transfer-model",
+                args.starling_transfer_model,
+                "--starling-transfer-device",
+                args.starling_transfer_device,
+                "--starling-transfer-batch-size",
+                str(args.starling_transfer_batch_size),
+                "--starling-transfer-max-examples-per-row",
+                str(args.starling_transfer_max_examples_per_row),
+                "--starling-transfer-select-top-k",
+                str(args.starling_transfer_select_top_k),
+                "--starling-transfer-query-metadata-mode",
+                args.starling_transfer_query_metadata_mode,
+            ]
+        )
     return command
 
 
@@ -627,9 +678,57 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--timeout-s", type=int, default=300)
     parser.add_argument("--max-tokens", type=int, default=8192)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
+    parser.add_argument(
+        "--reasoning-effort",
+        default="high",
+        help="OpenAI-compatible reasoning_effort value. Use an empty string to omit this parameter.",
+    )
+    parser.add_argument("--enable-thinking", dest="enable_thinking", action="store_true", default=True)
+    parser.add_argument("--disable-thinking", dest="enable_thinking", action="store_false")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
+    parser.add_argument(
+        "--tier1-replacement-index",
+        default="",
+        help="Optional pipeline-specific neighbor index used to replace base Tier 1 retrieval groups.",
+    )
+    parser.add_argument(
+        "--tier1-replacement-groups",
+        nargs="*",
+        default=None,
+        help="Optional group ids to retrieve from --tier1-replacement-index.",
+    )
     parser.add_argument("--max-groups", type=int, default=0)
     parser.add_argument("--disable-group-tools", action="store_true")
-    return parser.parse_args(argv)
+    parser.add_argument("--enable-starling-transfer-tool", action="store_true")
+    parser.add_argument("--starling-transfer-model", default="jiosephlee/starling-transfer-ssv2-srcval")
+    parser.add_argument("--starling-transfer-device", default="auto")
+    parser.add_argument("--starling-transfer-batch-size", type=int, default=16)
+    parser.add_argument("--starling-transfer-max-examples-per-row", type=int, default=6)
+    parser.add_argument("--starling-transfer-select-top-k", type=int, default=0)
+    parser.add_argument(
+        "--starling-transfer-query-metadata-mode",
+        choices=["same_source_context", "missing"],
+        default="same_source_context",
+    )
+    args = parser.parse_args(argv)
+    args.groups = _normalize_group_args(args.groups)
+    args.tier1_replacement_groups = _normalize_group_args(args.tier1_replacement_groups)
+    return args
+
+
+def _normalize_group_args(groups: list[str] | None) -> list[str] | None:
+    if not groups:
+        return groups
+    normalized: list[str] = []
+    i = 0
+    while i < len(groups):
+        group = groups[i]
+        if group in {"Tier", "Starling", "Combined"} and i + 1 < len(groups) and "." in groups[i + 1]:
+            normalized.append(f"{group} {groups[i + 1]}")
+            i += 2
+        else:
+            normalized.append(group)
+            i += 1
+    return normalized

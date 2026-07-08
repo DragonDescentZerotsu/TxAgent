@@ -1,4 +1,4 @@
-"""Run BBB Martins analog reasoning with group-level parallel LLM calls."""
+"""Run DILI analog reasoning with group-level parallel LLM calls."""
 
 from __future__ import annotations
 
@@ -16,18 +16,20 @@ from openai import OpenAI
 import requests
 
 from tools.chembl_tool.common.export import ensure_dir
-from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
-from tools.chembl_tool.tasks.bbb_martins.chembl_exact_context import (
+from tools.chembl_tool.tasks.dili.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
 )
-from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index, retrieve_neighbors
+from tools.chembl_tool.tasks.dili.constants import (
+    DILI_NEGATIVE_PREDICTION,
+    DILI_POSITIVE_PREDICTION,
+)
+from tools.chembl_tool.tasks.dili.retrieve_neighbors import load_index, retrieve_neighbors
 
 
-DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
-DEFAULT_INDEX = "outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl"
-DEFAULT_TIER1_REPLACEMENT_GROUPS = ["Tier 1.starling_direct_bbb_evidence"]
-DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs"
+DEFAULT_INPUT = "data/processed/DILI/test.jsonl"
+DEFAULT_INDEX = "outputs/chembl_tool/tasks/dili/evidence_library/dili_neighbor_index.pkl"
+DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/dili/reasoning/single_runs"
 DEFAULT_MODEL = "deepseek-v4-pro"
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
@@ -40,7 +42,7 @@ GROUP_REASONING_TOOLS = [
             "name": "mmp_structure_compare",
             "description": (
                 "Compare the query molecule to one neighbor using Morgan Tanimoto, MCS coverage, "
-                "and mmpdb matched-pair transformation. Use this to judge structural transferability."
+                "and mmpdb matched-pair transformation. Use this to judge DILI analog transferability."
             ),
             "parameters": {
                 "type": "object",
@@ -68,7 +70,8 @@ GROUP_REASONING_TOOLS = [
             "name": "properties_compare",
             "description": (
                 "Compare query and neighbor molecule properties, including RDKit descriptors and MolGpKa/logD "
-                "features. Use this to assess whether property changes affect BBB evidence transferability."
+                "features. Use this when solubility, ionization, lipophilicity, size, polarity, or charge could "
+                "change DILI evidence transferability."
             ),
             "parameters": {
                 "type": "object",
@@ -120,80 +123,6 @@ def main(argv: list[str] | None = None) -> int:
     if not api_key:
         raise SystemExit(f"Missing API key env var: {args.api_key_env}")
 
-    if args.resume_final_from_run_dir:
-        client = DeepSeekClient(
-            api_key=api_key,
-            base_url=args.base_url,
-            model=args.model,
-            timeout_s=args.timeout_s,
-            max_tokens=args.max_tokens,
-            tool_service_url=args.tool_service_url,
-            enable_group_tools=not args.disable_group_tools,
-            max_tool_rounds=args.max_tool_rounds,
-            reasoning_effort=args.reasoning_effort,
-            enable_thinking=args.enable_thinking,
-        )
-        return _resume_final_from_run_dir(Path(args.resume_final_from_run_dir), client)
-
-    run_id = args.run_id or time.strftime("bbb_reasoning_%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
-    out_dir = ensure_dir(Path(args.out_root) / run_id)
-    _log(f"run_id={run_id}")
-
-    query_record = _read_jsonl_record(Path(args.input_jsonl), args.query_index)
-    query_smiles = str(query_record.get(args.smiles_field) or "")
-    if not query_smiles:
-        raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
-
-    _log("loading neighbor index")
-    index = load_index(Path(args.index))
-    _log("retrieving top neighbors by group")
-    base_groups = _base_retrieval_groups(
-        index,
-        requested_groups=args.groups,
-        tier1_replacement_enabled=bool(args.tier1_replacement_index),
-    )
-    if args.tier1_replacement_index and base_groups == []:
-        retrieval = _empty_retrieval(query_smiles, index, args.top_k_per_group, args.min_similarity)
-    else:
-        retrieval = retrieve_neighbors(
-            query_smiles,
-            index,
-            top_k_per_group=args.top_k_per_group,
-            min_similarity=args.min_similarity,
-            groups=base_groups,
-        )
-    if retrieval.get("status") != "ok":
-        raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
-    if args.enable_chembl_exact_context:
-        _log("enriching retrieval with exact ChEMBL context")
-        retrieval = enrich_retrieval_with_chembl_context(
-            retrieval,
-            index,
-            chembl_sqlite=args.chembl_sqlite,
-        )
-    if args.tier1_replacement_index:
-        _log(f"retrieving Tier 1 replacement neighbors: {args.tier1_replacement_index}")
-        replacement_index = load_index(Path(args.tier1_replacement_index))
-        replacement_retrieval = retrieve_neighbors(
-            query_smiles,
-            replacement_index,
-            top_k_per_group=args.top_k_per_group,
-            min_similarity=args.min_similarity,
-            groups=_replacement_retrieval_groups(args.groups, args.tier1_replacement_groups),
-        )
-        if replacement_retrieval.get("status") != "ok":
-            raise SystemExit(json.dumps(replacement_retrieval.get("errors", []), ensure_ascii=False))
-        retrieval = _merge_tier1_replacement_retrieval(retrieval, replacement_retrieval)
-
-    retrieval_path = out_dir / "retrieval.json"
-    _write_json(retrieval_path, retrieval)
-    _log(f"wrote {retrieval_path}")
-
-    groups = [group for group in retrieval["groups"] if group.get("neighbors")]
-    if args.max_groups:
-        groups = groups[: args.max_groups]
-    _log(f"group reasoning calls={len(groups)}")
-
     client = DeepSeekClient(
         api_key=api_key,
         base_url=args.base_url,
@@ -206,6 +135,43 @@ def main(argv: list[str] | None = None) -> int:
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
     )
+
+    if args.resume_final_from_run_dir:
+        return _resume_final_from_run_dir(Path(args.resume_final_from_run_dir), client)
+
+    run_id = args.run_id or time.strftime("dili_reasoning_%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
+    out_dir = ensure_dir(Path(args.out_root) / run_id)
+    _log(f"run_id={run_id}")
+
+    query_record = _read_jsonl_record(Path(args.input_jsonl), args.query_index)
+    query_smiles = str(query_record.get(args.smiles_field) or "")
+    if not query_smiles:
+        raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
+
+    _log("loading neighbor index")
+    index = load_index(Path(args.index))
+    _log("retrieving top neighbors by group")
+    retrieval = retrieve_neighbors(
+        query_smiles,
+        index,
+        top_k_per_group=args.top_k_per_group,
+        min_similarity=args.min_similarity,
+        groups=args.groups,
+    )
+    if retrieval.get("status") != "ok":
+        raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
+    if args.enable_chembl_exact_context:
+        _log("enriching retrieval with exact ChEMBL context")
+        retrieval = enrich_retrieval_with_chembl_context(retrieval, index, chembl_sqlite=args.chembl_sqlite)
+
+    retrieval_path = out_dir / "retrieval.json"
+    _write_json(retrieval_path, retrieval)
+    _log(f"wrote {retrieval_path}")
+
+    groups = [group for group in retrieval["groups"] if group.get("neighbors")]
+    if args.max_groups:
+        groups = groups[: args.max_groups]
+    _log(f"group reasoning calls={len(groups)}")
 
     single_output, group_outputs = _run_parallel_reasoning(
         client,
@@ -248,13 +214,6 @@ def main(argv: list[str] | None = None) -> int:
         "tool_service_url": args.tool_service_url,
         "reasoning_effort": args.reasoning_effort,
         "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
-        "neighbor_index": args.index,
-        "tier1_replacement_index": args.tier1_replacement_index,
-        "tier1_replacement_groups": args.tier1_replacement_groups or DEFAULT_TIER1_REPLACEMENT_GROUPS
-        if args.tier1_replacement_index
-        else [],
-        "groups": args.groups or [],
-        "retrieval_evidence_source": retrieval.get("evidence_source", {}),
         "group_tools_enabled": not args.disable_group_tools,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
@@ -264,6 +223,7 @@ def main(argv: list[str] | None = None) -> int:
         "max_tool_rounds": args.max_tool_rounds,
         "top_k_per_group": args.top_k_per_group,
         "min_similarity": args.min_similarity,
+        "groups": args.groups,
         "n_groups_with_neighbors": len(groups),
         "paths": {
             "retrieval": str(retrieval_path),
@@ -304,20 +264,40 @@ class DeepSeekClient:
         self.enable_thinking = enable_thinking
 
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
-        response = self._create_completion(messages)
+        working_messages: list[Any] = list(messages)
+        responses = []
+        for _ in range(2):
+            response = self._create_completion(working_messages)
+            responses.append(response)
+            message = response.choices[0].message
+            content = message.content or "{}"
+            parsed = _parse_json_content(content)
+            if not _needs_json_retry(parsed, content):
+                return {
+                    "content": parsed,
+                    "raw_content": content,
+                    "reasoning_content": getattr(message, "reasoning_content", "") or "",
+                    "tool_calls": [],
+                    "tool_results": [],
+                    "messages": _trace_messages(working_messages, message),
+                    "usage": _sum_usage(responses),
+                    "model": response.model or self.model,
+                    "id": response.id or "",
+                }
+            working_messages.append(_assistant_message_to_chat(message))
+            working_messages.append(_json_retry_message())
+        response = responses[-1]
         message = response.choices[0].message
         content = message.content or "{}"
-        parsed_content = _parse_json_content(content)
-        trace_messages = [_json_safe_message(message) for message in messages]
-        trace_messages.append(_assistant_message_to_trace(message))
+        parsed = _parse_json_content(content)
         return {
-            "content": parsed_content,
+            "content": parsed,
             "raw_content": content,
             "reasoning_content": getattr(message, "reasoning_content", "") or "",
             "tool_calls": [],
             "tool_results": [],
-            "messages": trace_messages,
-            "usage": _usage_dict(response),
+            "messages": _trace_messages(working_messages, message),
+            "usage": _sum_usage(responses),
             "model": response.model or self.model,
             "id": response.id or "",
         }
@@ -343,6 +323,7 @@ class DeepSeekClient:
         trace_messages = [_json_safe_message(message) for message in messages]
         tool_results: list[dict[str, Any]] = []
         responses = []
+        json_retry_count = 0
         for round_index in range(max(0, self.max_tool_rounds) + 1):
             response = self._create_completion(
                 working_messages,
@@ -356,8 +337,15 @@ class DeepSeekClient:
             tool_calls = message.tool_calls or []
             if not tool_calls:
                 content = message.content or "{}"
+                parsed = _parse_json_content(content)
+                if _needs_json_retry(parsed, content) and json_retry_count < 2:
+                    json_retry_count += 1
+                    retry_request = _json_retry_message()
+                    working_messages.append(retry_request)
+                    trace_messages.append(retry_request)
+                    continue
                 return {
-                    "content": _parse_json_content(content),
+                    "content": parsed,
                     "raw_content": content,
                     "reasoning_content": getattr(message, "reasoning_content", "") or "",
                     "tool_calls": _tool_call_summaries(responses),
@@ -378,15 +366,15 @@ class DeepSeekClient:
                 working_messages.append(tool_message)
                 trace_messages.append({**tool_message, "name": result.get("tool_name"), "tool_result": result})
 
-        max_round_message = {
+        final_request = {
             "role": "user",
             "content": (
                 "You have reached the maximum allowed tool-call rounds. "
                 "Return the required JSON now using the available tool results."
             ),
         }
-        working_messages.append(max_round_message)
-        trace_messages.append(max_round_message)
+        working_messages.append(final_request)
+        trace_messages.append(final_request)
         response = self._create_completion(working_messages)
         responses.append(response)
         message = response.choices[0].message
@@ -436,19 +424,11 @@ class ToolServiceClient:
     def invoke_function_call(self, tool_call: Any, *, allowed_tool_names: set[str]) -> dict[str, Any]:
         tool_name = tool_call.function.name
         if tool_name not in allowed_tool_names:
-            return {
-                "tool_name": tool_name,
-                "status": "error",
-                "content": f"Tool `{tool_name}` is not allowed in this workflow.",
-            }
+            return {"tool_name": tool_name, "status": "error", "content": f"Tool `{tool_name}` is not allowed."}
         try:
             arguments = json.loads(tool_call.function.arguments or "{}")
         except json.JSONDecodeError as exc:
-            return {
-                "tool_name": tool_name,
-                "status": "error",
-                "content": f"Invalid JSON tool arguments: {exc}",
-            }
+            return {"tool_name": tool_name, "status": "error", "content": f"Invalid JSON tool arguments: {exc}"}
 
         response = requests.post(
             f"{self.base_url}/tools/{tool_name}/invoke",
@@ -494,16 +474,17 @@ def _run_parallel_reasoning(
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs: list[dict[str, Any]] = []
     single_output: dict[str, Any] | None = None
+    query = _llm_query_payload(retrieval["query"])
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(_reason_one_group, client, _llm_query_payload(retrieval["query"]), group): group["group_id"]
+            executor.submit(_reason_one_group, client, query, group): group["group_id"]
             for group in groups
         }
         futures[
             executor.submit(
                 _reason_single_molecule,
                 client,
-                _llm_query_payload(retrieval["query"]),
+                query,
                 _clean_query_chembl_context(retrieval.get("query_chembl_context") or {}),
             )
         ] = "single_molecule"
@@ -530,121 +511,6 @@ def _run_parallel_reasoning(
     )
 
 
-def _base_retrieval_groups(
-    index: dict[str, Any],
-    *,
-    requested_groups: list[str] | None = None,
-    tier1_replacement_enabled: bool,
-) -> list[str] | None:
-    if requested_groups:
-        base_requested = [group_id for group_id in requested_groups if not str(group_id).startswith("Tier 1.")]
-        return base_requested
-    if not tier1_replacement_enabled:
-        return None
-    return [
-        group_id
-        for group_id in sorted((index.get("group_to_molecule_indices") or {}).keys())
-        if not str(group_id).startswith("Tier 1.")
-    ]
-
-
-def _replacement_retrieval_groups(
-    requested_groups: list[str] | None,
-    replacement_groups: list[str] | None,
-) -> list[str]:
-    if replacement_groups:
-        return replacement_groups
-    if requested_groups:
-        requested_tier1 = [group_id for group_id in requested_groups if str(group_id).startswith("Tier 1.")]
-        return requested_tier1 or DEFAULT_TIER1_REPLACEMENT_GROUPS
-    return DEFAULT_TIER1_REPLACEMENT_GROUPS
-
-
-def _empty_retrieval(
-    query_smiles: str,
-    index: dict[str, Any],
-    top_k_per_group: int,
-    min_similarity: float,
-) -> dict[str, Any]:
-    canonical_smiles, inchi_key, _ = standardize_smiles_and_fp(query_smiles)
-    return {
-        "status": "ok",
-        "evidence_source": index.get("source", {}),
-        "query": {
-            "input_smiles": query_smiles,
-            "canonical_smiles": canonical_smiles,
-            "standard_inchi_key": inchi_key,
-            "fingerprint": index.get("fingerprint", {}),
-        },
-        "groups": [],
-        "coverage": {
-            "n_groups": 0,
-            "n_groups_with_neighbors": 0,
-            "n_neighbors_total": 0,
-            "min_similarity": min_similarity,
-            "top_k_per_group": top_k_per_group,
-        },
-    }
-
-
-def _merge_tier1_replacement_retrieval(
-    base_retrieval: dict[str, Any],
-    replacement_retrieval: dict[str, Any],
-) -> dict[str, Any]:
-    replacement_groups = [
-        group for group in replacement_retrieval.get("groups") or [] if str(group.get("group_id") or "").startswith("Tier 1.")
-    ]
-    base_groups = [
-        group for group in base_retrieval.get("groups") or [] if not str(group.get("group_id") or "").startswith("Tier 1.")
-    ]
-    groups = [*replacement_groups, *base_groups]
-    result = dict(base_retrieval)
-    result["groups"] = groups
-    result["evidence_source"] = {
-        "type": "tier1_replaced_source_retrievals",
-        "base_source": base_retrieval.get("evidence_source") or {},
-        "tier1_replacement_source": replacement_retrieval.get("evidence_source") or {},
-        "replacement_group_ids": [group.get("group_id") for group in replacement_groups],
-    }
-    result["coverage"] = _merged_coverage(
-        groups,
-        base_retrieval.get("coverage") or {},
-        replacement_retrieval.get("coverage") or {},
-    )
-    result["source_retrieval_coverage"] = [
-        {
-            "role": "tier1_replacement",
-            "evidence_source": replacement_retrieval.get("evidence_source") or {},
-            "coverage": replacement_retrieval.get("coverage") or {},
-            "group_ids": [group.get("group_id") for group in replacement_retrieval.get("groups") or []],
-        },
-        {
-            "role": "base_without_tier1",
-            "evidence_source": base_retrieval.get("evidence_source") or {},
-            "coverage": base_retrieval.get("coverage") or {},
-            "group_ids": [group.get("group_id") for group in base_retrieval.get("groups") or []],
-        },
-    ]
-    return result
-
-
-def _merged_coverage(
-    groups: list[dict[str, Any]],
-    base_coverage: dict[str, Any],
-    replacement_coverage: dict[str, Any],
-) -> dict[str, Any]:
-    return {
-        "n_groups": len(groups),
-        "n_groups_with_neighbors": sum(1 for group in groups if group.get("neighbors")),
-        "n_neighbors_total": sum(len(group.get("neighbors") or []) for group in groups),
-        "min_similarity": base_coverage.get("min_similarity", replacement_coverage.get("min_similarity")),
-        "top_k_per_group": base_coverage.get("top_k_per_group", replacement_coverage.get("top_k_per_group")),
-        "tier1_replacement_enabled": True,
-        "base_n_groups_without_tier1": base_coverage.get("n_groups"),
-        "replacement_n_groups": replacement_coverage.get("n_groups"),
-    }
-
-
 def _reason_single_molecule(
     client: DeepSeekClient,
     query: dict[str, Any],
@@ -652,16 +518,22 @@ def _reason_single_molecule(
 ) -> dict[str, Any]:
     instructions = [
         "Call molecule_properties for the query molecule before analysis.",
-        "Assess passive BBB plausibility from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
-        "Return JSON with passive_bbb_plausibility, efflux_or_transporter_prior, confidence, reasoning_summary, property_drivers, caveats.",
+        "Assess only molecule-intrinsic plausibility for DILI. Do not use analog evidence here.",
+        "Consider daily-dose-like exposure plausibility only qualitatively from molecular properties; you do not know the real dose.",
+        "Consider lipophilicity/logD, ionization and cationic amphiphilicity, TPSA, HBD/HBA, molecular size, aromaticity, reactive/electrophilic motifs, acyl glucuronide-like acid motifs, quinone-imine/anilide/phenol redox motifs, mitochondrial accumulation potential, and poor-solubility/high-exposure liabilities.",
+        "This single-molecule prior can support or weaken the final assessment, but it cannot by itself decide DILI risk.",
+        "Return compact JSON with the requested fields.",
     ]
     payload: dict[str, Any] = {
-        "task": "Single-molecule BBB plausibility analysis.",
+        "task": "Single-molecule DILI plausibility analysis.",
         "query": query,
         "instructions": instructions,
         "required_json_schema": {
-            "passive_bbb_plausibility": "high | moderate | low | uncertain",
-            "efflux_or_transporter_prior": "high | moderate | low | uncertain",
+            "dili_intrinsic_prior": "high_risk | low_risk | mixed_or_unclear",
+            "physicochemical_exposure_prior": "concerning | not_apparent | mixed_or_unclear",
+            "reactive_metabolite_prior": "concerning | not_apparent | mixed_or_unclear",
+            "mitochondrial_or_organelle_prior": "concerning | not_apparent | mixed_or_unclear",
+            "cholestasis_property_prior": "concerning | not_apparent | mixed_or_unclear",
             "exact_chembl_evidence_assessment": "string",
             "confidence": "high | moderate | low",
             "reasoning_summary": "string",
@@ -671,22 +543,19 @@ def _reason_single_molecule(
     }
     if chembl_context:
         instructions.append(
-            "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL BBB evidence from the physicochemical prior."
+            "If exact_query_chembl_context is found, distinguish same-molecule ChEMBL DILI evidence from the intrinsic property prior."
         )
         payload["exact_query_chembl_context"] = chembl_context
     messages = [
         {
             "role": "system",
             "content": (
-                "You are a medicinal chemistry BBB single-molecule analyst. "
+                "You are a medicinal chemistry DILI single-molecule analyst. "
                 "Only analyze the query molecule itself, without analog evidence. "
                 "You may call exactly one tool: molecule_properties. Return only valid JSON."
             ),
         },
-        {
-            "role": "user",
-            "content": json.dumps(payload, ensure_ascii=False),
-        },
+        {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
     ]
     response = client.chat_json_with_tools(
         messages,
@@ -694,11 +563,7 @@ def _reason_single_molecule(
         allowed_tool_names={"molecule_properties"},
         first_tool_choice="auto",
     )
-    return {
-        "analysis_id": "single_molecule",
-        "status": "ok",
-        "llm": response,
-    }
+    return {"analysis_id": "single_molecule", "status": "ok", "llm": response}
 
 
 def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
@@ -706,16 +571,12 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
         {
             "role": "system",
             "content": (
-                "You are a medicinal chemistry BBB analog evidence analyst. "
-                "Reason about whether analog evidence in one endpoint group is transferable to the query molecule. "
-                "You may call the provided molecule comparison tools when structural or property differences matter. "
-                "Return only valid JSON."
+                "You are a medicinal chemistry DILI analog evidence analyst. "
+                "Reason about whether analog evidence in one DILI Tier.endpoint_group transfers to the query molecule. "
+                "Use molecule comparison tools when structural or property differences matter. Return only valid JSON."
             ),
         },
-        {
-            "role": "user",
-            "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False),
-        },
+        {"role": "user", "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False)},
     ]
     response = client.chat_json_with_group_tools(messages)
     return {
@@ -734,73 +595,78 @@ def _run_final_reasoning(
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
 ) -> dict[str, Any]:
+    payload = {
+        "task": "Final DILI prediction from intrinsic prior and analog evidence.",
+        "query": _llm_query_payload(retrieval["query"]),
+        "retrieval_coverage": retrieval["coverage"],
+        "single_molecule_analysis": {
+            "status": single_output.get("status"),
+            "content": (single_output.get("llm") or {}).get("content"),
+        },
+        "group_reasoning_outputs": [
+            {
+                "group_id": item.get("group_id"),
+                "status": item.get("status"),
+                "content": (item.get("llm") or {}).get("content"),
+            }
+            for item in group_outputs
+        ],
+        "instructions": _final_instructions(),
+        "required_json_schema": {
+            "dili_prediction": f"{DILI_POSITIVE_PREDICTION} | {DILI_NEGATIVE_PREDICTION}",
+            "confidence": "high | moderate | low",
+            "main_reasons": ["string"],
+            "single_molecule_assessment": "string",
+            "human_or_clinical_dili_assessment": "string",
+            "in_vivo_liver_injury_assessment": "string",
+            "cholestasis_transporter_assessment": "string",
+            "mitochondrial_organelle_stress_assessment": "string",
+            "reactive_metabolite_bioactivation_assessment": "string",
+            "hepatic_cell_injury_assessment": "string",
+            "conflicting_evidence": ["string"],
+            "evidence_gaps": ["string"],
+            "final_summary": "string",
+        },
+    }
     messages = [
         {
             "role": "system",
             "content": (
-                "You are a senior BBB reasoning model. Integrate group-level analog evidence into one final BBB assessment. "
-                "Return only valid JSON."
+                "You are a senior DILI reasoning model. Integrate intrinsic molecular prior and analog evidence "
+                "into one final drug-induced liver injury risk prediction. Return only valid JSON."
             ),
         },
-        {
-            "role": "user",
-            "content": json.dumps(
-                {
-                    "task": "Final BBB prediction from analog evidence.",
-                        "query": _llm_query_payload(retrieval["query"]),
-                    "retrieval_coverage": retrieval["coverage"],
-                    "single_molecule_analysis": {
-                        "status": single_output.get("status"),
-                        "content": (single_output.get("llm") or {}).get("content"),
-                    },
-                    "group_reasoning_outputs": [
-                        {
-                            "group_id": item.get("group_id"),
-                            "status": item.get("status"),
-                            "content": (item.get("llm") or {}).get("content"),
-                        }
-                        for item in group_outputs
-                    ],
-                    "instructions": [
-                        "Return compact complete JSON.",
-                        "Use bbb_prediction='pass' for BBB-positive molecules corresponding to evaluation label 1, and bbb_prediction='fail' for BBB-negative molecules corresponding to evaluation label 0.",
-                        "Interpret BBB-positive as sufficient or detectable BBB/CNS access under the benchmark label ontology; it does not require ideal passive diffusion, high unbound brain exposure, or absence of every efflux signal.",
-                        "Use the single-molecule analysis as the physicochemical prior.",
-                        "Treat passive_bbb_plausibility as a passive-diffusion prior, not as the final label. Ionization, high polarity, high lipophilicity, or efflux liability should reduce confidence or exposure quality, but should not become a hard fail rule when other evidence supports meaningful BBB/CNS access.",
-                        "Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.",
-                        "Direct brain/plasma, unbound brain, CSF, brain uptake/perfusion, credible influx/prodrug context, or close same-scaffold evidence can support a pass prediction even when passive-property heuristics are imperfect; explain the uncertainty through confidence and evidence_gaps.",
-                        "For basic CNS-like amines with otherwise favorable MW, TPSA, HBD/HBA, logD/logP, and scaffold evidence, do not predict fail solely because the amine is mostly protonated at pH 7.4.",
-                        "Do not predict pass merely because BBB-positive labels can include non-ideal mechanisms. If the molecule has severe passive-property liabilities and no direct/close analog/mechanistic evidence for CNS access, fail remains the better-supported class.",
-                        "When evidence is weak or mixed, distinguish 'poor passive permeability' from 'no meaningful BBB access'. Choose fail only when the integrated evidence better supports insufficient BBB/CNS access, not merely because of one isolated drug-likeness heuristic.",
-                        "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
-                        "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
-                        "You must choose exactly one bbb_prediction: pass or fail. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",
-                    ],
-                    "required_json_schema": {
-                        "bbb_prediction": "pass | fail",
-                        "confidence": "high | moderate | low",
-                        "main_reasons": ["string"],
-                        "single_molecule_assessment": "string",
-                        "passive_permeability_assessment": "string",
-                        "direct_brain_exposure_analog_assessment": "string",
-                        "efflux_risk_assessment": "string",
-                        "influx_support_assessment": "string",
-                        "conflicting_evidence": ["string"],
-                        "evidence_gaps": ["string"],
-                        "final_summary": "string",
-                    },
-                },
-                ensure_ascii=False,
-            ),
-        },
+        {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
     ]
     response = client.chat_json(messages)
     return {"status": "ok", "llm": response}
 
 
+def _final_instructions() -> list[str]:
+    return [
+        "Return compact complete JSON.",
+        f"Use dili_prediction='{DILI_POSITIVE_PREDICTION}' for TDC DILI-positive molecules corresponding to evaluation label 1.",
+        f"Use dili_prediction='{DILI_NEGATIVE_PREDICTION}' for TDC DILI-negative molecules corresponding to evaluation label 0.",
+        "DILI is a human clinical liver-injury phenotype. Do not treat generic cytotoxicity, generic CYP inhibition, generic transporter inhibition, or weak structural alerts as sufficient by themselves.",
+        "Tier 1 direct human/clinical DILI evidence is strongest. Severe liver outcome, Hy's-law-like signal, withdrawal/warning liver signal, or clear human DILI analog evidence can drive dili_risk when transferability is high.",
+        "Tier 2 in vivo liver injury evidence can support dili_risk when liver-specific and transferable. Hepatic necrosis, ALT/AST/ALP/bilirubin/bile-acid changes, or repeated-dose liver pathology are stronger than liver-weight-only findings.",
+        "Liver-weight-only evidence is moderate supporting evidence, not a decisive positive anchor unless it is close-transferable and corroborated by stronger liver injury or mechanistic evidence.",
+        "Tier 3 cholestasis/hepatobiliary transporter evidence supports DILI risk when it involves BSEP, MRP2, MDR3, NTCP, OATP, bile-acid accumulation, or cholestasis with credible potency and transferability.",
+        "Tier 4 mitochondrial, oxidative, ER, lysosomal, or lipid stress supports DILI risk when hepatic/organelle injury is clear. GSH content/elevation without depletion/ROS/oxidative-stress direction is weak contextual evidence.",
+        "Tier 5 reactive metabolite, covalent binding, bioactivation, acyl glucuronide, GSH adduct, or immune/idiosyncratic evidence can strongly support DILI risk when liver metabolism context and transferability are credible.",
+        "Tier 6 hepatic cell injury is supporting evidence. Primary hepatocyte, HepaRG, HepG2/C3A ADMET, LDH/apoptosis/caspase, or spheroid evidence is useful but should not dominate over direct clinical/in vivo evidence.",
+        "Use the single-molecule analysis only as a plausibility prior; it cannot by itself determine dili_prediction.",
+        "Downweight low-transferability, distant_analog, very_distant_analog, weak, neutral_or_unclear, and context_dependent groups.",
+        "Do not use exact-query ChEMBL context unless it was explicitly provided in the payload. If exact context is disabled, ignore any outside knowledge of the molecule or therapeutic class.",
+        "When evidence is mixed, weigh directness, severity, liver specificity, analog similarity, structural transferability, property transferability, assay direction, species, route, dose, and duration.",
+        "If the strongest positive case is only weak Tier 6 cytotoxicity, liver-weight-only evidence, GSH elevation, or distant analogs, prefer no_dili_risk unless multiple independent mechanisms coherently support DILI risk.",
+        f"You must choose exactly one dili_prediction: {DILI_POSITIVE_PREDICTION} or {DILI_NEGATIVE_PREDICTION}. Express uncertainty through confidence, caveats, and evidence_gaps.",
+    ]
+
+
 def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     return {
-        "task": "Group-level BBB analog transferability analysis.",
+        "task": "Group-level DILI analog transferability analysis.",
         "query": query,
         "group": {
             "group_id": group["group_id"],
@@ -821,26 +687,35 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
         ],
         "instructions": [
             "Use only this group's evidence.",
-            "Assess structural transferability from neighbors to the query.",
-            "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
-            "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
-            "Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.",
-            "Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, or logP could affect BBB transferability.",
+            "Assess structural and property transferability from each neighbor to the query.",
+            "Low-similarity analogs are intentionally included. Explicitly judge whether they are transferable.",
+            "Do not use distant_analog or very_distant_analog neighbors as positive or negative DILI evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
+            "Use mmp_structure_compare when scaffold/MCS/matched-pair changes could alter reactive metabolite formation, bile-acid transporter liability, mitochondrial accumulation, or hepatic exposure.",
+            "Use properties_compare when pKa, logD, TPSA, charge, HBD/HBA, molecular size, polarity, or lipophilicity could affect transferability.",
             "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
             "Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.",
             "Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.",
-            "Distinguish direct BBB exposure, passive permeability, efflux substrate risk, influx support, and weak inhibition/binding evidence.",
-            "Do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
+            "Infer evidence direction and strength from the group tier/endpoint_group plus the raw evidence rows; make your own transferability judgment.",
+            "For Tier 1, distinguish human/clinical DILI, severe liver outcome, regulatory liver signal, and human liver lab monitoring.",
+            "For Tier 2, distinguish hepatic necrosis/pathology or liver clinical chemistry from liver-weight-only evidence.",
+            "For Tier 3, distinguish hepatobiliary/cholestasis transporters from generic transporters.",
+            "For Tier 4, distinguish oxidative stress or mitochondrial dysfunction from weak GSH content/elevation context.",
+            "For Tier 5, distinguish liver metabolism/bioactivation/covalent binding from generic target covalent binding.",
+            "For Tier 6, distinguish primary hepatocyte/HepaRG/HepG2-C3A ADMET injury from generic cancer-cell cytotoxicity.",
+            "Treat inactive/no effect/no toxicity activity comments as evidence against that specific assay liability only, not proof of global liver safety.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
-            "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bbb_reasoning yourself.",
-            "Return JSON with useful_for_bbb_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
+            "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_dili_reasoning yourself.",
+            "Return JSON with useful_for_dili_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
         "required_json_schema": {
-            "useful_for_bbb_reasoning": "boolean",
+            "useful_for_dili_reasoning": "boolean",
             "transferability": "high | moderate | low | not_applicable",
             "evidence_direction": (
-                "supports_bbb_crossing | argues_against_bbb_crossing | efflux_risk | "
-                "influx_support | neutral_or_unclear"
+                "supports_dili_risk | argues_against_dili_risk | clinical_dili_signal | "
+                "in_vivo_liver_injury_signal | cholestasis_or_bile_acid_transport_risk | "
+                "mitochondrial_or_organelle_stress_risk | reactive_metabolite_or_bioactivation_risk | "
+                "immune_or_idiosyncratic_context | hepatic_cell_injury_risk | exposure_or_property_context | "
+                "neutral_or_unclear | context_dependent"
             ),
             "confidence": "high | moderate | low",
             "reasoning_summary": "string",
@@ -853,7 +728,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
                     "activity_values": ["string"],
                     "tool_summary": "string",
                     "transferability": "high | moderate | low | not_applicable",
-                    "effect_on_bbb_reasoning": "string",
+                    "effect_on_dili_reasoning": "string",
                 }
             ],
             "caveats": ["string"],
@@ -897,8 +772,8 @@ def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
         "status": "found",
         "selected_molecule_chembl_id": context.get("selected_molecule_chembl_id", ""),
         "exact_matches": [_clean_exact_match(match) for match in context.get("exact_matches", [])],
-        "bbb_relevant_evidence_rows": [
-            _clean_evidence_row(row) for row in context.get("bbb_relevant_evidence_rows", [])
+        "dili_relevant_evidence_rows": [
+            _clean_evidence_row(row) for row in context.get("dili_relevant_evidence_rows", [])
         ],
     }
 
@@ -976,6 +851,22 @@ def _parse_json_content(content: str) -> Any:
         return {"unparsed_text": content}
 
 
+def _needs_json_retry(parsed: Any, raw_content: str) -> bool:
+    return not raw_content.strip() or (isinstance(parsed, dict) and "unparsed_text" in parsed)
+
+
+def _json_retry_message() -> dict[str, str]:
+    return {
+        "role": "user",
+        "content": "Your previous response was empty or not valid JSON. Return only the required JSON object now.",
+    }
+
+
+def _assistant_message_to_chat(message: Any) -> dict[str, str]:
+    content = getattr(message, "content", None) or ""
+    return {"role": "assistant", "content": content}
+
+
 def _usage_dict(response: Any) -> dict[str, Any]:
     usage = getattr(response, "usage", None)
     if usage is None:
@@ -1005,6 +896,12 @@ def _tool_call_summaries(responses: list[Any]) -> list[dict[str, Any]]:
                 }
             )
     return summaries
+
+
+def _trace_messages(messages: list[dict[str, Any]], assistant_message: Any) -> list[dict[str, Any]]:
+    trace_messages = [_json_safe_message(message) for message in messages]
+    trace_messages.append(_assistant_message_to_trace(assistant_message))
+    return trace_messages
 
 
 def _assistant_message_to_trace(message: Any) -> dict[str, Any]:
@@ -1049,8 +946,7 @@ def _write_trace_jsonl(
     group_outputs: list[dict[str, Any]],
     final_output: dict[str, Any],
 ) -> None:
-    records = []
-    records.append(_trace_record("single_molecule", query_index, smiles, query_record, single_output))
+    records = [_trace_record("single_molecule", query_index, smiles, query_record, single_output)]
     for group_output in group_outputs:
         records.append(
             _trace_record(
@@ -1082,16 +978,12 @@ def _trace_record(
         "smiles": smiles,
         "label": query_record.get("Y"),
         "status": output.get("status"),
-        "prediction": content.get("bbb_prediction") if isinstance(content, dict) else None,
+        "prediction": content.get("dili_prediction") if isinstance(content, dict) else None,
         "response_text": json.dumps(content, ensure_ascii=False, indent=2) if content is not None else output.get("error"),
         "messages": llm.get("messages") or [],
         "tool_count": len(llm.get("tool_calls") or []),
         "usage": llm.get("usage") or {},
-        "raw_output": {
-            key: value
-            for key, value in output.items()
-            if key != "llm"
-        },
+        "raw_output": {key: value for key, value in output.items() if key != "llm"},
     }
 
 
@@ -1145,10 +1037,7 @@ def _load_env(path: Path) -> None:
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        # The explicit --env-file is the run configuration source of truth.
-        os.environ[key] = value
+        os.environ[key.strip()] = value.strip().strip('"').strip("'")
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -1172,17 +1061,6 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--query-index", type=int, default=0)
     parser.add_argument("--smiles-field", default="drug")
     parser.add_argument("--index", default=DEFAULT_INDEX)
-    parser.add_argument(
-        "--tier1-replacement-index",
-        default="",
-        help="Optional neighbor index used to replace all base Tier 1 retrieval groups.",
-    )
-    parser.add_argument(
-        "--tier1-replacement-groups",
-        nargs="*",
-        default=None,
-        help="Optional group ids to retrieve from --tier1-replacement-index.",
-    )
     parser.add_argument("--chembl-sqlite", default=DEFAULT_CHEMBL_SQLITE)
     parser.add_argument("--out-root", default=DEFAULT_OUT_ROOT)
     parser.add_argument("--run-id", default="")
@@ -1193,6 +1071,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--tool-service-url", default=DEFAULT_TOOL_SERVICE_URL)
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--max-workers", type=int, default=6)
+    parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     parser.add_argument("--max-groups", type=int, default=0, help="Debug limit; 0 means all groups with neighbors.")
     parser.add_argument("--timeout-s", type=int, default=180)
     parser.add_argument("--max-tokens", type=int, default=4096)
@@ -1208,31 +1087,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
-    parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
-    args = parser.parse_args(argv)
-    args.groups = _normalize_group_args(args.groups)
-    args.tier1_replacement_groups = _normalize_group_args(args.tier1_replacement_groups)
-    return args
-
-
-def _normalize_group_args(groups: list[str] | None) -> list[str] | None:
-    if not groups:
-        return groups
-    normalized: list[str] = []
-    i = 0
-    while i < len(groups):
-        group = groups[i]
-        if group in {"Tier", "Starling", "Combined"} and i + 1 < len(groups) and "." in groups[i + 1]:
-            normalized.append(f"{group} {groups[i + 1]}")
-            i += 2
-        else:
-            normalized.append(group)
-            i += 1
-    return normalized
+    return parser.parse_args(argv)
 
 
 def _log(message: str) -> None:
-    print(f"[bbb_reasoning_pipeline] {message}", file=sys.stderr, flush=True)
+    print(f"[dili_reasoning_pipeline] {message}", file=sys.stderr, flush=True)
 
 
 if __name__ == "__main__":

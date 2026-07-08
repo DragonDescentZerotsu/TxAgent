@@ -66,6 +66,48 @@ def test_low_transferability_direct_f_is_blocked_from_direct_vote():
     assert blocked["reason"] == "transferability gate blocks direct label vote"
 
 
+def test_clearance_numeric_values_are_not_treated_as_f_percent_thresholds():
+    retrieval = _retrieval(
+        [
+            _group(
+                "Tier 5.intrinsic_or_hepatic_clearance",
+                [
+                    _neighbor(
+                        "CHEMBL_CL",
+                        [
+                            _row(
+                                standard_type="CL",
+                                standard_value="4.2",
+                                standard_units="mL/min/kg",
+                            ),
+                            _row(
+                                standard_type="Recovery",
+                                standard_value="97",
+                                standard_units="%",
+                            ),
+                        ],
+                    )
+                ],
+            )
+        ]
+    )
+    group_outputs = [
+        _group_output(
+            "Tier 5.intrinsic_or_hepatic_clearance",
+            transferability="moderate",
+            confidence="moderate",
+            useful=True,
+            direction="first_pass_or_clearance_risk",
+        )
+    ]
+
+    compiled = compile_final_evidence(retrieval, _single_output(), group_outputs)
+
+    card = compiled["group_cards"][0]
+    assert card["threshold_evidence"] == []
+    assert compiled["direct_label_votes"] == []
+
+
 def test_llm_decision_view_blocks_numeric_direction_values_but_keeps_context():
     retrieval = _retrieval(
         [

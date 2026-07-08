@@ -43,6 +43,11 @@ scoring.py
 
 run_reasoning_pipeline.py
   BBB_Martins prompt、single/group/final schema、retrieval/prompt assembly 和 final-only rerun。
+
+build_starling_evidence_library.py
+  从 `starling-labs/BBB` 构建 Starling BBB molecule-level evidence 和 neighbor index。
+  支持 `--mode qualitative`（不向 LLM 暴露 quantitative metric/value）和 `--mode all`
+  （保留 qualitative + quantitative 字段）两套 Tier 1 replacement source。
 ```
 
 下面这些文件是 task-specific 配置 wrapper，公共实现见根 `AGENTS.md` 的 `tools/chembl_tool/common/task_workflows/` 说明：
@@ -97,6 +102,13 @@ outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl
 outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.meta.json
 ```
 
+Starling BBB Tier 1 replacement index 默认放在：
+
+```text
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling/qualitative/
+outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling/all/
+```
+
 当前 test set：
 
 ```text
@@ -123,6 +135,26 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/
 4. 并发执行 group-level analysis；DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
 5. final summary 读取 single + all group outputs，不暴露任何 tool。
 6. 保存 retrieval/single/group/final/trace/manifest。
+```
+
+当传入 `--tier1-replacement-index` 时，pipeline 会从原 ChEMBL index 中排除所有
+`Tier 1.*` groups，并用 replacement index 中的 `Tier 1.starling_direct_bbb_evidence`
+替代；Tier 2/3/4 仍来自原 ChEMBL index。用于 Starling BBB 实验的典型命令：
+
+```bash
+python -m tools.chembl_tool.tasks.bbb_martins.build_starling_evidence_library \
+  --mode qualitative \
+  --workers 128 \
+  --progress-every 10000
+
+python -m tools.chembl_tool.tasks.bbb_martins.build_starling_evidence_library \
+  --mode all \
+  --workers 128 \
+  --progress-every 10000
+
+python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
+  --tier1-replacement-index outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling/qualitative/starling_bbb_neighbor_index.pkl \
+  --batch-id <batch_id>
 ```
 
 final-only rerun：

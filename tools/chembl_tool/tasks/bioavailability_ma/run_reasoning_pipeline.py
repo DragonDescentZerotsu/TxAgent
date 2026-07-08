@@ -111,6 +111,8 @@ SINGLE_MOLECULE_TOOLS = [
     }
 ]
 
+SINGLE_MOLECULE_TOOL_CHOICE = {"type": "function", "function": {"name": "molecule_properties"}}
+
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
@@ -129,6 +131,8 @@ def main(argv: list[str] | None = None) -> int:
             tool_service_url=args.tool_service_url,
             enable_group_tools=not args.disable_group_tools,
             max_tool_rounds=args.max_tool_rounds,
+            reasoning_effort=args.reasoning_effort,
+            enable_thinking=args.enable_thinking,
         )
         return _resume_final_from_run_dir(Path(args.resume_final_from_run_dir), client)
 
@@ -160,6 +164,37 @@ def main(argv: list[str] | None = None) -> int:
             index,
             chembl_sqlite=args.chembl_sqlite,
         )
+    starling_transfer_summary: dict[str, Any] | None = None
+    starling_transfer_selection_summary: dict[str, Any] | None = None
+    if args.enable_starling_transfer_tool:
+        _log("annotating Starling retrieval with transfer model")
+        from tools.chembl_tool.tasks.bioavailability_ma.starling_transfer_tool import (
+            StarlingTransferConfig,
+            annotate_retrieval_with_starling_transfer,
+            select_top_transfer_neighbors,
+        )
+
+        retrieval, starling_transfer_summary = annotate_retrieval_with_starling_transfer(
+            retrieval,
+            config=StarlingTransferConfig(
+                model_name_or_path=args.starling_transfer_model,
+                device=args.starling_transfer_device,
+                batch_size=args.starling_transfer_batch_size,
+                max_examples_per_row=args.starling_transfer_max_examples_per_row,
+                query_metadata_mode=args.starling_transfer_query_metadata_mode,
+            ),
+        )
+        _log(f"Starling transfer annotation: {json.dumps(starling_transfer_summary, ensure_ascii=False)}")
+        if args.starling_transfer_select_top_k > 0:
+            _log(f"selecting top {args.starling_transfer_select_top_k} Starling transfer neighbors per group")
+            retrieval, starling_transfer_selection_summary = select_top_transfer_neighbors(
+                retrieval,
+                top_k=args.starling_transfer_select_top_k,
+            )
+            _log(
+                "Starling transfer neighbor selection: "
+                f"{json.dumps(starling_transfer_selection_summary, ensure_ascii=False)}"
+            )
 
     retrieval_path = out_dir / "retrieval.json"
     _write_json(retrieval_path, retrieval)
@@ -179,6 +214,8 @@ def main(argv: list[str] | None = None) -> int:
         tool_service_url=args.tool_service_url,
         enable_group_tools=not args.disable_group_tools,
         max_tool_rounds=args.max_tool_rounds,
+        reasoning_effort=args.reasoning_effort,
+        enable_thinking=args.enable_thinking,
     )
 
     single_output, group_outputs = _run_parallel_reasoning(
@@ -222,10 +259,15 @@ def main(argv: list[str] | None = None) -> int:
         "model": args.model,
         "base_url": args.base_url,
         "tool_service_url": args.tool_service_url,
-        "thinking": {"type": "enabled"},
+        "reasoning_effort": args.reasoning_effort,
+        "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
         "group_tools_enabled": not args.disable_group_tools,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
+        "starling_transfer_tool_enabled": args.enable_starling_transfer_tool,
+        "starling_transfer_tool_summary": starling_transfer_summary or {},
+        "starling_transfer_select_top_k": args.starling_transfer_select_top_k,
+        "starling_transfer_neighbor_selection_summary": starling_transfer_selection_summary or {},
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
         if not args.disable_group_tools
         else [],
@@ -259,6 +301,8 @@ class DeepSeekClient:
         tool_service_url: str,
         enable_group_tools: bool,
         max_tool_rounds: int,
+        reasoning_effort: str,
+        enable_thinking: bool,
     ):
         self.client = OpenAI(api_key=api_key, base_url=base_url.rstrip("/"), timeout=timeout_s)
         self.model = model
@@ -266,6 +310,8 @@ class DeepSeekClient:
         self.tool_service = ToolServiceClient(tool_service_url, timeout_s=timeout_s)
         self.enable_group_tools = enable_group_tools
         self.max_tool_rounds = max_tool_rounds
+        self.reasoning_effort = reasoning_effort
+        self.enable_thinking = enable_thinking
 
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         response = self._create_completion(messages)
@@ -308,10 +354,13 @@ class DeepSeekClient:
         tool_results: list[dict[str, Any]] = []
         responses = []
         for round_index in range(max(0, self.max_tool_rounds) + 1):
+            current_tool_choice = first_tool_choice if round_index == 0 else "auto"
+            if self.enable_thinking and current_tool_choice not in (None, "auto"):
+                current_tool_choice = "auto"
             response = self._create_completion(
                 working_messages,
                 tools=tools,
-                tool_choice=first_tool_choice if round_index == 0 else "auto",
+                tool_choice=current_tool_choice,
             )
             responses.append(response)
             message = response.choices[0].message
@@ -373,21 +422,36 @@ class DeepSeekClient:
         messages: list[Any],
         *,
         tools: list[dict[str, Any]] | None = None,
-        tool_choice: str | None = None,
+        tool_choice: Any = None,
     ):
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "max_tokens": self.max_tokens,
             "response_format": {"type": "json_object"},
-            "reasoning_effort": "high",
-            "extra_body": {"thinking": {"type": "enabled"}},
         }
+        if self.reasoning_effort:
+            kwargs["reasoning_effort"] = self.reasoning_effort
+        if self.enable_thinking:
+            kwargs["extra_body"] = {"thinking": {"type": "enabled"}}
         if tools is not None:
             kwargs["tools"] = tools
         if tool_choice is not None:
             kwargs["tool_choice"] = tool_choice
-        return self.client.chat.completions.create(**kwargs)
+        try:
+            return self.client.chat.completions.create(**kwargs)
+        except Exception as exc:
+            if self.enable_thinking and tool_choice is not None and _is_tool_choice_thinking_error(exc):
+                fallback_kwargs = dict(kwargs)
+                fallback_kwargs.pop("extra_body", None)
+                fallback_kwargs.pop("reasoning_effort", None)
+                return self.client.chat.completions.create(**fallback_kwargs)
+            raise
+
+
+def _is_tool_choice_thinking_error(exc: Exception) -> bool:
+    message = str(exc)
+    return "Thinking mode does not support this tool_choice" in message
 
 
 class ToolServiceClient:
@@ -541,7 +605,7 @@ def _reason_single_molecule(
         messages,
         tools=SINGLE_MOLECULE_TOOLS,
         allowed_tool_names={"molecule_properties"},
-        first_tool_choice="auto",
+        first_tool_choice=SINGLE_MOLECULE_TOOL_CHOICE,
     )
     return {
         "analysis_id": "single_molecule",
@@ -651,10 +715,14 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "tier": group["tier"],
             "endpoint_group": group["endpoint_group"],
             "evidence_source": _group_evidence_source(group),
+            "transfer_neighbor_selection": group.get("transfer_neighbor_selection", {}),
         },
         "neighbors": [
             {
                 "rank": neighbor["rank"],
+                "structural_rank": neighbor.get("structural_rank", neighbor["rank"]),
+                "transfer_selection_rank": neighbor.get("transfer_selection_rank"),
+                "transfer_selection_score": neighbor.get("transfer_selection_score"),
                 "molecule_chembl_id": neighbor["molecule_chembl_id"],
                 "canonical_smiles": neighbor["canonical_smiles"],
                 "similarity": neighbor["similarity"],
@@ -678,6 +746,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "Do not convert CYP IC50/inhibition into metabolic instability, and do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
             "For Starling evidence, source_record_examples preserve the exact pairing between each displayed condition, its oral bioavailability percentage, and support text. source_qualitative_examples contain useful non-numeric or contextual statements and must not be treated as exact F% measurements.",
+            "If starling_transfer_tool is present, treat it as an auxiliary source-specific analog-transfer model for source molecule A to query molecule B. High P(transfer) supports using that source F% as transferable; low P(transfer) is a warning to downweight the source value. It is not an automatic final high/low label.",
             "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.",
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
@@ -757,6 +826,8 @@ def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
         _clean_starling_source_example(example, numeric=False)
         for example in row.get("source_qualitative_examples", [])
     ]
+    if row.get("starling_transfer_tool"):
+        cleaned["starling_transfer_tool"] = row.get("starling_transfer_tool")
     return cleaned
 
 
@@ -1091,8 +1162,39 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--timeout-s", type=int, default=180)
     parser.add_argument("--max-tokens", type=int, default=4096)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
+    parser.add_argument(
+        "--reasoning-effort",
+        default="high",
+        help="OpenAI-compatible reasoning_effort value. Use an empty string to omit this parameter.",
+    )
+    parser.add_argument("--enable-thinking", dest="enable_thinking", action="store_true", default=True)
+    parser.add_argument("--disable-thinking", dest="enable_thinking", action="store_false")
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
+    parser.add_argument("--enable-starling-transfer-tool", action="store_true")
+    parser.add_argument(
+        "--starling-transfer-model",
+        default="jiosephlee/starling-transfer-ssv2-srcval",
+        help="HuggingFace model path or local directory for Starling transfer scoring.",
+    )
+    parser.add_argument("--starling-transfer-device", default="auto", help="auto, cpu, cuda, cuda:0, etc.")
+    parser.add_argument("--starling-transfer-batch-size", type=int, default=16)
+    parser.add_argument("--starling-transfer-max-examples-per-row", type=int, default=6)
+    parser.add_argument(
+        "--starling-transfer-select-top-k",
+        type=int,
+        default=0,
+        help=(
+            "After annotating retrieved Starling neighbors, keep only the top K neighbors per group by "
+            "neighbor-level transfer probability. 0 disables filtering."
+        ),
+    )
+    parser.add_argument(
+        "--starling-transfer-query-metadata-mode",
+        choices=["same_source_context", "missing"],
+        default="same_source_context",
+        help="Metadata for query molecule B when scoring transfer from source molecule A.",
+    )
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")

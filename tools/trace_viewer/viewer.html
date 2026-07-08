@@ -663,11 +663,14 @@ function renderJsonReadable(value){
 }
 function summaryFieldNames(){
   return [
-    "bbb_prediction","bioavailability_prediction","confidence",
+    "bbb_prediction","bioavailability_prediction","dili_prediction","confidence",
     "useful_for_bbb_reasoning","useful_for_bioavailability_reasoning",
+    "useful_for_dili_reasoning",
     "transferability","evidence_direction","reasoning_summary",
     "passive_bbb_plausibility","efflux_or_transporter_prior",
     "oral_bioavailability_prior","absorption_prior","solubility_or_dissolution_prior","metabolism_or_clearance_prior",
+    "dili_intrinsic_prior","physicochemical_exposure_prior","reactive_metabolite_prior",
+    "mitochondrial_or_organelle_prior","cholestasis_property_prior",
     "single_molecule_assessment",
     "passive_permeability_assessment","direct_brain_exposure_analog_assessment",
     "efflux_risk_assessment","influx_support_assessment",
@@ -676,6 +679,12 @@ function summaryFieldNames(){
     "solubility_and_dissolution_assessment",
     "metabolism_first_pass_and_clearance_assessment",
     "transporter_efflux_assessment",
+    "human_or_clinical_dili_assessment",
+    "in_vivo_liver_injury_assessment",
+    "cholestasis_transporter_assessment",
+    "mitochondrial_organelle_stress_assessment",
+    "reactive_metabolite_bioactivation_assessment",
+    "hepatic_cell_injury_assessment",
     "final_summary"
   ];
 }
@@ -720,6 +729,7 @@ function renderEvidence(e){
     ${sourceStats.map(([k,v])=>kv(k,v)).join("")}
   </div>` : "";
   const provenance = [
+    renderStarlingTransferTool(e.starling_transfer_tool),
     renderSourceRecordExamples(e.source_record_examples),
     renderQualitativeSourceExamples(e.source_qualitative_examples),
     renderEvidenceList("source_molecule_names", e.source_molecule_names),
@@ -765,6 +775,42 @@ function renderSourceRecordExamples(examples){
     </div>`).join("")}
   </div>`;
 }
+function renderStarlingTransferTool(tool){
+  if(!tool || typeof tool !== "object") return "";
+  const scores = Array.isArray(tool.source_example_scores) ? tool.source_example_scores : [];
+  const summaryFields = [
+    ["model", tool.model],
+    ["direction", tool.direction],
+    ["query_metadata_mode", tool.query_metadata_mode],
+    ["threshold", tool.threshold],
+    ["scored examples", tool.n_scored_source_examples],
+    ["likely_transfer", tool.likely_transfer_count],
+    ["unlikely_transfer", tool.unlikely_transfer_count],
+    ["P(transfer) min", tool.transfer_probability_min],
+    ["P(transfer) median", tool.transfer_probability_median],
+    ["P(transfer) mean", tool.transfer_probability_mean],
+    ["P(transfer) max", tool.transfer_probability_max],
+  ].filter(([,v])=>v !== null && v !== undefined && v !== "");
+  const scoreRows = scores.length ? `<details open><summary>Source example scores (${scores.length})</summary>
+    ${scores.map((score, index)=>`<div class="neighbor-card">
+      <div>
+        <span class="badge">score ${index + 1}</span>
+        <span class="badge">${esc(score.transfer_prediction || "")}</span>
+        <strong>P(transfer) ${esc(score.transfer_probability ?? "")}</strong>
+      </div>
+      ${kv("source_value_percent", score.source_value_percent)}
+      ${score.source_metadata ? `<div class="json-body">${renderObjectFields(score.source_metadata)}</div>` : ""}
+    </div>`).join("")}
+  </details>` : "";
+  return `<div>
+    <div class="evidence-subtitle">Starling Transfer Tool</div>
+    <div class="evidence-summary">
+      ${summaryFields.map(([k,v])=>kv(k,v)).join("")}
+      ${tool.llm_note ? kv("llm_note", tool.llm_note) : ""}
+    </div>
+    ${scoreRows}
+  </div>`;
+}
 function renderQualitativeSourceExamples(examples){
   if(!Array.isArray(examples) || !examples.length) return "";
   return `<div>
@@ -782,6 +828,7 @@ function renderKeyEvidence(e){
     ? `<div>${kv("activity_values", e.activity_values.join("\n"))}</div>`
     : "";
   const effect =
+    e.effect_on_dili_reasoning ??
     e.effect_on_clintox_reasoning ??
     e.effect_on_bioavailability_reasoning ??
     e.effect_on_bbb_reasoning ??
