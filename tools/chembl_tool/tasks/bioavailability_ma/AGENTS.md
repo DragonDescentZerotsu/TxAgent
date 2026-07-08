@@ -794,6 +794,135 @@ Previous best complete Starling v2 pipeline:
   confusion matrix: TN=23 FP=8 FN=18 TP=79
 ```
 
+GLM-5.2 compatibility run, same Bioavailability-specific pipeline:
+
+```text
+model:
+  zai-org/GLM-5.2-FP8 via https://litellm.parcc.upenn.edu/v1
+
+main batch:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    glm52_specific_full_test_20260627
+
+final-only repair batch:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    glm52_specific_full_test_20260627_finalfix_20k
+
+merged metrics:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    glm52_specific_full_test_20260627/metrics_merged_finalfix_20k.json
+
+GLM-5.2 merged full/test performance:
+  n_total: 128
+  n_successful: 128
+  n_failed_runs: 0
+  accuracy: 0.765625
+  macro-F1: 0.727272
+  confusion matrix: TN=25 FP=6 FN=24 TP=73
+  prediction distribution: high=79 low=49
+```
+
+GLM-5.2 run command pattern:
+
+```bash
+export GLM_API_KEY='<local key; do not commit>'
+
+/data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch_specific \
+  --input-jsonl data/processed/Bioavailability_Ma/test.jsonl \
+  --batch-id glm52_specific_full_test_20260627 \
+  --parallelism 8 \
+  --group-workers 4 \
+  --top-k-per-group 3 \
+  --min-similarity 0.3 \
+  --max-tool-rounds 1 \
+  --max-tokens 8192 \
+  --timeout-s 300 \
+  --base-url https://litellm.parcc.upenn.edu/v1 \
+  --model zai-org/GLM-5.2-FP8 \
+  --api-key-env GLM_API_KEY \
+  --env-file /dev/null \
+  --disable-thinking \
+  --reasoning-effort ""
+```
+
+For GLM, do not report the main batch `metrics.json` alone as final performance: the initial
+8192-token final stage had 14 final JSON truncation/parse/missing failures at indices
+`1, 3, 4, 10, 31, 52, 53, 55, 75, 79, 87, 88, 120, 126`. These were repaired with a final-only
+rerun at `--max-tokens 20480`; use `metrics_merged_finalfix_20k.json` for the full 128-molecule score.
+
+GLM trace audit:
+
+```text
+reasoning_content:
+  single: 128/128 non-empty
+  group: 497/497 non-empty
+  final: 128/128 non-empty after finalfix
+
+single tool use:
+  expected tool: molecule_properties
+  total single tool calls: 122
+  successful single tool results: 121
+  recoverable single tool error then retry success: 1
+  missing required single tool call: 7/128
+  missing-tool indices: 5, 12, 30, 57, 69, 85, 101
+
+group tool use:
+  groups: 497
+  groups with tool calls: 360
+  groups without tool calls: 137
+  mmp_structure_compare calls: 1378
+  properties_compare calls: 1301
+```
+
+The missing single-tool cases are real GLM/LiteLLM tool-choice adherence failures: the assistant text
+claims it will call `molecule_properties`, but no OpenAI tool_call is emitted and the raw assistant
+content is `{}`. Group-level tool errors are mostly invalid/special SMILES, salts/coformers, or mmpdb
+assertions; similar errors also appear under DeepSeek and should be handled as tool robustness issues,
+not as GLM-only failures.
+
+DeepSeek-v4-pro comparison:
+
+```text
+closest same-pipeline live output before deterministic postprocess:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    bioavailability_ma_specific_fa_fg_fh_v16_mechanism_alert_full_finalonly_20260624
+
+metrics:
+  n_total: 128
+  n_successful: 128
+  n_failed_runs: 0
+  accuracy: 0.781250
+  macro-F1: 0.741861
+
+current recommended DeepSeek artifact after valid-selected postprocess v2:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    bioavailability_ma_specific_fa_fg_fh_v16_valid_selected_postprocess_v2_full_20260624
+
+postprocess metrics:
+  n_total: 128
+  n_successful: 128
+  n_failed_runs: 0
+  accuracy: 0.804688
+  macro-F1: 0.764273
+  confusion matrix: TN=25 FP=6 FN=19 TP=78
+
+trace/tool audit:
+  single reasoning: 128/128 non-empty
+  single molecule_properties: 128/128 called and successful
+  group reasoning: 497/497 non-empty
+  group tool calls: 497/497 groups with evidence had tools
+  final reasoning: 128/128 non-empty
+  final parse failures: 0
+```
+
+Conclusion for model comparison: the same Bioavailability-specific Fa/Fg/Fh pipeline runs successfully
+with both models, and DeepSeek's trace is complete under the same tool contract. Use 0.741861 only when
+comparing pure live final LLM output before the valid-selected deterministic postprocess; use 0.764273
+for the current recommended DeepSeek Bioavailability-specific artifact. The GLM-5.2 result therefore
+points to weaker model/endpoint adherence to tool calls and long structured JSON, not to a fundamental
+problem in the pipeline design. If GLM is used for future batches, add retry/validation for missing
+required single-tool calls and use larger final `max_tokens` or a more compact final schema.
+
 Interpretation caveat: the specific pipeline is the current best observed test score, but the improvement over
 the previous best complete Starling v2 run is small in absolute accuracy terms (+1 correct case on the 128-molecule
 test set). Treat it as the current best task-local artifact and a better Bioavailability-specific factorization,

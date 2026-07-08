@@ -81,7 +81,7 @@ def _reason_single_molecule_specific(
         messages,
         tools=v1.SINGLE_MOLECULE_TOOLS,
         allowed_tool_names={"molecule_properties"},
-        first_tool_choice="auto",
+        first_tool_choice=v1.SINGLE_MOLECULE_TOOL_CHOICE,
     )
     return {
         "analysis_id": "single_molecule",

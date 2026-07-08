@@ -136,6 +136,80 @@ ToolResponse.output.text
 
 BBB evidence library 内部可以保留 `evidence_direction`、`evidence_strength`、`endpoint_group_reason`、`assay_reason` 等规则派生字段，方便 debug 和审计；但这些字段不要发送给 reasoning LLM。LLM payload 中的 activity evidence row 应只包含原始 ChEMBL assay/activity 字段和必要 metadata，例如 assay id、tier、description、target、standard_type/value/units、activity_comment、confidence_score、relationship_type。分组层可以保留 `tier` / `endpoint_group`，因为并行分析本身按这个分组运行。
 
+## OpenAI-compatible / GLM-5.2 适配记录
+
+2026-06-27 已验证同一套 OpenAI-compatible client path 可以访问 Penn LiteLLM 上的 GLM-5.2：
+
+```text
+base_url: https://litellm.parcc.upenn.edu/v1
+model: zai-org/GLM-5.2-FP8
+api key: do not commit; pass through a local env var such as GLM_API_KEY
+```
+
+GLM-5.2 不能直接复用 DeepSeek thinking 参数。LiteLLM 对 DeepSeek-style `thinking`
+参数返回 400 unsupported-param error；跑 GLM 时使用：
+
+```bash
+--api-key-env GLM_API_KEY \
+--base-url https://litellm.parcc.upenn.edu/v1 \
+--model zai-org/GLM-5.2-FP8 \
+--disable-thinking \
+--reasoning-effort ""
+```
+
+注意：`--disable-thinking` 只是为了避免发送不兼容的 API 参数；当前 endpoint 仍会在 response
+中返回 `reasoning_content`，pipeline 会正常保存到 trace 的 `reasoning` 字段。
+
+Bioavailability_Ma specific full-test 实测显示，GLM-5.2 可以跑完整 pipeline，但相比
+DeepSeek-v4-pro 更容易出现 tool-choice 和 long structured-output 稳定性问题：
+
+```text
+GLM batch:
+  outputs/chembl_tool/tasks/bioavailability_ma/reasoning/batches/
+    glm52_specific_full_test_20260627
+
+merged final-fix metrics:
+  metrics_merged_finalfix_20k.json
+  n=128, failed=0
+  accuracy=0.765625
+  macro-F1=0.727272
+```
+
+已观察到的 GLM trace 问题：
+
+```text
+1. 7/128 single-molecule branches 没有实际发出 molecule_properties tool call，raw assistant content 为 {}。
+2. 初始 8192-token final run 有 14/128 个 final JSON 截断/解析失败；用 final-only 20480 tokens 可补齐。
+3. group-level tools 可用，但调用频率低于 DeepSeek；少量 tool errors 多为特殊 SMILES、salt/coformer
+   或 mmpdb assertion，DeepSeek 也会遇到，不是 GLM 独有。
+```
+
+DeepSeek-v4-pro 在同一 Bioavailability-specific Fa/Fg/Fh pipeline 上有两个常用口径：
+
+```text
+live final LLM output before deterministic postprocess:
+  batch: bioavailability_ma_specific_fa_fg_fh_v16_mechanism_alert_full_finalonly_20260624
+  macro-F1=0.741861
+
+current recommended DeepSeek artifact after valid-selected postprocess v2:
+  batch: bioavailability_ma_specific_fa_fg_fh_v16_valid_selected_postprocess_v2_full_20260624
+  macro-F1=0.764273
+```
+
+其中 live batch 128/128 成功，single/group/final trace 完整，single 分支 128/128 都调用并成功返回
+`molecule_properties`。当前结论是：GLM-5.2 的结果较弱主要来自模型/endpoint 对工具调用和长 JSON
+约束的遵循不如 DeepSeek，而不是 pipeline 设计本身失效。若比较纯 LLM live output，使用
+GLM 0.727272 vs DeepSeek 0.741861；若比较当前推荐的 DeepSeek pipeline artifact，使用
+DeepSeek postprocess 后的 0.764273。
+
+如果后续继续支持 GLM，优先加工程防护：
+
+```text
+1. single branch 若出现空 assistant content 或缺少必需 molecule_properties tool call，应自动 retry。
+2. GLM final-only rerun 默认提高 max_tokens 到 20480，或压缩 final prompt / schema。
+3. 对所有模型统一加强 tool input 的 SMILES canonicalization、salt/coformer 处理和 mmpdb error fallback。
+```
+
 ## ChEMBL task workflow 目录
 
 具体任务放在：

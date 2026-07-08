@@ -66,6 +66,98 @@ def annotate_retrieval_with_starling_transfer(
     }
 
 
+def select_top_transfer_neighbors(
+    retrieval: dict[str, Any],
+    *,
+    top_k: int,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Keep the top transfer-scored neighbors per group after Starling annotation."""
+    if top_k <= 0:
+        return retrieval, {
+            "status": "skipped",
+            "reason": "top_k <= 0",
+            "top_k": top_k,
+        }
+
+    selected_retrieval = copy.deepcopy(retrieval)
+    groups = selected_retrieval.get("groups") or []
+    total_candidates = 0
+    total_selected = 0
+    total_scored_candidates = 0
+    group_summaries = []
+
+    for group in groups:
+        candidates = list(group.get("neighbors") or [])
+        total_candidates += len(candidates)
+        ranked = []
+        for candidate_index, neighbor in enumerate(candidates):
+            score = _neighbor_transfer_score(neighbor)
+            if score["has_transfer_score"]:
+                total_scored_candidates += 1
+            ranked.append((neighbor, score, candidate_index))
+
+        ranked.sort(
+            key=lambda item: (
+                not item[1]["has_transfer_score"],
+                -_score_or_negative(item[1]["transfer_probability_max"]),
+                -_score_or_negative(item[1]["transfer_probability_mean"]),
+                -_score_or_negative(item[1]["transfer_probability_median"]),
+                -_score_or_negative(item[1]["similarity"]),
+                item[2],
+            )
+        )
+        selected_neighbors = []
+        for selection_rank, (neighbor, score, _candidate_index) in enumerate(ranked[:top_k], start=1):
+            neighbor = copy.deepcopy(neighbor)
+            neighbor.setdefault("structural_rank", neighbor.get("rank"))
+            neighbor["transfer_selection_rank"] = selection_rank
+            neighbor["transfer_selection_score"] = score
+            selected_neighbors.append(neighbor)
+        group["neighbors"] = selected_neighbors
+        group["transfer_neighbor_selection"] = {
+            "method": "rank by Starling transfer tool probability after structural retrieval",
+            "candidate_neighbor_count": len(candidates),
+            "scored_candidate_neighbor_count": sum(
+                1 for _neighbor, score, _candidate_index in ranked if score["has_transfer_score"]
+            ),
+            "selected_neighbor_count": len(selected_neighbors),
+            "top_k": top_k,
+            "primary_sort_key": "neighbor transfer_probability_max",
+            "tie_breakers": ["transfer_probability_mean", "transfer_probability_median", "similarity", "structural_rank"],
+        }
+        total_selected += len(selected_neighbors)
+        group_summaries.append(
+            {
+                "group_id": group.get("group_id", ""),
+                "candidate_neighbor_count": len(candidates),
+                "selected_neighbor_count": len(selected_neighbors),
+                "scored_candidate_neighbor_count": group["transfer_neighbor_selection"][
+                    "scored_candidate_neighbor_count"
+                ],
+            }
+        )
+
+    coverage = selected_retrieval.setdefault("coverage", {})
+    coverage["pre_transfer_selection_n_neighbors_total"] = coverage.get("n_neighbors_total", total_candidates)
+    coverage["n_neighbors_total"] = total_selected
+    coverage["n_groups_with_neighbors"] = sum(1 for group in groups if group.get("neighbors"))
+    coverage["transfer_selection_top_k_per_group"] = top_k
+    coverage["transfer_selection_candidate_neighbors_total"] = total_candidates
+    coverage["transfer_selection_scored_candidate_neighbors_total"] = total_scored_candidates
+
+    summary = {
+        "status": "ok",
+        "top_k": top_k,
+        "n_groups": len(groups),
+        "candidate_neighbors_total": total_candidates,
+        "scored_candidate_neighbors_total": total_scored_candidates,
+        "selected_neighbors_total": total_selected,
+        "groups": group_summaries,
+    }
+    selected_retrieval["starling_transfer_neighbor_selection"] = summary
+    return selected_retrieval, summary
+
+
 def _collect_scoring_tasks(
     retrieval: dict[str, Any],
     config: StarlingTransferConfig,
@@ -177,6 +269,42 @@ def _is_starling_row(row: dict[str, Any]) -> bool:
     if str(row.get("source_group_id") or "").startswith("Starling."):
         return True
     return bool(row.get("source_record_examples")) and str(row.get("assay_chembl_id") or "").startswith("STARLING_")
+
+
+def _neighbor_transfer_score(neighbor: dict[str, Any]) -> dict[str, Any]:
+    max_values = []
+    mean_values = []
+    median_values = []
+    likely_count = 0
+    scored_examples = 0
+    for row in neighbor.get("evidence_rows") or []:
+        annotation = row.get("starling_transfer_tool") or {}
+        row_max = _float_or_none(annotation.get("transfer_probability_max"))
+        row_mean = _float_or_none(annotation.get("transfer_probability_mean"))
+        row_median = _float_or_none(annotation.get("transfer_probability_median"))
+        if row_max is not None:
+            max_values.append(row_max)
+        if row_mean is not None:
+            mean_values.append(row_mean)
+        if row_median is not None:
+            median_values.append(row_median)
+        likely_count += int(annotation.get("likely_transfer_count") or 0)
+        scored_examples += int(annotation.get("n_scored_source_examples") or 0)
+    similarity = _float_or_none(neighbor.get("similarity"))
+    return {
+        "has_transfer_score": bool(max_values),
+        "transfer_probability_max": round(max(max_values), 4) if max_values else None,
+        "transfer_probability_mean": round(sum(mean_values) / len(mean_values), 4) if mean_values else None,
+        "transfer_probability_median": round(float(statistics.median(median_values)), 4) if median_values else None,
+        "likely_transfer_count": likely_count,
+        "n_scored_source_examples": scored_examples,
+        "similarity": similarity,
+    }
+
+
+def _score_or_negative(value: Any) -> float:
+    numeric = _float_or_none(value)
+    return numeric if numeric is not None else -1.0
 
 
 def _metadata_from_example(example: dict[str, Any]) -> dict[str, str]:

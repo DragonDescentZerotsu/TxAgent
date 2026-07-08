@@ -128,6 +128,61 @@ metrics after idx00074 final-only rerun:
   prediction distribution: no_risk=37 risk=45
 ```
 
+## Historical TRIM / DeepSeek properties-only baselines
+
+2026-06-29 跑了 3 个 Intern-S1/TRIM no-retrieval properties-only DeepSeek-v4-pro baseline，
+用于和当前 ChEMBL retrieval pipeline 做历史参考比较。它们不使用 TxAgent 当前
+`run_reasoning_pipeline.py`，也不使用 ChEMBL/Starling retrieval；prompt 来自
+`trim.reasoning.task_user_prompts.render_task_user_message`，tool mode 为 `properties`，
+唯一可见工具是 `get_mol_properties_and_fg`。数据 split 使用
+`/data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/Skin_Reaction.jsonl`，
+与当前 Skin_Reaction test split 的 82 条样本口径一致。
+
+```text
+identity allowed:
+  log: /data1/tianang/Projects/Intern-S1/logs/deepseek-v4-pro_properties_Skin_Reaction_DILI_test_20260629_194945.log
+  trace: /data1/tianang/Projects/Intern-S1/reasoning-trajectory/deepseek-v4-pro_properties_Skin_Reaction_DILI_test_20260629_194945.log/Skin_Reaction.jsonl
+  n=82, failed parses=0
+  accuracy=0.7683
+  macro-F1=0.7640
+  class 0 precision/recall/F1=0.7222/0.7429/0.7324
+  class 1 precision/recall/F1=0.8043/0.7872/0.7957
+  tool usage: 81/82 questions with tools, avg tools/sample=0.99
+
+strict no identity / no memory comparison:
+  log: /data1/tianang/Projects/Intern-S1/logs/deepseek-v4-pro_properties_no_smiles_identity_Skin_Reaction_DILI_test_20260629_195403.log
+  trace: /data1/tianang/Projects/Intern-S1/reasoning-trajectory/deepseek-v4-pro_properties_no_smiles_identity_Skin_Reaction_DILI_test_20260629_195403.log/Skin_Reaction.jsonl
+  n=82, failed parses=0
+  accuracy=0.7439
+  macro-F1=0.7408
+  class 0 precision/recall/F1=0.6842/0.7429/0.7123
+  class 1 precision/recall/F1=0.7955/0.7447/0.7692
+  tool usage: 82/82 questions with tools, avg tools/sample=1.00
+
+identity forbidden but memory comparison allowed:
+  log: /data1/tianang/Projects/Intern-S1/logs/deepseek-v4-pro_properties_no_smiles_identity_allow_memory_compare_Skin_Reaction_DILI_test_20260629_195652.log
+  trace: /data1/tianang/Projects/Intern-S1/reasoning-trajectory/deepseek-v4-pro_properties_no_smiles_identity_allow_memory_compare_Skin_Reaction_DILI_test_20260629_195652.log/Skin_Reaction.jsonl
+  n=82, failed parses=0
+  accuracy=0.6707
+  macro-F1=0.6695
+  class 0 precision/recall/F1=0.5952/0.7143/0.6494
+  class 1 precision/recall/F1=0.7500/0.6383/0.6897
+  tool usage: 82/82 questions with tools, avg tools/sample=1.00
+```
+
+Strict vs memory-allowed trace audit:
+
+```text
+The two no-identity runs differ on only 8/82 predictions.
+Memory-allowed is worse on 7 flips and better on 1 flip.
+Main degradation: positive recall drops from 35/47 to 30/47.
+Failure mode: memory-allowed often falls back to a narrow "classic direct electrophile only" checklist
+and misses pro-hapten / pre-hapten / autoxidation / less-canonical sensitizer mechanisms
+such as azlactone/reactive lactone, isothiourea-like reactivity, ortho-quinone-methide formation,
+terpene autoxidation, squaric-acid-like dicarbonyl chemistry, and pyrazolone/pro-hapten behavior.
+The one useful memory-allowed flip was a nitroaromatic pro-hapten case.
+```
+
 当前 v1 规则已主动排除：
 
 ```text

@@ -132,6 +132,8 @@ def main(argv: list[str] | None = None) -> int:
             tool_service_url=args.tool_service_url,
             enable_group_tools=not args.disable_group_tools,
             max_tool_rounds=args.max_tool_rounds,
+            reasoning_effort=args.reasoning_effort,
+            enable_thinking=args.enable_thinking,
         )
         return _resume_final_from_run_dir(Path(args.resume_final_from_run_dir), client)
 
@@ -184,6 +186,8 @@ def main(argv: list[str] | None = None) -> int:
         tool_service_url=args.tool_service_url,
         enable_group_tools=not args.disable_group_tools,
         max_tool_rounds=args.max_tool_rounds,
+        reasoning_effort=args.reasoning_effort,
+        enable_thinking=args.enable_thinking,
     )
 
     single_output, group_outputs = _run_parallel_reasoning(
@@ -225,7 +229,8 @@ def main(argv: list[str] | None = None) -> int:
         "model": args.model,
         "base_url": args.base_url,
         "tool_service_url": args.tool_service_url,
-        "thinking": {"type": "enabled"},
+        "reasoning_effort": args.reasoning_effort,
+        "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
         "group_tools_enabled": not args.disable_group_tools,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
@@ -262,6 +267,8 @@ class DeepSeekClient:
         tool_service_url: str,
         enable_group_tools: bool,
         max_tool_rounds: int,
+        reasoning_effort: str,
+        enable_thinking: bool,
     ):
         self.client = OpenAI(api_key=api_key, base_url=base_url.rstrip("/"), timeout=timeout_s)
         self.model = model
@@ -269,6 +276,8 @@ class DeepSeekClient:
         self.tool_service = ToolServiceClient(tool_service_url, timeout_s=timeout_s)
         self.enable_group_tools = enable_group_tools
         self.max_tool_rounds = max_tool_rounds
+        self.reasoning_effort = reasoning_effort
+        self.enable_thinking = enable_thinking
 
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         response = self._create_completion(messages)
@@ -376,16 +385,18 @@ class DeepSeekClient:
         messages: list[Any],
         *,
         tools: list[dict[str, Any]] | None = None,
-        tool_choice: str | None = None,
+        tool_choice: Any = None,
     ):
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "max_tokens": self.max_tokens,
             "response_format": {"type": "json_object"},
-            "reasoning_effort": "high",
-            "extra_body": {"thinking": {"type": "enabled"}},
         }
+        if self.reasoning_effort:
+            kwargs["reasoning_effort"] = self.reasoning_effort
+        if self.enable_thinking:
+            kwargs["extra_body"] = {"thinking": {"type": "enabled"}}
         if tools is not None:
             kwargs["tools"] = tools
         if tool_choice is not None:
@@ -1059,6 +1070,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--timeout-s", type=int, default=180)
     parser.add_argument("--max-tokens", type=int, default=4096)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
+    parser.add_argument(
+        "--reasoning-effort",
+        default="high",
+        help="OpenAI-compatible reasoning_effort value. Use an empty string to omit this parameter.",
+    )
+    parser.add_argument("--enable-thinking", dest="enable_thinking", action="store_true", default=True)
+    parser.add_argument("--disable-thinking", dest="enable_thinking", action="store_false")
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
