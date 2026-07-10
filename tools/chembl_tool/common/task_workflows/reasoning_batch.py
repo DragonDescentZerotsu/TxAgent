@@ -65,19 +65,6 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "tier1_replacement_index": args.tier1_replacement_index,
         "tier1_replacement_groups": args.tier1_replacement_groups or [],
         "final_only_source_batch": args.final_only_source_batch,
-        "starling_transfer_tool_enabled": args.enable_starling_transfer_tool,
-        "starling_transfer_model": args.starling_transfer_model if args.enable_starling_transfer_tool else "",
-        "starling_transfer_device": args.starling_transfer_device if args.enable_starling_transfer_tool else "",
-        "starling_transfer_batch_size": args.starling_transfer_batch_size if args.enable_starling_transfer_tool else 0,
-        "starling_transfer_max_examples_per_row": (
-            args.starling_transfer_max_examples_per_row if args.enable_starling_transfer_tool else 0
-        ),
-        "starling_transfer_select_top_k": (
-            args.starling_transfer_select_top_k if args.enable_starling_transfer_tool else 0
-        ),
-        "starling_transfer_query_metadata_mode": (
-            args.starling_transfer_query_metadata_mode if args.enable_starling_transfer_tool else ""
-        ),
         "started_at": _now(),
         "paths": {
             "batch_dir": str(batch_dir),
@@ -330,24 +317,6 @@ def _single_run_command(
             command.extend(args.tier1_replacement_groups)
     if args.disable_group_tools:
         command.append("--disable-group-tools")
-    if args.enable_starling_transfer_tool:
-        command.extend(
-            [
-                "--enable-starling-transfer-tool",
-                "--starling-transfer-model",
-                args.starling_transfer_model,
-                "--starling-transfer-device",
-                args.starling_transfer_device,
-                "--starling-transfer-batch-size",
-                str(args.starling_transfer_batch_size),
-                "--starling-transfer-max-examples-per-row",
-                str(args.starling_transfer_max_examples_per_row),
-                "--starling-transfer-select-top-k",
-                str(args.starling_transfer_select_top_k),
-                "--starling-transfer-query-metadata-mode",
-                args.starling_transfer_query_metadata_mode,
-            ]
-        )
     return command
 
 
@@ -701,17 +670,6 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     parser.add_argument("--max-groups", type=int, default=0)
     parser.add_argument("--disable-group-tools", action="store_true")
-    parser.add_argument("--enable-starling-transfer-tool", action="store_true")
-    parser.add_argument("--starling-transfer-model", default="jiosephlee/starling-transfer-ssv2-srcval")
-    parser.add_argument("--starling-transfer-device", default="auto")
-    parser.add_argument("--starling-transfer-batch-size", type=int, default=16)
-    parser.add_argument("--starling-transfer-max-examples-per-row", type=int, default=6)
-    parser.add_argument("--starling-transfer-select-top-k", type=int, default=0)
-    parser.add_argument(
-        "--starling-transfer-query-metadata-mode",
-        choices=["same_source_context", "missing"],
-        default="same_source_context",
-    )
     args = parser.parse_args(argv)
     args.groups = _normalize_group_args(args.groups)
     args.tier1_replacement_groups = _normalize_group_args(args.tier1_replacement_groups)

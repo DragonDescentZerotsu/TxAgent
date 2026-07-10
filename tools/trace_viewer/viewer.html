@@ -729,7 +729,7 @@ function renderEvidence(e){
     ${sourceStats.map(([k,v])=>kv(k,v)).join("")}
   </div>` : "";
   const provenance = [
-    renderStarlingTransferTool(e.starling_transfer_tool),
+    renderMinimalEvidence(e.minimal_evidence),
     renderSourceRecordExamples(e.source_record_examples),
     renderQualitativeSourceExamples(e.source_qualitative_examples),
     renderEvidenceList("source_molecule_names", e.source_molecule_names),
@@ -775,41 +775,12 @@ function renderSourceRecordExamples(examples){
     </div>`).join("")}
   </div>`;
 }
-function renderStarlingTransferTool(tool){
-  if(!tool || typeof tool !== "object") return "";
-  const scores = Array.isArray(tool.source_example_scores) ? tool.source_example_scores : [];
-  const summaryFields = [
-    ["model", tool.model],
-    ["direction", tool.direction],
-    ["query_metadata_mode", tool.query_metadata_mode],
-    ["threshold", tool.threshold],
-    ["scored examples", tool.n_scored_source_examples],
-    ["likely_transfer", tool.likely_transfer_count],
-    ["unlikely_transfer", tool.unlikely_transfer_count],
-    ["P(transfer) min", tool.transfer_probability_min],
-    ["P(transfer) median", tool.transfer_probability_median],
-    ["P(transfer) mean", tool.transfer_probability_mean],
-    ["P(transfer) max", tool.transfer_probability_max],
-  ].filter(([,v])=>v !== null && v !== undefined && v !== "");
-  const scoreRows = scores.length ? `<details open><summary>Source example scores (${scores.length})</summary>
-    ${scores.map((score, index)=>`<div class="neighbor-card">
-      <div>
-        <span class="badge">score ${index + 1}</span>
-        <span class="badge">${esc(score.transfer_prediction || "")}</span>
-        <strong>P(transfer) ${esc(score.transfer_probability ?? "")}</strong>
-      </div>
-      ${kv("source_value_percent", score.source_value_percent)}
-      ${score.source_metadata ? `<div class="json-body">${renderObjectFields(score.source_metadata)}</div>` : ""}
-    </div>`).join("")}
-  </details>` : "";
-  return `<div>
-    <div class="evidence-subtitle">Starling Transfer Tool</div>
-    <div class="evidence-summary">
-      ${summaryFields.map(([k,v])=>kv(k,v)).join("")}
-      ${tool.llm_note ? kv("llm_note", tool.llm_note) : ""}
-    </div>
-    ${scoreRows}
-  </div>`;
+function renderMinimalEvidence(record){
+  if(!record || typeof record !== "object") return "";
+  return `<details open>
+    <summary>${esc(record.contract_version || "minimal evidence")}</summary>
+    <div class="json-body">${renderObjectFields(record)}</div>
+  </details>`;
 }
 function renderQualitativeSourceExamples(examples){
   if(!Array.isArray(examples) || !examples.length) return "";

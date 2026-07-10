@@ -21,8 +21,9 @@ def test_clean_evidence_row_excludes_internal_derived_fields():
 
     cleaned = _clean_evidence_row(row)
 
-    assert cleaned["assay_chembl_id"] == "CHEMBL1"
-    assert cleaned["assay_tier"] == "Tier 2"
+    assert cleaned["source"]["record_id"] == "CHEMBL1"
+    assert cleaned["group"]["tier"] == "Tier 2"
+    assert cleaned["endpoint"]["name"] == "ALT"
     assert "evidence_direction" not in cleaned
     assert "evidence_strength" not in cleaned
     assert "endpoint_group_reason" not in cleaned

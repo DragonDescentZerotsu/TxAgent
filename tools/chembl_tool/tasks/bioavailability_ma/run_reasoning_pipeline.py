@@ -15,7 +15,14 @@ from typing import Any
 from openai import OpenAI
 import requests
 
+from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.json_utils import parse_json_content
+from tools.chembl_tool.common.reasoning_validation import (
+    call_with_json_validation,
+    structured_response_is_valid,
+    validated_branch_content,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
@@ -122,7 +129,7 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"Missing API key env var: {args.api_key_env}")
 
     if args.resume_final_from_run_dir:
-        client = DeepSeekClient(
+        client = OpenAICompatibleClient(
             api_key=api_key,
             base_url=args.base_url,
             model=args.model,
@@ -164,38 +171,6 @@ def main(argv: list[str] | None = None) -> int:
             index,
             chembl_sqlite=args.chembl_sqlite,
         )
-    starling_transfer_summary: dict[str, Any] | None = None
-    starling_transfer_selection_summary: dict[str, Any] | None = None
-    if args.enable_starling_transfer_tool:
-        _log("annotating Starling retrieval with transfer model")
-        from tools.chembl_tool.tasks.bioavailability_ma.starling_transfer_tool import (
-            StarlingTransferConfig,
-            annotate_retrieval_with_starling_transfer,
-            select_top_transfer_neighbors,
-        )
-
-        retrieval, starling_transfer_summary = annotate_retrieval_with_starling_transfer(
-            retrieval,
-            config=StarlingTransferConfig(
-                model_name_or_path=args.starling_transfer_model,
-                device=args.starling_transfer_device,
-                batch_size=args.starling_transfer_batch_size,
-                max_examples_per_row=args.starling_transfer_max_examples_per_row,
-                query_metadata_mode=args.starling_transfer_query_metadata_mode,
-            ),
-        )
-        _log(f"Starling transfer annotation: {json.dumps(starling_transfer_summary, ensure_ascii=False)}")
-        if args.starling_transfer_select_top_k > 0:
-            _log(f"selecting top {args.starling_transfer_select_top_k} Starling transfer neighbors per group")
-            retrieval, starling_transfer_selection_summary = select_top_transfer_neighbors(
-                retrieval,
-                top_k=args.starling_transfer_select_top_k,
-            )
-            _log(
-                "Starling transfer neighbor selection: "
-                f"{json.dumps(starling_transfer_selection_summary, ensure_ascii=False)}"
-            )
-
     retrieval_path = out_dir / "retrieval.json"
     _write_json(retrieval_path, retrieval)
     _log(f"wrote {retrieval_path}")
@@ -205,7 +180,7 @@ def main(argv: list[str] | None = None) -> int:
         groups = groups[: args.max_groups]
     _log(f"group reasoning calls={len(groups)}")
 
-    client = DeepSeekClient(
+    client = OpenAICompatibleClient(
         api_key=api_key,
         base_url=args.base_url,
         model=args.model,
@@ -264,10 +239,6 @@ def main(argv: list[str] | None = None) -> int:
         "group_tools_enabled": not args.disable_group_tools,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
-        "starling_transfer_tool_enabled": args.enable_starling_transfer_tool,
-        "starling_transfer_tool_summary": starling_transfer_summary or {},
-        "starling_transfer_select_top_k": args.starling_transfer_select_top_k,
-        "starling_transfer_neighbor_selection_summary": starling_transfer_selection_summary or {},
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
         if not args.disable_group_tools
         else [],
@@ -289,7 +260,7 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-class DeepSeekClient:
+class OpenAICompatibleClient:
     def __init__(
         self,
         *,
@@ -512,7 +483,7 @@ class ToolServiceClient:
 
 
 def _run_parallel_reasoning(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     groups: list[dict[str, Any]],
     *,
@@ -557,7 +528,7 @@ def _run_parallel_reasoning(
 
 
 def _reason_single_molecule(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -601,20 +572,26 @@ def _reason_single_molecule(
             "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
-    response = client.chat_json_with_tools(
+    response = call_with_json_validation(
+        lambda retry_messages: client.chat_json_with_tools(
+            retry_messages,
+            tools=SINGLE_MOLECULE_TOOLS,
+            allowed_tool_names={"molecule_properties"},
+            first_tool_choice=SINGLE_MOLECULE_TOOL_CHOICE,
+        ),
         messages,
-        tools=SINGLE_MOLECULE_TOOLS,
-        allowed_tool_names={"molecule_properties"},
-        first_tool_choice=SINGLE_MOLECULE_TOOL_CHOICE,
+        required_fields=("confidence", "reasoning_summary"),
+        required_tool_names=("molecule_properties",),
+        branch_name="single-molecule",
     )
     return {
         "analysis_id": "single_molecule",
-        "status": "ok",
+        "status": "ok" if structured_response_is_valid(response) else "error",
         "llm": response,
     }
 
 
-def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     messages = [
         {
             "role": "system",
@@ -630,10 +607,15 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
             "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False),
         },
     ]
-    response = client.chat_json_with_group_tools(messages)
+    response = call_with_json_validation(
+        client.chat_json_with_group_tools,
+        messages,
+        required_fields=("transferability", "confidence", "reasoning_summary"),
+        branch_name="group",
+    )
     return {
         "group_id": group["group_id"],
-        "status": "ok",
+        "status": "ok" if structured_response_is_valid(response) else "error",
         "tier": group["tier"],
         "endpoint_group": group["endpoint_group"],
         "n_neighbors": len(group["neighbors"]),
@@ -642,7 +624,7 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
 
 
 def _run_final_reasoning(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
@@ -664,13 +646,13 @@ def _run_final_reasoning(
                     "retrieval_coverage": retrieval["coverage"],
                     "single_molecule_analysis": {
                         "status": single_output.get("status"),
-                        "content": (single_output.get("llm") or {}).get("content"),
+                        "content": validated_branch_content(single_output),
                     },
                     "group_reasoning_outputs": [
                         {
                             "group_id": item.get("group_id"),
                             "status": item.get("status"),
-                            "content": (item.get("llm") or {}).get("content"),
+                            "content": validated_branch_content(item),
                         }
                         for item in group_outputs
                     ],
@@ -702,8 +684,14 @@ def _run_final_reasoning(
             ),
         },
     ]
-    response = client.chat_json(messages)
-    return {"status": "ok", "llm": response}
+    response = call_with_json_validation(
+        client.chat_json,
+        messages,
+        required_fields=("bioavailability_prediction",),
+        allowed_values={"bioavailability_prediction": {"high", "low"}},
+        branch_name="final",
+    )
+    return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
 
 
 def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
@@ -734,6 +722,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
         ],
         "instructions": [
             "Use only this group's evidence.",
+            "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
             "Assess structural transferability from neighbors to the query.",
             "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
             "Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
@@ -745,8 +734,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "Distinguish direct oral bioavailability, in vivo oral exposure/absorption, in vitro permeability, solubility/dissolution, metabolism/clearance, formulation/food-effect context, and weak inhibition/binding evidence.",
             "Do not convert CYP IC50/inhibition into metabolic instability, and do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
-            "For Starling evidence, source_record_examples preserve the exact pairing between each displayed condition, its oral bioavailability percentage, and support text. source_qualitative_examples contain useful non-numeric or contextual statements and must not be treated as exact F% measurements.",
-            "If starling_transfer_tool is present, treat it as an auxiliary source-specific analog-transfer model for source molecule A to query molecule B. High P(transfer) supports using that source F% as transferable; low P(transfer) is a warning to downweight the source value. It is not an automatic final high/low label.",
+            "For aggregated evidence, examples preserve endpoint, value, condition, and support-text pairings. Do not treat qualitative examples or surrogate_proxy roles as direct F% measurements.",
             "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.",
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
@@ -785,70 +773,7 @@ def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
 
 
 def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "assay_chembl_id",
-        "assay_tier",
-        "standard_type",
-        "standard_relation",
-        "standard_value",
-        "standard_units",
-        "pchembl_value",
-        "activity_comment",
-        "data_validity_comment",
-        "assay_description",
-        "target_pref_name",
-        "target_genes",
-        "organism",
-        "confidence_score",
-        "relationship_type",
-        "evidence_source",
-        "source_molecule_names",
-        "source_record_count",
-        "source_numeric_record_count",
-        "source_qualitative_record_count",
-        "source_value_min_percent",
-        "source_value_median_percent",
-        "source_value_max_percent",
-        "source_report_types",
-        "source_support_texts",
-        "source_molecule_id",
-        "source_group_id",
-        "source_canonical_smiles",
-        "combined_molecule_sources",
-        "combined_merge_key",
-    ]
-    cleaned = {field: row.get(field, "") for field in fields}
-    cleaned["source_record_examples"] = [
-        _clean_starling_source_example(example, numeric=True)
-        for example in row.get("source_record_examples", [])
-    ]
-    cleaned["source_qualitative_examples"] = [
-        _clean_starling_source_example(example, numeric=False)
-        for example in row.get("source_qualitative_examples", [])
-    ]
-    if row.get("starling_transfer_tool"):
-        cleaned["starling_transfer_tool"] = row.get("starling_transfer_tool")
-    return cleaned
-
-
-def _clean_starling_source_example(example: dict[str, Any], *, numeric: bool) -> dict[str, Any]:
-    fields = [
-        "molecule_name",
-        "condition_text",
-        "species_or_population",
-        "dose",
-        "oral_exposure_mode",
-        "qualifying_conditions",
-        "comparator",
-        "extra_details",
-        "support_text",
-        "bioavailability_report_type",
-    ]
-    if numeric:
-        fields.extend(["oral_bioavailability_value_percent", "parse_modifier"])
-    else:
-        fields.extend(["oral_bioavailability_value_text", "source_drop_reason"])
-    return {field: example.get(field, "") for field in fields}
+    return evidence_for_llm(row)
 
 
 def _group_evidence_source(group: dict[str, Any]) -> str:
@@ -942,14 +867,7 @@ def _clean_activity_value(activity: dict[str, Any]) -> dict[str, Any]:
 
 
 def _parse_json_content(content: str) -> Any:
-    try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        start = content.find("{")
-        end = content.rfind("}")
-        if start >= 0 and end > start:
-            return json.loads(content[start : end + 1])
-        return {"unparsed_text": content}
+    return parse_json_content(content)
 
 
 def _usage_dict(response: Any) -> dict[str, Any]:
@@ -1079,7 +997,7 @@ def _read_jsonl_record(path: Path, index: int) -> dict[str, Any]:
     raise SystemExit(f"No record at index {index}: {path}")
 
 
-def _resume_final_from_run_dir(run_dir: Path, client: DeepSeekClient) -> int:
+def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
     retrieval = json.loads((run_dir / "retrieval.json").read_text(encoding="utf-8"))
     single_output = json.loads((run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8"))
     group_outputs = [
@@ -1171,30 +1089,6 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--disable-thinking", dest="enable_thinking", action="store_false")
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
-    parser.add_argument("--enable-starling-transfer-tool", action="store_true")
-    parser.add_argument(
-        "--starling-transfer-model",
-        default="jiosephlee/starling-transfer-ssv2-srcval",
-        help="HuggingFace model path or local directory for Starling transfer scoring.",
-    )
-    parser.add_argument("--starling-transfer-device", default="auto", help="auto, cpu, cuda, cuda:0, etc.")
-    parser.add_argument("--starling-transfer-batch-size", type=int, default=16)
-    parser.add_argument("--starling-transfer-max-examples-per-row", type=int, default=6)
-    parser.add_argument(
-        "--starling-transfer-select-top-k",
-        type=int,
-        default=0,
-        help=(
-            "After annotating retrieved Starling neighbors, keep only the top K neighbors per group by "
-            "neighbor-level transfer probability. 0 disables filtering."
-        ),
-    )
-    parser.add_argument(
-        "--starling-transfer-query-metadata-mode",
-        choices=["same_source_context", "missing"],
-        default="same_source_context",
-        help="Metadata for query molecule B when scoring transfer from source molecule A.",
-    )
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")

@@ -15,7 +15,14 @@ from typing import Any
 from openai import OpenAI
 import requests
 
+from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.json_utils import parse_json_content
+from tools.chembl_tool.common.reasoning_validation import (
+    call_with_json_validation,
+    structured_response_is_valid,
+    validated_branch_content,
+)
 from tools.chembl_tool.tasks.dili.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
@@ -123,7 +130,7 @@ def main(argv: list[str] | None = None) -> int:
     if not api_key:
         raise SystemExit(f"Missing API key env var: {args.api_key_env}")
 
-    client = DeepSeekClient(
+    client = OpenAICompatibleClient(
         api_key=api_key,
         base_url=args.base_url,
         model=args.model,
@@ -239,7 +246,7 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-class DeepSeekClient:
+class OpenAICompatibleClient:
     def __init__(
         self,
         *,
@@ -466,7 +473,7 @@ class ToolServiceClient:
 
 
 def _run_parallel_reasoning(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     groups: list[dict[str, Any]],
     *,
@@ -512,7 +519,7 @@ def _run_parallel_reasoning(
 
 
 def _reason_single_molecule(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -557,16 +564,25 @@ def _reason_single_molecule(
         },
         {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
     ]
-    response = client.chat_json_with_tools(
+    response = call_with_json_validation(
+        lambda retry_messages: client.chat_json_with_tools(
+            retry_messages,
+            tools=SINGLE_MOLECULE_TOOLS,
+            allowed_tool_names={"molecule_properties"},
+            first_tool_choice="auto",
+        ),
         messages,
-        tools=SINGLE_MOLECULE_TOOLS,
-        allowed_tool_names={"molecule_properties"},
-        first_tool_choice="auto",
+        required_fields=("confidence", "reasoning_summary"),
+        branch_name="single-molecule",
     )
-    return {"analysis_id": "single_molecule", "status": "ok", "llm": response}
+    return {
+        "analysis_id": "single_molecule",
+        "status": "ok" if structured_response_is_valid(response) else "error",
+        "llm": response,
+    }
 
 
-def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     messages = [
         {
             "role": "system",
@@ -578,10 +594,15 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
         },
         {"role": "user", "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False)},
     ]
-    response = client.chat_json_with_group_tools(messages)
+    response = call_with_json_validation(
+        client.chat_json_with_group_tools,
+        messages,
+        required_fields=("transferability", "confidence", "reasoning_summary"),
+        branch_name="group",
+    )
     return {
         "group_id": group["group_id"],
-        "status": "ok",
+        "status": "ok" if structured_response_is_valid(response) else "error",
         "tier": group["tier"],
         "endpoint_group": group["endpoint_group"],
         "n_neighbors": len(group["neighbors"]),
@@ -590,7 +611,7 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
 
 
 def _run_final_reasoning(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
@@ -601,13 +622,13 @@ def _run_final_reasoning(
         "retrieval_coverage": retrieval["coverage"],
         "single_molecule_analysis": {
             "status": single_output.get("status"),
-            "content": (single_output.get("llm") or {}).get("content"),
+            "content": validated_branch_content(single_output),
         },
         "group_reasoning_outputs": [
             {
                 "group_id": item.get("group_id"),
                 "status": item.get("status"),
-                "content": (item.get("llm") or {}).get("content"),
+                "content": validated_branch_content(item),
             }
             for item in group_outputs
         ],
@@ -638,8 +659,14 @@ def _run_final_reasoning(
         },
         {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
     ]
-    response = client.chat_json(messages)
-    return {"status": "ok", "llm": response}
+    response = call_with_json_validation(
+        client.chat_json,
+        messages,
+        required_fields=("dili_prediction",),
+        allowed_values={"dili_prediction": {DILI_POSITIVE_PREDICTION, DILI_NEGATIVE_PREDICTION}},
+        branch_name="final",
+    )
+    return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
 
 
 def _final_instructions() -> list[str]:
@@ -687,6 +714,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
         ],
         "instructions": [
             "Use only this group's evidence.",
+            "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
             "Assess structural and property transferability from each neighbor to the query.",
             "Low-similarity analogs are intentionally included. Explicitly judge whether they are transferable.",
             "Do not use distant_analog or very_distant_analog neighbors as positive or negative DILI evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
@@ -695,7 +723,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
             "Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.",
             "Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.",
-            "Infer evidence direction and strength from the group tier/endpoint_group plus the raw evidence rows; make your own transferability judgment.",
+            "Infer evidence direction and strength from the group tier/endpoint_group plus the minimal evidence records; make your own transferability judgment.",
             "For Tier 1, distinguish human/clinical DILI, severe liver outcome, regulatory liver signal, and human liver lab monitoring.",
             "For Tier 2, distinguish hepatic necrosis/pathology or liver clinical chemistry from liver-weight-only evidence.",
             "For Tier 3, distinguish hepatobiliary/cholestasis transporters from generic transporters.",
@@ -744,24 +772,7 @@ def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
 
 
 def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "assay_chembl_id",
-        "assay_tier",
-        "standard_type",
-        "standard_relation",
-        "standard_value",
-        "standard_units",
-        "pchembl_value",
-        "activity_comment",
-        "data_validity_comment",
-        "assay_description",
-        "target_pref_name",
-        "target_genes",
-        "organism",
-        "confidence_score",
-        "relationship_type",
-    ]
-    return {field: row.get(field, "") for field in fields}
+    return evidence_for_llm(row)
 
 
 def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
@@ -841,14 +852,7 @@ def _clean_activity_value(activity: dict[str, Any]) -> dict[str, Any]:
 
 
 def _parse_json_content(content: str) -> Any:
-    try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        start = content.find("{")
-        end = content.rfind("}")
-        if start >= 0 and end > start:
-            return json.loads(content[start : end + 1])
-        return {"unparsed_text": content}
+    return parse_json_content(content)
 
 
 def _needs_json_retry(parsed: Any, raw_content: str) -> bool:
@@ -995,7 +999,7 @@ def _read_jsonl_record(path: Path, index: int) -> dict[str, Any]:
     raise SystemExit(f"No record at index {index}: {path}")
 
 
-def _resume_final_from_run_dir(run_dir: Path, client: DeepSeekClient) -> int:
+def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
     retrieval = json.loads((run_dir / "retrieval.json").read_text(encoding="utf-8"))
     single_output = json.loads((run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8"))
     group_outputs = [

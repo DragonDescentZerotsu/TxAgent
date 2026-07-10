@@ -14,6 +14,7 @@ from typing import Any
 
 from rdkit import Chem
 
+from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.task_workflows.evidence_library import (
     build_neighbor_index,
@@ -33,7 +34,7 @@ DEFAULT_OUT_DIR = "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library
 EVIDENCE_FILENAME = "starling_oral_bioavailability_evidence.jsonl"
 INDEX_FILENAME = "starling_oral_bioavailability_neighbor_index.pkl"
 META_FILENAME = "starling_oral_bioavailability_neighbor_index.meta.json"
-GROUP_ID = "Starling.direct_oral_bioavailability"
+GROUP_ID = "Observed.direct_oral_bioavailability"
 INDEX_VERSION = "bioavailability_ma_starling_neighbor_index.v2"
 SOURCE_DATASET = "starling-labs/Oral_Bioavailability"
 
@@ -191,11 +192,6 @@ def _summarize_molecule(
         standard_type = "Oral bioavailability"
         standard_value: float | str = round(median_value, 6)
         standard_units = "%"
-        evidence_direction = (
-            "supports_high_bioavailability" if median_value >= 20.0 else "argues_against_high_bioavailability"
-        )
-        evidence_strength = "strong"
-        endpoint_reason = "Direct numeric oral bioavailability evidence with qualitative Starling context when available."
     else:
         activity_comment = (
             f"Starling qualitative/contextual oral bioavailability summary over "
@@ -204,14 +200,11 @@ def _summarize_molecule(
         standard_type = "Oral bioavailability (qualitative/contextual)"
         standard_value = ""
         standard_units = ""
-        evidence_direction = _qualitative_evidence_direction(qualitative_rows)
-        evidence_strength = "moderate"
-        endpoint_reason = "Qualitative or contextual oral bioavailability evidence from Starling literature extraction."
-    return {
+    row = {
         "molecule_chembl_id": molecule_id,
         "canonical_smiles": smiles,
         "assay_chembl_id": "STARLING_ORAL_BIOAVAILABILITY",
-        "assay_tier": "Starling",
+        "assay_tier": "Observed",
         "endpoint_group": "direct_oral_bioavailability",
         "group_id": GROUP_ID,
         "standard_type": standard_type,
@@ -231,10 +224,14 @@ def _summarize_molecule(
         "organism": "; ".join(species[:8]),
         "confidence_score": "",
         "relationship_type": "",
-        "evidence_direction": evidence_direction,
-        "evidence_strength": evidence_strength,
-        "endpoint_group_reason": endpoint_reason,
         "evidence_source": SOURCE_DATASET,
+        "evidence_role": "direct_outcome",
+        "evidence_scope": {
+            "species_or_population": species[:8],
+            "report_types": report_types,
+        },
+        "transferability": "not_assessed",
+        "uncertainty": ["qualitative_only_no_numeric_measurement"] if not numeric_rows else [],
         "source_molecule_names": names[:10],
         "source_record_count": len(all_rows),
         "source_numeric_record_count": len(numeric_rows),
@@ -248,6 +245,7 @@ def _summarize_molecule(
         "source_record_examples": record_examples,
         "source_qualitative_examples": qualitative_examples,
     }
+    return attach_minimal_evidence(row)
 
 
 def _summary_relation(rows: list[dict[str, Any]]) -> str:
@@ -445,32 +443,6 @@ def _condition_text(row: dict[str, Any]) -> str:
         "extra_details",
     ]
     return "\n".join(f"{field}: {str(row.get(field) or 'not specified').strip()}" for field in fields)
-
-
-def _qualitative_evidence_direction(rows: list[dict[str, Any]]) -> str:
-    text = " ".join(
-        part
-        for row in rows
-        for part in (
-            str(row.get("_qualitative_value_text") or ""),
-            str((row.get("metadata") or {}).get("support_text") or ""),
-        )
-    ).lower()
-    low_terms = ("very low", "low bioavailability", "poor bioavailability", "negligible bioavailability")
-    high_terms = (
-        "high bioavailability",
-        "excellent bioavailability",
-        "complete bioavailability",
-        "near unity",
-        "virtually complete",
-    )
-    has_low = any(term in text for term in low_terms)
-    has_high = any(term in text for term in high_terms)
-    if has_high and not has_low:
-        return "supports_high_bioavailability"
-    if has_low and not has_high:
-        return "argues_against_high_bioavailability"
-    return "neutral_or_unclear"
 
 
 def _write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
