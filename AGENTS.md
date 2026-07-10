@@ -193,6 +193,7 @@ tools/chembl_tool/common/task_workflows/
   reasoning_batch.py
 
 tools/chembl_tool/common/evidence_contract.py
+tools/chembl_tool/common/openai_reasoning_client.py
 tools/chembl_tool/common/reasoning_validation.py
 tools/chembl_tool/common/starling/evidence_library.py
 ```
@@ -234,6 +235,10 @@ reasoning_batch.py
 evidence_contract.py
   `minimal_evidence.v1` 的唯一 schema/normalizer。旧 ChEMBL-like row 可以在 prompt-time 动态转换，
   新 source builder 应在建库时调用 `attach_minimal_evidence()`。该模块只描述 evidence，不预测 label。
+
+openai_reasoning_client.py
+  所有 task 共享的 OpenAI-compatible JSON completion、bounded tool-call loop、常驻工具服务调用和 trace
+  serialization。provider/model/base URL 由运行参数配置；task 文件不复制 client runtime。
 
 reasoning_validation.py
   为 single/group/final branch 提供通用必需字段、允许值和必需工具结果验证；无效时重试一次。

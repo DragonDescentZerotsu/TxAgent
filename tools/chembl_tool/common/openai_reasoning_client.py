@@ -1,0 +1,315 @@
+"""Provider-neutral OpenAI-compatible client for structured molecular reasoning."""
+
+from __future__ import annotations
+
+import json
+from typing import Any
+
+from openai import OpenAI
+import requests
+
+from tools.chembl_tool.common.json_utils import parse_json_content
+
+
+class OpenAICompatibleClient:
+    """Run JSON-only completions and bounded tool loops against one endpoint."""
+
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        base_url: str,
+        model: str,
+        timeout_s: int,
+        max_tokens: int,
+        tool_service_url: str,
+        enable_group_tools: bool,
+        max_tool_rounds: int,
+        reasoning_effort: str,
+        enable_thinking: bool,
+    ):
+        self.client = OpenAI(api_key=api_key, base_url=base_url.rstrip("/"), timeout=timeout_s)
+        self.model = model
+        self.max_tokens = max_tokens
+        self.tool_service = ToolServiceClient(tool_service_url, timeout_s=timeout_s)
+        self.enable_group_tools = enable_group_tools
+        self.max_tool_rounds = max_tool_rounds
+        self.reasoning_effort = reasoning_effort
+        self.enable_thinking = enable_thinking
+
+    def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
+        response = self._create_completion(messages)
+        message = response.choices[0].message
+        content = message.content or "{}"
+        trace_messages = [_json_safe_message(item) for item in messages]
+        trace_messages.append(_assistant_message_to_trace(message))
+        return {
+            "content": parse_json_content(content),
+            "raw_content": content,
+            "reasoning_content": getattr(message, "reasoning_content", "") or "",
+            "tool_calls": [],
+            "tool_results": [],
+            "messages": trace_messages,
+            "usage": _usage_dict(response),
+            "model": response.model or self.model,
+            "id": response.id or "",
+        }
+
+    def chat_json_with_optional_tools(
+        self,
+        messages: list[dict[str, Any]],
+        *,
+        tools: list[dict[str, Any]],
+        allowed_tool_names: set[str],
+    ) -> dict[str, Any]:
+        if not self.enable_group_tools:
+            return self.chat_json(messages)
+        return self.chat_json_with_tools(
+            messages,
+            tools=tools,
+            allowed_tool_names=allowed_tool_names,
+        )
+
+    def chat_json_with_tools(
+        self,
+        messages: list[dict[str, Any]],
+        *,
+        tools: list[dict[str, Any]],
+        allowed_tool_names: set[str],
+        first_tool_choice: Any = "auto",
+    ) -> dict[str, Any]:
+        working_messages: list[Any] = list(messages)
+        trace_messages = [_json_safe_message(item) for item in messages]
+        tool_results: list[dict[str, Any]] = []
+        responses = []
+        for round_index in range(max(0, self.max_tool_rounds) + 1):
+            current_tool_choice = first_tool_choice if round_index == 0 else "auto"
+            if self.enable_thinking and current_tool_choice not in (None, "auto"):
+                current_tool_choice = "auto"
+            response = self._create_completion(
+                working_messages,
+                tools=tools,
+                tool_choice=current_tool_choice,
+            )
+            responses.append(response)
+            message = response.choices[0].message
+            working_messages.append(message)
+            trace_messages.append(_assistant_message_to_trace(message))
+            tool_calls = message.tool_calls or []
+            if not tool_calls:
+                content = message.content or "{}"
+                return {
+                    "content": parse_json_content(content),
+                    "raw_content": content,
+                    "reasoning_content": getattr(message, "reasoning_content", "") or "",
+                    "tool_calls": _tool_call_summaries(responses),
+                    "tool_results": tool_results,
+                    "messages": trace_messages,
+                    "usage": _sum_usage(responses),
+                    "model": response.model or self.model,
+                    "id": response.id or "",
+                }
+            for tool_call in tool_calls:
+                result = self.tool_service.invoke_function_call(
+                    tool_call,
+                    allowed_tool_names=allowed_tool_names,
+                )
+                tool_results.append(result)
+                tool_message = {
+                    "role": "tool",
+                    "tool_call_id": tool_call.id,
+                    "content": result["content"],
+                }
+                working_messages.append(tool_message)
+                trace_messages.append({**tool_message, "name": result.get("tool_name"), "tool_result": result})
+
+        final_request = {
+            "role": "user",
+            "content": (
+                "You have reached the maximum allowed tool-call rounds. "
+                "Return the required JSON now using the available tool results."
+            ),
+        }
+        working_messages.append(final_request)
+        trace_messages.append(final_request)
+        response = self._create_completion(working_messages)
+        responses.append(response)
+        message = response.choices[0].message
+        content = message.content or "{}"
+        trace_messages.append(_assistant_message_to_trace(message))
+        return {
+            "content": parse_json_content(content),
+            "raw_content": content,
+            "reasoning_content": getattr(message, "reasoning_content", "") or "",
+            "tool_calls": _tool_call_summaries(responses),
+            "tool_results": tool_results,
+            "messages": trace_messages,
+            "usage": _sum_usage(responses),
+            "model": response.model or self.model,
+            "id": response.id or "",
+        }
+
+    def _create_completion(
+        self,
+        messages: list[Any],
+        *,
+        tools: list[dict[str, Any]] | None = None,
+        tool_choice: Any = None,
+    ) -> Any:
+        kwargs: dict[str, Any] = {
+            "model": self.model,
+            "messages": messages,
+            "max_tokens": self.max_tokens,
+            "response_format": {"type": "json_object"},
+        }
+        if self.reasoning_effort:
+            kwargs["reasoning_effort"] = self.reasoning_effort
+        if self.enable_thinking:
+            kwargs["extra_body"] = {"thinking": {"type": "enabled"}}
+        if tools is not None:
+            kwargs["tools"] = tools
+        if tool_choice is not None:
+            kwargs["tool_choice"] = tool_choice
+        try:
+            return self.client.chat.completions.create(**kwargs)
+        except Exception as exc:
+            if self.enable_thinking and tool_choice is not None and _is_tool_choice_thinking_error(exc):
+                fallback_kwargs = dict(kwargs)
+                fallback_kwargs.pop("extra_body", None)
+                fallback_kwargs.pop("reasoning_effort", None)
+                return self.client.chat.completions.create(**fallback_kwargs)
+            raise
+
+
+class ToolServiceClient:
+    """Invoke allowlisted functions through the persistent molecular tool service."""
+
+    def __init__(self, base_url: str, *, timeout_s: int):
+        self.base_url = base_url.rstrip("/")
+        self.timeout_s = timeout_s
+
+    def invoke_function_call(self, tool_call: Any, *, allowed_tool_names: set[str]) -> dict[str, Any]:
+        tool_name = tool_call.function.name
+        if tool_name not in allowed_tool_names:
+            return {
+                "tool_name": tool_name,
+                "status": "error",
+                "content": f"Tool `{tool_name}` is not allowed in this workflow.",
+            }
+        try:
+            arguments = json.loads(tool_call.function.arguments or "{}")
+        except json.JSONDecodeError as exc:
+            return {
+                "tool_name": tool_name,
+                "status": "error",
+                "content": f"Invalid JSON tool arguments: {exc}",
+            }
+
+        try:
+            response = requests.post(
+                f"{self.base_url}/tools/{tool_name}/invoke",
+                json={
+                    "tool_name": tool_name,
+                    "version": "v1",
+                    "input": arguments,
+                    "options": {"timeout_s": self.timeout_s, "return_debug": False},
+                },
+                timeout=self.timeout_s,
+            )
+        except requests.RequestException as exc:
+            return {
+                "tool_name": tool_name,
+                "status": "error",
+                "arguments": arguments,
+                "content": f"{tool_name} request failed: {exc}",
+            }
+        if response.status_code >= 400:
+            content = f"{tool_name} HTTP error {response.status_code}: {response.text[:1000]}"
+            return {"tool_name": tool_name, "status": "error", "arguments": arguments, "content": content}
+        payload = response.json()
+        output = payload.get("output") or {}
+        warnings = payload.get("warnings") or []
+        errors = payload.get("errors") or []
+        content_parts = [f"[{tool_name}]"]
+        if payload.get("status") == "ok":
+            content_parts.append(str(output.get("text") or "No LLM-readable tool text returned."))
+            if warnings:
+                content_parts.append("Warnings: " + "; ".join(str(item) for item in warnings))
+        else:
+            content_parts.append("Tool returned error: " + json.dumps(errors, ensure_ascii=False))
+        return {
+            "tool_name": tool_name,
+            "status": payload.get("status", "error"),
+            "arguments": arguments,
+            "content": "\n".join(content_parts),
+            "warnings": warnings,
+            "errors": errors,
+            "latency_ms": (payload.get("metadata") or {}).get("latency_ms"),
+        }
+
+
+def _is_tool_choice_thinking_error(exc: Exception) -> bool:
+    return "Thinking mode does not support this tool_choice" in str(exc)
+
+
+def _usage_dict(response: Any) -> dict[str, Any]:
+    usage = getattr(response, "usage", None)
+    if usage is None:
+        return {}
+    return usage.model_dump(mode="json") if hasattr(usage, "model_dump") else dict(usage)
+
+
+def _sum_usage(responses: list[Any]) -> dict[str, int]:
+    totals: dict[str, int] = {}
+    for response in responses:
+        for key, value in _usage_dict(response).items():
+            if isinstance(value, int):
+                totals[key] = totals.get(key, 0) + value
+    return totals
+
+
+def _tool_call_summaries(responses: list[Any]) -> list[dict[str, Any]]:
+    summaries: list[dict[str, Any]] = []
+    for response in responses:
+        message = response.choices[0].message
+        for tool_call in message.tool_calls or []:
+            summaries.append(
+                {
+                    "id": tool_call.id,
+                    "name": tool_call.function.name,
+                    "arguments": tool_call.function.arguments,
+                }
+            )
+    return summaries
+
+
+def _assistant_message_to_trace(message: Any) -> dict[str, Any]:
+    trace: dict[str, Any] = {"role": "assistant"}
+    content = getattr(message, "content", None)
+    if content:
+        trace["content"] = content
+    reasoning = getattr(message, "reasoning_content", None)
+    if reasoning:
+        trace["reasoning"] = reasoning
+    tool_calls = getattr(message, "tool_calls", None) or []
+    if tool_calls:
+        trace["tool_calls"] = [
+            {
+                "id": tool_call.id,
+                "type": tool_call.type,
+                "function": {
+                    "name": tool_call.function.name,
+                    "arguments": tool_call.function.arguments,
+                },
+            }
+            for tool_call in tool_calls
+        ]
+    return trace
+
+
+def _json_safe_message(message: Any) -> dict[str, Any]:
+    if isinstance(message, dict):
+        return json.loads(json.dumps(message, ensure_ascii=False, default=str))
+    if hasattr(message, "model_dump"):
+        return message.model_dump(mode="json")
+    return {"role": "unknown", "content": str(message)}
