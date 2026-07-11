@@ -13,9 +13,21 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retrieve_experiment_view
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.identity_blind import (
+    prepare_identity_blind_final_retrieval,
+    prepare_identity_blind_retrieval,
+    sanitize_identity_blind_branch_outputs,
+)
 from tools.chembl_tool.common.json_utils import parse_json_content
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
+from tools.chembl_tool.common.reasoning_calls import (
+    bound_group_prompt_payload,
+    call_group_branch,
+    call_single_molecule_branch,
+    load_frozen_single_analysis,
+)
 from tools.chembl_tool.common.reasoning_validation import (
     call_with_json_validation,
     structured_response_is_valid,
@@ -26,6 +38,7 @@ from tools.chembl_tool.tasks.bbb_martins.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
 )
+from tools.chembl_tool.tasks.bbb_martins.experiment_config import get_source_config
 from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index, retrieve_neighbors
 
 
@@ -132,6 +145,7 @@ def main(argv: list[str] | None = None) -> int:
             model=args.model,
             timeout_s=args.timeout_s,
             max_tokens=args.max_tokens,
+            temperature=args.temperature,
             tool_service_url=args.tool_service_url,
             enable_group_tools=not args.disable_group_tools,
             max_tool_rounds=args.max_tool_rounds,
@@ -149,34 +163,47 @@ def main(argv: list[str] | None = None) -> int:
     if not query_smiles:
         raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
 
-    _log("loading neighbor index")
-    index = load_index(Path(args.index))
-    _log("retrieving top neighbors by group")
-    base_groups = _base_retrieval_groups(
-        index,
-        requested_groups=args.groups,
-        tier1_replacement_enabled=bool(args.tier1_replacement_index),
-    )
-    if args.tier1_replacement_index and base_groups == []:
-        retrieval = _empty_retrieval(query_smiles, index, args.top_k_per_group, args.min_similarity)
+    index = None
+    if args.experiment_mode != "none":
+        _log("loading neighbor index")
+        index = load_index(Path(args.index))
+    if args.experiment_mode == "native":
+        base_groups = _base_retrieval_groups(
+            index,
+            requested_groups=args.groups,
+            tier1_replacement_enabled=bool(args.tier1_replacement_index),
+        )
+        if args.tier1_replacement_index and base_groups == []:
+            retrieval = _empty_retrieval(query_smiles, index, args.top_k_per_group, args.min_similarity)
+        else:
+            retrieval = retrieve_neighbors(
+                query_smiles,
+                index,
+                top_k_per_group=args.top_k_per_group,
+                min_similarity=args.min_similarity,
+                groups=base_groups,
+            )
     else:
-        retrieval = retrieve_neighbors(
+        _log(f"building retrieval view mode={args.experiment_mode} source={args.retrieval_source}")
+        retrieval = retrieve_experiment_view(
             query_smiles,
             index,
+            mode=args.experiment_mode,
+            config=get_source_config(args.retrieval_source) if args.experiment_mode != "none" else None,
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
-            groups=base_groups,
+            native_groups=args.groups,
         )
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
-    if args.enable_chembl_exact_context:
+    if args.enable_chembl_exact_context and index is not None:
         _log("enriching retrieval with exact ChEMBL context")
         retrieval = enrich_retrieval_with_chembl_context(
             retrieval,
             index,
             chembl_sqlite=args.chembl_sqlite,
         )
-    if args.tier1_replacement_index:
+    if args.tier1_replacement_index and args.experiment_mode == "native":
         _log(f"retrieving Tier 1 replacement neighbors: {args.tier1_replacement_index}")
         replacement_index = load_index(Path(args.tier1_replacement_index))
         replacement_retrieval = retrieve_neighbors(
@@ -205,28 +232,42 @@ def main(argv: list[str] | None = None) -> int:
         model=args.model,
         timeout_s=args.timeout_s,
         max_tokens=args.max_tokens,
+        temperature=args.temperature,
         tool_service_url=args.tool_service_url,
         enable_group_tools=not args.disable_group_tools,
         max_tool_rounds=args.max_tool_rounds,
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
     )
+    reasoning_retrieval = (
+        prepare_identity_blind_retrieval(retrieval, client.tool_service) if args.identity_blind else retrieval
+    )
+    reasoning_groups = [group for group in reasoning_retrieval["groups"] if group.get("neighbors")]
+    if args.max_groups:
+        reasoning_groups = reasoning_groups[: args.max_groups]
+    frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
 
     single_output, group_outputs = _run_parallel_reasoning(
         client,
-        retrieval,
-        groups,
+        reasoning_retrieval,
+        reasoning_groups,
         max_workers=args.max_workers,
+        single_output=frozen_single,
     )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
     _log(f"wrote {single_path}")
 
+    raw_group_path = out_dir / "group_reasoning_outputs_raw.jsonl"
+    if args.identity_blind:
+        _write_jsonl(raw_group_path, group_outputs)
+        group_outputs = sanitize_identity_blind_branch_outputs(group_outputs, retrieval)
+        _log(f"wrote {raw_group_path}")
     group_path = out_dir / "group_reasoning_outputs.jsonl"
     _write_jsonl(group_path, group_outputs)
     _log(f"wrote {group_path}")
 
-    final_output = _run_final_reasoning(client, retrieval, single_output, group_outputs)
+    final_output = _run_final_reasoning(client, reasoning_retrieval, single_output, group_outputs)
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     _log(f"wrote {final_path}")
@@ -236,7 +277,7 @@ def main(argv: list[str] | None = None) -> int:
         trace_path,
         query_record=query_record,
         query_index=args.query_index,
-        smiles=query_smiles,
+        smiles="[identity_blind]" if args.identity_blind else query_smiles,
         single_output=single_output,
         group_outputs=group_outputs,
         final_output=final_output,
@@ -248,12 +289,16 @@ def main(argv: list[str] | None = None) -> int:
         "input_jsonl": args.input_jsonl,
         "query_index": args.query_index,
         "smiles_field": args.smiles_field,
+        "experiment_mode": args.experiment_mode,
+        "retrieval_source": args.retrieval_source,
+        "identity_blind": args.identity_blind,
         "model": args.model,
         "base_url": args.base_url,
         "tool_service_url": args.tool_service_url,
         "reasoning_effort": args.reasoning_effort,
+        "temperature": args.temperature,
         "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
-        "neighbor_index": args.index,
+        "neighbor_index": args.index if args.experiment_mode != "none" else "",
         "tier1_replacement_index": args.tier1_replacement_index,
         "tier1_replacement_groups": args.tier1_replacement_groups or DEFAULT_TIER1_REPLACEMENT_GROUPS
         if args.tier1_replacement_index
@@ -261,6 +306,8 @@ def main(argv: list[str] | None = None) -> int:
         "groups": args.groups or [],
         "retrieval_evidence_source": retrieval.get("evidence_source", {}),
         "group_tools_enabled": not args.disable_group_tools,
+        "tool_execution_mode": "harness_prefetch" if args.identity_blind else "llm_function_call",
+        "single_analysis_source_run_dir": args.single_analysis_source_run_dir,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
@@ -274,6 +321,7 @@ def main(argv: list[str] | None = None) -> int:
             "retrieval": str(retrieval_path),
             "single_molecule_reasoning_output": str(single_path),
             "group_reasoning_outputs": str(group_path),
+            "group_reasoning_outputs_raw": str(raw_group_path) if args.identity_blind else "",
             "final_reasoning_output": str(final_path),
             "trace_messages": str(trace_path),
         },
@@ -290,22 +338,25 @@ def _run_parallel_reasoning(
     groups: list[dict[str, Any]],
     *,
     max_workers: int,
+    single_output: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs: list[dict[str, Any]] = []
-    single_output: dict[str, Any] | None = None
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
             executor.submit(_reason_one_group, client, _llm_query_payload(retrieval["query"]), group): group["group_id"]
             for group in groups
         }
-        futures[
-            executor.submit(
-                _reason_single_molecule,
-                client,
-                _llm_query_payload(retrieval["query"]),
-                _clean_query_chembl_context(retrieval.get("query_chembl_context") or {}),
-            )
-        ] = "single_molecule"
+        if single_output is None:
+            futures[
+                executor.submit(
+                    _reason_single_molecule,
+                    client,
+                    _llm_query_payload(retrieval["query"]),
+                    _clean_query_chembl_context(retrieval.get("query_chembl_context") or {}),
+                )
+            ] = "single_molecule"
+        else:
+            _log("reusing frozen single molecule analysis")
         for future in concurrent.futures.as_completed(futures):
             item_id = futures[future]
             try:
@@ -367,7 +418,7 @@ def _empty_retrieval(
 ) -> dict[str, Any]:
     canonical_smiles, inchi_key, _ = standardize_smiles_and_fp(query_smiles)
     return {
-        "status": "ok" if structured_response_is_valid(response) else "error",
+        "status": "ok",
         "evidence_source": index.get("source", {}),
         "query": {
             "input_smiles": query_smiles,
@@ -454,6 +505,8 @@ def _reason_single_molecule(
         "Assess passive BBB plausibility from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
         "Return JSON with passive_bbb_plausibility, efflux_or_transporter_prior, confidence, reasoning_summary, property_drivers, caveats.",
     ]
+    if query.get("identity_hidden"):
+        instructions[0] = "Use the harness-prefetched molecule_properties result; do not identify or name the query."
     payload: dict[str, Any] = {
         "task": "Single-molecule BBB plausibility analysis.",
         "query": query,
@@ -479,7 +532,12 @@ def _reason_single_molecule(
             "content": (
                 "You are a medicinal chemistry BBB single-molecule analyst. "
                 "Only analyze the query molecule itself, without analog evidence. "
-                "You may call exactly one tool: molecule_properties. Return only valid JSON."
+                + (
+                    "The harness already supplied molecule_properties; do not call tools or infer identity. "
+                    if query.get("identity_hidden")
+                    else "You may call exactly one tool: molecule_properties. "
+                )
+                + "Return only valid JSON."
             ),
         },
         {
@@ -487,16 +545,11 @@ def _reason_single_molecule(
             "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
-    response = call_with_json_validation(
-        lambda retry_messages: client.chat_json_with_tools(
-            retry_messages,
-            tools=SINGLE_MOLECULE_TOOLS,
-            allowed_tool_names={"molecule_properties"},
-            first_tool_choice="auto",
-        ),
+    response = call_single_molecule_branch(
+        client,
         messages,
-        required_fields=("confidence", "reasoning_summary"),
-        branch_name="single-molecule",
+        query=query,
+        tools=SINGLE_MOLECULE_TOOLS,
     )
     return {
         "analysis_id": "single_molecule",
@@ -512,8 +565,12 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
             "content": (
                 "You are a medicinal chemistry BBB analog evidence analyst. "
                 "Reason about whether analog evidence in one endpoint group is transferable to the query molecule. "
-                "You may call the provided molecule comparison tools when structural or property differences matter. "
-                "Return only valid JSON."
+                + (
+                    "Use the harness-prefetched comparison results; do not infer query identity. "
+                    if group.get("identity_blind")
+                    else "You may call the provided molecule comparison tools when structural or property differences matter. "
+                )
+                + "Return only valid JSON."
             ),
         },
         {
@@ -521,19 +578,15 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
             "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False),
         },
     ]
-    response = call_with_json_validation(
-        lambda retry_messages: client.chat_json_with_optional_tools(
-            retry_messages,
-            tools=GROUP_REASONING_TOOLS,
-            allowed_tool_names={"properties_compare", "mmp_structure_compare"},
-        ),
+    response = call_group_branch(
+        client,
         messages,
-        required_fields=("transferability", "confidence", "reasoning_summary"),
-        branch_name="group",
+        group=group,
+        tools=GROUP_REASONING_TOOLS,
     )
     return {
         "group_id": group["group_id"],
-        "status": "ok",
+        "status": "ok" if structured_response_is_valid(response) else "error",
         "tier": group["tier"],
         "endpoint_group": group["endpoint_group"],
         "n_neighbors": len(group["neighbors"]),
@@ -618,7 +671,7 @@ def _run_final_reasoning(
 
 
 def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
-    return {
+    return bound_group_prompt_payload({
         "task": "Group-level BBB analog transferability analysis.",
         "query": query,
         "group": {
@@ -633,6 +686,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
                 "canonical_smiles": neighbor["canonical_smiles"],
                 "similarity": neighbor["similarity"],
                 "similarity_bucket": neighbor["similarity_bucket"],
+                "prefetched_comparisons": neighbor.get("prefetched_comparisons") or [],
                 "evidence_rows": [_clean_evidence_row(row) for row in neighbor["evidence_rows"]],
                 "shared_assay_context": _clean_shared_assay_context(neighbor.get("shared_assay_context") or {}),
             }
@@ -678,10 +732,16 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             ],
             "caveats": ["string"],
         },
-    }
+    })
 
 
 def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
+    if query.get("identity_hidden"):
+        return {
+            "molecule_id": "query",
+            "identity_hidden": True,
+            "prefetched_molecule_properties": query.get("prefetched_molecule_properties") or {},
+        }
     return {
         "input_smiles": query.get("input_smiles", ""),
         "canonical_smiles": query.get("canonical_smiles", ""),
@@ -846,13 +906,20 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     ]
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+    if manifest.get("identity_blind"):
+        group_outputs = sanitize_identity_blind_branch_outputs(group_outputs, retrieval)
+        retrieval = prepare_identity_blind_final_retrieval(retrieval, single_output)
     final_output = _run_final_reasoning(client, retrieval, single_output, group_outputs)
     final_path = run_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     trace_path = run_dir / "trace_messages.jsonl"
     query_record = {"Y": manifest.get("query_label_for_eval_only")}
     query_index = int(manifest.get("query_index") or 0)
-    smiles = str((retrieval.get("query") or {}).get("input_smiles") or "")
+    smiles = (
+        "[identity_blind]"
+        if manifest.get("identity_blind")
+        else str((retrieval.get("query") or {}).get("input_smiles") or "")
+    )
     _write_trace_jsonl(
         trace_path,
         query_record=query_record,
@@ -905,6 +972,10 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--query-index", type=int, default=0)
     parser.add_argument("--smiles-field", default="drug")
     parser.add_argument("--index", default=DEFAULT_INDEX)
+    parser.add_argument("--experiment-mode", choices=sorted(EXPERIMENT_MODES), default="native")
+    parser.add_argument("--retrieval-source", default="chembl")
+    parser.add_argument("--identity-blind", action="store_true")
+    parser.add_argument("--single-analysis-source-run-dir", default="")
     parser.add_argument(
         "--tier1-replacement-index",
         default="",
@@ -928,7 +999,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--max-workers", type=int, default=6)
     parser.add_argument("--max-groups", type=int, default=0, help="Debug limit; 0 means all groups with neighbors.")
     parser.add_argument("--timeout-s", type=int, default=180)
-    parser.add_argument("--max-tokens", type=int, default=4096)
+    parser.add_argument("--max-tokens", type=int, default=20480)
+    parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument(
         "--reasoning-effort",

@@ -11,6 +11,9 @@ import requests
 from tools.chembl_tool.common.json_utils import parse_json_content
 
 
+TRANSPORT_MAX_RETRIES = 2
+
+
 class OpenAICompatibleClient:
     """Run JSON-only completions and bounded tool loops against one endpoint."""
 
@@ -22,15 +25,22 @@ class OpenAICompatibleClient:
         model: str,
         timeout_s: int,
         max_tokens: int,
+        temperature: float | None,
         tool_service_url: str,
         enable_group_tools: bool,
         max_tool_rounds: int,
         reasoning_effort: str,
         enable_thinking: bool,
     ):
-        self.client = OpenAI(api_key=api_key, base_url=base_url.rstrip("/"), timeout=timeout_s)
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url=base_url.rstrip("/"),
+            timeout=timeout_s,
+            max_retries=TRANSPORT_MAX_RETRIES,
+        )
         self.model = model
         self.max_tokens = max_tokens
+        self.temperature = temperature
         self.tool_service = ToolServiceClient(tool_service_url, timeout_s=timeout_s)
         self.enable_group_tools = enable_group_tools
         self.max_tool_rounds = max_tool_rounds
@@ -162,6 +172,8 @@ class OpenAICompatibleClient:
             "max_tokens": self.max_tokens,
             "response_format": {"type": "json_object"},
         }
+        if self.temperature is not None:
+            kwargs["temperature"] = self.temperature
         if self.reasoning_effort:
             kwargs["reasoning_effort"] = self.reasoning_effort
         if self.enable_thinking:
@@ -204,6 +216,11 @@ class ToolServiceClient:
                 "status": "error",
                 "content": f"Invalid JSON tool arguments: {exc}",
             }
+
+        return self.invoke(tool_name, arguments)
+
+    def invoke(self, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        """Invoke a known tool directly for harness-side prefetching."""
 
         try:
             response = requests.post(

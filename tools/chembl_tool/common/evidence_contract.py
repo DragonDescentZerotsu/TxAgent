@@ -125,6 +125,35 @@ def evidence_for_llm(row: Mapping[str, Any]) -> dict[str, Any]:
     return minimal_evidence_from_row(row)
 
 
+def numeric_only_evidence_row(row: Mapping[str, Any]) -> dict[str, Any] | None:
+    """Return a scalar-only evidence row, or None when no numeric value exists."""
+    value = row.get("standard_value", row.get("value", ""))
+    try:
+        float(value)
+    except (TypeError, ValueError):
+        return None
+
+    output = deepcopy(dict(row))
+    output.pop("minimal_evidence", None)
+    output.update(
+        {
+            "assay_description": "",
+            "activity_comment": "",
+            "target_pref_name": "",
+            "target_genes": "",
+            "organism": "",
+            "relationship_type": "",
+            "evidence_scope": {},
+            "scope": {},
+            "source_molecule_names": [],
+            "source_support_texts": [],
+            "source_qualitative_examples": [],
+            "source_record_examples": _numeric_examples(row),
+        }
+    )
+    return attach_minimal_evidence(output)
+
+
 def validate_minimal_evidence(record: Mapping[str, Any]) -> list[str]:
     """Return validation errors without imposing task-specific semantics."""
     errors: list[str] = []
@@ -171,6 +200,32 @@ def _safe_examples(row: Mapping[str, Any]) -> list[dict[str, Any]]:
         *(row.get("source_qualitative_examples") or []),
     ]
     return [_sanitize_mapping(item) for item in examples if isinstance(item, Mapping)][:6]
+
+
+def _numeric_examples(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    allowed_fields = {
+        "endpoint_type",
+        "exposure_measure",
+        "metric_type",
+        "parameter_name",
+        "oral_bioavailability_value_percent",
+        "parameter_value",
+        "reported_value",
+        "measured_value",
+        "reported_units",
+        "parameter_units",
+        "quant_value",
+        "quant_units",
+    }
+    examples = [
+        *(row.get("source_record_examples") or []),
+        *(row.get("source_qualitative_examples") or []),
+    ]
+    return [
+        {str(key): _json_scalar(value) for key, value in example.items() if str(key) in allowed_fields}
+        for example in examples
+        if isinstance(example, Mapping)
+    ][:6]
 
 
 def _sanitize_mapping(value: Mapping[str, Any]) -> dict[str, Any]:

@@ -2,6 +2,7 @@ from tools.chembl_tool.common.evidence_contract import (
     CONTRACT_VERSION,
     attach_minimal_evidence,
     evidence_for_llm,
+    numeric_only_evidence_row,
     validate_minimal_evidence,
 )
 
@@ -69,3 +70,30 @@ def test_validation_reports_only_structural_contract_errors():
         "missing_group_id",
         "missing_endpoint_and_evidence_text",
     ]
+
+
+def test_numeric_only_evidence_removes_text_and_qualitative_only_rows():
+    row = {
+        "molecule_chembl_id": "M1",
+        "canonical_smiles": "CCO",
+        "group_id": "Observed.direct",
+        "standard_type": "bioavailability",
+        "standard_value": 42.0,
+        "standard_units": "%",
+        "assay_description": "Human oral study with formulation details",
+        "source_support_texts": ["Forty-two percent after oral dosing"],
+        "source_record_examples": [
+            {
+                "oral_bioavailability_value_percent": 42.0,
+                "species": "human",
+                "support_text": "Forty-two percent after oral dosing",
+            }
+        ],
+    }
+
+    numeric = numeric_only_evidence_row(row)
+
+    assert numeric is not None
+    assert numeric["minimal_evidence"]["text"] == {"evidence": "", "context": ""}
+    assert numeric["minimal_evidence"]["examples"] == [{"oral_bioavailability_value_percent": 42.0}]
+    assert numeric_only_evidence_row({**row, "standard_value": "qualitative"}) is None

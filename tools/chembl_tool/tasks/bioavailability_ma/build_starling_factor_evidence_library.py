@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.evidence_contract import numeric_only_evidence_row
 from tools.chembl_tool.common.starling import (
     StarlingSourceProfile,
     build_starling_parquet_evidence_rows,
@@ -41,21 +42,31 @@ def main(argv: list[str] | None = None) -> int:
     if args.include_direct_hf:
         direct_rows, direct_stats = build_direct_f_rows(
             Path(args.direct_source_jsonl),
-            dropped_jsonl=Path(args.direct_dropped_jsonl) if args.direct_dropped_jsonl else None,
+            dropped_jsonl=(
+                Path(args.direct_dropped_jsonl)
+                if args.evidence_content == "full" and args.direct_dropped_jsonl
+                else None
+            ),
             min_value_percent=args.min_direct_value_percent,
             max_value_percent=args.max_direct_value_percent,
             max_record_examples=args.max_record_examples,
         )
 
+    profiles = bioavailability_profiles(Path(args.starling_data_dir), max_rows=args.max_rows_per_source)
+    if args.scope == "direct":
+        profiles = profiles[:1]
     factor_rows, factor_stats = build_starling_parquet_evidence_rows(
-        bioavailability_profiles(Path(args.starling_data_dir), max_rows=args.max_rows_per_source),
+        profiles,
         max_record_examples=args.max_record_examples,
         min_confidence=args.min_confidence,
     )
     evidence_rows = [*direct_rows, *factor_rows]
+    if args.evidence_content == "numeric_only":
+        evidence_rows = [numeric for row in evidence_rows if (numeric := numeric_only_evidence_row(row)) is not None]
+    index_version = f"{INDEX_VERSION}.{args.scope}.{args.evidence_content}"
     index = build_neighbor_index(
         evidence_rows,
-        index_version=INDEX_VERSION,
+        index_version=index_version,
         workers=args.workers,
         progress_every=args.progress_every,
     )
@@ -73,9 +84,11 @@ def main(argv: list[str] | None = None) -> int:
     with index_path.open("wb") as handle:
         pickle.dump(index, handle, protocol=pickle.HIGHEST_PROTOCOL)
     meta = {
-        "index_version": INDEX_VERSION,
+        "index_version": index_version,
         "starling_data_dir": args.starling_data_dir,
         "include_direct_hf": args.include_direct_hf,
+        "scope": args.scope,
+        "evidence_content": args.evidence_content,
         "n_direct_evidence_rows": len(direct_rows),
         "n_factor_evidence_rows": len(factor_rows),
         "n_evidence_rows": len(evidence_rows),
@@ -190,6 +203,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
     parser.add_argument("--include-direct-hf", dest="include_direct_hf", action="store_true", default=True)
     parser.add_argument("--no-include-direct-hf", dest="include_direct_hf", action="store_false")
+    parser.add_argument("--scope", choices=["direct", "full"], default="full")
+    parser.add_argument("--evidence-content", choices=["numeric_only", "full"], default="full")
     parser.add_argument("--direct-source-jsonl", default=DEFAULT_DIRECT_SOURCE_JSONL)
     parser.add_argument("--direct-dropped-jsonl", default=DEFAULT_DIRECT_DROPPED_JSONL)
     parser.add_argument("--min-direct-value-percent", type=float, default=0.0)

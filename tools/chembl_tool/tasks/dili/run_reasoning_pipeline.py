@@ -134,6 +134,7 @@ def main(argv: list[str] | None = None) -> int:
         model=args.model,
         timeout_s=args.timeout_s,
         max_tokens=args.max_tokens,
+        temperature=args.temperature,
         tool_service_url=args.tool_service_url,
         enable_group_tools=not args.disable_group_tools,
         max_tool_rounds=args.max_tool_rounds,
@@ -770,6 +771,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--max-groups", type=int, default=0, help="Debug limit; 0 means all groups with neighbors.")
     parser.add_argument("--timeout-s", type=int, default=180)
     parser.add_argument("--max-tokens", type=int, default=4096)
+    parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument(
         "--reasoning-effort",

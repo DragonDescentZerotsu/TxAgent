@@ -62,6 +62,13 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "combine_traces": args.combine_traces,
         "stream_logs": args.stream_logs,
         "model": args.model,
+        "experiment_mode": args.experiment_mode,
+        "retrieval_source": args.retrieval_source,
+        "identity_blind": args.identity_blind,
+        "max_tokens": args.max_tokens,
+        "temperature": args.temperature,
+        "transport_max_retries": 2,
+        "single_analysis_source_batch": args.single_analysis_source_batch,
         "tier1_replacement_index": args.tier1_replacement_index,
         "tier1_replacement_groups": args.tier1_replacement_groups or [],
         "final_only_source_batch": args.final_only_source_batch,
@@ -135,7 +142,7 @@ def _run_one(
     should_skip_existing = False
     if args.skip_existing and existing_final_path.exists():
         existing_result = _collect_result(config, args, item, run_id, run_dir)
-        should_skip_existing = existing_result.get("final_status") == "ok" and existing_result.get("pred_label") is not None
+        should_skip_existing = _result_is_complete(existing_result)
         if not should_skip_existing:
             _log(config, f"rerun invalid existing final index={item.index} run_id={run_id}")
 
@@ -170,7 +177,7 @@ def _run_one(
         {
             "status": (
                 "ok"
-                if returncode == 0 and result.get("final_status") == "ok" and result.get("pred_label") is not None
+                if returncode == 0 and _result_is_complete(result)
                 else "error"
             ),
             "returncode": returncode,
@@ -241,6 +248,8 @@ def _final_only_command(config: BatchConfig, args: argparse.Namespace, run_dir: 
         str(args.timeout_s),
         "--max-tokens",
         str(args.max_tokens),
+        "--temperature",
+        str(args.temperature),
         "--max-tool-rounds",
         str(args.max_tool_rounds),
         "--reasoning-effort",
@@ -272,6 +281,10 @@ def _single_run_command(
         args.smiles_field,
         "--index",
         args.index,
+        "--experiment-mode",
+        args.experiment_mode,
+        "--retrieval-source",
+        args.retrieval_source,
         "--out-root",
         str(run_root),
         "--run-id",
@@ -317,6 +330,17 @@ def _single_run_command(
             command.extend(args.tier1_replacement_groups)
     if args.disable_group_tools:
         command.append("--disable-group-tools")
+    if args.identity_blind:
+        command.append("--identity-blind")
+    if args.single_analysis_source_batch:
+        source_batch = Path(args.single_analysis_source_batch)
+        source_run_id = f"{source_batch.name}_idx{query_index:05d}"
+        command.extend(
+            [
+                "--single-analysis-source-run-dir",
+                str(source_batch / "runs" / source_run_id),
+            ]
+        )
     return command
 
 
@@ -384,8 +408,12 @@ def _collect_result(
     run_dir: Path,
 ) -> dict[str, Any]:
     final_path = run_dir / "final_reasoning_output.json"
+    single_path = run_dir / "single_molecule_reasoning_output.json"
+    group_path = run_dir / "group_reasoning_outputs.jsonl"
     manifest_path = run_dir / "manifest.json"
     final_output = _read_json(final_path) if final_path.exists() else {}
+    single_output = _read_json(single_path) if single_path.exists() else {}
+    group_outputs = _read_jsonl(group_path) if group_path.exists() else []
     manifest = _read_json(manifest_path) if manifest_path.exists() else {}
     content = ((final_output.get("llm") or {}).get("content") or {}) if isinstance(final_output, dict) else {}
     prediction = _normalize_prediction(config, content.get(config.prediction_field))
@@ -403,11 +431,25 @@ def _collect_result(
         "confidence": content.get("confidence"),
         "correct": correct,
         "final_status": (final_output.get("status") if isinstance(final_output, dict) else None),
+        "single_status": (single_output.get("status") if isinstance(single_output, dict) else None),
+        "n_group_outputs": len(group_outputs),
+        "n_failed_group_outputs": sum(row.get("status") != "ok" for row in group_outputs),
         "n_groups_with_neighbors": manifest.get("n_groups_with_neighbors"),
         "trace_messages": str(run_dir / "trace_messages.jsonl") if (run_dir / "trace_messages.jsonl").exists() else "",
         "final_reasoning_output": str(final_path) if final_path.exists() else "",
         "final_summary": content.get("final_summary", ""),
     }
+
+
+def _result_is_complete(result: dict[str, Any]) -> bool:
+    if result.get("final_status") != "ok" or result.get("pred_label") is None:
+        return False
+    if result.get("single_status") != "ok":
+        return False
+    expected_groups = result.get("n_groups_with_neighbors")
+    if expected_groups is not None and int(result.get("n_group_outputs") or 0) != int(expected_groups):
+        return False
+    return int(result.get("n_failed_group_outputs") or 0) == 0
 
 
 def compute_metrics(config: BatchConfig, rows: list[dict[str, Any]]) -> dict[str, Any]:
@@ -619,6 +661,18 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--smiles-field", default="drug")
     parser.add_argument("--label-field", default="Y")
     parser.add_argument("--index", default=config.default_index)
+    parser.add_argument(
+        "--experiment-mode",
+        choices=["none", "direct", "full_flat", "full_mechanism", "native"],
+        default="native",
+    )
+    parser.add_argument("--retrieval-source", default="chembl")
+    parser.add_argument("--identity-blind", action="store_true")
+    parser.add_argument(
+        "--single-analysis-source-batch",
+        default="",
+        help="Reuse each query's frozen single-molecule branch from another batch.",
+    )
     parser.add_argument("--batch-root", default=config.default_batch_root)
     parser.add_argument("--batch-id", default="")
     parser.add_argument(
@@ -645,7 +699,8 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--tool-service-url", default="http://127.0.0.1:8765")
     parser.add_argument("--model", default=config.default_model)
     parser.add_argument("--timeout-s", type=int, default=300)
-    parser.add_argument("--max-tokens", type=int, default=8192)
+    parser.add_argument("--max-tokens", type=int, default=20480)
+    parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument(
         "--reasoning-effort",
