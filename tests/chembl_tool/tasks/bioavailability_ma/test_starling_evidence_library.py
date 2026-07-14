@@ -73,8 +73,9 @@ def test_build_starling_evidence_rows_aggregates_molecule_records(tmp_path):
     assert "oral_bioavailability_value_percent: 50" in rows[0]["assay_description"]
     clean_row = _clean_evidence_row(rows[0])
     assert "source_pmids" not in clean_row
-    assert "pmid" not in clean_row["source_record_examples"][0]
-    assert clean_row["source_record_examples"][0]["oral_bioavailability_value_percent"] == 10.0
+    assert "pmid" not in clean_row["examples"][0]
+    assert clean_row["examples"][0]["oral_bioavailability_value_percent"] == 10.0
+    assert clean_row["annotations"]["evidence_role"] == "direct_outcome"
 
 
 def test_numeric_examples_cover_value_distribution_with_at_most_six_records(tmp_path):
@@ -139,10 +140,10 @@ def test_qualitative_only_molecule_is_added_without_fake_numeric_value(tmp_path)
     assert rows[0]["standard_value"] == ""
     assert rows[0]["source_numeric_record_count"] == 0
     assert rows[0]["source_qualitative_record_count"] == 1
-    assert rows[0]["evidence_direction"] == "argues_against_high_bioavailability"
     clean_row = _clean_evidence_row(rows[0])
-    assert clean_row["source_qualitative_examples"][0]["oral_bioavailability_value_text"] == "very low"
-    assert "pmid" not in clean_row["source_qualitative_examples"][0]
+    assert clean_row["examples"][0]["oral_bioavailability_value_text"] == "very low"
+    assert "qualitative_only_no_numeric_measurement" in clean_row["annotations"]["uncertainty"]
+    assert "pmid" not in clean_row["examples"][0]
     assert "source_pmids" not in clean_row
 
 

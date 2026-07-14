@@ -22,6 +22,7 @@ from typing import Any
 
 from rdkit import Chem
 
+from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.task_workflows.evidence_library import (
     build_neighbor_index,
@@ -235,7 +236,7 @@ def _summarize_molecule(
         numerical_rows=numerical_rows,
         direction=direction,
     )
-    return {
+    row = {
         "molecule_chembl_id": molecule_id,
         "canonical_smiles": smiles,
         "assay_chembl_id": "STARLING_BBB",
@@ -259,6 +260,13 @@ def _summarize_molecule(
         "evidence_strength": "strong" if include_numerical and numerical_rows else "moderate",
         "endpoint_group_reason": "Starling literature-derived BBB molecule evidence used as Tier 1 retrieval source.",
         "evidence_source": SOURCE_DATASET,
+        "evidence_role": "direct_outcome",
+        "evidence_scope": {
+            "species": _unique_text(row.get("species") for row in rows)[:8],
+            "record_types": _unique_text(row.get("record_type") for row in rows)[:8],
+        },
+        "transferability": "not_assessed",
+        "uncertainty": [] if numerical_rows else ["qualitative_only_no_numeric_measurement"],
         "source_record_count": len(rows),
         "source_qualitative_record_count": len(qualitative_rows),
         "source_numeric_record_count": len(numerical_rows),
@@ -270,6 +278,7 @@ def _summarize_molecule(
         "source_numerical_examples": numerical_examples,
         "source_numerical_included_in_llm_text": include_numerical,
     }
+    return attach_minimal_evidence(row)
 
 
 def _activity_comment(

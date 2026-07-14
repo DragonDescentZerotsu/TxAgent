@@ -12,10 +12,15 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from openai import OpenAI
-import requests
-
+from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.json_utils import parse_json_content
+from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
+from tools.chembl_tool.common.reasoning_validation import (
+    call_with_json_validation,
+    structured_response_is_valid,
+    validated_branch_content,
+)
 from tools.chembl_tool.tasks.dili.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
@@ -123,12 +128,13 @@ def main(argv: list[str] | None = None) -> int:
     if not api_key:
         raise SystemExit(f"Missing API key env var: {args.api_key_env}")
 
-    client = DeepSeekClient(
+    client = OpenAICompatibleClient(
         api_key=api_key,
         base_url=args.base_url,
         model=args.model,
         timeout_s=args.timeout_s,
         max_tokens=args.max_tokens,
+        temperature=args.temperature,
         tool_service_url=args.tool_service_url,
         enable_group_tools=not args.disable_group_tools,
         max_tool_rounds=args.max_tool_rounds,
@@ -239,234 +245,8 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-class DeepSeekClient:
-    def __init__(
-        self,
-        *,
-        api_key: str,
-        base_url: str,
-        model: str,
-        timeout_s: int,
-        max_tokens: int,
-        tool_service_url: str,
-        enable_group_tools: bool,
-        max_tool_rounds: int,
-        reasoning_effort: str,
-        enable_thinking: bool,
-    ):
-        self.client = OpenAI(api_key=api_key, base_url=base_url.rstrip("/"), timeout=timeout_s)
-        self.model = model
-        self.max_tokens = max_tokens
-        self.tool_service = ToolServiceClient(tool_service_url, timeout_s=timeout_s)
-        self.enable_group_tools = enable_group_tools
-        self.max_tool_rounds = max_tool_rounds
-        self.reasoning_effort = reasoning_effort
-        self.enable_thinking = enable_thinking
-
-    def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
-        working_messages: list[Any] = list(messages)
-        responses = []
-        for _ in range(2):
-            response = self._create_completion(working_messages)
-            responses.append(response)
-            message = response.choices[0].message
-            content = message.content or "{}"
-            parsed = _parse_json_content(content)
-            if not _needs_json_retry(parsed, content):
-                return {
-                    "content": parsed,
-                    "raw_content": content,
-                    "reasoning_content": getattr(message, "reasoning_content", "") or "",
-                    "tool_calls": [],
-                    "tool_results": [],
-                    "messages": _trace_messages(working_messages, message),
-                    "usage": _sum_usage(responses),
-                    "model": response.model or self.model,
-                    "id": response.id or "",
-                }
-            working_messages.append(_assistant_message_to_chat(message))
-            working_messages.append(_json_retry_message())
-        response = responses[-1]
-        message = response.choices[0].message
-        content = message.content or "{}"
-        parsed = _parse_json_content(content)
-        return {
-            "content": parsed,
-            "raw_content": content,
-            "reasoning_content": getattr(message, "reasoning_content", "") or "",
-            "tool_calls": [],
-            "tool_results": [],
-            "messages": _trace_messages(working_messages, message),
-            "usage": _sum_usage(responses),
-            "model": response.model or self.model,
-            "id": response.id or "",
-        }
-
-    def chat_json_with_group_tools(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
-        if not self.enable_group_tools:
-            return self.chat_json(messages)
-        return self.chat_json_with_tools(
-            messages,
-            tools=GROUP_REASONING_TOOLS,
-            allowed_tool_names={"properties_compare", "mmp_structure_compare"},
-        )
-
-    def chat_json_with_tools(
-        self,
-        messages: list[dict[str, Any]],
-        *,
-        tools: list[dict[str, Any]],
-        allowed_tool_names: set[str],
-        first_tool_choice: Any = "auto",
-    ) -> dict[str, Any]:
-        working_messages: list[Any] = list(messages)
-        trace_messages = [_json_safe_message(message) for message in messages]
-        tool_results: list[dict[str, Any]] = []
-        responses = []
-        json_retry_count = 0
-        for round_index in range(max(0, self.max_tool_rounds) + 1):
-            response = self._create_completion(
-                working_messages,
-                tools=tools,
-                tool_choice=first_tool_choice if round_index == 0 else "auto",
-            )
-            responses.append(response)
-            message = response.choices[0].message
-            working_messages.append(message)
-            trace_messages.append(_assistant_message_to_trace(message))
-            tool_calls = message.tool_calls or []
-            if not tool_calls:
-                content = message.content or "{}"
-                parsed = _parse_json_content(content)
-                if _needs_json_retry(parsed, content) and json_retry_count < 2:
-                    json_retry_count += 1
-                    retry_request = _json_retry_message()
-                    working_messages.append(retry_request)
-                    trace_messages.append(retry_request)
-                    continue
-                return {
-                    "content": parsed,
-                    "raw_content": content,
-                    "reasoning_content": getattr(message, "reasoning_content", "") or "",
-                    "tool_calls": _tool_call_summaries(responses),
-                    "tool_results": tool_results,
-                    "messages": trace_messages,
-                    "usage": _sum_usage(responses),
-                    "model": response.model or self.model,
-                    "id": response.id or "",
-                }
-            for tool_call in tool_calls:
-                result = self.tool_service.invoke_function_call(tool_call, allowed_tool_names=allowed_tool_names)
-                tool_results.append(result)
-                tool_message = {
-                    "role": "tool",
-                    "tool_call_id": tool_call.id,
-                    "content": result["content"],
-                }
-                working_messages.append(tool_message)
-                trace_messages.append({**tool_message, "name": result.get("tool_name"), "tool_result": result})
-
-        final_request = {
-            "role": "user",
-            "content": (
-                "You have reached the maximum allowed tool-call rounds. "
-                "Return the required JSON now using the available tool results."
-            ),
-        }
-        working_messages.append(final_request)
-        trace_messages.append(final_request)
-        response = self._create_completion(working_messages)
-        responses.append(response)
-        message = response.choices[0].message
-        content = message.content or "{}"
-        trace_messages.append(_assistant_message_to_trace(message))
-        return {
-            "content": _parse_json_content(content),
-            "raw_content": content,
-            "reasoning_content": getattr(message, "reasoning_content", "") or "",
-            "tool_calls": _tool_call_summaries(responses),
-            "tool_results": tool_results,
-            "messages": trace_messages,
-            "usage": _sum_usage(responses),
-            "model": response.model or self.model,
-            "id": response.id or "",
-        }
-
-    def _create_completion(
-        self,
-        messages: list[Any],
-        *,
-        tools: list[dict[str, Any]] | None = None,
-        tool_choice: Any = None,
-    ):
-        kwargs: dict[str, Any] = {
-            "model": self.model,
-            "messages": messages,
-            "max_tokens": self.max_tokens,
-            "response_format": {"type": "json_object"},
-        }
-        if self.reasoning_effort:
-            kwargs["reasoning_effort"] = self.reasoning_effort
-        if self.enable_thinking:
-            kwargs["extra_body"] = {"thinking": {"type": "enabled"}}
-        if tools is not None:
-            kwargs["tools"] = tools
-        if tool_choice is not None:
-            kwargs["tool_choice"] = tool_choice
-        return self.client.chat.completions.create(**kwargs)
-
-
-class ToolServiceClient:
-    def __init__(self, base_url: str, *, timeout_s: int):
-        self.base_url = base_url.rstrip("/")
-        self.timeout_s = timeout_s
-
-    def invoke_function_call(self, tool_call: Any, *, allowed_tool_names: set[str]) -> dict[str, Any]:
-        tool_name = tool_call.function.name
-        if tool_name not in allowed_tool_names:
-            return {"tool_name": tool_name, "status": "error", "content": f"Tool `{tool_name}` is not allowed."}
-        try:
-            arguments = json.loads(tool_call.function.arguments or "{}")
-        except json.JSONDecodeError as exc:
-            return {"tool_name": tool_name, "status": "error", "content": f"Invalid JSON tool arguments: {exc}"}
-
-        response = requests.post(
-            f"{self.base_url}/tools/{tool_name}/invoke",
-            json={
-                "tool_name": tool_name,
-                "version": "v1",
-                "input": arguments,
-                "options": {"timeout_s": self.timeout_s, "return_debug": False},
-            },
-            timeout=self.timeout_s,
-        )
-        if response.status_code >= 400:
-            content = f"{tool_name} HTTP error {response.status_code}: {response.text[:1000]}"
-            return {"tool_name": tool_name, "status": "error", "arguments": arguments, "content": content}
-        payload = response.json()
-        output = payload.get("output") or {}
-        warnings = payload.get("warnings") or []
-        errors = payload.get("errors") or []
-        content_parts = [f"[{tool_name}]"]
-        if payload.get("status") == "ok":
-            content_parts.append(str(output.get("text") or "No LLM-readable tool text returned."))
-            if warnings:
-                content_parts.append("Warnings: " + "; ".join(str(item) for item in warnings))
-        else:
-            content_parts.append("Tool returned error: " + json.dumps(errors, ensure_ascii=False))
-        return {
-            "tool_name": tool_name,
-            "status": payload.get("status", "error"),
-            "arguments": arguments,
-            "content": "\n".join(content_parts),
-            "warnings": warnings,
-            "errors": errors,
-            "latency_ms": (payload.get("metadata") or {}).get("latency_ms"),
-        }
-
-
 def _run_parallel_reasoning(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     groups: list[dict[str, Any]],
     *,
@@ -512,7 +292,7 @@ def _run_parallel_reasoning(
 
 
 def _reason_single_molecule(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -557,16 +337,25 @@ def _reason_single_molecule(
         },
         {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
     ]
-    response = client.chat_json_with_tools(
+    response = call_with_json_validation(
+        lambda retry_messages: client.chat_json_with_tools(
+            retry_messages,
+            tools=SINGLE_MOLECULE_TOOLS,
+            allowed_tool_names={"molecule_properties"},
+            first_tool_choice="auto",
+        ),
         messages,
-        tools=SINGLE_MOLECULE_TOOLS,
-        allowed_tool_names={"molecule_properties"},
-        first_tool_choice="auto",
+        required_fields=("confidence", "reasoning_summary"),
+        branch_name="single-molecule",
     )
-    return {"analysis_id": "single_molecule", "status": "ok", "llm": response}
+    return {
+        "analysis_id": "single_molecule",
+        "status": "ok" if structured_response_is_valid(response) else "error",
+        "llm": response,
+    }
 
 
-def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     messages = [
         {
             "role": "system",
@@ -578,10 +367,19 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
         },
         {"role": "user", "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False)},
     ]
-    response = client.chat_json_with_group_tools(messages)
+    response = call_with_json_validation(
+        lambda retry_messages: client.chat_json_with_optional_tools(
+            retry_messages,
+            tools=GROUP_REASONING_TOOLS,
+            allowed_tool_names={"properties_compare", "mmp_structure_compare"},
+        ),
+        messages,
+        required_fields=("transferability", "confidence", "reasoning_summary"),
+        branch_name="group",
+    )
     return {
         "group_id": group["group_id"],
-        "status": "ok",
+        "status": "ok" if structured_response_is_valid(response) else "error",
         "tier": group["tier"],
         "endpoint_group": group["endpoint_group"],
         "n_neighbors": len(group["neighbors"]),
@@ -590,7 +388,7 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
 
 
 def _run_final_reasoning(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
@@ -601,13 +399,13 @@ def _run_final_reasoning(
         "retrieval_coverage": retrieval["coverage"],
         "single_molecule_analysis": {
             "status": single_output.get("status"),
-            "content": (single_output.get("llm") or {}).get("content"),
+            "content": validated_branch_content(single_output),
         },
         "group_reasoning_outputs": [
             {
                 "group_id": item.get("group_id"),
                 "status": item.get("status"),
-                "content": (item.get("llm") or {}).get("content"),
+                "content": validated_branch_content(item),
             }
             for item in group_outputs
         ],
@@ -638,8 +436,14 @@ def _run_final_reasoning(
         },
         {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
     ]
-    response = client.chat_json(messages)
-    return {"status": "ok", "llm": response}
+    response = call_with_json_validation(
+        client.chat_json,
+        messages,
+        required_fields=("dili_prediction",),
+        allowed_values={"dili_prediction": {DILI_POSITIVE_PREDICTION, DILI_NEGATIVE_PREDICTION}},
+        branch_name="final",
+    )
+    return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
 
 
 def _final_instructions() -> list[str]:
@@ -687,6 +491,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
         ],
         "instructions": [
             "Use only this group's evidence.",
+            "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
             "Assess structural and property transferability from each neighbor to the query.",
             "Low-similarity analogs are intentionally included. Explicitly judge whether they are transferable.",
             "Do not use distant_analog or very_distant_analog neighbors as positive or negative DILI evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
@@ -695,7 +500,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
             "Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.",
             "Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.",
-            "Infer evidence direction and strength from the group tier/endpoint_group plus the raw evidence rows; make your own transferability judgment.",
+            "Infer evidence direction and strength from the group tier/endpoint_group plus the minimal evidence records; make your own transferability judgment.",
             "For Tier 1, distinguish human/clinical DILI, severe liver outcome, regulatory liver signal, and human liver lab monitoring.",
             "For Tier 2, distinguish hepatic necrosis/pathology or liver clinical chemistry from liver-weight-only evidence.",
             "For Tier 3, distinguish hepatobiliary/cholestasis transporters from generic transporters.",
@@ -744,24 +549,7 @@ def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
 
 
 def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "assay_chembl_id",
-        "assay_tier",
-        "standard_type",
-        "standard_relation",
-        "standard_value",
-        "standard_units",
-        "pchembl_value",
-        "activity_comment",
-        "data_validity_comment",
-        "assay_description",
-        "target_pref_name",
-        "target_genes",
-        "organism",
-        "confidence_score",
-        "relationship_type",
-    ]
-    return {field: row.get(field, "") for field in fields}
+    return evidence_for_llm(row)
 
 
 def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
@@ -841,99 +629,7 @@ def _clean_activity_value(activity: dict[str, Any]) -> dict[str, Any]:
 
 
 def _parse_json_content(content: str) -> Any:
-    try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        start = content.find("{")
-        end = content.rfind("}")
-        if start >= 0 and end > start:
-            return json.loads(content[start : end + 1])
-        return {"unparsed_text": content}
-
-
-def _needs_json_retry(parsed: Any, raw_content: str) -> bool:
-    return not raw_content.strip() or (isinstance(parsed, dict) and "unparsed_text" in parsed)
-
-
-def _json_retry_message() -> dict[str, str]:
-    return {
-        "role": "user",
-        "content": "Your previous response was empty or not valid JSON. Return only the required JSON object now.",
-    }
-
-
-def _assistant_message_to_chat(message: Any) -> dict[str, str]:
-    content = getattr(message, "content", None) or ""
-    return {"role": "assistant", "content": content}
-
-
-def _usage_dict(response: Any) -> dict[str, Any]:
-    usage = getattr(response, "usage", None)
-    if usage is None:
-        return {}
-    return usage.model_dump(mode="json") if hasattr(usage, "model_dump") else dict(usage)
-
-
-def _sum_usage(responses: list[Any]) -> dict[str, int]:
-    totals: dict[str, int] = {}
-    for response in responses:
-        for key, value in _usage_dict(response).items():
-            if isinstance(value, int):
-                totals[key] = totals.get(key, 0) + value
-    return totals
-
-
-def _tool_call_summaries(responses: list[Any]) -> list[dict[str, Any]]:
-    summaries: list[dict[str, Any]] = []
-    for response in responses:
-        message = response.choices[0].message
-        for tool_call in message.tool_calls or []:
-            summaries.append(
-                {
-                    "id": tool_call.id,
-                    "name": tool_call.function.name,
-                    "arguments": tool_call.function.arguments,
-                }
-            )
-    return summaries
-
-
-def _trace_messages(messages: list[dict[str, Any]], assistant_message: Any) -> list[dict[str, Any]]:
-    trace_messages = [_json_safe_message(message) for message in messages]
-    trace_messages.append(_assistant_message_to_trace(assistant_message))
-    return trace_messages
-
-
-def _assistant_message_to_trace(message: Any) -> dict[str, Any]:
-    trace: dict[str, Any] = {"role": "assistant"}
-    content = getattr(message, "content", None)
-    if content:
-        trace["content"] = content
-    reasoning = getattr(message, "reasoning_content", None)
-    if reasoning:
-        trace["reasoning"] = reasoning
-    tool_calls = getattr(message, "tool_calls", None) or []
-    if tool_calls:
-        trace["tool_calls"] = [
-            {
-                "id": tool_call.id,
-                "type": tool_call.type,
-                "function": {
-                    "name": tool_call.function.name,
-                    "arguments": tool_call.function.arguments,
-                },
-            }
-            for tool_call in tool_calls
-        ]
-    return trace
-
-
-def _json_safe_message(message: Any) -> dict[str, Any]:
-    if isinstance(message, dict):
-        return json.loads(json.dumps(message, ensure_ascii=False, default=str))
-    if hasattr(message, "model_dump"):
-        return message.model_dump(mode="json")
-    return {"role": "unknown", "content": str(message)}
+    return parse_json_content(content)
 
 
 def _write_trace_jsonl(
@@ -995,7 +691,7 @@ def _read_jsonl_record(path: Path, index: int) -> dict[str, Any]:
     raise SystemExit(f"No record at index {index}: {path}")
 
 
-def _resume_final_from_run_dir(run_dir: Path, client: DeepSeekClient) -> int:
+def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
     retrieval = json.loads((run_dir / "retrieval.json").read_text(encoding="utf-8"))
     single_output = json.loads((run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8"))
     group_outputs = [
@@ -1075,6 +771,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--max-groups", type=int, default=0, help="Debug limit; 0 means all groups with neighbors.")
     parser.add_argument("--timeout-s", type=int, default=180)
     parser.add_argument("--max-tokens", type=int, default=4096)
+    parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument(
         "--reasoning-effort",

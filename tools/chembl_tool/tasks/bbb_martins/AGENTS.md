@@ -2,6 +2,12 @@
 
 本文件只记录 BBB_Martins 的 task-specific 语义：label、当前数据版本、BBB evidence tier、过滤规则和 reasoning 边界。通用 ChEMBL workflow、wrapper 结构、batch/resume、viewer、cost 和目录规范统一记录在仓库根 `AGENTS.md`。
 
+当前论文路径由 `experiment_config.py` 将细粒度 ChEMBL endpoint groups 合并为 4 个 mechanism families：
+direct brain exposure、passive permeability、efflux transport 和 influx transport。`full_mechanism` 只为这 4
+个 family 启动并行 reasoning；`full_flat` 使用同一 evidence union 并合成一个 branch。下文按
+`Tier.endpoint_group` 分支的说明只描述旧 `run_reasoning_pipeline.py` native runner，不是新增任务的模板。
+Starling 当前只提供 direct evidence，因此只进入 direct condition，不假装补齐其它 BBB families。
+
 ## Task 定义
 
 目标不是训练 BBB classifier，而是构建可审计的 BBB evidence library：给定 query molecule，先预取相似分子的 BBB / permeability / transporter evidence，再交给 reasoning LLM 判断 analog evidence 是否能 transfer 到 query molecule。
@@ -14,7 +20,7 @@ Y=0 -> bbb_prediction=fail
 final summary 必须在 pass/fail 中二选一；不再允许 uncertain prediction
 ```
 
-当前边界：
+Legacy native runner 边界：
 
 ```text
 ChEMBL neighbor retrieval 不是 DeepSeek 可调用 tool。
@@ -32,6 +38,9 @@ DeepSeek single-molecule analysis 可调用的工具只有：
 ## Task-specific 文件
 
 ```text
+experiment_config.py
+  Paper-facing direct、full_flat 和 4-family full_mechanism retrieval view；不包含 label policy。
+
 endpoint_groups.py
   BBB Tier.endpoint_group、evidence_direction、evidence_strength 规则。
 
@@ -126,13 +135,13 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/
 ```
 
-## BBB reasoning pipeline
+## Legacy native BBB reasoning pipeline
 
 ```text
 1. 读取 test_efflux.jsonl 的 query molecule。
-2. 调用 retrieve_neighbors.py 预取每个 Tier.endpoint_group 的 ChEMBL neighbor evidence。
-3. 并发执行 single-molecule analysis；DeepSeek 只可调用 molecule_properties。
-4. 并发执行 group-level analysis；DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
+2. 调用 retrieve_neighbors.py 预取每个 source-local Tier.endpoint_group 的 ChEMBL neighbor evidence。
+3. 并发执行 single-molecule analysis；该历史 runner 中 DeepSeek 只可调用 molecule_properties。
+4. 并发执行 endpoint-group analysis；该历史 runner 中 DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
 5. final summary 读取 single + all group outputs，不暴露任何 tool。
 6. 保存 retrieval/single/group/final/trace/manifest。
 ```

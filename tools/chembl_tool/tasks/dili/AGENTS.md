@@ -4,6 +4,11 @@
 endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、tool service、batch/resume、
 trace viewer、输出目录和成本规范仍以仓库根 `AGENTS.md` 为准。
 
+DILI 当前不在四任务、21-condition 的 paper matrix 中，也还没有 `experiment_config.py`。本文件的大部分运行
+说明用于复现 2026-06 的 native endpoint-group runner。若将 DILI 纳入当前论文框架，必须先把细粒度 groups
+映射到少量、数据源无关的 mechanism families，再由通用 paper runner 做 family-level reasoning；不得直接
+把旧 endpoint groups 一一升级成论文分支。
+
 ## Task 定义
 
 目标不是训练一个普通 hepatotoxicity QSAR classifier，而是构建可审计的 DILI evidence retrieval
@@ -35,7 +40,7 @@ TDC DILI / LTKB / DILIrank 类型标签是 human DILI concern 的 drug-level lab
 体外 hepatocyte toxicity、任意 CYP/transporter inhibition 或 generic cytotoxicity。Reasoning 时应
 把直接人类 DILI evidence、体内肝损伤 phenotype、关键机制 liability 和弱 proxy 严格分开。
 
-## 当前边界
+## Legacy native runner 边界
 
 ```text
 ChEMBL neighbor retrieval 不是 DeepSeek 可调用 tool。
@@ -79,13 +84,13 @@ build_evidence_library.py
   从 DILI assay candidates + activity evidence 构建 molecule-level evidence library 和 neighbor index。
 
 retrieve_neighbors.py
-  对每个 Tier.endpoint_group 做 analog retrieval。
+  旧 native runner 对每个 source-local Tier.endpoint_group 做 analog retrieval。
 
 chembl_exact_context.py
   exact-query ChEMBL context wrapper。benchmark 默认不开启，避免 retrospective leakage。
 
 run_reasoning_pipeline.py
-  DILI-specific retrieval prefetch、single-molecule branch、group-level 并发 reasoning、final summary、
+  旧 DILI-specific retrieval prefetch、single-molecule branch、endpoint-group 并发 reasoning、final summary、
   trace 保存和 --resume-final-from-run-dir final-only rerun。
 
 run_reasoning_batch.py
@@ -515,7 +520,8 @@ uvicorn tools.service.app:app on that port and waits for health before running t
 2. Benchmark 默认不要开启 --enable-chembl-exact-context，避免 same-molecule ChEMBL evidence 泄漏。
 3. 下一轮建议从 6-sample smoke 扩到 20-sample balanced smoke，重点看 false positive/false negative traces。
 4. 如果 GLM-5.2 跑 DILI，沿用根 AGENTS.md 的 --disable-thinking / reasoning_effort="" 兼容参数。
-5. Starling 替换 ChEMBL 时保留同一套 Tier.endpoint_group schema，逐 tier 单独获取 evidence，不要再细切。
+5. Starling acquisition 以冻结后的 DILI mechanism family 为 task/prompt 粒度；endpoint subtype、species、
+   dose 和 assay context 作为 family 内 schema 字段。旧 Tier.endpoint_group 只做接入审计，不逐组运行 Starling。
 ```
 
 ## DILI evidence 总原则
@@ -536,7 +542,8 @@ Tier 5: reactive metabolite, bioactivation and immune/idiosyncratic liability
 Tier 6: hepatic cell injury models and exposure/property modifiers
 ```
 
-这些 tier 未来可以分别对应 Starling evidence acquisition。不要把 mechanism 切得过细，例如不要把
+这些 tier 可以先归并为未来 Starling acquisition 的 mechanism families。原则上每个 family 对应一个
+Starling task；不要把 mechanism 切得过细，例如不要把
 BSEP、MRP2、NTCP、MDR3 各自拆成单独 tier；它们属于同一条 cholestasis / hepatobiliary transporter
 机制轴。也不要把 ROS、ATP、MMP、ER stress 全拆成单独 tier；它们属于 organelle stress 机制轴。
 
@@ -1087,13 +1094,13 @@ Tier 6.exposure_dose_or_property_context
    liver injury/toxicity。
 ```
 
-## Reasoning pipeline 约束
+## Legacy native reasoning pipeline 约束
 
 ```text
 1. 读取 DILI test JSONL 的 query molecule。
-2. 调用 retrieve_neighbors.py 预取每个 Tier.endpoint_group 的 ChEMBL neighbor evidence。
-3. 并发执行 single-molecule analysis；DeepSeek 只可调用 molecule_properties。
-4. 并发执行 group-level analysis；DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
+2. 调用 retrieve_neighbors.py 预取每个 source-local Tier.endpoint_group 的 ChEMBL neighbor evidence。
+3. 并发执行 single-molecule analysis；该历史 runner 中 DeepSeek 只可调用 molecule_properties。
+4. 并发执行 endpoint-group analysis；该历史 runner 中 DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
 5. final summary 读取 single + all group outputs，不暴露任何 tool。
 6. 保存 retrieval/single/group/final/trace/manifest。
 ```

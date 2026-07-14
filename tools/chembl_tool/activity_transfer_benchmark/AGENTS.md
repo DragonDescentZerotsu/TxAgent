@@ -1953,11 +1953,16 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
   --progress-every 100
 ```
 
-## 后续优先实验
+## 历史 3K benchmark 后续计划
+
+下面是最初完成 `dynamic_v1_llm_3k` 时记录的消融清单，不再代表当前项目优先级。第 4 项 learned
+classifier 已由本文件前面的 endpoint-disjoint、HF proper-assay-transfer 和 Oral Bioavailability MLP
+实验实质完成；不得因为这份旧清单再次把它登记为“尚未开始”。其余三项只有在重新进入该 3K
+stress-test 研究问题时才执行，当前优先级以论文执行计划为准。
 
 ```text
 1. no-tools ablation：同一个 3K set，不允许工具调用。
 2. no-MCS-in-prompt ablation：保留 Tanimoto 和 assay context，移除 MCS coverage。
 3. full-distribution eval：从 dynamic_v1 自然分布抽样，和 full-data Tanimoto threshold 更公平比较。
-4. learned classifier：用 Tanimoto、MCS、assay dynamic range、endpoint metadata 做轻量模型 baseline。
+4. learned classifier：已由后续 MLP 系列实验取代并完成，不再是待办项。
 ```

@@ -6,6 +6,7 @@ from pathlib import Path
 
 from tools.chembl_tool.tasks.bbb_martins.build_evidence_library import DEFAULT_OUT_DIR
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
+    _is_exact_same_molecule,
     load_index,
     main as run_retrieval,
     retrieve_neighbors,

@@ -12,10 +12,30 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from openai import OpenAI
-import requests
-
+from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retrieve_experiment_view
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.identity_blind import (
+    prepare_identity_blind_final_retrieval,
+    prepare_prefetched_final_retrieval,
+    prepare_reasoning_retrieval,
+    sanitize_identity_blind_branch_outputs,
+)
+from tools.chembl_tool.common.json_utils import parse_json_content
+from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
+from tools.chembl_tool.common.reasoning_calls import (
+    bound_group_prompt_payload,
+    call_group_branch,
+    call_single_molecule_branch,
+    load_frozen_single_analysis,
+)
+from tools.chembl_tool.common.reasoning_validation import (
+    call_with_json_validation,
+    structured_response_is_valid,
+    validated_branch_content,
+)
+from tools.chembl_tool.common.retrieval_replay import load_retrieval_replay
+from tools.chembl_tool.common.retrieval_ablation import load_reusable_group_outputs
 from tools.chembl_tool.tasks.clintox.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
@@ -24,7 +44,8 @@ from tools.chembl_tool.tasks.clintox.constants import (
     CLINTOX_NEGATIVE_PREDICTION,
     CLINTOX_POSITIVE_PREDICTION,
 )
-from tools.chembl_tool.tasks.clintox.retrieve_neighbors import load_index, retrieve_neighbors
+from tools.chembl_tool.tasks.clintox.experiment_config import get_source_config
+from tools.chembl_tool.tasks.clintox.retrieve_neighbors import load_index
 
 
 DEFAULT_INPUT = "data/processed/ClinTox/test.jsonl"
@@ -123,12 +144,13 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"Missing API key env var: {args.api_key_env}")
 
     if args.resume_final_from_run_dir:
-        client = DeepSeekClient(
+        client = OpenAICompatibleClient(
             api_key=api_key,
             base_url=args.base_url,
             model=args.model,
             timeout_s=args.timeout_s,
             max_tokens=args.max_tokens,
+            temperature=args.temperature,
             tool_service_url=args.tool_service_url,
             enable_group_tools=not args.disable_group_tools,
             max_tool_rounds=args.max_tool_rounds,
@@ -146,18 +168,28 @@ def main(argv: list[str] | None = None) -> int:
     if not query_smiles:
         raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
 
-    _log("loading neighbor index")
-    index = load_index(Path(args.index))
-    _log("retrieving top neighbors by group")
-    retrieval = retrieve_neighbors(
-        query_smiles,
-        index,
-        top_k_per_group=args.top_k_per_group,
-        min_similarity=args.min_similarity,
-    )
+    retrieval = load_retrieval_replay(args.retrieval_replay_run_dir, query_smiles)
+    index = None
+    if retrieval is None and args.experiment_mode != "none":
+        _log("loading neighbor index")
+        index = load_index(Path(args.index))
+    if retrieval is None:
+        _log(f"building retrieval view mode={args.experiment_mode} source={args.retrieval_source}")
+        retrieval = retrieve_experiment_view(
+            query_smiles,
+            index,
+            mode=args.experiment_mode,
+            config=get_source_config(args.retrieval_source) if args.experiment_mode not in {"none", "native"} else None,
+            top_k_per_group=args.top_k_per_group,
+            min_similarity=args.min_similarity,
+            native_groups=args.groups,
+            neighbor_identity_policy=args.neighbor_identity_policy,
+        )
+    else:
+        _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
-    if args.enable_chembl_exact_context:
+    if args.enable_chembl_exact_context and index is not None:
         _log("enriching retrieval with exact ChEMBL context")
         retrieval = enrich_retrieval_with_chembl_context(
             retrieval,
@@ -170,41 +202,61 @@ def main(argv: list[str] | None = None) -> int:
     _log(f"wrote {retrieval_path}")
 
     groups = [group for group in retrieval["groups"] if group.get("neighbors")]
-    if args.groups:
+    if args.groups and args.experiment_mode == "native":
         selected_groups = set(args.groups)
         groups = [group for group in groups if group.get("group_id") in selected_groups]
     if args.max_groups:
         groups = groups[: args.max_groups]
     _log(f"group reasoning calls={len(groups)}")
 
-    client = DeepSeekClient(
+    client = OpenAICompatibleClient(
         api_key=api_key,
         base_url=args.base_url,
         model=args.model,
         timeout_s=args.timeout_s,
         max_tokens=args.max_tokens,
+        temperature=args.temperature,
         tool_service_url=args.tool_service_url,
         enable_group_tools=not args.disable_group_tools,
         max_tool_rounds=args.max_tool_rounds,
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
     )
+    reasoning_retrieval = prepare_reasoning_retrieval(
+        retrieval,
+        client.tool_service,
+        identity_blind=args.identity_blind,
+        harness_prefetch_tools=args.harness_prefetch_tools,
+        prefetched_tool_replay_run_dir=args.prefetched_tool_replay_run_dir,
+    )
+    reasoning_groups = [group for group in reasoning_retrieval["groups"] if group.get("neighbors")]
+    if args.max_groups:
+        reasoning_groups = reasoning_groups[: args.max_groups]
+    frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
+    frozen_groups = load_reusable_group_outputs(args.group_analysis_source_run_dir, retrieval)
 
     single_output, group_outputs = _run_parallel_reasoning(
         client,
-        retrieval,
-        groups,
+        reasoning_retrieval,
+        reasoning_groups,
         max_workers=args.max_workers,
+        single_output=frozen_single,
+        group_outputs=frozen_groups,
     )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
     _log(f"wrote {single_path}")
 
+    raw_group_path = out_dir / "group_reasoning_outputs_raw.jsonl"
+    if args.identity_blind:
+        _write_jsonl(raw_group_path, group_outputs)
+        group_outputs = sanitize_identity_blind_branch_outputs(group_outputs, retrieval)
+        _log(f"wrote {raw_group_path}")
     group_path = out_dir / "group_reasoning_outputs.jsonl"
     _write_jsonl(group_path, group_outputs)
     _log(f"wrote {group_path}")
 
-    final_output = _run_final_reasoning(client, retrieval, single_output, group_outputs)
+    final_output = _run_final_reasoning(client, reasoning_retrieval, single_output, group_outputs)
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     _log(f"wrote {final_path}")
@@ -214,7 +266,7 @@ def main(argv: list[str] | None = None) -> int:
         trace_path,
         query_record=query_record,
         query_index=args.query_index,
-        smiles=query_smiles,
+        smiles="[identity_blind]" if args.identity_blind else query_smiles,
         single_output=single_output,
         group_outputs=group_outputs,
         final_output=final_output,
@@ -226,12 +278,27 @@ def main(argv: list[str] | None = None) -> int:
         "input_jsonl": args.input_jsonl,
         "query_index": args.query_index,
         "smiles_field": args.smiles_field,
+        "experiment_mode": args.experiment_mode,
+        "retrieval_source": args.retrieval_source,
+        "neighbor_identity_policy": args.neighbor_identity_policy,
+        "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
+        "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
+        "identity_blind": args.identity_blind,
+        "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
+        "neighbor_index": args.index if args.experiment_mode != "none" else "",
+        "retrieval_evidence_source": retrieval.get("evidence_source", {}),
         "model": args.model,
         "base_url": args.base_url,
         "tool_service_url": args.tool_service_url,
         "reasoning_effort": args.reasoning_effort,
+        "temperature": args.temperature,
         "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
         "group_tools_enabled": not args.disable_group_tools,
+        "tool_execution_mode": (
+            "harness_prefetch" if args.identity_blind or args.harness_prefetch_tools else "llm_function_call"
+        ),
+        "single_analysis_source_run_dir": args.single_analysis_source_run_dir,
+        "group_analysis_source_run_dir": args.group_analysis_source_run_dir,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
@@ -245,6 +312,7 @@ def main(argv: list[str] | None = None) -> int:
             "retrieval": str(retrieval_path),
             "single_molecule_reasoning_output": str(single_path),
             "group_reasoning_outputs": str(group_path),
+            "group_reasoning_outputs_raw": str(raw_group_path) if args.identity_blind else "",
             "final_reasoning_output": str(final_path),
             "trace_messages": str(trace_path),
         },
@@ -255,234 +323,34 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-class DeepSeekClient:
-    def __init__(
-        self,
-        *,
-        api_key: str,
-        base_url: str,
-        model: str,
-        timeout_s: int,
-        max_tokens: int,
-        tool_service_url: str,
-        enable_group_tools: bool,
-        max_tool_rounds: int,
-        reasoning_effort: str,
-        enable_thinking: bool,
-    ):
-        self.client = OpenAI(api_key=api_key, base_url=base_url.rstrip("/"), timeout=timeout_s)
-        self.model = model
-        self.max_tokens = max_tokens
-        self.tool_service = ToolServiceClient(tool_service_url, timeout_s=timeout_s)
-        self.enable_group_tools = enable_group_tools
-        self.max_tool_rounds = max_tool_rounds
-        self.reasoning_effort = reasoning_effort
-        self.enable_thinking = enable_thinking
-
-    def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
-        response = self._create_completion(messages)
-        message = response.choices[0].message
-        content = message.content or "{}"
-        parsed_content = _parse_json_content(content)
-        trace_messages = [_json_safe_message(message) for message in messages]
-        trace_messages.append(_assistant_message_to_trace(message))
-        return {
-            "content": parsed_content,
-            "raw_content": content,
-            "reasoning_content": getattr(message, "reasoning_content", "") or "",
-            "tool_calls": [],
-            "tool_results": [],
-            "messages": trace_messages,
-            "usage": _usage_dict(response),
-            "model": response.model or self.model,
-            "id": response.id or "",
-        }
-
-    def chat_json_with_group_tools(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
-        if not self.enable_group_tools:
-            return self.chat_json(messages)
-        return self.chat_json_with_tools(
-            messages,
-            tools=GROUP_REASONING_TOOLS,
-            allowed_tool_names={"properties_compare", "mmp_structure_compare"},
-        )
-
-    def chat_json_with_tools(
-        self,
-        messages: list[dict[str, Any]],
-        *,
-        tools: list[dict[str, Any]],
-        allowed_tool_names: set[str],
-        first_tool_choice: Any = "auto",
-    ) -> dict[str, Any]:
-        working_messages: list[Any] = list(messages)
-        trace_messages = [_json_safe_message(message) for message in messages]
-        tool_results: list[dict[str, Any]] = []
-        responses = []
-        for round_index in range(max(0, self.max_tool_rounds) + 1):
-            response = self._create_completion(
-                working_messages,
-                tools=tools,
-                tool_choice=first_tool_choice if round_index == 0 else "auto",
-            )
-            responses.append(response)
-            message = response.choices[0].message
-            working_messages.append(message)
-            trace_messages.append(_assistant_message_to_trace(message))
-            tool_calls = message.tool_calls or []
-            if not tool_calls:
-                content = message.content or "{}"
-                return {
-                    "content": _parse_json_content(content),
-                    "raw_content": content,
-                    "reasoning_content": getattr(message, "reasoning_content", "") or "",
-                    "tool_calls": _tool_call_summaries(responses),
-                    "tool_results": tool_results,
-                    "messages": trace_messages,
-                    "usage": _sum_usage(responses),
-                    "model": response.model or self.model,
-                    "id": response.id or "",
-                }
-            for tool_call in tool_calls:
-                result = self.tool_service.invoke_function_call(tool_call, allowed_tool_names=allowed_tool_names)
-                tool_results.append(result)
-                tool_message = {
-                    "role": "tool",
-                    "tool_call_id": tool_call.id,
-                    "content": result["content"],
-                }
-                working_messages.append(tool_message)
-                trace_messages.append({**tool_message, "name": result.get("tool_name"), "tool_result": result})
-
-        max_round_message = {
-            "role": "user",
-            "content": (
-                "You have reached the maximum allowed tool-call rounds. "
-                "Return the required JSON now using the available tool results."
-            ),
-        }
-        working_messages.append(max_round_message)
-        trace_messages.append(max_round_message)
-        response = self._create_completion(working_messages)
-        responses.append(response)
-        message = response.choices[0].message
-        content = message.content or "{}"
-        trace_messages.append(_assistant_message_to_trace(message))
-        return {
-            "content": _parse_json_content(content),
-            "raw_content": content,
-            "reasoning_content": getattr(message, "reasoning_content", "") or "",
-            "tool_calls": _tool_call_summaries(responses),
-            "tool_results": tool_results,
-            "messages": trace_messages,
-            "usage": _sum_usage(responses),
-            "model": response.model or self.model,
-            "id": response.id or "",
-        }
-
-    def _create_completion(
-        self,
-        messages: list[Any],
-        *,
-        tools: list[dict[str, Any]] | None = None,
-        tool_choice: Any = None,
-    ):
-        kwargs: dict[str, Any] = {
-            "model": self.model,
-            "messages": messages,
-            "max_tokens": self.max_tokens,
-            "response_format": {"type": "json_object"},
-        }
-        if self.reasoning_effort:
-            kwargs["reasoning_effort"] = self.reasoning_effort
-        if self.enable_thinking:
-            kwargs["extra_body"] = {"thinking": {"type": "enabled"}}
-        if tools is not None:
-            kwargs["tools"] = tools
-        if tool_choice is not None:
-            kwargs["tool_choice"] = tool_choice
-        return self.client.chat.completions.create(**kwargs)
-
-
-class ToolServiceClient:
-    def __init__(self, base_url: str, *, timeout_s: int):
-        self.base_url = base_url.rstrip("/")
-        self.timeout_s = timeout_s
-
-    def invoke_function_call(self, tool_call: Any, *, allowed_tool_names: set[str]) -> dict[str, Any]:
-        tool_name = tool_call.function.name
-        if tool_name not in allowed_tool_names:
-            return {
-                "tool_name": tool_name,
-                "status": "error",
-                "content": f"Tool `{tool_name}` is not allowed in this workflow.",
-            }
-        try:
-            arguments = json.loads(tool_call.function.arguments or "{}")
-        except json.JSONDecodeError as exc:
-            return {
-                "tool_name": tool_name,
-                "status": "error",
-                "content": f"Invalid JSON tool arguments: {exc}",
-            }
-
-        response = requests.post(
-            f"{self.base_url}/tools/{tool_name}/invoke",
-            json={
-                "tool_name": tool_name,
-                "version": "v1",
-                "input": arguments,
-                "options": {"timeout_s": self.timeout_s, "return_debug": False},
-            },
-            timeout=self.timeout_s,
-        )
-        if response.status_code >= 400:
-            content = f"{tool_name} HTTP error {response.status_code}: {response.text[:1000]}"
-            return {"tool_name": tool_name, "status": "error", "arguments": arguments, "content": content}
-        payload = response.json()
-        output = payload.get("output") or {}
-        warnings = payload.get("warnings") or []
-        errors = payload.get("errors") or []
-        content_parts = [f"[{tool_name}]"]
-        if payload.get("status") == "ok":
-            content_parts.append(str(output.get("text") or "No LLM-readable tool text returned."))
-            if warnings:
-                content_parts.append("Warnings: " + "; ".join(str(item) for item in warnings))
-        else:
-            content_parts.append("Tool returned error: " + json.dumps(errors, ensure_ascii=False))
-        return {
-            "tool_name": tool_name,
-            "status": payload.get("status", "error"),
-            "arguments": arguments,
-            "content": "\n".join(content_parts),
-            "warnings": warnings,
-            "errors": errors,
-            "latency_ms": (payload.get("metadata") or {}).get("latency_ms"),
-        }
-
-
 def _run_parallel_reasoning(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     groups: list[dict[str, Any]],
     *,
     max_workers: int,
+    single_output: dict[str, Any] | None = None,
+    group_outputs: list[dict[str, Any]] | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    outputs: list[dict[str, Any]] = []
-    single_output: dict[str, Any] | None = None
+    outputs = list(group_outputs or [])
+    reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
             executor.submit(_reason_one_group, client, _llm_query_payload(retrieval["query"]), group): group["group_id"]
             for group in groups
+            if str(group.get("group_id") or "") not in reused_group_ids
         }
-        futures[
-            executor.submit(
-                _reason_single_molecule,
-                client,
-                _llm_query_payload(retrieval["query"]),
-                _clean_query_chembl_context(retrieval.get("query_chembl_context") or {}),
-            )
-        ] = "single_molecule"
+        if single_output is None:
+            futures[
+                executor.submit(
+                    _reason_single_molecule,
+                    client,
+                    _llm_query_payload(retrieval["query"]),
+                    _clean_query_chembl_context(retrieval.get("query_chembl_context") or {}),
+                )
+            ] = "single_molecule"
+        else:
+            _log("reusing frozen single molecule analysis")
         for future in concurrent.futures.as_completed(futures):
             item_id = futures[future]
             try:
@@ -507,7 +375,7 @@ def _run_parallel_reasoning(
 
 
 def _reason_single_molecule(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -516,6 +384,10 @@ def _reason_single_molecule(
         "Assess clinical toxicity prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, electrophilic/reactive functional groups, cationic amphiphilicity, and structural alerts.",
         "Return JSON with clinical_toxicity_prior, physicochemical_risk_prior, reactive_or_structural_alert_prior, exposure_accumulation_prior, confidence, reasoning_summary, property_drivers, caveats.",
     ]
+    if query.get("prefetched_molecule_properties"):
+        instructions[0] = "Use the harness-prefetched molecule_properties result."
+        if query.get("identity_hidden"):
+            instructions[0] += " Do not identify or name the query."
     payload: dict[str, Any] = {
         "task": "Single-molecule clinical toxicity plausibility analysis.",
         "query": query,
@@ -543,7 +415,13 @@ def _reason_single_molecule(
             "content": (
                 "You are a medicinal chemistry clinical toxicity single-molecule analyst. "
                 "Only analyze the query molecule itself, without analog evidence. "
-                "You may call exactly one tool: molecule_properties. Return only valid JSON."
+                + (
+                    "The harness already supplied molecule_properties; do not call tools. "
+                    + ("Do not infer query identity. " if query.get("identity_hidden") else "")
+                    if query.get("prefetched_molecule_properties")
+                    else "You may call exactly one tool: molecule_properties. "
+                )
+                + "Return only valid JSON."
             ),
         },
         {
@@ -551,28 +429,33 @@ def _reason_single_molecule(
             "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
-    response = client.chat_json_with_tools(
+    response = call_single_molecule_branch(
+        client,
         messages,
+        query=query,
         tools=SINGLE_MOLECULE_TOOLS,
-        allowed_tool_names={"molecule_properties"},
-        first_tool_choice="auto",
     )
     return {
         "analysis_id": "single_molecule",
-        "status": "ok",
+        "status": "ok" if structured_response_is_valid(response) else "error",
         "llm": response,
     }
 
 
-def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     messages = [
         {
             "role": "system",
             "content": (
                 "You are a medicinal chemistry clinical toxicity analog evidence analyst. "
                 "Reason about whether analog evidence in one endpoint group is transferable to the query molecule. "
-                "You may call the provided molecule comparison tools when structural or property differences matter. "
-                "Return only valid JSON."
+                + (
+                    "Use the harness-prefetched comparison results; do not call tools. "
+                    + ("Do not infer query identity. " if group.get("identity_blind") else "")
+                    if group.get("tools_prefetched") or group.get("identity_blind")
+                    else "You may call the provided molecule comparison tools when structural or property differences matter. "
+                )
+                + "Return only valid JSON."
             ),
         },
         {
@@ -580,10 +463,15 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
             "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False),
         },
     ]
-    response = client.chat_json_with_group_tools(messages)
+    response = call_group_branch(
+        client,
+        messages,
+        group=group,
+        tools=GROUP_REASONING_TOOLS,
+    )
     return {
         "group_id": group["group_id"],
-        "status": "ok",
+        "status": "ok" if structured_response_is_valid(response) else "error",
         "tier": group["tier"],
         "endpoint_group": group["endpoint_group"],
         "n_neighbors": len(group["neighbors"]),
@@ -592,7 +480,7 @@ def _reason_one_group(client: DeepSeekClient, query: dict[str, Any], group: dict
 
 
 def _run_final_reasoning(
-    client: DeepSeekClient,
+    client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
@@ -614,13 +502,13 @@ def _run_final_reasoning(
                     "retrieval_coverage": retrieval["coverage"],
                     "single_molecule_analysis": {
                         "status": single_output.get("status"),
-                        "content": (single_output.get("llm") or {}).get("content"),
+                        "content": validated_branch_content(single_output),
                     },
                     "group_reasoning_outputs": [
                         {
                             "group_id": item.get("group_id"),
                             "status": item.get("status"),
-                            "content": (item.get("llm") or {}).get("content"),
+                            "content": validated_branch_content(item),
                         }
                         for item in group_outputs
                     ],
@@ -668,12 +556,18 @@ def _run_final_reasoning(
             ),
         },
     ]
-    response = client.chat_json(messages)
-    return {"status": "ok", "llm": response}
+    response = call_with_json_validation(
+        client.chat_json,
+        messages,
+        required_fields=("clintox_prediction",),
+        allowed_values={"clintox_prediction": {CLINTOX_POSITIVE_PREDICTION, CLINTOX_NEGATIVE_PREDICTION}},
+        branch_name="final",
+    )
+    return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
 
 
 def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
-    return {
+    return bound_group_prompt_payload({
         "task": "Group-level clinical toxicity analog transferability analysis.",
         "query": query,
         "group": {
@@ -688,6 +582,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
                 "canonical_smiles": neighbor["canonical_smiles"],
                 "similarity": neighbor["similarity"],
                 "similarity_bucket": neighbor["similarity_bucket"],
+                "prefetched_comparisons": neighbor.get("prefetched_comparisons") or [],
                 "evidence_rows": [_clean_evidence_row(row) for row in neighbor["evidence_rows"]],
                 "shared_assay_context": _clean_shared_assay_context(neighbor.get("shared_assay_context") or {}),
             }
@@ -695,6 +590,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
         ],
         "instructions": [
             "Use only this group's evidence.",
+            "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
             "Assess structural transferability from neighbors to the query.",
             "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
             "Do not use distant_analog or very_distant_analog neighbors as positive or negative clinical toxicity evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
@@ -741,35 +637,28 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             ],
             "caveats": ["string"],
         },
-    }
+    })
 
 
 def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
-    return {
+    if query.get("identity_hidden"):
+        return {
+            "molecule_id": "query",
+            "identity_hidden": True,
+            "prefetched_molecule_properties": query.get("prefetched_molecule_properties") or {},
+        }
+    payload = {
         "input_smiles": query.get("input_smiles", ""),
         "canonical_smiles": query.get("canonical_smiles", ""),
     }
+    if query.get("prefetched_molecule_properties"):
+        payload["tools_prefetched"] = True
+        payload["prefetched_molecule_properties"] = query["prefetched_molecule_properties"]
+    return payload
 
 
 def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "assay_chembl_id",
-        "assay_tier",
-        "standard_type",
-        "standard_relation",
-        "standard_value",
-        "standard_units",
-        "pchembl_value",
-        "activity_comment",
-        "data_validity_comment",
-        "assay_description",
-        "target_pref_name",
-        "target_genes",
-        "organism",
-        "confidence_score",
-        "relationship_type",
-    ]
-    return {field: row.get(field, "") for field in fields}
+    return evidence_for_llm(row)
 
 
 def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
@@ -849,77 +738,7 @@ def _clean_activity_value(activity: dict[str, Any]) -> dict[str, Any]:
 
 
 def _parse_json_content(content: str) -> Any:
-    try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        start = content.find("{")
-        end = content.rfind("}")
-        if start >= 0 and end > start:
-            return json.loads(content[start : end + 1])
-        return {"unparsed_text": content}
-
-
-def _usage_dict(response: Any) -> dict[str, Any]:
-    usage = getattr(response, "usage", None)
-    if usage is None:
-        return {}
-    return usage.model_dump(mode="json") if hasattr(usage, "model_dump") else dict(usage)
-
-
-def _sum_usage(responses: list[Any]) -> dict[str, int]:
-    totals: dict[str, int] = {}
-    for response in responses:
-        for key, value in _usage_dict(response).items():
-            if isinstance(value, int):
-                totals[key] = totals.get(key, 0) + value
-    return totals
-
-
-def _tool_call_summaries(responses: list[Any]) -> list[dict[str, Any]]:
-    summaries: list[dict[str, Any]] = []
-    for response in responses:
-        message = response.choices[0].message
-        for tool_call in message.tool_calls or []:
-            summaries.append(
-                {
-                    "id": tool_call.id,
-                    "name": tool_call.function.name,
-                    "arguments": tool_call.function.arguments,
-                }
-            )
-    return summaries
-
-
-def _assistant_message_to_trace(message: Any) -> dict[str, Any]:
-    trace: dict[str, Any] = {"role": "assistant"}
-    content = getattr(message, "content", None)
-    if content:
-        trace["content"] = content
-    reasoning = getattr(message, "reasoning_content", None)
-    if reasoning:
-        trace["reasoning"] = reasoning
-    tool_calls = getattr(message, "tool_calls", None) or []
-    if tool_calls:
-        trace["tool_calls"] = [
-            {
-                "id": tool_call.id,
-                "type": tool_call.type,
-                "function": {
-                    "name": tool_call.function.name,
-                    "arguments": tool_call.function.arguments,
-                },
-            }
-            for tool_call in tool_calls
-        ]
-    return trace
-
-
-def _json_safe_message(message: Any) -> dict[str, Any]:
-    if isinstance(message, dict):
-        return json.loads(json.dumps(message, ensure_ascii=False, default=str))
-    if hasattr(message, "model_dump"):
-        return message.model_dump(mode="json")
-    return {"role": "unknown", "content": str(message)}
+    return parse_json_content(content)
 
 
 def _write_trace_jsonl(
@@ -986,7 +805,7 @@ def _read_jsonl_record(path: Path, index: int) -> dict[str, Any]:
     raise SystemExit(f"No record at index {index}: {path}")
 
 
-def _resume_final_from_run_dir(run_dir: Path, client: DeepSeekClient) -> int:
+def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
     retrieval = json.loads((run_dir / "retrieval.json").read_text(encoding="utf-8"))
     single_output = json.loads((run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8"))
     group_outputs = [
@@ -996,13 +815,22 @@ def _resume_final_from_run_dir(run_dir: Path, client: DeepSeekClient) -> int:
     ]
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+    if manifest.get("identity_blind"):
+        group_outputs = sanitize_identity_blind_branch_outputs(group_outputs, retrieval)
+        retrieval = prepare_identity_blind_final_retrieval(retrieval, single_output)
+    elif manifest.get("harness_prefetch_tools"):
+        retrieval = prepare_prefetched_final_retrieval(retrieval, single_output, identity_blind=False)
     final_output = _run_final_reasoning(client, retrieval, single_output, group_outputs)
     final_path = run_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     trace_path = run_dir / "trace_messages.jsonl"
     query_record = {"Y": manifest.get("query_label_for_eval_only")}
     query_index = int(manifest.get("query_index") or 0)
-    smiles = str((retrieval.get("query") or {}).get("input_smiles") or "")
+    smiles = (
+        "[identity_blind]"
+        if manifest.get("identity_blind")
+        else str((retrieval.get("query") or {}).get("input_smiles") or "")
+    )
     _write_trace_jsonl(
         trace_path,
         query_record=query_record,
@@ -1055,6 +883,19 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--query-index", type=int, default=0)
     parser.add_argument("--smiles-field", default="drug")
     parser.add_argument("--index", default=DEFAULT_INDEX)
+    parser.add_argument("--experiment-mode", choices=sorted(EXPERIMENT_MODES), default="native")
+    parser.add_argument("--retrieval-source", default="chembl")
+    parser.add_argument(
+        "--neighbor-identity-policy",
+        choices=["operational", "parent_disjoint"],
+        default="operational",
+    )
+    parser.add_argument("--identity-blind", action="store_true")
+    parser.add_argument("--harness-prefetch-tools", action="store_true")
+    parser.add_argument("--single-analysis-source-run-dir", default="")
+    parser.add_argument("--group-analysis-source-run-dir", default="")
+    parser.add_argument("--retrieval-replay-run-dir", default="")
+    parser.add_argument("--prefetched-tool-replay-run-dir", default="")
     parser.add_argument("--chembl-sqlite", default=DEFAULT_CHEMBL_SQLITE)
     parser.add_argument("--out-root", default=DEFAULT_OUT_ROOT)
     parser.add_argument("--run-id", default="")
@@ -1068,7 +909,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     parser.add_argument("--max-groups", type=int, default=0, help="Debug limit; 0 means all groups with neighbors.")
     parser.add_argument("--timeout-s", type=int, default=180)
-    parser.add_argument("--max-tokens", type=int, default=4096)
+    parser.add_argument("--max-tokens", type=int, default=20480)
+    parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument(
         "--reasoning-effort",

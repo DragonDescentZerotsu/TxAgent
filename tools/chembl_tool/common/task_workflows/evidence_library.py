@@ -19,7 +19,9 @@ from typing import Any
 from rdkit import Chem, DataStructs, RDLogger
 from rdkit.Chem import AllChem, inchi
 
+from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 
 
 DEFAULT_CHEMBL_FPS = "tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz"
@@ -136,6 +138,8 @@ def build_evidence_rows(
                     "evidence_strength": assignment.evidence_strength,
                 }
             )
+            row.setdefault("evidence_source", "ChEMBL")
+            attach_minimal_evidence(row)
             rows.append(row)
             if progress_every and i % progress_every == 0:
                 _log(_progress_message("evidence rows", i, total_rows, started, extra=f"kept={len(rows):,}"))
@@ -187,6 +191,7 @@ def build_neighbor_index(
         for row in rows:
             row["canonical_smiles"] = canonical_smiles or smiles
             row["standard_inchi_key"] = inchi_key
+            attach_minimal_evidence(row)
         molecule_index = len(molecules)
         group_rows: dict[str, list[dict[str, Any]]] = defaultdict(list)
         for row in rows:
@@ -201,6 +206,7 @@ def build_neighbor_index(
                 "n_evidence_rows": len(rows),
                 "groups": sorted(group_rows),
                 "fingerprint_source": "chembl_fps" if molecule_id in fps_by_molecule else "canonical_smiles",
+                "molecule_identity": normalize_molecule_identity(canonical_smiles or smiles).to_dict(),
             }
         )
         fingerprints.append(fp)
