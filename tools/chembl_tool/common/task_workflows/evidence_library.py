@@ -21,6 +21,7 @@ from rdkit.Chem import AllChem, inchi
 
 from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 
 
 DEFAULT_CHEMBL_FPS = "tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz"
@@ -205,6 +206,7 @@ def build_neighbor_index(
                 "n_evidence_rows": len(rows),
                 "groups": sorted(group_rows),
                 "fingerprint_source": "chembl_fps" if molecule_id in fps_by_molecule else "canonical_smiles",
+                "molecule_identity": normalize_molecule_identity(canonical_smiles or smiles).to_dict(),
             }
         )
         fingerprints.append(fp)

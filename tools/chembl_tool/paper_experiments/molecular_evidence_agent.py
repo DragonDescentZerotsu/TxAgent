@@ -8,11 +8,19 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from typing import Any
 
 
 PAPER_ROOT = Path("outputs/paper/molecular_evidence_agent")
 GLM_BASE_URL = "https://litellm.parcc.upenn.edu/v1"
 GLM_MODEL = "zai-org/GLM-5.2-FP8"
+IDENTITY_BLIND = "identity_blind"
+DEPLOYMENT_VISIBLE = "deployment_visible"
+DEPLOYMENT_VISIBLE_PREFETCHED = "deployment_visible_prefetched"
+VISIBILITY_MODES = (IDENTITY_BLIND, DEPLOYMENT_VISIBLE_PREFETCHED, DEPLOYMENT_VISIBLE)
+OPERATIONAL = "operational"
+PARENT_DISJOINT = "parent_disjoint"
+NEIGHBOR_IDENTITY_POLICIES = (OPERATIONAL, PARENT_DISJOINT)
 
 
 @dataclass(frozen=True)
@@ -170,7 +178,10 @@ def main(argv: list[str] | None = None) -> int:
         "model": GLM_MODEL,
         "base_url": GLM_BASE_URL,
         "api_key_env": args.api_key_env,
-        "identity_blind": True,
+        "visibility_mode": args.visibility_mode,
+        "identity_blind": args.visibility_mode == IDENTITY_BLIND,
+        "visibility_contract": _visibility_contract(args.visibility_mode),
+        "neighbor_identity_policy": args.neighbor_identity_policy,
         "temperature": 0.0,
         "max_tokens": 20480,
         "transport_max_retries": 2,
@@ -178,7 +189,18 @@ def main(argv: list[str] | None = None) -> int:
         "selected_experiments": [experiment.name for experiment in selected],
     }
     PAPER_ROOT.mkdir(parents=True, exist_ok=True)
-    (PAPER_ROOT / "experiment_matrix.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    if args.experiments:
+        selected_tasks = "_".join(sorted({experiment.task for experiment in selected}))
+        policy_suffix = "" if args.neighbor_identity_policy == OPERATIONAL else f"_{args.neighbor_identity_policy}"
+        matrix_path = PAPER_ROOT / f"experiment_matrix_{args.visibility_mode}{policy_suffix}_{selected_tasks}.json"
+    else:
+        policy_suffix = "" if args.neighbor_identity_policy == OPERATIONAL else f"_{args.neighbor_identity_policy}"
+        matrix_path = (
+            PAPER_ROOT / "experiment_matrix.json"
+            if args.visibility_mode == IDENTITY_BLIND and not policy_suffix
+            else PAPER_ROOT / f"experiment_matrix_{args.visibility_mode}{policy_suffix}.json"
+        )
+    matrix_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
     failed = []
     for experiment in selected:
@@ -194,6 +216,9 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
+    visibility_mode = getattr(args, "visibility_mode", IDENTITY_BLIND)
+    neighbor_identity_policy = getattr(args, "neighbor_identity_policy", OPERATIONAL)
+    batch_root = experiment_run_root(visibility_mode, neighbor_identity_policy) / experiment.task
     command = [
         args.python_executable,
         "-m",
@@ -203,14 +228,15 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
         "--index",
         experiment.index,
         "--batch-root",
-        str(PAPER_ROOT / "runs" / experiment.task),
+        str(batch_root),
         "--batch-id",
         experiment.name,
         "--experiment-mode",
         experiment.mode,
         "--retrieval-source",
         experiment.source,
-        "--identity-blind",
+        "--neighbor-identity-policy",
+        neighbor_identity_policy,
         "--api-key-env",
         args.api_key_env,
         "--base-url",
@@ -233,16 +259,80 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
         "--group-workers",
         str(args.group_workers),
         "--no-stream-logs",
+        "--no-combine-traces",
         "--skip-existing",
     ]
+    if visibility_mode == IDENTITY_BLIND:
+        command.append("--identity-blind")
+    elif visibility_mode == DEPLOYMENT_VISIBLE_PREFETCHED:
+        command.append("--harness-prefetch-tools")
+        if experiment.mode != "none":
+            blind_batch = experiment_run_root(IDENTITY_BLIND) / experiment.task / experiment.name
+            command.extend(["--retrieval-replay-source-batch", str(blind_batch)])
+            command.extend(["--prefetched-tool-replay-source-batch", str(blind_batch)])
     if experiment.mode != "none":
+        single_root = experiment_run_root(visibility_mode, OPERATIONAL)
         command.extend(
             [
                 "--single-analysis-source-batch",
-                str(PAPER_ROOT / "runs" / experiment.task / f"{experiment.task}__none"),
+                str(single_root / experiment.task / f"{experiment.task}__none")
+                if neighbor_identity_policy == PARENT_DISJOINT
+                else str(batch_root / f"{experiment.task}__none"),
             ]
         )
+        if neighbor_identity_policy == PARENT_DISJOINT:
+            command.extend(
+                [
+                    "--group-analysis-source-batch",
+                    str(single_root / experiment.task / experiment.name),
+                ]
+            )
     return command
+
+
+def experiment_run_root(visibility_mode: str, neighbor_identity_policy: str = OPERATIONAL) -> Path:
+    """Return the stable batch root for one paper visibility regime."""
+    if neighbor_identity_policy == PARENT_DISJOINT:
+        if visibility_mode != DEPLOYMENT_VISIBLE:
+            raise ValueError("Parent-disjoint paper ablation is defined for deployment-visible agentic runs.")
+        return PAPER_ROOT / "runs_deployment_visible_parent_disjoint"
+    if neighbor_identity_policy != OPERATIONAL:
+        raise ValueError(f"Unknown neighbor identity policy: {neighbor_identity_policy}")
+    if visibility_mode == IDENTITY_BLIND:
+        return PAPER_ROOT / "runs"
+    if visibility_mode == DEPLOYMENT_VISIBLE:
+        return PAPER_ROOT / "runs_deployment_visible"
+    if visibility_mode == DEPLOYMENT_VISIBLE_PREFETCHED:
+        return PAPER_ROOT / "runs_deployment_visible_prefetched"
+    raise ValueError(f"Unknown visibility mode: {visibility_mode}")
+
+
+def experiment_result_name(experiment_name: str, visibility_mode: str) -> str:
+    """Keep frozen blind names stable and qualify deployment-visible results."""
+    if visibility_mode == IDENTITY_BLIND:
+        return experiment_name
+    return f"{visibility_mode}__{experiment_name}"
+
+
+def _visibility_contract(visibility_mode: str) -> dict[str, Any]:
+    if visibility_mode == IDENTITY_BLIND:
+        return {
+            "query_structure": "hidden_from_llm",
+            "query_name": "not_provided",
+            "neighbor_structure": "hidden_from_llm",
+            "neighbor_name": "hidden_from_llm",
+            "tool_execution": "harness_prefetch",
+        }
+    contract = {
+        "query_structure": "visible_to_llm",
+        "query_name": "not_provided",
+        "neighbor_structure": "visible_to_llm",
+        "neighbor_name": "visible_when_present_in_source_evidence",
+    }
+    contract["tool_execution"] = (
+        "harness_prefetch" if visibility_mode == DEPLOYMENT_VISIBLE_PREFETCHED else "llm_function_call"
+    )
+    return contract
 
 
 def _select_experiments(names: list[str]) -> list[Experiment]:
@@ -260,6 +350,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--experiments", nargs="*", default=[])
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--api-key-env", default="GLM_API_KEY")
+    parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=IDENTITY_BLIND)
+    parser.add_argument(
+        "--neighbor-identity-policy",
+        choices=NEIGHBOR_IDENTITY_POLICIES,
+        default=OPERATIONAL,
+    )
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--parallelism", type=int, default=8)
     parser.add_argument("--group-workers", type=int, default=8)

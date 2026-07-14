@@ -79,7 +79,7 @@ STARLING = SourceExperimentConfig(
             source_groups=("Observed.direct_oral_bioavailability",),
         ),
     ),
-    mechanism_groups=(
+    mechanism_groups=tuple(
         EvidenceGroupSpec(
             group_id,
             group_id.split(".", 1)[0],

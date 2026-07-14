@@ -33,8 +33,9 @@ Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，�
 source rows
   -> minimal_evidence.v1
   -> molecule-level aggregation and fingerprint index
-  -> exact-query-excluding analog retrieval by group
-  -> parallel single-molecule and group reasoning
+  -> operational or parent-disjoint identity filtering
+  -> source-local groups mapped into direct/mechanism families
+  -> parallel single-molecule and mechanism-family reasoning
   -> final LLM synthesis
   -> structured-output validation only
 ```
@@ -46,7 +47,7 @@ source rows
 - source/provenance 保留；
 - single branch 的 `molecule_properties`；
 - group branch 的 `mmp_structure_compare` / `properties_compare`；
-- JSON schema validation 和一次 retry；
+- JSON schema validation 和有 trace 的 bounded retry（当前默认最多 4 次总尝试）；
 - trace、batch resume 和 metrics。
 
 禁止添加：
@@ -85,6 +86,15 @@ representative examples
 group LLM 根据结构比较和 evidence context 判断。Contract 不包含 threshold vote 或 label recommendation。
 
 ## Data sources
+
+Paper-facing source/group mapping 的唯一配置入口：
+
+```text
+tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py
+```
+
+它声明 ChEMBL/Starling 的 direct groups 和 5 个 mechanism families；不得在 runner 或 source adapter 中
+复制该 mapping。
 
 ChEMBL evidence library：
 

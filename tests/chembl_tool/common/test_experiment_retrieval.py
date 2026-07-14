@@ -110,3 +110,46 @@ def test_flat_and_mechanism_views_contain_the_same_evidence_rows():
     )
     assert mechanism_values == flat_values
     assert flat["groups"][0]["group_id"] == "Flat.all_evidence"
+
+
+def test_parent_disjoint_excludes_salt_and_backfills_only_eligible_analogs():
+    rows = [
+        _row("salt", "CC[NH3+].[Cl-]", "Tier 1.direct", 1),
+        _row("analog", "CCCN", "Tier 1.direct", 2),
+        _row("below_threshold", "c1ccccc1", "Tier 1.direct", 3),
+    ]
+    index = build_neighbor_index(rows, index_version="test.parent.v1")
+
+    operational = retrieve_experiment_view(
+        "CCN",
+        index,
+        mode="direct",
+        config=CONFIG,
+        top_k_per_group=3,
+        min_similarity=0.3,
+        neighbor_identity_policy="operational",
+    )
+    disjoint = retrieve_experiment_view(
+        "CCN",
+        index,
+        mode="direct",
+        config=CONFIG,
+        top_k_per_group=3,
+        min_similarity=0.3,
+        neighbor_identity_policy="parent_disjoint",
+    )
+
+    operational_by_id = {
+        row["molecule_chembl_id"]: row for row in operational["groups"][0]["neighbors"]
+    }
+    assert operational_by_id["salt"]["molecule_relation"] == "same_parent"
+    assert [row["molecule_chembl_id"] for row in disjoint["groups"][0]["neighbors"]] == ["analog"]
+    assert disjoint["coverage"]["top_k_per_group"] == 3
+
+
+def test_index_stores_versioned_parent_identity_metadata():
+    index = build_neighbor_index([_row("salt", "CC[NH3+].[Cl-]", "Tier 1.direct", 1)], index_version="test")
+    identity = index["molecules"][0]["molecule_identity"]
+
+    assert identity["normalizer_version"] == "rdkit_fragment_parent.v1"
+    assert identity["parent_inchi_key"]

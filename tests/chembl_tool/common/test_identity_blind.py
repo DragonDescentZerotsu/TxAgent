@@ -2,14 +2,20 @@ import json
 
 from tools.chembl_tool.common.identity_blind import (
     find_identity_blind_leaks,
+    prepare_harness_prefetched_retrieval,
     prepare_identity_blind_final_retrieval,
     prepare_identity_blind_retrieval,
+    prepare_replayed_prefetched_retrieval,
     sanitize_identity_blind_branch_outputs,
 )
 
 
 class FakeToolService:
+    def __init__(self):
+        self.calls = []
+
     def invoke(self, tool_name, arguments):
+        self.calls.append((tool_name, arguments))
         return {
             "tool_name": tool_name,
             "status": "ok",
@@ -64,6 +70,91 @@ def test_identity_blind_prefetch_removes_query_and_neighbor_structures():
     assert "ExampleDrug" not in serialized
     assert '"ED"' not in serialized
     assert "[neighbor] ([neighbor]) had a measured outcome" in serialized
+
+
+def test_visible_prefetch_preserves_identity_but_matches_blind_tool_calls():
+    retrieval = {
+        "query": {"input_smiles": "CCO", "canonical_smiles": "CCO"},
+        "groups": [
+            {
+                "group_id": "Direct.outcome",
+                "neighbors": [
+                    {
+                        "rank": 1,
+                        "molecule_chembl_id": "CHEMBL1",
+                        "canonical_smiles": "CCN",
+                        "evidence_rows": [{"source_molecule_names": ["VisibleNeighbor"]}],
+                    }
+                ],
+            }
+        ],
+    }
+    blind_service = FakeToolService()
+    visible_service = FakeToolService()
+
+    blind = prepare_harness_prefetched_retrieval(
+        retrieval, blind_service, identity_blind=True
+    )
+    visible = prepare_harness_prefetched_retrieval(
+        retrieval, visible_service, identity_blind=False
+    )
+
+    assert blind_service.calls == visible_service.calls
+    assert [name for name, _ in visible_service.calls] == [
+        "molecule_properties",
+        "mmp_structure_compare",
+        "properties_compare",
+    ]
+    assert visible["query"]["canonical_smiles"] == "CCO"
+    assert visible["query"]["tools_prefetched"] is True
+    assert visible["groups"][0]["tools_prefetched"] is True
+    assert visible["groups"][0]["neighbors"][0]["canonical_smiles"] == "CCN"
+    assert visible["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "CHEMBL1"
+    assert "VisibleNeighbor" in json.dumps(visible)
+    assert blind["query"]["identity_hidden"] is True
+
+
+def test_prefetched_tool_replay_keeps_visible_identity(tmp_path):
+    retrieval = {
+        "query": {"input_smiles": "CCO", "canonical_smiles": "CCO"},
+        "experiment": {},
+        "groups": [
+            {
+                "group_id": "Direct.outcome",
+                "neighbors": [
+                    {
+                        "rank": 1,
+                        "molecule_chembl_id": "CHEMBL1",
+                        "canonical_smiles": "CCN",
+                    }
+                ],
+            }
+        ],
+    }
+    (tmp_path / "single_molecule_reasoning_output.json").write_text(
+        json.dumps({"llm": {"tool_results": [{"tool_name": "molecule_properties", "content": "frozen"}]}})
+    )
+    payload = {
+        "group": {"group_id": "Direct.outcome"},
+        "neighbors": [
+            {
+                "rank": 1,
+                "prefetched_comparisons": [
+                    {"tool_name": "mmp_structure_compare", "content": "frozen comparison"}
+                ],
+            }
+        ],
+    }
+    branch = {"llm": {"messages": [{"role": "user", "content": "Input JSON:\n" + json.dumps(payload)}]}}
+    (tmp_path / "group_reasoning_outputs.jsonl").write_text(json.dumps(branch) + "\n")
+
+    output = prepare_replayed_prefetched_retrieval(retrieval, str(tmp_path))
+
+    neighbor = output["groups"][0]["neighbors"][0]
+    assert neighbor["molecule_chembl_id"] == "CHEMBL1"
+    assert neighbor["canonical_smiles"] == "CCN"
+    assert neighbor["prefetched_comparisons"][0]["content"] == "frozen comparison"
+    assert output["query"]["prefetched_molecule_properties"]["content"] == "frozen"
 
 
 def test_final_only_redaction_reuses_saved_property_result():

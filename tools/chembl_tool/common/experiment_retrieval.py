@@ -13,9 +13,14 @@ from typing import Any, Mapping
 
 from rdkit import DataStructs
 
+from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from tools.chembl_tool.common.retrieval_policy import (
+    NeighborIdentityPolicy,
+    decide_candidate,
+    policy_metadata,
+)
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
-    _is_exact_same_molecule,
     retrieve_neighbors,
     similarity_bucket,
 )
@@ -64,6 +69,7 @@ def retrieve_experiment_view(
     top_k_per_group: int,
     min_similarity: float,
     native_groups: list[str] | None = None,
+    neighbor_identity_policy: str = NeighborIdentityPolicy.OPERATIONAL.value,
 ) -> dict[str, Any]:
     """Build a native, direct, flat, mechanism, or retrieval-free query view."""
     if mode not in EXPERIMENT_MODES:
@@ -79,8 +85,13 @@ def retrieve_experiment_view(
             top_k_per_group=top_k_per_group,
             min_similarity=min_similarity,
             groups=native_groups,
+            neighbor_identity_policy=neighbor_identity_policy,
         )
-        result["experiment"] = {"mode": mode, "source": _source_name(config, index)}
+        result["experiment"] = {
+            "mode": mode,
+            "source": _source_name(config, index),
+            **policy_metadata(neighbor_identity_policy),
+        }
         return result
     if config is None:
         raise ValueError(f"Experiment mode `{mode}` requires a source experiment config")
@@ -94,6 +105,7 @@ def retrieve_experiment_view(
         mode=mode,
         top_k_per_group=top_k_per_group,
         min_similarity=min_similarity,
+        neighbor_identity_policy=neighbor_identity_policy,
     )
     if mode == "full_flat" and mechanism_view.get("status") == "ok":
         mechanism_view["groups"] = [_flatten_groups(mechanism_view["groups"])]
@@ -114,11 +126,13 @@ def _retrieve_specs(
     mode: str,
     top_k_per_group: int,
     min_similarity: float,
+    neighbor_identity_policy: str,
 ) -> dict[str, Any]:
     canonical_smiles, inchi_key, query_fp = standardize_smiles_and_fp(query_smiles)
     if query_fp is None:
         return _invalid_query(query_smiles)
 
+    query_identity = normalize_molecule_identity(query_smiles)
     similarities = list(DataStructs.BulkTanimotoSimilarity(query_fp, index["fingerprints"]))
     available_groups = set(index["group_to_molecule_indices"])
     output_groups = []
@@ -142,6 +156,8 @@ def _retrieve_specs(
             query_inchi_key=inchi_key,
             top_k=top_k_per_group,
             min_similarity=min_similarity,
+            query_identity=query_identity,
+            neighbor_identity_policy=neighbor_identity_policy,
         )
         output_groups.append(
             {
@@ -161,6 +177,7 @@ def _retrieve_specs(
             "mode": mode,
             "source": source_name,
             "resolved_group_mapping": resolved_mapping,
+            **policy_metadata(neighbor_identity_policy),
         },
         "query": {
             "input_smiles": query_smiles,
@@ -187,6 +204,8 @@ def _rank_group_candidates(
     query_inchi_key: str,
     top_k: int,
     min_similarity: float,
+    query_identity: Any,
+    neighbor_identity_policy: str,
 ) -> list[dict[str, Any]]:
     ranked = sorted(
         (
@@ -199,7 +218,8 @@ def _rank_group_candidates(
     neighbors = []
     for similarity, molecule_index in ranked:
         molecule = index["molecules"][molecule_index]
-        if _is_exact_same_molecule(molecule, query_canonical_smiles, query_inchi_key):
+        decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
+        if decision.excluded:
             continue
         molecule_id = molecule["molecule_chembl_id"]
         evidence_by_group = index["evidence_by_molecule_group"].get(molecule_id, {})
@@ -215,6 +235,7 @@ def _rank_group_candidates(
                 "standard_inchi_key": molecule.get("standard_inchi_key", ""),
                 "similarity": round(similarity, 6),
                 "similarity_bucket": similarity_bucket(similarity),
+                "molecule_relation": decision.relation.value,
                 "source_group_ids": matched_groups,
                 "n_evidence_rows": len(evidence_rows),
                 "evidence_rows": evidence_rows,

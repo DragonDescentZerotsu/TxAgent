@@ -50,8 +50,10 @@ Y: BBB label
 3. 长初始化模型要常驻。慢启动模型和大索引应在服务启动时加载，通过 FastAPI endpoint 调用，避免每个 query 反复初始化。
 4. evidence retrieval 只提供证据，不直接替代 reasoning。retrieval payload 必须保留 assay 描述、activity 数值、endpoint 语义、similarity 和不确定性。
 5. retrieval 单元优先是 molecule-level evidence，不是 assay-level evidence。assay 信息要保留，但 query-time ranking 应先找相似 molecule，再展开其 assay/activity evidence。
-6. LLM reasoning 分为并发证据分支和 final 汇总：single-molecule 分支判断理化性质先验，
-   group-level 分支判断每个 Tier.endpoint_group 的 analog transferability，final-level 汇总所有证据。
+6. LLM reasoning 分为并发证据分支和 final 汇总：single-molecule 分支判断理化性质先验；paper-facing
+   group-level 分支按少量、数据源无关的 mechanism family 判断 analog transferability；final-level 汇总所有
+   证据。细粒度 `Tier.endpoint_group` 只用于 source-local normalization、检索审计和 legacy native runner，
+   不得在新任务中一组对应一个并行 LLM branch。任务扩展规范见 `tools/chembl_tool/tasks/AGENTS.md`。
 
 ## 当前常驻工具服务
 
@@ -166,7 +168,8 @@ GLM-5.2 不能直接复用 DeepSeek thinking 参数。LiteLLM 对 DeepSeek-style
 中返回 `reasoning_content`，pipeline 会正常保存到 trace 的 `reasoning` 字段。
 
 GLM 对 tool choice 和长 structured output 的遵循可能不稳定。所有 task 统一通过
-`tools/chembl_tool/common/reasoning_validation.py` 检查必需 JSON 字段和允许值，并在格式无效时重试一次。
+`tools/chembl_tool/common/reasoning_validation.py` 检查必需 JSON 字段和允许值；当前默认最多 4 次总尝试，
+每次 validation error 和 attempt count 都必须进入 trace。
 该 validation 层不能修改有效 prediction，也不能实现 task-specific label policy。需要更长 final 输出时，
 显式提高 `--max-tokens`；不要用 postprocess 修补 benchmark label。
 
@@ -193,8 +196,17 @@ tools/chembl_tool/common/task_workflows/
   reasoning_batch.py
 
 tools/chembl_tool/common/evidence_contract.py
+tools/chembl_tool/common/identity_blind.py
+tools/chembl_tool/common/json_utils.py
 tools/chembl_tool/common/openai_reasoning_client.py
+tools/chembl_tool/common/reasoning_calls.py
 tools/chembl_tool/common/reasoning_validation.py
+tools/chembl_tool/common/molecule_identity.py
+tools/chembl_tool/common/retrieval_policy.py
+tools/chembl_tool/common/retrieval_ablation.py
+tools/chembl_tool/common/retrieval_replay.py
+tools/chembl_tool/common/experiment_retrieval.py
+tools/chembl_tool/common/scalar_knn.py
 tools/chembl_tool/common/starling/evidence_library.py
 ```
 
@@ -219,8 +231,9 @@ evidence_library.py
   支持 `--workers` 并行标准化 molecule / 构建 index，长任务进度会打印 elapsed、rate 和 ETA。
 
 retrieve_neighbors.py
-  对每个 Tier.endpoint_group 做 analog retrieval，包含 exact-molecule 排除、Tanimoto ranking、
-  similarity bucket 和 JSONL batch retrieval CLI。
+  source-local / legacy native retrieval：对细粒度 Tier.endpoint_group 做 analog retrieval，包含 molecule
+  identity policy、Tanimoto ranking、similarity threshold、similarity bucket 和 JSONL batch retrieval CLI。
+  Paper-facing direct/flat/mechanism 视图由 experiment_retrieval.py 在其上按 mechanism family 组装。
 
 chembl_exact_context.py
   可选 exact-query ChEMBL context 和 shared-assay enrichment。默认 benchmark 不开启，
@@ -236,13 +249,41 @@ evidence_contract.py
   `minimal_evidence.v1` 的唯一 schema/normalizer。旧 ChEMBL-like row 可以在 prompt-time 动态转换，
   新 source builder 应在建库时调用 `attach_minimal_evidence()`。该模块只描述 evidence，不预测 label。
 
+identity_blind.py
+  统一实现 identity redaction、harness-prefetched tool evidence 和 matched-prefetch tool replay。Paper task
+  runner 只能通过该模块选择 visibility/tool-execution contract，不能在 task 内复制脱敏或 replay 逻辑。
+
+reasoning_calls.py / json_utils.py
+  共享 single/group branch 调用、冻结 single analysis 复用、group payload transport bound 和 JSON 提取工具。
+  Transport bound 只能确定性采样超大 evidence rows，不能改变 evidence source、label policy 或 inference setting。
+
+molecule_identity.py / retrieval_policy.py
+  数据源和任务无关的 whole-record、RDKit fragment/molecular-parent 和 mixture-component 标准化及
+  neighbor exclusion policy。Operational 保留 same-parent evidence；parent_disjoint 额外排除并在既有
+  similarity threshold 内回填。这里的 parent 不是药理学 active moiety，也不推断 prodrug/metabolite 关系。
+
+retrieval_ablation.py
+  计算 LLM-visible retrieval/group input hash，支持完整 sample 和独立 mechanism branch 的确定性复用，
+  并记录 provenance。该模块不能改变 evidence、阈值或 prediction。
+
+retrieval_replay.py
+  按冻结的 retrieval/tool artifacts 做 matched-prefetch replay，检查 sample coverage 和输入一致性；仅用于
+  visibility/tool-execution 控制，不替代 agentic deployment-visible 主实验。
+
+experiment_retrieval.py
+  将 source-local endpoint groups 映射到 task 声明的 direct/mechanism families；确保 full_flat 与
+  full_mechanism 使用同一 evidence union，并只改变 reasoning organization。
+
+scalar_knn.py
+  共享标量 KNN baseline 实现；当前用于 Bioavailability numeric direct-F 对照，必须和 LLM agent 条件分开报告。
+
 openai_reasoning_client.py
   所有 task 共享的 OpenAI-compatible JSON completion、bounded tool-call loop、常驻工具服务调用和 trace
   serialization。provider/model/base URL 由运行参数配置；task 文件不复制 client runtime。
 
 reasoning_validation.py
-  为 single/group/final branch 提供通用必需字段、允许值和必需工具结果验证；无效时重试一次。
-  不能在 response 有效时改写 prediction。
+  为 single/group/final branch 提供通用必需字段、允许值和必需工具结果验证；当前默认最多 4 次总尝试。
+  不能在 response 有效时改写 prediction，也不能通过 retry 删除 evidence 或改变 inference setting。
 
 common/starling/evidence_library.py
   profile-driven parquet ingestion。profile 只声明 SMILES、endpoint、value、unit、context、scope、role
@@ -343,25 +384,15 @@ outputs/chembl_tool/tasks/<task_name>/
     batches/
 ```
 
-查看 trace：
+查看最终 paper trace：
 
 ```bash
-# standalone single runs
-bash tools/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/<task_name>/reasoning/single_runs \
-  8776
-
-# batch runs
-bash tools/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/<task_name>/reasoning/batches \
-  8776
+bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-新增 task 时必须检查 `tools/trace_viewer/viewer.html` 是否已经适配该 task 的 structured output。
-尤其要确认 final prediction 字段、`key_evidence` 中 task-specific effect 字段
-（例如 `effect_on_bbb_reasoning`、`effect_on_bioavailability_reasoning`、
-`effect_on_clintox_reasoning`）和新增 summary 字段会被正确渲染；否则 trace 原始 JSON 有值，
-viewer 页面也可能显示为空。
+Viewer 只扫描 `outputs/paper/molecular_evidence_agent/` 中当前论文框架生成的最终 condition，按样本展示
+single-molecule、mechanism-family/flat/direct 和 final stages，并递归展示通用 JSON、工具调用、
+retrieval evidence 和 provenance。旧 task-specific reasoning output 不再由该 viewer 支持。
 
 ## MiniMol baseline
 
@@ -891,6 +922,14 @@ assay-endpoints、约 199 万 sampled pairs。相比未过滤 v1，similar/diffe
 median |delta pChEMBL| 更高，close analog 的 macro similar-rate lift 约为 +0.16；
 这个版本更适合作为后续 LLM assay-transfer benchmark 的主数据。
 
+## Task-specific native runner 记录
+
+从这里开始的 BBB、ClinTox、Skin_Reaction 代码入口、旧 task prompt/schema、DeepSeek 运行参数和阶段性结果，
+用于复现 `tools/chembl_tool/tasks/<task>/run_reasoning_pipeline.py` 的 native/legacy workflow。当前论文方法以
+`tools/chembl_tool/paper_experiments/`、各 task 的 `experiment_config.py` 和
+`tools/chembl_tool/tasks/AGENTS.md` 为准；两者冲突时，不得把旧 `Tier.endpoint_group` 分支、task-specific
+prediction policy 或历史“下一步”恢复到 paper runner。
+
 ## BBB 代码入口
 
 ```text
@@ -914,13 +953,12 @@ tools/chembl_tool/tasks/bbb_martins/run_reasoning_batch.py
   可选 trace 保存/合并、prediction report、accuracy 和 macro-F1 评估。
 
 tools/trace_viewer/viewer.html
-  本地 trace 可视化页面。支持选择 run、选择 molecule trace package、查看单个分子的
-  single/group/final messages、reasoning、tool calls 和 parsed JSON response。新增 task
-  或新增 task-specific structured field 时，需要同步检查 viewer 渲染逻辑。
+  最终 paper trace 可视化页面。扫描 identity-blind/deployment-visible condition，查看单个样本的
+  single/group/final messages、reasoning、tool calls、retrieval evidence 和通用 JSON response。
+  不包含旧 task-specific structured field 适配。
 
 tools/trace_viewer/start_viewer.sh
-  启动通用 trace viewer 的静态 HTTP server。查看 standalone 单分子 run 时指向
-  reasoning/single_runs；查看 batch run 时指向 reasoning/batches。
+  在 `outputs/paper/molecular_evidence_agent/` 启动最终 paper trace viewer；参数只接受端口。
 
 tools/chembl_tool/tasks/bbb_martins/
   其他 BBB evidence 清洗、打分、报告和输出汇总脚本。
@@ -1393,11 +1431,12 @@ same_assay_different_endpoint_activity:
 
 ## LLM reasoning 流程
 
-BBB_Martins reasoning 当前分为并发 evidence branches 和 final summary。
+BBB_Martins 的 legacy native runner 分为并发 evidence branches 和 final summary。当前 paper runner 会先把
+下面的 source-local groups 合并为 `experiment_config.py` 声明的 mechanism families。
 
 ### Group-level reasoning
 
-每个 `Tier.endpoint_group` 独立执行：
+Legacy native runner 中每个 `Tier.endpoint_group` 独立执行：
 
 ```text
 input:
@@ -1584,19 +1623,24 @@ raw_output
 `query_index`，`molecule_key` 当前形如 `index:9`。viewer 会按 molecule package 分组，
 方便在一个 run 或上传的 JSONL 中选择不同分子的 trace 包，再查看该分子内部的所有阶段。
 
-viewer 启动：
+旧 task reasoning trace 已不再由 viewer 支持。最终论文 trace 统一启动：
 
 ```bash
-bash tools/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs \
-  8776
+bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
 然后打开：
 
 ```text
-http://localhost:8776/.trace_viewer.html
+http://localhost:8776/.trace_viewer.html?v=paper-v1
 ```
+
+Viewer 当前只扫描 `outputs/paper/molecular_evidence_agent/runs`、
+`runs_deployment_visible_prefetched`、`runs_deployment_visible` 和
+`runs_deployment_visible_parent_disjoint` 中由正式 `predictions.jsonl` 引用的样本级 trace。对于
+parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 identity policy，并区分 retrieval
+变化后的重跑与 LLM-visible input 未变化时的 artifact reuse。旧 task reasoning 目录的保留和清理规则见
+`tools/chembl_tool/paper_experiments/TRACE_RETENTION.md`。
 
 常用 pipeline 命令：
 
@@ -1666,21 +1710,16 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/<batch_i
 ...
 ```
 
-`trace_messages.jsonl` 会合并每个 molecule 的 trace。查看 batch trace 时启动 viewer 指向
-`reasoning/batches`，然后选择 `<batch_id>`：
+旧 task batch 可以生成合并 trace 供离线审计，但最终 paper runner 必须使用
+`--no-combine-traces`，只保留每个 molecule 自己的 trace。最终 viewer 固定启动为：
 
 ```bash
-bash tools/trace_viewer/start_viewer.sh \
-  outputs/chembl_tool/tasks/bbb_martins/reasoning/batches \
-  8776
+bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-viewer 可以选择 `<batch_id>`，再通过 `Molecule package` 下拉框切换分子。
-若传 `--no-save-trace`，不会生成 batch combined trace。
-
-注意：viewer 对常见字段有专门渲染逻辑。新增 task 时要同步适配
-`tools/trace_viewer/viewer.html`，至少检查 prediction 字段、final summary 字段和
-`key_evidence` 里的 task-specific effect 字段；否则后台 trace 正常保存，页面仍可能把对应列显示为空。
+Viewer 从 condition 的 `predictions.jsonl` 构建样本列表，再按需加载 per-run trace 和 retrieval。
+新增 task 时必须沿用通用 stage/message/tool/JSON contract；不要向 viewer 添加 task prediction、
+Tier、expert-policy 或 `key_evidence` effect 字段的专用适配。
 
 ### LLM usage 与成本估算
 
@@ -1692,10 +1731,8 @@ DeepSeek API response 会返回 token usage，但不会在每次 response 中直
 https://api-docs.deepseek.com/quick_start/pricing/
 ```
 
-`tools/trace_viewer` 会在页面中按当前填写的 token 单价估算费用：左侧显示 loaded trace
-总费用和当前筛选结果费用，每条 trace item 显示单条估算费用，详情页显示 cache hit、
-cache miss 和 output 三部分拆分。viewer 默认价格使用下面的 `deepseek-v4-pro` 当前折扣价；
-价格变化时直接在 viewer 页面改三个 USD / 1M tokens 输入框。
+最终 paper viewer 只负责 trace 审计与可视化，不内置 provider-specific 价格或成本估算。
+需要估算旧 run 成本时，从 trace 的 usage 字段离线汇总 token，并使用运行当日的官方价格。
 
 截至 2026-05-12，官方页面显示 `deepseek-v4-pro` 当前折扣价为：
 
@@ -1983,7 +2020,7 @@ DeepSeek function tool，也没有作为 `tools/service/` 的已注册常驻工�
 tools/chembl_tool/tasks/bbb_martins/retrieve_neighbors.py
 ```
 
-当前调用方式：
+Legacy native runner 的调用方式：
 
 ```text
 run_reasoning_pipeline.py 在 LLM 调用前读取 BBB neighbor index，
@@ -2012,12 +2049,12 @@ ChEMBL neighbor retrieval / evidence prefetch for each group（pipeline 内部�
 group-level LLM reasoning for each group
 ```
 
-建议边界：
+Legacy native runner 与当前 paper runner 的并发边界：
 
 ```text
-1. retrieval / evidence prefetch 的逻辑粒度是 endpoint group。
-2. group-level reasoning 并发粒度也是 endpoint group。
-3. final reasoning 必须等待所有 group reasoning 完成。
+1. source-local retrieval/normalization 可以保持 endpoint-group 粒度。
+2. legacy native runner 的 group-level reasoning 粒度是 endpoint group；paper runner 必须按 mechanism family。
+3. final reasoning 必须等待所有启用的 mechanism-family/group reasoning 完成。
 4. 每个 query 要有 request_id/run_id，所有中间产物可追踪。
 ```
 
@@ -2237,9 +2274,8 @@ positive/negative label mapping
 task-specific pipeline、retrieval、prompt 和 final schema 可以继续放在各自 task 目录中；
 当这些部分也稳定到足够通用时，再抽取公共模块。
 
-新增 task 的 trace schema 如果引入 task-specific 字段，也要同步检查
-`tools/trace_viewer/viewer.html`，确保 viewer 能显示新的 prediction、summary 和 key evidence
-effect 字段。
+新增 task 必须把 task-specific 输出保留在通用 JSON response 内，并沿用统一
+stage/message/tool contract。Viewer 会递归展示这些 JSON，不应新增 task-specific 渲染分支。
 
 ## 当前不做的事情
 
@@ -2254,9 +2290,9 @@ effect 字段。
 不为已安装的 mmpdb 增加源码路径环境变量。
 ```
 
-## 下一步
+## 历史 BBB 阶段性下一步
 
-当前通用工具层暂时冻结，BBB_Martins 单分子端到端 MVP 已能运行。下一步优先级：
+下面是早期 BBB 单分子 MVP 阶段留下的计划，已经被当前 paper experiment plan 取代，仅用于解释历史实现：
 
 ```text
 1. 批量评估 test_efflux.jsonl，形成 prediction/label 对照表和错误分析。

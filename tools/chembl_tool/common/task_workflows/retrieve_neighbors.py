@@ -48,7 +48,11 @@ def retrieve_neighbors(
     top_k_per_group: int = 3,
     min_similarity: float = 0.3,
     groups: list[str] | None = None,
+    neighbor_identity_policy: str = "operational",
 ) -> dict[str, Any]:
+    from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+    from tools.chembl_tool.common.retrieval_policy import policy_metadata
+
     canonical_smiles, inchi_key, query_fp = standardize_smiles_and_fp(query_smiles)
     if query_fp is None:
         return {
@@ -59,6 +63,7 @@ def retrieve_neighbors(
             "coverage": {"n_groups": 0, "n_groups_with_neighbors": 0, "n_neighbors_total": 0},
         }
 
+    query_identity = normalize_molecule_identity(query_smiles)
     similarities = list(DataStructs.BulkTanimotoSimilarity(query_fp, index["fingerprints"]))
     requested_groups = groups or sorted(index["group_to_molecule_indices"])
     output_groups = []
@@ -74,6 +79,8 @@ def retrieve_neighbors(
             query_inchi_key=inchi_key,
             top_k=top_k_per_group,
             min_similarity=min_similarity,
+            query_identity=query_identity,
+            neighbor_identity_policy=neighbor_identity_policy,
         )
         n_neighbors_total += len(neighbors)
         tier, endpoint_group = _split_group_id(group_id)
@@ -90,6 +97,7 @@ def retrieve_neighbors(
     return {
         "status": "ok",
         "evidence_source": index.get("source", {}),
+        "retrieval_policy": policy_metadata(neighbor_identity_policy),
         "query": {
             "input_smiles": query_smiles,
             "canonical_smiles": canonical_smiles,
@@ -131,7 +139,11 @@ def _top_neighbors_for_group(
     query_inchi_key: str,
     top_k: int,
     min_similarity: float,
+    query_identity: Any,
+    neighbor_identity_policy: str,
 ) -> list[dict[str, Any]]:
+    from tools.chembl_tool.common.retrieval_policy import decide_candidate
+
     ranked = sorted(
         (
             (similarities[molecule_index], molecule_index)
@@ -143,7 +155,8 @@ def _top_neighbors_for_group(
     neighbors: list[dict[str, Any]] = []
     for similarity, molecule_index in ranked:
         molecule = index["molecules"][molecule_index]
-        if _is_exact_same_molecule(molecule, query_canonical_smiles, query_inchi_key):
+        decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
+        if decision.excluded:
             continue
         evidence_rows = index["evidence_by_molecule_group"][molecule["molecule_chembl_id"]][group_id]
         neighbors.append(
@@ -154,6 +167,7 @@ def _top_neighbors_for_group(
                 "standard_inchi_key": molecule.get("standard_inchi_key", ""),
                 "similarity": round(float(similarity), 6),
                 "similarity_bucket": similarity_bucket(float(similarity)),
+                "molecule_relation": decision.relation.value,
                 "n_evidence_rows": len(evidence_rows),
                 "evidence_rows": evidence_rows,
             }

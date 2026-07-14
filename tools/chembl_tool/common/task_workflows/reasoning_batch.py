@@ -64,11 +64,23 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "model": args.model,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
+        "neighbor_identity_policy": args.neighbor_identity_policy,
         "identity_blind": args.identity_blind,
+        "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
+        "visibility_mode": (
+            "identity_blind"
+            if args.identity_blind
+            else "deployment_visible_prefetched"
+            if args.harness_prefetch_tools
+            else "deployment_visible"
+        ),
         "max_tokens": args.max_tokens,
         "temperature": args.temperature,
         "transport_max_retries": 2,
         "single_analysis_source_batch": args.single_analysis_source_batch,
+        "group_analysis_source_batch": args.group_analysis_source_batch,
+        "retrieval_replay_source_batch": args.retrieval_replay_source_batch,
+        "prefetched_tool_replay_source_batch": args.prefetched_tool_replay_source_batch,
         "tier1_replacement_index": args.tier1_replacement_index,
         "tier1_replacement_groups": args.tier1_replacement_groups or [],
         "final_only_source_batch": args.final_only_source_batch,
@@ -285,6 +297,8 @@ def _single_run_command(
         args.experiment_mode,
         "--retrieval-source",
         args.retrieval_source,
+        "--neighbor-identity-policy",
+        args.neighbor_identity_policy,
         "--out-root",
         str(run_root),
         "--run-id",
@@ -332,12 +346,41 @@ def _single_run_command(
         command.append("--disable-group-tools")
     if args.identity_blind:
         command.append("--identity-blind")
+    elif args.harness_prefetch_tools:
+        command.append("--harness-prefetch-tools")
     if args.single_analysis_source_batch:
         source_batch = Path(args.single_analysis_source_batch)
         source_run_id = f"{source_batch.name}_idx{query_index:05d}"
         command.extend(
             [
                 "--single-analysis-source-run-dir",
+                str(source_batch / "runs" / source_run_id),
+            ]
+        )
+    if args.group_analysis_source_batch:
+        source_batch = Path(args.group_analysis_source_batch)
+        source_run_id = f"{source_batch.name}_idx{query_index:05d}"
+        command.extend(
+            [
+                "--group-analysis-source-run-dir",
+                str(source_batch / "runs" / source_run_id),
+            ]
+        )
+    if args.retrieval_replay_source_batch:
+        source_batch = Path(args.retrieval_replay_source_batch)
+        source_run_id = f"{source_batch.name}_idx{query_index:05d}"
+        command.extend(
+            [
+                "--retrieval-replay-run-dir",
+                str(source_batch / "runs" / source_run_id),
+            ]
+        )
+    if args.prefetched_tool_replay_source_batch:
+        source_batch = Path(args.prefetched_tool_replay_source_batch)
+        source_run_id = f"{source_batch.name}_idx{query_index:05d}"
+        command.extend(
+            [
+                "--prefetched-tool-replay-run-dir",
                 str(source_batch / "runs" / source_run_id),
             ]
         )
@@ -415,6 +458,8 @@ def _collect_result(
     single_output = _read_json(single_path) if single_path.exists() else {}
     group_outputs = _read_jsonl(group_path) if group_path.exists() else []
     manifest = _read_json(manifest_path) if manifest_path.exists() else {}
+    reuse_path = run_dir / "reuse.json"
+    reuse = _read_json(reuse_path) if reuse_path.exists() else {}
     content = ((final_output.get("llm") or {}).get("content") or {}) if isinstance(final_output, dict) else {}
     prediction = _normalize_prediction(config, content.get(config.prediction_field))
     pred_label = prediction_to_label(config, prediction)
@@ -438,6 +483,8 @@ def _collect_result(
         "trace_messages": str(run_dir / "trace_messages.jsonl") if (run_dir / "trace_messages.jsonl").exists() else "",
         "final_reasoning_output": str(final_path) if final_path.exists() else "",
         "final_summary": content.get("final_summary", ""),
+        "reused_from": reuse.get("reused_from", ""),
+        "reuse_reason": reuse.get("reuse_reason", ""),
     }
 
 
@@ -667,11 +714,31 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         default="native",
     )
     parser.add_argument("--retrieval-source", default="chembl")
+    parser.add_argument(
+        "--neighbor-identity-policy",
+        choices=["operational", "parent_disjoint"],
+        default="operational",
+    )
     parser.add_argument("--identity-blind", action="store_true")
     parser.add_argument(
         "--single-analysis-source-batch",
         default="",
         help="Reuse each query's frozen single-molecule branch from another batch.",
+    )
+    parser.add_argument(
+        "--group-analysis-source-batch",
+        default="",
+        help="Reuse independent group branches with identical LLM-visible retrieval input.",
+    )
+    parser.add_argument(
+        "--retrieval-replay-source-batch",
+        default="",
+        help="Reuse each query's frozen retrieval.json from another batch.",
+    )
+    parser.add_argument(
+        "--prefetched-tool-replay-source-batch",
+        default="",
+        help="Reuse each query's frozen harness-prefetched tool outputs from another batch.",
     )
     parser.add_argument("--batch-root", default=config.default_batch_root)
     parser.add_argument("--batch-id", default="")
@@ -725,6 +792,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     parser.add_argument("--max-groups", type=int, default=0)
     parser.add_argument("--disable-group-tools", action="store_true")
+    parser.add_argument("--harness-prefetch-tools", action="store_true")
     args = parser.parse_args(argv)
     args.groups = _normalize_group_args(args.groups)
     args.tier1_replacement_groups = _normalize_group_args(args.tier1_replacement_groups)

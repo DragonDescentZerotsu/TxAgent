@@ -103,7 +103,7 @@ def call_group_branch(
     tools: list[dict[str, Any]],
 ) -> dict[str, Any]:
     """Use live comparison tools, or harness-prefetched blind comparisons."""
-    if group.get("identity_blind"):
+    if group.get("tools_prefetched") or group.get("identity_blind"):
         call = client.chat_json
     else:
         call = lambda retry_messages: client.chat_json_with_optional_tools(

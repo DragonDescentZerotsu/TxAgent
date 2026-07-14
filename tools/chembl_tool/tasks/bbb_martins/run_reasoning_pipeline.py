@@ -17,7 +17,8 @@ from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retr
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.identity_blind import (
     prepare_identity_blind_final_retrieval,
-    prepare_identity_blind_retrieval,
+    prepare_prefetched_final_retrieval,
+    prepare_reasoning_retrieval,
     sanitize_identity_blind_branch_outputs,
 )
 from tools.chembl_tool.common.json_utils import parse_json_content
@@ -33,6 +34,8 @@ from tools.chembl_tool.common.reasoning_validation import (
     structured_response_is_valid,
     validated_branch_content,
 )
+from tools.chembl_tool.common.retrieval_replay import load_retrieval_replay
+from tools.chembl_tool.common.retrieval_ablation import load_reusable_group_outputs
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
 from tools.chembl_tool.tasks.bbb_martins.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
@@ -163,11 +166,14 @@ def main(argv: list[str] | None = None) -> int:
     if not query_smiles:
         raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
 
+    retrieval = load_retrieval_replay(args.retrieval_replay_run_dir, query_smiles)
     index = None
-    if args.experiment_mode != "none":
+    if retrieval is None and args.experiment_mode != "none":
         _log("loading neighbor index")
         index = load_index(Path(args.index))
-    if args.experiment_mode == "native":
+    if retrieval is not None:
+        _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
+    elif args.experiment_mode == "native":
         base_groups = _base_retrieval_groups(
             index,
             requested_groups=args.groups,
@@ -193,9 +199,12 @@ def main(argv: list[str] | None = None) -> int:
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
             native_groups=args.groups,
+            neighbor_identity_policy=args.neighbor_identity_policy,
         )
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
+    if retrieval is None:
+        raise RuntimeError("Retrieval was not built or replayed.")
     if args.enable_chembl_exact_context and index is not None:
         _log("enriching retrieval with exact ChEMBL context")
         retrieval = enrich_retrieval_with_chembl_context(
@@ -203,7 +212,11 @@ def main(argv: list[str] | None = None) -> int:
             index,
             chembl_sqlite=args.chembl_sqlite,
         )
-    if args.tier1_replacement_index and args.experiment_mode == "native":
+    if (
+        not args.retrieval_replay_run_dir
+        and args.tier1_replacement_index
+        and args.experiment_mode == "native"
+    ):
         _log(f"retrieving Tier 1 replacement neighbors: {args.tier1_replacement_index}")
         replacement_index = load_index(Path(args.tier1_replacement_index))
         replacement_retrieval = retrieve_neighbors(
@@ -239,13 +252,18 @@ def main(argv: list[str] | None = None) -> int:
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
     )
-    reasoning_retrieval = (
-        prepare_identity_blind_retrieval(retrieval, client.tool_service) if args.identity_blind else retrieval
+    reasoning_retrieval = prepare_reasoning_retrieval(
+        retrieval,
+        client.tool_service,
+        identity_blind=args.identity_blind,
+        harness_prefetch_tools=args.harness_prefetch_tools,
+        prefetched_tool_replay_run_dir=args.prefetched_tool_replay_run_dir,
     )
     reasoning_groups = [group for group in reasoning_retrieval["groups"] if group.get("neighbors")]
     if args.max_groups:
         reasoning_groups = reasoning_groups[: args.max_groups]
     frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
+    frozen_groups = load_reusable_group_outputs(args.group_analysis_source_run_dir, retrieval)
 
     single_output, group_outputs = _run_parallel_reasoning(
         client,
@@ -253,6 +271,7 @@ def main(argv: list[str] | None = None) -> int:
         reasoning_groups,
         max_workers=args.max_workers,
         single_output=frozen_single,
+        group_outputs=frozen_groups,
     )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
@@ -291,7 +310,11 @@ def main(argv: list[str] | None = None) -> int:
         "smiles_field": args.smiles_field,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
+        "neighbor_identity_policy": args.neighbor_identity_policy,
+        "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
+        "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
+        "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
         "model": args.model,
         "base_url": args.base_url,
         "tool_service_url": args.tool_service_url,
@@ -306,8 +329,11 @@ def main(argv: list[str] | None = None) -> int:
         "groups": args.groups or [],
         "retrieval_evidence_source": retrieval.get("evidence_source", {}),
         "group_tools_enabled": not args.disable_group_tools,
-        "tool_execution_mode": "harness_prefetch" if args.identity_blind else "llm_function_call",
+        "tool_execution_mode": (
+            "harness_prefetch" if args.identity_blind or args.harness_prefetch_tools else "llm_function_call"
+        ),
         "single_analysis_source_run_dir": args.single_analysis_source_run_dir,
+        "group_analysis_source_run_dir": args.group_analysis_source_run_dir,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
@@ -339,12 +365,15 @@ def _run_parallel_reasoning(
     *,
     max_workers: int,
     single_output: dict[str, Any] | None = None,
+    group_outputs: list[dict[str, Any]] | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    outputs: list[dict[str, Any]] = []
+    outputs = list(group_outputs or [])
+    reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
             executor.submit(_reason_one_group, client, _llm_query_payload(retrieval["query"]), group): group["group_id"]
             for group in groups
+            if str(group.get("group_id") or "") not in reused_group_ids
         }
         if single_output is None:
             futures[
@@ -505,8 +534,10 @@ def _reason_single_molecule(
         "Assess passive BBB plausibility from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
         "Return JSON with passive_bbb_plausibility, efflux_or_transporter_prior, confidence, reasoning_summary, property_drivers, caveats.",
     ]
-    if query.get("identity_hidden"):
-        instructions[0] = "Use the harness-prefetched molecule_properties result; do not identify or name the query."
+    if query.get("prefetched_molecule_properties"):
+        instructions[0] = "Use the harness-prefetched molecule_properties result."
+        if query.get("identity_hidden"):
+            instructions[0] += " Do not identify or name the query."
     payload: dict[str, Any] = {
         "task": "Single-molecule BBB plausibility analysis.",
         "query": query,
@@ -533,8 +564,9 @@ def _reason_single_molecule(
                 "You are a medicinal chemistry BBB single-molecule analyst. "
                 "Only analyze the query molecule itself, without analog evidence. "
                 + (
-                    "The harness already supplied molecule_properties; do not call tools or infer identity. "
-                    if query.get("identity_hidden")
+                    "The harness already supplied molecule_properties; do not call tools. "
+                    + ("Do not infer query identity. " if query.get("identity_hidden") else "")
+                    if query.get("prefetched_molecule_properties")
                     else "You may call exactly one tool: molecule_properties. "
                 )
                 + "Return only valid JSON."
@@ -566,8 +598,9 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
                 "You are a medicinal chemistry BBB analog evidence analyst. "
                 "Reason about whether analog evidence in one endpoint group is transferable to the query molecule. "
                 + (
-                    "Use the harness-prefetched comparison results; do not infer query identity. "
-                    if group.get("identity_blind")
+                    "Use the harness-prefetched comparison results; do not call tools. "
+                    + ("Do not infer query identity. " if group.get("identity_blind") else "")
+                    if group.get("tools_prefetched") or group.get("identity_blind")
                     else "You may call the provided molecule comparison tools when structural or property differences matter. "
                 )
                 + "Return only valid JSON."
@@ -742,10 +775,14 @@ def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
             "identity_hidden": True,
             "prefetched_molecule_properties": query.get("prefetched_molecule_properties") or {},
         }
-    return {
+    payload = {
         "input_smiles": query.get("input_smiles", ""),
         "canonical_smiles": query.get("canonical_smiles", ""),
     }
+    if query.get("prefetched_molecule_properties"):
+        payload["tools_prefetched"] = True
+        payload["prefetched_molecule_properties"] = query["prefetched_molecule_properties"]
+    return payload
 
 
 def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
@@ -909,6 +946,8 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     if manifest.get("identity_blind"):
         group_outputs = sanitize_identity_blind_branch_outputs(group_outputs, retrieval)
         retrieval = prepare_identity_blind_final_retrieval(retrieval, single_output)
+    elif manifest.get("harness_prefetch_tools"):
+        retrieval = prepare_prefetched_final_retrieval(retrieval, single_output, identity_blind=False)
     final_output = _run_final_reasoning(client, retrieval, single_output, group_outputs)
     final_path = run_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
@@ -974,8 +1013,17 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--index", default=DEFAULT_INDEX)
     parser.add_argument("--experiment-mode", choices=sorted(EXPERIMENT_MODES), default="native")
     parser.add_argument("--retrieval-source", default="chembl")
+    parser.add_argument(
+        "--neighbor-identity-policy",
+        choices=["operational", "parent_disjoint"],
+        default="operational",
+    )
     parser.add_argument("--identity-blind", action="store_true")
+    parser.add_argument("--harness-prefetch-tools", action="store_true")
     parser.add_argument("--single-analysis-source-run-dir", default="")
+    parser.add_argument("--group-analysis-source-run-dir", default="")
+    parser.add_argument("--retrieval-replay-run-dir", default="")
+    parser.add_argument("--prefetched-tool-replay-run-dir", default="")
     parser.add_argument(
         "--tier1-replacement-index",
         default="",

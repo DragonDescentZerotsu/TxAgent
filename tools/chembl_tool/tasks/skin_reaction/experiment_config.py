@@ -23,11 +23,10 @@ CHEMBL = SourceExperimentConfig(
                 2: "sensitisation_aop",
                 3: "phototoxicity_irritation_local_damage",
                 4: "skin_exposure",
-                5: "context_background",
             }[tier],
             source_group_prefixes=(f"Tier {tier}.",),
         )
-        for tier in range(1, 6)
+        for tier in range(1, 5)
     ),
 )
 

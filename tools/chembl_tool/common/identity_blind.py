@@ -1,4 +1,4 @@
-"""Harness-side tool prefetching that hides query identity from the LLM.
+"""Harness-side tool prefetching with optional identity redaction.
 
 Retrieval still uses the molecular graph internally.  Before prompting, this
 module computes the same property/comparison tools outside the model, removes
@@ -9,6 +9,8 @@ source evidence needed for reasoning.
 from __future__ import annotations
 
 from copy import deepcopy
+import json
+from pathlib import Path
 import re
 from typing import Any
 
@@ -28,11 +30,13 @@ _GENERIC_IDENTITY_NAMES = {
 }
 
 
-def prepare_identity_blind_retrieval(
+def prepare_harness_prefetched_retrieval(
     retrieval: dict[str, Any],
     tool_service: ToolServiceClient,
+    *,
+    identity_blind: bool,
 ) -> dict[str, Any]:
-    """Return an LLM-facing retrieval copy with harness-prefetched tools."""
+    """Prefetch the same fixed tools, optionally hiding molecule identities."""
     output = deepcopy(retrieval)
     query = output.get("query") or {}
     query_smiles = str(query.get("canonical_smiles") or query.get("input_smiles") or "")
@@ -40,17 +44,23 @@ def prepare_identity_blind_retrieval(
         "molecule_properties",
         {"query_smiles": query_smiles, "logd_ph": 7.4},
     )
-    query.clear()
-    query.update(
-        {
+    prefetched_properties = _compact_result(property_result, query_smiles)
+    if identity_blind:
+        query.clear()
+        query.update({
             "molecule_id": "query",
             "identity_hidden": True,
-            "prefetched_molecule_properties": _compact_result(property_result, query_smiles),
-        }
-    )
+            "tools_prefetched": True,
+            "prefetched_molecule_properties": prefetched_properties,
+        })
+    else:
+        query["tools_prefetched"] = True
+        query["prefetched_molecule_properties"] = prefetched_properties
 
     for group_index, group in enumerate(output.get("groups") or [], start=1):
-        group["identity_blind"] = True
+        group["tools_prefetched"] = True
+        if identity_blind:
+            group["identity_blind"] = True
         for neighbor_index, neighbor in enumerate(group.get("neighbors") or [], start=1):
             reference_smiles = str(neighbor.get("canonical_smiles") or "")
             alias = f"neighbor_{group_index}_{neighbor_index}"
@@ -73,20 +83,153 @@ def prepare_identity_blind_retrieval(
                     },
                 ),
             ]
-            neighbor["molecule_chembl_id"] = alias
-            neighbor["canonical_smiles"] = "[hidden]"
-            neighbor["standard_inchi_key"] = ""
-            neighbor["identity_blind_alias"] = alias
             neighbor["prefetched_comparisons"] = [
                 _compact_result(result, query_smiles, reference_smiles) for result in comparisons
             ]
-            neighbor["evidence_rows"] = [
-                {"minimal_evidence": _redact_evidence_identity(evidence_for_llm(row), alias)}
-                for row in neighbor.get("evidence_rows") or []
-            ]
-    output = _replace_identity_terms(output, _retrieval_sensitive_terms(retrieval))
-    output.setdefault("experiment", {})["identity_blind"] = True
-    assert_identity_blind_retrieval(retrieval, output)
+            if identity_blind:
+                neighbor["molecule_chembl_id"] = alias
+                neighbor["canonical_smiles"] = "[hidden]"
+                neighbor["standard_inchi_key"] = ""
+                neighbor["identity_blind_alias"] = alias
+                neighbor["evidence_rows"] = [
+                    {"minimal_evidence": _redact_evidence_identity(evidence_for_llm(row), alias)}
+                    for row in neighbor.get("evidence_rows") or []
+                ]
+    experiment = output.setdefault("experiment", {})
+    experiment["tool_execution_mode"] = "harness_prefetch"
+    if identity_blind:
+        output = _replace_identity_terms(output, _retrieval_sensitive_terms(retrieval))
+        output.setdefault("experiment", {})["identity_blind"] = True
+        assert_identity_blind_retrieval(retrieval, output)
+    return output
+
+
+def prepare_identity_blind_retrieval(
+    retrieval: dict[str, Any],
+    tool_service: ToolServiceClient,
+) -> dict[str, Any]:
+    """Return a redacted LLM-facing copy with fixed prefetched tools."""
+    return prepare_harness_prefetched_retrieval(retrieval, tool_service, identity_blind=True)
+
+
+def prepare_reasoning_retrieval(
+    retrieval: dict[str, Any],
+    tool_service: ToolServiceClient,
+    *,
+    identity_blind: bool,
+    harness_prefetch_tools: bool,
+    prefetched_tool_replay_run_dir: str = "",
+) -> dict[str, Any]:
+    """Apply the requested paper tool-execution contract to retrieval."""
+    if identity_blind:
+        return prepare_harness_prefetched_retrieval(retrieval, tool_service, identity_blind=True)
+    if prefetched_tool_replay_run_dir:
+        return prepare_replayed_prefetched_retrieval(retrieval, prefetched_tool_replay_run_dir)
+    if harness_prefetch_tools:
+        return prepare_harness_prefetched_retrieval(retrieval, tool_service, identity_blind=False)
+    return retrieval
+
+
+def prepare_replayed_prefetched_retrieval(
+    retrieval: dict[str, Any],
+    source_run_dir: str,
+) -> dict[str, Any]:
+    """Attach frozen harness tool outputs while retaining visible identities."""
+
+    source_dir = Path(source_run_dir)
+    single = json.loads(
+        (source_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8")
+    )
+    query_results = ((single.get("llm") or {}).get("tool_results") or [])
+    if not query_results:
+        raise ValueError(f"Prefetched tool replay has no query tool result: {source_dir}")
+
+    source_groups: dict[str, dict[int, list[dict[str, Any]]]] = {}
+    raw_groups = source_dir / "group_reasoning_outputs_raw.jsonl"
+    group_path = raw_groups if raw_groups.exists() else source_dir / "group_reasoning_outputs.jsonl"
+    for line in group_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        branch = json.loads(line)
+        payload = _initial_group_payload((branch.get("llm") or {}).get("messages") or [])
+        group_id = str((payload.get("group") or {}).get("group_id") or branch.get("group_id") or "")
+        if not group_id:
+            continue
+        source_groups[group_id] = {
+            int(neighbor.get("rank")): deepcopy(neighbor.get("prefetched_comparisons") or [])
+            for neighbor in payload.get("neighbors") or []
+            if neighbor.get("rank") is not None
+        }
+
+    output = deepcopy(retrieval)
+    query = output.setdefault("query", {})
+    query["tools_prefetched"] = True
+    query["prefetched_molecule_properties"] = deepcopy(query_results[0])
+    for group in output.get("groups") or []:
+        neighbors = group.get("neighbors") or []
+        if not neighbors:
+            continue
+        group_id = str(group.get("group_id") or "")
+        by_rank = source_groups.get(group_id)
+        if by_rank is None:
+            raise ValueError(f"Prefetched tool replay is missing group {group_id}: {source_dir}")
+        group["tools_prefetched"] = True
+        for neighbor in neighbors:
+            rank = int(neighbor.get("rank"))
+            comparisons = by_rank.get(rank)
+            if not comparisons:
+                raise ValueError(
+                    f"Prefetched tool replay is missing {group_id} neighbor rank {rank}: {source_dir}"
+                )
+            neighbor["prefetched_comparisons"] = deepcopy(comparisons)
+    experiment = output.setdefault("experiment", {})
+    experiment["tool_execution_mode"] = "harness_prefetch_replay"
+    experiment["prefetched_tool_replay_source_run_dir"] = str(source_dir)
+    return output
+
+
+def _initial_group_payload(messages: list[dict[str, Any]]) -> dict[str, Any]:
+    for message in messages:
+        content = message.get("content")
+        if message.get("role") != "user" or not isinstance(content, str):
+            continue
+        try:
+            payload = json.loads(content)
+        except json.JSONDecodeError:
+            object_start = content.find("{")
+            if object_start < 0:
+                continue
+            try:
+                payload, _ = json.JSONDecoder().raw_decode(content[object_start:])
+            except json.JSONDecodeError:
+                continue
+        if isinstance(payload, dict) and "neighbors" in payload:
+            return payload
+    return {}
+
+
+def prepare_prefetched_final_retrieval(
+    retrieval: dict[str, Any],
+    single_output: dict[str, Any],
+    *,
+    identity_blind: bool,
+) -> dict[str, Any]:
+    """Restore prefetched query properties for a final-only retry."""
+    output = deepcopy(retrieval)
+    tool_results = ((single_output.get("llm") or {}).get("tool_results") or [])
+    prefetched = tool_results[0] if tool_results else {}
+    if identity_blind:
+        output["query"] = {
+            "molecule_id": "query",
+            "identity_hidden": True,
+            "tools_prefetched": True,
+            "prefetched_molecule_properties": prefetched,
+        }
+        output.setdefault("experiment", {})["identity_blind"] = True
+    else:
+        output.setdefault("query", {})["tools_prefetched"] = True
+        output["query"]["prefetched_molecule_properties"] = prefetched
+    output.setdefault("experiment", {})["tool_execution_mode"] = "harness_prefetch"
     return output
 
 
@@ -95,16 +238,7 @@ def prepare_identity_blind_final_retrieval(
     single_output: dict[str, Any],
 ) -> dict[str, Any]:
     """Redact a persisted retrieval before a final-only retry."""
-    output = deepcopy(retrieval)
-    tool_results = ((single_output.get("llm") or {}).get("tool_results") or [])
-    prefetched = tool_results[0] if tool_results else {}
-    output["query"] = {
-        "molecule_id": "query",
-        "identity_hidden": True,
-        "prefetched_molecule_properties": prefetched,
-    }
-    output.setdefault("experiment", {})["identity_blind"] = True
-    return output
+    return prepare_prefetched_final_retrieval(retrieval, single_output, identity_blind=True)
 
 
 def sanitize_identity_blind_branch_outputs(

@@ -12,9 +12,19 @@ import random
 import re
 from typing import Any
 
+from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.identity_blind import find_identity_blind_leaks
 
-from .molecular_evidence_agent import EXPERIMENTS, PAPER_ROOT
+from .molecular_evidence_agent import (
+    DEPLOYMENT_VISIBLE,
+    DEPLOYMENT_VISIBLE_PREFETCHED,
+    EXPERIMENTS,
+    IDENTITY_BLIND,
+    PAPER_ROOT,
+    VISIBILITY_MODES,
+    experiment_result_name,
+    experiment_run_root,
+)
 
 
 COMPARISONS = {
@@ -58,27 +68,32 @@ def main(argv: list[str] | None = None) -> int:
     group_coverage: list[dict[str, Any]] = []
     prediction_sets: dict[str, dict[int, dict[str, Any]]] = {}
 
-    for experiment in EXPERIMENTS:
-        batch_dir = PAPER_ROOT / "runs" / experiment.task / experiment.name
-        metrics_path = batch_dir / "metrics.json"
-        predictions_path = batch_dir / "predictions.jsonl"
-        if not metrics_path.exists() or not predictions_path.exists():
-            continue
-        predictions = _read_jsonl(predictions_path)
-        prediction_sets[experiment.name] = {
-            int(row["query_index"]): row for row in predictions if row.get("pred_label") is not None
-        }
-        group_coverage.extend(_group_coverage_rows(experiment.name, batch_dir, predictions))
-        summaries.append(
-            summarize_experiment(
-                experiment.name,
-                experiment.task,
-                batch_dir,
-                json.loads(metrics_path.read_text(encoding="utf-8")),
-                predictions,
-                bootstrap_replicates=args.bootstrap_replicates,
+    for visibility_mode in VISIBILITY_MODES:
+        for experiment in EXPERIMENTS:
+            batch_dir = experiment_run_root(visibility_mode) / experiment.task / experiment.name
+            metrics_path = batch_dir / "metrics.json"
+            predictions_path = batch_dir / "predictions.jsonl"
+            if not metrics_path.exists() or not predictions_path.exists():
+                continue
+            result_name = experiment_result_name(experiment.name, visibility_mode)
+            predictions = _read_jsonl(predictions_path)
+            prediction_sets[result_name] = {
+                int(row["query_index"]): row for row in predictions if row.get("pred_label") is not None
+            }
+            group_coverage.extend(
+                _group_coverage_rows(result_name, batch_dir, predictions, visibility_mode=visibility_mode)
             )
-        )
+            summaries.append(
+                summarize_experiment(
+                    result_name,
+                    experiment.task,
+                    batch_dir,
+                    json.loads(metrics_path.read_text(encoding="utf-8")),
+                    predictions,
+                    bootstrap_replicates=args.bootstrap_replicates,
+                    visibility_mode=visibility_mode,
+                )
+            )
 
     knn_dir = PAPER_ROOT / "bioavailability_ma" / "starling_direct_scalar_knn"
     if (knn_dir / "metrics.json").exists() and (knn_dir / "predictions.jsonl").exists():
@@ -112,14 +127,28 @@ def main(argv: list[str] | None = None) -> int:
                 json.loads((knn_dir / "metrics.json").read_text(encoding="utf-8")),
                 normalized_knn,
                 bootstrap_replicates=args.bootstrap_replicates,
+                visibility_mode="visibility_independent",
             )
         )
 
-    comparisons = build_comparisons(prediction_sets, args.bootstrap_replicates)
+    comparisons = []
+    for visibility_mode in VISIBILITY_MODES:
+        comparisons.extend(
+            build_comparisons(
+                prediction_sets,
+                args.bootstrap_replicates,
+                visibility_mode=visibility_mode,
+            )
+        )
+    visibility_comparisons = build_visibility_comparisons(
+        prediction_sets,
+        args.bootstrap_replicates,
+    )
     source_inventory = build_source_inventory()
     contextual_baselines = load_contextual_baselines()
     _write_tsv(output_dir / "experiment_summary.tsv", summaries)
     _write_tsv(output_dir / "paired_comparisons.tsv", comparisons)
+    _write_tsv(output_dir / "visibility_comparisons.tsv", visibility_comparisons)
     _write_tsv(output_dir / "group_coverage.tsv", group_coverage)
     _write_tsv(output_dir / "source_inventory.tsv", source_inventory)
     _write_tsv(output_dir / "contextual_baselines.tsv", contextual_baselines)
@@ -131,6 +160,7 @@ def main(argv: list[str] | None = None) -> int:
                 "contextual_baselines": contextual_baselines,
                 "group_coverage": group_coverage,
                 "comparisons": comparisons,
+                "visibility_comparisons": visibility_comparisons,
             },
             indent=2,
         )
@@ -138,10 +168,13 @@ def main(argv: list[str] | None = None) -> int:
         encoding="utf-8",
     )
     (output_dir / "report.md").write_text(
-        _render_report(summaries, comparisons, contextual_baselines),
+        _render_report(summaries, comparisons, visibility_comparisons, contextual_baselines),
         encoding="utf-8",
     )
-    print(f"Wrote {len(summaries)} experiment summaries and {len(comparisons)} comparisons to {output_dir}")
+    print(
+        f"Wrote {len(summaries)} experiment summaries, {len(comparisons)} within-regime comparisons, "
+        f"and {len(visibility_comparisons)} visibility comparisons to {output_dir}"
+    )
     return 0
 
 
@@ -153,6 +186,7 @@ def summarize_experiment(
     predictions: list[dict[str, Any]],
     *,
     bootstrap_replicates: int,
+    visibility_mode: str = IDENTITY_BLIND,
 ) -> dict[str, Any]:
     evaluable = [row for row in predictions if row.get("pred_label") is not None]
     labels = [int(row["label"]) for row in evaluable]
@@ -160,11 +194,24 @@ def summarize_experiment(
     macro_low, macro_high = bootstrap_metric_ci(labels, predicted, bootstrap_replicates)
     group_counts = [int(row.get("n_groups_with_neighbors") or 0) for row in predictions]
     usage = _collect_usage(batch_dir, predictions)
-    leaks = _count_identity_leaks(predictions)
+    trace_matches = _count_identity_leaks(predictions)
     prompt_audit = _audit_prompt_identities(batch_dir, predictions)
+    deployment_audit = _audit_deployment_visibility(batch_dir, predictions)
+    identity_blind = visibility_mode == IDENTITY_BLIND
+    if identity_blind:
+        visibility_contract_satisfied: bool | None = prompt_audit["prompt_identity_leak_runs"] == 0
+    elif visibility_mode in {DEPLOYMENT_VISIBLE, DEPLOYMENT_VISIBLE_PREFETCHED}:
+        visibility_contract_satisfied = (
+            deployment_audit["deployment_visibility_audited_runs"] == len(predictions)
+            and deployment_audit["deployment_contract_failed_runs"] == 0
+        )
+    else:
+        visibility_contract_satisfied = None
     return {
         "experiment": name,
         "task": task,
+        "visibility_mode": visibility_mode,
+        "identity_blind": identity_blind,
         "n_total": metrics.get("n_total", len(predictions)),
         "n_successful": metrics.get("n_successful", len(evaluable)),
         "n_failed": metrics.get("n_failed_runs", len(predictions) - len(evaluable)),
@@ -189,8 +236,11 @@ def summarize_experiment(
         "llm_calls": usage["llm_calls"],
         "reused_single_analyses": usage["reused_single_analyses"],
         "served_models": usage["served_models"],
-        "query_smiles_trace_leaks": leaks,
+        "query_smiles_trace_matches": trace_matches,
+        "query_smiles_trace_leaks": trace_matches if identity_blind else 0,
+        "visibility_contract_satisfied": visibility_contract_satisfied,
         **prompt_audit,
+        **deployment_audit,
     }
 
 
@@ -285,49 +335,113 @@ def load_contextual_baselines() -> list[dict[str, Any]]:
 def build_comparisons(
     prediction_sets: dict[str, dict[int, dict[str, Any]]],
     bootstrap_replicates: int,
+    *,
+    visibility_mode: str = IDENTITY_BLIND,
 ) -> list[dict[str, Any]]:
     rows = []
     for task, task_pairs in COMPARISONS.items():
         for left_suffix, right_suffix in task_pairs:
-            left_name = f"{task}__{left_suffix}"
-            right_name = f"{task}__{right_suffix}"
-            if left_name not in prediction_sets or right_name not in prediction_sets:
+            left_name = _visibility_condition_name(f"{task}__{left_suffix}", visibility_mode)
+            right_name = _visibility_condition_name(f"{task}__{right_suffix}", visibility_mode)
+            row = _paired_comparison(
+                task,
+                left_name,
+                right_name,
+                prediction_sets,
+                bootstrap_replicates,
+            )
+            if row is None:
                 continue
-            left = prediction_sets[left_name]
-            right = prediction_sets[right_name]
-            common = sorted(set(left) & set(right))
-            labels = [int(left[index]["label"]) for index in common]
-            left_pred = [int(left[index]["pred_label"]) for index in common]
-            right_pred = [int(right[index]["pred_label"]) for index in common]
-            left_f1 = macro_f1(labels, left_pred)
-            right_f1 = macro_f1(labels, right_pred)
-            delta_low, delta_high = paired_bootstrap_delta_ci(
-                labels, left_pred, right_pred, bootstrap_replicates
-            )
-            left_only = sum(
-                lp == y and rp != y for y, lp, rp in zip(labels, left_pred, right_pred)
-            )
-            right_only = sum(
-                lp != y and rp == y for y, lp, rp in zip(labels, left_pred, right_pred)
-            )
-            rows.append(
-                {
-                    "task": task,
-                    "left": left_name,
-                    "right": right_name,
-                    "n_paired": len(common),
-                    "left_macro_f1": left_f1,
-                    "right_macro_f1": right_f1,
-                    "delta_macro_f1": right_f1 - left_f1,
-                    "delta_ci_low": delta_low,
-                    "delta_ci_high": delta_high,
-                    "left_only_correct": left_only,
-                    "right_only_correct": right_only,
-                    "mcnemar_exact_p": mcnemar_exact_p(left_only, right_only),
-                }
-            )
+            row["comparison_type"] = "within_visibility_regime"
+            row["visibility_mode"] = visibility_mode
+            rows.append(row)
     _add_holm_adjusted_p(rows)
     return rows
+
+
+def build_visibility_comparisons(
+    prediction_sets: dict[str, dict[int, dict[str, Any]]],
+    bootstrap_replicates: int,
+) -> list[dict[str, Any]]:
+    """Build controlled visibility and agentic tool-use comparisons."""
+    rows = []
+    comparison_specs = (
+        (
+            IDENTITY_BLIND,
+            DEPLOYMENT_VISIBLE_PREFETCHED,
+            "identity_blind_vs_deployment_visible_prefetched",
+        ),
+        (
+            DEPLOYMENT_VISIBLE_PREFETCHED,
+            DEPLOYMENT_VISIBLE,
+            "deployment_visible_prefetched_vs_agentic",
+        ),
+    )
+    for left_mode, right_mode, comparison_type in comparison_specs:
+        family = []
+        for experiment in EXPERIMENTS:
+            left_name = experiment_result_name(experiment.name, left_mode)
+            right_name = experiment_result_name(experiment.name, right_mode)
+            row = _paired_comparison(
+                experiment.task,
+                left_name,
+                right_name,
+                prediction_sets,
+                bootstrap_replicates,
+            )
+            if row is None:
+                continue
+            row["condition"] = experiment.name
+            row["comparison_type"] = comparison_type
+            row["visibility_mode"] = "cross_visibility"
+            family.append(row)
+        _add_holm_adjusted_p(family)
+        rows.extend(family)
+    return rows
+
+
+def _paired_comparison(
+    task: str,
+    left_name: str,
+    right_name: str,
+    prediction_sets: dict[str, dict[int, dict[str, Any]]],
+    bootstrap_replicates: int,
+) -> dict[str, Any] | None:
+    if left_name not in prediction_sets or right_name not in prediction_sets:
+        return None
+    left = prediction_sets[left_name]
+    right = prediction_sets[right_name]
+    common = sorted(set(left) & set(right))
+    labels = [int(left[index]["label"]) for index in common]
+    left_pred = [int(left[index]["pred_label"]) for index in common]
+    right_pred = [int(right[index]["pred_label"]) for index in common]
+    left_f1 = macro_f1(labels, left_pred)
+    right_f1 = macro_f1(labels, right_pred)
+    delta_low, delta_high = paired_bootstrap_delta_ci(
+        labels, left_pred, right_pred, bootstrap_replicates
+    )
+    left_only = sum(lp == y and rp != y for y, lp, rp in zip(labels, left_pred, right_pred))
+    right_only = sum(lp != y and rp == y for y, lp, rp in zip(labels, left_pred, right_pred))
+    return {
+        "task": task,
+        "left": left_name,
+        "right": right_name,
+        "n_paired": len(common),
+        "left_macro_f1": left_f1,
+        "right_macro_f1": right_f1,
+        "delta_macro_f1": right_f1 - left_f1,
+        "delta_ci_low": delta_low,
+        "delta_ci_high": delta_high,
+        "left_only_correct": left_only,
+        "right_only_correct": right_only,
+        "mcnemar_exact_p": mcnemar_exact_p(left_only, right_only),
+    }
+
+
+def _visibility_condition_name(condition_name: str, visibility_mode: str) -> str:
+    if condition_name.endswith("__starling_direct_scalar_knn"):
+        return condition_name
+    return experiment_result_name(condition_name, visibility_mode)
 
 
 def _add_holm_adjusted_p(rows: list[dict[str, Any]]) -> None:
@@ -343,6 +457,8 @@ def _group_coverage_rows(
     experiment: str,
     batch_dir: Path,
     predictions: list[dict[str, Any]],
+    *,
+    visibility_mode: str = IDENTITY_BLIND,
 ) -> list[dict[str, Any]]:
     counts: dict[str, dict[str, int]] = {}
     for prediction in predictions:
@@ -361,6 +477,7 @@ def _group_coverage_rows(
     return [
         {
             "experiment": experiment,
+            "visibility_mode": visibility_mode,
             "group_id": group_id,
             "n_samples": item["samples"],
             "n_samples_with_neighbors": item["covered"],
@@ -512,6 +629,129 @@ def _audit_prompt_identities(batch_dir: Path, predictions: list[dict[str, Any]])
     }
 
 
+def _audit_deployment_visibility(
+    batch_dir: Path,
+    predictions: list[dict[str, Any]],
+) -> dict[str, int]:
+    """Verify the positive deployment contract against actual request histories."""
+    counts = {
+        "deployment_visibility_audited_runs": 0,
+        "deployment_query_structure_visible_runs": 0,
+        "deployment_neighbor_structure_expected_runs": 0,
+        "deployment_neighbor_structure_visible_runs": 0,
+        "deployment_neighbor_identifier_expected_runs": 0,
+        "deployment_neighbor_identifier_visible_runs": 0,
+        "deployment_neighbor_name_expected_runs": 0,
+        "deployment_neighbor_name_visible_runs": 0,
+        "deployment_contract_satisfied_runs": 0,
+        "deployment_contract_failed_runs": 0,
+    }
+    for prediction in predictions:
+        run_dir = _resolve_run_dir(batch_dir, prediction)
+        retrieval_path = run_dir / "retrieval.json"
+        if not retrieval_path.exists():
+            continue
+        payloads = _llm_prompt_payloads(run_dir)
+        if not payloads:
+            continue
+        retrieval = json.loads(retrieval_path.read_text(encoding="utf-8"))
+        counts["deployment_visibility_audited_runs"] += 1
+
+        query = retrieval.get("query") or {}
+        query_terms = [query.get("input_smiles"), query.get("canonical_smiles")]
+        query_visible = any(_term_is_visible(term, payloads) for term in query_terms if term)
+        counts["deployment_query_structure_visible_runs"] += int(query_visible)
+
+        neighbors = [
+            neighbor
+            for group in retrieval.get("groups") or []
+            for neighbor in group.get("neighbors") or []
+        ]
+        structure_expected = bool(neighbors)
+        structure_visible = all(
+            _term_is_visible(neighbor.get("canonical_smiles"), payloads)
+            for neighbor in neighbors
+            if neighbor.get("canonical_smiles")
+        )
+        structure_visible = structure_visible and all(
+            bool(neighbor.get("canonical_smiles")) for neighbor in neighbors
+        )
+        counts["deployment_neighbor_structure_expected_runs"] += int(structure_expected)
+        counts["deployment_neighbor_structure_visible_runs"] += int(
+            structure_expected and structure_visible
+        )
+
+        identifiers = [
+            str(neighbor.get("molecule_chembl_id") or "").strip()
+            for neighbor in neighbors
+            if str(neighbor.get("molecule_chembl_id") or "").strip()
+        ]
+        identifier_expected = bool(identifiers)
+        identifier_visible = all(_term_is_visible(term, payloads) for term in identifiers)
+        counts["deployment_neighbor_identifier_expected_runs"] += int(identifier_expected)
+        counts["deployment_neighbor_identifier_visible_runs"] += int(
+            identifier_expected and identifier_visible
+        )
+
+        neighbor_name_sets = [names for neighbor in neighbors if (names := _neighbor_names(neighbor))]
+        name_expected = bool(neighbor_name_sets)
+        name_visible = all(
+            any(_term_is_visible(name, payloads) for name in names)
+            for names in neighbor_name_sets
+        )
+        counts["deployment_neighbor_name_expected_runs"] += int(name_expected)
+        counts["deployment_neighbor_name_visible_runs"] += int(name_expected and name_visible)
+
+        contract_ok = (
+            query_visible
+            and (not structure_expected or structure_visible)
+            and (not identifier_expected or identifier_visible)
+            and (not name_expected or name_visible)
+        )
+        counts["deployment_contract_satisfied_runs"] += int(contract_ok)
+        counts["deployment_contract_failed_runs"] += int(not contract_ok)
+    return counts
+
+
+def _neighbor_names(neighbor: dict[str, Any]) -> set[str]:
+    names: set[str] = set()
+    for row in neighbor.get("evidence_rows") or []:
+        record = evidence_for_llm(row)
+        names.update(str(name).strip() for name in (record.get("molecule") or {}).get("names") or [])
+        for example in record.get("examples") or []:
+            if isinstance(example, dict):
+                names.add(str(example.get("molecule_name") or "").strip())
+    return {name for name in names if name}
+
+
+def _term_is_visible(term: Any, payloads: list[Any]) -> bool:
+    expected = str(term or "").strip().lower()
+    if not expected:
+        return False
+    # Prompt content often contains an embedded JSON string, where SMILES
+    # stereobond backslashes are escaped a second time.
+    escaped = json.dumps(expected, ensure_ascii=False)[1:-1]
+    candidates = {expected, escaped}
+    return any(
+        candidate in value.lower()
+        for payload in payloads
+        for value in _string_values(payload)
+        for candidate in candidates
+    )
+
+
+def _string_values(value: Any):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            yield str(key)
+            yield from _string_values(item)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            yield from _string_values(item)
+
+
 def _llm_prompt_payloads(run_dir: Path) -> list[list[dict[str, Any]]]:
     outputs: list[dict[str, Any]] = []
     for name in ("single_molecule_reasoning_output.json", "final_reasoning_output.json"):
@@ -562,20 +802,22 @@ def _write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
 def _render_report(
     summaries: list[dict[str, Any]],
     comparisons: list[dict[str, Any]],
+    visibility_comparisons: list[dict[str, Any]],
     contextual_baselines: list[dict[str, Any]],
 ) -> str:
-    lines = ["# Molecular Evidence Agent Experiment Report", "", "## Experiment Summary", ""]
-    lines.append("| Experiment | N | Macro-F1 | 95% CI | Accuracy | Coverage | Failed | Tokens |")
-    lines.append("|---|---:|---:|---:|---:|---:|---:|---:|")
+    lines = ["# 分子证据 Agent 实验报告", "", "## 实验汇总", ""]
+    lines.append("| 可见性模式 | 实验 | N | Macro-F1 | 95% CI | 准确率 | 检索覆盖率 | 失败数 | Tokens |")
+    lines.append("|---|---|---:|---:|---:|---:|---:|---:|---:|")
     for row in summaries:
         ci = f"{_fmt(row['macro_f1_ci_low'])}-{_fmt(row['macro_f1_ci_high'])}"
         lines.append(
-            f"| {row['experiment']} | {row['n_total']} | {_fmt(row['macro_f1'])} | {ci} | "
+            f"| {row['visibility_mode']} | {row['experiment']} | {row['n_total']} | "
+            f"{_fmt(row['macro_f1'])} | {ci} | "
             f"{_fmt(row['accuracy'])} | {_fmt(row['retrieval_coverage'])} | {row['n_failed']} | "
             f"{row['total_tokens']} |"
         )
-    lines.extend(["", "## Paired Comparisons", ""])
-    lines.append("| Task | Left | Right | Delta macro-F1 | 95% CI | McNemar p | Holm p |")
+    lines.extend(["", "## 配对比较", ""])
+    lines.append("| 任务 | 左侧条件 | 右侧条件 | Macro-F1 差值 | 95% CI | McNemar p | Holm p |")
     lines.append("|---|---|---|---:|---:|---:|---:|")
     for row in comparisons:
         ci = f"{_fmt(row['delta_ci_low'])}-{_fmt(row['delta_ci_high'])}"
@@ -584,8 +826,18 @@ def _render_report(
             f"{_fmt(row['delta_macro_f1'])} | {ci} | {_fmt(row['mcnemar_exact_p'])} | "
             f"{_fmt(row['mcnemar_holm_p'])} |"
         )
-    lines.extend(["", "## Contextual MiniMol Baselines", ""])
-    lines.append("| Task | Macro-F1 | Accuracy | AUROC | Selection |")
+    lines.extend(["", "## 可见性与 Agentic Tool-use 配对比较", ""])
+    lines.append("| 比较 | 任务 | 条件 | 左侧 Macro-F1 | 右侧 Macro-F1 | 差值 | 95% CI | McNemar p | Holm p |")
+    lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|")
+    for row in visibility_comparisons:
+        ci = f"{_fmt(row['delta_ci_low'])}-{_fmt(row['delta_ci_high'])}"
+        lines.append(
+            f"| {row['comparison_type']} | {row['task']} | {row['condition']} | {_fmt(row['left_macro_f1'])} | "
+            f"{_fmt(row['right_macro_f1'])} | {_fmt(row['delta_macro_f1'])} | {ci} | "
+            f"{_fmt(row['mcnemar_exact_p'])} | {_fmt(row['mcnemar_holm_p'])} |"
+        )
+    lines.extend(["", "## MiniMol 参考基线", ""])
+    lines.append("| 任务 | Macro-F1 | 准确率 | AUROC | 选择方式 |")
     lines.append("|---|---:|---:|---:|---|")
     for row in contextual_baselines:
         lines.append(
@@ -595,9 +847,12 @@ def _render_report(
     lines.extend(
         [
             "",
-            "Bootstrap intervals use paired test-set resampling with a fixed seed. McNemar p-values are exact and two-sided.",
-            "MiniMol rows are existing validation-selected or fixed-config contextual baselines, not members of the paired retrieval ablation.",
-            "Any prompt identity leak invalidates the identity-blind condition. A query-SMILES match found only in an assistant response is a separate reconstruction diagnostic and requires manual review.",
+            "Bootstrap 区间使用固定随机种子的测试集配对重采样。McNemar p 值采用精确双侧检验。",
+            "MiniMol 行是已有的、根据验证集选择或采用固定配置的参考基线，不属于配对检索消融实验。",
+            "论文主结果使用 deployment-visible agentic workflow，回答真实部署中的端到端性能、工具调用和 evidence 使用。",
+            "identity-blind 与 deployment-visible-prefetched 使用完全相同的 harness-prefetched 工具证据，只作为 parity-controlled visibility 补充控制；它们不进入主结果表。",
+            "当前结果使用 operational retrieval；parent-disjoint analog 消融完成前，这些数值仍属于 exploratory result。",
+            "仅在 assistant response 中发现的 query-SMILES 匹配属于单独的重构诊断，需要人工复核。",
             "",
         ]
     )

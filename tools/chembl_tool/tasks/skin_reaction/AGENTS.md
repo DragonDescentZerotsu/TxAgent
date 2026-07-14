@@ -4,6 +4,11 @@
 endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、batch/resume、viewer 和输出目录规范仍以仓库根
 `AGENTS.md` 为准。
 
+当前论文路径由 `experiment_config.py` 将 source-local groups 合并为 4 个 mechanism families：direct skin
+reaction、sensitisation AOP、phototoxicity/irritation/local damage 和 skin exposure。Tier 5 只留在 source
+library 做数据审计。下文 `retrieve_neighbors.py` 和历史 v1 batch 按 `Tier.endpoint_group` 运行的说明，是旧
+native task runner 的复现记录；新实验不得据此为每个细粒度 group 启动并行 reasoning。
+
 ## Task 定义
 
 目标不是训练一个单纯的 QSAR skin-reaction classifier，而是构建可审计的 skin-reaction evidence retrieval
@@ -60,6 +65,18 @@ Tier 4 skin exposure modifiers: 62 assays
 Tier 5 weak/context background: 1,649 assays
 ```
 
+2026-07-12 的论文视图审计后，Tier 5 继续保留在 ChEMBL source library 中用于 endpoint/data-quality
+审计，但不再进入 paper-facing `full_flat` 或 `full_mechanism`，也不再创建独立 LLM reasoning branch。
+现有两套 82-sample mechanism run 中，Tier 5 各覆盖 42 个样本并产生 84 次 group call；identity-blind
+没有一次判为 useful，deployment-visible 只有一次判为 useful 且方向仍为 `neutral_or_unclear`，合计消耗
+约 816k tokens。它主要重复说明 generic cytotoxicity、efficacy 或 target binding 不能决定 Skin label，
+没有观察到强正向作用。
+
+该删除只影响 reasoning view，不删除原始 Tier 5 evidence。有效 assay 的 concentration、vehicle、
+formulation、duration、light condition、skin model 等 context 必须继续随其所属 Tier 1-4 evidence row
+保留。2026-07-12 之前生成的 Skin full-mechanism exploratory runs 含 Tier 5，配置变更后的 run 必须使用
+新 batch ID，不能与旧 run 混合断点续跑。
+
 ## 当前代码入口和运行状态
 
 主要入口：
@@ -77,6 +94,9 @@ scoring.py
 endpoint_groups.py
   Tier.endpoint_group、evidence_direction、evidence_strength 和 endpoint assignment 规则。
 
+experiment_config.py
+  Paper-facing direct、full_flat 和 4-family full_mechanism retrieval view；Tier 5 不进入 reasoning view。
+
 screen_assays.py / rescore_outputs.py / summarize_outputs.py / report.py
   thin wrappers，复用 common task workflow 生成候选 assay、activity evidence、health check 和 report。
 
@@ -84,7 +104,7 @@ build_evidence_library.py
   从 v1 assay candidates + activity evidence 构建 molecule-level evidence library 和 neighbor index。
 
 retrieve_neighbors.py
-  对每个 Tier.endpoint_group 做 analog retrieval。当前 benchmark 使用 top-k-per-group=3、
+  旧 native runner 对每个 source-local Tier.endpoint_group 做 analog retrieval。历史 v1 benchmark 使用 top-k-per-group=3、
   min-similarity=0.35；min-similarity=0 的排查显示 index/retrieval 正常，低覆盖主要来自
   chemical-space similarity threshold。
 
@@ -92,7 +112,7 @@ chembl_exact_context.py
   exact-query ChEMBL context wrapper。benchmark 默认不开启，避免 retrospective leakage。
 
 run_reasoning_pipeline.py
-  单分子 reasoning pipeline：retrieval prefetch、single-molecule branch、group-level 并发 reasoning、
+  旧 native 单分子 reasoning pipeline：retrieval prefetch、single-molecule branch、endpoint-group 并发 reasoning、
   final summary、trace 保存，以及 --resume-final-from-run-dir final-only rerun。
 
 run_reasoning_batch.py
@@ -100,7 +120,7 @@ run_reasoning_batch.py
   runs 和 combined trace；支持 --skip-existing 断点续跑。
 ```
 
-当前 v1 全量 test 结果：
+历史 native v1 全量 test 结果：
 
 ```text
 batch:

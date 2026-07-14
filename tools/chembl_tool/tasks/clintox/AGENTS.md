@@ -11,10 +11,16 @@ batch/resume、viewer、cost 和目录规范统一记录在仓库根 `AGENTS.md`
 cellular stress、general cytotoxicity 和 safety-relevant off-target evidence，再交给 reasoning LLM
 判断 analog evidence 是否能 transfer 到 query molecule。
 
-当前 ClinTox 已进入归档状态。代码、evidence library、reasoning batch、trace 和 audit 工具保留，
-用于复现与案例分析；不再把 ClinTox macro-F1 作为当前 workflow 的主优化目标。
+ClinTox 的旧 task-specific optimization workflow 已进入归档状态：旧 native runner、历史 batch、trace 和
+audit 工具继续保留用于复现与案例分析，不再按 test errors 调整 task-specific policy。ClinTox 本身仍是当前
+21-condition 论文矩阵中的正式任务；paper-facing `none/direct/full_flat/full_mechanism` 由通用 runner 和
+`experiment_config.py` 生成，不能用下面的历史 native metrics 代替当前论文结果。
 
-归档结论：
+当前 paper config 将 source-local groups 合并为 7 个 mechanism families：clinical human safety、in vivo
+toxicology、organ-specific toxicity、genotoxicity/carcinogenicity、cellular stress、general cytotoxicity 和
+off-target/DDI/exposure。并行 reasoning 以这 7 个 family 为上限，而不是以 43 个 endpoint groups 为单位。
+
+旧 native workflow 的归档结论：
 
 ```text
 ClinTox 不太适合当前 setting 直接作为主 benchmark 分类任务。
@@ -152,7 +158,7 @@ confusion_matrix
 prediction_distribution
 ```
 
-## 当前边界
+## Legacy native runner 边界
 
 ```text
 ChEMBL neighbor retrieval 不是 DeepSeek 可调用 tool。
@@ -167,7 +173,9 @@ DeepSeek single-molecule analysis 可调用的工具只有：
   molecule_properties
 ```
 
-ClinTox final 阶段不暴露工具，只综合 single-molecule analysis 和 group-level outputs。
+旧 native ClinTox final 阶段不暴露工具，只综合 single-molecule analysis 和 endpoint-group outputs。当前
+paper runner 使用 GLM-5.2 和通用 direct/mechanism-family orchestration，模型与可见性设置以
+`tools/chembl_tool/paper_experiments/AGENTS.md` 为准。
 
 ## Task-specific 文件
 
@@ -179,6 +187,9 @@ constants.py
 
 endpoint_groups.py
   ClinTox Tier.endpoint_group、evidence_direction、evidence_strength 规则。
+
+experiment_config.py
+  Paper-facing direct、full_flat 和 7-family full_mechanism retrieval view；不包含历史 native label policy。
 
 rules.py
   ClinTox assay screening 关键词、negative keywords、weak/context-dependent terms、
@@ -1440,15 +1451,15 @@ ATAD5 luciferase:
   dna_damage_response, not generic reporter activity.
 ```
 
-## Reasoning pipeline 建议
+## Legacy native reasoning pipeline
 
-ClinTox reasoning 与 BBB / Bioavailability_Ma 保持相同三段式：
+旧 ClinTox native reasoning 与旧 BBB / Bioavailability_Ma runner 保持相同三段式：
 
 ```text
 1. 读取 ClinTox test.jsonl 的 query molecule。
-2. 调用 retrieve_neighbors.py 预取每个 Tier.endpoint_group 的 ChEMBL neighbor evidence。
-3. 并发执行 single-molecule analysis；DeepSeek 只可调用 molecule_properties。
-4. 并发执行 group-level analysis；DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
+2. 调用 retrieve_neighbors.py 预取每个 source-local Tier.endpoint_group 的 ChEMBL neighbor evidence。
+3. 并发执行 single-molecule analysis；该历史 runner 中 DeepSeek 只可调用 molecule_properties。
+4. 并发执行 endpoint-group analysis；该历史 runner 中 DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
 5. final summary 读取 single + all group outputs，不暴露任何 tool。
 6. 保存 retrieval/single/group/final/trace/manifest。
 ```
