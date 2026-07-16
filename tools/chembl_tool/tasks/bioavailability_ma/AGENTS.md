@@ -158,6 +158,7 @@ Fa/Fg/Fh 是 task ontology，不是 deterministic classifier。Final prediction 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full \
   --workers 32
 ```
 
@@ -166,7 +167,7 @@ Fa/Fg/Fh 是 task ontology，不是 deterministic classifier。Final prediction 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
-  --index outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_factor/starling_factor_neighbor_index.pkl \
+  --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full/starling_factor_neighbor_index.pkl \
   --api-key-env GLM_API_KEY \
   --base-url https://litellm.parcc.upenn.edu/v1 \
   --model zai-org/GLM-5.2-FP8 \
@@ -174,6 +175,10 @@ Fa/Fg/Fh 是 task ontology，不是 deterministic classifier。Final prediction 
   --reasoning-effort "" \
   --batch-id bioavailability_ma_paper_starling_<date>
 ```
+
+正式 paper run 只使用上述 `outputs/paper/` index。`outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/`
+下的 task-level builder 默认目录只用于临时开发，不得把历史 index 复制或软链接到正式实验路径；运行前应检查
+meta 中 `index_version`、`include_direct_hf`、`scope`、`evidence_content` 和五个稳定 group ID。
 
 API key 只能通过环境变量或未提交的本地 env file 提供，不能写入代码、manifest、命令示例或 git。
 

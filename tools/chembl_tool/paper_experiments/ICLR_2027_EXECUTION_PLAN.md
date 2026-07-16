@@ -164,10 +164,11 @@ ClinTox:
   off-target / DDI / exposure context
 
 Bioavailability:
-  Observed direct F and oral exposure
-  Fa
-  Fg
-  Fh
+  Direct oral bioavailability (F%)
+  Oral exposure proxies (AUC/Cmax)
+  Fa — absorption, solubility, and permeability
+  Fg — gut-wall transport and intestinal metabolism
+  Fh — hepatic clearance and metabolic stability
 ```
 
 Skin 的实验条件和 background 不单独运行 Starling prompt。Concentration、vehicle、formulation、duration、

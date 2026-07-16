@@ -37,3 +37,20 @@ def test_trace_viewer_has_no_legacy_task_specific_rendering():
     )
     for token in legacy_tokens:
         assert token not in html
+
+
+def test_trace_viewer_uses_friendly_bioavailability_family_labels_without_changing_ids():
+    html = VIEWER.read_text(encoding="utf-8")
+
+    expected_labels = {
+        "Observed.direct_oral_bioavailability": "Direct oral bioavailability (F%)",
+        "Observed.oral_auc_cmax_exposure": "Oral exposure proxies (AUC/Cmax)",
+        "Fa.absorption_solubility_permeability": "Fa — Absorption, solubility & permeability",
+        "Fg.gut_wall_efflux_intestinal_metabolism": "Fg — Gut-wall transport & intestinal metabolism",
+        "Fh.hepatic_clearance_metabolic_stability": "Fh — Hepatic clearance & metabolic stability",
+    }
+    for group_id, label in expected_labels.items():
+        assert f'"{group_id}": "{label}"' in html
+
+    assert "return groupDisplayLabel(task);" in html
+    assert "const rawIdTag = displayLabel !== groupId" in html
