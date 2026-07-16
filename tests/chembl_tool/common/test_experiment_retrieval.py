@@ -1,8 +1,10 @@
 from tools.chembl_tool.common.experiment_retrieval import (
     EvidenceGroupSpec,
     SourceExperimentConfig,
+    _rank_group_candidates,
     retrieve_experiment_view,
 )
+from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 from tools.chembl_tool.common.task_workflows.evidence_library import build_neighbor_index
 
 
@@ -153,3 +155,83 @@ def test_index_stores_versioned_parent_identity_metadata():
 
     assert identity["normalizer_version"] == "rdkit_fragment_parent.v1"
     assert identity["parent_inchi_key"]
+
+
+class _ReverseScoreReranker:
+    name = "test_reverse"
+
+    def rerank(self, *, query_smiles, group_id, candidates):
+        output = [
+            {**candidate, "transfer_selection_score": float(index)}
+            for index, candidate in enumerate(candidates)
+        ]
+        return sorted(output, key=lambda row: -row["transfer_selection_score"])
+
+    def provenance(self):
+        return {"name": self.name, "version": "test.v1"}
+
+
+def test_rerank_contract_truncates_raw_pool_before_exclusion_and_does_not_backfill():
+    molecules = [
+        {"molecule_chembl_id": "exact", "canonical_smiles": "CCO"},
+        {"molecule_chembl_id": "a", "canonical_smiles": "CCN"},
+        {"molecule_chembl_id": "b", "canonical_smiles": "CCC"},
+        {"molecule_chembl_id": "below_raw_pool", "canonical_smiles": "CCCC"},
+    ]
+    index = {
+        "molecules": molecules,
+        "evidence_by_molecule_group": {
+            row["molecule_chembl_id"]: {"Tier 1.direct": [{"id": row["molecule_chembl_id"]}]}
+            for row in molecules
+        },
+    }
+    neighbors = _rank_group_candidates(
+        index,
+        [0, 1, 2, 3],
+        source_groups=("Tier 1.direct",),
+        similarities=[1.0, 0.9, 0.8, 0.7],
+        query_canonical_smiles="CCO",
+        query_inchi_key="",
+        top_k=3,
+        min_similarity=0.0,
+        query_identity=normalize_molecule_identity("CCO"),
+        neighbor_identity_policy="operational",
+        query_smiles="CCO",
+        group_id="Direct.outcome",
+        reranker=_ReverseScoreReranker(),
+        rerank_raw_pool_size=3,
+        rerank_candidate_size=3,
+    )
+
+    assert [row["molecule_chembl_id"] for row in neighbors] == ["b", "a"]
+    assert "below_raw_pool" not in {row["molecule_chembl_id"] for row in neighbors}
+    assert [row["structural_rank"] for row in neighbors] == [3, 2]
+
+
+def test_reranker_disabled_preserves_structural_selection_order():
+    baseline = retrieve_experiment_view(
+        "CO",
+        _index(),
+        mode="full_mechanism",
+        config=CONFIG,
+        top_k_per_group=2,
+        min_similarity=0.0,
+    )
+    explicitly_disabled = retrieve_experiment_view(
+        "CO",
+        _index(),
+        mode="full_mechanism",
+        config=CONFIG,
+        top_k_per_group=2,
+        min_similarity=0.0,
+        reranker=None,
+    )
+
+    assert baseline == explicitly_disabled
+    assert "retrieval_reranker" not in baseline["experiment"]
+    assert all("transfer_neighbor_selection" not in group for group in baseline["groups"])
+    assert all(
+        "structural_rank" not in neighbor
+        for group in baseline["groups"]
+        for neighbor in group["neighbors"]
+    )

@@ -15,7 +15,9 @@ from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
     """Project retrieval output to source-independent fields visible to group prompts."""
     query = retrieval.get("query") or {}
-    return {
+    score_policy = (retrieval.get("experiment") or {}).get("llm_neighbor_score_policy") or {}
+    score_visible = score_policy.get("name") == "assay_transfer_scored_top5.v1"
+    contract = {
         "query": {
             "input_smiles": query.get("input_smiles", ""),
             "canonical_smiles": query.get("canonical_smiles", ""),
@@ -25,21 +27,32 @@ def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
                 "group_id": group.get("group_id", ""),
                 "tier": group.get("tier", ""),
                 "endpoint_group": group.get("endpoint_group", ""),
+                **({"llm_neighbor_score_policy": score_policy} if score_visible else {}),
                 "neighbors": [
-                    {
-                        "rank": neighbor.get("rank"),
-                        "molecule_chembl_id": neighbor.get("molecule_chembl_id", ""),
-                        "canonical_smiles": neighbor.get("canonical_smiles", ""),
-                        "similarity": neighbor.get("similarity"),
-                        "similarity_bucket": neighbor.get("similarity_bucket", ""),
-                        "evidence_rows": [evidence_for_llm(row) for row in neighbor.get("evidence_rows") or []],
-                    }
+                    _prompt_neighbor_contract(neighbor, score_visible=score_visible)
                     for neighbor in group.get("neighbors") or []
                 ],
             }
             for group in retrieval.get("groups") or []
         ],
     }
+    if score_visible:
+        contract["llm_neighbor_score_policy"] = score_policy
+    return contract
+
+
+def _prompt_neighbor_contract(neighbor: dict[str, Any], *, score_visible: bool) -> dict[str, Any]:
+    payload = {
+        "rank": neighbor.get("rank"),
+        "molecule_chembl_id": neighbor.get("molecule_chembl_id", ""),
+        "canonical_smiles": neighbor.get("canonical_smiles", ""),
+        "similarity": neighbor.get("similarity"),
+        "similarity_bucket": neighbor.get("similarity_bucket", ""),
+        "evidence_rows": [evidence_for_llm(row) for row in neighbor.get("evidence_rows") or []],
+    }
+    if score_visible:
+        payload["assay_transfer_score"] = round(float(neighbor["transfer_selection_score"]), 2)
+    return payload
 
 
 def retrieval_prompt_hash(retrieval: dict[str, Any]) -> str:

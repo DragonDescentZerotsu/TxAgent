@@ -141,9 +141,14 @@ def test_deployment_prompt_hides_query_name_but_preserves_structures_and_neighbo
         "group_id": "Observed.direct_oral_bioavailability",
         "tier": "Observed",
         "endpoint_group": "direct_oral_bioavailability",
+        "transfer_neighbor_selection": {"reranker": "assay_transfer", "raw_pool_size": 100},
         "neighbors": [
             {
                 "rank": 1,
+                "structural_rank": 8,
+                "transfer_selection_rank": 1,
+                "transfer_selection_score": 0.987,
+                "transfer_winning_record_id": "audit-only-record",
                 "molecule_chembl_id": "STARLING_1",
                 "canonical_smiles": "CCN",
                 "similarity": 0.8,
@@ -172,6 +177,9 @@ def test_deployment_prompt_hides_query_name_but_preserves_structures_and_neighbo
     assert "CCO" in serialized
     assert "CCN" in serialized
     assert "VisibleNeighbor" in serialized
+    assert "transfer_selection" not in serialized
+    assert "structural_rank" not in serialized
+    assert "audit-only-record" not in serialized
 
 
 def test_visible_prefetched_query_payload_preserves_structure_and_prefetched_properties():

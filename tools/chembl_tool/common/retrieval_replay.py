@@ -7,7 +7,12 @@ from pathlib import Path
 from typing import Any
 
 
-def load_retrieval_replay(source_run_dir: str, query_smiles: str) -> dict[str, Any] | None:
+def load_retrieval_replay(
+    source_run_dir: str,
+    query_smiles: str,
+    *,
+    expected_reranker_provenance: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
     """Return the source run's retrieval payload after checking query alignment."""
 
     if not source_run_dir:
@@ -24,4 +29,22 @@ def load_retrieval_replay(source_run_dir: str, query_smiles: str) -> dict[str, A
             "Retrieval replay query mismatch: "
             f"expected {query_smiles!r}, found {source_smiles!r} in {source_path}"
         )
+    if expected_reranker_provenance is not None:
+        observed = (retrieval.get("experiment") or {}).get("retrieval_reranker") or {"name": "none"}
+        expected = expected_reranker_provenance
+        keys = (
+            "name",
+            "model",
+            "model_revision",
+            "scoring_contract_version",
+            "template_hash",
+            "catalog_version",
+        )
+        mismatches = {
+            key: {"expected": expected.get(key), "observed": observed.get(key)}
+            for key in keys
+            if expected.get(key) != observed.get(key)
+        }
+        if mismatches:
+            raise ValueError(f"Retrieval replay reranker provenance mismatch: {mismatches}")
     return retrieval

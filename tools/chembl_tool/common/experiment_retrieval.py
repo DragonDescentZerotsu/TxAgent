@@ -19,6 +19,7 @@ from tools.chembl_tool.common.retrieval_policy import (
     decide_candidate,
     policy_metadata,
 )
+from tools.chembl_tool.common.retrieval_reranker import RetrievalReranker
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
     retrieve_neighbors,
@@ -70,10 +71,20 @@ def retrieve_experiment_view(
     min_similarity: float,
     native_groups: list[str] | None = None,
     neighbor_identity_policy: str = NeighborIdentityPolicy.OPERATIONAL.value,
+    reranker: RetrievalReranker | None = None,
+    rerank_raw_pool_size: int = 100,
+    rerank_candidate_size: int = 50,
 ) -> dict[str, Any]:
     """Build a native, direct, flat, mechanism, or retrieval-free query view."""
     if mode not in EXPERIMENT_MODES:
         raise ValueError(f"Unsupported experiment mode: {mode}")
+    if reranker is not None and not (
+        0 < top_k_per_group <= rerank_candidate_size <= rerank_raw_pool_size
+    ):
+        raise ValueError(
+            "Reranked retrieval requires 0 < top_k_per_group <= "
+            "rerank_candidate_size <= rerank_raw_pool_size"
+        )
     if mode == "none":
         return _query_only_retrieval(query_smiles, mode=mode)
     if index is None:
@@ -106,6 +117,9 @@ def retrieve_experiment_view(
         top_k_per_group=top_k_per_group,
         min_similarity=min_similarity,
         neighbor_identity_policy=neighbor_identity_policy,
+        reranker=reranker,
+        rerank_raw_pool_size=rerank_raw_pool_size,
+        rerank_candidate_size=rerank_candidate_size,
     )
     if mode == "full_flat" and mechanism_view.get("status") == "ok":
         mechanism_view["groups"] = [_flatten_groups(mechanism_view["groups"])]
@@ -127,6 +141,9 @@ def _retrieve_specs(
     top_k_per_group: int,
     min_similarity: float,
     neighbor_identity_policy: str,
+    reranker: RetrievalReranker | None,
+    rerank_raw_pool_size: int,
+    rerank_candidate_size: int,
 ) -> dict[str, Any]:
     canonical_smiles, inchi_key, query_fp = standardize_smiles_and_fp(query_smiles)
     if query_fp is None:
@@ -158,27 +175,41 @@ def _retrieve_specs(
             min_similarity=min_similarity,
             query_identity=query_identity,
             neighbor_identity_policy=neighbor_identity_policy,
+            query_smiles=query_smiles,
+            group_id=spec.group_id,
+            reranker=reranker,
+            rerank_raw_pool_size=rerank_raw_pool_size,
+            rerank_candidate_size=rerank_candidate_size,
         )
-        output_groups.append(
-            {
-                "group_id": spec.group_id,
-                "tier": spec.tier,
-                "endpoint_group": spec.endpoint_group,
-                "source_group_ids": list(source_groups),
-                "n_candidate_molecules": len(candidate_indices),
-                "neighbors": neighbors,
-            }
-        )
+        group_payload = {
+            "group_id": spec.group_id,
+            "tier": spec.tier,
+            "endpoint_group": spec.endpoint_group,
+            "source_group_ids": list(source_groups),
+            "n_candidate_molecules": len(candidate_indices),
+            "neighbors": neighbors,
+        }
+        if reranker is not None:
+            group_payload["transfer_neighbor_selection"] = _rerank_group_metadata(
+                reranker,
+                raw_pool_size=rerank_raw_pool_size,
+                candidate_size=rerank_candidate_size,
+                n_selected=len(neighbors),
+            )
+        output_groups.append(group_payload)
 
+    experiment = {
+        "mode": mode,
+        "source": source_name,
+        "resolved_group_mapping": resolved_mapping,
+        **policy_metadata(neighbor_identity_policy),
+    }
+    if reranker is not None:
+        experiment["retrieval_reranker"] = reranker.provenance()
     return {
         "status": "ok",
         "evidence_source": dict(index.get("source") or {}),
-        "experiment": {
-            "mode": mode,
-            "source": source_name,
-            "resolved_group_mapping": resolved_mapping,
-            **policy_metadata(neighbor_identity_policy),
-        },
+        "experiment": experiment,
         "query": {
             "input_smiles": query_smiles,
             "canonical_smiles": canonical_smiles,
@@ -206,6 +237,11 @@ def _rank_group_candidates(
     min_similarity: float,
     query_identity: Any,
     neighbor_identity_policy: str,
+    query_smiles: str = "",
+    group_id: str = "",
+    reranker: RetrievalReranker | None = None,
+    rerank_raw_pool_size: int = 100,
+    rerank_candidate_size: int = 50,
 ) -> list[dict[str, Any]]:
     ranked = sorted(
         (
@@ -215,8 +251,9 @@ def _rank_group_candidates(
         ),
         key=lambda item: (-item[0], index["molecules"][item[1]]["molecule_chembl_id"]),
     )
+    raw_ranked = ranked[:rerank_raw_pool_size] if reranker is not None else ranked
     neighbors = []
-    for similarity, molecule_index in ranked:
+    for structural_rank, (similarity, molecule_index) in enumerate(raw_ranked, start=1):
         molecule = index["molecules"][molecule_index]
         decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
         if decision.excluded:
@@ -227,23 +264,58 @@ def _rank_group_candidates(
         evidence_rows = [row for group in matched_groups for row in evidence_by_group[group]]
         if not evidence_rows:
             continue
-        neighbors.append(
-            {
-                "rank": len(neighbors) + 1,
-                "molecule_chembl_id": molecule_id,
-                "canonical_smiles": molecule["canonical_smiles"],
-                "standard_inchi_key": molecule.get("standard_inchi_key", ""),
-                "similarity": round(similarity, 6),
-                "similarity_bucket": similarity_bucket(similarity),
-                "molecule_relation": decision.relation.value,
-                "source_group_ids": matched_groups,
-                "n_evidence_rows": len(evidence_rows),
-                "evidence_rows": evidence_rows,
-            }
-        )
-        if len(neighbors) >= top_k:
+        neighbor = {
+            "rank": len(neighbors) + 1,
+            "molecule_chembl_id": molecule_id,
+            "canonical_smiles": molecule["canonical_smiles"],
+            "standard_inchi_key": molecule.get("standard_inchi_key", ""),
+            "similarity": round(similarity, 6),
+            "similarity_bucket": similarity_bucket(similarity),
+            "molecule_relation": decision.relation.value,
+            "source_group_ids": matched_groups,
+            "n_evidence_rows": len(evidence_rows),
+            "evidence_rows": evidence_rows,
+        }
+        if reranker is not None:
+            neighbor["structural_rank"] = structural_rank
+        neighbors.append(neighbor)
+        limit = rerank_candidate_size if reranker is not None else top_k
+        if len(neighbors) >= limit:
             break
+    if reranker is not None:
+        reranked = reranker.rerank(
+            query_smiles=query_smiles,
+            group_id=group_id,
+            candidates=neighbors,
+        )
+        if len(reranked) != len(neighbors):
+            raise ValueError(
+                f"Retrieval reranker `{reranker.name}` changed candidate cardinality "
+                f"for {group_id}: {len(neighbors)} -> {len(reranked)}"
+            )
+        neighbors = reranked[:top_k]
+    for rank, neighbor in enumerate(neighbors, start=1):
+        neighbor["rank"] = rank
     return neighbors
+
+
+def _rerank_group_metadata(
+    reranker: RetrievalReranker | None,
+    *,
+    raw_pool_size: int,
+    candidate_size: int,
+    n_selected: int,
+) -> dict[str, Any]:
+    if reranker is None:
+        return {}
+    return {
+        "reranker": reranker.name,
+        "candidate_contract": "tanimoto_raw_pool_then_identity_exclusion.v1",
+        "raw_pool_size": raw_pool_size,
+        "candidate_size": candidate_size,
+        "n_selected": n_selected,
+        "selection_metadata_is_llm_hidden": True,
+    }
 
 
 def _flatten_groups(groups: list[dict[str, Any]]) -> dict[str, Any]:

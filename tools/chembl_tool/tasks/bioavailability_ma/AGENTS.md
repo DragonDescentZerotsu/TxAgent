@@ -200,3 +200,64 @@ API key 只能通过环境变量或未提交的本地 env file 提供，不能�
 历史 Bioavailability test set 已在旧 expert-policy 迭代中被反复检查，不能作为论文的 untouched final
 test。Paper result 应使用新 holdout、重新冻结的 split 或外部 evaluation。Archive branch 的历史 metrics
 不能作为当前 simplified paper pipeline 的结果。
+
+## Cached assay-transfer reranking
+
+The optional `assay_transfer` retrieval reranker is restricted to the five Starling families declared in
+`experiment_config.STARLING`. It is disabled by default. Candidate selection is frozen as Tanimoto top 100,
+then the shared identity exclusion policy, then at most 50 survivors, then cached model reranking, then the
+existing final `top_k_per_group`. It never backfills below the raw top 100.
+
+The current cache is the retrieval-agnostic `flat_v2` store. It contains one stable five-source record
+catalog, eight exact condition manifests (validation/test x four/five-source x operational/parent-disjoint),
+an audit mapping, and an append-only SQLite score store. Score identity includes only the exact prompt hash,
+immutable model revision, scoring contract, and template hash. Catalog, split, source composition, and
+identity policy are audit/join metadata and never change score identity.
+
+Both direct-bioavailability source schemas are normalized: HF Oral Bioavailability records use
+`oral_bioavailability_value_percent`, while direct rows from Oral_AUC-Cmax use
+`reported_value`/`reported_units`. This normalization is only for assay-transfer prompts; it does not change
+the Starling evidence indexes or ordinary Morgan retrieval.
+
+Attached numeric source-record examples become candidate-scoped prompt records; qualitative-only candidates
+remain in the retained pool but do not receive fabricated prompts. Scoring mirrors training evaluation:
+append `(A)` and `(B)` with no leading space, find their first divergent token, and softmax the two next-token
+logits.
+
+Build the flat artifacts and migrate the two legacy caches without inference:
+
+```bash
+python -m tools.chembl_tool.tasks.bioavailability_ma.precompute_flat_assay_transfer_cache --prepare
+```
+
+Populate only missing scores with two independent BF16 model replicas using the training environment:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1 \
+  /vast/projects/myatskar/design-documents/conda_env/open_rlhf_intern/bin/python \
+  -m tools.chembl_tool.tasks.bioavailability_ma.precompute_flat_assay_transfer_cache \
+  --infer --devices 0,1 --batch-size 16 --force-model-download
+```
+
+Run all count, migration, composition, and independent retrieval checks:
+
+```bash
+python -m tools.chembl_tool.tasks.bioavailability_ma.precompute_flat_assay_transfer_cache \
+  --verify --strict-retrieval
+```
+
+Reasoning batches only read the cache and run a complete coverage preflight before starting subprocesses:
+
+```bash
+python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
+  --retrieval-source starling \
+  --experiment-mode full_mechanism \
+  --index outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_factor/starling_factor_neighbor_index.pkl \
+  --retrieval-reranker assay_transfer \
+  --rerank-candidate-manifest outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/assay_transfer_rerank/flat_v2/manifests/test__five_source__operational.jsonl \
+  --rerank-cache-mode read_only
+```
+
+Flat catalogs require the exact condition manifest at runtime; concept+molecule lookup is intentionally
+rejected because it could join fifth-source records into a four-source run. Reranking scores and winning
+record IDs remain audit-only retrieval metadata and must not enter group or final reasoning prompts.

@@ -41,6 +41,20 @@ from tools.chembl_tool.tasks.bioavailability_ma.chembl_exact_context import (
     enrich_retrieval_with_chembl_context,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.constants import BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT
+from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
+    ASSAY_TRANSFER_MODEL,
+    ASSAY_TRANSFER_MODEL_REVISION,
+    DEFAULT_CACHE as DEFAULT_RERANK_CACHE,
+    DEFAULT_CATALOG as DEFAULT_RERANK_CATALOG,
+    AssayTransferCachedReranker,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_prompt_policy import (
+    SCORED_TOP5_POLICY_NAME,
+    enable_scored_top5_prompt_policy,
+    public_assay_transfer_score,
+    resolve_scored_top5_top_k,
+    scored_top5_prompt_enabled,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import get_source_config
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import load_index
 
@@ -137,6 +151,17 @@ SINGLE_MOLECULE_TOOL_CHOICE = {"type": "function", "function": {"name": "molecul
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    requested_top_k_per_group = args.top_k_per_group
+    try:
+        args.top_k_per_group = resolve_scored_top5_top_k(
+            enabled=args.enable_assay_transfer_scored_top5,
+            requested_top_k=requested_top_k_per_group,
+            experiment_mode=args.experiment_mode,
+            retrieval_source=args.retrieval_source,
+            retrieval_reranker=args.retrieval_reranker,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
     if not api_key:
@@ -167,7 +192,28 @@ def main(argv: list[str] | None = None) -> int:
     if not query_smiles:
         raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
 
-    retrieval = load_retrieval_replay(args.retrieval_replay_run_dir, query_smiles)
+    reranker = None
+    if args.retrieval_reranker == "assay_transfer":
+        if args.retrieval_source != "starling":
+            raise SystemExit("assay_transfer reranking is enabled only for the five Starling Bioavailability families")
+        if args.experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
+            raise SystemExit("assay_transfer reranking requires direct, full_flat, or full_mechanism mode")
+        if args.rerank_cache_mode != "read_only":
+            raise SystemExit("reasoning runs require --rerank-cache-mode read_only; populate scores with precompute")
+        reranker = AssayTransferCachedReranker(
+            catalog_path=args.rerank_catalog,
+            cache_path=args.rerank_cache,
+            cache_mode="read_only",
+            model=args.assay_transfer_model,
+            model_revision=args.assay_transfer_model_revision,
+            candidate_manifest_path=args.rerank_candidate_manifest,
+        )
+    expected_reranker = reranker.provenance() if reranker is not None else {"name": "none"}
+    retrieval = load_retrieval_replay(
+        args.retrieval_replay_run_dir,
+        query_smiles,
+        expected_reranker_provenance=expected_reranker,
+    )
     index = None
     if retrieval is None and args.experiment_mode != "none":
         _log("loading neighbor index")
@@ -183,11 +229,21 @@ def main(argv: list[str] | None = None) -> int:
             min_similarity=args.min_similarity,
             native_groups=args.groups,
             neighbor_identity_policy=args.neighbor_identity_policy,
+            reranker=reranker,
+            rerank_raw_pool_size=args.rerank_raw_pool_size,
+            rerank_candidate_size=args.rerank_candidate_size,
         )
     else:
         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
+    if reranker is not None:
+        reranker.cache.close()
+    if args.enable_assay_transfer_scored_top5:
+        try:
+            enable_scored_top5_prompt_policy(retrieval)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
     if args.enable_chembl_exact_context and index is not None:
         _log("enriching retrieval with exact ChEMBL context")
         retrieval = enrich_retrieval_with_chembl_context(
@@ -275,6 +331,13 @@ def main(argv: list[str] | None = None) -> int:
         "smiles_field": args.smiles_field,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
+        "retrieval_reranker": (retrieval.get("experiment") or {}).get("retrieval_reranker", {"name": "none"}),
+        "enable_assay_transfer_scored_top5": args.enable_assay_transfer_scored_top5,
+        "llm_neighbor_score_policy": (retrieval.get("experiment") or {}).get("llm_neighbor_score_policy", {}),
+        "rerank_raw_pool_size": args.rerank_raw_pool_size,
+        "rerank_candidate_size": args.rerank_candidate_size,
+        "rerank_catalog": args.rerank_catalog if reranker is not None else "",
+        "rerank_cache": args.rerank_cache if reranker is not None else "",
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
@@ -300,6 +363,7 @@ def main(argv: list[str] | None = None) -> int:
         if not args.disable_group_tools
         else [],
         "max_tool_rounds": args.max_tool_rounds,
+        "top_k_per_group_requested": requested_top_k_per_group,
         "top_k_per_group": args.top_k_per_group,
         "min_similarity": args.min_similarity,
         "n_groups_with_neighbors": len(groups),
@@ -329,9 +393,16 @@ def _run_parallel_reasoning(
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs = list(group_outputs or [])
     reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
+    include_assay_transfer_score = scored_top5_prompt_enabled(retrieval)
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(_reason_one_group, client, _llm_query_payload(retrieval["query"]), group): group["group_id"]
+            executor.submit(
+                _reason_one_group,
+                client,
+                _llm_query_payload(retrieval["query"]),
+                group,
+                include_assay_transfer_score=include_assay_transfer_score,
+            ): group["group_id"]
             for group in groups
             if str(group.get("group_id") or "") not in reused_group_ids
         }
@@ -438,7 +509,13 @@ def _reason_single_molecule(
     }
 
 
-def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _reason_one_group(
+    client: OpenAICompatibleClient,
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    include_assay_transfer_score: bool = False,
+) -> dict[str, Any]:
     messages = [
         {
             "role": "system",
@@ -456,7 +533,14 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
         },
         {
             "role": "user",
-            "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False),
+            "content": json.dumps(
+                _group_prompt_payload(
+                    query,
+                    group,
+                    include_assay_transfer_score=include_assay_transfer_score,
+                ),
+                ensure_ascii=False,
+            ),
         },
     ]
     response = call_group_branch(
@@ -546,7 +630,12 @@ def _run_final_reasoning(
     return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
 
 
-def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _group_prompt_payload(
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    include_assay_transfer_score: bool = False,
+) -> dict[str, Any]:
     return bound_group_prompt_payload({
         "task": "Group-level oral bioavailability analog transferability analysis.",
         "query": query,
@@ -555,18 +644,24 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "tier": group["tier"],
             "endpoint_group": group["endpoint_group"],
             "evidence_source": _group_evidence_source(group),
-            "transfer_neighbor_selection": group.get("transfer_neighbor_selection", {}),
+            **(
+                {"assay_transfer_score_policy": SCORED_TOP5_POLICY_NAME}
+                if include_assay_transfer_score
+                else {}
+            ),
         },
         "neighbors": [
             {
                 "rank": neighbor["rank"],
-                "structural_rank": neighbor.get("structural_rank", neighbor["rank"]),
-                "transfer_selection_rank": neighbor.get("transfer_selection_rank"),
-                "transfer_selection_score": neighbor.get("transfer_selection_score"),
                 "molecule_chembl_id": neighbor["molecule_chembl_id"],
                 "canonical_smiles": neighbor["canonical_smiles"],
                 "similarity": neighbor["similarity"],
                 "similarity_bucket": neighbor["similarity_bucket"],
+                **(
+                    {"assay_transfer_score": public_assay_transfer_score(neighbor)}
+                    if include_assay_transfer_score
+                    else {}
+                ),
                 "prefetched_comparisons": neighbor.get("prefetched_comparisons") or [],
                 "evidence_rows": [_clean_evidence_row(row) for row in neighbor["evidence_rows"]],
                 "shared_assay_context": _clean_shared_assay_context(neighbor.get("shared_assay_context") or {}),
@@ -576,6 +671,13 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
         "instructions": [
             "Use only this group's evidence.",
             "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
+            *(
+                [
+                    "assay_transfer_score is a 0-1 cached model estimate that the best compatible source measurement transfers from that neighbor to the query. It is not an oral-bioavailability probability, assay value, calibrated label vote, or deterministic override; combine it with structure, assay context, and evidence quality."
+                ]
+                if include_assay_transfer_score
+                else []
+            ),
             "Assess structural transferability from neighbors to the query.",
             "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
             "Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
@@ -913,7 +1015,28 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
+    parser.add_argument(
+        "--enable-assay-transfer-scored-top5",
+        action="store_true",
+        help=(
+            "For Starling full_mechanism assay-transfer retrieval, atomically select five neighbors per family "
+            "and expose each rounded transfer score to the group reasoning LLM."
+        ),
+    )
     parser.add_argument("--min-similarity", type=float, default=0.3)
+    parser.add_argument("--retrieval-reranker", choices=["none", "assay_transfer"], default="none")
+    parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
+    parser.add_argument("--rerank-candidate-size", type=int, default=50)
+    parser.add_argument("--rerank-catalog", default=DEFAULT_RERANK_CATALOG)
+    parser.add_argument("--rerank-cache", default=DEFAULT_RERANK_CACHE)
+    parser.add_argument(
+        "--rerank-candidate-manifest",
+        default="",
+        help="Exact flat_v2 condition manifest; required with a flat assay-transfer catalog.",
+    )
+    parser.add_argument("--rerank-cache-mode", choices=["read_only", "read_write"], default="read_only")
+    parser.add_argument("--assay-transfer-model", default=ASSAY_TRANSFER_MODEL)
+    parser.add_argument("--assay-transfer-model-revision", default=ASSAY_TRANSFER_MODEL_REVISION)
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     return parser.parse_args(argv)
 

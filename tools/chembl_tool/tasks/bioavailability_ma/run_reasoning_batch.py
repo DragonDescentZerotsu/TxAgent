@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 from tools.chembl_tool.common.task_workflows.reasoning_batch import BatchConfig, main as run_batch
+from tools.chembl_tool.tasks.bioavailability_ma.precompute_assay_transfer_rerank import (
+    preflight_cache_coverage,
+)
 
 
 CONFIG = BatchConfig(
@@ -20,6 +23,8 @@ CONFIG = BatchConfig(
     canonical_negative="low",
     positive_predictions=frozenset({"high", "pass", "positive", "bioavailability_positive", "1"}),
     negative_predictions=frozenset({"low", "fail", "negative", "bioavailability_negative", "0"}),
+    rerank_preflight=preflight_cache_coverage,
+    supports_assay_transfer_scored_top5=True,
 )
 
 

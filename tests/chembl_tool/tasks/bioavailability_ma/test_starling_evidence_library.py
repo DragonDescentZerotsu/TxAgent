@@ -1,8 +1,14 @@
 import json
+import sys
+from types import SimpleNamespace
 
+from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
+from tools.chembl_tool.common.starling import oral_bioavailability as oral_cleaning
+from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLING
 from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library import (
     GROUP_ID,
     build_starling_evidence_rows,
+    build_starling_evidence_rows_from_pinned_hf,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.build_evidence_library import build_neighbor_index
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import retrieve_neighbors
@@ -169,6 +175,74 @@ def test_starling_index_retrieval_excludes_exact_query(tmp_path):
     assert len(neighbors) == 1
     assert neighbors[0]["canonical_smiles"] == "CCCO"
     assert result["evidence_source"]["dataset"] == "starling-labs/Oral_Bioavailability"
+
+
+def test_pinned_hf_loader_uses_frozen_revision(monkeypatch):
+    calls = []
+
+    def fake_load_dataset(*args, **kwargs):
+        calls.append((args, kwargs))
+        return []
+
+    monkeypatch.setitem(sys.modules, "datasets", SimpleNamespace(load_dataset=fake_load_dataset))
+    assert oral_cleaning.load_pinned_oral_bioavailability_dataset() == []
+    assert calls == [
+        (("starling-labs/Oral_Bioavailability",), {
+            "revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465", "split": "train"
+        })
+    ]
+
+
+def test_pinned_rows_filter_report_type_bounds_invalid_smiles_and_content_mode(monkeypatch):
+    dataset = [
+        _raw_hf("CCO", "0.5", "absolute"),
+        _raw_hf("OCC", "20%", "systemic_availability"),
+        _raw_hf("CCN", "very low", "unspecified"),
+        _raw_hf("CCC", "40%", "relative"),
+        _raw_hf("not smiles", "10%", "absolute"),
+        _raw_hf("CCCC", "101%", "absolute"),
+    ]
+    monkeypatch.setattr(oral_cleaning, "load_pinned_oral_bioavailability_dataset", lambda: dataset)
+
+    full_rows, full_stats = build_starling_evidence_rows_from_pinned_hf(evidence_content="full")
+    numeric_rows, numeric_stats = build_starling_evidence_rows_from_pinned_hf(evidence_content="numeric_only")
+
+    assert len(full_rows) == 2
+    ethanol = next(row for row in full_rows if row["canonical_smiles"] == "CCO")
+    assert ethanol["source_numeric_record_count"] == 2
+    assert ethanol["standard_value"] == 35.0
+    qualitative = next(row for row in full_rows if row["canonical_smiles"] == "CCN")
+    assert qualitative["source_qualitative_record_count"] == 1
+    assert len(numeric_rows) == 1
+    assert numeric_rows[0]["canonical_smiles"] == "CCO"
+    assert full_stats["revision"] == "01bbe3ee9cdd3dc081c39973529c9da0c814d465"
+    assert numeric_stats["n_qualitative_rows_kept"] == 0
+
+
+def test_direct_family_combines_sources_without_duplicate_neighbor_slots(tmp_path):
+    source = tmp_path / "records.jsonl"
+    source.write_text(json.dumps(_record(1, "CCCO", 40.0, "Human", "absolute")) + "\n", encoding="utf-8")
+    direct_rows, _ = build_starling_evidence_rows(source)
+    auc_row = dict(direct_rows[0])
+    auc_row["evidence_source"] = "starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure"
+    auc_row["activity_comment"] = "Oral AUC-Cmax direct bioavailability evidence"
+    index = build_neighbor_index([*direct_rows, auc_row])
+    index["source"] = {"dataset": "combined Starling direct sources"}
+
+    result = retrieve_experiment_view("CCO", index, mode="direct", config=STARLING, top_k_per_group=3, min_similarity=0.0)
+    neighbors = result["groups"][0]["neighbors"]
+    assert len(neighbors) == 1
+    assert neighbors[0]["n_evidence_rows"] == 2
+    assert {row["evidence_source"] for row in neighbors[0]["evidence_rows"]} == {
+        "starling-labs/Oral_Bioavailability", "starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure"
+    }
+
+
+def _raw_hf(smiles: str, value: str, report_type: str) -> dict:
+    return {
+        "molecule_name": "test molecule", "smiles": smiles, "oral_bioavailability_value": value,
+        "bioavailability_report_type": report_type, "species_or_population": "human", "support_text": "source passage",
+    }
 
 
 def _record(index: int, smiles: str, value: float, species: str, report_type: str) -> dict:

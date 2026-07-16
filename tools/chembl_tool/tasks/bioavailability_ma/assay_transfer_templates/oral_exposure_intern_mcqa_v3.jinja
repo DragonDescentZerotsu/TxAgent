@@ -1,0 +1,23 @@
+You are comparing two molecules for an oral exposure measurement.
+
+The endpoint is {{ endpoint_subtype }} in {{ unit_basis }}. Classify transfer when values are {{ threshold_display }}.
+
+Molecule A (retrieved measurement)
+- <SMILES>{{ retrieved_original_smiles }}</SMILES>
+- known value: {{ value_display }} {{ unit_basis }}
+- species or population: {{ species_or_population }}
+- exposure measure: {{ measured_process }}
+- statistic type: {{ report_or_statistic_type }}
+- dose: {{ dose }}
+- study context: {{ study_or_assay_system }}
+- comparator: {{ comparator }}
+- qualifying conditions: {{ qualifying_conditions }}
+
+Molecule B (query)
+- <SMILES>{{ query_original_smiles }}</SMILES>
+
+Should the measurement transfer from Molecule A to Molecule B?
+(A) transfer
+(B) not transfer
+
+Answer:

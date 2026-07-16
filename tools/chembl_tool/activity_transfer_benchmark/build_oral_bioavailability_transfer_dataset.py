@@ -28,9 +28,10 @@ import matplotlib.pyplot as plt
 from datasets import load_dataset
 from rdkit import Chem, DataStructs, RDLogger
 from rdkit.Chem import rdFingerprintGenerator
+from tools.chembl_tool.common.starling import oral_bioavailability as oral_cleaning
 
 
-DEFAULT_DATASET = "starling-labs/Oral_Bioavailability"
+DEFAULT_DATASET = oral_cleaning.ORAL_BIOAVAILABILITY_DATASET
 DEFAULT_SPLIT = "train"
 DEFAULT_OUT_ROOT = "outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf"
 DEFAULT_RUN_ID = "absolute_broad_condition_v1"
@@ -120,7 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     figures_dir.mkdir(parents=True, exist_ok=True)
 
-    dataset = load_dataset(args.dataset, split=args.split)
+    dataset = load_dataset(args.dataset, revision=args.revision or None, split=args.split)
     rows, dropped = clean_rows(dataset, args)
     aggregates = aggregate_rows(rows, args)
     candidate_pairs = build_candidate_pairs(aggregates, args, rng)
@@ -157,11 +158,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", default=DEFAULT_DATASET)
     parser.add_argument("--split", default=DEFAULT_SPLIT)
+    parser.add_argument("--revision", default=oral_cleaning.ORAL_BIOAVAILABILITY_REVISION)
     parser.add_argument("--out-root", default=DEFAULT_OUT_ROOT)
     parser.add_argument("--run-id", default=DEFAULT_RUN_ID)
     parser.add_argument(
         "--allowed-report-types",
-        default="absolute",
+        default=",".join(sorted(oral_cleaning.ALLOWED_REPORT_TYPES)),
         help="Comma-separated bioavailability_report_type values to retain.",
     )
     parser.add_argument(
@@ -173,7 +175,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--similar-delta", type=float, default=10.0)
     parser.add_argument("--different-delta", type=float, default=30.0)
     parser.add_argument("--min-value-percent", type=float, default=0.0)
-    parser.add_argument("--max-value-percent", type=float, default=1000.0)
+    parser.add_argument("--max-value-percent", type=float, default=100.0)
     parser.add_argument("--max-pairs-per-condition", type=int, default=3000)
     parser.add_argument("--max-candidate-pairs", type=int, default=100000)
     parser.add_argument("--n-eval-pairs", type=int, default=3000)
@@ -184,88 +186,33 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def clean_rows(dataset: Any, args: argparse.Namespace) -> tuple[list[CleanRow], list[dict[str, Any]]]:
     allowed_report_types = {item.strip() for item in args.allowed_report_types.split(",") if item.strip()}
-    rows: list[CleanRow] = []
-    dropped: list[dict[str, Any]] = []
-    for source_index, raw in enumerate(dataset):
-        row = dict(raw)
-        report_type = row.get("bioavailability_report_type")
-        if report_type not in allowed_report_types:
-            dropped.append(drop_record(source_index, row, "report_type_not_allowed"))
-            continue
-        smiles = clean_text(row.get("smiles"))
-        canonical_smiles = canonicalize_smiles(smiles)
-        if not canonical_smiles:
-            dropped.append(drop_record(source_index, row, "invalid_smiles"))
-            continue
-        parsed = parse_bioavailability_value(row.get("oral_bioavailability_value"))
-        if parsed is None:
-            dropped.append(drop_record(source_index, row, "unparseable_or_non_numeric_value"))
-            continue
-        value_percent, parse_method, parse_modifier = parsed
-        if not math.isfinite(value_percent):
-            dropped.append(drop_record(source_index, row, "nonfinite_value"))
-            continue
-        if value_percent < args.min_value_percent or value_percent > args.max_value_percent:
-            dropped.append(drop_record(source_index, row, "value_out_of_range"))
-            continue
-        condition_text = build_condition_text(row)
-        condition_key = build_condition_key(row, condition_text, args.condition_key_mode)
+    cleaned, dropped = oral_cleaning.clean_oral_bioavailability_rows(
+        dataset, allowed_report_types=allowed_report_types,
+        min_value_percent=args.min_value_percent, max_value_percent=args.max_value_percent,
+    )
+    rows = []
+    for item in cleaned:
+        condition_key = build_condition_key(item.raw_row, item.condition_text, args.condition_key_mode)
         rows.append(
             CleanRow(
-                source_index=source_index,
-                molecule_id=f"hf_ob_row_{source_index}",
-                molecule_name=clean_text(row.get("molecule_name")),
-                canonical_smiles=canonical_smiles,
-                oral_bioavailability_value_percent=value_percent,
-                condition_text=condition_text,
+                source_index=item.source_index,
+                molecule_id=f"hf_ob_row_{item.source_index}",
+                molecule_name=item.molecule_name,
+                canonical_smiles=item.canonical_smiles,
+                oral_bioavailability_value_percent=item.value_percent,
+                condition_text=item.condition_text,
                 condition_key=condition_key,
                 condition_key_hash=stable_hash(condition_key),
-                parse_method=parse_method,
-                parse_modifier=parse_modifier,
-                raw_row=row,
+                parse_method=item.parse_method,
+                parse_modifier=item.parse_modifier,
+                raw_row=item.raw_row,
             )
         )
     return rows, dropped
 
 
 def parse_bioavailability_value(value: Any) -> tuple[float, str, str] | None:
-    text = normalize_value_text(value)
-    if not text:
-        return None
-    if has_only_qualitative_signal(text):
-        return None
-
-    modifier = ""
-    lowered = text.lower()
-    if re.search(r"(?:>=|≥|at least|greater than|more than|above)", lowered):
-        modifier = "lower_bound"
-    elif re.search(r"(?:<=|≤|less than|lower than|below|up to)", lowered):
-        modifier = "upper_bound"
-
-    mean_match = re.search(rf"\b(?:mean|average|averaged)\s*[=:]?\s*([<>≤≥~≈]?\s*{NUMBER_PATTERN})", lowered)
-    if mean_match:
-        number = parse_float_token(mean_match.group(1))
-        return convert_to_percent(number, text), "explicit_mean", modifier
-
-    median_match = re.search(rf"\bmedian\b[^0-9<>≤≥~≈-]*([<>≤≥~≈]?\s*{NUMBER_PATTERN})", lowered)
-    if median_match:
-        number = parse_float_token(median_match.group(1))
-        return convert_to_percent(number, text), "explicit_median", modifier
-
-    plus_minus = re.search(rf"([<>≤≥~≈]?\s*{NUMBER_PATTERN})\s*(?:±|\+/-|\+-|plus/minus)\s*{NUMBER_PATTERN}", text)
-    if plus_minus:
-        number = parse_float_token(plus_minus.group(1))
-        return convert_to_percent(number, text), "mean_plus_minus", modifier
-
-    ranges = extract_ranges(text)
-    if ranges:
-        lo, hi = ranges[0]
-        return convert_to_percent((lo + hi) / 2.0, text), "range_midpoint", modifier
-
-    numbers = extract_numbers(text)
-    if not numbers:
-        return None
-    return convert_to_percent(numbers[0], text), "first_numeric_value", modifier
+    return oral_cleaning.parse_bioavailability_value(value)
 
 
 def normalize_value_text(value: Any) -> str:

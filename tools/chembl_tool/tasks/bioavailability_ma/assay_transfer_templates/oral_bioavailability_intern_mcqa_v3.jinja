@@ -1,0 +1,23 @@
+You are comparing two molecules for oral bioavailability.
+
+Oral bioavailability is the fraction of an oral dose reaching systemic circulation unchanged. For {{ metric_type }}, classify transfer when values are {{ threshold_display }}.
+
+Molecule A (retrieved measurement)
+- <SMILES>{{ retrieved_original_smiles }}</SMILES>
+- known value: {{ value_display }} {{ unit_basis }}
+- species or population: {{ species_or_population }}
+- report or statistic type: {{ report_or_statistic_type }}
+- dose: {{ dose }}
+- study context: {{ study_or_assay_system }}
+- qualifying conditions: {{ qualifying_conditions }}
+- comparator: {{ comparator }}
+- extra details: {{ extra_details }}
+
+Molecule B (query)
+- <SMILES>{{ query_original_smiles }}</SMILES>
+
+Should the measurement transfer from Molecule A to Molecule B?
+(A) transfer
+(B) not transfer
+
+Answer:

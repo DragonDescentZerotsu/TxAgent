@@ -21,6 +21,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library 
     DEFAULT_DROPPED_JSONL as DEFAULT_DIRECT_DROPPED_JSONL,
     DEFAULT_SOURCE_JSONL as DEFAULT_DIRECT_SOURCE_JSONL,
     build_starling_evidence_rows as build_direct_f_rows,
+    build_starling_evidence_rows_from_pinned_hf,
 )
 
 
@@ -39,16 +40,16 @@ def main(argv: list[str] | None = None) -> int:
 
     direct_rows: list[dict[str, Any]] = []
     direct_stats: dict[str, Any] = {}
-    if args.include_direct_hf:
+    if args.include_direct_hf and args.direct_source_mode == "pinned-hf":
+        direct_rows, direct_stats = build_starling_evidence_rows_from_pinned_hf(
+            min_value_percent=args.min_direct_value_percent, max_value_percent=args.max_direct_value_percent,
+            max_record_examples=args.max_record_examples, evidence_content=args.evidence_content,
+        )
+    elif args.include_direct_hf and args.direct_source_mode == "prepared-jsonl":
         direct_rows, direct_stats = build_direct_f_rows(
             Path(args.direct_source_jsonl),
-            dropped_jsonl=(
-                Path(args.direct_dropped_jsonl)
-                if args.evidence_content == "full" and args.direct_dropped_jsonl
-                else None
-            ),
-            min_value_percent=args.min_direct_value_percent,
-            max_value_percent=args.max_direct_value_percent,
+            dropped_jsonl=(Path(args.direct_dropped_jsonl) if args.evidence_content == "full" and args.direct_dropped_jsonl else None),
+            min_value_percent=args.min_direct_value_percent, max_value_percent=args.max_direct_value_percent,
             max_record_examples=args.max_record_examples,
         )
 
@@ -87,6 +88,7 @@ def main(argv: list[str] | None = None) -> int:
         "index_version": index_version,
         "starling_data_dir": args.starling_data_dir,
         "include_direct_hf": args.include_direct_hf,
+        "direct_source_mode": args.direct_source_mode,
         "scope": args.scope,
         "evidence_content": args.evidence_content,
         "n_direct_evidence_rows": len(direct_rows),
@@ -203,6 +205,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
     parser.add_argument("--include-direct-hf", dest="include_direct_hf", action="store_true", default=True)
     parser.add_argument("--no-include-direct-hf", dest="include_direct_hf", action="store_false")
+    parser.add_argument("--direct-source-mode", choices=["pinned-hf", "prepared-jsonl", "disabled"], default="prepared-jsonl")
     parser.add_argument("--scope", choices=["direct", "full"], default="full")
     parser.add_argument("--evidence-content", choices=["numeric_only", "full"], default="full")
     parser.add_argument("--direct-source-jsonl", default=DEFAULT_DIRECT_SOURCE_JSONL)
