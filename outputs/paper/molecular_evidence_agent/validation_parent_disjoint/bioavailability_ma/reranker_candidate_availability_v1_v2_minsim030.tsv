@@ -1,0 +1,15 @@
+scope	retrieval_reranker_version	min_similarity	identity_policy	candidate_depth_before_parent_disjoint	query_family_slots	fewer_than_3_eligible	fewer_than_5_eligible	at_least_3_eligible	at_least_5_eligible
+overall	v1	0.30	parent_disjoint	100	320	102	148	218	172
+overall	v2	0.30	parent_disjoint	1000	320	102	148	218	172
+
+family	retrieval_reranker_version	min_similarity	identity_policy	query_count	fewer_than_3_eligible	fewer_than_5_eligible
+Observed.direct_oral_bioavailability	v1	0.30	parent_disjoint	64	5	15
+Observed.direct_oral_bioavailability	v2	0.30	parent_disjoint	64	5	15
+Observed.oral_auc_cmax_exposure	v1	0.30	parent_disjoint	64	19	28
+Observed.oral_auc_cmax_exposure	v2	0.30	parent_disjoint	64	19	28
+Fa.absorption_solubility_permeability	v1	0.30	parent_disjoint	64	25	36
+Fa.absorption_solubility_permeability	v2	0.30	parent_disjoint	64	25	36
+Fg.gut_wall_efflux_intestinal_metabolism	v1	0.30	parent_disjoint	64	33	43
+Fg.gut_wall_efflux_intestinal_metabolism	v2	0.30	parent_disjoint	64	33	43
+Fh.hepatic_clearance_metabolic_stability	v1	0.30	parent_disjoint	64	20	26
+Fh.hepatic_clearance_metabolic_stability	v2	0.30	parent_disjoint	64	20	26
