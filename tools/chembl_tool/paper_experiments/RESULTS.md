@@ -27,6 +27,74 @@ Identity-blind 使用 116,008,812 tokens；matched-prefetch visible 使用 121,4
 outputs/paper/molecular_evidence_agent/analysis/
 ```
 
+## Validation split 诊断重跑（2026-07-17）
+
+Validation split 使用与 test 完全相同的冻结设置，输入只由各任务的 `test.jsonl`
+替换为 `valid.jsonl`。这是用于检查结论方向和 pipeline 可复现性的诊断重跑，不代替
+test 主结果。Identity-blind、matched-prefetch 和 deployment-visible 各完成 21 个条件、
+2,203 个 sample-condition，三套失败数均为 0。Prefetch parity audit 为 21/21 conditions、
+2,203/2,203 samples，missing、extra 和 mismatch 均为 0。
+
+### Valid Identity-Blind
+
+| 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.7098 | 0.7138 | 0.6954 | 0.7008 | **0.7429** | 不适用 | 不适用 |
+| Skin_Reaction | **0.7396** | 0.6931 | 0.7163 | 0.6647 | 不适用 | 不适用 | 不适用 |
+| ClinTox | 0.4774 | 0.4774 | **0.6229** | **0.6229** | 不适用 | 不适用 | 不适用 |
+| Bioavailability_Ma | 0.5031 | 0.5594 | 0.5713 | 0.5194 | 0.6657 仅数值 / 0.6522 完整 | 0.6657 | **0.6938** |
+
+### Valid Deployment-Visible（Matched Prefetch 补充控制）
+
+| 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.6677 | 0.7187 | 0.7411 | 0.7050 | **0.7436** | 不适用 | 不适用 |
+| Skin_Reaction | 0.5943 | **0.6577** | **0.6577** | **0.6577** | 不适用 | 不适用 | 不适用 |
+| ClinTox | 0.5358 | 0.5420 | **0.6352** | 0.5971 | 不适用 | 不适用 | 不适用 |
+| Bioavailability_Ma | 0.5333 | 0.6382 | 0.6382 | 0.6530 | 0.6395 仅数值 / 0.6938 完整 | **0.7388** | 0.7083 |
+
+### Valid Deployment-Visible（Agentic 主制度）
+
+| 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.6927 | 0.7138 | 0.7212 | 0.7138 | **0.7381** | 不适用 | 不适用 |
+| Skin_Reaction | 0.5733 | 0.5733 | 0.5733 | **0.6050** | 不适用 | 不适用 | 不适用 |
+| ClinTox | 0.5690 | 0.5842 | 0.6352 | **0.6445** | 不适用 | 不适用 | 不适用 |
+| Bioavailability_Ma | 0.4421 | 0.6135 | 0.6135 | 0.6395 | 0.6264 仅数值 / 0.6395 完整 | 0.6264 | **0.6952** |
+
+表中均为 valid macro-F1。Bioavailability 标量 KNN 的 valid macro-F1 为 0.6621，与 LLM
+agent 条件分开报告。
+
+### Valid Parent-disjoint 消融
+
+| 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.6927 | 0.7138 | 0.7261 | 0.7138 | **0.7641** | 不适用 | 不适用 |
+| Skin_Reaction | 0.5733 | 0.5733 | 0.5733 | **0.6050** | 不适用 | 不适用 | 不适用 |
+| ClinTox | 0.5690 | 0.5842 | **0.6919** | 0.6137 | 不适用 | 不适用 | 不适用 |
+| Bioavailability_Ma | 0.4421 | 0.6008 | 0.6000 | 0.6008 | 0.5749 仅数值 / 0.6008 完整 | 0.5995 | **0.6656** |
+
+17 个 retrieval conditions 共 1,765 个 sample-condition，失败数为 0。其中 197 个
+retrieval 输入变化，1,568 个整条 run 复用；35 个 prediction flips 中 14 个修正、
+21 个破坏。最终 retained-neighbor identity conflict 和低于 similarity threshold 的补位均为 0。
+
+Valid 上 parent-disjoint 后每个任务的最佳 retrieval 点估计仍高于 no-retrieval，但效果明显
+依赖任务：BBB 最佳为 Starling direct，ClinTox 最佳为 ChEMBL flat，Skin 只在 mechanism
+有小幅提升，Bioavailability 最佳为 Starling mechanism。Operational 到 parent-disjoint 的变化
+方向并不一致，mechanism 也没有稳定超过 flat；17 项 Holm 校正后都不显著。
+因此 valid 支持“retrieval 信号可复现但强烈依赖任务”，不支持将单个 valid 点估计
+改写为新的最终论文 claim。
+
+完整指标、paired tests、coverage、tokens 和 provenance 位于：
+
+```text
+outputs/paper/molecular_evidence_agent_valid/analysis/report.md
+outputs/paper/molecular_evidence_agent_valid/analysis/prefetch_contract_audit.json
+outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/result_report.md
+outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview.svg
+outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview_highres.png
+```
+
 ## Identity-Blind
 
 | 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |

@@ -394,6 +394,35 @@ Viewer 只扫描 `outputs/paper/molecular_evidence_agent/` 中当前论文框架
 single-molecule、mechanism-family/flat/direct 和 final stages，并递归展示通用 JSON、工具调用、
 retrieval evidence 和 provenance。旧 task-specific reasoning output 不再由该 viewer 支持。
 
+## Paper experiment split 与可视化入口
+
+冻结论文矩阵的详细操作规范位于 `tools/chembl_tool/paper_experiments/AGENTS.md`。默认不加
+`--split` 时使用 test 并写入 `outputs/paper/molecular_evidence_agent/`；validation 诊断重跑统一加
+`--split valid`，产物隔离写入 `outputs/paper/molecular_evidence_agent_valid/`。可复用入口包括：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --split valid ...
+python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
+python -m tools.chembl_tool.paper_experiments.audit_prefetch_contract --split valid
+python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split valid --materialize
+python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis \
+  --output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview.svg \
+  --png-output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview_highres.png \
+  --data-split valid
+```
+
+`summarize_parent_disjoint_results.py` 目前通过显式 `--operational-root`、`--parent-root` 和
+`--analysis-dir` 切换 split，详细 valid 命令见 paper-experiments 目录文档。
+
+2026-07-17 的 valid 矩阵已完成：三套 visibility/tool-execution 制度各 21 个条件、2,203 个
+sample-condition 且 0 失败；prefetch audit 为 2,203/2,203；parent-disjoint 为 17 个条件、
+1,765 个 sample-condition 且 0 失败。实测结果见 `tools/chembl_tool/paper_experiments/RESULTS.md`。
+
+论文 performance 可视化以 `plot_retrieval_claims_overview.py` 的横向 grouped-bar chart 为唯一模板。
+每个 split 的正式 figures 目录只保留 canonical SVG 和一份高分辨率 PNG，不保留
+preview、QA、pre-parent 或已被替代的 overview 代码/产物。
+
 ## MiniMol baseline
 
 MiniMol baseline 代码放在：

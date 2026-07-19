@@ -48,10 +48,12 @@ parent_disjoint_ablation.py
   runner 以 `--neighbor-identity-policy parent_disjoint` 执行。
 
 summarize_parent_disjoint_results.py
-  在完整 test set 上配对比较 operational 与 parent-disjoint，并审计 identity policy、threshold 和 reuse provenance。
+  在指定 split 的完整样本上配对比较 operational 与 parent-disjoint，并审计 identity policy、threshold 和
+  reuse provenance。当前入口通过显式 `--operational-root`、`--parent-root`、`--analysis-dir` 复用于 test/valid。
 
 plot_retrieval_claims_overview.py
-  从已生成的 analysis TSV 绘制 retrieval claims 总览 SVG；它不重新计算指标。
+  从已生成的 analysis TSV 绘制统一横向 grouped-bar chart；它不重新计算指标。
+  `--data-split {test,valid}` 控制 split 文案与结论，`--analysis-dir` / `--output` 用于分区产物。
 ```
 
 常用审计顺序：
@@ -61,6 +63,22 @@ python -m tools.chembl_tool.paper_experiments.summarize_results
 python -m tools.chembl_tool.paper_experiments.audit_prefetch_contract
 python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results
 python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview
+```
+
+Valid 诊断重跑的对应顺序：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
+python -m tools.chembl_tool.paper_experiments.audit_prefetch_contract --split valid
+python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results \
+  --operational-root outputs/paper/molecular_evidence_agent_valid/runs_deployment_visible \
+  --parent-root outputs/paper/molecular_evidence_agent_valid/runs_deployment_visible_parent_disjoint \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation
+python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis \
+  --output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview.svg \
+  --png-output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview_highres.png \
+  --data-split valid
 ```
 
 对应回归测试集中在 `tests/chembl_tool/common/`：identity/policy、retrieval view、replay/hash reuse、prefetch
@@ -110,8 +128,13 @@ top-k。现有 17 个 retrieval 条件的首轮消融已完成，但最终 Starl
 Parent-disjoint 产物统一放在：
 
 ```text
+# test
 outputs/paper/molecular_evidence_agent/runs_deployment_visible_parent_disjoint/
 outputs/paper/molecular_evidence_agent/analysis/parent_disjoint_ablation/
+
+# valid
+outputs/paper/molecular_evidence_agent_valid/runs_deployment_visible_parent_disjoint/
+outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/
 ```
 
 先运行 `parent_disjoint_ablation.py` 做两阶段审计：只有 operational top-k 中实际出现 same-parent 的
@@ -155,7 +178,7 @@ Group prompt 还具有 provider 传输保护。清理后不超过 750 KB 的 pay
 1. 必须满足 `n_failed_runs == 0`；否则使用 `--skip-existing` 重跑失败样本。
 2. 必须满足 `summarize_results.py` 输出的 `query_smiles_trace_leaks == 0`。
 3. `identity_blind` 必须通过身份盲化 preflight，并使用脱敏后的 group 输出进行 final synthesis。`group_reasoning_outputs_raw.jsonl` 仅用于审计，绝不能作为 final 输入。
-4. 主实验 `deployment_visible` 必须通过正向可见性 contract。补充的 `deployment_visible_prefetched` 必须逐 query replay 对应 `identity_blind` run 的冻结 `retrieval.json` 和 prefetched tool outputs，不能按当前 task config 重新检索或重新执行可能非确定的 MCS。当前 21 条件矩阵的 prefetch audit 必须覆盖 21/21 conditions 和 4,456/4,456 samples，且 missing、extra、mismatch 均为 0；交集匹配不能替代覆盖率检查。
+4. 主实验 `deployment_visible` 必须通过正向可见性 contract。补充的 `deployment_visible_prefetched` 必须逐 query replay 对应 `identity_blind` run 的冻结 `retrieval.json` 和 prefetched tool outputs，不能按当前 task config 重新检索或重新执行可能非确定的 MCS。21 条件矩阵的 prefetch audit 在 test 必须覆盖 4,456/4,456 samples，在 valid 必须覆盖 2,203/2,203 samples，且两者都要求 21/21 conditions 以及 missing、extra、mismatch 全为 0；交集匹配不能替代覆盖率检查。
 5. 报告性能时必须同时报告 retrieval coverage；缺少 neighbor 是数据源/索引的真实属性，不得静默删除相应样本。
 6. 使用共享汇总程序生成制度内和跨制度的配对测试集比较、bootstrap 区间和精确 McNemar 检验。
 7. 标量 KNN 结果必须与 LLM agent 条件分开报告；它是数值型 direct-F 对照，且不属于任何 LLM 可见性制度。
@@ -164,6 +187,30 @@ Group prompt 还具有 provider 传输保护。清理后不超过 750 KB 的 pay
 主实验候选，`runs/` 是 identity-blind 补充控制，`runs_deployment_visible_prefetched/` 是 matched-prefetch
 补充控制。
 这些是可复现产物，不是源代码。
+
+## 可视化与产物清理
+
+论文 performance 可视化统一使用 `plot_retrieval_claims_overview.py` 的横向 grouped-bar 设计。
+后续 test/valid 或新 split 的性能图应扩展这一入口，不再并行保留另一套 overview 绘图代码。
+每个 split 的 `analysis/figures/` 只保留两个正式产物：
+
+```text
+retrieval_claims_overview.svg
+retrieval_claims_overview_highres.png
+```
+
+`preview`、`qa`、`pre_parent_disjoint` 和已被这张图取代的其它 overview 文件不得留在正式
+figures 目录。SVG 是可复现源图；`--png-output` 通过 ImageMagick 导出便于查看的
+唯一 raster 版本。
+
+## Valid 诊断矩阵记录
+
+2026-07-17 按 test 的冻结设置完成 valid 重跑。Identity-blind、matched-prefetch 和
+deployment-visible 各 21 个条件，每套 2,203 个 sample-condition，失败均为 0；
+prefetch audit 为 2,203/2,203，无 missing、extra 或 mismatch。Parent-disjoint 的 17 个检索条件
+共 1,765 个 sample-condition，失败为 0，最终 neighbor identity conflict 和低于 threshold
+的补位均为 0。Bioavailability scalar KNN 在 valid 上的 macro-F1 为 0.6621。详细数值与
+解释必须同步查阅 `RESULTS.md` 和 `outputs/paper/molecular_evidence_agent_valid/analysis/`。
 
 Paper runner 必须保存每个样本自己的 `trace_messages.jsonl`，并传 `--no-combine-traces`，避免再生成
 condition-level 的重复大文件。最终 trace viewer 只服务四个 paper run root：`runs/`、

@@ -86,6 +86,26 @@ python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
 `--retrieval-replay-source-batch` 和 `--prefetched-tool-replay-source-batch`；不要用当前 index 重新构建
 matched-visible retrieval，否则 task mapping 漂移或 MCS 非确定性会破坏严格配对。
 
+需要以完全相同的冻结设置在 validation split 做诊断重跑时，为 matrix、prefetch audit 和汇总命令统一加
+`--split valid`。输入自动从各任务的 `valid.jsonl` 读取，全部产物隔离写入
+`outputs/paper/molecular_evidence_agent_valid/`；默认不加参数时仍使用 test split 和原结果 root。例如：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
+  --split valid \
+  --visibility-mode deployment_visible \
+  --experiments bioavailability_ma__none bioavailability_ma__starling_full_mechanism
+
+python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
+python -m tools.chembl_tool.paper_experiments.audit_prefetch_contract --split valid
+python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split valid --materialize
+```
+
+2026-07-17 已完成该 valid 诊断矩阵：identity-blind、matched-prefetch 和 deployment-visible
+各 21 个条件均为完整样本且 0 失败；17 个 parent-disjoint 条件也全部完成。主报告位于
+`outputs/paper/molecular_evidence_agent_valid/analysis/report.md`，parent-disjoint 配对审计位于
+`outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/result_report.md`。
+
 API key 默认从 `GLM_API_KEY` 读取，其值不得写入命令记录、manifest 或 trace。
 
 Parent-disjoint 已由公共 identity normalizer、retrieval policy、top-k backfill 和 manifest provenance
@@ -122,9 +142,29 @@ python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results
 python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview
 ```
 
+Valid split 使用相同入口，但要显式指向隔离的 analysis root：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results \
+  --operational-root outputs/paper/molecular_evidence_agent_valid/runs_deployment_visible \
+  --parent-root outputs/paper/molecular_evidence_agent_valid/runs_deployment_visible_parent_disjoint \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation
+
+python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis \
+  --output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview.svg \
+  --png-output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview_highres.png \
+  --data-split valid
+```
+
+Performance 可视化统一使用上述横向 grouped-bar chart。每个 split 的正式 figures
+目录只保留 `retrieval_claims_overview.svg` 和 `retrieval_claims_overview_highres.png`；不保留
+preview/QA 导出或另一套 overview 绘图代码。
+
 `audit_prefetch_contract` 同时输出逐样本 `prefetch_contract_audit.tsv` 和逐 condition
 `prefetch_contract_conditions.tsv`。当前 21 条件矩阵只有在 `n_conditions_complete=21`、
-`n_expected=n_audited=4456`、missing/extra/mismatch 均为 0 时才通过。审计同时要求 raw retrieval
+test 上 `n_expected=n_audited=4456`，valid 上 `n_expected=n_audited=2203`；两者都只有在
+missing/extra/mismatch 均为 0 时才通过。审计同时要求 raw retrieval
 精确一致，并在规范化 identity redaction 后比较 prefetched tool outputs；只比较两边已有样本的交集
 不构成完整审计。
 

@@ -21,8 +21,23 @@ deployment_visible_prefetched:
 deployment_visible:
   query structure visible，query name hidden；
   neighbor structure、source ID 和数据源已有名称 visible；
-  LLM 自主选择分子工具；现有 21 个条件属于该补充制度。
+  LLM 自主选择分子工具；现有 21 个条件属于论文主制度。
 ```
+
+## Valid split 可见性诊断
+
+2026-07-17 用完全相同设置在 valid 上重跑了三套制度。每套 21 个条件、2,203 个
+sample-condition，全部 0 失败；matched-prefetch 与 identity-blind 的 contract audit 覆盖
+2,203/2,203 samples，无 missing、extra 或 mismatch。因此 valid 制度对比在输入和工具
+replay 边界上是完整的。
+
+Valid 上 agentic deployment-visible 的最佳条件为 BBB Starling direct 0.7381、Skin ChEMBL
+mechanism 0.6050、ClinTox ChEMBL mechanism 0.6445 和 Bioavailability Starling mechanism 0.6952。
+相应 identity-blind 最佳值为 0.7429、0.7396、0.6229 和 0.6938。这一 split 再次显示：
+structure visibility 的效果不是单向提升，Skin 尤其容易因参数先验与运行波动而下降；
+ClinTox 和 Bioavailability 则对更强的 mechanism/source context 更有利。Valid 样本数较小，
+这些只是方向性 replication，不应用来替换 test 上的 paired inference。完整 valid 数值见
+`RESULTS.md` 与 `outputs/paper/molecular_evidence_agent_valid/analysis/report.md`。
 
 Parity-controlled 补充对照中，visible-prefetched 相对 identity-blind 的 21 个 Macro-F1 差值为 14 升、7 降，未加权
 平均为 +0.0192。只有 BBB ChEMBL mechanism 和 Bio ChEMBL flat 的 bootstrap 区间完全为正；经过

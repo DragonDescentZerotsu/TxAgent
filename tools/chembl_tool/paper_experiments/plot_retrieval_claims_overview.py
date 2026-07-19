@@ -2,14 +2,18 @@
 
 The chart compares Identity-Blind, Deployment-Visible, and the paired
 Parent-disjoint retrieval-policy ablation.  It reads the frozen
-machine-readable summaries and requires only the Python standard library.
+machine-readable summaries. SVG generation requires only the Python standard
+library; optional PNG export uses ImageMagick.
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
-from dataclasses import dataclass
+import shutil
+import subprocess
+from dataclasses import dataclass, replace
+from datetime import date
 from html import escape
 from pathlib import Path
 from typing import Iterable
@@ -197,6 +201,19 @@ def load_results(analysis_dir: Path) -> dict[str, dict[str, float]]:
     return results
 
 
+def load_task_sizes(analysis_dir: Path) -> dict[str, int]:
+    rows = read_tsv(analysis_dir / "experiment_summary.tsv")
+    sizes = {
+        row["task"]: int(row["n_total"])
+        for row in rows
+        if row["visibility_mode"] == "identity_blind" and row["experiment"].endswith("__none")
+    }
+    missing = sorted({task.key for task in TASKS} - sizes.keys())
+    if missing:
+        raise ValueError(f"Missing task sizes: {missing}")
+    return sizes
+
+
 def strategy_card(
     parts: list[str],
     x: float,
@@ -318,13 +335,18 @@ def claim_card(
     parts.append(multiline(x + 22, y + 91, lines, size=14, line_height=22))
 
 
-def render(analysis_dir: Path, output: Path) -> None:
+def render(analysis_dir: Path, output: Path, *, data_split: str = "test") -> None:
+    if data_split not in {"test", "valid"}:
+        raise ValueError(f"Unsupported data split: {data_split}")
     results = load_results(analysis_dir)
+    task_sizes = load_task_sizes(analysis_dir)
+    tasks = tuple(replace(task, n=task_sizes[task.key]) for task in TASKS)
+    generated = date.today().isoformat()
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 {WIDTH} {HEIGHT}" role="img" aria-labelledby="chart-title chart-desc">',
         '<title id="chart-title">Does molecular evidence retrieval improve property classification?</title>',
         '<desc id="chart-desc">Grouped bar charts compare Identity-Blind, Deployment-Visible, and Parent-disjoint retrieval across four molecular property tasks.</desc>',
-        '<metadata>Sources: experiment_summary.tsv and parent_disjoint_ablation/condition_results.tsv; generated 2026-07-13.</metadata>',
+        f'<metadata>Sources: experiment_summary.tsv and parent_disjoint_ablation/condition_results.tsv; split {data_split}; generated {generated}.</metadata>',
         rect(0, 0, WIDTH, HEIGHT, fill=BG, rx=0),
         svg_text(70, 58, "Does Molecular Evidence Retrieval Improve Property Classification?", size=36, weight=750),
         svg_text(70, 94, "Two evaluation regimes plus a paired parent-disjoint retrieval-policy ablation", size=20, fill=MUTED),
@@ -349,20 +371,54 @@ def render(analysis_dir: Path, output: Path) -> None:
     setting_card(parts, 635, color=VISIBLE, eyebrow="DEPLOYMENT-VISIBLE · MAIN EXPERIMENT", heading="Structure-visible deployment setting", lines=("Structures are visible; the query name is hidden.", "The LLM chooses comparison tools; same-parent records may remain."))
     setting_card(parts, 1200, color=PARENT, eyebrow="PARENT-DISJOINT · ANALOG-ONLY ABLATION", heading="Same Visible setting, stricter retrieval", lines=("Exclude exact, same-connectivity, and same-parent records.", "Backfill top-k only at similarity ≥ 0.30; no-retrieval is shared."))
 
-    render_panel(parts, TASKS[0], 70, 510, results)
-    render_panel(parts, TASKS[1], 915, 510, results)
-    render_panel(parts, TASKS[2], 70, 1125, results)
-    render_panel(parts, TASKS[3], 915, 1125, results)
+    render_panel(parts, tasks[0], 70, 510, results)
+    render_panel(parts, tasks[1], 915, 510, results)
+    render_panel(parts, tasks[2], 70, 1125, results)
+    render_panel(parts, tasks[3], 915, 1125, results)
 
     parts.append(svg_text(70, 1802, "WHAT DO THE CURRENT RESULTS SUPPORT?", size=14, weight=750, fill=PURPLE, spacing=1.2))
-    claim_card(parts, 70, color=POSITIVE, eyebrow="CLAIM 1 · RETRIEVAL HELPS", heading="SUPPORTED, TASK-DEPENDENT", lines=("Parent-disjoint retains +0.238 Bioavailability and +0.029 BBB gains;", "Skin remains negative, and ClinTox is metric-sensitive."))
-    claim_card(parts, 630, color=GOLD, eyebrow="CLAIM 2 · STARLING > CHEMBL", heading="PROMISING, PARENT-SENSITIVE", lines=("Bioavailability Starling remains strongest after exclusion, but declines;", "BBB Starling and ChEMBL Direct become nearly tied; coverage is incomplete."))
-    claim_card(parts, 1190, color=NEGATIVE, eyebrow="CLAIM 3 · MECHANISM > FLAT", heading="NOT CONSISTENTLY PROVEN", lines=("Parent-disjoint Bioavailability Starling favors Mechanism by +0.023;", "ClinTox moves the other way, and differences remain task-dependent."))
+    if data_split == "valid":
+        parent = results["parent_disjoint"]
+
+        def parent_gain(task: Task) -> float:
+            baseline = parent[f"{task.key}__none"]
+            return max(parent[f"{task.key}__{condition.suffix}"] for condition in task.conditions[1:]) - baseline
+
+        bbb_gain, skin_gain, clin_gain, bio_gain = (parent_gain(task) for task in tasks)
+        bbb_starling_lead = parent["bbb_martins__starling_direct"] - max(
+            parent["bbb_martins__chembl_direct"],
+            parent["bbb_martins__chembl_full_flat"],
+            parent["bbb_martins__chembl_full_mechanism"],
+        )
+        bio_starling_lead = max(
+            parent["bioavailability_ma__starling_direct_numeric"],
+            parent["bioavailability_ma__starling_direct_full"],
+            parent["bioavailability_ma__starling_full_flat"],
+            parent["bioavailability_ma__starling_full_mechanism"],
+        ) - max(
+            parent["bioavailability_ma__chembl_direct"],
+            parent["bioavailability_ma__chembl_full_flat"],
+            parent["bioavailability_ma__chembl_full_mechanism"],
+        )
+        bio_mechanism_delta = (
+            parent["bioavailability_ma__starling_full_mechanism"]
+            - parent["bioavailability_ma__starling_full_flat"]
+        )
+        skin_mechanism_delta = parent["skin_reaction__chembl_full_mechanism"] - parent["skin_reaction__chembl_full_flat"]
+        bbb_mechanism_delta = parent["bbb_martins__chembl_full_mechanism"] - parent["bbb_martins__chembl_full_flat"]
+        clin_mechanism_delta = parent["clintox__chembl_full_mechanism"] - parent["clintox__chembl_full_flat"]
+        claim_card(parts, 70, color=POSITIVE, eyebrow="CLAIM 1 · RETRIEVAL HELPS", heading="POSITIVE POINT ESTIMATES", lines=(f"Parent-disjoint gains: {bio_gain:+.3f} Bioavailability, {clin_gain:+.3f} ClinTox;", f"{bbb_gain:+.3f} BBB and {skin_gain:+.3f} Skin reaction."))
+        claim_card(parts, 630, color=GOLD, eyebrow="CLAIM 2 · STARLING > CHEMBL", heading="PROMISING, TASK-LIMITED", lines=(f"Parent-disjoint Starling leads best ChEMBL by {bio_starling_lead:+.3f} Bioavailability", f"and {bbb_starling_lead:+.3f} BBB; Starling coverage remains task-limited."))
+        claim_card(parts, 1190, color=NEGATIVE, eyebrow="CLAIM 3 · MECHANISM > FLAT", heading="NOT CONSISTENTLY PROVEN", lines=(f"Parent-disjoint Mechanism − Flat: Bio Starling {bio_mechanism_delta:+.3f}, Skin {skin_mechanism_delta:+.3f};", f"BBB {bbb_mechanism_delta:+.3f}, ClinTox {clin_mechanism_delta:+.3f} — strongly task-dependent."))
+    else:
+        claim_card(parts, 70, color=POSITIVE, eyebrow="CLAIM 1 · RETRIEVAL HELPS", heading="SUPPORTED, TASK-DEPENDENT", lines=("Parent-disjoint retains +0.238 Bioavailability and +0.029 BBB gains;", "Skin remains negative, and ClinTox is metric-sensitive."))
+        claim_card(parts, 630, color=GOLD, eyebrow="CLAIM 2 · STARLING > CHEMBL", heading="PROMISING, PARENT-SENSITIVE", lines=("Bioavailability Starling remains strongest after exclusion, but declines;", "BBB Starling and ChEMBL Direct become nearly tied; coverage is incomplete."))
+        claim_card(parts, 1190, color=NEGATIVE, eyebrow="CLAIM 3 · MECHANISM > FLAT", heading="NOT CONSISTENTLY PROVEN", lines=("Parent-disjoint Bioavailability Starling favors Mechanism by +0.023;", "ClinTox moves the other way, and differences remain task-dependent."))
 
     parts.extend(
         [
-            svg_text(70, 2012, "Source: frozen GLM-5.2 full-run artifacts · Values are test macro-F1 · Parent-disjoint covers 17 retrieval conditions", size=13, fill=MUTED),
-            svg_text(1730, 2012, "Generated 2026-07-13", size=13, fill=MUTED, anchor="end"),
+            svg_text(70, 2012, f"Source: frozen GLM-5.2 full-run artifacts · Values are {data_split} macro-F1 · Parent-disjoint covers 17 retrieval conditions", size=13, fill=MUTED),
+            svg_text(1730, 2012, f"Generated {generated}", size=13, fill=MUTED, anchor="end"),
             "</svg>",
         ]
     )
@@ -370,13 +426,30 @@ def render(analysis_dir: Path, output: Path) -> None:
     output.write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 
+def export_png(svg_path: Path, png_path: Path) -> None:
+    """Export the canonical SVG through ImageMagick when a PNG is requested."""
+    converter = shutil.which("convert")
+    if converter is None:
+        raise RuntimeError("ImageMagick 'convert' is required for --png-output")
+    png_path.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        [converter, "-background", "white", str(svg_path), str(png_path)],
+        check=True,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--analysis-dir", type=Path, default=DEFAULT_ANALYSIS_DIR)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--png-output", type=Path)
+    parser.add_argument("--data-split", choices=("test", "valid"), default="test")
     args = parser.parse_args()
-    render(args.analysis_dir, args.output)
+    render(args.analysis_dir, args.output, data_split=args.data_split)
     print(args.output)
+    if args.png_output is not None:
+        export_png(args.output, args.png_output)
+        print(args.png_output)
 
 
 if __name__ == "__main__":

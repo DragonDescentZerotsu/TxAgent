@@ -14,19 +14,21 @@ from tools.chembl_tool.common.identity_blind import (
     _retrieval_sensitive_terms,
 )
 
-from .molecular_evidence_agent import EXPERIMENTS, PAPER_ROOT
+from .molecular_evidence_agent import experiments_for_split, paper_root_for_split
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    output_dir = Path(args.output_dir)
+    paper_root = Path(args.paper_root) if args.paper_root else paper_root_for_split(args.split)
+    experiments = experiments_for_split(args.split)
+    output_dir = Path(args.output_dir) if args.output_dir else paper_root / "analysis"
     output_dir.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, Any]] = []
     condition_rows: list[dict[str, Any]] = []
-    for experiment in EXPERIMENTS:
-        blind_batch = PAPER_ROOT / "runs" / experiment.task / experiment.name
+    for experiment in experiments:
+        blind_batch = paper_root / "runs" / experiment.task / experiment.name
         visible_batch = (
-            PAPER_ROOT
+            paper_root
             / "runs_deployment_visible_prefetched"
             / experiment.task
             / experiment.name
@@ -66,7 +68,8 @@ def main(argv: list[str] | None = None) -> int:
     _write_tsv(output_dir / "prefetch_contract_audit.tsv", rows)
     _write_tsv(output_dir / "prefetch_contract_conditions.tsv", condition_rows)
     summary = {
-        "n_conditions_expected": len(EXPERIMENTS),
+        "data_split": args.split,
+        "n_conditions_expected": len(experiments),
         "n_conditions_complete": sum(row["complete"] for row in condition_rows),
         "n_expected": sum(row["n_expected"] for row in condition_rows),
         "n_audited": len(rows),
@@ -231,7 +234,9 @@ def _write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-dir", default=str(PAPER_ROOT / "analysis"))
+    parser.add_argument("--split", choices=("test", "valid"), default="test")
+    parser.add_argument("--paper-root", default="")
+    parser.add_argument("--output-dir", default="")
     return parser.parse_args(argv)
 
 

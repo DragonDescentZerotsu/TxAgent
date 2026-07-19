@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 from pathlib import Path
 import subprocess
@@ -21,6 +21,7 @@ VISIBILITY_MODES = (IDENTITY_BLIND, DEPLOYMENT_VISIBLE_PREFETCHED, DEPLOYMENT_VI
 OPERATIONAL = "operational"
 PARENT_DISJOINT = "parent_disjoint"
 NEIGHBOR_IDENTITY_POLICIES = (OPERATIONAL, PARENT_DISJOINT)
+DATA_SPLITS = ("test", "valid")
 
 
 @dataclass(frozen=True)
@@ -169,7 +170,8 @@ EXPERIMENTS = [
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    selected = _select_experiments(args.experiments)
+    all_experiments = experiments_for_split(args.split)
+    selected = _select_experiments(args.experiments, experiments=all_experiments)
     if args.list:
         print("\n".join(experiment.name for experiment in selected))
         return 0
@@ -182,23 +184,26 @@ def main(argv: list[str] | None = None) -> int:
         "identity_blind": args.visibility_mode == IDENTITY_BLIND,
         "visibility_contract": _visibility_contract(args.visibility_mode),
         "neighbor_identity_policy": args.neighbor_identity_policy,
+        "data_split": args.split,
+        "paper_root": str(_paper_root_from_args(args)),
         "temperature": 0.0,
         "max_tokens": 20480,
         "transport_max_retries": 2,
-        "experiments": [experiment.__dict__ for experiment in EXPERIMENTS],
+        "experiments": [experiment.__dict__ for experiment in all_experiments],
         "selected_experiments": [experiment.name for experiment in selected],
     }
-    PAPER_ROOT.mkdir(parents=True, exist_ok=True)
+    paper_root = _paper_root_from_args(args)
+    paper_root.mkdir(parents=True, exist_ok=True)
     if args.experiments:
         selected_tasks = "_".join(sorted({experiment.task for experiment in selected}))
         policy_suffix = "" if args.neighbor_identity_policy == OPERATIONAL else f"_{args.neighbor_identity_policy}"
-        matrix_path = PAPER_ROOT / f"experiment_matrix_{args.visibility_mode}{policy_suffix}_{selected_tasks}.json"
+        matrix_path = paper_root / f"experiment_matrix_{args.visibility_mode}{policy_suffix}_{selected_tasks}.json"
     else:
         policy_suffix = "" if args.neighbor_identity_policy == OPERATIONAL else f"_{args.neighbor_identity_policy}"
         matrix_path = (
-            PAPER_ROOT / "experiment_matrix.json"
+            paper_root / "experiment_matrix.json"
             if args.visibility_mode == IDENTITY_BLIND and not policy_suffix
-            else PAPER_ROOT / f"experiment_matrix_{args.visibility_mode}{policy_suffix}.json"
+            else paper_root / f"experiment_matrix_{args.visibility_mode}{policy_suffix}.json"
         )
     matrix_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
@@ -218,7 +223,14 @@ def main(argv: list[str] | None = None) -> int:
 def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
     visibility_mode = getattr(args, "visibility_mode", IDENTITY_BLIND)
     neighbor_identity_policy = getattr(args, "neighbor_identity_policy", OPERATIONAL)
-    batch_root = experiment_run_root(visibility_mode, neighbor_identity_policy) / experiment.task
+    split = getattr(args, "split", "test")
+    experiment = experiment_for_split(experiment, split)
+    paper_root = _paper_root_from_args(args)
+    batch_root = experiment_run_root(
+        visibility_mode,
+        neighbor_identity_policy,
+        paper_root=paper_root,
+    ) / experiment.task
     command = [
         args.python_executable,
         "-m",
@@ -267,11 +279,15 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
     elif visibility_mode == DEPLOYMENT_VISIBLE_PREFETCHED:
         command.append("--harness-prefetch-tools")
         if experiment.mode != "none":
-            blind_batch = experiment_run_root(IDENTITY_BLIND) / experiment.task / experiment.name
+            blind_batch = (
+                experiment_run_root(IDENTITY_BLIND, paper_root=paper_root)
+                / experiment.task
+                / experiment.name
+            )
             command.extend(["--retrieval-replay-source-batch", str(blind_batch)])
             command.extend(["--prefetched-tool-replay-source-batch", str(blind_batch)])
     if experiment.mode != "none":
-        single_root = experiment_run_root(visibility_mode, OPERATIONAL)
+        single_root = experiment_run_root(visibility_mode, OPERATIONAL, paper_root=paper_root)
         command.extend(
             [
                 "--single-analysis-source-batch",
@@ -290,20 +306,25 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
     return command
 
 
-def experiment_run_root(visibility_mode: str, neighbor_identity_policy: str = OPERATIONAL) -> Path:
+def experiment_run_root(
+    visibility_mode: str,
+    neighbor_identity_policy: str = OPERATIONAL,
+    *,
+    paper_root: Path = PAPER_ROOT,
+) -> Path:
     """Return the stable batch root for one paper visibility regime."""
     if neighbor_identity_policy == PARENT_DISJOINT:
         if visibility_mode != DEPLOYMENT_VISIBLE:
             raise ValueError("Parent-disjoint paper ablation is defined for deployment-visible agentic runs.")
-        return PAPER_ROOT / "runs_deployment_visible_parent_disjoint"
+        return paper_root / "runs_deployment_visible_parent_disjoint"
     if neighbor_identity_policy != OPERATIONAL:
         raise ValueError(f"Unknown neighbor identity policy: {neighbor_identity_policy}")
     if visibility_mode == IDENTITY_BLIND:
-        return PAPER_ROOT / "runs"
+        return paper_root / "runs"
     if visibility_mode == DEPLOYMENT_VISIBLE:
-        return PAPER_ROOT / "runs_deployment_visible"
+        return paper_root / "runs_deployment_visible"
     if visibility_mode == DEPLOYMENT_VISIBLE_PREFETCHED:
-        return PAPER_ROOT / "runs_deployment_visible_prefetched"
+        return paper_root / "runs_deployment_visible_prefetched"
     raise ValueError(f"Unknown visibility mode: {visibility_mode}")
 
 
@@ -335,10 +356,43 @@ def _visibility_contract(visibility_mode: str) -> dict[str, Any]:
     return contract
 
 
-def _select_experiments(names: list[str]) -> list[Experiment]:
+def paper_root_for_split(split: str) -> Path:
+    """Keep validation artifacts isolated from the frozen test-set paper roots."""
+    if split not in DATA_SPLITS:
+        raise ValueError(f"Unknown data split: {split}")
+    if split == "test":
+        return PAPER_ROOT
+    return PAPER_ROOT.with_name(f"{PAPER_ROOT.name}_{split}")
+
+
+def experiment_for_split(experiment: Experiment, split: str) -> Experiment:
+    if split not in DATA_SPLITS:
+        raise ValueError(f"Unknown data split: {split}")
+    input_path = Path(experiment.input_jsonl)
+    if input_path.name == f"{split}.jsonl":
+        return experiment
+    if input_path.name != "test.jsonl":
+        raise ValueError(f"Frozen experiment input is not a test split: {input_path}")
+    return replace(experiment, input_jsonl=str(input_path.with_name(f"{split}.jsonl")))
+
+
+def experiments_for_split(split: str) -> list[Experiment]:
+    return [experiment_for_split(experiment, split) for experiment in EXPERIMENTS]
+
+
+def _paper_root_from_args(args: argparse.Namespace) -> Path:
+    explicit = getattr(args, "paper_root", None)
+    return Path(explicit) if explicit else paper_root_for_split(getattr(args, "split", "test"))
+
+
+def _select_experiments(
+    names: list[str],
+    *,
+    experiments: list[Experiment] = EXPERIMENTS,
+) -> list[Experiment]:
     if not names:
-        return list(EXPERIMENTS)
-    by_name = {experiment.name: experiment for experiment in EXPERIMENTS}
+        return list(experiments)
+    by_name = {experiment.name: experiment for experiment in experiments}
     missing = sorted(set(names) - set(by_name))
     if missing:
         raise SystemExit(f"Unknown experiments: {', '.join(missing)}")
@@ -351,6 +405,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--api-key-env", default="GLM_API_KEY")
     parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=IDENTITY_BLIND)
+    parser.add_argument("--split", choices=DATA_SPLITS, default="test")
+    parser.add_argument(
+        "--paper-root",
+        default="",
+        help="Override the split-specific output root (default: frozen test root or a sibling _valid root).",
+    )
     parser.add_argument(
         "--neighbor-identity-policy",
         choices=NEIGHBOR_IDENTITY_POLICIES,

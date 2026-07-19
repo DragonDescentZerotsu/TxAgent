@@ -60,7 +60,7 @@ matched-prefetch 和 21 个 deployment-visible agentic。它们用于确定研�
 
 | 实验 | 核心内容 | 对应贡献 | 优先级 | 当前状态 |
 |---|---|---|---|---|
-| E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；现有 17 retrieval 条件首轮消融完成 |
+| E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；2026-07-17 完成同设置 valid 全矩阵诊断重跑：3 x 21 条件和 17 个 parent-disjoint 条件均 0 失败，prefetch 2,203 / 2,203 matched |
 | E1 | None vs direct retrieval | C1、C3 | P0 | 第一轮完成；最终矩阵待重跑 |
 | E2 | ChEMBL vs Starling | C2 | P0 | Bio/BBB direct 部分完成；数据不全 |
 | E3 | Source-quality 人工 annotation | C2、C6 | P0 | 未开始 |

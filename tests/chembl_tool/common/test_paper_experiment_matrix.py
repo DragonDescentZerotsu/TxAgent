@@ -6,6 +6,8 @@ from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     EXPERIMENTS,
     PARENT_DISJOINT,
     _command,
+    experiment_for_split,
+    paper_root_for_split,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     _group_prompt_payload,
@@ -72,6 +74,29 @@ def test_matrix_command_freezes_glm_and_identity_conditions():
     assert direct_command[direct_command.index("--single-analysis-source-batch") + 1].endswith(
         "bbb_martins__none"
     )
+
+
+def test_valid_split_changes_only_dataset_and_isolates_output_root():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_API_KEY",
+        parallelism=2,
+        group_workers=3,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        split="valid",
+        paper_root="",
+    )
+
+    command = _command(EXPERIMENTS[1], args)
+    valid_experiment = experiment_for_split(EXPERIMENTS[1], "valid")
+
+    assert valid_experiment.input_jsonl.endswith("/valid.jsonl")
+    assert command[command.index("--input-jsonl") + 1].endswith("/valid.jsonl")
+    assert str(paper_root_for_split("valid")) in command[command.index("--batch-root") + 1]
+    assert EXPERIMENTS[1].index == valid_experiment.index
+    assert command[command.index("--model") + 1] == "zai-org/GLM-5.2-FP8"
+    assert command[command.index("--temperature") + 1] == "0"
+    assert command[command.index("--max-tokens") + 1] == "20480"
 
 
 def test_deployment_visible_command_reuses_pipeline_without_blind_redaction():

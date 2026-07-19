@@ -21,17 +21,39 @@ from tools.chembl_tool.common.retrieval_policy import MoleculeRelation, classify
 from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
     EXPERIMENTS,
+    experiments_for_split,
     experiment_run_root,
+    paper_root_for_split,
 )
 
 
+# Backward-compatible default for callers that summarize the frozen test split.
+# Split-aware execution resolves the corresponding validation path in main().
 DEFAULT_OUTPUT = Path("outputs/paper/molecular_evidence_agent/analysis/parent_disjoint_ablation")
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    selected = _select_experiments(args.experiments)
-    output_dir = Path(args.output_dir)
+    paper_root = Path(args.paper_root) if args.paper_root else paper_root_for_split(args.split)
+    operational_root = (
+        Path(args.operational_root)
+        if args.operational_root
+        else experiment_run_root(DEPLOYMENT_VISIBLE, paper_root=paper_root)
+    )
+    target_root = (
+        Path(args.target_root)
+        if args.target_root
+        else experiment_run_root(
+            DEPLOYMENT_VISIBLE,
+            "parent_disjoint",
+            paper_root=paper_root,
+        )
+    )
+    output_dir = Path(args.output_dir) if args.output_dir else paper_root / "analysis/parent_disjoint_ablation"
+    selected = _select_experiments(
+        args.experiments,
+        experiments=experiments_for_split(args.split),
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
     all_rows: list[dict[str, Any]] = []
     summaries = []
@@ -40,8 +62,8 @@ def main(argv: list[str] | None = None) -> int:
             continue
         rows, summary = build_experiment_plan(
             experiment,
-            operational_root=Path(args.operational_root),
-            target_root=Path(args.target_root),
+            operational_root=operational_root,
+            target_root=target_root,
             materialize=args.materialize,
         )
         all_rows.extend(rows)
@@ -55,8 +77,9 @@ def main(argv: list[str] | None = None) -> int:
     _write_tsv(output_dir / "sample_condition_diff.tsv", all_rows)
     payload = {
         "policy": "parent_disjoint",
-        "operational_root": str(args.operational_root),
-        "target_root": str(args.target_root),
+        "data_split": args.split,
+        "operational_root": str(operational_root),
+        "target_root": str(target_root),
         "materialized": args.materialize,
         "n_sample_conditions": len(all_rows),
         "n_changed": sum(bool(row["changed"]) for row in all_rows),
@@ -181,8 +204,12 @@ def _same_parent_group_ids(query_smiles: str, retrieval: dict[str, Any]) -> list
     return sorted(affected)
 
 
-def _select_experiments(names: list[str]) -> list[Any]:
-    candidates = [experiment for experiment in EXPERIMENTS if experiment.mode != "none"]
+def _select_experiments(
+    names: list[str],
+    *,
+    experiments: list[Any] = EXPERIMENTS,
+) -> list[Any]:
+    candidates = [experiment for experiment in experiments if experiment.mode != "none"]
     if not names:
         return candidates
     by_name = {experiment.name: experiment for experiment in candidates}
@@ -228,12 +255,11 @@ def _report(summary: dict[str, Any]) -> str:
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--experiments", nargs="*", default=[])
-    parser.add_argument("--operational-root", default=str(experiment_run_root(DEPLOYMENT_VISIBLE)))
-    parser.add_argument(
-        "--target-root",
-        default="outputs/paper/molecular_evidence_agent/runs_deployment_visible_parent_disjoint",
-    )
-    parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT))
+    parser.add_argument("--split", choices=("test", "valid"), default="test")
+    parser.add_argument("--paper-root", default="")
+    parser.add_argument("--operational-root", default="")
+    parser.add_argument("--target-root", default="")
+    parser.add_argument("--output-dir", default="")
     parser.add_argument("--materialize", action="store_true")
     return parser.parse_args(argv)
 

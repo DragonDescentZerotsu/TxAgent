@@ -20,10 +20,11 @@ from .molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE_PREFETCHED,
     EXPERIMENTS,
     IDENTITY_BLIND,
-    PAPER_ROOT,
     VISIBILITY_MODES,
+    experiments_for_split,
     experiment_result_name,
     experiment_run_root,
+    paper_root_for_split,
 )
 
 
@@ -62,15 +63,21 @@ COMPARISONS = {
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    output_dir = Path(args.output_dir)
+    paper_root = Path(args.paper_root) if args.paper_root else paper_root_for_split(args.split)
+    experiments = experiments_for_split(args.split)
+    output_dir = Path(args.output_dir) if args.output_dir else paper_root / "analysis"
     output_dir.mkdir(parents=True, exist_ok=True)
     summaries: list[dict[str, Any]] = []
     group_coverage: list[dict[str, Any]] = []
     prediction_sets: dict[str, dict[int, dict[str, Any]]] = {}
 
     for visibility_mode in VISIBILITY_MODES:
-        for experiment in EXPERIMENTS:
-            batch_dir = experiment_run_root(visibility_mode) / experiment.task / experiment.name
+        for experiment in experiments:
+            batch_dir = (
+                experiment_run_root(visibility_mode, paper_root=paper_root)
+                / experiment.task
+                / experiment.name
+            )
             metrics_path = batch_dir / "metrics.json"
             predictions_path = batch_dir / "predictions.jsonl"
             if not metrics_path.exists() or not predictions_path.exists():
@@ -95,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
                 )
             )
 
-    knn_dir = PAPER_ROOT / "bioavailability_ma" / "starling_direct_scalar_knn"
+    knn_dir = paper_root / "bioavailability_ma" / "starling_direct_scalar_knn"
     if (knn_dir / "metrics.json").exists() and (knn_dir / "predictions.jsonl").exists():
         knn_predictions = _read_jsonl(knn_dir / "predictions.jsonl")
         normalized_knn = [
@@ -145,7 +152,7 @@ def main(argv: list[str] | None = None) -> int:
         args.bootstrap_replicates,
     )
     source_inventory = build_source_inventory()
-    contextual_baselines = load_contextual_baselines()
+    contextual_baselines = load_contextual_baselines() if args.split == "test" else []
     _write_tsv(output_dir / "experiment_summary.tsv", summaries)
     _write_tsv(output_dir / "paired_comparisons.tsv", comparisons)
     _write_tsv(output_dir / "visibility_comparisons.tsv", visibility_comparisons)
@@ -155,6 +162,7 @@ def main(argv: list[str] | None = None) -> int:
     (output_dir / "summary.json").write_text(
         json.dumps(
             {
+                "data_split": args.split,
                 "experiments": summaries,
                 "source_inventory": source_inventory,
                 "contextual_baselines": contextual_baselines,
@@ -168,7 +176,13 @@ def main(argv: list[str] | None = None) -> int:
         encoding="utf-8",
     )
     (output_dir / "report.md").write_text(
-        _render_report(summaries, comparisons, visibility_comparisons, contextual_baselines),
+        _render_report(
+            summaries,
+            comparisons,
+            visibility_comparisons,
+            contextual_baselines,
+            data_split=args.split,
+        ),
         encoding="utf-8",
     )
     print(
@@ -804,8 +818,11 @@ def _render_report(
     comparisons: list[dict[str, Any]],
     visibility_comparisons: list[dict[str, Any]],
     contextual_baselines: list[dict[str, Any]],
+    *,
+    data_split: str = "test",
 ) -> str:
-    lines = ["# 分子证据 Agent 实验报告", "", "## 实验汇总", ""]
+    split_label = "测试集" if data_split == "test" else "验证集"
+    lines = ["# 分子证据 Agent 实验报告", "", f"- 数据 split：{data_split}（{split_label}）", "", "## 实验汇总", ""]
     lines.append("| 可见性模式 | 实验 | N | Macro-F1 | 95% CI | 准确率 | 检索覆盖率 | 失败数 | Tokens |")
     lines.append("|---|---|---:|---:|---:|---:|---:|---:|---:|")
     for row in summaries:
@@ -847,11 +864,11 @@ def _render_report(
     lines.extend(
         [
             "",
-            "Bootstrap 区间使用固定随机种子的测试集配对重采样。McNemar p 值采用精确双侧检验。",
+            f"Bootstrap 区间使用固定随机种子的{split_label}配对重采样。McNemar p 值采用精确双侧检验。",
             "MiniMol 行是已有的、根据验证集选择或采用固定配置的参考基线，不属于配对检索消融实验。",
             "论文主结果使用 deployment-visible agentic workflow，回答真实部署中的端到端性能、工具调用和 evidence 使用。",
             "identity-blind 与 deployment-visible-prefetched 使用完全相同的 harness-prefetched 工具证据，只作为 parity-controlled visibility 补充控制；它们不进入主结果表。",
-            "当前结果使用 operational retrieval；parent-disjoint analog 消融完成前，这些数值仍属于 exploratory result。",
+            "主报告使用 operational retrieval；parent-disjoint analog 消融由 analysis/parent_disjoint_ablation/result_report.md 单独报告。",
             "仅在 assistant response 中发现的 query-SMILES 匹配属于单独的重构诊断，需要人工复核。",
             "",
         ]
@@ -865,7 +882,9 @@ def _fmt(value: Any) -> str:
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-dir", default=str(PAPER_ROOT / "analysis"))
+    parser.add_argument("--split", choices=("test", "valid"), default="test")
+    parser.add_argument("--paper-root", default="")
+    parser.add_argument("--output-dir", default="")
     parser.add_argument("--bootstrap-replicates", type=int, default=10_000)
     return parser.parse_args(argv)
 
