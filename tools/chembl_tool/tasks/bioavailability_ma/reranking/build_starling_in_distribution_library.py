@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pickle
 import time
 from pathlib import Path
@@ -33,6 +34,7 @@ from tools.chembl_tool.common.task_workflows.evidence_library import (
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     CATALOG_SCHEMA_VERSION,
     TEMPLATE_BY_CONCEPT,
+    V6_5_TEMPLATE_PROFILE,
     template_bundle_hash,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_rerank_catalog import (
@@ -42,13 +44,17 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_r
 
 # Authoritative per-record training source: assay_concept + pre-mapped context_<field>
 # columns + normalized scalar/unit/endpoint -> exact v6_5 training-prompt fidelity.
-DEFAULT_HF_CLEANED_DIR = (
-    "/data1/joseph/starling_assay_transfer/datasets/eligible/assay_transfer_soft_evidence_v6_5/records.parquet"
+DEFAULT_STARLING_ROOT = os.getenv(
+    "TXAGENT_STARLING_ROOT", "/data1/joseph/starling_assay_transfer"
+)
+DEFAULT_HF_CLEANED_DIR = str(
+    Path(DEFAULT_STARLING_ROOT)
+    / "datasets/eligible/assay_transfer_soft_evidence_v6_5/records.parquet"
 )
 # Canonical base the eligible v6.5 records were built from; carries the full support_text
 # narrative, joinable by child_id (100% coverage). Used for LLM presentation only.
-DEFAULT_SUPPORT_TEXT_BASE = (
-    "/data1/joseph/starling_assay_transfer/datasets/base/canonical_endpoints_v3"
+DEFAULT_SUPPORT_TEXT_BASE = str(
+    Path(DEFAULT_STARLING_ROOT) / "datasets/base/canonical_endpoints_v3"
 )
 DEFAULT_OUT_DIR = (
     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_in_distribution"
@@ -377,7 +383,8 @@ def write_in_distribution_catalog(evidence_rows: list[dict[str, Any]], path: Pat
         "record_type": "catalog_metadata",
         "schema_version": CATALOG_SCHEMA_VERSION,
         "catalog_version": f"{CATALOG_SCHEMA_VERSION}:in_distribution:{digest}",
-        "template_hash": template_bundle_hash(),
+        "template_hash": template_bundle_hash(profile=V6_5_TEMPLATE_PROFILE),
+        "template_profile": V6_5_TEMPLATE_PROFILE,
         "source_mode": "starling_in_distribution_hf_cleaned",
         "n_records": len(records),
     }

@@ -205,8 +205,8 @@ test。Paper result 应使用新 holdout、重新冻结的 split 或外部 evalu
 
 The optional `assay_transfer` retrieval reranker is restricted to the five Starling families declared in
 `experiment_config.STARLING`. It is disabled by default. Candidate selection is frozen as Tanimoto top 100,
-then the shared identity exclusion policy, then at most 50 survivors, then cached model reranking, then the
-existing final `top_k_per_group`. It never backfills below the raw top 100.
+then the shared identity exclusion policy, then every survivor, then cached model reranking, then the existing
+final `top_k_per_group`. It never scans or backfills below the raw top 100.
 
 The current imported cache is the retrieval-agnostic `cache_v2` store under
 `evidence_library/assay_transfer_rerank/`. It contains an append-only SQLite score store and its provenance
@@ -329,6 +329,50 @@ remain in the retained pool but do not receive fabricated prompts. Scoring mirro
 append `(A)` and `(B)` with no leading space, find their first divergent token, and softmax the two next-token
 logits.
 
+### Assay-transfer inference memory and batch size
+
+The pinned `jiosephlee/assay-transfer-tool@9515603b...` checkpoint is a Qwen3 causal LM with 36 layers,
+hidden size 4096, and about 8.2B BF16 parameters. Its four weight shards occupy 16.40 GB decimal
+(15.28 GiB), which is the main fixed per-worker GPU cost because precompute loads one independent model
+replica per GPU.
+
+Measured cache inference with BF16 and batch size 32 peaked at 29.76--31.00 GiB per full B200 worker. The
+293,021-prompt four-worker MIG90 run peaked at 22.11--23.54 GiB per worker and completed inference in 2,041
+seconds. GPU memory is not determined by batch size alone:
+approximately 15.3 GiB is fixed weights, while the remaining allocator/runtime, activations, padded tokens,
+KV state, and output logits grow with both batch size and the longest prompt in that batch. Consequently,
+do not extrapolate VRAM as purely linear in batch size.
+
+For future 90 GB MIG or 180 GB full-B200 runs, use batch size 64 as the next default and retain the 64 GiB
+free-memory preflight. First verify batch 64 on a bounded query subset and record the reported per-device peak.
+Do not raise beyond 64 without a new measurement because prompt-length padding can change the peak. If a worker
+OOMs, the append-only SQLite writer preserves already committed batches; rerun with batch size 32 to resume only
+the missing scores.
+
+### Runtime profiles: node002 and VAST/SLURM
+
+Machine paths are centralized in `reranking/runtime_profile.sh`. Select one profile instead of editing Python
+or launch scripts:
+
+```bash
+# node002: /data1 checkout + txagent-glm; direct execution
+TXAGENT_RUNTIME_PROFILE=node002 \
+  bash tools/chembl_tool/tasks/bioavailability_ma/reranking/build_in_distribution_library.sh
+TXAGENT_RUNTIME_PROFILE=node002 \
+  bash tools/chembl_tool/tasks/bioavailability_ma/reranking/precompute_in_distribution_validation.sh
+
+# VAST: shared checkout/cache; scheduler wrappers select vast_slurm automatically
+sbatch tools/chembl_tool/tasks/bioavailability_ma/reranking/slurm/build_in_distribution_library.sbatch
+sbatch tools/chembl_tool/tasks/bioavailability_ma/reranking/slurm/precompute_in_distribution_validation_mig90.sbatch
+```
+
+The profiles define only non-secret runtime locations: project root, Python, Starling checkout, Hugging Face
+cache/offline behavior, devices, workers, and batch size. Override any `TXAGENT_*` value in the environment for
+a one-off machine layout. API credentials remain outside profiles. The evidence/index/catalog/cache paths stay
+repository-relative, so copying or synchronizing the corresponding `outputs/.../starling_in_distribution/`
+tree preserves the condition manifest and cache provenance across machines; otherwise rebuild the artifacts
+from the same eligible-record checksum.
+
 Build the candidate-scoped catalog and manifest, then populate only missing scores with independent BF16
 model replicas. The validated v2 model provenance is
 `jiosephlee/assay-transfer-tool@9515603b1a5c4586e41c221dcdbc5e7487c0c3f5` and scoring contract
@@ -344,12 +388,12 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python \
   --top-k-per-group 10 \
   --min-similarity 0.0 \
   --rerank-raw-pool-size 100 \
-  --rerank-candidate-size 50 \
-  --rerank-catalog <prepared_hf_validation_r100_c50_min0/catalog.jsonl> \
+  --rerank-candidate-size 100 \
+  --rerank-catalog <prepared_hf_validation_r100_c100_min0/catalog.jsonl> \
   --candidate-manifest <manifest.jsonl> \
   --rerank-cache <cache_v2/scores.sqlite3> \
   --rerank-devices 0,1,2,3,4,5,6,7 \
-  --rerank-batch-size 32
+  --rerank-batch-size 64
 ```
 
 Reasoning batches only read the cache and run a complete coverage preflight before starting subprocesses:
@@ -361,9 +405,9 @@ python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
   --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_five_source_prepared_hf/starling_factor_neighbor_index.pkl \
   --retrieval-reranker assay_transfer \
   --rerank-raw-pool-size 100 \
-  --rerank-candidate-size 50 \
-  --rerank-catalog <prepared_hf_validation_r100_c50_min0/catalog.jsonl> \
-  --rerank-candidate-manifest <prepared_hf_validation_r100_c50_min0/manifest.jsonl> \
+  --rerank-candidate-size 100 \
+  --rerank-catalog <prepared_hf_validation_r100_c100_min0/catalog.jsonl> \
+  --rerank-candidate-manifest <prepared_hf_validation_r100_c100_min0/manifest.jsonl> \
   --rerank-cache <cache_v2/scores.sqlite3> \
   --rerank-cache-mode read_only \
   --enable-assay-transfer-scores \

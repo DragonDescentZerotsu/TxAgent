@@ -73,7 +73,7 @@ def retrieve_experiment_view(
     neighbor_identity_policy: str = NeighborIdentityPolicy.OPERATIONAL.value,
     reranker: RetrievalReranker | None = None,
     rerank_raw_pool_size: int = 100,
-    rerank_candidate_size: int = 50,
+    rerank_candidate_size: int = 100,
 ) -> dict[str, Any]:
     """Build a native, direct, flat, mechanism, or retrieval-free query view."""
     if mode not in EXPERIMENT_MODES:
@@ -241,7 +241,7 @@ def _rank_group_candidates(
     group_id: str = "",
     reranker: RetrievalReranker | None = None,
     rerank_raw_pool_size: int = 100,
-    rerank_candidate_size: int = 50,
+    rerank_candidate_size: int = 100,
 ) -> list[dict[str, Any]]:
     ranked = sorted(
         (
@@ -285,7 +285,8 @@ def _rank_group_candidates(
     if reranker is not None:
         # Record-level top-K: rank every scored record across the candidate molecules and
         # keep the K highest-transfer records (the same molecule may repeat).
-        record_neighbors = reranker.rerank_records(
+        rerank_records = getattr(reranker, "rerank_records", reranker.rerank)
+        record_neighbors = rerank_records(
             query_smiles=query_smiles,
             group_id=group_id,
             candidates=neighbors,

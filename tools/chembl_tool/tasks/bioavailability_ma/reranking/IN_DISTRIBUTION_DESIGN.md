@@ -1,6 +1,6 @@
 # In-distribution assay-transfer: design & investigation
 
-Status: design (approved) — not yet implemented.
+Status: implemented; validation cache generation uses the runbook below.
 Scope: Bioavailability_Ma assay-transfer reranking + how records are presented to the LLM.
 
 ## Problem
@@ -167,13 +167,9 @@ Legacy / Morgan / existing reranker paths are untouched; this is additive behind
   surfaces `support_text` (+ optional `extra_details`); the in-distribution catalog record
   carries the raw narrative, so the winning record presents real value + narrative.
   Verified. (Reconstructed catalogs render these empty — no regression.)
-- [ ] **Stage 3b — candidate manifest + score precompute (GPU; external).** The only
-  remaining piece for the **assay_transfer arm**: build the candidate manifest for the
-  validation queries and score the in-distribution catalog with the model. Integration
-  point: `precompute_assay_transfer_rerank` currently rebuilds its catalog via
-  `_index_example_record` (reconstruction) — it must instead **consume the pre-built
-  `starling_in_distribution_catalog.jsonl`** and build only the manifest
-  (`(query, group, molecule) → child_ids`) from the in-distribution evidence rows.
+- [x] **Stage 3b — candidate manifest + score precompute.** Precompute consumes the
+  immutable `starling_in_distribution_catalog.jsonl`, freezes only the condition manifest,
+  and scores all identity-eligible survivors from the Morgan top 100 using the v6.5 prompt.
 
 ## Runbook
 

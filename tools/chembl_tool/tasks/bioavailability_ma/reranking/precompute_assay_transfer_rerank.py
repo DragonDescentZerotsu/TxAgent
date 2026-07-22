@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import multiprocessing as mp
-import os
 import queue
-import subprocess
 import sys
 import time
 import traceback
@@ -33,8 +32,9 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank 
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_rerank_catalog import (
     DEFAULT_CANDIDATE_MANIFEST,
     build_candidate_scoped_catalog,
+    build_manifest_for_prebuilt_catalog,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLING
+from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import get_source_config
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import load_index
 
 
@@ -47,6 +47,19 @@ DEFAULT_INDEX = (
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    if args.reuse_prebuilt_catalog and args.reuse_frozen_flat_artifacts:
+        raise SystemExit(
+            "--reuse-prebuilt-catalog and --reuse-frozen-flat-artifacts are mutually exclusive"
+        )
+    if args.retrieval_source == "starling_in_distribution":
+        if not args.reuse_prebuilt_catalog:
+            raise SystemExit(
+                "starling_in_distribution requires --reuse-prebuilt-catalog"
+            )
+        if args.assay_transfer_template_profile != "v6_5_query_context_copy":
+            raise SystemExit(
+                "starling_in_distribution requires the v6_5_query_context_copy template profile"
+            )
     if not args.reuse_frozen_flat_artifacts and _catalog_is_flat(Path(args.rerank_catalog)):
         raise SystemExit(
             "The supplied flat catalog and condition manifest are immutable. Pass "
@@ -56,7 +69,6 @@ def main(argv: list[str] | None = None) -> int:
     if args.rerank_workers_per_device != 1:
         raise SystemExit("--rerank-workers-per-device is currently fixed to 1")
     devices = _parse_devices(args.rerank_devices)
-    _check_free_vram(devices, args.rerank_min_free_vram_gib)
 
     records = _read_jsonl(Path(args.input_jsonl))
     indices = _select_indices(args, len(records))
@@ -64,7 +76,38 @@ def main(argv: list[str] | None = None) -> int:
     if args.reuse_frozen_flat_artifacts:
         if not Path(args.rerank_catalog).is_file() or not Path(args.candidate_manifest).is_file():
             raise SystemExit("Frozen flat catalog and candidate manifest must both exist")
+        frozen = {
+            "catalog": args.rerank_catalog,
+            "candidate_manifest": args.candidate_manifest,
+        }
         print("[assay_transfer_precompute] reusing immutable flat catalog and candidate manifest", file=sys.stderr, flush=True)
+    elif args.reuse_prebuilt_catalog:
+        if not Path(args.rerank_catalog).is_file():
+            raise SystemExit("--reuse-prebuilt-catalog requires an existing catalog")
+        frozen = build_manifest_for_prebuilt_catalog(
+            records=records,
+            indices=indices,
+            smiles_field=args.smiles_field,
+            index=index,
+            catalog_path=Path(args.rerank_catalog),
+            manifest_output=Path(args.candidate_manifest),
+            experiment_mode=args.experiment_mode,
+            top_k_per_group=args.top_k_per_group,
+            min_similarity=args.min_similarity,
+            neighbor_identity_policy=args.neighbor_identity_policy,
+            raw_pool_size=args.rerank_raw_pool_size,
+            candidate_size=args.rerank_candidate_size,
+            index_path=args.index,
+            condition_id=args.condition_id,
+            template_profile=args.assay_transfer_template_profile,
+        )
+        print(
+            f"[assay_transfer_precompute] froze prebuilt-catalog manifest "
+            f"queries={frozen['n_queries']} groups={frozen['n_groups']} "
+            f"candidates={frozen['n_candidates']}",
+            file=sys.stderr,
+            flush=True,
+        )
     else:
         frozen = build_candidate_scoped_catalog(
             records=records,
@@ -80,7 +123,7 @@ def main(argv: list[str] | None = None) -> int:
             raw_pool_size=args.rerank_raw_pool_size,
             candidate_size=args.rerank_candidate_size,
             index_path=args.index,
-            condition_id="validation__five_source_prepared_hf__parent_disjoint",
+            condition_id=args.condition_id,
         )
         print(
             f"[assay_transfer_precompute] froze candidates queries={frozen['n_queries']} "
@@ -88,6 +131,10 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
             flush=True,
         )
+    if args.prepare_only:
+        print(json.dumps({"status": "prepared", **frozen}, indent=2))
+        return 0
+    _check_free_vram(devices, args.rerank_min_free_vram_gib)
     snapshot_path, immutable_revision = resolve_model_snapshot(
         args.assay_transfer_model,
         args.assay_transfer_model_revision,
@@ -114,6 +161,7 @@ def main(argv: list[str] | None = None) -> int:
         candidate_size=args.rerank_candidate_size,
         force_rescore=args.force_rescore,
         template_profile=args.assay_transfer_template_profile,
+        retrieval_source=args.retrieval_source,
     )
     print(
         f"[assay_transfer_precompute] queries={len(indices)} prompts_to_score={len(tasks)} "
@@ -122,12 +170,14 @@ def main(argv: list[str] | None = None) -> int:
         flush=True,
     )
     if not tasks:
-        print(json.dumps({
+        payload = {
             "status": "complete",
             "n_scored": 0,
             "n_prompt_task_references": reranker.prompt_task_reference_count,
             "provenance": reranker.provenance(),
-        }, indent=2))
+        }
+        _write_version_manifest(args, reranker, payload, len(indices))
+        print(json.dumps(payload, indent=2))
         reranker.cache.close()
         return 0
 
@@ -140,15 +190,65 @@ def main(argv: list[str] | None = None) -> int:
             batch_size=args.rerank_batch_size,
             dtype=args.rerank_dtype,
         )
+        payload = {
+            "status": "complete",
+            **summary,
+            "n_prompt_task_references": reranker.prompt_task_reference_count,
+            "provenance": reranker.provenance(),
+        }
+        _write_version_manifest(args, reranker, payload, len(indices))
     finally:
         reranker.cache.close()
-    print(json.dumps({
-        "status": "complete",
-        **summary,
-        "n_prompt_task_references": reranker.prompt_task_reference_count,
-        "provenance": reranker.provenance(),
-    }, indent=2))
+    print(json.dumps(payload, indent=2))
     return 0
+
+
+def _write_version_manifest(
+    args: argparse.Namespace,
+    reranker: AssayTransferCachedReranker,
+    summary: dict[str, Any],
+    n_queries: int,
+) -> None:
+    if not args.cache_version_manifest:
+        return
+    provenance = reranker.provenance()
+    n_scores = int(
+        reranker.cache.connection.execute("SELECT COUNT(*) FROM prompt_scores").fetchone()[0]
+    )
+    payload = {
+        "status": "complete",
+        **provenance,
+        "n_queries": n_queries,
+        "n_prompt_scores": n_scores,
+        "n_prompt_task_references": int(summary.get("n_prompt_task_references") or 0),
+        "input_jsonl": args.input_jsonl,
+        "input_sha256": _file_sha256(Path(args.input_jsonl)),
+        "index": args.index,
+        "index_sha256": _file_sha256(Path(args.index)),
+        "catalog": args.rerank_catalog,
+        "catalog_sha256": _file_sha256(Path(args.rerank_catalog)),
+        "candidate_manifest": args.candidate_manifest,
+        "retrieval_source": args.retrieval_source,
+        "experiment_mode": args.experiment_mode,
+        "neighbor_identity_policy": args.neighbor_identity_policy,
+        "min_similarity": args.min_similarity,
+        "raw_pool_size": args.rerank_raw_pool_size,
+        "candidate_size": args.rerank_candidate_size,
+        "devices": _parse_devices(args.rerank_devices),
+        "dtype": args.rerank_dtype,
+        "batch_size_per_gpu": args.rerank_batch_size,
+    }
+    output = Path(args.cache_version_manifest)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def collect_prompt_tasks(
@@ -170,10 +270,12 @@ def collect_prompt_tasks(
     candidate_size: int,
     force_rescore: bool,
     template_profile: str = DEFAULT_TEMPLATE_PROFILE,
+    retrieval_source: str = "starling",
 ) -> tuple[AssayTransferCachedReranker, list[PromptTask]]:
     if experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
         raise ValueError("Assay-transfer reranking requires direct, full_flat, or full_mechanism mode")
     index = load_index(Path(index_path))
+    config = get_source_config(retrieval_source)
     reranker = AssayTransferCachedReranker(
         catalog_path=catalog_path,
         cache_path=cache_path,
@@ -192,7 +294,7 @@ def collect_prompt_tasks(
             query_smiles,
             index,
             mode=experiment_mode,
-            config=STARLING,
+            config=config,
             top_k_per_group=top_k_per_group,
             min_similarity=min_similarity,
             neighbor_identity_policy=neighbor_identity_policy,
@@ -232,12 +334,14 @@ def preflight_cache_coverage(
     template_profile: str = DEFAULT_TEMPLATE_PROFILE,
     expected_score_count: int = 0,
     cache_version_path: str = "",
+    retrieval_source: str = "starling",
 ) -> dict[str, Any]:
     from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
         prepare_assay_transfer_selected_neighbors,
     )
 
     index = load_index(Path(index_path))
+    config = get_source_config(retrieval_source)
     reranker = AssayTransferCachedReranker(
         catalog_path=catalog_path,
         cache_path=cache_path,
@@ -256,7 +360,7 @@ def preflight_cache_coverage(
                 query_smiles,
                 index,
                 mode=experiment_mode,
-                config=STARLING,
+                config=config,
                 top_k_per_group=top_k_per_group,
                 min_similarity=min_similarity,
                 neighbor_identity_policy=neighbor_identity_policy,
@@ -599,33 +703,17 @@ def resolve_model_snapshot(
 
 
 def _check_free_vram(devices: list[int], minimum_gib: float) -> None:
-    command = [
-        "nvidia-smi",
-        "--query-gpu=index,uuid,memory.free",
-        "--format=csv,noheader,nounits",
-    ]
-    result = subprocess.run(command, check=True, capture_output=True, text=True)
-    physical = []
-    for line in result.stdout.splitlines():
-        index, uuid, free_mib = [part.strip() for part in line.split(",", 2)]
-        physical.append({"index": index, "uuid": uuid, "free_gib": float(free_mib) / 1024.0})
-    visible_tokens = [token.strip() for token in os.getenv("CUDA_VISIBLE_DEVICES", "").split(",") if token.strip()]
-    visible = []
-    if visible_tokens:
-        for token in visible_tokens:
-            matches = [row for row in physical if row["index"] == token or row["uuid"] == token]
-            if not matches:
-                raise RuntimeError(f"CUDA_VISIBLE_DEVICES entry is not reported by nvidia-smi: {token}")
-            visible.append(matches[0])
-    else:
-        visible = physical
+    import torch
+
+    visible_count = torch.cuda.device_count()
     for local_device in devices:
-        if local_device < 0 or local_device >= len(visible):
+        if local_device < 0 or local_device >= visible_count:
             raise RuntimeError(f"Requested local CUDA device {local_device} is not visible")
-        row = visible[local_device]
-        if row["free_gib"] < minimum_gib:
+        free_bytes, _ = torch.cuda.mem_get_info(local_device)
+        free_gib = float(free_bytes) / (1024.0**3)
+        if free_gib < minimum_gib:
             raise RuntimeError(
-                f"Local CUDA device {local_device} ({row['uuid']}) has {row['free_gib']:.2f} GiB free; "
+                f"Local CUDA device {local_device} has {free_gib:.2f} GiB free; "
                 f"at least {minimum_gib:.2f} GiB is required"
             )
 
@@ -702,6 +790,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--input-jsonl", default=DEFAULT_INPUT)
     parser.add_argument("--smiles-field", default="drug")
     parser.add_argument("--index", default=DEFAULT_INDEX)
+    parser.add_argument(
+        "--retrieval-source",
+        choices=["starling", "starling_in_distribution"],
+        default="starling",
+    )
     parser.add_argument("--experiment-mode", choices=["direct", "full_flat", "full_mechanism"], default="full_mechanism")
     parser.add_argument("--neighbor-identity-policy", choices=["operational", "parent_disjoint"], default="operational")
     parser.add_argument("--top-k-per-group", type=int, default=3)
@@ -711,10 +804,15 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--retrieval-reranker", choices=["assay_transfer"], default="assay_transfer")
     parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
-    parser.add_argument("--rerank-candidate-size", type=int, default=50)
+    parser.add_argument("--rerank-candidate-size", type=int, default=100)
     parser.add_argument("--rerank-catalog", default=DEFAULT_CATALOG)
     parser.add_argument("--candidate-manifest", default=DEFAULT_CANDIDATE_MANIFEST)
     parser.add_argument("--rerank-cache", default=DEFAULT_CACHE)
+    parser.add_argument(
+        "--cache-version-manifest",
+        default="",
+        help="Write immutable cache and retrieval provenance after successful completion.",
+    )
     parser.add_argument("--rerank-cache-mode", choices=["read_write"], default="read_write")
     parser.add_argument("--assay-transfer-model", default=ASSAY_TRANSFER_MODEL)
     parser.add_argument("--assay-transfer-model-revision", default=ASSAY_TRANSFER_MODEL_REVISION)
@@ -727,9 +825,23 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--force-rescore", action="store_true")
     parser.add_argument(
+        "--prepare-only",
+        action="store_true",
+        help="Freeze and validate the catalog/manifest inputs without loading the model or requiring GPUs.",
+    )
+    parser.add_argument(
         "--reuse-frozen-flat-artifacts",
         action="store_true",
         help="Use an existing immutable flat catalog/condition manifest and score only missing prompts.",
+    )
+    parser.add_argument(
+        "--reuse-prebuilt-catalog",
+        action="store_true",
+        help="Keep an existing source-native catalog immutable and freeze only its condition manifest.",
+    )
+    parser.add_argument(
+        "--condition-id",
+        default="validation__starling_in_distribution__parent_disjoint__r100_c100_min0__v6_5",
     )
     parser.add_argument("--rerank-devices", default="0,1")
     parser.add_argument("--rerank-workers-per-device", type=int, default=1)

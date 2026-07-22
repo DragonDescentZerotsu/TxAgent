@@ -24,6 +24,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank 
     template_bundle_hash,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.precompute_assay_transfer_rerank import (
+    _check_free_vram,
     resolve_model_snapshot,
     run_spawned_workers,
 )
@@ -55,12 +56,13 @@ def _record(record_id, smiles="CCN", concept="Fa", value="10"):
     }
 
 
-def _write_catalog(path, records):
+def _write_catalog(path, records, *, profile="legacy_v3"):
     metadata = {
         "record_type": "catalog_metadata",
         "schema_version": CATALOG_SCHEMA_VERSION,
         "catalog_version": "test.catalog.v1",
-        "template_hash": template_bundle_hash(),
+        "template_hash": template_bundle_hash(profile=profile),
+        "template_profile": profile,
         "n_records": len(records),
     }
     path.write_text(
@@ -141,6 +143,27 @@ def test_v6_5_profile_changes_template_hash_prompt_hash_and_cache_key():
     assert legacy.template_hash != v6_5.template_hash
     assert legacy.prompt_hash != v6_5.prompt_hash
     assert legacy.cache_key != v6_5.cache_key
+
+
+def test_catalog_hash_is_validated_against_selected_template_profile(tmp_path):
+    catalog = tmp_path / "catalog.jsonl"
+    cache = tmp_path / "scores.sqlite3"
+    _write_catalog(catalog, [_record("r1")], profile=V6_5_TEMPLATE_PROFILE)
+    AssayTransferScoreCache(cache, mode="read_write").close()
+
+    with pytest.raises(ValueError, match="selected template profile"):
+        AssayTransferCachedReranker(
+            catalog_path=catalog,
+            cache_path=cache,
+            template_profile="legacy_v3",
+        )
+    reranker = AssayTransferCachedReranker(
+        catalog_path=catalog,
+        cache_path=cache,
+        template_profile=V6_5_TEMPLATE_PROFILE,
+        allow_missing=True,
+    )
+    reranker.cache.close()
 
 
 def test_best_record_aggregation_and_deterministic_molecule_tie_breaking(tmp_path):
@@ -400,6 +423,20 @@ def test_model_snapshot_resolution_records_sha_and_supports_offline_cache(monkey
     assert (path, revision) == ("/local/snapshot", "b" * 40)
     assert all(call[0] != "info" for call in calls)
     assert calls[-1][1]["local_files_only"] is True
+
+
+def test_vram_preflight_uses_cuda_local_devices_and_supports_mig(monkeypatch):
+    cuda = SimpleNamespace(
+        device_count=lambda: 4,
+        mem_get_info=lambda device: ((90 - device) * 1024**3, 90 * 1024**3),
+    )
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(cuda=cuda))
+
+    _check_free_vram([0, 1, 2, 3], 64.0)
+    with pytest.raises(RuntimeError, match="not visible"):
+        _check_free_vram([4], 64.0)
+    with pytest.raises(RuntimeError, match="at least 90.00 GiB"):
+        _check_free_vram([1], 90.0)
 
 
 def _tasks(count):

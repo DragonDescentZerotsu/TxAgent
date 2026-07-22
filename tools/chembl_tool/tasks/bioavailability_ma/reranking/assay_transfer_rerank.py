@@ -96,15 +96,20 @@ def template_bundle_hash(
 
 
 class AssayTransferCatalog:
-    def __init__(self, path: str | Path):
+    def __init__(
+        self,
+        path: str | Path,
+        *,
+        template_profile: str = DEFAULT_TEMPLATE_PROFILE,
+    ):
         self.path = Path(path)
         self.metadata, self.records = load_catalog(self.path)
         self.catalog_version = str(self.metadata["catalog_version"])
         self.template_hash = str(self.metadata["template_hash"])
-        current_template_hash = template_bundle_hash()
+        current_template_hash = template_bundle_hash(profile=template_profile)
         if self.template_hash != current_template_hash:
             raise ValueError(
-                "Assay-transfer catalog template hash does not match vendored templates: "
+                "Assay-transfer catalog template hash does not match the selected template profile: "
                 f"catalog={self.template_hash}, current={current_template_hash}"
             )
         self._by_concept_smiles: dict[tuple[str, str], list[dict[str, Any]]] = {}
@@ -489,7 +494,10 @@ class AssayTransferCachedReranker:
     ):
         self.model = model
         self.model_revision = require_immutable_revision(model_revision)
-        self.catalog = AssayTransferCatalog(catalog_path)
+        self.catalog = AssayTransferCatalog(
+            catalog_path,
+            template_profile=template_profile,
+        )
         self.candidate_manifest = (
             AssayTransferCandidateManifest(candidate_manifest_path)
             if candidate_manifest_path

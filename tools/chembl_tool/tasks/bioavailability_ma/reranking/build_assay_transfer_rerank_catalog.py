@@ -55,6 +55,16 @@ class _CandidateCollector:
         )
         return candidates
 
+    def rerank_records(
+        self, *, query_smiles: str, group_id: str, candidates: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Collect the full pre-rerank molecule pool for record-level retrieval."""
+        return self.rerank(
+            query_smiles=query_smiles,
+            group_id=group_id,
+            candidates=candidates,
+        )
+
 
 def build_candidate_scoped_catalog(
     *,
@@ -171,6 +181,114 @@ def build_candidate_scoped_catalog(
         "manifest_metadata": manifest_metadata,
         "candidate_manifest": str(manifest_output),
         "catalog": str(output),
+    }
+
+
+def build_manifest_for_prebuilt_catalog(
+    *,
+    records: list[dict[str, Any]],
+    indices: list[int],
+    smiles_field: str,
+    index: dict[str, Any],
+    catalog_path: Path,
+    manifest_output: Path,
+    experiment_mode: str,
+    top_k_per_group: int,
+    min_similarity: float,
+    neighbor_identity_policy: str,
+    raw_pool_size: int,
+    candidate_size: int,
+    index_path: str = "",
+    condition_id: str = "validation__prebuilt_catalog",
+    template_profile: str = "v6_5_query_context_copy",
+) -> dict[str, Any]:
+    """Freeze candidate-to-record joins without rebuilding an immutable catalog."""
+    from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
+    from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
+        STARLING_IN_DISTRIBUTION,
+    )
+    from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
+        AssayTransferCatalog,
+    )
+
+    catalog = AssayTransferCatalog(catalog_path, template_profile=template_profile)
+    selections: list[dict[str, Any]] = []
+    for query_index in indices:
+        query_smiles = str(records[query_index].get(smiles_field) or "")
+        collector = _CandidateCollector(query_index, selections)
+        retrieve_experiment_view(
+            query_smiles,
+            index,
+            mode=experiment_mode,
+            config=STARLING_IN_DISTRIBUTION,
+            top_k_per_group=top_k_per_group,
+            min_similarity=min_similarity,
+            neighbor_identity_policy=neighbor_identity_policy,
+            reranker=collector,
+            rerank_raw_pool_size=raw_pool_size,
+            rerank_candidate_size=candidate_size,
+        )
+
+    manifest_rows = [
+        _prebuilt_manifest_row(selection, catalog, raw_pool_size, candidate_size)
+        for selection in selections
+    ]
+    metadata = {
+        "record_type": "manifest_metadata",
+        "schema_version": "assay_transfer_candidate_manifest.flat.v2",
+        "condition_id": condition_id,
+        "catalog_version": catalog.catalog_version,
+        "index_path": index_path,
+        "index_version": str(index.get("version") or ""),
+        "identity_policy": neighbor_identity_policy,
+        "n_queries": len(indices),
+        "n_groups": len(manifest_rows),
+        "n_candidates": sum(len(row["candidates"]) for row in manifest_rows),
+        "n_scoreable_candidates": sum(
+            bool(candidate["record_ids"])
+            for row in manifest_rows
+            for candidate in row["candidates"]
+        ),
+        "min_similarity": min_similarity,
+        "raw_pool_size": raw_pool_size,
+        "candidate_size": candidate_size,
+    }
+    manifest_output.parent.mkdir(parents=True, exist_ok=True)
+    with manifest_output.open("w", encoding="utf-8") as handle:
+        for row in [metadata, *manifest_rows]:
+            handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+    return {**metadata, "candidate_manifest": str(manifest_output)}
+
+
+def _prebuilt_manifest_row(
+    selection: dict[str, Any],
+    catalog: Any,
+    raw_pool_size: int,
+    candidate_size: int,
+) -> dict[str, Any]:
+    candidates = []
+    for candidate in selection["candidates"]:
+        compatible = catalog.compatible_records(
+            selection["group_id"], str(candidate["canonical_smiles"])
+        )
+        record_ids = sorted(str(record["record_id"]) for record in compatible)
+        candidates.append(
+            {
+                "molecule_id": candidate["molecule_chembl_id"],
+                "canonical_smiles": candidate["canonical_smiles"],
+                "similarity": candidate["similarity"],
+                "structural_rank": candidate["structural_rank"],
+                "record_ids": record_ids,
+            }
+        )
+    return {
+        "record_type": "candidate_group",
+        "query_index": selection["query_index"],
+        "query_smiles": selection["query_smiles"],
+        "group_id": selection["group_id"],
+        "raw_pool_size": raw_pool_size,
+        "candidate_size": candidate_size,
+        "candidates": candidates,
     }
 
 

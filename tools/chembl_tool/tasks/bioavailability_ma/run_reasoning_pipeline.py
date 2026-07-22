@@ -1049,7 +1049,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument("--retrieval-reranker", choices=["none", "assay_transfer"], default="none")
     parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
-    parser.add_argument("--rerank-candidate-size", type=int, default=50)
+    parser.add_argument("--rerank-candidate-size", type=int, default=100)
     parser.add_argument("--rerank-catalog", default=DEFAULT_RERANK_CATALOG)
     parser.add_argument("--rerank-cache", default=DEFAULT_RERANK_CACHE)
     parser.add_argument(

@@ -59,8 +59,10 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     if args.retrieval_reranker == "assay_transfer":
         if config.rerank_preflight is None:
             raise SystemExit(f"Pipeline {config.pipeline_module} does not support assay-transfer reranking")
-        if args.retrieval_source != "starling":
-            raise SystemExit("assay_transfer reranking is enabled only for Starling retrieval")
+        if args.retrieval_source not in {"starling", "starling_in_distribution"}:
+            raise SystemExit(
+                "assay_transfer reranking is enabled only for Starling retrieval"
+            )
         if args.rerank_cache_mode != "read_only":
             raise SystemExit("reasoning batches require --rerank-cache-mode read_only")
         if args.reuse_existing_rerank_preflight:
@@ -90,6 +92,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
                 template_profile=args.assay_transfer_template_profile,
                 expected_score_count=args.rerank_expected_score_count,
                 cache_version_path=args.rerank_cache_version_manifest,
+                retrieval_source=args.retrieval_source,
             )
             _release_preflight_memory()
     manifest = {
@@ -932,7 +935,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument("--retrieval-reranker", choices=["none", "assay_transfer"], default="none")
     parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
-    parser.add_argument("--rerank-candidate-size", type=int, default=50)
+    parser.add_argument("--rerank-candidate-size", type=int, default=100)
     parser.add_argument(
         "--rerank-catalog",
         default=(
