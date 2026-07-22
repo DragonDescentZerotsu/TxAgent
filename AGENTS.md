@@ -1,7 +1,42 @@
 # TxAgent 当前系统：常驻分子工具服务与证据检索推理
 
+## Language convention
+
+- Use English for all user-facing communication, progress updates, Markdown documentation, generated reports,
+  plots, captions, and experiment conclusions.
+- Code identifiers, commands, paths, model names, experiment IDs, and machine-readable fields remain unchanged.
+- This English-first policy overrides historical Chinese-language wording in this file and in nested Markdown
+  documentation. New or regenerated user-visible artifacts must not default to Chinese.
+
 ## Env instruction
-If you are on `node002` or `node001`, default to the `vllm` conda environment when you need RDKit or the local project dependencies. conda is at: /data1/tianang/anaconda3/condabin/conda
+This checkout is owned and run from `/data1/joseph/TxAgent` on `node002`. For RDKit, the tool service,
+and the reasoning pipeline, use the local `txagent-glm` environment, cloned from `vllm` and provisioned
+for this project:
+
+```bash
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm <command>
+```
+
+Do not assume that `/data1/tianang/anaconda3` or a colleague's project checkout is readable. The local
+`txagent-glm` environment includes `mmpdb==3.1.4` and `molgpka==0.1.0` from commit
+`f23ebcb12bba7ea2c9295db9527ceb07188d600e`, in addition to the cloned RDKit, FastAPI, OpenAI, requests
+and AccFG dependencies. Verify with:
+
+```bash
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm python -c \
+  'import rdkit, fastapi, openai, requests, mmpdblib, molgpka; print("tool-service dependencies ready")'
+```
+
+The local ignored `keys.py` exposes `LITELLM_API_KEY` and `LITELLM_BASE_URL`; it is not tracked. The task
+runner does not import that module automatically, so launch wrappers must inject `LITELLM_API_KEY` into
+the child environment and pass `--api-key-env LITELLM_API_KEY` without printing or persisting its value.
+Never write the key value to code, commands, manifests or traces. Joseph's fully initialized tool service
+uses `http://127.0.0.1:8766`; port 8765 is a separate colleague-owned process.
+
+As of this node002 audit, the task test JSONL files are present but the four ChEMBL neighbor-index files
+expected by the paper matrix are absent under `outputs/chembl_tool/tasks/*/evidence_library/`. A GLM
+`experiment-mode none` smoke run can proceed once the key is supplied; direct/flat/mechanism retrieval
+runs require building or restoring the matching evidence library and index first.
 
 ## 当前目标
 
@@ -418,8 +453,10 @@ train.jsonl / valid.jsonl / test.jsonl
 运行环境和实现注意事项：
 
 ```text
-conda env: intern
-MiniMol 源码参考: /data1/tianang/Projects/minimol
+MiniMol requires a separately provisioned `intern` environment. The current `/data1/joseph/miniconda3`
+installation has no `intern` environment, and no local MiniMol source checkout is available. The commands
+below are retained as historical/provisioning templates only; do not run this baseline until its environment
+and weights have been restored.
 
 实际运行优先使用 intern 环境已安装的 minimol 包。源码目录中的
 minimol/ckpts/minimol_v1/state_dict.pth 当前是 Git LFS pointer，不是可直接 torch.load 的权重。
@@ -446,7 +483,7 @@ valid-tuned threshold 指标也会写入 metrics.json，但主报告使用 fixed
 单任务 baseline 命令模板：
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
+/data1/joseph/miniconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
   --data-dir data/processed/<TaskName> \
   --output-dir outputs/baselines/minimol/<task_name>
 ```
@@ -454,7 +491,7 @@ valid-tuned threshold 指标也会写入 metrics.json，但主报告使用 fixed
 BBB_Martins 使用 MiniMol 原 `SWEEP_RESULTS['bbb_martins']` 超参：
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
+/data1/joseph/miniconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
   --data-dir data/processed/BBB_Martins \
   --output-dir outputs/baselines/minimol/bbb_martins \
   --hidden-dim 2048 \
@@ -466,7 +503,7 @@ BBB_Martins 使用 MiniMol 原 `SWEEP_RESULTS['bbb_martins']` 超参：
 导致 runner 退回 CPU。可靠做法是直接用 shell 显式绑定 GPU：
 
 ```bash
-env CUDA_VISIBLE_DEVICES=4 /data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
+env CUDA_VISIBLE_DEVICES=4 /data1/joseph/miniconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
   --data-dir data/processed/ClinTox \
   --output-dir outputs/baselines/minimol/clintox
 ```
@@ -581,7 +618,7 @@ tools/chembl_tool/activity_transfer_benchmark/
    再比较各 similarity bucket 的 similar-rate lift、fold lift 和 median-delta reduction。
 9. 可选 dynamic range filter：按 molecule-level pChEMBL range 和 IQR 过滤低信息量 assay endpoint。
 10. 辅助分析保守处理 binary activity_comment，只映射明确 active / inactive 类 comment。
-11. 生成 TSV/GZ 数据、metrics、SVG 图表和中文 report。
+11. Generate TSV/GZ data, metrics, SVG figures, and an English report.
 ```
 
 `benchmark_mcs_runtime.py` 的功能：
@@ -603,7 +640,7 @@ completed、rate、elapsed、ETA 和 timeout 数。
 ```text
 读取全量或 partial MCS TSV，排除 ambiguous label，扫描 mean MCS coverage threshold，
 并在同一批 observed pair 上重新扫描 Tanimoto threshold，输出 threshold metrics、
-MCS coverage bucket summary、Tanimoto x MCS heatmap、SVG 图表和中文报告。
+MCS coverage bucket summary, Tanimoto x MCS heatmap, SVG figures, and an English report.
 ```
 
 `build_llm_eval_set.py` 的功能：
@@ -612,7 +649,7 @@ MCS coverage bucket summary、Tanimoto x MCS heatmap、SVG 图表和中文报告
 从 dynamic_v1 continuous_pairs.tsv.gz 中抽取 LLM 小规模评估集。默认读取已有 MCS full-scan
 partial 结果，只保留有 observed MCS 的 non-ambiguous pairs，并按 label x Tanimoto bucket
 分层抽样。默认输出 3,000 pairs，similar/different 各 1,500，每个 similarity bucket 各 500。
-输出 JSONL/TSV、summary.json 和中文 report，供 LLM benchmark 复用。
+Output JSONL/TSV, summary.json, and an English report for reuse by the LLM benchmark.
 ```
 
 `run_llm_benchmark.py` 的功能：
@@ -623,7 +660,7 @@ host 的 gpt-oss-120b，也可跑 DeepSeek/OpenAI-compatible hosted endpoint；�
 dynamic_v1_llm_3k/eval_pairs.jsonl。prompt 隐藏 query pChEMBL，只暴露 reference molecule 的
 pChEMBL、assay context、Tanimoto、bucket 和 MCS coverage。可选调用当前 tool server 中的
 mmp_structure_compare / properties_compare；输出 per-sample run JSON、predictions.jsonl、
-metrics.json、中文 report、model-vs-baseline SVG 图和 trace_viewer 可读的 trace_messages.jsonl。
+metrics.json, an English report, model-vs-baseline SVG figures, and trace_viewer-compatible trace_messages.jsonl.
 当前也支持 HF prompt/completion/metadata 格式：completion A/B 映射为 similar/different，
 原始 metadata 保留在 input_record.hf_metadata，并按 similarity_bucket、assay_type 输出分组指标。
 默认 max-tool-rounds=3，断点续跑使用 --skip-existing。
@@ -1646,7 +1683,7 @@ parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 
 
 ```bash
 # 完整运行一个 test_efflux 分子
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
   --query-index 0 \
   --top-k-per-group 3 \
   --min-similarity 0.3 \
@@ -1658,14 +1695,14 @@ parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 
   --run-id <run_id>
 
 # 只重跑已有 run 的 final summary
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
   --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id> \
   --timeout-s 300 \
   --max-tokens 8192 \
   --model deepseek-v4-pro
 
 # 批量运行一个 JSONL 中的分子，并生成评估报告
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
   --input-jsonl data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl \
   --parallelism 1 \
   --group-workers 4 \

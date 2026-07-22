@@ -1,0 +1,8 @@
+# Natural-language description of each endpoint-group branch, shown at the top of the
+# group prompt in place of the raw group id. Format: <group_id> = <description>.
+# Lines starting with '#' and blank lines are ignored. Edit the prose freely.
+Fa.absorption_solubility_permeability = This aspect covers Fa, the fraction of an oral dose absorbed from the gut lumen. Judge whether the neighbor evidence on intestinal absorption, aqueous solubility, and passive permeability transfers to the query and how it bears on the query's oral bioavailability.
+Fg.gut_wall_efflux_intestinal_metabolism = This aspect covers Fg, gut-wall availability: the fraction of absorbed drug that escapes the intestinal wall. Judge whether the neighbor evidence on intestinal efflux transport (e.g. P-gp) and gut-wall/intestinal metabolism transfers to the query and how it bears on the query's oral bioavailability.
+Fh.hepatic_clearance_metabolic_stability = This aspect covers Fh, hepatic availability: the fraction escaping hepatic first-pass. Judge whether the neighbor evidence on hepatic clearance, first-pass metabolism, and metabolic stability transfers to the query and how it bears on the query's oral bioavailability.
+Observed.direct_oral_bioavailability = This aspect covers directly measured oral bioavailability (F%). Judge whether the neighbor in vivo oral-bioavailability measurements transfer to the query as direct evidence of its oral bioavailability.
+Observed.oral_auc_cmax_exposure = This aspect covers observed oral exposure (AUC and Cmax). Judge whether the neighbor oral exposure / pharmacokinetic measurements transfer to the query as indirect evidence of its oral bioavailability.

@@ -16,7 +16,7 @@ def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
     """Project retrieval output to source-independent fields visible to group prompts."""
     query = retrieval.get("query") or {}
     score_policy = (retrieval.get("experiment") or {}).get("llm_neighbor_score_policy") or {}
-    score_visible = score_policy.get("name") == "assay_transfer_scored_top5.v1"
+    score_visible = score_policy.get("name") == "assay_transfer_scored_neighbors.v1"
     contract = {
         "query": {
             "input_smiles": query.get("input_smiles", ""),

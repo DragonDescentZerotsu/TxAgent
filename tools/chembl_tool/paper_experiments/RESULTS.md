@@ -214,3 +214,127 @@ neighbor-only 和 source-ID-hidden ablation，并通过重复生成估计运行�
 - Matched-prefetch 初次运行暴露了 retrieval mapping 漂移、MCS 输出非确定性及旧 branch 状态未进入 metrics 的问题。旧 attempt 均归档；修复后通过 retrieval/tool replay、严格 branch gate 和 `--skip-existing` 只重跑受影响 index。
 - 一条 identity-blind BBB flat 的原始 assistant reasoning 根据允许使用的性质/MMP 证据重构出 `*CC(C)CO`。该字符串不存在于 LLM 请求输入，并在 final synthesis 前被清除，因此属于 assistant 侧重构诊断，不是上游泄漏。
 - 结构化 JSON 最多尝试 4 次；batch 完整性 gate 会拒绝任一必需分支不完整的结果。报告只使用最终完整 test set。
+
+## Prepared-HF Bioavailability validation rerun (2026-07-17)
+
+The legacy prepared-JSON ingestion path was restored from frozen
+`starling-labs/Oral_Bioavailability` revision `01bbe3ee9cdd3dc081c39973529c9da0c814d465`. Regeneration matched
+163,815 raw rows and 82,496 cleaned numeric rows. A separately named five-source index contains the prepared HF
+source plus Oral AUC/Cmax, Fa, Fg, and Fh; the prior pinned-HF index and partial no-HF run remain available only
+as superseded audit artifacts.
+
+On the 64-molecule validation split, deployment-visible `full_mechanism`, `parent_disjoint`, Morgan radius 2,
+2048 bits, and a 0.30 similarity floor produced:
+
+| Prepared-HF condition | Accuracy | Macro-F1 | Successful / total | Retrieval audit |
+|---|---:|---:|---:|---|
+| Morgan k=3 | 0.7188 | 0.6395 | 64 / 64 | pass |
+| Morgan k=5 | 0.7969 | 0.7233 | 64 / 64 | pass |
+| Morgan k=7 | 0.7344 | 0.6657 | 64 / 64 | pass |
+| Morgan k=10 | 0.7344 | 0.6657 | 64 / 64 | pass |
+
+All 750 retained k=3 neighbors and all 1,117 retained k=5 neighbors were independently classified as structural
+analogs. No exact-record, connectivity-equivalent, or same-parent neighbors remained; no similarity fell below
+0.30; and no group exceeded its selected k. Every below-k group (101 for k=3 and 146 for k=5) was reproduced
+with no additional eligible neighbor above the floor.
+
+The k=7 audit retained 1,409 structural analogs and explained all 182 below-k groups by insufficient eligible
+neighbors. The k=10 audit retained 1,756 structural analogs and similarly explained all 214 below-k groups.
+Both had zero identity, similarity-floor, or group-cap violations. Although k=7 and k=10 have identical aggregate
+metrics and confusion matrices, they differ on 2/64 paired predictions; k=5 and k=7 differ on 4/64 predictions.
+
+The superseded pinned-HF k=5 parent-disjoint result had accuracy 0.7344 and macro-F1 0.6530. Relative to that
+artifact, prepared-HF k=3 changed accuracy by -0.0156 and macro-F1 by -0.0134 with 5/64 prediction flips;
+prepared-HF k=5 changed accuracy by +0.0625 and macro-F1 by +0.0704 with 4/64 flips. These are validation-set
+comparisons, not final test-set claims.
+
+### Prepared-HF validation without a similarity floor
+
+The same 64-molecule configuration was rerun with `min_similarity=0.0`, keeping the five-source prepared-HF
+index, `full_mechanism`, `parent_disjoint`, and the frozen `none` single-molecule analysis fixed. Retrieval-dependent
+group and final outputs were generated independently for every k condition.
+
+| Prepared-HF no-floor condition | Accuracy | Macro-F1 | Successful / total | Retrieval audit |
+|---|---:|---:|---:|---|
+| Morgan k=3 | 0.7500 | 0.6517 | 64 / 64 | pass |
+| Morgan k=5 | 0.7500 | 0.6796 | 64 / 64 | pass |
+| Morgan k=7 | 0.7813 | 0.7083 | 64 / 64 | pass |
+| Morgan k=10 | 0.7500 | 0.6667 | 64 / 64 | pass |
+
+All 320 mechanism groups reached the requested k in each condition, yielding 960, 1,600, 2,240, and 3,200
+neighbors for k=3, 5, 7, and 10 respectively. Every neighbor was classified as a structural analog; no exact-record,
+connectivity-equivalent, or same-parent neighbor remained, and no group exceeded its selected k. The observed
+minimum similarities were 0.1842, 0.1648, 0.1622, and 0.1552 respectively, as expected when the 0.30 floor is
+removed. The consolidated audit is in
+`outputs/paper/molecular_evidence_agent/analysis/prepared_hf_validation_no_floor/`.
+
+The superseded pinned-HF k=5 result remains provenance only. Relative to it, the no-floor prepared-HF runs changed
+accuracy by +0.0156, +0.0156, +0.0469, and +0.0156 and macro-F1 by -0.0013, +0.0266, +0.0554, and +0.0137 for
+k=3, 5, 7, and 10 respectively. These are validation-set comparisons, not final test-set claims.
+
+### Assay-transfer-reranked prepared-HF validation
+
+The same eight prepared-HF conditions were rerun after retrieving the top 100 Morgan candidates per mechanism
+group, scoring the top 50 with `jiosephlee/assay-transfer-tool` revision
+`9515603b1a5c4586e41c221dcdbc5e7487c0c3f5`, and selecting the requested variable k by assay-transfer score.
+Scores came from the imported v2 SQLite cache, supplemented by exactly 377 scores recomputed with that immutable
+model revision. The score shown to group reasoning was rounded to two decimals; full-precision scores and winning
+candidate IDs remained audit-only. The five sources are prepared direct HF, Oral AUC/Cmax, Fa, Fg, and Fh.
+
+With a 0.30 Morgan similarity floor:
+
+| Reranked condition | Accuracy | Macro-F1 | Δ accuracy vs Morgan | Δ Macro-F1 vs Morgan | Successful / total | Audit |
+|---|---:|---:|---:|---:|---:|---|
+| k=3 | 0.6875 | 0.6257 | -0.0312 | -0.0138 | 64 / 64 | pass |
+| k=5 | 0.7188 | 0.6522 | -0.0781 | -0.0711 | 64 / 64 | pass |
+| k=7 | 0.7500 | 0.6796 | +0.0156 | +0.0139 | 64 / 64 | pass |
+| k=10 | 0.7500 | 0.6908 | +0.0156 | +0.0251 | 64 / 64 | pass |
+
+Without a similarity floor:
+
+| Reranked condition | Accuracy | Macro-F1 | Δ accuracy vs Morgan | Δ Macro-F1 vs Morgan | Successful / total | Audit |
+|---|---:|---:|---:|---:|---:|---|
+| k=3 | 0.7188 | 0.6522 | -0.0312 | +0.0005 | 64 / 64 | pass |
+| k=5 | 0.6875 | 0.6257 | -0.0625 | -0.0539 | 64 / 64 | pass |
+| k=7 | 0.7188 | 0.6522 | -0.0625 | -0.0562 | 64 / 64 | pass |
+| k=10 | 0.7344 | 0.6657 | -0.0156 | -0.0009 | 64 / 64 | pass |
+
+The consolidated audit found zero exact-record, connectivity-equivalent, same-parent, similarity-floor,
+group-cap, score-order, or prompt-visibility violations. All no-floor groups reached k. Below-k groups in the
+0.30 conditions were fully attributable to insufficient eligible candidates above the floor or to selected
+candidates without a valid reranker score. The comparison report is in
+`outputs/paper/molecular_evidence_agent/analysis/prepared_hf_assay_transfer_scored_validation/`. The old forced-k5
+reranking behavior is unsupported, and the pinned-HF k=5 result remains a superseded provenance artifact. These
+are validation-set comparisons, not final test-set claims.
+
+### Assay-transfer reranking with transfer scores hidden from reasoning
+
+The eight reranked conditions were independently regenerated while retaining the exact assay-transfer-selected
+ordered neighbors but removing every numeric transfer score, score-derived field, and transfer-score policy
+statement from the group and final prompts. Scoreability filtering remained part of retrieval selection; score
+visibility alone was ablated. The five-source prepared-HF index, v2 cache, immutable model revision, Morgan
+candidate pools, identity policy, and frozen retrieval-independent `none` single-molecule analyses were unchanged.
+
+With a 0.30 Morgan similarity floor:
+
+| k | Morgan accuracy | Score-hidden accuracy | Score-visible accuracy | Morgan Macro-F1 | Score-hidden Macro-F1 | Score-visible Macro-F1 | Δ hidden vs Morgan F1 | Δ hidden vs visible F1 | Flips vs visible | Audit |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| 3 | 0.7188 | 0.7188 | 0.6875 | 0.6395 | 0.6395 | 0.6257 | +0.0000 | +0.0138 | 8 | pass |
+| 5 | 0.7969 | 0.7188 | 0.7188 | 0.7233 | 0.6522 | 0.6522 | -0.0711 | +0.0000 | 2 | pass |
+| 7 | 0.7344 | 0.7656 | 0.7500 | 0.6657 | 0.6938 | 0.6796 | +0.0280 | +0.0142 | 5 | pass |
+| 10 | 0.7344 | 0.7656 | 0.7500 | 0.6657 | 0.6938 | 0.6908 | +0.0280 | +0.0030 | 3 | pass |
+
+Without a similarity floor:
+
+| k | Morgan accuracy | Score-hidden accuracy | Score-visible accuracy | Morgan Macro-F1 | Score-hidden Macro-F1 | Score-visible Macro-F1 | Δ hidden vs Morgan F1 | Δ hidden vs visible F1 | Flips vs visible | Audit |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| 3 | 0.7500 | 0.7188 | 0.7188 | 0.6517 | 0.6522 | 0.6522 | +0.0005 | +0.0000 | 4 | pass |
+| 5 | 0.7500 | 0.7031 | 0.6875 | 0.6796 | 0.6388 | 0.6257 | -0.0408 | +0.0131 | 3 | pass |
+| 7 | 0.7812 | 0.6875 | 0.7188 | 0.7083 | 0.6257 | 0.6522 | -0.0826 | -0.0264 | 4 | pass |
+| 10 | 0.7500 | 0.7031 | 0.7344 | 0.6667 | 0.6388 | 0.6657 | -0.0278 | -0.0269 | 2 | pass |
+
+The consolidated audit passed for all eight conditions. It confirmed 64/64 successful outputs, exact retrieval
+identity against the paired score-visible controls, no transfer-score fields or policy semantics in hidden prompts,
+and the expected v2-cache/model provenance. The report is in
+`outputs/paper/molecular_evidence_agent/analysis/prepared_hf_assay_transfer_score_visibility_ablation/`. These are
+independent validation generations and not final test-set claims.

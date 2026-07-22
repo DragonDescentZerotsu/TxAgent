@@ -179,10 +179,10 @@ reason
 keep_for_bbb_reasoning
 ```
 
-`reason` 用一句中文解释为什么保留，例如：
+`reason` must explain in one English sentence why the assay is retained, for example:
 
 ```text
-命中 brain/plasma 和 endpoint logBB，属于直接脑暴露证据。
+Matches brain/plasma and the logBB endpoint, so it is direct brain-exposure evidence.
 ```
 
 ---

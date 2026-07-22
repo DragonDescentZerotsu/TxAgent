@@ -1,14 +1,14 @@
 import json
-import sys
-from types import SimpleNamespace
+
+import pytest
 
 from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
-from tools.chembl_tool.common.starling import oral_bioavailability as oral_cleaning
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLING
+from tools.chembl_tool.tasks.bioavailability_ma import build_starling_evidence_library as direct_builder
+from tools.chembl_tool.tasks.bioavailability_ma import build_starling_factor_evidence_library as factor_builder
 from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library import (
     GROUP_ID,
     build_starling_evidence_rows,
-    build_starling_evidence_rows_from_pinned_hf,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.build_evidence_library import build_neighbor_index
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import retrieve_neighbors
@@ -177,46 +177,83 @@ def test_starling_index_retrieval_excludes_exact_query(tmp_path):
     assert result["evidence_source"]["dataset"] == "starling-labs/Oral_Bioavailability"
 
 
-def test_pinned_hf_loader_uses_frozen_revision(monkeypatch):
+def test_evidence_builder_clis_reject_removed_pinned_hf_modes():
+    with pytest.raises(SystemExit):
+        direct_builder._parse_args(["--source-mode", "pinned-hf"])
+    with pytest.raises(SystemExit):
+        factor_builder._parse_args(["--direct-source-mode", "pinned-hf"])
+
+
+def test_prepared_json_historical_qualitative_handling_keeps_not_allowed_report_type(tmp_path):
+    source = tmp_path / "records.jsonl"
+    source.write_text("", encoding="utf-8")
+    dropped = tmp_path / "dropped.jsonl"
+    dropped.write_text(json.dumps({
+        "source_index": 11,
+        "drop_reason": "report_type_not_allowed",
+        "raw_row": {
+            "molecule_name": "relative report",
+            "smiles": "CCN",
+            "oral_bioavailability_value": "higher than reference",
+            "bioavailability_report_type": "relative",
+            "support_text": "Relative oral exposure was higher than the reference.",
+        },
+    }) + "\n", encoding="utf-8")
+
+    rows, stats = build_starling_evidence_rows(source, dropped_jsonl=dropped)
+
+    assert len(rows) == 1
+    assert stats["n_qualitative_rows_kept"] == 1
+    assert rows[0]["source_report_types"] == ["relative"]
+    assert rows[0]["source_qualitative_record_count"] == 1
+
+
+def test_factor_builder_include_direct_hf_reads_prepared_json(monkeypatch, tmp_path):
+    records = tmp_path / "molecule_records.jsonl"
+    dropped = tmp_path / "dropped_rows.jsonl"
+    records.write_text("", encoding="utf-8")
+    dropped.write_text("", encoding="utf-8")
     calls = []
 
-    def fake_load_dataset(*args, **kwargs):
-        calls.append((args, kwargs))
-        return []
+    def fake_direct(source_jsonl, **kwargs):
+        calls.append((source_jsonl, kwargs["dropped_jsonl"]))
+        return [], {
+            "n_source_rows": 82496,
+            "n_source_rows_kept": 82496,
+            "n_dropped_rows_scanned": 81319,
+        }
 
-    monkeypatch.setitem(sys.modules, "datasets", SimpleNamespace(load_dataset=fake_load_dataset))
-    assert oral_cleaning.load_pinned_oral_bioavailability_dataset() == []
-    assert calls == [
-        (("starling-labs/Oral_Bioavailability",), {
-            "revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465", "split": "train"
-        })
-    ]
+    monkeypatch.setattr(factor_builder, "build_direct_f_rows", fake_direct)
+    monkeypatch.setattr(factor_builder, "build_starling_parquet_evidence_rows", lambda *args, **kwargs: ([], {}))
+    monkeypatch.setattr(factor_builder, "build_neighbor_index", lambda *args, **kwargs: {
+        "molecules": [], "group_to_molecule_indices": {}
+    })
+
+    assert factor_builder.main([
+        "--out-dir", str(tmp_path / "index"),
+        "--direct-source-jsonl", str(records),
+        "--direct-dropped-jsonl", str(dropped),
+    ]) == 0
+    assert calls == [(records, dropped)]
+    meta = json.loads((tmp_path / "index" / factor_builder.META_FILENAME).read_text(encoding="utf-8"))
+    assert meta["include_direct_hf"] is True
+    assert meta["direct_hf_provenance"]["source_mode"] == "prepared_jsonl"
+    assert meta["direct_source_stats"]["n_source_rows_kept"] == 82496
+    assert meta["prepared_hf_row_counts"] == {
+        "raw_rows": 163815,
+        "clean_numeric_rows": 82496,
+        "dropped_rows": 81319,
+    }
+    assert len(meta["underlying_sources"]) == 5
 
 
-def test_pinned_rows_filter_report_type_bounds_invalid_smiles_and_content_mode(monkeypatch):
-    dataset = [
-        _raw_hf("CCO", "0.5", "absolute"),
-        _raw_hf("OCC", "20%", "systemic_availability"),
-        _raw_hf("CCN", "very low", "unspecified"),
-        _raw_hf("CCC", "40%", "relative"),
-        _raw_hf("not smiles", "10%", "absolute"),
-        _raw_hf("CCCC", "101%", "absolute"),
-    ]
-    monkeypatch.setattr(oral_cleaning, "load_pinned_oral_bioavailability_dataset", lambda: dataset)
-
-    full_rows, full_stats = build_starling_evidence_rows_from_pinned_hf(evidence_content="full")
-    numeric_rows, numeric_stats = build_starling_evidence_rows_from_pinned_hf(evidence_content="numeric_only")
-
-    assert len(full_rows) == 2
-    ethanol = next(row for row in full_rows if row["canonical_smiles"] == "CCO")
-    assert ethanol["source_numeric_record_count"] == 2
-    assert ethanol["standard_value"] == 35.0
-    qualitative = next(row for row in full_rows if row["canonical_smiles"] == "CCN")
-    assert qualitative["source_qualitative_record_count"] == 1
-    assert len(numeric_rows) == 1
-    assert numeric_rows[0]["canonical_smiles"] == "CCO"
-    assert full_stats["revision"] == "01bbe3ee9cdd3dc081c39973529c9da0c814d465"
-    assert numeric_stats["n_qualitative_rows_kept"] == 0
+def test_prepared_hf_count_preflight_rejects_mismatched_artifacts():
+    with pytest.raises(ValueError, match="Prepared HF artifact preflight failed"):
+        factor_builder._validate_prepared_direct_hf_counts(
+            {"n_source_rows": 82495, "n_source_rows_kept": 82495, "n_dropped_rows_scanned": 81319},
+            expected_raw_rows=163815,
+            expected_clean_numeric_rows=82496,
+        )
 
 
 def test_direct_family_combines_sources_without_duplicate_neighbor_slots(tmp_path):
@@ -235,13 +272,6 @@ def test_direct_family_combines_sources_without_duplicate_neighbor_slots(tmp_pat
     assert neighbors[0]["n_evidence_rows"] == 2
     assert {row["evidence_source"] for row in neighbors[0]["evidence_rows"]} == {
         "starling-labs/Oral_Bioavailability", "starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure"
-    }
-
-
-def _raw_hf(smiles: str, value: str, report_type: str) -> dict:
-    return {
-        "molecule_name": "test molecule", "smiles": smiles, "oral_bioavailability_value": value,
-        "bioavailability_report_type": report_type, "species_or_population": "human", "support_text": "source passage",
     }
 
 

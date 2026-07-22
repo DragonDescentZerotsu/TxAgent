@@ -21,7 +21,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library 
     DEFAULT_DROPPED_JSONL as DEFAULT_DIRECT_DROPPED_JSONL,
     DEFAULT_SOURCE_JSONL as DEFAULT_DIRECT_SOURCE_JSONL,
     build_starling_evidence_rows as build_direct_f_rows,
-    build_starling_evidence_rows_from_pinned_hf,
+)
+from tools.chembl_tool.common.starling.oral_bioavailability import (
+    ORAL_BIOAVAILABILITY_DATASET,
+    ORAL_BIOAVAILABILITY_REVISION,
 )
 
 
@@ -31,6 +34,8 @@ EVIDENCE_FILENAME = "starling_factor_evidence.jsonl"
 INDEX_FILENAME = "starling_factor_neighbor_index.pkl"
 META_FILENAME = "starling_factor_neighbor_index.meta.json"
 INDEX_VERSION = "bioavailability_ma_starling_factor_neighbor_index.v2"
+EXPECTED_DIRECT_HF_RAW_ROWS = 163_815
+EXPECTED_DIRECT_HF_CLEAN_NUMERIC_ROWS = 82_496
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -40,17 +45,17 @@ def main(argv: list[str] | None = None) -> int:
 
     direct_rows: list[dict[str, Any]] = []
     direct_stats: dict[str, Any] = {}
-    if args.include_direct_hf and args.direct_source_mode == "pinned-hf":
-        direct_rows, direct_stats = build_starling_evidence_rows_from_pinned_hf(
-            min_value_percent=args.min_direct_value_percent, max_value_percent=args.max_direct_value_percent,
-            max_record_examples=args.max_record_examples, evidence_content=args.evidence_content,
-        )
-    elif args.include_direct_hf and args.direct_source_mode == "prepared-jsonl":
+    if args.include_direct_hf:
         direct_rows, direct_stats = build_direct_f_rows(
             Path(args.direct_source_jsonl),
             dropped_jsonl=(Path(args.direct_dropped_jsonl) if args.evidence_content == "full" and args.direct_dropped_jsonl else None),
             min_value_percent=args.min_direct_value_percent, max_value_percent=args.max_direct_value_percent,
             max_record_examples=args.max_record_examples,
+        )
+        _validate_prepared_direct_hf_counts(
+            direct_stats,
+            expected_raw_rows=args.expected_direct_raw_rows,
+            expected_clean_numeric_rows=args.expected_direct_clean_numeric_rows,
         )
 
     profiles = bioavailability_profiles(Path(args.starling_data_dir), max_rows=args.max_rows_per_source)
@@ -88,7 +93,26 @@ def main(argv: list[str] | None = None) -> int:
         "index_version": index_version,
         "starling_data_dir": args.starling_data_dir,
         "include_direct_hf": args.include_direct_hf,
-        "direct_source_mode": args.direct_source_mode,
+        "direct_hf_provenance": {
+            "source_mode": "prepared_jsonl",
+            "dataset": ORAL_BIOAVAILABILITY_DATASET,
+            "revision": ORAL_BIOAVAILABILITY_REVISION,
+            "molecule_records_jsonl": args.direct_source_jsonl,
+            "dropped_rows_jsonl": args.direct_dropped_jsonl,
+        } if args.include_direct_hf else None,
+        "prepared_hf_row_counts": {
+            "raw_rows": int(direct_stats.get("n_source_rows") or 0)
+            + int(direct_stats.get("n_dropped_rows_scanned") or 0),
+            "clean_numeric_rows": int(direct_stats.get("n_source_rows_kept") or 0),
+            "dropped_rows": int(direct_stats.get("n_dropped_rows_scanned") or 0),
+        } if args.include_direct_hf else None,
+        "underlying_sources": [
+            *([ORAL_BIOAVAILABILITY_DATASET] if args.include_direct_hf else []),
+            "starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure",
+            "starling-labs/bioavailability_ma/Fa",
+            "starling-labs/bioavailability_ma/Fg",
+            "starling-labs/bioavailability_ma/Fh",
+        ],
         "scope": args.scope,
         "evidence_content": args.evidence_content,
         "n_direct_evidence_rows": len(direct_rows),
@@ -105,6 +129,22 @@ def main(argv: list[str] | None = None) -> int:
     meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
     print(json.dumps(meta, ensure_ascii=False, indent=2, default=str), flush=True)
     return 0
+
+
+def _validate_prepared_direct_hf_counts(
+    stats: dict[str, Any], *, expected_raw_rows: int, expected_clean_numeric_rows: int
+) -> None:
+    clean_rows = int(stats.get("n_source_rows_kept") or 0)
+    raw_rows = int(stats.get("n_source_rows") or 0) + int(stats.get("n_dropped_rows_scanned") or 0)
+    mismatches = []
+    if expected_raw_rows and raw_rows != expected_raw_rows:
+        mismatches.append(f"raw rows: expected {expected_raw_rows:,}, found {raw_rows:,}")
+    if expected_clean_numeric_rows and clean_rows != expected_clean_numeric_rows:
+        mismatches.append(
+            f"clean numeric rows: expected {expected_clean_numeric_rows:,}, found {clean_rows:,}"
+        )
+    if mismatches:
+        raise ValueError("Prepared HF artifact preflight failed (" + "; ".join(mismatches) + ")")
 
 
 def bioavailability_profiles(data_dir: Path, *, max_rows: int = 0) -> list[StarlingSourceProfile]:
@@ -205,13 +245,18 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
     parser.add_argument("--include-direct-hf", dest="include_direct_hf", action="store_true", default=True)
     parser.add_argument("--no-include-direct-hf", dest="include_direct_hf", action="store_false")
-    parser.add_argument("--direct-source-mode", choices=["pinned-hf", "prepared-jsonl", "disabled"], default="prepared-jsonl")
     parser.add_argument("--scope", choices=["direct", "full"], default="full")
     parser.add_argument("--evidence-content", choices=["numeric_only", "full"], default="full")
     parser.add_argument("--direct-source-jsonl", default=DEFAULT_DIRECT_SOURCE_JSONL)
     parser.add_argument("--direct-dropped-jsonl", default=DEFAULT_DIRECT_DROPPED_JSONL)
     parser.add_argument("--min-direct-value-percent", type=float, default=0.0)
     parser.add_argument("--max-direct-value-percent", type=float, default=100.0)
+    parser.add_argument("--expected-direct-raw-rows", type=int, default=EXPECTED_DIRECT_HF_RAW_ROWS)
+    parser.add_argument(
+        "--expected-direct-clean-numeric-rows",
+        type=int,
+        default=EXPECTED_DIRECT_HF_CLEAN_NUMERIC_ROWS,
+    )
     parser.add_argument("--min-confidence", type=float, default=0.0)
     parser.add_argument("--max-record-examples", type=int, default=6)
     parser.add_argument("--max-rows-per-source", type=int, default=0)

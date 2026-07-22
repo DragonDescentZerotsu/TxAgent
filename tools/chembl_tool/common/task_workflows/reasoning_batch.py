@@ -34,7 +34,7 @@ class BatchConfig:
     positive_predictions: frozenset[str]
     negative_predictions: frozenset[str]
     rerank_preflight: Callable[..., dict[str, Any]] | None = None
-    supports_assay_transfer_scored_top5: bool = False
+    supports_assay_transfer_scores: bool = False
 
 
 @dataclass(frozen=True)
@@ -46,7 +46,7 @@ class BatchItem:
 def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     args = _parse_args(config, argv)
     requested_top_k_per_group = args.top_k_per_group
-    _apply_assay_transfer_scored_top5(config, args)
+    _validate_assay_transfer_scores(config, args)
     records = _read_jsonl(Path(args.input_jsonl))
     indices = _select_indices(args, len(records))
     batch_id = args.batch_id or time.strftime(f"{config.batch_id_prefix}_%Y%m%d_%H%M%S")
@@ -86,7 +86,10 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
                 neighbor_identity_policy=args.neighbor_identity_policy,
                 raw_pool_size=args.rerank_raw_pool_size,
                 candidate_size=args.rerank_candidate_size,
-                require_selected_scores=args.enable_assay_transfer_scored_top5,
+                require_selected_scores=args.enable_assay_transfer_scores,
+                template_profile=args.assay_transfer_template_profile,
+                expected_score_count=args.rerank_expected_score_count,
+                cache_version_path=args.rerank_cache_version_manifest,
             )
             _release_preflight_memory()
     manifest = {
@@ -105,9 +108,10 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
         "retrieval_reranker": args.retrieval_reranker,
-        "enable_assay_transfer_scored_top5": args.enable_assay_transfer_scored_top5,
+        "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+        "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "llm_neighbor_score_policy": (
-            "assay_transfer_scored_top5.v1" if args.enable_assay_transfer_scored_top5 else ""
+            "assay_transfer_scored_neighbors.v1" if args.enable_assay_transfer_scores else ""
         ),
         "rerank_raw_pool_size": args.rerank_raw_pool_size,
         "rerank_candidate_size": args.rerank_candidate_size,
@@ -117,6 +121,8 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
             args.rerank_candidate_manifest if args.retrieval_reranker != "none" else ""
         ),
         "rerank_cache_preflight": rerank_preflight,
+        "rerank_expected_score_count": args.rerank_expected_score_count,
+        "rerank_cache_version_manifest": args.rerank_cache_version_manifest,
         "rerank_preflight_reused": args.reuse_existing_rerank_preflight,
         "min_similarity": args.min_similarity,
         "neighbor_identity_policy": args.neighbor_identity_policy,
@@ -215,12 +221,15 @@ def _validate_reused_rerank_preflight(
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
         "retrieval_reranker": args.retrieval_reranker,
-        "enable_assay_transfer_scored_top5": args.enable_assay_transfer_scored_top5,
+        "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+        "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "rerank_raw_pool_size": args.rerank_raw_pool_size,
         "rerank_candidate_size": args.rerank_candidate_size,
         "rerank_catalog": args.rerank_catalog,
         "rerank_cache": args.rerank_cache,
         "rerank_candidate_manifest": args.rerank_candidate_manifest,
+        "rerank_expected_score_count": args.rerank_expected_score_count,
+        "rerank_cache_version_manifest": args.rerank_cache_version_manifest,
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "top_k_per_group": args.top_k_per_group,
         "min_similarity": args.min_similarity,
@@ -475,10 +484,12 @@ def _single_run_command(
                 args.assay_transfer_model,
                 "--assay-transfer-model-revision",
                 args.assay_transfer_model_revision,
+                "--assay-transfer-template-profile",
+                args.assay_transfer_template_profile,
             ]
         )
-    if args.enable_assay_transfer_scored_top5:
-        command.append("--enable-assay-transfer-scored-top5")
+    if args.enable_assay_transfer_scores:
+        command.append("--enable-assay-transfer-scores")
     if args.single_analysis_source_batch:
         source_batch = Path(args.single_analysis_source_batch)
         source_run_id = f"{source_batch.name}_idx{query_index:05d}"
@@ -914,9 +925,9 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--disable-thinking", dest="enable_thinking", action="store_false")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument(
-        "--enable-assay-transfer-scored-top5",
+        "--enable-assay-transfer-scores",
         action="store_true",
-        help="Bioavailability-only atomic assay-transfer scored top-5 mechanism prompt policy.",
+        help="Bioavailability-only variable-k assay-transfer score visibility policy.",
     )
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument("--retrieval-reranker", choices=["none", "assay_transfer"], default="none")
@@ -945,7 +956,23 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--assay-transfer-model", default="jiosephlee/assay-transfer-tool")
     parser.add_argument(
         "--assay-transfer-model-revision",
-        default="e7b694d1a3d52f5e50bc55ab73f3a07542ff69eb",
+        default="9515603b1a5c4586e41c221dcdbc5e7487c0c3f5",
+    )
+    parser.add_argument(
+        "--assay-transfer-template-profile",
+        choices=["legacy_v3", "v6_5_query_context_copy"],
+        default="legacy_v3",
+    )
+    parser.add_argument(
+        "--rerank-expected-score-count",
+        type=int,
+        default=0,
+        help="Require both prompt demand and SQLite row count to equal this value during preflight.",
+    )
+    parser.add_argument(
+        "--rerank-cache-version-manifest",
+        default="",
+        help="Optional VERSION.json whose model, template, catalog, manifest, and count must match preflight.",
     )
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     parser.add_argument(
@@ -968,18 +995,17 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     return args
 
 
-def _apply_assay_transfer_scored_top5(config: BatchConfig, args: argparse.Namespace) -> None:
-    if not args.enable_assay_transfer_scored_top5:
+def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespace) -> None:
+    if not args.enable_assay_transfer_scores:
         return
-    if not config.supports_assay_transfer_scored_top5:
-        raise SystemExit(f"Pipeline {config.pipeline_module} does not support --enable-assay-transfer-scored-top5")
+    if not config.supports_assay_transfer_scores:
+        raise SystemExit(f"Pipeline {config.pipeline_module} does not support --enable-assay-transfer-scores")
     if args.experiment_mode != "full_mechanism":
-        raise SystemExit("--enable-assay-transfer-scored-top5 requires --experiment-mode full_mechanism")
+        raise SystemExit("--enable-assay-transfer-scores requires --experiment-mode full_mechanism")
     if args.retrieval_source != "starling":
-        raise SystemExit("--enable-assay-transfer-scored-top5 requires --retrieval-source starling")
+        raise SystemExit("--enable-assay-transfer-scores requires --retrieval-source starling")
     if args.retrieval_reranker != "assay_transfer":
-        raise SystemExit("--enable-assay-transfer-scored-top5 requires --retrieval-reranker assay_transfer")
-    args.top_k_per_group = 5
+        raise SystemExit("--enable-assay-transfer-scores requires --retrieval-reranker assay_transfer")
 
 
 def _normalize_group_args(groups: list[str] | None) -> list[str] | None:

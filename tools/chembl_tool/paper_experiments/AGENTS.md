@@ -66,12 +66,13 @@ python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview
 对应回归测试集中在 `tests/chembl_tool/common/`：identity/policy、retrieval view、replay/hash reuse、prefetch
 contract、paper matrix/result summary、parent-disjoint summary 和 viewer root 都必须随相关入口一起运行。
 
-## 语言约定
+## Language convention
 
-- 内部分析、推理过程、代码标识符和机器可读字段可以使用英文。
-- 所有面向用户展示的说明、实验结论、Markdown 文档、生成报告和进度汇报必须使用中文。
-- 命令、路径、模型名、实验 ID、字段名和通行的技术术语可以保留英文，但正文解释必须使用中文。
-- 修改报告生成器时，必须确保重新生成的用户可见报告仍为中文，不能只手工翻译生成产物。
+- Use English for internal analysis, reasoning, user-facing explanations, experiment conclusions, Markdown
+  documentation, generated reports, and progress updates.
+- Commands, paths, model names, experiment IDs, field names, and established technical terms remain unchanged.
+- When modifying a report generator, ensure regenerated user-visible reports are produced in English; do not
+  rely on manually translating generated artifacts afterward.
 
 论文主结果表使用真实部署导向的 agentic 制度：
 

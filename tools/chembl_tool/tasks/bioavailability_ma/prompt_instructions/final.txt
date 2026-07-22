@@ -1,0 +1,10 @@
+# Editable instructions for the final synthesis prompt.
+# One instruction per line, rendered numbered at the top of the prompt.
+# Blank lines and lines starting with '#' are ignored. {high_f_cutoff} is filled in from the task cutoff.
+Integrate the single-molecule prior and the group analyses into one oral bioavailability prediction.
+Use bioavailability_prediction='high' for oral bioavailability F >= {high_f_cutoff}% (Bioavailability_Ma label 1), and 'low' for F < {high_f_cutoff}% (label 0).
+Use the single-molecule analysis as the physicochemical prior.
+Use the group analyses as analog evidence; downweight groups marked low confidence or low transferability.
+Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.
+You must choose exactly one bioavailability_prediction: high or low. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.
+Return compact, complete JSON.

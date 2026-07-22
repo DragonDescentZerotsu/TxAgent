@@ -59,7 +59,7 @@ tools/chembl_tool/activity_transfer_benchmark/
 run_benchmark.py
   从 ChEMBL 读取 assay activity，构建同 assay endpoint 内的 molecule pairs。
   连续值主分析使用 pchembl_value，计算 Tanimoto、|delta pChEMBL|、标签、threshold metrics、
-  assay-specific enrichment、binary comment 辅助分析，并生成 TSV/GZ、SVG 和中文 report。
+  assay-specific enrichment, binary-comment auxiliary analysis, and TSV/GZ, SVG, and English report outputs.
 
 run_task_assay_benchmark.py
   从 data/processed 四个任务 pipeline 的 assay evidence 出发，构建 task-scoped transfer benchmark。
@@ -71,7 +71,7 @@ benchmark_mcs_runtime.py
 
 analyze_mcs_results.py
   读取 MCS 结果，扫描 mean MCS coverage threshold，并在同一 observed subset 上重扫 Tanimoto。
-  输出 MCS/Tanimoto 对比指标、bucket summary、heatmap、SVG 和中文 report。
+  Output MCS/Tanimoto comparison metrics, bucket summaries, heatmaps, SVG figures, and an English report.
 
 build_llm_eval_set.py
   从 dynamic_v1 pairs 中构建 LLM 小评估集。默认 3,000 pairs，按 label x Tanimoto bucket 分层平衡，

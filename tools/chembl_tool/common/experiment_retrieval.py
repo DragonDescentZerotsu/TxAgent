@@ -283,17 +283,14 @@ def _rank_group_candidates(
         if len(neighbors) >= limit:
             break
     if reranker is not None:
-        reranked = reranker.rerank(
+        # Record-level top-K: rank every scored record across the candidate molecules and
+        # keep the K highest-transfer records (the same molecule may repeat).
+        record_neighbors = reranker.rerank_records(
             query_smiles=query_smiles,
             group_id=group_id,
             candidates=neighbors,
         )
-        if len(reranked) != len(neighbors):
-            raise ValueError(
-                f"Retrieval reranker `{reranker.name}` changed candidate cardinality "
-                f"for {group_id}: {len(neighbors)} -> {len(reranked)}"
-            )
-        neighbors = reranked[:top_k]
+        neighbors = record_neighbors[:top_k]
     for rank, neighbor in enumerate(neighbors, start=1):
         neighbor["rank"] = rank
     return neighbors

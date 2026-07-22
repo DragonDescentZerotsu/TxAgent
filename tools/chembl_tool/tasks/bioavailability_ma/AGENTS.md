@@ -208,42 +208,148 @@ The optional `assay_transfer` retrieval reranker is restricted to the five Starl
 then the shared identity exclusion policy, then at most 50 survivors, then cached model reranking, then the
 existing final `top_k_per_group`. It never backfills below the raw top 100.
 
-The current cache is the retrieval-agnostic `flat_v2` store. It contains one stable five-source record
-catalog, eight exact condition manifests (validation/test x four/five-source x operational/parent-disjoint),
-an audit mapping, and an append-only SQLite score store. Score identity includes only the exact prompt hash,
-immutable model revision, scoring contract, and template hash. Catalog, split, source composition, and
-identity policy are audit/join metadata and never change score identity.
+The current imported cache is the retrieval-agnostic `cache_v2` store under
+`evidence_library/assay_transfer_rerank/`. It contains an append-only SQLite score store and its provenance
+artifacts. Score identity includes only the exact prompt hash, immutable model revision, scoring contract,
+and template hash. Catalog, split, source composition, and identity policy are audit/join metadata and never
+change score identity.
+
+A separate soft-checkpoint cache is preserved at
+`evidence_library/assay_transfer_rerank/cache_soft_5fc06af6/`. It contains all 45,057 unique prompts in the
+frozen prepared-HF validation catalog and was built on GPUs 0--5 with
+`jiosephlee/assay-transfer-tool-soft@5fc06af66b490575e8eb32231d96aeada26794c6`. Its immutable
+`VERSION.json` records the exact catalog/manifest hashes, scoring contract, model runtime, devices, and row
+count. The original `cache_v2` remains unchanged. Soft-checkpoint validation uses these scores only to rank
+neighbors; it does not pass the scores or their semantics to reasoning prompts.
+
+The soft checkpoint's custom tokenizer requires `transformers==4.57.6` and
+`huggingface-hub==0.36.0`. The local ignored `.runtime/transformers_4_57_6/` overlay supplies those versions
+for cache inference without changing the project environment. Precompute commands for this checkpoint must
+prepend that directory to `PYTHONPATH`; reasoning runs only read SQLite and do not need the overlay.
 
 Both direct-bioavailability source schemas are normalized: HF Oral Bioavailability records use
 `oral_bioavailability_value_percent`, while direct rows from Oral_AUC-Cmax use
 `reported_value`/`reported_units`. This normalization is only for assay-transfer prompts; it does not change
 the Starling evidence indexes or ordinary Morgan retrieval.
 
+The versioned `v6_5_query_context_copy` prompt profile vendors the exact
+`assay_transfer_v6_5_intern/default.jinja` contract (SHA-256
+`e30f995988db7214cae4b170a2c36f3a5fd61b6bee6188b39ce54377fa67f5bd`). It renders the retrieval
+record with its canonical SMILES, scalar measurement, unit, canonical endpoint, assay concept, and complete
+assay context. The query uses canonical SMILES and copies the retrieval endpoint/concept/context while never
+receiving a scalar or known-value field. `legacy_v3` remains the default so existing catalogs, cache identities,
+and runs are unchanged. Cache and reasoning CLIs select the new contract explicitly with
+`--assay-transfer-template-profile v6_5_query_context_copy`.
+
+For the frozen prepared-HF validation manifest at similarity floor 0.30, there are 9,863 record-level prompt
+references. Exact v6.5 rendering collapses 39 duplicate references into 9,824 unique retrieval-agnostic prompt
+hashes; the older v6 template produced 9,844 unique hashes. The v6.5 SQLite cache therefore stores 9,824 scores
+while covering every record reference. Its `VERSION.json` records both counts and the reason for the difference.
+
+## Hosted GLM validation concurrency
+
+These instructions apply directly to `run_reasoning_batch.py`, `run_reasoning_pipeline.py`, and all
+Bioavailability hosted-GLM launch configurations.
+
+### Concurrency target
+
+- Treat 256 as the maximum number of outstanding GLM completion requests, not as a target for molecule
+  subprocesses or a multi-prompt request payload.
+- For a fresh `full_mechanism` Bioavailability batch with the current five mechanism families, default to
+  `--parallelism 48 --group-workers 5`. This permits approximately 240 simultaneous group requests and leaves
+  headroom below the 256-request API limit.
+- Calculate effective fan-out as
+  `min(parallelism, unfinished_molecules) * min(group_workers, active_group_count)`. Do not report
+  `parallelism * group_workers` when fewer groups exist. For example, `32 * 8` has an effective group-stage
+  ceiling of 160 when only five mechanism families are active.
+- For a different experiment view, choose the largest safe molecule parallelism that targets 224--240
+  effective requests without exceeding 256. Set `group_workers` to the number of concurrently active group
+  branches unless there is a measured reason to use less.
+- Do not default new hosted-GLM runs to serial execution. If the observed endpoint or node cannot sustain the
+  target, reduce concurrency in measured 20--25% steps and record the errors and final setting.
+
+### Launch and resume requirements
+
+- Use the local `txagent-glm` environment and inject the ignored local API key through `LITELLM_API_KEY`;
+  never print or persist the key.
+- Use `--skip-existing` whenever resuming so completed molecule outputs are preserved. A partial molecule
+  without `final_reasoning_output.json` may be rerun.
+- Preserve separate retrieval, group, final, and batch output directories for each k value or condition.
+  Never reuse final predictions across k values.
+- Archive a genuinely failed attempt before a clean retry. An intentional concurrency restart is a resume,
+  not a failed-attempt archive.
+- Keep score-hidden runs score-hidden: assay-transfer scores may rank neighbors but must not appear in any
+  GLM-visible prompt.
+
+### Preflight and monitoring
+
+Before issuing GLM requests, verify:
+
+- the tool service health endpoint is healthy;
+- SQLite `quick_check` is `ok` and the required score count and immutable provenance match;
+- the frozen catalog, candidate manifest, model revision, template profile, and template hash match;
+- the node has enough available memory for the requested molecule-process count, because each molecule
+  process loads retrieval state;
+- the configured effective GLM fan-out is no greater than 256.
+
+During the run, monitor completed outputs, active molecule processes, HTTP 429/5xx responses, timeouts,
+validation retries, and memory. Concurrency should remain near the target when healthy. Endpoint throttling,
+repeated transport failures, or memory pressure are valid reasons to reduce it; document the reason rather
+than silently reverting to serial execution.
+
+After completion, require 64/64 outputs and zero failures, then run the task's retrieval, identity,
+similarity-floor, group-size, below-k attribution, prompt-visibility, and provenance audits.
+
+Prompt-audit tooling lives in the `prompt_audit/` subpackage: `view_run.py` (trace/prompt viewer),
+`dump_prompt_examples.py` (example generator), and the committed `prompt_audit/prompt_examples/`. The examples
+are one per stage (single, group, final), with the group stage in all three formats (`group.legacy`,
+`group.morganfingerprint`, `group.assay_transfer_tool`). They are **compiled prompts only** (no model output),
+generated from one frozen real datapoint (`tests/.../fixtures/prompt_examples/fixture.json`) by
+`python -m tools.chembl_tool.tasks.bioavailability_ma.prompt_audit.dump_prompt_examples --write`, and pinned by
+the golden test `tests/.../test_prompt_examples.py` so they cannot drift from the prompt code — regenerate after
+any prompt change. Never add hidden labels, API credentials, or non-visible provenance to an example, and never
+add assay-transfer scores to a **score-hidden** example; the `assay_transfer_tool` format legitimately shows its
+by-design visible transfer score.
+
+The group text-format instruction blocks are editable `.txt` files under `prompt_instructions/`
+(`morganfingerprint.txt`, `assay_transfer_tool.txt`; one instruction per line, `#` comments ignored), loaded by
+`group_prompt_render.load_instructions`. Which metadata fields appear is likewise editable in
+`group_prompt_field_policy.py`.
+
+Cached assay-transfer reranking code lives in the `reranking/` subpackage
+(`tasks/bioavailability_ma/reranking/`: rerank, prompt policy, catalog/precompute builders, and the scoring
+`assay_transfer_templates/`).
+
+Assay-transfer scoreability filtering and neighbor selection are independent of prompt visibility. A score-hidden
+ablation may use the cached scores to select the same ordered neighbors while omitting all transfer scores and
+score-policy semantics from LLM-visible group and final prompts.
+
 Attached numeric source-record examples become candidate-scoped prompt records; qualitative-only candidates
 remain in the retained pool but do not receive fabricated prompts. Scoring mirrors training evaluation:
 append `(A)` and `(B)` with no leading space, find their first divergent token, and softmax the two next-token
 logits.
 
-Build the flat artifacts and migrate the two legacy caches without inference:
+Build the candidate-scoped catalog and manifest, then populate only missing scores with independent BF16
+model replicas. The validated v2 model provenance is
+`jiosephlee/assay-transfer-tool@9515603b1a5c4586e41c221dcdbc5e7487c0c3f5` and scoring contract
+`assay_transfer_chat_first_divergent_token_logits.v1`:
 
 ```bash
-python -m tools.chembl_tool.tasks.bioavailability_ma.precompute_flat_assay_transfer_cache --prepare
-```
-
-Populate only missing scores with two independent BF16 model replicas using the training environment:
-
-```bash
-CUDA_VISIBLE_DEVICES=0,1 \
-  /vast/projects/myatskar/design-documents/conda_env/open_rlhf_intern/bin/python \
-  -m tools.chembl_tool.tasks.bioavailability_ma.precompute_flat_assay_transfer_cache \
-  --infer --devices 0,1 --batch-size 16 --force-model-download
-```
-
-Run all count, migration, composition, and independent retrieval checks:
-
-```bash
-python -m tools.chembl_tool.tasks.bioavailability_ma.precompute_flat_assay_transfer_cache \
-  --verify --strict-retrieval
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python \
+  -m tools.chembl_tool.tasks.bioavailability_ma.reranking.precompute_assay_transfer_rerank \
+  --input-jsonl data/processed/Bioavailability_Ma/valid.jsonl \
+  --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_five_source_prepared_hf/starling_factor_neighbor_index.pkl \
+  --experiment-mode full_mechanism \
+  --neighbor-identity-policy parent_disjoint \
+  --top-k-per-group 10 \
+  --min-similarity 0.0 \
+  --rerank-raw-pool-size 100 \
+  --rerank-candidate-size 50 \
+  --rerank-catalog <prepared_hf_validation_r100_c50_min0/catalog.jsonl> \
+  --candidate-manifest <manifest.jsonl> \
+  --rerank-cache <cache_v2/scores.sqlite3> \
+  --rerank-devices 0,1,2,3,4,5,6,7 \
+  --rerank-batch-size 32
 ```
 
 Reasoning batches only read the cache and run a complete coverage preflight before starting subprocesses:
@@ -252,12 +358,20 @@ Reasoning batches only read the cache and run a complete coverage preflight befo
 python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
   --retrieval-source starling \
   --experiment-mode full_mechanism \
-  --index outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_factor/starling_factor_neighbor_index.pkl \
+  --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_five_source_prepared_hf/starling_factor_neighbor_index.pkl \
   --retrieval-reranker assay_transfer \
-  --rerank-candidate-manifest outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/assay_transfer_rerank/flat_v2/manifests/test__five_source__operational.jsonl \
-  --rerank-cache-mode read_only
+  --rerank-raw-pool-size 100 \
+  --rerank-candidate-size 50 \
+  --rerank-catalog <prepared_hf_validation_r100_c50_min0/catalog.jsonl> \
+  --rerank-candidate-manifest <prepared_hf_validation_r100_c50_min0/manifest.jsonl> \
+  --rerank-cache <cache_v2/scores.sqlite3> \
+  --rerank-cache-mode read_only \
+  --enable-assay-transfer-scores \
+  --top-k-per-group 7
 ```
 
-Flat catalogs require the exact condition manifest at runtime; concept+molecule lookup is intentionally
-rejected because it could join fifth-source records into a four-source run. Reranking scores and winning
-record IDs remain audit-only retrieval metadata and must not enter group or final reasoning prompts.
+Candidate-scoped catalogs require the exact condition manifest at runtime. The requested k is preserved;
+there is no legacy forced-k5 behavior. With `--enable-assay-transfer-scores`, each selected score is rounded
+to two decimals and exposed only to its group reasoning prompt. Full-precision scores, winning record IDs,
+selection ranks, and structural ranks remain audit-only retrieval metadata and do not enter group or final
+reasoning prompts.

@@ -1,0 +1,8 @@
+# Editable instructions for the assay_transfer_tool group prompt.
+# One instruction per line, rendered numbered at the top of the prompt.
+# Blank lines and lines starting with '#' are ignored.
+Each neighbor presents the assay measurement most likely to transfer to the query, with a transfer likelihood (a 0-1 model estimate); together these are the assays most likely to transfer to the query molecule.
+These likelihoods are the best estimates available but can be inaccurate, so feel free to further analyze the molecules to judge transfer (e.g. mmp_structure_compare for scaffold, MCS, and matched-pair differences).
+Use properties_compare when property differences (pKa, logD, TPSA, charge, HBD/HBA, logP, size, polarity) could affect transferability.
+From the assays that genuinely transfer, determine the implications for the query's oral bioavailability.
+Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.

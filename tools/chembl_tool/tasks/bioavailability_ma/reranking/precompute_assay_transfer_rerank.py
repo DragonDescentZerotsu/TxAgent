@@ -15,11 +15,13 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
-from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     ASSAY_TRANSFER_MODEL,
     ASSAY_TRANSFER_MODEL_REVISION,
+    DEFAULT_TEMPLATE_PROFILE,
     DEFAULT_CACHE,
     DEFAULT_CATALOG,
+    TEMPLATE_PROFILES,
     AssayTransferCachedReranker,
     PromptScore,
     PromptTask,
@@ -28,7 +30,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
     prompt_task_to_dict,
     require_immutable_revision,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.build_assay_transfer_rerank_catalog import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_rerank_catalog import (
     DEFAULT_CANDIDATE_MANIFEST,
     build_candidate_scoped_catalog,
 )
@@ -77,6 +79,8 @@ def main(argv: list[str] | None = None) -> int:
             neighbor_identity_policy=args.neighbor_identity_policy,
             raw_pool_size=args.rerank_raw_pool_size,
             candidate_size=args.rerank_candidate_size,
+            index_path=args.index,
+            condition_id="validation__five_source_prepared_hf__parent_disjoint",
         )
         print(
             f"[assay_transfer_precompute] froze candidates queries={frozen['n_queries']} "
@@ -109,6 +113,7 @@ def main(argv: list[str] | None = None) -> int:
         raw_pool_size=args.rerank_raw_pool_size,
         candidate_size=args.rerank_candidate_size,
         force_rescore=args.force_rescore,
+        template_profile=args.assay_transfer_template_profile,
     )
     print(
         f"[assay_transfer_precompute] queries={len(indices)} prompts_to_score={len(tasks)} "
@@ -117,7 +122,12 @@ def main(argv: list[str] | None = None) -> int:
         flush=True,
     )
     if not tasks:
-        print(json.dumps({"status": "complete", "n_scored": 0, "provenance": reranker.provenance()}, indent=2))
+        print(json.dumps({
+            "status": "complete",
+            "n_scored": 0,
+            "n_prompt_task_references": reranker.prompt_task_reference_count,
+            "provenance": reranker.provenance(),
+        }, indent=2))
         reranker.cache.close()
         return 0
 
@@ -132,7 +142,12 @@ def main(argv: list[str] | None = None) -> int:
         )
     finally:
         reranker.cache.close()
-    print(json.dumps({"status": "complete", **summary, "provenance": reranker.provenance()}, indent=2))
+    print(json.dumps({
+        "status": "complete",
+        **summary,
+        "n_prompt_task_references": reranker.prompt_task_reference_count,
+        "provenance": reranker.provenance(),
+    }, indent=2))
     return 0
 
 
@@ -154,6 +169,7 @@ def collect_prompt_tasks(
     raw_pool_size: int,
     candidate_size: int,
     force_rescore: bool,
+    template_profile: str = DEFAULT_TEMPLATE_PROFILE,
 ) -> tuple[AssayTransferCachedReranker, list[PromptTask]]:
     if experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
         raise ValueError("Assay-transfer reranking requires direct, full_flat, or full_mechanism mode")
@@ -166,6 +182,7 @@ def collect_prompt_tasks(
         model_revision=model_revision,
         allow_missing=True,
         candidate_manifest_path=candidate_manifest_path,
+        template_profile=template_profile,
     )
     for ordinal, index_value in enumerate(indices, start=1):
         query_smiles = str(records[index_value].get(smiles_field) or "")
@@ -212,9 +229,12 @@ def preflight_cache_coverage(
     raw_pool_size: int,
     candidate_size: int,
     require_selected_scores: bool = False,
+    template_profile: str = DEFAULT_TEMPLATE_PROFILE,
+    expected_score_count: int = 0,
+    cache_version_path: str = "",
 ) -> dict[str, Any]:
-    from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_prompt_policy import (
-        enable_scored_top5_prompt_policy,
+    from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
+        prepare_assay_transfer_selected_neighbors,
     )
 
     index = load_index(Path(index_path))
@@ -225,6 +245,7 @@ def preflight_cache_coverage(
         model=model,
         model_revision=model_revision,
         candidate_manifest_path=candidate_manifest_path,
+        template_profile=template_profile,
     )
     n_unscoreable_selected_dropped = 0
     n_scoreable_selected = 0
@@ -243,29 +264,95 @@ def preflight_cache_coverage(
                 rerank_raw_pool_size=raw_pool_size,
                 rerank_candidate_size=candidate_size,
             )
-            if require_selected_scores:
-                enable_scored_top5_prompt_policy(retrieval)
-                coverage = retrieval.get("coverage") or {}
-                n_unscoreable_selected_dropped += int(
-                    coverage.get("n_unscoreable_selected_dropped") or 0
+            prepare_assay_transfer_selected_neighbors(
+                retrieval, expose_scores=require_selected_scores
+            )
+            coverage = retrieval.get("coverage") or {}
+            n_unscoreable_selected_dropped += int(
+                coverage.get("n_unscoreable_selected_dropped") or 0
+            )
+            n_scoreable_selected += int(coverage.get("n_neighbors_total") or 0)
+        quick_check = str(reranker.cache.connection.execute("PRAGMA quick_check").fetchone()[0])
+        if quick_check != "ok":
+            raise ValueError(f"Assay-transfer cache quick_check failed: {quick_check}")
+        total_cache_rows = int(
+            reranker.cache.connection.execute("SELECT COUNT(*) FROM prompt_scores").fetchone()[0]
+        )
+        if expected_score_count:
+            if len(reranker.seen_tasks) != expected_score_count:
+                raise ValueError(
+                    "Assay-transfer prompt demand count mismatch: "
+                    f"expected={expected_score_count}, observed={len(reranker.seen_tasks)}"
                 )
-                n_scoreable_selected += int(coverage.get("n_neighbors_total") or 0)
+            if total_cache_rows != expected_score_count:
+                raise ValueError(
+                    "Assay-transfer cache row count mismatch: "
+                    f"expected={expected_score_count}, observed={total_cache_rows}"
+                )
+        version_validation = _validate_cache_version_manifest(
+            path=cache_version_path,
+            provenance=reranker.provenance(),
+            total_cache_rows=total_cache_rows,
+            expected_score_count=expected_score_count,
+        )
         result = {
             "status": "complete",
             "n_queries": len(indices),
             "n_unique_prompt_scores": len(reranker.seen_tasks),
+            "n_prompt_task_references": reranker.prompt_task_reference_count,
+            "cache_quick_check": quick_check,
+            "n_cache_rows": total_cache_rows,
+            "cache_version_validation": version_validation,
             "provenance": reranker.provenance(),
         }
-        if require_selected_scores:
-            result.update(
-                {
-                    "n_scoreable_selected": n_scoreable_selected,
-                    "n_unscoreable_selected_dropped": n_unscoreable_selected_dropped,
-                }
-            )
+        result.update(
+            {
+                "n_scoreable_selected": n_scoreable_selected,
+                "n_unscoreable_selected_dropped": n_unscoreable_selected_dropped,
+            }
+        )
         return result
     finally:
         reranker.cache.close()
+
+
+def _validate_cache_version_manifest(
+    *,
+    path: str,
+    provenance: dict[str, Any],
+    total_cache_rows: int,
+    expected_score_count: int,
+) -> dict[str, Any]:
+    if not path:
+        return {"status": "not_requested"}
+    version_path = Path(path)
+    if not version_path.is_file():
+        raise FileNotFoundError(f"Assay-transfer cache VERSION manifest does not exist: {path}")
+    payload = json.loads(version_path.read_text(encoding="utf-8"))
+    expected = {
+        "model": provenance["model"],
+        "model_revision": provenance["model_revision"],
+        "scoring_contract_version": provenance["scoring_contract_version"],
+        "template_hash": provenance["template_hash"],
+        "template_profile": provenance["template_profile"],
+        "query_context_policy": provenance["query_context_policy"],
+        "catalog_version": provenance["catalog_version"],
+        "candidate_manifest_sha256": provenance["candidate_manifest_sha256"],
+        "n_prompt_scores": expected_score_count or total_cache_rows,
+    }
+    mismatches = {
+        key: {"expected": value, "observed": payload.get(key)}
+        for key, value in expected.items()
+        if payload.get(key) != value
+    }
+    if payload.get("status") != "complete":
+        mismatches["status"] = {"expected": "complete", "observed": payload.get("status")}
+    if mismatches:
+        raise ValueError(
+            "Assay-transfer cache VERSION manifest mismatch: "
+            + json.dumps(mismatches, sort_keys=True)
+        )
+    return {"status": "pass", "path": str(version_path), "validated_fields": sorted(expected)}
 
 
 def run_spawned_workers(
@@ -631,6 +718,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--rerank-cache-mode", choices=["read_write"], default="read_write")
     parser.add_argument("--assay-transfer-model", default=ASSAY_TRANSFER_MODEL)
     parser.add_argument("--assay-transfer-model-revision", default=ASSAY_TRANSFER_MODEL_REVISION)
+    parser.add_argument(
+        "--assay-transfer-template-profile",
+        choices=TEMPLATE_PROFILES,
+        default=DEFAULT_TEMPLATE_PROFILE,
+    )
     parser.add_argument("--force-model-download", action="store_true")
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--force-rescore", action="store_true")

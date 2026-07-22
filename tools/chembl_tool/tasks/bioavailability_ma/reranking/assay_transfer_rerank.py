@@ -13,10 +13,16 @@ from typing import Any, Iterable
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 ASSAY_TRANSFER_MODEL = "jiosephlee/assay-transfer-tool"
-ASSAY_TRANSFER_MODEL_REVISION = "e7b694d1a3d52f5e50bc55ab73f3a07542ff69eb"
+ASSAY_TRANSFER_MODEL_REVISION = "9515603b1a5c4586e41c221dcdbc5e7487c0c3f5"
 SCORING_CONTRACT_VERSION = "assay_transfer_chat_first_divergent_token_logits.v1"
 CACHE_SCHEMA_VERSION = "assay_transfer_rerank_flat_cache.v2"
 CATALOG_SCHEMA_VERSION = "txagent_assay_transfer_catalog.v1"
+LEGACY_TEMPLATE_PROFILE = "legacy_v3"
+V6_5_TEMPLATE_PROFILE = "v6_5_query_context_copy"
+DEFAULT_TEMPLATE_PROFILE = LEGACY_TEMPLATE_PROFILE
+TEMPLATE_PROFILES = (LEGACY_TEMPLATE_PROFILE, V6_5_TEMPLATE_PROFILE)
+LEGACY_QUERY_CONTEXT_POLICY = "legacy_template_specific_query_context.v1"
+V6_5_QUERY_CONTEXT_POLICY = "copy_retrieval_assay_context_value_hidden.v1"
 DEFAULT_CATALOG = (
     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
     "assay_transfer_rerank/flat_v2/catalog.jsonl"
@@ -26,6 +32,7 @@ DEFAULT_CACHE = (
     "assay_transfer_rerank/flat_v2/scores.sqlite3"
 )
 TEMPLATE_DIR = Path(__file__).with_name("assay_transfer_templates")
+V6_5_TEMPLATE_FILENAME = "assay_transfer_v6_5_intern_default.jinja"
 TEMPLATE_BY_CONCEPT = {
     "oral_bioavailability": "oral_bioavailability_intern_mcqa_v3.jinja",
     "oral_exposure": "oral_exposure_intern_mcqa_v3.jinja",
@@ -70,7 +77,14 @@ class PromptScore:
     transfer_probability: float
 
 
-def template_bundle_hash(template_dir: Path = TEMPLATE_DIR) -> str:
+def template_bundle_hash(
+    template_dir: Path = TEMPLATE_DIR,
+    profile: str = DEFAULT_TEMPLATE_PROFILE,
+) -> str:
+    if profile == V6_5_TEMPLATE_PROFILE:
+        return hashlib.sha256((template_dir / V6_5_TEMPLATE_FILENAME).read_bytes()).hexdigest()
+    if profile != LEGACY_TEMPLATE_PROFILE:
+        raise ValueError(f"Unknown assay-transfer template profile: {profile}")
     digest = hashlib.sha256()
     for concept, filename in sorted(TEMPLATE_BY_CONCEPT.items()):
         path = template_dir / filename
@@ -180,9 +194,22 @@ def load_catalog(path: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
 
 
 class AssayTransferPromptRenderer:
-    def __init__(self, template_dir: Path = TEMPLATE_DIR):
+    def __init__(
+        self,
+        template_dir: Path = TEMPLATE_DIR,
+        *,
+        profile: str = DEFAULT_TEMPLATE_PROFILE,
+    ):
+        if profile not in TEMPLATE_PROFILES:
+            raise ValueError(f"Unknown assay-transfer template profile: {profile}")
         self.template_dir = template_dir
-        self.template_hash = template_bundle_hash(template_dir)
+        self.profile = profile
+        self.query_context_policy = (
+            V6_5_QUERY_CONTEXT_POLICY
+            if profile == V6_5_TEMPLATE_PROFILE
+            else LEGACY_QUERY_CONTEXT_POLICY
+        )
+        self.template_hash = template_bundle_hash(template_dir, profile)
         self.environment = Environment(
             loader=FileSystemLoader(str(template_dir)),
             undefined=StrictUndefined,
@@ -191,6 +218,8 @@ class AssayTransferPromptRenderer:
         )
 
     def render(self, record: dict[str, Any], query_smiles: str) -> str:
+        if self.profile == V6_5_TEMPLATE_PROFILE:
+            return self._render_v6_5(record, query_smiles)
         concept = str(record["assay_concept"])
         filename = TEMPLATE_BY_CONCEPT.get(concept)
         if not filename:
@@ -209,6 +238,37 @@ class AssayTransferPromptRenderer:
         for field in _TEMPLATE_CONTEXT_FIELDS:
             values.setdefault(field, "not specified")
         return self.environment.get_template(filename).render(**values)
+
+    def _render_v6_5(self, record: dict[str, Any], query_smiles: str) -> str:
+        # Import lazily so cache inspection does not initialize RDKit.
+        from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles
+
+        canonical_query_smiles, _ = standardize_smiles(query_smiles)
+        if not canonical_query_smiles:
+            raise ValueError(f"Could not canonicalize assay-transfer query SMILES: {query_smiles!r}")
+        context = {
+            field: str((record.get("template_context") or {}).get(field) or "")
+            for field in _TEMPLATE_CONTEXT_FIELDS
+        }
+        shared_assay_context = {
+            "assay_concept": str(record["assay_concept"]),
+            "canonical_endpoint_key": str(record["canonical_endpoint_key"]),
+            **{f"context_{field}": value for field, value in context.items()},
+        }
+        retrieval = {
+            **shared_assay_context,
+            "canonical_smiles": str(record["canonical_smiles"]),
+            "scalar_value": float(record["value"]),
+            "unit_basis": str(record["unit_basis"]),
+        }
+        query = {
+            **shared_assay_context,
+            "canonical_smiles": canonical_query_smiles,
+        }
+        return self.environment.get_template(V6_5_TEMPLATE_FILENAME).render(
+            retrieval=retrieval,
+            query=query,
+        )
 
 
 class AssayTransferScoreCache:
@@ -373,6 +433,45 @@ class AssayTransferScoreCache:
         return len(rows)
 
 
+# Catalog-record fields copied verbatim into the LLM-visible winning-record payload.
+# The prompt field policy decides which of these are actually rendered.
+_WINNING_RECORD_FIELDS = (
+    "original_smiles",
+    "canonical_smiles",
+    "canonical_endpoint_key",
+    "measurement_label",
+    "value_display",
+    "unit_basis",
+    "metric_type",
+    "threshold_display",
+    "endpoint_subtype",
+    "assay_concept",
+    "endpoint_family",
+    # in-distribution catalog records carry raw narrative for LLM presentation;
+    # reconstructed records omit these (rendered empty, so no effect there).
+    "support_text",
+    "extra_details",
+)
+
+
+def winning_record_payload_from_id(
+    catalog: "AssayTransferCatalog", record_id: str
+) -> dict[str, Any]:
+    """Build a source-agnostic winning-record payload from the scored catalog record.
+
+    The assay-transfer winning record lives in the reranker catalog (keyed by the
+    scoring record_id), a different namespace from evidence-library examples, so the
+    group prompt renders it from here. `context` mirrors the record's template_context.
+    """
+    record = catalog.records_by_id([record_id])[0]
+    payload: dict[str, Any] = {
+        field: record.get(field, "") for field in _WINNING_RECORD_FIELDS
+    }
+    payload["record_id"] = record_id
+    payload["context"] = dict(record.get("template_context") or {})
+    return payload
+
+
 class AssayTransferCachedReranker:
     name = "assay_transfer"
 
@@ -386,6 +485,7 @@ class AssayTransferCachedReranker:
         model_revision: str = ASSAY_TRANSFER_MODEL_REVISION,
         allow_missing: bool = False,
         candidate_manifest_path: str | Path | None = None,
+        template_profile: str = DEFAULT_TEMPLATE_PROFILE,
     ):
         self.model = model
         self.model_revision = require_immutable_revision(model_revision)
@@ -408,10 +508,11 @@ class AssayTransferCachedReranker:
         ):
             raise ValueError("Assay-transfer manifest and catalog versions do not match")
         self.cache = AssayTransferScoreCache(cache_path, mode=cache_mode)
-        self.renderer = AssayTransferPromptRenderer()
+        self.renderer = AssayTransferPromptRenderer(profile=template_profile)
         self.allow_missing = allow_missing
         self.missing_tasks: dict[str, PromptTask] = {}
         self.seen_tasks: dict[str, PromptTask] = {}
+        self.prompt_task_reference_count = 0
 
     def provenance(self) -> dict[str, Any]:
         return {
@@ -420,6 +521,8 @@ class AssayTransferCachedReranker:
             "model_revision": self.model_revision,
             "scoring_contract_version": SCORING_CONTRACT_VERSION,
             "template_hash": self.renderer.template_hash,
+            "template_profile": self.renderer.profile,
+            "query_context_policy": self.renderer.query_context_policy,
             "catalog_version": self.catalog.catalog_version,
             "condition_id": (
                 self.candidate_manifest.condition_id if self.candidate_manifest is not None else ""
@@ -474,6 +577,7 @@ class AssayTransferCachedReranker:
             query_smiles=query_smiles, group_id=group_id, candidates=candidates
         )
         all_tasks = [task for tasks in tasks_by_molecule.values() for task in tasks]
+        self.prompt_task_reference_count += len(all_tasks)
         self.seen_tasks.update((task.cache_key, task) for task in all_tasks)
         cached = self.cache.lookup(all_tasks)
         missing = [task for task in all_tasks if task.cache_key not in cached]
@@ -492,6 +596,7 @@ class AssayTransferCachedReranker:
                 for task in tasks_by_molecule[molecule_id]
                 if task.cache_key in cached
             ]
+            winning_record_payload: dict[str, Any] | None = None
             if available:
                 best_score, best_task = sorted(
                     available,
@@ -499,22 +604,74 @@ class AssayTransferCachedReranker:
                 )[0]
                 transfer_probability = best_score.transfer_probability
                 winning_record_id = best_task.record_id
+                winning_record_payload = winning_record_payload_from_id(self.catalog, winning_record_id)
             else:
                 transfer_probability = -1.0
                 winning_record_id = ""
-            output.append(
-                {
-                    **candidate,
-                    "transfer_selection_score": transfer_probability,
-                    "transfer_winning_record_id": winning_record_id,
-                    "transfer_scored_record_count": len(available),
-                }
-            )
+            entry = {
+                **candidate,
+                "transfer_selection_score": transfer_probability,
+                "transfer_winning_record_id": winning_record_id,
+                "transfer_scored_record_count": len(available),
+            }
+            if winning_record_payload is not None:
+                entry["transfer_winning_record"] = winning_record_payload
+            output.append(entry)
         output.sort(
             key=lambda row: (
                 -float(row["transfer_selection_score"]),
                 -float(row.get("similarity") or 0.0),
                 str(row.get("molecule_chembl_id") or ""),
+            )
+        )
+        for rank, row in enumerate(output, start=1):
+            row["transfer_selection_rank"] = rank
+        return output
+
+    def rerank_records(
+        self, *, query_smiles: str, group_id: str, candidates: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Rank at the **record** level: one item per scored record across all candidate
+        molecules, sorted by transfer probability. The same molecule may appear multiple
+        times. Scoring is identical to `rerank()`; only the selection unit differs.
+        """
+        tasks_by_molecule = self.tasks_for_candidates(
+            query_smiles=query_smiles, group_id=group_id, candidates=candidates
+        )
+        all_tasks = [task for tasks in tasks_by_molecule.values() for task in tasks]
+        self.prompt_task_reference_count += len(all_tasks)
+        self.seen_tasks.update((task.cache_key, task) for task in all_tasks)
+        cached = self.cache.lookup(all_tasks)
+        missing = [task for task in all_tasks if task.cache_key not in cached]
+        self.missing_tasks.update((task.cache_key, task) for task in missing)
+        if missing and not self.allow_missing:
+            raise AssayTransferCacheMiss(
+                f"Assay-transfer cache is missing {len(missing)} of {len(all_tasks)} prompt scores "
+                f"for family {group_id}; run precompute_assay_transfer_rerank first"
+            )
+
+        output = []
+        for candidate in candidates:
+            molecule_id = str(candidate["molecule_chembl_id"])
+            for task in tasks_by_molecule[molecule_id]:
+                score = cached.get(task.cache_key)
+                if score is None:
+                    continue  # unscoreable record (only reachable when allow_missing)
+                output.append(
+                    {
+                        **candidate,
+                        "transfer_selection_score": score.transfer_probability,
+                        "transfer_winning_record_id": task.record_id,
+                        "transfer_winning_record": winning_record_payload_from_id(
+                            self.catalog, task.record_id
+                        ),
+                        "transfer_scored_record_count": 1,
+                    }
+                )
+        output.sort(
+            key=lambda row: (
+                -float(row["transfer_selection_score"]),
+                str(row["transfer_winning_record_id"]),
             )
         )
         for rank, row in enumerate(output, start=1):

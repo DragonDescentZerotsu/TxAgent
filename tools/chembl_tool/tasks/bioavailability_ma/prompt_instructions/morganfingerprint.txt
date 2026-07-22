@@ -1,0 +1,9 @@
+# Editable instructions for the morganfingerprint group prompt.
+# One instruction per line, rendered numbered at the top of the prompt.
+# Blank lines and lines starting with '#' are ignored.
+Each neighbor is a structural analog of the query retrieved by Morgan fingerprint similarity (shown with a Tanimoto score and a similarity label), together with its associated assay evidence records.
+Low-similarity analogs may also be included, so judge for each analog whether its evidence structurally transfers to the query rather than assuming it does.
+Use mmp_structure_compare to inspect scaffold, MCS, and matched-pair differences when the similarity label alone is not enough.
+Use properties_compare when property differences (pKa, logD, TPSA, charge, HBD/HBA, logP, size, polarity) could affect transferability.
+From the evidence that genuinely transfers, determine the implications for the query's oral bioavailability.
+Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.

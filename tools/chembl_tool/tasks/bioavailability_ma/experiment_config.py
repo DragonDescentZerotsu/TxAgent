@@ -96,7 +96,24 @@ STARLING = SourceExperimentConfig(
     ),
 )
 
-SOURCES = {"chembl": CHEMBL, "starling": STARLING}
+# In-distribution retrieval over the starling normalized (hf_cleaned) molecules. The
+# neighbor index already keys on the five paper group_ids, so the group mapping is
+# identical to STARLING; only the source name (and the index/catalog paths) differ.
+STARLING_IN_DISTRIBUTION = SourceExperimentConfig(
+    source_name="starling_in_distribution",
+    direct_groups=STARLING.direct_groups,
+    mechanism_groups=STARLING.mechanism_groups,
+)
+
+SOURCES = {
+    "chembl": CHEMBL,
+    "starling": STARLING,
+    "starling_in_distribution": STARLING_IN_DISTRIBUTION,
+}
+
+# Retrieval sources whose molecules come from the starling assay-transfer data and are
+# therefore eligible for assay-transfer scoring.
+STARLING_RETRIEVAL_SOURCES = frozenset({"starling", "starling_in_distribution"})
 
 
 def get_source_config(source: str) -> SourceExperimentConfig:

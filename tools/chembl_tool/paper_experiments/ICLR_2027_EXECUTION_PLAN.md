@@ -62,7 +62,7 @@ matched-prefetch 和 21 个 deployment-visible agentic。它们用于确定研�
 |---|---|---|---|---|
 | E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；现有 17 retrieval 条件首轮消融完成 |
 | E1 | None vs direct retrieval | C1、C3 | P0 | 第一轮完成；最终矩阵待重跑 |
-| E2 | ChEMBL vs Starling | C2 | P0 | Bio/BBB direct 部分完成；数据不全 |
+| E2 | ChEMBL vs Starling | C2 | P0 | Bio prepared-HF validation/index rerun complete; BBB direct partial; final cross-task data still incomplete |
 | E3 | Source-quality 人工 annotation | C2、C6 | P0 | 未开始 |
 | E4 | Flat vs mechanism | C3 | P0 | 第一轮完成；全 Starling 未完成 |
 | E5 | Deployment-visible agentic 主矩阵与工具行为分析 | C4、C5 | P0 | 当前 21 条件完成；缺 8 个 Starling 条件及最终数据冻结重跑 |

@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles
-from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     CATALOG_SCHEMA_VERSION,
     TEMPLATE_BY_CONCEPT,
     template_bundle_hash,
@@ -70,6 +70,8 @@ def build_candidate_scoped_catalog(
     neighbor_identity_policy: str,
     raw_pool_size: int,
     candidate_size: int,
+    index_path: str = "",
+    condition_id: str = "validation__candidate_scoped",
 ) -> dict[str, Any]:
     """Freeze exactly the retained validation candidates and their attached source records."""
     from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
@@ -113,6 +115,7 @@ def build_candidate_scoped_catalog(
             )
         manifest_rows.append(
             {
+                "record_type": "candidate_group",
                 "query_index": selection["query_index"],
                 "query_smiles": selection["query_smiles"],
                 "group_id": selection["group_id"],
@@ -130,7 +133,8 @@ def build_candidate_scoped_catalog(
         "record_type": "catalog_metadata",
         "schema_version": CATALOG_SCHEMA_VERSION,
         "catalog_version": catalog_version,
-        "source_mode": "frozen_index_validation_candidates",
+        "source_mode": "flat_prepared_hf_validation_candidates",
+        "conditions": [condition_id],
         "index_version": str(index.get("version") or ""),
         "template_hash": template_bundle_hash(),
         "n_queries": len(indices),
@@ -144,10 +148,30 @@ def build_candidate_scoped_catalog(
         for record in catalog_records:
             handle.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
     manifest_output.parent.mkdir(parents=True, exist_ok=True)
+    manifest_metadata = {
+        "record_type": "manifest_metadata",
+        "schema_version": "assay_transfer_candidate_manifest.flat.v2",
+        "condition_id": condition_id,
+        "catalog_version": catalog_version,
+        "index_path": index_path,
+        "index_version": str(index.get("version") or ""),
+        "identity_policy": neighbor_identity_policy,
+        "n_queries": len(indices),
+        "n_groups": len(manifest_rows),
+        "n_candidates": sum(len(row["candidates"]) for row in manifest_rows),
+        "min_similarity": min_similarity,
+        "raw_pool_size": raw_pool_size,
+        "candidate_size": candidate_size,
+    }
     with manifest_output.open("w", encoding="utf-8") as handle:
-        for row in manifest_rows:
+        for row in [manifest_metadata, *manifest_rows]:
             handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
-    return {**metadata, "candidate_manifest": str(manifest_output), "catalog": str(output)}
+    return {
+        **metadata,
+        "manifest_metadata": manifest_metadata,
+        "candidate_manifest": str(manifest_output),
+        "catalog": str(output),
+    }
 
 
 def _records_from_index_candidate(group_id: str, candidate: dict[str, Any]) -> list[dict[str, Any]]:

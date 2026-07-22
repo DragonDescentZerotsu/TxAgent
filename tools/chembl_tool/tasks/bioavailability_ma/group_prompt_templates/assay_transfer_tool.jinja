@@ -1,0 +1,31 @@
+## INSTRUCTIONS
+{% for line in instructions %}
+{{ loop.index }}. {{ line }}
+{% endfor %}
+
+## ASPECT OF ORAL BIOAVAILABILITY
+{{ group.description }}
+
+## QUERY MOLECULE
+- SMILES: {{ query_smiles }}
+
+## NEIGHBOR ANALOGS ({{ neighbors|length }})
+{% for neighbor in neighbors %}
+
+[Neighbor {{ neighbor.rank }}]
+{% for label, value in neighbor.header %}
+- {{ label }}: {{ value }}
+{% endfor %}
+{% if neighbor.winning_record %}
+  Assay measurement:
+{% for label, value in neighbor.winning_record %}
+  - {{ label }}: {{ value }}
+{% endfor %}
+{% else %}
+  Assay measurement: none
+{% endif %}
+{% endfor %}
+
+Return a single JSON object with exactly this schema:
+{{ output_schema }}
+Return only valid JSON.

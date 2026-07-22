@@ -1,0 +1,24 @@
+## INSTRUCTIONS
+{% for line in instructions %}
+{{ loop.index }}. {{ line }}
+{% endfor %}
+
+## QUERY MOLECULE
+- SMILES: {{ query_smiles }}
+
+## RETRIEVAL COVERAGE
+{{ coverage_text }}
+
+## SINGLE-MOLECULE ANALYSIS (physicochemical prior)
+{{ single_text }}
+
+## GROUP ANALYSES ({{ groups|length }})
+{% for g in groups %}
+
+[{{ g.group_id }}] (status: {{ g.status }})
+{{ g.text }}
+{% endfor %}
+
+Return a single JSON object with exactly this schema:
+{{ output_schema }}
+Return only valid JSON.

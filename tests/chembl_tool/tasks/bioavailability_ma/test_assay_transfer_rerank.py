@@ -7,10 +7,12 @@ from types import SimpleNamespace
 
 import pytest
 
-from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     ASSAY_TRANSFER_MODEL_REVISION,
     CATALOG_SCHEMA_VERSION,
     SCORING_CONTRACT_VERSION,
+    V6_5_QUERY_CONTEXT_POLICY,
+    V6_5_TEMPLATE_PROFILE,
     AssayTransferCacheMiss,
     AssayTransferCachedReranker,
     AssayTransferPromptRenderer,
@@ -21,11 +23,11 @@ from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
     probability_from_log_likelihoods,
     template_bundle_hash,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.precompute_assay_transfer_rerank import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.precompute_assay_transfer_rerank import (
     resolve_model_snapshot,
     run_spawned_workers,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.build_assay_transfer_rerank_catalog import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_rerank_catalog import (
     _index_example_record,
 )
 
@@ -87,6 +89,60 @@ def test_vendored_fa_template_renders_training_contract_exactly():
     assert prompt.endswith("(B) not transfer\n\nAnswer:\n")
 
 
+def test_v6_5_template_is_exact_and_copies_context_while_hiding_query_value():
+    record = _record("r1", smiles="CCN", value="10")
+    record["template_context"].update(
+        {
+            "species_or_population": "rat",
+            "dose": "5 mg/kg",
+            "measured_process": "fraction absorbed",
+            "extra_details": "fed state",
+        }
+    )
+    renderer = AssayTransferPromptRenderer(profile=V6_5_TEMPLATE_PROFILE)
+    prompt = renderer.render(record, "C(C)O")
+    retrieval, query = prompt.split("Target query record (value hidden)", 1)
+
+    assert renderer.template_hash == "e30f995988db7214cae4b170a2c36f3a5fd61b6bee6188b39ce54377fa67f5bd"
+    assert renderer.query_context_policy == V6_5_QUERY_CONTEXT_POLICY
+    assert "- <SMILES>CCN</SMILES>" in retrieval
+    assert "- known value: 10 percent" in retrieval
+    assert "- <SMILES>CCO</SMILES>" in query
+    assert "- endpoint: q2.intestinal_absorption.fraction_absorbed.percent" in retrieval
+    assert "- endpoint: q2.intestinal_absorption.fraction_absorbed.percent" in query
+    for line in (
+        "- species or population: rat",
+        "- dose: 5 mg/kg",
+        "- measured process: fraction absorbed",
+        "- extra details: fed state",
+    ):
+        assert line in retrieval
+        assert line in query
+    assert "known value" not in query
+    assert "scalar_value" not in query
+    assert "value_display" not in query
+
+
+def test_v6_5_profile_changes_template_hash_prompt_hash_and_cache_key():
+    common = {
+        "record": _record("r1"),
+        "query_smiles": "CCO",
+        "group_id": "Fa.absorption_solubility_permeability",
+        "molecule_id": "A",
+        "model": "model",
+        "model_revision": "a" * 40,
+        "catalog_version": "catalog",
+    }
+    legacy = build_prompt_task(renderer=AssayTransferPromptRenderer(), **common)
+    v6_5 = build_prompt_task(
+        renderer=AssayTransferPromptRenderer(profile=V6_5_TEMPLATE_PROFILE), **common
+    )
+
+    assert legacy.template_hash != v6_5.template_hash
+    assert legacy.prompt_hash != v6_5.prompt_hash
+    assert legacy.cache_key != v6_5.cache_key
+
+
 def test_best_record_aggregation_and_deterministic_molecule_tie_breaking(tmp_path):
     catalog = tmp_path / "catalog.jsonl"
     cache_path = tmp_path / "scores.sqlite3"
@@ -122,8 +178,57 @@ def test_best_record_aggregation_and_deterministic_molecule_tie_breaking(tmp_pat
     reranker.cache.close()
 
     assert [row["molecule_chembl_id"] for row in reranked] == ["B", "A"]
-    assert next(row for row in reranked if row["molecule_chembl_id"] == "A")["transfer_winning_record_id"] == "a2"
+    row_a = next(row for row in reranked if row["molecule_chembl_id"] == "A")
+    assert row_a["transfer_winning_record_id"] == "a2"
     assert all(row["transfer_scored_record_count"] >= 1 for row in reranked)
+    # The winning-record payload is attached and matches the winning catalog record.
+    winning = row_a["transfer_winning_record"]
+    assert winning["record_id"] == "a2"
+    assert winning["value_display"] == "20"  # a2 was written with value="20"
+    assert winning["original_smiles"] == "CCN"
+    assert winning["context"] == {"study_or_assay_system": "human oral study"}
+    # canonical_smiles is carried in the payload (policy decides visibility, not rerank).
+    assert winning["canonical_smiles"] == "CCN"
+
+
+def test_rerank_records_selects_top_records_across_molecules(tmp_path):
+    catalog = tmp_path / "catalog.jsonl"
+    cache_path = tmp_path / "scores.sqlite3"
+    # molecule A has two records; B has one.
+    _write_catalog(catalog, [_record("a1", "CCN"), _record("a2", "CCN", value="20"), _record("b1", "CCC")])
+    candidates = [_candidate("A", "CCN", 0.7), _candidate("B", "CCC", 0.9)]
+
+    writer = AssayTransferCachedReranker(
+        catalog_path=catalog, cache_path=cache_path, cache_mode="read_write", allow_missing=True
+    )
+    tasks = writer.tasks_for_candidates(
+        query_smiles="CCO", group_id="Fa.absorption_solubility_permeability", candidates=candidates
+    )
+    # Both of molecule A's records outscore B's single record.
+    scores = {"a1": 0.9, "a2": 0.8, "b1": 0.5}
+    flat = [t for v in tasks.values() for t in v]
+    writer.cache.write_batch(
+        flat,
+        [PromptScore(t.cache_key, math.log(scores[t.record_id]), math.log(1 - scores[t.record_id]), scores[t.record_id]) for t in flat],
+    )
+    writer.cache.close()
+
+    reranker = AssayTransferCachedReranker(catalog_path=catalog, cache_path=cache_path, cache_mode="read_only")
+    records = reranker.rerank_records(
+        query_smiles="CCO", group_id="Fa.absorption_solubility_permeability", candidates=candidates
+    )
+    reranker.cache.close()
+
+    # one item per scored record, ranked by transfer score (records, not molecules)
+    assert [r["transfer_winning_record_id"] for r in records] == ["a1", "a2", "b1"]
+    # the top-2 records are BOTH from molecule A
+    top2 = records[:2]
+    assert [r["molecule_chembl_id"] for r in top2] == ["A", "A"]
+    assert {r["transfer_winning_record_id"] for r in top2} == {"a1", "a2"}
+    # each carries its own record as the winning record, count 1
+    assert all(r["transfer_scored_record_count"] == 1 for r in records)
+    assert records[0]["transfer_winning_record"]["record_id"] == "a1"
+    assert records[1]["transfer_winning_record"]["record_id"] == "a2"
 
 
 def test_missing_cache_fails_without_partial_tanimoto_fallback(tmp_path):

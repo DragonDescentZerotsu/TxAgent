@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
-from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     ASSAY_TRANSFER_MODEL,
     ASSAY_TRANSFER_MODEL_REVISION,
     CATALOG_SCHEMA_VERSION,
@@ -26,13 +26,13 @@ from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
     prompt_task_from_dict,
     template_bundle_hash,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.build_assay_transfer_rerank_catalog import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_rerank_catalog import (
     _CandidateCollector,
     _canonical_json,
     _records_from_index_candidate,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLING
-from tools.chembl_tool.tasks.bioavailability_ma.precompute_assay_transfer_rerank import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.precompute_assay_transfer_rerank import (
     resolve_model_snapshot,
     run_spawned_workers,
 )

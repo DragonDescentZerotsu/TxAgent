@@ -41,22 +41,35 @@ from tools.chembl_tool.tasks.bioavailability_ma.chembl_exact_context import (
     enrich_retrieval_with_chembl_context,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.constants import BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT
-from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_rerank import (
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     ASSAY_TRANSFER_MODEL,
     ASSAY_TRANSFER_MODEL_REVISION,
+    DEFAULT_TEMPLATE_PROFILE,
+    TEMPLATE_PROFILES,
     DEFAULT_CACHE as DEFAULT_RERANK_CACHE,
     DEFAULT_CATALOG as DEFAULT_RERANK_CATALOG,
     AssayTransferCachedReranker,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.assay_transfer_prompt_policy import (
-    SCORED_TOP5_POLICY_NAME,
-    enable_scored_top5_prompt_policy,
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
+    SCORED_NEIGHBORS_POLICY_NAME,
+    prepare_assay_transfer_selected_neighbors,
     public_assay_transfer_score,
-    resolve_scored_top5_top_k,
-    scored_top5_prompt_enabled,
+    scored_neighbors_prompt_enabled,
+    validate_scored_neighbors_configuration,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import get_source_config
+from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
+    STARLING_RETRIEVAL_SOURCES,
+    get_source_config,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
+    SUPPORTED_FORMATS as TEXT_GROUP_PROMPT_FORMATS,
+    build_final_messages,
+    build_group_messages,
+    group_system_message,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import load_index
+
+GROUP_PROMPT_FORMATS = ("legacy", *TEXT_GROUP_PROMPT_FORMATS)
 
 
 DEFAULT_INPUT = "data/processed/Bioavailability_Ma/test.jsonl"
@@ -151,17 +164,19 @@ SINGLE_MOLECULE_TOOL_CHOICE = {"type": "function", "function": {"name": "molecul
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    requested_top_k_per_group = args.top_k_per_group
     try:
-        args.top_k_per_group = resolve_scored_top5_top_k(
-            enabled=args.enable_assay_transfer_scored_top5,
-            requested_top_k=requested_top_k_per_group,
+        validate_scored_neighbors_configuration(
+            enabled=args.enable_assay_transfer_scores,
             experiment_mode=args.experiment_mode,
             retrieval_source=args.retrieval_source,
             retrieval_reranker=args.retrieval_reranker,
         )
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
+    if args.group_prompt_format == "assay_transfer_tool" and args.retrieval_reranker != "assay_transfer":
+        raise SystemExit(
+            "--group-prompt-format assay_transfer_tool requires --retrieval-reranker assay_transfer"
+        )
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
     if not api_key:
@@ -194,8 +209,8 @@ def main(argv: list[str] | None = None) -> int:
 
     reranker = None
     if args.retrieval_reranker == "assay_transfer":
-        if args.retrieval_source != "starling":
-            raise SystemExit("assay_transfer reranking is enabled only for the five Starling Bioavailability families")
+        if args.retrieval_source not in STARLING_RETRIEVAL_SOURCES:
+            raise SystemExit("assay_transfer reranking requires --retrieval-source starling or starling_in_distribution")
         if args.experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
             raise SystemExit("assay_transfer reranking requires direct, full_flat, or full_mechanism mode")
         if args.rerank_cache_mode != "read_only":
@@ -207,6 +222,7 @@ def main(argv: list[str] | None = None) -> int:
             model=args.assay_transfer_model,
             model_revision=args.assay_transfer_model_revision,
             candidate_manifest_path=args.rerank_candidate_manifest,
+            template_profile=args.assay_transfer_template_profile,
         )
     expected_reranker = reranker.provenance() if reranker is not None else {"name": "none"}
     retrieval = load_retrieval_replay(
@@ -239,9 +255,11 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
     if reranker is not None:
         reranker.cache.close()
-    if args.enable_assay_transfer_scored_top5:
+    if reranker is not None:
         try:
-            enable_scored_top5_prompt_policy(retrieval)
+            prepare_assay_transfer_selected_neighbors(
+                retrieval, expose_scores=args.enable_assay_transfer_scores
+            )
         except ValueError as exc:
             raise SystemExit(str(exc)) from exc
     if args.enable_chembl_exact_context and index is not None:
@@ -283,9 +301,28 @@ def main(argv: list[str] | None = None) -> int:
     reasoning_groups = [group for group in reasoning_retrieval["groups"] if group.get("neighbors")]
     if args.max_groups:
         reasoning_groups = reasoning_groups[: args.max_groups]
+    if args.group_prompt_format == "assay_transfer_tool":
+        missing = [
+            (group["group_id"], neighbor.get("molecule_chembl_id"))
+            for group in reasoning_groups
+            for neighbor in group.get("neighbors") or []
+            if not neighbor.get("transfer_winning_record")
+        ]
+        if missing:
+            raise SystemExit(
+                "assay_transfer_tool format requires a winning record on every selected "
+                f"neighbor; missing for {missing[:5]} (re-run precompute/retrieval)."
+            )
     frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
     frozen_groups = load_reusable_group_outputs(args.group_analysis_source_run_dir, retrieval)
 
+    group_prompt_options = {
+        "prompt_min_similarity": (
+            args.group_prompt_min_similarity
+            if args.group_prompt_min_similarity is not None
+            else args.min_similarity
+        ),
+    }
     single_output, group_outputs = _run_parallel_reasoning(
         client,
         reasoning_retrieval,
@@ -293,6 +330,8 @@ def main(argv: list[str] | None = None) -> int:
         max_workers=args.max_workers,
         single_output=frozen_single,
         group_outputs=frozen_groups,
+        group_prompt_format=args.group_prompt_format,
+        group_prompt_options=group_prompt_options,
     )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
@@ -332,7 +371,13 @@ def main(argv: list[str] | None = None) -> int:
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
         "retrieval_reranker": (retrieval.get("experiment") or {}).get("retrieval_reranker", {"name": "none"}),
-        "enable_assay_transfer_scored_top5": args.enable_assay_transfer_scored_top5,
+        "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+        "assay_transfer_template_profile": args.assay_transfer_template_profile,
+        "assay_transfer_prompt_provenance": (
+            (retrieval.get("experiment") or {}).get("retrieval_reranker", {})
+            if reranker is not None
+            else {}
+        ),
         "llm_neighbor_score_policy": (retrieval.get("experiment") or {}).get("llm_neighbor_score_policy", {}),
         "rerank_raw_pool_size": args.rerank_raw_pool_size,
         "rerank_candidate_size": args.rerank_candidate_size,
@@ -363,9 +408,11 @@ def main(argv: list[str] | None = None) -> int:
         if not args.disable_group_tools
         else [],
         "max_tool_rounds": args.max_tool_rounds,
-        "top_k_per_group_requested": requested_top_k_per_group,
+        "top_k_per_group_requested": args.top_k_per_group,
         "top_k_per_group": args.top_k_per_group,
         "min_similarity": args.min_similarity,
+        "group_prompt_format": args.group_prompt_format,
+        "group_prompt_min_similarity": group_prompt_options["prompt_min_similarity"],
         "n_groups_with_neighbors": len(groups),
         "paths": {
             "retrieval": str(retrieval_path),
@@ -390,10 +437,12 @@ def _run_parallel_reasoning(
     max_workers: int,
     single_output: dict[str, Any] | None = None,
     group_outputs: list[dict[str, Any]] | None = None,
+    group_prompt_format: str = "legacy",
+    group_prompt_options: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs = list(group_outputs or [])
     reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
-    include_assay_transfer_score = scored_top5_prompt_enabled(retrieval)
+    include_assay_transfer_score = scored_neighbors_prompt_enabled(retrieval)
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
             executor.submit(
@@ -402,6 +451,8 @@ def _run_parallel_reasoning(
                 _llm_query_payload(retrieval["query"]),
                 group,
                 include_assay_transfer_score=include_assay_transfer_score,
+                prompt_format=group_prompt_format,
+                prompt_options=group_prompt_options,
             ): group["group_id"]
             for group in groups
             if str(group.get("group_id") or "") not in reused_group_ids
@@ -440,11 +491,11 @@ def _run_parallel_reasoning(
     )
 
 
-def _reason_single_molecule(
-    client: OpenAICompatibleClient,
+def single_molecule_messages(
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
-) -> dict[str, Any]:
+) -> list[dict[str, str]]:
+    """Compile the single-molecule stage [system, user] messages (no LLM needed)."""
     instructions = [
         "Call molecule_properties for the query molecule before analysis.",
         "Assess oral bioavailability prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
@@ -475,7 +526,7 @@ def _reason_single_molecule(
             "If exact_query_chembl_context is found, distinguish direct same-molecule ChEMBL bioavailability evidence from the physicochemical prior."
         )
         payload["exact_query_chembl_context"] = chembl_context
-    messages = [
+    return [
         {
             "role": "system",
             "content": (
@@ -495,6 +546,14 @@ def _reason_single_molecule(
             "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
+
+
+def _reason_single_molecule(
+    client: OpenAICompatibleClient,
+    query: dict[str, Any],
+    chembl_context: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    messages = single_molecule_messages(query, chembl_context)
     response = call_single_molecule_branch(
         client,
         messages,
@@ -509,40 +568,44 @@ def _reason_single_molecule(
     }
 
 
+def legacy_group_messages(
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    include_assay_transfer_score: bool = False,
+) -> list[dict[str, str]]:
+    """Compile the legacy JSON group-branch [system, user] messages (no LLM needed)."""
+    return [
+        {"role": "system", "content": group_system_message(group)},
+        {
+            "role": "user",
+            "content": json.dumps(
+                _group_prompt_payload(
+                    query, group, include_assay_transfer_score=include_assay_transfer_score
+                ),
+                ensure_ascii=False,
+            ),
+        },
+    ]
+
+
 def _reason_one_group(
     client: OpenAICompatibleClient,
     query: dict[str, Any],
     group: dict[str, Any],
     *,
     include_assay_transfer_score: bool = False,
+    prompt_format: str = "legacy",
+    prompt_options: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are a medicinal chemistry oral bioavailability analog evidence analyst. "
-                "Reason about whether analog evidence in one endpoint group is transferable to the query molecule. "
-                + (
-                    "Use the harness-prefetched comparison results; do not call tools. "
-                    + ("Do not infer query identity. " if group.get("identity_blind") else "")
-                    if group.get("tools_prefetched") or group.get("identity_blind")
-                    else "You may call the provided molecule comparison tools when structural or property differences matter. "
-                )
-                + "Return only valid JSON."
-            ),
-        },
-        {
-            "role": "user",
-            "content": json.dumps(
-                _group_prompt_payload(
-                    query,
-                    group,
-                    include_assay_transfer_score=include_assay_transfer_score,
-                ),
-                ensure_ascii=False,
-            ),
-        },
-    ]
+    if prompt_format == "legacy":
+        messages = legacy_group_messages(
+            query, group, include_assay_transfer_score=include_assay_transfer_score
+        )
+    else:
+        messages = build_group_messages(
+            query, group, prompt_format=prompt_format, options=prompt_options or {}
+        )
     response = call_group_branch(
         client,
         messages,
@@ -559,67 +622,27 @@ def _reason_one_group(
     }
 
 
+def final_messages(
+    retrieval: dict[str, Any],
+    single_output: dict[str, Any],
+    group_outputs: list[dict[str, Any]],
+) -> list[dict[str, str]]:
+    """Compile the final-synthesis stage [system, user] messages (no LLM needed)."""
+    return build_final_messages(
+        retrieval,
+        single_output,
+        group_outputs,
+        high_f_cutoff=BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT,
+    )
+
+
 def _run_final_reasoning(
     client: OpenAICompatibleClient,
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are a senior oral bioavailability reasoning model. Integrate group-level analog evidence into one final oral bioavailability assessment. "
-                "Return only valid JSON."
-            ),
-        },
-        {
-            "role": "user",
-            "content": json.dumps(
-                {
-                    "task": "Final oral bioavailability prediction from analog evidence.",
-                        "query": _llm_query_payload(retrieval["query"]),
-                    "retrieval_coverage": retrieval["coverage"],
-                    "single_molecule_analysis": {
-                        "status": single_output.get("status"),
-                        "content": validated_branch_content(single_output),
-                    },
-                    "group_reasoning_outputs": [
-                        {
-                            "group_id": item.get("group_id"),
-                            "status": item.get("status"),
-                            "content": validated_branch_content(item),
-                        }
-                        for item in group_outputs
-                    ],
-                    "instructions": [
-                        "Return compact complete JSON.",
-                        f"Use bioavailability_prediction='high' for oral bioavailability F >= {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (Bioavailability_Ma label 1), and bioavailability_prediction='low' for F < {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (label 0).",
-                        "Use the single-molecule analysis as the physicochemical prior.",
-                        "Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.",
-                        "Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
-                        "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
-                        "You must choose exactly one bioavailability_prediction: high or low. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",
-                    ],
-                    "required_json_schema": {
-                        "bioavailability_prediction": "high | low",
-                        "confidence": "high | moderate | low",
-                        "main_reasons": ["string"],
-                        "single_molecule_assessment": "string",
-                        "absorption_and_permeability_assessment": "string",
-                        "solubility_and_dissolution_assessment": "string",
-                        "metabolism_first_pass_and_clearance_assessment": "string",
-                        "transporter_efflux_assessment": "string",
-                        "direct_oral_bioavailability_analog_assessment": "string",
-                        "conflicting_evidence": ["string"],
-                        "evidence_gaps": ["string"],
-                        "final_summary": "string",
-                    },
-                },
-                ensure_ascii=False,
-            ),
-        },
-    ]
+    messages = final_messages(retrieval, single_output, group_outputs)
     response = call_with_json_validation(
         client.chat_json,
         messages,
@@ -645,7 +668,7 @@ def _group_prompt_payload(
             "endpoint_group": group["endpoint_group"],
             "evidence_source": _group_evidence_source(group),
             **(
-                {"assay_transfer_score_policy": SCORED_TOP5_POLICY_NAME}
+                {"assay_transfer_score_policy": SCORED_NEIGHBORS_POLICY_NAME}
                 if include_assay_transfer_score
                 else {}
             ),
@@ -1016,11 +1039,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument(
-        "--enable-assay-transfer-scored-top5",
+        "--enable-assay-transfer-scores",
         action="store_true",
         help=(
-            "For Starling full_mechanism assay-transfer retrieval, atomically select five neighbors per family "
-            "and expose each rounded transfer score to the group reasoning LLM."
+            "For Starling full_mechanism assay-transfer retrieval, expose each selected neighbor's rounded "
+            "transfer score to the group reasoning LLM without changing --top-k-per-group."
         ),
     )
     parser.add_argument("--min-similarity", type=float, default=0.3)
@@ -1037,7 +1060,28 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--rerank-cache-mode", choices=["read_only", "read_write"], default="read_only")
     parser.add_argument("--assay-transfer-model", default=ASSAY_TRANSFER_MODEL)
     parser.add_argument("--assay-transfer-model-revision", default=ASSAY_TRANSFER_MODEL_REVISION)
+    parser.add_argument(
+        "--assay-transfer-template-profile",
+        choices=TEMPLATE_PROFILES,
+        default=DEFAULT_TEMPLATE_PROFILE,
+    )
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
+    parser.add_argument(
+        "--group-prompt-format",
+        choices=list(GROUP_PROMPT_FORMATS),
+        default="legacy",
+        help=(
+            "Group sub-branch prompt format: legacy (JSON, unchanged), morganfingerprint "
+            "(text: molecules + similarity + records), or assay_transfer_tool "
+            "(text: molecules + transfer score + winning record; requires the assay_transfer reranker)."
+        ),
+    )
+    parser.add_argument(
+        "--group-prompt-min-similarity",
+        type=float,
+        default=None,
+        help="morganfingerprint only: drop neighbors below this similarity from the prompt (default: --min-similarity).",
+    )
     return parser.parse_args(argv)
 
 
