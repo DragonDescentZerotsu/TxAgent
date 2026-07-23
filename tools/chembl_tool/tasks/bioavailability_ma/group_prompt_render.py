@@ -3,7 +3,8 @@
 Two formats are produced here, selected by `prompt_format`:
 
 * ``morganfingerprint``  -- molecules + Morgan similarity/label + their records.
-* ``assay_transfer_tool`` -- molecules + transfer score + only the winning record.
+* ``assay_transfer_tool`` -- top-k assay records + transfer score,
+  rendered through the same minimal-evidence record presentation as Morgan retrieval.
 
 Both put the instruction block at the top and end with the same required JSON output
 schema, so the group-output contract (and everything downstream) is unchanged. The
@@ -146,6 +147,41 @@ def _evidence_records(neighbor: dict[str, Any], dataset: str) -> list[list[tuple
     return records
 
 
+def _assay_transfer_evidence_record(
+    selected_record: dict[str, Any], dataset: str, group: dict[str, Any]
+) -> list[tuple[str, str]]:
+    """Normalize one selected catalog record through minimal_evidence.v1 for display."""
+    example = {
+        "endpoint_type": selected_record.get("endpoint_subtype")
+        or selected_record.get("measurement_label")
+        or selected_record.get("canonical_endpoint_key"),
+        "reported_value": selected_record.get("value_display", selected_record.get("value")),
+        "reported_units": selected_record.get("unit_basis"),
+        "context": selected_record.get("context") or {},
+        "support_text": selected_record.get("support_text"),
+    }
+    normalized = evidence_for_llm(
+        {
+            "evidence_source": dataset or selected_record.get("source_id") or "unknown",
+            "canonical_smiles": selected_record.get("canonical_smiles")
+            or selected_record.get("original_smiles"),
+            "group_id": group.get("group_id"),
+            "tier": group.get("tier"),
+            "endpoint_group": group.get("endpoint_group"),
+            "standard_type": example["endpoint_type"],
+            "standard_value": example["reported_value"],
+            "standard_units": example["reported_units"],
+            "evidence_text": example["support_text"],
+            "source_record_examples": [example],
+        }
+    )
+    normalized_example = (normalized.get("examples") or [{}])[0]
+    return _render_fields(
+        normalized_example,
+        included_fields("morganfingerprint.record", dataset),
+    )
+
+
 def load_group_description(group_id: str) -> str:
     """Return the editable natural-language description of a branch, or the group id.
 
@@ -208,17 +244,20 @@ def _build_morgan_context(query: dict[str, Any], group: dict[str, Any], *, min_s
 def _build_assay_transfer_context(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     dataset = _dataset_key(group)
     header_pairs = included_fields("assay_transfer_tool.neighbor", dataset)
-    winning_pairs = included_fields("assay_transfer_tool.record", dataset)
     neighbors_ctx = []
     for neighbor in group.get("neighbors") or []:
-        winning = neighbor.get("transfer_winning_record")
+        selected_record = neighbor.get("transfer_winning_record")
         neighbors_ctx.append(
             {
                 "rank": neighbor.get("rank"),
                 "header": _render_fields(
                     _neighbor_header_source(neighbor, with_transfer_score=True), header_pairs
                 ),
-                "winning_record": _render_fields(winning, winning_pairs) if winning else None,
+                "selected_record": (
+                    _assay_transfer_evidence_record(selected_record, dataset, group)
+                    if selected_record
+                    else []
+                ),
             }
         )
     return {
@@ -246,6 +285,8 @@ def build_group_messages(
         template = "morganfingerprint.jinja"
     elif prompt_format == "assay_transfer_tool":
         context = _build_assay_transfer_context(query, group)
+        # The layout is assay-transfer-specific, but record fields still come from
+        # the shared minimal_evidence.v1 / morganfingerprint.record policy.
         template = "assay_transfer_tool.jinja"
     else:
         raise ValueError(f"Unknown text group-prompt format: {prompt_format!r}")

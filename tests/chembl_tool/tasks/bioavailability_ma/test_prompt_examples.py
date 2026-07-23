@@ -48,6 +48,7 @@ def test_scoring_pair_is_in_distribution():
 
 def test_group_text_formats_are_not_json():
     # legacy is JSON; the two new formats are human-readable text.
+    assert "NEIGHBOR ANALOGS" in _EXAMPLES["group.morganfingerprint.prompt.txt"]
+    assert "SELECTED ASSAY RECORDS" in _EXAMPLES["group.assay_transfer_tool.prompt.txt"]
     for name in ("group.morganfingerprint.prompt.txt", "group.assay_transfer_tool.prompt.txt"):
-        assert "NEIGHBOR ANALOGS" in _EXAMPLES[name]
         assert '"evidence_rows"' not in _EXAMPLES[name]

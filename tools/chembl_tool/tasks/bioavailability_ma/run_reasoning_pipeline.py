@@ -164,6 +164,13 @@ SINGLE_MOLECULE_TOOL_CHOICE = {"type": "function", "function": {"name": "molecul
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    if args.assay_transfer_min_score is not None:
+        if args.retrieval_reranker != "assay_transfer":
+            raise SystemExit(
+                "--assay-transfer-min-score requires --retrieval-reranker assay_transfer"
+            )
+        if not 0.0 <= args.assay_transfer_min_score <= 1.0:
+            raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
     try:
         validate_scored_neighbors_configuration(
             enabled=args.enable_assay_transfer_scores,
@@ -230,6 +237,16 @@ def main(argv: list[str] | None = None) -> int:
         query_smiles,
         expected_reranker_provenance=expected_reranker,
     )
+    if retrieval is not None and args.assay_transfer_min_score is not None:
+        replay_policy = (retrieval.get("experiment") or {}).get(
+            "assay_transfer_selection_policy"
+        ) or {}
+        if replay_policy.get("min_score") != args.assay_transfer_min_score:
+            raise SystemExit(
+                "Retrieval replay assay-transfer threshold mismatch: "
+                f"expected {args.assay_transfer_min_score}, "
+                f"observed {replay_policy.get('min_score')!r}"
+            )
     index = None
     if retrieval is None and args.experiment_mode != "none":
         _log("loading neighbor index")
@@ -248,6 +265,7 @@ def main(argv: list[str] | None = None) -> int:
             reranker=reranker,
             rerank_raw_pool_size=args.rerank_raw_pool_size,
             rerank_candidate_size=args.rerank_candidate_size,
+            assay_transfer_min_score=args.assay_transfer_min_score,
         )
     else:
         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
@@ -310,7 +328,7 @@ def main(argv: list[str] | None = None) -> int:
         ]
         if missing:
             raise SystemExit(
-                "assay_transfer_tool format requires a winning record on every selected "
+                "assay_transfer_tool format requires an assay record on every selected "
                 f"neighbor; missing for {missing[:5]} (re-run precompute/retrieval)."
             )
     frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
@@ -411,7 +429,13 @@ def main(argv: list[str] | None = None) -> int:
         "top_k_per_group_requested": args.top_k_per_group,
         "top_k_per_group": args.top_k_per_group,
         "min_similarity": args.min_similarity,
+        "assay_transfer_min_score": args.assay_transfer_min_score,
         "group_prompt_format": args.group_prompt_format,
+        "group_evidence_presentation": (
+            "minimal_evidence.v1"
+            if args.group_prompt_format in {"morganfingerprint", "assay_transfer_tool"}
+            else "legacy"
+        ),
         "group_prompt_min_similarity": group_prompt_options["prompt_min_similarity"],
         "n_groups_with_neighbors": len(groups),
         "paths": {
@@ -1050,6 +1074,15 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--retrieval-reranker", choices=["none", "assay_transfer"], default="none")
     parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
     parser.add_argument("--rerank-candidate-size", type=int, default=100)
+    parser.add_argument(
+        "--assay-transfer-min-score",
+        type=float,
+        default=None,
+        help=(
+            "Optional inclusive cached transfer-probability floor applied before the final top-k; "
+            "requires --retrieval-reranker assay_transfer."
+        ),
+    )
     parser.add_argument("--rerank-catalog", default=DEFAULT_RERANK_CATALOG)
     parser.add_argument("--rerank-cache", default=DEFAULT_RERANK_CACHE)
     parser.add_argument(
@@ -1073,7 +1106,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help=(
             "Group sub-branch prompt format: legacy (JSON, unchanged), morganfingerprint "
             "(text: molecules + similarity + records), or assay_transfer_tool "
-            "(text: molecules + transfer score + winning record; requires the assay_transfer reranker)."
+            "(text: top-k assay records + transfer scores; the same molecule may repeat; "
+            "requires the assay_transfer reranker)."
         ),
     )
     parser.add_argument(

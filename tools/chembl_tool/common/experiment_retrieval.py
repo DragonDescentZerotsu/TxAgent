@@ -74,6 +74,7 @@ def retrieve_experiment_view(
     reranker: RetrievalReranker | None = None,
     rerank_raw_pool_size: int = 100,
     rerank_candidate_size: int = 100,
+    assay_transfer_min_score: float | None = None,
 ) -> dict[str, Any]:
     """Build a native, direct, flat, mechanism, or retrieval-free query view."""
     if mode not in EXPERIMENT_MODES:
@@ -85,6 +86,10 @@ def retrieve_experiment_view(
             "Reranked retrieval requires 0 < top_k_per_group <= "
             "rerank_candidate_size <= rerank_raw_pool_size"
         )
+    if assay_transfer_min_score is not None and not 0.0 <= assay_transfer_min_score <= 1.0:
+        raise ValueError("assay_transfer_min_score must be between 0 and 1 inclusive")
+    if assay_transfer_min_score is not None and reranker is None:
+        raise ValueError("assay_transfer_min_score requires a retrieval reranker")
     if mode == "none":
         return _query_only_retrieval(query_smiles, mode=mode)
     if index is None:
@@ -120,6 +125,7 @@ def retrieve_experiment_view(
         reranker=reranker,
         rerank_raw_pool_size=rerank_raw_pool_size,
         rerank_candidate_size=rerank_candidate_size,
+        assay_transfer_min_score=assay_transfer_min_score,
     )
     if mode == "full_flat" and mechanism_view.get("status") == "ok":
         mechanism_view["groups"] = [_flatten_groups(mechanism_view["groups"])]
@@ -144,6 +150,7 @@ def _retrieve_specs(
     reranker: RetrievalReranker | None,
     rerank_raw_pool_size: int,
     rerank_candidate_size: int,
+    assay_transfer_min_score: float | None,
 ) -> dict[str, Any]:
     canonical_smiles, inchi_key, query_fp = standardize_smiles_and_fp(query_smiles)
     if query_fp is None:
@@ -180,7 +187,14 @@ def _retrieve_specs(
             reranker=reranker,
             rerank_raw_pool_size=rerank_raw_pool_size,
             rerank_candidate_size=rerank_candidate_size,
+            assay_transfer_min_score=assay_transfer_min_score,
         )
+        selection_metadata = (
+            dict(neighbors.selection_metadata)
+            if isinstance(neighbors, _RankedNeighbors)
+            else {}
+        )
+        neighbors = list(neighbors)
         group_payload = {
             "group_id": spec.group_id,
             "tier": spec.tier,
@@ -195,6 +209,10 @@ def _retrieve_specs(
                 raw_pool_size=rerank_raw_pool_size,
                 candidate_size=rerank_candidate_size,
                 n_selected=len(neighbors),
+                min_score=assay_transfer_min_score,
+                n_below_min_score_dropped=int(
+                    selection_metadata.get("n_below_min_score_dropped", 0)
+                ),
             )
         output_groups.append(group_payload)
 
@@ -206,6 +224,11 @@ def _retrieve_specs(
     }
     if reranker is not None:
         experiment["retrieval_reranker"] = reranker.provenance()
+        experiment["assay_transfer_selection_policy"] = {
+            "min_score": assay_transfer_min_score,
+            "threshold_inclusive": True,
+            "threshold_applied_before_top_k": assay_transfer_min_score is not None,
+        }
     return {
         "status": "ok",
         "evidence_source": dict(index.get("source") or {}),
@@ -242,6 +265,7 @@ def _rank_group_candidates(
     reranker: RetrievalReranker | None = None,
     rerank_raw_pool_size: int = 100,
     rerank_candidate_size: int = 100,
+    assay_transfer_min_score: float | None = None,
 ) -> list[dict[str, Any]]:
     ranked = sorted(
         (
@@ -285,13 +309,28 @@ def _rank_group_candidates(
     if reranker is not None:
         # Record-level top-K: rank every scored record across the candidate molecules and
         # keep the K highest-transfer records (the same molecule may repeat).
-        rerank_records = getattr(reranker, "rerank_records", reranker.rerank)
+        rerank_records = getattr(reranker, "rerank_records", None) or reranker.rerank
         record_neighbors = rerank_records(
             query_smiles=query_smiles,
             group_id=group_id,
             candidates=neighbors,
         )
-        neighbors = record_neighbors[:top_k]
+        n_below_min_score_dropped = 0
+        if assay_transfer_min_score is not None:
+            retained_records = [
+                row
+                for row in record_neighbors
+                if float(row["transfer_selection_score"]) >= assay_transfer_min_score
+            ]
+            n_below_min_score_dropped = len(record_neighbors) - len(retained_records)
+            record_neighbors = retained_records
+        neighbors = _RankedNeighbors(
+            record_neighbors[:top_k],
+            selection_metadata={
+                "assay_transfer_min_score": assay_transfer_min_score,
+                "n_below_min_score_dropped": n_below_min_score_dropped,
+            },
+        )
     for rank, neighbor in enumerate(neighbors, start=1):
         neighbor["rank"] = rank
     return neighbors
@@ -303,6 +342,8 @@ def _rerank_group_metadata(
     raw_pool_size: int,
     candidate_size: int,
     n_selected: int,
+    min_score: float | None,
+    n_below_min_score_dropped: int,
 ) -> dict[str, Any]:
     if reranker is None:
         return {}
@@ -312,8 +353,18 @@ def _rerank_group_metadata(
         "raw_pool_size": raw_pool_size,
         "candidate_size": candidate_size,
         "n_selected": n_selected,
+        "assay_transfer_min_score": min_score,
+        "n_below_min_score_dropped": n_below_min_score_dropped,
         "selection_metadata_is_llm_hidden": True,
     }
+
+
+class _RankedNeighbors(list[dict[str, Any]]):
+    """List-compatible retrieval result carrying group-level audit metadata."""
+
+    def __init__(self, values: list[dict[str, Any]], *, selection_metadata: dict[str, Any]):
+        super().__init__(values)
+        self.selection_metadata = selection_metadata
 
 
 def _flatten_groups(groups: list[dict[str, Any]]) -> dict[str, Any]:
@@ -381,13 +432,25 @@ def _invalid_query(query_smiles: str) -> dict[str, Any]:
 
 
 def _coverage(groups: list[dict[str, Any]], *, min_similarity: float, top_k_per_group: int) -> dict[str, Any]:
-    return {
+    coverage = {
         "n_groups": len(groups),
         "n_groups_with_neighbors": sum(bool(group.get("neighbors")) for group in groups),
         "n_neighbors_total": sum(len(group.get("neighbors") or []) for group in groups),
         "min_similarity": min_similarity,
         "top_k_per_group": top_k_per_group,
     }
+    selections = [
+        group["transfer_neighbor_selection"]
+        for group in groups
+        if group.get("transfer_neighbor_selection") is not None
+    ]
+    if selections:
+        coverage["assay_transfer_min_score"] = selections[0].get("assay_transfer_min_score")
+        coverage["n_below_assay_transfer_min_score_dropped"] = sum(
+            int(selection.get("n_below_min_score_dropped") or 0)
+            for selection in selections
+        )
+    return coverage
 
 
 def _source_name(config: SourceExperimentConfig | None, index: Mapping[str, Any]) -> str:

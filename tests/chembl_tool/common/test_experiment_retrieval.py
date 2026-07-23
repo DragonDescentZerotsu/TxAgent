@@ -208,6 +208,60 @@ def test_rerank_contract_truncates_raw_pool_before_exclusion_and_does_not_backfi
     assert [row["structural_rank"] for row in neighbors] == [3, 2]
 
 
+class _ThresholdReranker:
+    name = "test_threshold"
+
+    def rerank_records(self, *, query_smiles, group_id, candidates):
+        scores = {"a": 0.7, "b": 0.5, "c": 0.4999}
+        return sorted(
+            [
+                {**candidate, "transfer_selection_score": scores[candidate["molecule_chembl_id"]]}
+                for candidate in candidates
+            ],
+            key=lambda row: -row["transfer_selection_score"],
+        )
+
+    def provenance(self):
+        return {"name": self.name, "version": "test.v1"}
+
+
+def test_assay_transfer_threshold_is_inclusive_and_applied_before_top_k():
+    molecules = [
+        {"molecule_chembl_id": "a", "canonical_smiles": "CCN"},
+        {"molecule_chembl_id": "b", "canonical_smiles": "CCC"},
+        {"molecule_chembl_id": "c", "canonical_smiles": "CCCl"},
+    ]
+    index = {
+        "molecules": molecules,
+        "evidence_by_molecule_group": {
+            row["molecule_chembl_id"]: {"Tier 1.direct": [{"id": row["molecule_chembl_id"]}]}
+            for row in molecules
+        },
+    }
+
+    neighbors = _rank_group_candidates(
+        index,
+        [0, 1, 2],
+        source_groups=("Tier 1.direct",),
+        similarities=[0.9, 0.8, 0.7],
+        query_canonical_smiles="CCO",
+        query_inchi_key="",
+        top_k=3,
+        min_similarity=0.0,
+        query_identity=normalize_molecule_identity("CCO"),
+        neighbor_identity_policy="operational",
+        query_smiles="CCO",
+        group_id="Direct.outcome",
+        reranker=_ThresholdReranker(),
+        rerank_raw_pool_size=3,
+        rerank_candidate_size=3,
+        assay_transfer_min_score=0.5,
+    )
+
+    assert [row["molecule_chembl_id"] for row in neighbors] == ["a", "b"]
+    assert neighbors.selection_metadata["n_below_min_score_dropped"] == 1
+
+
 def test_reranker_disabled_preserves_structural_selection_order():
     baseline = retrieve_experiment_view(
         "CO",

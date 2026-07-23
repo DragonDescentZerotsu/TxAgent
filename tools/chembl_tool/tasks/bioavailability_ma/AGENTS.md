@@ -419,3 +419,15 @@ there is no legacy forced-k5 behavior. With `--enable-assay-transfer-scores`, ea
 to two decimals and exposed only to its group reasoning prompt. Full-precision scores, winning record IDs,
 selection ranks, and structural ranks remain audit-only retrieval metadata and do not enter group or final
 reasoning prompts.
+
+Use `--assay-transfer-min-score <probability>` to apply an optional inclusive cached-score floor before the
+final `--top-k-per-group` truncation. The default is unset so historical retrieval remains unchanged. The
+threshold and rejected-record counts are recorded in retrieval, preflight, and batch audit metadata. For the
+frozen in-distribution validation condition, `k=3` with a `0.5` floor retains all 960 selected records across
+all 320 query-family groups; the minimum retained top-three score is exactly `0.5`.
+
+The portable GLM validation launcher is `reranking/run_in_distribution_glm_validation.sh`; its VAST scheduler
+wrapper is `reranking/slurm/run_in_distribution_glm_validation.sbatch`. Runtime profiles expose a separate
+`TXAGENT_REASONING_PYTHON` because the VAST cache-inference and resident-tool environments have different
+dependency sets. The launcher imports the ignored `keys.py` only when `LITELLM_API_KEY` is absent and never
+prints or persists the credential.

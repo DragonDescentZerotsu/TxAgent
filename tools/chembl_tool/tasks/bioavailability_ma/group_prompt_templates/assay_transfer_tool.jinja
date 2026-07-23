@@ -9,20 +9,17 @@
 ## QUERY MOLECULE
 - SMILES: {{ query_smiles }}
 
-## NEIGHBOR ANALOGS ({{ neighbors|length }})
+## SELECTED ASSAY RECORDS ({{ neighbors|length }})
 {% for neighbor in neighbors %}
 
-[Neighbor {{ neighbor.rank }}]
+[Record {{ neighbor.rank }}]
 {% for label, value in neighbor.header %}
 - {{ label }}: {{ value }}
 {% endfor %}
-{% if neighbor.winning_record %}
-  Assay measurement:
-{% for label, value in neighbor.winning_record %}
-  - {{ label }}: {{ value }}
-{% endfor %}
+{% if neighbor.selected_record %}
+- {% for label, value in neighbor.selected_record %}{{ label }}: {{ value }}{% if not loop.last %} | {% endif %}{% endfor %}
 {% else %}
-  Assay measurement: none
+- evidence record: none
 {% endif %}
 {% endfor %}
 

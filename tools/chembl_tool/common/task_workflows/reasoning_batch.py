@@ -35,6 +35,8 @@ class BatchConfig:
     negative_predictions: frozenset[str]
     rerank_preflight: Callable[..., dict[str, Any]] | None = None
     supports_assay_transfer_scores: bool = False
+    group_prompt_formats: tuple[str, ...] = ()
+    default_group_prompt_format: str = ""
 
 
 @dataclass(frozen=True)
@@ -93,6 +95,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
                 expected_score_count=args.rerank_expected_score_count,
                 cache_version_path=args.rerank_cache_version_manifest,
                 retrieval_source=args.retrieval_source,
+                assay_transfer_min_score=args.assay_transfer_min_score,
             )
             _release_preflight_memory()
     manifest = {
@@ -112,7 +115,14 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "retrieval_source": args.retrieval_source,
         "retrieval_reranker": args.retrieval_reranker,
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+        "assay_transfer_min_score": args.assay_transfer_min_score,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
+        "group_prompt_format": args.group_prompt_format,
+        "group_evidence_presentation": (
+            "minimal_evidence.v1"
+            if args.group_prompt_format in {"morganfingerprint", "assay_transfer_tool"}
+            else "legacy"
+        ),
         "llm_neighbor_score_policy": (
             "assay_transfer_scored_neighbors.v1" if args.enable_assay_transfer_scores else ""
         ),
@@ -225,7 +235,9 @@ def _validate_reused_rerank_preflight(
         "retrieval_source": args.retrieval_source,
         "retrieval_reranker": args.retrieval_reranker,
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+        "assay_transfer_min_score": args.assay_transfer_min_score,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
+        "group_prompt_format": args.group_prompt_format,
         "rerank_raw_pool_size": args.rerank_raw_pool_size,
         "rerank_candidate_size": args.rerank_candidate_size,
         "rerank_catalog": args.rerank_catalog,
@@ -446,6 +458,12 @@ def _single_run_command(
         "--min-similarity",
         str(args.min_similarity),
     ]
+    if args.assay_transfer_min_score is not None:
+        command.extend(
+            ["--assay-transfer-min-score", str(args.assay_transfer_min_score)]
+        )
+    if args.group_prompt_format:
+        command.extend(["--group-prompt-format", args.group_prompt_format])
     if not args.enable_thinking:
         command.append("--disable-thinking")
     else:
@@ -937,6 +955,12 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
     parser.add_argument("--rerank-candidate-size", type=int, default=100)
     parser.add_argument(
+        "--assay-transfer-min-score",
+        type=float,
+        default=None,
+        help="Optional inclusive cached transfer-probability floor applied before final top-k.",
+    )
+    parser.add_argument(
         "--rerank-catalog",
         default=(
             "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
@@ -965,6 +989,11 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         "--assay-transfer-template-profile",
         choices=["legacy_v3", "v6_5_query_context_copy"],
         default="legacy_v3",
+    )
+    parser.add_argument(
+        "--group-prompt-format",
+        choices=list(config.group_prompt_formats) or None,
+        default=config.default_group_prompt_format,
     )
     parser.add_argument(
         "--rerank-expected-score-count",
@@ -999,14 +1028,26 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
 
 
 def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespace) -> None:
+    if args.assay_transfer_min_score is not None:
+        if args.retrieval_reranker != "assay_transfer":
+            raise SystemExit(
+                "--assay-transfer-min-score requires --retrieval-reranker assay_transfer"
+            )
+        if not 0.0 <= args.assay_transfer_min_score <= 1.0:
+            raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
+    if args.group_prompt_format and not config.group_prompt_formats:
+        raise SystemExit(f"Pipeline {config.pipeline_module} does not support --group-prompt-format")
     if not args.enable_assay_transfer_scores:
         return
     if not config.supports_assay_transfer_scores:
         raise SystemExit(f"Pipeline {config.pipeline_module} does not support --enable-assay-transfer-scores")
     if args.experiment_mode != "full_mechanism":
         raise SystemExit("--enable-assay-transfer-scores requires --experiment-mode full_mechanism")
-    if args.retrieval_source != "starling":
-        raise SystemExit("--enable-assay-transfer-scores requires --retrieval-source starling")
+    if args.retrieval_source not in {"starling", "starling_in_distribution"}:
+        raise SystemExit(
+            "--enable-assay-transfer-scores requires --retrieval-source "
+            "starling or starling_in_distribution"
+        )
     if args.retrieval_reranker != "assay_transfer":
         raise SystemExit("--enable-assay-transfer-scores requires --retrieval-reranker assay_transfer")
 

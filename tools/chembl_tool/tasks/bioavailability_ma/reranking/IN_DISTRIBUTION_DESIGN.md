@@ -163,10 +163,13 @@ Legacy / Morgan / existing reranker paths are untouched; this is additive behind
   `assay_transfer_prompt_policy` accept `starling_in_distribution`. The **Morgan-retrieval
   arm runs end-to-end with no GPU** (retrieval over the in-distribution pool + rich
   presentation).
-- [x] **Stage 5 — LLM presentation.** `assay_transfer_tool.record` field policy now
-  surfaces `support_text` (+ optional `extra_details`); the in-distribution catalog record
-  carries the raw narrative, so the winning record presents real value + narrative.
-  Verified. (Reconstructed catalogs render these empty — no regression.)
+- [x] **Stage 5 — LLM presentation.** Every top-k assay-transfer record uses the shared
+  `minimal_evidence.v1` / `morganfingerprint.record` field policy; the transfer score and
+  record-level top-k selection are the only retriever-specific presentation elements. The
+  same molecule may appear in multiple ranked entries. The in-distribution catalog carries
+  the raw `support_text`, so each normalized selected record
+  presents the real endpoint, value, unit, context, and narrative. Verified. Reconstructed
+  catalogs keep an empty narrative when none exists.
 - [x] **Stage 3b — candidate manifest + score precompute.** Precompute consumes the
   immutable `starling_in_distribution_catalog.jsonl`, freezes only the condition manifest,
   and scores all identity-eligible survivors from the Morgan top 100 using the v6.5 prompt.

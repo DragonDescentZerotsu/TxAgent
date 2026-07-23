@@ -335,6 +335,7 @@ def preflight_cache_coverage(
     expected_score_count: int = 0,
     cache_version_path: str = "",
     retrieval_source: str = "starling",
+    assay_transfer_min_score: float | None = None,
 ) -> dict[str, Any]:
     from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
         prepare_assay_transfer_selected_neighbors,
@@ -352,6 +353,7 @@ def preflight_cache_coverage(
         template_profile=template_profile,
     )
     n_unscoreable_selected_dropped = 0
+    n_below_min_score_dropped = 0
     n_scoreable_selected = 0
     try:
         for index_value in indices:
@@ -367,6 +369,7 @@ def preflight_cache_coverage(
                 reranker=reranker,
                 rerank_raw_pool_size=raw_pool_size,
                 rerank_candidate_size=candidate_size,
+                assay_transfer_min_score=assay_transfer_min_score,
             )
             prepare_assay_transfer_selected_neighbors(
                 retrieval, expose_scores=require_selected_scores
@@ -374,6 +377,9 @@ def preflight_cache_coverage(
             coverage = retrieval.get("coverage") or {}
             n_unscoreable_selected_dropped += int(
                 coverage.get("n_unscoreable_selected_dropped") or 0
+            )
+            n_below_min_score_dropped += int(
+                coverage.get("n_below_assay_transfer_min_score_dropped") or 0
             )
             n_scoreable_selected += int(coverage.get("n_neighbors_total") or 0)
         quick_check = str(reranker.cache.connection.execute("PRAGMA quick_check").fetchone()[0])
@@ -408,11 +414,13 @@ def preflight_cache_coverage(
             "n_cache_rows": total_cache_rows,
             "cache_version_validation": version_validation,
             "provenance": reranker.provenance(),
+            "assay_transfer_min_score": assay_transfer_min_score,
         }
         result.update(
             {
                 "n_scoreable_selected": n_scoreable_selected,
                 "n_unscoreable_selected_dropped": n_unscoreable_selected_dropped,
+                "n_below_assay_transfer_min_score_dropped": n_below_min_score_dropped,
             }
         )
         return result

@@ -11,8 +11,9 @@ Record types are **format-scoped** so the two formats can differ:
 * ``morganfingerprint.neighbor`` -- neighbor header for the Morgan format.
 * ``morganfingerprint.record``   -- one retrieved evidence record (Morgan format).
 * ``assay_transfer_tool.neighbor`` -- neighbor header for the assay-transfer format.
-* ``assay_transfer_tool.record``   -- the single assay-transfer measurement (from the
-                                      winning catalog record).
+Each assay-transfer selected record is normalized through `minimal_evidence.v1` and
+uses ``morganfingerprint.record``. This intentionally prevents retriever-specific
+evidence presentation drift.
 
 The ``context`` field, where present, is a nested dict; the renderer flattens it to
 ``key: value; key: value`` and drops empty entries. Toggle it as one unit.
@@ -62,7 +63,8 @@ DEFAULT_POLICY: dict[str, list[FieldSpec]] = {
     ],
     # --- assay_transfer_tool format ---
     # Neighbor header: the molecule is identified by SMILES, and the only ranking
-    # signal shown is the transfer likelihood. Morgan similarity/label/molecule-id
+    # signal shown is the record's transfer likelihood. The same molecule may occur
+    # in multiple selected entries. Morgan similarity/label/molecule-id
     # are intentionally omitted (they belong to the Morgan format).
     "assay_transfer_tool.neighbor": [
         FieldSpec("canonical_smiles", "SMILES", include=True),
@@ -70,26 +72,6 @@ DEFAULT_POLICY: dict[str, list[FieldSpec]] = {
         FieldSpec("molecule_chembl_id", "molecule id", include=False),
         FieldSpec("similarity", "Morgan Tanimoto similarity", include=False),
         FieldSpec("similarity_bucket", "similarity label", include=False),
-    ],
-    # The single assay measurement most likely to transfer (from the winning catalog
-    # record). SMILES is shown in the neighbor header, so it is excluded here; the
-    # internal endpoint key and threshold are also excluded.
-    "assay_transfer_tool.record": [
-        FieldSpec("measurement_label", "measurement", include=True),
-        FieldSpec("value_display", "value", include=True),
-        FieldSpec("unit_basis", "unit", include=True),
-        FieldSpec("metric_type", "metric type", include=True),
-        FieldSpec("endpoint_subtype", "endpoint subtype", include=True),
-        FieldSpec("context", "assay context", include=True),
-        # raw narrative present on in-distribution records (empty on reconstructed ones).
-        FieldSpec("support_text", "evidence", include=True),
-        FieldSpec("extra_details", "extra details", include=False),
-        FieldSpec("original_smiles", "SMILES", include=False),
-        FieldSpec("canonical_smiles", "canonical SMILES", include=False),
-        FieldSpec("canonical_endpoint_key", "endpoint", include=False),
-        FieldSpec("threshold_display", "threshold", include=False),
-        FieldSpec("assay_concept", "assay concept", include=False),
-        FieldSpec("endpoint_family", "endpoint family", include=False),
     ],
 }
 

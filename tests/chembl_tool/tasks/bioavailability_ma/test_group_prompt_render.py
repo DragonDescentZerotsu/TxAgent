@@ -90,7 +90,7 @@ def test_morgan_similarity_threshold_drops_low_neighbors():
     assert "NEIGHBOR ANALOGS (1)" in user["content"]
 
 
-def test_assay_transfer_shows_score_and_single_winning_record():
+def test_assay_transfer_shows_score_and_one_record_per_ranked_entry():
     winning = {
         "original_smiles": "c1ccccc1",
         "canonical_smiles": "c1ccccc1-canon",
@@ -102,37 +102,59 @@ def test_assay_transfer_shows_score_and_single_winning_record():
         "threshold_display": "2-fold",
         "endpoint_subtype": "efflux_or_secretory_transport",
         "context": {"transporter_or_enzyme": "P-gp/ABCB1"},
+        "support_text": "polarized transport observed",
     }
     group = _group([_neighbor("M1", "c1ccccc1", 0.45, [EXAMPLE], transfer=0.294, winning=winning)])
     _, user = build_group_messages(QUERY, group, prompt_format="assay_transfer_tool")
     content = user["content"]
     assert "transfer likelihood (0-1): 0.29" in content
-    assert content.count("Assay measurement:") == 1
+    assert "SELECTED ASSAY RECORDS (1)" in content
+    assert "[Record 1]" in content
+    assert "[Neighbor 1]" not in content
+    assert "Records (1):" not in content
+    assert "endpoint: efflux_or_secretory_transport" in content
+    assert "value: 12.4%" in content
+    assert "unit: percent" in content
+    assert "evidence: polarized transport observed" in content
     assert "Winning transfer record" not in content  # internal detail must not reach the prompt
     # SMILES shown once (neighbor header); the in-block SMILES variants are excluded.
     assert "c1ccccc1" in content
     assert "c1ccccc1-canon" not in content
-    # only the winning record, not the 5-example dump semantics
-    assert "Records (" not in content
+    # This ranked entry presents exactly one selected record without a redundant wrapper.
+    assert content.count("endpoint: efflux_or_secretory_transport") == 1
 
 
-def test_field_policy_toggle_changes_output():
-    winning = {"original_smiles": "c1ccccc1", "canonical_smiles": "CANONVAL",
-               "canonical_endpoint_key": "Fg.efflux", "context": {}}
+def test_record_field_policy_is_shared_by_both_retrievers():
+    winning = {
+        "original_smiles": "c1ccccc1",
+        "canonical_endpoint_key": "Fg.efflux",
+        "endpoint_subtype": "efflux_or_secretory_transport",
+        "value_display": "12.4%",
+        "unit_basis": "percent",
+        "context": {},
+    }
     group = _group([_neighbor("M1", "c1ccccc1", 0.45, [EXAMPLE], transfer=0.5, winning=winning)])
 
-    _, before = build_group_messages(QUERY, group, prompt_format="assay_transfer_tool")
-    assert "CANONVAL" not in before["content"]
+    _, morgan_before = build_group_messages(
+        QUERY, group, prompt_format="morganfingerprint", options={"prompt_min_similarity": 0.0}
+    )
+    _, transfer_before = build_group_messages(QUERY, group, prompt_format="assay_transfer_tool")
+    assert "endpoint: efflux_or_secretory_transport" in morgan_before["content"]
+    assert "endpoint: efflux_or_secretory_transport" in transfer_before["content"]
 
-    # Flip canonical_smiles include on, then restore.
-    specs = policy.DEFAULT_POLICY["assay_transfer_tool.record"]
-    idx = next(i for i, s in enumerate(specs) if s.key == "canonical_smiles")
-    specs[idx] = policy.FieldSpec("canonical_smiles", "canonical SMILES", include=True)
+    specs = policy.DEFAULT_POLICY["morganfingerprint.record"]
+    idx = next(i for i, s in enumerate(specs) if s.key == "endpoint_type")
+    original = specs[idx]
+    specs[idx] = policy.FieldSpec("endpoint_type", "endpoint", include=False)
     try:
-        _, after = build_group_messages(QUERY, group, prompt_format="assay_transfer_tool")
-        assert "CANONVAL" in after["content"]
+        _, morgan_after = build_group_messages(
+            QUERY, group, prompt_format="morganfingerprint", options={"prompt_min_similarity": 0.0}
+        )
+        _, transfer_after = build_group_messages(QUERY, group, prompt_format="assay_transfer_tool")
+        assert "endpoint: efflux_or_secretory_transport" not in morgan_after["content"]
+        assert "endpoint: efflux_or_secretory_transport" not in transfer_after["content"]
     finally:
-        specs[idx] = policy.FieldSpec("canonical_smiles", "canonical SMILES", include=False)
+        specs[idx] = original
 
 
 def test_system_message_matches_legacy_string():

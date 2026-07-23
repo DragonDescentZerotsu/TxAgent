@@ -211,3 +211,36 @@ def test_v6_5_template_profile_propagates_from_batch_to_molecule_runner():
     assert command[command.index("--assay-transfer-template-profile") + 1] == (
         "v6_5_query_context_copy"
     )
+
+
+def test_in_distribution_threshold_and_prompt_format_propagate_to_pipeline():
+    args = _parse_batch_args(
+        CONFIG,
+        [
+            "--experiment-mode", "full_mechanism",
+            "--retrieval-source", "starling_in_distribution",
+            "--retrieval-reranker", "assay_transfer",
+            "--assay-transfer-min-score", "0.5",
+            "--enable-assay-transfer-scores",
+            "--group-prompt-format", "assay_transfer_tool",
+        ],
+    )
+    _validate_assay_transfer_scores(CONFIG, args)
+    command = _single_run_command(CONFIG, args, 0, "run", Path("runs"))
+
+    assert command[command.index("--assay-transfer-min-score") + 1] == "0.5"
+    assert command[command.index("--group-prompt-format") + 1] == "assay_transfer_tool"
+
+
+@pytest.mark.parametrize("threshold", ["-0.01", "1.01"])
+def test_batch_rejects_out_of_range_assay_transfer_threshold(threshold):
+    args = _parse_batch_args(
+        CONFIG,
+        [
+            "--retrieval-reranker", "assay_transfer",
+            "--assay-transfer-min-score", threshold,
+        ],
+    )
+
+    with pytest.raises(SystemExit, match="between 0 and 1"):
+        _validate_assay_transfer_scores(CONFIG, args)
