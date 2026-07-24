@@ -8,11 +8,18 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import pickle
+import re
 import statistics
+import time
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
-from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles
+from tools.chembl_tool.common.task_workflows.evidence_library import (
+    build_neighbor_index,
+    fingerprint_metadata,
+    standardize_smiles,
+)
 
 
 @dataclass(frozen=True)
@@ -40,6 +47,8 @@ class StarlingSourceProfile:
     standard_type_prefix: str = ""
     include_endpoint_values: tuple[str, ...] = ()
     exclude_endpoint_values: tuple[str, ...] = ()
+    context_filter_fields: tuple[str, ...] = ()
+    required_context_patterns_by_endpoint: tuple[tuple[str, tuple[str, ...]], ...] = ()
     max_rows: int = 0
     extra_example_fields: tuple[str, ...] = field(default_factory=tuple)
 
@@ -66,6 +75,56 @@ def build_starling_parquet_evidence_rows(
     return rows, {"n_sources": len(profiles), "n_evidence_rows": len(rows), "sources": source_stats}
 
 
+def build_and_write_starling_index(
+    evidence_rows: list[dict[str, Any]],
+    *,
+    out_dir: str | Path,
+    index_version: str,
+    source: dict[str, Any],
+    source_stats: dict[str, Any],
+    evidence_filename: str,
+    index_filename: str,
+    meta_filename: str,
+    workers: int = 1,
+    progress_every: int = 10000,
+) -> dict[str, Any]:
+    """Build and persist a profile-backed Starling index with common metadata."""
+    started = time.monotonic()
+    out_path = Path(out_dir)
+    out_path.mkdir(parents=True, exist_ok=True)
+    index = build_neighbor_index(
+        evidence_rows,
+        index_version=index_version,
+        workers=workers,
+        progress_every=progress_every,
+    )
+    index["source"] = source
+
+    evidence_path = out_path / evidence_filename
+    index_path = out_path / index_filename
+    meta_path = out_path / meta_filename
+    write_jsonl(evidence_path, evidence_rows)
+    with index_path.open("wb") as handle:
+        pickle.dump(index, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    meta = {
+        "index_version": index_version,
+        "n_evidence_rows": len(evidence_rows),
+        "n_index_molecules": len(index["molecules"]),
+        "groups": sorted(index["group_to_molecule_indices"]),
+        "fingerprint": fingerprint_metadata(),
+        "source": source,
+        "source_stats": source_stats,
+        "elapsed_s": round(time.monotonic() - started, 3),
+        "paths": {
+            "evidence_jsonl": str(evidence_path),
+            "index_pkl": str(index_path),
+        },
+    }
+    meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
+    return meta
+
+
 def _load_profile_records(
     profile: StarlingSourceProfile,
     *,
@@ -87,6 +146,10 @@ def _load_profile_records(
     n_invalid_smiles = 0
     n_low_confidence = 0
     n_filtered_endpoint = 0
+    n_filtered_context = 0
+    required_context = {
+        endpoint.lower(): patterns for endpoint, patterns in profile.required_context_patterns_by_endpoint
+    }
     for row_number, raw in enumerate(frame.to_dict(orient="records"), start=1):
         row = {key: _clean_scalar(value) for key, value in raw.items()}
         input_smiles = _text(row.get(profile.smiles_field))
@@ -108,6 +171,12 @@ def _load_profile_records(
         if exclude_values and endpoint_value in exclude_values:
             n_filtered_endpoint += 1
             continue
+        required_patterns = required_context.get(endpoint_value, ())
+        if required_patterns:
+            context_text = " ".join(_text(row.get(field_name)) for field_name in profile.context_filter_fields)
+            if not any(re.search(pattern, context_text, flags=re.IGNORECASE) for pattern in required_patterns):
+                n_filtered_context += 1
+                continue
         confidence = _float_or_none(row.get(profile.confidence_field))
         if confidence is not None and confidence < min_confidence:
             n_low_confidence += 1
@@ -124,6 +193,7 @@ def _load_profile_records(
         "n_invalid_smiles": n_invalid_smiles,
         "n_low_confidence": n_low_confidence,
         "n_filtered_endpoint": n_filtered_endpoint,
+        "n_filtered_context": n_filtered_context,
         "n_unique_smiles": len({_text(row.get("_canonical_smiles")) for row in records}),
         "endpoint_field": profile.endpoint_field,
         "endpoint_counts": dict(
@@ -192,7 +262,7 @@ def _summarize_profile_molecule(
         uncertainty.append("direct_outcome_numeric_value_missing_unit")
 
     row = {
-        "molecule_chembl_id": _starling_molecule_id(smiles),
+        "molecule_chembl_id": starling_molecule_id(smiles),
         "canonical_smiles": smiles,
         "assay_chembl_id": f"STARLING_{profile.source_id.upper()}",
         "assay_tier": profile.assay_tier,
@@ -329,7 +399,8 @@ def _single_value_or_empty(counter: Counter[str]) -> str:
     return values[0] if len(values) == 1 else ""
 
 
-def _starling_molecule_id(smiles: str) -> str:
+def starling_molecule_id(smiles: str) -> str:
+    """Return the stable cross-profile molecule identifier used by Starling indices."""
     digest = hashlib.sha1(smiles.encode("utf-8")).hexdigest()[:16].upper()
     return f"STARLING_{digest}"
 

@@ -191,6 +191,7 @@ tools/chembl_tool/common/task_workflows/
   summarize_outputs.py
   assay_report.py
   evidence_library.py
+  distance_assay_manifest.py
   retrieve_neighbors.py
   chembl_exact_context.py
   reasoning_batch.py
@@ -206,6 +207,9 @@ tools/chembl_tool/common/retrieval_policy.py
 tools/chembl_tool/common/retrieval_ablation.py
 tools/chembl_tool/common/retrieval_replay.py
 tools/chembl_tool/common/experiment_retrieval.py
+tools/chembl_tool/common/evidence_distance.py
+tools/chembl_tool/common/distance_index.py
+tools/chembl_tool/common/distance_retrieval.py
 tools/chembl_tool/common/scalar_knn.py
 tools/chembl_tool/common/starling/evidence_library.py
 ```
@@ -229,6 +233,10 @@ evidence_library.py
   从 assay candidates + activity evidence 构建 molecule-level evidence rows、RDKit fingerprint
   和 neighbor index。task 只配置输入路径、输出文件名、index version 和 assign_endpoint_group。
   支持 `--workers` 并行标准化 molecule / 构建 index，长任务进度会打印 elapsed、rate 和 ETA。
+
+distance_assay_manifest.py
+  E12 的通用 ChEMBL assay 扫描和冻结 manifest workflow。task-local classifier 只决定 family、scope、quality
+  和 mapping reason；公共实现负责 source manifest、纳入/排除审计、activity export 和 graph/config provenance。
 
 retrieve_neighbors.py
   source-local / legacy native retrieval：对细粒度 Tier.endpoint_group 做 analog retrieval，包含 molecule
@@ -273,6 +281,18 @@ retrieval_replay.py
 experiment_retrieval.py
   将 source-local endpoint groups 映射到 task 声明的 direct/mechanism families；确保 full_flat 与
   full_mechanism 使用同一 evidence union，并只改变 reasoning organization。
+
+evidence_distance.py / distance_index.py / distance_retrieval.py
+  E12 独立代码线，已实现 D-root/C-family tree contract：每个 C family 恰有一个聚合 H1 child，每个 H1 至多
+  一个 optional H2 child。每个 C/H1/H2 tree node 独立最多取 3 个 neighbors，并共享同一 similarity threshold；
+  child 内多个 target/measurement families 共享 node budget。公共 builder/retrieval/audit 已能物化
+  D、D+C、D+C+H1、D+C+H1+H2 的 flat/mechanism views，并验证 base parity、nestedness、branch stability
+  和 node budget；这仍是与旧 paper matrix 隔离的 engineering line，尚未注册为 paper LLM condition。
+  graph hop validation 之外还必须执行 same-molecule causal continuity audit：若 assay molecule 只改变 system
+  state，而 downstream endpoint 实际作用于另一个未观测 substrate，则标为 `requires_query_role` 或
+  `context_only`，不得进入主 H1/H2。所有 future task 发布前必须完整声明 `FamilySelfRelevanceAudit` 并通过
+  `validate_self_relevance_audit(..., require_publishable=True)`；prompt 不能替代缺失的 substrate/target role。
+  这些模块不得注册进旧 `EXPERIMENT_MODES`，也不得改变旧 paper matrix 或旧 index。
 
 scalar_knn.py
   共享标量 KNN baseline 实现；当前用于 Bioavailability numeric direct-F 对照，必须和 LLM agent 条件分开报告。
@@ -400,6 +420,11 @@ retrieval evidence 和 provenance。旧 task-specific reasoning output 不再由
 `--split` 时使用 test 并写入 `outputs/paper/molecular_evidence_agent/`；validation 诊断重跑统一加
 `--split valid`，产物隔离写入 `outputs/paper/molecular_evidence_agent_valid/`。可复用入口包括：
 
+Paper-facing structural-analog retrieval 主结果默认使用 `parent_disjoint`。`operational` 必须先跑，作为
+真实部署敏感性对照和 parent-disjoint 选择性 diff/reuse 的 staging source；它不是 analog-retrieval claim
+的默认最终设置。每个新增 retrieval condition 在 operational 完成后必须同轮补齐 parent-disjoint，并报告
+same-parent query/group/neighbor-slot/rank-1 暴露统计。
+
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --split valid ...
 python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
@@ -410,16 +435,27 @@ python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview \
   --output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview.svg \
   --png-output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview_highres.png \
   --data-split valid
+
+python -m tools.chembl_tool.paper_experiments.analyze_coverage_performance \
+  --split valid \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis
+
+python -m tools.chembl_tool.paper_experiments.plot_coverage_performance \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis \
+  --output outputs/paper/molecular_evidence_agent_valid/analysis/figures/coverage_performance_relationship.svg \
+  --data-split valid
 ```
 
-`summarize_parent_disjoint_results.py` 目前通过显式 `--operational-root`、`--parent-root` 和
-`--analysis-dir` 切换 split，详细 valid 命令见 paper-experiments 目录文档。
+`summarize_parent_disjoint_results.py` 目前通过显式 `--operational-root`、`--parent-disjoint-root` 和
+`--output-dir` 切换 split，详细 valid 命令见 paper-experiments 目录文档。
 
-2026-07-17 的 valid 矩阵已完成：三套 visibility/tool-execution 制度各 21 个条件、2,203 个
-sample-condition 且 0 失败；prefetch audit 为 2,203/2,203；parent-disjoint 为 17 个条件、
-1,765 个 sample-condition 且 0 失败。实测结果见 `tools/chembl_tool/paper_experiments/RESULTS.md`。
+2026-07-23 的 valid 矩阵已扩展完成：三套 visibility/tool-execution 制度各 26 个条件、2,713 个
+sample-condition 且 0 失败；prefetch audit 为 2,713/2,713；parent-disjoint 为 22 个条件、
+2,275 个 sample-condition 且 0 失败。Test 的 identity-blind 和 deployment-visible 各 26 个条件，
+matched-prefetch 仍为原 21 个条件。实测结果见 `tools/chembl_tool/paper_experiments/RESULTS.md`。
 
-论文 performance 可视化以 `plot_retrieval_claims_overview.py` 的横向 grouped-bar chart 为唯一模板。
+论文主 performance overview 仍以 `plot_retrieval_claims_overview.py` 的横向 grouped-bar chart 为唯一模板；
+coverage 与性能增幅的关系分析使用 `plot_coverage_performance.py`，并复用 `paper_figure_style.py` 的视觉规范。
 每个 split 的正式 figures 目录只保留 canonical SVG 和一份高分辨率 PNG，不保留
 preview、QA、pre-parent 或已被替代的 overview 代码/产物。
 

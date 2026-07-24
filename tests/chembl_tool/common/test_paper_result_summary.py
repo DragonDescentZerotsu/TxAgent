@@ -1,14 +1,19 @@
 import json
 
+from tools.chembl_tool.paper_experiments.analyze_coverage_performance import (
+    paired_bootstrap_delta_ci_fast,
+)
 from tools.chembl_tool.paper_experiments.summarize_results import (
     _add_holm_adjusted_p,
     _count_identity_leaks,
     _audit_deployment_visibility,
     _llm_prompt_payloads,
+    build_coverage_performance_rows,
     build_visibility_comparisons,
     macro_f1,
     mcnemar_exact_p,
     paired_bootstrap_delta_ci,
+    summarize_coverage_association,
 )
 
 
@@ -27,6 +32,15 @@ def test_paired_bootstrap_delta_ci_preserves_pairing():
     left = [1, 1, 0, 0]
     right = labels
     low, high = paired_bootstrap_delta_ci(labels, left, right, 200)
+    assert low >= 0.5
+    assert high <= 1.0
+
+
+def test_fast_paired_bootstrap_preserves_pairing():
+    labels = [0, 0, 1, 1]
+    left = [1, 1, 0, 0]
+    right = labels
+    low, high = paired_bootstrap_delta_ci_fast(labels, left, right, 1_000)
     assert low >= 0.5
     assert high <= 1.0
 
@@ -98,6 +112,52 @@ def test_visibility_comparison_is_paired_by_query_index():
         item["comparison_type"] == "deployment_visible_prefetched_vs_agentic"
         for item in rows
     )
+
+
+def test_coverage_performance_rows_report_class_coverage_and_paired_gain():
+    baseline_name = "deployment_visible__bbb_martins__none"
+    retrieval_name = "deployment_visible__bbb_martins__chembl_direct"
+    baseline = {
+        0: {"label": 0, "pred_label": 1, "n_groups_with_neighbors": 0},
+        1: {"label": 0, "pred_label": 1, "n_groups_with_neighbors": 0},
+        2: {"label": 1, "pred_label": 0, "n_groups_with_neighbors": 0},
+        3: {"label": 1, "pred_label": 0, "n_groups_with_neighbors": 0},
+    }
+    retrieval = {
+        0: {"label": 0, "pred_label": 0, "n_groups_with_neighbors": 1},
+        1: {"label": 0, "pred_label": 0, "n_groups_with_neighbors": 0},
+        2: {"label": 1, "pred_label": 1, "n_groups_with_neighbors": 1},
+        3: {"label": 1, "pred_label": 1, "n_groups_with_neighbors": 1},
+    }
+    summaries = [
+        {
+            "experiment": baseline_name,
+            "task": "bbb_martins",
+            "visibility_mode": "deployment_visible",
+        },
+        {
+            "experiment": retrieval_name,
+            "task": "bbb_martins",
+            "visibility_mode": "deployment_visible",
+        },
+    ]
+
+    [row] = build_coverage_performance_rows(
+        summaries,
+        {baseline_name: baseline, retrieval_name: retrieval},
+        200,
+    )
+
+    assert row["condition_label"] == "ChEMBL · Direct"
+    assert row["coverage"] == 0.75
+    assert row["negative_coverage"] == 0.5
+    assert row["positive_coverage"] == 1.0
+    assert row["delta_macro_f1"] == 1.0
+    assert row["n_paired"] == 4
+
+    association = summarize_coverage_association([row])
+    assert association["n_conditions"] == 1
+    assert association["n_positive_gain"] == 1
 
 
 def test_deployment_visibility_audit_checks_query_and_neighbor_contract(tmp_path):

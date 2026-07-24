@@ -3,5 +3,10 @@
 __pycache__/
 *.py[cod]
 outputs/
+
+# Starling acquisition queues are reproducible local intermediates and may
+# exceed GitHub's per-file size limit. Keep the extracted evidence and compact
+# provenance files, but not the PMID work queue.
+data/starling_data/**/pmids_to_process.json
 temp.md
 temp.tsv

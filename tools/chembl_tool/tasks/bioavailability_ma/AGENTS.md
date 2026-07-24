@@ -180,6 +180,13 @@ Fa/Fg/Fh 是 task ontology，不是 deterministic classifier。Final prediction 
 下的 task-level builder 默认目录只用于临时开发，不得把历史 index 复制或软链接到正式实验路径；运行前应检查
 meta 中 `index_version`、`include_direct_hf`、`scope`、`evidence_content` 和五个稳定 group ID。
 
+2026-07-23 strict-hop availability census 见
+`outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`。C 之外的
+experimental pKa、LogD/LogP、PPB/Fu 可组成 H1 candidate union（59,049 parents；parent-disjoint >=1 coverage
+98.44%），但没有合格 H2。pKa/LogD/LogP 与 query `molecule_properties` tool 语义重叠；PPB/Fu 只支持
+hepatic clearance 而非 direct absolute F。它们只能作为独立 distance/relevance 设计候选，不得修改现有
+paper matrix。
+
 API key 只能通过环境变量或未提交的本地 env file 提供，不能写入代码、manifest、命令示例或 git。
 
 ## Tests

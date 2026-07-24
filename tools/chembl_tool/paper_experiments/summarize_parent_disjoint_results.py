@@ -63,6 +63,15 @@ def main(argv: list[str] | None = None) -> int:
         "n_sample_conditions": sum(row["n_total"] for row in condition_rows),
         "n_retrieval_changed": sum(row["n_retrieval_changed"] for row in condition_rows),
         "n_sample_reused": sum(row["n_sample_reused"] for row in condition_rows),
+        "n_queries_with_same_parent": plan.get("n_queries_with_same_parent"),
+        "n_groups_with_same_parent": plan.get("n_groups_with_same_parent"),
+        "n_retrieved_neighbor_slots": plan.get("n_retrieved_neighbor_slots"),
+        "n_same_parent_neighbor_slots": plan.get("n_same_parent_neighbor_slots"),
+        "same_parent_neighbor_slot_fraction": plan.get("same_parent_neighbor_slot_fraction"),
+        "n_same_parent_unique_neighbors_summed_per_query": plan.get(
+            "n_same_parent_unique_neighbors_summed_per_query"
+        ),
+        "n_same_parent_rank1_slots": plan.get("n_same_parent_rank1_slots"),
         "n_prediction_flips": len(flip_rows),
         "n_corrected": sum(row["flip_effect"] == "corrected" for row in flip_rows),
         "n_broken": sum(row["flip_effect"] == "broken" for row in flip_rows),
@@ -173,6 +182,15 @@ def summarize_condition(
         "n_total": experiment["n_total"],
         "n_retrieval_changed": experiment["n_changed"],
         "n_sample_reused": experiment["n_reused"],
+        "n_queries_with_same_parent": experiment.get("n_queries_with_same_parent"),
+        "n_groups_with_same_parent": experiment.get("n_groups_with_same_parent"),
+        "n_retrieved_neighbor_slots": experiment.get("n_retrieved_neighbor_slots"),
+        "n_same_parent_neighbor_slots": experiment.get("n_same_parent_neighbor_slots"),
+        "same_parent_neighbor_slot_fraction": experiment.get("same_parent_neighbor_slot_fraction"),
+        "n_same_parent_unique_neighbors_summed_per_query": experiment.get(
+            "n_same_parent_unique_neighbors_summed_per_query"
+        ),
+        "n_same_parent_rank1_slots": experiment.get("n_same_parent_rank1_slots"),
         "n_prediction_flips": len(flips),
         "n_corrected": sum(row["flip_effect"] == "corrected" for row in flips),
         "n_broken": sum(row["flip_effect"] == "broken" for row in flips),
@@ -332,6 +350,12 @@ def _report(summary: dict[str, Any]) -> str:
         f"- sample-condition 总数：{summary['n_sample_conditions']}",
         f"- retrieval 输入变化 / 整条 run 复用：{summary['n_retrieval_changed']} / "
         f"{summary['n_sample_reused']}",
+        f"- same-parent query-condition / group：{summary['n_queries_with_same_parent']} / "
+        f"{summary['n_groups_with_same_parent']}",
+        f"- same-parent neighbor slots / 全部 slots：{summary['n_same_parent_neighbor_slots']} / "
+        f"{summary['n_retrieved_neighbor_slots']} "
+        f"({_format_percent(summary['same_parent_neighbor_slot_fraction'])})",
+        f"- rank-1 same-parent slots：{summary['n_same_parent_rank1_slots']}",
         f"- prediction flips：{summary['n_prediction_flips']}",
         f"- 修正 / 破坏：{summary['n_corrected']} / {summary['n_broken']}",
         f"- retained neighbor identity 冲突：{summary['n_parent_policy_conflicts']}",
@@ -378,6 +402,10 @@ def _report(summary: dict[str, Any]) -> str:
 
 def _format_delta(value: float | None) -> str:
     return f"{value:+.4f}" if value is not None else "不适用"
+
+
+def _format_percent(value: float | None) -> str:
+    return f"{100.0 * value:.2f}%" if value is not None else "不适用"
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:

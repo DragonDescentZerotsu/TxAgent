@@ -60,6 +60,44 @@ class SourceExperimentConfig:
     mechanism_groups: tuple[EvidenceGroupSpec, ...]
 
 
+def retrieve_group_specs_view(
+    query_smiles: str,
+    index: Mapping[str, Any],
+    *,
+    specs: tuple[EvidenceGroupSpec, ...],
+    source_name: str,
+    mode: str,
+    top_k_per_group: int,
+    min_similarity: float,
+    neighbor_identity_policy: str = NeighborIdentityPolicy.OPERATIONAL.value,
+) -> dict[str, Any]:
+    """Public, stateless family retrieval used by cumulative experiment views."""
+    return _retrieve_specs(
+        query_smiles,
+        index,
+        specs=specs,
+        source_name=source_name,
+        mode=mode,
+        top_k_per_group=top_k_per_group,
+        min_similarity=min_similarity,
+        neighbor_identity_policy=neighbor_identity_policy,
+    )
+
+
+def flatten_retrieval_groups(groups: list[dict[str, Any]]) -> dict[str, Any]:
+    """Public wrapper preserving the existing full-flat assembly semantics."""
+    return _flatten_groups(groups)
+
+
+def retrieval_coverage(
+    groups: list[dict[str, Any]],
+    *,
+    min_similarity: float,
+    top_k_per_group: int,
+) -> dict[str, Any]:
+    return _coverage(groups, min_similarity=min_similarity, top_k_per_group=top_k_per_group)
+
+
 def retrieve_experiment_view(
     query_smiles: str,
     index: Mapping[str, Any] | None,

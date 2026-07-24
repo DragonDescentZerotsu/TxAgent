@@ -14,9 +14,25 @@ import shutil
 import subprocess
 from dataclasses import dataclass, replace
 from datetime import date
-from html import escape
 from pathlib import Path
-from typing import Iterable
+
+from .paper_figure_style import (
+    BG,
+    BLIND,
+    CARD,
+    GOLD,
+    GRID,
+    MUTED,
+    NEGATIVE,
+    NEUTRAL,
+    PARENT,
+    POSITIVE,
+    PURPLE,
+    VISIBLE,
+    multiline,
+    rect,
+    svg_text,
+)
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -25,21 +41,6 @@ DEFAULT_OUTPUT = DEFAULT_ANALYSIS_DIR / "figures/retrieval_claims_overview.svg"
 
 WIDTH = 1800
 HEIGHT = 2040
-FONT = "Inter, DejaVu Sans, Arial, sans-serif"
-
-BG = "#F7F8FA"
-CARD = "#FFFFFF"
-INK = "#172033"
-MUTED = "#5E6878"
-GRID = "#D9DEE7"
-BLIND = "#2F6FB0"
-VISIBLE = "#D95F3D"
-PARENT = "#7A8338"
-NEUTRAL = "#8993A2"
-PURPLE = "#6557A4"
-GOLD = "#A66B12"
-POSITIVE = "#177A58"
-NEGATIVE = "#B54848"
 
 
 @dataclass(frozen=True)
@@ -67,6 +68,8 @@ TASKS = (
             Condition("chembl_full_flat", "ChEMBL · Full / Flat"),
             Condition("chembl_full_mechanism", "ChEMBL · Full / Mechanism"),
             Condition("starling_direct", "Starling · Direct"),
+            Condition("starling_full_flat", "Starling · Full / Flat"),
+            Condition("starling_full_mechanism", "Starling · Full / Mechanism"),
         ),
     ),
     Task(
@@ -78,6 +81,9 @@ TASKS = (
             Condition("chembl_direct", "ChEMBL · Direct"),
             Condition("chembl_full_flat", "ChEMBL · Full / Flat"),
             Condition("chembl_full_mechanism", "ChEMBL · Full / Mechanism"),
+            Condition("starling_direct", "Starling · Direct"),
+            Condition("starling_full_flat", "Starling · Full / Flat"),
+            Condition("starling_full_mechanism", "Starling · Full / Mechanism"),
         ),
     ),
     Task(
@@ -109,62 +115,15 @@ TASKS = (
 )
 
 
+# Every paper condition now has an identity-blind visibility control. Keep this
+# named set as an explicit schema hook so a future intentionally omitted control
+# must be declared here rather than silently disappearing from the chart.
+IDENTITY_BLIND_NOT_RUN_CONDITIONS: frozenset[str] = frozenset()
+
+
 def read_tsv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
-
-
-def svg_text(
-    x: float,
-    y: float,
-    value: str,
-    *,
-    size: int = 16,
-    weight: int = 400,
-    fill: str = INK,
-    anchor: str = "start",
-    spacing: float | None = None,
-) -> str:
-    attrs = [
-        f'x="{x:g}"',
-        f'y="{y:g}"',
-        f'font-family="{FONT}"',
-        f'font-size="{size}"',
-        f'font-weight="{weight}"',
-        f'fill="{fill}"',
-        f'text-anchor="{anchor}"',
-    ]
-    if spacing is not None:
-        attrs.append(f'letter-spacing="{spacing:g}"')
-    return f"<text {' '.join(attrs)}>{escape(value)}</text>"
-
-
-def multiline(
-    x: float,
-    y: float,
-    lines: Iterable[str],
-    *,
-    size: int = 14,
-    weight: int = 400,
-    fill: str = MUTED,
-    line_height: int = 20,
-) -> str:
-    spans = []
-    for index, line in enumerate(lines):
-        spans.append(f'<tspan x="{x:g}" dy="{0 if index == 0 else line_height:g}">{escape(line)}</tspan>')
-    return (
-        f'<text x="{x:g}" y="{y:g}" font-family="{FONT}" font-size="{size}" '
-        f'font-weight="{weight}" fill="{fill}" text-anchor="start">'
-        + "".join(spans)
-        + "</text>"
-    )
-
-
-def rect(x: float, y: float, width: float, height: float, *, fill: str, stroke: str = "none", rx: int = 8) -> str:
-    return (
-        f'<rect x="{x:g}" y="{y:g}" width="{width:g}" height="{height:g}" '
-        f'rx="{rx}" fill="{fill}" stroke="{stroke}"/>'
-    )
 
 
 def load_results(analysis_dir: Path) -> dict[str, dict[str, float]]:
@@ -194,8 +153,13 @@ def load_results(analysis_dir: Path) -> dict[str, dict[str, float]]:
         results["parent_disjoint"][experiment] = results["deployment_visible"][experiment]
 
     expected = {f"{task.key}__{condition.suffix}" for task in TASKS for condition in task.conditions}
+    required_by_regime = {
+        "identity_blind": expected - IDENTITY_BLIND_NOT_RUN_CONDITIONS,
+        "deployment_visible": expected,
+        "parent_disjoint": expected,
+    }
     for regime, values in results.items():
-        missing = sorted(expected - values.keys())
+        missing = sorted(required_by_regime[regime] - values.keys())
         if missing:
             raise ValueError(f"Missing {regime} results: {missing}")
     return results
@@ -271,7 +235,12 @@ def render_panel(
     gains = {}
     for regime in results:
         baseline = results[regime][baseline_key]
-        best = max(results[regime][f"{task.key}__{condition.suffix}"] for condition in task.conditions[1:])
+        retrieval_values = [
+            results[regime][experiment]
+            for condition in task.conditions[1:]
+            if (experiment := f"{task.key}__{condition.suffix}") in results[regime]
+        ]
+        best = max(retrieval_values)
         gains[regime] = best - baseline
     parts.append(svg_text(x + 22, y + 62, "Best retrieval gain vs no retrieval:", size=13, weight=600, fill=MUTED))
     gain_positions = (("identity_blind", "Blind", x + 314), ("deployment_visible", "Visible", x + 445), ("parent_disjoint", "Parent", x + 590))
@@ -303,6 +272,10 @@ def render_panel(
             parts.append(rect(x + 12, row_y - 29, width - 24, 58, fill="#F3F5F8", rx=4))
         parts.append(svg_text(x + 22, row_y + 5, condition.label, size=13, weight=600 if condition.suffix == "none" else 500))
         for regime, color, offset in regimes:
+            if experiment not in results[regime]:
+                parts.append(rect(plot_left, row_y + offset - 4.5, 24, 9, fill="none", stroke=GRID, rx=2))
+                parts.append(svg_text(plot_left + 31, row_y + offset + 4, "not run", size=10, weight=600, fill=MUTED))
+                continue
             value = results[regime][experiment]
             bar_width = value / scale_max * (plot_right - plot_left)
             bar_y = row_y + offset - 4.5
@@ -349,7 +322,7 @@ def render(analysis_dir: Path, output: Path, *, data_split: str = "test") -> Non
         f'<metadata>Sources: experiment_summary.tsv and parent_disjoint_ablation/condition_results.tsv; split {data_split}; generated {generated}.</metadata>',
         rect(0, 0, WIDTH, HEIGHT, fill=BG, rx=0),
         svg_text(70, 58, "Does Molecular Evidence Retrieval Improve Property Classification?", size=36, weight=750),
-        svg_text(70, 94, "Two evaluation regimes plus a paired parent-disjoint retrieval-policy ablation", size=20, fill=MUTED),
+        svg_text(70, 94, "Primary parent-disjoint analog results with operational and identity-blind controls", size=20, fill=MUTED),
         svg_text(1730, 58, "GLM-5.2", size=18, weight=700, fill=PURPLE, anchor="end"),
     ]
 
@@ -368,14 +341,16 @@ def render(analysis_dir: Path, output: Path, *, data_split: str = "test") -> Non
     )
 
     setting_card(parts, 70, color=BLIND, eyebrow="IDENTITY-BLIND · SUPPLEMENTARY CONTROL", heading="Evidence-only evaluation", lines=("Structures, names, and source IDs are hidden from the LLM.", "The harness supplies fixed property/comparison summaries."))
-    setting_card(parts, 635, color=VISIBLE, eyebrow="DEPLOYMENT-VISIBLE · MAIN EXPERIMENT", heading="Structure-visible deployment setting", lines=("Structures are visible; the query name is hidden.", "The LLM chooses comparison tools; same-parent records may remain."))
-    setting_card(parts, 1200, color=PARENT, eyebrow="PARENT-DISJOINT · ANALOG-ONLY ABLATION", heading="Same Visible setting, stricter retrieval", lines=("Exclude exact, same-connectivity, and same-parent records.", "Backfill top-k only at similarity ≥ 0.30; no-retrieval is shared."))
+    setting_card(parts, 635, color=VISIBLE, eyebrow="DEPLOYMENT-VISIBLE · OPERATIONAL REFERENCE", heading="Structure-visible deployment setting", lines=("Structures are visible; the query name is hidden.", "The LLM chooses comparison tools; same-parent records may remain."))
+    setting_card(parts, 1200, color=PARENT, eyebrow="PARENT-DISJOINT · PRIMARY ANALOG SETTING", heading="Same Visible setting, analog-only retrieval", lines=("Exclude exact, same-connectivity, and same-parent records.", "Backfill top-k only at similarity ≥ 0.30; no-retrieval is shared."))
 
     render_panel(parts, tasks[0], 70, 510, results)
     render_panel(parts, tasks[1], 915, 510, results)
     render_panel(parts, tasks[2], 70, 1125, results)
     render_panel(parts, tasks[3], 915, 1125, results)
 
+    parts.append(svg_text(70, 1748, "All displayed retrieval conditions have measured Identity-Blind, Operational, and Parent-disjoint results.", size=13, weight=600, fill=MUTED))
+    parts.append(svg_text(70, 1772, "No-retrieval is shared between Operational and Parent-disjoint because neighbor eligibility is not applicable.", size=13, fill=MUTED))
     parts.append(svg_text(70, 1802, "WHAT DO THE CURRENT RESULTS SUPPORT?", size=14, weight=750, fill=PURPLE, spacing=1.2))
     if data_split == "valid":
         parent = results["parent_disjoint"]
@@ -415,9 +390,15 @@ def render(analysis_dir: Path, output: Path, *, data_split: str = "test") -> Non
         claim_card(parts, 630, color=GOLD, eyebrow="CLAIM 2 · STARLING > CHEMBL", heading="PROMISING, PARENT-SENSITIVE", lines=("Bioavailability Starling remains strongest after exclusion, but declines;", "BBB Starling and ChEMBL Direct become nearly tied; coverage is incomplete."))
         claim_card(parts, 1190, color=NEGATIVE, eyebrow="CLAIM 3 · MECHANISM > FLAT", heading="NOT CONSISTENTLY PROVEN", lines=("Parent-disjoint Bioavailability Starling favors Mechanism by +0.023;", "ClinTox moves the other way, and differences remain task-dependent."))
 
+    n_parent_conditions = sum(
+        f"{task.key}__{condition.suffix}" in results["parent_disjoint"]
+        for task in tasks
+        for condition in task.conditions
+        if condition.suffix != "none"
+    )
     parts.extend(
         [
-            svg_text(70, 2012, f"Source: frozen GLM-5.2 full-run artifacts · Values are {data_split} macro-F1 · Parent-disjoint covers 17 retrieval conditions", size=13, fill=MUTED),
+            svg_text(70, 2012, f"Source: frozen GLM-5.2 full-run artifacts · Values are {data_split} macro-F1 · Parent-disjoint covers {n_parent_conditions} retrieval conditions", size=13, fill=MUTED),
             svg_text(1730, 2012, f"Generated {generated}", size=13, fill=MUTED, anchor="end"),
             "</svg>",
         ]

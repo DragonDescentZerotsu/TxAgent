@@ -1,6 +1,7 @@
 import json
 
 from tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results import (
+    _retrieval_coverage,
     summarize_condition,
 )
 
@@ -103,3 +104,24 @@ def test_summarize_condition_rejects_flip_for_reused_prompt(tmp_path):
         assert "identical retrieval input" in str(error)
     else:
         raise AssertionError("Expected unchanged-input flip to be rejected")
+
+
+def test_retrieval_coverage_counts_each_neighbor_slot_once(tmp_path):
+    batch = tmp_path / "batch"
+    run = batch / "runs" / "task_idx00000"
+    run.mkdir(parents=True)
+    (run / "retrieval.json").write_text(
+        json.dumps(
+            {
+                "groups": [
+                    {"neighbors": [{"canonical_smiles": "CCO"}, {"canonical_smiles": "CCN"}]},
+                    {"neighbors": [{"canonical_smiles": "CCC"}]},
+                ]
+            }
+        )
+    )
+
+    assert _retrieval_coverage(batch) == {
+        "n_retained_neighbors": 3,
+        "n_samples_with_neighbors": 1,
+    }

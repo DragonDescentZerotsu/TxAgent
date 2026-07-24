@@ -73,3 +73,58 @@ def test_valid_chart_uses_split_sizes_and_labels(tmp_path):
         assert f">{title}</text>" in svg
     for size in valid_sizes.values():
         assert f">n = {size}</text>" in svg
+
+
+def test_chart_requires_and_renders_all_identity_blind_controls(tmp_path):
+    analysis_dir = tmp_path / "analysis"
+    experiment_rows = []
+    parent_rows = []
+    for task in TASKS:
+        for index, condition in enumerate(task.conditions):
+            experiment = f"{task.key}__{condition.suffix}"
+            experiment_rows.append(
+                {
+                    "experiment": f"deployment_visible__{experiment}",
+                    "visibility_mode": "deployment_visible",
+                    "task": task.key,
+                    "n_total": task.n,
+                    "macro_f1": 0.5 + index / 100,
+                }
+            )
+            experiment_rows.append(
+                {
+                    "experiment": experiment,
+                    "visibility_mode": "identity_blind",
+                    "task": task.key,
+                    "n_total": task.n,
+                    "macro_f1": 0.49 + index / 100,
+                }
+            )
+            if condition.suffix != "none":
+                parent_rows.append(
+                    {
+                        "experiment": experiment,
+                        "parent_disjoint_macro_f1": 0.51 + index / 100,
+                    }
+                )
+
+    _write_tsv(
+        analysis_dir / "experiment_summary.tsv",
+        ["experiment", "visibility_mode", "task", "n_total", "macro_f1"],
+        experiment_rows,
+    )
+    _write_tsv(
+        analysis_dir / "parent_disjoint_ablation/condition_results.tsv",
+        ["experiment", "parent_disjoint_macro_f1"],
+        parent_rows,
+    )
+
+    output = analysis_dir / "figures/retrieval_claims_overview.svg"
+    render(analysis_dir, output)
+    svg = output.read_text(encoding="utf-8")
+
+    assert "Starling · Full / Flat" in svg
+    assert "Starling · Full / Mechanism" in svg
+    assert "not run" not in svg
+    assert "All displayed retrieval conditions have measured Identity-Blind" in svg
+    assert "Parent-disjoint covers 22 retrieval conditions" in svg

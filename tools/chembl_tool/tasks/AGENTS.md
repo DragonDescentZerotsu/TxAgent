@@ -94,6 +94,16 @@ PK scope annotation 表达。
 run；`full_mechanism` 中只有部分 family 变化时，可复用其它独立 group outputs，再重跑变化 branch 和 final。
 所有复用必须记录 `reused_from`、`reuse_reason` 和输入 hash；最终指标仍在完整 test set 上计算。
 
+Paper-facing structural-analog retrieval 的主 policy 是 `parent_disjoint`；`operational` 是必跑的第一阶段
+staging/deployment-sensitivity reference，用于发现 same-parent 暴露并支持选择性复用，不是 analog claim 的
+默认最终结果。每个新 retrieval condition 完成 operational 后必须立即补齐 parent-disjoint，不得只留下
+operational bar。
+
+Same-parent 暴露审计必须区分 query-condition、group、neighbor slot 和 query-condition 内去重 record。
+一个 slot 表示某 neighbor 在某 group 中的一次 LLM-visible 出现；同一 record 出现在多个 mechanism groups
+时分别计数，同时另报 query-condition 内的 unique count 和 rank-1 slot 数，避免把 branch 重复曝光误写成
+独立分子数。
+
 ## Starling 系统背景
 
 这里的 Starling 特指论文 *Self-Driving Datasets: From 20 Million Papers to Nuanced Biomedical Knowledge at Scale* 中的 Starling，不是其它同名软件。官方描述中，Starling 是一个面向大规模生物医学文献的 multi-agent deep research system：给定自然语言 extraction task，它会设计兼顾 precision/recall 的 corpus retrieval probes、从样本文献归纳统一 extraction schema，然后在检索子语料上生成带 supporting passage 和实验条件的结构化记录。
@@ -133,3 +143,35 @@ Starling 默认以 mechanism family 为 acquisition task/prompt/schema 的粒度
 6. Starling task 数默认等于需要采集的 mechanism family 数，不随 endpoint subtype 数量增长。
 7. schema 保留数值、单位、实验条件、scope、supporting passage、quality/uncertainty 和 provenance。
 8. 缺失 SMILES、结构标准化失败、重复 source molecule 和无法分类记录都有可审计统计。
+9. mechanistic/surrogate evidence 通过 same-molecule causal continuity gate：从 assay molecule 沿推理路径追踪
+   causal subject，不能把“该 molecule 改变系统状态”自动写成“该系统随后运输/代谢/伤害的另一个 molecule
+   就是它自己”。
+10. 若结论还需要 query molecule 具备 transporter substrate、enzyme substrate、metabolic precursor、target
+    engagement、sensitizer 等额外角色，该角色必须由同一 molecule 的 retrieval evidence 明确支持；不能让 LLM
+    根据 pathway 常识猜测。未满足时标为 `requires_query_role`，只影响其它 molecule/system 时标为
+    `context_only`，二者均不得进入主 H1/H2 retrieval。
+
+## Same-molecule causal continuity
+
+该检查与 graph hop、`scope_match` 和 `quality_status` 正交。一个 edge 可以有正确方向、可靠文献和高质量 assay，
+但仍然不适合预测 assay molecule 自己的 task label。例如：
+
+```text
+molecule A activates NRF2/AhR
+  -> barrier P-gp abundance increases
+  -> known probe substrate B has lower brain accumulation
+```
+
+若 evidence 没有证明 `A is a P-gp substrate`，最后一步不能用于预测 A 自己的 BBB disposition。类似地，
+`HIF-1 -> GLUT1 abundance -> glucose uptake` 不能用于任意 HIF perturbagen 的自身 BBB influx，除非同一 molecule
+另有 GLUT1 substrate evidence。
+
+所有 future distance-expansion task 必须为每个 measurement family 生成机器可读
+`FamilySelfRelevanceAudit`，并在发布 graph 前调用：
+
+```python
+validate_self_relevance_audit(config, audits, require_publishable=True)
+```
+
+`requires_query_role`、`context_only` 和 `unresolved` 可保留在 candidate/audit artifact 中，但不能通过发布 gate。
+prompt disclaimer 不能替代缺失的 molecule-role evidence。

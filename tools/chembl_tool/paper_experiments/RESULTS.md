@@ -1,25 +1,31 @@
 # 冻结的全量实验结果
 
-运行日期：2026-07-10 至 2026-07-13。
+运行日期：2026-07-10 至 2026-07-23。
 
-当前共有 63 个 GLM 条件和 1 个标量 KNN 基线：
+Test 可见性/执行矩阵共有 73 个 GLM 条件，另有 22 个完整 test-set 的 parent-disjoint retrieval 条件和
+1 个标量 KNN 基线。Valid 诊断矩阵的三套 GLM 制度均已扩展到 26 个条件，共 78 个 GLM 条件，另有
+22 个 parent-disjoint retrieval 条件和 1 个标量 KNN 基线：
 
 - `identity_blind`：query 和 retrieved molecule 的结构、名称及源标识符均不发送给 LLM。
 - `deployment_visible_prefetched`：结构与允许身份信息可见，但 harness 提供与 identity-blind 完全一致的工具结果；它是 parity-controlled visibility 补充控制。
 - `deployment_visible`：query structure visible、query name hidden；retrieved molecule 的 structure、source ID 和数据源已有名称 visible；模型自主选择 group comparison tools。
 
-论文使用口径已更新：`deployment_visible` agentic 结果作为真实部署主实验候选；identity-blind 和
-matched-prefetch 只作为补充控制。当前三套结果都使用第一轮 operational retrieval，其中 same-parent
-盐型、溶剂化物、重复组分或 formulation-linked record 仍可能进入 neighbor 集合。对应 17 个现有
-retrieval 条件的 parent-disjoint 消融已经完成；由于 Starling 数据仍未补齐和最终冻结，本文件中的数值
-仍是 exploratory result，不是最终论文主表。
+论文使用口径已更新：paper-facing structural-analog retrieval 主结果默认使用
+`deployment_visible + parent_disjoint`；`deployment_visible + operational` 是真实部署敏感性对照和选择性
+diff/reuse 的 staging reference。Identity-blind 和 matched-prefetch 只作为补充控制。当前 22 个已有
+retrieval 条件的 parent-disjoint 版本已在 test/valid 均完成；2026-07-22 新增的 5 个 BBB/Skin Starling
+条件也已补齐 test/valid identity-blind 和全部 valid 制度。Test matched-prefetch 仍保留原 21 条件，未补
+这 5 个新增条件。ClinTox Starling 仍未补齐，因此本文件中的数值仍是 exploratory result，不是最终论文主表。
 
-三套制度各有 21 个条件，全部满足 `n_successful == n_total` 且 `n_failed_runs == 0`。Prefetch parity audit
-逐 query 比较了 4,456 对工具 contract，结果为 4,456/4,456 完全一致。请求模型为
+Test identity-blind 和 deployment-visible operational 各有 26 个条件，matched-prefetch 有 21 个条件，
+parent-disjoint 有 22 个 retrieval 条件；全部满足 `n_successful == n_total` 且 `n_failed_runs == 0`。
+Test prefetch parity audit 覆盖配对的 21 个条件、4,456/4,456 samples；valid audit 覆盖 26 个条件、
+2,713/2,713 samples。两者的 missing、extra 和 mismatch 均为 0。请求模型为
 `zai-org/GLM-5.2-FP8`，端点实际返回 `hosted_vllm/nvidia/GLM-5.2-NVFP4`。
 
-Identity-blind 使用 116,008,812 tokens；matched-prefetch visible 使用 121,482,001 tokens；agentic visible
-使用 189,137,772 tokens。Agentic tool-use 比 matched-prefetch 多约 56% tokens。
+Test identity-blind 26 条件使用 152,148,912 tokens；matched-prefetch visible 21 条件使用
+121,482,001 tokens；agentic visible 26 条件使用 248,505,600 tokens（原 21 条件为 189,137,772）。
+不同条件数的总量不能直接用于制度间成本归因；配对成本分析仍应限制在共同的 21 条件上。
 
 机器可读指标、10,000 次 bootstrap、精确 McNemar 检验、Holm 校正、检索覆盖率、成本和可见性审计位于：
 
@@ -27,20 +33,38 @@ Identity-blind 使用 116,008,812 tokens；matched-prefetch visible 使用 121,4
 outputs/paper/molecular_evidence_agent/analysis/
 ```
 
-## Validation split 诊断重跑（2026-07-17）
+Skin Reaction valid matched-prefetch 的逐 trace 诊断见
+`SKIN_REACTION_VISIBILITY_TRACE_AUDIT.md`；可分享的中英文静态 casebook 位于
+`reports/skin_reaction_visibility_trace_casebook/index.html`。该报告中的 35 个 recurring flips 是
+5 个 gold-negative 分子跨 7 个 conditions 的重复输出，其中 28 个 condition-level 输出没有 retrieved
+neighbor；不能把它解释成 35 个独立分子都因同一个原因失败。
+
+## BBB evidence-distance v3 retrieval gate（尚无 LLM performance）
+
+2026-07-20 已完成与旧 matrix 隔离的 BBB ChEMBL-only C-family tree 数据与检索 gate。ChEMBL 36 全库扫描
+1,890,749 assays，纳入 1,514 个 extension assays、34,838 activity rows 和 21,127 indexed molecules；与
+20,369 个 frozen D/C assay IDs 的交集为 0。合并后的 superset index 有 73,175 molecules、24 source groups。
+
+392-query audit 中 D/D+C base parity、source nestedness、D+C->H1->H2 evidence retention 和 H1 branch
+stability 均为 0 failure。coverage 为 D 0.673、D+C 0.878、D+C+H1 0.923、D+C+H1+H2 0.923；mean unique
+neighbors 为 1.39、5.51、8.28、8.45。H2 的 efflux/influx tree-node coverage 仅 0.043/0.071，因此是
+low-coverage distant-evidence point。7 个非 none retrieval conditions 已各物化 392 个 replay artifacts；尚未调用
+LLM，不能把这些 coverage 数值解释为 macro-F1 结果。
+
+## Validation split 诊断重跑（扩展至 2026-07-23）
 
 Validation split 使用与 test 完全相同的冻结设置，输入只由各任务的 `test.jsonl`
 替换为 `valid.jsonl`。这是用于检查结论方向和 pipeline 可复现性的诊断重跑，不代替
-test 主结果。Identity-blind、matched-prefetch 和 deployment-visible 各完成 21 个条件、
-2,203 个 sample-condition，三套失败数均为 0。Prefetch parity audit 为 21/21 conditions、
-2,203/2,203 samples，missing、extra 和 mismatch 均为 0。
+test 主结果。Identity-blind、matched-prefetch 和 deployment-visible 各完成 26 个条件、
+2,713 个 sample-condition，三套失败数均为 0。Prefetch parity audit 为 26/26 conditions、
+2,713/2,713 samples，missing、extra 和 mismatch 均为 0。
 
 ### Valid Identity-Blind
 
 | 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 0.7098 | 0.7138 | 0.6954 | 0.7008 | **0.7429** | 不适用 | 不适用 |
-| Skin_Reaction | **0.7396** | 0.6931 | 0.7163 | 0.6647 | 不适用 | 不适用 | 不适用 |
+| BBB_Martins | 0.7098 | 0.7138 | 0.6954 | 0.7008 | **0.7429** | 0.7276 | 0.7220 |
+| Skin_Reaction | 0.7396 | 0.6931 | 0.7163 | 0.6647 | 0.7333 | **0.7630** | 0.7333 |
 | ClinTox | 0.4774 | 0.4774 | **0.6229** | **0.6229** | 不适用 | 不适用 | 不适用 |
 | Bioavailability_Ma | 0.5031 | 0.5594 | 0.5713 | 0.5194 | 0.6657 仅数值 / 0.6522 完整 | 0.6657 | **0.6938** |
 
@@ -48,8 +72,8 @@ test 主结果。Identity-blind、matched-prefetch 和 deployment-visible 各完
 
 | 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 0.6677 | 0.7187 | 0.7411 | 0.7050 | **0.7436** | 不适用 | 不适用 |
-| Skin_Reaction | 0.5943 | **0.6577** | **0.6577** | **0.6577** | 不适用 | 不适用 | 不适用 |
+| BBB_Martins | 0.6677 | 0.7187 | 0.7411 | 0.7050 | 0.7436 | 0.7375 | **0.7540** |
+| Skin_Reaction | 0.5943 | **0.6577** | **0.6577** | **0.6577** | 0.6011 | 0.6366 | 0.6366 |
 | ClinTox | 0.5358 | 0.5420 | **0.6352** | 0.5971 | 不适用 | 不适用 | 不适用 |
 | Bioavailability_Ma | 0.5333 | 0.6382 | 0.6382 | 0.6530 | 0.6395 仅数值 / 0.6938 完整 | **0.7388** | 0.7083 |
 
@@ -57,8 +81,8 @@ test 主结果。Identity-blind、matched-prefetch 和 deployment-visible 各完
 
 | 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 0.6927 | 0.7138 | 0.7212 | 0.7138 | **0.7381** | 不适用 | 不适用 |
-| Skin_Reaction | 0.5733 | 0.5733 | 0.5733 | **0.6050** | 不适用 | 不适用 | 不适用 |
+| BBB_Martins | 0.6927 | 0.7138 | 0.7212 | 0.7138 | 0.7381 | 0.7276 | **0.7596** |
+| Skin_Reaction | 0.5733 | 0.5733 | 0.5733 | 0.6050 | 0.6366 | 0.6366 | **0.6703** |
 | ClinTox | 0.5690 | 0.5842 | 0.6352 | **0.6445** | 不适用 | 不适用 | 不适用 |
 | Bioavailability_Ma | 0.4421 | 0.6135 | 0.6135 | 0.6395 | 0.6264 仅数值 / 0.6395 完整 | 0.6264 | **0.6952** |
 
@@ -69,19 +93,20 @@ agent 条件分开报告。
 
 | 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 0.6927 | 0.7138 | 0.7261 | 0.7138 | **0.7641** | 不适用 | 不适用 |
-| Skin_Reaction | 0.5733 | 0.5733 | 0.5733 | **0.6050** | 不适用 | 不适用 | 不适用 |
+| BBB_Martins | 0.6927 | 0.7138 | 0.7261 | 0.7138 | 0.7641 | 0.7484 | **0.7741** |
+| Skin_Reaction | 0.5733 | 0.5733 | 0.5733 | 0.6050 | 0.6366 | 0.6366 | **0.6703** |
 | ClinTox | 0.5690 | 0.5842 | **0.6919** | 0.6137 | 不适用 | 不适用 | 不适用 |
 | Bioavailability_Ma | 0.4421 | 0.6008 | 0.6000 | 0.6008 | 0.5749 仅数值 / 0.6008 完整 | 0.5995 | **0.6656** |
 
-17 个 retrieval conditions 共 1,765 个 sample-condition，失败数为 0。其中 197 个
-retrieval 输入变化，1,568 个整条 run 复用；35 个 prediction flips 中 14 个修正、
-21 个破坏。最终 retained-neighbor identity conflict 和低于 similarity threshold 的补位均为 0。
+22 个 retrieval conditions 共 2,275 个 sample-condition，失败数为 0。其中 228 个
+retrieval 输入变化，2,047 个整条 run 复用；42 个 prediction flips 中 19 个修正、
+23 个破坏。Operational retrieval 的 322/13,490 个 neighbor slots（2.39%）为 same-parent，
+其中 260 个位于 rank 1。最终 retained-neighbor identity conflict 和低于 similarity threshold 的补位均为 0。
 
 Valid 上 parent-disjoint 后每个任务的最佳 retrieval 点估计仍高于 no-retrieval，但效果明显
 依赖任务：BBB 最佳为 Starling direct，ClinTox 最佳为 ChEMBL flat，Skin 只在 mechanism
 有小幅提升，Bioavailability 最佳为 Starling mechanism。Operational 到 parent-disjoint 的变化
-方向并不一致，mechanism 也没有稳定超过 flat；17 项 Holm 校正后都不显著。
+方向并不一致，mechanism 也没有稳定超过 flat；22 项 Holm 校正后都不显著。
 因此 valid 支持“retrieval 信号可复现但强烈依赖任务”，不支持将单个 valid 点估计
 改写为新的最终论文 claim。
 
@@ -99,8 +124,8 @@ outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_o
 
 | 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 0.7148 | 0.7325 | 0.7399 | 0.7248 | **0.7972** | 不适用 | 不适用 |
-| Skin_Reaction | 0.6683 | 0.6450 | 0.6459 | **0.6822** | 不适用 | 不适用 | 不适用 |
+| BBB_Martins | 0.7148 | 0.7325 | 0.7399 | 0.7248 | **0.7972** | 0.7830 | 0.7937 |
+| Skin_Reaction | 0.6683 | 0.6450 | 0.6459 | **0.6822** | 0.6450 | 0.6622 | 0.6734 |
 | ClinTox | 0.4819 | 0.4819 | 0.5553 | **0.5891** | 不适用 | 不适用 | 不适用 |
 | Bioavailability_Ma | 0.5525 | 0.6866 | 0.6589 | 0.6664 | 0.6908 仅数值 / 0.6579 完整 | 0.6938 | **0.7101** |
 
@@ -117,19 +142,95 @@ outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_o
 
 | 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 0.7429 | **0.7721** | 0.7579 | 0.7677 | 0.7652 | 不适用 | 不适用 |
-| Skin_Reaction | **0.6622** | 0.6511 | 0.6286 | 0.6150 | 不适用 | 不适用 | 不适用 |
+| BBB_Martins | 0.7429 | 0.7721 | 0.7579 | 0.7677 | 0.7652 | 0.7603 | **0.7812** |
+| Skin_Reaction | 0.6622 | 0.6511 | 0.6286 | 0.6150 | 0.6483 | 0.6341 | **0.6704** |
 | ClinTox | 0.5337 | 0.5396 | 0.5501 | **0.5645** | 不适用 | 不适用 | 不适用 |
 | Bioavailability_Ma | 0.5185 | 0.7221 | 0.6908 | 0.7077 | 0.7174 仅数值 / 0.7307 完整 | 0.7520 | **0.7997** |
 
 表中均为 test macro-F1。Bioavailability 标量 KNN 的 macro-F1 为 0.6952。
 
+### 2026-07-22 新增 BBB/Skin Starling operational 与 parent-disjoint 条件
+
+五个条件均覆盖完整 test split、失败数为 0，并通过 deployment-visible 正向可见性 contract。BBB Starling
+full flat/mechanism 的 retrieval coverage 均为 97.19%，macro-F1 分别为 0.7603 和 0.7812；mechanism 相对
+flat 为 +0.0209，95% paired-bootstrap CI 为 -0.0113 至 +0.0545。BBB Starling mechanism 相对 ChEMBL
+mechanism 为 +0.0136，CI 为 -0.0374 至 +0.0632。
+
+Skin Starling direct/full coverage 分别为 68.29% 和 93.90%。Direct、full flat、full mechanism 的 macro-F1
+依次为 0.6483、0.6341、0.6704；mechanism 相对 flat 为 +0.0363，CI 为 -0.0425 至 +0.1182，Starling
+mechanism 相对 ChEMBL mechanism 为 +0.0554，CI 为 -0.0230 至 +0.1340。所有新增配对比较的区间均跨 0，
+Holm 校正后也不显著，因此只能报告 task-dependent point estimates，不能据此宣称 Starling 或 mechanism
+具有普遍优势。
+
+对应 parent-disjoint 版本同样覆盖完整 test split、失败数为 0。BBB Starling full flat/mechanism 的
+macro-F1 分别为 0.7727 和 0.7908，相对 operational 为 +0.0124 和 +0.0095；32/392 个 query 的 retrieval
+输入发生变化，prediction flips 分别为 5（4 修正、1 破坏）和 4（3 修正、1 破坏）。两项 paired-bootstrap
+区间分别为 -0.0028 至 +0.0305、-0.0040 至 +0.0267，均跨 0。Skin Starling direct/flat/mechanism 各有
+2/82 个 query 的 retrieval 输入变化，但 0 prediction flip，macro-F1 因而保持 0.6483、0.6341、0.6704。
+
+## Retrieval coverage 与 macro-F1 增幅（第一轮 test 分析）
+
+该分析以 22 个 deployment-visible agentic retrieval conditions 为观察单位。Coverage 定义为至少检索到
+一个 neighbor 的 query 比例；性能量为相对同任务 `none`、在相同 query 上计算的 paired macro-F1 差值。
+Macro-F1 是主指标，因为四个 benchmark 均有不同程度的标签不平衡。
+
+四个 ChEMBL direct 条件为：
+
+| 任务 | Overall coverage | 负类 coverage | 正类 coverage | Δ macro-F1 vs none | 95% paired-bootstrap CI |
+|---|---:|---:|---:|---:|---:|
+| BBB_Martins | 67.35% | 68.42% | 67.09% | +0.0292 | +0.0020 至 +0.0577 |
+| Skin_Reaction | 9.76% | 14.29% | 6.38% | -0.0112 | -0.0574 至 +0.0311 |
+| ClinTox | 3.15% | 2.99% | 5.56% | +0.0059 | -0.0083 至 +0.0247 |
+| Bioavailability_Ma | 96.09% | 93.55% | 96.91% | +0.2037 | +0.1130 至 +0.2950 |
+
+22 个 retrieval conditions 中有 17 个 macro-F1 点估计高于同任务 none，5 个下降。若直接合并不同任务，
+overall coverage 与 Δ macro-F1 的 Pearson `r=0.4490`；按 task 分别去均值后，相关为
+`r=0.1170`。因此 pooled 正相关仍主要来自 Bioavailability 同时具有接近完整的 coverage 和较大增幅，
+不能解释为“在同一任务内提高 coverage 就会稳定提高性能”。
+
+具体 failure boundary 与这一结论一致：
+
+- BBB ChEMBL coverage 从 direct 的 67.35% 增至 full 的 87.76%，但 flat/mechanism 增幅分别只有
+  +0.0150/+0.0248，没有超过 direct 的 +0.0292。
+- BBB Starling coverage 从 direct 的 96.94% 增至 full 的 97.19%，flat 增幅为 +0.0174、mechanism 为
+  +0.0383；coverage 几乎不变但性能方向不同，说明 evidence organization/content 仍然重要。
+- Skin coverage 从 direct 的 9.76% 增至 full 的 64.63%，macro-F1 差值反而从 -0.0112 下降至
+  flat -0.0336、mechanism -0.0472。
+- Skin Starling coverage 从 direct 的 68.29% 增至 full 的 93.90%，但 direct/flat 相对 none 为
+  -0.0140/-0.0281，只有 mechanism 为 +0.0081，进一步反驳“coverage 增加必然改善性能”。
+- ClinTox 从 direct 3.15% 增至 full 99.30% 时，点估计增幅由 +0.0059 增至 +0.0164/+0.0308，
+  但两个 full 条件的 paired-bootstrap 区间仍跨 0。
+- Bioavailability 的七个 retrieval conditions coverage 都在 96.09% 至 99.22%，但增幅仍从
+  +0.1724 到 +0.2813，说明在 coverage 近饱和后，source content 和 reasoning organization 仍有明显影响。
+
+Class-conditional coverage 的最大差距为 14.47 percentage points，出现在 Skin Starling direct：负类
+60.00%，正类 74.47%。BBB ChEMBL full 仍偏向负类（96.05% vs 85.76%），Skin ChEMBL direct 也偏向负类
+（14.29% vs 6.38%）。这些分层能揭示 overall coverage 掩盖的 label skew，但目前每个 condition
+仍只有一个模型 run，不能把 coverage 与性能的关联写成因果结论。
+
+作为 split-stability 诊断，同一入口也在 valid matrix 上生成了 17 个点：15 个增幅为正、2 个为 0、
+没有负值；pooled `r=0.6192`，task-centered `r=0.5975`。这与 test 的 task-centered `r≈0` 明显不同，
+说明 coverage–performance 关系本身具有 split sensitivity，现阶段不能把 pooled test 或 valid correlation
+单独升级为主 claim。Valid 最大 class-coverage gap 为 27.78 percentage points，出现在样本量更小的
+Skin ChEMBL full 条件，也进一步说明必须保留每类分母而不能只报告 overall coverage。
+
+机器可读表、10,000 次 paired bootstrap、描述性汇总和 canonical SVG 位于：
+
+```text
+outputs/paper/molecular_evidence_agent/analysis/coverage_performance.tsv
+outputs/paper/molecular_evidence_agent/analysis/coverage_performance_summary.json
+outputs/paper/molecular_evidence_agent/analysis/coverage_performance_report.md
+outputs/paper/molecular_evidence_agent/analysis/figures/coverage_performance_relationship.svg
+outputs/paper/molecular_evidence_agent_valid/analysis/coverage_performance_summary.json
+outputs/paper/molecular_evidence_agent_valid/analysis/figures/coverage_performance_relationship.svg
+```
+
 ## Parent-disjoint 消融
 
 | 任务 | 无检索 | ChEMBL direct | ChEMBL flat | ChEMBL mechanism | Starling direct | Starling flat | Starling mechanism |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 0.7429 | **0.7721** | 0.7579 | 0.7677 | 0.7719 | 不适用 | 不适用 |
-| Skin_Reaction | **0.6622** | 0.6511 | 0.6286 | 0.6150 | 不适用 | 不适用 | 不适用 |
+| BBB_Martins | 0.7429 | 0.7721 | 0.7579 | 0.7677 | 0.7719 | 0.7727 | **0.7908** |
+| Skin_Reaction | 0.6622 | 0.6511 | 0.6286 | 0.6150 | 0.6483 | 0.6341 | **0.6704** |
 | ClinTox | 0.5337 | 0.5396 | **0.5711** | 0.5424 | 不适用 | 不适用 | 不适用 |
 | Bioavailability_Ma | 0.5185 | 0.7221 | 0.6908 | 0.7077 | 0.7006 仅数值 / 0.6770 完整 | 0.7339 | **0.7567** |
 
@@ -137,19 +238,21 @@ outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_o
 agentic Deployment-Visible 结果；其余单元格来自完整 test set 的 parent-disjoint condition。没有
 same-parent overlap 或没有 prediction flip 的条件与上表数值相同。
 
-2026-07-13 完成 agentic deployment-visible 的首轮 parent-disjoint 消融。公共 RDKit normalizer 对 whole
+2026-07-22 完成 agentic deployment-visible 的 22 条件 parent-disjoint 消融。公共 RDKit normalizer 对 whole
 record、connectivity variant、fragment parent 和 mixture components 建立版本化 identity；消融排除
 `exact_record`、`same_connectivity_variant` 和 `same_parent`，然后只从原 `min_similarity=0.30` 以上的
-候选向后回填。17 个 retrieval 条件共 3,568 个 sample-condition，其中 424 个 LLM-visible retrieval
-输入发生变化，3,144 个完整 run 直接复用；变化样本的 1,047 个 group branches 中又复用了 471 个。
+候选向后回填。22 个 retrieval 条件共 4,598 个 sample-condition，其中 494 个 LLM-visible retrieval
+输入发生变化，4,104 个完整 run 直接复用；变化样本的 1,201 个 group branches 中又复用了 548 个。
 
-全部 17 个条件均满足 `n_failed_runs=0`。最终产物重新标准化审计得到 retained-neighbor identity conflict
-为 0，低于 similarity threshold 的补位为 0。60 个 prediction flips 中 26 个修正、34 个破坏。完整
+全部 22 个条件均满足 `n_failed_runs=0`。最终产物重新标准化审计得到 retained-neighbor identity conflict
+为 0，低于 similarity threshold 的补位为 0。69 个 prediction flips 中 33 个修正、36 个破坏。完整
 condition 表、逐样本 flips、coverage 和 provenance 位于：
 
 ```text
 outputs/paper/molecular_evidence_agent/analysis/parent_disjoint_ablation/
   result_report.md
+  same_parent_exposure_by_condition.tsv
+  sample_condition_diff.tsv
   condition_results.tsv
   prediction_flips.tsv
   result_summary.json
@@ -157,14 +260,16 @@ outputs/paper/molecular_evidence_agent/analysis/parent_disjoint_ablation/
 
 主要点估计如下：
 
-- BBB 的 ChEMBL direct/flat/mechanism 均无 prediction flip；Starling direct 从 0.7652 小幅升至 0.7719。
-- Skin 三个条件没有 same-parent overlap，因此结果完全不变。
+- BBB 的 ChEMBL direct/flat/mechanism 均无 prediction flip；Starling direct/flat/mechanism 分别从
+  0.7652/0.7603/0.7812 升至 0.7719/0.7727/0.7908。
+- Skin ChEMBL 三个条件没有 same-parent overlap；Starling direct/flat/mechanism 各有 2 个受影响 query，
+  但均无 prediction flip，因此结果不变。
 - ClinTox ChEMBL flat 从 0.5501 升至 0.5711，但 mechanism 从 0.5645 降至 0.5424；类别极不平衡，必须结合 confusion matrix 而非只看 accuracy。
 - Bioavailability ChEMBL direct/flat/mechanism 均无 prediction flip。Starling numeric direct 从 0.7174 降至 0.7006，full direct 从 0.7307 降至 0.6770，full flat 从 0.7520 降至 0.7339，full mechanism 从 0.7997 降至 0.7567。
 
 10,000 次 paired bootstrap 中，ClinTox flat 的 operational-to-parent 差值区间为 +0.0065 至 +0.0404，
-Bioavailability Starling full direct 为 -0.1004 至 -0.0133；其余非零差值区间均跨 0。17 项 exact
-McNemar 经 Holm 校正后没有一项显著，最小校正后 `p=0.2656`。因此同 parent 的影响有明确局部信号，
+Bioavailability Starling full direct 为 -0.1004 至 -0.0133；其余非零差值区间均跨 0。22 项 exact
+McNemar 经 Holm 校正后没有一项显著，最小校正后 `p=0.3438`。因此同 parent 的影响有明确局部信号，
 但当前不能宣称它在多重比较后普遍改变性能。
 
 这说明 same-parent 文献证据确实解释了 Starling 部分 operational 增益，尤其影响 Bioavailability high 类
@@ -172,6 +277,12 @@ McNemar 经 Holm 校正后没有一项显著，最小校正后 `p=0.2656`。因�
 direct、Starling full direct 和 Starling full mechanism 仍分别比同一 agentic no-retrieval baseline 高
 0.2037、0.1586 和 0.2383 macro-F1。BBB 的 ChEMBL/Starling direct 仍高约 0.029。相反，Skin direct
 仍低 0.0112，说明 analog retrieval 效应明确依赖任务和证据质量。
+
+Operational retrieval 的 same-parent 暴露统计显示：494/4,598 个 query-condition、642 个 group 命中
+same-parent；723/27,530 个 LLM-visible neighbor slots（2.63%）为 same-parent，其中 547 个（75.66%）位于
+rank 1。按 query-condition 内去重后，same-parent neighbor records 跨 query 求和为 573。该分布说明总体
+slot 占比不高，但高度集中在最靠前候选，适合作为论文中的 retrieval sensitivity/identity-overlap 分析；
+它本身不是性能因果证据，仍需与上述配对 flips 和指标差值共同解释。
 
 在 parent-disjoint 下，Bioavailability Starling mechanism 为 0.7567，仍高于同源 flat 的 0.7339，差值
 +0.0228；但该差值尚未做本轮 paired bootstrap/McNemar/Holm 更新，当前只能作为点估计，不能宣称显著。
@@ -192,13 +303,19 @@ direct、Starling full direct 和 Starling full mechanism 仍分别比同一 age
 - Matched-prefetch BBB 的同项差异为 +0.0374，95% CI 为 -0.0128 至 0.0889，不显著。
 - Matched-prefetch Bioavailability 的 Starling numeric direct 相对 ChEMBL direct 仅 +0.0026；Starling full mechanism 相对 ChEMBL mechanism 为 +0.0413，区间 -0.0448 至 0.1306，均不显著。
 - Agentic Bioavailability 的 Starling full mechanism 达到 0.7997，但 matched-prefetch 对应值为 0.7322；该 agentic 高分同时改变了工具执行策略，不能作为纯数据源效应。
+- 新增 agentic BBB Starling full mechanism 为 0.7812，相对 ChEMBL mechanism +0.0136；Skin 对应值为
+  0.6704，相对 ChEMBL mechanism +0.0554。Parent-disjoint 下 BBB Starling/ChEMBL mechanism 为
+  0.7908/0.7677，Skin 为 0.6704/0.6150；但两项仍无 matched-prefetch/identity-blind 对照，且 source
+  coverage 不匹配，不能升级为纯 source effect。
 
 因此，Starling 有强正向结果，但“文献抽取数据普遍优于 ChEMBL”仍不能作为跨任务的普遍结论。
 
 ### 机制拆分
 
 - Matched-prefetch 的 mechanism 相对同源 flat 点估计：BBB +0.0208、ClinTox +0.0226、ChEMBL Bioavailability -0.0266、Starling Bioavailability -0.0198、Skin -0.0361。
-- Agentic 的对应点估计为 BBB +0.0098、ClinTox +0.0144、ChEMBL Bioavailability +0.0169、Starling Bioavailability +0.0478、Skin -0.0136。
+- Agentic 的对应点估计为 BBB ChEMBL +0.0098、BBB Starling +0.0209、ClinTox +0.0144、
+  ChEMBL Bioavailability +0.0169、Starling Bioavailability +0.0478、Skin ChEMBL -0.0136、
+  Skin Starling +0.0363。
 - Identity-blind 的对应结果也不一致：Skin、ClinTox 和 Starling Bioavailability 为正，BBB 和 ChEMBL Bioavailability 为负。
 - 所有 flat-vs-mechanism 比较的配对区间均跨零，Holm 校正后均不显著。
 
@@ -275,8 +392,8 @@ neighbor-only 和 source-ID-hidden ablation，并通过重复生成估计运行�
 
 ## 审计说明
 
-- 21 个 identity-blind 条件在 prompt 边界上的 query/neighbor structure、identifier 和 name 泄漏均为 0。
-- 21 个 matched-prefetch 和 21 个 agentic deployment-visible 条件全部通过正向 contract 审计：每个 query 的 input/canonical SMILES 可见；存在 neighbor 时，每个 neighbor 的 structure 和 source ID 可见；数据源提供名称时，至少一个对应 source name 可见。输入数据不包含 query name，因此不会主动向 LLM 提供 query 名称。
+- 26 个 identity-blind 条件在 prompt 边界上的 query/neighbor structure、identifier 和 name 泄漏均为 0。
+- 21 个 matched-prefetch 和 26 个 agentic deployment-visible 条件全部通过正向 contract 审计：每个 query 的 input/canonical SMILES 可见；存在 neighbor 时，每个 neighbor 的 structure 和 source ID 可见；数据源提供名称时，至少一个对应 source name 可见。输入数据不包含 query name，因此不会主动向 LLM 提供 query 名称。
 - Matched-prefetch 逐样本复用 blind 的冻结 `retrieval.json` 和 prefetched tool outputs。最终审计覆盖 21/21 conditions、4,456/4,456 样本，missing、extra、mismatch 均为 0；两侧所有 single/group/final branch 状态均为 `ok`。
 - Deployment 正向审计同时支持 JSON 嵌套字符串中的反斜杠转义 SMILES，避免把实际可见的立体结构误报为缺失。
 - Matched-prefetch 初次运行暴露了 retrieval mapping 漂移、MCS 输出非确定性及旧 branch 状态未进入 metrics 的问题。旧 attempt 均归档；修复后通过 retrieval/tool replay、严格 branch gate 和 `--skip-existing` 只重跑受影响 index。

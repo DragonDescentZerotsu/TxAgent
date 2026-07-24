@@ -20,6 +20,12 @@ audit 工具继续保留用于复现与案例分析，不再按 test errors 调�
 toxicology、organ-specific toxicity、genotoxicity/carcinogenicity、cellular stress、general cytotoxicity 和
 off-target/DDI/exposure。并行 reasoning 以这 7 个 family 为上限，而不是以 43 个 endpoint groups 为单位。
 
+2026-07-23 strict-hop availability census 见
+`outputs/chembl_tool/tasks/clintox/distance_expansion/analysis/hop_availability_census/`。当前 C 已覆盖 43 groups、
+108,413 assays；KEAP1-NRF2 合格 rows 全部与 D/C assay 重叠，complex-I/CUL3 无可用 functional library。
+GSK3B 虽有 28.67% parent-disjoint coverage，但缺 toxic exposure 与 heterogeneous ClinTox label 的方向映射，
+因此不可发布。结论为 H1/H2 均 unavailable，不得为了构造 distance curve 加入旧 paper matrix。
+
 旧 native workflow 的归档结论：
 
 ```text

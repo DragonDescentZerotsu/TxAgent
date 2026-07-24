@@ -75,6 +75,10 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     _write_tsv(output_dir / "sample_condition_diff.tsv", all_rows)
+    _write_tsv(
+        output_dir / "same_parent_exposure_by_condition.tsv",
+        [_same_parent_exposure_row(summary) for summary in summaries],
+    )
     payload = {
         "policy": "parent_disjoint",
         "data_split": args.split,
@@ -84,8 +88,24 @@ def main(argv: list[str] | None = None) -> int:
         "n_sample_conditions": len(all_rows),
         "n_changed": sum(bool(row["changed"]) for row in all_rows),
         "n_reused": sum(not bool(row["changed"]) for row in all_rows),
+        "n_queries_with_same_parent": sum(bool(row["same_parent_group_ids"]) for row in all_rows),
+        "n_groups_with_same_parent": sum(
+            len(str(row["same_parent_group_ids"]).split("|"))
+            for row in all_rows
+            if row["same_parent_group_ids"]
+        ),
+        "n_retrieved_neighbor_slots": sum(int(row["n_retrieved_neighbor_slots"]) for row in all_rows),
+        "n_same_parent_neighbor_slots": sum(int(row["n_same_parent_neighbor_slots"]) for row in all_rows),
+        "n_same_parent_unique_neighbors_summed_per_query": sum(
+            int(row["n_same_parent_unique_neighbors"]) for row in all_rows
+        ),
+        "n_same_parent_rank1_slots": sum(int(row["n_same_parent_rank1_slots"]) for row in all_rows),
         "experiments": summaries,
     }
+    payload["same_parent_neighbor_slot_fraction"] = _safe_fraction(
+        payload["n_same_parent_neighbor_slots"],
+        payload["n_retrieved_neighbor_slots"],
+    )
     (output_dir / "summary.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     (output_dir / "report.md").write_text(_report(payload), encoding="utf-8")
     print(json.dumps(payload, indent=2), flush=True)
@@ -118,19 +138,20 @@ def build_experiment_plan(
         if not baseline_path.exists():
             raise FileNotFoundError(f"Missing operational retrieval: {baseline_path}")
         baseline = _read_json(baseline_path)
-        same_parent_groups = _same_parent_group_ids(str(record.get("drug") or ""), baseline)
-        baseline_inputs.append((query_index, record, source_run, baseline, same_parent_groups))
+        same_parent_stats = _same_parent_stats(str(record.get("drug") or ""), baseline)
+        baseline_inputs.append((query_index, record, source_run, baseline, same_parent_stats))
 
     index = None
     config = None
-    if any(item[4] for item in baseline_inputs):
+    if any(item[4]["group_ids"] for item in baseline_inputs):
         with Path(experiment.index).open("rb") as handle:
             index = pickle.load(handle)
         config_module = importlib.import_module(f"tools.chembl_tool.tasks.{experiment.task}.experiment_config")
         config = config_module.get_source_config(experiment.source)
 
     rows = []
-    for query_index, record, source_run, baseline, same_parent_groups in baseline_inputs:
+    for query_index, record, source_run, baseline, same_parent_stats in baseline_inputs:
+        same_parent_groups = same_parent_stats["group_ids"]
         baseline_hash = retrieval_prompt_hash(baseline)
         if same_parent_groups:
             target = retrieve_experiment_view(
@@ -158,6 +179,10 @@ def build_experiment_plan(
             "n_changed_groups": len(changed_groups),
             "changed_group_ids": "|".join(changed_groups),
             "same_parent_group_ids": "|".join(same_parent_groups),
+            "n_retrieved_neighbor_slots": same_parent_stats["n_retrieved_neighbor_slots"],
+            "n_same_parent_neighbor_slots": same_parent_stats["n_same_parent_neighbor_slots"],
+            "n_same_parent_unique_neighbors": same_parent_stats["n_same_parent_unique_neighbors"],
+            "n_same_parent_rank1_slots": same_parent_stats["n_same_parent_rank1_slots"],
             "baseline_prompt_hash": baseline_hash,
             "parent_disjoint_prompt_hash": target_hash,
         }
@@ -183,25 +208,104 @@ def build_experiment_plan(
         "n_total": len(rows),
         "n_changed": sum(bool(row["changed"]) for row in rows),
         "n_reused": sum(not bool(row["changed"]) for row in rows),
+        "n_queries_with_same_parent": sum(bool(row["same_parent_group_ids"]) for row in rows),
+        "n_groups_with_same_parent": sum(
+            len(str(row["same_parent_group_ids"]).split("|"))
+            for row in rows
+            if row["same_parent_group_ids"]
+        ),
+        "n_retrieved_neighbor_slots": sum(int(row["n_retrieved_neighbor_slots"]) for row in rows),
+        "n_same_parent_neighbor_slots": sum(int(row["n_same_parent_neighbor_slots"]) for row in rows),
+        "n_same_parent_unique_neighbors_summed_per_query": sum(
+            int(row["n_same_parent_unique_neighbors"]) for row in rows
+        ),
+        "n_same_parent_rank1_slots": sum(int(row["n_same_parent_rank1_slots"]) for row in rows),
         "changed_indices": [row["query_index"] for row in rows if row["changed"]],
     }
+    summary["same_parent_neighbor_slot_fraction"] = _safe_fraction(
+        summary["n_same_parent_neighbor_slots"],
+        summary["n_retrieved_neighbor_slots"],
+    )
     if materialize:
         (target_batch / "reuse_plan.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     return rows, summary
 
 
-def _same_parent_group_ids(query_smiles: str, retrieval: dict[str, Any]) -> list[str]:
+def _same_parent_stats(query_smiles: str, retrieval: dict[str, Any]) -> dict[str, Any]:
+    """Count LLM-visible same-parent exposure before parent-disjoint filtering.
+
+    A neighbor slot is one appearance in one retrieval group. The same source
+    record can therefore contribute multiple slots when it is independently
+    exposed to multiple mechanism branches. ``n_same_parent_unique_neighbors``
+    deduplicates records within this query-condition only.
+    """
     query_identity = normalize_molecule_identity(query_smiles)
-    affected = []
+    affected: list[str] = []
+    n_retrieved = 0
+    n_same_parent = 0
+    n_same_parent_rank1 = 0
+    unique_same_parent: set[str] = set()
     for group in retrieval.get("groups") or []:
-        has_same_parent = any(
-            classify_molecule_relation(query_identity, identity_from_record(neighbor))
-            is MoleculeRelation.SAME_PARENT
-            for neighbor in group.get("neighbors") or []
-        )
+        has_same_parent = False
+        for rank, neighbor in enumerate(group.get("neighbors") or [], start=1):
+            n_retrieved += 1
+            candidate_identity = identity_from_record(neighbor)
+            if classify_molecule_relation(query_identity, candidate_identity) is not MoleculeRelation.SAME_PARENT:
+                continue
+            has_same_parent = True
+            n_same_parent += 1
+            n_same_parent_rank1 += int(rank == 1)
+            unique_same_parent.add(_neighbor_record_key(neighbor, candidate_identity))
         if has_same_parent:
             affected.append(str(group.get("group_id") or ""))
-    return sorted(affected)
+    return {
+        "group_ids": sorted(affected),
+        "n_retrieved_neighbor_slots": n_retrieved,
+        "n_same_parent_neighbor_slots": n_same_parent,
+        "n_same_parent_unique_neighbors": len(unique_same_parent),
+        "n_same_parent_rank1_slots": n_same_parent_rank1,
+    }
+
+
+def _same_parent_group_ids(query_smiles: str, retrieval: dict[str, Any]) -> list[str]:
+    """Backward-compatible helper for callers that only need affected groups."""
+    return list(_same_parent_stats(query_smiles, retrieval)["group_ids"])
+
+
+def _neighbor_record_key(neighbor: dict[str, Any], identity: Any) -> str:
+    return str(
+        identity.standard_inchi_key
+        or identity.canonical_smiles
+        or neighbor.get("molecule_chembl_id")
+        or neighbor.get("source_record_id")
+        or neighbor.get("canonical_smiles")
+        or neighbor.get("smiles")
+        or json.dumps(neighbor, sort_keys=True, default=str)
+    )
+
+
+def _safe_fraction(numerator: int, denominator: int) -> float | None:
+    return numerator / denominator if denominator else None
+
+
+def _same_parent_exposure_row(summary: dict[str, Any]) -> dict[str, Any]:
+    fields = (
+        "experiment",
+        "task",
+        "source",
+        "mode",
+        "n_total",
+        "n_queries_with_same_parent",
+        "n_groups_with_same_parent",
+        "n_retrieved_neighbor_slots",
+        "n_same_parent_neighbor_slots",
+        "same_parent_neighbor_slot_fraction",
+        "n_same_parent_unique_neighbors_summed_per_query",
+        "n_same_parent_rank1_slots",
+        "n_changed",
+        "n_reused",
+    )
+    return {field: summary.get(field) for field in fields}
 
 
 def _select_experiments(
@@ -243,13 +347,33 @@ def _report(summary: dict[str, Any]) -> str:
         f"- sample-condition 总数：{summary['n_sample_conditions']}",
         f"- LLM 可见 retrieval 输入发生变化：{summary['n_changed']}",
         f"- 可直接复用：{summary['n_reused']}",
+        f"- 至少检索到一个 same-parent neighbor 的 query-condition：{summary['n_queries_with_same_parent']}",
+        f"- 含 same-parent neighbor 的 mechanism/group：{summary['n_groups_with_same_parent']}",
+        f"- same-parent neighbor slots：{summary['n_same_parent_neighbor_slots']} / "
+        f"{summary['n_retrieved_neighbor_slots']} "
+        f"({_format_percent(summary['same_parent_neighbor_slot_fraction'])})",
+        f"- rank-1 same-parent slots：{summary['n_same_parent_rank1_slots']}",
+        f"- query-condition 内去重后 same-parent neighbors（跨 query 求和）："
+        f"{summary['n_same_parent_unique_neighbors_summed_per_query']}",
         "",
-        "| 实验 | 总数 | 变化 | 复用 |",
-        "|---|---:|---:|---:|",
+        "slot 表示一个 neighbor 在一个 retrieval group 中的一次 LLM-visible 出现；同一记录若进入多个 "
+        "mechanism branch 会计为多个 slots。unique neighbor 只在单个 query-condition 内去重。",
+        "",
+        "| 实验 | 总数 | 变化 | 复用 | same-parent queries | same-parent slots | slot 占比 | rank-1 |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in summary["experiments"]:
-        lines.append(f"| {row['experiment']} | {row['n_total']} | {row['n_changed']} | {row['n_reused']} |")
+        lines.append(
+            f"| {row['experiment']} | {row['n_total']} | {row['n_changed']} | {row['n_reused']} | "
+            f"{row['n_queries_with_same_parent']} | {row['n_same_parent_neighbor_slots']} | "
+            f"{_format_percent(row['same_parent_neighbor_slot_fraction'])} | "
+            f"{row['n_same_parent_rank1_slots']} |"
+        )
     return "\n".join(lines) + "\n"
+
+
+def _format_percent(value: float | None) -> str:
+    return "n/a" if value is None else f"{100.0 * value:.2f}%"
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:

@@ -41,6 +41,7 @@ def _task_experiments(
     index: str,
     *,
     include_starling_direct: str = "",
+    include_starling_full: str = "",
 ) -> list[Experiment]:
     module = f"tools.chembl_tool.tasks.{task}.run_reasoning_batch"
     input_jsonl = f"data/processed/{data_name}/test.jsonl"
@@ -70,6 +71,29 @@ def _task_experiments(
                 "starling",
             )
         )
+    if include_starling_full:
+        experiments.extend(
+            [
+                Experiment(
+                    f"{task}__starling_full_flat",
+                    task,
+                    module,
+                    input_jsonl,
+                    include_starling_full,
+                    "full_flat",
+                    "starling",
+                ),
+                Experiment(
+                    f"{task}__starling_full_mechanism",
+                    task,
+                    module,
+                    input_jsonl,
+                    include_starling_full,
+                    "full_mechanism",
+                    "starling",
+                ),
+            ]
+        )
     return experiments
 
 
@@ -82,11 +106,23 @@ EXPERIMENTS = [
             "outputs/paper/molecular_evidence_agent/evidence/bbb_starling/all/"
             "starling_bbb_neighbor_index.pkl"
         ),
+        include_starling_full=(
+            "outputs/paper/molecular_evidence_agent/evidence/bbb_starling_full/"
+            "starling_bbb_neighbor_index.pkl"
+        ),
     ),
     *_task_experiments(
         "skin_reaction",
         "Skin_Reaction",
         "outputs/chembl_tool/tasks/skin_reaction/evidence_library/skin_reaction_neighbor_index.pkl",
+        include_starling_direct=(
+            "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full/"
+            "starling_skin_reaction_neighbor_index.pkl"
+        ),
+        include_starling_full=(
+            "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full/"
+            "starling_skin_reaction_neighbor_index.pkl"
+        ),
     ),
     *_task_experiments(
         "clintox",
@@ -172,9 +208,11 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     all_experiments = experiments_for_split(args.split)
     selected = _select_experiments(args.experiments, experiments=all_experiments)
+    selected = _prepare_policy_selection(selected, args)
     if args.list:
         print("\n".join(experiment.name for experiment in selected))
         return 0
+    _require_parent_disjoint_reuse_plans(selected, args)
 
     manifest = {
         "model": GLM_MODEL,
@@ -399,12 +437,55 @@ def _select_experiments(
     return [by_name[name] for name in names]
 
 
+def _prepare_policy_selection(
+    selected: list[Experiment],
+    args: argparse.Namespace,
+) -> list[Experiment]:
+    """Keep the primary parent-disjoint run analog-only and reuse query-only baselines."""
+    if args.neighbor_identity_policy != PARENT_DISJOINT:
+        return selected
+    if args.visibility_mode != DEPLOYMENT_VISIBLE:
+        raise SystemExit("parent_disjoint requires --visibility-mode deployment_visible")
+    selected_none = [experiment.name for experiment in selected if experiment.mode == "none"]
+    if args.experiments and selected_none:
+        raise SystemExit(
+            "Query-only conditions are policy-invariant and must remain in the operational root; "
+            f"remove from parent-disjoint selection: {', '.join(selected_none)}"
+        )
+    return [experiment for experiment in selected if experiment.mode != "none"]
+
+
+def _require_parent_disjoint_reuse_plans(
+    selected: list[Experiment],
+    args: argparse.Namespace,
+) -> None:
+    """Prevent an accidental full rerun when selective parent reuse was not planned."""
+    if args.neighbor_identity_policy != PARENT_DISJOINT:
+        return
+    target_root = experiment_run_root(
+        DEPLOYMENT_VISIBLE,
+        PARENT_DISJOINT,
+        paper_root=_paper_root_from_args(args),
+    )
+    missing = [
+        experiment.name
+        for experiment in selected
+        if not (target_root / experiment.task / experiment.name / "reuse_plan.json").exists()
+    ]
+    if missing:
+        raise SystemExit(
+            "Missing parent-disjoint reuse plans. Run "
+            "python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation "
+            f"--materialize first. Missing: {', '.join(missing)}"
+        )
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--experiments", nargs="*", default=[])
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--api-key-env", default="GLM_API_KEY")
-    parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=IDENTITY_BLIND)
+    parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=DEPLOYMENT_VISIBLE)
     parser.add_argument("--split", choices=DATA_SPLITS, default="test")
     parser.add_argument(
         "--paper-root",
@@ -414,7 +495,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument(
         "--neighbor-identity-policy",
         choices=NEIGHBOR_IDENTITY_POLICIES,
-        default=OPERATIONAL,
+        default=PARENT_DISJOINT,
     )
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--parallelism", type=int, default=8)

@@ -1,0 +1,109 @@
+{
+  "filters": [
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier"
+        ],
+        [
+          "LAT1",
+          "SLC7A5",
+          "MCT1",
+          "SLC16A1",
+          "MCT2",
+          "SLC16A7",
+          "nucleoside transporter",
+          "ENT1",
+          "SLC29A1",
+          "ENT2",
+          "SLC29A2",
+          "CNT1",
+          "SLC28A1",
+          "CNT2",
+          "SLC28A2",
+          "glucose transporter",
+          "GLUT1",
+          "SLC2A1",
+          "SLCO1A2",
+          "SLCO1C1",
+          "SLC22A8",
+          "SLC22A6",
+          "choline transporter",
+          "SLC5A7",
+          "CTL1",
+          "SLC44A1"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "A named compound or nutrient was transported into brain or taken up by blood-brain barrier endothelial cells through a specific influx carrier, with uptake, inhibition, competition, saturation, kinetic, or transporter-substrate evidence.",
+      "estimated_count": 14811,
+      "precision_estimate": 0.7667
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass",
+          "Protein"
+        ],
+        [
+          "blood-brain barrier"
+        ],
+        [
+          "transferrin receptor",
+          "TFRC",
+          "insulin receptor",
+          "INSR",
+          "LRP1",
+          "low density lipoprotein receptor-related protein 1"
+        ],
+        [
+          "endocytosis",
+          "transcytosis"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "A named ligand, conjugate, antibody, peptide, nanoparticle cargo, or therapeutic was internalized by brain endothelial cells and carried across the blood-brain barrier by receptor-mediated endocytosis or transcytosis.",
+      "estimated_count": 5699,
+      "precision_estimate": 0.7833
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier"
+        ],
+        [
+          "facilitated diffusion"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "A named molecule showed saturable, competitive, stereoselective, trans-stimulated, or energy-independent carrier-mediated uptake into brain or cultured brain capillary endothelial cells even though the molecular identity of the influx carrier was unknown.",
+      "estimated_count": 1255,
+      "precision_estimate": 0.8
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "Brain uptake of the named compound was saturable, competitively inhibited, stereoselective, trans-stimulated, sodium-dependent, energy-dependent, or described by Michaelis-Menten kinetics, demonstrating carrier-mediated influx across the blood-brain barrier or uptake into brain capillary endothelial cells.",
+      "estimated_count": 655815,
+      "precision_estimate": 0.775
+    }
+  ],
+  "window_entity_groups": null
+}

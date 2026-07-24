@@ -6,6 +6,8 @@ from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     EXPERIMENTS,
     PARENT_DISJOINT,
     _command,
+    _parse_args,
+    _prepare_policy_selection,
     experiment_for_split,
     paper_root_for_split,
 )
@@ -14,15 +16,63 @@ from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     _llm_query_payload,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLING as BIO_STARLING
-from tools.chembl_tool.tasks.skin_reaction.experiment_config import CHEMBL as SKIN_CHEMBL
+from tools.chembl_tool.tasks.bbb_martins.experiment_config import STARLING as BBB_STARLING
+from tools.chembl_tool.tasks.skin_reaction.experiment_config import (
+    CHEMBL as SKIN_CHEMBL,
+    STARLING as SKIN_STARLING,
+)
 
 
 def test_frozen_matrix_has_unique_expected_conditions():
     names = [experiment.name for experiment in EXPERIMENTS]
-    assert len(names) == 21
+    assert len(names) == 26
     assert len(names) == len(set(names))
     assert "bioavailability_ma__starling_full_mechanism" in names
     assert "bbb_martins__starling_direct" in names
+    assert "bbb_martins__starling_full_flat" in names
+    assert "bbb_martins__starling_full_mechanism" in names
+    assert "skin_reaction__starling_direct" in names
+    assert "skin_reaction__starling_full_flat" in names
+    assert "skin_reaction__starling_full_mechanism" in names
+
+
+def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():
+    args = _parse_args([])
+
+    assert args.visibility_mode == DEPLOYMENT_VISIBLE
+    assert args.neighbor_identity_policy == PARENT_DISJOINT
+    selected = _prepare_policy_selection(list(EXPERIMENTS), args)
+    assert selected
+    assert all(experiment.mode != "none" for experiment in selected)
+
+
+def test_explicit_parent_disjoint_none_is_rejected():
+    args = _parse_args(["--experiments", "bbb_martins__none"])
+
+    try:
+        _prepare_policy_selection([EXPERIMENTS[0]], args)
+    except SystemExit as error:
+        assert "Query-only conditions" in str(error)
+    else:
+        raise AssertionError("Expected explicit parent-disjoint none selection to be rejected")
+
+
+def test_new_starling_sources_match_the_four_paper_mechanism_families():
+    expected = [
+        "direct_brain_exposure",
+        "passive_permeability",
+        "efflux_transport",
+        "influx_transport",
+    ]
+    assert [group.endpoint_group for group in BBB_STARLING.mechanism_groups] == expected
+
+    expected_skin = [
+        "direct_skin_reaction",
+        "sensitisation_aop",
+        "phototoxicity_irritation_local_damage",
+        "skin_exposure",
+    ]
+    assert [group.endpoint_group for group in SKIN_STARLING.mechanism_groups] == expected_skin
 
 
 def test_skin_paper_view_excludes_standalone_weak_context_branch():
