@@ -1,0 +1,26 @@
+{
+  "method": "label_stratified_stable_hash",
+  "target_test_size": 500,
+  "actual_test_size": 500,
+  "test_size_shortfall": 0,
+  "n_train": 17393,
+  "n_test": 500,
+  "train_label_counts": {
+    "0": 4821,
+    "1": 12572
+  },
+  "test_label_counts": {
+    "0": 139,
+    "1": 361
+  },
+  "n_train_scaffolds": 8366,
+  "n_test_scaffolds": 399,
+  "train_test_scaffold_overlap": 219,
+  "train_test_identity_overlap": 0,
+  "paths": {
+    "train": "data/processed_starling/BBB_Martins/random/train.jsonl",
+    "test": "data/processed_starling/BBB_Martins/random/test.jsonl",
+    "train_molecule_labels": "data/processed_starling/BBB_Martins/random/train_molecule_labels.jsonl",
+    "test_molecule_labels": "data/processed_starling/BBB_Martins/random/test_molecule_labels.jsonl"
+  }
+}

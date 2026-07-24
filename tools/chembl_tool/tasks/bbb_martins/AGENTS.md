@@ -21,6 +21,25 @@ Y=0 -> bbb_prediction=fail
 final summary 必须在 pass/fail 中二选一；不再允许 uncertain prediction
 ```
 
+新的 Starling-held-out benchmark 由 `starling_benchmark.py` 构建：只把明确
+`bbb_permeability_label` 当作 qualitative gold outcome，transport label 只作 evidence context；
+数值记录只对 `logBB` 使用 TDC-compatible `>= -1` threshold；Papp、Kp、Kp,uu 等异构量不强行换算。
+`qualifying_conditions` 非空的 context-dependent row 不进入 molecule-only gold；parent-level
+文献/条件冲突分子不做多数票，直接从 gold split 排除。正式评估前必须分别按
+`random/test_molecule_labels.jsonl` 和 `scaffold/test_molecule_labels.jsonl`
+重建两套 train-only retrieval index。
+
+当前 frozen build 位于：
+
+```text
+data/processed_starling/BBB_Martins/random/
+data/processed_starling/BBB_Martins/scaffold/
+```
+
+共有 17,893 个 binary parents；两种 split 的 test 均为 500。构建命令、source revision、
+冲突/拒绝 reason 和完整统计统一见
+`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`，不得在本 task 内另写 split 脚本。
+
 Legacy native runner 边界：
 
 ```text
@@ -53,6 +72,9 @@ scoring.py
 
 run_reasoning_pipeline.py
   BBB_Martins prompt、single/group/final schema、retrieval/prompt assembly 和 final-only rerun。
+
+starling_benchmark.py
+  将 `starling-labs/BBB` 的 direct records 转成保守、可审计的 TDC-compatible parent-level binary label。
 
 build_starling_evidence_library.py
   从 `starling-labs/BBB` 构建 Starling BBB molecule-level evidence 和 neighbor index。
@@ -345,7 +367,7 @@ outputs/chembl_tool/tasks/bbb_martins/distance_expansion/retrieval_replay/v3/
 每个 condition 均含 392 个 `runs/<condition>_idxNNNNN/retrieval.json`。reasoning batch 必须通过
 `--retrieval-replay-source-batch` 使用这些冻结输入；不得让 task pipeline 按旧 experiment config 重新检索。
 
-当前 test set：
+历史 TDC/E12 frozen query set（不是当前 Starling gold split）：
 
 ```text
 data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl

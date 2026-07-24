@@ -1,0 +1,118 @@
+{
+  "task": "Bioavailability_Ma",
+  "protocol_version": "starling_binary_benchmark.v2",
+  "identity_normalizer_version": "rdkit_fragment_parent.v1",
+  "seed": 20260723,
+  "test_size_policy": {
+    "formula": "min(max_test_size, floor(test_fraction * n_binary_molecules))",
+    "max_test_size": 500,
+    "test_fraction": 0.2,
+    "target_test_size": 372
+  },
+  "n_source_rows_considered": 283007,
+  "n_source_rows_labeled_before_structure_normalization": 20814,
+  "source_rejection_counts": {
+    "interpretation_altering_qualifying_conditions": 13347,
+    "invalid_or_unresolved_smiles": 185,
+    "missing_bioavailability_value": 308,
+    "non_bioavailability_exposure_measure": 110550,
+    "non_direct_oral_bioavailability_report_type": 51570,
+    "nonhuman_or_unresolved_population": 82257,
+    "numeric_interval_crosses_20_percent_threshold": 742,
+    "numeric_value_out_of_percent_range": 808,
+    "qualitative_value_not_threshold_anchored": 912,
+    "relative_not_absolute_bioavailability": 68,
+    "unmapped_or_ambiguous_qualitative_value": 1164,
+    "unsupported_bioavailability_unit": 467
+  },
+  "n_parent_groups_with_any_label": 2247,
+  "n_conflicting_parent_groups": 385,
+  "n_binary_molecules": 1862,
+  "all_label_counts": {
+    "0": 497,
+    "1": 1365
+  },
+  "n_unique_bemis_murcko_scaffolds": 1172,
+  "n_acyclic_molecules": 154,
+  "splits": {
+    "random": {
+      "method": "label_stratified_stable_hash",
+      "target_test_size": 372,
+      "actual_test_size": 372,
+      "test_size_shortfall": 0,
+      "n_train": 1490,
+      "n_test": 372,
+      "train_label_counts": {
+        "0": 398,
+        "1": 1092
+      },
+      "test_label_counts": {
+        "0": 99,
+        "1": 273
+      },
+      "n_train_scaffolds": 977,
+      "n_test_scaffolds": 289,
+      "train_test_scaffold_overlap": 94,
+      "train_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling/Bioavailability_Ma/random/train.jsonl",
+        "test": "data/processed_starling/Bioavailability_Ma/random/test.jsonl",
+        "train_molecule_labels": "data/processed_starling/Bioavailability_Ma/random/train_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling/Bioavailability_Ma/random/test_molecule_labels.jsonl"
+      }
+    },
+    "scaffold": {
+      "method": "bemis_murcko_scaffold_group_subset_sum",
+      "target_test_size": 372,
+      "actual_test_size": 372,
+      "test_size_shortfall": 0,
+      "n_train": 1490,
+      "n_test": 372,
+      "train_label_counts": {
+        "0": 384,
+        "1": 1106
+      },
+      "test_label_counts": {
+        "0": 113,
+        "1": 259
+      },
+      "n_train_scaffolds": 887,
+      "n_test_scaffolds": 285,
+      "train_test_scaffold_overlap": 0,
+      "train_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling/Bioavailability_Ma/scaffold/train.jsonl",
+        "test": "data/processed_starling/Bioavailability_Ma/scaffold/test.jsonl",
+        "train_molecule_labels": "data/processed_starling/Bioavailability_Ma/scaffold/train_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling/Bioavailability_Ma/scaffold/test_molecule_labels.jsonl"
+      }
+    }
+  },
+  "cross_split_test_identity_overlap": 80,
+  "source_metadata": {
+    "sources": [
+      {
+        "dataset": "starling-labs/Oral_Bioavailability",
+        "requested_revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",
+        "resolved_revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",
+        "split": "train"
+      },
+      {
+        "path": "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
+        "sha256": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010"
+      }
+    ],
+    "tdc_compatibility": {
+      "population_scope": "human only",
+      "positive_label": "human oral bioavailability F >= 20%",
+      "negative_label": "human oral bioavailability F < 20%",
+      "numeric_units": "percent and unitless fraction normalized to percent",
+      "qualitative_policy": "only explicit high/good/complete or low/poor/negligible descriptors"
+    }
+  },
+  "paths": {
+    "molecule_labels": "data/processed_starling/Bioavailability_Ma/molecule_labels.jsonl",
+    "conflicting_molecules": "data/processed_starling/Bioavailability_Ma/conflicting_molecules.jsonl",
+    "source_rejection_examples": "data/processed_starling/Bioavailability_Ma/source_rejection_examples.jsonl"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "task": "Skin_Reaction",
+  "protocol_version": "starling_binary_benchmark.v2",
+  "identity_normalizer_version": "rdkit_fragment_parent.v1",
+  "seed": 20260723,
+  "test_size_policy": {
+    "formula": "min(max_test_size, floor(test_fraction * n_binary_molecules))",
+    "max_test_size": 500,
+    "test_fraction": 0.2,
+    "target_test_size": 380
+  },
+  "n_source_rows_considered": 66597,
+  "n_source_rows_labeled_before_structure_normalization": 61367,
+  "source_rejection_counts": {
+    "inconclusive_outcome": 181,
+    "invalid_or_unresolved_smiles": 16731,
+    "outside_tdc_skin_sensitization_scope": 5049
+  },
+  "n_parent_groups_with_any_label": 2921,
+  "n_conflicting_parent_groups": 1021,
+  "n_binary_molecules": 1900,
+  "all_label_counts": {
+    "0": 643,
+    "1": 1257
+  },
+  "n_unique_bemis_murcko_scaffolds": 653,
+  "n_acyclic_molecules": 467,
+  "splits": {
+    "random": {
+      "method": "label_stratified_stable_hash",
+      "target_test_size": 380,
+      "actual_test_size": 380,
+      "test_size_shortfall": 0,
+      "n_train": 1520,
+      "n_test": 380,
+      "train_label_counts": {
+        "0": 514,
+        "1": 1006
+      },
+      "test_label_counts": {
+        "0": 129,
+        "1": 251
+      },
+      "n_train_scaffolds": 560,
+      "n_test_scaffolds": 165,
+      "train_test_scaffold_overlap": 72,
+      "train_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling/Skin_Reaction/random/train.jsonl",
+        "test": "data/processed_starling/Skin_Reaction/random/test.jsonl",
+        "train_molecule_labels": "data/processed_starling/Skin_Reaction/random/train_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling/Skin_Reaction/random/test_molecule_labels.jsonl"
+      }
+    },
+    "scaffold": {
+      "method": "bemis_murcko_scaffold_group_subset_sum",
+      "target_test_size": 380,
+      "actual_test_size": 380,
+      "test_size_shortfall": 0,
+      "n_train": 1520,
+      "n_test": 380,
+      "train_label_counts": {
+        "0": 526,
+        "1": 994
+      },
+      "test_label_counts": {
+        "0": 117,
+        "1": 263
+      },
+      "n_train_scaffolds": 414,
+      "n_test_scaffolds": 239,
+      "train_test_scaffold_overlap": 0,
+      "train_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling/Skin_Reaction/scaffold/train.jsonl",
+        "test": "data/processed_starling/Skin_Reaction/scaffold/test.jsonl",
+        "train_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/train_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/test_molecule_labels.jsonl"
+      }
+    }
+  },
+  "cross_split_test_identity_overlap": 79,
+  "source_metadata": {
+    "path": "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet",
+    "sha256": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1",
+    "tdc_compatibility": {
+      "endpoint_scope": "skin sensitization/contact allergy, not irritation or generic local skin injury",
+      "positive_label": "sensitizer/positive direct skin-sensitization outcome",
+      "negative_label": "non-sensitizer/negative direct skin-sensitization outcome",
+      "numeric_policy": "outcome_label is authoritative; incidence fields are provenance, not a new threshold"
+    }
+  },
+  "paths": {
+    "molecule_labels": "data/processed_starling/Skin_Reaction/molecule_labels.jsonl",
+    "conflicting_molecules": "data/processed_starling/Skin_Reaction/conflicting_molecules.jsonl",
+    "source_rejection_examples": "data/processed_starling/Skin_Reaction/source_rejection_examples.jsonl"
+  }
+}

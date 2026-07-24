@@ -25,6 +25,24 @@ label:
   Y=0 -> low, oral bioavailability F < 20%
 ```
 
+新的 Starling-held-out benchmark 由 `starling_benchmark.py` 构建：只接受可确认 human context 的
+direct oral F；百分数与明确 fraction 统一到 percent，跨 20% 的 range、relative comparison、
+非 human、population 不明或 `qualifying_conditions` 非空的记录都不进入 gold label。
+parent-level 0/1 冲突分子不做多数票。
+这里的 benchmark label conversion 与下文禁止的 inference-time Starling label policy 是两回事；
+它不能进入 LLM prompt 或改变有效 prediction。
+
+当前 frozen build 位于：
+
+```text
+data/processed_starling/Bioavailability_Ma/random/
+data/processed_starling/Bioavailability_Ma/scaffold/
+```
+
+共有 1,862 个 binary parents；两种 split 的 test target 均为 372。公共构建/审计协议见
+`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。正式运行前必须按各 split 的
+`test_molecule_labels.jsonl` 分别重建 train-only retrieval index。
+
 Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，不是 LLM function tool。
 
 ## Paper pipeline
@@ -120,7 +138,16 @@ Starling factor builder：
 tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py
 ```
 
-它使用 shared profile ingestion：
+Starling gold benchmark adapter：
+
+```text
+tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
+```
+
+前者构建 inference-time evidence/index；后者只实现 direct human oral F 的 binary label adapter。
+二者不能互相替代。
+
+Starling factor builder 使用 shared profile ingestion：
 
 ```text
 tools/chembl_tool/common/starling/evidence_library.py

@@ -20,28 +20,55 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-当前 BBB 数据基础：
+## 当前 Starling 二分类 benchmark（2026-07-24）
+
+BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
+records 构建；ClinTox 因缺少与 clinical-trial toxicity failure 同定义的 Starling direct source，
+暂不构造 Starling split。公共协议和唯一构建入口为：
 
 ```text
-assay candidates:
-  outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/bbb_assay_candidates.csv
+tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
+tools/chembl_tool/common/starling/benchmark_dataset.py
+tools/chembl_tool/common/starling/build_benchmark_datasets.py
 
-activity evidence:
-  outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/bbb_activity_evidence.csv
-
-ChEMBL fingerprints:
-  tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz
-
-test molecules:
-  data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl
+task adapters:
+  tools/chembl_tool/tasks/bbb_martins/starling_benchmark.py
+  tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
+  tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
 ```
 
-`test_efflux.jsonl` 当前字段：
+每个 task 使用同一批 accepted binary parents 生成两个独立版本：
 
 ```text
-drug: query SMILES
-Y: BBB label
+data/processed_starling/<Task>/random/{train.jsonl,test.jsonl,...}
+data/processed_starling/<Task>/scaffold/{train.jsonl,test.jsonl,...}
 ```
+
+test 数量为 `min(500, floor(0.2 * n_binary_molecules))`。`random` 是固定 seed 的 label-stratified
+stable-hash split；`scaffold` 以 canonical Bemis–Murcko scaffold 为不可拆分 group。两者均要求
+train/test parent identity 零重叠，scaffold 版本还要求 scaffold 零重叠。当前 frozen build：
+
+| task | binary parents | test target | random test Y=0 / Y=1 | scaffold test Y=0 / Y=1 |
+|---|---:|---:|---:|---:|
+| BBB_Martins | 17,893 | 500 | 139 / 361 | 122 / 378 |
+| Bioavailability_Ma | 1,862 | 372 | 99 / 273 | 113 / 259 |
+| Skin_Reaction | 1,900 | 380 | 129 / 251 | 117 / 263 |
+
+运行入口：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.common.starling.build_benchmark_datasets
+```
+
+split 中的 `train.jsonl` / `test.jsonl` 仍只含 `drug` 和 `Y`。label provenance、source row
+accept/reject reason、parent identity 和冲突记录保存在同目录 audit artifacts。正式评估前必须针对
+random/scaffold 分别按 `test_molecule_labels.jsonl` 重建 train-only retrieval index；现有从 full
+Starling source 构建的 evidence index 不能直接用于新 benchmark。
+
+旧 `data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
+`data/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` 是既有 TDC 实验的历史输入，不再代表上述
+三个已迁移 task 的当前 benchmark。历史结果和复现命令可以保留，但必须明确标注 TDC lineage。
 
 ## 设计原则
 
@@ -212,6 +239,8 @@ tools/chembl_tool/common/distance_index.py
 tools/chembl_tool/common/distance_retrieval.py
 tools/chembl_tool/common/scalar_knn.py
 tools/chembl_tool/common/starling/evidence_library.py
+tools/chembl_tool/common/starling/benchmark_dataset.py
+tools/chembl_tool/common/starling/build_benchmark_datasets.py
 ```
 
 这些公共 workflow 的职责：
@@ -309,6 +338,15 @@ common/starling/evidence_library.py
   profile-driven parquet ingestion。profile 只声明 SMILES、endpoint、value、unit、context、scope、role
   和 group 映射；公共实现负责 canonicalization、缺失 SMILES 统计、molecule-level 聚合、representative
   examples、provenance 和 neighbor-index 兼容 evidence row。
+
+common/starling/benchmark_dataset.py
+  Starling direct gold-label 构建公共引擎：source-row 决策、RDKit fragment-parent 聚合、parent-level
+  label conflict 排除、random/scaffold 双 split、audit artifact 和 summary。task-specific threshold、
+  population/scope/unit/free-text 规则只能由 task adapter 提供。
+
+common/starling/build_benchmark_datasets.py
+  三个已支持 task 的统一 CLI；读取冻结 source revision/local parquet，生成
+  `data/processed_starling/<Task>/{random,scaffold}/` 及 task/root 汇总。它不构建 retrieval index。
 ```
 
 典型 task wrapper 文件：
@@ -420,6 +458,12 @@ retrieval evidence 和 provenance。旧 task-specific reasoning output 不再由
 `--split` 时使用 test 并写入 `outputs/paper/molecular_evidence_agent/`；validation 诊断重跑统一加
 `--split valid`，产物隔离写入 `outputs/paper/molecular_evidence_agent_valid/`。可复用入口包括：
 
+这里的既有 `test` / `valid` 和 2026-07-23 frozen results 来自旧 TDC lineage，应作为历史结果保留；
+`--split test|valid` 目前不能解释为 Starling 的 `random|scaffold`。新 Starling 正式实验必须显式选择
+`data/processed_starling/<Task>/random/test.jsonl` 或 `scaffold/test.jsonl`，使用相应 train-only
+retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
+test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
+
 Paper-facing structural-analog retrieval 主结果默认使用 `parent_disjoint`。`operational` 必须先跑，作为
 真实部署敏感性对照和 parent-disjoint 选择性 diff/reuse 的 staging source；它不是 analog-retrieval claim
 的默认最终设置。每个新增 retrieval condition 在 operational 完成后必须同轮补齐 parent-disjoint，并报告
@@ -459,7 +503,7 @@ coverage 与性能增幅的关系分析使用 `plot_coverage_performance.py`，�
 每个 split 的正式 figures 目录只保留 canonical SVG 和一份高分辨率 PNG，不保留
 preview、QA、pre-parent 或已被替代的 overview 代码/产物。
 
-## MiniMol baseline
+## MiniMol baseline（既有结果为历史 TDC lineage）
 
 MiniMol baseline 代码放在：
 
@@ -479,6 +523,11 @@ train.jsonl / valid.jsonl / test.jsonl
   drug: SMILES
   Y: 0/1 label
 ```
+
+下面列出的命令、sweep 和指标均使用 `data/processed/<Task>` 的旧 TDC split。若重跑当前 Starling
+benchmark，必须分别使用 `data/processed_starling/<Task>/random/` 和 `scaffold/`；当前 builder 不生成
+`valid.jsonl`，因此 MiniMol 的 valid-based model selection 还需要先冻结一套只从各自 train 内生成的
+validation protocol。新结果必须写入独立 output root，不能覆盖或与下面的 TDC 指标合并。
 
 运行环境和实现注意事项：
 
@@ -1710,7 +1759,7 @@ parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 
 常用 pipeline 命令：
 
 ```bash
-# 完整运行一个 test_efflux 分子
+# 历史 TDC native runner：完整运行一个 test_efflux 分子
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
   --query-index 0 \
   --top-k-per-group 3 \
@@ -1729,7 +1778,7 @@ parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 
   --max-tokens 8192 \
   --model deepseek-v4-pro
 
-# 批量运行一个 JSONL 中的分子，并生成评估报告
+# 历史 TDC batch 复现；新 Starling benchmark 不得沿用这个 input path 或 full-source index
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
   --input-jsonl data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl \
   --parallelism 1 \

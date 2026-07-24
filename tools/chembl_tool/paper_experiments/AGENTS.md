@@ -33,6 +33,38 @@ TRACE_RETENTION.md
 `analysis/report.md`，然后根据生成产物把已测结果同步到 `RESULTS.md`，最后更新
 `VISIBILITY_ANALYSIS.md` 等解释文档。当前生成器不会自动改写 `RESULTS.md`；不得只在聊天中保留结论。
 
+## Benchmark input lineage 与 Starling 迁移边界
+
+当前 frozen `test` / `valid` matrix、`RESULTS.md` 和
+`outputs/paper/molecular_evidence_agent{,_valid}/` 均来自迁移前的 TDC task splits。它们是可复现的
+历史结果，不应删除；但不得改称 Starling benchmark。现有 CLI 的 `--split test|valid` 仍是旧数据选择器，
+不能重载为 Starling 的 `random|scaffold`。
+
+新的 Starling direct gold benchmark 由以下公共入口构建：
+
+```text
+tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
+tools/chembl_tool/common/starling/build_benchmark_datasets.py
+
+data/processed_starling/<Task>/random/test.jsonl
+data/processed_starling/<Task>/scaffold/test.jsonl
+```
+
+将它接入 paper runner 时必须满足：
+
+1. condition manifest 显式记录 `benchmark_source=starling`、task、`random|scaffold`、builder/source
+   revision 和 test input hash；
+2. random 与 scaffold 分别使用对应 `test_molecule_labels.jsonl` 构建的 train-only evidence index，
+   不能复用从 full Starling direct source 构建的旧 index；
+3. 在运行 LLM 前审计 test parent identity 与 index molecule identity 为零重叠；scaffold split 还需保留
+   train/test scaffold 零重叠的 builder audit；
+4. 两种 Starling split 使用不同 output root/batch ID，且都与旧 TDC test/valid root 隔离；
+5. 汇总器和图表必须按 benchmark lineage 分区，不得把 TDC、Starling-random 和
+   Starling-scaffold sample-condition 合并成一个指标。
+
+当前仅完成 dataset builder 和 split artifacts；在上述 runner/index 接线与 leakage audit 完成前，
+`RESULTS.md` 中不存在正式 Starling rerun 结果。
+
 ## 代码与命令入口
 
 ```text

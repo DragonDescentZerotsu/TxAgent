@@ -67,6 +67,42 @@ tools/chembl_tool/common/identity_blind.py
 
 任务代码不得复制公共 retrieval、source aggregation、LLM client、validation 或 batch orchestration。
 
+## Starling direct gold benchmark
+
+Starling evidence ingestion 与 Starling gold-label 构建是两个独立模块，不能共用一套含义：
+
+```text
+tools/chembl_tool/common/starling/evidence_library.py
+  构建 inference-time molecule evidence/index，不产生 benchmark label。
+
+tools/chembl_tool/common/starling/benchmark_dataset.py
+  统一完成 parent identity、binary/ambiguous 决策聚合、冲突排除、random/scaffold split 和审计输出。
+
+tools/chembl_tool/common/starling/build_benchmark_datasets.py
+  当前支持任务的统一构建 CLI。
+
+tools/chembl_tool/tasks/<task>/starling_benchmark.py
+  只声明该 task 的 source、endpoint/scope/population、单位/threshold 和 free-text 到 label 的保守映射。
+```
+
+Task adapter 必须先把每条 source record 映射为 `0`、`1` 或带 reason 的拒绝/ambiguous 决策；不得把
+supporting passage 当作无条件 keyword vote，也不得在 adapter 内复制 parent aggregation 或 split 算法。
+公共层按 `rdkit_fragment_parent.v1` 聚合：同一 accepted parent 同时出现 0 和 1 即为冲突，整个 parent
+从两套 split 排除，不做多数票。
+
+每个支持 task 必须从同一 accepted parent pool 同时生成：
+
+```text
+data/processed_starling/<Task>/random/{train.jsonl,test.jsonl,...}
+data/processed_starling/<Task>/scaffold/{train.jsonl,test.jsonl,...}
+```
+
+test target 为 `min(500, floor(0.2 * n_binary_molecules))`。random 使用固定 seed 的 label-stratified
+stable-hash split；scaffold 以 canonical Bemis–Murcko scaffold 为不可拆分 group。对应
+`test_molecule_labels.jsonl` 是 train-only evidence library 的 exclusion contract；在各自 index 完成
+test-parent zero-overlap audit 前，不得启动正式评估。完整规则、当前 frozen counts 和运行命令见
+`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
+
 ## Molecule identity 与 parent-disjoint
 
 Molecule identity 是 retrieval ranking/filtering metadata，不属于 `minimal_evidence.v1` 的 evidence

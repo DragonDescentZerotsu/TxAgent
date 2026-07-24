@@ -1,0 +1,26 @@
+{
+  "method": "bemis_murcko_scaffold_group_subset_sum",
+  "target_test_size": 380,
+  "actual_test_size": 380,
+  "test_size_shortfall": 0,
+  "n_train": 1520,
+  "n_test": 380,
+  "train_label_counts": {
+    "0": 526,
+    "1": 994
+  },
+  "test_label_counts": {
+    "0": 117,
+    "1": 263
+  },
+  "n_train_scaffolds": 414,
+  "n_test_scaffolds": 239,
+  "train_test_scaffold_overlap": 0,
+  "train_test_identity_overlap": 0,
+  "paths": {
+    "train": "data/processed_starling/Skin_Reaction/scaffold/train.jsonl",
+    "test": "data/processed_starling/Skin_Reaction/scaffold/test.jsonl",
+    "train_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/train_molecule_labels.jsonl",
+    "test_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/test_molecule_labels.jsonl"
+  }
+}

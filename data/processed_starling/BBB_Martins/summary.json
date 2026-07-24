@@ -1,0 +1,101 @@
+{
+  "task": "BBB_Martins",
+  "protocol_version": "starling_binary_benchmark.v2",
+  "identity_normalizer_version": "rdkit_fragment_parent.v1",
+  "seed": 20260723,
+  "test_size_policy": {
+    "formula": "min(max_test_size, floor(test_fraction * n_binary_molecules))",
+    "max_test_size": 500,
+    "test_fraction": 0.2,
+    "target_test_size": 500
+  },
+  "n_source_rows_considered": 304845,
+  "n_source_rows_labeled_before_structure_normalization": 162810,
+  "source_rejection_counts": {
+    "interpretation_altering_qualifying_conditions": 103340,
+    "invalid_or_unresolved_smiles": 1118,
+    "no_tdc_compatible_qualitative_or_logbb_label": 38542,
+    "within_record_label_conflict": 153
+  },
+  "n_parent_groups_with_any_label": 20516,
+  "n_conflicting_parent_groups": 2623,
+  "n_binary_molecules": 17893,
+  "all_label_counts": {
+    "0": 4960,
+    "1": 12933
+  },
+  "n_unique_bemis_murcko_scaffolds": 8546,
+  "n_acyclic_molecules": 1348,
+  "splits": {
+    "random": {
+      "method": "label_stratified_stable_hash",
+      "target_test_size": 500,
+      "actual_test_size": 500,
+      "test_size_shortfall": 0,
+      "n_train": 17393,
+      "n_test": 500,
+      "train_label_counts": {
+        "0": 4821,
+        "1": 12572
+      },
+      "test_label_counts": {
+        "0": 139,
+        "1": 361
+      },
+      "n_train_scaffolds": 8366,
+      "n_test_scaffolds": 399,
+      "train_test_scaffold_overlap": 219,
+      "train_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling/BBB_Martins/random/train.jsonl",
+        "test": "data/processed_starling/BBB_Martins/random/test.jsonl",
+        "train_molecule_labels": "data/processed_starling/BBB_Martins/random/train_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling/BBB_Martins/random/test_molecule_labels.jsonl"
+      }
+    },
+    "scaffold": {
+      "method": "bemis_murcko_scaffold_group_subset_sum",
+      "target_test_size": 500,
+      "actual_test_size": 500,
+      "test_size_shortfall": 0,
+      "n_train": 17393,
+      "n_test": 500,
+      "train_label_counts": {
+        "0": 4838,
+        "1": 12555
+      },
+      "test_label_counts": {
+        "0": 122,
+        "1": 378
+      },
+      "n_train_scaffolds": 8276,
+      "n_test_scaffolds": 270,
+      "train_test_scaffold_overlap": 0,
+      "train_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling/BBB_Martins/scaffold/train.jsonl",
+        "test": "data/processed_starling/BBB_Martins/scaffold/test.jsonl",
+        "train_molecule_labels": "data/processed_starling/BBB_Martins/scaffold/train_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling/BBB_Martins/scaffold/test_molecule_labels.jsonl"
+      }
+    }
+  },
+  "cross_split_test_identity_overlap": 9,
+  "source_metadata": {
+    "dataset": "starling-labs/BBB",
+    "requested_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+    "resolved_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+    "split": "train",
+    "tdc_compatibility": {
+      "positive_label": "BBB permeable/pass",
+      "negative_label": "BBB non-permeable/fail",
+      "qualitative_rule": "only bbb_permeability_label is a gold outcome; transport labels are context only",
+      "numeric_rule": "logBB >= -1 is positive; only explicit logBB is converted"
+    }
+  },
+  "paths": {
+    "molecule_labels": "data/processed_starling/BBB_Martins/molecule_labels.jsonl",
+    "conflicting_molecules": "data/processed_starling/BBB_Martins/conflicting_molecules.jsonl",
+    "source_rejection_examples": "data/processed_starling/BBB_Martins/source_rejection_examples.jsonl"
+  }
+}
