@@ -14,6 +14,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    SIMILARITY_SELECTOR,
+)
+
 
 @dataclass(frozen=True)
 class BatchConfig:
@@ -65,6 +70,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
         "neighbor_identity_policy": args.neighbor_identity_policy,
+        "neighbor_selector": args.neighbor_selector,
         "identity_blind": args.identity_blind,
         "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
         "visibility_mode": (
@@ -299,6 +305,8 @@ def _single_run_command(
         args.retrieval_source,
         "--neighbor-identity-policy",
         args.neighbor_identity_policy,
+        "--neighbor-selector",
+        args.neighbor_selector,
         "--out-root",
         str(run_root),
         "--run-id",
@@ -778,6 +786,11 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--disable-thinking", dest="enable_thinking", action="store_false")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
+    parser.add_argument(
+        "--neighbor-selector",
+        choices=NEIGHBOR_SELECTORS,
+        default=SIMILARITY_SELECTOR,
+    )
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     parser.add_argument(
         "--tier1-replacement-index",

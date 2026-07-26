@@ -1,4 +1,11 @@
-from tools.chembl_tool.common.task_workflows.reasoning_batch import _result_is_complete
+from pathlib import Path
+
+from tools.chembl_tool.common.task_workflows.reasoning_batch import (
+    BatchConfig,
+    _parse_args,
+    _result_is_complete,
+    _single_run_command,
+)
 
 
 def test_result_completion_requires_all_reasoning_stages():
@@ -29,3 +36,31 @@ def test_result_completion_accepts_a_retrieval_free_run():
             "n_failed_group_outputs": 0,
         }
     )
+
+
+def test_batch_forwards_neighbor_selector_to_single_run():
+    config = BatchConfig(
+        description="test",
+        default_input="input.jsonl",
+        default_batch_root="batch-root",
+        default_index="index.pkl",
+        default_model="model",
+        batch_id_prefix="batch",
+        pipeline_module="test.pipeline",
+        log_prefix="test",
+        report_title="test",
+        prediction_field="prediction",
+        canonical_positive="positive",
+        canonical_negative="negative",
+        positive_predictions=frozenset({"positive"}),
+        negative_predictions=frozenset({"negative"}),
+    )
+    args = _parse_args(
+        config,
+        ["--neighbor-selector", "query_feature_coverage"],
+    )
+
+    command = _single_run_command(config, args, 7, "run-7", Path("run-root"))
+
+    selector_position = command.index("--neighbor-selector")
+    assert command[selector_position + 1] == "query_feature_coverage"

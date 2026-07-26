@@ -14,6 +14,13 @@ from typing import Any, Mapping
 from rdkit import DataStructs
 
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from tools.chembl_tool.common.neighbor_selection import (
+    QUERY_FEATURE_COVERAGE_SELECTOR,
+    SIMILARITY_SELECTOR,
+    NeighborCandidate,
+    select_neighbor_candidates,
+    selector_metadata,
+)
 from tools.chembl_tool.common.retrieval_policy import (
     NeighborIdentityPolicy,
     decide_candidate,
@@ -70,6 +77,7 @@ def retrieve_group_specs_view(
     top_k_per_group: int,
     min_similarity: float,
     neighbor_identity_policy: str = NeighborIdentityPolicy.OPERATIONAL.value,
+    neighbor_selector: str = SIMILARITY_SELECTOR,
 ) -> dict[str, Any]:
     """Public, stateless family retrieval used by cumulative experiment views."""
     return _retrieve_specs(
@@ -81,6 +89,7 @@ def retrieve_group_specs_view(
         top_k_per_group=top_k_per_group,
         min_similarity=min_similarity,
         neighbor_identity_policy=neighbor_identity_policy,
+        neighbor_selector=neighbor_selector,
     )
 
 
@@ -108,6 +117,7 @@ def retrieve_experiment_view(
     min_similarity: float,
     native_groups: list[str] | None = None,
     neighbor_identity_policy: str = NeighborIdentityPolicy.OPERATIONAL.value,
+    neighbor_selector: str = SIMILARITY_SELECTOR,
 ) -> dict[str, Any]:
     """Build a native, direct, flat, mechanism, or retrieval-free query view."""
     if mode not in EXPERIMENT_MODES:
@@ -124,12 +134,15 @@ def retrieve_experiment_view(
             min_similarity=min_similarity,
             groups=native_groups,
             neighbor_identity_policy=neighbor_identity_policy,
+            neighbor_selector=neighbor_selector,
         )
         result["experiment"] = {
             "mode": mode,
             "source": _source_name(config, index),
             **policy_metadata(neighbor_identity_policy),
         }
+        if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
+            result["experiment"]["neighbor_selector"] = selector_metadata(neighbor_selector)
         return result
     if config is None:
         raise ValueError(f"Experiment mode `{mode}` requires a source experiment config")
@@ -144,6 +157,7 @@ def retrieve_experiment_view(
         top_k_per_group=top_k_per_group,
         min_similarity=min_similarity,
         neighbor_identity_policy=neighbor_identity_policy,
+        neighbor_selector=neighbor_selector,
     )
     if mode == "full_flat" and mechanism_view.get("status") == "ok":
         mechanism_view["groups"] = [_flatten_groups(mechanism_view["groups"])]
@@ -165,6 +179,7 @@ def _retrieve_specs(
     top_k_per_group: int,
     min_similarity: float,
     neighbor_identity_policy: str,
+    neighbor_selector: str,
 ) -> dict[str, Any]:
     canonical_smiles, inchi_key, query_fp = standardize_smiles_and_fp(query_smiles)
     if query_fp is None:
@@ -196,6 +211,8 @@ def _retrieve_specs(
             min_similarity=min_similarity,
             query_identity=query_identity,
             neighbor_identity_policy=neighbor_identity_policy,
+            query_fingerprint=query_fp,
+            neighbor_selector=neighbor_selector,
         )
         output_groups.append(
             {
@@ -208,15 +225,19 @@ def _retrieve_specs(
             }
         )
 
+    experiment = {
+        "mode": mode,
+        "source": source_name,
+        "resolved_group_mapping": resolved_mapping,
+        **policy_metadata(neighbor_identity_policy),
+    }
+    if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
+        experiment["neighbor_selector"] = selector_metadata(neighbor_selector)
+
     return {
         "status": "ok",
         "evidence_source": dict(index.get("source") or {}),
-        "experiment": {
-            "mode": mode,
-            "source": source_name,
-            "resolved_group_mapping": resolved_mapping,
-            **policy_metadata(neighbor_identity_policy),
-        },
+        "experiment": experiment,
         "query": {
             "input_smiles": query_smiles,
             "canonical_smiles": canonical_smiles,
@@ -244,17 +265,17 @@ def _rank_group_candidates(
     min_similarity: float,
     query_identity: Any,
     neighbor_identity_policy: str,
+    query_fingerprint: Any,
+    neighbor_selector: str,
 ) -> list[dict[str, Any]]:
-    ranked = sorted(
-        (
-            (float(similarities[molecule_index]), molecule_index)
-            for molecule_index in candidate_indices
-            if similarities[molecule_index] >= min_similarity
-        ),
-        key=lambda item: (-item[0], index["molecules"][item[1]]["molecule_chembl_id"]),
-    )
-    neighbors = []
-    for similarity, molecule_index in ranked:
+    eligible: list[NeighborCandidate] = []
+    decisions: dict[int, Any] = {}
+    matched_groups_by_index: dict[int, list[str]] = {}
+    evidence_by_index: dict[int, list[dict[str, Any]]] = {}
+    for molecule_index in candidate_indices:
+        similarity = float(similarities[molecule_index])
+        if similarity < min_similarity:
+            continue
         molecule = index["molecules"][molecule_index]
         decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
         if decision.excluded:
@@ -265,6 +286,33 @@ def _rank_group_candidates(
         evidence_rows = [row for group in matched_groups for row in evidence_by_group[group]]
         if not evidence_rows:
             continue
+        eligible.append(
+            NeighborCandidate(
+                molecule_index=molecule_index,
+                molecule_id=str(molecule_id),
+                similarity=similarity,
+            )
+        )
+        decisions[molecule_index] = decision
+        matched_groups_by_index[molecule_index] = matched_groups
+        evidence_by_index[molecule_index] = evidence_rows
+
+    selected = select_neighbor_candidates(
+        eligible,
+        query_fingerprint=query_fingerprint,
+        candidate_fingerprints=index["fingerprints"],
+        top_k=top_k,
+        selector=neighbor_selector,
+    )
+    neighbors = []
+    for candidate in selected:
+        molecule_index = candidate.molecule_index
+        similarity = candidate.similarity
+        molecule = index["molecules"][molecule_index]
+        molecule_id = molecule["molecule_chembl_id"]
+        decision = decisions[molecule_index]
+        matched_groups = matched_groups_by_index[molecule_index]
+        evidence_rows = evidence_by_index[molecule_index]
         neighbors.append(
             {
                 "rank": len(neighbors) + 1,
@@ -279,8 +327,6 @@ def _rank_group_candidates(
                 "evidence_rows": evidence_rows,
             }
         )
-        if len(neighbors) >= top_k:
-            break
     return neighbors
 
 

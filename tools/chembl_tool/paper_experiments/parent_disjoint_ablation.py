@@ -34,7 +34,25 @@ DEFAULT_OUTPUT = Path("outputs/paper/molecular_evidence_agent/analysis/parent_di
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    paper_root = Path(args.paper_root) if args.paper_root else paper_root_for_split(args.split)
+    if args.benchmark_split:
+        from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import (
+            paper_root_for_benchmark_split,
+        )
+        from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
+            experiments_for_starling_benchmark,
+        )
+
+        paper_root = (
+            Path(args.paper_root)
+            if args.paper_root
+            else paper_root_for_benchmark_split(args.benchmark_split)
+        )
+        experiments = experiments_for_starling_benchmark(args.benchmark_split)
+        data_split = f"starling_{args.benchmark_split}"
+    else:
+        paper_root = Path(args.paper_root) if args.paper_root else paper_root_for_split(args.split)
+        experiments = experiments_for_split(args.split)
+        data_split = args.split
     operational_root = (
         Path(args.operational_root)
         if args.operational_root
@@ -52,7 +70,7 @@ def main(argv: list[str] | None = None) -> int:
     output_dir = Path(args.output_dir) if args.output_dir else paper_root / "analysis/parent_disjoint_ablation"
     selected = _select_experiments(
         args.experiments,
-        experiments=experiments_for_split(args.split),
+        experiments=experiments,
     )
     output_dir.mkdir(parents=True, exist_ok=True)
     all_rows: list[dict[str, Any]] = []
@@ -81,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     payload = {
         "policy": "parent_disjoint",
-        "data_split": args.split,
+        "data_split": data_split,
         "operational_root": str(operational_root),
         "target_root": str(target_root),
         "materialized": args.materialize,
@@ -380,6 +398,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--experiments", nargs="*", default=[])
     parser.add_argument("--split", choices=("test", "valid"), default="test")
+    parser.add_argument("--benchmark-split", choices=("random", "scaffold"), default="")
     parser.add_argument("--paper-root", default="")
     parser.add_argument("--operational-root", default="")
     parser.add_argument("--target-root", default="")

@@ -1,4 +1,5 @@
 import argparse
+import json
 
 from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
@@ -10,6 +11,12 @@ from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     _prepare_policy_selection,
     experiment_for_split,
     paper_root_for_split,
+)
+from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
+    _benchmark_provenance,
+    _matrix_manifest_path,
+    _write_json_atomic,
+    experiments_for_starling_benchmark,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     _group_prompt_payload,
@@ -34,6 +41,95 @@ def test_frozen_matrix_has_unique_expected_conditions():
     assert "skin_reaction__starling_direct" in names
     assert "skin_reaction__starling_full_flat" in names
     assert "skin_reaction__starling_full_mechanism" in names
+
+
+def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_indices():
+    experiments = experiments_for_starling_benchmark("random")
+    assert len(experiments) == 22
+    assert {experiment.task for experiment in experiments} == {
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+    }
+    assert all("/random/test.jsonl" in experiment.input_jsonl for experiment in experiments)
+
+    chembl = next(item for item in experiments if item.name == "bbb_martins__chembl_direct")
+    starling = next(item for item in experiments if item.name == "bbb_martins__starling_direct")
+    assert chembl.index == EXPERIMENTS[1].index
+    assert "molecular_evidence_agent_starling_random/evidence" in starling.index
+    assert starling.index.endswith("bbb_starling_direct/starling_bbb_neighbor_index.pkl")
+
+
+def test_starling_matrix_uses_selection_specific_atomic_manifests(tmp_path):
+    experiments = experiments_for_starling_benchmark("random")
+    args = argparse.Namespace(
+        visibility_mode="identity_blind",
+        neighbor_identity_policy="operational",
+        experiments=["bbb_martins__none"],
+    )
+    bbb = next(item for item in experiments if item.name == "bbb_martins__none")
+    bio = next(item for item in experiments if item.name == "bioavailability_ma__none")
+    bbb_path = _matrix_manifest_path(tmp_path, args, [bbb])
+    bio_path = _matrix_manifest_path(tmp_path, args, [bio])
+
+    assert bbb_path != bio_path
+    assert "bbb_martins" in bbb_path.name
+    assert "bioavailability_ma" in bio_path.name
+
+    _write_json_atomic(bbb_path, {"selected_experiments": [bbb.name]})
+    assert json.loads(bbb_path.read_text()) == {
+        "selected_experiments": ["bbb_martins__none"]
+    }
+    assert not list(tmp_path.glob("*.tmp"))
+
+
+def test_starling_matrix_provenance_hashes_split_inputs(tmp_path):
+    experiments = experiments_for_starling_benchmark("random")
+    task_dir = tmp_path / "BBB_Martins"
+    split_dir = task_dir / "random"
+    split_dir.mkdir(parents=True)
+    (task_dir / "summary.json").write_text(
+        json.dumps(
+            {
+                "protocol_version": "test.protocol.v1",
+                "identity_normalizer_version": "test.identity.v1",
+                "seed": 7,
+                "source_metadata": {"revision": "abc"},
+            }
+        )
+    )
+    (split_dir / "summary.json").write_text(
+        json.dumps({"train_test_identity_overlap": 0})
+    )
+    (split_dir / "test.jsonl").write_text('{"drug":"CCO","Y":1}\n')
+    (split_dir / "test_molecule_labels.jsonl").write_text(
+        '{"drug":"CCO","Y":1,"molecule_identity_key":"LFQSCWFLJHTTHZ-UHFFFAOYSA-N"}\n'
+    )
+
+    provenance = _benchmark_provenance(
+        "random",
+        [next(item for item in experiments if item.task == "bbb_martins")],
+        data_root=tmp_path,
+    )
+
+    bbb = provenance["bbb_martins"]
+    assert bbb["protocol_version"] == "test.protocol.v1"
+    assert bbb["source_metadata"] == {"revision": "abc"}
+    assert bbb["split_summary"]["train_test_identity_overlap"] == 0
+    assert len(bbb["test_jsonl_sha256"]) == 64
+    assert len(bbb["test_molecule_labels_sha256"]) == 64
+
+
+def test_starling_matrix_accepts_manifest_only_mode():
+    from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
+        _parse_args as parse_starling_args,
+    )
+
+    args = parse_starling_args(
+        ["--benchmark-split", "random", "--manifest-only"]
+    )
+
+    assert args.manifest_only is True
 
 
 def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():

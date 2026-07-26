@@ -43,6 +43,12 @@ def test_pipeline_accepts_group_filter():
     assert args.groups == groups
 
 
+def test_pipeline_accepts_query_feature_coverage_selector():
+    args = _parse_args(["--neighbor-selector", "query_feature_coverage"])
+
+    assert args.neighbor_selector == "query_feature_coverage"
+
+
 def _row(molecule_id: str, smiles: str, group_id: str, standard_type: str) -> dict:
     tier, endpoint_group = group_id.split(".", 1)
     return {

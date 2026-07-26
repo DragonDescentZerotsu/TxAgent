@@ -241,6 +241,7 @@ tools/chembl_tool/common/scalar_knn.py
 tools/chembl_tool/common/starling/evidence_library.py
 tools/chembl_tool/common/starling/benchmark_dataset.py
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
+tools/chembl_tool/common/starling/heldout_index.py
 ```
 
 这些公共 workflow 的职责：
@@ -347,6 +348,11 @@ common/starling/benchmark_dataset.py
 common/starling/build_benchmark_datasets.py
   三个已支持 task 的统一 CLI；读取冻结 source revision/local parquet，生成
   `data/processed_starling/<Task>/{random,scaffold}/` 及 task/root 汇总。它不构建 retrieval index。
+
+common/starling/heldout_index.py
+  从 full-source Starling evidence rows 中按 `rdkit_fragment_parent.v1` 删除 test parents，重建
+  train/test 隔离的 retrieval index，并写 source/exclusion SHA-256、排除数量和 zero-overlap audit。
+  构建时重算并校验 test parent key；无法解析 parent 的 source evidence row 保守排除。
 ```
 
 典型 task wrapper 文件：
@@ -469,6 +475,15 @@ Paper-facing structural-analog retrieval 主结果默认使用 `parent_disjoint`
 的默认最终设置。每个新增 retrieval condition 在 operational 完成后必须同轮补齐 parent-disjoint，并报告
 same-parent query/group/neighbor-slot/rank-1 暴露统计。
 
+Starling identity-blind 补充控制的统一入口也是
+`tools.chembl_tool.paper_experiments.starling_benchmark_matrix`，但必须显式使用
+`--benchmark-split random|scaffold --visibility-mode identity_blind --neighbor-identity-policy operational`。
+结果分别写入两个 Starling paper root 的 `runs/`，独立汇总到
+`analysis_identity_blind/`；每个 split 必须有 22 个 condition 且通过 failure、query-SMILES leak 和
+visibility-contract audit。identity-blind 不是 parent-disjoint 主结果，也不能直接当成纯 identity effect；
+完整命令、resume、manifest 并发写入约束和 matched-prefetch 后续要求见
+`tools/chembl_tool/paper_experiments/AGENTS.md`。
+
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --split valid ...
 python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
@@ -528,6 +543,10 @@ train.jsonl / valid.jsonl / test.jsonl
 benchmark，必须分别使用 `data/processed_starling/<Task>/random/` 和 `scaffold/`；当前 builder 不生成
 `valid.jsonl`，因此 MiniMol 的 valid-based model selection 还需要先冻结一套只从各自 train 内生成的
 validation protocol。新结果必须写入独立 output root，不能覆盖或与下面的 TDC 指标合并。
+
+若明确允许使用全部 benchmark train molecules，则使用 `--train-all`：不读取 `valid.jsonl`，每个
+ensemble member 在全部 `train.jsonl` 上训练固定 epoch，并用冻结的 `threshold=0.5` 评估 test。
+这种模式不得进行 test-selected early stopping 或 threshold tuning；输出中的 validation metrics 为 null。
 
 运行环境和实现注意事项：
 

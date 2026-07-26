@@ -22,6 +22,10 @@ from tools.chembl_tool.common.identity_blind import (
     sanitize_identity_blind_branch_outputs,
 )
 from tools.chembl_tool.common.json_utils import parse_json_content
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    SIMILARITY_SELECTOR,
+)
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
 from tools.chembl_tool.common.reasoning_calls import (
     bound_group_prompt_payload,
@@ -183,6 +187,7 @@ def main(argv: list[str] | None = None) -> int:
             min_similarity=args.min_similarity,
             native_groups=args.groups,
             neighbor_identity_policy=args.neighbor_identity_policy,
+            neighbor_selector=args.neighbor_selector,
         )
     else:
         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
@@ -276,6 +281,7 @@ def main(argv: list[str] | None = None) -> int:
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
         "neighbor_identity_policy": args.neighbor_identity_policy,
+        "neighbor_selector": args.neighbor_selector,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
@@ -914,6 +920,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
+    parser.add_argument(
+        "--neighbor-selector",
+        choices=NEIGHBOR_SELECTORS,
+        default=SIMILARITY_SELECTOR,
+    )
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     return parser.parse_args(argv)
 

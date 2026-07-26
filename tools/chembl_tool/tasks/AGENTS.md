@@ -55,6 +55,13 @@ tools/chembl_tool/common/molecule_identity.py
 tools/chembl_tool/common/retrieval_policy.py
   统一定义 operational 与 parent_disjoint 候选排除策略；task 和 source adapter 不得复制该逻辑。
 
+tools/chembl_tool/common/neighbor_selection.py
+  对已经通过 similarity threshold、identity policy 和 evidence-availability 检查的候选执行可插拔
+  top-k set selection。`similarity` 保留历史逐点 Tanimoto 排序；
+  `query_feature_coverage` 在不降低既有 `min_similarity` 的前提下，贪心最大化 query Morgan bits 的
+  marginal union coverage，并仅用 Tanimoto 做并列候选的 tie-break。selector 不得修改 evidence row、
+  mechanism-family mapping 或下游 retrieval JSON payload schema。
+
 tools/chembl_tool/common/retrieval_ablation.py
   对 LLM-visible sample/family input 做稳定 hash，物化整条 run 或独立 branch 复用并写 provenance。
 

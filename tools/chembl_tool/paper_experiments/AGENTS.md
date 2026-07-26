@@ -45,6 +45,11 @@ TRACE_RETENTION.md
 ```text
 tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
+tools/chembl_tool/common/starling/heldout_index.py
+tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
+tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
+tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
 
 data/processed_starling/<Task>/random/test.jsonl
 data/processed_starling/<Task>/scaffold/test.jsonl
@@ -52,8 +57,10 @@ data/processed_starling/<Task>/scaffold/test.jsonl
 
 将它接入 paper runner 时必须满足：
 
-1. condition manifest 显式记录 `benchmark_source=starling`、task、`random|scaffold`、builder/source
-   revision 和 test input hash；
+1. matrix manifest 顶层显式记录 `benchmark_source=starling` 和 `random|scaffold`；每个 experiment
+   记录 task、`input_jsonl_sha256` 和 task provenance reference；top-level `benchmark_provenance`
+   保存 protocol、identity normalizer、seed、source revision/metadata，以及 task/split summary、
+   test input 和 `test_molecule_labels.jsonl` 的 SHA-256；
 2. random 与 scaffold 分别使用对应 `test_molecule_labels.jsonl` 构建的 train-only evidence index，
    不能复用从 full Starling direct source 构建的旧 index；
 3. 在运行 LLM 前审计 test parent identity 与 index molecule identity 为零重叠；scaffold split 还需保留
@@ -62,8 +69,110 @@ data/processed_starling/<Task>/scaffold/test.jsonl
 5. 汇总器和图表必须按 benchmark lineage 分区，不得把 TDC、Starling-random 和
    Starling-scaffold sample-condition 合并成一个指标。
 
-当前仅完成 dataset builder 和 split artifacts；在上述 runner/index 接线与 leakage audit 完成前，
+`build_starling_benchmark_indices.py` 从既有 full-source Starling evidence rows 中删除对应 split 的
+全部 test parents，然后重建 direct/full index；因此可使用不属于 gold train 的其它 Starling records，
+但不能保留任何 test-parent record。构建时必须用当前 normalizer 从 `drug` 重算 test parent key 并与
+artifact 中保存的 key 一致；无法解析 parent 的 source evidence row 采用保守排除，不能在无法证明 disjoint
+时仍写入 evidence artifact。`starling_benchmark_matrix.py` 复用冻结的 GLM、prompt、retrieval mode、
+tool 和 batch pipeline，仅替换 test input、Starling index 与隔离 output root：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_random/
+outputs/paper/molecular_evidence_agent_starling_scaffold/
+```
+
+正式 Starling performance bar chart 从合并后的 `metrics.tsv` 读取 random/scaffold、三个 task、
+parent-disjoint pipeline 条件、MiniMol train-all baseline 和 Morgan fingerprint KNN baseline。
+KNN 只从同 split 的 `train.jsonl` 检索，固定 `k=3`，按未加权多数票预测，并用正类邻居比例计算
+AUROC。图中主指标为 macro-F1，输出只保留 canonical SVG 和一份高分辨率 PNG：
+
+```bash
+python -m baselines.structure_knn.run \
+  --data-dir data/processed_starling/<Task>/<random|scaffold> \
+  --output-dir outputs/baselines/structure_knn_starling/<Task>/<random|scaffold> \
+  --k 3
+
+python -m tools.chembl_tool.paper_experiments.plot_starling_benchmark_overview \
+  --png-output outputs/paper/starling_benchmark_results/figures/starling_benchmark_overview_highres.png
+```
+
+Coverage-selector KNN 是 retrieval selector 的诊断实验，不替代上述正式、全 test 的 Morgan KNN baseline。
+其 matched strict-threshold 口径固定 `k=3`、`min_similarity=0.3`，分别运行 `similarity` 和
+`query_feature_coverage`；不足 3 个合格 train neighbors 的 query 必须以
+`status=insufficient_neighbors` 保留在 predictions 中并排除出 supported-cohort metrics，不得用低于阈值的
+neighbors 回填，也不得用 class prior 猜测。结果必须同时报告 `n_evaluated` / `evaluation_coverage`，
+尤其 Bioavailability 和 scaffold split 的 supported cohort 可能只覆盖少数 test samples：
+
+```bash
+python -m baselines.structure_knn.run \
+  --data-dir data/processed_starling/<Task>/<random|scaffold> \
+  --output-dir outputs/baselines/structure_knn_coverage_starling/<Task>/<random|scaffold>/minsim0p3_supported_k3/<selector> \
+  --k 3 \
+  --min-similarity 0.3 \
+  --neighbor-selector <similarity|query_feature_coverage>
+```
+
+正式运行顺序仍是 deployment-visible operational、`parent_disjoint_ablation --materialize`、
+deployment-visible parent-disjoint。`parent_disjoint_ablation.py` 的 `--benchmark-split random|scaffold`
+用于读取新 matrix；旧 `--split test|valid` 语义不变。在完整矩阵、failure audit 和汇总完成前，
 `RESULTS.md` 中不存在正式 Starling rerun 结果。
+
+### Starling identity-blind 补充控制
+
+Starling random/scaffold 的 identity-blind 使用同一个 `starling_benchmark_matrix.py`，但必须显式选择
+`identity_blind + operational`。该制度隐藏 query/neighbor 的结构、名称和 source ID，由 harness 预先计算
+properties/comparison tool text，再把脱敏后的 evidence 和 branch output 交给 LLM。它是补充控制，不取代
+deployment-visible parent-disjoint 主结果；identity-blind 与 agentic deployment-visible 同时改变了身份可见性
+和工具执行方式，不能单独解释为纯 identity effect。严格的可见性比较仍需后续
+`deployment_visible_prefetched` 对同一 blind run 做 frozen retrieval/tool replay，并通过
+`audit_prefetch_contract.py`。
+
+正式入口：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
+  --benchmark-split random \
+  --visibility-mode identity_blind \
+  --neighbor-identity-policy operational \
+  --parallelism 12 \
+  --group-workers 4
+
+python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
+  --benchmark-split scaffold \
+  --visibility-mode identity_blind \
+  --neighbor-identity-policy operational \
+  --parallelism 12 \
+  --group-workers 4
+```
+
+可用 `--experiments <condition...>` 按 task/condition 分队列并行；batch runner 内置 `--skip-existing`，
+所以相同命令也是唯一 resume/failed-sample repair 入口。并行选择性运行时，matrix manifest 使用
+selection-specific 文件名和原子替换，不能让多个 launcher 共享写一个 manifest。只需重建/检查完整
+canonical manifest 而不启动 condition 时，在上述命令加 `--manifest-only`。产物固定写入：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_random/runs/
+outputs/paper/molecular_evidence_agent_starling_scaffold/runs/
+```
+
+两套 split 分别汇总，不能写入正式 parent-disjoint `metrics.tsv` 或在 blind 尚未完成时进入主 bar chart：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.summarize_results \
+  --split test \
+  --paper-root outputs/paper/molecular_evidence_agent_starling_random \
+  --output-dir outputs/paper/molecular_evidence_agent_starling_random/analysis_identity_blind
+
+python -m tools.chembl_tool.paper_experiments.summarize_results \
+  --split test \
+  --paper-root outputs/paper/molecular_evidence_agent_starling_scaffold \
+  --output-dir outputs/paper/molecular_evidence_agent_starling_scaffold/analysis_identity_blind
+```
+
+每个 split 必须恰有 22 个 identity-blind condition，并同时满足
+`n_failed=0`、`query_smiles_trace_leaks=0`、`visibility_contract_satisfied=true`，才能报告结果。
+`summarize_starling_benchmark.py` 仍只汇总 deployment-visible parent-disjoint 主 pipeline、
+MiniMol train-all 和正式全 test Morgan KNN；blind 使用上面的独立 analysis 目录。
 
 ## 代码与命令入口
 

@@ -1,0 +1,275 @@
+"""Run the frozen paper pipeline on Starling random/scaffold benchmark tests."""
+
+from __future__ import annotations
+
+import argparse
+from dataclasses import replace
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+from typing import Any
+
+from .build_starling_benchmark_indices import (
+    BENCHMARK_SPLITS,
+    paper_root_for_benchmark_split,
+)
+from .molecular_evidence_agent import (
+    DEPLOYMENT_VISIBLE,
+    EXPERIMENTS,
+    GLM_BASE_URL,
+    GLM_MODEL,
+    NEIGHBOR_IDENTITY_POLICIES,
+    PARENT_DISJOINT,
+    VISIBILITY_MODES,
+    Experiment,
+    _command,
+    _prepare_policy_selection,
+    _require_parent_disjoint_reuse_plans,
+    _select_experiments,
+    _visibility_contract,
+)
+
+
+TASK_DATA_NAMES = {
+    "bbb_martins": "BBB_Martins",
+    "bioavailability_ma": "Bioavailability_Ma",
+    "skin_reaction": "Skin_Reaction",
+}
+DEFAULT_BENCHMARK_DATA_ROOT = Path("data/processed_starling")
+
+
+def experiments_for_starling_benchmark(split: str) -> list[Experiment]:
+    """Replace only benchmark inputs and held-out-filtered Starling indices."""
+    paper_root = paper_root_for_benchmark_split(split)
+    experiments: list[Experiment] = []
+    for experiment in EXPERIMENTS:
+        data_name = TASK_DATA_NAMES.get(experiment.task)
+        if data_name is None:
+            continue
+        input_jsonl = f"data/processed_starling/{data_name}/{split}/test.jsonl"
+        index = experiment.index
+        if experiment.source == "starling":
+            index = str(_starling_index_path(experiment, paper_root))
+        experiments.append(replace(experiment, input_jsonl=input_jsonl, index=index))
+    return experiments
+
+
+def _starling_index_path(experiment: Experiment, paper_root: Path) -> Path:
+    if experiment.task == "bbb_martins":
+        name = "bbb_starling_direct" if experiment.name.endswith("__starling_direct") else "bbb_starling_full"
+        filename = "starling_bbb_neighbor_index.pkl"
+    elif experiment.task == "skin_reaction":
+        name = "skin_reaction_starling_full"
+        filename = "starling_skin_reaction_neighbor_index.pkl"
+    elif experiment.name.endswith("__starling_direct_numeric"):
+        name = "bioavailability_starling_direct_numeric"
+        filename = "starling_factor_neighbor_index.pkl"
+    else:
+        name = "bioavailability_starling_full"
+        filename = "starling_factor_neighbor_index.pkl"
+    return paper_root / "evidence" / name / filename
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parse_args(argv)
+    experiments = experiments_for_starling_benchmark(args.benchmark_split)
+    selected = _select_experiments(args.experiments, experiments=experiments)
+    selected = _prepare_policy_selection(selected, args)
+    if args.list:
+        print("\n".join(experiment.name for experiment in selected))
+        return 0
+
+    paper_root = paper_root_for_benchmark_split(args.benchmark_split)
+    args.paper_root = str(paper_root)
+    args.split = "test"
+    _validate_inputs(selected)
+    _require_parent_disjoint_reuse_plans(selected, args)
+    benchmark_provenance = _benchmark_provenance(
+        args.benchmark_split,
+        experiments,
+    )
+
+    manifest: dict[str, Any] = {
+        "benchmark_source": "starling",
+        "benchmark_split": args.benchmark_split,
+        "model": GLM_MODEL,
+        "base_url": GLM_BASE_URL,
+        "api_key_env": args.api_key_env,
+        "visibility_mode": args.visibility_mode,
+        "visibility_contract": _visibility_contract(args.visibility_mode),
+        "neighbor_identity_policy": args.neighbor_identity_policy,
+        "paper_root": str(paper_root),
+        "temperature": 0.0,
+        "max_tokens": 20480,
+        "benchmark_provenance": benchmark_provenance,
+        "experiments": [
+            {
+                **experiment.__dict__,
+                "input_jsonl_sha256": benchmark_provenance[experiment.task][
+                    "test_jsonl_sha256"
+                ],
+                "benchmark_provenance_ref": experiment.task,
+            }
+            for experiment in experiments
+        ],
+        "selected_experiments": [experiment.name for experiment in selected],
+    }
+    paper_root.mkdir(parents=True, exist_ok=True)
+    matrix_path = _matrix_manifest_path(paper_root, args, selected)
+    _write_json_atomic(matrix_path, manifest)
+    if args.manifest_only:
+        print(json.dumps({"matrix_manifest": str(matrix_path)}, indent=2))
+        return 0
+
+    failed: list[dict[str, Any]] = []
+    for experiment in selected:
+        command = _command(experiment, args)
+        print(
+            f"[starling_benchmark_matrix] split={args.benchmark_split} "
+            f"starting={experiment.name}",
+            flush=True,
+        )
+        completed = subprocess.run(command, check=False)
+        if completed.returncode:
+            failed.append({"experiment": experiment.name, "returncode": completed.returncode})
+    if failed:
+        print(json.dumps({"failed": failed}, indent=2), file=sys.stderr)
+        return 1
+    return 0
+
+
+def _validate_inputs(experiments: list[Experiment]) -> None:
+    missing: set[str] = set()
+    for experiment in experiments:
+        for value in (experiment.input_jsonl, experiment.index):
+            if not Path(value).exists():
+                missing.add(value)
+    if missing:
+        raise SystemExit("Missing benchmark inputs:\n" + "\n".join(sorted(missing)))
+
+
+def _benchmark_provenance(
+    split: str,
+    experiments: list[Experiment],
+    *,
+    data_root: Path = DEFAULT_BENCHMARK_DATA_ROOT,
+) -> dict[str, dict[str, Any]]:
+    provenance: dict[str, dict[str, Any]] = {}
+    for task in sorted({experiment.task for experiment in experiments}):
+        data_name = TASK_DATA_NAMES[task]
+        task_dir = data_root / data_name
+        split_dir = task_dir / split
+        task_summary_path = task_dir / "summary.json"
+        split_summary_path = split_dir / "summary.json"
+        test_path = split_dir / "test.jsonl"
+        heldout_path = split_dir / "test_molecule_labels.jsonl"
+        required = (
+            task_summary_path,
+            split_summary_path,
+            test_path,
+            heldout_path,
+        )
+        missing = [str(path) for path in required if not path.exists()]
+        if missing:
+            raise SystemExit(
+                "Missing Starling benchmark provenance artifacts:\n"
+                + "\n".join(missing)
+            )
+        task_summary = json.loads(task_summary_path.read_text(encoding="utf-8"))
+        split_summary = json.loads(split_summary_path.read_text(encoding="utf-8"))
+        provenance[task] = {
+            "data_name": data_name,
+            "protocol_version": task_summary.get("protocol_version"),
+            "identity_normalizer_version": task_summary.get(
+                "identity_normalizer_version"
+            ),
+            "seed": task_summary.get("seed"),
+            "source_metadata": task_summary.get("source_metadata"),
+            "split_summary": split_summary,
+            "task_summary_path": str(task_summary_path),
+            "task_summary_sha256": _sha256_file(task_summary_path),
+            "split_summary_path": str(split_summary_path),
+            "split_summary_sha256": _sha256_file(split_summary_path),
+            "test_jsonl": str(test_path),
+            "test_jsonl_sha256": _sha256_file(test_path),
+            "test_molecule_labels_jsonl": str(heldout_path),
+            "test_molecule_labels_sha256": _sha256_file(heldout_path),
+        }
+    return provenance
+
+
+def _matrix_manifest_path(
+    paper_root: Path,
+    args: argparse.Namespace,
+    selected: list[Experiment],
+) -> Path:
+    suffix = f"{args.visibility_mode}_{args.neighbor_identity_policy}"
+    if not args.experiments:
+        return paper_root / f"experiment_matrix_{suffix}.json"
+    names = [experiment.name for experiment in selected]
+    tasks = "_".join(sorted({experiment.task for experiment in selected}))
+    selection_hash = hashlib.sha256("\n".join(names).encode("utf-8")).hexdigest()[:12]
+    return paper_root / f"experiment_matrix_{suffix}_{tasks}_{selection_hash}.json"
+
+
+def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
+    """Keep concurrent task-specific matrix launches from corrupting manifests."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as handle:
+            json.dump(payload, handle, indent=2)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+            temporary_path = Path(handle.name)
+        temporary_path.replace(path)
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--benchmark-split", choices=BENCHMARK_SPLITS, required=True)
+    parser.add_argument("--experiments", nargs="*", default=[])
+    parser.add_argument("--list", action="store_true")
+    parser.add_argument(
+        "--manifest-only",
+        action="store_true",
+        help="Validate inputs and write the matrix manifest without launching conditions.",
+    )
+    parser.add_argument("--api-key-env", default="GLM_API_KEY")
+    parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=DEPLOYMENT_VISIBLE)
+    parser.add_argument(
+        "--neighbor-identity-policy",
+        choices=NEIGHBOR_IDENTITY_POLICIES,
+        default=PARENT_DISJOINT,
+    )
+    parser.add_argument("--python-executable", default=sys.executable)
+    parser.add_argument("--parallelism", type=int, default=8)
+    parser.add_argument("--group-workers", type=int, default=8)
+    return parser.parse_args(argv)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

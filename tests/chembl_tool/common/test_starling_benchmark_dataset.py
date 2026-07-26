@@ -14,6 +14,11 @@ from tools.chembl_tool.common.starling.benchmark_dataset import (
     scaffold_group_split,
     stratified_hash_split,
 )
+from tools.chembl_tool.common.starling.heldout_index import (
+    filter_heldout_evidence_rows,
+    identity_key,
+    load_heldout_identity_keys,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import label_record as label_bbb
 from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
     is_human_context,
@@ -219,3 +224,53 @@ def test_scaffold_split_is_reproducible_and_disjoint():
     train_scaffolds = {row["bemis_murcko_scaffold"] for row in first[0]}
     test_scaffolds = {row["bemis_murcko_scaffold"] for row in first[1]}
     assert not (train_scaffolds & test_scaffolds)
+
+
+def test_heldout_filter_removes_parent_equivalent_evidence(tmp_path):
+    heldout_path = tmp_path / "test_molecule_labels.jsonl"
+    heldout = {
+        "drug": "CCO",
+        "molecule_identity_key": identity_key({"canonical_smiles": "CCO"}),
+        "molecule_identity": {
+            "normalizer_version": "rdkit_fragment_parent.v1",
+        },
+        "Y": 1,
+    }
+    heldout_path.write_text(json.dumps(heldout) + "\n", encoding="utf-8")
+    heldout_keys = load_heldout_identity_keys(heldout_path)
+
+    kept, stats = filter_heldout_evidence_rows(
+        [
+            {"canonical_smiles": "CCO"},
+            {"canonical_smiles": "CCO.[Na+]"},
+            {"canonical_smiles": "CCN"},
+            {"canonical_smiles": ""},
+        ],
+        heldout_keys,
+    )
+
+    assert [row["canonical_smiles"] for row in kept] == ["CCN"]
+    assert stats["n_excluded_evidence_rows"] == 3
+    assert stats["n_excluded_unresolved_evidence_rows"] == 1
+    assert stats["zero_parent_overlap"] is True
+
+
+def test_heldout_identity_loader_recomputes_and_validates_stored_key(tmp_path):
+    heldout_path = tmp_path / "test_molecule_labels.jsonl"
+    heldout_path.write_text(
+        json.dumps(
+            {
+                "drug": "CCO",
+                "molecule_identity_key": "incorrect-key",
+                "molecule_identity": {
+                    "normalizer_version": "rdkit_fragment_parent.v1",
+                },
+                "Y": 1,
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="stores parent identity"):
+        load_heldout_identity_keys(heldout_path)

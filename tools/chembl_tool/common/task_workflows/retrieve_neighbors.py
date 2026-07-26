@@ -12,6 +12,14 @@ from typing import Any
 
 from rdkit import DataStructs
 
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    QUERY_FEATURE_COVERAGE_SELECTOR,
+    SIMILARITY_SELECTOR,
+    NeighborCandidate,
+    select_neighbor_candidates,
+    selector_metadata,
+)
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
 
 
@@ -26,6 +34,7 @@ def main(default_index: str, description: str, argv: list[str] | None = None) ->
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
             groups=args.groups,
+            neighbor_selector=args.neighbor_selector,
         )
         _write_single_result(result, args.out)
     elif args.query_jsonl:
@@ -49,6 +58,7 @@ def retrieve_neighbors(
     min_similarity: float = 0.3,
     groups: list[str] | None = None,
     neighbor_identity_policy: str = "operational",
+    neighbor_selector: str = SIMILARITY_SELECTOR,
 ) -> dict[str, Any]:
     from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
     from tools.chembl_tool.common.retrieval_policy import policy_metadata
@@ -81,6 +91,8 @@ def retrieve_neighbors(
             min_similarity=min_similarity,
             query_identity=query_identity,
             neighbor_identity_policy=neighbor_identity_policy,
+            query_fingerprint=query_fp,
+            neighbor_selector=neighbor_selector,
         )
         n_neighbors_total += len(neighbors)
         tier, endpoint_group = _split_group_id(group_id)
@@ -94,10 +106,14 @@ def retrieve_neighbors(
             }
         )
 
+    retrieval_policy = policy_metadata(neighbor_identity_policy)
+    if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
+        retrieval_policy["neighbor_selector"] = selector_metadata(neighbor_selector)
+
     return {
         "status": "ok",
         "evidence_source": index.get("source", {}),
-        "retrieval_policy": policy_metadata(neighbor_identity_policy),
+        "retrieval_policy": retrieval_policy,
         "query": {
             "input_smiles": query_smiles,
             "canonical_smiles": canonical_smiles,
@@ -141,24 +157,51 @@ def _top_neighbors_for_group(
     min_similarity: float,
     query_identity: Any,
     neighbor_identity_policy: str,
+    query_fingerprint: Any,
+    neighbor_selector: str,
 ) -> list[dict[str, Any]]:
     from tools.chembl_tool.common.retrieval_policy import decide_candidate
 
-    ranked = sorted(
-        (
-            (similarities[molecule_index], molecule_index)
-            for molecule_index in molecule_indices
-            if similarities[molecule_index] >= min_similarity
-        ),
-        key=lambda item: (-item[0], index["molecules"][item[1]]["molecule_chembl_id"]),
-    )
-    neighbors: list[dict[str, Any]] = []
-    for similarity, molecule_index in ranked:
+    eligible: list[NeighborCandidate] = []
+    decisions: dict[int, Any] = {}
+    evidence_by_index: dict[int, list[dict[str, Any]]] = {}
+    for molecule_index in molecule_indices:
+        similarity = float(similarities[molecule_index])
+        if similarity < min_similarity:
+            continue
         molecule = index["molecules"][molecule_index]
         decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
         if decision.excluded:
             continue
-        evidence_rows = index["evidence_by_molecule_group"][molecule["molecule_chembl_id"]][group_id]
+        evidence_rows = index["evidence_by_molecule_group"].get(
+            molecule["molecule_chembl_id"], {}
+        ).get(group_id, [])
+        if not evidence_rows:
+            continue
+        eligible.append(
+            NeighborCandidate(
+                molecule_index=molecule_index,
+                molecule_id=str(molecule["molecule_chembl_id"]),
+                similarity=similarity,
+            )
+        )
+        decisions[molecule_index] = decision
+        evidence_by_index[molecule_index] = evidence_rows
+
+    selected = select_neighbor_candidates(
+        eligible,
+        query_fingerprint=query_fingerprint,
+        candidate_fingerprints=index["fingerprints"],
+        top_k=top_k,
+        selector=neighbor_selector,
+    )
+    neighbors: list[dict[str, Any]] = []
+    for candidate in selected:
+        molecule_index = candidate.molecule_index
+        similarity = candidate.similarity
+        molecule = index["molecules"][molecule_index]
+        decision = decisions[molecule_index]
+        evidence_rows = evidence_by_index[molecule_index]
         neighbors.append(
             {
                 "rank": len(neighbors) + 1,
@@ -172,8 +215,6 @@ def _top_neighbors_for_group(
                 "evidence_rows": evidence_rows,
             }
         )
-        if len(neighbors) >= top_k:
-            break
     return neighbors
 
 
@@ -211,6 +252,7 @@ def _run_jsonl(args: argparse.Namespace, index: dict[str, Any]) -> None:
                     top_k_per_group=args.top_k_per_group,
                     min_similarity=args.min_similarity,
                     groups=args.groups,
+                    neighbor_selector=args.neighbor_selector,
                 )
                 result["source"] = {"query_index": i, "smiles_field": args.smiles_field}
                 out_handle.write(json.dumps(result, ensure_ascii=False, default=str) + "\n")
@@ -243,6 +285,11 @@ def _parse_args(default_index: str, description: str, argv: list[str] | None) ->
     parser.add_argument("--out", default="")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
+    parser.add_argument(
+        "--neighbor-selector",
+        choices=NEIGHBOR_SELECTORS,
+        default=SIMILARITY_SELECTOR,
+    )
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--groups", nargs="*", default=None)
     return parser.parse_args(argv)
