@@ -14,6 +14,13 @@ from typing import Any, Mapping
 from rdkit import DataStructs
 
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from tools.chembl_tool.common.neighbor_selection import (
+    QUERY_FEATURE_COVERAGE_SELECTOR,
+    SIMILARITY_SELECTOR,
+    NeighborCandidate,
+    select_neighbor_candidates,
+    selector_metadata,
+)
 from tools.chembl_tool.common.retrieval_policy import (
     NeighborIdentityPolicy,
     decide_candidate,
@@ -28,6 +35,13 @@ from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
 
 
 EXPERIMENT_MODES = {"none", "direct", "full_flat", "full_mechanism", "native"}
+
+# Retrieval strategy is the CLI-level source of truth. Internally the strategy is
+# implied by whether a reranker is supplied: morgan_fingerprint -> no reranker
+# (ranked by neighbor_selector); assay_transfer_tool -> assay-transfer reranker.
+MORGAN_FINGERPRINT_STRATEGY = "morgan_fingerprint"
+ASSAY_TRANSFER_TOOL_STRATEGY = "assay_transfer_tool"
+RETRIEVAL_STRATEGIES = (MORGAN_FINGERPRINT_STRATEGY, ASSAY_TRANSFER_TOOL_STRATEGY)
 
 
 @dataclass(frozen=True)
@@ -61,6 +75,46 @@ class SourceExperimentConfig:
     mechanism_groups: tuple[EvidenceGroupSpec, ...]
 
 
+def retrieve_group_specs_view(
+    query_smiles: str,
+    index: Mapping[str, Any],
+    *,
+    specs: tuple[EvidenceGroupSpec, ...],
+    source_name: str,
+    mode: str,
+    top_k_per_group: int,
+    min_similarity: float,
+    neighbor_identity_policy: str = NeighborIdentityPolicy.OPERATIONAL.value,
+    neighbor_selector: str = SIMILARITY_SELECTOR,
+) -> dict[str, Any]:
+    """Public, stateless family retrieval used by cumulative experiment views."""
+    return _retrieve_specs(
+        query_smiles,
+        index,
+        specs=specs,
+        source_name=source_name,
+        mode=mode,
+        top_k_per_group=top_k_per_group,
+        min_similarity=min_similarity,
+        neighbor_identity_policy=neighbor_identity_policy,
+        neighbor_selector=neighbor_selector,
+    )
+
+
+def flatten_retrieval_groups(groups: list[dict[str, Any]]) -> dict[str, Any]:
+    """Public wrapper preserving the existing full-flat assembly semantics."""
+    return _flatten_groups(groups)
+
+
+def retrieval_coverage(
+    groups: list[dict[str, Any]],
+    *,
+    min_similarity: float,
+    top_k_per_group: int,
+) -> dict[str, Any]:
+    return _coverage(groups, min_similarity=min_similarity, top_k_per_group=top_k_per_group)
+
+
 def retrieve_experiment_view(
     query_smiles: str,
     index: Mapping[str, Any] | None,
@@ -71,20 +125,24 @@ def retrieve_experiment_view(
     min_similarity: float,
     native_groups: list[str] | None = None,
     neighbor_identity_policy: str = NeighborIdentityPolicy.OPERATIONAL.value,
+    neighbor_selector: str = SIMILARITY_SELECTOR,
     reranker: RetrievalReranker | None = None,
-    rerank_raw_pool_size: int = 100,
-    rerank_candidate_size: int = 100,
+    assay_transfer_initial_morgan_filter: int = 100,
     assay_transfer_min_score: float | None = None,
 ) -> dict[str, Any]:
-    """Build a native, direct, flat, mechanism, or retrieval-free query view."""
+    """Build a native, direct, flat, mechanism, or retrieval-free query view.
+
+    Retrieval strategy is implied by ``reranker``: when it is ``None`` the
+    morgan-fingerprint path runs (ranked by ``neighbor_selector``); when a
+    reranker is supplied the assay-transfer path runs (initial morgan filter ->
+    candidate-validation policies -> record-level rerank -> top-k).
+    """
     if mode not in EXPERIMENT_MODES:
         raise ValueError(f"Unsupported experiment mode: {mode}")
-    if reranker is not None and not (
-        0 < top_k_per_group <= rerank_candidate_size <= rerank_raw_pool_size
-    ):
+    if reranker is not None and not (0 < top_k_per_group <= assay_transfer_initial_morgan_filter):
         raise ValueError(
-            "Reranked retrieval requires 0 < top_k_per_group <= "
-            "rerank_candidate_size <= rerank_raw_pool_size"
+            "Assay-transfer retrieval requires "
+            "0 < top_k_per_group <= assay_transfer_initial_morgan_filter"
         )
     if assay_transfer_min_score is not None and not 0.0 <= assay_transfer_min_score <= 1.0:
         raise ValueError("assay_transfer_min_score must be between 0 and 1 inclusive")
@@ -102,12 +160,15 @@ def retrieve_experiment_view(
             min_similarity=min_similarity,
             groups=native_groups,
             neighbor_identity_policy=neighbor_identity_policy,
+            neighbor_selector=neighbor_selector,
         )
         result["experiment"] = {
             "mode": mode,
             "source": _source_name(config, index),
             **policy_metadata(neighbor_identity_policy),
         }
+        if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
+            result["experiment"]["neighbor_selector"] = selector_metadata(neighbor_selector)
         return result
     if config is None:
         raise ValueError(f"Experiment mode `{mode}` requires a source experiment config")
@@ -122,9 +183,9 @@ def retrieve_experiment_view(
         top_k_per_group=top_k_per_group,
         min_similarity=min_similarity,
         neighbor_identity_policy=neighbor_identity_policy,
+        neighbor_selector=neighbor_selector,
         reranker=reranker,
-        rerank_raw_pool_size=rerank_raw_pool_size,
-        rerank_candidate_size=rerank_candidate_size,
+        assay_transfer_initial_morgan_filter=assay_transfer_initial_morgan_filter,
         assay_transfer_min_score=assay_transfer_min_score,
     )
     if mode == "full_flat" and mechanism_view.get("status") == "ok":
@@ -147,10 +208,10 @@ def _retrieve_specs(
     top_k_per_group: int,
     min_similarity: float,
     neighbor_identity_policy: str,
-    reranker: RetrievalReranker | None,
-    rerank_raw_pool_size: int,
-    rerank_candidate_size: int,
-    assay_transfer_min_score: float | None,
+    neighbor_selector: str,
+    reranker: RetrievalReranker | None = None,
+    assay_transfer_initial_morgan_filter: int = 100,
+    assay_transfer_min_score: float | None = None,
 ) -> dict[str, Any]:
     canonical_smiles, inchi_key, query_fp = standardize_smiles_and_fp(query_smiles)
     if query_fp is None:
@@ -182,11 +243,12 @@ def _retrieve_specs(
             min_similarity=min_similarity,
             query_identity=query_identity,
             neighbor_identity_policy=neighbor_identity_policy,
+            query_fingerprint=query_fp,
+            neighbor_selector=neighbor_selector,
             query_smiles=query_smiles,
             group_id=spec.group_id,
             reranker=reranker,
-            rerank_raw_pool_size=rerank_raw_pool_size,
-            rerank_candidate_size=rerank_candidate_size,
+            assay_transfer_initial_morgan_filter=assay_transfer_initial_morgan_filter,
             assay_transfer_min_score=assay_transfer_min_score,
         )
         selection_metadata = (
@@ -206,8 +268,7 @@ def _retrieve_specs(
         if reranker is not None:
             group_payload["transfer_neighbor_selection"] = _rerank_group_metadata(
                 reranker,
-                raw_pool_size=rerank_raw_pool_size,
-                candidate_size=rerank_candidate_size,
+                initial_morgan_filter=assay_transfer_initial_morgan_filter,
                 n_selected=len(neighbors),
                 min_score=assay_transfer_min_score,
                 n_below_min_score_dropped=int(
@@ -229,6 +290,8 @@ def _retrieve_specs(
             "threshold_inclusive": True,
             "threshold_applied_before_top_k": assay_transfer_min_score is not None,
         }
+    elif neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
+        experiment["neighbor_selector"] = selector_metadata(neighbor_selector)
     return {
         "status": "ok",
         "evidence_source": dict(index.get("source") or {}),
@@ -260,13 +323,143 @@ def _rank_group_candidates(
     min_similarity: float,
     query_identity: Any,
     neighbor_identity_policy: str,
+    neighbor_selector: str = SIMILARITY_SELECTOR,
+    query_fingerprint: Any = None,
     query_smiles: str = "",
     group_id: str = "",
     reranker: RetrievalReranker | None = None,
-    rerank_raw_pool_size: int = 100,
-    rerank_candidate_size: int = 100,
+    assay_transfer_initial_morgan_filter: int = 100,
     assay_transfer_min_score: float | None = None,
 ) -> list[dict[str, Any]]:
+    """Dispatch to the retrieval strategy implied by ``reranker``.
+
+    ``reranker is None`` runs the morgan-fingerprint path (ranked by
+    ``neighbor_selector``); otherwise the assay-transfer path runs (initial morgan
+    filter -> candidate-validation policies -> record-level rerank -> min-score
+    filter -> top-k).
+    """
+    if reranker is None:
+        return _morgan_neighbors(
+            index,
+            candidate_indices,
+            source_groups=source_groups,
+            similarities=similarities,
+            top_k=top_k,
+            min_similarity=min_similarity,
+            query_identity=query_identity,
+            neighbor_identity_policy=neighbor_identity_policy,
+            query_fingerprint=query_fingerprint,
+            neighbor_selector=neighbor_selector,
+        )
+    return _assay_transfer_neighbors(
+        index,
+        candidate_indices,
+        source_groups=source_groups,
+        similarities=similarities,
+        top_k=top_k,
+        min_similarity=min_similarity,
+        query_identity=query_identity,
+        neighbor_identity_policy=neighbor_identity_policy,
+        query_smiles=query_smiles,
+        group_id=group_id,
+        reranker=reranker,
+        initial_morgan_filter=assay_transfer_initial_morgan_filter,
+        assay_transfer_min_score=assay_transfer_min_score,
+    )
+
+
+def _morgan_neighbors(
+    index: Mapping[str, Any],
+    candidate_indices: list[int],
+    *,
+    source_groups: tuple[str, ...],
+    similarities: list[float],
+    top_k: int,
+    min_similarity: float,
+    query_identity: Any,
+    neighbor_identity_policy: str,
+    query_fingerprint: Any,
+    neighbor_selector: str,
+) -> list[dict[str, Any]]:
+    eligible: list[NeighborCandidate] = []
+    decisions: dict[int, Any] = {}
+    matched_groups_by_index: dict[int, list[str]] = {}
+    evidence_by_index: dict[int, list[dict[str, Any]]] = {}
+    for molecule_index in candidate_indices:
+        similarity = float(similarities[molecule_index])
+        if similarity < min_similarity:
+            continue
+        molecule = index["molecules"][molecule_index]
+        decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
+        if decision.excluded:
+            continue
+        molecule_id = molecule["molecule_chembl_id"]
+        evidence_by_group = index["evidence_by_molecule_group"].get(molecule_id, {})
+        matched_groups = [group for group in source_groups if evidence_by_group.get(group)]
+        evidence_rows = [row for group in matched_groups for row in evidence_by_group[group]]
+        if not evidence_rows:
+            continue
+        eligible.append(
+            NeighborCandidate(
+                molecule_index=molecule_index,
+                molecule_id=str(molecule_id),
+                similarity=similarity,
+            )
+        )
+        decisions[molecule_index] = decision
+        matched_groups_by_index[molecule_index] = matched_groups
+        evidence_by_index[molecule_index] = evidence_rows
+
+    selected = select_neighbor_candidates(
+        eligible,
+        query_fingerprint=query_fingerprint,
+        candidate_fingerprints=index["fingerprints"],
+        top_k=top_k,
+        selector=neighbor_selector,
+    )
+    neighbors = []
+    for candidate in selected:
+        molecule_index = candidate.molecule_index
+        similarity = candidate.similarity
+        molecule = index["molecules"][molecule_index]
+        molecule_id = molecule["molecule_chembl_id"]
+        decision = decisions[molecule_index]
+        matched_groups = matched_groups_by_index[molecule_index]
+        evidence_rows = evidence_by_index[molecule_index]
+        neighbors.append(
+            {
+                "rank": len(neighbors) + 1,
+                "molecule_chembl_id": molecule_id,
+                "canonical_smiles": molecule["canonical_smiles"],
+                "standard_inchi_key": molecule.get("standard_inchi_key", ""),
+                "similarity": round(similarity, 6),
+                "similarity_bucket": similarity_bucket(similarity),
+                "molecule_relation": decision.relation.value,
+                "source_group_ids": matched_groups,
+                "n_evidence_rows": len(evidence_rows),
+                "evidence_rows": evidence_rows,
+            }
+        )
+    return neighbors
+
+
+def _assay_transfer_neighbors(
+    index: Mapping[str, Any],
+    candidate_indices: list[int],
+    *,
+    source_groups: tuple[str, ...],
+    similarities: list[float],
+    top_k: int,
+    min_similarity: float,
+    query_identity: Any,
+    neighbor_identity_policy: str,
+    query_smiles: str,
+    group_id: str,
+    reranker: RetrievalReranker,
+    initial_morgan_filter: int,
+    assay_transfer_min_score: float | None,
+) -> list[dict[str, Any]]:
+    # 1. Initial morgan pool: top-N candidates by tanimoto similarity.
     ranked = sorted(
         (
             (float(similarities[molecule_index]), molecule_index)
@@ -275,7 +468,9 @@ def _rank_group_candidates(
         ),
         key=lambda item: (-item[0], index["molecules"][item[1]]["molecule_chembl_id"]),
     )
-    raw_ranked = ranked[:rerank_raw_pool_size] if reranker is not None else ranked
+    raw_ranked = ranked[:initial_morgan_filter]
+    # 2. Candidate-validation policies (parent-disjoint / identity exclusion + evidence
+    #    presence). Keep *all* validated candidates -- the whole pool is reranked.
     neighbors = []
     for structural_rank, (similarity, molecule_index) in enumerate(raw_ranked, start=1):
         molecule = index["molecules"][molecule_index]
@@ -288,59 +483,54 @@ def _rank_group_candidates(
         evidence_rows = [row for group in matched_groups for row in evidence_by_group[group]]
         if not evidence_rows:
             continue
-        neighbor = {
-            "rank": len(neighbors) + 1,
-            "molecule_chembl_id": molecule_id,
-            "canonical_smiles": molecule["canonical_smiles"],
-            "standard_inchi_key": molecule.get("standard_inchi_key", ""),
-            "similarity": round(similarity, 6),
-            "similarity_bucket": similarity_bucket(similarity),
-            "molecule_relation": decision.relation.value,
-            "source_group_ids": matched_groups,
-            "n_evidence_rows": len(evidence_rows),
-            "evidence_rows": evidence_rows,
-        }
-        if reranker is not None:
-            neighbor["structural_rank"] = structural_rank
-        neighbors.append(neighbor)
-        limit = rerank_candidate_size if reranker is not None else top_k
-        if len(neighbors) >= limit:
-            break
-    if reranker is not None:
-        # Record-level top-K: rank every scored record across the candidate molecules and
-        # keep the K highest-transfer records (the same molecule may repeat).
-        rerank_records = getattr(reranker, "rerank_records", None) or reranker.rerank
-        record_neighbors = rerank_records(
-            query_smiles=query_smiles,
-            group_id=group_id,
-            candidates=neighbors,
+        neighbors.append(
+            {
+                "rank": len(neighbors) + 1,
+                "molecule_chembl_id": molecule_id,
+                "canonical_smiles": molecule["canonical_smiles"],
+                "standard_inchi_key": molecule.get("standard_inchi_key", ""),
+                "similarity": round(similarity, 6),
+                "similarity_bucket": similarity_bucket(similarity),
+                "molecule_relation": decision.relation.value,
+                "source_group_ids": matched_groups,
+                "n_evidence_rows": len(evidence_rows),
+                "evidence_rows": evidence_rows,
+                "structural_rank": structural_rank,
+            }
         )
-        n_below_min_score_dropped = 0
-        if assay_transfer_min_score is not None:
-            retained_records = [
-                row
-                for row in record_neighbors
-                if float(row["transfer_selection_score"]) >= assay_transfer_min_score
-            ]
-            n_below_min_score_dropped = len(record_neighbors) - len(retained_records)
-            record_neighbors = retained_records
-        neighbors = _RankedNeighbors(
-            record_neighbors[:top_k],
-            selection_metadata={
-                "assay_transfer_min_score": assay_transfer_min_score,
-                "n_below_min_score_dropped": n_below_min_score_dropped,
-            },
-        )
-    for rank, neighbor in enumerate(neighbors, start=1):
+    # 3. Record-level rerank across the full validated set.
+    rerank_records = getattr(reranker, "rerank_records", None) or reranker.rerank
+    record_neighbors = rerank_records(
+        query_smiles=query_smiles,
+        group_id=group_id,
+        candidates=neighbors,
+    )
+    # 4. Min-score filter, then take top-k.
+    n_below_min_score_dropped = 0
+    if assay_transfer_min_score is not None:
+        retained_records = [
+            row
+            for row in record_neighbors
+            if float(row["transfer_selection_score"]) >= assay_transfer_min_score
+        ]
+        n_below_min_score_dropped = len(record_neighbors) - len(retained_records)
+        record_neighbors = retained_records
+    ranked_neighbors = _RankedNeighbors(
+        record_neighbors[:top_k],
+        selection_metadata={
+            "assay_transfer_min_score": assay_transfer_min_score,
+            "n_below_min_score_dropped": n_below_min_score_dropped,
+        },
+    )
+    for rank, neighbor in enumerate(ranked_neighbors, start=1):
         neighbor["rank"] = rank
-    return neighbors
+    return ranked_neighbors
 
 
 def _rerank_group_metadata(
     reranker: RetrievalReranker | None,
     *,
-    raw_pool_size: int,
-    candidate_size: int,
+    initial_morgan_filter: int,
     n_selected: int,
     min_score: float | None,
     n_below_min_score_dropped: int,
@@ -350,8 +540,7 @@ def _rerank_group_metadata(
     return {
         "reranker": reranker.name,
         "candidate_contract": "tanimoto_raw_pool_then_identity_exclusion.v1",
-        "raw_pool_size": raw_pool_size,
-        "candidate_size": candidate_size,
+        "assay_transfer_initial_morgan_filter": initial_morgan_filter,
         "n_selected": n_selected,
         "assay_transfer_min_score": min_score,
         "n_below_min_score_dropped": n_below_min_score_dropped,

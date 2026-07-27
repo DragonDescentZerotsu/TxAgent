@@ -17,6 +17,16 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
+from tools.chembl_tool.common.experiment_retrieval import (
+    ASSAY_TRANSFER_TOOL_STRATEGY,
+    MORGAN_FINGERPRINT_STRATEGY,
+    RETRIEVAL_STRATEGIES,
+)
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    SIMILARITY_SELECTOR,
+)
+
 
 @dataclass(frozen=True)
 class BatchConfig:
@@ -36,6 +46,9 @@ class BatchConfig:
     negative_predictions: frozenset[str]
     rerank_preflight: Callable[..., dict[str, Any]] | None = None
     supports_assay_transfer_scores: bool = False
+    # True only for tasks wired to the unified --retrieval-strategy CLI (bioavailability_ma).
+    # Other tasks keep receiving the legacy --neighbor-selector flag.
+    supports_retrieval_strategy: bool = False
     group_prompt_formats: tuple[str, ...] = ()
     default_group_prompt_format: str = ""
     group_output_schemas: tuple[str, ...] = ()
@@ -51,6 +64,7 @@ class BatchItem:
 def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     args = _parse_args(config, argv)
     requested_top_k_per_group = args.top_k_per_group
+    is_assay_transfer = args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
     _validate_assay_transfer_scores(config, args)
     group_prompt_instruction_provenance = _group_prompt_instruction_provenance(
         args.group_prompt_instructions_file
@@ -73,7 +87,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
 
     items = [BatchItem(index=i, record=records[i]) for i in indices]
     rerank_preflight = {"status": "not_requested"}
-    if args.retrieval_reranker == "assay_transfer":
+    if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
         if config.rerank_preflight is None:
             raise SystemExit(f"Pipeline {config.pipeline_module} does not support assay-transfer reranking")
         if args.retrieval_source not in {"starling", "starling_in_distribution"}:
@@ -121,8 +135,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
                 top_k_per_group=args.top_k_per_group,
                 min_similarity=args.min_similarity,
                 neighbor_identity_policy=args.neighbor_identity_policy,
-                raw_pool_size=args.rerank_raw_pool_size,
-                candidate_size=args.rerank_candidate_size,
+                initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
                 require_selected_scores=args.enable_assay_transfer_scores,
                 template_profile=args.assay_transfer_template_profile,
                 expected_score_count=args.rerank_expected_score_count,
@@ -146,7 +159,8 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "model": args.model,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
-        "retrieval_reranker": args.retrieval_reranker,
+        "retrieval_strategy": args.retrieval_strategy,
+        "retrieval_reranker": "assay_transfer" if is_assay_transfer else "none",
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
         "assay_transfer_min_score": args.assay_transfer_min_score,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
@@ -169,12 +183,11 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "llm_neighbor_score_policy": (
             "assay_transfer_scored_neighbors.v1" if args.enable_assay_transfer_scores else ""
         ),
-        "rerank_raw_pool_size": args.rerank_raw_pool_size,
-        "rerank_candidate_size": args.rerank_candidate_size,
-        "rerank_catalog": args.rerank_catalog if args.retrieval_reranker != "none" else "",
-        "rerank_cache": args.rerank_cache if args.retrieval_reranker != "none" else "",
+        "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
+        "rerank_catalog": args.rerank_catalog if is_assay_transfer else "",
+        "rerank_cache": args.rerank_cache if is_assay_transfer else "",
         "rerank_candidate_manifest": (
-            args.rerank_candidate_manifest if args.retrieval_reranker != "none" else ""
+            args.rerank_candidate_manifest if is_assay_transfer else ""
         ),
         "rerank_cache_preflight": rerank_preflight,
         "rerank_expected_score_count": args.rerank_expected_score_count,
@@ -186,6 +199,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "rerank_preflight_source_batch": args.rerank_preflight_source_batch,
         "min_similarity": args.min_similarity,
         "neighbor_identity_policy": args.neighbor_identity_policy,
+        "morgan_neighbor_selector": args.morgan_neighbor_selector,
         "identity_blind": args.identity_blind,
         "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
         "visibility_mode": (
@@ -280,13 +294,16 @@ def _validate_reused_rerank_preflight(
         "indices": indices,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
-        "retrieval_reranker": args.retrieval_reranker,
+        "retrieval_reranker": (
+            "assay_transfer"
+            if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+            else "none"
+        ),
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
         "assay_transfer_min_score": args.assay_transfer_min_score,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
-        "rerank_raw_pool_size": args.rerank_raw_pool_size,
-        "rerank_candidate_size": args.rerank_candidate_size,
+        "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
         "rerank_catalog": args.rerank_catalog,
         "rerank_cache": args.rerank_cache,
         "rerank_candidate_manifest": args.rerank_candidate_manifest,
@@ -548,15 +565,23 @@ def _single_run_command(
         command.append("--identity-blind")
     elif args.harness_prefetch_tools:
         command.append("--harness-prefetch-tools")
-    if args.retrieval_reranker != "none":
+    if config.supports_retrieval_strategy:
         command.extend(
             [
-                "--retrieval-reranker",
-                args.retrieval_reranker,
-                "--rerank-raw-pool-size",
-                str(args.rerank_raw_pool_size),
-                "--rerank-candidate-size",
-                str(args.rerank_candidate_size),
+                "--retrieval-strategy",
+                args.retrieval_strategy,
+                "--morgan-neighbor-selector",
+                args.morgan_neighbor_selector,
+            ]
+        )
+    else:
+        # Tasks without the unified retrieval CLI still take the morgan neighbor selector.
+        command.extend(["--neighbor-selector", args.morgan_neighbor_selector])
+    if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
+        command.extend(
+            [
+                "--assay-transfer-initial-morgan-filter",
+                str(args.assay_transfer_initial_morgan_filter),
                 "--rerank-catalog",
                 args.rerank_catalog,
                 "--rerank-cache",
@@ -1023,9 +1048,33 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         help="Bioavailability-only variable-k assay-transfer score visibility policy.",
     )
     parser.add_argument("--min-similarity", type=float, default=0.3)
-    parser.add_argument("--retrieval-reranker", choices=["none", "assay_transfer"], default="none")
-    parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
-    parser.add_argument("--rerank-candidate-size", type=int, default=100)
+    parser.add_argument(
+        "--retrieval-strategy",
+        choices=list(RETRIEVAL_STRATEGIES),
+        default=MORGAN_FINGERPRINT_STRATEGY,
+        help=(
+            "Retrieval mechanic and source of truth for the group-prompt format. "
+            "morgan_fingerprint uses --morgan-neighbor-selector and pairs with "
+            "--group-prompt-format legacy or morganfingerprint; assay_transfer_tool "
+            "uses the assay-transfer reranker and requires --group-prompt-format "
+            "assay_transfer_tool."
+        ),
+    )
+    parser.add_argument(
+        "--morgan-neighbor-selector",
+        choices=NEIGHBOR_SELECTORS,
+        default=SIMILARITY_SELECTOR,
+        help="morgan_fingerprint strategy only: neighbor selection policy.",
+    )
+    parser.add_argument(
+        "--assay-transfer-initial-morgan-filter",
+        type=int,
+        default=100,
+        help=(
+            "assay_transfer_tool strategy only: size of the initial top-N tanimoto pool "
+            "fed to candidate validation and reranking before the final top-k."
+        ),
+    )
     parser.add_argument(
         "--assay-transfer-min-score",
         type=float,
@@ -1122,13 +1171,31 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
 
 
 def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespace) -> None:
-    if args.assay_transfer_min_score is not None:
-        if args.retrieval_reranker != "assay_transfer":
+    is_assay_transfer = args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+    # --retrieval-strategy is the source of truth; it locks the compatible group-prompt-format.
+    if is_assay_transfer:
+        if args.group_prompt_format != "assay_transfer_tool":
             raise SystemExit(
-                "--assay-transfer-min-score requires --retrieval-reranker assay_transfer"
+                "--retrieval-strategy assay_transfer_tool requires "
+                "--group-prompt-format assay_transfer_tool"
             )
-        if not 0.0 <= args.assay_transfer_min_score <= 1.0:
-            raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
+        if args.morgan_neighbor_selector != SIMILARITY_SELECTOR:
+            raise SystemExit(
+                "--morgan-neighbor-selector applies only to "
+                "--retrieval-strategy morgan_fingerprint"
+            )
+    else:  # morgan_fingerprint
+        if args.group_prompt_format == "assay_transfer_tool":
+            raise SystemExit(
+                "--group-prompt-format assay_transfer_tool requires "
+                "--retrieval-strategy assay_transfer_tool"
+            )
+        if args.assay_transfer_min_score is not None:
+            raise SystemExit(
+                "--assay-transfer-min-score requires --retrieval-strategy assay_transfer_tool"
+            )
+    if args.assay_transfer_min_score is not None and not 0.0 <= args.assay_transfer_min_score <= 1.0:
+        raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
     if args.group_prompt_format and not config.group_prompt_formats:
         raise SystemExit(f"Pipeline {config.pipeline_module} does not support --group-prompt-format")
     if args.group_output_schema and not config.group_output_schemas:
@@ -1158,8 +1225,10 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
             "--enable-assay-transfer-scores requires --retrieval-source "
             "starling or starling_in_distribution"
         )
-    if args.retrieval_reranker != "assay_transfer":
-        raise SystemExit("--enable-assay-transfer-scores requires --retrieval-reranker assay_transfer")
+    if not is_assay_transfer:
+        raise SystemExit(
+            "--enable-assay-transfer-scores requires --retrieval-strategy assay_transfer_tool"
+        )
 
 
 def _normalize_group_args(groups: list[str] | None) -> list[str] | None:

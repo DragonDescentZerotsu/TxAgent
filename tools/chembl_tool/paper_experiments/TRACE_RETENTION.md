@@ -73,10 +73,10 @@ condition 级继续保留 `predictions.jsonl`、`metrics.json`、`manifest.json`
 清理后必须满足：
 
 ```text
-三种 regime 各 21 个 condition
-13,368 行 predictions
-13,368 个被 predictions 引用的 run 目录
-13,368 个 per-run trace_messages.jsonl
+identity-blind 26 个、matched-prefetch 21 个、agentic 26 个 condition
+15,428 行 predictions
+15,428 个被 predictions 引用的 run 目录
+15,428 个 per-run trace_messages.jsonl
 0 个 condition-level 合并 trace
 0 个 invalid/failed condition 或孤立 run
 ```
@@ -86,17 +86,17 @@ condition 级继续保留 `predictions.jsonl`、`metrics.json`、`manifest.json`
 Parent-disjoint 是论文 analog-retrieval claim 的正式消融，因此纳入长期 trace 和 viewer。当前冻结产物为：
 
 ```text
-identity-blind: 21 conditions / 4,456 traces
+identity-blind: 26 conditions / 5,486 traces
 deployment-visible matched-prefetch: 21 conditions / 4,456 traces
-deployment-visible agentic: 21 conditions / 4,456 traces
-deployment-visible parent-disjoint: 17 retrieval conditions / 3,568 traces
-total: 80 conditions / 16,936 predictions / 16,936 run directories / 16,936 traces
+deployment-visible agentic: 26 conditions / 5,486 traces
+deployment-visible parent-disjoint: 22 retrieval conditions / 4,598 traces
+total: 95 conditions / 20,026 predictions / 20,026 run directories / 20,026 traces
 missing referenced runs: 0
 orphan run directories: 0
 ```
 
-Parent-disjoint 的 3,568 个 sample manifest 全部记录 `neighbor_identity_policy=parent_disjoint`；其中
-424 个 sample 因 retrieval 变化而重跑，3,144 个 sample 通过相同 LLM-visible input hash 复用，并在
+Parent-disjoint 的 4,598 个 sample manifest 全部记录 `neighbor_identity_policy=parent_disjoint`；其中
+494 个 sample 因 retrieval 变化而重跑，4,104 个 sample 通过相同 LLM-visible input hash 复用，并在
 `reuse.json` 中保存 provenance。Viewer 必须明确展示二者，不能把复用 trace 误解成未执行 policy。
 
 本次删除不在上述 allowlist 中的 `repair_strict_pair_20260713_093731/` 归档（其正式修复结果已写回

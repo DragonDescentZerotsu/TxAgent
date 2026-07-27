@@ -149,6 +149,40 @@ def test_parent_disjoint_excludes_salt_and_backfills_only_eligible_analogs():
     assert disjoint["coverage"]["top_k_per_group"] == 3
 
 
+def test_query_feature_coverage_selector_keeps_retrieval_payload_contract():
+    similarity = retrieve_experiment_view(
+        "CO",
+        _index(),
+        mode="full_mechanism",
+        config=CONFIG,
+        top_k_per_group=2,
+        min_similarity=0.0,
+    )
+    coverage = retrieve_experiment_view(
+        "CO",
+        _index(),
+        mode="full_mechanism",
+        config=CONFIG,
+        top_k_per_group=2,
+        min_similarity=0.0,
+        neighbor_selector="query_feature_coverage",
+    )
+
+    similarity_neighbor = next(
+        neighbor
+        for group in similarity["groups"]
+        for neighbor in group["neighbors"]
+    )
+    coverage_neighbor = next(
+        neighbor
+        for group in coverage["groups"]
+        for neighbor in group["neighbors"]
+    )
+    assert set(coverage_neighbor) == set(similarity_neighbor)
+    assert coverage["experiment"]["neighbor_selector"]["name"] == "query_feature_coverage"
+    assert coverage["experiment"]["neighbor_selector"]["rank1_forced"] is False
+
+
 def test_index_stores_versioned_parent_identity_metadata():
     index = build_neighbor_index([_row("salt", "CC[NH3+].[Cl-]", "Tier 1.direct", 1)], index_version="test")
     identity = index["molecules"][0]["molecule_identity"]
@@ -199,8 +233,7 @@ def test_rerank_contract_truncates_raw_pool_before_exclusion_and_does_not_backfi
         query_smiles="CCO",
         group_id="Direct.outcome",
         reranker=_ReverseScoreReranker(),
-        rerank_raw_pool_size=3,
-        rerank_candidate_size=3,
+        assay_transfer_initial_morgan_filter=3,
     )
 
     assert [row["molecule_chembl_id"] for row in neighbors] == ["b", "a"]
@@ -253,8 +286,7 @@ def test_assay_transfer_threshold_is_inclusive_and_applied_before_top_k():
         query_smiles="CCO",
         group_id="Direct.outcome",
         reranker=_ThresholdReranker(),
-        rerank_raw_pool_size=3,
-        rerank_candidate_size=3,
+        assay_transfer_initial_morgan_filter=3,
         assay_transfer_min_score=0.5,
     )
 

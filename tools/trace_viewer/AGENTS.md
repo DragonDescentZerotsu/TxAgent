@@ -8,6 +8,15 @@ Viewer 只注册四个正式 paper root：identity-blind、matched-prefetch、ag
 deployment-visible parent-disjoint。Parent-disjoint sample 必须同时读取 manifest 与 `reuse.json`，明确
 展示 `neighbor_identity_policy`，并区分 retrieval 变化后的重跑与输入未变化时的 artifact reuse。
 
+## 展示名称与内部 ID
+
+Viewer 可以为 paper-facing mechanism family 提供简洁、可读的展示名称，但不得改写 trace 或 retrieval
+中的稳定 `group_id`。友好名称用于 stage、pill 和 retrieval group 标题；原始 ID 继续在 retrieval 标题 tag、
+group metadata 和 raw JSON 中展示，以保留 provenance、input hash 和 branch reuse 的可审计性。
+
+Bioavailability 的展示名称统一为 Direct oral bioavailability (F%)、Oral exposure proxies (AUC/Cmax)、
+Fa、Fg 和 Fh 的机制描述。不要把 `Observed` 前缀展示成一个额外 reasoning branch。
+
 ## 本地启动
 
 从仓库根目录运行：

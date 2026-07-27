@@ -99,9 +99,9 @@ class SplitData:
 class RunResult:
     seed: int
     best_epoch: int
-    best_valid_loss: float
-    valid_threshold: float
-    valid_macro_f1: float
+    best_valid_loss: float | None
+    valid_threshold: float | None
+    valid_macro_f1: float | None
 
 
 def parse_args() -> argparse.Namespace:
@@ -124,6 +124,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--threshold-strategy", choices=["fixed_0.5", "valid_macro_f1"], default="fixed_0.5")
+    parser.add_argument(
+        "--train-all",
+        action="store_true",
+        help="Train for all configured epochs on train.jsonl, without requiring or selecting on valid.jsonl.",
+    )
     parser.add_argument("--force-embed", action="store_true", help="Ignore cached MiniMol embeddings.")
     return parser.parse_args()
 
@@ -355,19 +360,29 @@ def main() -> None:
     device = torch.device(args.device)
 
     train = load_split(args.data_dir / "train.jsonl")
-    valid = load_split(args.data_dir / "valid.jsonl")
+    valid = None if args.train_all else load_split(args.data_dir / "valid.jsonl")
     test = load_split(args.data_dir / "test.jsonl")
 
     print(
         "[minimol] loaded splits: "
-        f"train={len(train.labels)} valid={len(valid.labels)} test={len(test.labels)} device={device}"
+        f"train={len(train.labels)} "
+        f"valid={len(valid.labels) if valid is not None else 'not_used'} "
+        f"test={len(test.labels)} device={device}"
     )
 
     train_embeddings = featurize_split("train", train, args)
-    valid_embeddings = featurize_split("valid", valid, args)
+    valid_embeddings = featurize_split("valid", valid, args) if valid is not None else None
     test_embeddings = featurize_split("test", test, args)
 
-    valid_loader = DataLoader(EmbeddingDataset(valid_embeddings, valid.labels), batch_size=args.eval_batch_size, shuffle=False)
+    valid_loader = (
+        DataLoader(
+            EmbeddingDataset(valid_embeddings, valid.labels),
+            batch_size=args.eval_batch_size,
+            shuffle=False,
+        )
+        if valid is not None and valid_embeddings is not None
+        else None
+    )
     test_loader = DataLoader(EmbeddingDataset(test_embeddings, test.labels), batch_size=args.eval_batch_size, shuffle=False)
 
     best_models: list[nn.Module] = []
@@ -391,30 +406,44 @@ def main() -> None:
 
         for epoch in range(args.epochs):
             train_one_epoch(model, train_loader, optimizer, scheduler, loss_fn, epoch, device)
-            valid_loss = evaluate_loss(model, valid_loader, loss_fn, device)
-            if valid_loss < best_valid_loss:
-                best_epoch = epoch + 1
-                best_valid_loss = valid_loss
-                best_model = deepcopy(model).cpu()
-            print(
-                f"[minimol] member={member_idx + 1}/{args.ensemble_size} "
-                f"epoch={epoch + 1}/{args.epochs} valid_loss={valid_loss:.6f} "
-                f"best_epoch={best_epoch}"
-            )
+            if valid_loader is None:
+                print(
+                    f"[minimol] member={member_idx + 1}/{args.ensemble_size} "
+                    f"epoch={epoch + 1}/{args.epochs} train_all=true"
+                )
+            else:
+                valid_loss = evaluate_loss(model, valid_loader, loss_fn, device)
+                if valid_loss < best_valid_loss:
+                    best_epoch = epoch + 1
+                    best_valid_loss = valid_loss
+                    best_model = deepcopy(model).cpu()
+                print(
+                    f"[minimol] member={member_idx + 1}/{args.ensemble_size} "
+                    f"epoch={epoch + 1}/{args.epochs} valid_loss={valid_loss:.6f} "
+                    f"best_epoch={best_epoch}"
+                )
+
+        if valid_loader is None:
+            best_epoch = args.epochs
+            best_model = deepcopy(model).cpu()
 
         if best_model is None:
             raise RuntimeError("No model was trained")
 
-        best_model.to(device)
-        valid_score = predict_proba(best_model, valid_loader, device)
-        threshold, valid_macro_f1 = choose_threshold(valid.labels, valid_score, args.threshold_strategy)
-        best_model.cpu()
+        if valid_loader is not None and valid is not None:
+            best_model.to(device)
+            valid_score = predict_proba(best_model, valid_loader, device)
+            threshold, valid_macro_f1 = choose_threshold(valid.labels, valid_score, args.threshold_strategy)
+            best_model.cpu()
+        else:
+            threshold = 0.5
+            valid_macro_f1 = None
         best_models.append(best_model)
         run_results.append(
             RunResult(
                 seed=seed,
                 best_epoch=best_epoch,
-                best_valid_loss=float(best_valid_loss),
+                best_valid_loss=float(best_valid_loss) if valid_loader is not None else None,
                 valid_threshold=threshold,
                 valid_macro_f1=valid_macro_f1,
             )
@@ -424,28 +453,47 @@ def main() -> None:
     test_member_scores = []
     for model in best_models:
         model.to(device)
-        valid_member_scores.append(predict_proba(model, valid_loader, device))
+        if valid_loader is not None:
+            valid_member_scores.append(predict_proba(model, valid_loader, device))
         test_member_scores.append(predict_proba(model, test_loader, device))
         model.cpu()
 
-    valid_scores = np.mean(np.stack(valid_member_scores), axis=0)
     test_scores = np.mean(np.stack(test_member_scores), axis=0)
-    threshold, valid_macro_f1 = choose_threshold(valid.labels, valid_scores, args.threshold_strategy)
-    valid_metrics = evaluate_metrics(valid.labels, valid_scores, threshold)
+    if valid is not None:
+        valid_scores = np.mean(np.stack(valid_member_scores), axis=0)
+        threshold, valid_macro_f1 = choose_threshold(valid.labels, valid_scores, args.threshold_strategy)
+        valid_metrics = evaluate_metrics(valid.labels, valid_scores, threshold)
+        valid_metrics_fixed = evaluate_metrics(valid.labels, valid_scores, 0.5)
+        valid_tuned_threshold, _ = choose_threshold(valid.labels, valid_scores, "valid_macro_f1")
+        valid_metrics_tuned = evaluate_metrics(valid.labels, valid_scores, valid_tuned_threshold)
+        test_metrics_tuned = evaluate_metrics(test.labels, test_scores, valid_tuned_threshold)
+    else:
+        threshold = 0.5
+        valid_macro_f1 = None
+        valid_metrics = None
+        valid_metrics_fixed = None
+        valid_metrics_tuned = None
+        test_metrics_tuned = None
     test_metrics = evaluate_metrics(test.labels, test_scores, threshold)
-    valid_metrics_fixed = evaluate_metrics(valid.labels, valid_scores, 0.5)
     test_metrics_fixed = evaluate_metrics(test.labels, test_scores, 0.5)
-    valid_tuned_threshold, _ = choose_threshold(valid.labels, valid_scores, "valid_macro_f1")
-    valid_metrics_tuned = evaluate_metrics(valid.labels, valid_scores, valid_tuned_threshold)
-    test_metrics_tuned = evaluate_metrics(test.labels, test_scores, valid_tuned_threshold)
 
     output = {
         "args": {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()},
-        "splits": {"train": len(train.labels), "valid": len(valid.labels), "test": len(test.labels)},
+        "splits": {
+            "train": len(train.labels),
+            "valid": len(valid.labels) if valid is not None else 0,
+            "test": len(test.labels),
+        },
         "model_selection": {
-            "criterion": "lowest validation BCE loss per ensemble member",
-            "threshold_strategy": args.threshold_strategy,
-            "ensemble_valid_macro_f1_at_threshold": float(valid_macro_f1),
+            "criterion": (
+                "fixed configured epochs using all training molecules"
+                if args.train_all
+                else "lowest validation BCE loss per ensemble member"
+            ),
+            "threshold_strategy": "fixed_0.5" if args.train_all else args.threshold_strategy,
+            "ensemble_valid_macro_f1_at_threshold": (
+                float(valid_macro_f1) if valid_macro_f1 is not None else None
+            ),
         },
         "members": [asdict(result) for result in run_results],
         "valid_metrics": valid_metrics,

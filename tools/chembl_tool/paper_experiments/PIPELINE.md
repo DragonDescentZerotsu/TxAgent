@@ -6,7 +6,7 @@
 
 共享模块负责数据源接入、Minimal Evidence Contract、分子级索引、实验视图、可见性控制、经过验证的 LLM 调用、batch 执行、指标计算和统计分析。每个任务只负责 endpoint 到 mechanism 的映射、任务 prompt 和最终预测 schema。
 
-Bioavailability 的特殊之处仅在于可用数据及其声明的证据类别：Observed direct F、Observed oral exposure、Fa、Fg 和 Fh。BBB、Skin_Reaction 和 ClinTox 使用完全相同的执行路径，只是采用各自的机制类别。
+Bioavailability 的特殊之处仅在于可用数据及其声明的证据类别：Direct oral bioavailability (F%)、Oral exposure proxies (AUC/Cmax)、Fa、Fg 和 Fh。BBB、Skin_Reaction 和 ClinTox 使用完全相同的执行路径，只是采用各自的机制类别。
 
 ## 离线证据构建
 
@@ -135,11 +135,15 @@ single branch 请求，group comparison 工具由模型自主选择。该制度�
 
 ### Bioavailability_Ma
 
-- Direct：绝对口服生物利用度 F
-- Observed exposure：口服 AUC/Cmax 以及食物/制剂条件
-- Fa：吸收、肠道通透性、溶解度、溶出和胃肠道稳定性
-- Fg：肠道外排和转运体证据
-- Fh：首过提取、肝清除/内在清除和代谢稳定性
+| 论文与 viewer 展示名称 | 内部 `group_id` | 证据语义 |
+|---|---|---|
+| Direct oral bioavailability (F%) | `Observed.direct_oral_bioavailability` | 绝对口服生物利用度 F；直接结果证据 |
+| Oral exposure proxies (AUC/Cmax) | `Observed.oral_auc_cmax_exposure` | 口服 AUC/Cmax、剂量和制剂等系统暴露 proxy |
+| Fa — Absorption, solubility & permeability | `Fa.absorption_solubility_permeability` | 吸收、肠道通透性、溶解度、溶出和胃肠道稳定性 |
+| Fg — Gut-wall transport & intestinal metabolism | `Fg.gut_wall_efflux_intestinal_metabolism` | 肠壁转运、外排和肠道代谢 |
+| Fh — Hepatic clearance & metabolic stability | `Fh.hepatic_clearance_metabolic_stability` | 首过提取、肝清除/内在清除和代谢稳定性 |
+
+展示层使用左列名称；retrieval、trace、input hash 和 branch reuse 继续使用中间列的稳定内部 ID。
 
 Starling 包含全部五类证据。ChEMBL endpoint group 会投影到同一组类别中。
 

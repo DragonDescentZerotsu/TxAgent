@@ -11,8 +11,8 @@
 - 什么结果可以进入主表，什么只能作为补充或失败分析；
 - 在预计 9 至 10 周的时间窗口内按什么顺序执行。
 
-当前已完成的 63 个 GLM 条件是第一轮完整 exploratory matrix：21 个 identity-blind、21 个
-matched-prefetch 和 21 个 deployment-visible agentic。它们用于确定研究问题、估算成本和
+当前 test 已完成 73 个 GLM 条件：26 个 identity-blind、21 个 matched-prefetch 和 26 个
+deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个。它们用于确定研究问题、估算成本和
 发现 failure modes，但不是自动成为最终论文主表。最终主表必须使用本文档冻结后的数据、排除规则、
 模型版本、统计协议和完整性 gate。
 
@@ -39,51 +39,57 @@ matched-prefetch 和 21 个 deployment-visible agentic。它们用于确定研�
 | 编号 | 计划贡献 | 必须由什么证据支撑 |
 |---|---|---|
 | C1 | 通用、可审计的 molecular evidence agent harness | 4 个 task、2 个 source、统一 Evidence Contract、统一 runner、trace、validation、batch 和 audit 均实际运行 |
-| C2 | ChEMBL curated evidence 与 Starling literature evidence 的受控比较 | 同 task/query/retrieval view 的 source 配对实验，加独立 source-quality annotation |
+| C2 | ChEMBL curated structured assay records 与 Starling 从原文抽取、保留 source context 的 evidence records 的受控比较 | 同 task/query/endpoint scope/retrieval view 的 source 配对实验，加独立 source-quality annotation |
 | C3 | Direct、flat、mechanism retrieval 的系统消融 | 相同 evidence row、只改变 grouping 的 flat-vs-mechanism 配对；none-vs-direct 测 retrieval |
 | C4 | 真实 deployment-visible agentic workflow 及其可审计行为 | Agentic 主矩阵、工具调用/成本/trace；identity-blind 与 matched-prefetch 只作补充 attribution control |
 | C5 | Parametric prior 与 retrieved evidence 的交互和失败分类 | 上升/下降 trace audit、身份核对、ontology conflict、重复运行与第二模型验证 |
 | C6 | 完整 provenance、统计和可复现评估协议 | source manifest、entity relation/parent policy、coverage、tokens、失败数、bootstrap、McNemar、Holm 和 release checklist |
+| C7 | ChEMBL 内 evidence distance 与 quantity 的累计扩展曲线 | 冻结的当前 direct/mechanism envelope、task-specific graph、`D/C/H1/H2` flat 主曲线、H1/H2 mechanism supplementary、matched-prefetch 控制和 agentic confirmation |
 
 ## 最终研究问题
 
 | 编号 | 研究问题 | Primary comparison |
 |---|---|---|
 | RQ1 | Retrieval 是否帮助分类，且增益是否超出 same-entity lookup？ | Agentic `none` vs operational `direct`；再比较 operational vs parent-disjoint direct |
-| RQ2 | Starling 是否优于 ChEMBL？ | `chembl_direct` vs `starling_direct_full`；`chembl_mechanism` vs `starling_mechanism` |
+| RQ2 | 在 endpoint scope 匹配时，Starling 原文抽取 evidence 与 ChEMBL curated structured records 的效用和质量有何差异？ | `chembl_direct` vs `starling_direct_full`；可匹配的 current-mechanism families 内比较 `chembl_mechanism` vs `starling_mechanism` |
 | RQ3 | Mechanism decomposition 是否优于 flat evidence？ | 同 source、同 evidence rows 的 `full_flat` vs `full_mechanism` |
 | RQ4 | 非数值 Starling evidence 是否增加价值？ | `starling_direct_numeric` vs `starling_direct_full`，KNN 为独立对照 |
 | RQ5 | Deployment-visible agent 如何调用和使用结构工具？ | Agentic tool-use、tokens、retries、trace；精选条件的 identity/matched attribution control |
 | RQ6 | 观察到的增益和下降是否跨模型、跨重复稳定？ | 第二模型 confirmation matrix；GLM 关键条件重复运行 |
+| RQ7 | Retrieval coverage 与 macro-F1 增幅有什么关系？ | Agentic retrieval 条件的 overall/positive-class/negative-class coverage 与相对同任务 `none` 的 paired macro-F1 差值 |
+| RQ8 | 超出当前 curated mechanism envelope 多远后，增加更多 assay evidence 不再帮助 LLM？ | ChEMBL-only 的 `none`、`D`、`D+C`、`D+C+H1`、`D+C+H1+H2` 累计扩展曲线 |
 
 ## 实验与贡献索引
 
 | 实验 | 核心内容 | 对应贡献 | 优先级 | 当前状态 |
 |---|---|---|---|---|
-| E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；现有 17 retrieval 条件首轮消融完成 |
+| E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；2026-07-23 valid 扩展矩阵为 3 x 26 条件和 22 个 parent-disjoint 条件，均 0 失败，prefetch 2,713 / 2,713 matched |
 | E1 | None vs direct retrieval | C1、C3 | P0 | 第一轮完成；最终矩阵待重跑 |
-| E2 | ChEMBL vs Starling | C2 | P0 | Bio prepared-HF validation/index rerun complete; BBB direct partial; final cross-task data still incomplete |
+| E2 | ChEMBL vs Starling | C2 | P0 | Bio、BBB、Skin 的 agentic source comparison 已有；Bio prepared-HF validation/index rerun complete；BBB direct partial；BBB/Skin 新增 full 控制和 ClinTox Starling 仍缺 |
 | E3 | Source-quality 人工 annotation | C2、C6 | P0 | 未开始 |
-| E4 | Flat vs mechanism | C3 | P0 | 第一轮完成；全 Starling 未完成 |
-| E5 | Deployment-visible agentic 主矩阵与工具行为分析 | C4、C5 | P0 | 当前 21 条件完成；缺 8 个 Starling 条件及最终数据冻结重跑 |
-| E6 | Identity-blind/matched 与细粒度 visibility attribution | C4、C5 | P1 精选条件 | 21 对 matched 已完成；细粒度 policy 未实现 |
+| E4 | Flat vs mechanism | C3 | P0 | BBB/Skin 新增 Starling agentic flat/mechanism 及 identity-blind/valid matched 控制已完成；ClinTox Starling 未完成 |
+| E5 | Deployment-visible agentic 主矩阵与工具行为分析 | C4、C5 | P0 | 当前 26 条件完整、0 failure；仍缺 ClinTox 3 个 Starling 条件及最终数据冻结重跑 |
+| E6 | Identity-blind/matched 与细粒度 visibility attribution | C4、C5 | P1 精选条件 | Test identity-blind 26 条件、matched 21 条件；valid 两者均 26 条件且 parity audit 完整；细粒度 policy 未实现 |
 | E7 | Numeric vs non-numeric | C2 补充 | P1 | Bio 第一轮完成 |
 | E8 | KNN、vote、ECFP learned、MiniMol、pretrained baselines | C1、C3 | P0 | MiniMol/KNN 部分完成 |
 | E9 | 第二模型 confirmation | C1、C5 | P0 | 模型未冻结 |
 | E10 | 关键条件重复运行 | C5、C6 | P0 | 未开始 |
+| E11 | Coverage–performance 关联分析 | C3、C6 | P0 | 第一轮 test/valid 各 17 个 agentic retrieval 条件已完成；TSV/JSON/report/canonical SVG 和 class-conditional coverage 已生成，最终矩阵冻结后需重跑 |
+| E12 | ChEMBL mechanistic-distance / evidence-quantity expansion | C7、C6 | P0 | C-family tree 协议已重冻；通用旧 graph/index/retrieval prototype 已实现，但 BBB v2 因 MMP-3 shortcut 只保留历史审计，四任务 tree mapping 与 batch/LLM runner 均待完成 |
 
 ## 当前资产与缺口
 
 | 项目 | 当前状态 | 缺口或风险 | 截止 gate |
 |---|---|---|---|
-| 通用 runner、Evidence Contract、validation、trace、batch | 已实现并完成 63 个 GLM 条件 | 新实验不得复制 task pipeline | 持续 gate |
+| 通用 runner、Evidence Contract、validation、trace、batch | 已实现；test 当前完成 73 个 GLM 条件，valid 完成 78 个 | 新实验不得复制 task pipeline | 持续 gate |
 | ChEMBL 四任务 evidence | 已有 direct/flat/mechanism | 需要冻结最终 source manifest | 数据冻结前 |
+| ChEMBL distance expansion | C-family tree ontology 已冻结；通用旧 config/validator、assay-manifest、superset index 和 cumulative retrieval prototype 已实现 | 需先升级 tree-node schema/retrieval；BBB v2 需重建，另外三任务 graph/mapping 与独立 batch/replay、汇总、绘图 runner 均缺失 | 数据冻结前 |
 | Bioavailability Starling | direct numeric/full、flat、mechanism 已有 | 检查最终 parquet 版本和 provenance | 2026-08-02 |
-| BBB Starling | 当前只有 direct | 缺 passive permeability、efflux、influx families | 2026-08-02 |
-| Skin Starling | direct 正在生成 | 缺 sensitization、phototoxicity/irritation/local damage、skin exposure 3 个 families | 2026-08-02 |
+| BBB Starling | direct + passive permeability + efflux + influx parquet、full index、flat/mechanism operational、identity-blind、valid matched 和 parent-disjoint 已完成 | Test matched-prefetch 与 source-quality 尚未补齐 | 2026-08-02 |
+| Skin Starling | direct + sensitization + phototoxicity/irritation/local damage + skin exposure parquet、full index、direct/flat/mechanism operational、identity-blind、valid matched 和 parent-disjoint 已完成 | Test matched-prefetch 与 source-quality 尚未补齐 | 2026-08-02 |
 | ClinTox Starling | 当前没有论文矩阵数据 | 缺 7 个 mechanism families；ontology 风险高 | 2026-08-02 |
-| Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；首轮 17 条 retrieval conditions 审计为 0 conflict | 最终数据冻结后重建 index 并复跑新增条件 | 2026-08-02 |
-| Agentic deployment matrix | 21 条件完成 | 缺 8 个 Starling 条件；final parent policy/annotation 后 retrieval 条件需重跑 | 2026-08-23 |
+| Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；现有 22 条 retrieval conditions 在 test/valid 均完成且为 0 conflict | 最终数据冻结后若 index 改变需重建与复跑 | 2026-08-02 |
+| Agentic deployment matrix | 26 条件完成，全部 `n_failed_runs=0`；新增结果已进入统一 summary 与主 overview 图 | 缺 ClinTox 3 个 Starling 条件；final annotation/source freeze 后按需重跑 | 2026-08-23 |
 | Source quality gold | 未建立 | 需要双人 annotation 和原始文献/assay 核验 | 2026-08-30 |
 | Learned baselines | MiniMol 已有 | 缺 ECFP classifier、retrieval-only vote 和现代 pretrained baseline | 2026-08-16 |
 | Cross-model evidence | 只有 GLM-5.2 | 缺第二个可复现模型 | 2026-08-23 |
@@ -164,10 +170,11 @@ ClinTox:
   off-target / DDI / exposure context
 
 Bioavailability:
-  Observed direct F and oral exposure
-  Fa
-  Fg
-  Fh
+  Direct oral bioavailability (F%)
+  Oral exposure proxies (AUC/Cmax)
+  Fa — absorption, solubility, and permeability
+  Fg — gut-wall transport and intestinal metabolism
+  Fh — hepatic clearance and metabolic stability
 ```
 
 Skin 的实验条件和 background 不单独运行 Starling prompt。Concentration、vehicle、formulation、duration、
@@ -184,6 +191,89 @@ Tier 5 weak-background rows也不进入 paper-facing flat/mechanism reasoning vi
 仅因为 preliminary test 表现最好而选择。
 
 Primary comparisons、bootstrap seed、Holm comparison family 和失败处理规则必须在新 full run 前冻结。
+
+### D4：ChEMBL mechanistic-distance graph 与累计 source levels 冻结
+
+E12 的 `D`、`C`、`H1`、`H2` 全部只使用同一冻结版本的 ChEMBL；不是只让新增的 one-hop/two-hop 层使用
+ChEMBL。`D/C` 从当前 ChEMBL direct/full evidence 中冻结，`H1/H2` 从同版 ChEMBL 扩展，不为任何一层运行
+Starling，也不得构造 `Starling D/C + ChEMBL H1/H2` 或其它跨 source 混合累计曲线。四层共享 ChEMBL release、
+assay/activity 标准化、measurement-quality gate、molecule aggregation、provenance contract 和 source manifest，
+以便在扩大 evidence quantity 时把 source/curation pipeline 固定不变。Starling 只参与 E2 的 matched-scope source
+comparison；不得将 Starling direct 与 ChEMBL distant-expanded condition 比较后归因为 source quality。
+
+Distance 不在单条 assay 文本上凭相似度定义，而在每个 task 的预注册 mechanism-family graph 上定义。
+`D` 是层级树 root，当前 paper-facing C mechanism families 是第一圈子节点；H1/H2 是每条 C branch 向外展开的
+depth，不是与 C 平行的全局 source groups：
+
+```text
+D root
+  C.family_k
+    H1.family_k: exactly one aggregate child; 可聚合多个到 C_k 一跳的 measurement families
+      H2.family_k: zero or one aggregate child; 可聚合多个到 H1_k 一跳的 measurement families
+```
+
+必须满足 `D ∩ C = empty`，且 `D ∪ C` 逐 source group 精确等于当前 full evidence union。C 内现有 families
+可能离 direct outcome 具有不同的绝对机制距离；E12 不重新给它们贴 one-hop/two-hop 标签。每个 task 必须先
+对全部 D/C assay 做 measured-state census；extension assay ID 和 measured node 均不得与 base 重叠。若某个
+upstream readout 已经被 coarse C family 收入，即使其 endpoint-group 名称没有显式写出该 node，也仍属于 B。
+每个 C family 必须有唯一 H1 child spec，H1 至多有一个 H2 child；child node 可聚合不同 targets/assays，但每个
+measurement family 必须唯一归属一个 C parent。H1 到 parent C 的最短路径为 1；H2 到其 H1 parent 有一条边且到
+整个 B 的最短路径为 2。H2 若对任意 D/C node 存在一跳捷径，必须重分到相应 H1 或排除。
+
+一条合格推理桥连接两个命名清楚、可测量且粒度相近的 biological state/process，并记录上游、下游、关系类型、
+允许的 inference direction、适用条件和支持文献。默认只顺 causal direction 推断，只有经过验证的 mechanistic
+readout 才允许反向 inference。只允许 causal/predictive process、functional component、exposure link 或已经验证的
+mechanistic readout；仅仅同属一个器官、疾病、pathway、target class、assay format，或只在统计上相关，都不算
+一条边。若 A 到 C 实际需要经过 B，除非存在独立的 A 到 C 直接证据，否则不能把两条边压成一条。
+
+每条 ChEMBL assay 先根据 assay description、target、measurement、organism/system 和 task endpoint rules
+映射到唯一 measurement family，再由该 family 所测 biological node 到冻结 envelope 的最短合格路径确定 level。
+物种/组织/模型可迁移性记录为独立 `scope_match`，measurement/curation 可靠性记录为独立 `quality_status`；两者
+都不增加 hop。`out_of_scope` 或未通过统一质量门槛的 assay 不进入任何 level。映射不确定、路径方向不清、
+存在更短路径冲突或只能靠跨任务 label 猜测的 assay 不进入主实验。
+
+当前没有外部领域专家，因此先采用 citation-backed 两遍独立审计：第一遍建立 node/edge/family mapping，第二遍
+在不读取第一遍 level 结论的情况下重新推导最短路径；不一致项进入 `unresolved` 并排除。该流程不能冒充外部
+expert annotation，论文中需如实披露，并把 graph、edge rationale、候选/纳入/排除 assay counts 全部发布。
+所有 mapping 在查看 test performance 前冻结；允许用 train/valid 做 coverage、payload 和工程 smoke，不能用
+valid/test macro-F1 改 graph、edge 或 distance level。
+
+累计 evidence union 固定为：
+
+```text
+none
+D
+D + C
+D + C + H1
+D + C + H1 + H2
+```
+
+每个 C family 在 graph freeze 前必须找到可信 H1，否则 task graph 不能通过；某个 H1 没有可信 H2 时，将该
+family 的 H2 显式记为 unavailable，不得为了形成完整曲线强行纳入弱相关 assay。
+主曲线使用一致的 flat assembly、相同 similarity threshold/top-k policy 和冻结的 single prior，避免把
+新增 mechanism branches 本身误当成 distance effect。
+
+除 flat 主曲线外，每个通过 tree graph freeze 的 task 必须运行 mechanism supplementary：
+
+```text
+D + C                    current mechanism baseline
+D + C + H1               reuse D/C branches; run H1 branches; rerun final
+D + C + H1 + H2          reuse D/C/H1 branches; run H2 branches; rerun final
+```
+
+`D+C+H1+H2` 只加入各 family 中 available 的 H2 children；若所有 C families 的 H2 均 unavailable，task 停在
+`D+C+H1`。同一 prefix 的 flat 与 mechanism 必须使用完全相同的 evidence union，只改变
+reasoning organization。每个 C-family H1 tree node 的 group ID、retrieved neighbors、LLM-visible evidence 和 branch input hash
+在加入 H2 后必须保持不变，否则不得声称复用 H1；任何 prefix 扩展都会改变 final 输入，因此 final 必须重跑。
+完整 matched-prefetch supplementary 同时包含 H1 与 H2 两点；deployment-visible agentic 也运行这两个 mechanism
+expansion points，并优先按 branch hash 复用当前 `D+C` 和前一 prefix 的 outputs。
+
+每个 C/H1/H2 tree node 独立最多检索 3 个 unique molecular neighbors，并使用相同 similarity threshold 和 identity
+policy。H1/H2 聚合 node 内的多个 target/measurement families 共享这 3 个位置，不得按 target 分别取 top-3。
+
+完整定义、配置 schema、代码隔离边界、资源控制和回归 gate 见 `DISTANCE_EXPANSION_DESIGN.md`。实现顺序固定为：
+先完成公共 schema/validator 和独立 runner，再建立四任务 graph 与新增 assay mapping；不能先凭关键词扩库、
+再根据结果反推 one-hop/two-hop。
 
 ## 最终主结果与实验矩阵
 
@@ -224,10 +314,18 @@ Starling 补齐后，agentic operational 主矩阵有 29 个 GLM 条件：
 4 none conditions are shared because retrieval policy does not apply
 ```
 
-当前已有 21 个 agentic operational 条件，缺 8 个 Starling 条件。若新增 entity-relation annotation 会进入
-prompt，则最终冻结后需重跑 25 个 operational retrieval 条件；parent-disjoint 还需运行对应的 25 个
+当前已有 26 个 agentic operational 条件，缺 ClinTox 的 3 个 Starling 条件；其中现有 22 个 retrieval
+条件的 parent-disjoint 已全部完成。若新增 entity-relation annotation 会进入 prompt，则最终冻结后需重跑
+25 个 operational retrieval 条件；parent-disjoint 还需运行对应的 25 个
 retrieval 条件。4 个 `none` 条件只有在 prompt、model 和 endpoint-returned model identifier 完全不变时
 才能复用。既有 identity-blind/matched 42 条件不计入最终 agentic 主矩阵预算。
+
+E12 是与上述 29 条件 source/grouping matrix 正交的 ChEMBL-only 扩展实验，不计入 29 条件。其完整累计
+曲线先在 `deployment_visible_prefetched` matched-prefetch setting 中运行，用于控制工具证据和 single prior；
+deployment-visible agentic confirmation 只复用/运行 `none`、`D`、`D+C` 和每个 task 最大科学可辩护层级
+这些 flat 关键点。Mechanism supplementary 必跑 `D+C+H1`，并在至少一个 C-family H2 available 时再跑
+`D+C+H1+H2`；按 `D+C -> D+C+H1 -> D+C+H1+H2` 顺序复用稳定 tree-node branches。Matched-prefetch 结果用于回答受控的
+distance/quantity 与 flat-vs-mechanism 问题，不能替代 agentic deployment claim。
 
 ## 实验清单
 
@@ -258,8 +356,8 @@ Primary comparison：在 agentic setting 中比较每个 task/source 的 `none` 
 operational `direct` vs parent-disjoint `direct`。同时报告 coverage、neighbor similarity、entity relation、
 排除后候选数量、top-k backfill 成功率和 paired flips。
 
-资源：完整 test sets；GLM API；预计属于 agentic operational + parent-disjoint 主矩阵。当前 ChEMBL 和 Bio/BBB 部分 Starling 已有，
-Skin/Clin/BBB full Starling 未完成。
+资源：完整 test sets；GLM API；预计属于 agentic operational + parent-disjoint 主矩阵。当前 ChEMBL 与
+Bio/BBB/Skin Starling 条件已有且 parent-disjoint 已补齐；ClinTox Starling direct/full 尚未完成。
 
 完成标准：不只报告平均提升；必须给每个任务的 effect size、95% CI、McNemar/Holm、coverage 和
 failure taxonomy。若任务间不一致，结论写成 task-conditional。
@@ -283,7 +381,8 @@ parent-disjoint 结果检查 source 差异是否主要来自 same-parent coverag
 必须并列报告 source coverage、每个 molecule 的 evidence count、condition completeness、provenance
 availability、retrieved-neighbor overlap 和 token cost。不能把 coverage 差异静默解释成 row quality。
 
-资源：补齐 Starling；agentic operational 当前缺 8 个条件，最终与 parent-disjoint 消融一起运行。Starling 生成成本单独
+资源：补齐 ClinTox Starling；agentic operational 当前缺 3 个 ClinTox Starling 条件，现有 22 个 retrieval
+条件的 parent-disjoint 已完成，新增 ClinTox 条件需在同轮补齐。Starling 生成成本单独
 记账，不与 GLM reasoning tokens 合并。
 
 完成标准：将“source quality”和“downstream performance”分开下结论；只有跨任务方向稳定时才声称
@@ -337,9 +436,11 @@ test 上继续改 mechanism prompt。
 confusion matrix、paired flips、token cost、tool-call/retry、身份声明、source-ID 使用和 evidence utilization。
 Same-parent relation 必须进入 trace/audit；parent-disjoint 使用相同 agent protocol 和冻结 prompt。
 
-资源：当前 21 个 agentic 条件已完成，缺 8 个 Starling 条件；数据和 relation contract 冻结后按需要重跑
-25 个 operational retrieval 条件，并运行对应 parent-disjoint 条件。既有 21 对 identity-blind/
-matched-prefetch、4,456 个样本 parity audit 保留为 appendix control，不扩成新的完整 29 对矩阵。
+资源：当前 26 个 agentic operational 条件已完成，缺 3 个 ClinTox Starling 条件；现有 22 个 retrieval
+条件的 parent-disjoint 已完成。数据和 relation contract 冻结后按需要重跑 25 个 operational retrieval
+条件，并运行对应 parent-disjoint 条件。Test 现有 identity-blind 26 个条件、matched-prefetch 21 个
+条件（4,456 个样本 parity audit）；valid 两套均为 26 个条件、2,713 个 matched samples。
+这些结果保留为 appendix control，不自动扩成新的完整 29 对 test 矩阵。
 
 完成标准：主表只比较同一 agentic regime 内的 retrieval/source/grouping policy；不得把 agentic 与
 identity-blind 的差异解释为纯 structure visibility。ClinTox 等不平衡任务必须同时检查 accuracy、
@@ -438,6 +539,85 @@ Bio Starling source、Bio mechanism、Skin failure、ClinTox failure。每个 co
 完成标准：报告 mean、SD、每次 paired delta、prediction disagreement 和结论方向稳定率。不能用表现最好
 的一次作为主结果。
 
+### E11：Coverage–performance 关联分析
+
+**支撑贡献：C3、C6。回答 RQ7。优先级：P0。**
+
+在 deployment-visible agentic 主制度中，对每个 retrieval condition 计算：
+
+```text
+overall coverage = 有至少一个 retrieved neighbor 的 query 比例
+positive-class coverage = 正类 query 中有至少一个 neighbor 的比例
+negative-class coverage = 负类 query 中有至少一个 neighbor 的比例
+delta macro-F1 = 该 retrieval condition 与同任务 none 条件在共同样本上的 paired macro-F1 差值
+```
+
+主图同时展示 condition-level overall coverage 与 `delta macro-F1`，并展示正负类别 coverage 的差距。
+该分析使用 macro-F1 作为主性能量，因为四个任务的标签分布不平衡；class-conditional coverage 用于判断
+retrieval 是否系统性偏向多数类或少数类。第一轮 operational test 结果用于建立分析和图表，不替代最终
+数据冻结后的重跑。
+
+该分析只报告描述性关联和 failure boundary，不把 coverage 当作随机化处理，也不声称更高 coverage
+因果性地带来更高性能。不同 task/source/view 的 evidence quality 同时变化，因此不做复杂的
+`none/hybrid/retrieval` counterfactual 拆分；后续 quality annotation 在 E3 中独立处理。
+
+完成标准：统一生成 `coverage_performance.tsv`、主报告中的对应表和 canonical SVG；test/valid、不同
+visibility regime 和新增 retrieval condition 不需要复制 task-specific 代码；每个点保留 task、source、
+view、样本数、正负类分母和 paired bootstrap 区间。
+
+### E12：ChEMBL mechanistic-distance / evidence-quantity expansion
+
+**支撑贡献：C7、C6。回答 RQ8。优先级：P0。**
+
+> 2026-07-23 update：四任务 strict-hop census 得到 `0/4` publishable strict H2。下文 H1/H2
+> 执行细节只保留作历史，不得启动 strict 四级 LLM curve。E12 主线改为
+> `RELEVANCE_DILUTION_EXPERIMENT_PLAN.md` 中的 controlled relevance-dilution prefixes；
+> strict H1 只作为 secondary analysis。
+
+2026-07-20 实现状态：BBB v2 先对 20,369 个 D/C assays 做 measured-state census，确认 tight-junction、
+efflux/influx abundance 和 functional PXR/CAR 已属于 base；因此 v1 对这些 node 的 extension mapping 作废。
+v2 historical prototype 曾映射 H1 `mmp9_activity` 与 H2 `mmp3_activity`，并完成 696 assays/2,747 molecules 的
+retrieval-only audit。但后续 shortcut audit 找到 MMP-3 到 tight-junction integrity 的直接路径，故 MMP-3 的最短
+距离也是 H1，原 H2 mapping 无效。v2 index/coverage 只保留作工程历史，不得送入 E12 LLM 或解释为新 ontology
+的 coverage/performance。
+
+下一版 BBB 必须按 C-family tree 重建：D 为 root，每个冻结 C mechanism family 恰有一个聚合 H1 child，每个 H1
+至多有一个 optional H2 child；一个 child 可聚合多个 measurement families，但 node 共享 top-3 neighbor budget。
+MMP-9/MMP-3 可同时进入 passive/barrier C family 的 H1；其它 C families 的 H1/H2 必须重新做 citation、shortcut、
+D/C overlap 和 ChEMBL feasibility audit。当前尚未形成可运行的 BBB E12 graph，也未运行 E12 LLM macro-F1。
+
+主实验是 D4 中冻结的累计 source expansion curve。主要指标只有 test macro-F1；每个相邻累计点和相对
+`none` 的差异报告 paired bootstrap interval，并画每任务 response curve。Coverage、unique retrieved
+molecule 数、assay/family 数、LLM-visible evidence rows 和 prompt tokens 作为解释 quantity 的辅助量，
+不增加固定-token replacement、rescue rate/harm rate 或 cross-task assay 条件。
+
+完整曲线使用 `deployment_visible_prefetched`，确保每个 query 的 prefetched tool outputs、single prior、
+模型参数和 evidence serialization policy 一致。`D/C/H1/H2` 均来自同一冻结 ChEMBL source manifest，唯一系统
+变化是该 ChEMBL evidence union 向更远 family 扩展；任何包含 Starling row 的 E12 condition 都应由审计直接判为
+无效。
+随后在每个 task 的 `none`、`D`、`D+C` 和最大可辩护层级做 deployment-visible agentic confirmation；已有
+完全匹配的 agentic condition 可通过 input hash 审计后复用。
+
+Mechanism supplementary 在同一 visibility regime 下运行 `D+C`、`D+C+H1`、`D+C+H1+H2`。执行必须先完成
+`D+C+H1`：复用 hash 未变化的 D/C branches，只运行各 C family 的聚合 H1 branches 后重跑 final；随后以该 condition 为
+`--group-analysis-source-batch` 运行 `D+C+H1+H2`，复用 D/C/H1，只运行 H2 branches 后再次重跑 final。
+同一 prefix 的 flat/mechanism evidence-row multiset 必须一致；两者差异只能是 grouping 和并行 reasoning。
+
+该实验回答的是“在同一 curated database 内，较远但更多的 evidence 是否仍然有用”，不能用于声称
+Starling generally better than ChEMBL。E2 才回答 source provenance/representation；两条实验线必须分别
+作图和下结论。若性能随扩展先升后降，报告 empirical frontier；若不同 task 的方向不一致，报告
+task-specific boundary，不拟合一个跨任务通用距离阈值。
+
+资源：ChEMBL assay mapping 和 citation-backed 两遍 graph/path audit；新 evidence library/index；四任务
+matched-prefetch flat 累计曲线与 H1/H2 mechanism supplementary；flat 最多每任务一个新增 maximal-distance
+agentic confirmation；mechanism 必含 H1 point，并在至少一个 family H2 available 时再含 H2 point。先在 valid 上做 coverage、payload
+和完整性检查，但不按 valid/test 性能改变 graph ontology。
+
+完成标准：graph、edge rationale、assay-to-family mapping 和 source manifest 可发布；每个累计点的实际
+coverage/evidence volume/tokens 可审计；必需 H1 point 与任何 available H2 point 均完成且通过 branch-reuse
+与 flat/mechanism evidence-parity audit；所有 paired comparison 使用共同 sample set；不存在用 Starling
+缺少 distant coverage 来人为放大 ChEMBL quantity 的跨 source comparison。
+
 ## 资源预算
 
 ### 计算与 API
@@ -480,11 +660,13 @@ Starling extraction: separate literature-processing budget
 严格按以下依赖顺序执行：
 
 ```text
-D1 operational/parent-disjoint policy + D3 protocol freeze
-  -> D2 Starling data freeze
+D1 operational/parent-disjoint policy + D3 protocol freeze + D4 ChEMBL distance graph freeze
+  -> D2 Starling data freeze and E12 ChEMBL distant-library build in parallel
   -> E0 index/overlap/contract smoke
   -> E3 annotation sampling and E8 baselines in parallel
   -> E1/E2/E4/E5 primary matrix
+  -> E12 matched-prefetch curve and selected agentic confirmation
+  -> E11 coverage-performance analysis
   -> E9 second model and E10 repeats
   -> E6 targeted visibility attribution
   -> final statistics, figures and writing
@@ -499,21 +681,29 @@ python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --list
 # 运行论文主实验的 deployment-visible agentic 条件
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
   --visibility-mode deployment_visible \
+  --neighbor-identity-policy operational \
   --experiments <experiment_id> [<experiment_id> ...]
 
 # 生成统一统计和报告
 python -m tools.chembl_tool.paper_experiments.summarize_results
+
+# 生成 coverage 与 macro-F1 增幅的 focused analysis 和 canonical SVG
+python -m tools.chembl_tool.paper_experiments.analyze_coverage_performance
+python -m tools.chembl_tool.paper_experiments.plot_coverage_performance
 ```
 
-Starling 当前可用 builder 命令见 [README.md](README.md)。以下内容尚无最终可运行入口，必须先实现并
+Starling 当前可用 builder 命令见 [README.md](README.md)。Operational staging、parent-disjoint
+exclusion/backfill/diff-reuse、same-parent exposure audit，以及 BBB/Skin full Starling builders 已实现并
+通过当前 test/valid matrix。以下内容尚无最终可运行入口，必须先实现并
 通过测试，不能把本文档中的名称直接当作 CLI 参数：
 
-- operational entity-relation annotation、parent-disjoint exclusion/backfill 与 overlap audit；
-- BBB full、Skin、ClinTox 的最终 Starling family builders/profiles；
+- ClinTox 的最终 Starling family builder/profile；
 - E6 的细粒度 query/neighbor/source-ID visibility policies；
 - E8 尚缺的 retrieval vote、ECFP learned 和 pretrained baseline runners；
 - E3 annotation sampler、schema、agreement 和 adjudication summarizer；
-- E9/E10 的模型/重复 run manifest 与聚合报告。
+- E9/E10 的模型/重复 run manifest 与聚合报告；
+- E12 的 publishable task configuration 与 LLM matrix integration。共享 graph/index/retrieval/audit 和 BBB
+  v3 engineering artifacts 已实现，但当前 self-relevance/role gate 仍不允许把 H1/H2 当成论文结果。
 
 每实现一个入口，必须先补测试和 `--help`/README 命令，再把本列表对应项删除并更新 E 编号状态。
 
@@ -525,9 +715,9 @@ ICLR 2027 官方 deadline 尚未发布。本时间表按往年 9 月中下旬 ab
 | 时间 | 必须完成 | Go/No-Go gate |
 |---|---|---|
 | 07-12 至 07-18 | 冻结 thesis、primary comparisons、两套 parent policy、第二模型和 annotation guideline | 未冻结则不生成新 Starling full data |
-| 07-19 至 08-02 | 补齐 BBB/Skin/Clin Starling；source manifest；开始人工 annotation | 数据不完整或 critical attribution error 未修则不跑主矩阵 |
-| 08-03 至 08-09 | 构建 index、5-sample smoke、parent overlap audit；完成 baseline 入口 | contract/overlap/失败 gate 未通过则不 full run |
-| 08-10 至 08-23 | Agentic operational/parent-disjoint 主矩阵、8 条件第二模型；持续完整性检查 | 08-23 必须得到可汇总主结果 |
+| 07-19 至 08-02 | 补齐 BBB/Skin/Clin Starling；冻结 ChEMBL distance graph/source manifest；开始人工 annotation | 数据不完整、distance mapping 未复核或 critical attribution error 未修则不跑对应主实验 |
+| 08-03 至 08-09 | 构建 standard/distant indices、5-sample smoke、parent overlap audit；完成 baseline 入口 | contract/overlap/payload/失败 gate 未通过则不 full run |
+| 08-10 至 08-23 | Agentic operational/parent-disjoint 主矩阵、E12 matched-prefetch 曲线与关键 agentic points、8 条件第二模型；持续完整性检查 | 08-23 必须得到可汇总主结果 |
 | 08-24 至 08-30 | 关键重复、visibility attribution、人工 annotation 仲裁、最终统计 | 结论与 claim 不符时改 claim，不改 test prompt |
 | 08-31 至 09-06 | 完成完整初稿、主图、主表、appendix 和 limitations | 内部读者必须能只靠文稿复现实验逻辑 |
 | 09-07 至 09-13 | 内部 review、匿名化、artifact/license 检查、只修 blocker | 不再增加新核心实验 |
@@ -564,6 +754,8 @@ ICLR 2027 官方 deadline 尚未发布。本时间表按往年 9 月中下旬 ab
 - [ ] 第二模型 confirmation 和 6 个关键 comparison repeats 完成。
 - [ ] Visibility gain/failure taxonomy 由第二 annotator 复核。
 - [ ] 每个主 claim 都能指向一张主表或一幅主图，不依赖 anecdotal trace。
+- [ ] 最终 agentic retrieval 矩阵已生成 overall/class-conditional coverage、paired macro-F1 增幅和 coverage–performance SVG。
+- [ ] E12 的 ChEMBL-only tree-prefix flat 曲线、`D+C/D+C+H1` 及任何 available `D+C+H1+H2` mechanism supplementary、branch-reuse/evidence-parity 审计和关键 agentic confirmation 完成；不可辩护的 H2 逐 C family 记为 unavailable。
 - [ ] Mixed/negative result 被如实写入 abstract、limitations 和 conclusion。
 - [ ] 文稿、仓库、artifact、日志和引用全部匿名化并完成 license 检查。
 
@@ -577,6 +769,7 @@ ICLR 2027 官方 deadline 尚未发布。本时间表按往年 9 月中下旬 ab
 4. source-quality annotation；
 5. 强 baseline、第二模型最小 confirmation、关键重复；
 6. Identity-blind/matched 的最小 appendix control，以及完整 provenance、paired statistics 和 failure analysis。
+7. ChEMBL-only mechanistic-distance 累计扩展曲线及其 task-specific boundary。
 
 若 Starling 无法按时补齐 Skin/Clin mechanism，应在数据冻结 gate 做一次明确 scope reduction，并将论文
 主张收缩为“跨任务 direct source comparison + 两个任务的 mechanism case study”，而不是在截稿前留下

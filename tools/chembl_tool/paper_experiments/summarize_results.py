@@ -20,10 +20,11 @@ from .molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE_PREFETCHED,
     EXPERIMENTS,
     IDENTITY_BLIND,
-    PAPER_ROOT,
     VISIBILITY_MODES,
+    experiments_for_split,
     experiment_result_name,
     experiment_run_root,
+    paper_root_for_split,
 )
 
 
@@ -33,11 +34,19 @@ COMPARISONS = {
         ("chembl_direct", "chembl_full_flat"),
         ("chembl_full_flat", "chembl_full_mechanism"),
         ("chembl_direct", "starling_direct"),
+        ("starling_direct", "starling_full_flat"),
+        ("starling_full_flat", "starling_full_mechanism"),
+        ("chembl_full_mechanism", "starling_full_mechanism"),
     ],
     "skin_reaction": [
         ("none", "chembl_direct"),
         ("chembl_direct", "chembl_full_flat"),
         ("chembl_full_flat", "chembl_full_mechanism"),
+        ("none", "starling_direct"),
+        ("chembl_direct", "starling_direct"),
+        ("starling_direct", "starling_full_flat"),
+        ("starling_full_flat", "starling_full_mechanism"),
+        ("chembl_full_mechanism", "starling_full_mechanism"),
     ],
     "clintox": [
         ("none", "chembl_direct"),
@@ -62,15 +71,21 @@ COMPARISONS = {
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    output_dir = Path(args.output_dir)
+    paper_root = Path(args.paper_root) if args.paper_root else paper_root_for_split(args.split)
+    experiments = experiments_for_split(args.split)
+    output_dir = Path(args.output_dir) if args.output_dir else paper_root / "analysis"
     output_dir.mkdir(parents=True, exist_ok=True)
     summaries: list[dict[str, Any]] = []
     group_coverage: list[dict[str, Any]] = []
     prediction_sets: dict[str, dict[int, dict[str, Any]]] = {}
 
     for visibility_mode in VISIBILITY_MODES:
-        for experiment in EXPERIMENTS:
-            batch_dir = experiment_run_root(visibility_mode) / experiment.task / experiment.name
+        for experiment in experiments:
+            batch_dir = (
+                experiment_run_root(visibility_mode, paper_root=paper_root)
+                / experiment.task
+                / experiment.name
+            )
             metrics_path = batch_dir / "metrics.json"
             predictions_path = batch_dir / "predictions.jsonl"
             if not metrics_path.exists() or not predictions_path.exists():
@@ -95,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
                 )
             )
 
-    knn_dir = PAPER_ROOT / "bioavailability_ma" / "starling_direct_scalar_knn"
+    knn_dir = paper_root / "bioavailability_ma" / "starling_direct_scalar_knn"
     if (knn_dir / "metrics.json").exists() and (knn_dir / "predictions.jsonl").exists():
         knn_predictions = _read_jsonl(knn_dir / "predictions.jsonl")
         normalized_knn = [
@@ -144,23 +159,33 @@ def main(argv: list[str] | None = None) -> int:
         prediction_sets,
         args.bootstrap_replicates,
     )
+    coverage_performance = build_coverage_performance_rows(
+        [row for row in summaries if row["visibility_mode"] == DEPLOYMENT_VISIBLE],
+        prediction_sets,
+        args.bootstrap_replicates,
+    )
+    coverage_association = summarize_coverage_association(coverage_performance)
     source_inventory = build_source_inventory()
-    contextual_baselines = load_contextual_baselines()
+    contextual_baselines = load_contextual_baselines() if args.split == "test" else []
     _write_tsv(output_dir / "experiment_summary.tsv", summaries)
     _write_tsv(output_dir / "paired_comparisons.tsv", comparisons)
     _write_tsv(output_dir / "visibility_comparisons.tsv", visibility_comparisons)
+    _write_tsv(output_dir / "coverage_performance.tsv", coverage_performance)
     _write_tsv(output_dir / "group_coverage.tsv", group_coverage)
     _write_tsv(output_dir / "source_inventory.tsv", source_inventory)
     _write_tsv(output_dir / "contextual_baselines.tsv", contextual_baselines)
     (output_dir / "summary.json").write_text(
         json.dumps(
             {
+                "data_split": args.split,
                 "experiments": summaries,
                 "source_inventory": source_inventory,
                 "contextual_baselines": contextual_baselines,
                 "group_coverage": group_coverage,
                 "comparisons": comparisons,
                 "visibility_comparisons": visibility_comparisons,
+                "coverage_performance": coverage_performance,
+                "coverage_performance_association": coverage_association,
             },
             indent=2,
         )
@@ -168,12 +193,20 @@ def main(argv: list[str] | None = None) -> int:
         encoding="utf-8",
     )
     (output_dir / "report.md").write_text(
-        _render_report(summaries, comparisons, visibility_comparisons, contextual_baselines),
+        _render_report(
+            summaries,
+            comparisons,
+            visibility_comparisons,
+            coverage_performance,
+            contextual_baselines,
+            data_split=args.split,
+        ),
         encoding="utf-8",
     )
     print(
         f"Wrote {len(summaries)} experiment summaries, {len(comparisons)} within-regime comparisons, "
-        f"and {len(visibility_comparisons)} visibility comparisons to {output_dir}"
+        f"{len(visibility_comparisons)} visibility comparisons, and "
+        f"{len(coverage_performance)} coverage-performance rows to {output_dir}"
     )
     return 0
 
@@ -398,6 +431,150 @@ def build_visibility_comparisons(
         _add_holm_adjusted_p(family)
         rows.extend(family)
     return rows
+
+
+_CONDITION_LABELS = {
+    "chembl_direct": "ChEMBL · Direct",
+    "chembl_full_flat": "ChEMBL · Full / Flat",
+    "chembl_full_mechanism": "ChEMBL · Full / Mechanism",
+    "starling_direct": "Starling · Direct",
+    "starling_direct_numeric": "Starling · Direct (numeric)",
+    "starling_direct_full": "Starling · Direct (full)",
+    "starling_full_flat": "Starling · Full / Flat",
+    "starling_full_mechanism": "Starling · Full / Mechanism",
+}
+
+
+def build_coverage_performance_rows(
+    summaries: list[dict[str, Any]],
+    prediction_sets: dict[str, dict[int, dict[str, Any]]],
+    bootstrap_replicates: int,
+    *,
+    bootstrap_delta_fn: Any | None = None,
+) -> list[dict[str, Any]]:
+    """Relate retrieval availability to paired macro-F1 change.
+
+    Coverage is computed from every labelled query in the retrieval condition.
+    Performance change is paired against the same task's no-retrieval condition
+    on the common evaluable query indices.  The output deliberately retains the
+    task/source/view grain so downstream plots cannot silently pool unlike
+    retrieval conditions.
+    """
+    experiment_by_name = {experiment.name: experiment for experiment in EXPERIMENTS}
+    rows: list[dict[str, Any]] = []
+    for summary in summaries:
+        visibility_mode = str(summary["visibility_mode"])
+        if visibility_mode == "visibility_independent":
+            continue
+        result_name = str(summary["experiment"])
+        prefix = "" if visibility_mode == IDENTITY_BLIND else f"{visibility_mode}__"
+        if prefix and not result_name.startswith(prefix):
+            continue
+        experiment_name = result_name[len(prefix) :] if prefix else result_name
+        experiment = experiment_by_name.get(experiment_name)
+        if experiment is None or experiment.mode == "none":
+            continue
+        condition = experiment_name.removeprefix(f"{experiment.task}__")
+        baseline_name = experiment_result_name(f"{experiment.task}__none", visibility_mode)
+        current = prediction_sets.get(result_name)
+        baseline = prediction_sets.get(baseline_name)
+        if current is None or baseline is None:
+            continue
+
+        labelled = [row for row in current.values() if row.get("label") is not None]
+        by_class = {label: [row for row in labelled if int(row["label"]) == label] for label in (0, 1)}
+        covered = lambda row: int(row.get("n_groups_with_neighbors") or 0) > 0
+        common = sorted(set(current) & set(baseline))
+        labels = [int(current[index]["label"]) for index in common]
+        baseline_labels = [int(baseline[index]["label"]) for index in common]
+        if labels != baseline_labels:
+            raise ValueError(f"Label mismatch between {baseline_name} and {result_name}")
+        baseline_predictions = [int(baseline[index]["pred_label"]) for index in common]
+        current_predictions = [int(current[index]["pred_label"]) for index in common]
+        baseline_macro_f1 = macro_f1(labels, baseline_predictions)
+        retrieval_macro_f1 = macro_f1(labels, current_predictions)
+        delta_fn = bootstrap_delta_fn or paired_bootstrap_delta_ci
+        delta_low, delta_high = delta_fn(
+            labels,
+            baseline_predictions,
+            current_predictions,
+            bootstrap_replicates,
+        )
+        negative_covered = sum(covered(row) for row in by_class[0])
+        positive_covered = sum(covered(row) for row in by_class[1])
+        n_covered = negative_covered + positive_covered
+        rows.append(
+            {
+                "experiment": result_name,
+                "task": experiment.task,
+                "visibility_mode": visibility_mode,
+                "condition": condition,
+                "condition_label": _CONDITION_LABELS.get(condition, condition),
+                "source": experiment.source,
+                "retrieval_view": experiment.mode,
+                "n_total": len(labelled),
+                "n_paired": len(common),
+                "n_covered": n_covered,
+                "coverage": n_covered / len(labelled) if labelled else None,
+                "n_negative": len(by_class[0]),
+                "n_negative_covered": negative_covered,
+                "negative_coverage": negative_covered / len(by_class[0]) if by_class[0] else None,
+                "n_positive": len(by_class[1]),
+                "n_positive_covered": positive_covered,
+                "positive_coverage": positive_covered / len(by_class[1]) if by_class[1] else None,
+                "baseline_macro_f1": baseline_macro_f1,
+                "retrieval_macro_f1": retrieval_macro_f1,
+                "delta_macro_f1": retrieval_macro_f1 - baseline_macro_f1,
+                "delta_ci_low": delta_low,
+                "delta_ci_high": delta_high,
+            }
+        )
+    return rows
+
+
+def summarize_coverage_association(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Return descriptive pooled and task-centered coverage associations."""
+    selected = [row for row in rows if row["visibility_mode"] == DEPLOYMENT_VISIBLE]
+    if not selected:
+        return {}
+
+    def pearson(xs: list[float], ys: list[float]) -> float | None:
+        if len(xs) < 2:
+            return None
+        x_mean = sum(xs) / len(xs)
+        y_mean = sum(ys) / len(ys)
+        numerator = sum((x - x_mean) * (y - y_mean) for x, y in zip(xs, ys))
+        x_scale = math.sqrt(sum((x - x_mean) ** 2 for x in xs))
+        y_scale = math.sqrt(sum((y - y_mean) ** 2 for y in ys))
+        return numerator / (x_scale * y_scale) if x_scale and y_scale else None
+
+    coverage = [float(row["coverage"]) for row in selected]
+    gains = [float(row["delta_macro_f1"]) for row in selected]
+    centered_coverage: list[float] = []
+    centered_gains: list[float] = []
+    for task in sorted({str(row["task"]) for row in selected}):
+        task_rows = [row for row in selected if row["task"] == task]
+        task_coverage = [float(row["coverage"]) for row in task_rows]
+        task_gains = [float(row["delta_macro_f1"]) for row in task_rows]
+        coverage_mean = sum(task_coverage) / len(task_coverage)
+        gain_mean = sum(task_gains) / len(task_gains)
+        centered_coverage.extend(value - coverage_mean for value in task_coverage)
+        centered_gains.extend(value - gain_mean for value in task_gains)
+    largest_gap = max(
+        selected,
+        key=lambda row: abs(float(row["positive_coverage"]) - float(row["negative_coverage"])),
+    )
+    return {
+        "n_conditions": len(selected),
+        "n_positive_gain": sum(gain > 0 for gain in gains),
+        "n_negative_gain": sum(gain < 0 for gain in gains),
+        "pooled_pearson_r": pearson(coverage, gains),
+        "task_centered_pearson_r": pearson(centered_coverage, centered_gains),
+        "largest_absolute_class_coverage_gap": abs(
+            float(largest_gap["positive_coverage"]) - float(largest_gap["negative_coverage"])
+        ),
+        "largest_class_coverage_gap_experiment": largest_gap["experiment"],
+    }
 
 
 def _paired_comparison(
@@ -803,9 +980,13 @@ def _render_report(
     summaries: list[dict[str, Any]],
     comparisons: list[dict[str, Any]],
     visibility_comparisons: list[dict[str, Any]],
+    coverage_performance: list[dict[str, Any]],
     contextual_baselines: list[dict[str, Any]],
+    *,
+    data_split: str = "test",
 ) -> str:
-    lines = ["# 分子证据 Agent 实验报告", "", "## 实验汇总", ""]
+    split_label = "测试集" if data_split == "test" else "验证集"
+    lines = ["# 分子证据 Agent 实验报告", "", f"- 数据 split：{data_split}（{split_label}）", "", "## 实验汇总", ""]
     lines.append("| 可见性模式 | 实验 | N | Macro-F1 | 95% CI | 准确率 | 检索覆盖率 | 失败数 | Tokens |")
     lines.append("|---|---|---:|---:|---:|---:|---:|---:|---:|")
     for row in summaries:
@@ -836,6 +1017,7 @@ def _render_report(
             f"{_fmt(row['right_macro_f1'])} | {_fmt(row['delta_macro_f1'])} | {ci} | "
             f"{_fmt(row['mcnemar_exact_p'])} | {_fmt(row['mcnemar_holm_p'])} |"
         )
+    lines.extend(["", *_render_coverage_performance_section(coverage_performance)])
     lines.extend(["", "## MiniMol 参考基线", ""])
     lines.append("| 任务 | Macro-F1 | 准确率 | AUROC | 选择方式 |")
     lines.append("|---|---:|---:|---:|---|")
@@ -847,16 +1029,54 @@ def _render_report(
     lines.extend(
         [
             "",
-            "Bootstrap 区间使用固定随机种子的测试集配对重采样。McNemar p 值采用精确双侧检验。",
+            f"Bootstrap 区间使用固定随机种子的{split_label}配对重采样。McNemar p 值采用精确双侧检验。",
             "MiniMol 行是已有的、根据验证集选择或采用固定配置的参考基线，不属于配对检索消融实验。",
             "论文主结果使用 deployment-visible agentic workflow，回答真实部署中的端到端性能、工具调用和 evidence 使用。",
             "identity-blind 与 deployment-visible-prefetched 使用完全相同的 harness-prefetched 工具证据，只作为 parity-controlled visibility 补充控制；它们不进入主结果表。",
-            "当前结果使用 operational retrieval；parent-disjoint analog 消融完成前，这些数值仍属于 exploratory result。",
+            "主报告使用 operational retrieval；parent-disjoint analog 消融由 analysis/parent_disjoint_ablation/result_report.md 单独报告。",
             "仅在 assistant response 中发现的 query-SMILES 匹配属于单独的重构诊断，需要人工复核。",
             "",
         ]
     )
     return "\n".join(lines)
+
+
+def _render_coverage_performance_section(rows: list[dict[str, Any]]) -> list[str]:
+    association = summarize_coverage_association(rows)
+    lines = [
+        "<!-- coverage-performance:start -->",
+        "## Retrieval coverage 与 macro-F1 增幅",
+        "",
+        "以下只列论文主制度 deployment-visible agentic；增幅相对同任务无检索条件，coverage 表示至少有一个 neighbor 的 query 比例。",
+        "",
+        (
+            f"当前 {association.get('n_conditions', 0)} 个 retrieval conditions 中，"
+            f"{association.get('n_positive_gain', 0)} 个 macro-F1 点估计上升、"
+            f"{association.get('n_negative_gain', 0)} 个下降。Pooled Pearson r="
+            f"{_fmt(association.get('pooled_pearson_r'))}；按 task 去均值后 r="
+            f"{_fmt(association.get('task_centered_pearson_r'))}。后者说明 pooled 趋势不能解释为同一任务内 coverage 增加的稳定收益。"
+        ),
+        "",
+        "| 任务 | Retrieval condition | Overall coverage | 负类 coverage | 正类 coverage | Δ macro-F1 | 95% CI |",
+        "|---|---|---:|---:|---:|---:|---:|",
+    ]
+    for row in rows:
+        if row["visibility_mode"] != DEPLOYMENT_VISIBLE:
+            continue
+        ci = f"{_fmt(row['delta_ci_low'])}-{_fmt(row['delta_ci_high'])}"
+        lines.append(
+            f"| {row['task']} | {row['condition_label']} | {_fmt(row['coverage'])} | "
+            f"{_fmt(row['negative_coverage'])} | {_fmt(row['positive_coverage'])} | "
+            f"{_fmt(row['delta_macro_f1'])} | {ci} |"
+        )
+    lines.extend(
+        [
+            "",
+            "Coverage 与性能增幅是 condition-level 描述性关联；不同任务、source 和 retrieval view 的 evidence quality 同时变化，因此不能解释为 coverage 的因果效应。",
+            "<!-- coverage-performance:end -->",
+        ]
+    )
+    return lines
 
 
 def _fmt(value: Any) -> str:
@@ -865,7 +1085,9 @@ def _fmt(value: Any) -> str:
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-dir", default=str(PAPER_ROOT / "analysis"))
+    parser.add_argument("--split", choices=("test", "valid"), default="test")
+    parser.add_argument("--paper-root", default="")
+    parser.add_argument("--output-dir", default="")
     parser.add_argument("--bootstrap-replicates", type=int, default=10_000)
     return parser.parse_args(argv)
 

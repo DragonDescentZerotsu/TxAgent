@@ -20,6 +20,16 @@ audit 工具继续保留用于复现与案例分析，不再按 test errors 调�
 toxicology、organ-specific toxicity、genotoxicity/carcinogenicity、cellular stress、general cytotoxicity 和
 off-target/DDI/exposure。并行 reasoning 以这 7 个 family 为上限，而不是以 43 个 endpoint groups 为单位。
 
+当前仓库没有与 ClinTox “toxicity-related clinical-trial failure” 同定义的 Starling direct acquisition，
+因此本轮不构造 ClinTox Starling split，也不从 heterogeneous in vitro/in vivo liability records
+伪造 clinical-failure gold label。
+
+2026-07-23 strict-hop availability census 见
+`outputs/chembl_tool/tasks/clintox/distance_expansion/analysis/hop_availability_census/`。当前 C 已覆盖 43 groups、
+108,413 assays；KEAP1-NRF2 合格 rows 全部与 D/C assay 重叠，complex-I/CUL3 无可用 functional library。
+GSK3B 虽有 28.67% parent-disjoint coverage，但缺 toxic exposure 与 heterogeneous ClinTox label 的方向映射，
+因此不可发布。结论为 H1/H2 均 unavailable，不得为了构造 distance curve 加入旧 paper matrix。
+
 旧 native workflow 的归档结论：
 
 ```text
@@ -92,7 +102,8 @@ weak/background context
 其中 hERG、5-HT2B、CYP、transporter、DDI、generic cytotoxicity 等机制性 liability
 应主要作为 risk explanation 或 uncertainty，不应单独决定 `clintox_prediction=toxic`。
 
-当前本地数据：
+当前可用 gold 数据仍是旧 TDC lineage；因为本 task 尚无合格 Starling direct source，下面的路径没有被
+`data/processed_starling/` 替代，也不能与三个已迁移 task 的 Starling 结果合并汇总：
 
 ```text
 data/processed/ClinTox/train.jsonl

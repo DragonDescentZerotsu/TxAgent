@@ -40,7 +40,32 @@ STARLING = SourceExperimentConfig(
             source_groups=("Tier 1.starling_direct_bbb_evidence",),
         ),
     ),
-    mechanism_groups=(),
+    mechanism_groups=(
+        EvidenceGroupSpec(
+            "Mechanism.tier_1",
+            "Tier 1",
+            "direct_brain_exposure",
+            source_groups=("Tier 1.starling_direct_bbb_evidence",),
+        ),
+        EvidenceGroupSpec(
+            "Mechanism.tier_2",
+            "Tier 2",
+            "passive_permeability",
+            source_groups=("Mechanism.passive_permeability",),
+        ),
+        EvidenceGroupSpec(
+            "Mechanism.tier_3",
+            "Tier 3",
+            "efflux_transport",
+            source_groups=("Mechanism.efflux_transport",),
+        ),
+        EvidenceGroupSpec(
+            "Mechanism.tier_4",
+            "Tier 4",
+            "influx_transport",
+            source_groups=("Mechanism.influx_transport",),
+        ),
+    ),
 )
 
 SOURCES = {"chembl": CHEMBL, "starling": STARLING}

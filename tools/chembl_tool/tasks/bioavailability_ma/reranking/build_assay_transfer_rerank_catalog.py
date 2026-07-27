@@ -78,8 +78,7 @@ def build_candidate_scoped_catalog(
     top_k_per_group: int,
     min_similarity: float,
     neighbor_identity_policy: str,
-    raw_pool_size: int,
-    candidate_size: int,
+    initial_morgan_filter: int,
     index_path: str = "",
     condition_id: str = "validation__candidate_scoped",
 ) -> dict[str, Any]:
@@ -100,8 +99,7 @@ def build_candidate_scoped_catalog(
             min_similarity=min_similarity,
             neighbor_identity_policy=neighbor_identity_policy,
             reranker=collector,
-            rerank_raw_pool_size=raw_pool_size,
-            rerank_candidate_size=candidate_size,
+            assay_transfer_initial_morgan_filter=initial_morgan_filter,
         )
 
     by_id: dict[str, dict[str, Any]] = {}
@@ -129,8 +127,7 @@ def build_candidate_scoped_catalog(
                 "query_index": selection["query_index"],
                 "query_smiles": selection["query_smiles"],
                 "group_id": selection["group_id"],
-                "raw_pool_size": raw_pool_size,
-                "candidate_size": candidate_size,
+                "assay_transfer_initial_morgan_filter": initial_morgan_filter,
                 "candidates": frozen_candidates,
             }
         )
@@ -170,8 +167,7 @@ def build_candidate_scoped_catalog(
         "n_groups": len(manifest_rows),
         "n_candidates": sum(len(row["candidates"]) for row in manifest_rows),
         "min_similarity": min_similarity,
-        "raw_pool_size": raw_pool_size,
-        "candidate_size": candidate_size,
+        "assay_transfer_initial_morgan_filter": initial_morgan_filter,
     }
     with manifest_output.open("w", encoding="utf-8") as handle:
         for row in [manifest_metadata, *manifest_rows]:
@@ -196,8 +192,7 @@ def build_manifest_for_prebuilt_catalog(
     top_k_per_group: int,
     min_similarity: float,
     neighbor_identity_policy: str,
-    raw_pool_size: int,
-    candidate_size: int,
+    initial_morgan_filter: int,
     index_path: str = "",
     condition_id: str = "validation__prebuilt_catalog",
     template_profile: str = "v6_5_query_context_copy",
@@ -225,12 +220,11 @@ def build_manifest_for_prebuilt_catalog(
             min_similarity=min_similarity,
             neighbor_identity_policy=neighbor_identity_policy,
             reranker=collector,
-            rerank_raw_pool_size=raw_pool_size,
-            rerank_candidate_size=candidate_size,
+            assay_transfer_initial_morgan_filter=initial_morgan_filter,
         )
 
     manifest_rows = [
-        _prebuilt_manifest_row(selection, catalog, raw_pool_size, candidate_size)
+        _prebuilt_manifest_row(selection, catalog, initial_morgan_filter)
         for selection in selections
     ]
     metadata = {
@@ -250,8 +244,7 @@ def build_manifest_for_prebuilt_catalog(
             for candidate in row["candidates"]
         ),
         "min_similarity": min_similarity,
-        "raw_pool_size": raw_pool_size,
-        "candidate_size": candidate_size,
+        "assay_transfer_initial_morgan_filter": initial_morgan_filter,
     }
     manifest_output.parent.mkdir(parents=True, exist_ok=True)
     with manifest_output.open("w", encoding="utf-8") as handle:
@@ -263,8 +256,7 @@ def build_manifest_for_prebuilt_catalog(
 def _prebuilt_manifest_row(
     selection: dict[str, Any],
     catalog: Any,
-    raw_pool_size: int,
-    candidate_size: int,
+    initial_morgan_filter: int,
 ) -> dict[str, Any]:
     candidates = []
     for candidate in selection["candidates"]:
@@ -286,8 +278,7 @@ def _prebuilt_manifest_row(
         "query_index": selection["query_index"],
         "query_smiles": selection["query_smiles"],
         "group_id": selection["group_id"],
-        "raw_pool_size": raw_pool_size,
-        "candidate_size": candidate_size,
+        "assay_transfer_initial_morgan_filter": initial_morgan_filter,
         "candidates": candidates,
     }
 

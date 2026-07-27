@@ -123,3 +123,43 @@ def test_profiles_can_split_roles_without_duplicate_source_molecule_identity(mon
     assert direct["minimal_evidence"]["endpoint"]["measurement"]["value"] == 40.0
     assert proxy["standard_value"] == ""
     assert sorted(standardize_calls) == ["CCO", "OCC"]
+
+
+def test_profile_can_require_context_for_an_ambiguous_endpoint(monkeypatch):
+    frame = pd.DataFrame(
+        [
+            {
+                "smiles": "CCO",
+                "kind": "local_tissue_injury",
+                "support_text": "Topical exposure caused epidermal blistering.",
+            },
+            {
+                "smiles": "CCN",
+                "kind": "local_tissue_injury",
+                "support_text": "Cardiac mitochondrial injury was observed.",
+            },
+            {
+                "smiles": "CCC",
+                "kind": "skin_irritation",
+                "support_text": "No extra context is required for this unambiguous endpoint.",
+            },
+        ]
+    )
+    monkeypatch.setattr(pd, "read_parquet", lambda path: frame)
+    profile = StarlingSourceProfile(
+        source_id="skin_damage",
+        path="unused.parquet",
+        group_id="Mechanism.skin_damage",
+        assay_tier="Tier 3",
+        endpoint_group="skin_damage",
+        evidence_source="starling/example",
+        endpoint_field="kind",
+        include_endpoint_values=("local_tissue_injury", "skin_irritation"),
+        context_filter_fields=("support_text",),
+        required_context_patterns_by_endpoint=(("local_tissue_injury", (r"epiderm", r"dermal")),),
+    )
+
+    rows, stats = build_starling_parquet_evidence_rows([profile])
+
+    assert {row["canonical_smiles"] for row in rows} == {"CCO", "CCC"}
+    assert stats["sources"]["skin_damage"]["n_filtered_context"] == 1

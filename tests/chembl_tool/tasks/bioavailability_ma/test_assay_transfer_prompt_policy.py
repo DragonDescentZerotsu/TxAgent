@@ -181,7 +181,8 @@ def test_batch_switch_preserves_k_and_is_forwarded_to_pipeline(top_k):
         [
             "--experiment-mode", "full_mechanism",
             "--retrieval-source", "starling",
-            "--retrieval-reranker", "assay_transfer",
+            "--retrieval-strategy", "assay_transfer_tool",
+            "--group-prompt-format", "assay_transfer_tool",
             "--top-k-per-group", str(top_k),
             "--enable-assay-transfer-scores",
         ],
@@ -203,7 +204,7 @@ def test_v6_5_template_profile_propagates_from_batch_to_molecule_runner():
     args = _parse_batch_args(
         CONFIG,
         [
-            "--retrieval-reranker", "assay_transfer",
+            "--retrieval-strategy", "assay_transfer_tool",
             "--assay-transfer-template-profile", "v6_5_query_context_copy",
         ],
     )
@@ -219,8 +220,8 @@ def test_corrected_profile_and_tool_free_policy_propagate_to_molecule_runner():
     args = _parse_batch_args(
         CONFIG,
         [
-            "--retrieval-reranker",
-            "assay_transfer",
+            "--retrieval-strategy",
+            "assay_transfer_tool",
             "--assay-transfer-template-profile",
             "v6_5_query_context_copy_no_extra_details",
             "--disable-group-tools",
@@ -240,7 +241,7 @@ def test_in_distribution_threshold_and_prompt_format_propagate_to_pipeline():
         [
             "--experiment-mode", "full_mechanism",
             "--retrieval-source", "starling_in_distribution",
-            "--retrieval-reranker", "assay_transfer",
+            "--retrieval-strategy", "assay_transfer_tool",
             "--assay-transfer-min-score", "0.5",
             "--enable-assay-transfer-scores",
             "--group-prompt-format", "assay_transfer_tool",
@@ -257,6 +258,8 @@ def test_assay_transfer_group_output_schema_propagates_to_pipeline():
     args = _parse_batch_args(
         CONFIG,
         [
+            "--retrieval-strategy",
+            "assay_transfer_tool",
             "--group-prompt-format",
             "assay_transfer_tool",
             "--group-output-schema",
@@ -333,8 +336,8 @@ def test_matched_preflight_source_requires_identical_retrieval_configuration():
             "full_mechanism",
             "--retrieval-source",
             "starling_in_distribution",
-            "--retrieval-reranker",
-            "assay_transfer",
+            "--retrieval-strategy",
+            "assay_transfer_tool",
             "--enable-assay-transfer-scores",
             "--assay-transfer-min-score",
             "0.5",
@@ -353,13 +356,12 @@ def test_matched_preflight_source_requires_identical_retrieval_configuration():
         "indices": indices,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
-        "retrieval_reranker": args.retrieval_reranker,
+        "retrieval_reranker": "assay_transfer",
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
         "assay_transfer_min_score": args.assay_transfer_min_score,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
-        "rerank_raw_pool_size": args.rerank_raw_pool_size,
-        "rerank_candidate_size": args.rerank_candidate_size,
+        "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
         "rerank_catalog": args.rerank_catalog,
         "rerank_cache": args.rerank_cache,
         "rerank_candidate_manifest": args.rerank_candidate_manifest,
@@ -389,7 +391,8 @@ def test_batch_rejects_out_of_range_assay_transfer_threshold(threshold):
     args = _parse_batch_args(
         CONFIG,
         [
-            "--retrieval-reranker", "assay_transfer",
+            "--retrieval-strategy", "assay_transfer_tool",
+            "--group-prompt-format", "assay_transfer_tool",
             "--assay-transfer-min-score", threshold,
         ],
     )

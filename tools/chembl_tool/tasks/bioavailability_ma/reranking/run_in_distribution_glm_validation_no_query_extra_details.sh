@@ -100,9 +100,8 @@ for top_k in "${top_k_values[@]}"; do
     --retrieval-source starling_in_distribution \
     --experiment-mode full_mechanism \
     --neighbor-identity-policy parent_disjoint \
-    --retrieval-reranker assay_transfer \
-    --rerank-raw-pool-size 100 \
-    --rerank-candidate-size 100 \
+    --retrieval-strategy assay_transfer_tool \
+    --assay-transfer-initial-morgan-filter 100 \
     --rerank-catalog "${ROOT}/starling_in_distribution_catalog.jsonl" \
     --rerank-candidate-manifest "${CONDITION}/manifest.jsonl" \
     --rerank-cache "${CONDITION}/scores.sqlite3" \

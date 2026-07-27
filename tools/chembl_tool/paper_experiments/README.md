@@ -8,6 +8,8 @@
 - [当前冻结实验协议](EXPERIMENT_PLAN.md)：第一轮矩阵、参数、指标和统计方法。
 - [Pipeline](PIPELINE.md)：数据流、retrieval views、visibility 和 mechanism families。
 - [Visibility 分析](VISIBILITY_ANALYSIS.md)：structure visible 后性能上升或下降的集中解释。
+- [Skin Reaction trace casebook](reports/skin_reaction_visibility_trace_casebook/index.html)：可直接分享的
+  中英文静态案例报告，右上角按钮切换语言。
 - [当前结果](RESULTS.md)：已完成 full run 的实测结果。
 - [Trace 保留策略](TRACE_RETENTION.md)：最终 trace 的唯一目录、清理边界和一致性约束。
 
@@ -44,9 +46,12 @@
 运行矩阵前先构建冻结的 Starling index：
 
 ```bash
-python -m tools.chembl_tool.tasks.bbb_martins.build_starling_evidence_library \
-  --mode all \
-  --out-root outputs/paper/molecular_evidence_agent/evidence/bbb_starling \
+python -m tools.chembl_tool.tasks.bbb_martins.build_starling_full_evidence_library \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/bbb_starling_full \
+  --workers 128
+
+python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full \
   --workers 128
 
 python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
@@ -66,25 +71,66 @@ python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evide
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --list
 ```
 
-运行主实验时必须显式选择 deployment-visible agentic 制度：
+Runner 默认使用 `deployment_visible + parent_disjoint`，即论文 structural-analog retrieval 主设置。
+Parent-disjoint 只接受 retrieval conditions，且必须先由 operational staging 产物生成 `reuse_plan.json`。
+第一次跑新条件时显式使用 operational policy：
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
   --visibility-mode deployment_visible \
+  --neighbor-identity-policy operational \
   --experiments bioavailability_ma__none bioavailability_ma__starling_full_mechanism
 ```
 
-运行补充的 identity-blind 制度时省略 `--visibility-mode`。运行 matched-prefetch 补充控制：
+完成 `parent_disjoint_ablation --materialize` 后，按 reuse plan 运行最终 retrieval conditions：
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
+  --visibility-mode deployment_visible \
+  --neighbor-identity-policy parent_disjoint \
+  --experiments <retrieval_condition_names_from_plan>
+```
+
+Identity-blind 和 matched-prefetch 是 operational-policy 下的补充控制，必须显式选择 visibility 与
+policy；不能依赖 runner 默认值：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
+  --visibility-mode identity_blind \
+  --neighbor-identity-policy operational \
+  --experiments bioavailability_ma__none bioavailability_ma__starling_full_mechanism
+
+python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
   --visibility-mode deployment_visible_prefetched \
+  --neighbor-identity-policy operational \
   --experiments bioavailability_ma__none bioavailability_ma__starling_full_mechanism
 ```
 
 该命令要求对应 identity-blind condition 已完整存在。batch 会自动传入
 `--retrieval-replay-source-batch` 和 `--prefetched-tool-replay-source-batch`；不要用当前 index 重新构建
 matched-visible retrieval，否则 task mapping 漂移或 MCS 非确定性会破坏严格配对。
+
+需要以完全相同的冻结设置在 validation split 做诊断重跑时，为 matrix、prefetch audit 和汇总命令统一加
+`--split valid`。输入自动从各任务的 `valid.jsonl` 读取，全部产物隔离写入
+`outputs/paper/molecular_evidence_agent_valid/`；默认不加参数时仍使用 test split 和原结果 root。例如：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
+  --split valid \
+  --visibility-mode deployment_visible \
+  --neighbor-identity-policy operational \
+  --experiments bioavailability_ma__none bioavailability_ma__starling_full_mechanism
+
+python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
+python -m tools.chembl_tool.paper_experiments.audit_prefetch_contract --split valid
+python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split valid --materialize
+```
+
+2026-07-23 已扩展完成该 valid 诊断矩阵：identity-blind、matched-prefetch 和 deployment-visible
+各 26 个条件、2,713 个 sample-condition，均为完整样本且 0 失败；22 个 parent-disjoint 条件、
+2,275 个 sample-condition 也全部完成。主报告位于
+`outputs/paper/molecular_evidence_agent_valid/analysis/report.md`，parent-disjoint 配对审计位于
+`outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/result_report.md`。
 
 API key 默认从 `GLM_API_KEY` 读取，其值不得写入命令记录、manifest 或 trace。
 
@@ -122,9 +168,29 @@ python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results
 python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview
 ```
 
+Valid split 使用相同入口，但要显式指向隔离的 analysis root：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results \
+  --operational-root outputs/paper/molecular_evidence_agent_valid/runs_deployment_visible \
+  --parent-root outputs/paper/molecular_evidence_agent_valid/runs_deployment_visible_parent_disjoint \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation
+
+python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview \
+  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis \
+  --output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview.svg \
+  --png-output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview_highres.png \
+  --data-split valid
+```
+
+Performance 可视化统一使用上述横向 grouped-bar chart。每个 split 的正式 figures
+目录只保留 `retrieval_claims_overview.svg` 和 `retrieval_claims_overview_highres.png`；不保留
+preview/QA 导出或另一套 overview 绘图代码。
+
 `audit_prefetch_contract` 同时输出逐样本 `prefetch_contract_audit.tsv` 和逐 condition
 `prefetch_contract_conditions.tsv`。当前 21 条件矩阵只有在 `n_conditions_complete=21`、
-`n_expected=n_audited=4456`、missing/extra/mismatch 均为 0 时才通过。审计同时要求 raw retrieval
+test 上 `n_expected=n_audited=4456`，valid 上 `n_expected=n_audited=2203`；两者都只有在
+missing/extra/mismatch 均为 0 时才通过。审计同时要求 raw retrieval
 精确一致，并在规范化 identity redaction 后比较 prefetched tool outputs；只比较两边已有样本的交集
 不构成完整审计。
 

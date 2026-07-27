@@ -55,6 +55,13 @@ tools/chembl_tool/common/molecule_identity.py
 tools/chembl_tool/common/retrieval_policy.py
   统一定义 operational 与 parent_disjoint 候选排除策略；task 和 source adapter 不得复制该逻辑。
 
+tools/chembl_tool/common/neighbor_selection.py
+  对已经通过 similarity threshold、identity policy 和 evidence-availability 检查的候选执行可插拔
+  top-k set selection。`similarity` 保留历史逐点 Tanimoto 排序；
+  `query_feature_coverage` 在不降低既有 `min_similarity` 的前提下，贪心最大化 query Morgan bits 的
+  marginal union coverage，并仅用 Tanimoto 做并列候选的 tie-break。selector 不得修改 evidence row、
+  mechanism-family mapping 或下游 retrieval JSON payload schema。
+
 tools/chembl_tool/common/retrieval_ablation.py
   对 LLM-visible sample/family input 做稳定 hash，物化整条 run 或独立 branch 复用并写 provenance。
 
@@ -66,6 +73,42 @@ tools/chembl_tool/common/identity_blind.py
 ```
 
 任务代码不得复制公共 retrieval、source aggregation、LLM client、validation 或 batch orchestration。
+
+## Starling direct gold benchmark
+
+Starling evidence ingestion 与 Starling gold-label 构建是两个独立模块，不能共用一套含义：
+
+```text
+tools/chembl_tool/common/starling/evidence_library.py
+  构建 inference-time molecule evidence/index，不产生 benchmark label。
+
+tools/chembl_tool/common/starling/benchmark_dataset.py
+  统一完成 parent identity、binary/ambiguous 决策聚合、冲突排除、random/scaffold split 和审计输出。
+
+tools/chembl_tool/common/starling/build_benchmark_datasets.py
+  当前支持任务的统一构建 CLI。
+
+tools/chembl_tool/tasks/<task>/starling_benchmark.py
+  只声明该 task 的 source、endpoint/scope/population、单位/threshold 和 free-text 到 label 的保守映射。
+```
+
+Task adapter 必须先把每条 source record 映射为 `0`、`1` 或带 reason 的拒绝/ambiguous 决策；不得把
+supporting passage 当作无条件 keyword vote，也不得在 adapter 内复制 parent aggregation 或 split 算法。
+公共层按 `rdkit_fragment_parent.v1` 聚合：同一 accepted parent 同时出现 0 和 1 即为冲突，整个 parent
+从两套 split 排除，不做多数票。
+
+每个支持 task 必须从同一 accepted parent pool 同时生成：
+
+```text
+data/processed_starling/<Task>/random/{train.jsonl,test.jsonl,...}
+data/processed_starling/<Task>/scaffold/{train.jsonl,test.jsonl,...}
+```
+
+test target 为 `min(500, floor(0.2 * n_binary_molecules))`。random 使用固定 seed 的 label-stratified
+stable-hash split；scaffold 以 canonical Bemis–Murcko scaffold 为不可拆分 group。对应
+`test_molecule_labels.jsonl` 是 train-only evidence library 的 exclusion contract；在各自 index 完成
+test-parent zero-overlap audit 前，不得启动正式评估。完整规则、当前 frozen counts 和运行命令见
+`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
 
 ## Molecule identity 与 parent-disjoint
 
@@ -93,6 +136,16 @@ PK scope annotation 表达。
 论文消融的选择性重跑以 LLM-visible retrieval contract 的稳定 hash 为准。sample 输入完全相同时复用整个
 run；`full_mechanism` 中只有部分 family 变化时，可复用其它独立 group outputs，再重跑变化 branch 和 final。
 所有复用必须记录 `reused_from`、`reuse_reason` 和输入 hash；最终指标仍在完整 test set 上计算。
+
+Paper-facing structural-analog retrieval 的主 policy 是 `parent_disjoint`；`operational` 是必跑的第一阶段
+staging/deployment-sensitivity reference，用于发现 same-parent 暴露并支持选择性复用，不是 analog claim 的
+默认最终结果。每个新 retrieval condition 完成 operational 后必须立即补齐 parent-disjoint，不得只留下
+operational bar。
+
+Same-parent 暴露审计必须区分 query-condition、group、neighbor slot 和 query-condition 内去重 record。
+一个 slot 表示某 neighbor 在某 group 中的一次 LLM-visible 出现；同一 record 出现在多个 mechanism groups
+时分别计数，同时另报 query-condition 内的 unique count 和 rank-1 slot 数，避免把 branch 重复曝光误写成
+独立分子数。
 
 ## Starling 系统背景
 
@@ -133,3 +186,35 @@ Starling 默认以 mechanism family 为 acquisition task/prompt/schema 的粒度
 6. Starling task 数默认等于需要采集的 mechanism family 数，不随 endpoint subtype 数量增长。
 7. schema 保留数值、单位、实验条件、scope、supporting passage、quality/uncertainty 和 provenance。
 8. 缺失 SMILES、结构标准化失败、重复 source molecule 和无法分类记录都有可审计统计。
+9. mechanistic/surrogate evidence 通过 same-molecule causal continuity gate：从 assay molecule 沿推理路径追踪
+   causal subject，不能把“该 molecule 改变系统状态”自动写成“该系统随后运输/代谢/伤害的另一个 molecule
+   就是它自己”。
+10. 若结论还需要 query molecule 具备 transporter substrate、enzyme substrate、metabolic precursor、target
+    engagement、sensitizer 等额外角色，该角色必须由同一 molecule 的 retrieval evidence 明确支持；不能让 LLM
+    根据 pathway 常识猜测。未满足时标为 `requires_query_role`，只影响其它 molecule/system 时标为
+    `context_only`，二者均不得进入主 H1/H2 retrieval。
+
+## Same-molecule causal continuity
+
+该检查与 graph hop、`scope_match` 和 `quality_status` 正交。一个 edge 可以有正确方向、可靠文献和高质量 assay，
+但仍然不适合预测 assay molecule 自己的 task label。例如：
+
+```text
+molecule A activates NRF2/AhR
+  -> barrier P-gp abundance increases
+  -> known probe substrate B has lower brain accumulation
+```
+
+若 evidence 没有证明 `A is a P-gp substrate`，最后一步不能用于预测 A 自己的 BBB disposition。类似地，
+`HIF-1 -> GLUT1 abundance -> glucose uptake` 不能用于任意 HIF perturbagen 的自身 BBB influx，除非同一 molecule
+另有 GLUT1 substrate evidence。
+
+所有 future distance-expansion task 必须为每个 measurement family 生成机器可读
+`FamilySelfRelevanceAudit`，并在发布 graph 前调用：
+
+```python
+validate_self_relevance_audit(config, audits, require_publishable=True)
+```
+
+`requires_query_role`、`context_only` 和 `unresolved` 可保留在 candidate/audit artifact 中，但不能通过发布 gate。
+prompt disclaimer 不能替代缺失的 molecule-role evidence。

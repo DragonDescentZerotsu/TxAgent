@@ -1,0 +1,79 @@
+{
+  "task": "Build a molecule-level literature dataset of carrier-mediated influx and uptake evidence relevant to blood-brain barrier entry. Include LAT1, nucleoside transporters, monocarboxylate transporters, glucose transporters, OAT/OATP systems, choline transporters, receptor-mediated uptake, brain endothelial uptake assays, and qualitative transporter-substrate evidence.",
+  "task_instantiation": "Build a molecule-level dataset of positive carrier- or receptor-mediated influx/uptake evidence at the blood-brain barrier (BBB). The primary top-level `global_identifier` must represent the transported/test article itself: a specific small molecule or ion, molecular class, peptide, protein, or antibody. Extract evidence for LAT1/other amino-acid carriers, nucleoside transporters, monocarboxylate transporters, GLUT systems, OAT/OATP systems, choline transporters, other explicitly named BBB influx carriers, and receptor-mediated uptake of molecular ligands/cargos.\n\nCreate one record per transported article × explicitly stated mediator/mechanism × experimental condition/result. Split lists of substrates into separate records. A record is in scope only if the passage itself explicitly connects the article to (a) blood/luminal-to-brain/abluminal transport across the BBB, (b) internalization/uptake by brain capillary endothelial cells, or (c) substrate status for a carrier stated to operate at brain capillaries/the BBB. Require an affirmative claim, not merely a hypothesis: skip “possible,” “may,” “could,” proposed, predicted, or structurally expected substrates unless experimental evidence is also stated. Accept explicit qualitative substrate/transport claims, absolute kinetic or uptake measurements, comparative uptake/transport, and inhibitor/competition or genetic-perturbation evidence. Preserve uncertainty and exact direction; do not turn “influx involvement” into transcytosis or turn endothelial internalization into BBB crossing. Do not infer a specific mediator (for example insulin receptor or GLUT1) when only receptor-mediated uptake or a generic carrier is stated; leave `mediator_name` null when the mechanism is explicit but the mediator is unnamed.\n\nFor quantitative data, extract values stated in text/tables or directly readable from a figure, preserving parameter, uncertainty, and units in `reported_result`; do not calculate or invent values. Comparative-only evidence is valid and must retain the comparator in `extra_details`. Class-level substrate claims are valid using the molecular class as the primary entity.\n\nExclude all multicomponent nanoparticles, liposomes, polymer conjugates, and other drug-delivery constructs, including claims about uptake of an encapsulated cargo or targeting ligand; these are not molecule-level records. Also exclude leukocytes/cells/pathogens; adsorptive or fluid-phase/nonspecific endocytosis; passive diffusion or nonspecific permeability without carrier/receptor attribution; transporter/receptor expression, localization, binding, or endothelial enzyme activity without uptake/transport; assay recommendations; efflux or brain-to-blood movement (including P-gp/BCRP/MRP efflux substrates); blood-CSF, blood-nerve, blood-retina, tumor-blood, and other non-BBB barriers; uptake by neurons, glia, or tumor cells; and systemic administration followed only by brain concentration/radioactivity without explicit carrier/receptor-mediated BBB attribution. Exclude evidence dependent on a disrupted/leaky BBB, brain tumor, stroke, trauma, meningitis, or other disease-related barrier opening even if a carrier is proposed.\n\nUse only what the cited passage supports; do not import claims from general knowledge or another paragraph. `transport_mechanism` and `transport_endpoint` must match explicit wording: assign receptor-mediated transcytosis only when transcytosis or passage across the endothelial layer is stated; receptor-mediated endocytosis only when receptor-mediated endothelial internalization/endocytosis is stated; and receptor-mediated influx when a receptor is called an influx transporter/pump without explicit transcytosis. Default context is an intact, wild-type BBB under standard physiological/experimental conditions. Put exceptional but still in-scope manipulations such as a transporter inhibitor/competitor, knockout, or overexpression in `qualifying_conditions`; routine species, dose, time, tissue, and standard assay parameters belong in `assay_model` or `extra_details`.",
+  "schema_spec": [
+    {
+      "name": "mediator_name",
+      "description": "Transporter, carrier system, or receptor explicitly stated to mediate the article's BBB/endothelial uptake; use the most specific stated name, or null if only a generic mediated mechanism is stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "mediator_identifier",
+      "description": "Stable identifier for the secondary transporter/receptor from the Entities list (prefer UniProt, otherwise NCBIGene), only when that exact mediator is stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "transport_mechanism",
+      "description": "Mechanism explicitly supported; do not upgrade generic influx or internalization to transcytosis.",
+      "value_type": "string",
+      "allowed_values": [
+        "carrier-mediated influx",
+        "transporter-mediated endothelial uptake",
+        "receptor-mediated influx",
+        "receptor-mediated transcytosis",
+        "receptor-mediated endocytosis",
+        "unspecified mediated BBB uptake"
+      ]
+    },
+    {
+      "name": "transport_endpoint",
+      "description": "Most advanced endpoint explicitly demonstrated or claimed; BBB substrate relationship means only that the article is identified as substrate of a BBB/brain-capillary carrier.",
+      "value_type": "string",
+      "allowed_values": [
+        "blood-to-brain transport",
+        "luminal-to-abluminal transport",
+        "brain endothelial cell uptake",
+        "BBB substrate relationship",
+        "unspecified BBB influx"
+      ]
+    },
+    {
+      "name": "evidence_basis",
+      "description": "Strongest basis in this record. Use quantitative absolute only when an absolute numeric transport/uptake result is given; comparative when only a relative result is given.",
+      "value_type": "string",
+      "allowed_values": [
+        "quantitative absolute",
+        "comparative",
+        "inhibition or competition",
+        "genetic perturbation",
+        "qualitative substrate claim"
+      ]
+    },
+    {
+      "name": "assay_model",
+      "description": "Explicit assay/model and routine context, including species and brain endothelial or BBB preparation. Null for an unqualified literature statement.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "reported_result",
+      "description": "Compact faithful statement of the supported result, preserving metric, value, uncertainty, units, direction, and hedging as stated; never add a mechanism or endpoint absent from the passage.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Exceptional in-scope manipulation materially affecting interpretation, such as transporter inhibitor/competitor, knockout, or overexpression. Null for standard/unspecified conditions; disease-related BBB opening is excluded, not qualified here.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

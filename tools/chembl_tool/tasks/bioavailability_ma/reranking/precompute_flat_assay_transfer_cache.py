@@ -117,8 +117,7 @@ def prepare_flat_artifacts(args: argparse.Namespace, output_dir: Path) -> dict[s
             index=indices[condition.source_setup],
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
-            raw_pool_size=args.raw_pool_size,
-            candidate_size=args.candidate_size,
+            initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
         )
         for record in records:
             record_id = str(record["record_id"])
@@ -258,8 +257,7 @@ def prepare_flat_artifacts(args: argparse.Namespace, output_dir: Path) -> dict[s
         "model": args.model,
         "model_revision": args.model_revision,
         "retrieval_cap": {
-            "rerank_raw_pool_size": args.raw_pool_size,
-            "rerank_candidate_size": args.candidate_size,
+            "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
             "min_similarity": args.min_similarity,
             "top_k_per_group": args.top_k_per_group,
         },
@@ -285,8 +283,7 @@ def freeze_condition(
     index: dict[str, Any],
     top_k_per_group: int,
     min_similarity: float,
-    raw_pool_size: int,
-    candidate_size: int,
+    initial_morgan_filter: int,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     selections: list[dict[str, Any]] = []
     for query_index, query_record in enumerate(query_records):
@@ -302,8 +299,7 @@ def freeze_condition(
             min_similarity=min_similarity,
             neighbor_identity_policy=condition.identity_policy,
             reranker=_CandidateCollector(query_index, selections),
-            rerank_raw_pool_size=raw_pool_size,
-            rerank_candidate_size=candidate_size,
+            assay_transfer_initial_morgan_filter=initial_morgan_filter,
         )
 
     records_by_id: dict[str, dict[str, Any]] = {}
@@ -333,8 +329,7 @@ def freeze_condition(
                 "query_index": selection["query_index"],
                 "query_smiles": selection["query_smiles"],
                 "group_id": selection["group_id"],
-                "raw_pool_size": raw_pool_size,
-                "candidate_size": candidate_size,
+                "assay_transfer_initial_morgan_filter": initial_morgan_filter,
                 "candidates": candidates,
             }
         )
@@ -555,8 +550,7 @@ def verify_flat_artifacts(
                 index=indices[condition.source_setup],
                 top_k_per_group=args.top_k_per_group,
                 min_similarity=args.min_similarity,
-                raw_pool_size=args.raw_pool_size,
-                candidate_size=args.candidate_size,
+                initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
             )
             if regenerated != manifests[condition.condition_id]:
                 raise ValueError(f"Strict manifest replay mismatch: {condition.condition_id}")
@@ -591,8 +585,7 @@ def verify_flat_artifacts(
                         min_similarity=args.min_similarity,
                         neighbor_identity_policy=condition.identity_policy,
                         reranker=reranker,
-                        rerank_raw_pool_size=args.raw_pool_size,
-                        rerank_candidate_size=args.candidate_size,
+                        assay_transfer_initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
                     )
                 seen_keys = set(reranker.seen_tasks)
                 expected_keys = audit_keys_by_condition[condition.condition_id]
@@ -752,8 +745,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--five-source-index", default=str(DEFAULT_FIVE_SOURCE_INDEX))
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
-    parser.add_argument("--raw-pool-size", type=int, default=100)
-    parser.add_argument("--candidate-size", type=int, default=50)
+    parser.add_argument("--assay-transfer-initial-morgan-filter", type=int, default=100)
     parser.add_argument("--model", default=ASSAY_TRANSFER_MODEL)
     parser.add_argument("--model-revision", default=ASSAY_TRANSFER_MODEL_REVISION)
     parser.add_argument("--devices", default="0,1")

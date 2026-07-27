@@ -13,7 +13,13 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
-from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retrieve_experiment_view
+from tools.chembl_tool.common.experiment_retrieval import (
+    ASSAY_TRANSFER_TOOL_STRATEGY,
+    EXPERIMENT_MODES,
+    MORGAN_FINGERPRINT_STRATEGY,
+    RETRIEVAL_STRATEGIES,
+    retrieve_experiment_view,
+)
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.identity_blind import (
     prepare_identity_blind_final_retrieval,
@@ -22,6 +28,10 @@ from tools.chembl_tool.common.identity_blind import (
     sanitize_identity_blind_branch_outputs,
 )
 from tools.chembl_tool.common.json_utils import parse_json_content
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    SIMILARITY_SELECTOR,
+)
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
 from tools.chembl_tool.common.reasoning_calls import (
     bound_group_prompt_payload,
@@ -168,26 +178,42 @@ SINGLE_MOLECULE_TOOL_CHOICE = {"type": "function", "function": {"name": "molecul
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    if args.assay_transfer_min_score is not None:
-        if args.retrieval_reranker != "assay_transfer":
+    # --retrieval-strategy is the source of truth; it locks the compatible group-prompt-format.
+    if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
+        if args.group_prompt_format != "assay_transfer_tool":
             raise SystemExit(
-                "--assay-transfer-min-score requires --retrieval-reranker assay_transfer"
+                "--retrieval-strategy assay_transfer_tool requires "
+                "--group-prompt-format assay_transfer_tool"
             )
-        if not 0.0 <= args.assay_transfer_min_score <= 1.0:
-            raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
+        if args.morgan_neighbor_selector != SIMILARITY_SELECTOR:
+            raise SystemExit(
+                "--morgan-neighbor-selector applies only to "
+                "--retrieval-strategy morgan_fingerprint"
+            )
+    else:  # morgan_fingerprint
+        if args.group_prompt_format == "assay_transfer_tool":
+            raise SystemExit(
+                "--group-prompt-format assay_transfer_tool requires "
+                "--retrieval-strategy assay_transfer_tool"
+            )
+        if args.assay_transfer_min_score is not None:
+            raise SystemExit(
+                "--assay-transfer-min-score requires --retrieval-strategy assay_transfer_tool"
+            )
+    if args.assay_transfer_min_score is not None and not 0.0 <= args.assay_transfer_min_score <= 1.0:
+        raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
+    reranker_provenance_name = (
+        "assay_transfer" if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY else "none"
+    )
     try:
         validate_scored_neighbors_configuration(
             enabled=args.enable_assay_transfer_scores,
             experiment_mode=args.experiment_mode,
             retrieval_source=args.retrieval_source,
-            retrieval_reranker=args.retrieval_reranker,
+            retrieval_reranker=reranker_provenance_name,
         )
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
-    if args.group_prompt_format == "assay_transfer_tool" and args.retrieval_reranker != "assay_transfer":
-        raise SystemExit(
-            "--group-prompt-format assay_transfer_tool requires --retrieval-reranker assay_transfer"
-        )
     if (
         args.group_output_schema == "assay-transfer"
         and args.group_prompt_format != "assay_transfer_tool"
@@ -253,7 +279,7 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
 
     reranker = None
-    if args.retrieval_reranker == "assay_transfer":
+    if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
         if args.retrieval_source not in STARLING_RETRIEVAL_SOURCES:
             raise SystemExit("assay_transfer reranking requires --retrieval-source starling or starling_in_distribution")
         if args.experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
@@ -300,9 +326,9 @@ def main(argv: list[str] | None = None) -> int:
             min_similarity=args.min_similarity,
             native_groups=args.groups,
             neighbor_identity_policy=args.neighbor_identity_policy,
+            neighbor_selector=args.morgan_neighbor_selector,
             reranker=reranker,
-            rerank_raw_pool_size=args.rerank_raw_pool_size,
-            rerank_candidate_size=args.rerank_candidate_size,
+            assay_transfer_initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
             assay_transfer_min_score=args.assay_transfer_min_score,
         )
     else:
@@ -429,6 +455,7 @@ def main(argv: list[str] | None = None) -> int:
         "smiles_field": args.smiles_field,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
+        "retrieval_strategy": args.retrieval_strategy,
         "retrieval_reranker": (retrieval.get("experiment") or {}).get("retrieval_reranker", {"name": "none"}),
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
@@ -438,11 +465,11 @@ def main(argv: list[str] | None = None) -> int:
             else {}
         ),
         "llm_neighbor_score_policy": (retrieval.get("experiment") or {}).get("llm_neighbor_score_policy", {}),
-        "rerank_raw_pool_size": args.rerank_raw_pool_size,
-        "rerank_candidate_size": args.rerank_candidate_size,
+        "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
         "rerank_catalog": args.rerank_catalog if reranker is not None else "",
         "rerank_cache": args.rerank_cache if reranker is not None else "",
         "neighbor_identity_policy": args.neighbor_identity_policy,
+        "morgan_neighbor_selector": args.morgan_neighbor_selector,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
@@ -1145,16 +1172,40 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         ),
     )
     parser.add_argument("--min-similarity", type=float, default=0.3)
-    parser.add_argument("--retrieval-reranker", choices=["none", "assay_transfer"], default="none")
-    parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
-    parser.add_argument("--rerank-candidate-size", type=int, default=100)
+    parser.add_argument(
+        "--retrieval-strategy",
+        choices=list(RETRIEVAL_STRATEGIES),
+        default=MORGAN_FINGERPRINT_STRATEGY,
+        help=(
+            "Retrieval mechanic and source of truth for the group-prompt format. "
+            "morgan_fingerprint uses --morgan-neighbor-selector and pairs with "
+            "--group-prompt-format legacy or morganfingerprint; assay_transfer_tool "
+            "uses the assay-transfer reranker and requires --group-prompt-format "
+            "assay_transfer_tool."
+        ),
+    )
+    parser.add_argument(
+        "--morgan-neighbor-selector",
+        choices=NEIGHBOR_SELECTORS,
+        default=SIMILARITY_SELECTOR,
+        help="morgan_fingerprint strategy only: neighbor selection policy.",
+    )
+    parser.add_argument(
+        "--assay-transfer-initial-morgan-filter",
+        type=int,
+        default=100,
+        help=(
+            "assay_transfer_tool strategy only: size of the initial top-N tanimoto pool "
+            "fed to candidate validation and reranking before the final top-k."
+        ),
+    )
     parser.add_argument(
         "--assay-transfer-min-score",
         type=float,
         default=None,
         help=(
             "Optional inclusive cached transfer-probability floor applied before the final top-k; "
-            "requires --retrieval-reranker assay_transfer."
+            "requires --retrieval-strategy assay_transfer_tool."
         ),
     )
     parser.add_argument("--rerank-catalog", default=DEFAULT_RERANK_CATALOG)

@@ -9,29 +9,48 @@ reaction、sensitisation AOP、phototoxicity/irritation/local damage 和 skin ex
 library 做数据审计。下文 `retrieve_neighbors.py` 和历史 v1 batch 按 `Tier.endpoint_group` 运行的说明，是旧
 native task runner 的复现记录；新实验不得据此为每个细粒度 group 启动并行 reasoning。
 
+2026-07-23 strict-hop availability census 见
+`outputs/chembl_tool/tasks/skin_reaction/distance_expansion/analysis/hop_availability_census/`。GSK3B activity
+到 NRF2 state 的 graph/data gate 通过（7,950 parents；parent-disjoint >=1 coverage 34.15%），但直接药理性
+NRF2 regulation 不是 sensitizer-specific，必须保留 scope caveat。KEAP1-NRF2 PPI coverage 只有 2.44%，
+CUL3 H2 为 0；本 task 没有可用 strict H2。不得据此新增旧 paper condition。
+
+2026-07-22 已导入 Starling direct Skin_Reaction parquet，以及 sensitization AOP、phototoxicity/irritation/local
+damage 和 skin exposure 三个 mechanism-family acquisition。`build_starling_evidence_library.py` 通过公共 profile
+reader 将四类数据构建成一个 molecule-level index，供 Starling direct/full-flat/full-mechanism 三个论文条件共用。
+
 ## Task 定义
 
 目标不是训练一个单纯的 QSAR skin-reaction classifier，而是构建可审计的 skin-reaction evidence retrieval
 和 reasoning workflow：给定 query molecule，从 ChEMBL 中检索与皮肤不良反应判断相关的相似分子实验读数，
 再由 reasoning LLM 判断这些 analog evidence 是否能 transfer 到 query molecule。
 
-当前本地数据：
+当前 Starling gold benchmark：
 
 ```text
-data/processed/Skin_Reaction/train.jsonl
-data/processed/Skin_Reaction/test.jsonl
+data/processed_starling/Skin_Reaction/random/{train.jsonl,test.jsonl}
+data/processed_starling/Skin_Reaction/scaffold/{train.jsonl,test.jsonl}
 
 fields:
   drug: query SMILES
   Y: Skin_Reaction label
 ```
 
-当前评估约定先按二分类处理：
+当前 frozen build 有 1,900 个 binary parents，两种 split 的 test target 均为 380。正式运行前必须按
+各自 `test_molecule_labels.jsonl` 重建 train-only retrieval index。构建命令和审计协议见
+`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
+
+当前二分类约定：
 
 ```text
-Y=1 -> skin reaction risk / positive
-Y=0 -> no skin reaction risk / negative
+Y=1 -> skin sensitizer / positive
+Y=0 -> non-sensitizer / negative
 ```
+
+原始 404-molecule task 来自 binary LLNA skin-sensitization 数据，不是任意 clinical dermatologic
+reaction。新的 Starling-held-out benchmark 因此只接受 sensitization 或 allergic contact
+dermatitis/contact allergy scope 的明确 positive/negative record；irritation、generic local damage、
+skin exposure 和 inconclusive 不转成 gold label。
 
 当前 ChEMBL evidence 版本：
 
@@ -103,6 +122,17 @@ screen_assays.py / rescore_outputs.py / summarize_outputs.py / report.py
 build_evidence_library.py
   从 v1 assay candidates + activity evidence 构建 molecule-level evidence library 和 neighbor index。
 
+build_starling_evidence_library.py
+  从 `data/starling_data/skin_reaction/` 构建 Starling 四-family evidence/index；正式产物写入
+  `outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full/`。
+
+  构建命令：
+  `python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library --workers 32 --progress-every 10000`
+
+starling_benchmark.py
+  将 direct Skin_Reaction parquet 的 sensitization/contact-allergy records 转成可审计的
+  parent-level binary label；不把其它 skin mechanism families 当作 gold outcome。
+
 retrieve_neighbors.py
   旧 native runner 对每个 source-local Tier.endpoint_group 做 analog retrieval。历史 v1 benchmark 使用 top-k-per-group=3、
   min-similarity=0.35；min-similarity=0 的排查显示 index/retrieval 正常，低覆盖主要来自
@@ -120,7 +150,7 @@ run_reasoning_batch.py
   runs 和 combined trace；支持 --skip-existing 断点续跑。
 ```
 
-历史 native v1 全量 test 结果：
+历史 native v1 全量 test 结果（TDC lineage，不是当前 Starling split）：
 
 ```text
 batch:
@@ -213,9 +243,8 @@ anti-inflammatory / dermatology efficacy in reconstructed human epidermis models
 permeation-enhancer assays where the tested molecule promotes another compound's transdermal permeation
 ```
 
-后续必须确认数据集原始定义。如果原始 label 指的是 clinical dermatologic adverse reaction，而不是
-chemical skin sensitisation，则 ChEMBL 的 sensitisation / irritation / phototoxicity evidence 只能作为
-mechanistic hazard evidence，不能被等同于 clinical label。
+原始 task 定义已经按 source chain 确认为 binary LLNA skin sensitisation。Irritation、phototoxicity、
+local damage 和 skin exposure 仍只能作为 mechanistic/context evidence，不能被等同于 gold label。
 
 ## Skin_Reaction evidence 原则
 

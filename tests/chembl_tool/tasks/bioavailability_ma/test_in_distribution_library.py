@@ -144,8 +144,7 @@ def test_prebuilt_manifest_keeps_every_survivor_from_raw_top_100(tmp_path, monke
         )
 
     def fake_retrieve(query_smiles, index, *, reranker, **kwargs):
-        assert kwargs["rerank_raw_pool_size"] == 100
-        assert kwargs["rerank_candidate_size"] == 100
+        assert kwargs["assay_transfer_initial_morgan_filter"] == 100
         reranker.rerank_records(
             query_smiles=query_smiles,
             group_id="Fg.gut_wall_efflux_intestinal_metabolism",
@@ -180,8 +179,7 @@ def test_prebuilt_manifest_keeps_every_survivor_from_raw_top_100(tmp_path, monke
         top_k_per_group=10,
         min_similarity=0.0,
         neighbor_identity_policy="parent_disjoint",
-        raw_pool_size=100,
-        candidate_size=100,
+        initial_morgan_filter=100,
     )
 
     rows = [json.loads(line) for line in manifest.read_text().splitlines()]

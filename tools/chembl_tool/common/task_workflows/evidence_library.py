@@ -319,11 +319,12 @@ def _standardize_mol(mol: Chem.Mol) -> tuple[str, str]:
 def _load_assays(path: Path) -> dict[str, dict[str, Any]]:
     assays: dict[str, dict[str, Any]] = {}
     with path.open(newline="", encoding="utf-8", errors="replace") as handle:
-        for row in csv.DictReader(handle):
+        delimiter = "\t" if path.suffix.lower() == ".tsv" else ","
+        for row in csv.DictReader(handle, delimiter=delimiter):
             assay_id = str(row.get("assay_chembl_id") or "").strip()
             if not assay_id:
                 continue
-            assays[assay_id] = {
+            assay = {
                 "assay_chembl_id": assay_id,
                 "assay_id": row.get("assay_id", ""),
                 "assay_tier": row.get("tier", ""),
@@ -345,7 +346,27 @@ def _load_assays(path: Path) -> dict[str, dict[str, Any]]:
                 "matched_targets": row.get("matched_targets", ""),
                 "assay_reason": row.get("reason", ""),
             }
+            for field in (
+                "distance_level",
+                "distance_family_id",
+                "distance_tree_node_id",
+                "parent_c_family_id",
+                "source_group_id",
+                "measured_node",
+                "scope_match",
+                "quality_status",
+                "effect_direction",
+                "mapping_reason",
+            ):
+                if row.get(field) not in (None, ""):
+                    assay[field] = row[field]
+            assays[assay_id] = assay
     return assays
+
+
+def load_assays(path: Path) -> dict[str, dict[str, Any]]:
+    """Public assay-manifest loader; TSV is supported for distance manifests."""
+    return _load_assays(path)
 
 
 def _merged_evidence_row(activity: dict[str, Any], assay: dict[str, Any]) -> dict[str, Any]:

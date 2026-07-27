@@ -100,8 +100,7 @@ def main(argv: list[str] | None = None) -> int:
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
             neighbor_identity_policy=args.neighbor_identity_policy,
-            raw_pool_size=args.rerank_raw_pool_size,
-            candidate_size=args.rerank_candidate_size,
+            initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
             index_path=args.index,
             condition_id=args.condition_id,
             template_profile=args.assay_transfer_template_profile,
@@ -125,8 +124,7 @@ def main(argv: list[str] | None = None) -> int:
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
             neighbor_identity_policy=args.neighbor_identity_policy,
-            raw_pool_size=args.rerank_raw_pool_size,
-            candidate_size=args.rerank_candidate_size,
+            initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
             index_path=args.index,
             condition_id=args.condition_id,
         )
@@ -162,8 +160,7 @@ def main(argv: list[str] | None = None) -> int:
         top_k_per_group=args.top_k_per_group,
         min_similarity=args.min_similarity,
         neighbor_identity_policy=args.neighbor_identity_policy,
-        raw_pool_size=args.rerank_raw_pool_size,
-        candidate_size=args.rerank_candidate_size,
+        initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
         force_rescore=args.force_rescore,
         template_profile=args.assay_transfer_template_profile,
         retrieval_source=args.retrieval_source,
@@ -237,8 +234,7 @@ def _write_version_manifest(
         "experiment_mode": args.experiment_mode,
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "min_similarity": args.min_similarity,
-        "raw_pool_size": args.rerank_raw_pool_size,
-        "candidate_size": args.rerank_candidate_size,
+        "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
         "devices": _parse_devices(args.rerank_devices),
         "dtype": args.rerank_dtype,
         "batch_size_per_gpu": args.rerank_batch_size,
@@ -271,8 +267,7 @@ def collect_prompt_tasks(
     top_k_per_group: int,
     min_similarity: float,
     neighbor_identity_policy: str,
-    raw_pool_size: int,
-    candidate_size: int,
+    initial_morgan_filter: int,
     force_rescore: bool,
     template_profile: str = DEFAULT_TEMPLATE_PROFILE,
     retrieval_source: str = "starling",
@@ -304,8 +299,7 @@ def collect_prompt_tasks(
             min_similarity=min_similarity,
             neighbor_identity_policy=neighbor_identity_policy,
             reranker=reranker,
-            rerank_raw_pool_size=raw_pool_size,
-            rerank_candidate_size=candidate_size,
+            assay_transfer_initial_morgan_filter=initial_morgan_filter,
         )
         if ordinal % 25 == 0:
             print(
@@ -333,8 +327,7 @@ def preflight_cache_coverage(
     top_k_per_group: int,
     min_similarity: float,
     neighbor_identity_policy: str,
-    raw_pool_size: int,
-    candidate_size: int,
+    initial_morgan_filter: int,
     require_selected_scores: bool = False,
     template_profile: str = DEFAULT_TEMPLATE_PROFILE,
     expected_score_count: int = 0,
@@ -372,8 +365,7 @@ def preflight_cache_coverage(
                 min_similarity=min_similarity,
                 neighbor_identity_policy=neighbor_identity_policy,
                 reranker=reranker,
-                rerank_raw_pool_size=raw_pool_size,
-                rerank_candidate_size=candidate_size,
+                assay_transfer_initial_morgan_filter=initial_morgan_filter,
                 assay_transfer_min_score=assay_transfer_min_score,
             )
             prepare_assay_transfer_selected_neighbors(
@@ -816,8 +808,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--retrieval-reranker", choices=["assay_transfer"], default="assay_transfer")
-    parser.add_argument("--rerank-raw-pool-size", type=int, default=100)
-    parser.add_argument("--rerank-candidate-size", type=int, default=100)
+    parser.add_argument("--assay-transfer-initial-morgan-filter", type=int, default=100)
     parser.add_argument("--rerank-catalog", default=DEFAULT_CATALOG)
     parser.add_argument("--candidate-manifest", default=DEFAULT_CANDIDATE_MANIFEST)
     parser.add_argument("--rerank-cache", default=DEFAULT_CACHE)

@@ -32,8 +32,7 @@ exec "${TXAGENT_PYTHON}" \
   --top-k-per-group 10 \
   --min-similarity 0.0 \
   --limit "${TXAGENT_RERANK_LIMIT}" \
-  --rerank-raw-pool-size 100 \
-  --rerank-candidate-size 100 \
+  --assay-transfer-initial-morgan-filter 100 \
   --rerank-catalog "${ARTIFACT_ROOT}/starling_in_distribution_catalog.jsonl" \
   --candidate-manifest "${CONDITION_ROOT}/manifest.jsonl" \
   --rerank-cache "${CONDITION_ROOT}/scores.sqlite3" \

@@ -1,0 +1,80 @@
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 1, "qualifying_conditions": "barrier breakdown"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 12, "qualifying_conditions": "intact BBB"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 16, "qualifying_conditions": "paracellular permeability"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 18, "qualifying_conditions": "mdr1a/1b knockout (KO) mouse model"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 39, "qualifying_conditions": "delivered via poly(n-butylcyanoacrylate) NPs coated with Tween® 80"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 46, "qualifying_conditions": "brain meningitis"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 47, "qualifying_conditions": "brain meningitis; blood-cerebrospinal fluid barrier (BCSFB)"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 66, "qualifying_conditions": "used as a low molecular weight marker of paracellular integrity"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 68, "qualifying_conditions": "following nanoparticle administration; BBB breakdown"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 71, "qualifying_conditions": "newborns with more permeable BBB"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 74, "qualifying_conditions": "dissolved in DMSO"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 77, "qualifying_conditions": "steady state"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 78, "qualifying_conditions": "steady state"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 79, "qualifying_conditions": "measured between 2 and 10 hours"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 82, "qualifying_conditions": "predicted"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 83, "qualifying_conditions": "predicted"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 84, "qualifying_conditions": "predicted"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 85, "qualifying_conditions": "predicted"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 93, "qualifying_conditions": "Encapsulated in glutathione-PEG-LPs (SSLs)"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/BBB", "source_index": 94, "qualifying_conditions": "Encapsulated in glutathione-PEG-LPs (SSLs)"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:5792"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:6202"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:11983"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:12527"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:13630"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:16918"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:17321"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:18362"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:18752"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:18970"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:18971"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:20494"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:21093"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:21271"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:21275"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:21878"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:25395"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:25944"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:26760"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/BBB", "source_record_id": "row:26982"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 8, "permeability_label": null, "transport_label": null, "quant_metric": "CSF to plasma AUC ratio", "quant_value": "high"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 9, "permeability_label": null, "transport_label": null, "quant_metric": "CSF to plasma AUC ratio", "quant_value": "low"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 19, "permeability_label": null, "transport_label": null, "quant_metric": "permeability", "quant_value": "≈2 × 10⁻³"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 24, "permeability_label": null, "transport_label": "transporter_mediated", "quant_metric": null, "quant_value": null}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 30, "permeability_label": null, "transport_label": null, "quant_metric": "Kp,uu,brain", "quant_value": "1.10"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 31, "permeability_label": null, "transport_label": null, "quant_metric": "Kp,uu,csf", "quant_value": "0.74"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 33, "permeability_label": null, "transport_label": "efflux_substrate", "quant_metric": null, "quant_value": null}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 34, "permeability_label": null, "transport_label": null, "quant_metric": "extraction coefficient", "quant_value": "8"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 38, "permeability_label": null, "transport_label": "efflux_substrate", "quant_metric": "basal to apical flux / apical to basal flux", "quant_value": "1.5 times higher"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 53, "permeability_label": null, "transport_label": null, "quant_metric": "Pe", "quant_value": "0.03 and 0.1 × 10⁻⁶"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 54, "permeability_label": null, "transport_label": null, "quant_metric": "Pe", "quant_value": "1 and 30 × 10⁻⁶"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 55, "permeability_label": null, "transport_label": null, "quant_metric": "Pe", "quant_value": "0.08 and 42 × 10⁻⁶"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 56, "permeability_label": null, "transport_label": "efflux_substrate", "quant_metric": null, "quant_value": null}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 57, "permeability_label": null, "transport_label": "efflux_substrate", "quant_metric": null, "quant_value": null}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 67, "permeability_label": null, "transport_label": "efflux_substrate", "quant_metric": null, "quant_value": null}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 80, "permeability_label": null, "transport_label": "passive_diffusion", "quant_metric": "C_u,b / C_u,p", "quant_value": "69%"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 87, "permeability_label": null, "transport_label": null, "quant_metric": "%ID", "quant_value": "1.29% (±0.42)"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 96, "permeability_label": null, "transport_label": null, "quant_metric": "Papp", "quant_value": "159 ± 7 x 10⁻⁶"}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 105, "permeability_label": null, "transport_label": "transporter_mediated", "quant_metric": null, "quant_value": null}}
+{"reason": "no_tdc_compatible_qualitative_or_logbb_label", "example": {"source_id": "starling-labs/BBB", "source_index": 109, "permeability_label": null, "transport_label": null, "quant_metric": "E%", "quant_value": "74~79%"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 1269, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "logBB", "quant_value": "-0.9"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 1271, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "logBB", "quant_value": "-1.0"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 5549, "permeability_label": "impermeable", "transport_label": null, "quant_metric": "log BB", "quant_value": "-0.809"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 6748, "permeability_label": "low_permeability", "transport_label": null, "quant_metric": "Log BB", "quant_value": "-0.77"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 6750, "permeability_label": "low_permeability", "transport_label": null, "quant_metric": "Log BB", "quant_value": "-0.78"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 6751, "permeability_label": "low_permeability", "transport_label": null, "quant_metric": "Log BB", "quant_value": "-0.71"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 6752, "permeability_label": "low_permeability", "transport_label": null, "quant_metric": "Log BB", "quant_value": "-0.59"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 19633, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "log BB", "quant_value": "-0.85"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 31450, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "logBB", "quant_value": "0.029"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 56225, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "logBB", "quant_value": "0.030"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 56226, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "logBB", "quant_value": "0.123"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 56644, "permeability_label": "low_permeability", "transport_label": null, "quant_metric": "LogBB", "quant_value": "-0.78"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 60519, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "logBB", "quant_value": "-0.80"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 67014, "permeability_label": "poor_penetration", "transport_label": "efflux_substrate", "quant_metric": "logBB", "quant_value": "-0.78"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 67015, "permeability_label": "poor_penetration", "transport_label": "not_subject_to_efflux", "quant_metric": "logBB", "quant_value": "-0.33"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 67016, "permeability_label": "poor_penetration", "transport_label": "efflux_substrate", "quant_metric": "logBB", "quant_value": "-0.02"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 67234, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "logBB", "quant_value": "-0.561"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 71319, "permeability_label": "permeable", "transport_label": null, "quant_metric": "logBB", "quant_value": "−1.11"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 78481, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "log BB", "quant_value": "< −1"}}
+{"reason": "within_record_label_conflict", "example": {"source_id": "starling-labs/BBB", "source_index": 78482, "permeability_label": "poor_penetration", "transport_label": null, "quant_metric": "log BB", "quant_value": "< −1"}}

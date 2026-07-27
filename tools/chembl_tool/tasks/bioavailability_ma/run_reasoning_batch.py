@@ -25,6 +25,7 @@ CONFIG = BatchConfig(
     negative_predictions=frozenset({"low", "fail", "negative", "bioavailability_negative", "0"}),
     rerank_preflight=preflight_cache_coverage,
     supports_assay_transfer_scores=True,
+    supports_retrieval_strategy=True,
     group_prompt_formats=("legacy", "morganfingerprint", "assay_transfer_tool"),
     default_group_prompt_format="legacy",
     group_output_schemas=("legacy", "assay-transfer"),

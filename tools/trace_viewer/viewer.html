@@ -348,11 +348,22 @@ function usageText(usage) {
   if (!usage) return "";
   return `${Number(usage.prompt_tokens || 0).toLocaleString()} in / ${Number(usage.completion_tokens || 0).toLocaleString()} out / ${Number(usage.total_tokens || 0).toLocaleString()} total`;
 }
+const GROUP_DISPLAY_LABELS = Object.freeze({
+  "Observed.direct_oral_bioavailability": "Direct oral bioavailability (F%)",
+  "Observed.oral_auc_cmax_exposure": "Oral exposure proxies (AUC/Cmax)",
+  "Fa.absorption_solubility_permeability": "Fa — Absorption, solubility & permeability",
+  "Fg.gut_wall_efflux_intestinal_metabolism": "Fg — Gut-wall transport & intestinal metabolism",
+  "Fh.hepatic_clearance_metabolic_stability": "Fh — Hepatic clearance & metabolic stability",
+});
+function groupDisplayLabel(groupId) {
+  const value = String(groupId || "");
+  return GROUP_DISPLAY_LABELS[value] || value || "group";
+}
 function stageLabel(task) {
   if (task === "single_molecule") return "Single-molecule prior";
   if (task === "final_summary") return "Final synthesis";
   if (task === "Flat.all_evidence") return "Flat evidence reasoning";
-  return task;
+  return groupDisplayLabel(task);
 }
 function parseMaybeJson(value) {
   if (value && typeof value === "object") return value;
@@ -417,7 +428,10 @@ function renderRetrieval(retrieval) {
 function renderRetrievalGroup(group) {
   const neighbors = Array.isArray(group.neighbors) ? group.neighbors : [];
   const meta = Object.fromEntries(Object.entries(group).filter(([key]) => key !== "neighbors"));
-  return `<details class="stage"><summary><span>${esc(group.group_id || group.endpoint_group || "group")}</span><span class="tag">${neighbors.length} neighbors</span></summary><div class="stage-content">${renderValue(meta)}${neighbors.map(renderNeighbor).join("")}</div></details>`;
+  const groupId = group.group_id || group.endpoint_group || "group";
+  const displayLabel = groupDisplayLabel(groupId);
+  const rawIdTag = displayLabel !== groupId ? `<span class="tag">${esc(groupId)}</span>` : "";
+  return `<details class="stage"><summary><span>${esc(displayLabel)}</span>${rawIdTag}<span class="tag">${neighbors.length} neighbors</span></summary><div class="stage-content">${renderValue(meta)}${neighbors.map(renderNeighbor).join("")}</div></details>`;
 }
 function renderNeighbor(neighbor) {
   const evidence = Array.isArray(neighbor.evidence_rows) ? neighbor.evidence_rows : [];

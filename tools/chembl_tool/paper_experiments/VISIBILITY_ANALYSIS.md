@@ -16,18 +16,43 @@ identity_blind:
 deployment_visible_prefetched:
   query/neighbor 可见信息同 deployment_visible；
   harness 预取与 identity_blind 完全相同的工具结果；
-  这是 parity-controlled visibility 补充控制；21 个条件和 4,456 个配对样本已完成。
+  这是 parity-controlled visibility 补充控制；test 为 21 个条件和 4,456 个配对样本，
+  valid 已扩展到 26 个条件和 2,713 个配对样本。
 
 deployment_visible:
   query structure visible，query name hidden；
   neighbor structure、source ID 和数据源已有名称 visible；
-  LLM 自主选择分子工具；现有 21 个条件属于该补充制度。
+  LLM 自主选择分子工具；现有 26 个条件属于论文主制度。
 ```
 
-Parity-controlled 补充对照中，visible-prefetched 相对 identity-blind 的 21 个 Macro-F1 差值为 14 升、7 降，未加权
-平均为 +0.0192。只有 BBB ChEMBL mechanism 和 Bio ChEMBL flat 的 bootstrap 区间完全为正；经过
-Holm 校正后，没有条件同时满足 Macro-F1 区间为正且 McNemar 显著。ClinTox mechanism 的 McNemar
-结果显著但 Macro-F1 差值为负且区间跨零，仍需按类别不平衡解释。
+## Valid split 可见性诊断
+
+2026-07-23 已用完全相同设置将 valid 的三套制度扩展到每套 26 个条件、2,713 个
+sample-condition，全部 0 失败；matched-prefetch 与 identity-blind 的 contract audit 覆盖
+2,713/2,713 samples，无 missing、extra 或 mismatch。因此 valid 制度对比在输入和工具
+replay 边界上是完整的。
+
+Valid 上 agentic deployment-visible 的最佳条件为 BBB Starling mechanism 0.7596、Skin Starling
+mechanism 0.6703、ClinTox ChEMBL mechanism 0.6445 和 Bioavailability Starling mechanism 0.6952。
+相应 identity-blind 最佳值为 0.7429、0.7630、0.6229 和 0.6938。这一 split 再次显示：
+structure visibility 的效果不是单向提升，Skin 尤其容易因参数先验与运行波动而下降；
+ClinTox 和 Bioavailability 则对更强的 mechanism/source context 更有利。Valid 样本数较小，
+这些只是方向性 replication，不应用来替换 test 上的 paired inference。完整 valid 数值见
+`RESULTS.md` 与 `outputs/paper/molecular_evidence_agent_valid/analysis/report.md`。
+
+Skin Reaction 的逐样本、逐 stage reasoning trace 审计另见
+`SKIN_REACTION_VISIBILITY_TRACE_AUDIT.md`。该审计用 matched-prefetch 排除 retrieval/tool
+输入差异，定位了五个重复负类分子、single structural prior 与 final evidence-threshold 缺口，
+并记录 parent-disjoint 无 prediction flip 的排除性证据。
+
+供 teammate 直接查看的中英文静态案例报告位于
+`reports/skin_reaction_visibility_trace_casebook/index.html`。报告默认显示英文，右上角按钮可切换中文；
+其中“35 个 flips”明确表示同样 5 个分子在 7 个 retrieval/reasoning conditions 下的重复
+sample-condition 输出，不是 35 个独立分子。
+
+Parity-controlled 补充对照中，visible-prefetched 相对 identity-blind 的 26 个 Macro-F1 差值为
+16 升、10 降，未加权平均为 -0.0010。BBB ChEMBL flat、Bio ChEMBL mechanism 和 Bio Starling flat
+的 bootstrap 区间完全为正，BBB none 完全为负；经过 Holm 校正后仍没有稳定的跨条件单向提升。
 
 | 任务 | none | direct | ChEMBL flat | ChEMBL mechanism | Starling numeric/full direct | Starling flat | Starling mechanism |
 |---|---:|---:|---:|---:|---:|---:|---:|

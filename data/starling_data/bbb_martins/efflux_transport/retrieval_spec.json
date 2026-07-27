@@ -1,0 +1,145 @@
+{
+  "filters": [
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier"
+        ],
+        [
+          "P-glycoprotein",
+          "ABCB1",
+          "BCRP",
+          "ABCG2",
+          "multidrug resistance-associated protein",
+          "ABCC1",
+          "ABCC2",
+          "ABCC3",
+          "ABCC4",
+          "ABCC5"
+        ],
+        [
+          "efflux ratio",
+          "knockout mouse",
+          "MDCK-MDR1",
+          "Caco-2",
+          "Assay/Result"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "A named compound showed polarized apical-to-basolateral and basolateral-to-apical transport, an efflux ratio, or altered brain-to-plasma exposure after P-gp/ABCB1, BCRP/ABCG2, or MRP inhibition or genetic knockout, demonstrating transporter substrate, inhibitor, or transporter-limited blood-brain barrier penetration.",
+      "estimated_count": 11934,
+      "precision_estimate": 0.8
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier"
+        ],
+        [
+          "P-glycoprotein",
+          "ABCB1",
+          "BCRP",
+          "ABCG2",
+          "multidrug resistance-associated protein",
+          "ABCC1",
+          "ABCC2",
+          "ABCC3",
+          "ABCC4",
+          "ABCC5"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "A named drug or compound was identified as a P-glycoprotein, BCRP, or MRP substrate or inhibitor at the blood-brain barrier, and transporter activity reduced or altered its brain uptake, CNS penetration, or brain exposure.",
+      "estimated_count": 33594,
+      "precision_estimate": 0.72
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "brain",
+          "central nervous system"
+        ],
+        [
+          "P-glycoprotein",
+          "ABCB1",
+          "BCRP",
+          "ABCG2",
+          "multidrug resistance-associated protein",
+          "ABCC1",
+          "ABCC2",
+          "ABCC3",
+          "ABCC4",
+          "ABCC5"
+        ],
+        [
+          "efflux ratio",
+          "Mice, Knockout",
+          "ABCB1 (-/-)",
+          "MDCK-MDR1",
+          "Caco-2",
+          "Assay/Result",
+          "Valspodar",
+          "Cyclosporine"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "In knockout animals or after administration of a selective P-gp, BCRP, or MRP inhibitor, a named compound showed increased brain concentration, brain-to-plasma partitioning, CNS exposure, or uptake; alternatively, bidirectional transport identified the compound as an efflux-transporter substrate.",
+      "estimated_count": 72600,
+      "precision_estimate": 0.88
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "P-glycoprotein",
+          "ABCB1",
+          "BCRP",
+          "ABCG2",
+          "multidrug resistance-associated protein",
+          "ABCC1",
+          "ABCC2",
+          "ABCC3",
+          "ABCC4",
+          "ABCC5"
+        ],
+        [
+          "efflux ratio",
+          "MDCK-MDR1",
+          "MDCK-II",
+          "LLC-PK1",
+          "Madin-Darby canine kidney"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "Bidirectional transport across MDR1-, BCRP-, or MRP-transfected MDCK or LLC-PK1 monolayers yielded apical-to-basolateral and basolateral-to-apical permeability values and an efflux ratio for a named compound, supporting prediction of transporter-limited brain penetration.",
+      "estimated_count": 20442,
+      "precision_estimate": 0.82
+    }
+  ],
+  "window_entity_groups": [
+    [
+      "SmallMolecule",
+      "SmallMoleculeClass"
+    ],
+    [
+      "Gene",
+      "Protein",
+      "Protein/GeneFamily"
+    ]
+  ]
+}
