@@ -21,6 +21,22 @@ The ``context`` field, where present, is a nested dict; the renderer flattens it
 To vary the policy per dataset/source, add an entry to ``DATASET_OVERRIDES`` keyed by
 the neighbor ``evidence_source`` (e.g. ``"starling-labs/bioavailability_ma/Fg"``);
 otherwise ``DEFAULT_POLICY`` applies.
+
+Presentation style (``--presentation-style``)
+---------------------------------------------
+There are two orthogonal axes:
+
+* **Retriever** (Morgan fingerprint vs assay-transfer tool) -- presentation is held
+  *invariant* across retrievers: both route records through ``morganfingerprint.record``.
+* **Data source** (what fields a record actually holds) -- this is what ``style`` varies.
+
+``style="legacy"`` (default) uses ``DEFAULT_POLICY`` -- the narrow, unified minimal view,
+identical for every source. ``style="full"`` consults ``FULL_SOURCE_POLICY``, a *per-source*
+expanded view keyed by a prefix of the neighbor ``evidence_source`` (its "source family",
+e.g. ``"starling-in-distribution"`` or ``"starling-labs/bioavailability_ma"``). Because both
+retrievers share ``morganfingerprint.record``, a per-source ``full`` override is automatically
+the same across retrievers -- it exposes source richness without reintroducing retriever drift.
+Sources with no ``full`` entry fall back to ``DEFAULT_POLICY``.
 """
 
 from __future__ import annotations
@@ -82,11 +98,100 @@ DEFAULT_POLICY: dict[str, list[FieldSpec]] = {
 DATASET_OVERRIDES: dict[str, dict[str, list[FieldSpec]]] = {}
 
 
-def included_fields(record_type: str, dataset: str | None = None) -> list[tuple[str, str]]:
-    """Return ordered ``(key, label)`` pairs to render for a record type/dataset."""
-    policy = DEFAULT_POLICY
-    if dataset and dataset in DATASET_OVERRIDES and record_type in DATASET_OVERRIDES[dataset]:
-        specs = DATASET_OVERRIDES[dataset][record_type]
-    else:
-        specs = policy.get(record_type, [])
+# --- Per-source "full" presentation (style="full") -------------------------------
+# Keyed by *source family* (a prefix of the neighbor `evidence_source`). Each value is
+# a partial policy: only the record types you list override DEFAULT_POLICY for that
+# source under the `full` style; everything else falls back to the legacy view.
+#
+# `full` shows every scientific field a source's records hold. Internal ids/provenance
+# (pmid, source_id, record_id, hashes, row numbers) are deliberately omitted -- they are
+# noise to the model. The renderer drops empty fields, so records missing a field render
+# cleanly.
+FULL_SOURCE_POLICY: dict[str, dict[str, list[FieldSpec]]] = {
+    # Normalized in-distribution records carry the full scientific scoring payload.
+    "starling-in-distribution": {
+        "morganfingerprint.record": [
+            # endpoint identity
+            FieldSpec("canonical_endpoint_key", "endpoint (canonical)", include=True),
+            FieldSpec("endpoint_family", "endpoint family", include=True),
+            FieldSpec("endpoint_subtype", "endpoint subtype", include=True),
+            FieldSpec("measurement_label", "measurement", include=True),
+            # value / unit
+            FieldSpec("scalar_value", "value", include=True),
+            FieldSpec("value_display", "value (as reported)", include=True),
+            FieldSpec("unit_basis", "unit", include=True),
+            FieldSpec("unit_normalized", "unit (normalized)", include=True),
+            # metric / threshold
+            FieldSpec("metric_type", "metric type", include=True),
+            FieldSpec("threshold_display", "threshold", include=True),
+            # variation / direction
+            FieldSpec("direction", "direction", include=True),
+            FieldSpec("variation_type", "variation type", include=True),
+            FieldSpec("variation_value", "variation value", include=True),
+            FieldSpec("statistic_type", "statistic type", include=True),
+            FieldSpec("assay_concept", "assay concept", include=True),
+            # context + narrative
+            FieldSpec("context", "assay context", include=True),
+            FieldSpec("support_text", "evidence", include=True),
+        ],
+    },
+    # The TxAgent evidence library holds report/prose-shaped fields, not scoring fields.
+    "starling-labs/bioavailability_ma": {
+        "morganfingerprint.record": [
+            FieldSpec("endpoint_type", "endpoint", include=True),
+            FieldSpec("reported_value", "value", include=True),
+            FieldSpec("reported_units", "unit", include=True),
+            FieldSpec("dose", "dose", include=True),
+            FieldSpec("species_or_population", "species/population", include=True),
+            FieldSpec("comparator", "comparator", include=True),
+            FieldSpec("condition_text", "condition", include=True),
+            FieldSpec("oral_exposure_mode", "oral exposure mode", include=True),
+            FieldSpec("bioavailability_report_type", "report type", include=True),
+            FieldSpec(
+                "oral_bioavailability_value_percent",
+                "oral bioavailability (%)",
+                include=True,
+            ),
+            FieldSpec("qualifying_conditions", "qualifying conditions", include=True),
+            FieldSpec("extra_details", "extra details", include=True),
+            FieldSpec("context", "assay context", include=True),
+            FieldSpec("support_text", "evidence", include=True),
+        ],
+    },
+}
+
+
+def _full_source_specs(record_type: str, dataset: str | None) -> list[FieldSpec] | None:
+    """Longest-prefix match `dataset` against FULL_SOURCE_POLICY source families."""
+    if not dataset:
+        return None
+    best_family: str | None = None
+    for family in FULL_SOURCE_POLICY:
+        if dataset == family or dataset.startswith(family + "/"):
+            if best_family is None or len(family) > len(best_family):
+                best_family = family
+    if best_family is None:
+        return None
+    return FULL_SOURCE_POLICY[best_family].get(record_type)
+
+
+def included_fields(
+    record_type: str,
+    dataset: str | None = None,
+    style: str = "legacy",
+) -> list[tuple[str, str]]:
+    """Return ordered ``(key, label)`` pairs to render for a record type/dataset.
+
+    ``style="full"`` consults the per-source ``FULL_SOURCE_POLICY`` (matched by a prefix
+    of ``dataset``); if no ``full`` spec exists for this source+record_type it falls back
+    to the legacy policy. ``style="legacy"`` (default) always uses the legacy policy.
+    """
+    specs: list[FieldSpec] | None = None
+    if style == "full":
+        specs = _full_source_specs(record_type, dataset)
+    if specs is None:
+        if dataset and dataset in DATASET_OVERRIDES and record_type in DATASET_OVERRIDES[dataset]:
+            specs = DATASET_OVERRIDES[dataset][record_type]
+        else:
+            specs = DEFAULT_POLICY.get(record_type, [])
     return [(spec.key, spec.label) for spec in specs if spec.include]

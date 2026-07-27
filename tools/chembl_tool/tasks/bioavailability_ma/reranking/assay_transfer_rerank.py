@@ -8,6 +8,7 @@ import math
 import sqlite3
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from collections.abc import Mapping
 from typing import Any, Iterable
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -466,18 +467,65 @@ _WINNING_RECORD_FIELDS = (
     "canonical_smiles",
     "canonical_endpoint_key",
     "measurement_label",
+    "value",
     "value_display",
     "unit_basis",
+    "unit_normalized",
     "metric_type",
     "threshold_display",
     "endpoint_subtype",
     "assay_concept",
     "endpoint_family",
+    # scientific detail surfaced by the per-source `full` presentation style.
+    "direction",
+    "variation_type",
+    "variation_value",
+    "statistic_type",
     # in-distribution catalog records carry raw narrative for LLM presentation;
     # reconstructed records omit these (rendered empty, so no effect there).
     "support_text",
     "extra_details",
 )
+
+
+# Canonical scientific fields exposed by the per-source ``full`` presentation. Shared so
+# the assay-transfer render path and the in-distribution library build produce an identical
+# key set -- the ``full`` presentation must be invariant across retrievers for a source.
+_FULL_EXAMPLE_FIELDS = (
+    "canonical_endpoint_key",
+    "endpoint_family",
+    "endpoint_subtype",
+    "measurement_label",
+    "scalar_value",
+    "value_display",
+    "unit_basis",
+    "unit_normalized",
+    "metric_type",
+    "threshold_display",
+    "direction",
+    "variation_type",
+    "variation_value",
+    "statistic_type",
+    "assay_concept",
+    "support_text",
+)
+
+
+def full_record_example(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Map a catalog/starling-shaped record to the canonical ``full`` example fields.
+
+    Reads ``scalar_value``/``value`` and ``context``/``template_context`` interchangeably so
+    both the render path (catalog winning record) and the build path (normalized record)
+    yield the same keys/values. Empty fields are kept and dropped later by the renderer.
+    """
+    out: dict[str, Any] = {}
+    for field in _FULL_EXAMPLE_FIELDS:
+        if field == "scalar_value":
+            out[field] = record.get("scalar_value", record.get("value", ""))
+        else:
+            out[field] = record.get(field, "")
+    out["context"] = dict(record.get("context") or record.get("template_context") or {})
+    return out
 
 
 def winning_record_payload_from_id(

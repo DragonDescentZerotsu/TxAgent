@@ -380,6 +380,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         "instructions_file": args.group_prompt_instructions_file or None,
         "output_schema_profile": args.group_output_schema,
+        "presentation_style": args.presentation_style,
     }
     single_output, group_outputs = _run_parallel_reasoning(
         client,
@@ -490,6 +491,7 @@ def main(argv: list[str] | None = None) -> int:
             else "legacy"
         ),
         "group_prompt_min_similarity": group_prompt_options["prompt_min_similarity"],
+        "presentation_style": args.presentation_style,
         "n_groups_with_neighbors": len(groups),
         "paths": {
             "retrieval": str(retrieval_path),
@@ -1213,6 +1215,16 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         type=float,
         default=None,
         help="morganfingerprint only: drop neighbors below this similarity from the prompt (default: --min-similarity).",
+    )
+    parser.add_argument(
+        "--presentation-style",
+        choices=["legacy", "full"],
+        default="legacy",
+        help=(
+            "Record presentation style for the text group prompts: legacy (unified minimal "
+            "view, unchanged) or full (per-source expanded scientific fields, keyed by the "
+            "neighbor evidence_source; invariant across retriever)."
+        ),
     )
     return parser.parse_args(argv)
 

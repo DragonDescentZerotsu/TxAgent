@@ -12,6 +12,9 @@ from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
     group_system_message,
     instruction_file_provenance,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
+    full_record_example,
+)
 
 
 def _neighbor(molecule_id, smiles, similarity, examples, *, transfer=None, winning=None):
@@ -282,3 +285,175 @@ def test_empty_group_instruction_file_is_rejected(tmp_path):
 def test_unknown_format_raises():
     with pytest.raises(ValueError):
         build_group_messages(QUERY, _group([]), prompt_format="nope")
+
+
+# --- Per-source `full` presentation style ----------------------------------------
+
+# In-distribution normalized winning/catalog record with the full scientific payload.
+INDIST_WINNING = {
+    "original_smiles": "c1ccccc1",
+    "canonical_smiles": "c1ccccc1",
+    "canonical_endpoint_key": "q3.intestinal_transport.efflux_ratio.dimensionless_ratio.secretory_over_absorptive",
+    "endpoint_family": "intestinal_transport",
+    "endpoint_subtype": "efflux_ratio",
+    "measurement_label": "efflux ratio",
+    "value": 1.5,
+    "value_display": "1.5",
+    "unit_basis": "dimensionless_ratio",
+    "unit_normalized": "ratio",
+    "metric_type": "dimensionless_ratio",
+    "threshold_display": "within 2-fold / at least 5-fold apart",
+    "direction": "higher_is_more_efflux",
+    "variation_type": "sd",
+    "variation_value": "0.2",
+    "statistic_type": "mean",
+    "assay_concept": "gut_wall_efflux",
+    "context": {"study_or_assay_system": "Caco-2 bidirectional transport"},
+    "support_text": "efflux ratio 1.5 indicates limited active efflux",
+}
+
+
+def _indist_group(neighbors):
+    group = _group(neighbors)
+    group["evidence_source"] = "starling-in-distribution/Fg"
+    return group
+
+
+def _indist_example(winning):
+    """Build the morganfingerprint example (legacy 5 keys + full scientific keys), as the
+    in-distribution library does."""
+    example = {
+        "endpoint_type": winning["endpoint_subtype"],
+        "reported_value": winning["value_display"],
+        "reported_units": winning["unit_basis"],
+        "context": winning["context"],
+        "support_text": winning["support_text"],
+    }
+    example.update(full_record_example(winning))
+    return example
+
+
+# Scientific fields that only the `full` view should surface (label prefixes).
+_SCI_LINES = [
+    "endpoint (canonical): q3.intestinal_transport.efflux_ratio",
+    "metric type: dimensionless_ratio",
+    "threshold: within 2-fold",
+    "direction: higher_is_more_efflux",
+    "variation type: sd",
+    "statistic type: mean",
+    "unit (normalized): ratio",
+]
+
+
+def test_full_style_surfaces_scientific_fields_for_in_distribution():
+    group = _indist_group([_neighbor("M1", "c1ccccc1", 0.45, [_indist_example(INDIST_WINNING)])])
+
+    _, legacy = build_group_messages(
+        QUERY, group, prompt_format="morganfingerprint",
+        options={"prompt_min_similarity": 0.0},
+    )
+    _, full = build_group_messages(
+        QUERY, group, prompt_format="morganfingerprint",
+        options={"prompt_min_similarity": 0.0, "presentation_style": "full"},
+    )
+    # legacy: narrow view, none of the scientific fields.
+    for line in _SCI_LINES:
+        assert line not in legacy["content"]
+    assert "endpoint: efflux_ratio" in legacy["content"]
+    # full: every scientific field is shown.
+    for line in _SCI_LINES:
+        assert line in full["content"]
+
+
+def test_full_style_is_per_source_txagent_gets_no_scoring_fields():
+    # TxAgent-library source: report/prose fields, NOT the normalized scoring fields.
+    example = {
+        "endpoint_type": "efflux_or_secretory_transport",
+        "reported_value": "45",
+        "reported_units": "%",
+        "dose": "10 mg/kg",
+        "species_or_population": "rat",
+        "metric_type": "dimensionless_ratio",  # present on the dict but not in the txagent full spec
+        "context": {"transporter_or_enzyme": "P-gp"},
+        "support_text": "oral bioavailability reported",
+    }
+    group = _group([_neighbor("M1", "c1ccccc1", 0.45, [example])])  # starling-labs source
+    _, full = build_group_messages(
+        QUERY, group, prompt_format="morganfingerprint",
+        options={"prompt_min_similarity": 0.0, "presentation_style": "full"},
+    )
+    content = full["content"]
+    assert "dose: 10 mg/kg" in content
+    assert "species/population: rat" in content
+    # the txagent `full` spec does not list metric_type, so it must not appear
+    assert "metric type: dimensionless_ratio" not in content
+
+
+def test_full_style_omits_provenance_ids():
+    example = _indist_example(INDIST_WINNING)
+    example.update({"pmid": "12345678", "source_id": "SRC1", "record_id": "REC1"})
+    group = _indist_group([_neighbor("M1", "c1ccccc1", 0.45, [example])])
+    _, full = build_group_messages(
+        QUERY, group, prompt_format="morganfingerprint",
+        options={"prompt_min_similarity": 0.0, "presentation_style": "full"},
+    )
+    content = full["content"]
+    assert "12345678" not in content
+    assert "SRC1" not in content and "REC1" not in content
+
+
+def test_full_is_invariant_across_retrievers():
+    """The `full` record view must be identical for Morgan and assay-transfer retrieval of
+    the same in-distribution source (retriever-invariance)."""
+    morgan_group = _indist_group(
+        [_neighbor("M1", "c1ccccc1", 0.45, [_indist_example(INDIST_WINNING)])]
+    )
+    transfer_group = _indist_group(
+        [_neighbor("M1", "c1ccccc1", 0.45, [EXAMPLE], transfer=0.5, winning=INDIST_WINNING)]
+    )
+    _, morgan_full = build_group_messages(
+        QUERY, morgan_group, prompt_format="morganfingerprint",
+        options={"prompt_min_similarity": 0.0, "presentation_style": "full"},
+    )
+    _, transfer_full = build_group_messages(
+        QUERY, transfer_group, prompt_format="assay_transfer_tool",
+        options={"presentation_style": "full"},
+    )
+    # Every scientific field line renders identically in both retrievers' prompts.
+    for line in _SCI_LINES:
+        assert line in morgan_full["content"], line
+        assert line in transfer_full["content"], line
+
+
+def test_full_resolves_evidence_source_from_evidence_rows():
+    """In the real retrieval structure, evidence_source lives on each evidence row (not the
+    group/neighbor). The `full` policy must still resolve the per-source spec from there."""
+    ex = _indist_example(INDIST_WINNING)
+    row = {"evidence_source": "starling-in-distribution/Fg", "source_record_examples": [ex]}
+    neighbor = {
+        "rank": 1, "molecule_chembl_id": "M1", "canonical_smiles": "c1ccccc1",
+        "similarity": 0.45, "similarity_bucket": "weak_analog", "evidence_rows": [row],
+    }
+    # No group-level or neighbor-level evidence_source on purpose.
+    group = {"group_id": "Fg.x", "tier": "Fg", "endpoint_group": "x", "neighbors": [neighbor]}
+    _, full = build_group_messages(
+        QUERY, group, prompt_format="morganfingerprint",
+        options={"prompt_min_similarity": 0.0, "presentation_style": "full"},
+    )
+    for line in _SCI_LINES:
+        assert line in full["content"], line
+
+
+def test_included_fields_style_and_prefix_matching():
+    indist = "starling-in-distribution/Fg"
+    full_specs = policy.included_fields("morganfingerprint.record", indist, "full")
+    keys = [k for k, _ in full_specs]
+    assert "canonical_endpoint_key" in keys and "metric_type" in keys and "direction" in keys
+    # legacy default is unchanged and narrow
+    legacy_specs = policy.included_fields("morganfingerprint.record", indist, "legacy")
+    assert [k for k, _ in legacy_specs] == [
+        "endpoint_type", "reported_value", "reported_units", "context", "support_text",
+    ]
+    # unknown source under `full` falls back to the legacy policy
+    unknown = policy.included_fields("morganfingerprint.record", "some-other-source/Fg", "full")
+    assert unknown == legacy_specs

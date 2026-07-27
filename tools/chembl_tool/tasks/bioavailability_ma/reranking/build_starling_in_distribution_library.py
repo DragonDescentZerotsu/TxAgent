@@ -35,6 +35,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank 
     CATALOG_SCHEMA_VERSION,
     TEMPLATE_BY_CONCEPT,
     V6_5_TEMPLATE_PROFILE,
+    full_record_example,
     template_bundle_hash,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_rerank_catalog import (
@@ -249,11 +250,20 @@ def in_distribution_catalog_record(
         "endpoint_family": str(record.get("endpoint_family") or ""),
         "endpoint_subtype": endpoint_subtype,
         "unit_basis": unit_basis,
+        "unit_normalized": str(record.get("unit_normalized") or ""),
         "metric_type": metric_type,
         "threshold_display": threshold_display,
         "value": scalar,
         "value_display": str(record.get("scalar_value")).strip(),
         "measurement_label": endpoint_subtype.replace("_", " "),
+        # scientific detail surfaced by the per-source `full` presentation style.
+        "direction": str(record.get("direction") or ""),
+        "variation_type": str(record.get("variation_type") or ""),
+        "variation_value": (
+            "" if record.get("variation_value") in (None, "")
+            else str(record.get("variation_value")).strip()
+        ),
+        "statistic_type": str(record.get("statistic_type") or ""),
         # full narrative for the LLM presentation (joined from the canonical base by
         # child_id; not used by the scoring template).
         "support_text": _resolve_support_text(record, support_by_id),
@@ -307,6 +317,19 @@ def evidence_row_from_record(
     starling_record = {field: record.get(field) for field in STARLING_RECORD_FIELDS}
     starling_record["assay_concept"] = concept
     starling_record["support_text"] = support_text
+    catalog_record = in_distribution_catalog_record(record, support_by_id)
+    # Legacy minimal example (5 fields) for the default presentation, enriched with the
+    # full scientific fields (from the catalog record) so `--presentation-style full` can
+    # show them. The legacy policy ignores the extra keys, so the legacy view is unchanged.
+    example = {
+        "endpoint_type": str(record.get("endpoint_subtype") or canonical_endpoint_key),
+        "reported_value": record.get("scalar_value"),
+        "reported_units": record.get("unit_basis"),
+        "context": template_context_from_record(record),
+        "support_text": support_text,
+    }
+    if catalog_record is not None:
+        example.update(full_record_example(catalog_record))
     return {
         "molecule_chembl_id": molecule_id_for(smiles),
         "canonical_smiles": smiles,
@@ -324,10 +347,13 @@ def evidence_row_from_record(
         "support_text": support_text,
         "extra_details": record.get("extra_details") or record.get("context_extra_details"),
         "confidence_score": record.get("confidence"),
+        # one minimal-evidence example so the morganfingerprint presentation
+        # (evidence_for_llm -> examples) shows this normalized record.
+        "source_record_examples": [example],
         # full normalized record for the catalog + template + presentation
         "starling_record": starling_record,
         # v6_5-renderable scoring record (None when unscoreable, e.g. categorical-only)
-        "catalog_record": in_distribution_catalog_record(record, support_by_id),
+        "catalog_record": catalog_record,
     }
 
 

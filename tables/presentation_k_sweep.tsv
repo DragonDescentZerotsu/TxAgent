@@ -1,0 +1,9 @@
+source	k	accuracy	macro_f1
+TxAgent (legacy)	1	0.6875	0.6257
+TxAgent (legacy)	3	0.7812	0.7197
+TxAgent (legacy)	5	0.7656	0.6807
+TxAgent (legacy)	7	0.7031	0.6264
+in-distribution (full)	1	0.5938	0.5273
+in-distribution (full)	3	0.7500	0.6517
+in-distribution (full)	5	0.7344	0.6530
+in-distribution (full)	7	0.6875	0.5995

@@ -522,6 +522,12 @@ def _single_run_command(
                 args.group_prompt_instructions_sha256,
             ]
         )
+    if args.group_prompt_min_similarity is not None:
+        command.extend(
+            ["--group-prompt-min-similarity", str(args.group_prompt_min_similarity)]
+        )
+    if config.group_prompt_formats and getattr(args, "presentation_style", "legacy") != "legacy":
+        command.extend(["--presentation-style", args.presentation_style])
     if not args.enable_thinking:
         command.append("--disable-thinking")
     else:
@@ -1064,6 +1070,13 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         "--group-prompt-format",
         choices=list(config.group_prompt_formats) or None,
         default=config.default_group_prompt_format,
+    )
+    parser.add_argument("--group-prompt-min-similarity", type=float, default=None)
+    parser.add_argument(
+        "--presentation-style",
+        choices=["legacy", "full"],
+        default="legacy",
+        help="Record presentation style for text group prompts: legacy or per-source full.",
     )
     parser.add_argument(
         "--group-output-schema",

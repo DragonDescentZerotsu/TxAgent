@@ -30,6 +30,9 @@ from tools.chembl_tool.common.reasoning_validation import validated_branch_conte
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
     public_assay_transfer_score,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
+    full_record_example,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_field_policy import included_fields
 
 TEMPLATE_DIR = Path(__file__).with_name("group_prompt_templates")
@@ -274,8 +277,10 @@ def _neighbor_header_source(neighbor: dict[str, Any], *, with_transfer_score: bo
     return source
 
 
-def _evidence_records(neighbor: dict[str, Any], dataset: str) -> list[list[tuple[str, str]]]:
-    pairs = included_fields("morganfingerprint.record", dataset)
+def _evidence_records(
+    neighbor: dict[str, Any], dataset: str, style: str = "legacy"
+) -> list[list[tuple[str, str]]]:
+    pairs = included_fields("morganfingerprint.record", dataset, style)
     records: list[list[tuple[str, str]]] = []
     for row in neighbor.get("evidence_rows") or []:
         for example in evidence_for_llm(row).get("examples") or []:
@@ -286,7 +291,7 @@ def _evidence_records(neighbor: dict[str, Any], dataset: str) -> list[list[tuple
 
 
 def _assay_transfer_evidence_record(
-    selected_record: dict[str, Any], dataset: str, group: dict[str, Any]
+    selected_record: dict[str, Any], dataset: str, group: dict[str, Any], style: str = "legacy"
 ) -> list[tuple[str, str]]:
     """Normalize one selected catalog record through minimal_evidence.v1 for display."""
     example = {
@@ -298,6 +303,9 @@ def _assay_transfer_evidence_record(
         "context": selected_record.get("context") or {},
         "support_text": selected_record.get("support_text"),
     }
+    # Carry the full scientific fields so the per-source `full` presentation can show them;
+    # the legacy policy ignores the extra keys, keeping the legacy view byte-identical.
+    example.update(full_record_example(selected_record))
     normalized = evidence_for_llm(
         {
             "evidence_source": dataset or selected_record.get("source_id") or "unknown",
@@ -316,7 +324,7 @@ def _assay_transfer_evidence_record(
     normalized_example = (normalized.get("examples") or [{}])[0]
     return _render_fields(
         normalized_example,
-        included_fields("morganfingerprint.record", dataset),
+        included_fields("morganfingerprint.record", dataset, style),
     )
 
 
@@ -336,14 +344,28 @@ def load_group_description(group_id: str) -> str:
     return group_id
 
 
+def _resolve_evidence_source(group: dict[str, Any]) -> str:
+    """The neighbor `evidence_source` (used to key the field policy). In the retrieval
+    structure it lives on each evidence row, so fall back there when the group/neighbor
+    level doesn't carry it."""
+    if group.get("evidence_source"):
+        return str(group["evidence_source"])
+    for neighbor in group.get("neighbors") or []:
+        if neighbor.get("evidence_source"):
+            return str(neighbor["evidence_source"])
+        for row in neighbor.get("evidence_rows") or []:
+            if row.get("evidence_source"):
+                return str(row["evidence_source"])
+    return ""
+
+
 def _group_meta(group: dict[str, Any]) -> dict[str, str]:
     group_id = group.get("group_id", "")
     return {
         "group_id": group_id,
         "tier": group.get("tier", ""),
         "endpoint_group": group.get("endpoint_group", ""),
-        "evidence_source": group.get("evidence_source")
-        or (group.get("neighbors") or [{}])[0].get("evidence_source", ""),
+        "evidence_source": _resolve_evidence_source(group),
         "description": load_group_description(group_id),
     }
 
@@ -360,6 +382,7 @@ def _build_morgan_context(
     min_similarity: float,
     instructions_file: str | Path | None = None,
     output_schema_profile: str = "legacy",
+    style: str = "legacy",
 ) -> dict[str, Any]:
     dataset = _dataset_key(group)
     header_pairs = included_fields("morganfingerprint.neighbor", dataset)
@@ -374,7 +397,7 @@ def _build_morgan_context(
                 "header": _render_fields(
                     _neighbor_header_source(neighbor, with_transfer_score=False), header_pairs
                 ),
-                "records": _evidence_records(neighbor, dataset),
+                "records": _evidence_records(neighbor, dataset, style),
             }
         )
     return {
@@ -400,6 +423,7 @@ def _build_assay_transfer_context(
     *,
     instructions_file: str | Path | None = None,
     output_schema_profile: str = "legacy",
+    style: str = "legacy",
 ) -> dict[str, Any]:
     dataset = _dataset_key(group)
     header_pairs = included_fields("assay_transfer_tool.neighbor", dataset)
@@ -413,7 +437,7 @@ def _build_assay_transfer_context(
                     _neighbor_header_source(neighbor, with_transfer_score=True), header_pairs
                 ),
                 "selected_record": (
-                    _assay_transfer_evidence_record(selected_record, dataset, group)
+                    _assay_transfer_evidence_record(selected_record, dataset, group, style)
                     if selected_record
                     else []
                 ),
@@ -446,6 +470,7 @@ def build_group_messages(
     """Return [system, user] messages for a new text group-prompt format."""
     options = options or {}
     output_schema_profile = str(options.get("output_schema_profile", "legacy"))
+    style = str(options.get("presentation_style", "legacy"))
     if prompt_format == "morganfingerprint":
         context = _build_morgan_context(
             query,
@@ -453,6 +478,7 @@ def build_group_messages(
             min_similarity=float(options.get("prompt_min_similarity", 0.0)),
             instructions_file=options.get("instructions_file"),
             output_schema_profile=output_schema_profile,
+            style=style,
         )
         template = "morganfingerprint.jinja"
     elif prompt_format == "assay_transfer_tool":
@@ -461,6 +487,7 @@ def build_group_messages(
             group,
             instructions_file=options.get("instructions_file"),
             output_schema_profile=output_schema_profile,
+            style=style,
         )
         # The layout is assay-transfer-specific, but record fields still come from
         # the shared minimal_evidence.v1 / morganfingerprint.record policy.

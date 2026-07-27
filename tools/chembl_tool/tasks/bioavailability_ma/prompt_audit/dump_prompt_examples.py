@@ -102,6 +102,12 @@ def render_examples(fixture: dict) -> dict[str, str]:
             build_group_messages(query, group, prompt_format="morganfingerprint",
                                  options={"prompt_min_similarity": min_sim}),
         ),
+        "group.morganfingerprint.full.prompt.txt": _format(
+            "group / morganfingerprint / presentation-style=full",
+            build_group_messages(query, group, prompt_format="morganfingerprint",
+                                 options={"prompt_min_similarity": min_sim,
+                                          "presentation_style": "full"}),
+        ),
         "group.assay_transfer_tool.prompt.txt": _format(
             "group / assay_transfer_tool",
             build_group_messages(
@@ -122,6 +128,11 @@ def render_examples(fixture: dict) -> dict[str, str]:
                     "output_schema_profile": "assay-transfer",
                 },
             ),
+        ),
+        "group.assay_transfer_tool.full.prompt.txt": _format(
+            "group / assay_transfer_tool / presentation-style=full",
+            build_group_messages(query, group, prompt_format="assay_transfer_tool",
+                                 options={"presentation_style": "full"}),
         ),
         "final.prompt.txt": _format(
             "final synthesis",
@@ -150,7 +161,9 @@ def _readme() -> str:
         "One example of the exact prompt sent to GLM at each pipeline stage, compiled\n"
         "from a single frozen real datapoint (query index 0, group Fg). These are\n"
         "**compiled prompts only** -- no model output. The group stage has one example\n"
-        "per format, plus the evidence-centric assay-transfer output profile.\n\n"
+        "per format (legacy, morganfingerprint, assay_transfer_tool), plus the\n"
+        "evidence-centric assay-transfer output profile. The two text formats also\n"
+        "have a `.full.` variant showing `--presentation-style full` (per-source fields).\n\n"
         "Do not edit by hand. Regenerate after any prompt-code change:\n\n"
         "    python -m tools.chembl_tool.tasks.bioavailability_ma.prompt_audit.dump_prompt_examples --write\n\n"
         "A golden-file test (tests/.../test_prompt_examples.py) fails if these drift.\n"
