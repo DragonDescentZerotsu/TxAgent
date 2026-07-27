@@ -11,6 +11,8 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank 
     ASSAY_TRANSFER_MODEL_REVISION,
     CATALOG_SCHEMA_VERSION,
     SCORING_CONTRACT_VERSION,
+    V6_5_NO_QUERY_EXTRA_DETAILS_QUERY_CONTEXT_POLICY,
+    V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE,
     V6_5_QUERY_CONTEXT_POLICY,
     V6_5_TEMPLATE_PROFILE,
     AssayTransferCacheMiss,
@@ -123,6 +125,68 @@ def test_v6_5_template_is_exact_and_copies_context_while_hiding_query_value():
     assert "known value" not in query
     assert "scalar_value" not in query
     assert "value_display" not in query
+
+
+def test_v6_5_no_query_extra_details_preserves_retrieval_context_only():
+    record = _record("r1", smiles="CCN", value="10")
+    record["template_context"].update(
+        {
+            "species_or_population": "rat",
+            "dose": "5 mg/kg",
+            "extra_details": "fed state",
+        }
+    )
+    renderer = AssayTransferPromptRenderer(
+        profile=V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE
+    )
+    prompt = renderer.render(record, "C(C)O")
+    retrieval, query = prompt.split("Target query record (value hidden)", 1)
+
+    assert renderer.template_hash == template_bundle_hash(
+        profile=V6_5_TEMPLATE_PROFILE
+    )
+    assert (
+        renderer.query_context_policy
+        == V6_5_NO_QUERY_EXTRA_DETAILS_QUERY_CONTEXT_POLICY
+    )
+    assert "- endpoint: q2.intestinal_absorption.fraction_absorbed.percent" in retrieval
+    assert "- endpoint: q2.intestinal_absorption.fraction_absorbed.percent" in query
+    assert "- species or population: rat" in retrieval
+    assert "- species or population: rat" in query
+    assert "- dose: 5 mg/kg" in retrieval
+    assert "- dose: 5 mg/kg" in query
+    assert "- extra details: fed state" in retrieval
+    assert "- extra details: not specified" in query
+    assert "known value" not in query
+
+
+def test_corrected_profile_has_distinct_prompt_cache_and_provenance():
+    common = {
+        "record": _record("r1"),
+        "query_smiles": "CCO",
+        "group_id": "Fa.absorption_solubility_permeability",
+        "molecule_id": "A",
+        "model": "model",
+        "model_revision": "a" * 40,
+        "catalog_version": "catalog",
+    }
+    common["record"]["template_context"]["extra_details"] = "fed state"
+    historical_renderer = AssayTransferPromptRenderer(
+        profile=V6_5_TEMPLATE_PROFILE
+    )
+    corrected_renderer = AssayTransferPromptRenderer(
+        profile=V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE
+    )
+    historical = build_prompt_task(renderer=historical_renderer, **common)
+    corrected = build_prompt_task(renderer=corrected_renderer, **common)
+
+    assert historical_renderer.template_hash == corrected_renderer.template_hash
+    assert (
+        historical_renderer.query_context_policy
+        != corrected_renderer.query_context_policy
+    )
+    assert historical.prompt_hash != corrected.prompt_hash
+    assert historical.cache_key != corrected.cache_key
 
 
 def test_v6_5_profile_changes_template_hash_prompt_hash_and_cache_key():

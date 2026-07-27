@@ -132,6 +132,23 @@ def test_validation_checks_required_successful_tool():
     assert errors == ["missing_successful_tool:molecule_properties"]
 
 
+def test_validation_rejects_forbidden_field_name_at_any_depth():
+    response = {
+        "content": {
+            "confidence": "high",
+            "key_evidence": [{"molecule_chembl_id": "CHEMBL1"}],
+        }
+    }
+
+    errors = response_validation_errors(
+        response,
+        required_fields=("confidence",),
+        forbidden_field_names=("molecule_chembl_id",),
+    )
+
+    assert errors == ["forbidden_field:molecule_chembl_id"]
+
+
 def test_invalid_branch_content_is_withheld_from_final_synthesis():
     branch = {
         "status": "error",

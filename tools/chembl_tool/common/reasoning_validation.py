@@ -16,6 +16,7 @@ def call_with_json_validation(
     *,
     required_fields: Iterable[str] = (),
     allowed_values: Mapping[str, set[str]] | None = None,
+    forbidden_field_names: Iterable[str] = (),
     required_tool_names: Iterable[str] = (),
     branch_name: str = "reasoning",
     max_attempts: int = 4,
@@ -62,6 +63,7 @@ def call_with_json_validation(
             response,
             required_fields=required_fields,
             allowed_values=allowed_values,
+            forbidden_field_names=forbidden_field_names,
             required_tool_names=required_tool_names,
         )
         attempt_errors.append(errors)
@@ -130,6 +132,7 @@ def response_validation_errors(
     *,
     required_fields: Iterable[str] = (),
     allowed_values: Mapping[str, set[str]] | None = None,
+    forbidden_field_names: Iterable[str] = (),
     required_tool_names: Iterable[str] = (),
 ) -> list[str]:
     errors: list[str] = []
@@ -143,6 +146,9 @@ def response_validation_errors(
         value = str(content.get(field) or "")
         if value not in values:
             errors.append(f"invalid_value:{field}")
+    forbidden = set(forbidden_field_names)
+    for field in sorted(_nested_field_names(content) & forbidden):
+        errors.append(f"forbidden_field:{field}")
     completed_tools = {
         str(result.get("tool_name") or "")
         for result in response.get("tool_results") or []
@@ -152,3 +158,18 @@ def response_validation_errors(
         if tool_name not in completed_tools:
             errors.append(f"missing_successful_tool:{tool_name}")
     return errors
+
+
+def _nested_field_names(value: Any) -> set[str]:
+    """Collect mapping keys recursively so task contracts can forbid identity fields."""
+    if isinstance(value, Mapping):
+        names = {str(key) for key in value}
+        for nested in value.values():
+            names.update(_nested_field_names(nested))
+        return names
+    if isinstance(value, list):
+        names: set[str] = set()
+        for nested in value:
+            names.update(_nested_field_names(nested))
+        return names
+    return set()

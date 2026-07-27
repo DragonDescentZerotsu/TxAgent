@@ -241,6 +241,14 @@ receiving a scalar or known-value field. `legacy_v3` remains the default so exis
 and runs are unchanged. Cache and reasoning CLIs select the new contract explicitly with
 `--assay-transfer-template-profile v6_5_query_context_copy`.
 
+The corrected `v6_5_query_context_copy_no_extra_details` profile uses the same immutable v6.5 Jinja and
+canonical endpoint contract, but copies every retrieval assay-context field to the query except
+`extra_details`. Retrieval-side `extra_details` remains visible and the query always renders
+`extra details: not specified`. Its cache provenance records
+`copy_retrieval_assay_context_except_extra_details_value_hidden.v1`, and corrected artifacts live under
+`evidence_library/starling_in_distribution/v6_5_no_query_extra_details/`; do not reuse the historical
+`validation_parent_disjoint_r100_c100_min0_v6_5/` condition as the corrected cache.
+
 For the frozen prepared-HF validation manifest at similarity floor 0.30, there are 9,863 record-level prompt
 references. Exact v6.5 rendering collapses 39 duplicate references into 9,824 unique retrieval-agnostic prompt
 hashes; the older v6 template produced 9,844 unique hashes. The v6.5 SQLite cache therefore stores 9,824 scores
@@ -315,6 +323,23 @@ The group text-format instruction blocks are editable `.txt` files under `prompt
 (`morganfingerprint.txt`, `assay_transfer_tool.txt`; one instruction per line, `#` comments ignored), loaded by
 `group_prompt_render.load_instructions`. Which metadata fields appear is likewise editable in
 `group_prompt_field_policy.py`.
+
+Use `--group-prompt-instructions-file <path>` for a versioned instruction ablation instead of replacing the
+default file. The batch runner fingerprints the selected UTF-8 file, passes the launch-time SHA-256 guard to
+every molecule process, and records the resolved path, hash, and instruction count in batch and run manifests.
+Missing, empty, unreadable, or mid-run modified files fail before a mixed-prompt condition can be produced.
+
+Use `--group-output-schema legacy|assay-transfer` to select the group response contract independently of the
+prompt layout. `legacy` remains the default. The evidence-centric `assay-transfer` profile is permitted only
+with `--group-prompt-format assay_transfer_tool`; it replaces rigid transferability/direction enums and
+molecule-ID/similarity/tool fields with free-text assay-transfer assessment, bioavailability implications,
+record rank/endpoint/likelihood evidence, confidence, and caveats. The selected profile and immutable schema
+hash must be recorded in each run manifest.
+
+When a reasoning-only ablation reuses the exact retrieval configuration of an existing batch, pass
+`--rerank-preflight-source-batch <batch-dir>` to reuse that batch's completed deterministic cache preflight.
+The source manifest must match the current indices, cache/catalog/manifest, profile, identity policy, threshold,
+and k; actual retrieval replay and post-run threshold/group-size audits remain required.
 
 Cached assay-transfer reranking code lives in the `reranking/` subpackage
 (`tasks/bioavailability_ma/reranking/`: rerank, prompt policy, catalog/precompute builders, and the scoring

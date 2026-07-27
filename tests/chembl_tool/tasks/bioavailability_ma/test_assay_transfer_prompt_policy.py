@@ -5,9 +5,11 @@ import pytest
 
 from tools.chembl_tool.common.retrieval_ablation import retrieval_prompt_hash
 from tools.chembl_tool.common.task_workflows.reasoning_batch import (
+    _group_prompt_instruction_provenance,
     _parse_args as _parse_batch_args,
     _single_run_command,
     _validate_assay_transfer_scores,
+    _validate_reused_rerank_preflight,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
     SCORED_NEIGHBORS_POLICY_NAME,
@@ -64,7 +66,7 @@ def _retrieval(top_k: int = 5) -> dict:
     }
 
 
-@pytest.mark.parametrize("top_k", [3, 5, 7, 10])
+@pytest.mark.parametrize("top_k", [3, 5, 7, 10, 15])
 def test_score_visibility_preserves_requested_top_k(top_k):
     validate_scored_neighbors_configuration(
         enabled=True,
@@ -172,7 +174,7 @@ def test_prompt_hash_ignores_hidden_score_but_tracks_visible_rounded_score():
     assert retrieval_prompt_hash(baseline) != retrieval_prompt_hash(changed)
 
 
-@pytest.mark.parametrize("top_k", [3, 5, 7, 10])
+@pytest.mark.parametrize("top_k", [3, 5, 7, 10, 15])
 def test_batch_switch_preserves_k_and_is_forwarded_to_pipeline(top_k):
     args = _parse_batch_args(
         CONFIG,
@@ -213,6 +215,25 @@ def test_v6_5_template_profile_propagates_from_batch_to_molecule_runner():
     )
 
 
+def test_corrected_profile_and_tool_free_policy_propagate_to_molecule_runner():
+    args = _parse_batch_args(
+        CONFIG,
+        [
+            "--retrieval-reranker",
+            "assay_transfer",
+            "--assay-transfer-template-profile",
+            "v6_5_query_context_copy_no_extra_details",
+            "--disable-group-tools",
+        ],
+    )
+    command = _single_run_command(CONFIG, args, 0, "run", Path("runs"))
+
+    assert command[command.index("--assay-transfer-template-profile") + 1] == (
+        "v6_5_query_context_copy_no_extra_details"
+    )
+    assert "--disable-group-tools" in command
+
+
 def test_in_distribution_threshold_and_prompt_format_propagate_to_pipeline():
     args = _parse_batch_args(
         CONFIG,
@@ -230,6 +251,137 @@ def test_in_distribution_threshold_and_prompt_format_propagate_to_pipeline():
 
     assert command[command.index("--assay-transfer-min-score") + 1] == "0.5"
     assert command[command.index("--group-prompt-format") + 1] == "assay_transfer_tool"
+
+
+def test_assay_transfer_group_output_schema_propagates_to_pipeline():
+    args = _parse_batch_args(
+        CONFIG,
+        [
+            "--group-prompt-format",
+            "assay_transfer_tool",
+            "--group-output-schema",
+            "assay-transfer",
+        ],
+    )
+    _validate_assay_transfer_scores(CONFIG, args)
+    command = _single_run_command(CONFIG, args, 0, "run", Path("runs"))
+
+    assert command[command.index("--group-output-schema") + 1] == "assay-transfer"
+
+
+@pytest.mark.parametrize("prompt_format", ["legacy", "morganfingerprint"])
+def test_assay_transfer_group_output_schema_rejects_other_prompt_formats(prompt_format):
+    args = _parse_batch_args(
+        CONFIG,
+        [
+            "--group-prompt-format",
+            prompt_format,
+            "--group-output-schema",
+            "assay-transfer",
+        ],
+    )
+
+    with pytest.raises(SystemExit, match="requires --group-prompt-format assay_transfer_tool"):
+        _validate_assay_transfer_scores(CONFIG, args)
+
+
+def test_group_prompt_instruction_override_and_hash_propagate_to_pipeline(tmp_path):
+    instructions = tmp_path / "ignore.txt"
+    instructions.write_text("Trust the supplied likelihoods completely.\n", encoding="utf-8")
+    args = _parse_batch_args(
+        CONFIG,
+        [
+            "--group-prompt-format",
+            "assay_transfer_tool",
+            "--group-prompt-instructions-file",
+            str(instructions),
+        ],
+    )
+    provenance = _group_prompt_instruction_provenance(
+        args.group_prompt_instructions_file
+    )
+    args.group_prompt_instructions_file = provenance["path"]
+    args.group_prompt_instructions_sha256 = provenance["sha256"]
+
+    command = _single_run_command(CONFIG, args, 0, "run", Path("runs"))
+
+    assert command[command.index("--group-prompt-instructions-file") + 1] == str(
+        instructions.resolve()
+    )
+    assert command[command.index("--group-prompt-instructions-sha256") + 1] == (
+        provenance["sha256"]
+    )
+
+
+def test_legacy_group_prompt_rejects_instruction_override(tmp_path):
+    instructions = tmp_path / "instructions.txt"
+    instructions.write_text("One instruction.\n", encoding="utf-8")
+    args = _parse_batch_args(
+        CONFIG,
+        ["--group-prompt-instructions-file", str(instructions)],
+    )
+
+    with pytest.raises(SystemExit, match="non-legacy"):
+        _validate_assay_transfer_scores(CONFIG, args)
+
+
+def test_matched_preflight_source_requires_identical_retrieval_configuration():
+    args = _parse_batch_args(
+        CONFIG,
+        [
+            "--experiment-mode",
+            "full_mechanism",
+            "--retrieval-source",
+            "starling_in_distribution",
+            "--retrieval-reranker",
+            "assay_transfer",
+            "--enable-assay-transfer-scores",
+            "--assay-transfer-min-score",
+            "0.5",
+            "--assay-transfer-template-profile",
+            "v6_5_query_context_copy_no_extra_details",
+            "--group-prompt-format",
+            "assay_transfer_tool",
+            "--neighbor-identity-policy",
+            "parent_disjoint",
+            "--top-k-per-group",
+            "15",
+        ],
+    )
+    indices = [0, 1]
+    manifest = {
+        "indices": indices,
+        "experiment_mode": args.experiment_mode,
+        "retrieval_source": args.retrieval_source,
+        "retrieval_reranker": args.retrieval_reranker,
+        "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+        "assay_transfer_min_score": args.assay_transfer_min_score,
+        "assay_transfer_template_profile": args.assay_transfer_template_profile,
+        "group_prompt_format": args.group_prompt_format,
+        "rerank_raw_pool_size": args.rerank_raw_pool_size,
+        "rerank_candidate_size": args.rerank_candidate_size,
+        "rerank_catalog": args.rerank_catalog,
+        "rerank_cache": args.rerank_cache,
+        "rerank_candidate_manifest": args.rerank_candidate_manifest,
+        "rerank_expected_score_count": args.rerank_expected_score_count,
+        "rerank_cache_version_manifest": args.rerank_cache_version_manifest,
+        "neighbor_identity_policy": args.neighbor_identity_policy,
+        "top_k_per_group": args.top_k_per_group,
+        "min_similarity": args.min_similarity,
+        "rerank_cache_preflight": {
+            "status": "complete",
+            "n_queries": len(indices),
+            "provenance": {
+                "model": args.assay_transfer_model,
+                "model_revision": args.assay_transfer_model_revision,
+            },
+        },
+    }
+
+    _validate_reused_rerank_preflight(manifest, args, indices)
+    manifest["top_k_per_group"] = 10
+    with pytest.raises(SystemExit, match="top_k_per_group"):
+        _validate_reused_rerank_preflight(manifest, args, indices)
 
 
 @pytest.mark.parametrize("threshold", ["-0.01", "1.01"])

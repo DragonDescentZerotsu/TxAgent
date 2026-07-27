@@ -1,0 +1,8 @@
+# Assay-transfer likelihood ablation with the evidence-centric output schema.
+# One instruction per line, rendered numbered at the top of the prompt.
+# Blank lines and lines starting with '#' are ignored.
+Each ranked entry is one of the top-k assay records across all candidate molecules, with a transfer likelihood (a 0-1 model estimate).
+Even if the molecules seem structurally dissimilar put aside your judgements of structural similarity.
+Completely trust these likelihoods as they are the best possible estimates of transfer.
+Based on the transfer liklihoods, determine the implications for the mechanism at hand and the query's oral bioavailability.
+Return a single JSON object matching the required schema shown below.

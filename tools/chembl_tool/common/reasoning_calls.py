@@ -101,6 +101,13 @@ def call_group_branch(
     *,
     group: dict[str, Any],
     tools: list[dict[str, Any]],
+    required_fields: tuple[str, ...] = (
+        "transferability",
+        "confidence",
+        "reasoning_summary",
+    ),
+    allowed_values: dict[str, set[str]] | None = None,
+    forbidden_field_names: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     """Use live comparison tools, or harness-prefetched blind comparisons."""
     if group.get("tools_prefetched") or group.get("identity_blind"):
@@ -114,6 +121,8 @@ def call_group_branch(
     return call_with_json_validation(
         call,
         messages,
-        required_fields=("transferability", "confidence", "reasoning_summary"),
+        required_fields=required_fields,
+        allowed_values=allowed_values,
+        forbidden_field_names=forbidden_field_names,
         branch_name="group",
     )

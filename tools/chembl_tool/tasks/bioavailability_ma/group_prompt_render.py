@@ -6,9 +6,11 @@ Two formats are produced here, selected by `prompt_format`:
 * ``assay_transfer_tool`` -- top-k assay records + transfer score,
   rendered through the same minimal-evidence record presentation as Morgan retrieval.
 
-Both put the instruction block at the top and end with the same required JSON output
-schema, so the group-output contract (and everything downstream) is unchanged. The
-legacy JSON format is not handled here; the pipeline keeps it inline.
+Both put the instruction block at the top and end with a selected required JSON
+output schema. The default ``legacy`` schema remains unchanged; the
+``assay-transfer`` profile is evidence-centric and omits molecule identity and rigid
+direction/transferability enums. The legacy JSON prompt format is not handled here;
+the pipeline keeps it inline.
 
 Which metadata fields appear is decided entirely by ``group_prompt_field_policy`` --
 this module only formats what that policy selects.
@@ -16,6 +18,7 @@ this module only formats what that policy selects.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -34,22 +37,69 @@ INSTRUCTIONS_DIR = Path(__file__).with_name("prompt_instructions")
 GROUP_DESCRIPTIONS_PATH = INSTRUCTIONS_DIR / "group_descriptions.md"
 
 SUPPORTED_FORMATS = ("morganfingerprint", "assay_transfer_tool")
+GROUP_OUTPUT_SCHEMA_PROFILES = ("legacy", "assay-transfer")
 
 
-def load_instructions(prompt_format: str) -> list[str]:
+def instruction_file_provenance(
+    prompt_format: str,
+    instructions_file: str | Path | None = None,
+    *,
+    output_schema_profile: str = "legacy",
+) -> dict[str, Any]:
+    """Resolve, validate, and fingerprint one editable prompt-instruction file."""
+    if instructions_file:
+        path = Path(instructions_file)
+    elif (
+        prompt_format == "assay_transfer_tool"
+        and output_schema_profile == "assay-transfer"
+    ):
+        path = INSTRUCTIONS_DIR / "assay_transfer_tool_assay_transfer_schema.txt"
+    else:
+        path = INSTRUCTIONS_DIR / f"{prompt_format}.txt"
+    try:
+        resolved = path.expanduser().resolve(strict=True)
+        raw = resolved.read_bytes()
+        text = raw.decode("utf-8")
+    except (OSError, UnicodeError) as exc:
+        raise ValueError(f"Cannot read group prompt instructions file {path}: {exc}") from exc
+    lines = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    if not lines:
+        raise ValueError(f"Group prompt instructions file has no instruction lines: {resolved}")
+    return {
+        "path": str(resolved),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "instruction_count": len(lines),
+        "instructions": lines,
+    }
+
+
+def load_instructions(
+    prompt_format: str,
+    instructions_file: str | Path | None = None,
+    *,
+    output_schema_profile: str = "legacy",
+) -> list[str]:
     """Load the editable, numbered instruction lines for a group prompt format.
 
     Instructions live in `prompt_instructions/<format>.txt` (one per line; blank lines
     and `#` comments ignored) so they can be edited without touching this module.
     """
-    path = INSTRUCTIONS_DIR / f"{prompt_format}.txt"
-    lines = path.read_text(encoding="utf-8").splitlines()
-    return [line.strip() for line in lines if line.strip() and not line.lstrip().startswith("#")]
+    return list(
+        instruction_file_provenance(
+            prompt_format,
+            instructions_file,
+            output_schema_profile=output_schema_profile,
+        )["instructions"]
+    )
 
 
-# The group-output contract, identical to the legacy schema so final synthesis and
-# validators keep working unchanged.
-GROUP_OUTPUT_SCHEMA: dict[str, Any] = {
+# The historical group-output contract. Keep this object unchanged so the default
+# profile, prompt goldens, and completed runs remain comparable.
+LEGACY_GROUP_OUTPUT_SCHEMA: dict[str, Any] = {
     "useful_for_bioavailability_reasoning": "boolean",
     "transferability": "high | moderate | low | not_applicable",
     "evidence_direction": (
@@ -73,14 +123,102 @@ GROUP_OUTPUT_SCHEMA: dict[str, Any] = {
     ],
     "caveats": ["string"],
 }
+GROUP_OUTPUT_SCHEMA = LEGACY_GROUP_OUTPUT_SCHEMA
 
-def group_system_message(group: dict[str, Any]) -> str:
+ASSAY_TRANSFER_GROUP_OUTPUT_SCHEMA: dict[str, Any] = {
+    "useful_for_bioavailability_reasoning": "boolean",
+    "confidence": "high | moderate | low",
+    "assay_transfer_assessment": "string",
+    "bioavailability_implications": ["string"],
+    "reasoning_summary": "string",
+    "key_evidence": [
+        {
+            "record_rank": "integer or null",
+            "assay_endpoint": "string",
+            "transfer_likelihood": "number or null",
+            "assay_observation": "string",
+            "bioavailability_implication": "string",
+            "limitations": ["string"],
+        }
+    ],
+    "caveats": ["string"],
+}
+
+
+def group_output_schema(profile: str) -> dict[str, Any]:
+    if profile == "legacy":
+        return LEGACY_GROUP_OUTPUT_SCHEMA
+    if profile == "assay-transfer":
+        return ASSAY_TRANSFER_GROUP_OUTPUT_SCHEMA
+    raise ValueError(f"Unknown group output schema profile: {profile!r}")
+
+
+def group_output_validation(profile: str) -> dict[str, Any]:
+    """Return the response validator contract paired with one rendered schema."""
+    if profile == "legacy":
+        return {
+            "required_fields": (
+                "transferability",
+                "confidence",
+                "reasoning_summary",
+            ),
+            "allowed_values": None,
+            "forbidden_field_names": (),
+        }
+    if profile == "assay-transfer":
+        return {
+            "required_fields": (
+                "useful_for_bioavailability_reasoning",
+                "confidence",
+                "assay_transfer_assessment",
+                "bioavailability_implications",
+                "reasoning_summary",
+            ),
+            "allowed_values": {
+                "confidence": {"high", "moderate", "low"},
+            },
+            "forbidden_field_names": ("molecule_chembl_id",),
+        }
+    raise ValueError(f"Unknown group output schema profile: {profile!r}")
+
+
+def group_output_schema_provenance(profile: str) -> dict[str, Any]:
+    schema = group_output_schema(profile)
+    serialized = json.dumps(
+        schema,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return {
+        "profile": profile,
+        "contract_version": (
+            "bioavailability_group_output.legacy.v1"
+            if profile == "legacy"
+            else "bioavailability_group_output.assay_transfer.v1"
+        ),
+        "schema_sha256": hashlib.sha256(serialized).hexdigest(),
+    }
+
+def group_system_message(
+    group: dict[str, Any],
+    *,
+    group_tools_enabled: bool = True,
+    use_assay_transfer_likelihoods: bool = False,
+) -> str:
     """System message shared with the legacy branch (kept byte-identical there)."""
     prefetched = group.get("tools_prefetched") or group.get("identity_blind")
     if prefetched:
         middle = "Use the harness-prefetched comparison results; do not call tools. " + (
             "Do not infer query identity. " if group.get("identity_blind") else ""
         )
+    elif not group_tools_enabled:
+        middle = "No tools are available for this branch. "
+        if use_assay_transfer_likelihoods:
+            middle += (
+                "Use the supplied assay-transfer likelihoods as the best available "
+                "transfer estimates. "
+            )
     else:
         middle = "You may call the provided molecule comparison tools when structural or property differences matter. "
     return (
@@ -152,9 +290,9 @@ def _assay_transfer_evidence_record(
 ) -> list[tuple[str, str]]:
     """Normalize one selected catalog record through minimal_evidence.v1 for display."""
     example = {
-        "endpoint_type": selected_record.get("endpoint_subtype")
-        or selected_record.get("measurement_label")
-        or selected_record.get("canonical_endpoint_key"),
+        "endpoint_type": selected_record.get("canonical_endpoint_key")
+        or selected_record.get("endpoint_subtype")
+        or selected_record.get("measurement_label"),
         "reported_value": selected_record.get("value_display", selected_record.get("value")),
         "reported_units": selected_record.get("unit_basis"),
         "context": selected_record.get("context") or {},
@@ -215,7 +353,14 @@ def _dataset_key(group: dict[str, Any]) -> str:
     return meta.get("evidence_source", "")
 
 
-def _build_morgan_context(query: dict[str, Any], group: dict[str, Any], *, min_similarity: float) -> dict[str, Any]:
+def _build_morgan_context(
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    min_similarity: float,
+    instructions_file: str | Path | None = None,
+    output_schema_profile: str = "legacy",
+) -> dict[str, Any]:
     dataset = _dataset_key(group)
     header_pairs = included_fields("morganfingerprint.neighbor", dataset)
     neighbors_ctx = []
@@ -233,15 +378,29 @@ def _build_morgan_context(query: dict[str, Any], group: dict[str, Any], *, min_s
             }
         )
     return {
-        "instructions": load_instructions("morganfingerprint"),
+        "instructions": load_instructions(
+            "morganfingerprint",
+            instructions_file,
+            output_schema_profile=output_schema_profile,
+        ),
         "group": _group_meta(group),
         "query_smiles": _query_smiles(query),
         "neighbors": neighbors_ctx,
-        "output_schema": json.dumps(GROUP_OUTPUT_SCHEMA, indent=2, ensure_ascii=False),
+        "output_schema": json.dumps(
+            group_output_schema(output_schema_profile),
+            indent=2,
+            ensure_ascii=False,
+        ),
     }
 
 
-def _build_assay_transfer_context(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _build_assay_transfer_context(
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    instructions_file: str | Path | None = None,
+    output_schema_profile: str = "legacy",
+) -> dict[str, Any]:
     dataset = _dataset_key(group)
     header_pairs = included_fields("assay_transfer_tool.neighbor", dataset)
     neighbors_ctx = []
@@ -261,11 +420,19 @@ def _build_assay_transfer_context(query: dict[str, Any], group: dict[str, Any]) 
             }
         )
     return {
-        "instructions": load_instructions("assay_transfer_tool"),
+        "instructions": load_instructions(
+            "assay_transfer_tool",
+            instructions_file,
+            output_schema_profile=output_schema_profile,
+        ),
         "group": _group_meta(group),
         "query_smiles": _query_smiles(query),
         "neighbors": neighbors_ctx,
-        "output_schema": json.dumps(GROUP_OUTPUT_SCHEMA, indent=2, ensure_ascii=False),
+        "output_schema": json.dumps(
+            group_output_schema(output_schema_profile),
+            indent=2,
+            ensure_ascii=False,
+        ),
     }
 
 
@@ -278,13 +445,23 @@ def build_group_messages(
 ) -> list[dict[str, str]]:
     """Return [system, user] messages for a new text group-prompt format."""
     options = options or {}
+    output_schema_profile = str(options.get("output_schema_profile", "legacy"))
     if prompt_format == "morganfingerprint":
         context = _build_morgan_context(
-            query, group, min_similarity=float(options.get("prompt_min_similarity", 0.0))
+            query,
+            group,
+            min_similarity=float(options.get("prompt_min_similarity", 0.0)),
+            instructions_file=options.get("instructions_file"),
+            output_schema_profile=output_schema_profile,
         )
         template = "morganfingerprint.jinja"
     elif prompt_format == "assay_transfer_tool":
-        context = _build_assay_transfer_context(query, group)
+        context = _build_assay_transfer_context(
+            query,
+            group,
+            instructions_file=options.get("instructions_file"),
+            output_schema_profile=output_schema_profile,
+        )
         # The layout is assay-transfer-specific, but record fields still come from
         # the shared minimal_evidence.v1 / morganfingerprint.record policy.
         template = "assay_transfer_tool.jinja"
@@ -292,7 +469,14 @@ def build_group_messages(
         raise ValueError(f"Unknown text group-prompt format: {prompt_format!r}")
     user_content = _env().get_template(template).render(**context)
     return [
-        {"role": "system", "content": group_system_message(group)},
+        {
+            "role": "system",
+            "content": group_system_message(
+                group,
+                group_tools_enabled=bool(options.get("group_tools_enabled", True)),
+                use_assay_transfer_likelihoods=prompt_format == "assay_transfer_tool",
+            ),
+        },
         {"role": "user", "content": user_content},
     ]
 

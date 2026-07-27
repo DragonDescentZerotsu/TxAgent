@@ -21,6 +21,8 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank 
     DEFAULT_CACHE,
     DEFAULT_CATALOG,
     TEMPLATE_PROFILES,
+    V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE,
+    V6_5_TEMPLATE_PROFILE,
     AssayTransferCachedReranker,
     PromptScore,
     PromptTask,
@@ -56,9 +58,12 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(
                 "starling_in_distribution requires --reuse-prebuilt-catalog"
             )
-        if args.assay_transfer_template_profile != "v6_5_query_context_copy":
+        if args.assay_transfer_template_profile not in {
+            V6_5_TEMPLATE_PROFILE,
+            V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE,
+        }:
             raise SystemExit(
-                "starling_in_distribution requires the v6_5_query_context_copy template profile"
+                "starling_in_distribution requires a v6.5 query-context-copy template profile"
             )
     if not args.reuse_frozen_flat_artifacts and _catalog_is_flat(Path(args.rerank_catalog)):
         raise SystemExit(

@@ -27,6 +27,8 @@ CONFIG = BatchConfig(
     supports_assay_transfer_scores=True,
     group_prompt_formats=("legacy", "morganfingerprint", "assay_transfer_tool"),
     default_group_prompt_format="legacy",
+    group_output_schemas=("legacy", "assay-transfer"),
+    default_group_output_schema="legacy",
 )
 
 

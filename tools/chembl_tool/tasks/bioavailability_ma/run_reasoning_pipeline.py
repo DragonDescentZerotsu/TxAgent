@@ -62,10 +62,14 @@ from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
     get_source_config,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
+    GROUP_OUTPUT_SCHEMA_PROFILES,
     SUPPORTED_FORMATS as TEXT_GROUP_PROMPT_FORMATS,
     build_final_messages,
     build_group_messages,
+    group_output_schema_provenance,
+    group_output_validation,
     group_system_message,
+    instruction_file_provenance,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import load_index
 
@@ -183,6 +187,40 @@ def main(argv: list[str] | None = None) -> int:
     if args.group_prompt_format == "assay_transfer_tool" and args.retrieval_reranker != "assay_transfer":
         raise SystemExit(
             "--group-prompt-format assay_transfer_tool requires --retrieval-reranker assay_transfer"
+        )
+    if (
+        args.group_output_schema == "assay-transfer"
+        and args.group_prompt_format != "assay_transfer_tool"
+    ):
+        raise SystemExit(
+            "--group-output-schema assay-transfer requires "
+            "--group-prompt-format assay_transfer_tool"
+        )
+    if args.group_prompt_instructions_file and args.group_prompt_format not in TEXT_GROUP_PROMPT_FORMATS:
+        raise SystemExit(
+            "--group-prompt-instructions-file requires a text group prompt format"
+        )
+    group_prompt_instruction_provenance: dict[str, Any] = {}
+    if args.group_prompt_format in TEXT_GROUP_PROMPT_FORMATS:
+        try:
+            group_prompt_instruction_provenance = instruction_file_provenance(
+                args.group_prompt_format,
+                args.group_prompt_instructions_file or None,
+                output_schema_profile=args.group_output_schema,
+            )
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        observed_hash = str(group_prompt_instruction_provenance["sha256"])
+        if (
+            args.group_prompt_instructions_sha256
+            and observed_hash != args.group_prompt_instructions_sha256
+        ):
+            raise SystemExit(
+                "Group prompt instructions SHA-256 mismatch: "
+                f"expected {args.group_prompt_instructions_sha256}, observed {observed_hash}"
+            )
+        args.group_prompt_instructions_file = str(
+            group_prompt_instruction_provenance["path"]
         )
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
@@ -340,6 +378,8 @@ def main(argv: list[str] | None = None) -> int:
             if args.group_prompt_min_similarity is not None
             else args.min_similarity
         ),
+        "instructions_file": args.group_prompt_instructions_file or None,
+        "output_schema_profile": args.group_output_schema,
     }
     single_output, group_outputs = _run_parallel_reasoning(
         client,
@@ -431,6 +471,19 @@ def main(argv: list[str] | None = None) -> int:
         "min_similarity": args.min_similarity,
         "assay_transfer_min_score": args.assay_transfer_min_score,
         "group_prompt_format": args.group_prompt_format,
+        "group_output_schema": args.group_output_schema,
+        "group_output_schema_provenance": group_output_schema_provenance(
+            args.group_output_schema
+        ),
+        "group_prompt_instructions_file": group_prompt_instruction_provenance.get(
+            "path", ""
+        ),
+        "group_prompt_instructions_sha256": group_prompt_instruction_provenance.get(
+            "sha256", ""
+        ),
+        "group_prompt_instruction_count": group_prompt_instruction_provenance.get(
+            "instruction_count", 0
+        ),
         "group_evidence_presentation": (
             "minimal_evidence.v1"
             if args.group_prompt_format in {"morganfingerprint", "assay_transfer_tool"}
@@ -597,10 +650,16 @@ def legacy_group_messages(
     group: dict[str, Any],
     *,
     include_assay_transfer_score: bool = False,
+    group_tools_enabled: bool = True,
 ) -> list[dict[str, str]]:
     """Compile the legacy JSON group-branch [system, user] messages (no LLM needed)."""
     return [
-        {"role": "system", "content": group_system_message(group)},
+        {
+            "role": "system",
+            "content": group_system_message(
+                group, group_tools_enabled=group_tools_enabled
+            ),
+        },
         {
             "role": "user",
             "content": json.dumps(
@@ -624,17 +683,30 @@ def _reason_one_group(
 ) -> dict[str, Any]:
     if prompt_format == "legacy":
         messages = legacy_group_messages(
-            query, group, include_assay_transfer_score=include_assay_transfer_score
+            query,
+            group,
+            include_assay_transfer_score=include_assay_transfer_score,
+            group_tools_enabled=client.enable_group_tools,
         )
     else:
+        effective_prompt_options = {
+            **(prompt_options or {}),
+            "group_tools_enabled": client.enable_group_tools,
+        }
         messages = build_group_messages(
-            query, group, prompt_format=prompt_format, options=prompt_options or {}
+            query,
+            group,
+            prompt_format=prompt_format,
+            options=effective_prompt_options,
         )
     response = call_group_branch(
         client,
         messages,
         group=group,
         tools=GROUP_REASONING_TOOLS,
+        **group_output_validation(
+            str((prompt_options or {}).get("output_schema_profile", "legacy"))
+        ),
     )
     return {
         "group_id": group["group_id"],
@@ -1108,6 +1180,32 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             "(text: molecules + similarity + records), or assay_transfer_tool "
             "(text: top-k assay records + transfer scores; the same molecule may repeat; "
             "requires the assay_transfer reranker)."
+        ),
+    )
+    parser.add_argument(
+        "--group-output-schema",
+        choices=list(GROUP_OUTPUT_SCHEMA_PROFILES),
+        default="legacy",
+        help=(
+            "Structured output profile for group branches. The assay-transfer "
+            "profile is evidence-centric and requires --group-prompt-format "
+            "assay_transfer_tool."
+        ),
+    )
+    parser.add_argument(
+        "--group-prompt-instructions-file",
+        default="",
+        help=(
+            "Optional UTF-8 instruction file for a text group prompt format. "
+            "The default remains prompt_instructions/<group-prompt-format>.txt."
+        ),
+    )
+    parser.add_argument(
+        "--group-prompt-instructions-sha256",
+        default="",
+        help=(
+            "Optional launch-time SHA-256 guard for --group-prompt-instructions-file; "
+            "used by the batch runner to prevent mixed prompts."
         ),
     )
     parser.add_argument(

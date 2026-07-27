@@ -1,7 +1,7 @@
-# Editable instructions for the assay_transfer_tool group prompt.
+# Editable instructions for the assay_transfer_tool group prompt with the evidence-centric output schema.
 # One instruction per line, rendered numbered at the top of the prompt.
 # Blank lines and lines starting with '#' are ignored.
 Each ranked entry is one of the top-k assay records across all candidate molecules, with a transfer likelihood (a 0-1 model estimate).
 Trust these likelihoods as they are the best estimates available.
 Based on the transfer liklihoods, determine the implications for the query's oral bioavailability.
-Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.
+Return a single JSON object matching the required schema shown below.

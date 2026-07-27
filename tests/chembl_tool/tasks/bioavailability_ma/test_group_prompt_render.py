@@ -1,11 +1,16 @@
 """Tests for the new text group-prompt formats and their editable field policy."""
 
+import hashlib
+
 import pytest
 
 from tools.chembl_tool.tasks.bioavailability_ma import group_prompt_field_policy as policy
 from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
     build_group_messages,
+    group_output_schema_provenance,
+    group_output_validation,
     group_system_message,
+    instruction_file_provenance,
 )
 
 
@@ -112,7 +117,7 @@ def test_assay_transfer_shows_score_and_one_record_per_ranked_entry():
     assert "[Record 1]" in content
     assert "[Neighbor 1]" not in content
     assert "Records (1):" not in content
-    assert "endpoint: efflux_or_secretory_transport" in content
+    assert "endpoint: Fg.efflux" in content
     assert "value: 12.4%" in content
     assert "unit: percent" in content
     assert "evidence: polarized transport observed" in content
@@ -121,7 +126,50 @@ def test_assay_transfer_shows_score_and_one_record_per_ranked_entry():
     assert "c1ccccc1" in content
     assert "c1ccccc1-canon" not in content
     # This ranked entry presents exactly one selected record without a redundant wrapper.
-    assert content.count("endpoint: efflux_or_secretory_transport") == 1
+    assert content.count("endpoint: Fg.efflux") == 1
+
+
+def test_assay_transfer_output_schema_is_evidence_centric_and_identity_free():
+    _, user = build_group_messages(
+        QUERY,
+        _group([]),
+        prompt_format="assay_transfer_tool",
+        options={"output_schema_profile": "assay-transfer"},
+    )
+    content = user["content"]
+
+    assert '"assay_transfer_assessment": "string"' in content
+    assert '"bioavailability_implications": [' in content
+    assert '"record_rank": "integer or null"' in content
+    assert '"assay_endpoint": "string"' in content
+    assert '"transfer_likelihood": "number or null"' in content
+    assert '"molecule_chembl_id"' not in content
+    assert '"similarity_bucket"' not in content
+    assert '"tool_summary"' not in content
+    assert '"evidence_direction"' not in content
+    assert '"transferability"' not in content
+    assert "Return a single JSON object matching the required schema shown below." in content
+
+    validation = group_output_validation("assay-transfer")
+    assert "assay_transfer_assessment" in validation["required_fields"]
+    assert validation["forbidden_field_names"] == ("molecule_chembl_id",)
+    assert group_output_schema_provenance("assay-transfer")["contract_version"] == (
+        "bioavailability_group_output.assay_transfer.v1"
+    )
+
+
+def test_legacy_output_schema_remains_the_default():
+    _, user = build_group_messages(
+        QUERY,
+        _group([]),
+        prompt_format="assay_transfer_tool",
+    )
+    content = user["content"]
+
+    assert '"transferability": "high | moderate | low | not_applicable"' in content
+    assert '"evidence_direction":' in content
+    assert '"molecule_chembl_id": "string"' in content
+    assert '"assay_transfer_assessment"' not in content
 
 
 def test_record_field_policy_is_shared_by_both_retrievers():
@@ -140,7 +188,7 @@ def test_record_field_policy_is_shared_by_both_retrievers():
     )
     _, transfer_before = build_group_messages(QUERY, group, prompt_format="assay_transfer_tool")
     assert "endpoint: efflux_or_secretory_transport" in morgan_before["content"]
-    assert "endpoint: efflux_or_secretory_transport" in transfer_before["content"]
+    assert "endpoint: Fg.efflux" in transfer_before["content"]
 
     specs = policy.DEFAULT_POLICY["morganfingerprint.record"]
     idx = next(i for i, s in enumerate(specs) if s.key == "endpoint_type")
@@ -152,7 +200,7 @@ def test_record_field_policy_is_shared_by_both_retrievers():
         )
         _, transfer_after = build_group_messages(QUERY, group, prompt_format="assay_transfer_tool")
         assert "endpoint: efflux_or_secretory_transport" not in morgan_after["content"]
-        assert "endpoint: efflux_or_secretory_transport" not in transfer_after["content"]
+        assert "endpoint: Fg.efflux" not in transfer_after["content"]
     finally:
         specs[idx] = original
 
@@ -172,6 +220,63 @@ def test_system_message_matches_legacy_string():
         "Use the harness-prefetched comparison results; do not call tools. Do not infer query identity. "
         "Return only valid JSON."
     )
+
+
+def test_tool_free_assay_transfer_system_message_uses_supplied_likelihoods():
+    system, _ = build_group_messages(
+        QUERY,
+        _group([]),
+        prompt_format="assay_transfer_tool",
+        options={"group_tools_enabled": False},
+    )
+
+    assert "No tools are available for this branch." in system["content"]
+    assert (
+        "Use the supplied assay-transfer likelihoods as the best available transfer estimates."
+        in system["content"]
+    )
+    assert "You may call" not in system["content"]
+
+
+def test_assay_transfer_instruction_file_override_is_verbatim_and_fingerprinted(tmp_path):
+    instructions_path = tmp_path / "ignore.txt"
+    raw = (
+        "# ignored comment\n"
+        "Put aside structural-similarity judgments.\n"
+        "\n"
+        "Completely trust the supplied likelihoods.\n"
+    )
+    instructions_path.write_text(raw, encoding="utf-8")
+
+    _, user = build_group_messages(
+        QUERY,
+        _group([]),
+        prompt_format="assay_transfer_tool",
+        options={"instructions_file": str(instructions_path)},
+    )
+    provenance = instruction_file_provenance(
+        "assay_transfer_tool", instructions_path
+    )
+
+    assert "1. Put aside structural-similarity judgments." in user["content"]
+    assert "2. Completely trust the supplied likelihoods." in user["content"]
+    assert provenance == {
+        "path": str(instructions_path.resolve()),
+        "sha256": hashlib.sha256(raw.encode("utf-8")).hexdigest(),
+        "instruction_count": 2,
+        "instructions": [
+            "Put aside structural-similarity judgments.",
+            "Completely trust the supplied likelihoods.",
+        ],
+    }
+
+
+def test_empty_group_instruction_file_is_rejected(tmp_path):
+    instructions_path = tmp_path / "empty.txt"
+    instructions_path.write_text("# comments only\n\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="no instruction lines"):
+        instruction_file_provenance("assay_transfer_tool", instructions_path)
 
 
 def test_unknown_format_raises():

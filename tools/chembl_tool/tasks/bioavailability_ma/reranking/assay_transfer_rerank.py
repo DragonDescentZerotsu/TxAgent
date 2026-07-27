@@ -19,10 +19,20 @@ CACHE_SCHEMA_VERSION = "assay_transfer_rerank_flat_cache.v2"
 CATALOG_SCHEMA_VERSION = "txagent_assay_transfer_catalog.v1"
 LEGACY_TEMPLATE_PROFILE = "legacy_v3"
 V6_5_TEMPLATE_PROFILE = "v6_5_query_context_copy"
+V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE = (
+    "v6_5_query_context_copy_no_extra_details"
+)
 DEFAULT_TEMPLATE_PROFILE = LEGACY_TEMPLATE_PROFILE
-TEMPLATE_PROFILES = (LEGACY_TEMPLATE_PROFILE, V6_5_TEMPLATE_PROFILE)
+TEMPLATE_PROFILES = (
+    LEGACY_TEMPLATE_PROFILE,
+    V6_5_TEMPLATE_PROFILE,
+    V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE,
+)
 LEGACY_QUERY_CONTEXT_POLICY = "legacy_template_specific_query_context.v1"
 V6_5_QUERY_CONTEXT_POLICY = "copy_retrieval_assay_context_value_hidden.v1"
+V6_5_NO_QUERY_EXTRA_DETAILS_QUERY_CONTEXT_POLICY = (
+    "copy_retrieval_assay_context_except_extra_details_value_hidden.v1"
+)
 DEFAULT_CATALOG = (
     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
     "assay_transfer_rerank/flat_v2/catalog.jsonl"
@@ -81,7 +91,10 @@ def template_bundle_hash(
     template_dir: Path = TEMPLATE_DIR,
     profile: str = DEFAULT_TEMPLATE_PROFILE,
 ) -> str:
-    if profile == V6_5_TEMPLATE_PROFILE:
+    if profile in {
+        V6_5_TEMPLATE_PROFILE,
+        V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE,
+    }:
         return hashlib.sha256((template_dir / V6_5_TEMPLATE_FILENAME).read_bytes()).hexdigest()
     if profile != LEGACY_TEMPLATE_PROFILE:
         raise ValueError(f"Unknown assay-transfer template profile: {profile}")
@@ -209,11 +222,14 @@ class AssayTransferPromptRenderer:
             raise ValueError(f"Unknown assay-transfer template profile: {profile}")
         self.template_dir = template_dir
         self.profile = profile
-        self.query_context_policy = (
-            V6_5_QUERY_CONTEXT_POLICY
-            if profile == V6_5_TEMPLATE_PROFILE
-            else LEGACY_QUERY_CONTEXT_POLICY
-        )
+        if profile == V6_5_TEMPLATE_PROFILE:
+            self.query_context_policy = V6_5_QUERY_CONTEXT_POLICY
+        elif profile == V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE:
+            self.query_context_policy = (
+                V6_5_NO_QUERY_EXTRA_DETAILS_QUERY_CONTEXT_POLICY
+            )
+        else:
+            self.query_context_policy = LEGACY_QUERY_CONTEXT_POLICY
         self.template_hash = template_bundle_hash(template_dir, profile)
         self.environment = Environment(
             loader=FileSystemLoader(str(template_dir)),
@@ -223,7 +239,10 @@ class AssayTransferPromptRenderer:
         )
 
     def render(self, record: dict[str, Any], query_smiles: str) -> str:
-        if self.profile == V6_5_TEMPLATE_PROFILE:
+        if self.profile in {
+            V6_5_TEMPLATE_PROFILE,
+            V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE,
+        }:
             return self._render_v6_5(record, query_smiles)
         concept = str(record["assay_concept"])
         filename = TEMPLATE_BY_CONCEPT.get(concept)
@@ -270,6 +289,8 @@ class AssayTransferPromptRenderer:
             **shared_assay_context,
             "canonical_smiles": canonical_query_smiles,
         }
+        if self.profile == V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE:
+            query["context_extra_details"] = ""
         return self.environment.get_template(V6_5_TEMPLATE_FILENAME).render(
             retrieval=retrieval,
             query=query,

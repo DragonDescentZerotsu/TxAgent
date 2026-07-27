@@ -6,6 +6,7 @@ import argparse
 import concurrent.futures
 import ctypes
 import gc
+import hashlib
 import json
 import shutil
 import subprocess
@@ -37,6 +38,8 @@ class BatchConfig:
     supports_assay_transfer_scores: bool = False
     group_prompt_formats: tuple[str, ...] = ()
     default_group_prompt_format: str = ""
+    group_output_schemas: tuple[str, ...] = ()
+    default_group_output_schema: str = ""
 
 
 @dataclass(frozen=True)
@@ -49,6 +52,18 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     args = _parse_args(config, argv)
     requested_top_k_per_group = args.top_k_per_group
     _validate_assay_transfer_scores(config, args)
+    group_prompt_instruction_provenance = _group_prompt_instruction_provenance(
+        args.group_prompt_instructions_file
+    )
+    if group_prompt_instruction_provenance:
+        args.group_prompt_instructions_file = str(
+            group_prompt_instruction_provenance["path"]
+        )
+        args.group_prompt_instructions_sha256 = str(
+            group_prompt_instruction_provenance["sha256"]
+        )
+    else:
+        args.group_prompt_instructions_sha256 = ""
     records = _read_jsonl(Path(args.input_jsonl))
     indices = _select_indices(args, len(records))
     batch_id = args.batch_id or time.strftime(f"{config.batch_id_prefix}_%Y%m%d_%H%M%S")
@@ -67,7 +82,25 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
             )
         if args.rerank_cache_mode != "read_only":
             raise SystemExit("reasoning batches require --rerank-cache-mode read_only")
-        if args.reuse_existing_rerank_preflight:
+        if args.reuse_existing_rerank_preflight and args.rerank_preflight_source_batch:
+            raise SystemExit(
+                "--reuse-existing-rerank-preflight and "
+                "--rerank-preflight-source-batch are mutually exclusive"
+            )
+        if args.rerank_preflight_source_batch:
+            source_batch = Path(args.rerank_preflight_source_batch)
+            source_manifest = _read_json(source_batch / "manifest.json")
+            _validate_reused_rerank_preflight(source_manifest, args, indices)
+            rerank_preflight = dict(
+                source_manifest.get("rerank_cache_preflight") or {}
+            )
+            rerank_preflight["reused_from_batch"] = str(source_batch)
+            _log(
+                config,
+                "reusing matched assay-transfer cache preflight from "
+                f"{source_batch}",
+            )
+        elif args.reuse_existing_rerank_preflight:
             existing_manifest = _read_json(batch_dir / "manifest.json")
             _validate_reused_rerank_preflight(existing_manifest, args, indices)
             rerank_preflight = existing_manifest.get("rerank_cache_preflight") or {}
@@ -118,6 +151,16 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "assay_transfer_min_score": args.assay_transfer_min_score,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
+        "group_output_schema": args.group_output_schema,
+        "group_prompt_instructions_file": group_prompt_instruction_provenance.get(
+            "path", ""
+        ),
+        "group_prompt_instructions_sha256": group_prompt_instruction_provenance.get(
+            "sha256", ""
+        ),
+        "group_prompt_instruction_count": group_prompt_instruction_provenance.get(
+            "instruction_count", 0
+        ),
         "group_evidence_presentation": (
             "minimal_evidence.v1"
             if args.group_prompt_format in {"morganfingerprint", "assay_transfer_tool"}
@@ -136,7 +179,11 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "rerank_cache_preflight": rerank_preflight,
         "rerank_expected_score_count": args.rerank_expected_score_count,
         "rerank_cache_version_manifest": args.rerank_cache_version_manifest,
-        "rerank_preflight_reused": args.reuse_existing_rerank_preflight,
+        "rerank_preflight_reused": bool(
+            args.reuse_existing_rerank_preflight
+            or args.rerank_preflight_source_batch
+        ),
+        "rerank_preflight_source_batch": args.rerank_preflight_source_batch,
         "min_similarity": args.min_similarity,
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "identity_blind": args.identity_blind,
@@ -464,6 +511,17 @@ def _single_run_command(
         )
     if args.group_prompt_format:
         command.extend(["--group-prompt-format", args.group_prompt_format])
+    if args.group_output_schema:
+        command.extend(["--group-output-schema", args.group_output_schema])
+    if args.group_prompt_instructions_file:
+        command.extend(
+            [
+                "--group-prompt-instructions-file",
+                args.group_prompt_instructions_file,
+                "--group-prompt-instructions-sha256",
+                args.group_prompt_instructions_sha256,
+            ]
+        )
     if not args.enable_thinking:
         command.append("--disable-thinking")
     else:
@@ -926,6 +984,14 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         action="store_true",
         help="Reuse a complete same-size assay-transfer audit from this batch's existing manifest.",
     )
+    parser.add_argument(
+        "--rerank-preflight-source-batch",
+        default="",
+        help=(
+            "Reuse a validated assay-transfer cache preflight from a matched source "
+            "batch instead of repeating the deterministic full-query scan."
+        ),
+    )
     parser.add_argument("--stream-logs", dest="stream_logs", action="store_true", default=True)
     parser.add_argument("--no-stream-logs", dest="stream_logs", action="store_false")
     parser.add_argument("--env-file", default=".env")
@@ -987,13 +1053,27 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     parser.add_argument(
         "--assay-transfer-template-profile",
-        choices=["legacy_v3", "v6_5_query_context_copy"],
+        choices=[
+            "legacy_v3",
+            "v6_5_query_context_copy",
+            "v6_5_query_context_copy_no_extra_details",
+        ],
         default="legacy_v3",
     )
     parser.add_argument(
         "--group-prompt-format",
         choices=list(config.group_prompt_formats) or None,
         default=config.default_group_prompt_format,
+    )
+    parser.add_argument(
+        "--group-output-schema",
+        choices=list(config.group_output_schemas) or None,
+        default=config.default_group_output_schema,
+    )
+    parser.add_argument(
+        "--group-prompt-instructions-file",
+        default="",
+        help="Optional UTF-8 instruction file for a non-legacy text group prompt format.",
     )
     parser.add_argument(
         "--rerank-expected-score-count",
@@ -1022,6 +1102,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument("--harness-prefetch-tools", action="store_true")
     args = parser.parse_args(argv)
+    args.group_prompt_instructions_sha256 = ""
     args.groups = _normalize_group_args(args.groups)
     args.tier1_replacement_groups = _normalize_group_args(args.tier1_replacement_groups)
     return args
@@ -1037,6 +1118,22 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
             raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
     if args.group_prompt_format and not config.group_prompt_formats:
         raise SystemExit(f"Pipeline {config.pipeline_module} does not support --group-prompt-format")
+    if args.group_output_schema and not config.group_output_schemas:
+        raise SystemExit(
+            f"Pipeline {config.pipeline_module} does not support --group-output-schema"
+        )
+    if (
+        args.group_output_schema == "assay-transfer"
+        and args.group_prompt_format != "assay_transfer_tool"
+    ):
+        raise SystemExit(
+            "--group-output-schema assay-transfer requires "
+            "--group-prompt-format assay_transfer_tool"
+        )
+    if args.group_prompt_instructions_file and args.group_prompt_format == "legacy":
+        raise SystemExit(
+            "--group-prompt-instructions-file requires a non-legacy text group prompt format"
+        )
     if not args.enable_assay_transfer_scores:
         return
     if not config.supports_assay_transfer_scores:
@@ -1066,3 +1163,31 @@ def _normalize_group_args(groups: list[str] | None) -> list[str] | None:
             normalized.append(group)
             i += 1
     return normalized
+
+
+def _group_prompt_instruction_provenance(path_value: str) -> dict[str, Any]:
+    if not path_value:
+        return {}
+    path = Path(path_value)
+    try:
+        resolved = path.expanduser().resolve(strict=True)
+        raw = resolved.read_bytes()
+        text = raw.decode("utf-8")
+    except (OSError, UnicodeError) as exc:
+        raise SystemExit(
+            f"Cannot read group prompt instructions file {path}: {exc}"
+        ) from exc
+    instructions = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    if not instructions:
+        raise SystemExit(
+            f"Group prompt instructions file has no instruction lines: {resolved}"
+        )
+    return {
+        "path": str(resolved),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "instruction_count": len(instructions),
+    }

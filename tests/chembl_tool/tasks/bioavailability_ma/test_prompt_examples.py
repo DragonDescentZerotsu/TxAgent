@@ -31,8 +31,10 @@ def test_all_stage_examples_present():
         "group.legacy.prompt.txt",
         "group.morganfingerprint.prompt.txt",
         "group.assay_transfer_tool.prompt.txt",
+        "group.assay_transfer_tool.assay-transfer.prompt.txt",
         "final.prompt.txt",
         "assay_transfer_scoring_pair.v6_5.prompt.txt",
+        "assay_transfer_scoring_pair.v6_5_no_query_extra_details.prompt.txt",
     }
 
 
@@ -46,9 +48,28 @@ def test_scoring_pair_is_in_distribution():
     assert pair.count("known value:") == 1
 
 
+def test_corrected_scoring_pair_hides_only_query_extra_details():
+    pair = _EXAMPLES[
+        "assay_transfer_scoring_pair.v6_5_no_query_extra_details.prompt.txt"
+    ]
+    retrieval, query = pair.split("Target query record (value hidden)", 1)
+
+    assert "extra details: not specified" not in retrieval
+    assert "extra details: not specified" in query
+    assert "endpoint: q3." in retrieval
+    assert "endpoint: q3." in query
+
+
 def test_group_text_formats_are_not_json():
     # legacy is JSON; the two new formats are human-readable text.
     assert "NEIGHBOR ANALOGS" in _EXAMPLES["group.morganfingerprint.prompt.txt"]
     assert "SELECTED ASSAY RECORDS" in _EXAMPLES["group.assay_transfer_tool.prompt.txt"]
-    for name in ("group.morganfingerprint.prompt.txt", "group.assay_transfer_tool.prompt.txt"):
+    assert "SELECTED ASSAY RECORDS" in _EXAMPLES[
+        "group.assay_transfer_tool.assay-transfer.prompt.txt"
+    ]
+    for name in (
+        "group.morganfingerprint.prompt.txt",
+        "group.assay_transfer_tool.prompt.txt",
+        "group.assay_transfer_tool.assay-transfer.prompt.txt",
+    ):
         assert '"evidence_rows"' not in _EXAMPLES[name]
