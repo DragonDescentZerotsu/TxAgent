@@ -187,6 +187,19 @@ Performance 可视化统一使用上述横向 grouped-bar chart。每个 split �
 目录只保留 `retrieval_claims_overview.svg` 和 `retrieval_claims_overview_highres.png`；不保留
 preview/QA 导出或另一套 overview 绘图代码。
 
+上述约束只针对旧 TDC `test|valid` lineage。Starling `random|scaffold` 使用独立的汇总、图表和
+output root，不能写入或替代上述 TDC figures：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.summarize_starling_benchmark
+python -m tools.chembl_tool.paper_experiments.plot_starling_benchmark_overview \
+  --png-output outputs/paper/starling_benchmark_results/figures/starling_benchmark_overview_highres.png
+```
+
+Starling 图从统一 `metrics.tsv` 读取 parent-disjoint agent conditions、MiniMol train-all head、
+Morgan KNN 和 MiniMol embedding cosine KNN；完整口径、结果和 baseline 入口见
+[`STARLING_BENCHMARK_RESULTS.md`](STARLING_BENCHMARK_RESULTS.md)。
+
 `audit_prefetch_contract` 同时输出逐样本 `prefetch_contract_audit.tsv` 和逐 condition
 `prefetch_contract_conditions.tsv`。当前 21 条件矩阵只有在 `n_conditions_complete=21`、
 test 上 `n_expected=n_audited=4456`，valid 上 `n_expected=n_audited=2203`；两者都只有在

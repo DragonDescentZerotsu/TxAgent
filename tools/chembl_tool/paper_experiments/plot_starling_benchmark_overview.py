@@ -1,8 +1,9 @@
 """Render the Starling random/scaffold benchmark grouped-bar overview.
 
 The figure compares the parent-disjoint molecular-evidence-agent conditions
-with the train-all MiniMol baseline. It reads the consolidated benchmark TSV,
-writes a canonical SVG, and optionally exports a high-resolution PNG.
+with train-all MiniMol, Morgan KNN, and MiniMol embedding KNN baselines. It
+reads the consolidated benchmark TSV, writes a canonical SVG, and optionally
+exports a high-resolution PNG.
 """
 
 from __future__ import annotations
@@ -24,6 +25,7 @@ from .paper_figure_style import (
     INK,
     MUTED,
     NEUTRAL,
+    PARENT,
     PURPLE,
     VISIBLE,
     rect,
@@ -61,6 +63,15 @@ COMMON_METHODS = (
     Method("chembl_full_flat", "ChEMBL · Full / Flat", "chembl"),
     Method("chembl_full_mechanism", "ChEMBL · Full / Mechanism", "chembl"),
 )
+BASELINE_METHODS = (
+    Method("minimol_train_all", "MiniMol · Train all", "minimol"),
+    Method("morgan_knn_k3", "Morgan KNN · k=3", "knn"),
+    Method(
+        "minimol_embedding_cosine_knn_k3",
+        "MiniMol KNN · k=3",
+        "minimol_knn",
+    ),
+)
 
 TASKS = (
     Task(
@@ -71,9 +82,8 @@ TASKS = (
             Method("starling_direct", "Starling · Direct", "starling"),
             Method("starling_full_flat", "Starling · Full / Flat", "starling"),
             Method("starling_full_mechanism", "Starling · Full / Mechanism", "starling"),
-            Method("minimol_train_all", "MiniMol · Train all", "minimol"),
-            Method("morgan_knn_k3", "Morgan KNN · k=3", "knn"),
-        ),
+        )
+        + BASELINE_METHODS,
     ),
     Task(
         "skin_reaction",
@@ -83,9 +93,8 @@ TASKS = (
             Method("starling_direct", "Starling · Direct", "starling"),
             Method("starling_full_flat", "Starling · Full / Flat", "starling"),
             Method("starling_full_mechanism", "Starling · Full / Mechanism", "starling"),
-            Method("minimol_train_all", "MiniMol · Train all", "minimol"),
-            Method("morgan_knn_k3", "Morgan KNN · k=3", "knn"),
-        ),
+        )
+        + BASELINE_METHODS,
     ),
     Task(
         "bioavailability_ma",
@@ -96,9 +105,8 @@ TASKS = (
             Method("starling_direct_full", "Starling · Direct (full)", "starling"),
             Method("starling_full_flat", "Starling · Full / Flat", "starling"),
             Method("starling_full_mechanism", "Starling · Full / Mechanism", "starling"),
-            Method("minimol_train_all", "MiniMol · Train all", "minimol"),
-            Method("morgan_knn_k3", "Morgan KNN · k=3", "knn"),
-        ),
+        )
+        + BASELINE_METHODS,
     ),
 )
 
@@ -109,6 +117,13 @@ SOURCE_COLORS = {
     "starling": VISIBLE,
     "minimol": PURPLE,
     "knn": GOLD,
+    "minimol_knn": PARENT,
+}
+BASELINE_SOURCES = {"minimol", "knn", "minimol_knn"}
+BASELINE_FILLS = {
+    "minimol": "#F2EFF8",
+    "knn": "#FBF3E6",
+    "minimol_knn": "#F2F4E8",
 }
 
 
@@ -171,16 +186,25 @@ def render_panel(
         row = results[(split, task.key, method.key)]
         value = float(row["macro_f1"])
         color = SOURCE_COLORS[method.source]
-        if method.source in {"minimol", "knn"}:
-            baseline_fill = "#F2EFF8" if method.source == "minimol" else "#FBF3E6"
-            parts.append(rect(x + 12, row_y - 18, width - 24, 36, fill=baseline_fill, rx=4))
+        if method.source in BASELINE_SOURCES:
+            band_height = min(34.0, max(24.0, step - 2.0))
+            parts.append(
+                rect(
+                    x + 12,
+                    row_y - band_height / 2,
+                    width - 24,
+                    band_height,
+                    fill=BASELINE_FILLS[method.source],
+                    rx=4,
+                )
+            )
         parts.append(
             svg_text(
                 x + 22,
                 row_y + 5,
                 method.label,
                 size=13,
-                weight=700 if method.source in {"minimol", "knn"} else 500,
+                weight=700 if method.source in BASELINE_SOURCES else 500,
             )
         )
         bar_width = value / SCALE_MAX * (plot_right - plot_left)
@@ -205,27 +229,35 @@ def render(metrics_path: Path, output: Path) -> None:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
         f'viewBox="0 0 {WIDTH} {HEIGHT}" role="img" aria-labelledby="chart-title chart-desc">',
         '<title id="chart-title">Starling benchmark performance by task and split</title>',
-        '<desc id="chart-desc">Horizontal bar charts compare no retrieval, ChEMBL retrieval, Starling retrieval, and MiniMol macro-F1 for three tasks on random and scaffold splits.</desc>',
+        '<desc id="chart-desc">Horizontal bar charts compare no retrieval, ChEMBL retrieval, Starling retrieval, MiniMol train-all, Morgan KNN, and MiniMol embedding KNN macro-F1 for three tasks on random and scaffold splits.</desc>',
         f'<metadata>Source: {metrics_path}; generated {generated}.</metadata>',
         rect(0, 0, WIDTH, HEIGHT, fill=BG, rx=0),
         svg_text(70, 58, "Starling Benchmark Performance", size=36, weight=750),
         svg_text(70, 94, "Random and scaffold held-out tests · Macro-F1", size=20, fill=MUTED),
-        svg_text(1830, 58, "GLM-5.2 + supervised baselines", size=18, weight=700, fill=PURPLE, anchor="end"),
-        svg_text(70, 132, "Retrieval: parent-disjoint · MiniMol: train-all · Morgan KNN: train labels only, k=3", size=14, fill=MUTED),
+        svg_text(1830, 58, "GLM-5.2 + train-label baselines", size=18, weight=700, fill=PURPLE, anchor="end"),
+        svg_text(70, 132, "Retrieval: parent-disjoint · MiniMol head: train-all · KNN: train labels only, k=3 (Morgan/Tanimoto or MiniMol/cosine)", size=14, fill=MUTED),
     ]
 
     legend = (
         ("No retrieval", NEUTRAL),
         ("ChEMBL retrieval", BLIND),
         ("Starling retrieval", VISIBLE),
-        ("MiniMol baseline", PURPLE),
+        ("MiniMol head", PURPLE),
         ("Morgan KNN · k=3", GOLD),
+        ("MiniMol KNN · k=3", PARENT),
     )
     legend_x = 70
     for label, color in legend:
         parts.append(rect(legend_x, 157, 18, 18, fill=color, rx=3))
         parts.append(svg_text(legend_x + 27, 171, label, size=14, weight=600))
-        legend_x += 220 if label != "Starling retrieval" else 230
+        legend_x += {
+            "No retrieval": 180,
+            "ChEMBL retrieval": 220,
+            "Starling retrieval": 220,
+            "MiniMol head": 190,
+            "Morgan KNN · k=3": 220,
+            "MiniMol KNN · k=3": 220,
+        }[label]
 
     panel_y = (205, 725, 1245)
     for task, y in zip(TASKS, panel_y, strict=True):

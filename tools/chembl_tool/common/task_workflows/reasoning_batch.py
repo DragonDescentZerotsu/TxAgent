@@ -90,6 +90,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "tier1_replacement_index": args.tier1_replacement_index,
         "tier1_replacement_groups": args.tier1_replacement_groups or [],
         "final_only_source_batch": args.final_only_source_batch,
+        "final_only_groups": args.final_only_groups or [],
         "started_at": _now(),
         "paths": {
             "batch_dir": str(batch_dir),
@@ -232,6 +233,10 @@ def _prepare_final_only_run_dir(args: argparse.Namespace, query_index: int, run_
     manifest["run_id"] = run_id
     manifest["final_only_source_run_dir"] = str(source_run_dir)
     manifest["final_only_source_batch"] = str(source_batch_dir)
+    if args.final_only_groups:
+        filter_audit = _filter_final_only_run_artifacts(run_dir, args.final_only_groups)
+        manifest["final_only_group_filter"] = filter_audit
+        manifest["n_groups_with_neighbors"] = filter_audit["n_retained_groups_with_neighbors"]
     manifest.setdefault("paths", {})
     manifest["paths"].update(
         {
@@ -243,6 +248,75 @@ def _prepare_final_only_run_dir(args: argparse.Namespace, query_index: int, run_
         }
     )
     _write_json(run_dir / "manifest.json", manifest)
+
+
+def _filter_final_only_run_artifacts(run_dir: Path, requested_group_ids: list[str]) -> dict[str, Any]:
+    """Restrict copied retrieval/group artifacts before a final-only rerun."""
+    requested = list(dict.fromkeys(str(group_id) for group_id in requested_group_ids if group_id))
+    if not requested:
+        raise ValueError("Final-only group filtering requires at least one group id.")
+    requested_set = set(requested)
+
+    retrieval_path = run_dir / "retrieval.json"
+    group_path = run_dir / "group_reasoning_outputs.jsonl"
+    retrieval = _read_json(retrieval_path)
+    groups = list(retrieval.get("groups") or [])
+    available = {str(group.get("group_id") or "") for group in groups}
+    missing = sorted(requested_set - available)
+    if missing:
+        raise ValueError(
+            "Final-only group ids are absent from copied retrieval: "
+            + ", ".join(missing)
+        )
+
+    retained_groups = [
+        group for group in groups if str(group.get("group_id") or "") in requested_set
+    ]
+    outputs = _read_jsonl(group_path)
+    retained_outputs = [
+        output
+        for output in outputs
+        if str(output.get("group_id") or "") in requested_set
+    ]
+    retained_output_ids = [str(output.get("group_id") or "") for output in retained_outputs]
+    expected_output_ids = [
+        str(group.get("group_id") or "")
+        for group in retained_groups
+        if group.get("neighbors")
+    ]
+    if retained_output_ids != expected_output_ids:
+        raise ValueError(
+            "Copied group outputs do not match retained retrieval groups with neighbors: "
+            f"expected={expected_output_ids}, found={retained_output_ids}"
+        )
+
+    coverage = dict(retrieval.get("coverage") or {})
+    coverage.update(
+        {
+            "n_groups": len(retained_groups),
+            "n_groups_with_neighbors": len(expected_output_ids),
+            "n_neighbors_total": sum(
+                len(group.get("neighbors") or []) for group in retained_groups
+            ),
+        }
+    )
+    retrieval["groups"] = retained_groups
+    retrieval["coverage"] = coverage
+    retrieval.setdefault("experiment", {})["final_only_group_filter"] = {
+        "requested_group_ids": requested,
+        "source_group_ids": [str(group.get("group_id") or "") for group in groups],
+        "retained_group_ids": [str(group.get("group_id") or "") for group in retained_groups],
+    }
+    _write_json(retrieval_path, retrieval)
+    _write_jsonl(group_path, retained_outputs)
+    return {
+        "requested_group_ids": requested,
+        "source_group_ids": [str(group.get("group_id") or "") for group in groups],
+        "retained_group_ids": [str(group.get("group_id") or "") for group in retained_groups],
+        "n_source_group_outputs": len(outputs),
+        "n_retained_group_outputs": len(retained_outputs),
+        "n_retained_groups_with_neighbors": len(expected_output_ids),
+    }
 
 
 def _final_only_command(config: BatchConfig, args: argparse.Namespace, run_dir: Path) -> list[str]:
@@ -755,6 +829,15 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         default="",
         help="Existing batch directory whose retrieval/single/group artifacts should be reused for final-only reruns.",
     )
+    parser.add_argument(
+        "--final-only-groups",
+        nargs="*",
+        default=None,
+        help=(
+            "Optional exact group ids retained from --final-only-source-batch before final synthesis. "
+            "This filters copied retrieval and group outputs without rerunning earlier reasoning stages."
+        ),
+    )
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--indices", nargs="*", default=None, help="Indices or inclusive ranges, e.g. 0 3 5-8.")
     parser.add_argument("--start", type=int, default=0)
@@ -809,6 +892,9 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     args = parser.parse_args(argv)
     args.groups = _normalize_group_args(args.groups)
     args.tier1_replacement_groups = _normalize_group_args(args.tier1_replacement_groups)
+    args.final_only_groups = _normalize_group_args(args.final_only_groups)
+    if args.final_only_groups and not args.final_only_source_batch:
+        parser.error("--final-only-groups requires --final-only-source-batch")
     return args
 
 

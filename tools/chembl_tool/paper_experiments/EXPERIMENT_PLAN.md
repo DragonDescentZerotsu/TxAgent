@@ -208,3 +208,8 @@ The endpoint-returned model identifier is recorded from every response rather th
 ## 补充的非 Agent baseline
 
 现有 MiniMol 结果可作为 learned baseline 背景，但不属于 retrieval ablation，也不能用来选择 agent setting。历史 DeepSeek 和 Bioavailability expert-policy run 仅作为 provenance 参考；它们与冻结的 GLM 矩阵不可直接比较，不进入论文主表。
+
+当前 Starling random/scaffold 已完成 MiniMol `--train-all` head、full-test Morgan KNN `k=3` 和
+复用冻结 MiniMol embedding 的 cosine KNN `k=3`。三者进入 Starling benchmark performance overview，
+但都不是 agent retrieval condition；训练/选择口径、结果与入口见
+`STARLING_BENCHMARK_RESULTS.md`。本节其余 29-condition 计数仍只描述旧 TDC-lineage agentic matrix。

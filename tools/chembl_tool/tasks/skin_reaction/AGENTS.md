@@ -52,6 +52,63 @@ reaction。新的 Starling-held-out benchmark 因此只接受 sensitization 或 
 dermatitis/contact allergy scope 的明确 positive/negative record；irritation、generic local damage、
 skin exposure 和 inconclusive 不转成 gold label。
 
+### Paper-facing tier 的距离语义
+
+Skin 的 `Mechanism.tier_1` 至 `tier_4` 是逐步扩大的 evidence scope，不是像 oral bioavailability
+`F = Fa × Fg × Fh` 那样的层层因果分解：
+
+```text
+Tier 1:
+  direct sensitization/contact-allergy anchors；最接近当前 gold。
+
+Tier 2:
+  sensitization AOP key events；与 gold 对齐，但单一 key event 不等于最终 clinical outcome。
+
+Tier 3:
+  phototoxicity、irritation、corrosion、local skin damage；都是 skin hazard，
+  但不是当前 sensitization label 的组成机制。
+
+Tier 4:
+  skin permeability、retention 和 exposure context；只改变 hazard 表现的 plausibility，
+  不能单独证明 sensitization。
+```
+
+因此从 direct 扩展到 full 并不是加入越来越完整的同一条 causal chain，而是加入越来越远、语义可能
+不完全对齐的 evidence。`experiment_config.py` 是 paper-facing source/group mapping 的代码真相。
+
+### 2026-07-27 Starling retrieval degradation trace audit
+
+Deployment-visible parent-disjoint Starling 的 observed macro-F1：
+
+| split | direct | full flat | full mechanism |
+|---|---:|---:|---:|
+| random | 0.643141 | 0.635255 | 0.629991 |
+| scaffold | 0.597332 | 0.592139 | 0.583574 |
+
+Full-flat 与 full-mechanism 的 LLM-visible evidence-row multiset 在 random/scaffold 均为 380/380
+逐 query exact matches；mechanism 没有获得额外 rows，只是把同一 union 拆成多个 branches 再做 final。
+Direct 到 mechanism 的 prediction flips 为：
+
+```text
+random:   38 flips，17 corrected / 21 broken，net -4 correct
+scaffold: 29 flips，12 corrected / 17 broken，net -5 correct
+```
+
+Trace 中主要 failure modes 是：phototoxicity/irritation 被提升成 sensitization hazard、Tier 4 exposure
+support 被误当 risk、weak/distant AOP narrative 被 branch packaging 放大、broad mixed negatives 稀释
+较近 positive anchor，以及无 neighbor 时的 prompt-boundary instability。Starling random 的平均 logical
+tokens 从 direct 27.7k 增至 flat 77.4k、mechanism 96.1k；scaffold 为 26.9k、73.4k、91.6k。
+更多 tokens 表示更多 group calls/重复 synthesis，不等于更多 label-aligned information。
+
+完整量化和逐 flip trace：
+
+```text
+outputs/paper/skin_reaction_retrieval_diagnostic/agent_quant_summary.json
+outputs/paper/skin_reaction_retrieval_diagnostic/agent_random_flips.jsonl
+outputs/paper/skin_reaction_retrieval_diagnostic/agent_scaffold_flips.jsonl
+outputs/paper/skin_reaction_retrieval_diagnostic/report_trace_examples.csv
+```
+
 当前 ChEMBL evidence 版本：
 
 ```text
@@ -149,6 +206,52 @@ run_reasoning_batch.py
   批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、report、logs、
   runs 和 combined trace；支持 --skip-existing 断点续跑。
 ```
+
+## Starling Tier 1+2 final-only 诊断（2026-07-27）
+
+为检查较远的 Tier 3（phototoxicity/irritation/local damage）和 Tier 4（skin exposure）evidence 是否拖累
+sensitization gold label，已对 random/scaffold 的 deployment-visible parent-disjoint
+`starling_full_mechanism` 做 post-hoc scope ablation。该条件：
+
+```text
+保留：冻结的 single-molecule output、Mechanism.tier_1、Mechanism.tier_2
+删除：Mechanism.tier_3、Mechanism.tier_4
+重跑：仅 final synthesis
+不变：query、retrieval policy、source artifacts、branch outputs、final prompt/schema、model/config
+```
+
+公共入口为 `reasoning_batch.py --final-only-source-batch ... --final-only-groups ...`。必须使用
+`--final-only-groups` 做 artifact 级过滤；普通 `--groups` 只控制 fresh pipeline 的 group reasoning，
+不能替代 resume-final 过滤。当前 batch：
+
+```text
+random:
+  outputs/paper/molecular_evidence_agent_starling_random/runs_deployment_visible_parent_disjoint/
+    skin_reaction/skin_reaction__starling_tier12_final_only/
+
+scaffold:
+  outputs/paper/molecular_evidence_agent_starling_scaffold/runs_deployment_visible_parent_disjoint/
+    skin_reaction/skin_reaction__starling_tier12_final_only/
+```
+
+两套均为 380/380 successful、0 failure。逐样本检查确认 single output 与 source batch byte-identical，
+retained group outputs 与 source 中 Tier 1/2 子集完全相同，retrieval/group/trace 无 Tier 3/4 group 泄漏。
+结果：
+
+| split | condition | macro-F1 | accuracy | TN / FP / FN / TP |
+|---|---|---:|---:|---|
+| random | direct | 0.643141 | 0.663158 | 81 / 48 / 80 / 171 |
+| random | Tier 1+2 final-only | 0.631003 | 0.652632 | 78 / 51 / 81 / 170 |
+| random | full mechanism | 0.629991 | 0.652632 | 77 / 52 / 80 / 171 |
+| scaffold | direct | 0.597332 | 0.634211 | 63 / 54 / 85 / 178 |
+| scaffold | Tier 1+2 final-only | 0.594785 | 0.626316 | 66 / 51 / 91 / 172 |
+| scaffold | full mechanism | 0.583574 | 0.621053 | 61 / 56 / 88 / 175 |
+
+相对 full mechanism，Tier 1+2 的 paired macro-F1 delta 为 random `+0.001013`
+（13 better / 13 worse；bootstrap 95% CI `[-0.026550, 0.028667]`）和 scaffold `+0.011211`
+（10 better / 8 worse；95% CI `[-0.009740, 0.033671]`）。它说明裁掉 Tier 3/4 在 scaffold 上有小幅
+point-estimate recovery，但两套区间均跨 0，且都没有超过 direct；该 test-driven post-hoc 结果只能作为
+failure diagnostic，不能当作新的预注册 primary condition。
 
 历史 native v1 全量 test 结果（TDC lineage，不是当前 Starling split）：
 

@@ -54,7 +54,28 @@ train/test parent identity 零重叠，scaffold 版本还要求 scaffold 零重�
 | Bioavailability_Ma | 1,862 | 372 | 99 / 273 | 113 / 259 |
 | Skin_Reaction | 1,900 | 380 | 129 / 251 | 117 / 263 |
 
-运行入口：
+当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
+MiniMol embedding cosine KNN、blind 进度、Skin retrieval degradation、Tier 1+2 final-only 诊断和
+代码入口统一记录在：
+
+```text
+tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
+```
+
+当前 Starling benchmark 的主要运行与汇总入口：
+
+```text
+tools/chembl_tool/common/starling/build_benchmark_datasets.py
+tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
+tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
+tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
+baselines/minimol/run_bioavailability_ma.py --train-all
+baselines/minimol/run_embedding_knn.py
+baselines/structure_knn/run.py
+```
+
+数据构建入口：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -280,7 +301,9 @@ chembl_exact_context.py
 reasoning_batch.py
   多分子 batch orchestration，包括 molecule 级并行、日志、trace 合并、断点续跑、
   predictions/metrics/report 输出。支持 `--groups` 透传给 task pipeline，用于 targeted
-  group smoke test；metrics 包含 positive-class precision/recall/F1、confusion matrix 和
+  group smoke test；支持 `--final-only-source-batch` 复用已有 single/group artifacts，
+  并用 `--final-only-groups` 在重新汇总 final 前严格裁剪可见 group（不能用 `--groups`
+  代替该过滤）；metrics 包含 positive-class precision/recall/F1、confusion matrix 和
   prediction distribution。
 
 evidence_contract.py
@@ -484,6 +507,11 @@ visibility-contract audit。identity-blind 不是 parent-disjoint 主结果，�
 完整命令、resume、manifest 并发写入约束和 matched-prefetch 后续要求见
 `tools/chembl_tool/paper_experiments/AGENTS.md`。
 
+2026-07-27 当前 artifact snapshot 虽然 random/scaffold 各已有 22 个 blind condition metrics，但仍分别有
+9/5 个 failed sample-condition，尚未通过正式 gate，也未进入 Starling 主 bar chart。具体失败分布、当前
+point estimates 和 repair 后必做 audit 见
+`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
+
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --split valid ...
 python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
@@ -518,13 +546,14 @@ coverage 与性能增幅的关系分析使用 `plot_coverage_performance.py`，�
 每个 split 的正式 figures 目录只保留 canonical SVG 和一份高分辨率 PNG，不保留
 preview、QA、pre-parent 或已被替代的 overview 代码/产物。
 
-## MiniMol baseline（既有结果为历史 TDC lineage）
+## MiniMol baseline（历史 TDC 与当前 Starling train-all）
 
 MiniMol baseline 代码放在：
 
 ```text
 baselines/minimol/
   run_bioavailability_ma.py
+  run_embedding_knn.py
   run_direct_gpu_sweep.sh
   run_hparam_sweep.py
 ```
@@ -544,9 +573,23 @@ benchmark，必须分别使用 `data/processed_starling/<Task>/random/` 和 `sca
 `valid.jsonl`，因此 MiniMol 的 valid-based model selection 还需要先冻结一套只从各自 train 内生成的
 validation protocol。新结果必须写入独立 output root，不能覆盖或与下面的 TDC 指标合并。
 
-若明确允许使用全部 benchmark train molecules，则使用 `--train-all`：不读取 `valid.jsonl`，每个
+当前 formal Starling baseline 已明确允许使用全部 benchmark train molecules，因此使用 `--train-all`：
+不读取 `valid.jsonl`，每个
 ensemble member 在全部 `train.jsonl` 上训练固定 epoch，并用冻结的 `threshold=0.5` 评估 test。
 这种模式不得进行 test-selected early stopping 或 threshold tuning；输出中的 validation metrics 为 null。
+当前 random/scaffold 结果和 output roots 见
+`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`；下文单列的 sweep 数值仍全部是
+旧 TDC lineage。
+
+MiniMol embedding retrieval-only 对照复用上述正式 baseline 已保存、且与 split 逐行一致的
+`embeddings/{train,test}.pt`，L2 normalize 后按 cosine similarity 取同 split train 中的 top-3 molecules。
+它与 Morgan KNN 一样使用未加权多数票，score 为正类邻居比例；不训练新 head，也不需要重新占用 GPU。
+入口与输出分别为：
+
+```text
+baselines/minimol/run_embedding_knn.py
+outputs/baselines/minimol_embedding_knn_starling/<Task>/<random|scaffold>/
+```
 
 运行环境和实现注意事项：
 

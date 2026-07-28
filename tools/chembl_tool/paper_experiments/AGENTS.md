@@ -18,6 +18,12 @@ VISIBILITY_ANALYSIS.md
 RESULTS.md
   已实际测得的结果和统计结论。不能写入尚未运行的预期结果。
 
+STARLING_BENCHMARK_RESULTS.md
+  当前 Starling random/scaffold lineage 的集中总账：frozen split/label 决策、formal pipeline、
+  MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、identity-blind 进度、
+  Skin retrieval degradation、Tier 1+2 post-hoc 和所有入口。
+  它与主要记录旧 TDC test/valid matrix 的 RESULTS.md 分开，不能跨 lineage 混表。
+
 PIPELINE.md
   通用 pipeline、数据流、可见性制度和 task mechanism families。
 
@@ -82,15 +88,23 @@ outputs/paper/molecular_evidence_agent_starling_scaffold/
 ```
 
 正式 Starling performance bar chart 从合并后的 `metrics.tsv` 读取 random/scaffold、三个 task、
-parent-disjoint pipeline 条件、MiniMol train-all baseline 和 Morgan fingerprint KNN baseline。
-KNN 只从同 split 的 `train.jsonl` 检索，固定 `k=3`，按未加权多数票预测，并用正类邻居比例计算
-AUROC。图中主指标为 macro-F1，输出只保留 canonical SVG 和一份高分辨率 PNG：
+parent-disjoint pipeline 条件、MiniMol train-all baseline、Morgan fingerprint KNN 和 MiniMol
+embedding cosine KNN。两种 KNN 都只从同 split 的 `train.jsonl` 检索，固定 `k=3`，按未加权多数票预测，
+并用正类邻居比例计算 AUROC。图中主指标为 macro-F1，输出只保留 canonical SVG 和一份高分辨率 PNG：
 
 ```bash
 python -m baselines.structure_knn.run \
   --data-dir data/processed_starling/<Task>/<random|scaffold> \
   --output-dir outputs/baselines/structure_knn_starling/<Task>/<random|scaffold> \
   --k 3
+
+python -m baselines.minimol.run_embedding_knn \
+  --data-dir data/processed_starling/<Task>/<random|scaffold> \
+  --embedding-cache-dir outputs/baselines/minimol_starling/<Task>/<random|scaffold>/embeddings \
+  --output-dir outputs/baselines/minimol_embedding_knn_starling/<Task>/<random|scaffold> \
+  --k 3
+
+python -m tools.chembl_tool.paper_experiments.summarize_starling_benchmark
 
 python -m tools.chembl_tool.paper_experiments.plot_starling_benchmark_overview \
   --png-output outputs/paper/starling_benchmark_results/figures/starling_benchmark_overview_highres.png
@@ -172,7 +186,14 @@ python -m tools.chembl_tool.paper_experiments.summarize_results \
 每个 split 必须恰有 22 个 identity-blind condition，并同时满足
 `n_failed=0`、`query_smiles_trace_leaks=0`、`visibility_contract_satisfied=true`，才能报告结果。
 `summarize_starling_benchmark.py` 仍只汇总 deployment-visible parent-disjoint 主 pipeline、
-MiniMol train-all 和正式全 test Morgan KNN；blind 使用上面的独立 analysis 目录。
+MiniMol train-all、正式全 test Morgan KNN 和 MiniMol embedding cosine KNN；blind 使用上面的独立
+analysis 目录。
+
+2026-07-27 artifact snapshot 已有 random/scaffold 各 22 个 blind condition metrics，但尚未通过完成 gate：
+random 有 9 个 failed sample-condition（均在 Bioavailability），scaffold 有 5 个（BBB ChEMBL flat 2 个，
+Bioavailability Starling direct-full/flat/mechanism 各 1 个）。这些 point estimates 只能用于 repair
+进度诊断，不得写入 formal Starling bar chart；修复后还必须重跑 leak/visibility audit。当前逐条件状态和
+结果集中记录在 `STARLING_BENCHMARK_RESULTS.md`。
 
 ## 代码与命令入口
 

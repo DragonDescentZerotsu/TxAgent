@@ -71,7 +71,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | E5 | Deployment-visible agentic 主矩阵与工具行为分析 | C4、C5 | P0 | 当前 26 条件完整、0 failure；仍缺 ClinTox 3 个 Starling 条件及最终数据冻结重跑 |
 | E6 | Identity-blind/matched 与细粒度 visibility attribution | C4、C5 | P1 精选条件 | Test identity-blind 26 条件、matched 21 条件；valid 两者均 26 条件且 parity audit 完整；细粒度 policy 未实现 |
 | E7 | Numeric vs non-numeric | C2 补充 | P1 | Bio 第一轮完成 |
-| E8 | KNN、vote、ECFP learned、MiniMol、pretrained baselines | C1、C3 | P0 | MiniMol/KNN 部分完成 |
+| E8 | KNN、vote、ECFP learned、MiniMol、pretrained baselines | C1、C3 | P0 | Starling MiniMol train-all、full-test Morgan KNN 和 MiniMol embedding cosine KNN 已完成；其余 baseline 待补 |
 | E9 | 第二模型 confirmation | C1、C5 | P0 | 模型未冻结 |
 | E10 | 关键条件重复运行 | C5、C6 | P0 | 未开始 |
 | E11 | Coverage–performance 关联分析 | C3、C6 | P0 | 第一轮 test/valid 各 17 个 agentic retrieval 条件已完成；TSV/JSON/report/canonical SVG 和 class-conditional coverage 已生成，最终矩阵冻结后需重跑 |
@@ -91,7 +91,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；现有 22 条 retrieval conditions 在 test/valid 均完成且为 0 conflict | 最终数据冻结后若 index 改变需重建与复跑 | 2026-08-02 |
 | Agentic deployment matrix | 26 条件完成，全部 `n_failed_runs=0`；新增结果已进入统一 summary 与主 overview 图 | 缺 ClinTox 3 个 Starling 条件；final annotation/source freeze 后按需重跑 | 2026-08-23 |
 | Source quality gold | 未建立 | 需要双人 annotation 和原始文献/assay 核验 | 2026-08-30 |
-| Learned baselines | MiniMol 已有 | 缺 ECFP classifier、retrieval-only vote 和现代 pretrained baseline | 2026-08-16 |
+| Learned baselines | 当前 Starling random/scaffold 的 MiniMol train-all、full-test Morgan KNN 和 MiniMol embedding cosine KNN 已完成 | 缺 ECFP RF/XGBoost、matched-neighbor retrieval-only vote 和独立的第二种 pretrained encoder baseline | 2026-08-16 |
 | Cross-model evidence | 只有 GLM-5.2 | 缺第二个可复现模型 | 2026-08-23 |
 | Run-to-run variance | 当前每个条件一次 | 关键比较需至少 3 次独立生成 | 2026-08-30 |
 | Visibility failure audit | 第一轮已完成 | 需要第二 annotator 和 targeted causal ablation | 2026-08-30 |
@@ -425,6 +425,12 @@ evidence duplication、token cost、failed branch 和 final evidence utilization
 和 mechanism 使用相同 evidence row 集合。当前结果已证明 gain 可能很小，因此不允许在
 test 上继续改 mechanism prompt。
 
+2026-07-27 对 Skin Starling parent-disjoint random/scaffold 完成一次 test-driven post-hoc failure
+diagnostic：冻结并复用 full-mechanism 的 single、Tier 1 和 Tier 2 branch，只删除 Tier 3/4 后重跑 final。
+该诊断不修改 prompt，也不注册为 primary condition。相对 full mechanism 的 macro-F1 delta 分别为
+`+0.001013` 和 `+0.011211`，bootstrap 95% CI 均跨 0，且两套均未超过 direct；详细 provenance、
+coverage 和命令记录在 `tools/chembl_tool/tasks/skin_reaction/AGENTS.md`。
+
 完成标准：若 gain 不稳定，改写为“mechanism decomposition 的收益依赖 family coverage/quality”，并
 检验 gain 与 coverage、duplicate burden、group disagreement 的关系。
 
@@ -496,8 +502,11 @@ one modern pretrained molecular encoder selected without test tuning
 所有 supervised baseline 只用 train 训练、valid 选配置、test 一次评估。Retrieval-only baseline 使用与
 agent 对应 policy 下的相同 neighbors，防止比较不同候选池。Operational 与 parent-disjoint baseline 分开报告。
 
-资源：1 至 4 张 GPU 足够完成 learned baseline；CPU 可跑 KNN/RF/XGBoost。当前只有 MiniMol 和
-Bioavailability scalar KNN，其他入口未实现。
+资源：1 至 4 张 GPU 足够完成 learned baseline；CPU 可跑 KNN/RF/XGBoost。当前三任务、两种 Starling
+split 的 MiniMol train-all、full-test Morgan KNN 和复用冻结 MiniMol embedding 的 cosine KNN 已完成；
+Bioavailability scalar KNN 仍作为 numeric direct-F 专项对照。尚缺 ECFP RF/XGBoost、使用 agent
+相同 neighbors 的 retrieval-only vote，以及用于确认表示选择稳健性的独立第二种 pretrained encoder。
+当前数值与入口见 `STARLING_BENCHMARK_RESULTS.md`。
 
 完成标准：报告 Macro-F1、accuracy、AUROC（有 score 时）、训练/推理成本。Agent claim 必须说明它
 在哪些任务优于 learned model，以及 retrieval/trace 提供了什么额外能力。
@@ -699,7 +708,7 @@ exclusion/backfill/diff-reuse、same-parent exposure audit，以及 BBB/Skin ful
 
 - ClinTox 的最终 Starling family builder/profile；
 - E6 的细粒度 query/neighbor/source-ID visibility policies；
-- E8 尚缺的 retrieval vote、ECFP learned 和 pretrained baseline runners；
+- E8 尚缺的 retrieval vote、ECFP learned 和独立第二种 pretrained encoder runner；
 - E3 annotation sampler、schema、agreement 和 adjudication summarizer；
 - E9/E10 的模型/重复 run manifest 与聚合报告；
 - E12 的 publishable task configuration 与 LLM matrix integration。共享 graph/index/retrieval/audit 和 BBB

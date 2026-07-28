@@ -89,6 +89,91 @@ skin exposure 不等于这个 label。
 TDC ClinTox positive 表示因 toxicity 导致 clinical-trial failure；不是任意 in vitro liability。
 当前仓库还没有 ClinTox Starling direct acquisition，因此本轮不构造 ClinTox Starling split。
 
+## Free-text 到 binary label 的精确规则
+
+这里记录 task adapters 当前实际执行的 mapping，避免把解释性自然语言误当成隐式多数票或模型判断。
+任何修改都必须同时修改 adapter tests 和本节。
+
+### BBB_Martins
+
+`bbb_permeability_label` 先转小写，并把空格/连字符归一化为下划线。只接受以下显式枚举：
+
+```text
+Y=1:
+  permeable
+  good_penetration
+  increased_permeability
+  high_permeability
+
+Y=0:
+  poor_penetration
+  impermeable
+  low_permeability
+  restricted
+```
+
+`bbb_transport_label` 即使写了 influx/efflux，也只描述机制，不产生 gold label。任意其它 qualitative
+文本只有在同一 row 还存在可解释的明确 logBB 时才可能由 logBB 得到 label；qualitative 与 logBB
+冲突则整条 row 为 `within_record_label_conflict`。
+
+### Bioavailability_Ma
+
+没有可解析数字时，只接受能明确落在 20% threshold 两侧的描述：
+
+```text
+Y=1:
+  high
+  good
+  excellent
+  complete / completely
+  near complete / nearly complete
+  almost complete
+
+Y=0:
+  very low
+  low
+  poor
+  negligible
+  minimal
+```
+
+以下描述不提供 20% threshold 信息，单独出现时拒绝：
+
+```text
+moderate
+variable
+unpredictable
+intermediate
+orally bioavailable
+orally available
+```
+
+`fold`、`times`、`relative`、`increase/decrease by`、`higher/lower than` 等相对比较也拒绝。
+如果文本同时含数字，则优先按可审计的 numeric interval/range 和 unit normalization 判断；
+跨 20% 的 range 不取 midpoint，仍为 ambiguous。
+
+### Skin_Reaction
+
+先要求 `reaction_type` 归一化后属于：
+
+```text
+sensitization
+allergic contact dermatitis
+contact allergy
+```
+
+然后只按明确 `outcome_label` 映射：
+
+```text
+positive -> Y=1
+negative -> Y=0
+inconclusive / missing / unknown -> reject
+```
+
+`positive_count` 和 `total_tested` 只保留为 provenance，不另造 incidence threshold。只写
+`skin reaction`、irritation、urticaria、generic local injury、phototoxicity/photo-irritation 或
+permeability/exposure 的记录不映射为 sensitization gold。
+
 ## 代码与输出
 
 公共逻辑：
