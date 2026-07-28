@@ -31,6 +31,14 @@ from .molecular_evidence_agent import (
     _require_parent_disjoint_reuse_plans,
     _select_experiments,
     _visibility_contract,
+    experiment_run_root,
+)
+from .minimol_retrieval_contract import (
+    MINIMOL_RETRIEVAL_FEATURE,
+    MORGAN_RETRIEVAL_FEATURE,
+    RETRIEVAL_FEATURES,
+    descriptor_path_for_experiment,
+    paper_root_for_minimol_retrieval,
 )
 
 
@@ -42,8 +50,14 @@ TASK_DATA_NAMES = {
 DEFAULT_BENCHMARK_DATA_ROOT = Path("data/processed_starling")
 
 
-def experiments_for_starling_benchmark(split: str) -> list[Experiment]:
+def experiments_for_starling_benchmark(
+    split: str,
+    *,
+    retrieval_feature: str = MORGAN_RETRIEVAL_FEATURE,
+) -> list[Experiment]:
     """Replace only benchmark inputs and held-out-filtered Starling indices."""
+    if retrieval_feature not in RETRIEVAL_FEATURES:
+        raise ValueError(f"Unknown retrieval feature: {retrieval_feature}")
     paper_root = paper_root_for_benchmark_split(split)
     experiments: list[Experiment] = []
     for experiment in EXPERIMENTS:
@@ -54,7 +68,13 @@ def experiments_for_starling_benchmark(split: str) -> list[Experiment]:
         index = experiment.index
         if experiment.source == "starling":
             index = str(_starling_index_path(experiment, paper_root))
-        experiments.append(replace(experiment, input_jsonl=input_jsonl, index=index))
+        updated = replace(experiment, input_jsonl=input_jsonl, index=index)
+        if retrieval_feature == MINIMOL_RETRIEVAL_FEATURE and updated.mode != "none":
+            updated = replace(
+                updated,
+                index=str(descriptor_path_for_experiment(split, updated.name)),
+            )
+        experiments.append(updated)
     return experiments
 
 
@@ -76,16 +96,47 @@ def _starling_index_path(experiment: Experiment, paper_root: Path) -> Path:
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    experiments = experiments_for_starling_benchmark(args.benchmark_split)
+    if (
+        args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
+        and args.visibility_mode != DEPLOYMENT_VISIBLE
+    ):
+        raise SystemExit(
+            "The MiniMol retrieval-feature ablation is frozen for "
+            "deployment_visible only."
+        )
+    experiments = experiments_for_starling_benchmark(
+        args.benchmark_split,
+        retrieval_feature=args.retrieval_feature,
+    )
     selected = _select_experiments(args.experiments, experiments=experiments)
     selected = _prepare_policy_selection(selected, args)
+    if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE:
+        requested_none = [experiment.name for experiment in selected if experiment.mode == "none"]
+        if args.experiments and requested_none:
+            raise SystemExit(
+                "MiniMol retrieval leaves query-only conditions unchanged; reuse the frozen "
+                "Morgan-root none batches instead of selecting: "
+                + ", ".join(requested_none)
+            )
+        selected = [experiment for experiment in selected if experiment.mode != "none"]
     if args.list:
         print("\n".join(experiment.name for experiment in selected))
         return 0
 
-    paper_root = paper_root_for_benchmark_split(args.benchmark_split)
+    paper_root = (
+        paper_root_for_minimol_retrieval(args.benchmark_split)
+        if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
+        else paper_root_for_benchmark_split(args.benchmark_split)
+    )
     args.paper_root = str(paper_root)
     args.split = "test"
+    if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE:
+        frozen_morgan_operational_root = experiment_run_root(
+            DEPLOYMENT_VISIBLE,
+            paper_root=paper_root_for_benchmark_split(args.benchmark_split),
+        )
+        args.single_analysis_root = str(frozen_morgan_operational_root)
+        args.group_analysis_root = str(frozen_morgan_operational_root)
     _validate_inputs(selected)
     _require_parent_disjoint_reuse_plans(selected, args)
     benchmark_provenance = _benchmark_provenance(
@@ -96,6 +147,7 @@ def main(argv: list[str] | None = None) -> int:
     manifest: dict[str, Any] = {
         "benchmark_source": "starling",
         "benchmark_split": args.benchmark_split,
+        "retrieval_feature": args.retrieval_feature,
         "model": GLM_MODEL,
         "base_url": GLM_BASE_URL,
         "api_key_env": args.api_key_env,
@@ -103,8 +155,11 @@ def main(argv: list[str] | None = None) -> int:
         "visibility_contract": _visibility_contract(args.visibility_mode),
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "paper_root": str(paper_root),
+        "single_analysis_root": str(getattr(args, "single_analysis_root", "")),
+        "group_analysis_root": str(getattr(args, "group_analysis_root", "")),
         "temperature": 0.0,
         "max_tokens": 20480,
+        "limit": args.limit,
         "benchmark_provenance": benchmark_provenance,
         "experiments": [
             {
@@ -251,6 +306,11 @@ def _sha256_file(path: Path) -> str:
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--benchmark-split", choices=BENCHMARK_SPLITS, required=True)
+    parser.add_argument(
+        "--retrieval-feature",
+        choices=RETRIEVAL_FEATURES,
+        default=MORGAN_RETRIEVAL_FEATURE,
+    )
     parser.add_argument("--experiments", nargs="*", default=[])
     parser.add_argument("--list", action="store_true")
     parser.add_argument(
@@ -268,6 +328,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--parallelism", type=int, default=8)
     parser.add_argument("--group-workers", type=int, default=8)
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="Run at most this many test rows per selected condition; 0 runs the full test.",
+    )
     return parser.parse_args(argv)
 
 

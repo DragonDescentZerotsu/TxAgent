@@ -18,6 +18,9 @@ from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     _write_json_atomic,
     experiments_for_starling_benchmark,
 )
+from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
+    paper_root_for_minimol_retrieval,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     _group_prompt_payload,
     _llm_query_payload,
@@ -58,6 +61,24 @@ def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_ind
     assert chembl.index == EXPERIMENTS[1].index
     assert "molecular_evidence_agent_starling_random/evidence" in starling.index
     assert starling.index.endswith("bbb_starling_direct/starling_bbb_neighbor_index.pkl")
+
+
+def test_starling_minimol_matrix_uses_descriptors_and_isolated_output_root():
+    experiments = experiments_for_starling_benchmark(
+        "scaffold",
+        retrieval_feature="minimol",
+    )
+    none = next(item for item in experiments if item.name == "bbb_martins__none")
+    direct = next(item for item in experiments if item.name == "bbb_martins__chembl_direct")
+
+    assert none.index == EXPERIMENTS[0].index
+    assert direct.index.endswith(
+        "minimol_retrieval_features/scaffold/descriptors/"
+        "bbb_martins__chembl_direct.json"
+    )
+    assert paper_root_for_minimol_retrieval("scaffold").name == (
+        "molecular_evidence_agent_starling_scaffold_minimol_retrieval"
+    )
 
 
 def test_starling_matrix_uses_selection_specific_atomic_manifests(tmp_path):
@@ -284,6 +305,65 @@ def test_parent_disjoint_command_uses_separate_root_and_operational_single_prior
     assert "runs_deployment_visible" in single_source
     group_source = command[command.index("--group-analysis-source-batch") + 1]
     assert group_source.endswith("bbb_martins__chembl_direct")
+
+
+def test_parent_disjoint_command_can_reuse_external_single_without_crossing_group_features():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_API_KEY",
+        parallelism=2,
+        group_workers=3,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy=PARENT_DISJOINT,
+        paper_root="/tmp/minimol-paper-root",
+        single_analysis_root="/tmp/frozen-morgan-single-root",
+        split="test",
+    )
+
+    command = _command(EXPERIMENTS[1], args)
+
+    single_source = command[command.index("--single-analysis-source-batch") + 1]
+    group_source = command[command.index("--group-analysis-source-batch") + 1]
+    assert single_source.startswith("/tmp/frozen-morgan-single-root/")
+    assert group_source.startswith("/tmp/minimol-paper-root/runs_deployment_visible/")
+
+
+def test_operational_feature_ablation_reuses_only_hash_identical_morgan_groups():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_API_KEY",
+        parallelism=2,
+        group_workers=3,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy="operational",
+        paper_root="/tmp/minimol-paper-root",
+        single_analysis_root="/tmp/frozen-morgan-operational",
+        group_analysis_root="/tmp/frozen-morgan-operational",
+        split="test",
+    )
+
+    command = _command(EXPERIMENTS[1], args)
+
+    single_source = command[command.index("--single-analysis-source-batch") + 1]
+    group_source = command[command.index("--group-analysis-source-batch") + 1]
+    assert single_source.startswith("/tmp/frozen-morgan-operational/")
+    assert group_source.startswith("/tmp/frozen-morgan-operational/")
+
+
+def test_matrix_command_passes_explicit_smoke_limit_only_when_requested():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_API_KEY",
+        parallelism=1,
+        group_workers=1,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy="operational",
+        limit=1,
+    )
+
+    command = _command(EXPERIMENTS[0], args)
+
+    assert command[command.index("--limit") + 1] == "1"
 
 
 def test_matched_prefetch_command_is_visible_but_disables_agentic_tool_choice():

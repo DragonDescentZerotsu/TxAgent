@@ -11,8 +11,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from rdkit import DataStructs
-
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 from tools.chembl_tool.common.neighbor_selection import (
     QUERY_FEATURE_COVERAGE_SELECTOR,
@@ -26,10 +24,14 @@ from tools.chembl_tool.common.retrieval_policy import (
     decide_candidate,
     policy_metadata,
 )
+from tools.chembl_tool.common.retrieval_features import (
+    retrieval_feature_metadata,
+    similarity_bucket_for_index,
+    similarity_vector,
+)
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
     retrieve_neighbors,
-    similarity_bucket,
 )
 
 
@@ -186,7 +188,12 @@ def _retrieve_specs(
         return _invalid_query(query_smiles)
 
     query_identity = normalize_molecule_identity(query_smiles)
-    similarities = list(DataStructs.BulkTanimotoSimilarity(query_fp, index["fingerprints"]))
+    similarities = similarity_vector(
+        query_fp,
+        canonical_smiles,
+        index,
+        neighbor_selector=neighbor_selector,
+    )
     available_groups = set(index["group_to_molecule_indices"])
     output_groups = []
     resolved_mapping: dict[str, list[str]] = {}
@@ -229,6 +236,7 @@ def _retrieve_specs(
         "mode": mode,
         "source": source_name,
         "resolved_group_mapping": resolved_mapping,
+        "retrieval_feature": retrieval_feature_metadata(index),
         **policy_metadata(neighbor_identity_policy),
     }
     if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
@@ -242,7 +250,12 @@ def _retrieve_specs(
             "input_smiles": query_smiles,
             "canonical_smiles": canonical_smiles,
             "standard_inchi_key": inchi_key,
-            "fingerprint": dict(index.get("fingerprint") or {}),
+            "fingerprint": (
+                dict(index.get("fingerprint") or {})
+                if retrieval_feature_metadata(index)["feature"] == "morgan_fingerprint"
+                else {}
+            ),
+            "retrieval_feature": retrieval_feature_metadata(index),
         },
         "groups": output_groups,
         "coverage": _coverage(
@@ -320,7 +333,8 @@ def _rank_group_candidates(
                 "canonical_smiles": molecule["canonical_smiles"],
                 "standard_inchi_key": molecule.get("standard_inchi_key", ""),
                 "similarity": round(similarity, 6),
-                "similarity_bucket": similarity_bucket(similarity),
+                "similarity_bucket": similarity_bucket_for_index(similarity, index),
+                "similarity_metric": retrieval_feature_metadata(index)["similarity"],
                 "molecule_relation": decision.relation.value,
                 "source_group_ids": matched_groups,
                 "n_evidence_rows": len(evidence_rows),

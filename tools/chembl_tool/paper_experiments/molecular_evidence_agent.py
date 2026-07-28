@@ -312,6 +312,9 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
         "--no-combine-traces",
         "--skip-existing",
     ]
+    limit = int(getattr(args, "limit", 0) or 0)
+    if limit:
+        command.extend(["--limit", str(limit)])
     if visibility_mode == IDENTITY_BLIND:
         command.append("--identity-blind")
     elif visibility_mode == DEPLOYMENT_VISIBLE_PREFETCHED:
@@ -325,22 +328,39 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
             command.extend(["--retrieval-replay-source-batch", str(blind_batch)])
             command.extend(["--prefetched-tool-replay-source-batch", str(blind_batch)])
     if experiment.mode != "none":
-        single_root = experiment_run_root(visibility_mode, OPERATIONAL, paper_root=paper_root)
+        operational_root = experiment_run_root(
+            visibility_mode,
+            OPERATIONAL,
+            paper_root=paper_root,
+        )
+        explicit_single_root = str(getattr(args, "single_analysis_root", "") or "")
+        single_root = (
+            Path(explicit_single_root)
+            if explicit_single_root
+            else operational_root
+        )
         command.extend(
             [
                 "--single-analysis-source-batch",
-                str(single_root / experiment.task / f"{experiment.task}__none")
-                if neighbor_identity_policy == PARENT_DISJOINT
-                else str(batch_root / f"{experiment.task}__none"),
+                str(single_root / experiment.task / f"{experiment.task}__none"),
             ]
         )
         if neighbor_identity_policy == PARENT_DISJOINT:
             command.extend(
                 [
                     "--group-analysis-source-batch",
-                    str(single_root / experiment.task / experiment.name),
+                    str(operational_root / experiment.task / experiment.name),
                 ]
             )
+        else:
+            explicit_group_root = str(getattr(args, "group_analysis_root", "") or "")
+            if explicit_group_root:
+                command.extend(
+                    [
+                        "--group-analysis-source-batch",
+                        str(Path(explicit_group_root) / experiment.task / experiment.name),
+                    ]
+                )
     return command
 
 

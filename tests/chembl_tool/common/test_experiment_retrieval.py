@@ -1,9 +1,20 @@
+import json
+import pickle
+
+import numpy as np
+import pytest
+
 from tools.chembl_tool.common.experiment_retrieval import (
     EvidenceGroupSpec,
     SourceExperimentConfig,
     retrieve_experiment_view,
 )
+from tools.chembl_tool.common.retrieval_features import (
+    DESCRIPTOR_TYPE,
+    candidate_order_sha256,
+)
 from tools.chembl_tool.common.task_workflows.evidence_library import build_neighbor_index
+from tools.chembl_tool.common.task_workflows.retrieve_neighbors import load_index
 
 
 def _index():
@@ -187,3 +198,113 @@ def test_index_stores_versioned_parent_identity_metadata():
 
     assert identity["normalizer_version"] == "rdkit_fragment_parent.v1"
     assert identity["parent_inchi_key"]
+
+
+def test_minimol_descriptor_replaces_morgan_ranking_and_preserves_provenance(tmp_path):
+    index = _index()
+    base_index = tmp_path / "index.pkl"
+    with base_index.open("wb") as handle:
+        pickle.dump(index, handle)
+
+    # Candidate order is exact, amine, alkane. The query is closest to alkane
+    # in embedding space even though the Morgan ranking differs.
+    vector_by_id = {
+        "exact": [0.0, 1.0],
+        "amine": [0.6, 0.8],
+        "alkane": [1.0, 0.0],
+    }
+    candidate_embeddings = np.asarray(
+        [vector_by_id[item["molecule_chembl_id"]] for item in index["molecules"]],
+        dtype=np.float32,
+    )
+    query_embeddings = np.asarray([[1.0, 0.0]], dtype=np.float32)
+    candidate_path = tmp_path / "candidate.npy"
+    query_path = tmp_path / "query.npy"
+    np.save(candidate_path, candidate_embeddings)
+    np.save(query_path, query_embeddings)
+    query_manifest = tmp_path / "query.json"
+    query_manifest.write_text(
+        json.dumps({"canonical_smiles_to_row": {"CO": 0}}),
+        encoding="utf-8",
+    )
+    descriptor = tmp_path / "descriptor.json"
+    descriptor.write_text(
+        json.dumps(
+            {
+                "type": DESCRIPTOR_TYPE,
+                "model": "MiniMol",
+                "model_version": "minimol_v1",
+                "base_index_path": str(base_index),
+                "candidate_embeddings_path": str(candidate_path),
+                "candidate_order_sha256": candidate_order_sha256(index),
+                "query_embeddings_path": str(query_path),
+                "query_manifest_path": str(query_manifest),
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = retrieve_experiment_view(
+        "CO",
+        load_index(descriptor),
+        mode="full_mechanism",
+        config=CONFIG,
+        top_k_per_group=1,
+        min_similarity=0.0,
+    )
+
+    factor_neighbor = result["groups"][1]["neighbors"][0]
+    assert factor_neighbor["molecule_chembl_id"] == "alkane"
+    assert factor_neighbor["similarity"] == 1.0
+    assert factor_neighbor["similarity_metric"] == "cosine"
+    assert factor_neighbor["similarity_bucket"] == (
+        "minimol_embedding_cosine_not_structural_similarity"
+    )
+    assert result["experiment"]["retrieval_feature"] == {
+        "feature": "minimol_embedding",
+        "model": "MiniMol",
+        "model_version": "minimol_v1",
+        "normalization": "L2",
+        "similarity": "cosine",
+    }
+
+
+def test_minimol_descriptor_rejects_morgan_bit_coverage_selector(tmp_path):
+    index = _index()
+    base_index = tmp_path / "index.pkl"
+    with base_index.open("wb") as handle:
+        pickle.dump(index, handle)
+    candidate_path = tmp_path / "candidate.npy"
+    query_path = tmp_path / "query.npy"
+    np.save(candidate_path, np.ones((len(index["molecules"]), 2), dtype=np.float32))
+    np.save(query_path, np.ones((1, 2), dtype=np.float32))
+    query_manifest = tmp_path / "query.json"
+    query_manifest.write_text(
+        json.dumps({"canonical_smiles_to_row": {"CO": 0}}),
+        encoding="utf-8",
+    )
+    descriptor = tmp_path / "descriptor.json"
+    descriptor.write_text(
+        json.dumps(
+            {
+                "type": DESCRIPTOR_TYPE,
+                "base_index_path": str(base_index),
+                "candidate_embeddings_path": str(candidate_path),
+                "candidate_order_sha256": candidate_order_sha256(index),
+                "query_embeddings_path": str(query_path),
+                "query_manifest_path": str(query_manifest),
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="Morgan-bit-specific"):
+        retrieve_experiment_view(
+            "CO",
+            load_index(descriptor),
+            mode="full_mechanism",
+            config=CONFIG,
+            top_k_per_group=1,
+            min_similarity=0.0,
+            neighbor_selector="query_feature_coverage",
+        )

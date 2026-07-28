@@ -87,6 +87,83 @@ outputs/paper/molecular_evidence_agent_starling_random/
 outputs/paper/molecular_evidence_agent_starling_scaffold/
 ```
 
+### MiniMol feature agent retrieval
+
+MiniMol agent retrieval 是与 Morgan/Tanimoto formal pipeline 配对的 feature ablation：evidence source、
+paper-facing group mapping、`top_k=3`、数值 `min_similarity=0.3`、GLM/prompt/tool 设置和
+operational -> parent-disjoint 顺序全部不变，只把 candidate ranking 改为 MiniMol v1 embedding
+L2-normalized cosine。Cosine 不能使用 Morgan 的结构相似性 bucket 文案，也不能使用
+`query_feature_coverage` 这个 Morgan-bit selector。
+
+MiniMol 模型不能在每个 reasoning worker 内即时加载。先对 random/scaffold 的 13 个实际 base index 和
+六套 test query 构建共享 registry、按 index 顺序物化 candidate store，再生成轻量 descriptor。Builder
+必须记录 checkpoint/config SHA-256，并通过 candidate row order、query coverage、formal MiniMol
+`test.pt` cosine parity 和 Starling test-parent exclusion gate：
+
+若 legacy evidence candidate 的 whole-record SMILES 可用于旧 index/fingerprint、但 Graphium 无法图化，
+builder 只能对该 candidate 使用 `minimol_parseable_parent_or_fragment.v1` fallback，并逐条保存
+registry row、原始 SMILES、实际 embedded SMILES 和原因；不得静默丢 row或填充伪向量。Gold test query
+不允许 fallback，仍必须与 formal MiniMol cache 逐条通过 cosine parity。
+
+```bash
+env CUDA_VISIBLE_DEVICES=0 /data1/tianang/anaconda3/envs/intern/bin/python \
+  -m tools.chembl_tool.paper_experiments.build_minimol_retrieval_features \
+  --splits random scaffold
+```
+
+产物与 Morgan index、Morgan agent runs 隔离：
+
+```text
+outputs/paper/minimol_retrieval_features/
+outputs/paper/molecular_evidence_agent_starling_random_minimol_retrieval/
+outputs/paper/molecular_evidence_agent_starling_scaffold_minimol_retrieval/
+outputs/paper/minimol_retrieval_agent_results/
+```
+
+每个 split 仍先跑 19 个 deployment-visible operational retrieval conditions。Query-only single branch
+直接复用同 split 已冻结的 `none` batch；Morgan condition 的 group output 只有在
+`retrieval_prompt_hash` 完全相同时才允许复用。随后按 MiniMol operational artifact 生成
+parent-disjoint plan，再跑正式 parent-disjoint：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
+  --benchmark-split <random|scaffold> \
+  --retrieval-feature minimol \
+  --visibility-mode deployment_visible \
+  --neighbor-identity-policy operational \
+  --parallelism 12 \
+  --group-workers 4
+
+python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation \
+  --benchmark-split <random|scaffold> \
+  --retrieval-feature minimol \
+  --materialize
+
+python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
+  --benchmark-split <random|scaffold> \
+  --retrieval-feature minimol \
+  --visibility-mode deployment_visible \
+  --neighbor-identity-policy parent_disjoint \
+  --parallelism 12 \
+  --group-workers 4
+
+python -m tools.chembl_tool.paper_experiments.summarize_minimol_retrieval_agent
+
+python -m tools.chembl_tool.paper_experiments.plot_minimol_retrieval_agent \
+  --png-output outputs/paper/minimol_retrieval_agent_results/figures/minimol_vs_morgan_agent_retrieval_highres.png
+```
+
+上述长矩阵也可以用单一可恢复入口串联；它内部仍调用同一 matrix、parent-disjoint materializer、
+summarizer 和 plotter，不定义第二套实验逻辑：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.run_minimol_retrieval_agent_experiment
+```
+
+`--limit 1` 只用于首个 end-to-end smoke；正式汇总必须覆盖 random/scaffold 全部 38 个 retrieval
+condition 且 Morgan/MiniMol 均为零 failed sample。该 ablation 使用独立配对汇总，不能把
+MiniMol/cosine agent row 冒充或覆盖 canonical Morgan agent row。
+
 正式 Starling performance bar chart 从合并后的 `metrics.tsv` 读取 random/scaffold、三个 task、
 parent-disjoint pipeline 条件、MiniMol train-all baseline、Morgan fingerprint KNN 和 MiniMol
 embedding cosine KNN。两种 KNN 都只从同 split 的 `train.jsonl` 检索，固定 `k=3`，按未加权多数票预测，

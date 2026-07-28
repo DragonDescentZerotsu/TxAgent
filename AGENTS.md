@@ -55,8 +55,8 @@ train/test parent identity 零重叠，scaffold 版本还要求 scaffold 零重�
 | Skin_Reaction | 1,900 | 380 | 129 / 251 | 117 / 263 |
 
 当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
-MiniMol embedding cosine KNN、blind 进度、Skin retrieval degradation、Tier 1+2 final-only 诊断和
-代码入口统一记录在：
+MiniMol embedding cosine KNN、MiniMol/cosine agent retrieval、blind 进度、Skin retrieval degradation、
+Tier 1+2 final-only 诊断和代码入口统一记录在：
 
 ```text
 tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
@@ -67,9 +67,12 @@ tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
 ```text
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
+tools/chembl_tool/paper_experiments/build_minimol_retrieval_features.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+tools/chembl_tool/paper_experiments/summarize_minimol_retrieval_agent.py
 tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
 tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
+tools/chembl_tool/paper_experiments/run_minimol_retrieval_agent_experiment.py
 baselines/minimol/run_bioavailability_ma.py --train-all
 baselines/minimol/run_embedding_knn.py
 baselines/structure_knn/run.py
@@ -591,6 +594,23 @@ baselines/minimol/run_embedding_knn.py
 outputs/baselines/minimol_embedding_knn_starling/<Task>/<random|scaffold>/
 ```
 
+MiniMol feature agent ablation 与上述 label-vote KNN 不同：它只把 agent pipeline 的 neighbor
+ranking 从 Morgan/Tanimoto 换成 L2-normalized MiniMol/cosine，保持 evidence source、top-k、GLM
+和 inference settings 不变。完整 random/scaffold operational -> parent-disjoint -> paired summary
+-> figure 的可恢复入口为：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.run_minimol_retrieval_agent_experiment
+```
+
+MiniMol agent retrieval 是另一条独立实验线：它不从 gold train label 做 KNN vote，而是把 ChEMBL /
+Starling evidence index 的 Morgan/Tanimoto neighbor ranking 替换为 MiniMol v1 embedding cosine，
+然后把检索到的 evidence 送入冻结 GLM agent pipeline。它保持 source/group/top-k/数值 min-similarity、
+prompt/tool/model 和 operational -> parent-disjoint 顺序不变，并写入独立 output root。正式入口、feature
+store contract、checkpoint/cache parity、test-parent audit 和完整命令见
+`tools/chembl_tool/paper_experiments/AGENTS.md`；不得把这条 agent ablation 与
+`baselines/minimol/run_embedding_knn.py` 的 label-vote baseline 混为一项。
+
 运行环境和实现注意事项：
 
 ```text
@@ -600,7 +620,7 @@ MiniMol 源码参考: /data1/tianang/Projects/minimol
 实际运行优先使用 intern 环境已安装的 minimol 包。源码目录中的
 minimol/ckpts/minimol_v1/state_dict.pth 当前是 Git LFS pointer，不是可直接 torch.load 的权重。
 
-runner 内部做了两个兼容 patch：
+共享 `baselines/minimol/embedding_runtime.py` 做两个兼容 patch：
   1. Graphium CPU/fake-graph featurization 默认 float16 会触发 scipy.sparse dtype 错误，
      runner 在进程内强制用 float32 adjacency/pyg graph。
   2. MiniMol checkpoint 早于 PyTorch 2.6 weights_only=True 默认值，初始化 MiniMol 时临时

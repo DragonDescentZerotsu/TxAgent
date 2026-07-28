@@ -7,7 +7,6 @@ import csv
 import importlib
 import json
 from pathlib import Path
-import pickle
 from typing import Any
 
 from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
@@ -18,6 +17,7 @@ from tools.chembl_tool.common.retrieval_ablation import (
     retrieval_prompt_hash,
 )
 from tools.chembl_tool.common.retrieval_policy import MoleculeRelation, classify_molecule_relation
+from tools.chembl_tool.common.task_workflows.retrieve_neighbors import load_index
 from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
     EXPERIMENTS,
@@ -41,13 +41,24 @@ def main(argv: list[str] | None = None) -> int:
         from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
             experiments_for_starling_benchmark,
         )
+        from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
+            MINIMOL_RETRIEVAL_FEATURE,
+            paper_root_for_minimol_retrieval,
+        )
 
         paper_root = (
             Path(args.paper_root)
             if args.paper_root
-            else paper_root_for_benchmark_split(args.benchmark_split)
+            else (
+                paper_root_for_minimol_retrieval(args.benchmark_split)
+                if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
+                else paper_root_for_benchmark_split(args.benchmark_split)
+            )
         )
-        experiments = experiments_for_starling_benchmark(args.benchmark_split)
+        experiments = experiments_for_starling_benchmark(
+            args.benchmark_split,
+            retrieval_feature=args.retrieval_feature,
+        )
         data_split = f"starling_{args.benchmark_split}"
     else:
         paper_root = Path(args.paper_root) if args.paper_root else paper_root_for_split(args.split)
@@ -162,8 +173,7 @@ def build_experiment_plan(
     index = None
     config = None
     if any(item[4]["group_ids"] for item in baseline_inputs):
-        with Path(experiment.index).open("rb") as handle:
-            index = pickle.load(handle)
+        index = load_index(Path(experiment.index))
         config_module = importlib.import_module(f"tools.chembl_tool.tasks.{experiment.task}.experiment_config")
         config = config_module.get_source_config(experiment.source)
 
@@ -399,6 +409,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--experiments", nargs="*", default=[])
     parser.add_argument("--split", choices=("test", "valid"), default="test")
     parser.add_argument("--benchmark-split", choices=("random", "scaffold"), default="")
+    parser.add_argument(
+        "--retrieval-feature",
+        choices=("morgan", "minimol"),
+        default="morgan",
+    )
     parser.add_argument("--paper-root", default="")
     parser.add_argument("--operational-root", default="")
     parser.add_argument("--target-root", default="")
