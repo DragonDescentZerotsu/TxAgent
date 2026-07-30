@@ -454,7 +454,7 @@ def _is_identity_term(term: str) -> bool:
 
 def _identity_pattern(term: str) -> str:
     escaped = re.escape(term)
-    if len(term) <= 3 and term.isalnum():
+    if term.isalnum():
         return rf"(?<!\w){escaped}(?!\w)"
     return escaped
 

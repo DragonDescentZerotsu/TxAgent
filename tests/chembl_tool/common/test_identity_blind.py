@@ -268,6 +268,40 @@ def test_identity_blind_leak_finder_uses_identifier_boundaries_and_ignores_gener
     assert leaks == {"structures": [], "identifiers": [], "names": []}
 
 
+def test_identity_blind_leak_finder_ignores_four_letter_name_inside_common_word():
+    """Regression guard: a 4-letter abbreviation like "SCOP" (e.g. scopolamine)
+    must not falsely match as a substring of an unrelated word like "scope"."""
+    retrieval = {
+        "query": {},
+        "groups": [
+            {
+                "neighbors": [
+                    {
+                        "molecule_chembl_id": "CHEMBL9",
+                        "canonical_smiles": "CCO",
+                        "evidence_rows": [
+                            {
+                                "molecule_chembl_id": "CHEMBL9",
+                                "canonical_smiles": "CCO",
+                                "group_id": "Direct.outcome",
+                                "standard_type": "outcome",
+                                "source_molecule_names": ["SCOP"],
+                            }
+                        ],
+                    }
+                ]
+            }
+        ],
+    }
+
+    leaks = find_identity_blind_leaks(
+        retrieval, "the analysis is beyond the scope of available evidence"
+    )
+
+    assert leaks == {"structures": [], "identifiers": [], "names": []}
+    assert find_identity_blind_leaks(retrieval, "SCOP was administered")["names"] == ["SCOP"]
+
+
 def test_identity_blind_leak_finder_does_not_match_short_smiles_inside_words():
     retrieval = {
         "query": {"input_smiles": "CCC(C)(C)O"},
