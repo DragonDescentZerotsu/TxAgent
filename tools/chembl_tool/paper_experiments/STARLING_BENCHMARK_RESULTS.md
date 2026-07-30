@@ -1,6 +1,6 @@
 # Starling random/scaffold benchmark：当前决策、结果与入口
 
-更新时间：2026-07-28。
+更新时间：2026-07-30。
 
 本文件是 2026-07-24 至 2026-07-27 Starling benchmark 迁移和实验的集中总账。它只记录当前
 Starling-held-out `random` / `scaffold` lineage；旧 TDC `test` / `valid` 的历史结果仍见
@@ -115,7 +115,7 @@ MiniMol 和 KNN 条件均为 0 failed samples。
 
 - BBB 的 Starling direct/full 明显高于 ChEMBL，但 direct/flat/mechanism 内部差异较小；
 - Bioavailability 的 MiniMol embedding KNN 在 random/scaffold 都高于 Morgan KNN 和 MiniMol head；
-- Skin 的 Starling direct 到 full mechanism 在两套 split 都下降，见第 7 节；
+- Skin 的 Starling direct 到 full mechanism 在两套 split 都下降，见第 8 节；
 - random 与 scaffold 是不同 test sets，不能把两者的绝对高低直接解释为方法对 scaffold 的因果效应。
 
 ## 4. MiniMol baseline 的选择口径
@@ -213,7 +213,61 @@ machine-readable method: minimol_embedding_cosine_knn_k3
 该 baseline 已进入 `summarize_starling_benchmark.py` 生成的 `metrics.tsv`、`summary.json`、
 `report.md` 和 canonical `starling_benchmark_overview.{svg,png}`，不是只存在于单独实验目录。
 
-## 6. Identity-blind 补充控制：当前实测状态
+## 6. MiniMol embedding agent retrieval（operational）
+
+2026-07-30 完成 MiniMol/cosine agent retrieval 的 random/scaffold operational 矩阵。该实验不是
+train-label KNN：它保持 evidence source、direct/flat/mechanism organization、top-k、GLM、prompt、
+tool execution 和 inference settings 不变，只将 agent 的 neighbor ranking feature 从
+Morgan/Tanimoto 换为 L2-normalized MiniMol embedding/cosine。
+
+完整 gate：
+
+```text
+conditions: 38/38（random 19，scaffold 19）
+sample-conditions: 15,768/15,768 successful
+failed: 0
+neighbor identity policy: operational
+```
+
+失败的 structured-output 分支均按原设置定点重跑；每次失败版本保存在
+`outputs/paper/minimol_retrieval_agent_results/failed_attempts/operational/attempt_*/`，没有通过
+postprocess 补字段或改写 prediction。
+
+与已有正式 Morgan agent retrieval 的配对 point estimates：
+
+| split / task | paired win / loss / tie | best MiniMol operational condition | MiniMol macro-F1 | best Morgan formal condition | Morgan macro-F1 |
+|---|---:|---|---:|---|---:|
+| random / BBB | 0 / 5 / 1 | Starling full / flat | 0.7353 | Starling direct | 0.7527 |
+| random / Bioavailability | 7 / 0 / 0 | Starling full / flat | 0.7089 | Starling full / mechanism | 0.6991 |
+| random / Skin | 2 / 4 / 0 | Starling direct | 0.6267 | Starling direct | 0.6431 |
+| scaffold / BBB | 4 / 2 / 0 | Starling direct | 0.7224 | Starling full / flat | 0.7024 |
+| scaffold / Bioavailability | 7 / 0 / 0 | Starling full / mechanism | 0.7111 | Starling full / mechanism | 0.6743 |
+| scaffold / Skin | 6 / 0 / 0 | Starling full / mechanism | 0.6252 | ChEMBL full / flat | 0.6107 |
+
+38 个 paired retrieval conditions 中 MiniMol operational 为 26 win / 11 loss / 1 tie；平均
+`Δ macro-F1 = +0.0111`，中位数 `+0.0098`。最大提高是 scaffold Bioavailability 的
+ChEMBL direct（`+0.0549`），最大下降是 random BBB 的 ChEMBL full/mechanism（`-0.0250`）。
+Bioavailability 两套 split 的 14/14 paired conditions 都提高；random BBB 则没有提高，
+Skin random 也有 4/6 下降。这些异质性不支持“MiniMol feature 普遍支配 Morgan”的结论。
+
+这里的配对图是结果比较，不是纯 retrieval-feature causal attribution：已有 Morgan bars 使用正式
+`parent_disjoint` policy，新 MiniMol bars是本轮 `operational` policy，因此同时改变了 feature 和
+neighbor identity policy。No-retrieval、MiniMol train-all head、Morgan KNN 和 MiniMol KNN 仅作为同图
+context。下一步若要作 feature-only claim，必须完成 MiniMol `parent_disjoint` 并与同 policy 的 Morgan
+结果配对。
+
+入口与产物：
+
+```text
+tools/chembl_tool/paper_experiments/run_minimol_retrieval_agent_experiment.py
+tools/chembl_tool/paper_experiments/plot_starling_with_minimol_agent.py
+
+outputs/paper/minimol_retrieval_agent_results/operational_all_results_comparison.tsv
+outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent_operational.svg
+outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent_operational_highres.png
+```
+
+## 7. Identity-blind 补充控制：当前实测状态
 
 Blind 条件隐藏 query/neighbor 的结构、名称和 source ID，并由 harness 预先提供脱敏后的 properties /
 comparison tool evidence。它与 deployment-visible 同时改变 identity visibility 和 tool execution，
@@ -252,7 +306,7 @@ outputs/paper/molecular_evidence_agent_starling_random/runs/
 outputs/paper/molecular_evidence_agent_starling_scaffold/runs/
 ```
 
-## 7. Skin_Reaction：label scope、retrieval distance 与性能下降
+## 8. Skin_Reaction：label scope、retrieval distance 与性能下降
 
 Skin gold label 是 sensitization/contact allergy，不是所有 adverse skin effects 的并集。Paper-facing
 Starling mechanism families 是 evidence-scope expansion，而不是像 oral bioavailability
@@ -334,7 +388,7 @@ direct，也没有证明稳定改善；Tier 2 analog noise、branch synthesis �
 
 普通 `--groups` 只控制 fresh pipeline，不能用于 resume-final artifact filtering。
 
-## 8. 主要运行与汇总入口
+## 9. 主要运行与汇总入口
 
 ```text
 data builder:
@@ -361,13 +415,19 @@ Morgan KNN:
 MiniMol embedding KNN:
   python -m baselines.minimol.run_embedding_knn --k 3
 
+MiniMol embedding agent retrieval:
+  python -m tools.chembl_tool.paper_experiments.run_minimol_retrieval_agent_experiment
+  python -m tools.chembl_tool.paper_experiments.plot_starling_with_minimol_agent
+
 generic final-only group filtering:
   tools/chembl_tool/common/task_workflows/reasoning_batch.py
 ```
 
-## 9. 当前未完成项
+## 10. 当前未完成项
 
 - repair identity-blind 的 14 个 failed sample-condition runs，并生成独立 blind analysis/audit；
+- MiniMol agent retrieval 的 `parent_disjoint` 矩阵尚未完成；当前 operational 与 formal Morgan
+  parent-disjoint 的同图比较不能解释为纯 feature effect；
 - test matched-prefetch 尚未扩展到全部当前 Starling conditions；
 - ECFP RF/XGBoost 和 matched-neighbor evidence retrieval-only vote 未完成；
 - 用于确认表示选择稳健性的独立第二种 pretrained encoder baseline 未完成；
@@ -375,7 +435,7 @@ generic final-only group filtering:
 - 当前 GLM condition 每项主要只有一次 run，关键 comparisons 仍需 repeats/第二模型验证；
 - Skin Tier 1+2 是 test-triggered post-hoc diagnosis，不得升级成预注册 primary condition。
 
-## 10. Git 发布里程碑
+## 11. Git 发布里程碑
 
 已直接推送到 `origin/main` 的 Starling migration：
 
@@ -388,3 +448,7 @@ generic final-only group filtering:
 及相关入口。本轮 scoped publish 在其上补充 2026-07-27 的 Skin Tier 1+2 final-only
 filtering/results、集中结果总账，以及 2026-07-28 的 MiniMol embedding cosine KNN、统一汇总和
 canonical bar chart；同时存在的 viewer/coverage-selector 独立改动不属于该 publish scope。
+
+2026-07-30 的 scoped publish 进一步加入 MiniMol/cosine operational agent retrieval 的 38-condition
+零失败 gate、与已有结果同图比较的独立 SVG/PNG/TSV、绘图入口和本节结果记录；viewer 与
+coverage-selector 独立改动仍不属于该 publish scope。

@@ -151,6 +151,10 @@ python -m tools.chembl_tool.paper_experiments.summarize_minimol_retrieval_agent
 
 python -m tools.chembl_tool.paper_experiments.plot_minimol_retrieval_agent \
   --png-output outputs/paper/minimol_retrieval_agent_results/figures/minimol_vs_morgan_agent_retrieval_highres.png
+
+# operational MiniMol agent 与已有正式 Morgan agent / supervised baselines 同图比较
+python -m tools.chembl_tool.paper_experiments.plot_starling_with_minimol_agent \
+  --png-output outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent_operational_highres.png
 ```
 
 上述长矩阵也可以用单一可恢复入口串联；它内部仍调用同一 matrix、parent-disjoint materializer、

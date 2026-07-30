@@ -72,6 +72,7 @@ tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 tools/chembl_tool/paper_experiments/summarize_minimol_retrieval_agent.py
 tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
 tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
+tools/chembl_tool/paper_experiments/plot_starling_with_minimol_agent.py
 tools/chembl_tool/paper_experiments/run_minimol_retrieval_agent_experiment.py
 baselines/minimol/run_bioavailability_ma.py --train-all
 baselines/minimol/run_embedding_knn.py
