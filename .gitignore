@@ -8,6 +8,8 @@ outputs/
 # exceed GitHub's per-file size limit. Keep the extracted evidence and compact
 # provenance files, but not the PMID work queue.
 data/starling_data/**/pmids_to_process.json
+# Large, reproducible local staging copy of the hash-pinned v6.5 structure map.
+data/starling_data/_shared/final_smiles_mapping_v2.parquet
 temp.md
 temp.tsv
 keys.py

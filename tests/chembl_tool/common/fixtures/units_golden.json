@@ -1,0 +1,9811 @@
+{
+  "%": {
+    "canonical": "%",
+    "cleaned": "%",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "% (v/v)": {
+    "canonical": "%",
+    "cleaned": "% (v/v)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "% (w/v)": {
+    "canonical": "%·w/v",
+    "cleaned": "% (w/v)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "w",
+      "v"
+    ]
+  },
+  "% (w/w)": {
+    "canonical": "%",
+    "cleaned": "% (w/w)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "% (wt/vol)": {
+    "canonical": "%·wt/vol",
+    "cleaned": "% (wt/vol)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "wt",
+      "vol"
+    ]
+  },
+  "% applied dose": {
+    "canonical": "%·applied·dose",
+    "cleaned": "% applied dose",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "applied",
+      "dose"
+    ]
+  },
+  "% dose": {
+    "canonical": "%·dose",
+    "cleaned": "% dose",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "dose"
+    ]
+  },
+  "% increase": {
+    "canonical": "%·increase",
+    "cleaned": "% increase",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "increase"
+    ]
+  },
+  "% inhibition": {
+    "canonical": "%·inhibition",
+    "cleaned": "% inhibition",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "inhibition"
+    ]
+  },
+  "% of administered dose": {
+    "canonical": "%·administered·dose·of",
+    "cleaned": "% of administered dose",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "of",
+      "administered",
+      "dose"
+    ]
+  },
+  "% of applied dose": {
+    "canonical": "%·applied·dose·of",
+    "cleaned": "% of applied dose",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "of",
+      "applied",
+      "dose"
+    ]
+  },
+  "% of applied radioactivity": {
+    "canonical": "%·applied·of·radioactivity",
+    "cleaned": "% of applied radioactivity",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "of",
+      "applied",
+      "radioactivity"
+    ]
+  },
+  "% of control": {
+    "canonical": "%·control·of",
+    "cleaned": "% of control",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "of",
+      "control"
+    ]
+  },
+  "% of dose": {
+    "canonical": "%·dose·of",
+    "cleaned": "% of dose",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "of",
+      "dose"
+    ]
+  },
+  "% of negative control": {
+    "canonical": "%·control·negative·of",
+    "cleaned": "% of negative control",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "of",
+      "negative",
+      "control"
+    ]
+  },
+  "% of total radioactivity": {
+    "canonical": "%·of·radioactivity·total",
+    "cleaned": "% of total radioactivity",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "of",
+      "total",
+      "radioactivity"
+    ]
+  },
+  "% peptide depletion": {
+    "canonical": "%·depletion·peptide",
+    "cleaned": "% peptide depletion",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "peptide",
+      "depletion"
+    ]
+  },
+  "% reduction": {
+    "canonical": "%·reduction",
+    "cleaned": "% reduction",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "reduction"
+    ]
+  },
+  "% w/v": {
+    "canonical": "%·w/v",
+    "cleaned": "% w/v",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "w",
+      "v"
+    ]
+  },
+  "% w/w": {
+    "canonical": "%",
+    "cleaned": "% w/w",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "% wt/vol": {
+    "canonical": "%·wt/vol",
+    "cleaned": "% wt/vol",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "wt",
+      "vol"
+    ]
+  },
+  "%/h": {
+    "canonical": "%/h",
+    "cleaned": "%/h",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.0002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "*10-6 cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "*10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "*10^-6 cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "*10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "*10^-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "*10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "+ grade": {
+    "canonical": "+·grade",
+    "cleaned": "+ grade",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "+",
+      "grade"
+    ]
+  },
+  "/10 animals": {
+    "canonical": "/10·animals",
+    "cleaned": "/10 animals",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "10",
+      "animals"
+    ]
+  },
+  "1 × 10^-6 cm/s": {
+    "canonical": "1·cm/s",
+    "cleaned": "1 × 10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": [
+      "1"
+    ]
+  },
+  "1 × 10−6 cm/s": {
+    "canonical": "1·cm/s",
+    "cleaned": "1 × 10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": [
+      "1"
+    ]
+  },
+  "1/h": {
+    "canonical": "1/h",
+    "cleaned": "1/h",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.0002777777777777778,
+    "transform": "",
+    "unknown_tokens": [
+      "1"
+    ]
+  },
+  "10 × 10^-6 cm/sec": {
+    "canonical": "10·cm/s",
+    "cleaned": "10 × 10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": [
+      "10"
+    ]
+  },
+  "10-6 cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10-6 cm s-6": {
+    "canonical": "cm/s^6",
+    "cleaned": "10-6 cm s^-6",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -6
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10-6cm.s-1": {
+    "canonical": "10-6cm/s",
+    "cleaned": "10-6cm·s^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "10-6cm"
+    ]
+  },
+  "10^-3 cm/h": {
+    "canonical": "cm/h",
+    "cleaned": "10^-3 cm/h",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-3 cm/min": {
+    "canonical": "cm/min",
+    "cleaned": "10^-3 cm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666668e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-4 cm/h": {
+    "canonical": "cm/h",
+    "cleaned": "10^-4 cm/h",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-4 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^-4 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-5 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^-5 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm min^-1": {
+    "canonical": "cm/min",
+    "cleaned": "10^-6 cm min^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666666e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm.s-1": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm.s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm·s-1": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-6 cm·s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-7 cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "10^-7 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-7 cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "10^-7 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-7 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^-7 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^-8 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^-8 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^{-3} cm/min": {
+    "canonical": "cm/min",
+    "cleaned": "10^-3 cm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666668e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^{-6} cm s^{-1}": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10^{-6} cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10×10^{-6} cm/sec": {
+    "canonical": "10·cm/s",
+    "cleaned": "10×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": [
+      "10"
+    ]
+  },
+  "10–6 cm s–1": {
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10–6 cm s−1": {
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10–6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10–6 cm s−1": {
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10⁻³ cm/min": {
+    "canonical": "cm/min",
+    "cleaned": "10^-3 cm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666668e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10⁻⁵ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^-5 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10⁻⁶ cm s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10⁻⁶ cm/min": {
+    "canonical": "cm/min",
+    "cleaned": "10^-6 cm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666666e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10⁻⁶ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10⁻⁶ cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10⁻⁶ cm·s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "10^-6 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10⁻⁷ cm s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "10^-7 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10−6 cm s−1": {
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "10−6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "AU": {
+    "canonical": "AU",
+    "cleaned": "AU",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "AU"
+    ]
+  },
+  "DPM": {
+    "canonical": "DPM",
+    "cleaned": "DPM",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "DPM"
+    ]
+  },
+  "Da": {
+    "canonical": "Da",
+    "cleaned": "Da",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "Da"
+    ]
+  },
+  "FI": {
+    "canonical": "FI",
+    "cleaned": "FI",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "FI"
+    ]
+  },
+  "L mol-1 min-1": {
+    "canonical": "L/min·mol",
+    "cleaned": "L mol^-1 min^-1",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "L/h": {
+    "canonical": "L/h",
+    "cleaned": "L/h",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.0002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "L/h/kg": {
+    "canonical": "L/h·kg",
+    "cleaned": "L/h/kg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 2.7777777777777776e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "L/min": {
+    "canonical": "L/min",
+    "cleaned": "L/min",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "M": {
+    "canonical": "M",
+    "cleaned": "M",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "MFI": {
+    "canonical": "MFI",
+    "cleaned": "MFI",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "MFI"
+    ]
+  },
+  "MR": {
+    "canonical": "MR",
+    "cleaned": "MR",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "MR"
+    ]
+  },
+  "M^-1 min^-1": {
+    "canonical": "/M·min",
+    "cleaned": "M^-1 min^-1",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "M⁻¹ min⁻¹": {
+    "canonical": "/M·min",
+    "cleaned": "M^-1 min^-1",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "RFI": {
+    "canonical": "RFI",
+    "cleaned": "RFI",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "RFI"
+    ]
+  },
+  "RI": {
+    "canonical": "RI",
+    "cleaned": "RI",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "RI"
+    ]
+  },
+  "SI": {
+    "canonical": "SI",
+    "cleaned": "SI",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "SI"
+    ]
+  },
+  "SI (stimulation index)": {
+    "canonical": "SI·index·stimulation",
+    "cleaned": "SI (stimulation index)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "SI",
+      "stimulation",
+      "index"
+    ]
+  },
+  "absorbance": {
+    "canonical": "absorbance",
+    "cleaned": "absorbance",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "absorbance"
+    ]
+  },
+  "animals": {
+    "canonical": "animals",
+    "cleaned": "animals",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "animals"
+    ]
+  },
+  "arbitrary fluorescence units": {
+    "canonical": "arbitrary·fluorescence·units",
+    "cleaned": "arbitrary fluorescence units",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "arbitrary",
+      "fluorescence",
+      "units"
+    ]
+  },
+  "arbitrary units": {
+    "canonical": "arbitrary·units",
+    "cleaned": "arbitrary units",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "arbitrary",
+      "units"
+    ]
+  },
+  "cases": {
+    "canonical": "cases",
+    "cleaned": "cases",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "cases"
+    ]
+  },
+  "cells per 100 LCs": {
+    "canonical": "cells/LCs",
+    "cleaned": "cells/100 LCs",
+    "dimension": [
+      [
+        "count",
+        1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "LCs"
+    ]
+  },
+  "cm": {
+    "canonical": "cm",
+    "cleaned": "cm",
+    "dimension": [
+      [
+        "length",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm h-1": {
+    "canonical": "cm/h",
+    "cleaned": "cm h^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm h^-1": {
+    "canonical": "cm/h",
+    "cleaned": "cm h^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm h⁻¹": {
+    "canonical": "cm/h",
+    "cleaned": "cm h^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm min^-1": {
+    "canonical": "cm/min",
+    "cleaned": "cm min^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.00016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm s^{-1}": {
+    "canonical": "cm/s",
+    "cleaned": "cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm sec⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm s−1": {
+    "canonical": "cm/s",
+    "cleaned": "cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm.s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/h": {
+    "canonical": "cm/h",
+    "cleaned": "cm/h",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/hour": {
+    "canonical": "cm/h",
+    "cleaned": "cm/h",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/hr": {
+    "canonical": "cm/h",
+    "cleaned": "cm/h",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/min": {
+    "canonical": "cm/min",
+    "cleaned": "cm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.00016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/min ×10^-3": {
+    "canonical": "cm/min",
+    "cleaned": "cm/min ×10^-3",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666668e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/s × 10^-6": {
+    "canonical": "cm/s",
+    "cleaned": "cm/s × 10^-6",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/s × 10^6": {
+    "canonical": "cm/s",
+    "cleaned": "cm/s × 10^6",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/s × 10⁻⁶": {
+    "canonical": "cm/s",
+    "cleaned": "cm/s × 10^-6",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/sec × 10^-5": {
+    "canonical": "cm/s",
+    "cleaned": "cm/s × 10^-5",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/second": {
+    "canonical": "cm/s",
+    "cleaned": "cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm/s×10-5": {
+    "canonical": "cm/s",
+    "cleaned": "cm/s×10-5",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm·h-1": {
+    "canonical": "cm/h",
+    "cleaned": "cm·h^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm·s-1": {
+    "canonical": "cm/s",
+    "cleaned": "cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm·s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm·s^{-1}": {
+    "canonical": "cm/s",
+    "cleaned": "cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "cm·s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "count": {
+    "canonical": "count",
+    "cleaned": "count",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "count"
+    ]
+  },
+  "counts": {
+    "canonical": "counts",
+    "cleaned": "counts",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "counts"
+    ]
+  },
+  "cpm": {
+    "canonical": "cpm",
+    "cleaned": "cpm",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "cpm"
+    ]
+  },
+  "day": {
+    "canonical": "d",
+    "cleaned": "d",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 86400.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "days": {
+    "canonical": "d",
+    "cleaned": "d",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 86400.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "dimensionless": {
+    "canonical": "dimensionless",
+    "cleaned": "dimensionless",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "fold": {
+    "canonical": "fold",
+    "cleaned": "fold",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "fold change": {
+    "canonical": "change·fold",
+    "cleaned": "fold change",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "change"
+    ]
+  },
+  "fold increase": {
+    "canonical": "fold·increase",
+    "cleaned": "fold increase",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "increase"
+    ]
+  },
+  "fold induction": {
+    "canonical": "fold·induction",
+    "cleaned": "fold induction",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "induction"
+    ]
+  },
+  "fraction": {
+    "canonical": "fraction",
+    "cleaned": "fraction",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "fraction positive": {
+    "canonical": "fraction·positive",
+    "cleaned": "fraction positive",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "positive"
+    ]
+  },
+  "g": {
+    "canonical": "g",
+    "cleaned": "g",
+    "dimension": [
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "g/100 ml": {
+    "canonical": "g/mL",
+    "cleaned": "g/100 mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "g/L": {
+    "canonical": "g/L",
+    "cleaned": "g/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "genes overexpressed": {
+    "canonical": "genes·overexpressed",
+    "cleaned": "genes overexpressed",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "genes",
+      "overexpressed"
+    ]
+  },
+  "grade": {
+    "canonical": "grade",
+    "cleaned": "grade",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "grade"
+    ]
+  },
+  "h": {
+    "canonical": "h",
+    "cleaned": "h",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 3600.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h ng/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "h ng/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h ng/ml": {
+    "canonical": "h·ng/mL",
+    "cleaned": "h ng/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h*ng/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "h*ng/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h-1": {
+    "canonical": "/h",
+    "cleaned": "h^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.0002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h^-1": {
+    "canonical": "/h",
+    "cleaned": "h^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.0002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "hour": {
+    "canonical": "h",
+    "cleaned": "h",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 3600.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "hours": {
+    "canonical": "h",
+    "cleaned": "h",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 3600.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "hr": {
+    "canonical": "h",
+    "cleaned": "h",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 3600.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "hr^-1": {
+    "canonical": "/h",
+    "cleaned": "h^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.0002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "hrs": {
+    "canonical": "h",
+    "cleaned": "h",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 3600.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "hr·ng/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "h·ng/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "hr·µg/ml": {
+    "canonical": "h·µg/mL",
+    "cleaned": "h·µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·mg/L": {
+    "canonical": "h·mg/L",
+    "cleaned": "h·mg/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·nM": {
+    "canonical": "h·nM",
+    "cleaned": "h·nM",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6000000000000003e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·ng/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "h·ng/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·ng/ml": {
+    "canonical": "h·ng/mL",
+    "cleaned": "h·ng/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·ng·ml⁻¹": {
+    "canonical": "h·ng/mL",
+    "cleaned": "h·ng·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·pg/mL": {
+    "canonical": "h·pg/mL",
+    "cleaned": "h·pg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·µM": {
+    "canonical": "h·µM",
+    "cleaned": "h·µM",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·µg/L": {
+    "canonical": "h·µg/L",
+    "cleaned": "h·µg/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·µg/mL": {
+    "canonical": "h·µg/mL",
+    "cleaned": "h·µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·µg/ml": {
+    "canonical": "h·µg/mL",
+    "cleaned": "h·µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h·μg/mL": {
+    "canonical": "h·µg/mL",
+    "cleaned": "h·µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "h⁻¹": {
+    "canonical": "/h",
+    "cleaned": "h^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.0002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "index": {
+    "canonical": "index",
+    "cleaned": "index",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "index"
+    ]
+  },
+  "index (fold increase over vehicle control)": {
+    "canonical": "control·fold·increase·index·over·vehicle",
+    "cleaned": "index (fold increase over vehicle control)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "index",
+      "increase",
+      "over",
+      "vehicle",
+      "control"
+    ]
+  },
+  "l/h/kg": {
+    "canonical": "L/h·kg",
+    "cleaned": "L/h/kg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 2.7777777777777776e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "log (dimensionless)": {
+    "canonical": "log(dimensionless)",
+    "cleaned": "log (dimensionless)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": []
+  },
+  "log (s^-1 M^-1)": {
+    "canonical": "log(/M·s)",
+    "cleaned": "log (s^-1 M^-1)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": []
+  },
+  "log M": {
+    "canonical": "log(M)",
+    "cleaned": "log M",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": []
+  },
+  "log cm/s": {
+    "canonical": "log(cm/s)",
+    "cleaned": "log cm/s",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": []
+  },
+  "log(1/EC3)": {
+    "canonical": "log(1/EC^3)",
+    "cleaned": "log(1/EC^3)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": [
+      "1",
+      "EC"
+    ]
+  },
+  "log(M⁻¹ min⁻¹)": {
+    "canonical": "log(/M·min)",
+    "cleaned": "log(M^-1 min^-1)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": []
+  },
+  "log(cm/s)": {
+    "canonical": "log(cm/s)",
+    "cleaned": "log(cm/s)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": []
+  },
+  "log(s⁻¹ M⁻¹)": {
+    "canonical": "log(/M·s)",
+    "cleaned": "log(s^-1 M^-1)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": []
+  },
+  "log(µmol cm⁻² h⁻¹)": {
+    "canonical": "log(µmol/cm^2·h)",
+    "cleaned": "log(µmol cm^-2 h^-1)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log",
+    "unknown_tokens": []
+  },
+  "log10(cm/s)": {
+    "canonical": "log10(cm/s)",
+    "cleaned": "log10(cm/s)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "log10",
+    "unknown_tokens": []
+  },
+  "mL": {
+    "canonical": "mL",
+    "cleaned": "mL",
+    "dimension": [
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL min-1 g-1": {
+    "canonical": "mL/g·min",
+    "cleaned": "mL min^-1 g^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL min-1 kg-1": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL min^-1 kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL min^-1 kg^-1": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL min^-1 kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL min⁻¹ kg⁻¹": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL min^-1 kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL min⁻¹ mg⁻¹": {
+    "canonical": "mL/mg·min",
+    "cleaned": "mL min^-1 mg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/(min·kg)": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL/(min·kg)",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/h/10^6 cells": {
+    "canonical": "mL/cells·h",
+    "cleaned": "mL/h/10^6 cells",
+    "dimension": [
+      [
+        "count",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 2.777777777777778e-13,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/min": {
+    "canonical": "mL/min",
+    "cleaned": "mL/min",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/min kg": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL/min kg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/min/g": {
+    "canonical": "mL/g·min",
+    "cleaned": "mL/min/g",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/min/g liver": {
+    "canonical": "mL/g·liver·min",
+    "cleaned": "mL/min/g liver",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": [
+      "liver"
+    ]
+  },
+  "mL/min/g tissue": {
+    "canonical": "mL/g·min·tissue",
+    "cleaned": "mL/min/g tissue",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/min/kg": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL/min/kg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/min/mg": {
+    "canonical": "mL/mg·min",
+    "cleaned": "mL/min/mg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/min/mg microsomal protein": {
+    "canonical": "mL/mg·microsomal·min·protein",
+    "cleaned": "mL/min/mg microsomal protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": [
+      "microsomal"
+    ]
+  },
+  "mL/min/mg protein": {
+    "canonical": "mL/mg·min·protein",
+    "cleaned": "mL/min/mg protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL/min/nmol P450": {
+    "canonical": "mL/P450·min·nmol",
+    "cleaned": "mL/min/nmol P450",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666664,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "mL/s cm²": {
+    "canonical": "mL/cm^2·s",
+    "cleaned": "mL/s cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 10.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL·min-1·kg-1": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL·min^-1·kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mL·min⁻¹·kg⁻¹": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL·min^-1·kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mM": {
+    "canonical": "mM",
+    "cleaned": "mM",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mcg/mL": {
+    "canonical": "µg/mL",
+    "cleaned": "µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mcg/ml": {
+    "canonical": "µg/mL",
+    "cleaned": "µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mean erythema score": {
+    "canonical": "erythema·mean·score",
+    "cleaned": "mean erythema score",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "mean",
+      "erythema",
+      "score"
+    ]
+  },
+  "mean response score": {
+    "canonical": "mean·response·score",
+    "cleaned": "mean response score",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "mean",
+      "response",
+      "score"
+    ]
+  },
+  "mg": {
+    "canonical": "mg",
+    "cleaned": "mg",
+    "dimension": [
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/L": {
+    "canonical": "mg/L",
+    "cleaned": "mg/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/L·h": {
+    "canonical": "mg/L·h",
+    "cleaned": "mg/L·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777776e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/cm2": {
+    "canonical": "mg/cm^2",
+    "cleaned": "mg/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 10.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/cm2/h": {
+    "canonical": "mg/cm^2·h",
+    "cleaned": "mg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/cm²": {
+    "canonical": "mg/cm^2",
+    "cleaned": "mg/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 10.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/cm²/h": {
+    "canonical": "mg/cm^2·h",
+    "cleaned": "mg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/cm²/hr": {
+    "canonical": "mg/cm^2·h",
+    "cleaned": "mg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.002777777777777778,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/cm²/min": {
+    "canonical": "mg/cm^2·min",
+    "cleaned": "mg/cm^2/min",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.16666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/day": {
+    "canonical": "mg/d",
+    "cleaned": "mg/d",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.1574074074074074e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/g": {
+    "canonical": "mg/g",
+    "cleaned": "mg/g",
+    "dimension": [],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/kg": {
+    "canonical": "mg/kg",
+    "cleaned": "mg/kg",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/kg/day": {
+    "canonical": "mg/d·kg",
+    "cleaned": "mg/kg/d",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.1574074074074074e-11,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/l": {
+    "canonical": "mg/L",
+    "cleaned": "mg/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/mL": {
+    "canonical": "mg/mL",
+    "cleaned": "mg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg/ml": {
+    "canonical": "mg/mL",
+    "cleaned": "mg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg·h/L": {
+    "canonical": "h·mg/L",
+    "cleaned": "mg·h/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg·hr/L": {
+    "canonical": "h·mg/L",
+    "cleaned": "mg·h/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mg·min/L": {
+    "canonical": "mg·min/L",
+    "cleaned": "mg·min/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "min": {
+    "canonical": "min",
+    "cleaned": "min",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 60.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "min-1": {
+    "canonical": "/min",
+    "cleaned": "min^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "min^-1": {
+    "canonical": "/min",
+    "cleaned": "min^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "minutes": {
+    "canonical": "min",
+    "cleaned": "min",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 60.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "min⁻¹": {
+    "canonical": "/min",
+    "cleaned": "min^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml": {
+    "canonical": "mL",
+    "cleaned": "mL",
+    "dimension": [
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml min-1": {
+    "canonical": "mL/min",
+    "cleaned": "mL min^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml min-1 kg-1": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL min^-1 kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml min⁻¹": {
+    "canonical": "mL/min",
+    "cleaned": "mL min^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml min⁻¹ kg⁻¹": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL min^-1 kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/hr": {
+    "canonical": "mL/h",
+    "cleaned": "mL/h",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 2.7777777777777776e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min": {
+    "canonical": "mL/min",
+    "cleaned": "mL/min",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min per kg": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL/min/kg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min per kilogram": {
+    "canonical": "mL/kilogram·min",
+    "cleaned": "mL/min/kilogram",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": [
+      "kilogram"
+    ]
+  },
+  "ml/min per mg protein": {
+    "canonical": "mL/mg·min·protein",
+    "cleaned": "mL/min/mg protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min/g": {
+    "canonical": "mL/g·min",
+    "cleaned": "mL/min/g",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min/g liver": {
+    "canonical": "mL/g·liver·min",
+    "cleaned": "mL/min/g liver",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": [
+      "liver"
+    ]
+  },
+  "ml/min/kg": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL/min/kg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min/mg": {
+    "canonical": "mL/mg·min",
+    "cleaned": "mL/min/mg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min/mg protein": {
+    "canonical": "mL/mg·min·protein",
+    "cleaned": "mL/min/mg protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min/nmol": {
+    "canonical": "mL/min·nmol",
+    "cleaned": "mL/min/nmol",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666664,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml/min/nmol P450": {
+    "canonical": "mL/P450·min·nmol",
+    "cleaned": "mL/min/nmol P450",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666664,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "ml·min-1·kg-1": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL·min^-1·kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ml·min⁻¹·kg⁻¹": {
+    "canonical": "mL/kg·min",
+    "cleaned": "mL·min^-1·kg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mm": {
+    "canonical": "mm",
+    "cleaned": "mm",
+    "dimension": [
+      [
+        "length",
+        1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mmol/L": {
+    "canonical": "mmol/L",
+    "cleaned": "mmol/L",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mol/L": {
+    "canonical": "mol/L",
+    "cleaned": "mol/L",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "mol/mol": {
+    "canonical": "",
+    "cleaned": "mol/mol",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nM": {
+    "canonical": "nM",
+    "cleaned": "nM",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nM/cm2": {
+    "canonical": "nM/cm^2",
+    "cleaned": "nM/cm^2",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nM·h": {
+    "canonical": "h·nM",
+    "cleaned": "nM·h",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6000000000000003e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng": {
+    "canonical": "ng",
+    "cleaned": "ng",
+    "dimension": [
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng cm-2 h-1": {
+    "canonical": "ng/cm^2·h",
+    "cleaned": "ng cm^-2 h^-1",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng cm⁻²": {
+    "canonical": "ng/cm^2",
+    "cleaned": "ng cm^-2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng cm⁻² h⁻¹": {
+    "canonical": "ng/cm^2·h",
+    "cleaned": "ng cm^-2 h^-1",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng h ml-1": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng h mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng h/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng h/ml": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng mL-1": {
+    "canonical": "ng/mL",
+    "cleaned": "ng mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng mL⁻¹": {
+    "canonical": "ng/mL",
+    "cleaned": "ng mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng ml-1": {
+    "canonical": "ng/mL",
+    "cleaned": "ng mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng ml-1 h": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng mL^-1 h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000008,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng ml⁻¹": {
+    "canonical": "ng/mL",
+    "cleaned": "ng mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng.h/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng.h/ml": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/cm2": {
+    "canonical": "ng/cm^2",
+    "cleaned": "ng/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/cm^2": {
+    "canonical": "ng/cm^2",
+    "cleaned": "ng/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/cm²": {
+    "canonical": "ng/cm^2",
+    "cleaned": "ng/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/cm²/h": {
+    "canonical": "ng/cm^2·h",
+    "cleaned": "ng/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/g": {
+    "canonical": "ng/g",
+    "cleaned": "ng/g",
+    "dimension": [],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/mL": {
+    "canonical": "ng/mL",
+    "cleaned": "ng/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/mL per mg": {
+    "canonical": "ng/mL·mg",
+    "cleaned": "ng/mL/mg",
+    "dimension": [
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0010000000000000002,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/mL/h": {
+    "canonical": "ng/h·mL",
+    "cleaned": "ng/mL/h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/mL/mg": {
+    "canonical": "ng/mL·mg",
+    "cleaned": "ng/mL/mg",
+    "dimension": [
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0010000000000000002,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/mL·h": {
+    "canonical": "ng/h·mL",
+    "cleaned": "ng/mL·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/mg": {
+    "canonical": "ng/mg",
+    "cleaned": "ng/mg",
+    "dimension": [],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/ml": {
+    "canonical": "ng/mL",
+    "cleaned": "ng/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/ml/h": {
+    "canonical": "ng/h·mL",
+    "cleaned": "ng/mL/h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng/ml·h": {
+    "canonical": "ng/h·mL",
+    "cleaned": "ng/mL·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·h/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·h/mL/mg": {
+    "canonical": "h·ng/mL·mg",
+    "cleaned": "ng·h/mL/mg",
+    "dimension": [
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6000000000000005,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·h/ml": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·hour/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·hr/mL": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·hr/ml": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·h·mL-1": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·h·mL⁻¹": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·h·ml-1": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·h·ml⁻¹": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·h·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000003,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·mL-1": {
+    "canonical": "ng/mL",
+    "cleaned": "ng·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·mL·h": {
+    "canonical": "h·mL·ng",
+    "cleaned": "ng·mL·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 3.600000000000001e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·mL⁻¹": {
+    "canonical": "ng/mL",
+    "cleaned": "ng·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·min/mL": {
+    "canonical": "min·ng/mL",
+    "cleaned": "ng·min/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 6.000000000000001e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·ml-1": {
+    "canonical": "ng/mL",
+    "cleaned": "ng·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·ml·h": {
+    "canonical": "h·mL·ng",
+    "cleaned": "ng·mL·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 3.600000000000001e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·ml⁻¹": {
+    "canonical": "ng/mL",
+    "cleaned": "ng·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng·ml⁻¹·h": {
+    "canonical": "h·ng/mL",
+    "cleaned": "ng·mL^-1·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036000000000000008,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "ng ml⁻¹": {
+    "canonical": "ng/mL",
+    "cleaned": "ng mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nm s-1": {
+    "canonical": "nm/s",
+    "cleaned": "nm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nm s−1": {
+    "canonical": "nm/s",
+    "cleaned": "nm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nm-s-1": {
+    "canonical": "/nm-s",
+    "cleaned": "nm-s^-1",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "nm-s"
+    ]
+  },
+  "nm/s": {
+    "canonical": "nm/s",
+    "cleaned": "nm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nm/sec": {
+    "canonical": "nm/s",
+    "cleaned": "nm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol": {
+    "canonical": "nmol",
+    "cleaned": "nmol",
+    "dimension": [
+      [
+        "amount",
+        1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol cm-2": {
+    "canonical": "nmol/cm^2",
+    "cleaned": "nmol cm^-2",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ]
+    ],
+    "scale": 1e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol cm-2 h-1": {
+    "canonical": "nmol/cm^2·h",
+    "cleaned": "nmol cm^-2 h^-1",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol cm⁻² h⁻¹": {
+    "canonical": "nmol/cm^2·h",
+    "cleaned": "nmol cm^-2 h^-1",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/L": {
+    "canonical": "nmol/L",
+    "cleaned": "nmol/L",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/cm2": {
+    "canonical": "nmol/cm^2",
+    "cleaned": "nmol/cm^2",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ]
+    ],
+    "scale": 1e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/cm2/h": {
+    "canonical": "nmol/cm^2·h",
+    "cleaned": "nmol/cm^2/h",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/cm²": {
+    "canonical": "nmol/cm^2",
+    "cleaned": "nmol/cm^2",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ]
+    ],
+    "scale": 1e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/cm²/h": {
+    "canonical": "nmol/cm^2·h",
+    "cleaned": "nmol/cm^2/h",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/g": {
+    "canonical": "nmol/g",
+    "cleaned": "nmol/g",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/l": {
+    "canonical": "nmol/L",
+    "cleaned": "nmol/L",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/mg": {
+    "canonical": "nmol/mg",
+    "cleaned": "nmol/mg",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/mg protein": {
+    "canonical": "nmol/mg·protein",
+    "cleaned": "nmol/mg protein",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/mg protein/min": {
+    "canonical": "nmol/mg·min·protein",
+    "cleaned": "nmol/mg protein/min",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/min": {
+    "canonical": "nmol/min",
+    "cleaned": "nmol/min",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-11,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/min/mg": {
+    "canonical": "nmol/mg·min",
+    "cleaned": "nmol/min/mg",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/min/mg protein": {
+    "canonical": "nmol/mg·min·protein",
+    "cleaned": "nmol/min/mg protein",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol/min/nmol P450": {
+    "canonical": "/P450·min",
+    "cleaned": "nmol/min/nmol P450",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "nmol/nmol P450/min": {
+    "canonical": "/P450·min",
+    "cleaned": "nmol/nmol P450/min",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "nmoles": {
+    "canonical": "nmol",
+    "cleaned": "nmol",
+    "dimension": [
+      [
+        "amount",
+        1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nmol·h/L": {
+    "canonical": "h·nmol/L",
+    "cleaned": "nmol·h/L",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6000000000000003e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "nm·s⁻¹": {
+    "canonical": "nm/s",
+    "cleaned": "nm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "number of genes": {
+    "canonical": "genes·number·of",
+    "cleaned": "number of genes",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "number",
+      "of",
+      "genes"
+    ]
+  },
+  "number of positive tests": {
+    "canonical": "number·of·positive·tests",
+    "cleaned": "number of positive tests",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "number",
+      "of",
+      "positive",
+      "tests"
+    ]
+  },
+  "out of 10": {
+    "canonical": "10·of·out",
+    "cleaned": "out of 10",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "out",
+      "of",
+      "10"
+    ]
+  },
+  "out of 20": {
+    "canonical": "20·of·out",
+    "cleaned": "out of 20",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "out",
+      "of",
+      "20"
+    ]
+  },
+  "out of 5": {
+    "canonical": "5·of·out",
+    "cleaned": "out of 5",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "out",
+      "of",
+      "5"
+    ]
+  },
+  "pEC3": {
+    "canonical": "pEC3",
+    "cleaned": "pEC3",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "-log10",
+    "unknown_tokens": []
+  },
+  "patients": {
+    "canonical": "patients",
+    "cleaned": "patients",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "patients"
+    ]
+  },
+  "patients positive out of 16": {
+    "canonical": "16·of·out·patients·positive",
+    "cleaned": "patients positive out of 16",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "patients",
+      "positive",
+      "out",
+      "of",
+      "16"
+    ]
+  },
+  "percent": {
+    "canonical": "percent",
+    "cleaned": "percent",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "percent"
+    ]
+  },
+  "pg/mL": {
+    "canonical": "pg/mL",
+    "cleaned": "pg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pg/mg": {
+    "canonical": "pg/mg",
+    "cleaned": "pg/mg",
+    "dimension": [],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pg/ml": {
+    "canonical": "pg/mL",
+    "cleaned": "pg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pg·h/mL": {
+    "canonical": "h·pg/mL",
+    "cleaned": "pg·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pg·h/ml": {
+    "canonical": "h·pg/mL",
+    "cleaned": "pg·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pmol": {
+    "canonical": "pmol",
+    "cleaned": "pmol",
+    "dimension": [
+      [
+        "amount",
+        1
+      ]
+    ],
+    "scale": 1e-12,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pmol/cm²": {
+    "canonical": "pmol/cm^2",
+    "cleaned": "pmol/cm^2",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pmol/mg": {
+    "canonical": "pmol/mg",
+    "cleaned": "pmol/mg",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pmol/mg protein": {
+    "canonical": "pmol/mg·protein",
+    "cleaned": "pmol/mg protein",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pmol/mg protein/min": {
+    "canonical": "pmol/mg·min·protein",
+    "cleaned": "pmol/mg protein/min",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-11,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pmol/min/mg": {
+    "canonical": "pmol/mg·min",
+    "cleaned": "pmol/min/mg",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-11,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pmol/min/mg protein": {
+    "canonical": "pmol/mg·min·protein",
+    "cleaned": "pmol/min/mg protein",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-11,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "pmol/min/nmol P450": {
+    "canonical": "pmol/P450·min·nmol",
+    "cleaned": "pmol/min/nmol P450",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666664e-05,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "pmol/min/pmol CYP": {
+    "canonical": "/CYP·min",
+    "cleaned": "pmol/min/pmol CYP",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": [
+      "CYP"
+    ]
+  },
+  "pmol/min/pmol P450": {
+    "canonical": "/P450·min",
+    "cleaned": "pmol/min/pmol P450",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "pmol·min⁻¹·mg protein⁻¹": {
+    "canonical": "mg·pmol/min·protein",
+    "cleaned": "pmol·min^-1·mg protein^-1",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-17,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "positive animals out of 15": {
+    "canonical": "15·animals·of·out·positive",
+    "cleaned": "positive animals out of 15",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "positive",
+      "animals",
+      "out",
+      "of",
+      "15"
+    ]
+  },
+  "positive count": {
+    "canonical": "count·positive",
+    "cleaned": "positive count",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "positive",
+      "count"
+    ]
+  },
+  "positive patients": {
+    "canonical": "patients·positive",
+    "cleaned": "positive patients",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "positive",
+      "patients"
+    ]
+  },
+  "positive reactions": {
+    "canonical": "positive·reactions",
+    "cleaned": "positive reactions",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "positive",
+      "reactions"
+    ]
+  },
+  "ppm": {
+    "canonical": "ppm",
+    "cleaned": "ppm",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "probability": {
+    "canonical": "probability",
+    "cleaned": "probability",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "probability"
+    ]
+  },
+  "probability (0-1)": {
+    "canonical": "0-1·probability",
+    "cleaned": "probability (0-1)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "probability",
+      "0-1"
+    ]
+  },
+  "proportion": {
+    "canonical": "proportion",
+    "cleaned": "proportion",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "proportion"
+    ]
+  },
+  "ratio": {
+    "canonical": "ratio",
+    "cleaned": "ratio",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "reactions": {
+    "canonical": "reactions",
+    "cleaned": "reactions",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "reactions"
+    ]
+  },
+  "relative rate (vs 1a)": {
+    "canonical": "1a·rate·relative·vs",
+    "cleaned": "relative rate (vs 1a)",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "relative",
+      "rate",
+      "vs",
+      "1a"
+    ]
+  },
+  "residues": {
+    "canonical": "residues",
+    "cleaned": "residues",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "residues"
+    ]
+  },
+  "s": {
+    "canonical": "s",
+    "cleaned": "s",
+    "dimension": [
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "s^-1": {
+    "canonical": "/s",
+    "cleaned": "s^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "score": {
+    "canonical": "score",
+    "cleaned": "score",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "score"
+    ]
+  },
+  "sites": {
+    "canonical": "sites",
+    "cleaned": "sites",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "sites"
+    ]
+  },
+  "subjects": {
+    "canonical": "subjects",
+    "cleaned": "subjects",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "subjects"
+    ]
+  },
+  "times": {
+    "canonical": "times",
+    "cleaned": "times",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": [
+      "times"
+    ]
+  },
+  "unitless": {
+    "canonical": "dimensionless",
+    "cleaned": "dimensionless",
+    "dimension": [],
+    "scale": 1.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x 10^-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x 10^6 cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x 10⁻⁶ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x 1e-6 cm/s": {
+    "canonical": "cm·x/1e^6·s",
+    "cleaned": "x 1e^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": [
+      "x",
+      "1e"
+    ]
+  },
+  "x10-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x10^-3 cm min^-1": {
+    "canonical": "cm/min",
+    "cleaned": "×10^-3 cm min^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666668e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x10^-6 cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x10^-6 cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x10^-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x10^-6 cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x10^6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "x10⁻⁶ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL min-1 mg-1": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL min^-1 mg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL min⁻¹ mg⁻¹": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL min^-1 mg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL min⁻¹ mg⁻¹ protein": {
+    "canonical": "protein·µL/mg·min",
+    "cleaned": "µL min^-1 mg^-1 protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/mg protein/min": {
+    "canonical": "µL/mg·min·protein",
+    "cleaned": "µL/mg protein/min",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/mg/min": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL/mg/min",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min": {
+    "canonical": "µL/min",
+    "cleaned": "µL/min",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min per mg": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL/min/mg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min per mg protein": {
+    "canonical": "µL/mg·min·protein",
+    "cleaned": "µL/min/mg protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min/10^6 cells": {
+    "canonical": "µL/cells·min",
+    "cleaned": "µL/min/10^6 cells",
+    "dimension": [
+      [
+        "count",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-14,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min/10⁶ cells": {
+    "canonical": "µL/cells·min",
+    "cleaned": "µL/min/10^6 cells",
+    "dimension": [
+      [
+        "count",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-14,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min/mg": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL/min/mg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min/mg microsomal protein": {
+    "canonical": "µL/mg·microsomal·min·protein",
+    "cleaned": "µL/min/mg microsomal protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": [
+      "microsomal"
+    ]
+  },
+  "µL/min/mg protein": {
+    "canonical": "µL/mg·min·protein",
+    "cleaned": "µL/min/mg protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min/million cells": {
+    "canonical": "µL/cells·million·min",
+    "cleaned": "µL/min/million cells",
+    "dimension": [
+      [
+        "count",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": [
+      "million"
+    ]
+  },
+  "µL/min/nmol": {
+    "canonical": "µL/min·nmol",
+    "cleaned": "µL/min/nmol",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16.666666666666664,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min/nmol CYP": {
+    "canonical": "µL/CYP·min·nmol",
+    "cleaned": "µL/min/nmol CYP",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16.666666666666664,
+    "transform": "",
+    "unknown_tokens": [
+      "CYP"
+    ]
+  },
+  "µL/min/nmol P450": {
+    "canonical": "µL/P450·min·nmol",
+    "cleaned": "µL/min/nmol P450",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16.666666666666664,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "µL/min/pmol": {
+    "canonical": "µL/min·pmol",
+    "cleaned": "µL/min/pmol",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666668,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL/min/pmol CYP": {
+    "canonical": "µL/CYP·min·pmol",
+    "cleaned": "µL/min/pmol CYP",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666668,
+    "transform": "",
+    "unknown_tokens": [
+      "CYP"
+    ]
+  },
+  "µL/min/pmol CYP2B6": {
+    "canonical": "µL/CYP·min·pmol",
+    "cleaned": "µL/min/pmol CYP^2B6",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666668,
+    "transform": "",
+    "unknown_tokens": [
+      "CYP"
+    ]
+  },
+  "µL/min/pmol CYP2D6": {
+    "canonical": "µL/CYP·min·pmol",
+    "cleaned": "µL/min/pmol CYP^2d6",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666668,
+    "transform": "",
+    "unknown_tokens": [
+      "CYP"
+    ]
+  },
+  "µL/min/pmol P450": {
+    "canonical": "µL/P450·min·pmol",
+    "cleaned": "µL/min/pmol P450",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666668,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "µL/min/µmol": {
+    "canonical": "µL/min·µmol",
+    "cleaned": "µL/min/µmol",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL·min-1·mg-1": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL·min^-1·mg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL·min⁻¹·10⁶ cells⁻¹": {
+    "canonical": "µL/cells·min",
+    "cleaned": "µL·min^-1·10^6 cells^-1",
+    "dimension": [
+      [
+        "count",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 0.016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL·min⁻¹·mg protein⁻¹": {
+    "canonical": "mg·µL/min·protein",
+    "cleaned": "µL·min^-1·mg protein^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-11,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL·min⁻¹·mg⁻¹": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL·min^-1·mg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µL·min⁻¹·mg⁻¹ protein": {
+    "canonical": "protein·µL/mg·min",
+    "cleaned": "µL·min^-1·mg^-1 protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µM": {
+    "canonical": "µM",
+    "cleaned": "µM",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µM·h": {
+    "canonical": "h·µM",
+    "cleaned": "µM·h",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µM·min": {
+    "canonical": "min·µM",
+    "cleaned": "µM·min",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 5.9999999999999995e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg": {
+    "canonical": "µg",
+    "cleaned": "µg",
+    "dimension": [
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg GSH+GSSG/g skin": {
+    "canonical": "GSH+GSSG·µg/g·skin",
+    "cleaned": "µg GSH+GSSG/g skin",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": [
+      "GSH+GSSG"
+    ]
+  },
+  "µg GSH/g skin": {
+    "canonical": "GSH·µg/g·skin",
+    "cleaned": "µg GSH/g skin",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": [
+      "GSH"
+    ]
+  },
+  "µg GSSG/g skin": {
+    "canonical": "GSSG·µg/g·skin",
+    "cleaned": "µg GSSG/g skin",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": [
+      "GSSG"
+    ]
+  },
+  "µg Ni/cm²": {
+    "canonical": "Ni·µg/cm^2",
+    "cleaned": "µg Ni/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": [
+      "Ni"
+    ]
+  },
+  "µg cm-2": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg cm^-2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg cm-2 h-1": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg cm^-2 h^-1",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg cm⁻²": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg cm^-2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg cm⁻² h⁻¹": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg cm^-2 h^-1",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg g-1": {
+    "canonical": "µg/g",
+    "cleaned": "µg g^-1",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg h/L": {
+    "canonical": "h·µg/L",
+    "cleaned": "µg h/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg h/mL": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg h/ml": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg mL-1": {
+    "canonical": "µg/mL",
+    "cleaned": "µg mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg mL⁻¹": {
+    "canonical": "µg/mL",
+    "cleaned": "µg mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg min/ml": {
+    "canonical": "min·µg/mL",
+    "cleaned": "µg min/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg ml-1": {
+    "canonical": "µg/mL",
+    "cleaned": "µg mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg ml-1 h": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg mL^-1 h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg ml⁻¹": {
+    "canonical": "µg/mL",
+    "cleaned": "µg mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/(cm² h)": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/(cm^2 h)",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/L": {
+    "canonical": "µg/L",
+    "cleaned": "µg/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/L·h": {
+    "canonical": "µg/L·h",
+    "cleaned": "µg/L·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777777e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm2": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm2/h": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm^2": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm²": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm² h": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2 h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm² per h": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm²/h": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm²/hr": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm²/min": {
+    "canonical": "µg/cm^2·min",
+    "cleaned": "µg/cm^2/min",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.00016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm²h": {
+    "canonical": "µg/cm",
+    "cleaned": "µg/cm^2h",
+    "dimension": [
+      [
+        "length",
+        -1
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 9.999999999999999e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm²·h": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2·h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/cm³": {
+    "canonical": "µg/cm^3",
+    "cleaned": "µg/cm^3",
+    "dimension": [
+      [
+        "length",
+        -3
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.9999999999999999,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/g": {
+    "canonical": "µg/g",
+    "cleaned": "µg/g",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/g of skin": {
+    "canonical": "µg/g·of·skin",
+    "cleaned": "µg/g of skin",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": [
+      "of"
+    ]
+  },
+  "µg/g skin": {
+    "canonical": "µg/g·skin",
+    "cleaned": "µg/g skin",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/h": {
+    "canonical": "µg/h",
+    "cleaned": "µg/h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777777e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/h/cm²": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/h/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777775e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/hr": {
+    "canonical": "µg/h",
+    "cleaned": "µg/h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777777e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/kg": {
+    "canonical": "µg/kg",
+    "cleaned": "µg/kg",
+    "dimension": [],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/l": {
+    "canonical": "µg/L",
+    "cleaned": "µg/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/mL": {
+    "canonical": "µg/mL",
+    "cleaned": "µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/mL/h": {
+    "canonical": "µg/h·mL",
+    "cleaned": "µg/mL/h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777776e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/mL·h": {
+    "canonical": "µg/h·mL",
+    "cleaned": "µg/mL·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777776e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/mg": {
+    "canonical": "µg/mg",
+    "cleaned": "µg/mg",
+    "dimension": [],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/ml": {
+    "canonical": "µg/mL",
+    "cleaned": "µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/ml·h": {
+    "canonical": "µg/h·mL",
+    "cleaned": "µg/mL·h",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777776e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg/m²": {
+    "canonical": "µg/m^2",
+    "cleaned": "µg/m^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·L⁻¹": {
+    "canonical": "µg/L",
+    "cleaned": "µg·L^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·cm-2": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg·cm^-2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·cm-2·h-1": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg·cm^-2·h^-1",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·cm⁻²·h⁻¹": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg·cm^-2·h^-1",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·h/L": {
+    "canonical": "h·µg/L",
+    "cleaned": "µg·h/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·h/l": {
+    "canonical": "h·µg/L",
+    "cleaned": "µg·h/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·h/mL": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·h/ml": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·hour/ml": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·hr/mL": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·hr/ml": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·h·ml⁻¹": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg·h·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·min/mL": {
+    "canonical": "min·µg/mL",
+    "cleaned": "µg·min/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·min/ml": {
+    "canonical": "min·µg/mL",
+    "cleaned": "µg·min/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·ml-1": {
+    "canonical": "µg/mL",
+    "cleaned": "µg·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µg·ml⁻¹": {
+    "canonical": "µg/mL",
+    "cleaned": "µg·mL^-1",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl": {
+    "canonical": "µL",
+    "cleaned": "µL",
+    "dimension": [
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl min-1 mg-1": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL min^-1 mg^-1",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl min⁻¹": {
+    "canonical": "µL/min",
+    "cleaned": "µL min^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl/mg protein/min": {
+    "canonical": "µL/mg·min·protein",
+    "cleaned": "µL/mg protein/min",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl/min per mg": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL/min/mg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl/min per mg protein": {
+    "canonical": "µL/mg·min·protein",
+    "cleaned": "µL/min/mg protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl/min/10^6 cells": {
+    "canonical": "µL/cells·min",
+    "cleaned": "µL/min/10^6 cells",
+    "dimension": [
+      [
+        "count",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-14,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl/min/mg": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL/min/mg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl/min/mg protein": {
+    "canonical": "µL/mg·min·protein",
+    "cleaned": "µL/min/mg protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl/min/million cells": {
+    "canonical": "µL/cells·million·min",
+    "cleaned": "µL/min/million cells",
+    "dimension": [
+      [
+        "count",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": [
+      "million"
+    ]
+  },
+  "µl/min/pmol": {
+    "canonical": "µL/min·pmol",
+    "cleaned": "µL/min/pmol",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666668,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µl/min/pmol P450": {
+    "canonical": "µL/P450·min·pmol",
+    "cleaned": "µL/min/pmol P450",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666668,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "µl/min·mg": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL/min·mg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µm": {
+    "canonical": "µm",
+    "cleaned": "µm",
+    "dimension": [
+      [
+        "length",
+        1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µm/min": {
+    "canonical": "µm/min",
+    "cleaned": "µm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol": {
+    "canonical": "µmol",
+    "cleaned": "µmol",
+    "dimension": [
+      [
+        "amount",
+        1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol cm-2 h-1": {
+    "canonical": "µmol/cm^2·h",
+    "cleaned": "µmol cm^-2 h^-1",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol cm⁻² h⁻¹": {
+    "canonical": "µmol/cm^2·h",
+    "cleaned": "µmol cm^-2 h^-1",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol/L": {
+    "canonical": "µmol/L",
+    "cleaned": "µmol/L",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol/L·h": {
+    "canonical": "µmol/L·h",
+    "cleaned": "µmol/L·h",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 2.7777777777777777e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol/cm²": {
+    "canonical": "µmol/cm^2",
+    "cleaned": "µmol/cm^2",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol/cm²/h": {
+    "canonical": "µmol/cm^2·h",
+    "cleaned": "µmol/cm^2/h",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "length",
+        -2
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol/g skin": {
+    "canonical": "µmol/g·skin",
+    "cleaned": "µmol/g skin",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "mass",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol/l": {
+    "canonical": "µmol/L",
+    "cleaned": "µmol/L",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol/min": {
+    "canonical": "µmol/min",
+    "cleaned": "µmol/min",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "µmol·h/L": {
+    "canonical": "h·µmol/L",
+    "cleaned": "µmol·h/L",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10-5 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10-5 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10-6 cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "× 10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 106 cm s-1": {
+    "canonical": "106·cm/s",
+    "cleaned": "× 106 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": [
+      "106"
+    ]
+  },
+  "× 106 cm/s": {
+    "canonical": "106·cm/s",
+    "cleaned": "× 106 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": [
+      "106"
+    ]
+  },
+  "× 106 cm·s-1": {
+    "canonical": "106·cm/s",
+    "cleaned": "× 106 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": [
+      "106"
+    ]
+  },
+  "× 10^-3 cm·min^-1": {
+    "canonical": "cm/min",
+    "cleaned": "× 10^-3 cm·min^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666668e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10^-5 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-5 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10^-6 cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10^-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10^6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10^{-6} cm s^{-1}": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10^{-6} cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10–6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10⁻⁶ cm s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10⁻⁶ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "× 10−6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "× 10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10-5 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10-5 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10-5cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "×10-5cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10-6 cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "×10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-2 min^-1": {
+    "canonical": "/min",
+    "cleaned": "×10^-2 min^-1",
+    "dimension": [
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 0.00016666666666666666,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-3 cm/h": {
+    "canonical": "cm/h",
+    "cleaned": "×10^-3 cm/h",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-4 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-4 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000002e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-5 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-5 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-6 cm s-1": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-6 cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-6 cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-6 cm·s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-7 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-7 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^-8 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-8 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^6 cm s^-1": {
+    "canonical": "cm/s",
+    "cleaned": "×10^6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^6 cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "×10^6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^{-6} cm s^{-1}": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^{-6} cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^{-6} cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^{-6} cm·s": {
+    "canonical": "cm·s",
+    "cleaned": "×10^-6 cm·s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^{-7} cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-7 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10^–6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁶ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 10000.0,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁴ cm/min": {
+    "canonical": "cm/min",
+    "cleaned": "×10^-4 cm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁵ cm/min": {
+    "canonical": "cm/min",
+    "cleaned": "×10^-5 cm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁵ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-5 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.0000000000000001e-07,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁶ cm s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁶ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁶ cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁶ cm·s⁻¹": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁶ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁷ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-7 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-09,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10⁻⁸ cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10^-8 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-10,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10−6 cm s−1": {
+    "canonical": "cm/s",
+    "cleaned": "×10-6 cm s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10−6 cm/s": {
+    "canonical": "cm/s",
+    "cleaned": "×10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10−6 cm/sec": {
+    "canonical": "cm/s",
+    "cleaned": "×10-6 cm/s",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "×10−6 cm·s−1": {
+    "canonical": "cm/s",
+    "cleaned": "×10-6 cm·s^-1",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1e-08,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μL/min/10^6 cells": {
+    "canonical": "µL/cells·min",
+    "cleaned": "µL/min/10^6 cells",
+    "dimension": [
+      [
+        "count",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-14,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μL/min/mg": {
+    "canonical": "µL/mg·min",
+    "cleaned": "µL/min/mg",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μL/min/mg protein": {
+    "canonical": "µL/mg·min·protein",
+    "cleaned": "µL/min/mg protein",
+    "dimension": [
+      [
+        "mass",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 1.6666666666666667e-05,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μL/min/pmol P450": {
+    "canonical": "µL/P450·min·pmol",
+    "cleaned": "µL/min/pmol P450",
+    "dimension": [
+      [
+        "amount",
+        -1
+      ],
+      [
+        "time",
+        -1
+      ],
+      [
+        "volume",
+        1
+      ]
+    ],
+    "scale": 16666.666666666668,
+    "transform": "",
+    "unknown_tokens": [
+      "P450"
+    ]
+  },
+  "μM": {
+    "canonical": "µM",
+    "cleaned": "µM",
+    "dimension": [
+      [
+        "amount",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg": {
+    "canonical": "µg",
+    "cleaned": "µg",
+    "dimension": [
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/L": {
+    "canonical": "µg/L",
+    "cleaned": "µg/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/cm2": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/cm2/h": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/cm^2": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/cm²": {
+    "canonical": "µg/cm^2",
+    "cleaned": "µg/cm^2",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 0.01,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/cm²/h": {
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2/h",
+    "dimension": [
+      [
+        "length",
+        -2
+      ],
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 2.777777777777778e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/g": {
+    "canonical": "µg/g",
+    "cleaned": "µg/g",
+    "dimension": [],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/mL": {
+    "canonical": "µg/mL",
+    "cleaned": "µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg/ml": {
+    "canonical": "µg/mL",
+    "cleaned": "µg/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.001,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg·h/L": {
+    "canonical": "h·µg/L",
+    "cleaned": "µg·h/L",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 0.0036,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μg·h/mL": {
+    "canonical": "h·µg/mL",
+    "cleaned": "µg·h/mL",
+    "dimension": [
+      [
+        "mass",
+        1
+      ],
+      [
+        "time",
+        1
+      ],
+      [
+        "volume",
+        -1
+      ]
+    ],
+    "scale": 3.6,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μm": {
+    "canonical": "µm",
+    "cleaned": "µm",
+    "dimension": [
+      [
+        "length",
+        1
+      ]
+    ],
+    "scale": 1e-06,
+    "transform": "",
+    "unknown_tokens": []
+  },
+  "μm/min": {
+    "canonical": "µm/min",
+    "cleaned": "µm/min",
+    "dimension": [
+      [
+        "length",
+        1
+      ],
+      [
+        "time",
+        -1
+      ]
+    ],
+    "scale": 1.6666666666666667e-08,
+    "transform": "",
+    "unknown_tokens": []
+  }
+}

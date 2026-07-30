@@ -105,10 +105,21 @@ STARLING_IN_DISTRIBUTION = SourceExperimentConfig(
     mechanism_groups=STARLING.mechanism_groups,
 )
 
+# Retrieval over the policy-decoupled starling_normalized_v5 evidence library. Its
+# neighbor index is re-aggregated to the same five paper group_ids as the legacy
+# factor library, so the group mapping is identical to STARLING; only the source
+# name (and the index/evidence paths) differ.
+STARLING_V5 = SourceExperimentConfig(
+    source_name="starling_v5",
+    direct_groups=STARLING.direct_groups,
+    mechanism_groups=STARLING.mechanism_groups,
+)
+
 SOURCES = {
     "chembl": CHEMBL,
     "starling": STARLING,
     "starling_in_distribution": STARLING_IN_DISTRIBUTION,
+    "starling_v5": STARLING_V5,
 }
 
 # Retrieval sources whose molecules come from the starling assay-transfer data and are

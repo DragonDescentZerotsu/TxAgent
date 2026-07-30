@@ -20,6 +20,20 @@ from .oral_bioavailability import (
     clean_oral_bioavailability_rows,
     load_pinned_oral_bioavailability_dataset,
 )
+from .normalized_evidence import (
+    EndpointOrthography,
+    FamilyAssignment,
+    MeasurementPair,
+    NormalizedSourceProfile,
+    aggregate_molecule_family_records,
+    canonicalize_endpoint,
+    normalize_measurement_and_unit,
+    normalize_source_rows,
+    standardize_measurement_pair,
+)
+from .pair_buckets import (
+    materialize_pair_buckets,
+)
 
 __all__ = [
     "StarlingSourceProfile",
@@ -36,4 +50,14 @@ __all__ = [
     "ORAL_BIOAVAILABILITY_REVISION",
     "clean_oral_bioavailability_rows",
     "load_pinned_oral_bioavailability_dataset",
+    "EndpointOrthography",
+    "FamilyAssignment",
+    "MeasurementPair",
+    "NormalizedSourceProfile",
+    "aggregate_molecule_family_records",
+    "canonicalize_endpoint",
+    "normalize_measurement_and_unit",
+    "normalize_source_rows",
+    "standardize_measurement_pair",
+    "materialize_pair_buckets",
 ]

@@ -59,6 +59,17 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
         "meta_filename": "starling_factor_neighbor_index.meta.json",
     },
     {
+        "name": "bioavailability_starling_v5",
+        "task": "Bioavailability_Ma",
+        "source_evidence": (
+            "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
+            "starling_normalized_v5/molecule_family_evidence.jsonl"
+        ),
+        "evidence_filename": "starling_factor_evidence.jsonl",
+        "index_filename": "starling_factor_neighbor_index.pkl",
+        "meta_filename": "starling_factor_neighbor_index.meta.json",
+    },
+    {
         "name": "skin_reaction_starling_full",
         "task": "Skin_Reaction",
         "source_evidence": (
