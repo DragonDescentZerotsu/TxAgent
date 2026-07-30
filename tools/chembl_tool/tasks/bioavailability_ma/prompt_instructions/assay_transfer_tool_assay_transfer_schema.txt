@@ -4,4 +4,5 @@
 Each ranked entry is one of the top-k assay records across all candidate molecules, with a transfer likelihood (a 0-1 model estimate).
 Trust these likelihoods as they are the best estimates available.
 Based on the transfer liklihoods, determine the implications for the query's oral bioavailability.
+Do not treat qualitative, relative, or surrogate_proxy evidence as a direct absolute F% measurement.
 Return a single JSON object matching the required schema shown below.

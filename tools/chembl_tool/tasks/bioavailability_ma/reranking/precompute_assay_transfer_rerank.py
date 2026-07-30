@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
+from tools.chembl_tool.common.assay_transfer_selection import ASSAY_TRANSFER_DIVERSITY_NONE
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     ASSAY_TRANSFER_MODEL,
     ASSAY_TRANSFER_MODEL_REVISION,
@@ -334,6 +335,8 @@ def preflight_cache_coverage(
     cache_version_path: str = "",
     retrieval_source: str = "starling",
     assay_transfer_min_score: float | None = None,
+    assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
+    assay_transfer_diversity_score_slack: float = 0.0,
 ) -> dict[str, Any]:
     from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
         prepare_assay_transfer_selected_neighbors,
@@ -367,6 +370,8 @@ def preflight_cache_coverage(
                 reranker=reranker,
                 assay_transfer_initial_morgan_filter=initial_morgan_filter,
                 assay_transfer_min_score=assay_transfer_min_score,
+                assay_transfer_diversity_mode=assay_transfer_diversity_mode,
+                assay_transfer_diversity_score_slack=assay_transfer_diversity_score_slack,
             )
             prepare_assay_transfer_selected_neighbors(
                 retrieval, expose_scores=require_selected_scores

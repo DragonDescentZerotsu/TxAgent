@@ -6,4 +6,5 @@ Low-similarity analogs may also be included, so judge for each analog whether it
 Use mmp_structure_compare to inspect scaffold, MCS, and matched-pair differences when the similarity label alone is not enough.
 Use properties_compare when property differences (pKa, logD, TPSA, charge, HBD/HBA, logP, size, polarity) could affect transferability.
 From the evidence that genuinely transfers, determine the implications for the query's oral bioavailability.
+Do not treat qualitative, relative, or surrogate_proxy evidence as a direct absolute F% measurement.
 Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.

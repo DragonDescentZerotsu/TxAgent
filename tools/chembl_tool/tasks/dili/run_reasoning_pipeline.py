@@ -15,6 +15,10 @@ from typing import Any
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.json_utils import parse_json_content
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    SIMILARITY_SELECTOR,
+)
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
 from tools.chembl_tool.common.reasoning_validation import (
     call_with_json_validation,
@@ -163,6 +167,7 @@ def main(argv: list[str] | None = None) -> int:
         top_k_per_group=args.top_k_per_group,
         min_similarity=args.min_similarity,
         groups=args.groups,
+        neighbor_selector=args.morgan_neighbor_selector,
     )
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
@@ -229,6 +234,7 @@ def main(argv: list[str] | None = None) -> int:
         "max_tool_rounds": args.max_tool_rounds,
         "top_k_per_group": args.top_k_per_group,
         "min_similarity": args.min_similarity,
+        "morgan_neighbor_selector": args.morgan_neighbor_selector,
         "groups": args.groups,
         "n_groups_with_neighbors": len(groups),
         "paths": {
@@ -784,6 +790,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
+    parser.add_argument(
+        "--morgan-neighbor-selector",
+        choices=NEIGHBOR_SELECTORS,
+        default=SIMILARITY_SELECTOR,
+    )
     return parser.parse_args(argv)
 
 

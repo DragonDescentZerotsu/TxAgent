@@ -13,6 +13,12 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.assay_transfer_selection import (
+    ASSAY_TRANSFER_DIVERSITY_MODES,
+    ASSAY_TRANSFER_DIVERSITY_NONE,
+    assay_transfer_selection_policy,
+    validate_assay_transfer_diversity,
+)
 from tools.chembl_tool.common.cli.retrieval_args import add_retrieval_strategy_args
 from tools.chembl_tool.common.experiment_retrieval import (
     ASSAY_TRANSFER_TOOL_STRATEGY,
@@ -196,8 +202,19 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(
                 "--assay-transfer-min-score requires --retrieval-strategy assay_transfer_tool"
             )
+        if args.assay_transfer_diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
+            raise SystemExit(
+                "--assay-transfer-diversity-mode requires --retrieval-strategy assay_transfer_tool"
+            )
     if args.assay_transfer_min_score is not None and not 0.0 <= args.assay_transfer_min_score <= 1.0:
         raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
+    try:
+        validate_assay_transfer_diversity(
+            mode=args.assay_transfer_diversity_mode,
+            score_slack=args.assay_transfer_diversity_score_slack,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     reranker_provenance_name = (
         "assay_transfer" if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY else "none"
     )
@@ -295,7 +312,19 @@ def main(argv: list[str] | None = None) -> int:
     retrieval = load_retrieval_replay(
         args.retrieval_replay_run_dir,
         query_smiles,
+        expected_neighbor_selector=args.morgan_neighbor_selector,
         expected_reranker_provenance=expected_reranker,
+        expected_assay_transfer_selection_policy=(
+            {
+                "min_score": args.assay_transfer_min_score,
+                "diversity": assay_transfer_selection_policy(
+                    mode=args.assay_transfer_diversity_mode,
+                    score_slack=args.assay_transfer_diversity_score_slack,
+                ),
+            }
+            if reranker is not None
+            else None
+        ),
     )
     if retrieval is not None and args.assay_transfer_min_score is not None:
         replay_policy = (retrieval.get("experiment") or {}).get(
@@ -326,6 +355,8 @@ def main(argv: list[str] | None = None) -> int:
             reranker=reranker,
             assay_transfer_initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
             assay_transfer_min_score=args.assay_transfer_min_score,
+            assay_transfer_diversity_mode=args.assay_transfer_diversity_mode,
+            assay_transfer_diversity_score_slack=args.assay_transfer_diversity_score_slack,
         )
     else:
         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
@@ -462,6 +493,11 @@ def main(argv: list[str] | None = None) -> int:
         ),
         "llm_neighbor_score_policy": (retrieval.get("experiment") or {}).get("llm_neighbor_score_policy", {}),
         "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
+        "assay_transfer_diversity_mode": args.assay_transfer_diversity_mode,
+        "assay_transfer_diversity_score_slack": args.assay_transfer_diversity_score_slack,
+        "assay_transfer_selection_policy": (retrieval.get("experiment") or {}).get(
+            "assay_transfer_selection_policy", {}
+        ),
         "rerank_catalog": args.rerank_catalog if reranker is not None else "",
         "rerank_cache": args.rerank_cache if reranker is not None else "",
         "neighbor_identity_policy": args.neighbor_identity_policy,
@@ -833,7 +869,7 @@ def _group_prompt_payload(
             "Distinguish direct oral bioavailability, in vivo oral exposure/absorption, in vitro permeability, solubility/dissolution, metabolism/clearance, formulation/food-effect context, and weak inhibition/binding evidence.",
             "Do not convert CYP IC50/inhibition into metabolic instability, and do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
-            "For aggregated evidence, examples preserve endpoint, value, condition, and support-text pairings. Do not treat qualitative examples or surrogate_proxy roles as direct F% measurements.",
+            "For aggregated evidence, examples preserve endpoint, value, condition, and support-text pairings. Do not treat qualitative, relative, or surrogate_proxy evidence as a direct absolute F% measurement.",
             "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.",
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
@@ -1176,6 +1212,24 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help=(
             "Optional inclusive cached transfer-probability floor applied before the final top-k; "
             "requires --retrieval-strategy assay_transfer_tool."
+        ),
+    )
+    parser.add_argument(
+        "--assay-transfer-diversity-mode",
+        choices=ASSAY_TRANSFER_DIVERSITY_MODES,
+        default=ASSAY_TRANSFER_DIVERSITY_NONE,
+        help=(
+            "Opt-in score-slack diversity policy for assay-transfer records: structural "
+            "covers query Morgan bits; assay covers canonical endpoint keys."
+        ),
+    )
+    parser.add_argument(
+        "--assay-transfer-diversity-score-slack",
+        type=float,
+        default=0.0,
+        help=(
+            "Maximum raw transfer-score loss allowed versus the best remaining record at each "
+            "selection slot; zero preserves score ranking exactly."
         ),
     )
     parser.add_argument("--rerank-catalog", default=DEFAULT_RERANK_CATALOG)

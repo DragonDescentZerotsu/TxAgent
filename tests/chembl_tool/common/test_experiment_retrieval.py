@@ -179,8 +179,13 @@ def test_query_feature_coverage_selector_keeps_retrieval_payload_contract():
         for neighbor in group["neighbors"]
     )
     assert set(coverage_neighbor) == set(similarity_neighbor)
+    assert similarity["retrieval_policy"]["neighbor_selector"]["name"] == "similarity"
     assert coverage["experiment"]["neighbor_selector"]["name"] == "query_feature_coverage"
     assert coverage["experiment"]["neighbor_selector"]["rank1_forced"] is False
+    assert (
+        coverage["retrieval_policy"]["neighbor_selector"]
+        == coverage["experiment"]["neighbor_selector"]
+    )
 
 
 def test_index_stores_versioned_parent_identity_metadata():

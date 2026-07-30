@@ -15,6 +15,13 @@ from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     full_record_example,
 )
+from tools.chembl_tool.common.starling.normalized_evidence import (
+    EndpointOrthography,
+    FamilyAssignment,
+    NormalizedSourceProfile,
+    aggregate_molecule_family_records,
+    normalize_source_rows,
+)
 
 
 def _neighbor(molecule_id, smiles, similarity, examples, *, transfer=None, winning=None):
@@ -82,6 +89,53 @@ def test_morgan_is_text_not_json_and_shows_records():
     # The record's support text and endpoint appear; the duplicated text.evidence blob does not.
     assert "polarized transport observed" in content
     assert "blob" not in content
+
+
+def test_starling_v5_evidence_row_renders_non_blank_endpoint_value_unit():
+    """Regression guard: starling_normalized_v5 example dicts must use the same
+    endpoint_type/reported_value/reported_units keys as the legacy factor library,
+    so the morganfingerprint field policy doesn't render blank fields for v5 rows."""
+    profile = NormalizedSourceProfile(
+        source_id="v5_test",
+        source_name="test/starling_v5",
+        endpoint_field="kind",
+        measurement_field="value",
+        unit_field="unit",
+        structure_mode="direct",
+        record_id_field="record",
+    )
+    result = normalize_source_rows(
+        [{"smiles": "c1ccccc1", "kind": "efflux_or_secretory_transport",
+          "value": "12.4", "unit": "%", "record": "1"}],
+        profile,
+        smiles_mapping=None,
+        endpoint_normalizer=lambda source_id, endpoint_name: EndpointOrthography(
+            endpoint_name, endpoint_name, "unchanged", "no_reviewed_correction", "test.v1"
+        ),
+        family_resolver=lambda source_id, endpoint_name: FamilyAssignment(
+            "Fg.gut_wall_efflux_intestinal_metabolism", "Fg",
+            "gut_wall_efflux_intestinal_metabolism", "mechanistic_factor", "test endpoint",
+        ),
+    )
+    rows = aggregate_molecule_family_records(result.records)
+    assert len(rows) == 1
+    row = rows[0]
+
+    neighbor = {
+        "rank": 1,
+        "molecule_chembl_id": row["molecule_chembl_id"],
+        "canonical_smiles": row["canonical_smiles"],
+        "similarity": 0.45,
+        "similarity_bucket": "weak_analog",
+        "evidence_rows": [row],
+    }
+    group = _group([neighbor])
+    _, user = build_group_messages(QUERY, group, prompt_format="morganfingerprint",
+                                   options={"prompt_min_similarity": 0.3})
+    content = user["content"]
+    assert "efflux_or_secretory_transport" in content
+    assert "12.4" in content
+    assert "%" in content
 
 
 def test_morgan_similarity_threshold_drops_low_neighbors():

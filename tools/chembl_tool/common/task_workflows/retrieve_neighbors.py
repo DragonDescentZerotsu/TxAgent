@@ -14,7 +14,6 @@ from rdkit import DataStructs
 
 from tools.chembl_tool.common.neighbor_selection import (
     NEIGHBOR_SELECTORS,
-    QUERY_FEATURE_COVERAGE_SELECTOR,
     SIMILARITY_SELECTOR,
     NeighborCandidate,
     select_neighbor_candidates,
@@ -34,7 +33,7 @@ def main(default_index: str, description: str, argv: list[str] | None = None) ->
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
             groups=args.groups,
-            neighbor_selector=args.neighbor_selector,
+            neighbor_selector=args.morgan_neighbor_selector,
         )
         _write_single_result(result, args.out)
     elif args.query_jsonl:
@@ -106,9 +105,10 @@ def retrieve_neighbors(
             }
         )
 
-    retrieval_policy = policy_metadata(neighbor_identity_policy)
-    if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
-        retrieval_policy["neighbor_selector"] = selector_metadata(neighbor_selector)
+    retrieval_policy = {
+        **policy_metadata(neighbor_identity_policy),
+        "neighbor_selector": selector_metadata(neighbor_selector),
+    }
 
     return {
         "status": "ok",
@@ -252,7 +252,7 @@ def _run_jsonl(args: argparse.Namespace, index: dict[str, Any]) -> None:
                     top_k_per_group=args.top_k_per_group,
                     min_similarity=args.min_similarity,
                     groups=args.groups,
-                    neighbor_selector=args.neighbor_selector,
+                    neighbor_selector=args.morgan_neighbor_selector,
                 )
                 result["source"] = {"query_index": i, "smiles_field": args.smiles_field}
                 out_handle.write(json.dumps(result, ensure_ascii=False, default=str) + "\n")
@@ -286,7 +286,7 @@ def _parse_args(default_index: str, description: str, argv: list[str] | None) ->
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument(
-        "--neighbor-selector",
+        "--morgan-neighbor-selector",
         choices=NEIGHBOR_SELECTORS,
         default=SIMILARITY_SELECTOR,
     )

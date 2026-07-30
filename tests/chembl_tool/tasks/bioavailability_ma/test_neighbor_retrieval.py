@@ -21,6 +21,30 @@ def test_retrieve_neighbors_returns_top_per_group_and_excludes_exact_query():
     assert direct_neighbors[0]["evidence_rows"][0]["standard_type"] == "Bioavailability"
     assert permeability_neighbors[0]["molecule_chembl_id"] == "CHEMBL_PERM"
     assert result["coverage"]["n_groups_with_neighbors"] == 2
+    assert result["retrieval_policy"]["neighbor_selector"]["name"] == "similarity"
+
+
+def test_retrieve_neighbors_records_nondefault_selector_provenance():
+    index = build_neighbor_index(
+        [
+            _row(
+                "CHEMBL_CLOSE",
+                "CCCO",
+                "Tier 1.direct_absolute_bioavailability",
+                "Bioavailability",
+            )
+        ]
+    )
+
+    result = retrieve_neighbors(
+        "CCO",
+        index,
+        top_k_per_group=1,
+        min_similarity=0.0,
+        neighbor_selector="query_feature_coverage",
+    )
+
+    assert result["retrieval_policy"]["neighbor_selector"]["name"] == "query_feature_coverage"
 
 
 def test_similarity_bucket_ranges():

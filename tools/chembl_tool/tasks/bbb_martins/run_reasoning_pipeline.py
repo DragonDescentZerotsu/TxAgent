@@ -170,7 +170,11 @@ def main(argv: list[str] | None = None) -> int:
     if not query_smiles:
         raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
 
-    retrieval = load_retrieval_replay(args.retrieval_replay_run_dir, query_smiles)
+    retrieval = load_retrieval_replay(
+        args.retrieval_replay_run_dir,
+        query_smiles,
+        expected_neighbor_selector=args.morgan_neighbor_selector,
+    )
     index = None
     if retrieval is None and args.experiment_mode != "none":
         _log("loading neighbor index")
@@ -192,7 +196,7 @@ def main(argv: list[str] | None = None) -> int:
                 top_k_per_group=args.top_k_per_group,
                 min_similarity=args.min_similarity,
                 groups=base_groups,
-                neighbor_selector=args.neighbor_selector,
+                neighbor_selector=args.morgan_neighbor_selector,
             )
     else:
         _log(f"building retrieval view mode={args.experiment_mode} source={args.retrieval_source}")
@@ -205,7 +209,7 @@ def main(argv: list[str] | None = None) -> int:
             min_similarity=args.min_similarity,
             native_groups=args.groups,
             neighbor_identity_policy=args.neighbor_identity_policy,
-            neighbor_selector=args.neighbor_selector,
+            neighbor_selector=args.morgan_neighbor_selector,
         )
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
@@ -231,7 +235,7 @@ def main(argv: list[str] | None = None) -> int:
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
             groups=_replacement_retrieval_groups(args.groups, args.tier1_replacement_groups),
-            neighbor_selector=args.neighbor_selector,
+            neighbor_selector=args.morgan_neighbor_selector,
         )
         if replacement_retrieval.get("status") != "ok":
             raise SystemExit(json.dumps(replacement_retrieval.get("errors", []), ensure_ascii=False))
@@ -318,7 +322,7 @@ def main(argv: list[str] | None = None) -> int:
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
         "neighbor_identity_policy": args.neighbor_identity_policy,
-        "neighbor_selector": args.neighbor_selector,
+        "morgan_neighbor_selector": args.morgan_neighbor_selector,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
@@ -1070,7 +1074,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument(
-        "--neighbor-selector",
+        "--morgan-neighbor-selector",
         choices=NEIGHBOR_SELECTORS,
         default=SIMILARITY_SELECTOR,
     )

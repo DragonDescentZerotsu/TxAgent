@@ -13,9 +13,14 @@ from typing import Any, Mapping
 
 from rdkit import DataStructs
 
+from tools.chembl_tool.common.assay_transfer_selection import (
+    ASSAY_TRANSFER_DIVERSITY_NONE,
+    assay_transfer_selection_policy,
+    select_assay_transfer_records,
+    validate_assay_transfer_diversity,
+)
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 from tools.chembl_tool.common.neighbor_selection import (
-    QUERY_FEATURE_COVERAGE_SELECTOR,
     SIMILARITY_SELECTOR,
     NeighborCandidate,
     select_neighbor_candidates,
@@ -129,6 +134,8 @@ def retrieve_experiment_view(
     reranker: RetrievalReranker | None = None,
     assay_transfer_initial_morgan_filter: int = 100,
     assay_transfer_min_score: float | None = None,
+    assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
+    assay_transfer_diversity_score_slack: float = 0.0,
 ) -> dict[str, Any]:
     """Build a native, direct, flat, mechanism, or retrieval-free query view.
 
@@ -148,6 +155,12 @@ def retrieve_experiment_view(
         raise ValueError("assay_transfer_min_score must be between 0 and 1 inclusive")
     if assay_transfer_min_score is not None and reranker is None:
         raise ValueError("assay_transfer_min_score requires a retrieval reranker")
+    validate_assay_transfer_diversity(
+        mode=assay_transfer_diversity_mode,
+        score_slack=assay_transfer_diversity_score_slack,
+    )
+    if reranker is None and assay_transfer_diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
+        raise ValueError("assay-transfer diversity requires a retrieval reranker")
     if mode == "none":
         return _query_only_retrieval(query_smiles, mode=mode)
     if index is None:
@@ -166,9 +179,8 @@ def retrieve_experiment_view(
             "mode": mode,
             "source": _source_name(config, index),
             **policy_metadata(neighbor_identity_policy),
+            "neighbor_selector": selector_metadata(neighbor_selector),
         }
-        if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
-            result["experiment"]["neighbor_selector"] = selector_metadata(neighbor_selector)
         return result
     if config is None:
         raise ValueError(f"Experiment mode `{mode}` requires a source experiment config")
@@ -187,6 +199,8 @@ def retrieve_experiment_view(
         reranker=reranker,
         assay_transfer_initial_morgan_filter=assay_transfer_initial_morgan_filter,
         assay_transfer_min_score=assay_transfer_min_score,
+        assay_transfer_diversity_mode=assay_transfer_diversity_mode,
+        assay_transfer_diversity_score_slack=assay_transfer_diversity_score_slack,
     )
     if mode == "full_flat" and mechanism_view.get("status") == "ok":
         mechanism_view["groups"] = [_flatten_groups(mechanism_view["groups"])]
@@ -212,6 +226,8 @@ def _retrieve_specs(
     reranker: RetrievalReranker | None = None,
     assay_transfer_initial_morgan_filter: int = 100,
     assay_transfer_min_score: float | None = None,
+    assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
+    assay_transfer_diversity_score_slack: float = 0.0,
 ) -> dict[str, Any]:
     canonical_smiles, inchi_key, query_fp = standardize_smiles_and_fp(query_smiles)
     if query_fp is None:
@@ -250,6 +266,8 @@ def _retrieve_specs(
             reranker=reranker,
             assay_transfer_initial_morgan_filter=assay_transfer_initial_morgan_filter,
             assay_transfer_min_score=assay_transfer_min_score,
+            assay_transfer_diversity_mode=assay_transfer_diversity_mode,
+            assay_transfer_diversity_score_slack=assay_transfer_diversity_score_slack,
         )
         selection_metadata = (
             dict(neighbors.selection_metadata)
@@ -274,6 +292,7 @@ def _retrieve_specs(
                 n_below_min_score_dropped=int(
                     selection_metadata.get("n_below_min_score_dropped", 0)
                 ),
+                diversity=dict(selection_metadata.get("diversity") or {}),
             )
         output_groups.append(group_payload)
 
@@ -282,6 +301,7 @@ def _retrieve_specs(
         "source": source_name,
         "resolved_group_mapping": resolved_mapping,
         **policy_metadata(neighbor_identity_policy),
+        "neighbor_selector": selector_metadata(neighbor_selector),
     }
     if reranker is not None:
         experiment["retrieval_reranker"] = reranker.provenance()
@@ -289,12 +309,18 @@ def _retrieve_specs(
             "min_score": assay_transfer_min_score,
             "threshold_inclusive": True,
             "threshold_applied_before_top_k": assay_transfer_min_score is not None,
+            "diversity": assay_transfer_selection_policy(
+                mode=assay_transfer_diversity_mode,
+                score_slack=assay_transfer_diversity_score_slack,
+            ),
         }
-    elif neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
-        experiment["neighbor_selector"] = selector_metadata(neighbor_selector)
     return {
         "status": "ok",
         "evidence_source": dict(index.get("source") or {}),
+        "retrieval_policy": {
+            **policy_metadata(neighbor_identity_policy),
+            "neighbor_selector": selector_metadata(neighbor_selector),
+        },
         "experiment": experiment,
         "query": {
             "input_smiles": query_smiles,
@@ -330,6 +356,8 @@ def _rank_group_candidates(
     reranker: RetrievalReranker | None = None,
     assay_transfer_initial_morgan_filter: int = 100,
     assay_transfer_min_score: float | None = None,
+    assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
+    assay_transfer_diversity_score_slack: float = 0.0,
 ) -> list[dict[str, Any]]:
     """Dispatch to the retrieval strategy implied by ``reranker``.
 
@@ -360,11 +388,14 @@ def _rank_group_candidates(
         min_similarity=min_similarity,
         query_identity=query_identity,
         neighbor_identity_policy=neighbor_identity_policy,
+        query_fingerprint=query_fingerprint,
         query_smiles=query_smiles,
         group_id=group_id,
         reranker=reranker,
         initial_morgan_filter=assay_transfer_initial_morgan_filter,
         assay_transfer_min_score=assay_transfer_min_score,
+        diversity_mode=assay_transfer_diversity_mode,
+        diversity_score_slack=assay_transfer_diversity_score_slack,
     )
 
 
@@ -453,11 +484,14 @@ def _assay_transfer_neighbors(
     min_similarity: float,
     query_identity: Any,
     neighbor_identity_policy: str,
+    query_fingerprint: Any,
     query_smiles: str,
     group_id: str,
     reranker: RetrievalReranker,
     initial_morgan_filter: int,
     assay_transfer_min_score: float | None,
+    diversity_mode: str,
+    diversity_score_slack: float,
 ) -> list[dict[str, Any]]:
     # 1. Initial morgan pool: top-N candidates by tanimoto similarity.
     ranked = sorted(
@@ -515,11 +549,38 @@ def _assay_transfer_neighbors(
         ]
         n_below_min_score_dropped = len(record_neighbors) - len(retained_records)
         record_neighbors = retained_records
+    if diversity_mode == ASSAY_TRANSFER_DIVERSITY_NONE or diversity_score_slack == 0.0:
+        # Preserve the historical score-only path exactly, including unit-test
+        # callers that deliberately supply a minimal index without fingerprints.
+        selected_records = record_neighbors[:top_k]
+        diversity_audit = {
+            **assay_transfer_selection_policy(
+                mode=diversity_mode,
+                score_slack=diversity_score_slack,
+            ),
+            "n_selected": len(selected_records),
+        }
+    else:
+        if query_fingerprint is None or "fingerprints" not in index:
+            raise ValueError("Assay-transfer diversity requires Morgan fingerprints")
+        fingerprints_by_molecule = {
+            str(index["molecules"][molecule_index]["molecule_chembl_id"]): index["fingerprints"][molecule_index]
+            for _, molecule_index in raw_ranked
+        }
+        selected_records, diversity_audit = select_assay_transfer_records(
+            record_neighbors,
+            top_k=top_k,
+            mode=diversity_mode,
+            score_slack=diversity_score_slack,
+            query_fingerprint=query_fingerprint,
+            fingerprints_by_molecule=fingerprints_by_molecule,
+        )
     ranked_neighbors = _RankedNeighbors(
-        record_neighbors[:top_k],
+        selected_records,
         selection_metadata={
             "assay_transfer_min_score": assay_transfer_min_score,
             "n_below_min_score_dropped": n_below_min_score_dropped,
+            "diversity": diversity_audit,
         },
     )
     for rank, neighbor in enumerate(ranked_neighbors, start=1):
@@ -534,6 +595,7 @@ def _rerank_group_metadata(
     n_selected: int,
     min_score: float | None,
     n_below_min_score_dropped: int,
+    diversity: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if reranker is None:
         return {}
@@ -544,6 +606,7 @@ def _rerank_group_metadata(
         "n_selected": n_selected,
         "assay_transfer_min_score": min_score,
         "n_below_min_score_dropped": n_below_min_score_dropped,
+        "diversity": diversity or {},
         "selection_metadata_is_llm_hidden": True,
     }
 

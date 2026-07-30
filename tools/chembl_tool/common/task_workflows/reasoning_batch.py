@@ -18,6 +18,11 @@ from pathlib import Path
 from typing import Any, Callable
 
 from tools.chembl_tool.common.cli.retrieval_args import add_retrieval_strategy_args
+from tools.chembl_tool.common.assay_transfer_selection import (
+    ASSAY_TRANSFER_DIVERSITY_MODES,
+    ASSAY_TRANSFER_DIVERSITY_NONE,
+    validate_assay_transfer_diversity,
+)
 from tools.chembl_tool.common.experiment_retrieval import ASSAY_TRANSFER_TOOL_STRATEGY
 from tools.chembl_tool.common.neighbor_selection import SIMILARITY_SELECTOR
 
@@ -41,7 +46,7 @@ class BatchConfig:
     rerank_preflight: Callable[..., dict[str, Any]] | None = None
     supports_assay_transfer_scores: bool = False
     # True only for tasks wired to the unified --retrieval-strategy CLI (bioavailability_ma).
-    # Other tasks keep receiving the legacy --neighbor-selector flag.
+    # Every task receives the strict --morgan-neighbor-selector flag.
     supports_retrieval_strategy: bool = False
     group_prompt_formats: tuple[str, ...] = ()
     default_group_prompt_format: str = ""
@@ -136,6 +141,8 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
                 cache_version_path=args.rerank_cache_version_manifest,
                 retrieval_source=args.retrieval_source,
                 assay_transfer_min_score=args.assay_transfer_min_score,
+                assay_transfer_diversity_mode=args.assay_transfer_diversity_mode,
+                assay_transfer_diversity_score_slack=args.assay_transfer_diversity_score_slack,
             )
             _release_preflight_memory()
     manifest = {
@@ -157,6 +164,8 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "retrieval_reranker": "assay_transfer" if is_assay_transfer else "none",
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
         "assay_transfer_min_score": args.assay_transfer_min_score,
+        "assay_transfer_diversity_mode": args.assay_transfer_diversity_mode,
+        "assay_transfer_diversity_score_slack": args.assay_transfer_diversity_score_slack,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
         "group_output_schema": args.group_output_schema,
@@ -295,6 +304,8 @@ def _validate_reused_rerank_preflight(
         ),
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
         "assay_transfer_min_score": args.assay_transfer_min_score,
+        "assay_transfer_diversity_mode": args.assay_transfer_diversity_mode,
+        "assay_transfer_diversity_score_slack": args.assay_transfer_diversity_score_slack,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
         "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
@@ -520,6 +531,15 @@ def _single_run_command(
         command.extend(
             ["--assay-transfer-min-score", str(args.assay_transfer_min_score)]
         )
+    if args.assay_transfer_diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
+        command.extend(
+            [
+                "--assay-transfer-diversity-mode",
+                args.assay_transfer_diversity_mode,
+                "--assay-transfer-diversity-score-slack",
+                str(args.assay_transfer_diversity_score_slack),
+            ]
+        )
     if args.group_prompt_format:
         command.extend(["--group-prompt-format", args.group_prompt_format])
     if args.group_output_schema:
@@ -569,8 +589,7 @@ def _single_run_command(
             ]
         )
     else:
-        # Tasks without the unified retrieval CLI still take the morgan neighbor selector.
-        command.extend(["--neighbor-selector", args.morgan_neighbor_selector])
+        command.extend(["--morgan-neighbor-selector", args.morgan_neighbor_selector])
     if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
         command.extend(
             [
@@ -1049,6 +1068,22 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         default=None,
         help="Optional inclusive cached transfer-probability floor applied before final top-k.",
     )
+    if config.supports_retrieval_strategy:
+        parser.add_argument(
+            "--assay-transfer-diversity-mode",
+            choices=ASSAY_TRANSFER_DIVERSITY_MODES,
+            default=ASSAY_TRANSFER_DIVERSITY_NONE,
+        )
+        parser.add_argument(
+            "--assay-transfer-diversity-score-slack",
+            type=float,
+            default=0.0,
+        )
+    else:
+        parser.set_defaults(
+            assay_transfer_diversity_mode=ASSAY_TRANSFER_DIVERSITY_NONE,
+            assay_transfer_diversity_score_slack=0.0,
+        )
     parser.add_argument(
         "--rerank-catalog",
         default=(
@@ -1162,8 +1197,19 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
             raise SystemExit(
                 "--assay-transfer-min-score requires --retrieval-strategy assay_transfer_tool"
             )
+        if args.assay_transfer_diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
+            raise SystemExit(
+                "--assay-transfer-diversity-mode requires --retrieval-strategy assay_transfer_tool"
+            )
     if args.assay_transfer_min_score is not None and not 0.0 <= args.assay_transfer_min_score <= 1.0:
         raise SystemExit("--assay-transfer-min-score must be between 0 and 1 inclusive")
+    try:
+        validate_assay_transfer_diversity(
+            mode=args.assay_transfer_diversity_mode,
+            score_slack=args.assay_transfer_diversity_score_slack,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     if args.group_prompt_format and not config.group_prompt_formats:
         raise SystemExit(f"Pipeline {config.pipeline_module} does not support --group-prompt-format")
     if args.group_output_schema and not config.group_output_schemas:

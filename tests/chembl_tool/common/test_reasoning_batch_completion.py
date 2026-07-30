@@ -38,7 +38,7 @@ def test_result_completion_accepts_a_retrieval_free_run():
     )
 
 
-def test_batch_forwards_neighbor_selector_to_single_run():
+def test_batch_forwards_strict_morgan_neighbor_selector_to_single_run():
     config = BatchConfig(
         description="test",
         default_input="input.jsonl",
@@ -62,5 +62,6 @@ def test_batch_forwards_neighbor_selector_to_single_run():
 
     command = _single_run_command(config, args, 7, "run-7", Path("run-root"))
 
-    selector_position = command.index("--neighbor-selector")
+    selector_position = command.index("--morgan-neighbor-selector")
     assert command[selector_position + 1] == "query_feature_coverage"
+    assert "--neighbor-selector" not in command
