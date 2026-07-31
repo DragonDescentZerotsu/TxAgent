@@ -8,10 +8,7 @@ exports a high-resolution PNG.
 
 from __future__ import annotations
 
-import argparse
 import csv
-import shutil
-import subprocess
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -28,7 +25,9 @@ from .paper_figure_style import (
     PARENT,
     PURPLE,
     VISIBLE,
+    append_vertical_grid,
     rect,
+    run_metric_plot_cli,
     svg_text,
 )
 
@@ -170,13 +169,16 @@ def render_panel(
 
     plot_left, plot_right = x + 270, x + 760
     plot_top, plot_bottom = y + 66, y + 427
-    for tick in (0.0, 0.2, 0.4, 0.6, 0.8):
-        tick_x = plot_left + tick / SCALE_MAX * (plot_right - plot_left)
-        parts.append(
-            f'<line x1="{tick_x:.1f}" y1="{plot_top}" x2="{tick_x:.1f}" '
-            f'y2="{plot_bottom}" stroke="{GRID}" stroke-width="1"/>'
-        )
-        parts.append(svg_text(tick_x, y + 459, f"{tick:.1f}", size=12, fill=MUTED, anchor="middle"))
+    append_vertical_grid(
+        parts,
+        plot_left=plot_left,
+        plot_right=plot_right,
+        plot_top=plot_top,
+        plot_bottom=plot_bottom,
+        ticks=(0.0, 0.2, 0.4, 0.6, 0.8),
+        scale_max=SCALE_MAX,
+        label_y=y + 459,
+    )
 
     count = len(task.methods)
     step = min(44.0, 340.0 / max(1, count - 1))
@@ -284,28 +286,13 @@ def render(metrics_path: Path, output: Path) -> None:
     output.write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 
-def export_png(svg_path: Path, png_path: Path) -> None:
-    converter = shutil.which("convert")
-    if converter is None:
-        raise RuntimeError("ImageMagick 'convert' is required for --png-output")
-    png_path.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run(
-        [converter, "-background", "white", str(svg_path), str(png_path)],
-        check=True,
-    )
-
-
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--metrics", type=Path, default=DEFAULT_METRICS)
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--png-output", type=Path)
-    args = parser.parse_args()
-    render(args.metrics, args.output)
-    print(args.output)
-    if args.png_output is not None:
-        export_png(args.output, args.png_output)
-        print(args.png_output)
+    run_metric_plot_cli(
+        description=__doc__,
+        render=render,
+        default_metrics=DEFAULT_METRICS,
+        default_output=DEFAULT_OUTPUT,
+    )
 
 
 if __name__ == "__main__":

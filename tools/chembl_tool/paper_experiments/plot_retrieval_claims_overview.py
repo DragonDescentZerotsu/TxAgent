@@ -10,8 +10,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import shutil
-import subprocess
 from dataclasses import dataclass, replace
 from datetime import date
 from pathlib import Path
@@ -29,6 +27,8 @@ from .paper_figure_style import (
     POSITIVE,
     PURPLE,
     VISIBLE,
+    append_vertical_grid,
+    export_png,
     multiline,
     rect,
     svg_text,
@@ -251,10 +251,16 @@ def render_panel(
     plot_left, plot_right = x + 235, x + 724
     plot_top, plot_bottom = y + 80, y + 548
     scale_max = 0.85
-    for tick in (0.0, 0.2, 0.4, 0.6, 0.8):
-        tick_x = plot_left + tick / scale_max * (plot_right - plot_left)
-        parts.append(f'<line x1="{tick_x:.1f}" y1="{plot_top}" x2="{tick_x:.1f}" y2="{plot_bottom}" stroke="{GRID}" stroke-width="1"/>')
-        parts.append(svg_text(tick_x, y + 570, f"{tick:.1f}", size=12, fill=MUTED, anchor="middle"))
+    append_vertical_grid(
+        parts,
+        plot_left=plot_left,
+        plot_right=plot_right,
+        plot_top=plot_top,
+        plot_bottom=plot_bottom,
+        ticks=(0.0, 0.2, 0.4, 0.6, 0.8),
+        scale_max=scale_max,
+        label_y=y + 570,
+    )
 
     count = len(task.conditions)
     step = min(58.0, 420.0 / max(1, count - 1)) if count > 1 else 0.0
@@ -405,18 +411,6 @@ def render(analysis_dir: Path, output: Path, *, data_split: str = "test") -> Non
     )
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text("\n".join(parts) + "\n", encoding="utf-8")
-
-
-def export_png(svg_path: Path, png_path: Path) -> None:
-    """Export the canonical SVG through ImageMagick when a PNG is requested."""
-    converter = shutil.which("convert")
-    if converter is None:
-        raise RuntimeError("ImageMagick 'convert' is required for --png-output")
-    png_path.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run(
-        [converter, "-background", "white", str(svg_path), str(png_path)],
-        check=True,
-    )
 
 
 def main() -> None:

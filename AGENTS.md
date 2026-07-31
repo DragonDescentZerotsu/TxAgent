@@ -73,6 +73,9 @@ tools/chembl_tool/paper_experiments/summarize_minimol_retrieval_agent.py
 tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
 tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
 tools/chembl_tool/paper_experiments/plot_starling_with_minimol_agent.py
+tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
+tools/chembl_tool/paper_experiments/analyze_coverage_selector_retrieval_changes.py
+tools/chembl_tool/paper_experiments/plot_coverage_selector_llm_matrix.py
 tools/chembl_tool/paper_experiments/run_minimol_retrieval_agent_experiment.py
 baselines/minimol/run_bioavailability_ma.py --train-all
 baselines/minimol/run_embedding_knn.py
@@ -481,9 +484,11 @@ outputs/chembl_tool/tasks/<task_name>/
 bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-Viewer 只扫描 `outputs/paper/molecular_evidence_agent/` 中当前论文框架生成的最终 condition，按样本展示
-single-molecule、mechanism-family/flat/direct 和 final stages，并递归展示通用 JSON、工具调用、
-retrieval evidence 和 provenance。旧 task-specific reasoning output 不再由该 viewer 支持。
+Viewer 默认注册 Starling random、Starling scaffold 和历史 TDC test 三个 dataset；每个 dataset 内只扫描
+identity-blind、matched-prefetch、deployment-visible 和 deployment-visible parent-disjoint 四个正式
+paper run root。页面按样本展示 single-molecule、mechanism-family/flat/direct 和 final stages，并递归展示
+通用 JSON、工具调用、retrieval evidence 和 provenance。旧 task-specific reasoning output 不再支持；
+需要其它 dataset 时可在端口后显式追加 trace root。
 
 ## Paper experiment split 与可视化入口
 
@@ -1155,7 +1160,8 @@ tools/trace_viewer/viewer.html
   不包含旧 task-specific structured field 适配。
 
 tools/trace_viewer/start_viewer.sh
-  在 `outputs/paper/molecular_evidence_agent/` 启动最终 paper trace viewer；参数只接受端口。
+  在临时、受限的 serving root 中注册 Starling random/scaffold 与历史 TDC paper trace；第一个参数是端口，
+  后续可选参数是要注册的 trace roots。
 
 tools/chembl_tool/tasks/bbb_martins/
   其他 BBB evidence 清洗、打分、报告和输出汇总脚本。
@@ -1829,15 +1835,15 @@ bash tools/trace_viewer/start_viewer.sh 8776
 然后打开：
 
 ```text
-http://localhost:8776/.trace_viewer.html?v=paper-v1
+http://localhost:8776/.trace_viewer.html?v=paper-v2
 ```
 
-Viewer 当前只扫描 `outputs/paper/molecular_evidence_agent/runs`、
+Viewer 默认分别注册 Starling random、Starling scaffold 和历史 TDC test；每个 dataset 只扫描 `runs`、
 `runs_deployment_visible_prefetched`、`runs_deployment_visible` 和
-`runs_deployment_visible_parent_disjoint` 中由正式 `predictions.jsonl` 引用的样本级 trace。对于
-parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 identity policy，并区分 retrieval
-变化后的重跑与 LLM-visible input 未变化时的 artifact reuse。旧 task reasoning 目录的保留和清理规则见
-`tools/chembl_tool/paper_experiments/TRACE_RETENTION.md`。
+`runs_deployment_visible_parent_disjoint` 中由正式 `predictions.jsonl` 引用的样本级 trace，不跨 dataset
+合并指标。对于 parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 identity policy，
+并区分 retrieval 变化后的重跑与 LLM-visible input 未变化时的 artifact reuse。旧 task reasoning 目录的
+保留和清理规则见 `tools/chembl_tool/paper_experiments/TRACE_RETENTION.md`。
 
 常用 pipeline 命令：
 

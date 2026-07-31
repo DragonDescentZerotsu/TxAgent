@@ -22,6 +22,8 @@ from .paper_figure_style import (
     PARENT,
     PURPLE,
     VISIBLE,
+    append_vertical_grid,
+    export_png,
     rect,
     svg_text,
 )
@@ -32,7 +34,6 @@ from .plot_starling_benchmark_overview import (
     SPLITS,
     TASKS,
     Task,
-    export_png,
     read_metrics,
 )
 
@@ -182,22 +183,16 @@ def render_panel(
     )
     plot_left, plot_right = x + 270, x + 748
     plot_top, plot_bottom = y + 66, y + 427
-    for tick in (0.0, 0.2, 0.4, 0.6, 0.8):
-        tick_x = plot_left + tick / SCALE_MAX * (plot_right - plot_left)
-        parts.append(
-            f'<line x1="{tick_x:.1f}" y1="{plot_top}" x2="{tick_x:.1f}" '
-            f'y2="{plot_bottom}" stroke="{GRID}" stroke-width="1"/>'
-        )
-        parts.append(
-            svg_text(
-                tick_x,
-                y + 459,
-                f"{tick:.1f}",
-                size=12,
-                fill=MUTED,
-                anchor="middle",
-            )
-        )
+    append_vertical_grid(
+        parts,
+        plot_left=plot_left,
+        plot_right=plot_right,
+        plot_top=plot_top,
+        plot_bottom=plot_bottom,
+        ticks=(0.0, 0.2, 0.4, 0.6, 0.8),
+        scale_max=SCALE_MAX,
+        label_y=y + 459,
+    )
 
     count = len(task.methods)
     step = min(44.0, 340.0 / max(1, count - 1))

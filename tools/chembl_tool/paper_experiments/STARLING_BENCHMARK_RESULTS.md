@@ -1,6 +1,6 @@
 # Starling random/scaffold benchmark：当前决策、结果与入口
 
-更新时间：2026-07-30。
+更新时间：2026-07-31。
 
 本文件是 2026-07-24 至 2026-07-27 Starling benchmark 迁移和实验的集中总账。它只记录当前
 Starling-held-out `random` / `scaffold` lineage；旧 TDC `test` / `valid` 的历史结果仍见
@@ -267,7 +267,61 @@ outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_mi
 outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent_operational_highres.png
 ```
 
-## 7. Identity-blind 补充控制：当前实测状态
+## 7. Morgan similarity vs query-feature coverage agent retrieval
+
+2026-07-28 完成 coverage selector 的六个 Starling task/split 全样本 matched LLM 对比，全部
+`n_failed_runs=0`。两组条件固定使用 Starling full evidence、`full_mechanism`、deployment-visible、
+`parent_disjoint`、`top_k_per_group=3`、`min_similarity=0.30`、相同 GLM/single analysis/group reuse 和
+decoding；唯一变化是 neighbor selector：按 Morgan/Tanimoto similarity 排序，或在 similarity 不低于
+`0.30` 的候选中贪心最大化 query Morgan-bit union coverage。
+
+| split / task | Morgan accuracy | Coverage accuracy | Δ accuracy | Morgan macro-F1 | Coverage macro-F1 | Δ macro-F1 | flips | McNemar p |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| random / BBB | 0.7720 | 0.7440 | -0.0280 | 0.7422 | 0.7078 | -0.0344 | 34 | 0.0243 |
+| scaffold / BBB | 0.7380 | 0.7200 | -0.0180 | 0.7005 | 0.6862 | -0.0142 | 33 | 0.1628 |
+| random / Bioavailability | 0.7231 | 0.7016 | -0.0215 | 0.6991 | 0.6779 | -0.0213 | 28 | 0.1849 |
+| scaffold / Bioavailability | 0.6855 | 0.6801 | -0.0054 | 0.6743 | 0.6694 | -0.0049 | 30 | 0.8555 |
+| random / Skin | 0.6526 | 0.6447 | -0.0079 | 0.6300 | 0.6200 | -0.0100 | 23 | 0.6776 |
+| scaffold / Skin | 0.6211 | 0.6395 | +0.0184 | 0.5836 | 0.6017 | +0.0181 | 25 | 0.2295 |
+
+Coverage 在 6 个条件中有 5 个降低 accuracy 和 macro-F1；唯一上升是 Skin scaffold，但 paired
+McNemar 不显著，macro-F1 paired-bootstrap 95% CI `[-0.0058, +0.0426]` 仍跨零。BBB random 的下降
+最明确：Morgan-only correct / coverage-only correct 为 `24 / 10`，McNemar `p=0.0243`，macro-F1
+delta bootstrap 95% CI `[-0.0612, -0.0094]`。因此当前结果不支持用 pure coverage selector 全局替代
+Morgan similarity selector。它仍可作为 hybrid selector 的互补项，但下一版必须同时保留 analog relevance
+约束并预先冻结组合规则，不能根据这六个 test 结果调权后再在同一 test 上作确认性结论。
+
+2026-07-31 对全部 retrieval 和 reasoning trace 做了进一步配对审计。`2,504` 个 query 中有
+`1,699 (67.9%)` 实际换入至少一个 neighbor，`1,195 (47.7%)` 至少一个 mechanism group 的 top-1
+发生变化；跨 query 的平均 replacement 数为 `2.15`，实际变化 query 中为 `3.17`。selector 的确提高了
+Morgan query-feature coverage（六条件平均增幅范围 `+0.0357` 至 `+0.0632`）并降低 neighbor-neighbor
+Tanimoto（`-0.0977` 至 `-0.1344`），所以负结果不是 selector 没有改变 retrieval。真正发生 set replacement
+的样本中 Morgan-only correct / coverage-only correct 为 `85 / 51`，损失集中在换入 evidence 的下游效用。
+
+Trace audit 还发现 `543` 个 query 的 ranked retrieval 完全相同，其中 `27` 个 final prediction 仍发生
+flip；这 `27` 个 query 的 final LLM 输入逐字相同，因此属于模型调用波动，不能归因于 selector。当前 group
+prompt 会逐 neighbor 提供 whole-molecule Tanimoto、MCS/MMP、property delta 和 assay evidence，但不会把
+selector 的 marginal Morgan-bit coverage、query atom/region mapping 或 neighbor 独有覆盖区域传给 LLM。
+因此这轮实验验证的是“coverage-selected analog set + 既有 whole-molecule transferability reasoning”，
+不能解释为已经完整检验 fragment-wise compositional reasoning。
+
+入口与产物：
+
+```text
+tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
+tools/chembl_tool/paper_experiments/analyze_coverage_selector_retrieval_changes.py
+tools/chembl_tool/paper_experiments/plot_coverage_selector_llm_matrix.py
+outputs/paper/coverage_selector_llm/analysis/metrics.tsv
+outputs/paper/coverage_selector_llm/analysis/comparison.json
+outputs/paper/coverage_selector_llm/analysis/report.md
+outputs/paper/coverage_selector_llm/analysis/retrieval_change_analysis.json
+outputs/paper/coverage_selector_llm/analysis/retrieval_change_analysis.tsv
+outputs/paper/coverage_selector_llm/analysis/retrieval_change_report.md
+outputs/paper/coverage_selector_llm/analysis/figures/coverage_selector_llm_matrix.svg
+outputs/paper/coverage_selector_llm/analysis/figures/coverage_selector_llm_matrix_highres.png
+```
+
+## 8. Identity-blind 补充控制：当前实测状态
 
 Blind 条件隐藏 query/neighbor 的结构、名称和 source ID，并由 harness 预先提供脱敏后的 properties /
 comparison tool evidence。它与 deployment-visible 同时改变 identity visibility 和 tool execution，
@@ -306,7 +360,7 @@ outputs/paper/molecular_evidence_agent_starling_random/runs/
 outputs/paper/molecular_evidence_agent_starling_scaffold/runs/
 ```
 
-## 8. Skin_Reaction：label scope、retrieval distance 与性能下降
+## 9. Skin_Reaction：label scope、retrieval distance 与性能下降
 
 Skin gold label 是 sensitization/contact allergy，不是所有 adverse skin effects 的并集。Paper-facing
 Starling mechanism families 是 evidence-scope expansion，而不是像 oral bioavailability
@@ -388,7 +442,7 @@ direct，也没有证明稳定改善；Tier 2 analog noise、branch synthesis �
 
 普通 `--groups` 只控制 fresh pipeline，不能用于 resume-final artifact filtering。
 
-## 9. 主要运行与汇总入口
+## 10. 主要运行与汇总入口
 
 ```text
 data builder:
@@ -423,7 +477,7 @@ generic final-only group filtering:
   tools/chembl_tool/common/task_workflows/reasoning_batch.py
 ```
 
-## 10. 当前未完成项
+## 11. 当前未完成项
 
 - repair identity-blind 的 14 个 failed sample-condition runs，并生成独立 blind analysis/audit；
 - MiniMol agent retrieval 的 `parent_disjoint` 矩阵尚未完成；当前 operational 与 formal Morgan
@@ -435,7 +489,7 @@ generic final-only group filtering:
 - 当前 GLM condition 每项主要只有一次 run，关键 comparisons 仍需 repeats/第二模型验证；
 - Skin Tier 1+2 是 test-triggered post-hoc diagnosis，不得升级成预注册 primary condition。
 
-## 11. Git 发布里程碑
+## 12. Git 发布里程碑
 
 已直接推送到 `origin/main` 的 Starling migration：
 

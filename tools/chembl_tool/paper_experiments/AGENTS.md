@@ -207,6 +207,25 @@ python -m baselines.structure_knn.run \
   --neighbor-selector <similarity|query_feature_coverage>
 ```
 
+### Coverage-selector matched LLM ablation
+
+Coverage-selector LLM ablation 固定 Starling full evidence、`full_mechanism`、deployment-visible、
+`parent_disjoint`、`top_k_per_group=3`、`min_similarity=0.30` 和同一 GLM/prompt，只比较 Morgan similarity
+与 `query_feature_coverage` selector。六个 task/split 条件统一由一套 canonical 汇总和绘图入口处理；早期
+BBB scaffold pilot artifact 仍可作为其中一行输入，但不再维护独立 pilot 汇总器或独立 overview 绘图代码：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.summarize_coverage_selector_llm_matrix
+python -m tools.chembl_tool.paper_experiments.analyze_coverage_selector_retrieval_changes
+python -m tools.chembl_tool.paper_experiments.plot_coverage_selector_llm_matrix \
+  --png-output outputs/paper/coverage_selector_llm/analysis/figures/coverage_selector_llm_matrix_highres.png
+```
+
+`summarize_coverage_selector_llm_matrix.py` 是全样本配对指标、McNemar 和 paired-bootstrap 的唯一入口；
+`analyze_coverage_selector_retrieval_changes.py` 进一步审计 neighbor set/rank/top-1 变化、Morgan feature
+coverage、neighbor redundancy、group reasoning content 和相同 final input 下的模型波动。两者共享同一
+condition/path resolver，新增 split 或迁移 artifact 路径时不得复制 special case。
+
 正式运行顺序仍是 deployment-visible operational、`parent_disjoint_ablation --materialize`、
 deployment-visible parent-disjoint。`parent_disjoint_ablation.py` 的 `--benchmark-split random|scaffold`
 用于读取新 matrix；旧 `--split test|valid` 语义不变。在完整矩阵、failure audit 和汇总完成前，
@@ -312,7 +331,19 @@ plot_coverage_performance.py
   只负责展示，不在图内重算指标。默认输出 deployment-visible agentic 的 canonical SVG。
 
 paper_figure_style.py
-  论文 SVG 共用的颜色、字体和基础绘图 primitive；新增 figure 不复制视觉常量。
+  论文 SVG 共用的颜色、字体、基础绘图 primitive、纵向数值网格、标准 metrics-to-SVG CLI 和唯一
+  ImageMagick PNG export helper；新增 figure 不复制视觉常量、网格、标准 CLI 或 `export_png` 实现。
+
+summarize_coverage_selector_llm_matrix.py
+  汇总六个 Starling task/split 的 Morgan-vs-coverage matched LLM 指标、配对 outcome、McNemar 和
+  macro-F1 bootstrap；同时集中维护 control/coverage artifact 路径。
+
+analyze_coverage_selector_retrieval_changes.py
+  在同一配对矩阵上审计 query/group/slot 级 neighbor replacement、top-1/reorder、结构 coverage、
+  neighbor redundancy、group reasoning 变化和相同 final input 下的 prediction 波动。
+
+plot_coverage_selector_llm_matrix.py
+  只读取 canonical `metrics.tsv` 绘制六条件 accuracy/macro-F1 matched bar chart，不重算指标。
 ```
 
 常用审计顺序：
@@ -544,9 +575,10 @@ Skin Reaction valid visibility trace 的规范化分析写在
 不得再把专用 title、description 或两语言逻辑复制进一次性脚本。
 
 Paper runner 必须保存每个样本自己的 `trace_messages.jsonl`，并传 `--no-combine-traces`，避免再生成
-condition-level 的重复大文件。最终 trace viewer 只服务四个 paper run root：`runs/`、
-`runs_deployment_visible_prefetched/`、`runs_deployment_visible/` 和
-`runs_deployment_visible_parent_disjoint/`，通过 `predictions.jsonl` 定位 per-run trace；不得重新加入旧
-task、Tier、expert policy 或 task-specific prediction 字段的硬编码适配。Parent-disjoint 仍必须通过
-`analysis/parent_disjoint_ablation/` 的汇总产物审计；viewer 还必须从 manifest 和 `reuse.json` 明确显示
-`parent_disjoint` policy，以及 sample 是因 retrieval 变化而重跑，还是因 LLM-visible input hash 未变化而复用。
+condition-level 的重复大文件。最终 trace viewer 默认注册 Starling random/scaffold 与历史 TDC test；
+每个 dataset 内只服务四个 paper run root：`runs/`、`runs_deployment_visible_prefetched/`、
+`runs_deployment_visible/` 和 `runs_deployment_visible_parent_disjoint/`，通过 `predictions.jsonl` 定位
+per-run trace，且不得跨 dataset 合并指标。不得重新加入旧 task、Tier、expert policy 或 task-specific
+prediction 字段的硬编码适配。Parent-disjoint 仍必须通过 `analysis/parent_disjoint_ablation/` 的汇总产物
+审计；viewer 还必须从 manifest 和 `reuse.json` 明确显示 `parent_disjoint` policy，以及 sample 是因
+retrieval 变化而重跑，还是因 LLM-visible input hash 未变化而复用。

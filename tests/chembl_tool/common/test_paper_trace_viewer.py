@@ -15,7 +15,26 @@ def test_trace_viewer_targets_only_final_paper_runs():
     assert "predictions.jsonl" in html
     assert "retrieval.json" in html
     assert "trace_messages.jsonl" in html
-    assert 'TRACE_ROOT="outputs/paper/molecular_evidence_agent"' in starter
+    assert "molecular_evidence_agent_starling_random" in starter
+    assert "molecular_evidence_agent_starling_scaffold" in starter
+    assert "molecular_evidence_agent" in starter
+    assert ".trace_viewer_sources.tsv" in starter
+    assert ".trace_viewer_catalog.tsv" in starter
+
+
+def test_trace_viewer_supports_configured_benchmark_datasets_and_generic_metrics():
+    html = VIEWER.read_text(encoding="utf-8")
+
+    assert 'id="dataset"' in html
+    assert ".trace_viewer_sources.tsv" in html
+    assert ".trace_viewer_catalog.tsv" in html
+    assert "datasetPath" in html
+    assert "resolveArtifactPath" in html
+    assert "rowFailed" in html
+    assert "computeConditionMetrics" in html
+    assert "computed from predictions.jsonl" in html
+    assert "molecular_evidence_agent_starling_random" not in html
+    assert "molecular_evidence_agent_starling_scaffold" not in html
 
 
 def test_trace_viewer_has_no_legacy_task_specific_rendering():

@@ -23,7 +23,7 @@
   header { position: sticky; top: 0; z-index: 10; padding: 12px 18px; color: #fff; background: var(--nav); box-shadow: 0 2px 8px rgba(0,0,0,.18); }
   h1 { margin: 0 0 10px; font-size: 18px; letter-spacing: 0; }
   .build { margin-left: 8px; color: #9bc5ed; font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .toolbar { display: grid; grid-template-columns: 170px 170px minmax(260px, 1fr) auto; gap: 8px; align-items: end; }
+  .toolbar { display: grid; grid-template-columns: 190px 190px 170px minmax(260px, 1fr) auto; gap: 8px; align-items: end; }
   .control { display: grid; gap: 4px; }
   label { color: #cbd5e1; font-size: 11px; font-weight: 700; }
   select, input, button { min-height: 34px; border-radius: 5px; font: 13px inherit; }
@@ -134,8 +134,9 @@
 </head>
 <body>
 <header>
-  <h1>Paper Reasoning Trace Viewer <span class="build">paper-v1</span></h1>
+  <h1>Paper Reasoning Trace Viewer <span class="build">paper-v2</span></h1>
   <div class="toolbar">
+    <div class="control"><label for="dataset">Benchmark dataset</label><select id="dataset"></select></div>
     <div class="control"><label for="regime">Visibility</label><select id="regime"></select></div>
     <div class="control"><label for="task">Task</label><select id="task"></select></div>
     <div class="control"><label for="condition">Experiment condition</label><select id="condition"></select></div>
@@ -166,14 +167,14 @@
 </main>
 <script>
 const ROOTS = [
+  { id: "runs_deployment_visible_parent_disjoint", label: "Deployment-visible (parent-disjoint)" },
+  { id: "runs_deployment_visible", label: "Deployment-visible (agentic tools)" },
   { id: "runs", label: "Identity-blind" },
   { id: "runs_deployment_visible_prefetched", label: "Deployment-visible (matched prefetch)" },
-  { id: "runs_deployment_visible", label: "Deployment-visible (agentic tools)" },
-  { id: "runs_deployment_visible_parent_disjoint", label: "Deployment-visible (parent-disjoint)" },
 ];
-const state = { catalog: [], condition: null, manifest: null, predictions: [], filtered: [], selected: null, trace: [], retrieval: null, runManifest: null, reuse: null, loading: false };
+const state = { datasets: [], catalog: [], condition: null, manifest: null, predictions: [], filtered: [], selected: null, trace: [], retrieval: null, runManifest: null, reuse: null, loading: false };
 const $ = id => document.getElementById(id);
-const els = { regime: $("regime"), task: $("task"), condition: $("condition"), refresh: $("refresh"), search: $("search"), correctness: $("correctness"), status: $("status"), samples: $("samples"), count: $("count"), detail: $("detail") };
+const els = { dataset: $("dataset"), regime: $("regime"), task: $("task"), condition: $("condition"), refresh: $("refresh"), search: $("search"), correctness: $("correctness"), status: $("status"), samples: $("samples"), count: $("count"), detail: $("detail") };
 
 function esc(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -185,11 +186,18 @@ function text(value) {
 }
 function joinPath(...parts) { return parts.filter(Boolean).map(x => String(x).replace(/^\/+|\/+$/g, "")).join("/"); }
 function dirname(path) { return String(path).replace(/\/[^/]*$/, ""); }
-function normalizePaperPath(path) {
+function resolveArtifactPath(path) {
   const raw = String(path || "").replaceAll("\\", "/");
-  const marker = "outputs/paper/molecular_evidence_agent/";
-  const index = raw.indexOf(marker);
-  return (index >= 0 ? raw.slice(index + marker.length) : raw).replace(/^\/+/, "");
+  const condition = state.condition;
+  if (!condition) return raw.replace(/^\/+/, "");
+  if (raw === condition.datasetPath || raw.startsWith(`${condition.datasetPath}/`)) return raw;
+  const marker = `/${condition.regime}/`;
+  const index = raw.lastIndexOf(marker);
+  if (index >= 0) return joinPath(condition.datasetPath, raw.slice(index + 1));
+  if (raw === condition.regime || raw.startsWith(`${condition.regime}/`)) {
+    return joinPath(condition.datasetPath, raw);
+  }
+  return raw.replace(/^\/+/, "");
 }
 async function fetchText(path) {
   const response = await fetch(path, { cache: "no-store" });
@@ -198,6 +206,7 @@ async function fetchText(path) {
 }
 async function fetchJson(path) { return JSON.parse(await fetchText(path)); }
 async function fetchJsonOptional(path) { try { return await fetchJson(path); } catch { return null; } }
+async function fetchTextOptional(path) { try { return await fetchText(path); } catch { return null; } }
 async function exists(path) { try { const r = await fetch(path, { method: "HEAD", cache: "no-store" }); return r.ok; } catch { return false; } }
 function parseJsonl(source) { return source.split(/\r?\n/).filter(line => line.trim()).map(line => JSON.parse(line)); }
 async function listDirectories(path) {
@@ -214,37 +223,97 @@ async function listDirectories(path) {
   return values;
 }
 
-async function scanCatalog() {
-  setLoading(true, "Scanning final paper conditions...");
+async function loadDatasets() {
+  const source = await fetchTextOptional(".trace_viewer_sources.tsv");
+  if (!source) {
+    state.datasets = [{ id: "default", label: "Paper results", path: "." }];
+    return;
+  }
+  state.datasets = source.split(/\r?\n/).filter(line => line.trim()).map(line => {
+    const [id, label, path] = line.split("\t");
+    return { id, label, path };
+  }).filter(dataset => dataset.id && dataset.label && dataset.path);
+  if (!state.datasets.length) throw new Error("Trace viewer dataset config is empty.");
+}
+
+async function loadConfiguredCatalog() {
+  const source = await fetchTextOptional(".trace_viewer_catalog.tsv");
+  if (!source) return null;
+  const datasetsById = new Map(state.datasets.map(dataset => [dataset.id, dataset]));
+  const rootsById = new Map(ROOTS.map(root => [root.id, root]));
+  return source.split(/\r?\n/).filter(line => line.trim()).map(line => {
+    const [datasetId, regime, task, name] = line.split("\t");
+    const dataset = datasetsById.get(datasetId);
+    const root = rootsById.get(regime);
+    if (!dataset || !root || !task || !name) return null;
+    return {
+      datasetId,
+      datasetLabel: dataset.label,
+      datasetPath: dataset.path,
+      regime,
+      regimeLabel: root.label,
+      task,
+      name,
+      path: joinPath(dataset.path, regime, task, name),
+    };
+  }).filter(Boolean);
+}
+
+async function scanRemoteCatalog() {
   const catalog = [];
-  for (const root of ROOTS) {
-    if (!(await exists(`${root.id}/`))) continue;
-    for (const task of await listDirectories(root.id)) {
-      for (const condition of await listDirectories(task.path)) {
-        if (await exists(`${condition.path}/predictions.jsonl`)) {
-          catalog.push({ regime: root.id, regimeLabel: root.label, task: task.name, name: condition.name, path: condition.path });
+  for (const dataset of state.datasets) {
+    for (const root of ROOTS) {
+      const rootPath = joinPath(dataset.path, root.id);
+      if (!(await exists(`${rootPath}/`))) continue;
+      for (const task of await listDirectories(rootPath)) {
+        for (const condition of await listDirectories(task.path)) {
+          if (await exists(`${condition.path}/predictions.jsonl`)) {
+            catalog.push({
+              datasetId: dataset.id,
+              datasetLabel: dataset.label,
+              datasetPath: dataset.path,
+              regime: root.id,
+              regimeLabel: root.label,
+              task: task.name,
+              name: condition.name,
+              path: condition.path,
+            });
+          }
         }
       }
     }
   }
-  state.catalog = catalog.sort((a, b) => `${a.regime}/${a.task}/${a.name}`.localeCompare(`${b.regime}/${b.task}/${b.name}`));
-  populateRegimes();
+  return catalog;
+}
+
+async function scanCatalog() {
+  setLoading(true, "Scanning final paper conditions...");
+  await loadDatasets();
+  const configuredCatalog = await loadConfiguredCatalog();
+  const catalog = configuredCatalog || await scanRemoteCatalog();
+  state.catalog = catalog.sort((a, b) => `${a.datasetId}/${a.regime}/${a.task}/${a.name}`.localeCompare(`${b.datasetId}/${b.regime}/${b.task}/${b.name}`));
+  populateDatasets();
   setLoading(false);
   if (state.catalog.length) await loadSelectedCondition();
   else showError("No final paper conditions with predictions.jsonl were found.");
 }
+function populateDatasets() {
+  const datasets = state.datasets.filter(dataset => state.catalog.some(item => item.datasetId === dataset.id));
+  els.dataset.innerHTML = datasets.map(dataset => `<option value="${esc(dataset.id)}">${esc(dataset.label)}</option>`).join("");
+  populateRegimes();
+}
 function populateRegimes() {
-  const regimes = ROOTS.filter(root => state.catalog.some(item => item.regime === root.id));
+  const regimes = ROOTS.filter(root => state.catalog.some(item => item.datasetId === els.dataset.value && item.regime === root.id));
   els.regime.innerHTML = regimes.map(root => `<option value="${esc(root.id)}">${esc(root.label)}</option>`).join("");
   populateTasks();
 }
 function populateTasks() {
-  const tasks = [...new Set(state.catalog.filter(x => x.regime === els.regime.value).map(x => x.task))].sort();
+  const tasks = [...new Set(state.catalog.filter(x => x.datasetId === els.dataset.value && x.regime === els.regime.value).map(x => x.task))].sort();
   els.task.innerHTML = tasks.map(task => `<option value="${esc(task)}">${esc(task)}</option>`).join("");
   populateConditions();
 }
 function populateConditions() {
-  const conditions = state.catalog.filter(x => x.regime === els.regime.value && x.task === els.task.value);
+  const conditions = state.catalog.filter(x => x.datasetId === els.dataset.value && x.regime === els.regime.value && x.task === els.task.value);
   els.condition.innerHTML = conditions.map(item => `<option value="${esc(item.path)}">${esc(item.name)}</option>`).join("");
 }
 async function loadSelectedCondition() {
@@ -314,8 +383,8 @@ async function selectSample(row) {
   renderSampleList();
   renderLoadingDetail(`Loading sample #${row.query_index}...`);
   try {
-    let tracePath = normalizePaperPath(row.trace_messages);
-    if (!tracePath && row.run_dir) tracePath = `${normalizePaperPath(row.run_dir)}/trace_messages.jsonl`;
+    let tracePath = resolveArtifactPath(row.trace_messages);
+    if (!tracePath && row.run_dir) tracePath = `${resolveArtifactPath(row.run_dir)}/trace_messages.jsonl`;
     if (!tracePath) throw new Error("Prediction row does not contain a trace path.");
     const runRoot = dirname(tracePath);
     const [trace, retrieval, runManifest, reuse] = await Promise.all([
@@ -347,6 +416,56 @@ function metric(key, value) { return `<div class="metric"><div class="metric-key
 function usageText(usage) {
   if (!usage) return "";
   return `${Number(usage.prompt_tokens || 0).toLocaleString()} in / ${Number(usage.completion_tokens || 0).toLocaleString()} out / ${Number(usage.total_tokens || 0).toLocaleString()} total`;
+}
+function rowFailed(row) {
+  const statuses = [row.status, row.final_status]
+    .filter(value => value !== null && value !== undefined && String(value) !== "")
+    .map(value => String(value).toLowerCase());
+  return statuses.some(status => status !== "ok");
+}
+function computeConditionMetrics(rows) {
+  const evaluated = rows.filter(row => !rowFailed(row) && row.label !== null && row.label !== undefined && row.pred_label !== null && row.pred_label !== undefined);
+  const classes = [...new Set(evaluated.flatMap(row => [String(row.label), String(row.pred_label)]))].sort();
+  const correct = evaluated.filter(row => String(row.label) === String(row.pred_label)).length;
+  const f1Values = classes.map(value => {
+    const tp = evaluated.filter(row => String(row.label) === value && String(row.pred_label) === value).length;
+    const fp = evaluated.filter(row => String(row.label) !== value && String(row.pred_label) === value).length;
+    const fn = evaluated.filter(row => String(row.label) === value && String(row.pred_label) !== value).length;
+    const denominator = (2 * tp) + fp + fn;
+    return denominator ? (2 * tp) / denominator : 0;
+  });
+  const confusion = classes.length === 2 && classes.includes("0") && classes.includes("1") ? {
+    tn: evaluated.filter(row => String(row.label) === "0" && String(row.pred_label) === "0").length,
+    fp: evaluated.filter(row => String(row.label) === "0" && String(row.pred_label) === "1").length,
+    fn: evaluated.filter(row => String(row.label) === "1" && String(row.pred_label) === "0").length,
+    tp: evaluated.filter(row => String(row.label) === "1" && String(row.pred_label) === "1").length,
+  } : null;
+  return {
+    total: rows.length,
+    evaluated: evaluated.length,
+    failed: rows.filter(rowFailed).length,
+    accuracy: evaluated.length ? correct / evaluated.length : null,
+    macroF1: f1Values.length ? f1Values.reduce((sum, value) => sum + value, 0) / f1Values.length : null,
+    confusion,
+  };
+}
+function formatScore(value) { return value === null ? "" : value.toFixed(4); }
+function renderConditionSummary() {
+  const summary = computeConditionMetrics(state.predictions);
+  const values = [
+    metric("Benchmark dataset", state.condition?.datasetLabel),
+    metric("Task", state.condition?.task),
+    metric("Condition", state.condition?.name),
+    metric("Samples", summary.total),
+    metric("Evaluated", summary.evaluated),
+    metric("Accuracy", formatScore(summary.accuracy)),
+    metric("Macro-F1", formatScore(summary.macroF1)),
+    metric("Failures", summary.failed),
+  ];
+  if (summary.confusion) {
+    values.push(metric("Confusion matrix", `TN ${summary.confusion.tn} / FP ${summary.confusion.fp} / FN ${summary.confusion.fn} / TP ${summary.confusion.tp}`));
+  }
+  return `<div class="section"><div class="section-head"><span>Condition results</span><span class="tag">computed from predictions.jsonl</span></div><div class="overview">${values.join("")}</div></div>`;
 }
 const GROUP_DISPLAY_LABELS = Object.freeze({
   "Observed.direct_oral_bioavailability": "Direct oral bioavailability (F%)",
@@ -468,6 +587,7 @@ function renderDetail() {
     return sum;
   }, { prompt: 0, completion: 0, total: 0 });
   const overview = [
+    metric("Benchmark dataset", state.condition?.datasetLabel),
     metric("Task", state.condition?.task),
     metric("Condition", state.condition?.name),
     metric("Visibility", state.condition?.regimeLabel),
@@ -484,9 +604,10 @@ function renderDetail() {
   ].join("");
   const stages = state.trace.map((record, index) => renderStage(record, index, state.trace.length)).join("");
   const pills = state.trace.map(record => `<span class="pill ${statusClass(record.status)}">${esc(stageLabel(record.task))}</span>`).join("");
-  els.detail.innerHTML = `<div class="section"><div class="section-head"><span>Sample overview</span><span class="tag">${esc(row.run_id || "")}</span></div><div class="overview">${overview}</div><div class="stage-nav">${pills}</div></div>${renderReuseProvenance(state.reuse)}${renderRetrieval(state.retrieval)}<div class="section"><div class="section-head"><span>Reasoning stages</span><span class="tag">single -> group(s) -> final</span></div>${stages}</div>`;
+  els.detail.innerHTML = `${renderConditionSummary()}<div class="section"><div class="section-head"><span>Sample overview</span><span class="tag">${esc(row.run_id || "")}</span></div><div class="overview">${overview}</div><div class="stage-nav">${pills}</div></div>${renderReuseProvenance(state.reuse)}${renderRetrieval(state.retrieval)}<div class="section"><div class="section-head"><span>Reasoning stages</span><span class="tag">single -> group(s) -> final</span></div>${stages}</div>`;
 }
 
+els.dataset.onchange = () => { populateRegimes(); loadSelectedCondition(); };
 els.regime.onchange = () => { populateTasks(); loadSelectedCondition(); };
 els.task.onchange = () => { populateConditions(); loadSelectedCondition(); };
 els.condition.onchange = loadSelectedCondition;
