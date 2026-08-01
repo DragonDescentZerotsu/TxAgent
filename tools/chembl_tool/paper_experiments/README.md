@@ -132,7 +132,12 @@ python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split v
 `outputs/paper/molecular_evidence_agent_valid/analysis/report.md`，parent-disjoint 配对审计位于
 `outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/result_report.md`。
 
-API key 默认从 `GLM_API_KEY` 读取，其值不得写入命令记录、manifest 或 trace。
+当前 paper/Starling runner 默认使用本机 tunnel `http://127.0.0.1:50000/v1`、
+`nvidia/GLM-5.2-NVFP4` 和 `reasoning_effort=none`。运行前用 `ssh -fNT parcc-glm` 建立 tunnel；
+loopback vLLM 无鉴权时，runner 会在进程内为 `GLM_LOCAL_API_KEY` 注入非敏感占位值。
+旧 LiteLLM 只作为显式 fallback，使用 `--api-key-env GLM_API_KEY --base-url
+https://litellm.parcc.upenn.edu/v1 --model zai-org/GLM-5.2-FP8 --reasoning-effort ""`。
+不得将任何真实 API key 的值写入命令记录、manifest 或 trace。
 
 Parent-disjoint 已由公共 identity normalizer、retrieval policy、top-k backfill 和 manifest provenance
 实现。先审计并生成选择性重跑计划；确认后用 `--materialize` 物化输入未变化的整条 reuse artifact 和

@@ -20,8 +20,10 @@ from .build_starling_benchmark_indices import (
 from .molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
     EXPERIMENTS,
+    GLM_API_KEY_ENV,
     GLM_BASE_URL,
     GLM_MODEL,
+    GLM_REASONING_EFFORT,
     NEIGHBOR_IDENTITY_POLICIES,
     PARENT_DISJOINT,
     VISIBILITY_MODES,
@@ -31,6 +33,7 @@ from .molecular_evidence_agent import (
     _require_parent_disjoint_reuse_plans,
     _select_experiments,
     _visibility_contract,
+    ensure_endpoint_api_key,
     experiment_run_root,
 )
 from .minimol_retrieval_contract import (
@@ -148,9 +151,10 @@ def main(argv: list[str] | None = None) -> int:
         "benchmark_source": "starling",
         "benchmark_split": args.benchmark_split,
         "retrieval_feature": args.retrieval_feature,
-        "model": GLM_MODEL,
-        "base_url": GLM_BASE_URL,
+        "model": args.model,
+        "base_url": args.base_url,
         "api_key_env": args.api_key_env,
+        "reasoning_effort": args.reasoning_effort,
         "visibility_mode": args.visibility_mode,
         "visibility_contract": _visibility_contract(args.visibility_mode),
         "neighbor_identity_policy": args.neighbor_identity_policy,
@@ -180,6 +184,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"matrix_manifest": str(matrix_path)}, indent=2))
         return 0
 
+    ensure_endpoint_api_key(args.api_key_env, args.base_url)
     failed: list[dict[str, Any]] = []
     for experiment in selected:
         command = _command(experiment, args)
@@ -318,7 +323,10 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         action="store_true",
         help="Validate inputs and write the matrix manifest without launching conditions.",
     )
-    parser.add_argument("--api-key-env", default="GLM_API_KEY")
+    parser.add_argument("--api-key-env", default=GLM_API_KEY_ENV)
+    parser.add_argument("--base-url", default=GLM_BASE_URL)
+    parser.add_argument("--model", default=GLM_MODEL)
+    parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
     parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=DEPLOYMENT_VISIBLE)
     parser.add_argument(
         "--neighbor-identity-policy",

@@ -151,6 +151,10 @@ def test_starling_matrix_accepts_manifest_only_mode():
     )
 
     assert args.manifest_only is True
+    assert args.base_url == "http://127.0.0.1:50000/v1"
+    assert args.model == "nvidia/GLM-5.2-NVFP4"
+    assert args.reasoning_effort == "none"
+    assert args.api_key_env == "GLM_LOCAL_API_KEY"
 
 
 def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():
@@ -158,6 +162,9 @@ def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():
 
     assert args.visibility_mode == DEPLOYMENT_VISIBLE
     assert args.neighbor_identity_policy == PARENT_DISJOINT
+    assert args.base_url == "http://127.0.0.1:50000/v1"
+    assert args.model == "nvidia/GLM-5.2-NVFP4"
+    assert args.reasoning_effort == "none"
     selected = _prepare_policy_selection(list(EXPERIMENTS), args)
     assert selected
     assert all(experiment.mode != "none" for experiment in selected)
@@ -261,7 +268,9 @@ def test_valid_split_changes_only_dataset_and_isolates_output_root():
     assert command[command.index("--input-jsonl") + 1].endswith("/valid.jsonl")
     assert str(paper_root_for_split("valid")) in command[command.index("--batch-root") + 1]
     assert EXPERIMENTS[1].index == valid_experiment.index
-    assert command[command.index("--model") + 1] == "zai-org/GLM-5.2-FP8"
+    assert command[command.index("--model") + 1] == "nvidia/GLM-5.2-NVFP4"
+    assert command[command.index("--base-url") + 1] == "http://127.0.0.1:50000/v1"
+    assert command[command.index("--reasoning-effort") + 1] == "none"
     assert command[command.index("--temperature") + 1] == "0"
     assert command[command.index("--max-tokens") + 1] == "20480"
 

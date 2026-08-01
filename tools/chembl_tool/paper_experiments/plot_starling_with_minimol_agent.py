@@ -1,4 +1,4 @@
-"""Compare MiniMol operational agent retrieval with all existing Starling results."""
+"""Compare parent-disjoint MiniMol agent retrieval with all Starling results."""
 
 from __future__ import annotations
 
@@ -42,9 +42,9 @@ ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_RESULTS_DIR = ROOT / "outputs/paper/minimol_retrieval_agent_results"
 DEFAULT_OUTPUT = (
     DEFAULT_RESULTS_DIR
-    / "figures/starling_benchmark_with_minimol_agent_operational.svg"
+    / "figures/starling_benchmark_with_minimol_agent.svg"
 )
-DEFAULT_DATA_OUTPUT = DEFAULT_RESULTS_DIR / "operational_all_results_comparison.tsv"
+DEFAULT_DATA_OUTPUT = DEFAULT_RESULTS_DIR / "all_results_comparison.tsv"
 
 WIDTH = 1900
 HEIGHT = 1840
@@ -62,12 +62,15 @@ SINGLE_FILLS = {
 }
 
 
-def read_minimol_operational() -> dict[tuple[str, str, str], dict[str, Any]]:
+def read_minimol_parent_disjoint() -> dict[tuple[str, str, str], dict[str, Any]]:
     results: dict[tuple[str, str, str], dict[str, Any]] = {}
     missing: list[str] = []
     failed: list[str] = []
     for split, _ in SPLITS:
-        root = paper_root_for_minimol_retrieval(split) / "runs_deployment_visible"
+        root = (
+            paper_root_for_minimol_retrieval(split)
+            / "runs_deployment_visible_parent_disjoint"
+        )
         for task in TASKS:
             for method in task.methods:
                 if method.source not in AGENT_SOURCES:
@@ -86,9 +89,9 @@ def read_minimol_operational() -> dict[tuple[str, str, str], dict[str, Any]]:
                     "metrics_path": str(metrics_path),
                 }
     if missing:
-        raise ValueError(f"Missing MiniMol operational agent results: {missing}")
+        raise ValueError(f"Missing MiniMol parent-disjoint agent results: {missing}")
     if failed:
-        raise ValueError(f"Cannot plot MiniMol operational rows with failures: {failed}")
+        raise ValueError(f"Cannot plot MiniMol parent-disjoint rows with failures: {failed}")
     return results
 
 
@@ -130,7 +133,7 @@ def write_comparison_data(
                             "method": method.key,
                             "display_label": method.label,
                             "result_series": "MiniMol agent retrieval",
-                            "neighbor_identity_policy": "operational",
+                            "neighbor_identity_policy": "parent_disjoint",
                             "n_test": feature_row["n_evaluable"],
                             "n_failed": feature_row["n_failed_runs"],
                             "macro_f1": feature_row["macro_f1"],
@@ -272,15 +275,15 @@ def render_panel(
 
 def render(metrics_path: Path, output: Path, *, data_output: Path) -> None:
     existing = read_metrics(metrics_path)
-    minimol = read_minimol_operational()
+    minimol = read_minimol_parent_disjoint()
     write_comparison_data(data_output, existing=existing, minimol=minimol)
     generated = date.today().isoformat()
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
         f'viewBox="0 0 {WIDTH} {HEIGHT}" role="img" aria-labelledby="chart-title chart-desc">',
         '<title id="chart-title">Starling benchmark results with MiniMol agent retrieval</title>',
-        '<desc id="chart-desc">Six horizontal bar panels compare existing formal Starling benchmark results with MiniMol embedding cosine operational agent retrieval across tasks and random or scaffold splits.</desc>',
-        f"<metadata>Sources: {metrics_path}; MiniMol operational roots; generated {generated}.</metadata>",
+        '<desc id="chart-desc">Six horizontal bar panels compare existing formal Starling benchmark results with matched parent-disjoint MiniMol embedding cosine agent retrieval across tasks and random or scaffold splits.</desc>',
+        f"<metadata>Sources: {metrics_path}; MiniMol parent-disjoint roots; generated {generated}.</metadata>",
         rect(0, 0, WIDTH, HEIGHT, fill=BG, rx=0),
         svg_text(
             70,
@@ -292,7 +295,7 @@ def render(metrics_path: Path, output: Path, *, data_output: Path) -> None:
         svg_text(
             70,
             94,
-            "Existing formal results plus MiniMol/cosine operational agent · Macro-F1",
+            "Existing formal results plus MiniMol/cosine parent-disjoint agent · Macro-F1",
             size=19,
             fill=MUTED,
         ),
@@ -308,7 +311,7 @@ def render(metrics_path: Path, output: Path, *, data_output: Path) -> None:
     ]
     legend = (
         ("Morgan agent · parent-disjoint", GOLD, 270),
-        ("MiniMol agent · operational", PURPLE, 250),
+        ("MiniMol agent · parent-disjoint", PURPLE, 280),
         ("No retrieval", NEUTRAL, 160),
         ("MiniMol head", BLIND, 170),
         ("Morgan KNN", VISIBLE, 170),
@@ -338,14 +341,14 @@ def render(metrics_path: Path, output: Path, *, data_output: Path) -> None:
             svg_text(
                 70,
                 1762,
-                "Agent comparison changes retrieval feature and identity policy: existing Morgan bars are formal parent-disjoint; MiniMol bars are operational.",
+                "Agent comparison is identity-policy matched: both Morgan and MiniMol bars use parent-disjoint neighbors; only the retrieval feature changes.",
                 size=13,
                 fill=MUTED,
             ),
             svg_text(
                 70,
                 1792,
-                "No-retrieval and train-label baselines are shared context. Exact values and provenance are in operational_all_results_comparison.tsv.",
+                "No-retrieval and train-label baselines are shared context. Exact values and provenance are in all_results_comparison.tsv.",
                 size=13,
                 fill=MUTED,
             ),

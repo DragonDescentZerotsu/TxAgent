@@ -32,3 +32,7 @@ def test_matrix_orchestration_covers_all_feature_conditions(monkeypatch, tmp_pat
     assert all("--retrieval-feature" in command for _, command in captured)
     assert all(command[command.index("--neighbor-identity-policy") + 1] == "operational"
                for _, command in captured)
+    assert all(command[command.index("--base-url") + 1] == "http://127.0.0.1:50000/v1"
+               for _, command in captured)
+    assert all(command[command.index("--reasoning-effort") + 1] == "none"
+               for _, command in captured)

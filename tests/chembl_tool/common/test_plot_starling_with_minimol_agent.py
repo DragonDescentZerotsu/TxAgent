@@ -33,7 +33,7 @@ def _write_existing(path):
         writer.writerows(rows)
 
 
-def _operational_rows(*, failed=False):
+def _parent_disjoint_rows(*, failed=False):
     rows = {}
     for split, _ in plot.SPLITS:
         for task in plot.TASKS:
@@ -59,14 +59,14 @@ def test_render_comparison_and_data(monkeypatch, tmp_path):
     output = tmp_path / "comparison.svg"
     data_output = tmp_path / "comparison.tsv"
     _write_existing(metrics)
-    monkeypatch.setattr(plot, "read_minimol_operational", _operational_rows)
+    monkeypatch.setattr(plot, "read_minimol_parent_disjoint", _parent_disjoint_rows)
 
     plot.render(metrics, output, data_output=data_output)
 
     svg = output.read_text(encoding="utf-8")
     assert "Starling Benchmark with MiniMol Agent Retrieval" in svg
     assert svg.count("Morgan agent · parent-disjoint") == 1
-    assert svg.count("MiniMol agent · operational") == 1
+    assert svg.count("MiniMol agent · parent-disjoint") == 1
     assert "0.600" in svg
     rows = list(csv.DictReader(data_output.open(encoding="utf-8"), delimiter="\t"))
     assert len(rows) == 100
@@ -80,7 +80,7 @@ def test_render_comparison_and_data(monkeypatch, tmp_path):
     }
 
 
-def test_operational_reader_rejects_failed_rows(monkeypatch, tmp_path):
+def test_parent_disjoint_reader_rejects_failed_rows(monkeypatch, tmp_path):
     for split, _ in plot.SPLITS:
         root = tmp_path / split
         for task in plot.TASKS:
@@ -89,7 +89,7 @@ def test_operational_reader_rejects_failed_rows(monkeypatch, tmp_path):
                     continue
                 batch = (
                     root
-                    / "runs_deployment_visible"
+                    / "runs_deployment_visible_parent_disjoint"
                     / task.key
                     / f"{task.key}__{method.key}"
                 )
@@ -115,4 +115,4 @@ def test_operational_reader_rejects_failed_rows(monkeypatch, tmp_path):
     )
 
     with pytest.raises(ValueError, match="rows with failures"):
-        plot.read_minimol_operational()
+        plot.read_minimol_parent_disjoint()

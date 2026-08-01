@@ -24,6 +24,13 @@ from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
     DEFAULT_FEATURE_ROOT,
     paper_root_for_minimol_retrieval,
 )
+from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
+    GLM_API_KEY_ENV,
+    GLM_BASE_URL,
+    GLM_MODEL,
+    GLM_REASONING_EFFORT,
+    ensure_endpoint_api_key,
+)
 from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     experiments_for_starling_benchmark,
 )
@@ -40,8 +47,7 @@ def main(argv: list[str] | None = None) -> int:
             "MiniMol retrieval feature store is missing; run "
             "build_minimol_retrieval_features first."
         )
-    if not os.environ.get(args.api_key_env):
-        raise SystemExit(f"Missing required API key environment variable: {args.api_key_env}")
+    ensure_endpoint_api_key(args.api_key_env, args.base_url)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     state_path = args.output_dir / "experiment_state.json"
@@ -50,6 +56,10 @@ def main(argv: list[str] | None = None) -> int:
         "status": "running",
         "parallelism": args.parallelism,
         "group_workers": args.group_workers,
+        "model": args.model,
+        "base_url": args.base_url,
+        "api_key_env": args.api_key_env,
+        "reasoning_effort": args.reasoning_effort,
         "completed_phases": [],
     }
     _write_json_atomic(state_path, state)
@@ -82,6 +92,10 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _run_matrix(policy: str, args: argparse.Namespace) -> None:
+    api_key_env = getattr(args, "api_key_env", GLM_API_KEY_ENV)
+    base_url = getattr(args, "base_url", GLM_BASE_URL)
+    model = getattr(args, "model", GLM_MODEL)
+    reasoning_effort = getattr(args, "reasoning_effort", GLM_REASONING_EFFORT)
     commands: list[tuple[str, list[str]]] = []
     for split in BENCHMARK_SPLITS:
         by_task: dict[str, list[str]] = {}
@@ -115,6 +129,14 @@ def _run_matrix(policy: str, args: argparse.Namespace) -> None:
                         str(args.parallelism),
                         "--group-workers",
                         str(args.group_workers),
+                        "--api-key-env",
+                        api_key_env,
+                        "--base-url",
+                        base_url,
+                        "--model",
+                        model,
+                        "--reasoning-effort",
+                        reasoning_effort,
                     ],
                 )
             )
@@ -195,8 +217,23 @@ def _run_final_summary_and_plot(args: argparse.Namespace) -> None:
                 str(figures / "minimol_vs_morgan_agent_retrieval_highres.png"),
             ],
         ),
+        (
+            "final/plot_all_results.log",
+            [
+                args.python_executable,
+                "-u",
+                "-m",
+                "tools.chembl_tool.paper_experiments.plot_starling_with_minimol_agent",
+                "--output",
+                str(figures / "starling_benchmark_with_minimol_agent.svg"),
+                "--data-output",
+                str(args.output_dir / "all_results_comparison.tsv"),
+                "--png-output",
+                str(figures / "starling_benchmark_with_minimol_agent_highres.png"),
+            ],
+        ),
     ]
-    # The plot consumes the summary TSV, so these two commands are intentionally serial.
+    # Both plots consume completed summaries, so these commands are intentionally serial.
     for command in commands:
         _run_commands([command], log_root=args.output_dir / "launcher_logs")
 
@@ -262,7 +299,10 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--python-executable", default=sys.executable)
-    parser.add_argument("--api-key-env", default="GLM_API_KEY")
+    parser.add_argument("--api-key-env", default=GLM_API_KEY_ENV)
+    parser.add_argument("--base-url", default=GLM_BASE_URL)
+    parser.add_argument("--model", default=GLM_MODEL)
+    parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
     parser.add_argument("--parallelism", type=int, default=8)
     parser.add_argument("--group-workers", type=int, default=4)
     return parser.parse_args(argv)

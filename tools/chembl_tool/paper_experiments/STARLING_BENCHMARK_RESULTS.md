@@ -1,6 +1,6 @@
 # Starling random/scaffold benchmark：当前决策、结果与入口
 
-更新时间：2026-07-31。
+更新时间：2026-08-01。
 
 本文件是 2026-07-24 至 2026-07-27 Starling benchmark 迁移和实验的集中总账。它只记录当前
 Starling-held-out `random` / `scaffold` lineage；旧 TDC `test` / `valid` 的历史结果仍见
@@ -213,7 +213,7 @@ machine-readable method: minimol_embedding_cosine_knn_k3
 该 baseline 已进入 `summarize_starling_benchmark.py` 生成的 `metrics.tsv`、`summary.json`、
 `report.md` 和 canonical `starling_benchmark_overview.{svg,png}`，不是只存在于单独实验目录。
 
-## 6. MiniMol embedding agent retrieval（operational）
+## 6. MiniMol embedding agent retrieval（operational + parent-disjoint）
 
 2026-07-30 完成 MiniMol/cosine agent retrieval 的 random/scaffold operational 矩阵。该实验不是
 train-label KNN：它保持 evidence source、direct/flat/mechanism organization、top-k、GLM、prompt、
@@ -250,13 +250,47 @@ ChEMBL direct（`+0.0549`），最大下降是 random BBB 的 ChEMBL full/mechan
 Bioavailability 两套 split 的 14/14 paired conditions 都提高；random BBB 则没有提高，
 Skin random 也有 4/6 下降。这些异质性不支持“MiniMol feature 普遍支配 Morgan”的结论。
 
-这里的配对图是结果比较，不是纯 retrieval-feature causal attribution：已有 Morgan bars 使用正式
+2026-07-30 的 operational-only 配对图只是结果比较，不是纯 retrieval-feature causal attribution：已有 Morgan bars 使用正式
 `parent_disjoint` policy，新 MiniMol bars是本轮 `operational` policy，因此同时改变了 feature 和
 neighbor identity policy。No-retrieval、MiniMol train-all head、Morgan KNN 和 MiniMol KNN 仅作为同图
-context。下一步若要作 feature-only claim，必须完成 MiniMol `parent_disjoint` 并与同 policy 的 Morgan
-结果配对。
+context。当时尚不能作 feature-only claim；下述 2026-08-01 matched 结果解决了这项限制。
 
-入口与产物：
+2026-08-01 已补齐同轮 MiniMol `parent_disjoint`、paired summary 和正式图：
+
+```text
+conditions: 38/38（random 19，scaffold 19）
+missing conditions: 0
+Morgan failed runs: 0
+MiniMol failed runs: 0
+neighbor identity policy: parent_disjoint（两侧 matched）
+bootstrap replicates: 10,000 per condition
+```
+
+在 identity policy matched 后，38 个条件仍为 26 win / 11 loss / 1 tie；平均
+`Delta macro-F1 = +0.0103`，中位数 `+0.0112`。六个 task/split 的最优条件与上表一致。
+10,000 次 paired bootstrap 中有 6 个条件的 95% CI 不跨 0：random BBB ChEMBL full/mechanism
+偏向 Morgan；random Bioavailability ChEMBL full/mechanism、scaffold Skin Starling full/mechanism，
+以及 scaffold Bioavailability 的 ChEMBL direct、Starling full/flat、Starling full/mechanism 偏向 MiniMol。
+这些是 condition-level 未做多重比较校正的结果，仍不支持把平均改善解释成普遍支配。
+
+正式 parent-disjoint 产物：
+
+```text
+outputs/paper/minimol_retrieval_agent_results/summary.json
+outputs/paper/minimol_retrieval_agent_results/condition_results.tsv
+outputs/paper/minimol_retrieval_agent_results/report.md
+outputs/paper/minimol_retrieval_agent_results/all_results_comparison.tsv
+outputs/paper/minimol_retrieval_agent_results/figures/minimol_vs_morgan_agent_retrieval.svg
+outputs/paper/minimol_retrieval_agent_results/figures/minimol_vs_morgan_agent_retrieval_highres.png
+outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent.svg
+outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent_highres.png
+```
+
+其中 `minimol_vs_morgan_agent_retrieval` 是 38 个 feature-only paired 条件；
+`starling_benchmark_with_minimol_agent` 将 matched parent-disjoint MiniMol agent bars 与 no-retrieval、
+MiniMol train-all head、Morgan KNN、MiniMol KNN 和既有 Morgan agent 结果放在同一张 bar chart。
+
+历史 operational-only 入口与产物仍保留用于 sensitivity audit：
 
 ```text
 tools/chembl_tool/paper_experiments/run_minimol_retrieval_agent_experiment.py
@@ -477,11 +511,44 @@ generic final-only group filtering:
   tools/chembl_tool/common/task_workflows/reasoning_batch.py
 ```
 
+### GLM endpoint 默认值与 2026-08-01 benchmark
+
+上述 paper/Starling GLM 入口现在默认使用：
+
+```text
+http://127.0.0.1:50000/v1
+nvidia/GLM-5.2-NVFP4
+reasoning_effort=none
+```
+
+本机端口由 `ssh -fNT parcc-glm` 转发到 `dgx008:50000`。旧 LiteLLM 请求名
+`zai-org/GLM-5.2-FP8` 实际也解析到 `hosted_vllm/nvidia/GLM-5.2-NVFP4`，因此这里不是两种模型精度的比较。
+
+同一约 3.3k input-token structured-output 请求的 64 并发 smoke：
+
+| runtime contract | valid JSON | wall time | p50 latency | aggregate token/s |
+|---|---:|---:|---:|---:|
+| old LiteLLM + historical default thinking | 0 / 64 | 16.41 s | 7.99 s | 14,767 |
+| direct dgx008 + `reasoning_effort=none` | 64 / 64 | 6.68 s | 3.43 s | 32,221 |
+
+按完成全部请求的 wall time，新默认快 `2.46x`；p50 快 `2.33x`；aggregate token throughput 为 `2.18x`。
+相同 default-thinking 设置下，直连端点反而约慢 3--10 倍且容易把 completion budget 消耗在 reasoning，
+所以当前加速结论属于完整 runtime contract，不应解释为单独的 endpoint transport 或硬件差异。
+
+为找 endpoint 吞吐上限，另用约 2.1k token/request、短 JSON 输出和共享 prompt 前缀测试直连端点：
+
+| concurrency | valid JSON | wall time | aggregate token/s |
+|---:|---:|---:|---:|
+| 128 | 128 / 128 | 4.73 s | 57,128 |
+| 256 | 256 / 256 | 6.16 s | 87,883 |
+| 512 | 512 / 512 | 8.80 s | 122,927 |
+
+因此当前最快实测是约 `122.9k token/s`。这是短输出 endpoint ceiling smoke；真实 agent pipeline 还受
+retrieval、工具调用、branch 数量、重试和每个样本 prompt 长度限制，不能直接按这个数字换算完成时间。
+
 ## 11. 当前未完成项
 
 - repair identity-blind 的 14 个 failed sample-condition runs，并生成独立 blind analysis/audit；
-- MiniMol agent retrieval 的 `parent_disjoint` 矩阵尚未完成；当前 operational 与 formal Morgan
-  parent-disjoint 的同图比较不能解释为纯 feature effect；
 - test matched-prefetch 尚未扩展到全部当前 Starling conditions；
 - ECFP RF/XGBoost 和 matched-neighbor evidence retrieval-only vote 未完成；
 - 用于确认表示选择稳健性的独立第二种 pretrained encoder baseline 未完成；

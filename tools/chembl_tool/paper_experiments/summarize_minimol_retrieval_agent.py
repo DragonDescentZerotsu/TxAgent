@@ -134,8 +134,8 @@ def summarize_condition(
     if morgan.keys() != minimol.keys():
         raise ValueError(f"Prediction index mismatch for {split}:{experiment.name}")
     indices = sorted(morgan)
-    labels = [int(morgan[index]["true_label"]) for index in indices]
-    if labels != [int(minimol[index]["true_label"]) for index in indices]:
+    labels = [_gold_label(morgan[index]) for index in indices]
+    if labels != [_gold_label(minimol[index]) for index in indices]:
         raise ValueError(f"Gold label mismatch for {split}:{experiment.name}")
     morgan_predictions = [int(morgan[index]["pred_label"]) for index in indices]
     minimol_predictions = [int(minimol[index]["pred_label"]) for index in indices]
@@ -206,6 +206,17 @@ def _prediction_map(path: Path) -> dict[int, dict[str, Any]]:
                 continue
             rows[int(row["query_index"])] = row
     return rows
+
+
+def _gold_label(row: dict[str, Any]) -> int:
+    """Accept both historical summary fixtures and current batch prediction rows."""
+    values = [row[key] for key in ("true_label", "label") if row.get(key) is not None]
+    if not values:
+        raise KeyError("Prediction row has neither 'true_label' nor 'label'")
+    labels = {int(value) for value in values}
+    if len(labels) != 1:
+        raise ValueError("Prediction row has conflicting 'true_label' and 'label' values")
+    return labels.pop()
 
 
 def _read_json(path: Path) -> dict[str, Any]:

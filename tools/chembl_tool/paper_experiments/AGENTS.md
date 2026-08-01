@@ -401,7 +401,9 @@ identity_blind 与 deployment_visible_prefetched:
 主实验和补充控制共享以下基础条件：
 
 ```text
-model: zai-org/GLM-5.2-FP8
+default endpoint: http://127.0.0.1:50000/v1 (requires `ssh -fNT parcc-glm`)
+model: nvidia/GLM-5.2-NVFP4
+reasoning_effort: none
 temperature: 0
 max_tokens: 20480
 top_k_per_group: 3
@@ -523,7 +525,10 @@ BBB 详细记录见 `tools/chembl_tool/tasks/bbb_martins/DISTANCE_SELF_RELEVANCE
 
 每个任务必须先运行 `none` 条件。所有包含检索的条件都必须使用 `--single-analysis-source-batch`，以复用该条件中冻结的 single-molecule 分支。不得为每个消融条件独立重新生成先验。
 
-不得将 API key 的值写入代码、保存到文件中的命令、manifest、报告或 trace。使用 `GLM_API_KEY` 或另一个明确指定的环境变量。
+不得将 API key 的值写入代码、保存到文件中的命令、manifest、报告或 trace。直连 loopback vLLM 默认使用
+`GLM_LOCAL_API_KEY` 的非敏感占位值；旧 LiteLLM fallback 使用 `GLM_API_KEY` 或另一个明确指定的环境变量。
+旧 `zai-org/GLM-5.2-FP8` 是请求别名，实际 response model 为 `hosted_vllm/nvidia/GLM-5.2-NVFP4`；
+不得把 endpoint 对比误写成 FP8 与 NVFP4 模型精度对比。
 
 OpenAI SDK 的传输层 retry 上限明确固定为 2，与 baseline run 一致。结构化 JSON 验证在记录的调用路径中最多允许 4 次总尝试。最后两次尝试只重新序列化相同的 JSON evidence，以避开 provider 的确定性退化；不得删除证据或改变 inference setting。single、group 或 final 分支不完整的 run 会被 batch 完整性约束排除，并通过 batch `--skip-existing` 显式重跑。
 

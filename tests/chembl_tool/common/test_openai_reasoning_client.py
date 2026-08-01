@@ -3,10 +3,18 @@ from types import SimpleNamespace
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
 
 
-def _response(content, *, tool_calls=None, response_id="response-1"):
+def _response(
+    content,
+    *,
+    tool_calls=None,
+    response_id="response-1",
+    reasoning_content="",
+    reasoning=None,
+):
     message = SimpleNamespace(
         content=content,
-        reasoning_content="",
+        reasoning_content=reasoning_content,
+        reasoning=reasoning,
         tool_calls=tool_calls or [],
     )
     return SimpleNamespace(
@@ -68,3 +76,16 @@ def test_optional_group_tools_falls_back_to_plain_json_when_disabled():
 
     assert result["content"] == {"transferability": "low"}
     assert result["tool_calls"] == []
+
+
+def test_chat_json_accepts_vllm_reasoning_field():
+    client = _client()
+    client._create_completion = lambda *args, **kwargs: _response(
+        '{"confidence":"high"}',
+        reasoning="provider reasoning",
+    )
+
+    result = client.chat_json([{"role": "user", "content": "analyze"}])
+
+    assert result["reasoning_content"] == "provider reasoning"
+    assert result["messages"][-1]["reasoning"] == "provider reasoning"

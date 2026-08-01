@@ -200,27 +200,42 @@ policy 或 deterministic override。
 
 ## OpenAI-compatible / GLM-5.2 适配记录
 
-2026-06-27 已验证同一套 OpenAI-compatible client path 可以访问 Penn LiteLLM 上的 GLM-5.2：
+2026-08-01 起，paper/Starling GLM runner 默认通过本机 SSH tunnel 直连 dgx008 vLLM：
 
 ```text
-base_url: https://litellm.parcc.upenn.edu/v1
-model: zai-org/GLM-5.2-FP8
-api key: do not commit; pass through a local env var such as GLM_API_KEY
+base_url: http://127.0.0.1:50000/v1
+model: nvidia/GLM-5.2-NVFP4
+api key env: GLM_LOCAL_API_KEY (loopback vLLM 无鉴权时 runner 自动注入非敏感占位值)
+reasoning_effort: none
 ```
 
-GLM-5.2 不能直接复用 DeepSeek thinking 参数。LiteLLM 对 DeepSeek-style `thinking`
-参数返回 400 unsupported-param error；跑 GLM 时使用：
+先建立 tunnel：
+
+```bash
+ssh -fNT parcc-glm
+```
+
+旧 Penn LiteLLM 仍可显式作为 fallback：
 
 ```bash
 --api-key-env GLM_API_KEY \
 --base-url https://litellm.parcc.upenn.edu/v1 \
 --model zai-org/GLM-5.2-FP8 \
---disable-thinking \
 --reasoning-effort ""
 ```
 
-注意：`--disable-thinking` 只是为了避免发送不兼容的 API 参数；当前 endpoint 仍会在 response
-中返回 `reasoning_content`，pipeline 会正常保存到 trace 的 `reasoning` 字段。
+`zai-org/GLM-5.2-FP8` 是旧 LiteLLM 请求别名；旧 response 和既有 trace 实际均报告
+`hosted_vllm/nvidia/GLM-5.2-NVFP4`。不要把旧/新路径描述成 FP8 与 NVFP4 两种模型的比较。
+直连 vLLM 必须显式使用 `reasoning_effort=none` 才能得到当前速度和稳定 JSON；默认 thinking 会生成很长
+reasoning，实测反而显著慢于 LiteLLM。64 并发、约 3.3k input-token、同一 structured-output prompt 的
+endpoint smoke 中，直连 no-reasoning 为 64/64 有效、6.68 s，旧 LiteLLM default-thinking 为 0/64 有效、
+16.41 s；按 wall time 为 2.46x，aggregate token throughput 为 2.18x。该数字是“新直连 + no-reasoning”
+对“旧代理 + 历史默认 thinking”的 operational contract 比较，不是纯网络或纯硬件 benchmark。
+另一组约 2.1k token/request 的直连吞吐压力测试在 128/256/512 并发下全部得到有效 JSON，分别达到
+57.1k/87.9k/122.9k aggregate token/s；当前最快实测为 512 并发的 122.9k token/s，但这是共享前缀、
+短输出的 endpoint ceiling smoke，不应当作真实 agent pipeline 的样本吞吐承诺。
+
+OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `reasoning`；共享 client 两者都接受。
 
 GLM 对 tool choice 和长 structured output 的遵循可能不稳定。所有 task 统一通过
 `tools/chembl_tool/common/reasoning_validation.py` 检查必需 JSON 字段和允许值；当前默认最多 4 次总尝试，
