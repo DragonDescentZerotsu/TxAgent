@@ -133,7 +133,8 @@ python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split v
 `outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/result_report.md`。
 
 当前 paper/Starling runner 默认使用本机 tunnel `http://127.0.0.1:50000/v1`、
-`nvidia/GLM-5.2-NVFP4` 和 `reasoning_effort=none`。运行前用 `ssh -fNT parcc-glm` 建立 tunnel；
+`nvidia/GLM-5.2-NVFP4` 和历史一致的 `--disable-thinking --reasoning-effort ""`。空值使 client 不发送
+`reasoning_effort` 参数，但 GLM 返回的 reasoning 仍会保存在 trace。运行前用 `ssh -fNT parcc-glm` 建立 tunnel；
 loopback vLLM 无鉴权时，runner 会在进程内为 `GLM_LOCAL_API_KEY` 注入非敏感占位值。
 旧 LiteLLM 只作为显式 fallback，使用 `--api-key-env GLM_API_KEY --base-url
 https://litellm.parcc.upenn.edu/v1 --model zai-org/GLM-5.2-FP8 --reasoning-effort ""`。

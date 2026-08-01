@@ -518,7 +518,7 @@ generic final-only group filtering:
 ```text
 http://127.0.0.1:50000/v1
 nvidia/GLM-5.2-NVFP4
-reasoning_effort=none
+reasoning_effort=""（省略 API 参数，保持历史 GLM reasoning contract）
 ```
 
 本机端口由 `ssh -fNT parcc-glm` 转发到 `dgx008:50000`。旧 LiteLLM 请求名
@@ -529,11 +529,11 @@ reasoning_effort=none
 | runtime contract | valid JSON | wall time | p50 latency | aggregate token/s |
 |---|---:|---:|---:|---:|
 | old LiteLLM + historical default thinking | 0 / 64 | 16.41 s | 7.99 s | 14,767 |
-| direct dgx008 + `reasoning_effort=none` | 64 / 64 | 6.68 s | 3.43 s | 32,221 |
+| direct dgx008 + `reasoning_effort=none`（诊断，不采用） | 64 / 64 | 6.68 s | 3.43 s | 32,221 |
 
-按完成全部请求的 wall time，新默认快 `2.46x`；p50 快 `2.33x`；aggregate token throughput 为 `2.18x`。
-相同 default-thinking 设置下，直连端点反而约慢 3--10 倍且容易把 completion budget 消耗在 reasoning，
-所以当前加速结论属于完整 runtime contract，不应解释为单独的 endpoint transport 或硬件差异。
+上表的 `2.46x` wall-time、`2.33x` p50 和 `2.18x` aggregate throughput 改善来自关闭 reasoning，
+不属于正式 agent 设置，不能作为新默认相对旧端点的速度结论。正式 runner 保持历史
+`--disable-thinking --reasoning-effort ""`：不发送 reasoning-effort 参数，但继续接收并保存 GLM reasoning。
 
 为找 endpoint 吞吐上限，另用约 2.1k token/request、短 JSON 输出和共享 prompt 前缀测试直连端点：
 
@@ -543,8 +543,8 @@ reasoning_effort=none
 | 256 | 256 / 256 | 6.16 s | 87,883 |
 | 512 | 512 / 512 | 8.80 s | 122,927 |
 
-因此当前最快实测是约 `122.9k token/s`。这是短输出 endpoint ceiling smoke；真实 agent pipeline 还受
-retrieval、工具调用、branch 数量、重试和每个样本 prompt 长度限制，不能直接按这个数字换算完成时间。
+这组最高约 `122.9k token/s` 同样使用 `reasoning_effort=none`，只保留为关闭 reasoning 的 endpoint
+ceiling 诊断；它不是当前 reasoning-enabled 默认，也不能换算真实 agent pipeline 完成时间。
 
 ## 11. 当前未完成项
 

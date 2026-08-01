@@ -89,3 +89,21 @@ def test_chat_json_accepts_vllm_reasoning_field():
 
     assert result["reasoning_content"] == "provider reasoning"
     assert result["messages"][-1]["reasoning"] == "provider reasoning"
+
+
+def test_empty_reasoning_effort_omits_parameter_without_enabling_deepseek_thinking():
+    client = _client()
+    client.temperature = 0.0
+    captured = {}
+    client.client = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=SimpleNamespace(
+                create=lambda **kwargs: captured.update(kwargs) or _response('{}')
+            )
+        )
+    )
+
+    client._create_completion([{"role": "user", "content": "analyze"}])
+
+    assert "reasoning_effort" not in captured
+    assert "extra_body" not in captured

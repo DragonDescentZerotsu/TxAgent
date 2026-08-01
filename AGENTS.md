@@ -206,7 +206,7 @@ policy 或 deterministic override。
 base_url: http://127.0.0.1:50000/v1
 model: nvidia/GLM-5.2-NVFP4
 api key env: GLM_LOCAL_API_KEY (loopback vLLM 无鉴权时 runner 自动注入非敏感占位值)
-reasoning_effort: none
+reasoning_effort: "" (omit the API parameter; matches the historical LiteLLM runs)
 ```
 
 先建立 tunnel：
@@ -226,14 +226,11 @@ ssh -fNT parcc-glm
 
 `zai-org/GLM-5.2-FP8` 是旧 LiteLLM 请求别名；旧 response 和既有 trace 实际均报告
 `hosted_vllm/nvidia/GLM-5.2-NVFP4`。不要把旧/新路径描述成 FP8 与 NVFP4 两种模型的比较。
-直连 vLLM 必须显式使用 `reasoning_effort=none` 才能得到当前速度和稳定 JSON；默认 thinking 会生成很长
-reasoning，实测反而显著慢于 LiteLLM。64 并发、约 3.3k input-token、同一 structured-output prompt 的
-endpoint smoke 中，直连 no-reasoning 为 64/64 有效、6.68 s，旧 LiteLLM default-thinking 为 0/64 有效、
-16.41 s；按 wall time 为 2.46x，aggregate token throughput 为 2.18x。该数字是“新直连 + no-reasoning”
-对“旧代理 + 历史默认 thinking”的 operational contract 比较，不是纯网络或纯硬件 benchmark。
-另一组约 2.1k token/request 的直连吞吐压力测试在 128/256/512 并发下全部得到有效 JSON，分别达到
-57.1k/87.9k/122.9k aggregate token/s；当前最快实测为 512 并发的 122.9k token/s，但这是共享前缀、
-短输出的 endpoint ceiling smoke，不应当作真实 agent pipeline 的样本吞吐承诺。
+正式 runner 继续沿用历史 `--disable-thinking --reasoning-effort ""`。这里的 `--disable-thinking` 只是不发送
+DeepSeek-style `thinking` 参数，空 `reasoning_effort` 使 client 完全省略该 API 参数；它不会关闭 GLM 自己的
+reasoning，provider 返回的 `reasoning_content` 或 `reasoning` 仍写入 trace。曾测得的 64/128/256/512
+并发高吞吐数字使用了 `reasoning_effort=none`，属于关闭 reasoning 的 endpoint ceiling 诊断，未被采纳为
+正式默认，也不能用于估算当前 reasoning-enabled agent pipeline 的加速比例。
 
 OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `reasoning`；共享 client 两者都接受。
 

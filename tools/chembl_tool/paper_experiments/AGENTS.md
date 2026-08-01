@@ -403,7 +403,7 @@ identity_blind 与 deployment_visible_prefetched:
 ```text
 default endpoint: http://127.0.0.1:50000/v1 (requires `ssh -fNT parcc-glm`)
 model: nvidia/GLM-5.2-NVFP4
-reasoning_effort: none
+reasoning_effort: "" (omit the parameter; preserve the historical GLM reasoning contract)
 temperature: 0
 max_tokens: 20480
 top_k_per_group: 3
