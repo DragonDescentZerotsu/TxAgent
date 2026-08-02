@@ -1,0 +1,16 @@
+{
+  "contract_version": "bioavailability_canonical_direct.v2",
+  "source_path": "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
+  "source_sha256": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010",
+  "residual_records_path": "data/starling_data/bioavailability_ma/oral_exposure_residual_v2/exposure_records.parquet",
+  "residual_records_sha256": "81c45f9dc035ed2b066b19a569eb80ef1f806d7a0f421956ea92b2dadb779bda",
+  "partition_reconciliation": {
+    "input_rows": 119192,
+    "absolute_rows_removed_from_residual": 3920,
+    "absolute_rows_with_valid_structure": 3712,
+    "absolute_rows_rejected_structure": 208,
+    "residual_rows": 115272,
+    "reconciles": true
+  },
+  "absolute_direct_rows_in_residual": 0
+}

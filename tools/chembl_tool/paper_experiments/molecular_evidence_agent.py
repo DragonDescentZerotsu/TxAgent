@@ -271,6 +271,7 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
     base_url = getattr(args, "base_url", GLM_BASE_URL)
     model = getattr(args, "model", GLM_MODEL)
     reasoning_effort = getattr(args, "reasoning_effort", GLM_REASONING_EFFORT)
+    fresh_parent_disjoint = bool(getattr(args, "fresh_parent_disjoint", False))
     experiment = experiment_for_split(experiment, split)
     paper_root = _paper_root_from_args(args)
     batch_root = experiment_run_root(
@@ -342,10 +343,17 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
             OPERATIONAL,
             paper_root=paper_root,
         )
+        current_run_root = experiment_run_root(
+            visibility_mode,
+            neighbor_identity_policy,
+            paper_root=paper_root,
+        )
         explicit_single_root = str(getattr(args, "single_analysis_root", "") or "")
         single_root = (
             Path(explicit_single_root)
             if explicit_single_root
+            else current_run_root
+            if fresh_parent_disjoint
             else operational_root
         )
         command.extend(
@@ -354,7 +362,7 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
                 str(single_root / experiment.task / f"{experiment.task}__none"),
             ]
         )
-        if neighbor_identity_policy == PARENT_DISJOINT:
+        if neighbor_identity_policy == PARENT_DISJOINT and not fresh_parent_disjoint:
             command.extend(
                 [
                     "--group-analysis-source-batch",
@@ -381,9 +389,13 @@ def experiment_run_root(
 ) -> Path:
     """Return the stable batch root for one paper visibility regime."""
     if neighbor_identity_policy == PARENT_DISJOINT:
-        if visibility_mode != DEPLOYMENT_VISIBLE:
-            raise ValueError("Parent-disjoint paper ablation is defined for deployment-visible agentic runs.")
-        return paper_root / "runs_deployment_visible_parent_disjoint"
+        if visibility_mode == IDENTITY_BLIND:
+            return paper_root / "runs_identity_blind_parent_disjoint"
+        if visibility_mode == DEPLOYMENT_VISIBLE:
+            return paper_root / "runs_deployment_visible_parent_disjoint"
+        raise ValueError(
+            "Parent-disjoint runs support identity_blind or deployment_visible visibility."
+        )
     if neighbor_identity_policy != OPERATIONAL:
         raise ValueError(f"Unknown neighbor identity policy: {neighbor_identity_policy}")
     if visibility_mode == IDENTITY_BLIND:
@@ -470,8 +482,14 @@ def _prepare_policy_selection(
     selected: list[Experiment],
     args: argparse.Namespace,
 ) -> list[Experiment]:
-    """Keep the primary parent-disjoint run analog-only and reuse query-only baselines."""
+    """Select either the historical reuse ablation or a fresh parent-disjoint matrix."""
     if args.neighbor_identity_policy != PARENT_DISJOINT:
+        return selected
+    if bool(getattr(args, "fresh_parent_disjoint", False)):
+        if args.visibility_mode != IDENTITY_BLIND:
+            raise SystemExit(
+                "Fresh parent_disjoint is frozen for --visibility-mode identity_blind"
+            )
         return selected
     if args.visibility_mode != DEPLOYMENT_VISIBLE:
         raise SystemExit("parent_disjoint requires --visibility-mode deployment_visible")
@@ -490,6 +508,8 @@ def _require_parent_disjoint_reuse_plans(
 ) -> None:
     """Prevent an accidental full rerun when selective parent reuse was not planned."""
     if args.neighbor_identity_policy != PARENT_DISJOINT:
+        return
+    if bool(getattr(args, "fresh_parent_disjoint", False)):
         return
     target_root = experiment_run_root(
         DEPLOYMENT_VISIBLE,

@@ -1,240 +1,154 @@
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 6, "qualifying_conditions": "absorption is not linear with increasing dose"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 9, "qualifying_conditions": "conditioning regimen for stem-cell transplantation"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 37, "qualifying_conditions": "ileocolonic delivery, Eudragit S100 coated"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 38, "qualifying_conditions": "ileocolonic delivery, Eudragit S100 coated"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 44, "qualifying_conditions": "severe liver cirrhosis"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 49, "qualifying_conditions": "lysine salt"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 60, "qualifying_conditions": "SDP formulation"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 68, "qualifying_conditions": "undergoes first-pass metabolism in the gut wall"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 89, "qualifying_conditions": "administration of grapefruit juice (150mL at 1 and 0.25 hours before and 150mL during scopolamine administration)"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 92, "qualifying_conditions": "before construction of the mesocaval shunt"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 93, "qualifying_conditions": "after construction of the mesocaval shunt"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 105, "qualifying_conditions": "cirrhosis"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 120, "qualifying_conditions": "first-pass degradation"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 123, "qualifying_conditions": "pretreatment with cimetidine (200mg, 5 times a day)"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 126, "qualifying_conditions": "prior total gastrectomy"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 148, "qualifying_conditions": "high first-pass metabolism (57%)"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 152, "qualifying_conditions": "slow-release"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 154, "qualifying_conditions": "slow-release"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 155, "qualifying_conditions": "overnight fast"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 161, "qualifying_conditions": "CYP2D6 poor metabolisers"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:405"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:406"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:407"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:815"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:4370"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:6023"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:6024"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:6025"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:6026"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:9420"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:9492"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:9677"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:9721"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:10526"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:11135"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:11516"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:11541"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:11542"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:11543"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_record_id": "row:12538"}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 89}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 95}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 319}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 484}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 494}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 785}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1156}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1430}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1747}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1871}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 2644}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 2645}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 3099}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 4908}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 5107}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 5129}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 5601}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 5996}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 6069}}
-{"reason": "missing_bioavailability_value", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 6903}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 0, "exposure_measure": "AUC"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1, "exposure_measure": "AUC"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 4, "exposure_measure": "AUC0_t"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 8, "exposure_measure": "Cmax"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 9, "exposure_measure": "Tmax"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 10, "exposure_measure": "AUC"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 11, "exposure_measure": "Cmax"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 12, "exposure_measure": "Tmax"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 13, "exposure_measure": "AUC0_t"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 14, "exposure_measure": "Cmax"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 15, "exposure_measure": "Tmax"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 16, "exposure_measure": "AUC0_t"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 17, "exposure_measure": "other_oral_exposure"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 18, "exposure_measure": "other_oral_exposure"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 19, "exposure_measure": "other_oral_exposure"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 20, "exposure_measure": "Cmax"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 21, "exposure_measure": "AUC0_t"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 22, "exposure_measure": "AUC0_inf"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 23, "exposure_measure": "Cmax"}}
-{"reason": "non_bioavailability_exposure_measure", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 24, "exposure_measure": "Tmax"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 16, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 20, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 23, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 36, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 40, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 42, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 47, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 48, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 56, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 57, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 59, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 77, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 78, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 96, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 97, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 103, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 106, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 107, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 108, "report_type": "relative_comparison"}}
-{"reason": "non_direct_oral_bioavailability_report_type", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 109, "report_type": "relative_comparison"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1, "population": "rats"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3, "population": null}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 5, "population": "man"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 11, "population": "dogs"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 12, "population": "Cynomolgus monkeys"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 13, "population": "anaesthetised Göttingen mini-pigs"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 17, "population": null}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 19, "population": "rats"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 22, "population": "most animal species"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 26, "population": null}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 30, "population": "healthy dogs"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 32, "population": "individuals"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 33, "population": "adult pigs"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 46, "population": "allogeneic hematopoietic stem cell transplant recipients"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 52, "population": "rabbit"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 53, "population": "monkey"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 54, "population": "three species"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 58, "population": "most animal species"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 61, "population": "healthy Beagles"}}
-{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 62, "population": "rats"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 4, "value": "approximately 17–24%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 24, "value": "9 to 33 %"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 84, "value": "0.189 to 0.99"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 200, "value": "15 - 20 %"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 347, "value": "9 to 22% (14 ± 5%, mean ± SD)"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 416, "value": "33 ± 19%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 487, "value": "14–39%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 495, "value": "42 ± 28%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 498, "value": "33 ± 19%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 907, "value": "0.15–0.93"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1659, "value": "18–24%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1680, "value": "15 to 70%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1696, "value": "less than 40% in only 1 patient"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1709, "value": "30.6±12.7%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1915, "value": "14–39%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2292, "value": "increased nonlinearly with dose from 5 to 50 mg and plateaued afterwards"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2504, "value": "0.10–0.58 (0.37)"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2649, "value": "16±6%"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2850, "value": "18.9 ± 3.6"}}
-{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3042, "value": "14–39%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 21, "value": "0.96 ± 0.08"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 470, "value": "122% (range, 72% to 207%)"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 497, "value": "71 ± 31%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 499, "value": "72 ± 43%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 828, "value": "0.27 ± 12"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 862, "value": "101%, with a 95% CI of (93%, 111%)"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1146, "value": "68.2 to 121.6%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1593, "value": "81 ± 32%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1747, "value": "0.25 to 1.49"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1957, "value": "78 ± 24%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2078, "value": "93 ± 9%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2195, "value": "100.1%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2196, "value": "102.3%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2263, "value": "102·77 ± 12·05 per cent"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2502, "value": "101% (90% CI: 95.4% to 106%)"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2586, "value": "108 ± 2.7%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2587, "value": "99 ± 5.9%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2892, "value": "101%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3272, "value": "94.3 ± 11.0%"}}
-{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3374, "value": "110%"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 195, "value": "orally bioavailable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 196, "value": "orally bioavailable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 540, "value": "moderate"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 554, "value": "incomplete and variable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 611, "value": "unpredictable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 639, "value": "highly variable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1398, "value": "variable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1401, "value": "low and variable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1415, "value": "orally bioavailable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1416, "value": "orally bioavailable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1417, "value": "orally bioavailable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2636, "value": "incomplete and highly variable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3071, "value": "low and variable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3771, "value": "orally bioavailable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3953, "value": "incomplete and highly variable; low"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 4440, "value": "low and variable"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 4469, "value": "moderate"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 4474, "value": "unpredictable and incomplete"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 4500, "value": "moderate"}}
-{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 4565, "value": "relatively moderate oral bioavailability"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 896, "value": "erratic, varies several-fold"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2782, "value": "lower than that reported in adults"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 4707, "value": "lower than in women"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 9449, "value": "considerably lower than the predicted Fa value (15–35%)"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 11069, "value": "varies about 3-fold"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 11678, "value": "15 % lower than that of axitinib Form IV"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 12003, "value": "higher than 85 %"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 14274, "value": "varies as much as 3-fold"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 20834, "value": "almost three-fold higher"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 22052, "value": "lower than those with other routes of administration"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 22962, "value": "higher (Cmax increased by 83%) and prolonged (AUC∞ 140% increase)"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 23003, "value": "4.8 times higher"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 23147, "value": "sevenfold to 12-fold interindividual variability"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 23338, "value": "varies 8-fold in different subjects"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 23423, "value": "lower than stavudine"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 23424, "value": "lower than stavudine"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 29216, "value": "almost 5-fold lower internal exposure as compared to free or total MEHP"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 30177, "value": "low, varying up to six-fold from 0.17 to 0.94%"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 31332, "value": "20%–30% lower than that after administration of an IR tablet"}}
-{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 36748, "value": "relative constancy"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 41, "value": "wide intraindividual variation"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 179, "value": "considerably increased"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 197, "value": "reduced"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 198, "value": "lack of dose-dependent bioavailability"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 234, "value": "large interpatient variation"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 309, "value": "confirmed"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 310, "value": "confirmed"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 316, "value": "similar"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 459, "value": "decreased oral bioavailability over the therapeutically effective dose range"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 969, "value": "erratic"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1176, "value": "sufficient"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1257, "value": "higher systemic availability"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1384, "value": "limited"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1431, "value": "limited"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1751, "value": "no significant difference in F values"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 1752, "value": "decreasing bioavailability with increasing oral dosage"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2414, "value": "maximally a few per cent"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 2471, "value": "reduced oral bioavailability"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3037, "value": "reduced bioavailability"}}
-{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "starling-labs/Oral_Bioavailability", "source_index": 3119, "value": "Extreme variability"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 2, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 3, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 5, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 6, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 32, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 33, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 34, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 49, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 50, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 117, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 118, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 126, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 307, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 347, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 354, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1821, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1822, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1823, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1824, "units": "nan"}}
-{"reason": "unsupported_bioavailability_unit", "example": {"source_id": "local:data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet", "source_index": 1916, "units": "nan"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 3, "qualifying_conditions": "fasted PEM children"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 4, "qualifying_conditions": "fasted PEM children"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 6, "qualifying_conditions": "fasted PEM children"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 24, "qualifying_conditions": "administered for 4 weeks prior to surgery"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 42, "qualifying_conditions": "upper limit, overestimates the true value"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 86, "qualifying_conditions": "Food"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 89, "qualifying_conditions": "Food"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 95, "qualifying_conditions": "calculated using a 2-compartment nonlinear model"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 96, "qualifying_conditions": "fasted subjects"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 100, "qualifying_conditions": "estimated based on noncompartmental analysis (NCA)"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 101, "qualifying_conditions": "fasted condition"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 103, "qualifying_conditions": "taking it with food"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 116, "qualifying_conditions": "food intake"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 123, "qualifying_conditions": "taken with food"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 131, "qualifying_conditions": "hydrochloride salt, administered with food"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 143, "qualifying_conditions": "with the intake of food"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 147, "qualifying_conditions": "advanced cancer patients with solid tumors"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 152, "qualifying_conditions": "administration with food"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 155, "qualifying_conditions": "high fat, high-calorie meal"}}
+{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 158, "qualifying_conditions": "Food intake"}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 4600, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 5723, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 19661, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 21088, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 24215, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 25918, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 26130, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 54344, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 55382, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 55383, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 80904, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 86762, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 99955, "value": ""}}
+{"reason": "missing_bioavailability_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 107077, "value": ""}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 0, "population": "dogs"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1, "population": ""}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 5, "population": "six controls"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 7, "population": "six controls"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 8, "population": ""}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 9, "population": ""}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 10, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 11, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 12, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 13, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 14, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 15, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 16, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 17, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 18, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 19, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 20, "population": "rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 21, "population": "female rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 22, "population": "Sprague Dawley rats"}}
+{"reason": "nonhuman_or_unresolved_population", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 23, "population": "male rats"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 398, "value": "22.1 ± 2.2 (S.E.M.) per cent"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 401, "value": "22.1 ± 2.2 per cent"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 402, "value": "14-36 per cent"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 404, "value": "19.5 ± 3.2 per cent"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 406, "value": "14 to 36 per cent (±3 per cent)"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 691, "value": "0.23 ± 0.07"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 711, "value": "10–35%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 713, "value": "10-35%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 715, "value": "10-35%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 736, "value": "10–35%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 743, "value": "10–35%, with the average of about 25%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 765, "value": "10–35%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 822, "value": "23±7%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1055, "value": "0.23 ± 0.04"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1064, "value": "0.23 ± 0.04"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1092, "value": "0.23 ± 0.04"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2138, "value": "17-62%, mean 34%±16% (SD)"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2274, "value": "18.6 ± 7.2%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2790, "value": "39 ± 24%"}}
+{"reason": "numeric_interval_crosses_20_percent_threshold", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2791, "value": "34 ± 21%"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 94, "value": "106%"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 99, "value": "106.0 %"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 146, "value": "106% (95% CI, 99%-114%)"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 149, "value": "106.0 %"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 281, "value": "100±14%"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 336, "value": "0.98 ± 0.06 (0.79-1.40)"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 637, "value": "6100 μg/mL·h"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 638, "value": "4900 μg/mL·h"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1163, "value": "1.1"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1170, "value": "1.1"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1367, "value": "61.7-154.6 µg · hr · ml⁻¹"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1754, "value": "86-120%"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2079, "value": "1.3"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2085, "value": "1.30 (0.84-1.65)"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2125, "value": "103 (14)%"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2468, "value": "1.11 ± 0.15"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2469, "value": "1.24 ± 0.11"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 3550, "value": "85 ± 19% (range, 50-111%)"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 3581, "value": "1.119 ± 0.399"}}
+{"reason": "numeric_value_out_of_percent_range", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 3583, "value": "1.11"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 40, "value": "quite variable"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 57, "value": "orally bioavailable"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 84, "value": "orally available"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 121, "value": "low and variable"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 166, "value": "orally available"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 180, "value": "orally available"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 191, "value": "orally bioavailable"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 200, "value": "orally bioavailable"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 490, "value": "moderate bioavailability"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 692, "value": "orally available"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 850, "value": "orally available"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 852, "value": "orally bioavailable"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 854, "value": "orally bioavailable"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 859, "value": "orally bioavailable"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1246, "value": "variable bioavailability"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1460, "value": "moderate to excellent"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1461, "value": "moderate to excellent"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1469, "value": "moderate to excellent"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1470, "value": "moderate to excellent"}}
+{"reason": "qualitative_value_not_threshold_anchored", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1491, "value": "moderate to excellent"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1317, "value": "can not be increased by high intake of free ellagic acid"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1597, "value": "considerably lower than the predicted Fa value (15–35%)"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 3101, "value": "vary up to 20 times from one individual to another"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 3304, "value": "low and highly variable, with differences as much as 20-fold"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 6633, "value": "five-fold variation from 1230 to 6000 pg/ml/h"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 7772, "value": "four times lower than sublingual administration"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 9495, "value": "higher than 60%"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 10069, "value": "lower than 0.002%"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 10524, "value": "lower than stavudine"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 10865, "value": "4.9 times higher"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 12712, "value": "varies as much as 3-fold"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 12801, "value": "no higher than 50–80%"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 15942, "value": "almost three-fold higher"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 17663, "value": "higher than 50%"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 19023, "value": "two- to three-times lower"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 19669, "value": "higher than 90%"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 24463, "value": "erratic, varies several-fold"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 24612, "value": "lower than expected"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 24802, "value": "higher than 85 %"}}
+{"reason": "relative_not_absolute_bioavailability", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 27856, "value": "lower than stavudine"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 134, "value": "similar"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 284, "value": "fast komplette Bioverfügbarkeit"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 368, "value": "equal between all routes"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 421, "value": "varied widely"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 651, "value": "limited"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 820, "value": "systemically available"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 940, "value": "bioavailable"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 942, "value": "highly bioavailable"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 961, "value": "bioavailable"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1392, "value": "does not appear to be dose-dependent"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1431, "value": "does not appear to be dose dependent"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1566, "value": "minimally bioavailable"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1719, "value": "%"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1745, "value": "dose dependent systemic availability"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1864, "value": "bioavailable"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1865, "value": "bioavailable"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1866, "value": "bioavailable"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1870, "value": "bioavailable"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 1976, "value": "maximally a few per cent"}}
+{"reason": "unmapped_or_ambiguous_qualitative_value", "example": {"source_id": "canonical:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet", "source_index": 2066, "value": "favourable"}}

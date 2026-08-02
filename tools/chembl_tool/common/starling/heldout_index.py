@@ -1,4 +1,4 @@
-"""Build Starling evidence indices after excluding benchmark test parents."""
+"""Build Starling evidence indices after excluding all benchmark eval parents."""
 
 from __future__ import annotations
 
@@ -61,7 +61,7 @@ def filter_heldout_evidence_rows(
     rows: Iterable[Mapping[str, Any]],
     heldout_keys: set[str],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Remove every evidence row whose normalized parent is in the test set."""
+    """Remove every evidence row whose normalized parent is in valid or test."""
     kept: list[dict[str, Any]] = []
     excluded_keys: set[str] = set()
     unresolved = 0

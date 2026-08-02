@@ -28,16 +28,17 @@ reader 将四类数据构建成一个 molecule-level index，供 Starling direct
 当前 Starling gold benchmark：
 
 ```text
-data/processed_starling/Skin_Reaction/random/{train.jsonl,test.jsonl}
-data/processed_starling/Skin_Reaction/scaffold/{train.jsonl,test.jsonl}
+data/processed_starling/Skin_Reaction/random/{train.jsonl,valid.jsonl,test.jsonl}
+data/processed_starling/Skin_Reaction/scaffold/{train.jsonl,valid.jsonl,test.jsonl}
 
 fields:
   drug: query SMILES
   Y: Skin_Reaction label
 ```
 
-当前 frozen build 有 1,900 个 binary parents，两种 split 的 test target 均为 380。正式运行前必须按
-各自 `test_molecule_labels.jsonl` 重建 train-only retrieval index。构建命令和审计协议见
+当前 frozen build 有 2,456 个 binary parents，两种构造方法的 valid/test target 均为 245。冲突 parent
+按 accepted source records 计算 70% agreement，同 PMID 多条 record 分别计票，精确 tie 拒绝。正式运行前
+必须按各自 valid+test union 的 `heldout_molecule_labels.jsonl` 重建 train-only retrieval index。构建命令和审计协议见
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
 
 当前二分类约定：

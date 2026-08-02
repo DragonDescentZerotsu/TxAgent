@@ -14,6 +14,7 @@ import tempfile
 from typing import Any
 
 from .build_starling_benchmark_indices import (
+    BENCHMARK_LINEAGE,
     BENCHMARK_SPLITS,
     paper_root_for_benchmark_split,
 )
@@ -24,6 +25,7 @@ from .molecular_evidence_agent import (
     GLM_BASE_URL,
     GLM_MODEL,
     GLM_REASONING_EFFORT,
+    IDENTITY_BLIND,
     NEIGHBOR_IDENTITY_POLICIES,
     PARENT_DISJOINT,
     VISIBILITY_MODES,
@@ -51,14 +53,20 @@ TASK_DATA_NAMES = {
     "skin_reaction": "Skin_Reaction",
 }
 DEFAULT_BENCHMARK_DATA_ROOT = Path("data/processed_starling")
+EVALUATION_SUBSETS = ("valid", "test")
+DEFAULT_ENDPOINT_CONCURRENCY_BUDGET = 512
+DEFAULT_LAUNCHER_PARALLELISM = 128
 
 
 def experiments_for_starling_benchmark(
     split: str,
     *,
+    evaluation_subset: str = "test",
     retrieval_feature: str = MORGAN_RETRIEVAL_FEATURE,
 ) -> list[Experiment]:
     """Replace only benchmark inputs and held-out-filtered Starling indices."""
+    if evaluation_subset not in EVALUATION_SUBSETS:
+        raise ValueError(f"Unknown evaluation subset: {evaluation_subset}")
     if retrieval_feature not in RETRIEVAL_FEATURES:
         raise ValueError(f"Unknown retrieval feature: {retrieval_feature}")
     paper_root = paper_root_for_benchmark_split(split)
@@ -67,7 +75,9 @@ def experiments_for_starling_benchmark(
         data_name = TASK_DATA_NAMES.get(experiment.task)
         if data_name is None:
             continue
-        input_jsonl = f"data/processed_starling/{data_name}/{split}/test.jsonl"
+        input_jsonl = (
+            f"data/processed_starling/{data_name}/{split}/{evaluation_subset}.jsonl"
+        )
         index = experiment.index
         if experiment.source == "starling":
             index = str(_starling_index_path(experiment, paper_root))
@@ -99,9 +109,14 @@ def _starling_index_path(experiment: Experiment, paper_root: Path) -> Path:
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    _validate_concurrency(args)
+    args.fresh_parent_disjoint = (
+        args.visibility_mode == IDENTITY_BLIND
+        and args.neighbor_identity_policy == PARENT_DISJOINT
+    )
     if (
         args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
-        and args.visibility_mode != DEPLOYMENT_VISIBLE
+        and args.visibility_mode not in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}
     ):
         raise SystemExit(
             "The MiniMol retrieval-feature ablation is frozen for "
@@ -109,6 +124,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     experiments = experiments_for_starling_benchmark(
         args.benchmark_split,
+        evaluation_subset=args.evaluation_subset,
         retrieval_feature=args.retrieval_feature,
     )
     selected = _select_experiments(args.experiments, experiments=experiments)
@@ -126,20 +142,30 @@ def main(argv: list[str] | None = None) -> int:
         print("\n".join(experiment.name for experiment in selected))
         return 0
 
-    paper_root = (
+    canonical_paper_root = (
         paper_root_for_minimol_retrieval(args.benchmark_split)
         if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
         else paper_root_for_benchmark_split(args.benchmark_split)
     )
+    paper_root = _paper_root_for_evaluation_subset(
+        canonical_paper_root,
+        args.evaluation_subset,
+    )
     args.paper_root = str(paper_root)
-    args.split = "test"
+    args.split = args.evaluation_subset
     if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE:
-        frozen_morgan_operational_root = experiment_run_root(
-            DEPLOYMENT_VISIBLE,
-            paper_root=paper_root_for_benchmark_split(args.benchmark_split),
+        frozen_morgan_paper_root = _paper_root_for_evaluation_subset(
+            paper_root_for_benchmark_split(args.benchmark_split),
+            args.evaluation_subset,
         )
-        args.single_analysis_root = str(frozen_morgan_operational_root)
-        args.group_analysis_root = str(frozen_morgan_operational_root)
+        frozen_morgan_root = experiment_run_root(
+            IDENTITY_BLIND if args.fresh_parent_disjoint else DEPLOYMENT_VISIBLE,
+            PARENT_DISJOINT if args.fresh_parent_disjoint else "operational",
+            paper_root=frozen_morgan_paper_root,
+        )
+        args.single_analysis_root = str(frozen_morgan_root)
+        if not args.fresh_parent_disjoint:
+            args.group_analysis_root = str(frozen_morgan_root)
     _validate_inputs(selected)
     _require_parent_disjoint_reuse_plans(selected, args)
     benchmark_provenance = _benchmark_provenance(
@@ -149,12 +175,20 @@ def main(argv: list[str] | None = None) -> int:
 
     manifest: dict[str, Any] = {
         "benchmark_source": "starling",
+        "dataset_lineage": BENCHMARK_LINEAGE,
         "benchmark_split": args.benchmark_split,
+        "evaluation_subset": args.evaluation_subset,
         "retrieval_feature": args.retrieval_feature,
         "model": args.model,
+        "served_model": args.model,
         "base_url": args.base_url,
         "api_key_env": args.api_key_env,
         "reasoning_effort": args.reasoning_effort,
+        "reasoning": {
+            "disable_thinking_flag": True,
+            "reasoning_effort": args.reasoning_effort,
+            "provider_reasoning_preserved": True,
+        },
         "visibility_mode": args.visibility_mode,
         "visibility_contract": _visibility_contract(args.visibility_mode),
         "neighbor_identity_policy": args.neighbor_identity_policy,
@@ -163,14 +197,28 @@ def main(argv: list[str] | None = None) -> int:
         "group_analysis_root": str(getattr(args, "group_analysis_root", "")),
         "temperature": 0.0,
         "max_tokens": 20480,
+        "endpoint_concurrency_budget": DEFAULT_ENDPOINT_CONCURRENCY_BUDGET,
+        "parallelism": args.parallelism,
+        "group_workers": args.group_workers,
+        "effective_concurrency": args.parallelism * args.group_workers,
+        "fresh_parent_disjoint": args.fresh_parent_disjoint,
+        "operational_staging_used": (
+            args.neighbor_identity_policy == PARENT_DISJOINT
+            and not args.fresh_parent_disjoint
+        ),
         "limit": args.limit,
         "benchmark_provenance": benchmark_provenance,
         "experiments": [
             {
                 **experiment.__dict__,
                 "input_jsonl_sha256": benchmark_provenance[experiment.task][
-                    "test_jsonl_sha256"
+                    f"{args.evaluation_subset}_jsonl_sha256"
                 ],
+                "effective_neighbor_identity_policy": (
+                    "not_applicable"
+                    if experiment.mode == "none"
+                    else args.neighbor_identity_policy
+                ),
                 "benchmark_provenance_ref": experiment.task,
             }
             for experiment in experiments
@@ -202,6 +250,31 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+def _paper_root_for_evaluation_subset(
+    canonical_root: Path,
+    evaluation_subset: str,
+) -> Path:
+    """Keep v4 validation traces isolated from the untouched formal test root."""
+    if evaluation_subset not in EVALUATION_SUBSETS:
+        raise ValueError(f"Unknown evaluation subset: {evaluation_subset}")
+    if evaluation_subset == "test":
+        return canonical_root
+    return canonical_root.with_name(f"{canonical_root.name}_valid")
+
+
+def _validate_concurrency(args: argparse.Namespace) -> None:
+    """Enforce the endpoint-wide request budget for the single-launcher protocol."""
+    if args.parallelism < 1 or args.group_workers < 1:
+        raise SystemExit("--parallelism and --group-workers must both be positive")
+    requested = args.parallelism * args.group_workers
+    if requested > DEFAULT_ENDPOINT_CONCURRENCY_BUDGET:
+        raise SystemExit(
+            "Requested concurrency exceeds the frozen endpoint budget: "
+            f"{args.parallelism} * {args.group_workers} = {requested} > "
+            f"{DEFAULT_ENDPOINT_CONCURRENCY_BUDGET}"
+        )
+
+
 def _validate_inputs(experiments: list[Experiment]) -> None:
     missing: set[str] = set()
     for experiment in experiments:
@@ -225,12 +298,18 @@ def _benchmark_provenance(
         split_dir = task_dir / split
         task_summary_path = task_dir / "summary.json"
         split_summary_path = split_dir / "summary.json"
+        valid_path = split_dir / "valid.jsonl"
         test_path = split_dir / "test.jsonl"
-        heldout_path = split_dir / "test_molecule_labels.jsonl"
+        valid_labels_path = split_dir / "valid_molecule_labels.jsonl"
+        test_labels_path = split_dir / "test_molecule_labels.jsonl"
+        heldout_path = split_dir / "heldout_molecule_labels.jsonl"
         required = (
             task_summary_path,
             split_summary_path,
+            valid_path,
             test_path,
+            valid_labels_path,
+            test_labels_path,
             heldout_path,
         )
         missing = [str(path) for path in required if not path.exists()]
@@ -248,16 +327,24 @@ def _benchmark_provenance(
                 "identity_normalizer_version"
             ),
             "seed": task_summary.get("seed"),
+            "parent_label_policy": task_summary.get("parent_label_policy"),
+            "split_size_policy": task_summary.get("split_size_policy"),
             "source_metadata": task_summary.get("source_metadata"),
             "split_summary": split_summary,
             "task_summary_path": str(task_summary_path),
             "task_summary_sha256": _sha256_file(task_summary_path),
             "split_summary_path": str(split_summary_path),
             "split_summary_sha256": _sha256_file(split_summary_path),
+            "valid_jsonl": str(valid_path),
+            "valid_jsonl_sha256": _sha256_file(valid_path),
             "test_jsonl": str(test_path),
             "test_jsonl_sha256": _sha256_file(test_path),
-            "test_molecule_labels_jsonl": str(heldout_path),
-            "test_molecule_labels_sha256": _sha256_file(heldout_path),
+            "valid_molecule_labels_jsonl": str(valid_labels_path),
+            "valid_molecule_labels_sha256": _sha256_file(valid_labels_path),
+            "test_molecule_labels_jsonl": str(test_labels_path),
+            "test_molecule_labels_sha256": _sha256_file(test_labels_path),
+            "heldout_molecule_labels_jsonl": str(heldout_path),
+            "heldout_molecule_labels_sha256": _sha256_file(heldout_path),
         }
     return provenance
 
@@ -312,6 +399,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--benchmark-split", choices=BENCHMARK_SPLITS, required=True)
     parser.add_argument(
+        "--evaluation-subset",
+        choices=EVALUATION_SUBSETS,
+        default="valid",
+        help="Run v4 validation first; select test only after the settings are frozen.",
+    )
+    parser.add_argument(
         "--retrieval-feature",
         choices=RETRIEVAL_FEATURES,
         default=MORGAN_RETRIEVAL_FEATURE,
@@ -327,15 +420,19 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--base-url", default=GLM_BASE_URL)
     parser.add_argument("--model", default=GLM_MODEL)
     parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
-    parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=DEPLOYMENT_VISIBLE)
+    parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=IDENTITY_BLIND)
     parser.add_argument(
         "--neighbor-identity-policy",
         choices=NEIGHBOR_IDENTITY_POLICIES,
         default=PARENT_DISJOINT,
     )
     parser.add_argument("--python-executable", default=sys.executable)
-    parser.add_argument("--parallelism", type=int, default=8)
-    parser.add_argument("--group-workers", type=int, default=8)
+    parser.add_argument(
+        "--parallelism",
+        type=int,
+        default=DEFAULT_LAUNCHER_PARALLELISM,
+    )
+    parser.add_argument("--group-workers", type=int, default=1)
     parser.add_argument(
         "--limit",
         type=int,

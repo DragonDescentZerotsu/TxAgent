@@ -6,6 +6,10 @@
 和 case study 直接引用。机器可读统计仍以
 `outputs/paper/molecular_evidence_agent/analysis/visibility_comparisons.tsv` 为准；本文档不替代生成器输出。
 
+> 2026-08-01 scope：本文主体分析的是旧 TDC/strict-conflict visibility experiments。
+> `record_agreement70_split811_v1` 新主矩阵已改为 identity-blind + parent-disjoint；deployment-visible、
+> matched-prefetch 和 operational 仅作显式补充，不再是新主矩阵前置依赖。
+
 ## 三套制度及当前结果口径
 
 ```text
@@ -22,7 +26,7 @@ deployment_visible_prefetched:
 deployment_visible:
   query structure visible，query name hidden；
   neighbor structure、source ID 和数据源已有名称 visible；
-  LLM 自主选择分子工具；现有 26 个条件属于论文主制度。
+  LLM 自主选择分子工具；现有 26 个条件属于历史主制度，不是 v4 默认。
 ```
 
 ## Valid split 可见性诊断
@@ -213,8 +217,8 @@ Bioavailability visible trace 更明确地区分：
 - ipratropium 的永久季铵 charge；
 - estradiol 的高 absorption 与低 unchanged-parent F。
 
-这可以修正 identity-blind 对同一 RDKit molecular-parent record 的普通 analog 处理。但同样说明最终主表
-必须同时报告 operational same-parent relation 和 parent-disjoint 消融，不把 same-parent evidence 当作普通 analog。
+这可以修正 identity-blind 对同一 RDKit molecular-parent record 的普通 analog 处理。该结论解释旧
+operational/deployment-visible lineage；新 v4 直接使用 parent-disjoint，不把 same-parent evidence 放入主矩阵。
 
 ### 上升原因 D：校准 borderline descriptor
 

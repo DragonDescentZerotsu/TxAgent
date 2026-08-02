@@ -1,33 +1,36 @@
 # Starling 二分类 benchmark 构建协议
 
 本协议用于把 Starling direct literature records 转成与当前 TDC task 语义兼容的二分类
-`train.jsonl` / `test.jsonl`。它与 Starling evidence retrieval index 分离：benchmark builder
+`train.jsonl` / `valid.jsonl` / `test.jsonl`。它与 Starling evidence retrieval index 分离：benchmark builder
 负责 gold-label 构建，`minimal_evidence.v1` 继续只负责 inference-time evidence。
 
-## 为什么不能直接多数票
+## Parent record-majority policy
 
 Starling 原始论文没有发布一个统一的二值化脚本。论文将每条 extraction 按“如果放进相应 TDC
 会得到什么标签”进行分析，并明确指出同一分子会因 species、dose、formulation、disease state、
 transporter mechanism 等上下文产生不同结果。论文 Appendix H 展示的是 molecule 内 positive
 fraction，而不是把所有 contextual records 无条件压成一个 gold label。
 
-因此本项目采用保守的 molecule-level 规则：
+当前 v4 在保留 source-row ambiguity gate 的前提下，采用用户冻结的 70% record-weighted majority：
 
 1. source row 先按 task-specific TDC 语义独立转成 `0/1/ambiguous`；
 2. SMILES 用 `rdkit_fragment_parent.v1` 归一化，盐型不成为独立 benchmark molecule；
-3. 一个 parent 的所有可用 source rows 必须一致；
-4. 同时出现 0 和 1 的 parent 不做多数票，写入 `conflicting_molecules.jsonl`；
+3. 同一个 parent 内以每条 accepted source record 为一票，计算
+   `agreement=max(n0,n1)/(n0+n1)`；同一 PMID 的多条 record 仍分别计票；
+4. agreement `>= 0.70` 且不是精确 50/50 tie 时，接受多数 label；否则写入
+   `rejected_parent_molecules.jsonl`；`conflicting_molecules.jsonl` 保留所有同时出现 0/1 的 parent，
+   并标记它最终是 majority-accepted 还是 rejected；
 5. range/inequality 跨过分类 threshold 时写入 ambiguous，不取 midpoint；
    `mean ± error` 按完整 `[mean-error, mean+error]` 区间处理；
 6. 相对比较、单位不兼容、非目标 endpoint、inconclusive 和无法确认 population 的记录不进入 gold label；
 7. Starling 明确标为 `qualifying_conditions` 的 dose、formulation、disease state、co-treatment 等
    条件性 record 不进入当前 molecule-only gold；
-8. test target 为 `min(500, floor(0.2 * n_binary_molecules))`；
+8. valid 与 test target 分别为 `min(500, floor(0.1 * n_binary_molecules))`，train 使用剩余 parents；
 9. 同一批 accepted parents 同时生成两个版本：
    - `random`：固定 seed 的 label-stratified stable-hash random split；
    - `scaffold`：以 canonical Bemis–Murcko scaffold 为不可拆分 group，按固定 seed 排序后
-     用 subset-sum 从下方逼近 test target；
-10. scaffold group 无法精确凑到 target 时只能从下方逼近，并在 summary 中记录 shortfall，
+     先选完整 test scaffold groups，再从剩余 groups 选择 valid，以保证 train/valid/test scaffold 两两不重叠；
+10. scaffold group 无法精确凑到 valid/test target 时只能从下方逼近，并在 summary 中记录 shortfall，
     不允许拆散同一 scaffold 来凑整数。
 
 这套规则优先保证 label precision 和可审计性，而不是最大化保留率。
@@ -35,13 +38,13 @@ fraction，而不是把所有 contextual records 无条件压成一个 gold labe
 ## Held-out 隔离要求
 
 构造 gold split 和构造 retrieval evidence 是两个独立步骤。现有 Starling evidence index 是从
-full direct source 建立的，其中包含新 test molecules 的 source rows，**不能**直接用于这个 benchmark。
+full direct source 建立的，其中包含新 valid/test molecules 的 source rows，**不能**直接用于这个 benchmark。
 
-- `random/test_molecule_labels.jsonl` 和 `scaffold/test_molecule_labels.jsonl`
-  是两套必须分别排除的 parent-identity 清单；
-- 后续 evidence library 必须只从 train-source records 重建，并排除 test parent 的全部盐型、片段和重复记录；
+- `random/heldout_molecule_labels.jsonl` 和 `scaffold/heldout_molecule_labels.jsonl`
+  分别是各构造方法 valid+test parent 的 union 排除清单；
+- 后续 evidence library 必须排除 valid/test parent 的全部盐型、片段和重复记录；
 - 不允许只依赖 query-time exact-SMILES exclusion；identity-equivalent source rows 也必须排除；
-- train-only index 完成覆盖率和 zero-overlap audit 之前，不能启动正式 paper rerun。
+- train-only index 对 valid+test union 完成覆盖率和 zero-overlap audit 之前，不能启动正式 paper rerun。
 
 ## 当前 task policy
 
@@ -55,12 +58,20 @@ TDC 目标为 BBB pass/fail；常用数值表述是 `logBB >= -1` 为 positive�
 - Papp、Kp、Kp,uu、brain concentration、CSF concentration 等异构量不互相换算；
 - `qualifying_conditions` 非空的 context-dependent record 不进入 molecule-only gold；
 - qualitative permeability 与 logBB 信号在同一 record 内冲突时，该 record 为 ambiguous；
-- molecule parent 跨文献/条件冲突时整个 molecule 不进入 binary benchmark。
+- molecule parent 跨记录出现不同标签时，按统一 70% record-agreement policy 决定接受或拒绝。
 
 ### Bioavailability_Ma
 
 TDC 目标为 human oral bioavailability，`F >= 20%` 为 positive。
 
+- gold 与 agent direct evidence 共同读取
+  `data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet`；
+- canonical source 由固定 revision 的 HF `starling-labs/Oral_Bioavailability` 与 local exposure
+  extraction 中有明确 absolute/oral-IV 锚点的记录合并；同 parent、PMID、threshold side 且数值/区间
+  相差不超过 1 percentage point 的跨来源记录只形成一个 claim；
+- 原始 HF snapshot 和 local parquet 保持 immutable；local 中确认 absolute 的行转入 canonical，active
+  residual source 不再包含该分区。明确 relative 或没有 absolute 锚点的 bioavailability 行只保留为
+  inference-time exposure/context，不进入 gold；
 - 只保留可确认是 human subjects/patients/volunteers 的 direct oral bioavailability；
 - `%`、`percent`、`per cent` 统一为 percent；
 - 0–1.5 的明确 fraction/unitless F 转成百分数；
@@ -212,24 +223,31 @@ tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
 data/processed_starling/<Task>/
   molecule_labels.jsonl
   conflicting_molecules.jsonl
+  rejected_parent_molecules.jsonl
   source_rejection_examples.jsonl
   summary.json
   report_zh.md
   random/
     train.jsonl
+    valid.jsonl
     test.jsonl
     train_molecule_labels.jsonl
+    valid_molecule_labels.jsonl
     test_molecule_labels.jsonl
+    heldout_molecule_labels.jsonl
     summary.json
   scaffold/
     train.jsonl
+    valid.jsonl
     test.jsonl
     train_molecule_labels.jsonl
+    valid_molecule_labels.jsonl
     test_molecule_labels.jsonl
+    heldout_molecule_labels.jsonl
     summary.json
 ```
 
-两个 split 目录中的 `train.jsonl` / `test.jsonl` 只含 runner 需要的 `drug` 和 `Y`。
+两个 split 目录中的 `train.jsonl` / `valid.jsonl` / `test.jsonl` 只含 runner 需要的 `drug` 和 `Y`。
 详细 label method、source IDs、
 PMIDs、raw value examples、identity metadata 和冲突信息放在 audit artifacts，不能整包进入 LLM prompt。
 根目录 `molecule_labels.jsonl` 带有 `split_assignments.random/scaffold`；每个 split-specific audit
@@ -244,29 +262,32 @@ PMIDs、raw value examples、identity metadata 和冲突信息放在 audit artif
 - TDC ADME tasks: https://tdcommons.ai/single_pred_tasks/adme/
 - TDC task supplement: https://zitniklab.hms.harvard.edu/publications/papers/TDC-neurips21-supp.pdf
 
-HF source revision 固定在 task adapter 常量中；local parquet 的 SHA-256 写入每次生成的
-`summary.json`。源数据更新后必须使用新 output root 或明确审计 diff，不能静默覆盖并沿用旧结果。
+HF source revision、local parquet SHA-256、分区守恒和 claim-level dedup policy 固定在
+`canonical_direct_v2/merge_manifest.json`；gold summary 与 agent index meta 必须记录同一份
+`direct_claims.parquet` SHA-256。源数据更新后必须使用新 output root 或明确审计 diff，不能静默覆盖并沿用旧结果。
 
-## 冲突定义
+## 冲突与 agreement 定义
 
 冲突发生在 split 之前。每条通过 task scope、单位、population、context 和 ambiguity gate 的 source
 record 先独立获得 `Y=0` 或 `Y=1`，再按 `rdkit_fragment_parent.v1` 聚合。如果同一个 normalized
-parent 的 accepted records 同时出现 0 和 1，则该 parent 是
-`conflicting_parent_level_labels`，整个 parent 从 random/scaffold 两套候选池中排除，不做多数票。
+parent 的 accepted records 同时出现 0 和 1，则该 parent 是 label-conflict parent。v4 不再自动丢弃：
+多数一侧占全部 accepted records 的比例达到 70% 就接受该多数 label；低于 70% 或精确 tie 才拒绝。
+这里的 vote unit 是 record，不是 unique PMID。
 
 这与 `within_record_label_conflict` 不同：后者指同一条 source record 内的两个可用信号已经互相矛盾，
 例如 BBB qualitative 写 `permeable`，但同条明确 logBB 小于 -1；这种 row 在 parent 聚合前就被拒绝。
 
-## 2026-07-24 frozen build
+## 2026-08-02 record-agreement70 split811 v1 build
 
-默认 `max_test_size=500`、`test_fraction=0.2`、`seed=20260723`：
+默认 `agreement_threshold=0.70`、`valid_fraction=test_fraction=0.1`、
+`max_eval_size=500`、`seed=20260723`：
 
-| task | binary parents | target | random test Y=0 / Y=1 | scaffold test Y=0 / Y=1 | conflicting parents |
-|---|---:|---:|---:|---:|---:|
-| BBB_Martins | 17,893 | 500 | 139 / 361 | 122 / 378 | 2,623 |
-| Bioavailability_Ma | 1,862 | 372 | 99 / 273 | 113 / 259 | 385 |
-| Skin_Reaction | 1,900 | 380 | 129 / 251 | 117 / 263 | 1,021 |
+| task | binary parents | rejected | valid/test target | random valid Y=0 / Y=1 | random test Y=0 / Y=1 | scaffold valid Y=0 / Y=1 | scaffold test Y=0 / Y=1 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 19,425 | 1,091 | 500 / 500 | 139 / 361 | 139 / 361 | 150 / 350 | 148 / 352 |
+| Bioavailability_Ma | 2,092 | 106 | 209 / 209 | 58 / 151 | 58 / 151 | 61 / 148 | 65 / 144 |
+| Skin_Reaction | 2,456 | 465 | 245 / 245 | 75 / 170 | 75 / 170 | 74 / 171 | 71 / 174 |
 
-两种 split 均精确命中 target 且各自 train/test parent identity 为零重叠。三个 scaffold split 的
-train/test Bemis–Murcko scaffold overlap 均为 0。random 与 scaffold 是两个独立版本，所以它们的
-test 集之间允许重叠；实际交集依次为 BBB 9、Bioavailability 80、Skin_Reaction 79 个 parents。
+两种构造均精确命中 valid/test target，且 train/valid/test parent identity 两两零重叠。三个 scaffold
+版本的 train/valid/test Bemis–Murcko scaffold 也两两零重叠。random 与 scaffold 是两个独立版本，
+因此同名 valid 或 test subset 跨构造方法允许出现 parent 交集。

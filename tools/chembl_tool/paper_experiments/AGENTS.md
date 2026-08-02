@@ -39,6 +39,41 @@ TRACE_RETENTION.md
 `analysis/report.md`，然后根据生成产物把已测结果同步到 `RESULTS.md`，最后更新
 `VISIBILITY_ANALYSIS.md` 等解释文档。当前生成器不会自动改写 `RESULTS.md`；不得只在聊天中保留结论。
 
+## 新数据集默认运行合同（2026-08-01 冻结）
+
+本节覆盖下文所有针对旧 TDC/strict-conflict lineage 的默认描述。对
+`record_agreement70_split811_v1` 及其后的新实验，正式默认是：
+
+```text
+base_url: http://127.0.0.1:50000/v1
+model: nvidia/GLM-5.2-NVFP4
+reasoning_effort: ""（省略参数，保留历史 GLM reasoning 行为）
+visibility_mode: identity_blind
+neighbor_identity_policy: parent_disjoint
+operational_staging_used: false
+endpoint_concurrency_budget: 512
+default launcher shape: --parallelism 128 --group-workers 1
+```
+
+`identity_blind + parent_disjoint` 是新主矩阵，不再是补充控制。它直接从 valid+test-heldout-filtered index
+fresh retrieval，并由 harness 预取脱敏工具证据；operational 不再预跑，`reuse_plan.json` 不再是主矩阵输入。
+既有 deployment-visible、operational、matched-prefetch 和 reuse 结果全部保留为 historical lineage。
+
+512 是同一 endpoint 的全局 outstanding-request budget。首次 512 并发 valid 压力运行在 500 个 BBB
+query-only samples 中出现 1 个 transport timeout；随后 384 并发 BBB ChEMBL full-flat 又有 193/500
+失败，其中 190 个是 group request timeout。因此当前默认降为 128，以适配 reasoning-enabled
+长 group prompt 的实际吞吐；512 仅保留为 endpoint ceiling，不再是 agent launcher 默认值。
+默认只允许一个 condition launcher 占用预算；不得再并行
+启动多个各自 512 的 split/task launcher。若 orchestrator 必须 fan out，必须静态切分 slots 并保证总和不超过
+512。第一轮 valid 运行若出现 429、连接/超时错误、服务队列持续增长或 structured-output failure rate 上升，
+再下调并发；不得因为并发调整而改变 prompt、reasoning、temperature、max tokens 或 validation policy。
+
+runner 已实现该目标合同：Starling v4 CLI 默认先跑 `valid`，使用
+`identity_blind + parent_disjoint`、`parallelism=128`、`group_workers=1`，并且 fresh 主矩阵
+不读 operational reuse plan。`valid` 产物写入 lineage 同名 `_valid` root，与正式 test root 隔离。
+超过 512 的 `parallelism * group_workers` 会在 launcher 启动前拒绝。旧 generic runner 的
+deployment-visible/operational 路径仅保留用于 historical ablation。
+
 ## Benchmark input lineage 与 Starling 迁移边界
 
 当前 frozen `test` / `valid` matrix、`RESULTS.md` 和
@@ -57,41 +92,41 @@ tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
 tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
 
-data/processed_starling/<Task>/random/test.jsonl
-data/processed_starling/<Task>/scaffold/test.jsonl
+data/processed_starling/<Task>/random/{train,valid,test}.jsonl
+data/processed_starling/<Task>/scaffold/{train,valid,test}.jsonl
 ```
 
 将它接入 paper runner 时必须满足：
 
 1. matrix manifest 顶层显式记录 `benchmark_source=starling` 和 `random|scaffold`；每个 experiment
    记录 task、`input_jsonl_sha256` 和 task provenance reference；top-level `benchmark_provenance`
-   保存 protocol、identity normalizer、seed、source revision/metadata，以及 task/split summary、
-   test input 和 `test_molecule_labels.jsonl` 的 SHA-256；
-2. random 与 scaffold 分别使用对应 `test_molecule_labels.jsonl` 构建的 train-only evidence index，
+   保存 protocol、identity normalizer、seed、source revision/metadata、parent agreement policy，以及 task/split
+   summary、valid/test inputs、各自 label audit 和 valid+test union `heldout_molecule_labels.jsonl` 的 SHA-256；
+2. random 与 scaffold 分别使用对应 `heldout_molecule_labels.jsonl` 构建的 train-only evidence index，
    不能复用从 full Starling direct source 构建的旧 index；
-3. 在运行 LLM 前审计 test parent identity 与 index molecule identity 为零重叠；scaffold split 还需保留
-   train/test scaffold 零重叠的 builder audit；
+3. 在运行 LLM 前审计 valid+test parent identity union 与 index molecule identity 为零重叠；scaffold split
+   还需保留 train/valid/test scaffold 两两零重叠的 builder audit；
 4. 两种 Starling split 使用不同 output root/batch ID，且都与旧 TDC test/valid root 隔离；
 5. 汇总器和图表必须按 benchmark lineage 分区，不得把 TDC、Starling-random 和
    Starling-scaffold sample-condition 合并成一个指标。
 
-`build_starling_benchmark_indices.py` 从既有 full-source Starling evidence rows 中删除对应 split 的
-全部 test parents，然后重建 direct/full index；因此可使用不属于 gold train 的其它 Starling records，
-但不能保留任何 test-parent record。构建时必须用当前 normalizer 从 `drug` 重算 test parent key 并与
+`build_starling_benchmark_indices.py` 从既有 full-source Starling evidence rows 中删除对应构造方法的
+全部 valid+test parents，然后重建 direct/full index；因此可使用不属于 gold train 的其它 Starling records，
+但不能保留任何 evaluation-parent record。构建时必须用当前 normalizer 从 `drug` 重算 held-out parent key 并与
 artifact 中保存的 key 一致；无法解析 parent 的 source evidence row 采用保守排除，不能在无法证明 disjoint
 时仍写入 evidence artifact。`starling_benchmark_matrix.py` 复用冻结的 GLM、prompt、retrieval mode、
 tool 和 batch pipeline，仅替换 test input、Starling index 与隔离 output root：
 
 ```text
-outputs/paper/molecular_evidence_agent_starling_random/
-outputs/paper/molecular_evidence_agent_starling_scaffold/
+outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/
 ```
 
 ### MiniMol feature agent retrieval
 
 MiniMol agent retrieval 是与 Morgan/Tanimoto formal pipeline 配对的 feature ablation：evidence source、
 paper-facing group mapping、`top_k=3`、数值 `min_similarity=0.3`、GLM/prompt/tool 设置和
-operational -> parent-disjoint 顺序全部不变，只把 candidate ranking 改为 MiniMol v1 embedding
+`identity_blind + parent_disjoint` fresh-run 合同全部不变，只把 candidate ranking 改为 MiniMol v1 embedding
 L2-normalized cosine。Cosine 不能使用 Morgan 的结构相似性 bucket 文案，也不能使用
 `query_feature_coverage` 这个 Morgan-bit selector。
 
@@ -120,45 +155,31 @@ outputs/paper/molecular_evidence_agent_starling_scaffold_minimol_retrieval/
 outputs/paper/minimol_retrieval_agent_results/
 ```
 
-每个 split 仍先跑 19 个 deployment-visible operational retrieval conditions。Query-only single branch
-直接复用同 split 已冻结的 `none` batch；Morgan condition 的 group output 只有在
-`retrieval_prompt_hash` 完全相同时才允许复用。随后按 MiniMol operational artifact 生成
-parent-disjoint plan，再跑正式 parent-disjoint：
+新 v4 每个 split 直接跑完整 `identity_blind + parent_disjoint` 条件。Query-only `none` 同轮 fresh-run，
+其 identity policy 在 manifest 中标为不适用；retrieval conditions 不从 Morgan 或 operational artifacts
+复用 group/final output：
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
   --benchmark-split <random|scaffold> \
   --retrieval-feature minimol \
-  --visibility-mode deployment_visible \
-  --neighbor-identity-policy operational \
-  --parallelism 12 \
-  --group-workers 4
-
-python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation \
-  --benchmark-split <random|scaffold> \
-  --retrieval-feature minimol \
-  --materialize
-
-python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
-  --benchmark-split <random|scaffold> \
-  --retrieval-feature minimol \
-  --visibility-mode deployment_visible \
+  --visibility-mode identity_blind \
   --neighbor-identity-policy parent_disjoint \
-  --parallelism 12 \
-  --group-workers 4
+  --parallelism 128 \
+  --group-workers 1
 
 python -m tools.chembl_tool.paper_experiments.summarize_minimol_retrieval_agent
 
 python -m tools.chembl_tool.paper_experiments.plot_minimol_retrieval_agent \
   --png-output outputs/paper/minimol_retrieval_agent_results/figures/minimol_vs_morgan_agent_retrieval_highres.png
 
-# operational MiniMol agent 与已有正式 Morgan agent / supervised baselines 同图比较
+# matched parent-disjoint MiniMol agent 与 Morgan agent / supervised baselines 同图比较
 python -m tools.chembl_tool.paper_experiments.plot_starling_with_minimol_agent \
-  --png-output outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent_operational_highres.png
+  --png-output outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent_highres.png
 ```
 
-上述长矩阵也可以用单一可恢复入口串联；它内部仍调用同一 matrix、parent-disjoint materializer、
-summarizer 和 plotter，不定义第二套实验逻辑：
+代码迁移完成后，长矩阵仍由单一可恢复入口串联；该入口应直接调用 fresh parent-disjoint matrix、
+summarizer 和 plotter，不再调用 operational matrix 或 parent-disjoint materializer，也不定义第二套实验逻辑：
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.run_minimol_retrieval_agent_experiment
@@ -169,7 +190,7 @@ condition 且 Morgan/MiniMol 均为零 failed sample。该 ablation 使用独立
 MiniMol/cosine agent row 冒充或覆盖 canonical Morgan agent row。
 
 正式 Starling performance bar chart 从合并后的 `metrics.tsv` 读取 random/scaffold、三个 task、
-parent-disjoint pipeline 条件、MiniMol train-all baseline、Morgan fingerprint KNN 和 MiniMol
+parent-disjoint pipeline 条件、lineage-frozen MiniMol head baseline、Morgan fingerprint KNN 和 MiniMol
 embedding cosine KNN。两种 KNN 都只从同 split 的 `train.jsonl` 检索，固定 `k=3`，按未加权多数票预测，
 并用正类邻居比例计算 AUROC。图中主指标为 macro-F1，输出只保留 canonical SVG 和一份高分辨率 PNG：
 
@@ -226,20 +247,18 @@ python -m tools.chembl_tool.paper_experiments.plot_coverage_selector_llm_matrix 
 coverage、neighbor redundancy、group reasoning content 和相同 final input 下的模型波动。两者共享同一
 condition/path resolver，新增 split 或迁移 artifact 路径时不得复制 special case。
 
-正式运行顺序仍是 deployment-visible operational、`parent_disjoint_ablation --materialize`、
-deployment-visible parent-disjoint。`parent_disjoint_ablation.py` 的 `--benchmark-split random|scaffold`
-用于读取新 matrix；旧 `--split test|valid` 语义不变。在完整矩阵、failure audit 和汇总完成前，
-`RESULTS.md` 中不存在正式 Starling rerun 结果。
+新 v4 正式运行顺序是 valid `identity_blind + parent_disjoint` fresh-run、valid audit、设置冻结、test
+fresh-run、test audit 和汇总。`parent_disjoint_ablation.py` 仅用于旧 operational lineage 或显式 opt-in
+sensitivity，不参与默认路径。在完整矩阵、failure/leak/identity/held-out audit 和汇总完成前，
+`RESULTS.md` 中不存在正式 v4 Starling rerun 结果。
 
-### Starling identity-blind 补充控制
+### Starling identity-blind parent-disjoint 主矩阵
 
-Starling random/scaffold 的 identity-blind 使用同一个 `starling_benchmark_matrix.py`，但必须显式选择
-`identity_blind + operational`。该制度隐藏 query/neighbor 的结构、名称和 source ID，由 harness 预先计算
-properties/comparison tool text，再把脱敏后的 evidence 和 branch output 交给 LLM。它是补充控制，不取代
-deployment-visible parent-disjoint 主结果；identity-blind 与 agentic deployment-visible 同时改变了身份可见性
-和工具执行方式，不能单独解释为纯 identity effect。严格的可见性比较仍需后续
-`deployment_visible_prefetched` 对同一 blind run 做 frozen retrieval/tool replay，并通过
-`audit_prefetch_contract.py`。
+Starling random/scaffold 的新 v4 主矩阵使用同一个 `starling_benchmark_matrix.py`，默认选择
+`identity_blind + parent_disjoint`。该制度隐藏 query/neighbor 的结构、名称和 source ID，由 harness 预先计算
+properties/comparison tool text，再把脱敏后的 evidence 和 branch output 交给 LLM。当前主张只针对这一冻结
+blind contract；不得把它解释为 deployment-visible agentic 性能。若以后需要可见性比较，另开显式
+deployment-visible-prefetched/agentic ablation，不得让它阻塞主矩阵。
 
 正式入口：
 
@@ -247,53 +266,52 @@ deployment-visible parent-disjoint 主结果；identity-blind 与 agentic deploy
 python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
   --benchmark-split random \
   --visibility-mode identity_blind \
-  --neighbor-identity-policy operational \
-  --parallelism 12 \
-  --group-workers 4
+  --neighbor-identity-policy parent_disjoint \
+  --parallelism 128 \
+  --group-workers 1
 
 python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
   --benchmark-split scaffold \
   --visibility-mode identity_blind \
-  --neighbor-identity-policy operational \
-  --parallelism 12 \
-  --group-workers 4
+  --neighbor-identity-policy parent_disjoint \
+  --parallelism 128 \
+  --group-workers 1
 ```
 
-可用 `--experiments <condition...>` 按 task/condition 分队列并行；batch runner 内置 `--skip-existing`，
-所以相同命令也是唯一 resume/failed-sample repair 入口。并行选择性运行时，matrix manifest 使用
-selection-specific 文件名和原子替换，不能让多个 launcher 共享写一个 manifest。只需重建/检查完整
+可用 `--experiments <condition...>` 按 task/condition 选择队列，但默认顺序运行，不能在多个 launcher 中
+各自占用 512 并发。batch runner 内置 `--skip-existing`，所以相同命令也是唯一 resume/failed-sample repair
+入口。选择性运行时，matrix manifest 使用 selection-specific 文件名和原子替换，不能让多个 launcher
+共享写一个 manifest。只需重建/检查完整
 canonical manifest 而不启动 condition 时，在上述命令加 `--manifest-only`。产物固定写入：
 
 ```text
-outputs/paper/molecular_evidence_agent_starling_random/runs/
-outputs/paper/molecular_evidence_agent_starling_scaffold/runs/
+outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/runs_identity_blind_parent_disjoint/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/runs_identity_blind_parent_disjoint/
 ```
 
-两套 split 分别汇总，不能写入正式 parent-disjoint `metrics.tsv` 或在 blind 尚未完成时进入主 bar chart：
+两套 split 分别汇总；blind parent-disjoint 未完整通过 gate 前不能进入主 bar chart：
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.summarize_results \
   --split test \
-  --paper-root outputs/paper/molecular_evidence_agent_starling_random \
-  --output-dir outputs/paper/molecular_evidence_agent_starling_random/analysis_identity_blind
+  --paper-root outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1 \
+  --output-dir outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/analysis_identity_blind_parent_disjoint
 
 python -m tools.chembl_tool.paper_experiments.summarize_results \
   --split test \
-  --paper-root outputs/paper/molecular_evidence_agent_starling_scaffold \
-  --output-dir outputs/paper/molecular_evidence_agent_starling_scaffold/analysis_identity_blind
+  --paper-root outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1 \
+  --output-dir outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/analysis_identity_blind_parent_disjoint
 ```
 
-每个 split 必须恰有 22 个 identity-blind condition，并同时满足
-`n_failed=0`、`query_smiles_trace_leaks=0`、`visibility_contract_satisfied=true`，才能报告结果。
-`summarize_starling_benchmark.py` 仍只汇总 deployment-visible parent-disjoint 主 pipeline、
-MiniMol train-all、正式全 test Morgan KNN 和 MiniMol embedding cosine KNN；blind 使用上面的独立
-analysis 目录。
+每个 split 必须恰有 22 个 identity-blind condition，并同时满足 `n_failed=0`、
+`query_smiles_trace_leaks=0`、`visibility_contract_satisfied=true`、retained parent conflict=0 和 held-out
+overlap=0，才能报告结果。`summarize_starling_benchmark.py` 的 v4 汇总必须读取这套 blind parent-disjoint
+主 pipeline、对应 lineage 冻结的 MiniMol head、正式全 test Morgan KNN 和 MiniMol embedding cosine KNN。
 
-2026-07-27 artifact snapshot 已有 random/scaffold 各 22 个 blind condition metrics，但尚未通过完成 gate：
-random 有 9 个 failed sample-condition（均在 Bioavailability），scaffold 有 5 个（BBB ChEMBL flat 2 个，
-Bioavailability Starling direct-full/flat/mechanism 各 1 个）。这些 point estimates 只能用于 repair
-进度诊断，不得写入 formal Starling bar chart；修复后还必须重跑 leak/visibility audit。当前逐条件状态和
-结果集中记录在 `STARLING_BENCHMARK_RESULTS.md`。
+2026-07-27 的 random/scaffold 各 22-condition blind artifact 属于上一版 strict-conflict split，曾分别残留
+9/5 个 failed sample-condition；它只保留作 historical repair lineage，不能冒充当前 v4。当前
+`record_agreement70_split811_v1` 重新从 valid 开始 fresh-run，逐条件状态记录在
+`STARLING_BENCHMARK_RESULTS.md`，完整 valid gate 通过前不得启动或解释 test。
 
 ## 代码与命令入口
 
@@ -313,7 +331,7 @@ audit_prefetch_contract.py
   逐 condition、逐样本验证 matched-prefetch 是否完整 replay identity-blind 的 retrieval 和工具输出。
 
 parent_disjoint_ablation.py
-  审计 operational retrieval 的 same-parent overlap，生成选择性重跑/整条复用/family-branch 复用计划；
+  历史/显式 sensitivity 工具：审计 operational retrieval 的 same-parent overlap，生成选择性重跑/整条复用/family-branch 复用计划；
   加 `--materialize` 后只物化输入未变化的整条 reuse artifact 和 reuse plan。输入变化的样本仍由统一 matrix
   runner 以 `--neighbor-identity-policy parent_disjoint` 执行。
 
@@ -328,7 +346,8 @@ plot_retrieval_claims_overview.py
 
 plot_coverage_performance.py
   从 `coverage_performance.tsv` 绘制 overall/class-conditional coverage 与 paired macro-F1 增幅；
-  只负责展示，不在图内重算指标。默认输出 deployment-visible agentic 的 canonical SVG。
+  只负责展示，不在图内重算指标。当前代码默认输出历史 deployment-visible agentic 的 canonical SVG；
+  v4 汇总接线前不能拿它冒充 blind 主结果。
 
 paper_figure_style.py
   论文 SVG 共用的颜色、字体、基础绘图 primitive、纵向数值网格、标准 metrics-to-SVG CLI 和唯一
@@ -383,19 +402,23 @@ contract、paper matrix/result summary、parent-disjoint summary 和 viewer root
 - 命令、路径、模型名、实验 ID、字段名和通行的技术术语可以保留英文，但正文解释必须使用中文。
 - 修改报告生成器时，必须确保重新生成的用户可见报告仍为中文，不能只手工翻译生成产物。
 
-论文主结果表使用真实部署导向的 agentic 制度：
+新 v4 论文主结果表使用 identity-blind 制度；以下 deployment-visible 定义仅用于历史结果或显式 ablation：
 
 ```text
+identity_blind:
+  query/neighbor 的结构、名称和 source ID 对 LLM 隐藏；
+  harness 预取 properties/comparison tool text；
+  与 parent-disjoint retrieval 配对，作为 v4 none/direct/full_flat/full_mechanism 和 source comparison 主制度。
+
 deployment_visible:
   query 只暴露结构，不暴露名称；
   retrieved molecule 暴露结构，并在数据源提供时暴露 source name/source ID；
   LLM 自主决定是否调用比较工具；
-  作为 none/direct/full_flat/full_mechanism 和 source comparison 的论文主制度。
+  只作为显式 deployment ablation，不是 v4 默认。
 
-identity_blind 与 deployment_visible_prefetched:
+deployment_visible_prefetched:
   只作为 visibility/tool-execution 补充控制；
-  不进入论文主结果表，不得代替 deployment_visible 的端到端 agentic 结果；
-  既有 parity audit 和结果必须保留用于 provenance/appendix。
+  不进入 v4 主结果表；既有 parity audit 和结果保留用于 provenance/appendix。
 ```
 
 主实验和补充控制共享以下基础条件：
@@ -408,66 +431,45 @@ temperature: 0
 max_tokens: 20480
 top_k_per_group: 3
 min_similarity: 0.30
-operational_exact_record_exclusion: true
+exact_record_exclusion: true
 primary_analog_neighbor_identity_policy: parent_disjoint
-operational_policy_role: mandatory staging and deployment-sensitivity reference
+visibility_mode: identity_blind
+operational_policy_role: opt-in historical/deployment-sensitivity ablation only
+endpoint_concurrency_budget: 512
+default_launcher_shape: parallelism=128, group_workers=1, one launcher at a time
 ```
 
 所有 paper-facing structural-analog retrieval 主结果默认使用 `parent_disjoint`：标准化 query/source parent、
-排除相同 parent，再用仍高于原 similarity threshold 的后续候选补足 top-k。`operational` 仍必须先运行，
-因为它代表真实部署中可能利用盐型、溶剂化物、重复组分和 formulation-linked record 的设置，也是
-parent-disjoint 差异检测、整条 run 复用和 branch 复用的 staging/reference；但它不再作为 analog-retrieval
-claim 的默认最终结果，只作为 deployment-sensitivity 对照单独报告。这里的 parent 是 RDKit FragmentParent
-标准化结果，不是 active moiety，也不推断 prodrug 或代谢物关系。
-
-新增任何 retrieval condition 时，完成 operational run 后必须在同一轮工作中生成 parent-disjoint 计划、
-物化不变样本并补跑变化样本；不能等到最后统一补消融。统一 runner 的 CLI 默认已设为
-`deployment_visible + parent_disjoint`，且会要求目标 batch 已有 `reuse_plan.json`；第一阶段 operational 必须
-显式传 `--neighbor-identity-policy operational`，防止误把 staging 设置当成最终主实验。
+排除相同 parent，再用仍高于原 similarity threshold 的后续候选补足 top-k。新 v4 直接 fresh-run，
+不需要 operational staging、diff、整条 run reuse 或 branch reuse。这里的 parent 是 RDKit FragmentParent
+标准化结果，不是 active moiety，也不推断 prodrug 或代谢物关系。Operational 只能显式 opt in 到独立 root，
+用于 deployment sensitivity；不得成为新 retrieval condition 的依赖。
 
 Parent-disjoint 产物统一放在：
 
 ```text
 # test
-outputs/paper/molecular_evidence_agent/runs_deployment_visible_parent_disjoint/
-outputs/paper/molecular_evidence_agent/analysis/parent_disjoint_ablation/
+outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/runs_identity_blind_parent_disjoint/
+outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/analysis_identity_blind_parent_disjoint/
 
-# valid
-outputs/paper/molecular_evidence_agent_valid/runs_deployment_visible_parent_disjoint/
-outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/
+# scaffold
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/runs_identity_blind_parent_disjoint/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/analysis_identity_blind_parent_disjoint/
 ```
 
-先运行 `parent_disjoint_ablation.py` 做两阶段审计：只有 operational top-k 中实际出现 same-parent 的
-sample-condition 才重新执行 fingerprint retrieval 和 GLM。无 same-parent 的输入按 hash 直接复用；
-mechanism condition 还应通过 `--group-analysis-source-batch` 复用 hash 未变化的 family branch。禁止通过
-删除受影响样本、只评估子集或从 similarity threshold 以下补候选来节省计算。
-
-计划报告必须同时统计 operational retrieval 的 same-parent 暴露量：受影响 query-condition 数、受影响
-group 数、same-parent neighbor slots、rank-1 slots、全部 neighbor slots 中的占比，以及在单个
-query-condition 内去重后的 same-parent record 数。`slot` 是一个 neighbor 在一个 retrieval group 中的一次
-LLM-visible 出现；同一 record 若进入多个 mechanism branch，应计为多个 slots。该统计描述暴露频率，不能
-单独解释为性能因果效应；因果敏感性仍以 operational/parent-disjoint 配对 prediction flip 和指标变化为准。
-
-`--materialize` 之后，按计划只选择 retrieval conditions 运行统一入口（不要把 `none` 重复写入
-parent-disjoint root）：
+新 v4 直接运行完整 fresh matrix；`none` 同轮运行但 identity policy 为不适用：
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
-  --visibility-mode deployment_visible \
+  --visibility-mode identity_blind \
   --neighbor-identity-policy parent_disjoint \
-  --experiments <retrieval_condition_names_from_plan>
+  --parallelism 128 \
+  --group-workers 1
 ```
 
-完成 parent-disjoint 条件后统一运行：
-
-```bash
-python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results
-```
-
-该汇总器会生成 condition-level 配对指标、逐样本 prediction flips、修正/破坏计数、整条 run 与 family
-branch 复用计数，并从最终 `retrieval.json` 重新审计 retained neighbor 的 identity relation 和 similarity
-threshold。最终报告前必须满足所有条件完成、`n_failed_runs == 0`、parent-policy conflict 为 0、低于
-threshold 的补位为 0。
+最终汇总直接审计 fresh retrieval：所有条件完成、`n_failed_runs == 0`、parent-policy conflict 为 0、
+held-out overlap 为 0、低于 threshold 的补位为 0、identity leak 为 0。旧
+`summarize_parent_disjoint_results.py` 的 operational/parent 配对输出只属于历史 sensitivity analysis。
 
 `full_flat` 和 `full_mechanism` 必须来自同一组选定的数据源证据。两者唯一预期差异是：前者将证据集合放在一个 group 中，后者按任务机制拆分证据。
 
@@ -538,16 +540,21 @@ Group prompt 还具有 provider 传输保护。清理后不超过 750 KB 的 pay
 
 1. 必须满足 `n_failed_runs == 0`；否则使用 `--skip-existing` 重跑失败样本。
 2. 必须满足 `summarize_results.py` 输出的 `query_smiles_trace_leaks == 0`。
-3. `identity_blind` 必须通过身份盲化 preflight，并使用脱敏后的 group 输出进行 final synthesis。`group_reasoning_outputs_raw.jsonl` 仅用于审计，绝不能作为 final 输入。
-4. 主实验 `deployment_visible` 必须通过正向可见性 contract。补充的 `deployment_visible_prefetched` 必须逐 query replay 对应 `identity_blind` run 的冻结 `retrieval.json` 和 prefetched tool outputs，不能按当前 task config 重新检索或重新执行可能非确定的 MCS。当前 test matched-prefetch 保留 21 个条件并必须覆盖 4,456/4,456 samples；valid 已扩展到 26 个条件并必须覆盖 2,713/2,713 samples。两者都要求 missing、extra、mismatch 全为 0；交集匹配不能替代覆盖率检查。
+3. v4 主实验 `identity_blind` 必须通过身份盲化 preflight，并使用脱敏后的 group 输出进行 final synthesis；
+   `group_reasoning_outputs_raw.jsonl` 仅用于审计，绝不能作为 final 输入。同时逐 retrieval 审计
+   parent conflict=0、held-out overlap=0 和 threshold violation=0。
+4. `deployment_visible` / `deployment_visible_prefetched` 只在显式 visibility ablation 中运行。Prefetched
+   条件必须逐 query replay 对应 `identity_blind` run 的冻结 `retrieval.json` 和 prefetched tool outputs，
+   不能按当前 task config 重新检索或重新执行可能非确定的 MCS。历史 matched-prefetch coverage gate
+   仍保留用于旧 lineage；它不阻塞新 v4 blind 主矩阵。
 5. 报告性能时必须同时报告 retrieval coverage；缺少 neighbor 是数据源/索引的真实属性，不得静默删除相应样本。
 6. 使用共享汇总程序生成制度内和跨制度的配对测试集比较、bootstrap 区间和精确 McNemar 检验。
 7. 标量 KNN 结果必须与 LLM agent 条件分开报告；它是数值型 direct-F 对照，且不属于任何 LLM 可见性制度。
 
-生成的证据和运行输出位于 `outputs/paper/molecular_evidence_agent/`：`runs_deployment_visible/` 是 agentic
-主实验候选，`runs/` 是 identity-blind 补充控制，`runs_deployment_visible_prefetched/` 是 matched-prefetch
-补充控制。
-这些是可复现产物，不是源代码。
+旧 lineage 的运行输出位于 `outputs/paper/molecular_evidence_agent/`：`runs_deployment_visible/`、`runs/`
+和 `runs_deployment_visible_prefetched/` 分别是历史 agentic、blind 和 matched-prefetch artifacts。
+新 v4 主输出位于各 record-agreement lineage root 的 `runs_identity_blind_parent_disjoint/`。
+这些都是可复现产物，不是源代码。
 
 ## 可视化与产物清理
 
@@ -581,8 +588,9 @@ Skin Reaction valid visibility trace 的规范化分析写在
 
 Paper runner 必须保存每个样本自己的 `trace_messages.jsonl`，并传 `--no-combine-traces`，避免再生成
 condition-level 的重复大文件。最终 trace viewer 默认注册 Starling random/scaffold 与历史 TDC test；
-每个 dataset 内只服务四个 paper run root：`runs/`、`runs_deployment_visible_prefetched/`、
-`runs_deployment_visible/` 和 `runs_deployment_visible_parent_disjoint/`，通过 `predictions.jsonl` 定位
+新 v4 dataset 服务 `runs_identity_blind_parent_disjoint/`，历史 dataset 继续服务四个 legacy roots：
+`runs/`、`runs_deployment_visible_prefetched/`、`runs_deployment_visible/` 和
+`runs_deployment_visible_parent_disjoint/`，通过 `predictions.jsonl` 定位
 per-run trace，且不得跨 dataset 合并指标。不得重新加入旧 task、Tier、expert policy 或 task-specific
 prediction 字段的硬编码适配。Parent-disjoint 仍必须通过 `analysis/parent_disjoint_ablation/` 的汇总产物
 审计；viewer 还必须从 manifest 和 `reuse.json` 明确显示 `parent_disjoint` policy，以及 sample 是因

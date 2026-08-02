@@ -11,6 +11,20 @@
 - 什么结果可以进入主表，什么只能作为补充或失败分析；
 - 在预计 9 至 10 周的时间窗口内按什么顺序执行。
 
+### 2026-08-01 v4 主矩阵决策
+
+`record_agreement70_split811_v1` 及后续新数据集的正式默认改为
+`identity_blind + parent_disjoint` fresh-run。Operational、deployment-visible 和 matched-prefetch 不再是
+主矩阵前置依赖，只作为历史结果或显式 ablation。默认 endpoint 为本机 tunnel
+`http://127.0.0.1:50000/v1` 上的 `nvidia/GLM-5.2-NVFP4`，保持历史 GLM reasoning 设置；全局 endpoint
+并发预算上限为 512；首次压力运行出现 1/500 transport timeout 后，单 launcher 默认形状
+先调整为 384；由于 BBB full-flat 仍出现大量长 group-request timeout，当前默认进一步调整为
+`parallelism=128, group_workers=1`，禁止外层 fan-out 乘法超额。
+
+这一决策覆盖下文基于 2026-07 historical operational/deployment-visible 矩阵的“主表”措辞，但不删除历史
+结果或 relation taxonomy。新 v4 先跑 valid 并通过完整性、identity leak、parent conflict 和 held-out overlap
+gate，冻结后再跑 test。代码未完成 blind+parent-disjoint fresh-run/独立 root/全局并发迁移前不得启动 LLM。
+
 当前 test 已完成 73 个 GLM 条件：26 个 identity-blind、21 个 matched-prefetch 和 26 个
 deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个。它们用于确定研究问题、估算成本和
 发现 failure modes，但不是自动成为最终论文主表。最终主表必须使用本文档冻结后的数据、排除规则、
@@ -41,7 +55,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | C1 | 通用、可审计的 molecular evidence agent harness | 4 个 task、2 个 source、统一 Evidence Contract、统一 runner、trace、validation、batch 和 audit 均实际运行 |
 | C2 | ChEMBL curated structured assay records 与 Starling 从原文抽取、保留 source context 的 evidence records 的受控比较 | 同 task/query/endpoint scope/retrieval view 的 source 配对实验，加独立 source-quality annotation |
 | C3 | Direct、flat、mechanism retrieval 的系统消融 | 相同 evidence row、只改变 grouping 的 flat-vs-mechanism 配对；none-vs-direct 测 retrieval |
-| C4 | 真实 deployment-visible agentic workflow 及其可审计行为 | Agentic 主矩阵、工具调用/成本/trace；identity-blind 与 matched-prefetch 只作补充 attribution control |
+| C4 | 可审计的 identity-blind evidence-reasoning workflow | Blind parent-disjoint 主矩阵、harness-prefetched 工具证据、成本/trace；deployment-visible 只作补充 deployment control |
 | C5 | Parametric prior 与 retrieved evidence 的交互和失败分类 | 上升/下降 trace audit、身份核对、ontology conflict、重复运行与第二模型验证 |
 | C6 | 完整 provenance、统计和可复现评估协议 | source manifest、entity relation/parent policy、coverage、tokens、失败数、bootstrap、McNemar、Holm 和 release checklist |
 | C7 | ChEMBL 内 evidence distance 与 quantity 的累计扩展曲线 | 冻结的当前 direct/mechanism envelope、task-specific graph、`D/C/H1/H2` flat 主曲线、H1/H2 mechanism supplementary、matched-prefetch 控制和 agentic confirmation |
@@ -50,13 +64,13 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 
 | 编号 | 研究问题 | Primary comparison |
 |---|---|---|
-| RQ1 | Retrieval 是否帮助分类，且增益是否超出 same-entity lookup？ | Agentic `none` vs operational `direct`；再比较 operational vs parent-disjoint direct |
+| RQ1 | Retrieval 是否帮助分类，且增益是否超出 same-entity lookup？ | Identity-blind `none` vs parent-disjoint `direct` |
 | RQ2 | 在 endpoint scope 匹配时，Starling 原文抽取 evidence 与 ChEMBL curated structured records 的效用和质量有何差异？ | `chembl_direct` vs `starling_direct_full`；可匹配的 current-mechanism families 内比较 `chembl_mechanism` vs `starling_mechanism` |
 | RQ3 | Mechanism decomposition 是否优于 flat evidence？ | 同 source、同 evidence rows 的 `full_flat` vs `full_mechanism` |
 | RQ4 | 非数值 Starling evidence 是否增加价值？ | `starling_direct_numeric` vs `starling_direct_full`，KNN 为独立对照 |
-| RQ5 | Deployment-visible agent 如何调用和使用结构工具？ | Agentic tool-use、tokens、retries、trace；精选条件的 identity/matched attribution control |
+| RQ5 | Identity-blind 模型如何使用 harness-prefetched 结构工具证据？ | Blind tool evidence、tokens、retries、trace；精选条件的 deployment-visible ablation |
 | RQ6 | 观察到的增益和下降是否跨模型、跨重复稳定？ | 第二模型 confirmation matrix；GLM 关键条件重复运行 |
-| RQ7 | Retrieval coverage 与 macro-F1 增幅有什么关系？ | Agentic retrieval 条件的 overall/positive-class/negative-class coverage 与相对同任务 `none` 的 paired macro-F1 差值 |
+| RQ7 | Retrieval coverage 与 macro-F1 增幅有什么关系？ | Blind parent-disjoint retrieval 条件的 overall/positive-class/negative-class coverage 与相对同任务 `none` 的 paired macro-F1 差值 |
 | RQ8 | 超出当前 curated mechanism envelope 多远后，增加更多 assay evidence 不再帮助 LLM？ | ChEMBL-only 的 `none`、`D`、`D+C`、`D+C+H1`、`D+C+H1+H2` 累计扩展曲线 |
 
 ## 实验与贡献索引
@@ -99,7 +113,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 
 ## 数据冻结前的强制决策
 
-### D1：Operational 与 parent-disjoint retrieval policy
+### D1：Parent-disjoint 主 policy 与 historical operational taxonomy
 
 真实部署中，同一 active moiety 的盐型、溶剂化物和 formulation-linked evidence 本身有价值，不应从
 operational 主结果中静默删除；但它们也不能被称为普通 analog。数据冻结前实现并记录以下层级：
@@ -120,7 +134,7 @@ structural_analog / unresolved:
   active moiety 自动折叠为 same parent，避免把真正的结构转化误当作同一实体。
 ```
 
-最终论文报告两套 policy：
+新 v4 主结果只要求 parent-disjoint；operational 可作为显式 sensitivity 另行报告：
 
 ```text
 operational:
@@ -130,13 +144,13 @@ parent_disjoint:
   排除相同 parent 后继续向后检索，补足 top-k；用于证明 structural-analog retrieval 的独立价值。
 ```
 
-Agentic operational 是主性能表；agentic parent-disjoint 是必须完成的主消融。Identity-blind 和
-matched-prefetch 不需要为 parent 消融重跑完整矩阵。
+Identity-blind parent-disjoint 是 v4 主性能表。Operational/deployment-visible 若运行，必须写入独立 ablation
+root，且不得成为主矩阵的 staging 或 reuse-plan 来源。
 
 验收标准：
 
 - 每个 run manifest 写入 exclusion policy 和标准化版本；
-- operational run 报告每个 relation 的 query/neighbor 数量和 performance stratum；
+- 若显式运行 operational，则报告每个 relation 的 query/neighbor 数量和 performance stratum；
 - parent-disjoint run 中 query 与 retained neighbor 的 parent key 审计为 0 冲突；
 - 对 nelfinavir salt、propranolol salt、ChEMBL protonation counterpart 等已知案例建立测试；
 - parent-disjoint 必须 backfill top-k，不能删除受影响 query 或只做 post-hoc 子集评分；
@@ -669,7 +683,7 @@ Starling extraction: separate literature-processing budget
 严格按以下依赖顺序执行：
 
 ```text
-D1 operational/parent-disjoint policy + D3 protocol freeze + D4 ChEMBL distance graph freeze
+D1 parent-disjoint policy + D3 protocol freeze + D4 ChEMBL distance graph freeze
   -> D2 Starling data freeze and E12 ChEMBL distant-library build in parallel
   -> E0 index/overlap/contract smoke
   -> E3 annotation sampling and E8 baselines in parallel
@@ -681,16 +695,19 @@ D1 operational/parent-disjoint policy + D3 protocol freeze + D4 ChEMBL distance 
   -> final statistics, figures and writing
 ```
 
-当前已经存在并可以使用的统一入口：
+统一入口已按 v4 合同完成代码迁移。主命令为：
 
 ```bash
 # 查看当前 runner 已注册的实验
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --list
 
-# 运行论文主实验的 deployment-visible agentic 条件
-python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
-  --visibility-mode deployment_visible \
-  --neighbor-identity-policy operational \
+# 运行 v4 identity-blind parent-disjoint 主条件；同一时间只启动一个 launcher
+python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
+  --benchmark-split <random|scaffold> \
+  --visibility-mode identity_blind \
+  --neighbor-identity-policy parent_disjoint \
+  --parallelism 128 \
+  --group-workers 1 \
   --experiments <experiment_id> [<experiment_id> ...]
 
 # 生成统一统计和报告
@@ -701,9 +718,9 @@ python -m tools.chembl_tool.paper_experiments.analyze_coverage_performance
 python -m tools.chembl_tool.paper_experiments.plot_coverage_performance
 ```
 
-Starling 当前可用 builder 命令见 [README.md](README.md)。Operational staging、parent-disjoint
-exclusion/backfill/diff-reuse、same-parent exposure audit，以及 BBB/Skin full Starling builders 已实现并
-通过当前 test/valid matrix。以下内容尚无最终可运行入口，必须先实现并
+Starling 当前可用 builder 命令见 [README.md](README.md)。Parent-disjoint exclusion/backfill 和
+BBB/Skin full Starling builders 已实现；blind+parent-disjoint fresh-run、独立 root、无需 operational
+reuse plan 的完整 none/retrieval matrix，以及 512 全局并发约束已实现。以下入口必须继续
 通过测试，不能把本文档中的名称直接当作 CLI 参数：
 
 - ClinTox 的最终 Starling family builder/profile；

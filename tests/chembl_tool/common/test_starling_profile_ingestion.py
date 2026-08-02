@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from tools.chembl_tool.common.starling import evidence_library as starling_evidence_library
 from tools.chembl_tool.common.starling import StarlingSourceProfile, build_starling_parquet_evidence_rows
@@ -163,3 +164,35 @@ def test_profile_can_require_context_for_an_ambiguous_endpoint(monkeypatch):
 
     assert {row["canonical_smiles"] for row in rows} == {"CCO", "CCC"}
     assert stats["sources"]["skin_damage"]["n_filtered_context"] == 1
+
+
+def test_profile_converts_parquet_array_provenance_to_plain_lists(monkeypatch):
+    frame = pd.DataFrame(
+        [
+            {
+                "smiles": "CCO",
+                "kind": "absolute",
+                "value": 50.0,
+                "unit": "%",
+                "source_origins": np.array(["hf", "local"], dtype=object),
+            }
+        ]
+    )
+    monkeypatch.setattr(pd, "read_parquet", lambda path: frame)
+    profile = StarlingSourceProfile(
+        source_id="canonical_direct",
+        path="unused.parquet",
+        group_id="Observed.direct",
+        assay_tier="Observed",
+        endpoint_group="direct",
+        evidence_source="canonical/v2",
+        endpoint_field="kind",
+        value_field="value",
+        unit_field="unit",
+        evidence_role="direct_outcome",
+        extra_example_fields=("source_origins",),
+    )
+
+    rows, _ = build_starling_parquet_evidence_rows([profile])
+
+    assert rows[0]["source_record_examples"][0]["source_origins"] == ["hf", "local"]

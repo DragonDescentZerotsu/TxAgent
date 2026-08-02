@@ -1,6 +1,6 @@
 # Starling random/scaffold benchmark：当前决策、结果与入口
 
-更新时间：2026-08-01。
+更新时间：2026-08-02。
 
 本文件是 2026-07-24 至 2026-07-27 Starling benchmark 迁移和实验的集中总账。它只记录当前
 Starling-held-out `random` / `scaffold` lineage；旧 TDC `test` / `valid` 的历史结果仍见
@@ -26,25 +26,26 @@ tools/chembl_tool/common/starling/benchmark_dataset.py
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
 ```
 
-当前冻结规则：
+当前冻结 v4 规则：
 
-- test size 为 `min(500, floor(0.2 * n_binary_molecules))`；
+- parent agreement 为 record-weighted `max(n0,n1)/(n0+n1)`，threshold 为 70%，精确 tie 拒绝；
+- valid 与 test size 分别为 `min(500, floor(0.1 * n_binary_molecules))`；
 - `random` 是固定 seed 的 label-stratified stable-hash split；
 - `scaffold` 以 canonical Bemis–Murcko scaffold 为不可拆分 group；
 - 两套 split 从同一批 accepted binary parents 独立构建；
-- 每套 train/test parent identity 为零重叠，scaffold 还要求 scaffold 零重叠；
+- 每套 train/valid/test parent identity 两两零重叠，scaffold 还要求 scaffold 两两零重叠；
 - source row 先按 task adapter 独立转成 `0/1/ambiguous`，再按
   `rdkit_fragment_parent.v1` 聚合；
-- 同一个 normalized parent 的 accepted rows 同时出现 0 和 1 时，整个 parent 排除，不做多数票；
+- 同一个 normalized parent 的 accepted rows 同时出现 0 和 1 时，达到 70% 就接受多数 label；
 - `within_record_label_conflict` 指同一条 row 内可用信号互相矛盾；这种 row 在 parent 聚合前拒绝。
 
 冻结规模：
 
-| task | binary parents | test target | random Y=0 / Y=1 | scaffold Y=0 / Y=1 |
-|---|---:|---:|---:|---:|
-| BBB_Martins | 17,893 | 500 | 139 / 361 | 122 / 378 |
-| Bioavailability_Ma | 1,862 | 372 | 99 / 273 | 113 / 259 |
-| Skin_Reaction | 1,900 | 380 | 129 / 251 | 117 / 263 |
+| task | binary parents | rejected | valid/test | random valid / test Y=0,Y=1 | scaffold valid / test Y=0,Y=1 |
+|---|---:|---:|---:|---:|---:|
+| BBB_Martins | 19,425 | 1,091 | 500 / 500 | 139,361 / 139,361 | 150,350 / 148,352 |
+| Bioavailability_Ma | 2,092 | 106 | 209 / 209 | 58,151 / 58,151 | 61,148 / 65,144 |
+| Skin_Reaction | 2,456 | 465 | 245 / 245 | 75,170 / 75,170 | 74,171 / 71,174 |
 
 Task label：
 
@@ -54,6 +55,10 @@ BBB_Martins:
 
 Bioavailability_Ma:
   human oral F >= 20% -> Y=1；F < 20% -> Y=0。
+  2026-08-01 起使用 `bioavailability_canonical_direct.v2`：固定 HF snapshot 与 local 中明确
+  absolute/oral-IV rows 合并，跨来源近等值 claim 去重；relative/ambiguous local rows 只留在 residual
+  inference evidence。当前 direct claims SHA-256 为
+  `045261cbda785092143eeadd636f78399f7b02f951b23480b16fb8dde22661c5`。
 
 Skin_Reaction:
   Y=1 skin sensitizer；Y=0 non-sensitizer。
@@ -62,6 +67,37 @@ Skin_Reaction:
 ClinTox:
   当前没有与 toxicity-caused clinical-trial failure 同定义的 Starling direct source，
   所以没有构造 Starling split。
+```
+
+此前所有 17,893/1,828/1,900-parent strict-conflict benchmark 的 baseline、agent 和图表，以及更早的
+Bioavailability 1,862-parent mixed-source 结果，均为 historical lineage，不得与当前 v4 混表。
+当前 v4 agent root 为：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/
+```
+
+数据与诊断入口：
+
+```text
+Bioavailability canonical source:
+  tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
+
+record/PMID provenance distributions:
+  tools/chembl_tool/paper_experiments/analyze_starling_parent_provenance.py
+
+50/60/70/80/90% threshold comparison:
+  tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
+
+70% gold split build:
+  tools/chembl_tool/common/starling/build_benchmark_datasets.py
+
+valid+test-heldout index build:
+  tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
+
+identity-blind parent-disjoint valid/test matrix:
+  tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 ```
 
 具体 numerical/unit/free-text 映射以三个 task adapter 为代码真相，汇总规则见
@@ -75,8 +111,8 @@ tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
 
 ## 2. Held-out retrieval 隔离
 
-Gold split 与 retrieval evidence library 是两个步骤。正式 retrieval condition 分别使用对应 split 的
-`test_molecule_labels.jsonl` 从 full Starling evidence 中删除全部 test parents，再重建 held-out index；
+Gold split 与 retrieval evidence library 是两个步骤。正式 retrieval condition 分别使用对应构造方法的
+`heldout_molecule_labels.jsonl` 从 full Starling evidence 中删除全部 valid+test parents，再重建 train-only index；
 不能只靠 query-time exact-SMILES exclusion，也不能直接使用 full-source index。
 
 入口：
@@ -86,17 +122,32 @@ tools/chembl_tool/common/starling/heldout_index.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 ```
 
-当前 formal pipeline condition 使用 deployment-visible agentic 制度：
+当前 v4 formal pipeline condition 使用 `identity_blind + parent_disjoint` fresh-run 制度：
 
 ```text
 none:
-  operational；没有 retrieval。
+  没有 retrieval，identity policy 标为 not applicable。
 
 retrieval conditions:
-  parent_disjoint；retained neighbor 与 query parent identity 零重叠。
+  直接从 valid+test-heldout-filtered index 做 fresh parent_disjoint retrieval；
+  retained neighbor 与 query parent identity 零重叠，不读 operational reuse plan。
 ```
 
-## 3. Formal performance
+2026-08-01 的 random-valid BBB query-only 首次 512 并发压力运行完成 499/500，唯一失败是
+single branch transport timeout，不是 structured-output validation 失败。按预定 contingency 将正式
+launcher 稍降为 `parallelism=384, group_workers=1`，只重跑该样本后达到 500/500、0 failed。
+但 384 并发的 BBB ChEMBL full-flat 又产生 193/500 失败，其中 190 个为 group request timeout；
+矩阵因此可恢复暂停，当前默认降为 `parallelism=128, group_workers=1`，后续仅重跑失败/未完成样本。
+random-valid 完整 22-condition matrix 通过 tmux session `starling_v4_valid_random` 运行；完整
+valid gate 通过前不启动 test。
+
+## 3. Historical strict-conflict performance
+
+以下数值全部来自上一版 strict-conflict train/test split，不是当前 70%-agreement、8:1:1 v4 的结果。
+它们仅用于历史复现；当前 v4 agent valid matrix 正在重跑，baseline 和正式 test 尚未重跑。
+V4 主合同已在 `AGENTS.md` / `EXPERIMENT_PLAN.md` 冻结为
+`identity_blind + parent_disjoint` fresh-run、operational staging disabled、endpoint 上限 512/当前
+launcher 128；除上述 BBB valid query-only 完整性检查外，尚没有 v4 performance 结果。
 
 下表均为完整 test 的 macro-F1。`Starling direct` 对 Bioavailability 指 full direct-F condition；
 另有 numeric-only direct-F：random `0.6652`、scaffold `0.6392`。所有表内 formal pipeline、
@@ -118,9 +169,9 @@ MiniMol 和 KNN 条件均为 0 failed samples。
 - Skin 的 Starling direct 到 full mechanism 在两套 split 都下降，见第 8 节；
 - random 与 scaffold 是不同 test sets，不能把两者的绝对高低直接解释为方法对 scaffold 的因果效应。
 
-## 4. MiniMol baseline 的选择口径
+## 4. Historical strict-conflict MiniMol 选择口径
 
-当前 Starling MiniMol 使用 `--train-all`：
+上一版 strict-conflict Starling MiniMol 使用 `--train-all`：
 
 - 使用该 split 的全部 `train.jsonl`；
 - 不读取或构造 `valid.jsonl`；

@@ -20,7 +20,7 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Starling 二分类 benchmark（2026-07-24）
+## 当前 Starling 二分类 benchmark（2026-08-02）
 
 BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
 records 构建；ClinTox 因缺少与 clinical-trial toxicity failure 同定义的 Starling direct source，
@@ -40,19 +40,29 @@ task adapters:
 每个 task 使用同一批 accepted binary parents 生成两个独立版本：
 
 ```text
-data/processed_starling/<Task>/random/{train.jsonl,test.jsonl,...}
-data/processed_starling/<Task>/scaffold/{train.jsonl,test.jsonl,...}
+data/processed_starling/<Task>/random/{train.jsonl,valid.jsonl,test.jsonl,...}
+data/processed_starling/<Task>/scaffold/{train.jsonl,valid.jsonl,test.jsonl,...}
 ```
 
-test 数量为 `min(500, floor(0.2 * n_binary_molecules))`。`random` 是固定 seed 的 label-stratified
-stable-hash split；`scaffold` 以 canonical Bemis–Murcko scaffold 为不可拆分 group。两者均要求
-train/test parent identity 零重叠，scaffold 版本还要求 scaffold 零重叠。当前 frozen build：
+parent label 使用 70% record-weighted agreement；同 PMID 的多条 accepted records 仍分别计票，精确 tie
+始终拒绝。valid 与 test 数量分别为 `min(500, floor(0.1 * n_binary_molecules))`，train 使用剩余 parents。
+`random` 是固定 seed 的 label-stratified stable-hash split；`scaffold` 以 canonical Bemis–Murcko scaffold
+为不可拆分 group。两者均要求 train/valid/test parent identity 两两零重叠，scaffold 版本还要求 scaffold
+两两零重叠。当前 frozen build：
 
-| task | binary parents | test target | random test Y=0 / Y=1 | scaffold test Y=0 / Y=1 |
+| task | binary parents | valid/test | random valid / test Y=0,Y=1 | scaffold valid / test Y=0,Y=1 |
 |---|---:|---:|---:|---:|
-| BBB_Martins | 17,893 | 500 | 139 / 361 | 122 / 378 |
-| Bioavailability_Ma | 1,862 | 372 | 99 / 273 | 113 / 259 |
-| Skin_Reaction | 1,900 | 380 | 129 / 251 | 117 / 263 |
+| BBB_Martins | 19,425 | 500 / 500 | 139,361 / 139,361 | 150,350 / 148,352 |
+| Bioavailability_Ma | 2,092 | 209 / 209 | 58,151 / 58,151 | 61,148 / 65,144 |
+| Skin_Reaction | 2,456 | 245 / 245 | 75,170 / 75,170 | 74,171 / 71,174 |
+
+Bioavailability 自 2026-08-01 使用 `bioavailability_canonical_direct.v2`：固定 revision 的 HF snapshot 与
+local oral-exposure extraction 中明确 absolute/oral-IV 的 rows 合并，跨来源同 parent+PMID 近等值 claim
+一对一去重；relative/ambiguous local bioavailability 只留在 residual inference evidence。Gold builder 与
+agent direct evidence 必须读取同一份
+`data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet`。旧 1,862-parent mixed-source
+和 1,828-parent strict-conflict 结果均为 historical lineage，不得与当前 2,092-parent build 混表。
+Skin source 保持不变；其 label/split policy 与其它 task 一起升级。
 
 当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
 MiniMol embedding cosine KNN、MiniMol/cosine agent retrieval、blind 进度、Skin retrieval degradation、
@@ -66,6 +76,9 @@ tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
 
 ```text
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
+tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
+tools/chembl_tool/paper_experiments/analyze_starling_parent_provenance.py
+tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 tools/chembl_tool/paper_experiments/build_minimol_retrieval_features.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
@@ -89,9 +102,9 @@ baselines/structure_knn/run.py
   python -m tools.chembl_tool.common.starling.build_benchmark_datasets
 ```
 
-split 中的 `train.jsonl` / `test.jsonl` 仍只含 `drug` 和 `Y`。label provenance、source row
+split 中的 `train.jsonl` / `valid.jsonl` / `test.jsonl` 仍只含 `drug` 和 `Y`。label provenance、source row
 accept/reject reason、parent identity 和冲突记录保存在同目录 audit artifacts。正式评估前必须针对
-random/scaffold 分别按 `test_molecule_labels.jsonl` 重建 train-only retrieval index；现有从 full
+random/scaffold 分别按 valid+test union 的 `heldout_molecule_labels.jsonl` 重建 train-only retrieval index；现有从 full
 Starling source 构建的 evidence index 不能直接用于新 benchmark。
 
 旧 `data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
@@ -233,6 +246,42 @@ reasoning，provider 返回的 `reasoning_content` 或 `reasoning` 仍写入 tra
 正式默认，也不能用于估算当前 reasoning-enabled agent pipeline 的加速比例。
 
 OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `reasoning`；共享 client 两者都接受。
+
+### 2026-08-01 起的新数据集正式运行默认
+
+当前 `record_agreement70_split811_v1` 及其后的新 paper/Starling 实验统一冻结为：
+
+```text
+endpoint: http://127.0.0.1:50000/v1
+model: nvidia/GLM-5.2-NVFP4
+reasoning: --disable-thinking --reasoning-effort ""（与历史 GLM 设置一致，仍保存 reasoning）
+visibility_mode: identity_blind
+neighbor_identity_policy: parent_disjoint
+run_operational_first: false
+endpoint_concurrency_budget: 512
+```
+
+这里的 512 是单次正式 launcher 的全局 endpoint request budget，不是允许每一层并行各自再乘 512。
+Reasoning-enabled valid 压力运行已证明 512/384 对长 group prompt 不稳定，因此当前默认执行形状为
+`--parallelism 128 --group-workers 1`，并且同一 endpoint 同时只启动一个 condition launcher；任何多 split、
+多 task 或多 condition 外层 fan-out 都必须共享这 512 个 slots。512 只表示硬上限，不是推荐并发。
+
+新正式矩阵直接从 held-out-filtered index 做 fresh `parent_disjoint` retrieval，不再依赖 operational artifact、
+same-parent diff 或 `reuse_plan.json`。`none` 仍必须运行，但其 identity policy 标记为不适用。新数据集先跑 valid
+做 pipeline/completeness 检查，冻结设置后再跑 test；不得根据 test 调并发以外的模型、prompt、threshold 或
+label policy。既有 operational、deployment-visible、matched-prefetch 和 reuse artifacts 都保留为 historical
+lineage，不删除，也不混入新 v4 主结果。
+
+当前代码已经完成以下实现 gate；正式结果仍须等待完整 valid/test artifact gate：
+
+1. runner 默认改为 `identity_blind + parent_disjoint`，并允许该组合 fresh-run；
+2. parent-disjoint fresh-run 不要求 operational `reuse_plan.json`，且输出到独立
+   `runs_identity_blind_parent_disjoint/`；
+3. 默认 launcher 为 128×1，并阻止 `parallelism * group_workers` 超过全局 512 budget；
+4. manifest 显式保存 endpoint、served model、reasoning、visibility、identity policy、effective concurrency、
+   evaluation subset 和 `operational_staging_used=false`；
+5. valid/test 分区、manifest 和 held-out index 使用同一 valid+test union；完整矩阵仍必须通过
+   `n_failed_runs=0`、identity leak=0、parent conflict=0 和 held-out overlap=0。
 
 GLM 对 tool choice 和长 structured output 的遵循可能不稳定。所有 task 统一通过
 `tools/chembl_tool/common/reasoning_validation.py` 检查必需 JSON 字段和允许值；当前默认最多 4 次总尝试，
@@ -383,8 +432,8 @@ common/starling/evidence_library.py
   examples、provenance 和 neighbor-index 兼容 evidence row。
 
 common/starling/benchmark_dataset.py
-  Starling direct gold-label 构建公共引擎：source-row 决策、RDKit fragment-parent 聚合、parent-level
-  label conflict 排除、random/scaffold 双 split、audit artifact 和 summary。task-specific threshold、
+  Starling direct gold-label 构建公共引擎：source-row 决策、RDKit fragment-parent 聚合、70% record-majority、
+  random/scaffold train/valid/test split、audit artifact 和 summary。task-specific threshold、
   population/scope/unit/free-text 规则只能由 task adapter 提供。
 
 common/starling/build_benchmark_datasets.py
@@ -392,9 +441,9 @@ common/starling/build_benchmark_datasets.py
   `data/processed_starling/<Task>/{random,scaffold}/` 及 task/root 汇总。它不构建 retrieval index。
 
 common/starling/heldout_index.py
-  从 full-source Starling evidence rows 中按 `rdkit_fragment_parent.v1` 删除 test parents，重建
-  train/test 隔离的 retrieval index，并写 source/exclusion SHA-256、排除数量和 zero-overlap audit。
-  构建时重算并校验 test parent key；无法解析 parent 的 source evidence row 保守排除。
+  从 full-source Starling evidence rows 中按 `rdkit_fragment_parent.v1` 删除 valid+test parents，重建
+  train/evaluation 隔离的 retrieval index，并写 source/exclusion SHA-256、排除数量和 zero-overlap audit。
+  构建时重算并校验 held-out parent key；无法解析 parent 的 source evidence row 保守排除。
 ```
 
 典型 task wrapper 文件：
@@ -496,9 +545,10 @@ outputs/chembl_tool/tasks/<task_name>/
 bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-Viewer 默认注册 Starling random、Starling scaffold 和历史 TDC test 三个 dataset；每个 dataset 内只扫描
-identity-blind、matched-prefetch、deployment-visible 和 deployment-visible parent-disjoint 四个正式
-paper run root。页面按样本展示 single-molecule、mechanism-family/flat/direct 和 final stages，并递归展示
+Viewer 默认注册 Starling random、Starling scaffold 和历史 TDC test。新 v4 dataset 默认扫描
+`runs_identity_blind_parent_disjoint/`；历史 dataset 继续扫描 identity-blind、matched-prefetch、
+deployment-visible 和 deployment-visible parent-disjoint 四个 legacy paper roots。页面按样本展示
+single-molecule、mechanism-family/flat/direct 和 final stages，并递归展示
 通用 JSON、工具调用、retrieval evidence 和 provenance。旧 task-specific reasoning output 不再支持；
 需要其它 dataset 时可在端口后显式追加 trace root。
 
@@ -514,19 +564,17 @@ paper run root。页面按样本展示 single-molecule、mechanism-family/flat/d
 retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
 test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
 
-Paper-facing structural-analog retrieval 主结果默认使用 `parent_disjoint`。`operational` 必须先跑，作为
-真实部署敏感性对照和 parent-disjoint 选择性 diff/reuse 的 staging source；它不是 analog-retrieval claim
-的默认最终设置。每个新增 retrieval condition 在 operational 完成后必须同轮补齐 parent-disjoint，并报告
-same-parent query/group/neighbor-slot/rank-1 暴露统计。
+新 `record_agreement70_split811_v1` 及后续 paper-facing structural-analog 主结果默认使用
+`identity_blind + parent_disjoint` fresh-run；不再先跑 operational，也不要求 operational diff/reuse plan。
+旧 lineage 的 operational -> parent-disjoint 流程及 same-parent 暴露统计只作为 historical sensitivity
+artifact 保留。若将来需要 operational 对照，必须作为显式 opt-in ablation 使用独立 root，不能成为主矩阵依赖。
 
-Starling identity-blind 补充控制的统一入口也是
-`tools.chembl_tool.paper_experiments.starling_benchmark_matrix`，但必须显式使用
-`--benchmark-split random|scaffold --visibility-mode identity_blind --neighbor-identity-policy operational`。
-结果分别写入两个 Starling paper root 的 `runs/`，独立汇总到
-`analysis_identity_blind/`；每个 split 必须有 22 个 condition 且通过 failure、query-SMILES leak 和
-visibility-contract audit。identity-blind 不是 parent-disjoint 主结果，也不能直接当成纯 identity effect；
-完整命令、resume、manifest 并发写入约束和 matched-prefetch 后续要求见
-`tools/chembl_tool/paper_experiments/AGENTS.md`。
+新数据集的 Starling 主入口仍是
+`tools.chembl_tool.paper_experiments.starling_benchmark_matrix`，正式默认必须解析为
+`--visibility-mode identity_blind --neighbor-identity-policy parent_disjoint`，输出到各 lineage root 的
+`runs_identity_blind_parent_disjoint/`。每个 split 必须覆盖完整 condition/sample 集并通过 failure、
+query-SMILES leak、visibility-contract、parent identity 和 held-out overlap audit。旧 `identity_blind + operational`
+结果仍是 historical supplemental control，不得冒充当前主结果。
 
 2026-07-27 当前 artifact snapshot 虽然 random/scaffold 各已有 22 个 blind condition metrics，但仍分别有
 9/5 个 failed sample-condition，尚未通过正式 gate，也未进入 Starling 主 bar chart。具体失败分布、当前
@@ -567,7 +615,7 @@ coverage 与性能增幅的关系分析使用 `plot_coverage_performance.py`，�
 每个 split 的正式 figures 目录只保留 canonical SVG 和一份高分辨率 PNG，不保留
 preview、QA、pre-parent 或已被替代的 overview 代码/产物。
 
-## MiniMol baseline（历史 TDC 与当前 Starling train-all）
+## MiniMol baseline（历史结果与当前 v4 待重跑边界）
 
 MiniMol baseline 代码放在：
 
@@ -589,16 +637,16 @@ train.jsonl / valid.jsonl / test.jsonl
   Y: 0/1 label
 ```
 
-下面列出的命令、sweep 和指标均使用 `data/processed/<Task>` 的旧 TDC split。若重跑当前 Starling
-benchmark，必须分别使用 `data/processed_starling/<Task>/random/` 和 `scaffold/`；当前 builder 不生成
-`valid.jsonl`，因此 MiniMol 的 valid-based model selection 还需要先冻结一套只从各自 train 内生成的
-validation protocol。新结果必须写入独立 output root，不能覆盖或与下面的 TDC 指标合并。
+下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前 v4 已在
+`data/processed_starling/<Task>/{random,scaffold}/` 生成独立 `train/valid/test.jsonl`；新 baseline
+是否用 valid 选择 epoch/hyperparameter，必须在正式重跑前冻结，且不得用 test 做选择。新结果必须写入
+`record_agreement70_split811_v1` 隔离 output root，不能覆盖或与历史指标合并。
 
-当前 formal Starling baseline 已明确允许使用全部 benchmark train molecules，因此使用 `--train-all`：
+上一版 strict-conflict formal Starling baseline 使用 `--train-all`：
 不读取 `valid.jsonl`，每个
 ensemble member 在全部 `train.jsonl` 上训练固定 epoch，并用冻结的 `threshold=0.5` 评估 test。
 这种模式不得进行 test-selected early stopping 或 threshold tuning；输出中的 validation metrics 为 null。
-当前 random/scaffold 结果和 output roots 见
+这些历史 random/scaffold 结果和 output roots 见
 `tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`；下文单列的 sweep 数值仍全部是
 旧 TDC lineage。
 

@@ -17,10 +17,12 @@ from tools.chembl_tool.common.starling import (
     write_jsonl,
 )
 from tools.chembl_tool.common.task_workflows.evidence_library import build_neighbor_index, fingerprint_metadata
-from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library import (
-    DEFAULT_DROPPED_JSONL as DEFAULT_DIRECT_DROPPED_JSONL,
-    DEFAULT_SOURCE_JSONL as DEFAULT_DIRECT_SOURCE_JSONL,
-    build_starling_evidence_rows as build_direct_f_rows,
+from tools.chembl_tool.common.starling.benchmark_dataset import sha256_file
+from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+    CANONICAL_VERSION,
+    DIRECT_CLAIMS_PATH,
+    MANIFEST_PATH,
+    RESIDUAL_RECORDS_PATH,
 )
 
 
@@ -29,7 +31,7 @@ DEFAULT_OUT_DIR = "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library
 EVIDENCE_FILENAME = "starling_factor_evidence.jsonl"
 INDEX_FILENAME = "starling_factor_neighbor_index.pkl"
 META_FILENAME = "starling_factor_neighbor_index.meta.json"
-INDEX_VERSION = "bioavailability_ma_starling_factor_neighbor_index.v2"
+INDEX_VERSION = "bioavailability_ma_starling_factor_neighbor_index.v3"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -37,30 +39,19 @@ def main(argv: list[str] | None = None) -> int:
     started = time.monotonic()
     out_dir = ensure_dir(args.out_dir)
 
-    direct_rows: list[dict[str, Any]] = []
-    direct_stats: dict[str, Any] = {}
-    if args.include_direct_hf:
-        direct_rows, direct_stats = build_direct_f_rows(
-            Path(args.direct_source_jsonl),
-            dropped_jsonl=(
-                Path(args.direct_dropped_jsonl)
-                if args.evidence_content == "full" and args.direct_dropped_jsonl
-                else None
-            ),
-            min_value_percent=args.min_direct_value_percent,
-            max_value_percent=args.max_direct_value_percent,
-            max_record_examples=args.max_record_examples,
-        )
-
-    profiles = bioavailability_profiles(Path(args.starling_data_dir), max_rows=args.max_rows_per_source)
+    profiles = bioavailability_profiles(
+        Path(args.starling_data_dir),
+        canonical_direct_path=Path(args.canonical_direct_source),
+        residual_exposure_path=Path(args.residual_exposure_source),
+        max_rows=args.max_rows_per_source,
+    )
     if args.scope == "direct":
         profiles = profiles[:1]
-    factor_rows, factor_stats = build_starling_parquet_evidence_rows(
+    evidence_rows, source_stats = build_starling_parquet_evidence_rows(
         profiles,
         max_record_examples=args.max_record_examples,
         min_confidence=args.min_confidence,
     )
-    evidence_rows = [*direct_rows, *factor_rows]
     if args.evidence_content == "numeric_only":
         evidence_rows = [numeric for row in evidence_rows if (numeric := numeric_only_evidence_row(row)) is not None]
     index_version = f"{INDEX_VERSION}.{args.scope}.{args.evidence_content}"
@@ -72,7 +63,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     index["source"] = {
         "type": "starling_profile_index",
-        "dataset": "starling-labs/Bioavailability_Ma",
+        "dataset": "txagent/bioavailability_canonical_direct.v2",
+        "canonical_direct_source": args.canonical_direct_source,
+        "canonical_direct_source_sha256": sha256_file(Path(args.canonical_direct_source)),
         "groups": sorted(index.get("group_to_molecule_indices", {})),
         "exact_query_exclusion": True,
     }
@@ -86,17 +79,20 @@ def main(argv: list[str] | None = None) -> int:
     meta = {
         "index_version": index_version,
         "starling_data_dir": args.starling_data_dir,
-        "include_direct_hf": args.include_direct_hf,
+        "canonical_contract_version": CANONICAL_VERSION,
+        "canonical_direct_source": args.canonical_direct_source,
+        "canonical_direct_source_sha256": sha256_file(Path(args.canonical_direct_source)),
+        "canonical_manifest": args.canonical_manifest,
+        "canonical_manifest_sha256": sha256_file(Path(args.canonical_manifest)),
+        "residual_exposure_source": args.residual_exposure_source,
+        "residual_exposure_source_sha256": sha256_file(Path(args.residual_exposure_source)),
         "scope": args.scope,
         "evidence_content": args.evidence_content,
-        "n_direct_evidence_rows": len(direct_rows),
-        "n_factor_evidence_rows": len(factor_rows),
         "n_evidence_rows": len(evidence_rows),
         "n_index_molecules": len(index["molecules"]),
         "groups": sorted(index["group_to_molecule_indices"]),
         "fingerprint": fingerprint_metadata(),
-        "direct_source_stats": direct_stats,
-        "factor_source_stats": factor_stats,
+        "source_stats": source_stats,
         "elapsed_s": round(time.monotonic() - started, 3),
         "paths": {"evidence_jsonl": str(evidence_path), "index_pkl": str(index_path)},
     }
@@ -105,30 +101,44 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def bioavailability_profiles(data_dir: Path, *, max_rows: int = 0) -> list[StarlingSourceProfile]:
+def bioavailability_profiles(
+    data_dir: Path,
+    *,
+    canonical_direct_path: Path = DIRECT_CLAIMS_PATH,
+    residual_exposure_path: Path = RESIDUAL_RECORDS_PATH,
+    max_rows: int = 0,
+) -> list[StarlingSourceProfile]:
     """Task configuration only: parquet columns, evidence groups, and roles."""
     return [
         StarlingSourceProfile(
-            source_id="observed_direct_bioavailability",
-            path=str(data_dir / "Oral_AUC-Cmax_Exposure" / "extractions.parquet"),
+            source_id="canonical_direct_bioavailability",
+            path=str(canonical_direct_path),
             group_id="Observed.direct_oral_bioavailability",
             assay_tier="Observed",
             endpoint_group="direct_oral_bioavailability",
-            evidence_source="starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure",
-            endpoint_field="exposure_measure",
-            value_field="parameter_value",
-            unit_field="parameter_units",
-            context_fields=("statistic_type", "oral_dose", "study_context", "comparator_exposure"),
-            scope_fields=("study_context",),
+            evidence_source="txagent/bioavailability_canonical_direct.v2",
+            endpoint_field="bioavailability_report_type",
+            value_field="value_percent",
+            unit_field="value_units",
+            context_fields=(
+                "species_or_population",
+                "dose",
+                "oral_exposure_mode",
+                "qualifying_conditions",
+                "comparator",
+            ),
+            scope_fields=("species_or_population", "qualifying_conditions"),
+            name_fields=("molecule_name",),
+            record_id_field="canonical_claim_id",
             target_pref_name="oral bioavailability",
             evidence_role="direct_outcome",
             standard_type_prefix="oral bioavailability",
-            include_endpoint_values=("bioavailability",),
+            extra_example_fields=("source_origins", "n_source_records", "cross_source_deduplicated"),
             max_rows=max_rows,
         ),
         StarlingSourceProfile(
             source_id="observed_oral_auc_cmax_exposure",
-            path=str(data_dir / "Oral_AUC-Cmax_Exposure" / "extractions.parquet"),
+            path=str(residual_exposure_path),
             group_id="Observed.oral_auc_cmax_exposure",
             assay_tier="Observed",
             endpoint_group="oral_auc_cmax_exposure",
@@ -141,7 +151,7 @@ def bioavailability_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starl
             target_pref_name="oral systemic exposure",
             evidence_role="surrogate_proxy",
             standard_type_prefix="oral exposure",
-            exclude_endpoint_values=("bioavailability",),
+            extra_example_fields=("partition", "partition_reason"),
             max_rows=max_rows,
         ),
         StarlingSourceProfile(
@@ -201,14 +211,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--starling-data-dir", default=DEFAULT_STARLING_DATA_DIR)
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
-    parser.add_argument("--include-direct-hf", dest="include_direct_hf", action="store_true", default=True)
-    parser.add_argument("--no-include-direct-hf", dest="include_direct_hf", action="store_false")
     parser.add_argument("--scope", choices=["direct", "full"], default="full")
     parser.add_argument("--evidence-content", choices=["numeric_only", "full"], default="full")
-    parser.add_argument("--direct-source-jsonl", default=DEFAULT_DIRECT_SOURCE_JSONL)
-    parser.add_argument("--direct-dropped-jsonl", default=DEFAULT_DIRECT_DROPPED_JSONL)
-    parser.add_argument("--min-direct-value-percent", type=float, default=0.0)
-    parser.add_argument("--max-direct-value-percent", type=float, default=100.0)
+    parser.add_argument("--canonical-direct-source", default=str(DIRECT_CLAIMS_PATH))
+    parser.add_argument("--canonical-manifest", default=str(MANIFEST_PATH))
+    parser.add_argument("--residual-exposure-source", default=str(RESIDUAL_RECORDS_PATH))
     parser.add_argument("--min-confidence", type=float, default=0.0)
     parser.add_argument("--max-record-examples", type=int, default=6)
     parser.add_argument("--max-rows-per-source", type=int, default=0)

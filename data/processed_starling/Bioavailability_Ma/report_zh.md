@@ -1,40 +1,40 @@
 # Bioavailability_Ma Starling 二分类数据构建报告
 
-- 协议：`starling_binary_benchmark.v2`
+- 协议：`starling_binary_benchmark.v4`
 - 分子身份：`rdkit_fragment_parent.v1`
 - seed：20260723
-- 可用二分类 parent：1,862
-- test target：372
-- 因 parent-level 标签冲突而丢弃：385
+- 可用二分类 parent：2,092
+- record agreement threshold：70%
+- valid / test target：209 / 209
+- 原始 label-conflict parents：370
+- majority 恢复：264
+- agreement/tie 拒绝：106
 
 ## Splits
 
-| split | train | test | test Y=0 / Y=1 | scaffold overlap |
-|---|---:|---:|---:|---:|
-| random | 1,490 | 372 | 99 / 273 | 94 |
-| scaffold | 1,490 | 372 | 113 / 259 | 0 |
+| split | train | valid | test | valid Y=0 / Y=1 | test Y=0 / Y=1 | scaffold pairwise overlap |
+|---|---:|---:|---:|---:|---:|---:|
+| random | 1,674 | 209 | 209 | 58 / 151 | 58 / 151 | 144 |
+| scaffold | 1,674 | 209 | 209 | 61 / 148 | 65 / 144 | 0 |
 
 ## Source-row rejection
 
 ```json
 {
-  "interpretation_altering_qualifying_conditions": 13347,
-  "invalid_or_unresolved_smiles": 185,
-  "missing_bioavailability_value": 308,
-  "non_bioavailability_exposure_measure": 110550,
-  "non_direct_oral_bioavailability_report_type": 51570,
-  "nonhuman_or_unresolved_population": 82257,
-  "numeric_interval_crosses_20_percent_threshold": 742,
-  "numeric_value_out_of_percent_range": 808,
-  "qualitative_value_not_threshold_anchored": 912,
-  "relative_not_absolute_bioavailability": 68,
-  "unmapped_or_ambiguous_qualitative_value": 1164,
-  "unsupported_bioavailability_unit": 467
+  "interpretation_altering_qualifying_conditions": 12913,
+  "missing_bioavailability_value": 14,
+  "nonhuman_or_unresolved_population": 77589,
+  "numeric_interval_crosses_20_percent_threshold": 739,
+  "numeric_value_out_of_percent_range": 635,
+  "qualitative_value_not_threshold_anchored": 905,
+  "relative_not_absolute_bioavailability": 52,
+  "unmapped_or_ambiguous_qualitative_value": 1249
 }
 ```
 
-完整 provenance 见 `molecule_labels.jsonl`；冲突分子和 source-row rejection 示例分别见
-`conflicting_molecules.jsonl` 与 `source_rejection_examples.jsonl`。
+完整 provenance 见 `molecule_labels.jsonl`；所有原始 conflict parent、未达到 agreement 的拒绝
+以及 source-row rejection 示例分别见 `conflicting_molecules.jsonl`、
+`rejected_parent_molecules.jsonl` 与 `source_rejection_examples.jsonl`。
 
-`random/test_molecule_labels.jsonl` 与 `scaffold/test_molecule_labels.jsonl`
-分别是两套 retrieval 泄漏隔离清单。现有 full-source Starling index 不能直接用于这些 test。
+每种构造方法的 `heldout_molecule_labels.jsonl` 是 valid+test union retrieval 泄漏隔离清单。
+现有 full-source Starling index 不能直接用于 valid 或 test。
