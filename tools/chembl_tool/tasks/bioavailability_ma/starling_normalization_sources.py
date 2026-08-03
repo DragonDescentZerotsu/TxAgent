@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import json
-from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
+
+import pandas as pd
 
 from tools.chembl_tool.common.starling.normalization.contracts import NormalizedSourceProfile
 from tools.chembl_tool.common.starling.oral_bioavailability import (
@@ -21,6 +21,25 @@ EXPECTED_SOURCE_ROWS = {
     "fh": 67_943,
     "direct_hf": 163_815,
 }
+
+DEFAULT_DIRECT_HF_PARQUET = Path(
+    "data/starling_data/bioavailability_ma/Direct_HF/records.parquet"
+)
+DIRECT_HF_SOURCE_COLUMNS = (
+    "source_index",
+    "pmid",
+    "molecule_name",
+    "smiles",
+    "support_text",
+    "oral_bioavailability_value",
+    "bioavailability_report_type",
+    "species_or_population",
+    "dose",
+    "oral_exposure_mode",
+    "qualifying_conditions",
+    "comparator",
+    "extra_details",
+)
 
 
 def source_profiles(data_dir: Path) -> list[NormalizedSourceProfile]:
@@ -93,15 +112,12 @@ def source_profiles(data_dir: Path) -> list[NormalizedSourceProfile]:
     ]
 
 
-def direct_hf_profile(
-    records_path: Path,
-    dropped_path: Path,
-) -> NormalizedSourceProfile:
+def direct_hf_profile(records_path: Path) -> NormalizedSourceProfile:
     return NormalizedSourceProfile(
         source_id="direct_hf",
         source_name=ORAL_BIOAVAILABILITY_DATASET,
         source_revision=ORAL_BIOAVAILABILITY_REVISION,
-        source_path=f"{records_path};{dropped_path}",
+        source_path=str(records_path),
         endpoint_constant="oral_bioavailability",
         measurement_field="oral_bioavailability_value",
         unit_constant="%",
@@ -122,58 +138,33 @@ def direct_hf_profile(
 
 
 def load_direct_hf_rows(
-    records_jsonl: Path,
-    dropped_jsonl: Path,
+    records_parquet: Path,
     *,
     max_rows: int = 0,
 ) -> list[dict[str, Any]]:
-    """Reconstruct all pinned HF rows from its kept+dropped prepared partition."""
-    rows: list[dict[str, Any]] = []
-    seen_indices: set[int] = set()
-    for payload in _read_jsonl(records_jsonl):
-        source_index = int(payload["source_index"])
-        raw = dict(payload.get("metadata") or {})
-        raw["source_index"] = source_index
-        raw.setdefault("smiles", payload.get("smiles"))
-        raw.setdefault("molecule_name", payload.get("molecule_name"))
-        _append_direct_row(rows, seen_indices, raw)
-        if max_rows and len(rows) >= max_rows:
-            return rows
-    for payload in _read_jsonl(dropped_jsonl):
-        source_index = int(payload["source_index"])
-        raw = dict(payload.get("raw_row") or {})
-        raw["source_index"] = source_index
-        raw["_prepared_drop_reason"] = payload.get("drop_reason")
-        _append_direct_row(rows, seen_indices, raw)
-        if max_rows and len(rows) >= max_rows:
-            return rows
-    return rows
-
-
-def _append_direct_row(
-    rows: list[dict[str, Any]],
-    seen_indices: set[int],
-    row: dict[str, Any],
-) -> None:
-    source_index = int(row["source_index"])
-    if source_index in seen_indices:
-        raise ValueError(f"duplicate direct HF source_index: {source_index}")
-    seen_indices.add(source_index)
-    rows.append(row)
-
-
-def _read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
-    with path.open(encoding="utf-8") as handle:
-        for line_number, line in enumerate(handle, start=1):
-            if not line.strip():
-                continue
-            value = json.loads(line)
-            if not isinstance(value, dict):
-                raise ValueError(f"{path}:{line_number}: expected a JSON object")
-            yield value
+    """Load the complete pinned HF source without historical filter partitions."""
+    frame = pd.read_parquet(records_parquet)
+    if tuple(frame.columns) != DIRECT_HF_SOURCE_COLUMNS:
+        raise ValueError(
+            "Direct HF source-column contract mismatch: "
+            f"expected={DIRECT_HF_SOURCE_COLUMNS!r}, found={tuple(frame.columns)!r}"
+        )
+    if frame["source_index"].isna().any() or not frame["source_index"].is_unique:
+        raise ValueError("Direct HF source_index must be complete and unique")
+    frame = frame.sort_values("source_index", kind="stable")
+    if not max_rows:
+        expected = list(range(EXPECTED_SOURCE_ROWS["direct_hf"]))
+        if frame["source_index"].astype(int).tolist() != expected:
+            raise ValueError("Direct HF source_index coverage must be exactly 0..163814")
+    elif max_rows:
+        frame = frame.head(max_rows)
+    frame = frame.astype(object).where(pd.notna(frame), None)
+    return frame.to_dict(orient="records")
 
 
 __all__ = [
+    "DEFAULT_DIRECT_HF_PARQUET",
+    "DIRECT_HF_SOURCE_COLUMNS",
     "EXPECTED_SOURCE_ROWS",
     "direct_hf_profile",
     "load_direct_hf_rows",

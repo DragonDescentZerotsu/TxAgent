@@ -11,15 +11,23 @@ from tools.chembl_tool.common.starling.normalized_evidence import (
 from tools.chembl_tool.common.starling.normalization.measurements import (
     parse_point_measurement,
 )
+from tools.chembl_tool.common.starling import (
+    build_normalized_evidence_library as staged_builder,
+)
 from tools.chembl_tool.tasks.bioavailability_ma import (
     build_normalized_starling_evidence_library as normalized_builder,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.build_normalized_starling_evidence_library import (
+from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+    DIRECT_HF_SOURCE_COLUMNS,
     load_direct_hf_rows,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_policy import (
     endpoint_specific_standardization_of_unit,
     family_assignment,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_contextual_unit_reconciliation import (
+    CONTEXTUAL_STANDARDIZATION_STATUS,
+    contextual_canonical_record_fields,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling import (
     SPACING_AND_SPELLING_VERSION,
@@ -116,6 +124,95 @@ def test_unusual_dimension_preserves_mechanical_pair_status_and_scalar():
     assert record["canonical_unit"] == "%"
     assert record["finite_scalar_value"] == 5.0
     assert record["measurement_unit_status"] == "cleaned_pair"
+
+
+def test_contextual_policy_rewrites_the_canonical_pair_not_source_fields():
+    record = {
+        "source_id": "fa",
+        "canonical_endpoint": "caco2_mdck_pampa_permeability",
+        "global_context": "caco_2",
+        "global_species_context": None,
+        "measurement_text": "8 ± 1",
+        "unit_text": "ng/cm²/min",
+        "canonical_measurement": "8 ± 1",
+        "canonical_unit": "ng/cm^2·min",
+        "measurement_unit_status": "cleaned_pair",
+        "unit_notation_status": "none",
+        "unit_notation_factor": None,
+    }
+    fields = contextual_canonical_record_fields(record)
+    assert fields["canonical_measurement"] == "8000 ± 1000"
+    assert fields["canonical_unit"] == "pg/cm^2·min"
+    assert fields["finite_scalar_value"] == pytest.approx(8000.0)
+    assert fields["variation_value"] == pytest.approx(1000.0)
+    assert fields["measurement_unit_status"] == CONTEXTUAL_STANDARDIZATION_STATUS
+    assert fields["canonical_unit_policy_status"] == "converted"
+    assert fields["canonical_unit_conversion_factor"] == pytest.approx(1000.0)
+    assert record["measurement_text"] == "8 ± 1"
+    assert record["unit_text"] == "ng/cm²/min"
+
+
+def test_contextual_policy_leaves_unapproved_assay_canonical_pair_unchanged():
+    record = {
+        "source_id": "fa",
+        "canonical_endpoint": "caco2_mdck_pampa_permeability",
+        "global_context": "pampa",
+        "global_species_context": None,
+        "canonical_measurement": "8",
+        "canonical_unit": "ng/cm^2·min",
+        "measurement_unit_status": "cleaned_pair",
+        "unit_notation_status": "none",
+        "unit_notation_factor": None,
+    }
+    fields = contextual_canonical_record_fields(record)
+    assert fields["canonical_measurement"] == "8"
+    assert fields["canonical_unit"] == "ng/cm^2·min"
+    assert fields["finite_scalar_value"] == pytest.approx(8.0)
+    assert fields["canonical_unit_policy_status"] == "no_matching_rule"
+    assert fields["canonical_unit_rule_id"] is None
+
+
+def test_contextual_policy_converts_only_human_liver_microsome_cyp():
+    base = {
+        "source_id": "fh",
+        "canonical_endpoint": "cyp_metabolism",
+        "global_context": "liver microsomes",
+        "canonical_measurement": "2.5",
+        "canonical_unit": "nmol/mg·min",
+        "measurement_unit_status": "cleaned_pair",
+        "unit_notation_status": "none",
+        "unit_notation_factor": None,
+    }
+    human = contextual_canonical_record_fields(
+        {**base, "global_species_context": "human"}
+    )
+    rat = contextual_canonical_record_fields(
+        {**base, "global_species_context": "rat"}
+    )
+    assert human["canonical_measurement"] == "2500"
+    assert human["canonical_unit"] == "pmol/mg·min"
+    assert rat["canonical_measurement"] == "2.5"
+    assert rat["canonical_unit"] == "nmol/mg·min"
+
+
+def test_contextual_policy_rewrites_target_equivalent_unit_spelling():
+    fields = contextual_canonical_record_fields(
+        {
+            "source_id": "fh",
+            "canonical_endpoint": "cyp_metabolism",
+            "global_context": "liver microsomes",
+            "global_species_context": "human",
+            "canonical_measurement": "25",
+            "canonical_unit": "pmol/min/mg",
+            "measurement_unit_status": "cleaned_pair",
+            "unit_notation_status": "none",
+            "unit_notation_factor": None,
+        }
+    )
+    assert fields["canonical_measurement"] == "25"
+    assert fields["canonical_unit"] == "pmol/mg·min"
+    assert fields["measurement_unit_status"] == CONTEXTUAL_STANDARDIZATION_STATUS
+    assert fields["canonical_unit_policy_status"] == "matched_target_unit"
 
 
 def test_orthographic_corrections_are_explicit_case_preserving_and_audited():
@@ -284,37 +381,19 @@ def test_frozen_inventory_audits_orthography_without_semantic_registry():
         validate_endpoint_inventory("direct_hf", ["oral_bioavailability", "new_endpoint"])
 
 
-def test_direct_hf_loader_reconstructs_kept_and_dropped_rows(tmp_path):
-    kept = tmp_path / "kept.jsonl"
-    dropped = tmp_path / "dropped.jsonl"
-    kept.write_text(
-        json.dumps(
-            {
-                "source_index": 1,
-                "smiles": "CCO",
-                "metadata": {"oral_bioavailability_value": "57%", "smiles": "CCO"},
-            }
-        )
-        + "\n",
-        encoding="utf-8",
-    )
-    dropped.write_text(
-        json.dumps(
-            {
-                "source_index": 2,
-                "drop_reason": "unparseable_or_non_numeric_value",
-                "raw_row": {
-                    "oral_bioavailability_value": "low",
-                    "smiles": "CCN",
-                },
-            }
-        )
-        + "\n",
-        encoding="utf-8",
-    )
-    rows = load_direct_hf_rows(kept, dropped)
-    assert [row["source_index"] for row in rows] == [1, 2]
-    assert rows[1]["_prepared_drop_reason"] == "unparseable_or_non_numeric_value"
+def test_direct_hf_loader_reads_one_complete_unpartitioned_source(tmp_path):
+    source = tmp_path / "direct_hf.parquet"
+    columns = DIRECT_HF_SOURCE_COLUMNS
+    pd.DataFrame(
+        [
+            {**{column: None for column in columns}, "source_index": 0, "smiles": "CCO", "oral_bioavailability_value": "57%"},
+            {**{column: None for column in columns}, "source_index": 1, "smiles": "CCN", "oral_bioavailability_value": "low"},
+        ],
+        columns=columns,
+    ).to_parquet(source, index=False)
+    rows = load_direct_hf_rows(source, max_rows=2)
+    assert [row["source_index"] for row in rows] == [0, 1]
+    assert "_prepared_drop_reason" not in rows[1]
 
 
 def test_versioned_builder_schema_manifest_and_restart(tmp_path):
@@ -360,23 +439,21 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
             for index, smiles in enumerate(("CCO", "CCN", "CCC", "CCCl"), start=1)
         ]
     ).to_parquet(mapping, index=False)
-    kept = tmp_path / "kept.jsonl"
-    kept.write_text(
-        json.dumps(
+    direct = tmp_path / "direct_hf.parquet"
+    pd.DataFrame(
+        [
             {
+                **{
+                    column: None
+                    for column in DIRECT_HF_SOURCE_COLUMNS
+                },
                 "source_index": 0,
                 "smiles": "CCBr",
-                "metadata": {
-                    "oral_bioavailability_value": "40%",
-                    "smiles": "CCBr",
-                },
+                "oral_bioavailability_value": "40%",
             }
-        )
-        + "\n",
-        encoding="utf-8",
-    )
-    dropped = tmp_path / "dropped.jsonl"
-    dropped.write_text("", encoding="utf-8")
+        ],
+        columns=DIRECT_HF_SOURCE_COLUMNS,
+    ).to_parquet(direct, index=False)
     out_dir = tmp_path / "out"
     common_args = [
         "--starling-data-dir",
@@ -384,10 +461,8 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "--smiles-mapping",
         str(mapping),
         "--allow-unpinned-smiles-mapping",
-        "--direct-source-jsonl",
-        str(kept),
-        "--direct-dropped-jsonl",
-        str(dropped),
+        "--direct-source-parquet",
+        str(direct),
         "--out-dir",
         str(out_dir),
         "--no-strict-endpoint-inventory",
@@ -410,25 +485,25 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "canonical_endpoint",
     ]
     assert all(column in records for column in endpoint_columns)
-    assert all(
-        column in records
-        for column in (
-            "spacing_and_spelling_status",
-            "spacing_and_spelling_reason",
-            "spacing_and_spelling_version",
-        )
-    )
+    assert "spacing_and_spelling_status" in records
+    assert "spacing_and_spelling_reason" not in records
+    assert "spacing_and_spelling_version" not in records
     assert all(
         column in records
         for column in (
             "source_smiles",
             "normalization_validity_status",
             "canonical_bioavailability_report_type",
-            "canonical_dose_key",
-            "canonical_assay_system",
-            "canonical_species",
+            "global_context",
+            "global_species_context",
+            "auxiliary_mapping_status",
         )
     )
+    assert not {
+        "canonical_dose_key",
+        "canonical_assay_system",
+        "canonical_species",
+    } & set(records)
     assert len(records) == len(normalized) == 5
     removed = {
         "metric_name",
@@ -454,18 +529,58 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "matching_performed": False,
         "status": "not_performed",
     }
-    assert manifest["artifact_version"].endswith(".v5")
-    assert manifest["normalization_domain_rules_version"].endswith(".v2")
+    assert manifest["artifact_version"].endswith(".v6")
+    assert manifest["normalization_domain_rules_version"].endswith(".v3")
+    assert manifest["scalar_parser_version"].endswith(".v4")
+    assert (
+        manifest["fg_scalar_rule_version"]
+        == "bioavailability_fg_single_outcome_scalar_rules.v2"
+    )
+    assert manifest["source_column_contract_version"] == "source_column_contract.v1"
+    assert manifest["index_version"] == "bioavailability_ma.compact_neighbor_index.v1"
+    assert manifest["compact_artifact_version"] == "bioavailability_ma.compact_v6.v1"
+    assert manifest["auxiliary_attachment_version"] == "starling_auxiliary_attachment.v1"
+    assert manifest["contextual_unit_policy"]["policy_version"] == (
+        "contextual_canonical_unit_policy.v1"
+    )
+    assert manifest["contextual_unit_policy"]["matching"] == (
+        "exact_all_declared_fields_fail_closed"
+    )
+    auxiliary_manifest = json.loads(
+        (out_dir / normalized_builder.AUXILIARY_MAPPING_MANIFEST_FILENAME).read_text(
+            encoding="utf-8"
+        )
+    )
+    assert auxiliary_manifest["mapping_version"] == (
+        "starling_auxiliary.globally_reconciled.v1"
+    )
+    assert auxiliary_manifest["coverage"]["records"] == 5
+    source_contract = json.loads(
+        (out_dir / normalized_builder.SOURCE_COLUMN_CONTRACT_FILENAME).read_text(
+            encoding="utf-8"
+        )
+    )
+    assert source_contract["contract_version"] == "source_column_contract.v1"
+    assert set(source_contract["sources"]) == {
+        "oral_exposure", "fa", "fg", "fh", "direct_hf"
+    }
+    artifact_columns = set(normalized.columns)
+    for source in source_contract["sources"].values():
+        assert set(source["normalized_artifact_columns"]) == artifact_columns
     assert "comparison_policy_registry_version" not in manifest
     assert "expected_frozen_census" not in manifest
     assert not (out_dir / "pair_buckets").exists()
 
     preserved_paths = [
         out_dir / normalized_builder.RECORDS_FILENAME,
-        out_dir / normalized_builder.EVIDENCE_FILENAME,
-        out_dir / normalized_builder.INDEX_FILENAME,
+        out_dir / normalized_builder.EVIDENCE_FAMILIES_FILENAME,
+        out_dir / normalized_builder.EVIDENCE_BRIDGE_FILENAME,
+        out_dir / normalized_builder.INDEX_MOLECULES_FILENAME,
+        out_dir / normalized_builder.INDEX_FINGERPRINTS_FILENAME,
+        out_dir / normalized_builder.INDEX_MEMBERSHIP_FILENAME,
         out_dir / normalized_builder.MANIFEST_FILENAME,
-        out_dir / normalized_builder.CANONICALIZATION_POLICY_FILENAME,
+        out_dir / normalized_builder.VALIDITY_POLICY_FILENAME,
+        out_dir / normalized_builder.AUXILIARY_MAPPING_MANIFEST_FILENAME,
     ]
     preserved_bytes = {path: path.read_bytes() for path in preserved_paths}
     failed_args = list(common_args)
@@ -477,7 +592,12 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         normalized_builder.main(failed_args)
     assert all(path.read_bytes() == preserved_bytes[path] for path in preserved_paths)
 
-    for directory in ("pair_buckets", "endpoint_policies", "analysis"):
+    for directory in (
+        "06_pair_buckets",
+        "07_assay_transfer_policy",
+        "07_endpoint_policies",
+        "08_audits",
+    ):
         target = out_dir / directory
         target.mkdir()
         (target / "stale.txt").write_text("stale", encoding="utf-8")
@@ -505,23 +625,30 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "through_stage": "organize",
     }
     assert {
-        "analysis",
-        "endpoint_policies",
-        "molecule_family_evidence.jsonl",
-        "neighbor_index.meta.json",
-        "neighbor_index.pkl",
-        "pair_buckets",
+        "04_evidence_catalog/molecule_families.parquet",
+        "04_evidence_catalog/molecule_family_records.parquet",
+        "05_neighbor_index/molecules.parquet",
+        "05_neighbor_index/fingerprints.npz",
+        "06_pair_buckets",
+        "07_assay_transfer_policy",
+        "07_endpoint_policies",
+        "08_audits",
     } <= set(restarted["invalidated_artifacts"])
-    assert not (out_dir / normalized_builder.EVIDENCE_FILENAME).exists()
-    assert not (out_dir / normalized_builder.INDEX_FILENAME).exists()
+    assert not (out_dir / normalized_builder.EVIDENCE_FAMILIES_FILENAME).exists()
+    assert not (out_dir / normalized_builder.INDEX_MOLECULES_FILENAME).exists()
     assert not (out_dir / normalized_builder.INDEX_META_FILENAME).exists()
     assert all(
         not (out_dir / directory).exists()
-        for directory in ("pair_buckets", "endpoint_policies", "analysis")
+        for directory in (
+            "06_pair_buckets",
+            "07_assay_transfer_policy",
+            "07_endpoint_policies",
+            "08_audits",
+        )
     )
     assert not any("-stage-" in path.name for path in out_dir.iterdir())
 
-    frozen_v1 = out_dir / "endpoint_policies" / "v1"
+    frozen_v1 = out_dir / "07_endpoint_policies" / "v1"
     frozen_v1.mkdir(parents=True)
     (frozen_v1 / "endpoint_policy_registry.json").write_text(
         "stale", encoding="utf-8"
@@ -533,8 +660,8 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     assert clean_only["completed_stages"] == ["clean"]
     assert not (out_dir / normalized_builder.NORMALIZED_RECORDS_FILENAME).exists()
     assert not (out_dir / normalized_builder.RECORDS_FILENAME).exists()
-    assert not (out_dir / "endpoint_policies").exists()
-    assert "endpoint_policies" in clean_only["invalidated_artifacts"]
+    assert not (out_dir / "07_endpoint_policies").exists()
+    assert "07_endpoint_policies" in clean_only["invalidated_artifacts"]
 
 
 @pytest.mark.parametrize(
@@ -555,13 +682,15 @@ def test_stage_invalidation_follows_dependency_order(
         for filename in filenames:
             if filename == normalized_builder.MANIFEST_FILENAME:
                 continue
-            (out_dir / filename).write_text(filename, encoding="utf-8")
+            target = out_dir / filename
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(filename, encoding="utf-8")
     for directory in normalized_builder.RECORD_DEPENDENT_DIRECTORIES:
         target = out_dir / directory
-        target.mkdir()
+        target.mkdir(exist_ok=True)
         (target / "stale.txt").write_text("stale", encoding="utf-8")
 
-    normalized_builder._invalidate_downstream_artifacts(out_dir, stage)
+    staged_builder._invalidate_downstream_artifacts(out_dir, stage)
 
     stage_index = normalized_builder.STAGES.index(stage)
     for candidate in normalized_builder.STAGES:
@@ -583,6 +712,8 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
     out_dir.mkdir()
     cleaned_path = out_dir / normalized_builder.CLEANED_FILENAME
     normalized_path = out_dir / normalized_builder.NORMALIZED_RECORDS_FILENAME
+    cleaned_path.parent.mkdir(parents=True)
+    normalized_path.parent.mkdir(parents=True)
     pd.DataFrame([{"cleaned_record_id": "clean-1"}]).to_parquet(
         cleaned_path, index=False
     )
@@ -594,7 +725,7 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
             }
         ]
     ).to_parquet(normalized_path, index=False)
-    manifest = normalized_builder.stage_manifest(
+    manifest = staged_builder.stage_manifest(
         stage="normalize",
         version=normalized_builder.NORMALIZATION_STAGE_VERSION,
         inputs={"cleaned_records": cleaned_path},
@@ -602,7 +733,7 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
         row_counts={"normalized_records": 1},
         validations={"test": True},
     )
-    (out_dir / "02_normalization.manifest.json").write_text(
+    (out_dir / normalized_builder.STAGE_ARTIFACTS["normalize"][1]).write_text(
         json.dumps(manifest), encoding="utf-8"
     )
     pd.DataFrame([{"cleaned_record_id": "clean-2"}]).to_parquet(
@@ -610,16 +741,16 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
     )
 
     with pytest.raises(ValueError, match="upstream input hash mismatch"):
-        normalized_builder._load_verified_stage(out_dir, "normalize")
+        staged_builder._load_verified_stage(out_dir, "normalize")
 
 
 def test_builder_rejects_reconciliation_until_comparison_contract_exists():
     with pytest.raises(SystemExit):
-        normalized_builder._parse_args(["--v65-reconciliation"])
+        staged_builder.parse_args(normalized_builder.POLICY, ["--v65-reconciliation"])
 
 
 def test_builder_cli_has_no_expansion_stage():
     with pytest.raises(SystemExit):
-        normalized_builder._parse_args(
+        staged_builder.parse_args(normalized_builder.POLICY,
             ["--from-stage", "expand", "--through-stage", "expand"]
         )

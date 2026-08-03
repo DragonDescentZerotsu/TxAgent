@@ -307,15 +307,23 @@ def _compact_record(record: Mapping[str, Any]) -> dict[str, Any]:
         "canonical_measurement",
         "canonical_unit",
         "canonical_bioavailability_report_type",
-        "canonical_dose_key",
-        "canonical_assay_system",
-        "canonical_species",
+        "global_context",
+        "global_species_context",
+        "auxiliary_mapping_status",
+        "auxiliary_attachment_version",
         "normalization_validity_status",
         "finite_scalar_value",
         "is_absolute_and_continuous",
         "absolute_and_continuous_value",
         "variation_value",
         "measurement_unit_status",
+        "source_scalar_rule_version",
+        "source_scalar_rule_id",
+        "source_scalar_rule_reason",
+        "scalar_semantic_label",
+        "source_column_contract_version",
+        "llm_source_contract_json",
+        "llm_source_fields_json",
         "confidence",
         "support_text",
         "evidence_context_json",
@@ -330,6 +338,22 @@ def _llm_example(record: Mapping[str, Any]) -> dict[str, Any]:
         context = json.loads(str(record.get("evidence_context_json") or "{}"))
     except json.JSONDecodeError:
         context = {}
+    try:
+        source_contract = json.loads(
+            str(record.get("llm_source_contract_json") or "{}")
+        )
+        source_fields = json.loads(
+            str(record.get("llm_source_fields_json") or "{}")
+        )
+    except json.JSONDecodeError as exc:
+        raise ValueError("invalid persisted LLM source projection") from exc
+    if source_contract or source_fields:
+        if not source_contract or not isinstance(source_fields, Mapping):
+            raise ValueError("incomplete persisted LLM source projection")
+        return {
+            "source_contract": source_contract,
+            "source_fields": source_fields,
+        }
     return {
         "source_id": record.get("source_id"),
         "source_record_id": record.get("source_record_id"),

@@ -1,0 +1,2 @@
+artifacts/chembl_tool/tasks/bioavailability_ma/starling_normalized_v6/**/stage.tar.zst.part-* -diff
+data/starling_data/bioavailability_ma/Direct_HF/*.parquet -diff

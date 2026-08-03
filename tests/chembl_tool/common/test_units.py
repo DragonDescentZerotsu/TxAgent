@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from tools.chembl_tool.common.units import (
@@ -7,6 +9,7 @@ from tools.chembl_tool.common.units import (
     canonicalized_unit,
     canonicalized_value,
     clean_unit,
+    load_contextual_unit_policy,
     unit_dimension,
     units_compatible,
 )
@@ -349,3 +352,95 @@ def test_units_compatible_matches_expected_quantity_kind():
 def test_units_compatible_returns_none_for_unfamiliar_units():
     assert units_compatible("wibbles/mL", "permeability") is None
     assert units_compatible("", "permeability") is None
+
+
+def test_contextual_policy_always_converts_an_exact_dynamic_assay_match():
+    assay = {
+        "source_id": "fa",
+        "canonical_endpoint": "caco2_mdck_pampa_permeability",
+        "global_context": "caco_2",
+        "global_species_context": None,
+        "extra_field_is_ignored": "yes",
+    }
+    parsed = canonicalize_unit(
+        "ng/cm^2·min", task="bioavailability_ma", assay=assay
+    )
+    assert parsed.canonical == "pg/cm^2·min"
+    assert parsed.contextual_policy_status == "converted"
+    assert parsed.contextual_rule_id == "bioavailability_ma.fa.caco2_flux.pg_ng.v1"
+    assert parsed.contextual_conversion_factor == pytest.approx(1000.0)
+    assert canonicalize_measurement(
+        8.0,
+        "ng/cm^2·min",
+        task="bioavailability_ma",
+        assay=assay,
+    ) == (pytest.approx(8000.0), "pg/cm^2·min")
+
+
+def test_contextual_policy_distinguishes_missing_null_and_wrong_context():
+    base = {
+        "source_id": "fa",
+        "canonical_endpoint": "caco2_mdck_pampa_permeability",
+        "global_context": "caco_2",
+    }
+    for assay in (
+        base,
+        {**base, "global_species_context": "human"},
+        {**base, "global_context": "pampa", "global_species_context": None},
+    ):
+        result = canonicalize_unit(
+            "ng/cm^2·min", task="bioavailability_ma", assay=assay
+        )
+        assert result.canonical == "ng/cm^2·min"
+        assert result.contextual_policy_status == "no_matching_rule"
+
+
+def test_contextual_policy_requires_task_and_assay_together():
+    with pytest.raises(ValueError, match="task and assay together"):
+        canonicalize_unit("ng/mL", task="bioavailability_ma")
+
+
+def test_contextual_policy_loader_rejects_overlapping_dynamic_rules(tmp_path):
+    policy = {
+        "schema_version": "contextual_canonical_unit_policy.schema.v1",
+        "policy_version": "test.v1",
+        "rules": [
+            {
+                "rule_id": rule_id,
+                "task": "test",
+                "match": match,
+                "accepted_units": ["ng/mL", "µg/mL"],
+                "canonical_unit": "ng/mL",
+                "review": {},
+            }
+            for rule_id, match in (
+                ("broad", {"platform": "caco_2"}),
+                ("specific", {"platform": "caco_2", "species": "human"}),
+            )
+        ],
+    }
+    path = tmp_path / "policy.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    with pytest.raises(ValueError, match="ambiguous contextual unit rules"):
+        load_contextual_unit_policy(path)
+
+
+def test_contextual_policy_loader_rejects_dimension_mismatch(tmp_path):
+    policy = {
+        "schema_version": "contextual_canonical_unit_policy.schema.v1",
+        "policy_version": "test.v1",
+        "rules": [
+            {
+                "rule_id": "bad",
+                "task": "test",
+                "match": {"platform": "caco_2"},
+                "accepted_units": ["ng/mL", "ng"],
+                "canonical_unit": "ng/mL",
+                "review": {},
+            }
+        ],
+    }
+    path = tmp_path / "policy.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    with pytest.raises(ValueError, match="dimension mismatch"):
+        load_contextual_unit_policy(path)

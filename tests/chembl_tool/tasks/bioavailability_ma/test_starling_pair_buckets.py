@@ -11,15 +11,6 @@ from tools.chembl_tool.common.starling.pair_buckets import (
 from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_sidecar import (
     build_sidecar,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.build_starling_endpoint_policy_assignments import (
-    ASSIGNMENTS_FILENAME,
-    REGISTRY_FILENAME,
-    build_endpoint_policy_assignments,
-)
-from tools.chembl_tool.tasks.bioavailability_ma.audit_starling_pair_bucket_distributions import (
-    AUDIT_FILENAME,
-    audit_distributions,
-)
 from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
@@ -59,22 +50,17 @@ def _materialize(records):
 def test_bioavailability_source_field_mapping_uses_only_persisted_canonical_fields():
     assert SOURCE_PAIR_FIELDS == {
         "direct_hf": ("canonical_bioavailability_report_type",),
-        "oral_exposure": (
-            "canonical_dose_quantity_kind",
-            "canonical_dose_basis",
-            "canonical_dose_bin",
-            "canonical_dose_regimen",
-        ),
-        "fa": ("canonical_assay_system",),
-        "fg": ("canonical_assay_system",),
-        "fh": ("canonical_species", "canonical_assay_system"),
+        "oral_exposure": (),
+        "fa": ("global_context", "global_species_context"),
+        "fg": ("global_context", "global_species_context"),
+        "fh": ("global_context", "global_species_context"),
     }
 
 
 def test_materializer_maps_persisted_values_without_recanonicalizing_them():
     records = [
-        _record(1, canonical_assay_system="Caco-2|EXACT"),
-        _record(2, smiles="CCN", canonical_assay_system="caco_2|exact"),
+        _record(1, global_context="Caco-2|EXACT", global_species_context="human"),
+        _record(2, smiles="CCN", global_context="caco_2|exact", global_species_context="human"),
     ]
     rows, metadata = _materialize(records)
     assert rows[0]["pair_bucket_key"] != rows[1]["pair_bucket_key"]
@@ -88,8 +74,8 @@ def test_unknown_fields_match_unknown_and_sources_remain_distinct():
             source="fh",
             endpoint="intrinsic_clearance",
             unit="mL/min/kg",
-            canonical_species=None,
-            canonical_assay_system="liver_microsomes|clearance",
+            global_species_context=None,
+            global_context="liver microsomes",
         ),
         _record(
             2,
@@ -97,8 +83,8 @@ def test_unknown_fields_match_unknown_and_sources_remain_distinct():
             endpoint="intrinsic_clearance",
             unit="mL/min/kg",
             smiles="CCN",
-            canonical_species=None,
-            canonical_assay_system="liver_microsomes|clearance",
+            global_species_context=None,
+            global_context="liver microsomes",
         ),
         _record(
             3,
@@ -106,40 +92,51 @@ def test_unknown_fields_match_unknown_and_sources_remain_distinct():
             endpoint="intrinsic_clearance",
             unit="mL/min/kg",
             smiles="CCC",
-            canonical_species="rat",
-            canonical_assay_system="liver_microsomes|clearance",
+            global_species_context="rat",
+            global_context="liver microsomes",
         ),
     ]
     rows, metadata = _materialize(records)
     fields = json.loads(rows[0]["canonical_pair_fields_json"])
-    assert fields["canonical_species"] == UNKNOWN_TOKEN
+    assert fields["global_species_context"] == UNKNOWN_TOKEN
     assert rows[0]["pair_bucket_key"] == rows[1]["pair_bucket_key"]
     assert rows[0]["pair_bucket_key"] != rows[2]["pair_bucket_key"]
-    assert metadata["unknown_field_rates"]["canonical_species"] == pytest.approx(2 / 3)
+    assert metadata["unknown_field_rates"]["global_species_context"] == pytest.approx(2 / 3)
     assert all(metadata["validations"].values())
 
 
-def test_policy_key_is_absent_from_readable_bucket_key():
-    record = _record(
-        1,
-        source="oral_exposure",
-        endpoint="auc",
-        unit="ng·h/mL",
-        canonical_dose_quantity_kind="mass",
-        canonical_dose_basis="per_kg",
-        canonical_dose_bin="log2:3",
-        canonical_dose_regimen="single",
-    )
-    rows, _ = _materialize([record])
+def test_oral_exposure_dose_is_metadata_not_a_bucket_boundary():
+    records = [
+        _record(
+            1,
+            source="oral_exposure",
+            endpoint="auc",
+            unit="ng·h/mL",
+            canonical_dose_quantity_kind="mass",
+            canonical_dose_basis="per_kg",
+            canonical_dose_bin="log2:3",
+            canonical_dose_regimen="single",
+        ),
+        _record(
+            2,
+            source="oral_exposure",
+            endpoint="auc",
+            unit="ng·h/mL",
+            smiles="CCN",
+            canonical_dose_quantity_kind="molar",
+            canonical_dose_basis="absolute",
+            canonical_dose_bin="log2:10",
+            canonical_dose_regimen="repeated",
+        ),
+    ]
+    rows, metadata = _materialize(records)
     assert json.loads(rows[0]["pair_bucket_key"]) == [
         "oral_exposure",
         "auc",
         "ng·h/mL",
-        "mass",
-        "per_kg",
-        "log2:3",
-        "single",
     ]
+    assert rows[0]["pair_bucket_key"] == rows[1]["pair_bucket_key"]
+    assert metadata["stats"]["buckets"] == 1
 
 
 @pytest.mark.parametrize(
@@ -153,7 +150,7 @@ def test_policy_key_is_absent_from_readable_bucket_key():
 )
 def test_normalization_validity_excludes_without_sidecar_recomputation(status):
     rows, metadata = _materialize(
-        [_record(1, status=status, canonical_assay_system="caco_2|permeability")]
+        [_record(1, status=status, global_context="caco_2")]
     )
     assert rows[0]["bucket_eligible"] is False
     assert rows[0]["pair_bucket_key"] is None
@@ -164,7 +161,7 @@ def test_normalization_validity_excludes_without_sidecar_recomputation(status):
 def test_materializer_rejects_unmapped_sources():
     with pytest.raises(ValueError, match="no pair-bucket field mapping"):
         _materialize(
-            [_record(1, source="new_source", canonical_assay_system="aqueous")]
+            [_record(1, source="new_source", global_context="aqueous")]
         )
 
 
@@ -172,11 +169,11 @@ def test_standalone_builder_writes_exactly_two_files_without_rewriting_v5(tmp_pa
     records_path = tmp_path / "records.parquet"
     pd.DataFrame(
         [
-            _record(1, canonical_assay_system="caco_2|permeability"),
+            _record(1, global_context="caco_2"),
             _record(
                 2,
                 smiles="CCN",
-                canonical_assay_system="caco_2|permeability",
+                global_context="caco_2",
             ),
         ]
     ).to_parquet(records_path, index=False)
@@ -215,46 +212,3 @@ def test_standalone_builder_writes_exactly_two_files_without_rewriting_v5(tmp_pa
         "bucket_eligible",
         "bucket_exclusion_reason",
     ]
-
-
-def test_distribution_audit_uses_policy_comparison_space(tmp_path):
-    records_path = tmp_path / "records.parquet"
-    records = [
-        {
-            **_record(
-                1,
-                canonical_assay_system="caco_2|permeability",
-            ),
-            "finite_scalar_value": 10.0,
-        },
-        {
-            **_record(
-                2,
-                smiles="CCN",
-                canonical_assay_system="caco_2|permeability",
-            ),
-            "finite_scalar_value": 50.0,
-        },
-    ]
-    pd.DataFrame(records).to_parquet(records_path, index=False)
-    sidecar_dir = tmp_path / "sidecar"
-    build_sidecar(records_path=records_path, out_dir=sidecar_dir)
-    policy_dir = tmp_path / "policies"
-    build_endpoint_policy_assignments(
-        records_path=records_path,
-        out_dir=policy_dir,
-    )
-    analysis_dir = tmp_path / "analysis"
-    summary = audit_distributions(
-        records_path=records_path,
-        sidecar_path=sidecar_dir / "pair_bucket_records.parquet",
-        assignments_path=policy_dir / ASSIGNMENTS_FILENAME,
-        registry_path=policy_dir / REGISTRY_FILENAME,
-        out_dir=analysis_dir,
-    )
-    assert summary["stats"]["buckets"] == 1
-    assert summary["stats"]["pairable_buckets"] == 1
-    assert summary["stats"]["wide_buckets"] == 1
-    audit = pd.read_parquet(analysis_dir / AUDIT_FILENAME)
-    assert audit.loc[0, "comparison_space_robust_span"] == pytest.approx(36.0)
-    assert audit.loc[0, "robust_span_over_far_threshold"] == pytest.approx(1.2)

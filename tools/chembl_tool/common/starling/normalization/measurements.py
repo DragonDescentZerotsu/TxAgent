@@ -120,10 +120,14 @@ class EndpointOrthography:
 
 EndpointNormalizer = Callable[[str, str], EndpointOrthography | str]
 EndpointStandardizer = Callable[[str, MeasurementPair], MeasurementPair]
+SourceMeasurementResolver = Callable[
+    [Mapping[str, Any], str, MeasurementPair], MeasurementPair
+]
 FamilyResolver = Callable[[str, str], FamilyAssignment | None]
 RecordEnricher = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 
 _ENDPOINT_SEPARATORS = re.compile(r"[\s_\-\u2010-\u2015\u2212]+")
+SOURCE_SPECIFIC_ATOMIC_SCALAR_STATUS = "source_specific_atomic_scalar"
 
 
 def canonicalize_endpoint(value: Any) -> str:
@@ -423,6 +427,7 @@ def normalize_cleaned_records(
     *,
     endpoint_normalizer: EndpointNormalizer,
     endpoint_standardizer: EndpointStandardizer | None = None,
+    source_measurement_resolver: SourceMeasurementResolver | None = None,
     family_resolver: FamilyResolver,
     record_enricher: RecordEnricher | None = None,
 ) -> list[dict[str, Any]]:
@@ -450,6 +455,8 @@ def normalize_cleaned_records(
             if endpoint_standardizer is not None
             else baseline
         )
+        if source_measurement_resolver is not None:
+            pair = source_measurement_resolver(cleaned, canonical_endpoint, pair)
         parsed = parse_point_measurement(pair.canonical_measurement)
         recognized_unit = _recognized_unit(pair.canonical_unit)
         finite_scalar = (
@@ -513,6 +520,8 @@ __all__ = [
     "EndpointStandardizer",
     "FamilyResolver",
     "RecordEnricher",
+    "SOURCE_SPECIFIC_ATOMIC_SCALAR_STATUS",
+    "SourceMeasurementResolver",
     "canonicalize_endpoint",
     "format_number",
     "normalize_cleaned_records",

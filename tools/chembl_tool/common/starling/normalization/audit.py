@@ -5,13 +5,17 @@ from __future__ import annotations
 import json
 import math
 from collections import Counter, defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 from .cleaning import file_sha256
-from .contracts import STAGE_REQUIRED_COLUMNS
-from .measurements import EndpointStandardizer, normalize_measurement_and_unit
+from .contracts import MeasurementPair, STAGE_REQUIRED_COLUMNS
+from .measurements import (
+    EndpointStandardizer,
+    SourceMeasurementResolver,
+    normalize_measurement_and_unit,
+)
 
 
 def write_parquet(path: str | Path, rows: Sequence[Mapping[str, Any]]) -> None:
@@ -20,7 +24,13 @@ def write_parquet(path: str | Path, rows: Sequence[Mapping[str, Any]]) -> None:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     frame = pd.DataFrame([dict(row) for row in rows])
-    frame.to_parquet(target, index=False)
+    frame.to_parquet(
+        target,
+        index=False,
+        engine="pyarrow",
+        compression="zstd",
+        compression_level=9,
+    )
 
 
 def read_parquet_records(path: str | Path) -> list[dict[str, Any]]:
@@ -106,6 +116,11 @@ def validate_stage_schema(
 def validate_measurement_pairs(
     records: Sequence[Mapping[str, Any]],
     endpoint_standardizer: EndpointStandardizer | None = None,
+    source_measurement_resolver: SourceMeasurementResolver | None = None,
+    contextual_standardizer: Callable[
+        [Mapping[str, Any], MeasurementPair], MeasurementPair
+    ]
+    | None = None,
 ) -> list[str]:
     """Recompute each authoritative pair and report any atomicity drift."""
     errors: list[str] = []
@@ -118,16 +133,29 @@ def validate_measurement_pairs(
             if endpoint_standardizer is not None
             else baseline
         )
+        if source_measurement_resolver is not None:
+            expected = source_measurement_resolver(
+                record,
+                str(record.get("canonical_endpoint") or ""),
+                expected,
+            )
+        if contextual_standardizer is not None:
+            expected = contextual_standardizer(record, expected)
         if (
             record.get("canonical_measurement") != expected.canonical_measurement
             or record.get("canonical_unit") != expected.canonical_unit
+            or record.get("measurement_unit_status") != expected.status
+            or record.get("unit_notation_status") != expected.unit_notation_status
+            or record.get("unit_notation_factor") != expected.unit_notation_factor
         ):
             errors.append(
                 f"{record.get('normalized_record_id') or '<missing>'}: "
                 f"actual=({record.get('canonical_measurement')!r}, "
                 f"{record.get('canonical_unit')!r}) expected=("
                 f"{expected.canonical_measurement!r}, "
-                f"{expected.canonical_unit!r})"
+                f"{expected.canonical_unit!r}, {expected.status!r}, "
+                f"{expected.unit_notation_status!r}, "
+                f"{expected.unit_notation_factor!r})"
             )
     return errors
 

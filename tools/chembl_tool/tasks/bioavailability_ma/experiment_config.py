@@ -115,11 +115,21 @@ STARLING_V5 = SourceExperimentConfig(
     mechanism_groups=STARLING.mechanism_groups,
 )
 
+# Compact normalized-v6 uses a relational Parquet/NPZ index.  Its loader
+# hydrates representative evidence from finalized record references once at
+# startup, while preserving the same five paper-facing groups.
+STARLING_V6 = SourceExperimentConfig(
+    source_name="starling_v6",
+    direct_groups=STARLING.direct_groups,
+    mechanism_groups=STARLING.mechanism_groups,
+)
+
 SOURCES = {
     "chembl": CHEMBL,
     "starling": STARLING,
     "starling_in_distribution": STARLING_IN_DISTRIBUTION,
     "starling_v5": STARLING_V5,
+    "starling_v6": STARLING_V6,
 }
 
 # Retrieval sources whose molecules come from the starling assay-transfer data and are

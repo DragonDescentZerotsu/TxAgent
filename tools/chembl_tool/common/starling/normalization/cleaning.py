@@ -194,6 +194,9 @@ def clean_source_rows(
         # Context fields remain source-facing display values at top level. Canonical
         # variants are added only by the normalization stage.
         cleaned_record.update(context)
+        # Persist the complete simply-cleaned source schema columnarly.  Downstream
+        # prompt projection selects from the source contract; it no longer needs a
+        # second JSON serialization of the same source row.
         cleaned_records.append(cleaned_record)
     return cleaned_records
 

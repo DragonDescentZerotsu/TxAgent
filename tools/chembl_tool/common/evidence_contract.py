@@ -229,9 +229,11 @@ def _numeric_examples(row: Mapping[str, Any]) -> list[dict[str, Any]]:
 
 
 def _sanitize_mapping(value: Mapping[str, Any]) -> dict[str, Any]:
-    output: dict[str, Any] = {}
+    output = _validated_source_projection(value)
     for key, item in value.items():
         key_text = str(key)
+        if key_text == "source_fields" or key_text == "source_contract":
+            continue
         if key_text.lower() in _PRIVATE_EXAMPLE_FIELDS:
             continue
         if isinstance(item, Mapping):
@@ -239,6 +241,44 @@ def _sanitize_mapping(value: Mapping[str, Any]) -> dict[str, Any]:
         elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
             output[key_text] = [
                 _sanitize_mapping(entry) if isinstance(entry, Mapping) else _json_scalar(entry)
+                for entry in item
+            ]
+        else:
+            output[key_text] = _json_scalar(item)
+    return output
+
+
+def _validated_source_projection(value: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate the allowlist before preserving otherwise-private source fields."""
+    contract = value.get("source_contract")
+    fields = value.get("source_fields")
+    if contract is None and fields is None:
+        return {}
+    if not isinstance(contract, Mapping) or not isinstance(fields, Mapping):
+        raise ValueError("source projection requires both source_contract and source_fields")
+    if contract.get("contract_version") != "source_column_contract.v1":
+        raise ValueError("unsupported source-column contract version")
+    allowed = contract.get("source_or_simply_cleaned")
+    if not isinstance(allowed, Mapping) or any(item is not True for item in allowed.values()):
+        raise ValueError("source-column contract must contain a Boolean-true allowlist")
+    if set(map(str, fields)) != set(map(str, allowed)):
+        raise ValueError("source fields do not exactly match the source-column allowlist")
+    return {
+        "source_contract": _sanitize_source_mapping(contract),
+        "source_fields": _sanitize_source_mapping(fields),
+    }
+
+
+def _sanitize_source_mapping(value: Mapping[str, Any]) -> dict[str, Any]:
+    """Preserve fields admitted by an explicit source contract, including provenance."""
+    output: dict[str, Any] = {}
+    for key, item in value.items():
+        key_text = str(key)
+        if isinstance(item, Mapping):
+            output[key_text] = _sanitize_source_mapping(item)
+        elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
+            output[key_text] = [
+                _sanitize_source_mapping(entry) if isinstance(entry, Mapping) else _json_scalar(entry)
                 for entry in item
             ]
         else:

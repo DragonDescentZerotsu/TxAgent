@@ -65,6 +65,9 @@ def test_evidence_row_preserves_normalized_fields():
     assert rec["transporter_or_enzyme"] == "BCRP/ABCG2"
     # no synthetic index.* key anywhere
     assert "index." not in row["standard_type"]
+    example = row["source_record_examples"][0]
+    assert example["source_fields"]["support_text"] == "B>A transport observed"
+    assert "canonical_endpoint_key" not in example["source_fields"]
 
 
 def test_rows_out_of_scope_or_no_smiles_are_dropped():
@@ -111,9 +114,30 @@ def test_support_text_joined_by_child_id_for_presentation():
     # with a join match -> full narrative
     cat = in_distribution_catalog_record(rec, support_by_id={"CID1": "full narrative sentence"})
     assert cat["support_text"] == "full narrative sentence"
+    assert cat["source_fields"]["support_text"] == "full narrative sentence"
     # without a match -> falls back to context_extra_details
     cat2 = in_distribution_catalog_record(rec, support_by_id={"OTHER": "x"})
     assert cat2["support_text"] == "short details"
+
+
+def test_source_projection_joins_complete_original_row_and_fails_closed():
+    rec = _record(child_id="CID1")
+    original = {
+        "pmid": "12345",
+        "extraction_id": "ext-1",
+        "measured_value": "efflux ratio 1.5",
+        "gut_wall_process": "efflux",
+        "support_text": "original source sentence",
+    }
+    cat = in_distribution_catalog_record(
+        rec, source_by_id={"CID1": ("fg", original)}
+    )
+
+    assert cat["source_fields"]["pmid"] == "12345"
+    assert cat["source_fields"]["measured_value"] == "efflux ratio 1.5"
+    assert "canonical_endpoint_key" not in cat["source_fields"]
+    with pytest.raises(ValueError, match="missing canonical source-row join"):
+        in_distribution_catalog_record(rec, source_by_id={})
 
 
 def test_prebuilt_manifest_keeps_every_survivor_from_raw_top_100(tmp_path, monkeypatch):

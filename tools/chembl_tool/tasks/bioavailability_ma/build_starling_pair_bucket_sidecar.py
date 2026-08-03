@@ -1,6 +1,6 @@
 """Build the Bioavailability_Ma source-aware pair-bucket sidecar.
 
-The command reads normalized v5 ``records.parquet`` and never rewrites it.
+The command reads normalized v6 ``records.parquet`` and never rewrites it.
 It materializes bucket membership and audits only; it does not enumerate or
 label molecular pairs.
 """
@@ -24,11 +24,11 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
 )
 
 
-DEFAULT_V5_DIR = (
+DEFAULT_NORMALIZED_DIR = (
     Path("outputs/chembl_tool/tasks/bioavailability_ma/evidence_library")
-    / "starling_normalized_v5"
+    / "starling_normalized_v6"
 )
-DEFAULT_OUT_DIR = DEFAULT_V5_DIR / "pair_buckets"
+DEFAULT_OUT_DIR = DEFAULT_NORMALIZED_DIR / "06_pair_buckets"
 PAIR_BUCKET_RECORDS_FILENAME = "pair_bucket_records.parquet"
 PAIR_BUCKET_METADATA_FILENAME = "pair_bucket_metadata.json"
 LEGACY_FILENAMES = (
@@ -103,7 +103,9 @@ def main(argv: list[str] | None = None) -> int:
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--records", default=str(DEFAULT_V5_DIR / "records.parquet"))
+    parser.add_argument(
+        "--records", default=str(DEFAULT_NORMALIZED_DIR / "03_records/records.parquet")
+    )
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
     return parser.parse_args(argv)
 

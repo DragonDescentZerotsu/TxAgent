@@ -207,27 +207,37 @@ The side-by-side layered Starling builder is:
 tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py
 ```
 
-The policy-decoupled v5 builder persists every boundary before molecule aggregation:
+The policy-decoupled v6 builder persists every boundary before molecule aggregation and attaches the
+globally reconciled assay-transfer context sidecar:
 
 ```text
-starling_normalized_v5/
-  01_cleaned_records.parquet
-  02_normalized_records.parquet
-  records.parquet
-  duplicates.parquet
-  organization_exclusions.parquet
-  scalar_distribution_audit.parquet
-  context_canonicalization_policy.json
-  molecule_family_evidence.jsonl
-  neighbor_index.pkl
+starling_normalized_v6/
+  01_cleaned/{records.parquet, manifest.json, source_inventory.json, endpoint_inventory.json}
+  02_normalized/{records.parquet, manifest.json, endpoint_registry.json,
+                 record_validity_policy.json, auxiliary_mapping_manifest.json, source_contract.json}
+  03_records/{records.parquet, duplicates.parquet, exclusions.parquet,
+              scalar_distribution.parquet, manifest.json}
+  04_evidence_catalog/{molecule_families.parquet, molecule_family_records.parquet, manifest.json}
+  05_neighbor_index/{molecules.parquet, fingerprints.npz, group_membership.parquet, manifest.json}
+  06_pair_buckets/
+  07_assay_transfer_policy/
+  08_audits/
   manifest.json
 ```
 
-Cleaning is meaning-preserving. Normalization consumes `01_cleaned_records.parquet` directly and emits exactly
+The local numbered directories are directly readable and ignored by Git. Each completed directory is also
+packaged independently as deterministic `tar.zst` parts of at most 90 MB under
+`artifacts/chembl_tool/tasks/bioavailability_ma/starling_normalized_v6/`, so a new checkout can restore only
+the stages it needs. `starling_artifact_store.py` provides `package`, `restore`, `verify-tracked`, and
+`verify-local` actions. Parquet compresses columns with Zstd; the outer deterministic archive further
+compresses file/container overhead and allows ordinary GitHub tracking without Git LFS.
+
+Cleaning is meaning-preserving. Normalization consumes `01_cleaned/records.parquet` directly and emits exactly
 one pre-deduplication record for every `cleaned_record_id`. It owns the atomic `canonical_measurement` /
 `canonical_unit` pair and scalar metadata; organization owns within-source deduplication and retrieval
 eligibility. Cleaning also promotes cleaned source-facing context columns and
-`source_smiles` to top-level columns. Endpoint identity has three explicit layers:
+`source_smiles` and every declared raw source column to sparse top-level Parquet columns. Endpoint identity
+has three explicit layers:
 
 ```text
 endpoint_name
@@ -240,8 +250,20 @@ spacing/spelling correction and preserves case, with status, reason, and version
 `canonical_endpoint` is then derived mechanically by casefolding and treating whitespace, underscores,
 hyphens, and Unicode dash variants as equivalent separators. Other punctuation and meaningful symbols are
 preserved. Report context, assay context, and units never rewrite endpoint identity. Original endpoint,
-measurement, unit, SMILES, and source context are authoritative for presentation and remain both top-level
-and in `source_payload_json`.
+measurement, unit, SMILES, and source context are authoritative for presentation. Compact v6 does not persist
+the former duplicate `source_payload_json` serialization.
+
+LLM visibility is governed separately by `source_column_contract.v1`, persisted as
+`starling_normalized_v6/02_normalized/source_contract.json`. Every column in every source schema and every column
+in the normalized artifact has the Boolean metadata `source_or_simply_cleaned`. All genuine source fields,
+including source provenance such as PMID and extraction ID, are eligible; derived canonical, normalization,
+policy, scoring, audit, and helper fields are not. Prompt assembly must project the declared source fields
+under their original column names and must fail closed rather than substitute canonical fields. The contract
+is one shared map, not a repeated Boolean on every record. At index load time, representative evidence IDs are
+joined to `03_records/records.parquet`, and the source projection is reconstructed from those declared columns;
+this performs no LLM/API call and no normalization. Retrieval
+identity/similarity and an optional assay-transfer score are a separate retrieval envelope. Assay-transfer
+scoring may consume canonical fields, but its winning-record display must resolve to this source projection.
 
 Measurement normalization has one authoritative path. Cleaning preserves the source-facing
 `measurement_text` and `unit_text`; normalization removes an exact repeated source-unit suffix, parses one
@@ -254,7 +276,7 @@ fold, permeability and other scalar endpoint measurements; it does not mean "non
 absolute oral F. Bounds, ranges, qualitative text and ambiguous compound measurements remain evidence with a
 null scalar. `normalization_validity_status` records policy-independent structure, parsing, unit and physical
 domain validity. The existing `finite_scalar_value` and `canonical_unit` are the policy-ready comparison
-input; v5 does not persist labeling policy, distance, threshold or comparison-value duplicates.
+input; v6 does not persist labeling policy, distance, threshold or comparison-value duplicates.
 
 Joint and compound measurements are never split. Papp/efflux, AUC/Cmax ratios, Vmax/Km, statistics,
 vector-valued series, condition series, dissolution-model parameters, clock times, and formulation ratios each
@@ -262,7 +284,17 @@ remain one intact record. If the complete row cannot be parsed as one measuremen
 but remains retrieval-eligible when its structure and mechanism family resolve. Later scalar assay-transfer
 datasets must select only records with non-null `absolute_and_continuous_value`.
 
-The v1-v4 directories are historical audit artifacts. The v5 code does not reproduce or rewrite them.
+The v1-v5 directories are historical audit artifacts. The v6 code does not reproduce or rewrite them.
+The read-only `audit_starling_v5_v6_migration.py` records both artifact hashes, normalized-record identity
+overlap, removal of the heuristic columns, and per-source global attachment status under
+`starling_normalized_v6/08_audits/v5_v6_migration/`.
+
+Direct oral-bioavailability evidence is loaded from the single complete pinned source
+`data/starling_data/bioavailability_ma/Direct_HF/records.parquet`. It contains all 163,815 rows from
+`starling-labs/Oral_Bioavailability` revision `01bbe3ee9cdd3dc081c39973529c9da0c814d465`, with one stable
+`source_index` and the twelve original factual columns. It contains no historical kept/dropped partition or
+preparation reason. The normalized-v6 builder must not depend on the legacy benchmark JSONLs under
+`outputs/chembl_tool/activity_transfer_benchmark/`.
 
 Scientific notation is folded only when explicit, whether the factor appears in the source unit or in an
 atomic source measurement. `2.5` with unit `×10^-6 cm/s` and `2.5×10^-6 cm/s` with unit `cm/s` both become
@@ -270,6 +302,8 @@ atomic source measurement. `2.5` with unit `×10^-6 cm/s` and `2.5×10^-6 cm/s` 
 atomically. Bounds, ranges, compounds, conflicting factors, and OCR-compressed `×106` forms are never promoted
 to scalars; ambiguous notation is retained and marked rather than guessed. Notation is provenance, not a
 permeability comparison stratum.
+The folded value, `unit_notation_status`, and `unit_notation_factor` are one atomic normalization result;
+source-specific scalar resolvers must preserve all three.
 
 Endpoint-specific conversion is controlled by `starling_normalization_policy.py` and selected only by
 `canonical_endpoint`. Unit dimensions may select a reviewed representation, such as mass- versus molar-AUC,
@@ -279,128 +313,109 @@ measurement, unit, and status are retained. Every nonempty unit remains valid an
 rows for provenance but exclude them from assay-transfer pairing. The builder still fails on endpoint-inventory
 drift in full builds.
 
-The versioned source-aware pair-bucket sidecar is the context-comparability contract. Its required source
-fields are report type for `direct_hf`, oral dose for `oral_exposure`, assay system for `fa` and `fg`, and
-species plus assay system for `fh`. Null-like mapped fields use `__unknown__`; unknown matches unknown.
+The versioned source-aware pair-bucket sidecar is the context-comparability contract. Fa, Fg, and Fh each
+use the globally reconciled `global_context` and `global_species_context`; direct HF uses its reviewed report
+type and oral exposure has no auxiliary hard boundary. The global fields are joined from the frozen tuple map
+after meaning-preserving cleaning. The build fails on missing tuple coverage or conflicting cleaned-key
+collisions. Raw context and dose remain source fields, but heuristic assay-system, species, and structured-dose
+columns are absent from v6. Null mapped fields use `__unknown__`; unknown matches unknown.
 Every fact-valid scalar record belongs to exactly one bucket, and `source_id` prevents cross-source pairing.
 The sidecar does not enumerate pairs, create labels, set thresholds, or produce modeling datasets.
-All context canonicalization now occurs in the normalize stage. Dose uses quantity kind, basis, factor-of-two
-magnitude bin, and regimen; species uses base taxon with sex/strain/model qualifiers preserved separately;
-assay systems use reviewed platform/protocol/modifier classes with conservative protected-token fuzzy
-matching and exact `unmapped:` fallbacks. It is a standalone derived artifact and is not built automatically:
+The authoritative auxiliary input is
+`data_processing/globally_reconciled_auxiliary_value_mapping.json`, version
+`starling_auxiliary.globally_reconciled.v1`. It preserves role-bearing species context such as
+`dog host; human gene`. The attached global fields are derived comparison metadata and remain excluded from
+the source-only LLM projection. No free-text direction, time, absolute/relative, or other derived subtype
+creates an additional comparison stratum.
 
-Dose regimen has one deterministic resolver. `/d`, `/day`, `per day`, `QD`/`q.d.`, daily, and
-BID/TID/QID forms are repeated-dose signals; a calendar reference such as `day 1` is not. Text containing
-both explicit single-dose and repeated-dose signals uses the distinct
-`conflicting_single_and_repeated` regimen and cannot share either bucket. Permeability direction recognizes
-the A/B and AP/BL abbreviations, arrows, `to`, and spelled apical/basolateral forms. A record containing both
-directions remains mixed and receives no scalar-transfer policy.
+Reviewed metric-prefix reconciliation is part of canonical normalization, not a downstream comparison
+projection. `tools/chembl_tool/common/units.py` loads the central versioned
+`tools/chembl_tool/common/contextual_unit_policy.json` and accepts a dynamic assay mapping. Every field declared
+by a rule must be present and exactly equal; missing differs from explicit null, extra fields are ignored, and
+ambiguous rules fail policy validation. Bioavailability always supplies source, canonical endpoint, globally
+reconciled assay context, and species context. When a rule matches, `canonical_measurement`, `canonical_unit`,
+`finite_scalar_value`, variation, and absolute/continuous value are converted atomically. Source-facing
+`measurement_text` and `unit_text` remain unchanged and authoritative for display. Rule ID, policy version,
+status, and factor are internal audit fields excluded from the source-only LLM projection. V1 approves only
+Caco-2 Fa flux pg/ng reconciliation with unspecified species and human liver-microsome Fh CYP rate pmol/nmol
+reconciliation; context-conditioned intestinal-perfusion candidates remain unmerged.
 
 ```text
-starling_normalized_v5/pair_buckets/
+starling_normalized_v6/06_pair_buckets/
   pair_bucket_records.parquet
   pair_bucket_metadata.json
+
+starling_normalized_v6/07_assay_transfer_policy/
+  pair_bucket_transfer_policy.json.gz
 ```
 
-The bucket key is the readable JSON tuple
-`source_id + canonical_endpoint + canonical_unit + persisted source-aware fields`. The sidecar never reads
-`source_payload_json`, normalizes text, applies fuzzy matching, assigns a policy, or re-evaluates metric
-domains. Original context and displayed values remain unchanged and can be joined by `normalized_record_id`.
+The readable v8 bucket key remains
+`source_id + canonical_endpoint + canonical_unit + persisted source-aware fields`.
+No downstream policy may add another comparison stratum, refine the key, or rewrite
+`03_records`. The authoritative auxiliary surface consists of one public runner,
+`data_processing/auxiliary_value_prompts.json` with exactly the original six
+Fa/FG/Fh context/species prompts, and the complete frozen
+`globally_reconciled_auxiliary_value_mapping.json`. Dose, statistic type,
+intestinal site, and other variance candidates receive no LLM mapping.
 
-Endpoint-specific distance and labeling policies are a standalone downstream artifact:
+`build_starling_pair_bucket_transfer_policy.py` produces one combined entry for
+every existing pair bucket. One sample is one normalized record, including repeated
+records for the same molecule. A bucket first requires at least 25 records. Supported
+buckets are then checked against the source-specific raw candidate columns; the
+highest-ranked column uses `omega_squared * coverage`, at least two levels, at
+least three records per level, and at least 50% coverage. Missing
+`qualifying_conditions` is the explicit `__baseline__` category; other missing
+candidate values are excluded.
+
+The automatic exclusion gate is:
 
 ```text
-starling_normalized_v5/endpoint_policies/v1/
-  endpoint_policy_assignments.parquet
-  endpoint_policy_registry.json
-  endpoint_policy_metadata.json
+omega_squared >= 0.20
+AND
+(median_range / IQR >= 1.00 OR median_range / SD >= 1.35)
 ```
 
-Each fact-valid supported row receives an endpoint-specific policy key. v1 inherits the former v4 distance
-functions and cutoffs without calibration. Rows formerly rejected as `missing_comparison_policy` remain
-unassigned with `unsupported_assay_transfer_semantics`; they remain retrieval evidence but cannot enter
-assay-transfer labeling. Effective assay-transfer eligibility requires both a context bucket and an assigned
-endpoint policy. This artifact does not enumerate or label molecular pairs.
+This is a numerical heterogeneity warning, not a causal claim. A flagged parent is
+excluded wholesale; raw candidate values never create child buckets or downstream
+labels. Eligible buckets use sample SD with `ddof=1`. Numeric assay transfer is
+`abs(left-right) / bucket_SD <= 1`, inclusively, with no endpoint-specific
+thresholds or deadband. Ineligible buckets return no transfer label rather than a
+negative example.
 
-Endpoint policy v2 is an additional standalone artifact; v1 is immutable:
+Each eligible entry also stores 101 local empirical percentile knots. Small buckets
+use every unordered record pair; larger buckets use 10,000 deterministic hash-sampled
+record pairs. Exact equality maps to zero. These 0--100 values describe unusualness
+inside one bucket and are not a shared physical scale across buckets.
 
-```text
-starling_normalized_v5/endpoint_policies/v2/
-  endpoint_policy_assignments.parquet
-  endpoint_policy_registry.json
-  endpoint_policy_metadata.json
-```
+The frozen build has 5,221 buckets and 246,385 records. Of these, 365 buckets /
+226,913 records meet n=25; the variance gate removes 76 buckets / 27,318 records;
+289 buckets / 199,595 records remain assay-transfer eligible. All 289 have positive
+finite sample SD.
 
-Every assignment row contains `normalized_record_id`, `measurement_subtype`,
-`endpoint_policy_key`, and `policy_assignment_status`. Keys have the form
-`bioavailability_ma/<canonical_endpoint>/<measurement_subtype>/v2`. V2 has no generic
-positive-scalar fallback: it explicitly distinguishes bounded percentages/fractions,
-exposure metrics, Tmax, half-life, permeability direction, clearance, solubility mode,
-dimensionless ratios, and resolved kinetic parameters. Mixed or under-specified semantics
-remain unassigned. Percentage dissolution/stability requires a resolved time context;
-directional permeability and efflux comparisons use direction-specific subtypes.
-Finite negative permeability coordinates reported as `log(cm/s)` or `log10(cm/s)` are factually valid.
-Bioavailability v2 uses the reviewed convention that bare permeability `log` is log10 and compares these
-already-transformed values by absolute coordinate difference; it never applies log10 a second time.
-Transformed metrics outside this reviewed permeability case remain valid evidence but unassigned.
-
-Every assigned endpoint policy resolves exactly one named threshold profile using the frozen
-precedence `endpoint+subtype override -> subtype-prefix override -> subtype override -> policy-family
-default`. The registry publishes the selected profile, resolution reason, profile version, raw thresholds,
-normalization anchor, and normalized cutoffs. AUC, Cmax, other exposure, Tmax, half-life, rate constants,
-hepatic clearance, intrinsic clearance, equilibrium/kinetic solubility, ratios, and resolved Km/Vmax each
-have explicit semantic profiles. Profiles may currently share the same reviewed numeric thresholds; the
-separate names prevent unrelated endpoints from being silently coupled in later reviewed revisions.
-Papp and Peff use the wide log profile (3-fold transfer / 10-fold not-transfer primary) because permeability
-systems are heterogeneous. Already-log10 permeability coordinates use identity coordinate distance with the
-same wide thresholds and `log10(20)` permissive far anchor. Pair-bucket matching still independently enforces
-direction and assay-system comparability.
-
-V2 freezes primary and sensitivity thresholds before model evaluation. Its calibration
-audit excludes the union of random and scaffold test parents and emits aggregate
-diagnostics only: assignment/exclusion counts, observational same-parent dispersion,
-cross-parent distance summaries, aggregate record and unique-molecule pair yields,
-coverage, and sensitivity-label stability. It does not materialize training pairs, read
-benchmark outcomes, modify modeling datasets, or fit thresholds.
-
-V2 also publishes `endpoint_policy_distance_normalization.v1`, one invariant distance
-score per pair on a clipped 0--100 scale. Each policy family is normalized linearly in
-its resolved endpoint/subtype profile's reviewed raw comparison space, with 100 anchored at that profile's
-permissive `not_transfer_min`. The same score is used for strict, primary, and permissive
-sensitivity analyses; only their normalized cutoffs differ. Pair labels, deadbands,
-stability calculations, and inclusive boundary behavior continue to use full-precision
-raw distance. Raw and normalized values are stored at full floating-point precision,
-while reports and LLM-visible text render normalized scores to two decimal places.
-
-The downstream artifacts can be rebuilt without rewriting normalized v5:
+The downstream pair-bucket membership and combined transfer policy can be rebuilt
+without rewriting normalized-v6 records:
 
 ```bash
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
   python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_sidecar
 
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_endpoint_policy_assignments
-
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_endpoint_policy_assignments_v2
-
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.tasks.bioavailability_ma.audit_starling_pair_bucket_distributions \
-  --policy-version v2
-
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.tasks.bioavailability_ma.audit_starling_endpoint_policy_v2_calibration
+  python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_transfer_policy
 ```
 
-Staged normalized-v5 rebuilds publish each stage only after its temporary outputs
+The second command performs no LLM call. The compressed policy contains its source
+hashes, complete gate contract, exact counts, bucket-local SD curves, and one entry
+per v8 key. Downstream consumers join only by `pair_bucket_key`; there is no
+record-level endpoint-policy assignment.
+
+Staged normalized-v6 rebuilds publish each stage only after its temporary outputs
 have been written and validated. A successful `clean`, `normalize`, or `organize`
 rebuild deletes every active downstream artifact, including pair buckets,
-endpoint-policy v1/v2, analyses, evidence JSONL, and the neighbor index as
+the combined assay-transfer policy, analyses, evidence JSONL, and the neighbor index as
 applicable. Failed stage computation preserves the prior coherent build. Stage
 resume also verifies that the recorded immediate-upstream input hash still
 matches the current upstream artifact; a self-consistent but stale downstream
-stage cannot be resumed. Endpoint-policy v1 remains frozen in definition but is
-intentionally deleted, not regenerated, when `records.parquet` is rebuilt.
+stage cannot be resumed.
 
 The local v6.5 identifier-to-SMILES mapping must be staged at:
 
@@ -418,9 +433,10 @@ Build with the local project environment:
 ```
 
 Use `--from-stage` and `--through-stage` with `clean|normalize|organize|index` to inspect or restart a hashed
-stage. The legacy factor/direct builders and v1-v3 artifacts remain unchanged. Experiments must opt into
-`starling_normalized_v5/neighbor_index.pkl` explicitly until its full artifacts and held-out exclusion
-variants have been audited.
+stage. The legacy factor/direct consumers now reconstruct their views from the same complete Direct-HF
+Parquet; v1-v5 outputs remain frozen historical artifacts. Experiments opt into the directory index at
+`starling_normalized_v6/05_neighbor_index/`; `load_index()` detects its manifest and joins referenced
+finalized records once at startup. Normalized-v5 is not rewritten by the v6 builder.
 
 ## Commands
 

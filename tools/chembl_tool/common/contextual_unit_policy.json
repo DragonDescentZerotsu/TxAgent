@@ -1,0 +1,64 @@
+{
+  "schema_version": "contextual_canonical_unit_policy.schema.v1",
+  "policy_version": "contextual_canonical_unit_policy.v1",
+  "rules": [
+    {
+      "rule_id": "bioavailability_ma.fa.caco2_flux.pg_ng.v1",
+      "task": "bioavailability_ma",
+      "match": {
+        "source_id": "fa",
+        "canonical_endpoint": "caco2_mdck_pampa_permeability",
+        "global_context": "caco_2",
+        "global_species_context": null
+      },
+      "accepted_units": [
+        "pg/cm^2·min",
+        "ng/cm^2·min"
+      ],
+      "canonical_unit": "pg/cm^2·min",
+      "review": {
+        "decision": "approved_moderate",
+        "records_by_unit": {
+          "pg/cm^2·min": 22,
+          "ng/cm^2·min": 20
+        },
+        "converted_median_ratio": 1.883,
+        "ks_distance_log10": 0.359,
+        "review_boundary": {
+          "maximum_absolute_log10_median_gap": 0.35,
+          "maximum_ks_distance": 0.45,
+          "minimum_records_per_unit_in_context_stratum": 5
+        }
+      }
+    },
+    {
+      "rule_id": "bioavailability_ma.fh.cyp_rate.pmol_nmol.v1",
+      "task": "bioavailability_ma",
+      "match": {
+        "source_id": "fh",
+        "canonical_endpoint": "cyp_metabolism",
+        "global_context": "liver microsomes",
+        "global_species_context": "human"
+      },
+      "accepted_units": [
+        "pmol/mg·min",
+        "nmol/mg·min"
+      ],
+      "canonical_unit": "pmol/mg·min",
+      "review": {
+        "decision": "approved_moderate",
+        "records_by_unit": {
+          "pmol/mg·min": 11,
+          "nmol/mg·min": 23
+        },
+        "converted_median_ratio": 2.217,
+        "ks_distance_log10": 0.372,
+        "review_boundary": {
+          "maximum_absolute_log10_median_gap": 0.35,
+          "maximum_ks_distance": 0.45,
+          "minimum_records_per_unit_in_context_stratum": 5
+        }
+      }
+    }
+  ]
+}

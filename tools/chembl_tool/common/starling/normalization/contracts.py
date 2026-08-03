@@ -6,13 +6,13 @@ from dataclasses import dataclass
 from typing import Any
 
 
-CLEANING_STAGE_VERSION = "starling_record_cleaning.v5"
-NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v9"
-ORGANIZATION_STAGE_VERSION = "starling_record_organization.v7"
+CLEANING_STAGE_VERSION = "starling_record_cleaning.v6"
+NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v14"
+ORGANIZATION_STAGE_VERSION = "starling_record_organization.v9"
 
-NORMALIZED_RECORD_VERSION = "starling_normalized_record.v5"
-NORMALIZED_ARTIFACT_VERSION = "starling_normalized_evidence.v5"
-SCALAR_PARSER_VERSION = "lossless_scalar_parser.v3"
+NORMALIZED_RECORD_VERSION = "starling_normalized_record.v6"
+NORMALIZED_ARTIFACT_VERSION = "starling_normalized_evidence.v6"
+SCALAR_PARSER_VERSION = "lossless_scalar_parser.v4"
 
 STAGE_REQUIRED_COLUMNS = {
     "clean": {
@@ -25,15 +25,12 @@ STAGE_REQUIRED_COLUMNS = {
         "source_smiles",
         "canonical_smiles",
         "structure_status",
-        "source_payload_json",
     },
     "normalize": {
         "cleaned_record_id",
         "normalized_record_id",
         "spacing_and_spelling_endpoint",
         "spacing_and_spelling_status",
-        "spacing_and_spelling_reason",
-        "spacing_and_spelling_version",
         "canonical_endpoint",
         "canonical_measurement",
         "canonical_unit",

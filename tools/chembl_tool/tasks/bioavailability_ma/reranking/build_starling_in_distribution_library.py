@@ -42,6 +42,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_r
     _context,
     _v3_scoring_profile,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts import (
+    SOURCE_COLUMNS,
+    llm_source_projection_from_mapping,
+)
 
 # Authoritative per-record training source: assay_concept + pre-mapped context_<field>
 # columns + normalized scalar/unit/endpoint -> exact v6_5 training-prompt fidelity.
@@ -64,7 +68,7 @@ EVIDENCE_FILENAME = "starling_in_distribution_evidence.jsonl"
 INDEX_FILENAME = "starling_in_distribution_neighbor_index.pkl"
 CATALOG_FILENAME = "starling_in_distribution_catalog.jsonl"
 META_FILENAME = "starling_in_distribution_neighbor_index.meta.json"
-INDEX_VERSION = "bioavailability_ma_starling_in_distribution_neighbor_index.v1"
+INDEX_VERSION = "bioavailability_ma_starling_in_distribution_neighbor_index.v2"
 
 # canonical_endpoint_key prefix -> (group_id, tier, endpoint_group). q1 splits on the
 # second component (oral_bioavailability vs oral_exposure); q2/q3/q4 map to Fa/Fg/Fh.
@@ -130,6 +134,61 @@ def load_support_text_by_child_id(base_dir: Path) -> dict[str, str]:
             if child_id and support_text:
                 mapping[str(child_id)] = str(support_text)
     return mapping
+
+
+def load_source_rows_by_child_id(base_dir: Path) -> dict[str, tuple[str, dict[str, Any]]]:
+    """Load only original source columns from the canonical-base child records."""
+    import pyarrow.parquet as pq
+
+    source_by_directory = {
+        "oral_bioavailability": "oral_exposure",
+        "intestinal_absorption": "fa",
+        "gut_wall": "fg",
+        "hepatic": "fh",
+        "starling_oba": "direct_hf",
+    }
+    mapping: dict[str, tuple[str, dict[str, Any]]] = {}
+    for directory, source_id in source_by_directory.items():
+        path = base_dir / directory / "records.parquet"
+        if not path.exists():
+            continue
+        columns = ["child_id", *SOURCE_COLUMNS[source_id]]
+        table = pq.read_table(path, columns=columns)
+        for row in table.to_pylist():
+            child_id = str(row.pop("child_id") or "")
+            if not child_id:
+                continue
+            value = (source_id, row)
+            previous = mapping.get(child_id)
+            if previous is not None and previous != value:
+                raise ValueError(f"conflicting canonical source rows for child_id={child_id}")
+            mapping[child_id] = value
+    return mapping
+
+
+def _source_projection_for_record(
+    record: dict[str, Any],
+    concept: str,
+    support_by_id: dict[str, str] | None,
+    source_by_id: dict[str, tuple[str, dict[str, Any]]] | None,
+) -> dict[str, Any]:
+    child_id = str(record.get("child_id") or record.get("record_id") or "")
+    if source_by_id is not None:
+        joined = source_by_id.get(child_id)
+        if joined is None:
+            raise ValueError(f"missing canonical source-row join for child_id={child_id}")
+        source_id, source_row = joined
+        return llm_source_projection_from_mapping(source_id, source_row)
+    source_id = {
+        "oral_bioavailability": "direct_hf",
+        "oral_exposure": "oral_exposure",
+        "Fa": "fa",
+        "Fg": "fg",
+        "Fh": "fh",
+    }[concept]
+    fallback = dict(record)
+    fallback["support_text"] = _resolve_support_text(record, support_by_id)
+    return llm_source_projection_from_mapping(source_id, fallback)
 
 
 def _resolve_support_text(record: dict[str, Any], support_by_id: dict[str, str] | None) -> str:
@@ -213,7 +272,9 @@ def _finite_float(value: Any) -> float | None:
 
 
 def in_distribution_catalog_record(
-    record: dict[str, Any], support_by_id: dict[str, str] | None = None
+    record: dict[str, Any],
+    support_by_id: dict[str, str] | None = None,
+    source_by_id: dict[str, tuple[str, dict[str, Any]]] | None = None,
 ) -> dict[str, Any] | None:
     """Build a v6_5-renderable catalog record from a normalized record.
 
@@ -239,6 +300,9 @@ def in_distribution_catalog_record(
     # child_id is unique per scalar emission; record_id is the (shared) parent. Use
     # child_id so scalar-split records don't collide in the catalog.
     catalog_record_id = str(record.get("child_id") or record.get("record_id") or "")
+    source_projection = _source_projection_for_record(
+        record, concept, support_by_id, source_by_id
+    )
     return {
         "record_type": "assay_record",
         "record_id": catalog_record_id,
@@ -277,6 +341,12 @@ def in_distribution_catalog_record(
             "input_sha256": str(record.get("input_sha256") or ""),
             "source_id": str(record.get("source_id") or ""),
         },
+        "source_contract": {
+            key: value
+            for key, value in source_projection.items()
+            if key != "source_fields"
+        },
+        "source_fields": source_projection["source_fields"],
     }
 
 
@@ -302,7 +372,9 @@ def _hf_rows(hf_cleaned_dir: Path, *, max_rows: int = 0) -> Iterator[dict[str, A
 
 
 def evidence_row_from_record(
-    record: dict[str, Any], support_by_id: dict[str, str] | None = None
+    record: dict[str, Any],
+    support_by_id: dict[str, str] | None = None,
+    source_by_id: dict[str, tuple[str, dict[str, Any]]] | None = None,
 ) -> dict[str, Any] | None:
     """Convert one normalized record to an in-distribution evidence row."""
     canonical_endpoint_key = str(record.get("canonical_endpoint_key") or "")
@@ -317,19 +389,21 @@ def evidence_row_from_record(
     starling_record = {field: record.get(field) for field in STARLING_RECORD_FIELDS}
     starling_record["assay_concept"] = concept
     starling_record["support_text"] = support_text
-    catalog_record = in_distribution_catalog_record(record, support_by_id)
+    catalog_record = in_distribution_catalog_record(record, support_by_id, source_by_id)
     # Legacy minimal example (5 fields) for the default presentation, enriched with the
     # full scientific fields (from the catalog record) so `--presentation-style full` can
     # show them. The legacy policy ignores the extra keys, so the legacy view is unchanged.
+    source_projection = _source_projection_for_record(
+        record, concept, support_by_id, source_by_id
+    )
     example = {
-        "endpoint_type": str(record.get("endpoint_subtype") or canonical_endpoint_key),
-        "reported_value": record.get("scalar_value"),
-        "reported_units": record.get("unit_basis"),
-        "context": template_context_from_record(record),
-        "support_text": support_text,
+        "source_contract": {
+            key: value
+            for key, value in source_projection.items()
+            if key != "source_fields"
+        },
+        "source_fields": source_projection["source_fields"],
     }
-    if catalog_record is not None:
-        example.update(full_record_example(catalog_record))
     return {
         "molecule_chembl_id": molecule_id_for(smiles),
         "canonical_smiles": smiles,
@@ -358,7 +432,11 @@ def evidence_row_from_record(
 
 
 def build_in_distribution_evidence_rows(
-    hf_cleaned_dir: Path, *, max_rows: int = 0, support_by_id: dict[str, str] | None = None
+    hf_cleaned_dir: Path,
+    *,
+    max_rows: int = 0,
+    support_by_id: dict[str, str] | None = None,
+    source_by_id: dict[str, tuple[str, dict[str, Any]]] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     per_group: dict[str, int] = {}
@@ -367,7 +445,7 @@ def build_in_distribution_evidence_rows(
     n_support = 0
     for record in _hf_rows(hf_cleaned_dir, max_rows=max_rows):
         scanned += 1
-        row = evidence_row_from_record(record, support_by_id)
+        row = evidence_row_from_record(record, support_by_id, source_by_id)
         if row is None:
             skipped += 1
             continue
@@ -426,10 +504,15 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = ensure_dir(args.out_dir)
 
     support_by_id = load_support_text_by_child_id(Path(args.support_text_base))
+    source_by_id = load_source_rows_by_child_id(Path(args.support_text_base))
     evidence_rows, stats = build_in_distribution_evidence_rows(
-        Path(args.hf_cleaned_dir), max_rows=args.max_rows, support_by_id=support_by_id
+        Path(args.hf_cleaned_dir),
+        max_rows=args.max_rows,
+        support_by_id=support_by_id,
+        source_by_id=source_by_id,
     )
     stats["n_support_text_map"] = len(support_by_id)
+    stats["n_source_row_map"] = len(source_by_id)
     index = build_neighbor_index(
         evidence_rows,
         index_version=INDEX_VERSION,

@@ -20,16 +20,17 @@ from tools.chembl_tool.common.task_workflows.evidence_library import (
     build_neighbor_index,
     fingerprint_metadata,
 )
+from tools.chembl_tool.common.starling.oral_bioavailability import (
+    ALLOWED_REPORT_TYPES,
+    clean_oral_bioavailability_rows,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+    DEFAULT_DIRECT_HF_PARQUET,
+    load_direct_hf_rows,
+)
 
 
-DEFAULT_SOURCE_JSONL = (
-    "outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf/"
-    "absolute_unspecified_systemic_broad_condition_full_text_v1/molecule_records.jsonl"
-)
-DEFAULT_DROPPED_JSONL = (
-    "outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf/"
-    "absolute_unspecified_systemic_broad_condition_full_text_v1/dropped_rows.jsonl"
-)
+DEFAULT_SOURCE_PARQUET = str(DEFAULT_DIRECT_HF_PARQUET)
 DEFAULT_OUT_DIR = "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling"
 EVIDENCE_FILENAME = "starling_oral_bioavailability_evidence.jsonl"
 INDEX_FILENAME = "starling_oral_bioavailability_neighbor_index.pkl"
@@ -42,13 +43,13 @@ SOURCE_DATASET = "starling-labs/Oral_Bioavailability"
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     started = time.monotonic()
-    source_path = Path(args.source_jsonl)
-    dropped_path = Path(args.dropped_jsonl) if args.dropped_jsonl else None
+    source_path = Path(args.source_parquet)
     out_dir = ensure_dir(args.out_dir)
 
     evidence_rows, source_stats = build_starling_evidence_rows(
         source_path,
-        dropped_jsonl=dropped_path,
+        include_qualitative=args.include_qualitative,
+        max_source_rows=args.max_source_rows,
         min_value_percent=args.min_value_percent,
         max_value_percent=args.max_value_percent,
         max_record_examples=args.max_record_examples,
@@ -68,8 +69,7 @@ def main(argv: list[str] | None = None) -> int:
     index["source"] = {
         "type": "starling_oral_bioavailability",
         "dataset": SOURCE_DATASET,
-        "source_jsonl": str(source_path),
-        "dropped_jsonl": str(dropped_path) if dropped_path else "",
+        "source_parquet": str(source_path),
         "group_id": GROUP_ID,
         "exact_query_exclusion": True,
     }
@@ -84,8 +84,7 @@ def main(argv: list[str] | None = None) -> int:
     meta = {
         "index_version": INDEX_VERSION,
         "source_dataset": SOURCE_DATASET,
-        "source_jsonl": str(source_path),
-        "dropped_jsonl": str(dropped_path) if dropped_path else "",
+        "source_parquet": str(source_path),
         "group_id": GROUP_ID,
         "min_value_percent": args.min_value_percent,
         "max_value_percent": args.max_value_percent,
@@ -107,37 +106,48 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def build_starling_evidence_rows(
-    source_jsonl: Path,
+    source_parquet: Path,
     *,
-    dropped_jsonl: Path | None = None,
+    include_qualitative: bool = True,
+    max_source_rows: int = 0,
     min_value_percent: float = 0.0,
     max_value_percent: float = 100.0,
     max_record_examples: int = 6,
 ) -> tuple[list[dict[str, Any]], dict[str, int]]:
     numeric_by_smiles: dict[str, list[dict[str, Any]]] = defaultdict(list)
     qualitative_by_smiles: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    n_source_rows = 0
+    raw_rows = load_direct_hf_rows(source_parquet, max_rows=max_source_rows)
+    cleaned, dropped = clean_oral_bioavailability_rows(
+        raw_rows,
+        allowed_report_types=ALLOWED_REPORT_TYPES,
+        min_value_percent=min_value_percent,
+        max_value_percent=max_value_percent,
+    )
+    n_source_rows = len(raw_rows)
     n_source_rows_kept = 0
     n_out_of_range = 0
-    with source_jsonl.open(encoding="utf-8") as handle:
-        for line in handle:
-            if not line.strip():
-                continue
-            n_source_rows += 1
-            row = json.loads(line)
-            smiles = str(row.get("smiles") or "").strip()
-            try:
-                value = float(row.get("oral_bioavailability_value_percent"))
-            except (TypeError, ValueError):
-                continue
-            if not smiles or value < min_value_percent or value > max_value_percent:
-                n_out_of_range += 1
-                continue
-            row["_value_percent"] = value
-            numeric_by_smiles[smiles].append(row)
-            n_source_rows_kept += 1
+    for item in cleaned:
+        row = {
+            "source_index": item.source_index,
+            "molecule_name": item.molecule_name,
+            "smiles": item.canonical_smiles,
+            "oral_bioavailability_value_percent": item.value_percent,
+            "condition_text": item.condition_text,
+            "parse_method": item.parse_method,
+            "parse_modifier": item.parse_modifier,
+            "metadata": item.raw_row,
+            "_value_percent": item.value_percent,
+        }
+        numeric_by_smiles[item.canonical_smiles].append(row)
+        n_source_rows_kept += 1
+    n_out_of_range = sum(
+        item.get("drop_reason") in {"value_out_of_range", "nonfinite_value", "invalid_smiles"}
+        for item in dropped
+    )
 
-    qualitative_stats = _load_qualitative_rows(dropped_jsonl, qualitative_by_smiles)
+    qualitative_stats = _load_qualitative_rows(
+        dropped if include_qualitative else [], qualitative_by_smiles
+    )
     all_smiles = sorted(set(numeric_by_smiles) | set(qualitative_by_smiles))
     evidence_rows = [
         _summarize_molecule(
@@ -383,7 +393,7 @@ def _record_examples_text(
 
 
 def _load_qualitative_rows(
-    dropped_jsonl: Path | None,
+    dropped_rows: list[dict[str, Any]],
     qualitative_by_smiles: dict[str, list[dict[str, Any]]],
 ) -> dict[str, int]:
     stats = {
@@ -392,39 +402,33 @@ def _load_qualitative_rows(
         "n_qualitative_rows_invalid_smiles": 0,
         "n_qualitative_rows_empty": 0,
     }
-    if dropped_jsonl is None or not dropped_jsonl.exists():
-        return stats
     allowed_reasons = {"unparseable_or_non_numeric_value", "report_type_not_allowed"}
-    with dropped_jsonl.open(encoding="utf-8") as handle:
-        for line in handle:
-            if not line.strip():
-                continue
-            stats["n_dropped_rows_scanned"] += 1
-            dropped = json.loads(line)
-            reason = str(dropped.get("drop_reason") or "")
-            if reason not in allowed_reasons:
-                continue
-            raw = dropped.get("raw_row") or {}
-            value_text = str(raw.get("oral_bioavailability_value") or "").strip()
-            support_text = str(raw.get("support_text") or "").strip()
-            if not value_text and not support_text:
-                stats["n_qualitative_rows_empty"] += 1
-                continue
-            smiles = _canonicalize_smiles(str(raw.get("smiles") or ""))
-            if not smiles:
-                stats["n_qualitative_rows_invalid_smiles"] += 1
-                continue
-            qualitative_by_smiles[smiles].append(
-                {
-                    "source_index": dropped.get("source_index", ""),
-                    "molecule_name": str(raw.get("molecule_name") or "").strip(),
-                    "condition_text": _condition_text(raw),
-                    "metadata": raw,
-                    "_qualitative_value_text": value_text,
-                    "_source_drop_reason": reason,
-                }
-            )
-            stats["n_qualitative_rows_kept"] += 1
+    for dropped in dropped_rows:
+        stats["n_dropped_rows_scanned"] += 1
+        reason = str(dropped.get("drop_reason") or "")
+        if reason not in allowed_reasons:
+            continue
+        raw = dropped.get("raw_row") or {}
+        value_text = str(raw.get("oral_bioavailability_value") or "").strip()
+        support_text = str(raw.get("support_text") or "").strip()
+        if not value_text and not support_text:
+            stats["n_qualitative_rows_empty"] += 1
+            continue
+        smiles = _canonicalize_smiles(str(raw.get("smiles") or ""))
+        if not smiles:
+            stats["n_qualitative_rows_invalid_smiles"] += 1
+            continue
+        qualitative_by_smiles[smiles].append(
+            {
+                "source_index": dropped.get("source_index", ""),
+                "molecule_name": str(raw.get("molecule_name") or "").strip(),
+                "condition_text": _condition_text(raw),
+                "metadata": raw,
+                "_qualitative_value_text": value_text,
+                "_source_drop_reason": reason,
+            }
+        )
+        stats["n_qualitative_rows_kept"] += 1
     return stats
 
 
@@ -453,12 +457,17 @@ def _write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-jsonl", default=DEFAULT_SOURCE_JSONL)
-    parser.add_argument("--dropped-jsonl", default=DEFAULT_DROPPED_JSONL)
+    parser.add_argument("--source-parquet", default=DEFAULT_SOURCE_PARQUET)
+    parser.add_argument(
+        "--include-qualitative",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
     parser.add_argument("--min-value-percent", type=float, default=0.0)
     parser.add_argument("--max-value-percent", type=float, default=100.0)
     parser.add_argument("--max-record-examples", type=int, default=6)
+    parser.add_argument("--max-source-rows", type=int, default=0)
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--progress-every", type=int, default=10000)
     return parser.parse_args(argv)

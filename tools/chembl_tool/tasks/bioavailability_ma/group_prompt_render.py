@@ -249,7 +249,13 @@ def _render_fields(source: dict[str, Any], pairs: list[tuple[str, str]]) -> list
     for key, label in pairs:
         value = source.get(key)
         if isinstance(value, dict):
-            parts = [f"{k}: {v}" for k, v in value.items() if v not in (None, "", [], {})]
+            if key == "source_fields":
+                parts = [
+                    f"{k}: {v if v not in (None, '', [], {}) else 'not reported'}"
+                    for k, v in value.items()
+                ]
+            else:
+                parts = [f"{k}: {v}" for k, v in value.items() if v not in (None, "", [], {})]
             if not parts:
                 continue
             value = "; ".join(parts)
@@ -294,18 +300,32 @@ def _assay_transfer_evidence_record(
     selected_record: dict[str, Any], dataset: str, group: dict[str, Any], style: str = "legacy"
 ) -> list[tuple[str, str]]:
     """Normalize one selected catalog record through minimal_evidence.v1 for display."""
-    example = {
-        "endpoint_type": selected_record.get("canonical_endpoint_key")
-        or selected_record.get("endpoint_subtype")
-        or selected_record.get("measurement_label"),
-        "reported_value": selected_record.get("value_display", selected_record.get("value")),
-        "reported_units": selected_record.get("unit_basis"),
-        "context": selected_record.get("context") or {},
-        "support_text": selected_record.get("support_text"),
-    }
-    # Carry the full scientific fields so the per-source `full` presentation can show them;
-    # the legacy policy ignores the extra keys, keeping the legacy view byte-identical.
-    example.update(full_record_example(selected_record))
+    source_contract = selected_record.get("source_contract")
+    source_fields = selected_record.get("source_fields")
+    if source_contract or source_fields:
+        if not isinstance(source_contract, dict) or not isinstance(source_fields, dict):
+            raise ValueError("assay-transfer winning record has an incomplete source projection")
+        example = {
+            "source_contract": source_contract,
+            "source_fields": source_fields,
+        }
+    elif dataset == "Starling normalized oral bioavailability":
+        raise ValueError(
+            "normalized Starling assay-transfer record lacks its source projection; "
+            "canonical display fallback is forbidden"
+        )
+    else:
+        example = {
+            "endpoint_type": selected_record.get("canonical_endpoint_key")
+            or selected_record.get("endpoint_subtype")
+            or selected_record.get("measurement_label"),
+            "reported_value": selected_record.get("value_display", selected_record.get("value")),
+            "reported_units": selected_record.get("unit_basis"),
+            "context": selected_record.get("context") or {},
+            "support_text": selected_record.get("support_text"),
+        }
+        # Legacy catalogs do not yet carry an explicit source projection.
+        example.update(full_record_example(selected_record))
     normalized = evidence_for_llm(
         {
             "evidence_source": dataset or selected_record.get("source_id") or "unknown",
@@ -314,10 +334,10 @@ def _assay_transfer_evidence_record(
             "group_id": group.get("group_id"),
             "tier": group.get("tier"),
             "endpoint_group": group.get("endpoint_group"),
-            "standard_type": example["endpoint_type"],
-            "standard_value": example["reported_value"],
-            "standard_units": example["reported_units"],
-            "evidence_text": example["support_text"],
+            "standard_type": example.get("endpoint_type", "source_record"),
+            "standard_value": example.get("reported_value", ""),
+            "standard_units": example.get("reported_units", ""),
+            "evidence_text": example.get("support_text", "source-contracted record"),
             "source_record_examples": [example],
         }
     )

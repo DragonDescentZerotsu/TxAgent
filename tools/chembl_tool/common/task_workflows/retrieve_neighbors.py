@@ -48,7 +48,40 @@ def main(default_index: str, description: str, argv: list[str] | None = None) ->
 
 
 def load_index(path: Path) -> dict[str, Any]:
+    if path.is_dir():
+        manifest_path = path / "manifest.json"
+        if not manifest_path.exists():
+            raise FileNotFoundError(f"index directory lacks manifest.json: {path}")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        task_id = _compact_index_task_id(manifest)
+        if task_id:
+            import importlib
+
+            from tools.chembl_tool.common.starling.compact_artifacts import (
+                load_compact_neighbor_index,
+            )
+
+            policy = importlib.import_module(
+                f"tools.chembl_tool.tasks.{task_id}.starling_policy"
+            )
+            return load_compact_neighbor_index(path, profile=policy.POLICY.compact)
+        raise ValueError(f"unsupported directory index format: {path}")
     return load_retrieval_index(path)
+
+
+def _compact_index_task_id(manifest: dict[str, Any]) -> str:
+    """Resolve the owning task of a compact directory index.
+
+    Newer indices record ``task_id`` directly.  Indices written before that
+    field existed are identified by the ``<task>.compact_neighbor_index.v1``
+    version prefix, so an already-built index needs no rebuild to load.
+    """
+    task_id = str(manifest.get("task_id") or "").strip()
+    if task_id:
+        return task_id
+    version = str(manifest.get("index_version") or "")
+    prefix, separator, suffix = version.partition(".")
+    return prefix if separator and suffix == "compact_neighbor_index.v1" else ""
 
 
 def retrieve_neighbors(

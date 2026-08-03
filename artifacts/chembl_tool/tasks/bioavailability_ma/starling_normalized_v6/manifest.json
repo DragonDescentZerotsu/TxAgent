@@ -1,0 +1,310 @@
+{
+  "archive_format": "deterministic tar + zstd",
+  "local_layout": [
+    "01_cleaned",
+    "02_normalized",
+    "03_records",
+    "04_evidence_catalog",
+    "05_neighbor_index",
+    "06_pair_buckets",
+    "07_assay_transfer_policy",
+    "08_audits"
+  ],
+  "part_size_limit": 90000000,
+  "root_file": {
+    "path": "build_manifest.json",
+    "restored_path": "manifest.json",
+    "sha256": "a1ade97ec35287d04e81e2eb85e78f39508141e855d7f853ab6d590808993ec6",
+    "size": 69478
+  },
+  "stages": {
+    "01_cleaned": {
+      "archive_sha256": "1b114a7b342d3ea9438f10ee4ac686dd81c3d534b28ca47333ae5990d2426fe4",
+      "archive_size": 52225850,
+      "files": [
+        {
+          "path": "endpoint_inventory.json",
+          "sha256": "045c70436ac1fe557864f594f191993df1e9421ec78d1a3ede3d968b12b60980",
+          "size": 60546
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "53db859cc667c20f7913a56da858a1ba750b61bda8a18d4d765a8c7254d1ec7b",
+          "size": 1571
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "378155132ae2bc0c196b2b27adc57e11c540ffed72d8535f84dce9c094d41f6e",
+          "size": 53144265
+        },
+        {
+          "path": "source_inventory.json",
+          "sha256": "67e1456f1f985f204b9bf8c451443b785b674af4f97f8d0df8526527b6f7e3c9",
+          "size": 1201
+        }
+      ],
+      "parts": [
+        {
+          "path": "01_cleaned/stage.tar.zst.part-0001",
+          "sha256": "1b114a7b342d3ea9438f10ee4ac686dd81c3d534b28ca47333ae5990d2426fe4",
+          "size": 52225850
+        }
+      ],
+      "uncompressed_tar_size": 53217280
+    },
+    "02_normalized": {
+      "archive_sha256": "9e6409286d342e43af5c012a8499a696ea17d767f83b9e993055885adee1c81d",
+      "archive_size": 72619378,
+      "files": [
+        {
+          "path": "auxiliary_mapping_manifest.json",
+          "sha256": "bdb2e7cec0f209fdf1434f90b4a12cf47cacf6e77428d18834a8a8549eb908e9",
+          "size": 2851
+        },
+        {
+          "path": "endpoint_registry.json",
+          "sha256": "ca7aec476c2c7a8ceeb08423993a9dc3b969e5c39cc1f20e883ef2e437cf121a",
+          "size": 56456
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "616599c53532fb7d54c6e36c82f3ea95fa9182f7a55be8011c4b66a6fc79b4ae",
+          "size": 1536
+        },
+        {
+          "path": "record_validity_policy.json",
+          "sha256": "5e36ce336fb1149fdfcb6cff0c12f1bb247edd05cc7da09dfc64992a963b8a98",
+          "size": 1083
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "b60d8bfa71795ebea28958e5824dae1ca5a16b63d69661f6910fda1d1eaa59b3",
+          "size": 74293884
+        },
+        {
+          "path": "source_contract.json",
+          "sha256": "d619ef10375206bcb42416b1d41550b089072a1d124d2bfb63789d968e31a3dc",
+          "size": 40964
+        }
+      ],
+      "parts": [
+        {
+          "path": "02_normalized/stage.tar.zst.part-0001",
+          "sha256": "9e6409286d342e43af5c012a8499a696ea17d767f83b9e993055885adee1c81d",
+          "size": 72619378
+        }
+      ],
+      "uncompressed_tar_size": 74403840
+    },
+    "03_records": {
+      "archive_sha256": "a8a5d0528015d0ea779e45aa0ed9d5d5c36d40ef190b2b9d8b7db828bfe40350",
+      "archive_size": 91154549,
+      "files": [
+        {
+          "path": "duplicates.parquet",
+          "sha256": "177bff26992d98874d013f3d2274536cb97db063222189cb2ef0d1cf75615943",
+          "size": 21073
+        },
+        {
+          "path": "exclusions.parquet",
+          "sha256": "d228a8f02c398dc5d8917d6034ef5f6c1136c2522c690adc6963d372bda79f6b",
+          "size": 2185178
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "f0a352bbb2450219e4af97d60b1ec02061b289ea6c7bfa52f2bf0ada1da7e309",
+          "size": 940
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "38a9a15e620023ec6c5619a2d3b89ce25cea4b6460dbd8f3c5b55cba9d6e0829",
+          "size": 90873515
+        },
+        {
+          "path": "scalar_distribution.parquet",
+          "sha256": "c94c365a0f9b48376bd1c10ef4d5051661bbd18405028ed67c1594a4cccfc847",
+          "size": 103895
+        }
+      ],
+      "parts": [
+        {
+          "path": "03_records/stage.tar.zst.part-0001",
+          "sha256": "47d6a5d461839a62a953d83985e6cff44cc95875a873a3b5d66d3b8c489821e0",
+          "size": 90000000
+        },
+        {
+          "path": "03_records/stage.tar.zst.part-0002",
+          "sha256": "b8eefc3758cd8355e6e40b8b7ac7a24ea3e3acbd5e8628d9344f3e222155f77a",
+          "size": 1154549
+        }
+      ],
+      "uncompressed_tar_size": 93194240
+    },
+    "04_evidence_catalog": {
+      "archive_sha256": "008cf444a710b7fb1177e09235efe0a0dd20a1591f057f56e1104da6d6e01259",
+      "archive_size": 18864450,
+      "files": [
+        {
+          "path": "manifest.json",
+          "sha256": "4144d462fc5ca52410d3210f6c30f224c80f58ee39f0b2f2a24cbb8f8b6bceb1",
+          "size": 501
+        },
+        {
+          "path": "molecule_families.parquet",
+          "sha256": "58bc7b1b4751f0982a9782deec90537d179d148ca56875f7f6db60e9f1d195fb",
+          "size": 2273169
+        },
+        {
+          "path": "molecule_family_records.parquet",
+          "sha256": "1d1735a5d2b0d759a19753c564b59443dfdd3a2fa2bb124043f1159a8411d07f",
+          "size": 17257800
+        }
+      ],
+      "parts": [
+        {
+          "path": "04_evidence_catalog/stage.tar.zst.part-0001",
+          "sha256": "008cf444a710b7fb1177e09235efe0a0dd20a1591f057f56e1104da6d6e01259",
+          "size": 18864450
+        }
+      ],
+      "uncompressed_tar_size": 19537920
+    },
+    "05_neighbor_index": {
+      "archive_sha256": "5c45163511ec70c97b489b03f1c9a733acab02b1c3b871d6b839353a70946d10",
+      "archive_size": 5712605,
+      "files": [
+        {
+          "path": "fingerprints.npz",
+          "sha256": "ca49433f74aaa6c5bd72e37fcf8a1ed30918d9b993f0b06387547c7c378aa9ee",
+          "size": 1592473
+        },
+        {
+          "path": "group_membership.parquet",
+          "sha256": "765ffab281641bf72eed6bdefd89c67d13f48da0bc3db6c69e5ff22618ffabcb",
+          "size": 1778237
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "72cbb59c3ff6aced3ae9c833bf7adfb2c06a7bb0d58ae369bb4d2d44a9781430",
+          "size": 1208
+        },
+        {
+          "path": "molecules.parquet",
+          "sha256": "2ed423cace9c3f5f32d3418917babdff045cd3bc0ff2bedcdf85b83c0e8af007",
+          "size": 2571362
+        }
+      ],
+      "parts": [
+        {
+          "path": "05_neighbor_index/stage.tar.zst.part-0001",
+          "sha256": "5c45163511ec70c97b489b03f1c9a733acab02b1c3b871d6b839353a70946d10",
+          "size": 5712605
+        }
+      ],
+      "uncompressed_tar_size": 5949440
+    },
+    "06_pair_buckets": {
+      "archive_sha256": "feef0f876cdb5971a6ecf285d1888cfa96b5afd25e236007d0e8879c5e3f3180",
+      "archive_size": 17469058,
+      "files": [
+        {
+          "path": "pair_bucket_metadata.json",
+          "sha256": "28fd956f2bfdedadf1f02adff1af997efbd0012654b11a4009dcb97fe2de5ac7",
+          "size": 2951
+        },
+        {
+          "path": "pair_bucket_records.parquet",
+          "sha256": "4bd7edfdcb3b097a9fc3973752047c6072d5e4d54f6e2f7a0662069084ac971d",
+          "size": 17481633
+        }
+      ],
+      "parts": [
+        {
+          "path": "06_pair_buckets/stage.tar.zst.part-0001",
+          "sha256": "feef0f876cdb5971a6ecf285d1888cfa96b5afd25e236007d0e8879c5e3f3180",
+          "size": 17469058
+        }
+      ],
+      "uncompressed_tar_size": 17489920
+    },
+    "07_assay_transfer_policy": {
+      "archive_sha256": "bd10f26f9948bc22630bd70a1933bd1dc801f5876f8eedf16de4a0db9883657f",
+      "archive_size": 473197,
+      "files": [
+        {
+          "path": "pair_bucket_transfer_policy.json.gz",
+          "sha256": "0d4b4658bc6a2fb33e363054d434740626a746438e60df932e643d3206c03c2d",
+          "size": 472605
+        }
+      ],
+      "parts": [
+        {
+          "path": "07_assay_transfer_policy/stage.tar.zst.part-0001",
+          "sha256": "bd10f26f9948bc22630bd70a1933bd1dc801f5876f8eedf16de4a0db9883657f",
+          "size": 473197
+        }
+      ],
+      "uncompressed_tar_size": 481280
+    },
+    "08_audits": {
+      "archive_sha256": "c42f4ba8ab23005c54660f7220181fa8a994e8a4c55c750de4d7de9688f8e1bb",
+      "archive_size": 6574406,
+      "files": [
+        {
+          "path": "fg_scalar_rules_v2/AUDIT.md",
+          "sha256": "7a3270989199e8281d7b27ac428845671211de29e8b5a0cb3220bd81b86aac76",
+          "size": 3146
+        },
+        {
+          "path": "fg_scalar_rules_v2/accepted_review_sample_100.jsonl",
+          "sha256": "69ff284db84ef88484f0bd83ebeca686f433aaca2bb15c9eeb511131c888b2bb",
+          "size": 169641
+        },
+        {
+          "path": "fg_scalar_rules_v2/boundary_examples.jsonl",
+          "sha256": "8e932b1c2134bda35308f58e8f6b216695f1f0e58beca35b6ff5ec644cf49e03",
+          "size": 803522
+        },
+        {
+          "path": "fg_scalar_rules_v2/decisions.parquet",
+          "sha256": "714298783e4353408944b86bb9eb4849bc575141f38dbe746ad1680cf331fcff",
+          "size": 8406828
+        },
+        {
+          "path": "fg_scalar_rules_v2/manual_review_sample_100.jsonl",
+          "sha256": "1746135818406592dfbcec8cad44edfec86be1dc37229a48ec43bd81aa995beb",
+          "size": 172023
+        },
+        {
+          "path": "fg_scalar_rules_v2/summary.json",
+          "sha256": "cf91a8142042ec42dfcf3c20de022b0ce67c90d588766a128653b786b308295c",
+          "size": 4146
+        },
+        {
+          "path": "pair_bucket_distributions/v2/pair_bucket_distribution_audit.parquet",
+          "sha256": "2784b4be17bc543afed523e17b6d3be6476bc8981344a470f24b9b3e83358b18",
+          "size": 536513
+        },
+        {
+          "path": "pair_bucket_distributions/v2/pair_bucket_distribution_summary.json",
+          "sha256": "7f291923a8e47fa451b02c26cf6bc0b0c584884ea0f4e8e35675eea0913d21e8",
+          "size": 63827
+        },
+        {
+          "path": "v5_v6_migration/migration_summary.json",
+          "sha256": "98eabf935259b49992b329372492ce6133e75d02846d01ef813397292c1eff33",
+          "size": 2524
+        }
+      ],
+      "parts": [
+        {
+          "path": "08_audits/stage.tar.zst.part-0001",
+          "sha256": "c42f4ba8ab23005c54660f7220181fa8a994e8a4c55c750de4d7de9688f8e1bb",
+          "size": 6574406
+        }
+      ],
+      "uncompressed_tar_size": 10178560
+    }
+  },
+  "store_version": "bioavailability_ma.normalized_v6_store.v2"
+}

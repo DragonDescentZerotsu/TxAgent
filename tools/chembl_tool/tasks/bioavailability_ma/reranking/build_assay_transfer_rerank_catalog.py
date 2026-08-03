@@ -557,6 +557,10 @@ def _cleaned_catalog_record(
     cleaned: dict[str, Any],
     raw: dict[str, Any],
 ) -> dict[str, Any]:
+    from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts import (
+        llm_source_projection_from_mapping,
+    )
+
     canonical_smiles = str(cleaned["smiles"])
     original_smiles = str(raw.get("smiles") or canonical_smiles)
     scalar_value = float(cleaned["scalar_value"])
@@ -566,6 +570,14 @@ def _cleaned_catalog_record(
         endpoint_subtype=str(cleaned["endpoint_subtype"]),
         unit_basis=unit_basis,
     )
+    source_contract_id = {
+        "oral_bioavailability": "direct_hf",
+        "oral_exposure": "oral_exposure",
+        "Fa": "fa",
+        "Fg": "fg",
+        "Fh": "fh",
+    }[concept]
+    source_projection = llm_source_projection_from_mapping(source_contract_id, raw)
     return {
         "record_type": "assay_record",
         "record_id": str(cleaned["child_id"]),
@@ -590,6 +602,12 @@ def _cleaned_catalog_record(
             "input_sha256": str(cleaned.get("input_sha256") or ""),
             "child_id": str(cleaned.get("child_id") or ""),
         },
+        "source_contract": {
+            key: value
+            for key, value in source_projection.items()
+            if key != "source_fields"
+        },
+        "source_fields": source_projection["source_fields"],
     }
 
 

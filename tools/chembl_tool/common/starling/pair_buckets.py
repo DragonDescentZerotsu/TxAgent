@@ -7,7 +7,6 @@ from collections import Counter, defaultdict
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-
 PAIR_BUCKET_CONTRACT_VERSION = "source_aware_pair_bucket.v4"
 UNKNOWN_TOKEN = "__unknown__"
 

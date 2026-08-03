@@ -17,7 +17,7 @@ ASSAY_TRANSFER_MODEL = "jiosephlee/assay-transfer-tool"
 ASSAY_TRANSFER_MODEL_REVISION = "9515603b1a5c4586e41c221dcdbc5e7487c0c3f5"
 SCORING_CONTRACT_VERSION = "assay_transfer_chat_first_divergent_token_logits.v1"
 CACHE_SCHEMA_VERSION = "assay_transfer_rerank_flat_cache.v2"
-CATALOG_SCHEMA_VERSION = "txagent_assay_transfer_catalog.v1"
+CATALOG_SCHEMA_VERSION = "txagent_assay_transfer_catalog.v2"
 LEGACY_TEMPLATE_PROFILE = "legacy_v3"
 V6_5_TEMPLATE_PROFILE = "v6_5_query_context_copy"
 V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE = (
@@ -485,6 +485,10 @@ _WINNING_RECORD_FIELDS = (
     # reconstructed records omit these (rendered empty, so no effect there).
     "support_text",
     "extra_details",
+    # Source-faithful LLM projection. These fields are ignored by scoring and
+    # consumed only after a winning record has been selected.
+    "source_contract",
+    "source_fields",
 )
 
 

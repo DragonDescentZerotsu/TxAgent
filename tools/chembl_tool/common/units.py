@@ -18,20 +18,31 @@ Public API:
   is *opt-in* via ``measurement_class`` (endpoint-derived; guarded so a mislabeled unit returns
   ``None``) or an explicit ``targets`` override. ``units_compatible`` answers whether a unit fits a
   named endpoint quantity-kind.
+
+* Providing ``task`` and a dynamic ``assay`` mapping activates the central exact-match
+  contextual policy. Matching reviewed rules always replace the canonical prefix; the
+  shared parser does not hard-code an assay schema.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 import re
 import unicodedata
-from collections.abc import Iterable
-from dataclasses import asdict, dataclass
+from collections.abc import Iterable, Mapping
+from dataclasses import asdict, dataclass, replace
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 
-UNIT_NORMALIZER_VERSION = "unit_normalizer.v3"
+UNIT_NORMALIZER_VERSION = "unit_normalizer.v4"
+CONTEXTUAL_UNIT_POLICY_SCHEMA_VERSION = "contextual_canonical_unit_policy.schema.v1"
+DEFAULT_CONTEXTUAL_UNIT_POLICY_PATH = Path(__file__).with_name(
+    "contextual_unit_policy.json"
+)
 
 _NULL_VALUES = {"", "nan", "none", "null", "na", "n/a", "-", "unspecified"}
 
@@ -298,14 +309,39 @@ class CanonicalUnit:
     # Scientific-notation provenance is separate from the physical canonical key.
     notation_status: str = "none"
     notation_factor: float | None = None
+    contextual_policy_status: str = "not_requested"
+    contextual_rule_id: str | None = None
+    contextual_policy_version: str | None = None
+    contextual_conversion_factor: float | None = None
     normalizer_version: str = UNIT_NORMALIZER_VERSION
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
+JSONScalar = str | int | float | bool | None
+
+
+@dataclass(frozen=True)
+class ContextualCanonicalUnitRule:
+    rule_id: str
+    task: str
+    match: tuple[tuple[str, JSONScalar], ...]
+    accepted_units: tuple[str, ...]
+    canonical_unit: str
+
+
+@dataclass(frozen=True)
+class ContextualCanonicalUnitPolicy:
+    schema_version: str
+    policy_version: str
+    rules: tuple[ContextualCanonicalUnitRule, ...]
+    path: str
+    sha256: str
+
+
 @lru_cache(maxsize=100_000)
-def canonicalize_unit(value: Any) -> CanonicalUnit:
+def _canonicalize_unit_basic(value: Any) -> CanonicalUnit:
     """Parse a unit into a dimension signature, scale factor, and canonical key.
 
     Scientific-notation scale factors (``×10⁻⁶``, ``x10^-6``, ``10-6``) are folded
@@ -325,7 +361,7 @@ def canonicalize_unit(value: Any) -> CanonicalUnit:
     # a log of a different unit. Mark it as a transform rather than plain dimensionless.
     func_match = _FUNC_RE.match(cleaned) or _PREFIX_FUNC_RE.match(cleaned)
     if func_match:
-        inner = canonicalize_unit(func_match.group(2))
+        inner = _canonicalize_unit_basic(func_match.group(2))
         return CanonicalUnit(
             raw=raw,
             cleaned=cleaned,
@@ -410,6 +446,199 @@ def canonicalize_unit(value: Any) -> CanonicalUnit:
         unknown_tokens=tuple(unknown),
         notation_status=notation_status,
         notation_factor=notation_factor,
+    )
+
+
+@lru_cache(maxsize=8)
+def load_contextual_unit_policy(
+    path: str | Path = DEFAULT_CONTEXTUAL_UNIT_POLICY_PATH,
+) -> ContextualCanonicalUnitPolicy:
+    """Load and fully validate the frozen dynamic-assay unit policy."""
+    policy_path = Path(path)
+    raw_bytes = policy_path.read_bytes()
+    payload = json.loads(raw_bytes.decode("utf-8"))
+    if not isinstance(payload, dict) or set(payload) != {
+        "schema_version",
+        "policy_version",
+        "rules",
+    }:
+        raise ValueError("invalid contextual unit policy root")
+    if payload["schema_version"] != CONTEXTUAL_UNIT_POLICY_SCHEMA_VERSION:
+        raise ValueError(
+            "unsupported contextual unit policy schema: "
+            f"{payload['schema_version']!r}"
+        )
+    policy_version = payload["policy_version"]
+    if not isinstance(policy_version, str) or not policy_version:
+        raise ValueError("contextual unit policy_version must be nonempty")
+    raw_rules = payload["rules"]
+    if not isinstance(raw_rules, list):
+        raise ValueError("contextual unit policy rules must be a list")
+
+    rules: list[ContextualCanonicalUnitRule] = []
+    seen_rule_ids: set[str] = set()
+    for raw_rule in raw_rules:
+        if not isinstance(raw_rule, dict) or set(raw_rule) != {
+            "rule_id",
+            "task",
+            "match",
+            "accepted_units",
+            "canonical_unit",
+            "review",
+        }:
+            raise ValueError("invalid contextual unit rule shape")
+        rule_id = raw_rule["rule_id"]
+        task = raw_rule["task"]
+        match = raw_rule["match"]
+        accepted_units = raw_rule["accepted_units"]
+        target_unit = raw_rule["canonical_unit"]
+        if not isinstance(rule_id, str) or not rule_id or rule_id in seen_rule_ids:
+            raise ValueError(f"duplicate or invalid contextual rule_id: {rule_id!r}")
+        seen_rule_ids.add(rule_id)
+        if not isinstance(task, str) or not task:
+            raise ValueError(f"invalid task in contextual rule {rule_id!r}")
+        if not isinstance(match, dict) or not match:
+            raise ValueError(f"contextual rule {rule_id!r} requires a match object")
+        for field, expected in match.items():
+            if not isinstance(field, str) or not field or not _is_json_scalar(expected):
+                raise ValueError(f"invalid dynamic match in contextual rule {rule_id!r}")
+        if (
+            not isinstance(accepted_units, list)
+            or len(accepted_units) < 2
+            or not all(isinstance(unit, str) and unit for unit in accepted_units)
+            or len(accepted_units) != len(set(accepted_units))
+        ):
+            raise ValueError(f"invalid accepted_units in contextual rule {rule_id!r}")
+        if not isinstance(target_unit, str) or target_unit not in accepted_units:
+            raise ValueError(
+                f"canonical_unit must occur in accepted_units for {rule_id!r}"
+            )
+        if not isinstance(raw_rule["review"], dict):
+            raise ValueError(f"invalid review metadata in contextual rule {rule_id!r}")
+
+        target = _canonicalize_unit_basic(target_unit)
+        if target.canonical != target_unit or target.unknown_tokens or target.transform:
+            raise ValueError(f"noncanonical target unit in {rule_id!r}: {target_unit!r}")
+        for unit in accepted_units:
+            parsed = _canonicalize_unit_basic(unit)
+            if parsed.canonical != unit or parsed.unknown_tokens or parsed.transform:
+                raise ValueError(f"noncanonical accepted unit in {rule_id!r}: {unit!r}")
+            if parsed.dimension != target.dimension:
+                raise ValueError(f"dimension mismatch in contextual rule {rule_id!r}")
+        rules.append(
+            ContextualCanonicalUnitRule(
+                rule_id=rule_id,
+                task=task,
+                match=tuple(sorted(match.items())),
+                accepted_units=tuple(accepted_units),
+                canonical_unit=target_unit,
+            )
+        )
+
+    for index, left in enumerate(rules):
+        for right in rules[index + 1 :]:
+            if _rules_can_overlap(left, right):
+                raise ValueError(
+                    "ambiguous contextual unit rules can match the same assay: "
+                    f"{left.rule_id!r}, {right.rule_id!r}"
+                )
+    return ContextualCanonicalUnitPolicy(
+        schema_version=payload["schema_version"],
+        policy_version=policy_version,
+        rules=tuple(rules),
+        path=str(policy_path),
+        sha256=hashlib.sha256(raw_bytes).hexdigest(),
+    )
+
+
+def contextual_unit_policy_manifest() -> dict[str, Any]:
+    policy = load_contextual_unit_policy()
+    return {
+        "schema_version": policy.schema_version,
+        "policy_version": policy.policy_version,
+        "path": policy.path,
+        "sha256": policy.sha256,
+        "rule_ids": [rule.rule_id for rule in policy.rules],
+        "matching": "exact_all_declared_fields_fail_closed",
+    }
+
+
+def canonicalize_unit(
+    value: Any,
+    *,
+    task: str | None = None,
+    assay: Mapping[str, JSONScalar] | None = None,
+) -> CanonicalUnit:
+    """Parse a unit and apply the matching task/assay canonical-unit rule.
+
+    Calls without task context retain the physical, source-prefix canonicalization.
+    Calls with a task must provide the complete dynamic assay mapping. Every field
+    declared by a policy rule must be present and exactly equal; missing differs
+    from explicit ``None``. Extra assay fields are ignored.
+    """
+    basic = _canonicalize_unit_basic(value)
+    if task is None and assay is None:
+        return basic
+    if not isinstance(task, str) or not task or not isinstance(assay, Mapping):
+        raise ValueError("contextual canonicalization requires task and assay together")
+    for field, actual in assay.items():
+        if not isinstance(field, str) or not field or not _is_json_scalar(actual):
+            raise ValueError("assay context must map nonempty strings to JSON scalars")
+    policy = load_contextual_unit_policy()
+    matches = [
+        rule
+        for rule in policy.rules
+        if rule.task == task
+        and basic.canonical in rule.accepted_units
+        and all(field in assay and assay[field] == expected for field, expected in rule.match)
+    ]
+    if not matches:
+        return replace(
+            basic,
+            contextual_policy_status="no_matching_rule",
+            contextual_policy_version=policy.policy_version,
+        )
+    if len(matches) != 1:
+        raise ValueError(
+            "multiple contextual unit rules matched: "
+            + ", ".join(rule.rule_id for rule in matches)
+        )
+    rule = matches[0]
+    target = _canonicalize_unit_basic(rule.canonical_unit)
+    source_canonical = _canonicalize_unit_basic(basic.canonical)
+    factor = source_canonical.scale / target.scale
+    return replace(
+        basic,
+        canonical=rule.canonical_unit,
+        contextual_policy_status=(
+            "matched_target_unit"
+            if basic.canonical == rule.canonical_unit
+            else "converted"
+        ),
+        contextual_rule_id=rule.rule_id,
+        contextual_policy_version=policy.policy_version,
+        contextual_conversion_factor=factor,
+    )
+
+
+def _is_json_scalar(value: Any) -> bool:
+    return value is None or (
+        isinstance(value, (str, int, float, bool))
+        and not (isinstance(value, float) and not math.isfinite(value))
+    )
+
+
+def _rules_can_overlap(
+    left: ContextualCanonicalUnitRule,
+    right: ContextualCanonicalUnitRule,
+) -> bool:
+    if left.task != right.task or not set(left.accepted_units) & set(right.accepted_units):
+        return False
+    left_match = dict(left.match)
+    right_match = dict(right.match)
+    return all(
+        left_match[field] == right_match[field]
+        for field in set(left_match) & set(right_match)
     )
 
 
@@ -572,7 +801,12 @@ def _magnitude_under(source_cleaned: str, target_unit: str) -> float:
 
 
 def canonicalized_unit(
-    value: Any, targets: Iterable[str] | None = None, measurement_class: str | None = None
+    value: Any,
+    targets: Iterable[str] | None = None,
+    measurement_class: str | None = None,
+    *,
+    task: str | None = None,
+    assay: Mapping[str, JSONScalar] | None = None,
 ) -> str | None:
     """Return the unit for ``value``, or ``None`` for null-like input.
 
@@ -584,7 +818,7 @@ def canonicalized_unit(
     ``"potency"``) or ``targets`` (explicit unit strings). Transforms return the ``log(...)`` form
     unchanged.
     """
-    result = canonicalize_unit(value)
+    result = canonicalize_unit(value, task=task, assay=assay)
     if result.cleaned == "":
         return None
     if measurement_class is not None:
@@ -602,6 +836,9 @@ def canonicalized_value(
     unit: Any,
     targets: Iterable[str] | None = None,
     measurement_class: str | None = None,
+    *,
+    task: str | None = None,
+    assay: Mapping[str, JSONScalar] | None = None,
 ) -> float | None:
     """Return ``value`` expressed in :func:`canonicalized_unit`'s unit.
 
@@ -617,7 +854,7 @@ def canonicalized_value(
     number = _to_float(value)
     if number is None:
         return None
-    result = canonicalize_unit(unit)
+    result = canonicalize_unit(unit, task=task, assay=assay)
     if result.cleaned == "":
         return number
     if measurement_class is not None:
@@ -643,11 +880,27 @@ def canonicalize_measurement(
     unit: Any,
     targets: Iterable[str] | None = None,
     measurement_class: str | None = None,
+    *,
+    task: str | None = None,
+    assay: Mapping[str, JSONScalar] | None = None,
 ) -> tuple[float | None, str | None]:
     """Return ``(canonicalized_value, canonicalized_unit)`` as a consistent (value, unit) pair."""
     return (
-        canonicalized_value(value, unit, targets, measurement_class),
-        canonicalized_unit(unit, targets, measurement_class),
+        canonicalized_value(
+            value,
+            unit,
+            targets,
+            measurement_class,
+            task=task,
+            assay=assay,
+        ),
+        canonicalized_unit(
+            unit,
+            targets,
+            measurement_class,
+            task=task,
+            assay=assay,
+        ),
     )
 
 

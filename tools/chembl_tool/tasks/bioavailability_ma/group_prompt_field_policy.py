@@ -95,7 +95,18 @@ DEFAULT_POLICY: dict[str, list[FieldSpec]] = {
 # --- Optional per-dataset overrides ----------------------------------------------
 # Key by the neighbor `evidence_source` string. Each value is a partial policy:
 # only the record types you list override DEFAULT_POLICY; others fall back.
-DATASET_OVERRIDES: dict[str, dict[str, list[FieldSpec]]] = {}
+_SOURCE_CONTRACT_RECORD_FIELDS = [
+    FieldSpec("source_contract", "source-column contract", include=True),
+    FieldSpec("source_fields", "source record", include=True),
+]
+
+DATASET_OVERRIDES: dict[str, dict[str, list[FieldSpec]]] = {
+    # The layered normalized library is source-faithful in every presentation
+    # style. Canonical measurement fields remain available to scoring code only.
+    "Starling normalized oral bioavailability": {
+        "morganfingerprint.record": _SOURCE_CONTRACT_RECORD_FIELDS,
+    },
+}
 
 
 # --- Per-source "full" presentation (style="full") -------------------------------
@@ -110,33 +121,13 @@ DATASET_OVERRIDES: dict[str, dict[str, list[FieldSpec]]] = {}
 FULL_SOURCE_POLICY: dict[str, dict[str, list[FieldSpec]]] = {
     # Normalized in-distribution records carry the full scientific scoring payload.
     "starling-in-distribution": {
-        "morganfingerprint.record": [
-            # endpoint identity
-            FieldSpec("canonical_endpoint_key", "endpoint (canonical)", include=True),
-            FieldSpec("endpoint_family", "endpoint family", include=True),
-            FieldSpec("endpoint_subtype", "endpoint subtype", include=True),
-            FieldSpec("measurement_label", "measurement", include=True),
-            # value / unit
-            FieldSpec("scalar_value", "value", include=True),
-            FieldSpec("value_display", "value (as reported)", include=True),
-            FieldSpec("unit_basis", "unit", include=True),
-            FieldSpec("unit_normalized", "unit (normalized)", include=True),
-            # metric / threshold
-            FieldSpec("metric_type", "metric type", include=True),
-            FieldSpec("threshold_display", "threshold", include=True),
-            # variation / direction
-            FieldSpec("direction", "direction", include=True),
-            FieldSpec("variation_type", "variation type", include=True),
-            FieldSpec("variation_value", "variation value", include=True),
-            FieldSpec("statistic_type", "statistic type", include=True),
-            FieldSpec("assay_concept", "assay concept", include=True),
-            # context + narrative
-            FieldSpec("context", "assay context", include=True),
-            FieldSpec("support_text", "evidence", include=True),
-        ],
+        "morganfingerprint.record": _SOURCE_CONTRACT_RECORD_FIELDS,
     },
     # The TxAgent evidence library holds report/prose-shaped fields, not scoring fields.
     "starling-labs/bioavailability_ma": {
+        # Legacy pre-normalized libraries have no persisted source contract. Keep
+        # their historical source-shaped view; the new normalized library below
+        # always uses the fail-closed contract projection.
         "morganfingerprint.record": [
             FieldSpec("endpoint_type", "endpoint", include=True),
             FieldSpec("reported_value", "value", include=True),
@@ -157,6 +148,9 @@ FULL_SOURCE_POLICY: dict[str, dict[str, list[FieldSpec]]] = {
             FieldSpec("context", "assay context", include=True),
             FieldSpec("support_text", "evidence", include=True),
         ],
+    },
+    "Starling normalized oral bioavailability": {
+        "morganfingerprint.record": _SOURCE_CONTRACT_RECORD_FIELDS,
     },
 }
 
@@ -187,7 +181,12 @@ def included_fields(
     to the legacy policy. ``style="legacy"`` (default) always uses the legacy policy.
     """
     specs: list[FieldSpec] | None = None
-    if style == "full":
+    if dataset and (
+        dataset == "Starling normalized oral bioavailability"
+        or dataset.startswith("starling-in-distribution/")
+    ):
+        specs = _SOURCE_CONTRACT_RECORD_FIELDS
+    if specs is None and style == "full":
         specs = _full_source_specs(record_type, dataset)
     if specs is None:
         if dataset and dataset in DATASET_OVERRIDES and record_type in DATASET_OVERRIDES[dataset]:

@@ -92,7 +92,7 @@ def test_morgan_is_text_not_json_and_shows_records():
 
 
 def test_starling_v5_evidence_row_renders_non_blank_endpoint_value_unit():
-    """Regression guard: starling_normalized_v5 example dicts must use the same
+    """Regression guard: normalized Starling example dicts must use the same
     endpoint_type/reported_value/reported_units keys as the legacy factor library,
     so the morganfingerprint field policy doesn't render blank fields for v5 rows."""
     profile = NormalizedSourceProfile(
@@ -364,6 +364,15 @@ INDIST_WINNING = {
     "assay_concept": "gut_wall_efflux",
     "context": {"study_or_assay_system": "Caco-2 bidirectional transport"},
     "support_text": "efflux ratio 1.5 indicates limited active efflux",
+    "source_contract": {
+        "contract_version": "source_column_contract.v1",
+        "source_id": "fg",
+        "source_or_simply_cleaned": {"measured_value": True, "pmid": True},
+    },
+    "source_fields": {
+        "measured_value": "efflux ratio 1.5",
+        "pmid": "12345",
+    },
 }
 
 
@@ -374,17 +383,11 @@ def _indist_group(neighbors):
 
 
 def _indist_example(winning):
-    """Build the morganfingerprint example (legacy 5 keys + full scientific keys), as the
-    in-distribution library does."""
-    example = {
-        "endpoint_type": winning["endpoint_subtype"],
-        "reported_value": winning["value_display"],
-        "reported_units": winning["unit_basis"],
-        "context": winning["context"],
-        "support_text": winning["support_text"],
+    """Build the source-contracted example emitted by the library."""
+    return {
+        "source_contract": winning["source_contract"],
+        "source_fields": winning["source_fields"],
     }
-    example.update(full_record_example(winning))
-    return example
 
 
 # Scientific fields that only the `full` view should surface (label prefixes).
@@ -399,7 +402,7 @@ _SCI_LINES = [
 ]
 
 
-def test_full_style_surfaces_scientific_fields_for_in_distribution():
+def test_all_styles_surface_only_source_fields_for_in_distribution():
     group = _indist_group([_neighbor("M1", "c1ccccc1", 0.45, [_indist_example(INDIST_WINNING)])])
 
     _, legacy = build_group_messages(
@@ -410,26 +413,23 @@ def test_full_style_surfaces_scientific_fields_for_in_distribution():
         QUERY, group, prompt_format="morganfingerprint",
         options={"prompt_min_similarity": 0.0, "presentation_style": "full"},
     )
-    # legacy: narrow view, none of the scientific fields.
+    # Both styles use the same source-faithful projection.
     for line in _SCI_LINES:
         assert line not in legacy["content"]
-    assert "endpoint: efflux_ratio" in legacy["content"]
-    # full: every scientific field is shown.
-    for line in _SCI_LINES:
-        assert line in full["content"]
+        assert line not in full["content"]
+    assert "measured_value: efflux ratio 1.5" in legacy["content"]
+    assert "pmid: 12345" in legacy["content"]
+    assert "measured_value: efflux ratio 1.5" in full["content"]
 
 
 def test_full_style_is_per_source_txagent_gets_no_scoring_fields():
     # TxAgent-library source: report/prose fields, NOT the normalized scoring fields.
     example = {
-        "endpoint_type": "efflux_or_secretory_transport",
-        "reported_value": "45",
-        "reported_units": "%",
+        "endpoint_type": "oral bioavailability",
         "dose": "10 mg/kg",
         "species_or_population": "rat",
-        "metric_type": "dimensionless_ratio",  # present on the dict but not in the txagent full spec
-        "context": {"transporter_or_enzyme": "P-gp"},
         "support_text": "oral bioavailability reported",
+        "metric_type": "dimensionless_ratio",
     }
     group = _group([_neighbor("M1", "c1ccccc1", 0.45, [example])])  # starling-labs source
     _, full = build_group_messages(
@@ -443,7 +443,7 @@ def test_full_style_is_per_source_txagent_gets_no_scoring_fields():
     assert "metric type: dimensionless_ratio" not in content
 
 
-def test_full_style_omits_provenance_ids():
+def test_full_style_keeps_contracted_provenance_and_omits_uncontracted_ids():
     example = _indist_example(INDIST_WINNING)
     example.update({"pmid": "12345678", "source_id": "SRC1", "record_id": "REC1"})
     group = _indist_group([_neighbor("M1", "c1ccccc1", 0.45, [example])])
@@ -452,6 +452,7 @@ def test_full_style_omits_provenance_ids():
         options={"prompt_min_similarity": 0.0, "presentation_style": "full"},
     )
     content = full["content"]
+    assert "pmid: 12345" in content
     assert "12345678" not in content
     assert "SRC1" not in content and "REC1" not in content
 
@@ -473,10 +474,11 @@ def test_full_is_invariant_across_retrievers():
         QUERY, transfer_group, prompt_format="assay_transfer_tool",
         options={"presentation_style": "full"},
     )
-    # Every scientific field line renders identically in both retrievers' prompts.
+    assert "measured_value: efflux ratio 1.5" in morgan_full["content"]
+    assert "measured_value: efflux ratio 1.5" in transfer_full["content"]
     for line in _SCI_LINES:
-        assert line in morgan_full["content"], line
-        assert line in transfer_full["content"], line
+        assert line not in morgan_full["content"], line
+        assert line not in transfer_full["content"], line
 
 
 def test_full_resolves_evidence_source_from_evidence_rows():
@@ -494,20 +496,21 @@ def test_full_resolves_evidence_source_from_evidence_rows():
         QUERY, group, prompt_format="morganfingerprint",
         options={"prompt_min_similarity": 0.0, "presentation_style": "full"},
     )
+    assert "measured_value: efflux ratio 1.5" in full["content"]
     for line in _SCI_LINES:
-        assert line in full["content"], line
+        assert line not in full["content"], line
 
 
 def test_included_fields_style_and_prefix_matching():
     indist = "starling-in-distribution/Fg"
     full_specs = policy.included_fields("morganfingerprint.record", indist, "full")
     keys = [k for k, _ in full_specs]
-    assert "canonical_endpoint_key" in keys and "metric_type" in keys and "direction" in keys
-    # legacy default is unchanged and narrow
+    assert keys == ["source_contract", "source_fields"]
+    # legacy uses the same contract and cannot expose canonical scoring fields.
     legacy_specs = policy.included_fields("morganfingerprint.record", indist, "legacy")
-    assert [k for k, _ in legacy_specs] == [
-        "endpoint_type", "reported_value", "reported_units", "context", "support_text",
-    ]
+    assert [k for k, _ in legacy_specs] == ["source_contract", "source_fields"]
     # unknown source under `full` falls back to the legacy policy
     unknown = policy.included_fields("morganfingerprint.record", "some-other-source/Fg", "full")
-    assert unknown == legacy_specs
+    assert [k for k, _ in unknown] == [
+        "endpoint_type", "reported_value", "reported_units", "context", "support_text",
+    ]
