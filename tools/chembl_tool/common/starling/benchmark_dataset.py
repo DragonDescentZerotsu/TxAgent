@@ -58,11 +58,13 @@ class LabelDecision:
 
 @dataclass(frozen=True)
 class DatasetSplit:
-    """One deterministic train/test partition over accepted parent molecules."""
+    """One deterministic train/valid/test partition over accepted parents."""
 
     method: str
     train: list[dict[str, Any]]
+    valid: list[dict[str, Any]]
     test: list[dict[str, Any]]
+    target_valid_size: int
     target_test_size: int
 
 
@@ -165,12 +167,16 @@ def build_benchmark_dataset(
     decisions: Iterable[LabelDecision],
     source_metadata: Mapping[str, Any],
     output_dir: str | Path,
-    max_test_size: int = 500,
-    test_fraction: float = 0.2,
+    max_eval_size: int = 500,
+    valid_fraction: float = 0.1,
+    test_fraction: float = 0.1,
+    agreement_threshold: float = 0.70,
     seed: int = 20260723,
     max_rejection_examples: int = 20,
 ) -> dict[str, Any]:
-    """Aggregate consistent parent labels and write random/scaffold split artifacts."""
+    """Apply record-majority labels and write random/scaffold three-way splits."""
+    if not 0.5 <= agreement_threshold <= 1.0:
+        raise ValueError("agreement_threshold must be between 0.5 and 1.0")
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
@@ -203,9 +209,17 @@ def build_benchmark_dataset(
 
     molecule_rows: list[dict[str, Any]] = []
     conflicting_rows: list[dict[str, Any]] = []
+    rejected_parent_rows: list[dict[str, Any]] = []
+    recovered_conflict_count = 0
     for identity_key, items in sorted(grouped.items()):
         labels = sorted({record.label for record, _ in items})
         label_counts = Counter(record.label for record, _ in items)
+        total_records = len(items)
+        majority_count = max(label_counts.values())
+        minority_count = total_records - majority_count
+        agreement_fraction = majority_count / total_records
+        is_tie = len(labels) > 1 and label_counts[0] == label_counts[1]
+        majority_label = 1 if label_counts[1] > label_counts[0] else 0
         identity = items[0][1]
         base = {
             "drug": identity["parent_smiles"],
@@ -219,30 +233,65 @@ def build_benchmark_dataset(
             "raw_value_examples": _unique_limited((record.raw_value for record, _ in items), 20),
             "context_examples": _unique_limited((record.context for record, _ in items), 10),
             "molecule_identity": identity,
+            "majority_label": majority_label,
+            "majority_record_count": majority_count,
+            "minority_record_count": minority_count,
+            "agreement_fraction": agreement_fraction,
+            "agreement_threshold": agreement_threshold,
+            "vote_unit": "accepted_source_record",
         }
-        if len(labels) != 1:
-            conflicting_rows.append({**base, "drop_reason": "conflicting_parent_level_labels"})
+        if is_tie:
+            rejected = {**base, "drop_reason": "parent_record_label_tie"}
+            conflicting_rows.append({**rejected, "agreement_decision": "rejected"})
+            rejected_parent_rows.append(rejected)
             continue
+        if agreement_fraction < agreement_threshold:
+            rejected = {
+                **base,
+                "drop_reason": "parent_record_agreement_below_threshold",
+            }
+            conflicting_rows.append({**rejected, "agreement_decision": "rejected"})
+            rejected_parent_rows.append(rejected)
+            continue
+        if len(labels) > 1:
+            recovered_conflict_count += 1
+            conflicting_rows.append(
+                {
+                    **base,
+                    "agreement_decision": "accepted_record_majority",
+                    "assigned_label": majority_label,
+                }
+            )
         molecule_rows.append(
             {
                 **base,
-                "Y": labels[0],
+                "Y": majority_label,
+                "label_decision": (
+                    "unanimous" if len(labels) == 1 else "accepted_record_majority"
+                ),
                 "bemis_murcko_scaffold": bemis_murcko_scaffold(identity["parent_smiles"]),
             }
         )
 
+    target_valid_size = calculate_eval_size(
+        len(molecule_rows),
+        max_eval_size=max_eval_size,
+        eval_fraction=valid_fraction,
+    )
     target_test_size = calculate_test_size(
         len(molecule_rows),
-        max_test_size=max_test_size,
+        max_test_size=max_eval_size,
         test_fraction=test_fraction,
     )
-    random_train, random_test = stratified_hash_split(
+    random_train, random_valid, random_test = stratified_hash_three_way_split(
         molecule_rows,
+        valid_size=target_valid_size,
         test_size=target_test_size,
         seed=seed,
     )
-    scaffold_train, scaffold_test = scaffold_group_split(
+    scaffold_train, scaffold_valid, scaffold_test = scaffold_group_three_way_split(
         molecule_rows,
+        valid_size=target_valid_size,
         test_size=target_test_size,
         seed=seed,
     )
@@ -250,29 +299,37 @@ def build_benchmark_dataset(
         "random": DatasetSplit(
             method="label_stratified_stable_hash",
             train=random_train,
+            valid=random_valid,
             test=random_test,
+            target_valid_size=target_valid_size,
             target_test_size=target_test_size,
         ),
         "scaffold": DatasetSplit(
             method="bemis_murcko_scaffold_group_subset_sum",
             train=scaffold_train,
+            valid=scaffold_valid,
             test=scaffold_test,
+            target_valid_size=target_valid_size,
             target_test_size=target_test_size,
         ),
     }
-    split_test_keys = {
-        name: {row["molecule_identity_key"] for row in split.test}
+    split_assignments = {
+        name: {
+            row["molecule_identity_key"]: subset
+            for subset, rows in (
+                ("train", split.train),
+                ("valid", split.valid),
+                ("test", split.test),
+            )
+            for row in rows
+        }
         for name, split in splits.items()
     }
     labeled_rows = [
         {
             **row,
             "split_assignments": {
-                name: (
-                    "test"
-                    if row["molecule_identity_key"] in split_test_keys[name]
-                    else "train"
-                )
+                name: split_assignments[name][row["molecule_identity_key"]]
                 for name in splits
             },
         }
@@ -280,6 +337,7 @@ def build_benchmark_dataset(
     ]
     _write_jsonl(output_path / "molecule_labels.jsonl", labeled_rows)
     _write_jsonl(output_path / "conflicting_molecules.jsonl", conflicting_rows)
+    _write_jsonl(output_path / "rejected_parent_molecules.jsonl", rejected_parent_rows)
     _write_jsonl(
         output_path / "source_rejection_examples.jsonl",
         (
@@ -295,20 +353,34 @@ def build_benchmark_dataset(
     }
     summary = {
         "task": task_name,
-        "protocol_version": "starling_binary_benchmark.v2",
+        "protocol_version": "starling_binary_benchmark.v4",
         "identity_normalizer_version": IDENTITY_NORMALIZER_VERSION,
         "seed": seed,
-        "test_size_policy": {
-            "formula": "min(max_test_size, floor(test_fraction * n_binary_molecules))",
-            "max_test_size": max_test_size,
+        "parent_label_policy": {
+            "method": "record_weighted_majority",
+            "agreement_formula": "max(n_label_0, n_label_1) / (n_label_0 + n_label_1)",
+            "agreement_threshold": agreement_threshold,
+            "vote_unit": "accepted_source_record",
+            "tie_policy": "reject_exact_ties",
+        },
+        "split_size_policy": {
+            "formula": "min(max_eval_size, floor(fraction * n_binary_molecules)) for valid and test",
+            "max_eval_size": max_eval_size,
+            "valid_fraction": valid_fraction,
             "test_fraction": test_fraction,
+            "target_valid_size": target_valid_size,
             "target_test_size": target_test_size,
         },
         "n_source_rows_considered": source_counts["n_source_rows_considered"],
         "n_source_rows_labeled_before_structure_normalization": source_counts["n_source_rows_labeled"],
         "source_rejection_counts": dict(sorted(rejection_counts.items())),
         "n_parent_groups_with_any_label": len(grouped),
-        "n_conflicting_parent_groups": len(conflicting_rows),
+        "n_parent_groups_with_label_conflict": len(conflicting_rows),
+        "n_parent_groups_recovered_by_majority": recovered_conflict_count,
+        "n_rejected_parent_groups": len(rejected_parent_rows),
+        "parent_rejection_counts": dict(
+            sorted(Counter(row["drop_reason"] for row in rejected_parent_rows).items())
+        ),
         "n_binary_molecules": len(molecule_rows),
         "all_label_counts": _label_counts(molecule_rows),
         "n_unique_bemis_murcko_scaffolds": len(
@@ -318,13 +390,26 @@ def build_benchmark_dataset(
             not row["bemis_murcko_scaffold"] for row in molecule_rows
         ),
         "splits": split_summaries,
-        "cross_split_test_identity_overlap": len(
-            split_test_keys["random"] & split_test_keys["scaffold"]
-        ),
+        "cross_method_eval_identity_overlap": {
+            subset: len(
+                {
+                    row["molecule_identity_key"]
+                    for row in getattr(splits["random"], subset)
+                }
+                & {
+                    row["molecule_identity_key"]
+                    for row in getattr(splits["scaffold"], subset)
+                }
+            )
+            for subset in ("valid", "test")
+        },
         "source_metadata": dict(source_metadata),
         "paths": {
             "molecule_labels": str(output_path / "molecule_labels.jsonl"),
             "conflicting_molecules": str(output_path / "conflicting_molecules.jsonl"),
+            "rejected_parent_molecules": str(
+                output_path / "rejected_parent_molecules.jsonl"
+            ),
             "source_rejection_examples": str(output_path / "source_rejection_examples.jsonl"),
         },
     }
@@ -342,19 +427,57 @@ def calculate_test_size(
     max_test_size: int = 500,
     test_fraction: float = 0.2,
 ) -> int:
-    """Calculate floor(min(max_test_size, fraction * accepted molecules))."""
+    """Backward-compatible wrapper for one evaluation subset size."""
+    return calculate_eval_size(
+        n_molecules,
+        max_eval_size=max_test_size,
+        eval_fraction=test_fraction,
+    )
+
+
+def calculate_eval_size(
+    n_molecules: int,
+    *,
+    max_eval_size: int = 500,
+    eval_fraction: float = 0.1,
+) -> int:
+    """Calculate floor(min(max_eval_size, fraction * accepted molecules))."""
     if n_molecules < 2:
         raise ValueError("at least two binary molecules are required")
-    if max_test_size <= 0:
-        raise ValueError("max_test_size must be positive")
-    if not 0 < test_fraction < 1:
-        raise ValueError("test_fraction must be between 0 and 1")
-    test_size = min(max_test_size, math.floor(test_fraction * n_molecules))
-    if test_size <= 0:
+    if max_eval_size <= 0:
+        raise ValueError("max_eval_size must be positive")
+    if not 0 < eval_fraction < 1:
+        raise ValueError("eval_fraction must be between 0 and 1")
+    eval_size = min(max_eval_size, math.floor(eval_fraction * n_molecules))
+    if eval_size <= 0:
         raise ValueError(
-            f"test-size policy produced {test_size} for {n_molecules} molecules"
+            f"evaluation-size policy produced {eval_size} for {n_molecules} molecules"
         )
-    return test_size
+    return eval_size
+
+
+def stratified_hash_three_way_split(
+    rows: list[dict[str, Any]],
+    *,
+    valid_size: int,
+    test_size: int,
+    seed: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Return exact-size, label-stratified deterministic train/valid/test sets."""
+    _validate_three_way_sizes(rows, valid_size=valid_size, test_size=test_size)
+    remaining, test = _stratified_hash_take(
+        rows,
+        take_size=test_size,
+        seed=seed,
+        namespace="test",
+    )
+    train, valid = _stratified_hash_take(
+        remaining,
+        take_size=valid_size,
+        seed=seed,
+        namespace="valid",
+    )
+    return train, valid, test
 
 
 def stratified_hash_split(
@@ -369,15 +492,35 @@ def stratified_hash_split(
     if len(rows) < test_size:
         raise ValueError(f"need at least {test_size} binary molecules, found {len(rows)}")
 
+    return _stratified_hash_take(
+        rows,
+        take_size=test_size,
+        seed=seed,
+        namespace="",
+    )
+
+
+def _stratified_hash_take(
+    rows: list[dict[str, Any]],
+    *,
+    take_size: int,
+    seed: int,
+    namespace: str,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    if take_size <= 0:
+        raise ValueError("take_size must be positive")
+    if len(rows) < take_size:
+        raise ValueError(f"need at least {take_size} binary molecules, found {len(rows)}")
+
     by_label: dict[int, list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
         by_label[int(row["Y"])].append(row)
     if set(by_label) != {0, 1}:
         raise ValueError(f"both binary labels are required, found {sorted(by_label)}")
 
-    positive_target = round(test_size * len(by_label[1]) / len(rows))
-    positive_target = min(max(1, positive_target), len(by_label[1]), test_size - 1)
-    negative_target = test_size - positive_target
+    positive_target = round(take_size * len(by_label[1]) / len(rows))
+    positive_target = min(max(1, positive_target), len(by_label[1]), take_size - 1)
+    negative_target = take_size - positive_target
     if negative_target > len(by_label[0]):
         shift = negative_target - len(by_label[0])
         negative_target -= shift
@@ -392,7 +535,11 @@ def stratified_hash_split(
         ordered = sorted(
             by_label[label],
             key=lambda row: (
-                _stable_hash(f"{seed}\0{row['molecule_identity_key']}"),
+                _stable_hash(
+                    f"{seed}\0{namespace}\0{row['molecule_identity_key']}"
+                    if namespace
+                    else f"{seed}\0{row['molecule_identity_key']}"
+                ),
                 row["molecule_identity_key"],
             ),
         )
@@ -402,13 +549,15 @@ def stratified_hash_split(
         (row for row in rows if row["molecule_identity_key"] not in test_keys),
         key=lambda row: row["molecule_identity_key"],
     )
-    test = sorted(
+    selected = sorted(
         (row for row in rows if row["molecule_identity_key"] in test_keys),
         key=lambda row: row["molecule_identity_key"],
     )
-    if len(test) != test_size:
-        raise AssertionError(f"expected {test_size} test molecules, found {len(test)}")
-    return train, test
+    if len(selected) != take_size:
+        raise AssertionError(
+            f"expected {take_size} selected molecules, found {len(selected)}"
+        )
+    return train, selected
 
 
 def bemis_murcko_scaffold(smiles: str) -> str:
@@ -429,10 +578,49 @@ def scaffold_group_split(
     seed: int,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Seed-order whole scaffolds and subset-sum toward the test target from below."""
-    if test_size <= 0:
-        raise ValueError("test_size must be positive")
-    if len(rows) < test_size:
-        raise ValueError(f"need at least {test_size} binary molecules, found {len(rows)}")
+    return _scaffold_group_take(
+        rows,
+        take_size=test_size,
+        seed=seed,
+        namespace="",
+    )
+
+
+def scaffold_group_three_way_split(
+    rows: list[dict[str, Any]],
+    *,
+    valid_size: int,
+    test_size: int,
+    seed: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Select disjoint whole-scaffold test and valid sets from one parent pool."""
+    _validate_three_way_sizes(rows, valid_size=valid_size, test_size=test_size)
+    remaining, test = _scaffold_group_take(
+        rows,
+        take_size=test_size,
+        seed=seed,
+        namespace="test",
+    )
+    train, valid = _scaffold_group_take(
+        remaining,
+        take_size=valid_size,
+        seed=seed,
+        namespace="valid",
+    )
+    return train, valid, test
+
+
+def _scaffold_group_take(
+    rows: list[dict[str, Any]],
+    *,
+    take_size: int,
+    seed: int,
+    namespace: str,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    if take_size <= 0:
+        raise ValueError("take_size must be positive")
+    if len(rows) < take_size:
+        raise ValueError(f"need at least {take_size} binary molecules, found {len(rows)}")
 
     groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
@@ -442,10 +630,14 @@ def scaffold_group_split(
         (
             (scaffold, group)
             for scaffold, group in groups.items()
-            if len(group) <= test_size
+            if len(group) <= take_size
         ),
         key=lambda item: (
-            _stable_hash(f"{seed}\0scaffold\0{item[0]}"),
+            _stable_hash(
+                f"{seed}\0scaffold\0{namespace}\0{item[0]}"
+                if namespace
+                else f"{seed}\0scaffold\0{item[0]}"
+            ),
             item[0],
         ),
     )
@@ -454,33 +646,47 @@ def scaffold_group_split(
         group_size = len(group)
         for current_size in sorted(tuple(reachable), reverse=True):
             new_size = current_size + group_size
-            if new_size > test_size or new_size in reachable:
+            if new_size > take_size or new_size in reachable:
                 continue
             reachable[new_size] = (*reachable[current_size], scaffold)
-        if test_size in reachable:
+        if take_size in reachable:
             break
 
-    actual_test_size = max(reachable)
-    if actual_test_size <= 0:
-        raise ValueError("no scaffold group fits within the requested test size")
-    test_scaffolds = set(reachable[actual_test_size])
+    actual_size = max(reachable)
+    if actual_size <= 0:
+        raise ValueError("no scaffold group fits within the requested evaluation size")
+    selected_scaffolds = set(reachable[actual_size])
     train = sorted(
-        (row for row in rows if row["bemis_murcko_scaffold"] not in test_scaffolds),
+        (row for row in rows if row["bemis_murcko_scaffold"] not in selected_scaffolds),
         key=lambda row: row["molecule_identity_key"],
     )
-    test = sorted(
-        (row for row in rows if row["bemis_murcko_scaffold"] in test_scaffolds),
+    selected = sorted(
+        (row for row in rows if row["bemis_murcko_scaffold"] in selected_scaffolds),
         key=lambda row: row["molecule_identity_key"],
     )
     train_scaffolds = {row["bemis_murcko_scaffold"] for row in train}
-    observed_test_scaffolds = {row["bemis_murcko_scaffold"] for row in test}
-    if train_scaffolds & observed_test_scaffolds:
-        raise AssertionError("scaffold leakage detected between train and test")
-    if len(test) != actual_test_size:
+    observed_selected_scaffolds = {row["bemis_murcko_scaffold"] for row in selected}
+    if train_scaffolds & observed_selected_scaffolds:
+        raise AssertionError("scaffold leakage detected between retained and selected rows")
+    if len(selected) != actual_size:
         raise AssertionError(
-            f"expected {actual_test_size} scaffold-test molecules, found {len(test)}"
+            f"expected {actual_size} scaffold-selected molecules, found {len(selected)}"
         )
-    return train, test
+    return train, selected
+
+
+def _validate_three_way_sizes(
+    rows: list[dict[str, Any]],
+    *,
+    valid_size: int,
+    test_size: int,
+) -> None:
+    if valid_size <= 0 or test_size <= 0:
+        raise ValueError("valid_size and test_size must be positive")
+    if valid_size + test_size >= len(rows):
+        raise ValueError(
+            "valid_size + test_size must leave at least one training molecule"
+        )
 
 
 def sha256_file(path: str | Path) -> str:
@@ -548,48 +754,86 @@ def _write_split_artifacts(
 ) -> dict[str, Any]:
     split_path = output_path / name
     split_path.mkdir(parents=True, exist_ok=True)
-    train_keys = {row["molecule_identity_key"] for row in split.train}
-    test_keys = {row["molecule_identity_key"] for row in split.test}
-    if train_keys & test_keys:
+    subsets = {"train": split.train, "valid": split.valid, "test": split.test}
+    key_sets = {
+        subset: {row["molecule_identity_key"] for row in rows}
+        for subset, rows in subsets.items()
+    }
+    scaffold_sets = {
+        subset: {row["bemis_murcko_scaffold"] for row in rows}
+        for subset, rows in subsets.items()
+    }
+    identity_overlaps = _pairwise_overlap_counts(key_sets)
+    scaffold_overlaps = _pairwise_overlap_counts(scaffold_sets)
+    if any(identity_overlaps.values()):
         raise AssertionError(f"{name} split has molecule-identity overlap")
+    if name == "scaffold" and any(scaffold_overlaps.values()):
+        raise AssertionError("scaffold split has train/valid/test scaffold overlap")
 
-    train_scaffolds = {row["bemis_murcko_scaffold"] for row in split.train}
-    test_scaffolds = {row["bemis_murcko_scaffold"] for row in split.test}
-    scaffold_overlap = train_scaffolds & test_scaffolds
-    if name == "scaffold" and scaffold_overlap:
-        raise AssertionError("scaffold split has train/test scaffold overlap")
-
-    train_details = (
-        {**row, "split": "train", "split_method": split.method}
-        for row in split.train
-    )
-    test_details = (
-        {**row, "split": "test", "split_method": split.method}
-        for row in split.test
-    )
     _write_jsonl(split_path / "train.jsonl", _minimal_rows(split.train))
+    _write_jsonl(split_path / "valid.jsonl", _minimal_rows(split.valid))
     _write_jsonl(split_path / "test.jsonl", _minimal_rows(split.test))
-    _write_jsonl(split_path / "train_molecule_labels.jsonl", train_details)
-    _write_jsonl(split_path / "test_molecule_labels.jsonl", test_details)
+    for subset, rows in subsets.items():
+        details = (
+            {**row, "split": subset, "split_method": split.method}
+            for row in rows
+        )
+        _write_jsonl(split_path / f"{subset}_molecule_labels.jsonl", details)
+    heldout_rows = sorted(
+        [*split.valid, *split.test],
+        key=lambda row: row["molecule_identity_key"],
+    )
+    _write_jsonl(
+        split_path / "heldout_molecule_labels.jsonl",
+        (
+            {
+                **row,
+                "split": (
+                    "valid"
+                    if row["molecule_identity_key"] in key_sets["valid"]
+                    else "test"
+                ),
+                "split_method": split.method,
+            }
+            for row in heldout_rows
+        ),
+    )
 
     summary = {
         "method": split.method,
+        "target_valid_size": split.target_valid_size,
         "target_test_size": split.target_test_size,
+        "actual_valid_size": len(split.valid),
         "actual_test_size": len(split.test),
+        "valid_size_shortfall": split.target_valid_size - len(split.valid),
         "test_size_shortfall": split.target_test_size - len(split.test),
         "n_train": len(split.train),
+        "n_valid": len(split.valid),
         "n_test": len(split.test),
         "train_label_counts": _label_counts(split.train),
+        "valid_label_counts": _label_counts(split.valid),
         "test_label_counts": _label_counts(split.test),
-        "n_train_scaffolds": len(train_scaffolds),
-        "n_test_scaffolds": len(test_scaffolds),
-        "train_test_scaffold_overlap": len(scaffold_overlap),
-        "train_test_identity_overlap": 0,
+        "n_train_scaffolds": len(scaffold_sets["train"]),
+        "n_valid_scaffolds": len(scaffold_sets["valid"]),
+        "n_test_scaffolds": len(scaffold_sets["test"]),
+        "pairwise_scaffold_overlap": scaffold_overlaps,
+        "pairwise_identity_overlap": identity_overlaps,
+        "train_valid_scaffold_overlap": scaffold_overlaps["train_valid"],
+        "train_test_scaffold_overlap": scaffold_overlaps["train_test"],
+        "valid_test_scaffold_overlap": scaffold_overlaps["valid_test"],
+        "train_valid_identity_overlap": identity_overlaps["train_valid"],
+        "train_test_identity_overlap": identity_overlaps["train_test"],
+        "valid_test_identity_overlap": identity_overlaps["valid_test"],
         "paths": {
             "train": str(split_path / "train.jsonl"),
+            "valid": str(split_path / "valid.jsonl"),
             "test": str(split_path / "test.jsonl"),
             "train_molecule_labels": str(split_path / "train_molecule_labels.jsonl"),
+            "valid_molecule_labels": str(split_path / "valid_molecule_labels.jsonl"),
             "test_molecule_labels": str(split_path / "test_molecule_labels.jsonl"),
+            "heldout_molecule_labels": str(
+                split_path / "heldout_molecule_labels.jsonl"
+            ),
         },
     }
     (split_path / "summary.json").write_text(
@@ -597,6 +841,14 @@ def _write_split_artifacts(
         encoding="utf-8",
     )
     return summary
+
+
+def _pairwise_overlap_counts(values: Mapping[str, set[str]]) -> dict[str, int]:
+    return {
+        "train_valid": len(values["train"] & values["valid"]),
+        "train_test": len(values["train"] & values["test"]),
+        "valid_test": len(values["valid"] & values["test"]),
+    }
 
 
 def _render_report(summary: Mapping[str, Any]) -> str:
@@ -607,19 +859,24 @@ def _render_report(summary: Mapping[str, Any]) -> str:
         f"- 分子身份：`{summary['identity_normalizer_version']}`",
         f"- seed：{summary['seed']}",
         f"- 可用二分类 parent：{summary['n_binary_molecules']:,}",
-        f"- test target：{summary['test_size_policy']['target_test_size']:,}",
-        f"- 因 parent-level 标签冲突而丢弃：{summary['n_conflicting_parent_groups']:,}",
+        f"- record agreement threshold：{summary['parent_label_policy']['agreement_threshold']:.0%}",
+        f"- valid / test target：{summary['split_size_policy']['target_valid_size']:,} / "
+        f"{summary['split_size_policy']['target_test_size']:,}",
+        f"- 原始 label-conflict parents：{summary['n_parent_groups_with_label_conflict']:,}",
+        f"- majority 恢复：{summary['n_parent_groups_recovered_by_majority']:,}",
+        f"- agreement/tie 拒绝：{summary['n_rejected_parent_groups']:,}",
         "",
         "## Splits",
         "",
-        "| split | train | test | test Y=0 / Y=1 | scaffold overlap |",
-        "|---|---:|---:|---:|---:|",
+        "| split | train | valid | test | valid Y=0 / Y=1 | test Y=0 / Y=1 | scaffold pairwise overlap |",
+        "|---|---:|---:|---:|---:|---:|---:|",
     ]
     for name, split in summary["splits"].items():
         lines.append(
-            f"| {name} | {split['n_train']:,} | {split['n_test']:,} | "
+            f"| {name} | {split['n_train']:,} | {split['n_valid']:,} | {split['n_test']:,} | "
+            f"{split['valid_label_counts']['0']:,} / {split['valid_label_counts']['1']:,} | "
             f"{split['test_label_counts']['0']:,} / {split['test_label_counts']['1']:,} | "
-            f"{split['train_test_scaffold_overlap']:,} |"
+            f"{sum(split['pairwise_scaffold_overlap'].values()):,} |"
         )
     lines.extend(
         [
@@ -630,11 +887,12 @@ def _render_report(summary: Mapping[str, Any]) -> str:
             json.dumps(summary["source_rejection_counts"], ensure_ascii=False, indent=2),
             "```",
             "",
-            "完整 provenance 见 `molecule_labels.jsonl`；冲突分子和 source-row rejection 示例分别见",
-            "`conflicting_molecules.jsonl` 与 `source_rejection_examples.jsonl`。",
+            "完整 provenance 见 `molecule_labels.jsonl`；所有原始 conflict parent、未达到 agreement 的拒绝",
+            "以及 source-row rejection 示例分别见 `conflicting_molecules.jsonl`、",
+            "`rejected_parent_molecules.jsonl` 与 `source_rejection_examples.jsonl`。",
             "",
-            "`random/test_molecule_labels.jsonl` 与 `scaffold/test_molecule_labels.jsonl`",
-            "分别是两套 retrieval 泄漏隔离清单。现有 full-source Starling index 不能直接用于这些 test。",
+            "每种构造方法的 `heldout_molecule_labels.jsonl` 是 valid+test union retrieval 泄漏隔离清单。",
+            "现有 full-source Starling index 不能直接用于 valid 或 test。",
             "",
         ]
     )

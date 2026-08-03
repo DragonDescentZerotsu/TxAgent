@@ -5,15 +5,19 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass, replace
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 from typing import Any
+from urllib.parse import urlparse
 
 
 PAPER_ROOT = Path("outputs/paper/molecular_evidence_agent")
-GLM_BASE_URL = "https://litellm.parcc.upenn.edu/v1"
-GLM_MODEL = "zai-org/GLM-5.2-FP8"
+GLM_BASE_URL = "http://127.0.0.1:50000/v1"
+GLM_MODEL = "nvidia/GLM-5.2-NVFP4"
+GLM_API_KEY_ENV = "GLM_LOCAL_API_KEY"
+GLM_REASONING_EFFORT = ""
 IDENTITY_BLIND = "identity_blind"
 DEPLOYMENT_VISIBLE = "deployment_visible"
 DEPLOYMENT_VISIBLE_PREFETCHED = "deployment_visible_prefetched"
@@ -212,12 +216,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.list:
         print("\n".join(experiment.name for experiment in selected))
         return 0
+    ensure_endpoint_api_key(args.api_key_env, args.base_url)
     _require_parent_disjoint_reuse_plans(selected, args)
 
     manifest = {
-        "model": GLM_MODEL,
-        "base_url": GLM_BASE_URL,
+        "model": args.model,
+        "base_url": args.base_url,
         "api_key_env": args.api_key_env,
+        "reasoning_effort": args.reasoning_effort,
         "visibility_mode": args.visibility_mode,
         "identity_blind": args.visibility_mode == IDENTITY_BLIND,
         "visibility_contract": _visibility_contract(args.visibility_mode),
@@ -262,6 +268,10 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
     visibility_mode = getattr(args, "visibility_mode", IDENTITY_BLIND)
     neighbor_identity_policy = getattr(args, "neighbor_identity_policy", OPERATIONAL)
     split = getattr(args, "split", "test")
+    base_url = getattr(args, "base_url", GLM_BASE_URL)
+    model = getattr(args, "model", GLM_MODEL)
+    reasoning_effort = getattr(args, "reasoning_effort", GLM_REASONING_EFFORT)
+    fresh_parent_disjoint = bool(getattr(args, "fresh_parent_disjoint", False))
     experiment = experiment_for_split(experiment, split)
     paper_root = _paper_root_from_args(args)
     batch_root = experiment_run_root(
@@ -290,12 +300,12 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
         "--api-key-env",
         args.api_key_env,
         "--base-url",
-        GLM_BASE_URL,
+        base_url,
         "--model",
-        GLM_MODEL,
+        model,
         "--disable-thinking",
         "--reasoning-effort",
-        "",
+        reasoning_effort,
         "--temperature",
         "0",
         "--max-tokens",
@@ -312,6 +322,9 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
         "--no-combine-traces",
         "--skip-existing",
     ]
+    limit = int(getattr(args, "limit", 0) or 0)
+    if limit:
+        command.extend(["--limit", str(limit)])
     if visibility_mode == IDENTITY_BLIND:
         command.append("--identity-blind")
     elif visibility_mode == DEPLOYMENT_VISIBLE_PREFETCHED:
@@ -325,22 +338,46 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
             command.extend(["--retrieval-replay-source-batch", str(blind_batch)])
             command.extend(["--prefetched-tool-replay-source-batch", str(blind_batch)])
     if experiment.mode != "none":
-        single_root = experiment_run_root(visibility_mode, OPERATIONAL, paper_root=paper_root)
+        operational_root = experiment_run_root(
+            visibility_mode,
+            OPERATIONAL,
+            paper_root=paper_root,
+        )
+        current_run_root = experiment_run_root(
+            visibility_mode,
+            neighbor_identity_policy,
+            paper_root=paper_root,
+        )
+        explicit_single_root = str(getattr(args, "single_analysis_root", "") or "")
+        single_root = (
+            Path(explicit_single_root)
+            if explicit_single_root
+            else current_run_root
+            if fresh_parent_disjoint
+            else operational_root
+        )
         command.extend(
             [
                 "--single-analysis-source-batch",
-                str(single_root / experiment.task / f"{experiment.task}__none")
-                if neighbor_identity_policy == PARENT_DISJOINT
-                else str(batch_root / f"{experiment.task}__none"),
+                str(single_root / experiment.task / f"{experiment.task}__none"),
             ]
         )
-        if neighbor_identity_policy == PARENT_DISJOINT:
+        if neighbor_identity_policy == PARENT_DISJOINT and not fresh_parent_disjoint:
             command.extend(
                 [
                     "--group-analysis-source-batch",
-                    str(single_root / experiment.task / experiment.name),
+                    str(operational_root / experiment.task / experiment.name),
                 ]
             )
+        else:
+            explicit_group_root = str(getattr(args, "group_analysis_root", "") or "")
+            if explicit_group_root:
+                command.extend(
+                    [
+                        "--group-analysis-source-batch",
+                        str(Path(explicit_group_root) / experiment.task / experiment.name),
+                    ]
+                )
     return command
 
 
@@ -352,9 +389,13 @@ def experiment_run_root(
 ) -> Path:
     """Return the stable batch root for one paper visibility regime."""
     if neighbor_identity_policy == PARENT_DISJOINT:
-        if visibility_mode != DEPLOYMENT_VISIBLE:
-            raise ValueError("Parent-disjoint paper ablation is defined for deployment-visible agentic runs.")
-        return paper_root / "runs_deployment_visible_parent_disjoint"
+        if visibility_mode == IDENTITY_BLIND:
+            return paper_root / "runs_identity_blind_parent_disjoint"
+        if visibility_mode == DEPLOYMENT_VISIBLE:
+            return paper_root / "runs_deployment_visible_parent_disjoint"
+        raise ValueError(
+            "Parent-disjoint runs support identity_blind or deployment_visible visibility."
+        )
     if neighbor_identity_policy != OPERATIONAL:
         raise ValueError(f"Unknown neighbor identity policy: {neighbor_identity_policy}")
     if visibility_mode == IDENTITY_BLIND:
@@ -441,8 +482,14 @@ def _prepare_policy_selection(
     selected: list[Experiment],
     args: argparse.Namespace,
 ) -> list[Experiment]:
-    """Keep the primary parent-disjoint run analog-only and reuse query-only baselines."""
+    """Select either the historical reuse ablation or a fresh parent-disjoint matrix."""
     if args.neighbor_identity_policy != PARENT_DISJOINT:
+        return selected
+    if bool(getattr(args, "fresh_parent_disjoint", False)):
+        if args.visibility_mode != IDENTITY_BLIND:
+            raise SystemExit(
+                "Fresh parent_disjoint is frozen for --visibility-mode identity_blind"
+            )
         return selected
     if args.visibility_mode != DEPLOYMENT_VISIBLE:
         raise SystemExit("parent_disjoint requires --visibility-mode deployment_visible")
@@ -461,6 +508,8 @@ def _require_parent_disjoint_reuse_plans(
 ) -> None:
     """Prevent an accidental full rerun when selective parent reuse was not planned."""
     if args.neighbor_identity_policy != PARENT_DISJOINT:
+        return
+    if bool(getattr(args, "fresh_parent_disjoint", False)):
         return
     target_root = experiment_run_root(
         DEPLOYMENT_VISIBLE,
@@ -484,7 +533,10 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--experiments", nargs="*", default=[])
     parser.add_argument("--list", action="store_true")
-    parser.add_argument("--api-key-env", default="GLM_API_KEY")
+    parser.add_argument("--api-key-env", default=GLM_API_KEY_ENV)
+    parser.add_argument("--base-url", default=GLM_BASE_URL)
+    parser.add_argument("--model", default=GLM_MODEL)
+    parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
     parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=DEPLOYMENT_VISIBLE)
     parser.add_argument("--split", choices=DATA_SPLITS, default="test")
     parser.add_argument(
@@ -501,6 +553,17 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--parallelism", type=int, default=8)
     parser.add_argument("--group-workers", type=int, default=8)
     return parser.parse_args(argv)
+
+
+def ensure_endpoint_api_key(api_key_env: str, base_url: str) -> None:
+    """Allow unauthenticated loopback vLLM without leaking a remote API key."""
+    if os.environ.get(api_key_env):
+        return
+    hostname = (urlparse(base_url).hostname or "").lower()
+    if hostname in {"127.0.0.1", "localhost", "::1"}:
+        os.environ[api_key_env] = "local"
+        return
+    raise SystemExit(f"Missing required API key environment variable: {api_key_env}")
 
 
 if __name__ == "__main__":

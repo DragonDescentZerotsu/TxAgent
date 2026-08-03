@@ -1,0 +1,75 @@
+{
+  "contract_version": "bioavailability_canonical_direct.v2",
+  "hf_source": {
+    "dataset": "starling-labs/Oral_Bioavailability",
+    "requested_revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",
+    "resolved_revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",
+    "split": "train",
+    "snapshot_path": "data/starling_data/bioavailability_ma/canonical_direct_v2/hf_oral_bioavailability_snapshot.parquet"
+  },
+  "local_source": {
+    "path": "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
+    "sha256": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010"
+  },
+  "classification_policy": {
+    "direct_local_partition": "canonical_absolute_bioavailability",
+    "rule": "explicit absolute-bioavailability wording or oral/IV anchor, with relative signals taking precedence",
+    "ambiguous_bioavailability_is_residual": true
+  },
+  "deduplication_policy": {
+    "grain": "cross-source one-to-one claim match within parent identity and PMID",
+    "numeric_match": "complete intervals must be on the same 20% threshold side and within tolerance",
+    "text_fallback": "identical normalized support text only when either side lacks a parsed numeric value",
+    "value_tolerance_percent": 1.0,
+    "same-source_rows_are_not_collapsed": true
+  },
+  "stats": {
+    "n_hf_snapshot_rows": 163815,
+    "n_hf_direct_source_rows": 111848,
+    "n_hf_direct_rejected_invalid_structure": 397,
+    "n_local_input_rows": 119192,
+    "n_local_absolute_rows_removed_from_residual": 3920,
+    "n_local_absolute_rows_with_valid_structure": 3712,
+    "n_local_absolute_rows_rejected_structure": 208,
+    "n_local_residual_rows": 115272,
+    "local_partition_counts": {
+      "canonical_absolute_bioavailability": 3712,
+      "canonical_absolute_rejected_structure": 208,
+      "residual_ambiguous_bioavailability": 3533,
+      "residual_non_bioavailability_exposure": 110550,
+      "residual_relative_bioavailability": 1189
+    },
+    "n_direct_source_rows_before_dedup": 115560,
+    "n_cross_source_matches": 2480,
+    "n_canonical_direct_claims": 113080,
+    "claim_source_origin_counts": {
+      "hf": 109368,
+      "hf+local": 2480,
+      "local": 1232
+    },
+    "local_partition_reconciliation": {
+      "input_rows": 119192,
+      "absolute_rows_removed_from_residual": 3920,
+      "absolute_rows_with_valid_structure": 3712,
+      "absolute_rows_rejected_structure": 208,
+      "residual_rows": 115272,
+      "reconciles": true
+    }
+  },
+  "paths": {
+    "hf_snapshot": "data/starling_data/bioavailability_ma/canonical_direct_v2/hf_oral_bioavailability_snapshot.parquet",
+    "direct_source_rows": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_source_rows.parquet",
+    "direct_claims": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
+    "direct_rejected_rows": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_rejected_rows.parquet",
+    "dedup_audit": "data/starling_data/bioavailability_ma/canonical_direct_v2/cross_source_dedup_audit.parquet",
+    "local_partition_audit": "data/starling_data/bioavailability_ma/canonical_direct_v2/local_partition_audit.parquet",
+    "residual_records": "data/starling_data/bioavailability_ma/oral_exposure_residual_v2/exposure_records.parquet",
+    "hf_snapshot_sha256": "70c1c1c298c904e70eb1efc154dcad61e6691b5079777cd2d70681192046c83e",
+    "direct_source_rows_sha256": "2a531d43ba5c79657b284b5f3a57e4f483dc034719b77cde735bef801dce9ba2",
+    "direct_claims_sha256": "045261cbda785092143eeadd636f78399f7b02f951b23480b16fb8dde22661c5",
+    "direct_rejected_rows_sha256": "58782e8dce9a5d40868d462a29fb7d13327c342f69f95eef9d251ce483240b94",
+    "dedup_audit_sha256": "ee74f6d91d63b2a1edb1995ea1a740efb82703bbc87889d1b73ef144af6ce7ce",
+    "local_partition_audit_sha256": "cb4d35625b3edf3426f27376f88b7c9316f59d138ae8f8dbb32c1c28cbc94885",
+    "residual_records_sha256": "81c45f9dc035ed2b066b19a569eb80ef1f806d7a0f421956ea92b2dadb779bda"
+  }
+}

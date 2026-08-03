@@ -5,18 +5,29 @@ from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
     DEPLOYMENT_VISIBLE_PREFETCHED,
     EXPERIMENTS,
+    IDENTITY_BLIND,
     PARENT_DISJOINT,
     _command,
     _parse_args,
     _prepare_policy_selection,
     experiment_for_split,
+    experiment_run_root,
     paper_root_for_split,
 )
 from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     _benchmark_provenance,
     _matrix_manifest_path,
+    _paper_root_for_evaluation_subset,
+    _validate_concurrency,
     _write_json_atomic,
     experiments_for_starling_benchmark,
+)
+from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
+    paper_root_for_minimol_retrieval,
+)
+from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import (
+    _collect_existing_index_meta,
+    _load_existing_summary,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     _group_prompt_payload,
@@ -56,8 +67,67 @@ def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_ind
     chembl = next(item for item in experiments if item.name == "bbb_martins__chembl_direct")
     starling = next(item for item in experiments if item.name == "bbb_martins__starling_direct")
     assert chembl.index == EXPERIMENTS[1].index
-    assert "molecular_evidence_agent_starling_random/evidence" in starling.index
+    assert "molecular_evidence_agent_starling_random_record_agreement70_split811_v1/evidence" in starling.index
     assert starling.index.endswith("bbb_starling_direct/starling_bbb_neighbor_index.pkl")
+
+
+def test_starling_benchmark_matrix_can_select_valid_without_changing_indices():
+    test_experiments = experiments_for_starling_benchmark("random")
+    valid_experiments = experiments_for_starling_benchmark(
+        "random",
+        evaluation_subset="valid",
+    )
+
+    assert all("/random/valid.jsonl" in item.input_jsonl for item in valid_experiments)
+    assert [item.index for item in valid_experiments] == [
+        item.index for item in test_experiments
+    ]
+
+
+def test_partial_starling_index_rebuild_can_preserve_existing_summary(tmp_path):
+    summary = tmp_path / "summary.json"
+    summary.write_text(json.dumps({"random": {"bbb": {"ok": True}}}), encoding="utf-8")
+
+    assert _load_existing_summary(summary) == {"random": {"bbb": {"ok": True}}}
+    assert _load_existing_summary(tmp_path / "missing.json") == {}
+
+
+def test_index_summary_can_be_rebuilt_after_parallel_partial_builds(tmp_path):
+    meta_path = (
+        tmp_path
+        / "molecular_evidence_agent_starling_random_record_agreement70_split811_v1"
+        / "evidence"
+        / "example"
+        / "meta.json"
+    )
+    meta_path.parent.mkdir(parents=True)
+    meta_path.write_text(json.dumps({"zero_parent_overlap": True}), encoding="utf-8")
+
+    collected = _collect_existing_index_meta(
+        splits=["random"],
+        specs=[{"name": "example", "meta_filename": "meta.json"}],
+        output_root=tmp_path,
+    )
+
+    assert collected == {"random": {"example": {"zero_parent_overlap": True}}}
+
+
+def test_starling_minimol_matrix_uses_descriptors_and_isolated_output_root():
+    experiments = experiments_for_starling_benchmark(
+        "scaffold",
+        retrieval_feature="minimol",
+    )
+    none = next(item for item in experiments if item.name == "bbb_martins__none")
+    direct = next(item for item in experiments if item.name == "bbb_martins__chembl_direct")
+
+    assert none.index == EXPERIMENTS[0].index
+    assert direct.index.endswith(
+        "minimol_retrieval_features_record_agreement70_split811_v1/scaffold/descriptors/"
+        "bbb_martins__chembl_direct.json"
+    )
+    assert paper_root_for_minimol_retrieval("scaffold").name == (
+        "molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_minimol_retrieval"
+    )
 
 
 def test_starling_matrix_uses_selection_specific_atomic_manifests(tmp_path):
@@ -94,6 +164,8 @@ def test_starling_matrix_provenance_hashes_split_inputs(tmp_path):
                 "protocol_version": "test.protocol.v1",
                 "identity_normalizer_version": "test.identity.v1",
                 "seed": 7,
+                "parent_label_policy": {"agreement_threshold": 0.7},
+                "split_size_policy": {"valid_fraction": 0.1, "test_fraction": 0.1},
                 "source_metadata": {"revision": "abc"},
             }
         )
@@ -102,7 +174,15 @@ def test_starling_matrix_provenance_hashes_split_inputs(tmp_path):
         json.dumps({"train_test_identity_overlap": 0})
     )
     (split_dir / "test.jsonl").write_text('{"drug":"CCO","Y":1}\n')
+    (split_dir / "valid.jsonl").write_text('{"drug":"CCN","Y":0}\n')
+    (split_dir / "valid_molecule_labels.jsonl").write_text(
+        '{"drug":"CCN","Y":0,"molecule_identity_key":"QUSNBJAOOMFDIB-UHFFFAOYSA-N"}\n'
+    )
     (split_dir / "test_molecule_labels.jsonl").write_text(
+        '{"drug":"CCO","Y":1,"molecule_identity_key":"LFQSCWFLJHTTHZ-UHFFFAOYSA-N"}\n'
+    )
+    (split_dir / "heldout_molecule_labels.jsonl").write_text(
+        '{"drug":"CCN","Y":0,"molecule_identity_key":"QUSNBJAOOMFDIB-UHFFFAOYSA-N"}\n'
         '{"drug":"CCO","Y":1,"molecule_identity_key":"LFQSCWFLJHTTHZ-UHFFFAOYSA-N"}\n'
     )
 
@@ -115,9 +195,14 @@ def test_starling_matrix_provenance_hashes_split_inputs(tmp_path):
     bbb = provenance["bbb_martins"]
     assert bbb["protocol_version"] == "test.protocol.v1"
     assert bbb["source_metadata"] == {"revision": "abc"}
+    assert bbb["parent_label_policy"] == {"agreement_threshold": 0.7}
+    assert bbb["split_size_policy"] == {"valid_fraction": 0.1, "test_fraction": 0.1}
     assert bbb["split_summary"]["train_test_identity_overlap"] == 0
     assert len(bbb["test_jsonl_sha256"]) == 64
+    assert len(bbb["valid_jsonl_sha256"]) == 64
+    assert len(bbb["valid_molecule_labels_sha256"]) == 64
     assert len(bbb["test_molecule_labels_sha256"]) == 64
+    assert len(bbb["heldout_molecule_labels_sha256"]) == 64
 
 
 def test_starling_matrix_accepts_manifest_only_mode():
@@ -130,6 +215,74 @@ def test_starling_matrix_accepts_manifest_only_mode():
     )
 
     assert args.manifest_only is True
+    assert args.base_url == "http://127.0.0.1:50000/v1"
+    assert args.model == "nvidia/GLM-5.2-NVFP4"
+    assert args.reasoning_effort == ""
+    assert args.api_key_env == "GLM_LOCAL_API_KEY"
+    assert args.evaluation_subset == "valid"
+    assert args.visibility_mode == IDENTITY_BLIND
+    assert args.neighbor_identity_policy == PARENT_DISJOINT
+    assert args.parallelism == 128
+    assert args.group_workers == 1
+
+
+def test_starling_matrix_enforces_single_endpoint_concurrency_budget():
+    from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
+        _parse_args as parse_starling_args,
+    )
+
+    accepted = parse_starling_args(
+        ["--benchmark-split", "random", "--parallelism", "256", "--group-workers", "2"]
+    )
+    _validate_concurrency(accepted)
+
+    rejected = parse_starling_args(
+        ["--benchmark-split", "random", "--parallelism", "512", "--group-workers", "2"]
+    )
+    try:
+        _validate_concurrency(rejected)
+    except SystemExit as error:
+        assert "exceeds the frozen endpoint budget" in str(error)
+    else:
+        raise AssertionError("Expected an over-budget launcher shape to be rejected")
+
+
+def test_starling_valid_root_is_isolated_from_formal_test_root(tmp_path):
+    canonical = tmp_path / "starling_random_v4"
+
+    assert _paper_root_for_evaluation_subset(canonical, "test") == canonical
+    assert _paper_root_for_evaluation_subset(canonical, "valid") == tmp_path / "starling_random_v4_valid"
+
+
+def test_fresh_identity_blind_parent_disjoint_keeps_none_and_avoids_group_reuse(tmp_path):
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_LOCAL_API_KEY",
+        parallelism=512,
+        group_workers=1,
+        visibility_mode=IDENTITY_BLIND,
+        neighbor_identity_policy=PARENT_DISJOINT,
+        fresh_parent_disjoint=True,
+        paper_root=str(tmp_path),
+        split="valid",
+        limit=0,
+        experiments=[],
+    )
+    selected = _prepare_policy_selection(list(EXPERIMENTS), args)
+    assert any(item.mode == "none" for item in selected)
+
+    command = _command(EXPERIMENTS[1], args)
+    batch_root = command[command.index("--batch-root") + 1]
+    single_root = command[command.index("--single-analysis-source-batch") + 1]
+    assert "runs_identity_blind_parent_disjoint" in batch_root
+    assert "runs_identity_blind_parent_disjoint" in single_root
+    assert "--group-analysis-source-batch" not in command
+    assert "--identity-blind" in command
+    assert experiment_run_root(
+        IDENTITY_BLIND,
+        PARENT_DISJOINT,
+        paper_root=tmp_path,
+    ).name == "runs_identity_blind_parent_disjoint"
 
 
 def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():
@@ -137,6 +290,9 @@ def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():
 
     assert args.visibility_mode == DEPLOYMENT_VISIBLE
     assert args.neighbor_identity_policy == PARENT_DISJOINT
+    assert args.base_url == "http://127.0.0.1:50000/v1"
+    assert args.model == "nvidia/GLM-5.2-NVFP4"
+    assert args.reasoning_effort == ""
     selected = _prepare_policy_selection(list(EXPERIMENTS), args)
     assert selected
     assert all(experiment.mode != "none" for experiment in selected)
@@ -240,7 +396,9 @@ def test_valid_split_changes_only_dataset_and_isolates_output_root():
     assert command[command.index("--input-jsonl") + 1].endswith("/valid.jsonl")
     assert str(paper_root_for_split("valid")) in command[command.index("--batch-root") + 1]
     assert EXPERIMENTS[1].index == valid_experiment.index
-    assert command[command.index("--model") + 1] == "zai-org/GLM-5.2-FP8"
+    assert command[command.index("--model") + 1] == "nvidia/GLM-5.2-NVFP4"
+    assert command[command.index("--base-url") + 1] == "http://127.0.0.1:50000/v1"
+    assert command[command.index("--reasoning-effort") + 1] == ""
     assert command[command.index("--temperature") + 1] == "0"
     assert command[command.index("--max-tokens") + 1] == "20480"
 
@@ -284,6 +442,65 @@ def test_parent_disjoint_command_uses_separate_root_and_operational_single_prior
     assert "runs_deployment_visible" in single_source
     group_source = command[command.index("--group-analysis-source-batch") + 1]
     assert group_source.endswith("bbb_martins__chembl_direct")
+
+
+def test_parent_disjoint_command_can_reuse_external_single_without_crossing_group_features():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_API_KEY",
+        parallelism=2,
+        group_workers=3,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy=PARENT_DISJOINT,
+        paper_root="/tmp/minimol-paper-root",
+        single_analysis_root="/tmp/frozen-morgan-single-root",
+        split="test",
+    )
+
+    command = _command(EXPERIMENTS[1], args)
+
+    single_source = command[command.index("--single-analysis-source-batch") + 1]
+    group_source = command[command.index("--group-analysis-source-batch") + 1]
+    assert single_source.startswith("/tmp/frozen-morgan-single-root/")
+    assert group_source.startswith("/tmp/minimol-paper-root/runs_deployment_visible/")
+
+
+def test_operational_feature_ablation_reuses_only_hash_identical_morgan_groups():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_API_KEY",
+        parallelism=2,
+        group_workers=3,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy="operational",
+        paper_root="/tmp/minimol-paper-root",
+        single_analysis_root="/tmp/frozen-morgan-operational",
+        group_analysis_root="/tmp/frozen-morgan-operational",
+        split="test",
+    )
+
+    command = _command(EXPERIMENTS[1], args)
+
+    single_source = command[command.index("--single-analysis-source-batch") + 1]
+    group_source = command[command.index("--group-analysis-source-batch") + 1]
+    assert single_source.startswith("/tmp/frozen-morgan-operational/")
+    assert group_source.startswith("/tmp/frozen-morgan-operational/")
+
+
+def test_matrix_command_passes_explicit_smoke_limit_only_when_requested():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_API_KEY",
+        parallelism=1,
+        group_workers=1,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy="operational",
+        limit=1,
+    )
+
+    command = _command(EXPERIMENTS[0], args)
+
+    assert command[command.index("--limit") + 1] == "1"
 
 
 def test_matched_prefetch_command_is_visible_but_disables_agentic_tool_choice():

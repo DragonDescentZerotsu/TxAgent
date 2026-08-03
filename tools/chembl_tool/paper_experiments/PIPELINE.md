@@ -43,10 +43,10 @@ query SMILES（始终供 harness 检索使用；是否发送给 LLM 由可见性
     -> 保留 similarity >= 0.30 的前 3 个 neighbor
 ```
 
-论文区分两套 retrieval policy。Operational policy 代表真实部署：排除完全相同的 source record，但允许
-同一 RDKit molecular parent 的盐型、溶剂化物、重复组分和 formulation-linked evidence，并标记其 entity relation。
-Parent-disjoint policy 是 analog-only 消融：对 query 和 source molecule 使用同一 parent normalizer，排除
+新 v4 主 pipeline 固定 parent-disjoint：对 query 和 source molecule 使用同一 parent normalizer，排除
 相同 parent 后继续向后取候选，直至补足 top-k 或耗尽候选。不能通过删除受影响 query 来代替重检索。
+Operational policy 允许 same-parent formulation evidence，仅保留为历史或显式 deployment-sensitivity
+ablation；它不再是 v4 staging，也不产生主矩阵 reuse plan。
 
 实验视图包括：
 
@@ -59,11 +59,11 @@ flat 视图由已经选定的 mechanism 视图生成，因此 flat 与 mechanism
 
 ## 可见性与工具执行制度
 
-论文主结果表使用 deployment-visible agentic tool-use；identity-blind 和 matched-prefetch 作为补充控制。
-三者复用同一套 retrieval、task config、reasoning、validation 和 batch 代码，但 agentic 与 prefetched 的
-工具执行路径和计算量不同，不能把二者差异解释为纯 visibility 因果效应。
+新 v4 主结果表使用 identity-blind + parent-disjoint。Deployment-visible agentic 和 matched-prefetch 作为
+显式补充控制。三者复用同一套 retrieval、task config、reasoning、validation 和 batch 代码，但 agentic 与
+prefetched 的工具执行路径和计算量不同，不能把二者差异解释为纯 visibility 因果效应。
 
-### 身份盲化补充控制
+### 身份盲化主制度
 
 在报告所用实验中，LLM 从不接收 query 或 neighbor 的结构和标识符。
 
@@ -100,11 +100,11 @@ retrieved molecule:
 MCS timeout 影响的工具。visible prompt 保留相同 evidence 和工具文本，同时恢复 query/neighbor 结构、
 source ID 和数据源已有名称。因此该补充配对唯一改变的是 LLM 可见的身份与结构信息。
 
-### 部署可见：Agentic 主实验
+### 部署可见：Agentic 补充实验
 
 `deployment_visible` 保留 query structure、neighbor structure/source ID/source name；query properties 由
 single branch 请求，group comparison 工具由模型自主选择。该制度回答真实部署中的端到端 agent 性能，
-用于论文主表；不得与 `identity_blind` 构成严格 visibility 对照。
+只作为显式补充实验；不得与 `identity_blind` 构成严格 visibility 对照，也不阻塞 v4 主矩阵。
 
 ## 推理与汇总
 

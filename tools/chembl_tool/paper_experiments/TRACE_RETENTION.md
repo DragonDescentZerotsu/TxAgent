@@ -4,7 +4,20 @@
 
 ## 唯一正式目录
 
-最终论文 trace 只保留在：
+2026-08-01 起，新 `record_agreement70_split811_v1` lineage 的正式 trace 只保留在：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/
+  runs_identity_blind_parent_disjoint/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/
+  runs_identity_blind_parent_disjoint/
+```
+
+这两个 root 是新 v4 主矩阵；不依赖 operational 或 `reuse.json`。下述四个
+`outputs/paper/molecular_evidence_agent/` roots 是旧 TDC/strict-conflict lineage 的 historical allowlist，
+继续保留但不得与 v4 混表或作为新默认。
+
+历史论文 trace 保留在：
 
 ```text
 outputs/paper/molecular_evidence_agent/
@@ -106,7 +119,10 @@ activity-transfer benchmark 的正式 runs 继续保留；task assay/evidence li
 
 ## Viewer 约束
 
-`tools/trace_viewer/viewer.html` 只扫描上述四个正式 paper run root。它通过 `predictions.jsonl` 构建样本目录，再按需加载样本级 trace、retrieval、sample manifest 和 reuse provenance；渲染依据统一 stage、message、tool call 和 JSON 数据结构，不硬编码 task prediction 字段、旧 Tier 或 expert-policy schema。
+`tools/trace_viewer/viewer.html` 对新 v4 扫描 `runs_identity_blind_parent_disjoint/`，对历史 dataset 扫描上述
+四个 legacy paper roots。它通过 `predictions.jsonl` 构建样本目录，再按需加载样本级 trace、retrieval、
+sample manifest 和可选 reuse provenance；渲染依据统一 stage、message、tool call 和 JSON 数据结构，
+不硬编码 task prediction 字段、旧 Tier 或 expert-policy schema。
 
 启动方式：
 

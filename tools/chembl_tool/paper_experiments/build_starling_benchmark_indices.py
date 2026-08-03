@@ -1,4 +1,4 @@
-"""Build random/scaffold Starling indices with all test parents excluded."""
+"""Build random/scaffold Starling indices with all valid/test parents excluded."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from tools.chembl_tool.common.starling import build_heldout_starling_index
 
 DEFAULT_OUTPUT_ROOT = Path("outputs/paper")
 BENCHMARK_SPLITS = ("random", "scaffold")
+BENCHMARK_LINEAGE = "record_agreement70_split811_v1"
 
 INDEX_SPECS: tuple[dict[str, str], ...] = (
     {
@@ -41,7 +42,7 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
         "task": "Bioavailability_Ma",
         "source_evidence": (
             "outputs/paper/molecular_evidence_agent/evidence/"
-            "bioavailability_starling_direct_numeric/starling_factor_evidence.jsonl"
+            "bioavailability_starling_direct_numeric_v2/starling_factor_evidence.jsonl"
         ),
         "evidence_filename": "starling_factor_evidence.jsonl",
         "index_filename": "starling_factor_neighbor_index.pkl",
@@ -52,7 +53,7 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
         "task": "Bioavailability_Ma",
         "source_evidence": (
             "outputs/paper/molecular_evidence_agent/evidence/"
-            "bioavailability_starling_full/starling_factor_evidence.jsonl"
+            "bioavailability_starling_full_v2/starling_factor_evidence.jsonl"
         ),
         "evidence_filename": "starling_factor_evidence.jsonl",
         "index_filename": "starling_factor_neighbor_index.pkl",
@@ -86,23 +87,37 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
 def paper_root_for_benchmark_split(split: str, *, output_root: str | Path = DEFAULT_OUTPUT_ROOT) -> Path:
     if split not in BENCHMARK_SPLITS:
         raise ValueError(f"Unknown Starling benchmark split: {split}")
-    return Path(output_root) / f"molecular_evidence_agent_starling_{split}"
+    return Path(output_root) / f"molecular_evidence_agent_starling_{split}_{BENCHMARK_LINEAGE}"
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     splits = args.splits or list(BENCHMARK_SPLITS)
     specs = _select_specs(args.indices)
-    results: dict[str, Any] = {}
+    summary_path = Path(args.output_root) / "starling_benchmark_index_summary.json"
+    if args.summarize_existing:
+        results = _collect_existing_index_meta(
+            splits=splits,
+            specs=specs,
+            output_root=args.output_root,
+        )
+        summary_path.parent.mkdir(parents=True, exist_ok=True)
+        summary_path.write_text(
+            json.dumps(results, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(json.dumps({"summary": str(summary_path)}, indent=2), flush=True)
+        return 0
+    results = _load_existing_summary(summary_path)
     for split in splits:
         paper_root = paper_root_for_benchmark_split(split, output_root=args.output_root)
-        split_results: dict[str, Any] = {}
+        split_results = dict(results.get(split, {}))
         for spec in specs:
             heldout_path = (
                 Path("data/processed_starling")
                 / spec["task"]
                 / split
-                / "test_molecule_labels.jsonl"
+                / "heldout_molecule_labels.jsonl"
             )
             out_dir = paper_root / "evidence" / spec["name"]
             print(f"[starling_benchmark_index] split={split} index={spec['name']}", flush=True)
@@ -110,7 +125,7 @@ def main(argv: list[str] | None = None) -> int:
                 source_evidence_jsonl=spec["source_evidence"],
                 heldout_labels_jsonl=heldout_path,
                 out_dir=out_dir,
-                index_version=f"{spec['name']}.heldout_{split}.v1",
+                index_version=f"{spec['name']}.heldout_valid_test_{split}.v2",
                 evidence_filename=spec["evidence_filename"],
                 index_filename=spec["index_filename"],
                 meta_filename=spec["meta_filename"],
@@ -120,11 +135,44 @@ def main(argv: list[str] | None = None) -> int:
             split_results[spec["name"]] = meta
         results[split] = split_results
 
-    summary_path = Path(args.output_root) / "starling_benchmark_index_summary.json"
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"summary": str(summary_path)}, indent=2), flush=True)
     return 0
+
+
+def _load_existing_summary(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected object in existing index summary: {path}")
+    return payload
+
+
+def _collect_existing_index_meta(
+    *,
+    splits: list[str],
+    specs: list[dict[str, str]],
+    output_root: str | Path,
+) -> dict[str, Any]:
+    results: dict[str, Any] = {}
+    missing: list[str] = []
+    for split in splits:
+        paper_root = paper_root_for_benchmark_split(split, output_root=output_root)
+        split_results: dict[str, Any] = {}
+        for spec in specs:
+            meta_path = paper_root / "evidence" / spec["name"] / spec["meta_filename"]
+            if not meta_path.exists():
+                missing.append(str(meta_path))
+                continue
+            split_results[spec["name"]] = json.loads(
+                meta_path.read_text(encoding="utf-8")
+            )
+        results[split] = split_results
+    if missing:
+        raise SystemExit("Missing held-out index metadata:\n" + "\n".join(missing))
+    return results
 
 
 def _select_specs(names: list[str]) -> list[dict[str, str]]:
@@ -144,6 +192,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--workers", type=int, default=32)
     parser.add_argument("--progress-every", type=int, default=10000)
+    parser.add_argument(
+        "--summarize-existing",
+        action="store_true",
+        help="Rebuild only the root summary from existing held-out index metadata.",
+    )
     return parser.parse_args(argv)
 
 

@@ -7,12 +7,10 @@ uses the repo's fixed train/valid/test JSONL splits instead of TDC folds.
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import math
 import os
 import random
-import sys
 from copy import deepcopy
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -27,10 +25,14 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader, Dataset
 
+from baselines.minimol.embedding_runtime import (
+    DEFAULT_MINIMOL_SOURCE,
+    create_featurizer,
+    embed_smiles,
+)
 
 DEFAULT_DATA_DIR = Path("data/processed/Bioavailability_Ma")
 DEFAULT_OUTPUT_DIR = Path("outputs/baselines/minimol/bioavailability_ma")
-DEFAULT_MINIMOL_SOURCE = Path("/data1/tianang/Projects/minimol")
 
 
 class TaskHead(nn.Module):
@@ -154,64 +156,6 @@ def set_seed(seed: int) -> None:
     torch.cuda.manual_seed_all(seed)
 
 
-def ensure_minimol_import(minimol_source: Path) -> None:
-    if importlib.util.find_spec("minimol") is not None:
-        return
-    if minimol_source.exists():
-        sys.path.insert(0, str(minimol_source))
-
-
-def patch_graphium_float32_featurization() -> None:
-    """Avoid SciPy sparse float16 failures in Graphium's CPU featurization path."""
-    from scipy.sparse import coo_matrix
-
-    import graphium.data.datamodule as graphium_datamodule
-    import graphium.features as graphium_features
-    import graphium.features.featurizer as graphium_featurizer
-    import graphium.features.nmp as graphium_nmp
-
-    if getattr(graphium_featurizer.mol_to_pyggraph, "_txagent_float32_patch", False):
-        return
-
-    original_mol_to_pyggraph = graphium_featurizer.mol_to_pyggraph
-
-    def mol_to_adjacency_matrix_float32(
-        mol,
-        use_bonds_weights: bool = False,
-        add_self_loop: bool = False,
-        dtype=np.float32,
-    ):
-        adj_idx = []
-        adj_val = []
-        for bond in mol.GetBonds():
-            adj_idx.append([bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()])
-            adj_idx.append([bond.GetEndAtomIdx(), bond.GetBeginAtomIdx()])
-            val = graphium_nmp.BOND_TYPES[bond.GetBondType()] if use_bonds_weights else 1.0
-            adj_val.extend([val, val])
-
-        if adj_val:
-            data = np.asarray(adj_val, dtype=np.float32)
-            coords = np.asarray(adj_idx, dtype=np.int64).T.reshape(2, -1)
-            adj = coo_matrix((data, coords), shape=(mol.GetNumAtoms(), mol.GetNumAtoms()), dtype=np.float32)
-        else:
-            adj = coo_matrix(([], np.array([[], []])), shape=(mol.GetNumAtoms(), mol.GetNumAtoms()), dtype=np.float32)
-
-        if add_self_loop:
-            arange = np.arange(adj.shape[0], dtype=int)
-            adj[arange, arange] = 1
-        return adj
-
-    def mol_to_pyggraph_float32(*args, **kwargs):
-        kwargs["dtype"] = np.float32
-        return original_mol_to_pyggraph(*args, **kwargs)
-
-    mol_to_pyggraph_float32._txagent_float32_patch = True
-    graphium_featurizer.mol_to_adjacency_matrix = mol_to_adjacency_matrix_float32
-    graphium_featurizer.mol_to_pyggraph = mol_to_pyggraph_float32
-    graphium_features.mol_to_pyggraph = mol_to_pyggraph_float32
-    graphium_datamodule.mol_to_pyggraph = mol_to_pyggraph_float32
-
-
 def cache_path(output_dir: Path, split_name: str) -> Path:
     return output_dir / "embeddings" / f"{split_name}.pt"
 
@@ -230,35 +174,12 @@ def featurize_split(split_name: str, split: SplitData, args: argparse.Namespace)
             return payload["embeddings"].float()
         print(f"[minimol] cache mismatch for {split_name}; recomputing embeddings")
 
-    ensure_minimol_import(args.minimol_source)
-    patch_graphium_float32_featurization()
-    from hydra.core.global_hydra import GlobalHydra
-    from minimol import Minimol
-
     print(f"[minimol] featurizing {split_name}: {len(split.smiles)} molecules")
-    original_torch_load = torch.load
-
-    def torch_load_weights_compatible(*load_args, **load_kwargs):
-        load_kwargs.setdefault("weights_only", False)
-        return original_torch_load(*load_args, **load_kwargs)
-
-    try:
-        # MiniMol's bundled checkpoint predates PyTorch's weights_only=True default.
-        if GlobalHydra.instance().is_initialized():
-            GlobalHydra.instance().clear()
-        torch.load = torch_load_weights_compatible
-        featurizer = Minimol(batch_size=args.embedding_batch_size)
-    finally:
-        torch.load = original_torch_load
-
-    featurizer.datamodule.featurization_n_jobs = 1
-    with torch.no_grad():
-        embeddings = featurizer(split.smiles)
-
-    if len(embeddings) != len(split.smiles):
-        raise RuntimeError(f"MiniMol returned {len(embeddings)} embeddings for {len(split.smiles)} {split_name} molecules")
-
-    tensor = torch.stack([embedding.detach().cpu().float() for embedding in embeddings])
+    featurizer = create_featurizer(
+        batch_size=args.embedding_batch_size,
+        minimol_source=args.minimol_source,
+    )
+    tensor = embed_smiles(featurizer, split.smiles)
     path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"smiles": split.smiles, "labels": split.labels, "embeddings": tensor}, path)
     return tensor

@@ -13,24 +13,30 @@
 - [当前结果](RESULTS.md)：已完成 full run 的实测结果。
 - [Trace 保留策略](TRACE_RETENTION.md)：最终 trace 的唯一目录、清理边界和一致性约束。
 
-## 共享约定
+## 新 v4 默认运行约定
 
 所有 LLM 实验共享以下条件：
 
-- 通过 Penn LiteLLM OpenAI-compatible endpoint 使用 GLM-5.2
+- 默认通过 SSH tunnel 直连 `http://127.0.0.1:50000/v1`，模型为 `nvidia/GLM-5.2-NVFP4`
+- 保持历史 `--disable-thinking --reasoning-effort ""`，GLM reasoning 仍保存到 trace
 - temperature 0，最大输出 20,480 tokens
-- operational retrieval 排除完全相同的 source record，但允许并标记 same-parent formulation record
-- parent-disjoint 消融排除相同 RDKit molecular parent，并只用原 similarity threshold 以上的后续
-  structural analog 回填 top-k；这里的 parent 不是药理学 active moiety
+- 主矩阵固定 `identity_blind + parent_disjoint`；直接排除相同 RDKit molecular parent，并只用原
+  similarity threshold 以上的后续 structural analog 回填 top-k
+- operational 不再预跑，不生成或依赖 `reuse_plan.json`；只作为显式 historical/deployment ablation
+- endpoint 全局并发预算上限为 512；首次 512 压力运行出现 1/500 transport timeout 后，
+  随后 384 的 full-flat 运行仍发生大量长 group-request timeout，因此当前单 launcher 默认使用
+  `--parallelism 128 --group-workers 1`，禁止多个
+  launcher 各自再占 512
 - 每个 task/query 冻结一个 single-molecule analysis，并在各检索条件间复用
 - 每个 evidence group 最多检索 3 个 Morgan similarity 不低于 0.30 的 neighbor
 - 共享 single、group、final、JSON validation、retry、trace 和 batch evaluation workflow
 
-论文主结果表使用 deployment-visible agentic tool-use 制度：
+新 v4 论文主结果表使用 identity-blind 制度：
 
-- `deployment_visible`：结构与允许身份信息可见；LLM 自主选择工具；用于主表的 none/direct/flat/mechanism 和 source comparison。
-- `identity_blind`：LLM 不看 query/neighbor 的结构和身份；harness 预取结构工具结果；只作为补充诊断。
-- `deployment_visible_prefetched`：结构与允许身份信息可见；逐 query replay `identity_blind` 的冻结 retrieval 和工具结果；只作为 matched control。
+- `identity_blind`：LLM 不看 query/neighbor 的结构和身份；harness 预取结构工具结果；用于主表的
+  none/direct/flat/mechanism 和 source comparison。
+- `deployment_visible`：只作为显式 agentic/deployment ablation，不是默认。
+- `deployment_visible_prefetched`：只作为显式 matched visibility control，不阻塞主矩阵。
 
 实验模式定义在 `common/experiment_retrieval.py`：
 
@@ -46,6 +52,8 @@
 运行矩阵前先构建冻结的 Starling index：
 
 ```bash
+python -m tools.chembl_tool.tasks.bioavailability_ma.build_canonical_starling_source
+
 python -m tools.chembl_tool.tasks.bbb_martins.build_starling_full_evidence_library \
   --out-dir outputs/paper/molecular_evidence_agent/evidence/bbb_starling_full \
   --workers 128
@@ -57,60 +65,72 @@ python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library 
 python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
   --scope full \
   --evidence-content full \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v2 \
   --workers 128
 
 python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
   --scope direct \
   --evidence-content numeric_only \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_direct_numeric \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_direct_numeric_v2 \
   --workers 128
+```
+
+### 数据审计与构建入口
+
+```text
+tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
+  固定 HF snapshot，将 local 中明确 absolute/oral-IV 的记录移入 canonical direct source，跨来源按
+  parent+PMID 近等值 claim 一对一去重，并生成 residual exposure 与完整 partition/dedup audit。
+
+tools/chembl_tool/paper_experiments/analyze_starling_parent_provenance.py
+  重建每个 parent 的 accepted-record 和 unique-PMID 分布；其中 strict status 仅表示是否出现过两种 label。
+
+tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
+  比较 50/60/70/80/90% record agreement 下的 keep/reject、label、record 和 publication 分布。
+
+tools/chembl_tool/common/starling/build_benchmark_datasets.py
+  唯一正式 gold builder：70% record-majority、精确 tie 拒绝、random/scaffold 8:1:1 split，并生成
+  valid+test union 的 heldout audit artifact。
+
+tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
+  读取 heldout union，从 inference evidence 删除全部 valid/test parents，构建 split-specific index。
+
+tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+  当前正式 valid/test runner；默认 identity_blind + parent_disjoint、128×1，valid 与 test root 隔离。
 ```
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --list
 ```
 
-Runner 默认使用 `deployment_visible + parent_disjoint`，即论文 structural-analog retrieval 主设置。
-Parent-disjoint 只接受 retrieval conditions，且必须先由 operational staging 产物生成 `reuse_plan.json`。
-第一次跑新条件时显式使用 operational policy：
+新 v4 runner 已实现 `identity_blind + parent_disjoint` fresh-run，并将 endpoint/model/reasoning、
+512 全局并发预算和 valid/test 隔离接入统一 CLI。默认先跑 valid；冻结设置后显式加
+`--evaluation-subset test` 跑正式 test。命令形状为：
 
 ```bash
-python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
-  --visibility-mode deployment_visible \
-  --neighbor-identity-policy operational \
-  --experiments bioavailability_ma__none bioavailability_ma__starling_full_mechanism
-```
-
-完成 `parent_disjoint_ablation --materialize` 后，按 reuse plan 运行最终 retrieval conditions：
-
-```bash
-python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
-  --visibility-mode deployment_visible \
-  --neighbor-identity-policy parent_disjoint \
-  --experiments <retrieval_condition_names_from_plan>
-```
-
-Identity-blind 和 matched-prefetch 是 operational-policy 下的补充控制，必须显式选择 visibility 与
-policy；不能依赖 runner 默认值：
-
-```bash
-python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
+python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
+  --benchmark-split <random|scaffold> \
   --visibility-mode identity_blind \
-  --neighbor-identity-policy operational \
-  --experiments bioavailability_ma__none bioavailability_ma__starling_full_mechanism
+  --neighbor-identity-policy parent_disjoint \
+  --parallelism 128 \
+  --group-workers 1
+```
 
+Operational 和 deployment-visible 以后只能显式 opt in，并写入独立 historical/ablation root：
+
+```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
-  --visibility-mode deployment_visible_prefetched \
+  --visibility-mode deployment_visible \
   --neighbor-identity-policy operational \
   --experiments bioavailability_ma__none bioavailability_ma__starling_full_mechanism
 ```
 
-该命令要求对应 identity-blind condition 已完整存在。batch 会自动传入
-`--retrieval-replay-source-batch` 和 `--prefetched-tool-replay-source-batch`；不要用当前 index 重新构建
-matched-visible retrieval，否则 task mapping 漂移或 MCS 非确定性会破坏严格配对。
+新正式 root 固定为各 `record_agreement70_split811_v1` lineage 下的
+`runs_identity_blind_parent_disjoint/`。先在 valid 做 completeness/contract 检查，冻结设置后再运行 test；
+test 不用于模型、prompt、threshold 或 label-policy 选择。
 
-需要以完全相同的冻结设置在 validation split 做诊断重跑时，为 matrix、prefetch audit 和汇总命令统一加
+以下旧 TDC validation 流程仅保留作历史复现，不是 v4 默认。需要以完全相同的旧设置诊断重跑时，为
+matrix、prefetch audit 和汇总命令统一加
 `--split valid`。输入自动从各任务的 `valid.jsonl` 读取，全部产物隔离写入
 `outputs/paper/molecular_evidence_agent_valid/`；默认不加参数时仍使用 test split 和原结果 root。例如：
 
@@ -132,43 +152,28 @@ python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split v
 `outputs/paper/molecular_evidence_agent_valid/analysis/report.md`，parent-disjoint 配对审计位于
 `outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/result_report.md`。
 
-API key 默认从 `GLM_API_KEY` 读取，其值不得写入命令记录、manifest 或 trace。
+当前 paper/Starling runner 默认使用本机 tunnel `http://127.0.0.1:50000/v1`、
+`nvidia/GLM-5.2-NVFP4` 和历史一致的 `--disable-thinking --reasoning-effort ""`。空值使 client 不发送
+`reasoning_effort` 参数，但 GLM 返回的 reasoning 仍会保存在 trace。运行前用 `ssh -fNT parcc-glm` 建立 tunnel；
+loopback vLLM 无鉴权时，runner 会在进程内为 `GLM_LOCAL_API_KEY` 注入非敏感占位值。
+旧 LiteLLM 只作为显式 fallback，使用 `--api-key-env GLM_API_KEY --base-url
+https://litellm.parcc.upenn.edu/v1 --model zai-org/GLM-5.2-FP8 --reasoning-effort ""`。
+不得将任何真实 API key 的值写入命令记录、manifest 或 trace。
 
-Parent-disjoint 已由公共 identity normalizer、retrieval policy、top-k backfill 和 manifest provenance
-实现。先审计并生成选择性重跑计划；确认后用 `--materialize` 物化输入未变化的整条 reuse artifact 和
-reuse plan：
-
-```bash
-python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation
-python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --materialize
-```
-
-然后按 plan 只选择 retrieval conditions 运行统一 matrix 入口；`none` 不写入 parent-disjoint root：
-
-```bash
-python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
-  --visibility-mode deployment_visible \
-  --neighbor-identity-policy parent_disjoint \
-  --experiments <retrieval_condition_names_from_plan>
-```
-
-该流程只重跑 operational top-k 中实际出现 same-parent 且 LLM-visible input hash 变化的 sample-condition；
-未变化的整条 run 已复用，`full_mechanism` 还可复用未变化的独立 family branch。不得降低
-`min_similarity`、删除受影响样本或只在 overlap 子集上计算指标。
+V4 parent-disjoint 使用公共 identity normalizer、retrieval policy、top-k backfill 和 manifest provenance，
+但直接 fresh-run，不读取 operational retrieval，也不生成 reuse plan。汇总必须从最终 `retrieval.json`
+逐条验证 parent conflict=0、held-out overlap=0、threshold violation=0，并验证 identity-blind leak=0。
+不得降低 `min_similarity`、删除受影响样本或只在 supported/overlap 子集上计算主指标。
 
 ## 汇总分析
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.summarize_results
 
-python -m tools.chembl_tool.paper_experiments.audit_prefetch_contract
-
-python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results
-
 python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview
 ```
 
-Valid split 使用相同入口，但要显式指向隔离的 analysis root：
+以下 operational/parent 配对汇总只用于旧 lineage：
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.summarize_parent_disjoint_results \
@@ -186,6 +191,20 @@ python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview \
 Performance 可视化统一使用上述横向 grouped-bar chart。每个 split 的正式 figures
 目录只保留 `retrieval_claims_overview.svg` 和 `retrieval_claims_overview_highres.png`；不保留
 preview/QA 导出或另一套 overview 绘图代码。
+
+上述约束只针对旧 TDC `test|valid` lineage。Starling `random|scaffold` 使用独立的汇总、图表和
+output root，不能写入或替代上述 TDC figures：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.summarize_starling_benchmark
+python -m tools.chembl_tool.paper_experiments.plot_starling_benchmark_overview \
+  --png-output outputs/paper/starling_benchmark_results/figures/starling_benchmark_overview_highres.png
+```
+
+Starling 图从统一 `metrics.tsv` 读取。现有 parent-disjoint agent conditions、MiniMol train-all head、
+Morgan KNN 和 MiniMol embedding cosine KNN 都属于上一版 strict-conflict lineage；当前 70% record-majority
+8:1:1 v4 dataset 尚未重跑这些模型结果。完整口径、历史结果和 baseline 入口见
+[`STARLING_BENCHMARK_RESULTS.md`](STARLING_BENCHMARK_RESULTS.md)。
 
 `audit_prefetch_contract` 同时输出逐样本 `prefetch_contract_audit.tsv` 和逐 condition
 `prefetch_contract_conditions.tsv`。当前 21 条件矩阵只有在 `n_conditions_complete=21`、

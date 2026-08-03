@@ -1,6 +1,11 @@
 # 冻结的全量实验结果
 
-运行日期：2026-07-10 至 2026-07-23。
+运行日期：2026-07-10 至 2026-07-27。
+
+本文件主体记录旧 TDC test/valid matrix。当前 Starling-held-out random/scaffold 的 frozen data 决策、
+formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind 进度、Skin trace audit
+和新增入口统一见
+`STARLING_BENCHMARK_RESULTS.md`；两种 lineage 不得混表。
 
 Test 可见性/执行矩阵共有 73 个 GLM 条件，另有 22 个完整 test-set 的 parent-disjoint retrieval 条件和
 1 个标量 KNN 基线。Valid 诊断矩阵的三套 GLM 制度均已扩展到 26 个条件，共 78 个 GLM 条件，另有
@@ -38,6 +43,25 @@ Skin Reaction valid matched-prefetch 的逐 trace 诊断见
 `reports/skin_reaction_visibility_trace_casebook/index.html`。该报告中的 35 个 recurring flips 是
 5 个 gold-negative 分子跨 7 个 conditions 的重复输出，其中 28 个 condition-level 输出没有 retrieved
 neighbor；不能把它解释成 35 个独立分子都因同一个原因失败。
+
+## Skin Starling Tier 1+2 final-only post-hoc 诊断（2026-07-27）
+
+该诊断使用当前 Starling-held-out random/scaffold test（各 380 molecules），与上文旧 TDC-lineage matrix
+严格分开。它从 deployment-visible parent-disjoint Starling full-mechanism batch 逐样本复用冻结的
+single、Tier 1 和 Tier 2 branch，删除 Tier 3/4 后只重跑 final；不修改 prompt/schema 或 branch output。
+两套均为 380/380 successful、0 failure，且 retrieval/group/trace scope audit 为 0 mismatch：
+
+| split | direct macro-F1 | Tier 1+2 macro-F1 | full-mechanism macro-F1 | Tier 1+2 accuracy |
+|---|---:|---:|---:|---:|
+| random | 0.643141 | 0.631003 | 0.629991 | 0.652632 |
+| scaffold | 0.597332 | 0.594785 | 0.583574 | 0.626316 |
+
+Tier 1+2 相对 full mechanism 的 paired macro-F1 delta 为 random `+0.001013`
+（95% bootstrap CI `[-0.026550, 0.028667]`）和 scaffold `+0.011211`
+（`[-0.009740, 0.033671]`）；相对 direct 则分别为 `-0.012137` 和 `-0.002546`。因此裁掉 Tier 3/4
+只显示小幅、不确定的 recovery，尚无证据证明改善，且没有超过 direct。该分析由观察到的 Skin failure
+触发，只能作为 post-hoc diagnosis，不能替代预注册 primary comparison。完整 batch path、confusion matrix、
+coverage 和复用审计记录在 `tools/chembl_tool/tasks/skin_reaction/AGENTS.md`。
 
 ## BBB evidence-distance v3 retrieval gate（尚无 LLM performance）
 

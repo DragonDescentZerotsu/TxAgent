@@ -28,20 +28,21 @@ label:
 新的 Starling-held-out benchmark 由 `starling_benchmark.py` 构建：只接受可确认 human context 的
 direct oral F；百分数与明确 fraction 统一到 percent，跨 20% 的 range、relative comparison、
 非 human、population 不明或 `qualifying_conditions` 非空的记录都不进入 gold label。
-parent-level 0/1 冲突分子不做多数票。
+parent-level 0/1 冲突按 accepted source record 计算 70% agreement；同 PMID 多条 record 分别计票，
+精确 tie 或 agreement 低于 70% 才拒绝。
 这里的 benchmark label conversion 与下文禁止的 inference-time Starling label policy 是两回事；
 它不能进入 LLM prompt 或改变有效 prediction。
 
-当前 frozen build 位于：
+当前 canonical-direct v2 build 位于：
 
 ```text
 data/processed_starling/Bioavailability_Ma/random/
 data/processed_starling/Bioavailability_Ma/scaffold/
 ```
 
-共有 1,862 个 binary parents；两种 split 的 test target 均为 372。公共构建/审计协议见
+共有 2,092 个 binary parents；两种构造方法的 valid/test target 均为 209。公共构建/审计协议见
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。正式运行前必须按各 split 的
-`test_molecule_labels.jsonl` 分别重建 train-only retrieval index。
+valid+test union `heldout_molecule_labels.jsonl` 分别重建 train-only retrieval index。
 
 Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，不是 LLM function tool。
 
@@ -126,11 +127,32 @@ Starling task data：
 
 ```text
 data/starling_data/bioavailability_ma/
-  Oral_AUC-Cmax_Exposure/extractions.parquet
+  Oral_AUC-Cmax_Exposure/extractions.parquet        # immutable upstream
+  canonical_direct_v2/
+    hf_oral_bioavailability_snapshot.parquet
+    direct_source_rows.parquet
+    direct_claims.parquet
+    cross_source_dedup_audit.parquet
+    local_partition_audit.parquet
+    merge_manifest.json
+  oral_exposure_residual_v2/
+    exposure_records.parquet
+    partition_manifest.json
   Fa/extractions.parquet
   Fg/extractions.parquet
   Fh/extractions.parquet
 ```
+
+统一 canonical source 构建入口：
+
+```text
+tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
+```
+
+原始 HF snapshot 与 local parquet 不原地修改。Local `bioavailability` 行只有出现明确 absolute wording 或
+oral/IV anchor 才转入 canonical direct；relative 与没有 absolute anchor 的 ambiguous rows 留在 residual。
+跨 HF/local 的同 parent+PMID 近等值 claim 做一对一去重并保留双来源 provenance。Gold builder 与 agent
+direct evidence 必须读取同一个 `direct_claims.parquet` SHA-256。
 
 Starling factor builder：
 
@@ -157,9 +179,8 @@ Task wrapper 只声明 column mapping 和 group/role：
 
 | Source | Group | Evidence role |
 |---|---|---|
-| HF Oral Bioavailability | `Observed.direct_oral_bioavailability` | `direct_outcome` |
-| Oral_AUC-Cmax `bioavailability` rows | `Observed.direct_oral_bioavailability` | `direct_outcome` |
-| Other Oral_AUC-Cmax rows | `Observed.oral_auc_cmax_exposure` | `surrogate_proxy` |
+| canonical direct v2 claims | `Observed.direct_oral_bioavailability` | `direct_outcome` |
+| residual Oral_AUC-Cmax/relative/ambiguous rows | `Observed.oral_auc_cmax_exposure` | `surrogate_proxy` |
 | Fa parquet | `Fa.absorption_solubility_permeability` | `mechanistic_factor` |
 | Fg parquet | `Fg.gut_wall_efflux_intestinal_metabolism` | `mechanistic_factor` |
 | Fh parquet | `Fh.hepatic_clearance_metabolic_stability` | `mechanistic_factor` |
@@ -408,7 +429,7 @@ variants have been audited.
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v2 \
   --workers 32
 ```
 
@@ -417,7 +438,7 @@ variants have been audited.
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
-  --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full/starling_factor_neighbor_index.pkl \
+  --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v2/starling_factor_neighbor_index.pkl \
   --api-key-env GLM_API_KEY \
   --base-url https://litellm.parcc.upenn.edu/v1 \
   --model zai-org/GLM-5.2-FP8 \
@@ -428,7 +449,8 @@ variants have been audited.
 
 正式 paper run 只使用上述 `outputs/paper/` index。`outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/`
 下的 task-level builder 默认目录只用于临时开发，不得把历史 index 复制或软链接到正式实验路径；运行前应检查
-meta 中 `index_version`、`include_direct_hf`、`scope`、`evidence_content` 和五个稳定 group ID。
+meta 中 `index_version`、`canonical_contract_version`、canonical/residual SHA-256、`scope`、
+`evidence_content` 和五个稳定 group ID。
 
 2026-07-23 strict-hop availability census 见
 `outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`。C 之外的

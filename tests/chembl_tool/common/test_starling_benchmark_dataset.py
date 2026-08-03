@@ -7,12 +7,15 @@ from tools.chembl_tool.common.starling.benchmark_dataset import (
     accepted,
     bemis_murcko_scaffold,
     build_benchmark_dataset,
+    calculate_eval_size,
     calculate_test_size,
     classify_interval,
     has_reported_text,
     parse_numeric_interval,
     scaffold_group_split,
+    scaffold_group_three_way_split,
     stratified_hash_split,
+    stratified_hash_three_way_split,
 )
 from tools.chembl_tool.common.starling.heldout_index import (
     filter_heldout_evidence_rows,
@@ -120,7 +123,7 @@ def test_skin_reaction_matches_sensitization_not_irritation():
     assert label_skin({"reaction_type": "sensitization", "outcome_label": "inconclusive"})[0] is None
 
 
-def test_parent_conflicts_are_dropped_and_split_is_exact(tmp_path):
+def test_record_majority_and_three_way_splits_are_exact(tmp_path):
     decisions = []
     smiles_values = (
         "c1ccccc1",
@@ -152,15 +155,23 @@ def test_parent_conflicts_are_dropped_and_split_is_exact(tmp_path):
         decisions=decisions,
         source_metadata={},
         output_dir=tmp_path,
-        max_test_size=2,
-        test_fraction=0.5,
+        max_eval_size=2,
+        valid_fraction=0.34,
+        test_fraction=0.34,
+        agreement_threshold=0.70,
         seed=7,
     )
-    assert summary["n_conflicting_parent_groups"] == 1
-    assert summary["test_size_policy"]["target_test_size"] == 2
+    assert summary["n_parent_groups_with_label_conflict"] == 1
+    assert summary["n_rejected_parent_groups"] == 1
+    assert summary["split_size_policy"]["target_valid_size"] == 2
+    assert summary["split_size_policy"]["target_test_size"] == 2
+    assert summary["splits"]["random"]["n_valid"] == 2
     assert summary["splits"]["random"]["n_test"] == 2
+    assert summary["splits"]["scaffold"]["n_valid"] == 2
     assert summary["splits"]["scaffold"]["n_test"] == 2
+    assert sum(1 for _ in (tmp_path / "random" / "valid.jsonl").open()) == 2
     assert sum(1 for _ in (tmp_path / "random" / "test.jsonl").open()) == 2
+    assert sum(1 for _ in (tmp_path / "scaffold" / "valid.jsonl").open()) == 2
     assert sum(1 for _ in (tmp_path / "scaffold" / "test.jsonl").open()) == 2
     split_rows = [
         json.loads(line)
@@ -168,9 +179,52 @@ def test_parent_conflicts_are_dropped_and_split_is_exact(tmp_path):
     ]
     assert all(set(row["split_assignments"]) == {"random", "scaffold"} for row in split_rows)
     assert sum(1 for _ in (tmp_path / "random" / "test_molecule_labels.jsonl").open()) == 2
-    assert sum(1 for _ in (tmp_path / "random" / "train_molecule_labels.jsonl").open()) == 4
+    assert sum(1 for _ in (tmp_path / "random" / "valid_molecule_labels.jsonl").open()) == 2
+    assert sum(1 for _ in (tmp_path / "random" / "train_molecule_labels.jsonl").open()) == 2
+    assert sum(1 for _ in (tmp_path / "random" / "heldout_molecule_labels.jsonl").open()) == 4
     conflict = json.loads((tmp_path / "conflicting_molecules.jsonl").read_text().splitlines()[0])
-    assert conflict["drop_reason"] == "conflicting_parent_level_labels"
+    assert conflict["drop_reason"] == "parent_record_label_tie"
+
+
+def test_seventy_percent_record_majority_recovers_three_to_one_parent(tmp_path):
+    decisions = [
+        accepted(LabeledSourceRecord(smiles="CCN", label=1, source_id="source")),
+        accepted(LabeledSourceRecord(smiles="CC[NH3+].[Cl-]", label=1, source_id="source")),
+        accepted(LabeledSourceRecord(smiles="CCN", label=1, source_id="source")),
+        accepted(LabeledSourceRecord(smiles="CCN", label=0, source_id="source")),
+    ]
+    for index, smiles in enumerate(("c1ccccc1", "c1ccncc1", "C1CCCCC1", "c1ccoc1") * 3):
+        decisions.append(
+            accepted(
+                LabeledSourceRecord(
+                    smiles=smiles + ("" if index < 4 else "C"),
+                    label=index % 2,
+                    source_id="source",
+                )
+            )
+        )
+
+    summary = build_benchmark_dataset(
+        task_name="test",
+        decisions=decisions,
+        source_metadata={},
+        output_dir=tmp_path,
+        max_eval_size=2,
+        valid_fraction=0.25,
+        test_fraction=0.25,
+        agreement_threshold=0.70,
+    )
+
+    recovered = [
+        json.loads(line)
+        for line in (tmp_path / "molecule_labels.jsonl").read_text().splitlines()
+        if json.loads(line)["molecule_identity_key"] == "QUSNBJAOOMFDIB-UHFFFAOYSA-N"
+    ]
+    assert len(recovered) == 1
+    assert recovered[0]["Y"] == 1
+    assert recovered[0]["agreement_fraction"] == 0.75
+    assert recovered[0]["label_decision"] == "accepted_record_majority"
+    assert summary["n_parent_groups_recovered_by_majority"] >= 1
 
 
 @pytest.mark.parametrize(
@@ -186,6 +240,14 @@ def test_test_size_policy(n_molecules, expected):
     assert calculate_test_size(n_molecules) == expected
 
 
+@pytest.mark.parametrize(
+    ("n_molecules", "expected"),
+    [(100, 10), (2_140, 214), (2_456, 245), (19_425, 500)],
+)
+def test_eval_size_policy(n_molecules, expected):
+    assert calculate_eval_size(n_molecules) == expected
+
+
 def test_hash_split_is_reproducible():
     rows = [
         {"molecule_identity_key": f"k{index}", "Y": index % 2}
@@ -195,6 +257,23 @@ def test_hash_split_is_reproducible():
     second = stratified_hash_split(rows, test_size=6, seed=11)
     assert first == second
     assert {row["Y"] for row in first[1]} == {0, 1}
+
+
+def test_hash_three_way_split_is_reproducible_and_disjoint():
+    rows = [
+        {"molecule_identity_key": f"k{index}", "Y": index % 2}
+        for index in range(30)
+    ]
+    first = stratified_hash_three_way_split(
+        rows, valid_size=5, test_size=5, seed=11
+    )
+    second = stratified_hash_three_way_split(
+        rows, valid_size=5, test_size=5, seed=11
+    )
+    assert first == second
+    assert [len(part) for part in first] == [20, 5, 5]
+    key_sets = [{row["molecule_identity_key"] for row in part} for part in first]
+    assert not (key_sets[0] & key_sets[1] | key_sets[0] & key_sets[2] | key_sets[1] & key_sets[2])
 
 
 def test_scaffold_split_is_reproducible_and_disjoint():
@@ -224,6 +303,40 @@ def test_scaffold_split_is_reproducible_and_disjoint():
     train_scaffolds = {row["bemis_murcko_scaffold"] for row in first[0]}
     test_scaffolds = {row["bemis_murcko_scaffold"] for row in first[1]}
     assert not (train_scaffolds & test_scaffolds)
+
+
+def test_scaffold_three_way_split_has_pairwise_scaffold_disjointness():
+    smiles_values = [
+        "c1ccccc1",
+        "Cc1ccccc1",
+        "c1ccncc1",
+        "Cc1ccncc1",
+        "C1CCCCC1",
+        "OC1CCCCC1",
+        "c1ccoc1",
+        "c1ccsc1",
+    ]
+    rows = [
+        {
+            "drug": smiles,
+            "molecule_identity_key": f"k{index}",
+            "Y": index % 2,
+            "bemis_murcko_scaffold": bemis_murcko_scaffold(smiles),
+        }
+        for index, smiles in enumerate(smiles_values)
+    ]
+    train, valid, test = scaffold_group_three_way_split(
+        rows, valid_size=2, test_size=2, seed=11
+    )
+    scaffold_sets = [
+        {row["bemis_murcko_scaffold"] for row in part}
+        for part in (train, valid, test)
+    ]
+    assert not (
+        scaffold_sets[0] & scaffold_sets[1]
+        or scaffold_sets[0] & scaffold_sets[2]
+        or scaffold_sets[1] & scaffold_sets[2]
+    )
 
 
 def test_heldout_filter_removes_parent_equivalent_evidence(tmp_path):

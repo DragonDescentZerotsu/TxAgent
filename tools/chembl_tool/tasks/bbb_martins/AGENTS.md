@@ -25,8 +25,8 @@ final summary 必须在 pass/fail 中二选一；不再允许 uncertain predicti
 `bbb_permeability_label` 当作 qualitative gold outcome，transport label 只作 evidence context；
 数值记录只对 `logBB` 使用 TDC-compatible `>= -1` threshold；Papp、Kp、Kp,uu 等异构量不强行换算。
 `qualifying_conditions` 非空的 context-dependent row 不进入 molecule-only gold；parent-level
-文献/条件冲突分子不做多数票，直接从 gold split 排除。正式评估前必须分别按
-`random/test_molecule_labels.jsonl` 和 `scaffold/test_molecule_labels.jsonl`
+冲突按 accepted source records 计算 70% agreement，同 PMID 的多条 record 分别计票，精确 tie 拒绝。
+正式评估前必须分别按 random/scaffold 的 `heldout_molecule_labels.jsonl`（valid+test union）
 重建两套 train-only retrieval index。
 
 当前 frozen build 位于：
@@ -36,7 +36,7 @@ data/processed_starling/BBB_Martins/random/
 data/processed_starling/BBB_Martins/scaffold/
 ```
 
-共有 17,893 个 binary parents；两种 split 的 test 均为 500。构建命令、source revision、
+共有 19,425 个 binary parents；两种构造方法的 valid/test 均为 500。构建命令、source revision、
 冲突/拒绝 reason 和完整统计统一见
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`，不得在本 task 内另写 split 脚本。
 

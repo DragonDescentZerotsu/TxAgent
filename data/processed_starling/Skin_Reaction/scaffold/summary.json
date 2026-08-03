@@ -1,26 +1,52 @@
 {
   "method": "bemis_murcko_scaffold_group_subset_sum",
-  "target_test_size": 380,
-  "actual_test_size": 380,
+  "target_valid_size": 245,
+  "target_test_size": 245,
+  "actual_valid_size": 245,
+  "actual_test_size": 245,
+  "valid_size_shortfall": 0,
   "test_size_shortfall": 0,
-  "n_train": 1520,
-  "n_test": 380,
+  "n_train": 1966,
+  "n_valid": 245,
+  "n_test": 245,
   "train_label_counts": {
-    "0": 526,
-    "1": 994
+    "0": 605,
+    "1": 1361
+  },
+  "valid_label_counts": {
+    "0": 74,
+    "1": 171
   },
   "test_label_counts": {
-    "0": 117,
-    "1": 263
+    "0": 71,
+    "1": 174
   },
-  "n_train_scaffolds": 414,
-  "n_test_scaffolds": 239,
+  "n_train_scaffolds": 494,
+  "n_valid_scaffolds": 133,
+  "n_test_scaffolds": 127,
+  "pairwise_scaffold_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "pairwise_identity_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "train_valid_scaffold_overlap": 0,
   "train_test_scaffold_overlap": 0,
+  "valid_test_scaffold_overlap": 0,
+  "train_valid_identity_overlap": 0,
   "train_test_identity_overlap": 0,
+  "valid_test_identity_overlap": 0,
   "paths": {
     "train": "data/processed_starling/Skin_Reaction/scaffold/train.jsonl",
+    "valid": "data/processed_starling/Skin_Reaction/scaffold/valid.jsonl",
     "test": "data/processed_starling/Skin_Reaction/scaffold/test.jsonl",
     "train_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/train_molecule_labels.jsonl",
-    "test_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/test_molecule_labels.jsonl"
+    "valid_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/valid_molecule_labels.jsonl",
+    "test_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/test_molecule_labels.jsonl",
+    "heldout_molecule_labels": "data/processed_starling/Skin_Reaction/scaffold/heldout_molecule_labels.jsonl"
   }
 }

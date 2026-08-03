@@ -56,7 +56,7 @@ class OpenAICompatibleClient:
         return {
             "content": parse_json_content(content),
             "raw_content": content,
-            "reasoning_content": getattr(message, "reasoning_content", "") or "",
+            "reasoning_content": _reasoning_text(message),
             "tool_calls": [],
             "tool_results": [],
             "messages": trace_messages,
@@ -111,7 +111,7 @@ class OpenAICompatibleClient:
                 return {
                     "content": parse_json_content(content),
                     "raw_content": content,
-                    "reasoning_content": getattr(message, "reasoning_content", "") or "",
+                    "reasoning_content": _reasoning_text(message),
                     "tool_calls": _tool_call_summaries(responses),
                     "tool_results": tool_results,
                     "messages": trace_messages,
@@ -150,7 +150,7 @@ class OpenAICompatibleClient:
         return {
             "content": parse_json_content(content),
             "raw_content": content,
-            "reasoning_content": getattr(message, "reasoning_content", "") or "",
+            "reasoning_content": _reasoning_text(message),
             "tool_calls": _tool_call_summaries(responses),
             "tool_results": tool_results,
             "messages": trace_messages,
@@ -305,7 +305,7 @@ def _assistant_message_to_trace(message: Any) -> dict[str, Any]:
     content = getattr(message, "content", None)
     if content:
         trace["content"] = content
-    reasoning = getattr(message, "reasoning_content", None)
+    reasoning = _reasoning_text(message)
     if reasoning:
         trace["reasoning"] = reasoning
     tool_calls = getattr(message, "tool_calls", None) or []
@@ -322,6 +322,20 @@ def _assistant_message_to_trace(message: Any) -> dict[str, Any]:
             for tool_call in tool_calls
         ]
     return trace
+
+
+def _reasoning_text(message: Any) -> str:
+    """Normalize reasoning fields used by OpenAI-compatible providers."""
+    for field in ("reasoning_content", "reasoning"):
+        value = getattr(message, field, None)
+        if value:
+            return str(value)
+    model_extra = getattr(message, "model_extra", None) or {}
+    if isinstance(model_extra, dict):
+        value = model_extra.get("reasoning_content") or model_extra.get("reasoning")
+        if value:
+            return str(value)
+    return ""
 
 
 def _json_safe_message(message: Any) -> dict[str, Any]:

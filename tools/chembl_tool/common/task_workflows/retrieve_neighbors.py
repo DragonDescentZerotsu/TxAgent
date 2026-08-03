@@ -4,13 +4,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import pickle
 import sys
 import time
 from pathlib import Path
 from typing import Any
-
-from rdkit import DataStructs
 
 from tools.chembl_tool.common.neighbor_selection import (
     NEIGHBOR_SELECTORS,
@@ -18,6 +15,12 @@ from tools.chembl_tool.common.neighbor_selection import (
     NeighborCandidate,
     select_neighbor_candidates,
     selector_metadata,
+)
+from tools.chembl_tool.common.retrieval_features import (
+    load_retrieval_index,
+    retrieval_feature_metadata,
+    similarity_bucket_for_index,
+    similarity_vector,
 )
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
 
@@ -45,8 +48,7 @@ def main(default_index: str, description: str, argv: list[str] | None = None) ->
 
 
 def load_index(path: Path) -> dict[str, Any]:
-    with path.open("rb") as handle:
-        return pickle.load(handle)
+    return load_retrieval_index(path)
 
 
 def retrieve_neighbors(
@@ -73,7 +75,12 @@ def retrieve_neighbors(
         }
 
     query_identity = normalize_molecule_identity(query_smiles)
-    similarities = list(DataStructs.BulkTanimotoSimilarity(query_fp, index["fingerprints"]))
+    similarities = similarity_vector(
+        query_fp,
+        canonical_smiles,
+        index,
+        neighbor_selector=neighbor_selector,
+    )
     requested_groups = groups or sorted(index["group_to_molecule_indices"])
     output_groups = []
     n_neighbors_total = 0
@@ -118,7 +125,12 @@ def retrieve_neighbors(
             "input_smiles": query_smiles,
             "canonical_smiles": canonical_smiles,
             "standard_inchi_key": inchi_key,
-            "fingerprint": index.get("fingerprint", {}),
+            "fingerprint": (
+                index.get("fingerprint", {})
+                if retrieval_feature_metadata(index)["feature"] == "morgan_fingerprint"
+                else {}
+            ),
+            "retrieval_feature": retrieval_feature_metadata(index),
         },
         "groups": output_groups,
         "coverage": {
@@ -132,17 +144,8 @@ def retrieve_neighbors(
 
 
 def similarity_bucket(similarity: float) -> str:
-    if similarity >= 0.95:
-        return "very_close_analog"
-    if similarity >= 0.80:
-        return "close_analog"
-    if similarity >= 0.60:
-        return "moderate_analog"
-    if similarity >= 0.40:
-        return "weak_analog"
-    if similarity >= 0.20:
-        return "distant_analog"
-    return "very_distant_analog"
+    """Backward-compatible Morgan/Tanimoto bucket helper."""
+    return similarity_bucket_for_index(similarity, {})
 
 
 def _top_neighbors_for_group(
@@ -209,7 +212,8 @@ def _top_neighbors_for_group(
                 "canonical_smiles": molecule["canonical_smiles"],
                 "standard_inchi_key": molecule.get("standard_inchi_key", ""),
                 "similarity": round(float(similarity), 6),
-                "similarity_bucket": similarity_bucket(float(similarity)),
+                "similarity_bucket": similarity_bucket_for_index(float(similarity), index),
+                "similarity_metric": retrieval_feature_metadata(index)["similarity"],
                 "molecule_relation": decision.relation.value,
                 "n_evidence_rows": len(evidence_rows),
                 "evidence_rows": evidence_rows,

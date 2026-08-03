@@ -427,6 +427,8 @@ def _clean_scalar(value: Any) -> Any:
         return ""
     if isinstance(value, float) and math.isnan(value):
         return ""
+    if hasattr(value, "tolist"):
+        return value.tolist()
     return value
 
 

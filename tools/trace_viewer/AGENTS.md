@@ -4,9 +4,15 @@
 根目录动态读取 condition、`predictions.jsonl`、sample trace 和 retrieval 文件。因此不要只上传
 `viewer.html` 到单文件 HTML pastebin，也不要把一个本地文件 URL 当作完整 viewer 分享。
 
-Viewer 只注册四个正式 paper root：identity-blind、matched-prefetch、agentic deployment-visible 和
-deployment-visible parent-disjoint。Parent-disjoint sample 必须同时读取 manifest 与 `reuse.json`，明确
-展示 `neighbor_identity_policy`，并区分 retrieval 变化后的重跑与输入未变化时的 artifact reuse。
+Viewer 通过启动时生成的 `.trace_viewer_sources.tsv` 注册 benchmark dataset，并用
+`.trace_viewer_catalog.tsv` 注册已有 condition，避免公网页面逐目录扫描；缺少 catalog 时仍可回退为
+browser-side discovery。每个 dataset 内只注册四个正式 paper root：identity-blind、matched-prefetch、agentic deployment-visible 和
+deployment-visible parent-disjoint。Dataset path/label 不写死在 `viewer.html`；新增 benchmark 或 split
+时只需由启动脚本注册新的 trace root。Parent-disjoint sample 必须同时读取 manifest 与 `reuse.json`，
+明确展示 `neighbor_identity_policy`，并区分 retrieval 变化后的重跑与输入未变化时的 artifact reuse。
+
+Condition results 必须从当前 `predictions.jsonl` 通用计算样本数、accuracy、macro-F1、失败数和可用时的
+二分类混淆矩阵，不读取 task-specific prediction 字段，也不把不同 benchmark dataset 的样本合并。
 
 ## 展示名称与内部 ID
 
@@ -25,10 +31,19 @@ Fa、Fg 和 Fh 的机制描述。不要把 `Observed` 前缀展示成一个额�
 bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
+默认会同时注册 Starling random test、Starling scaffold test 和历史 TDC test 三个结果根；不存在的根会
+被跳过。也可以在端口后显式传入任意数量的 trace root：
+
+```bash
+bash tools/trace_viewer/start_viewer.sh 8776 \
+  outputs/paper/molecular_evidence_agent_starling_random \
+  outputs/paper/molecular_evidence_agent_starling_scaffold
+```
+
 本地页面固定为：
 
 ```text
-http://127.0.0.1:8776/.trace_viewer.html?v=paper-v1
+http://127.0.0.1:8776/.trace_viewer.html?v=paper-v2
 ```
 
 `start_viewer.sh` 会以前台进程运行；终端停在 `Serving HTTP ...` 并持续打印 GET 日志是正常状态，
@@ -89,13 +104,13 @@ Cloudflare 只打印公网基础地址，不知道 viewer 的具体页面路径�
 本地 URL 中端口后的路径追加到公网基础地址：
 
 ```text
-https://random-words.trycloudflare.com/.trace_viewer.html?v=paper-v1
+https://random-words.trycloudflare.com/.trace_viewer.html?v=paper-v2
 ```
 
 通用拼接规则：
 
 ```text
-公网基础地址 + /.trace_viewer.html?v=paper-v1
+公网基础地址 + /.trace_viewer.html?v=paper-v2
 ```
 
 两个前台进程都必须保持运行：
@@ -131,14 +146,14 @@ cloudflared tunnel --protocol http2 --url http://127.0.0.1:8776
 分享前先验证本地页面；本地不通时，tunnel 也无法修复 origin：
 
 ```bash
-curl -I 'http://127.0.0.1:8776/.trace_viewer.html?v=paper-v1'
+curl -I 'http://127.0.0.1:8776/.trace_viewer.html?v=paper-v2'
 ```
 
 ## 安全边界
 
-Quick Tunnel 是公开、无鉴权、无 uptime guarantee 的临时开发入口。当前 `start_viewer.sh` 的 HTTP
-根目录是整个 `outputs/paper/molecular_evidence_agent/`，不仅是当前浏览器中打开的样本。任何拿到
-URL 的人都可能请求该根目录下的其它文件。因此：
+Quick Tunnel 是公开、无鉴权、无 uptime guarantee 的临时开发入口。`start_viewer.sh` 只在临时 serving
+directory 中链接本次注册的 trace roots，不暴露仓库或整个 `outputs/paper/`；但任何拿到 URL 的人仍可能
+请求这些已注册 root 中的其它文件，而不仅是浏览器中当前打开的样本。因此：
 
 1. 只在确认 trace、prompt、SMILES、label、内部路径和 model/tool 返回内容可以分享时启动 tunnel。
 2. 不要用 Quick Tunnel 暴露 API key、`.env`、工具服务端口、LLM endpoint 或仓库根目录。

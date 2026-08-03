@@ -1,26 +1,52 @@
 {
   "method": "label_stratified_stable_hash",
-  "target_test_size": 372,
-  "actual_test_size": 372,
+  "target_valid_size": 209,
+  "target_test_size": 209,
+  "actual_valid_size": 209,
+  "actual_test_size": 209,
+  "valid_size_shortfall": 0,
   "test_size_shortfall": 0,
-  "n_train": 1490,
-  "n_test": 372,
+  "n_train": 1674,
+  "n_valid": 209,
+  "n_test": 209,
   "train_label_counts": {
-    "0": 398,
-    "1": 1092
+    "0": 461,
+    "1": 1213
+  },
+  "valid_label_counts": {
+    "0": 58,
+    "1": 151
   },
   "test_label_counts": {
-    "0": 99,
-    "1": 273
+    "0": 58,
+    "1": 151
   },
-  "n_train_scaffolds": 977,
-  "n_test_scaffolds": 289,
-  "train_test_scaffold_overlap": 94,
+  "n_train_scaffolds": 1036,
+  "n_valid_scaffolds": 166,
+  "n_test_scaffolds": 167,
+  "pairwise_scaffold_overlap": {
+    "train_valid": 58,
+    "train_test": 63,
+    "valid_test": 23
+  },
+  "pairwise_identity_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "train_valid_scaffold_overlap": 58,
+  "train_test_scaffold_overlap": 63,
+  "valid_test_scaffold_overlap": 23,
+  "train_valid_identity_overlap": 0,
   "train_test_identity_overlap": 0,
+  "valid_test_identity_overlap": 0,
   "paths": {
     "train": "data/processed_starling/Bioavailability_Ma/random/train.jsonl",
+    "valid": "data/processed_starling/Bioavailability_Ma/random/valid.jsonl",
     "test": "data/processed_starling/Bioavailability_Ma/random/test.jsonl",
     "train_molecule_labels": "data/processed_starling/Bioavailability_Ma/random/train_molecule_labels.jsonl",
-    "test_molecule_labels": "data/processed_starling/Bioavailability_Ma/random/test_molecule_labels.jsonl"
+    "valid_molecule_labels": "data/processed_starling/Bioavailability_Ma/random/valid_molecule_labels.jsonl",
+    "test_molecule_labels": "data/processed_starling/Bioavailability_Ma/random/test_molecule_labels.jsonl",
+    "heldout_molecule_labels": "data/processed_starling/Bioavailability_Ma/random/heldout_molecule_labels.jsonl"
   }
 }

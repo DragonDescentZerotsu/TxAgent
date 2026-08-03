@@ -5,13 +5,25 @@ retrieval 消融、第二模型、重复运行、source-quality annotation、bas
 [ICLR_2027_EXECUTION_PLAN.md](ICLR_2027_EXECUTION_PLAN.md)。Visibility 升降原因的集中分析见
 [VISIBILITY_ANALYSIS.md](VISIBILITY_ANALYSIS.md)。
 
+## 2026-08-01 v4 协议覆盖
+
+对 `record_agreement70_split811_v1` 及后续新数据集，本计划的运行默认更新为
+`identity_blind + parent_disjoint` fresh-run；operational 不再预跑，也不作为 parent-disjoint 的 staging。
+默认直连 `http://127.0.0.1:50000/v1` 的 `nvidia/GLM-5.2-NVFP4`，保持历史空
+`reasoning_effort`，endpoint 全局并发预算先试 512。旧 deployment-visible/operational 章节只描述历史
+lineage 或未来显式 ablation，不能覆盖本节。
+
+第一轮先在 valid 运行完整条件和 audit，冻结设置后再运行 test。文档冻结不等于代码已就绪：runner 必须先
+支持 blind+parent-disjoint fresh-run、独立 root、无需 reuse plan 的完整 `none`+retrieval 矩阵，以及不被
+外层 launcher 乘法放大的 512 全局并发预算。
+
 ## 研究问题
 
 ### RQ1：相似分子检索能否提高分子性质分类性能？
 
-主分析在 deployment-visible agentic setting 中比较 `none` 与 `direct`。Operational retrieval 允许检索
-同一 RDKit molecular parent 的盐型、溶剂化物和 formulation-linked record，代表真实部署；parent-disjoint
-消融排除同一 parent 后用后续真正 analog 补齐 top-k，用于检验增益是否仍来自相似分子迁移。
+V4 主分析在 identity-blind setting 中比较 `none` 与 `direct`，retrieval 固定 parent-disjoint：排除同一
+RDKit molecular parent 后用后续真正 analog 补齐 top-k。Operational 只保留为历史或显式 deployment
+sensitivity，不属于默认因果链。
 
 ### RQ2：Starling 原文抽取 evidence 与 ChEMBL curated structured assay records 有何差异？
 
@@ -40,17 +52,15 @@ volume、各 group availability 和独立 source-quality annotation 一起报告
 
 Starling content 只分 `numeric_only` 和 `full` 两种，不在主实验中引入更细的分类。
 
-### RQ5：结构和 retrieved molecule 身份可见时，系统在真实部署 setting 下表现如何？
+### RQ5：在冻结的 identity-blind contract 下，retrieval evidence 如何改变判断？
 
-论文主实验使用 `deployment_visible`：只隐藏 query name，保留 query structure，并保留 retrieved molecule
-的 structure、source ID 和数据源已有名称；模型自主决定是否调用工具。`identity_blind` 与
-`deployment_visible_prefetched` 不进入主结果表，只作为补充控制，用于诊断 identity/structure visibility
-和固定工具证据对模型行为的影响。它们不能替代真实部署的 agentic 结果，也不能与 agentic 条件构成纯
-visibility 因果比较。
+V4 主实验使用 `identity_blind`：LLM 不看 query/neighbor 的结构和身份，harness 提供脱敏的 properties/
+comparison 工具文本。论文结论限定在该 contract。`deployment_visible` 和
+`deployment_visible_prefetched` 只作为后续显式可见性/部署消融，不能反向决定 blind 主矩阵设置。
 
 ### RQ7：Retrieval coverage 与 macro-F1 增幅有什么关系？
 
-在 deployment-visible agentic 主制度中，以每个 retrieval condition 为观察单位，报告 overall、正类和
+在 identity-blind parent-disjoint 主制度中，以每个 retrieval condition 为观察单位，报告 overall、正类和
 负类 coverage，并计算相对同任务 `none` 的 paired macro-F1 差值。主性能量使用 macro-F1，以避免标签
 不平衡使 accuracy 掩盖少数类行为；class-conditional coverage 是解释 retrieval availability 是否偏向
 某一类别的诊断量。
@@ -150,11 +160,10 @@ ChEMBL source manifest，出现 Starling 或其它 source row 时该 condition �
 | ClinTox | yes | yes | yes | yes | no | no | no | no | no |
 | Bioavailability_Ma | yes | yes | yes | yes | yes | yes | yes | yes | yes |
 
-当前已有 26 个 deployment-visible agentic 条件作为主实验候选；BBB/Skin 新增的 5 个 Starling
-operational 条件、对应 test/valid identity-blind、全部 valid matched-prefetch，以及现有 22 个 retrieval
-条件的 test/valid parent-disjoint 均已完成。Test matched-prefetch 保留原 21 条件，另有一个与 LLM
-可见性无关的 scalar KNN 对照。ClinTox 三个 Starling 条件补齐后，最终 agentic operational 主矩阵为
-29 个条件；新增 ClinTox retrieval 也必须同轮运行 parent-disjoint。当前结果仍属于 exploratory。
+新 v4 当前包含 BBB、Skin 和 Bioavailability 的 22 个 identity-blind 条件/构造方法 split，其中 3 个
+`none` 的 identity policy 不适用，19 个 retrieval 条件使用 parent-disjoint。Random/scaffold 分别先跑 valid
+再跑 test；当前尚未启动 v4 LLM。旧 26-condition deployment-visible/identity-blind/matched-prefetch 和
+parent-disjoint 结果均属于历史 lineage。ClinTox 当前没有 Starling gold split，不计入这轮 v4 矩阵。
 
 RQ8 的 ChEMBL-only cumulative distance curve 是与这套 29-condition source/grouping matrix 正交的新增
 实验，不计入上述条件数；完整 curve 先作为 matched-prefetch 受控实验运行，再做少量 agentic confirmation。
@@ -162,13 +171,16 @@ RQ8 的 ChEMBL-only cumulative distance curve 是与这套 29-condition source/g
 ## 固定模型和检索设置
 
 ```text
-requested model: zai-org/GLM-5.2-FP8
+base URL: http://127.0.0.1:50000/v1
+requested model: nvidia/GLM-5.2-NVFP4
+reasoning effort: "" (API parameter omitted; historical GLM reasoning behavior preserved)
 temperature: 0
 maximum output tokens: 20480
-primary deployment mode: deployment_visible with agentic tool use
-supplementary controls: identity_blind and deployment_visible_prefetched
-operational retrieval policy: canonical-record exact exclusion; same-parent records allowed and annotated
-analog-only ablation: parent-disjoint exclusion with top-k backfill
+primary visibility mode: identity_blind with harness-prefetched redacted tool evidence
+primary retrieval policy: parent-disjoint exclusion with top-k backfill
+operational staging: disabled by default; explicit historical/deployment ablation only
+endpoint concurrency budget: 512 total
+default launcher shape: --parallelism 128 --group-workers 1; one condition launcher at a time
 Morgan radius/bits: 2 / 2048
 top k per group: 3
 minimum similarity: 0.30
@@ -208,3 +220,8 @@ The endpoint-returned model identifier is recorded from every response rather th
 ## 补充的非 Agent baseline
 
 现有 MiniMol 结果可作为 learned baseline 背景，但不属于 retrieval ablation，也不能用来选择 agent setting。历史 DeepSeek 和 Bioavailability expert-policy run 仅作为 provenance 参考；它们与冻结的 GLM 矩阵不可直接比较，不进入论文主表。
+
+当前 Starling random/scaffold 已完成 MiniMol `--train-all` head、full-test Morgan KNN `k=3` 和
+复用冻结 MiniMol embedding 的 cosine KNN `k=3`。三者进入 Starling benchmark performance overview，
+但都不是 agent retrieval condition；训练/选择口径、结果与入口见
+`STARLING_BENCHMARK_RESULTS.md`。本节其余 29-condition 计数仍只描述旧 TDC-lineage agentic matrix。

@@ -15,11 +15,9 @@ from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import (
     load_label_decisions as load_bbb,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
-    HF_SOURCE_REVISION as BIOAVAILABILITY_REVISION,
-)
-from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
     load_label_decisions as load_bioavailability,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import DIRECT_CLAIMS_PATH
 from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
     load_label_decisions as load_skin_reaction,
 )
@@ -52,14 +50,18 @@ def main(argv: list[str] | None = None) -> int:
             decisions=decisions,
             source_metadata=source_metadata,
             output_dir=Path(args.output_root) / output_name,
-            max_test_size=args.max_test_size,
+            max_eval_size=args.max_eval_size,
+            valid_fraction=args.valid_fraction,
             test_fraction=args.test_fraction,
+            agreement_threshold=args.agreement_threshold,
             seed=args.seed,
             max_rejection_examples=args.max_rejection_examples,
         )
         print(
             f"[starling-benchmark] {output_name}: "
+            f"random_valid={summaries[task]['splits']['random']['n_valid']:,} "
             f"random_test={summaries[task]['splits']['random']['n_test']:,} "
+            f"scaffold_valid={summaries[task]['splits']['scaffold']['n_valid']:,} "
             f"scaffold_test={summaries[task]['splits']['scaffold']['n_test']:,}",
             flush=True,
         )
@@ -75,7 +77,7 @@ def _load_task(task: str, args: argparse.Namespace):
         return load_bbb(revision=args.bbb_revision, max_rows=args.max_rows_per_source)
     if task == "bioavailability_ma":
         return load_bioavailability(
-            revision=args.bioavailability_revision,
+            source_path=args.bioavailability_source,
             max_rows=args.max_rows_per_source,
         )
     if task == "skin_reaction":
@@ -115,11 +117,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=["all"],
     )
     parser.add_argument("--output-root", default="data/processed_starling")
-    parser.add_argument("--max-test-size", type=int, default=500)
-    parser.add_argument("--test-fraction", type=float, default=0.2)
+    parser.add_argument("--max-eval-size", type=int, default=500)
+    parser.add_argument("--valid-fraction", type=float, default=0.1)
+    parser.add_argument("--test-fraction", type=float, default=0.1)
+    parser.add_argument("--agreement-threshold", type=float, default=0.70)
     parser.add_argument("--seed", type=int, default=20260723)
     parser.add_argument("--bbb-revision", default=BBB_REVISION)
-    parser.add_argument("--bioavailability-revision", default=BIOAVAILABILITY_REVISION)
+    parser.add_argument("--bioavailability-source", default=str(DIRECT_CLAIMS_PATH))
     parser.add_argument("--max-rows-per-source", type=int, default=0)
     parser.add_argument("--max-rejection-examples", type=int, default=20)
     parser.add_argument(

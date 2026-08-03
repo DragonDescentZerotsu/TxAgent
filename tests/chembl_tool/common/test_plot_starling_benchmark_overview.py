@@ -45,7 +45,7 @@ def _write_metrics(path, *, omit=None, failed=None):
         writer.writerows(rows)
 
 
-def test_chart_renders_all_tasks_splits_and_minimol(tmp_path):
+def test_chart_renders_all_tasks_splits_and_baselines(tmp_path):
     metrics = tmp_path / "metrics.tsv"
     output = tmp_path / "overview.svg"
     _write_metrics(metrics)
@@ -58,6 +58,8 @@ def test_chart_renders_all_tasks_splits_and_minimol(tmp_path):
     assert "Scaffold split · n =" in svg
     assert svg.count("MiniMol · Train all") == 6
     assert svg.count("Morgan KNN · k=3") == 7  # Six panels plus the legend.
+    assert svg.count("MiniMol KNN · k=3") == 7  # Six panels plus the legend.
+    assert "MiniMol/cosine" in svg
     for task in TASKS:
         assert svg.count(f">{task.title}</text>") == 2
 

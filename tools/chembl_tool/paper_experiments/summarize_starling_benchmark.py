@@ -1,4 +1,4 @@
-"""Summarize random/scaffold Starling pipeline and MiniMol benchmark metrics."""
+"""Summarize random/scaffold Starling pipeline and supervised baseline metrics."""
 
 from __future__ import annotations
 
@@ -15,6 +15,14 @@ from .starling_benchmark_matrix import experiments_for_starling_benchmark
 DEFAULT_OUTPUT_DIR = Path("outputs/paper/starling_benchmark_results")
 MINIMOL_ROOT = Path("outputs/baselines/minimol_starling")
 STRUCTURE_KNN_ROOT = Path("outputs/baselines/structure_knn_starling")
+MINIMOL_EMBEDDING_KNN_ROOT = Path(
+    "outputs/baselines/minimol_embedding_knn_starling"
+)
+TASK_DATA_NAMES = {
+    "bbb_martins": "BBB_Martins",
+    "bioavailability_ma": "Bioavailability_Ma",
+    "skin_reaction": "Skin_Reaction",
+}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -24,6 +32,7 @@ def main(argv: list[str] | None = None) -> int:
         rows.extend(_pipeline_rows(split))
         rows.extend(_minimol_rows(split))
         rows.extend(_structure_knn_rows(split))
+        rows.extend(_minimol_embedding_knn_rows(split))
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     _write_tsv(output_dir / "metrics.tsv", rows)
@@ -78,13 +87,8 @@ def _pipeline_rows(split: str) -> list[dict[str, Any]]:
 
 
 def _minimol_rows(split: str) -> list[dict[str, Any]]:
-    task_names = {
-        "bbb_martins": "BBB_Martins",
-        "bioavailability_ma": "Bioavailability_Ma",
-        "skin_reaction": "Skin_Reaction",
-    }
     rows: list[dict[str, Any]] = []
-    for task, data_name in task_names.items():
+    for task, data_name in TASK_DATA_NAMES.items():
         metrics_path = MINIMOL_ROOT / data_name / split / "metrics.json"
         predictions_path = MINIMOL_ROOT / data_name / split / "test_predictions.jsonl"
         if not metrics_path.exists() or not predictions_path.exists():
@@ -120,29 +124,53 @@ def _minimol_rows(split: str) -> list[dict[str, Any]]:
 
 
 def _structure_knn_rows(split: str) -> list[dict[str, Any]]:
-    task_names = {
-        "bbb_martins": "BBB_Martins",
-        "bioavailability_ma": "Bioavailability_Ma",
-        "skin_reaction": "Skin_Reaction",
-    }
+    return _knn_rows(
+        split,
+        root=STRUCTURE_KNN_ROOT,
+        expected_method="morgan_knn_k3",
+        method_family="structure_knn",
+    )
+
+
+def _minimol_embedding_knn_rows(split: str) -> list[dict[str, Any]]:
+    return _knn_rows(
+        split,
+        root=MINIMOL_EMBEDDING_KNN_ROOT,
+        expected_method="minimol_embedding_cosine_knn_k3",
+        method_family="minimol_embedding_knn",
+    )
+
+
+def _knn_rows(
+    split: str,
+    *,
+    root: Path,
+    expected_method: str,
+    method_family: str,
+) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    for task, data_name in task_names.items():
-        metrics_path = STRUCTURE_KNN_ROOT / data_name / split / "metrics.json"
+    for task, data_name in TASK_DATA_NAMES.items():
+        metrics_path = root / data_name / split / "metrics.json"
         if not metrics_path.exists():
             continue
         metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+        if metrics.get("method") != expected_method:
+            raise ValueError(
+                f"Unexpected KNN method in {metrics_path}: "
+                f"{metrics.get('method')!r} != {expected_method!r}"
+            )
         confusion = metrics["confusion_matrix"]
         rows.append(
             {
                 "benchmark_split": split,
                 "task": task,
-                "method": "morgan_knn_k3",
-                "method_family": "structure_knn",
+                "method": expected_method,
+                "method_family": method_family,
                 "source": "train_jsonl",
                 "reasoning_mode": "supervised_knn_baseline",
                 "neighbor_identity_policy": "",
                 "n_test": metrics["n_test"],
-                "n_successful": metrics["n_test"],
+                "n_successful": metrics.get("n_evaluated", metrics["n_test"]),
                 "n_failed": 0,
                 "accuracy": metrics["accuracy"],
                 "macro_f1": metrics["macro_f1"],
@@ -202,7 +230,8 @@ def _report(rows: list[dict[str, Any]]) -> str:
         "",
         "Pipeline 指标使用 deployment-visible 主制度：none 采用 operational；所有 retrieval conditions "
         "采用 parent-disjoint。MiniMol 使用全部 train、固定 epoch 和 threshold=0.5；Morgan KNN "
-        "只检索同 split 的 train labels，固定 k=3 并使用未加权多数票。",
+        "与 MiniMol embedding cosine KNN 都只检索同 split 的 train labels，固定 k=3 并使用"
+        "未加权多数票。",
         "",
         "| split | task | method | n | failed | accuracy | macro-F1 | AUROC | positive P/R/F1 |",
         "|---|---|---|---:|---:|---:|---:|---:|---|",

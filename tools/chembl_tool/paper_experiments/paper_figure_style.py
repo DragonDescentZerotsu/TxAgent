@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import argparse
+from collections.abc import Callable, Iterable
 from html import escape
-from typing import Iterable
+from pathlib import Path
+import shutil
+import subprocess
 
 
 FONT = "Inter, DejaVu Sans, Arial, sans-serif"
@@ -20,6 +24,38 @@ PURPLE = "#6557A4"
 GOLD = "#A66B12"
 POSITIVE = "#177A58"
 NEGATIVE = "#B54848"
+
+
+def export_png(svg_path: Path, png_path: Path) -> None:
+    """Export a canonical SVG through ImageMagick when PNG is requested."""
+    converter = shutil.which("convert")
+    if converter is None:
+        raise RuntimeError("ImageMagick 'convert' is required for --png-output")
+    png_path.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        [converter, "-background", "white", str(svg_path), str(png_path)],
+        check=True,
+    )
+
+
+def run_metric_plot_cli(
+    *,
+    description: str | None,
+    render: Callable[[Path, Path], None],
+    default_metrics: Path,
+    default_output: Path,
+) -> None:
+    """Run the standard metrics-to-SVG CLI shared by paper figures."""
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("--metrics", type=Path, default=default_metrics)
+    parser.add_argument("--output", type=Path, default=default_output)
+    parser.add_argument("--png-output", type=Path)
+    args = parser.parse_args()
+    render(args.metrics, args.output)
+    print(args.output)
+    if args.png_output is not None:
+        export_png(args.output, args.png_output)
+        print(args.png_output)
 
 
 def svg_text(
@@ -83,3 +119,35 @@ def rect(
         f'<rect x="{x:g}" y="{y:g}" width="{width:g}" height="{height:g}" '
         f'rx="{rx}" fill="{fill}" stroke="{stroke}"/>'
     )
+
+
+def append_vertical_grid(
+    parts: list[str],
+    *,
+    plot_left: float,
+    plot_right: float,
+    plot_top: float,
+    plot_bottom: float,
+    ticks: Iterable[float],
+    scale_max: float,
+    label_y: float,
+) -> None:
+    """Append the shared vertical grid and numeric tick labels for bar charts."""
+    if scale_max <= 0:
+        raise ValueError("scale_max must be positive")
+    for tick in ticks:
+        tick_x = plot_left + tick / scale_max * (plot_right - plot_left)
+        parts.append(
+            f'<line x1="{tick_x:.1f}" y1="{plot_top}" x2="{tick_x:.1f}" '
+            f'y2="{plot_bottom}" stroke="{GRID}" stroke-width="1"/>'
+        )
+        parts.append(
+            svg_text(
+                tick_x,
+                label_y,
+                f"{tick:.1f}",
+                size=12,
+                fill=MUTED,
+                anchor="middle",
+            )
+        )
