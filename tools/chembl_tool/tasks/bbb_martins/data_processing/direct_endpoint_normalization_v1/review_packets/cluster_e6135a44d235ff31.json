@@ -1,0 +1,1812 @@
+{
+  "assignment_count": 361,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "absolute concentration in CSF"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Achievable concentration in CSF"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "achievable CSF concentration"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "achievable CSF concentrations"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "acyclovir concentration in the CSF"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Al concentration in the CSF"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "amount of amiloride in the CSF"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "area under the concentration-time curve for CSF"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average concentration in CSF"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average concentrations of erlotinib in CSF"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Average CSF concentration"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average CSF concentration"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average CSF concentrations"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average level of voriconazole in CSF"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average maximal concentration in the CSF"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average maximum CSF concentration"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average steady-state concentration in CSF"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Bilirubin concentration in CSF"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "bilirubin concentration in CSF"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "BPA concentration in the CSF"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "captopril concentration in CSF"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cefuroxime concentrations in the CSF"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "cisternal_csf_concentration",
+      "raw_value": "Cisternal CSF concentration"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "cisternal_csf_concentration",
+      "raw_value": "cisternal CSF concentration"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CNO concentrations in the CSF"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Compound CSF concentration"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration CSF"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentration in CSF"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in CSF"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the CSF"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "subarachnoid_space_csf_concentration",
+      "raw_value": "concentration in the CSF of the sub-arachnoid space"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the human CSF"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "concentration in ventricular CSF"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentration of FK506 in CSF"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of GCV in CSF"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of mannitol in CSF"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of orotic acid in CSF"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of UDCA in CSF"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of VP 16-213 in the CSF"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentration probenecid in CSF"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration values in CSF"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration within CSF"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations [in CSF]"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations achieved in CSF"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentrations in CSF"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in CSF"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "isf_concentration",
+      "raw_value": "concentrations in ISF"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in the CSF"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "concentrations in ventricular CSF"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations of MTX in the CSF"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_radioactivity_concentration",
+      "raw_value": "Concentrations of radiocarbon in the CSF"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations of VCR equivalents in CSF"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "csf_auc0_24h",
+      "raw_value": "CSF 0- to 24-hour area under the concentration-time curves (AUC₀-₂₄)"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF absolute concentration"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF acetone concentration"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF acyclovir concentration"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF aluminium concentration"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "CSF arsenic concentration / plasma arsenic concentration"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF bilirubin concentration"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF cefotetan concentrations"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF ceftolozane concentration"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF cefuroxime concentrations"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF chloramphenicol concentration"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF Concentration"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration (1 h)"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "CSF concentration (free)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "CSF concentration (free-fraction)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration (median)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration (peak)"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration (Trough)"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration (trough)"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "CSF concentration (ventricular)"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "csf_ec90_ratio",
+      "raw_value": "CSF concentration / EC90"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "csf_concentration_fold_increase",
+      "raw_value": "CSF concentration fold-increase"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "csf_concentration_increase",
+      "raw_value": "CSF concentration increase"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration of etoposide"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration peak"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration range"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "csf_concentration_rate",
+      "raw_value": "CSF concentration rates"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "csf_concentration_ratio",
+      "raw_value": "CSF concentration ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "csf_concentration_ratio",
+      "raw_value": "CSF concentration ratio (2-OH-DMI/DMI)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "csf_mbc90_ratio",
+      "raw_value": "CSF concentration relative to MBC90"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "csf_systemic_ratio",
+      "raw_value": "CSF concentration relative to systemic concentrations"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "csf_ic50_ratio",
+      "raw_value": "CSF concentration/IC50 ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "csf_mic_ratio",
+      "raw_value": "CSF concentration/MIC ratio"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF Concentrations"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentrations"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "csf_plasma_cmax_ratio",
+      "raw_value": "CSF concentrations / plasma Cmax"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_serum_ratio",
+      "raw_value": "CSF concentrations / sera concentrations"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_systemic_ratio",
+      "raw_value": "CSF concentrations / systemic concentrations"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_concentration_above_mic90",
+      "raw_value": "CSF concentrations above the MIC90"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_ppc_ratio",
+      "raw_value": "CSF concentrations compared to PPCs"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_unbound_systemic_ratio",
+      "raw_value": "CSF concentrations vs. unbound systemic concentrations"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF CSP concentration"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF CTRX concentrations"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF DHA concentration"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF DTG concentration"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF ethanol concentration"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF etravirine concentration"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_auc_tau",
+      "raw_value": "CSF exposure over its dosing interval"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF gadolinium concentration"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF GCV concentration"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF glucose concentration"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_ionized_magnesium_concentration",
+      "raw_value": "CSF ionized [Mg++]"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF lithium levels"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "CSF M6G concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "csf_magnesium_concentration",
+      "raw_value": "CSF magnesium concentration"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "csf_magnesium_concentration_increase",
+      "raw_value": "CSF magnesium concentration increase"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_magnesium_concentration_increase",
+      "raw_value": "CSF magnesium increase"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_magnesium_concentration_increase",
+      "raw_value": "CSF magnesium level increase"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF maximal concentration"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "CSF mean tramiprosate concentration (C ss-ave)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF median concentrations"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF miltefosine concentration"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF minimum concentration"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF moxalactam concentration"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF MTX concentration"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF MTX concentrations"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF NAC concentrations"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF nimesulide concentration"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF nitroxide concentration"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF peak and trough concentrations"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF peak concentration"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF peak concentrations"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF Probenecid Concentration"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_radioactivity_concentration",
+      "raw_value": "CSF radioactivity concentration"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_radioactivity_concentration",
+      "raw_value": "CSF radiosodium concentration"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "csf_concentration_ratio",
+      "raw_value": "CSF relative concentration"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF rifampicin concentration"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF salicylate concentration"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF SAMe concentrations"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF sample tazobactam concentration range"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "CSF steady-state concentration"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_total_concentration",
+      "raw_value": "CSF total concentration"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_magnesium_concentration_increase",
+      "raw_value": "CSF total magnesium concentration rise"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_total_concentration",
+      "raw_value": "CSF TPM concentration (total)"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "CSF TPM concentration (unbound)"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF trough concentration"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF tryptophan concentration"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF VCR concentration"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF voriconazole concentration"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF α-tocopherol concentrations"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF-MTX concentration"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "csf_trough_ratio",
+      "raw_value": "CSF-to-trough concentration ratio"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "csf_circulation_ratio",
+      "raw_value": "CSF/circulation concentration ratio"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "csf_peripheral_ratio",
+      "raw_value": "CSF/peripheral concentration ratio"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "CSF/plasma arsenic concentration"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "CSF/plasma lithium concentrations"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "csf_spb_ratio",
+      "raw_value": "CSF/S PB concentration ratio"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "csf_serum_ratio",
+      "raw_value": "CSF/sera concentration ratio"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "csf_systemic_ratio",
+      "raw_value": "CSF/systemic concentration ratio"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "csf_unbound_plasma_ratio_and_csf_concentration",
+      "raw_value": "CSF/Uplasma ratio and CSF concentration"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "C¹⁴ concentration in the CSF / plasma concentration"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "dasatinib concentration in CSF"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "DCA concentration in the CSF"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "detectable concentrations in CSF"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Dox concentration in CSF"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "csf_time_above_threshold",
+      "raw_value": "duration of MTX concentration > 1 x 10-6 mol/L in CSF"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_time_above_threshold",
+      "raw_value": "duration of MTX concentration > 1 x 10-8 mol/L in CSF"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "ecf_concentration",
+      "raw_value": "ECF concentration"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Estimated effective ARV concentration in CSF"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "estimated steady-state CSF concentration"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "csf_extracellular_concentration",
+      "raw_value": "extracellular concentrations in CSF"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "extrapolated concentration of alectinib in CSF"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "F-ddA concentration in CSF"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "fetal_csf_concentration",
+      "raw_value": "fetal CSF concentration"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "free CSF concentration"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "free CSF concentrations"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "gadolinium CSF concentration"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Galactose concentration in CSF"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "geometric mean CSF concentration"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "geometric mean CSF concentrations"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "highest BAF concentration in the CSF"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "highest CSF concentration"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Highest CSF concentration detected"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "highest mean CSF concentrations"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Imipenem concentration in CSF"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "imipenem concentration in the CSF"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "csf_concentration_increase",
+      "raw_value": "increase in CSF concentrations"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "csf_ionized_magnesium_concentration_increase",
+      "raw_value": "Ionized CSF [Mg++] increase"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "isf_perfusate_ratio",
+      "raw_value": "ISF-to-perfusate concentration ratio"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lithium in the CSF"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lopinavir concentration in CSF"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lopinavir concentration in the CSF"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lowest concentration in the CSF"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "LPV concentration in CSF"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "manganese concentration in CSF"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "max CSF concentration"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximal concentration in CSF"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximal concentration in the CSF"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximal concentration observed in CSF"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "maximal concentrations (CSF/plasma)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximal concentrations of ponazuril in the CSF (C max)"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "csf_ionized_magnesium_concentration_increase",
+      "raw_value": "maximal CSF ionized Mg²⁺ increase"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximal L-DOPA concentrations in the CSF"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximal reachable concentration in CSF"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximal TMZ concentration in CSF"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximum concentration achieved in the CSF"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Maximum concentration in CSF"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximum concentration in CSF"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "ecf_concentration",
+      "raw_value": "maximum concentration in the ECF"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "Maximum concentrations free in the CSF"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximum concentrations in CSF"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximum concentrations in the CSF"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Maximum CSF concentration"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximum CSF concentration"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximum CSF concentration (C highest)"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Maximum CSF concentrations"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "maximum CSF concentrations"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "csf_plasma_cmax_ratio",
+      "raw_value": "maximum CSF concentrations / plasma Cmax"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Maximum mean CSF concentration"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean 1 h postdose CSF concentration"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean ara-C concentration (CSF)"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean aztreonam concentrations in CSF"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean ceftizoxime concentrations in CSF"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean concentration in CSF"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean concentration in CSF"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean concentration in the CSF"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean concentration of moxalactam in CSF"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean concentrations in CSF"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean concentrations in CSF"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF ara-C concentration"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF ceftazidime concentration"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean CSF Concentration"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean CSF concentration"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF concentration"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF concentrations"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF ibrutinib concentration"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF ibrutinib concentrations"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF lithium level"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF nicotinamide"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF peak concentration"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF praziquantel concentration"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF stavudine concentrations"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF trough concentration"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF-MTX concentrations"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "blood_to_csf_equilibrium_half_time",
+      "raw_value": "mean half-times to reach equilibrium from blood to CSF"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "mean lumbar CSF concentration"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean maximal CSF concentration"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "mean maximum CSF concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean methotrexate levels in the CSF"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak concentration (CSF)"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean peak concentration in CSF"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak concentration in CSF"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak concentrations in CSF"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak concentrations in the CSF"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean peak CSF concentration"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak CSF concentration"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak CSF concentrations"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak CSF MTX concentration"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak CSF nafcillin concentration"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean peak nicotine concentration in the CSF"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean rifampin concentration of CSF"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean stavudine CSF concentrations"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "mean steady-state trough concentration in the CSF"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean trough CSF concentration"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "mean unbound ribociclib concentration in CSF"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "mean ventricular CSF concentration"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "csf_iodothyronine_change",
+      "raw_value": "Mean Δ in CSF iodothyronine"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Measured concentration in CSF"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Median concentration in CSF"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median concentration in CSF"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Median concentration in CSF at Cmin,24h"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Median concentration in the CSF"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median concentration in the CSF"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median concentration of afatinib in CSF"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Median CSF concentration"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median CSF concentration"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median CSF MTX concentration"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median CSF ponatinib concentration"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median CSF rifampicin concentration"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median DTG concentration in the CSF"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Median L-serine concentration (CSF)"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median peak CSF concentration"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "median steady-state CSF MTX concentrations"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "minimal concentrations in the CSF"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "minimum CSF concentration"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Moxalactam concentration (CSF)"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "MTX concentration in CSF"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "MTX concentration in the CSF"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "nadir concentration in CSF"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Naf concentrations"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "NMDA concentration in CSF"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "normalized MMB4 DMS concentration in CSF"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "obtainable concentration in CSF"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "offset concentration in CSF"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak and trough concentrations in CSF"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Peak concentration (CSF)"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Peak concentration in CSF"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak concentration in CSF"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak concentration in inflamed CSF"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Peak concentration in the CSF"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak concentration in the CSF"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "ecf_concentration",
+      "raw_value": "peak concentration in the ECF"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "peak concentration in ventricular CSF"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "csf_uniform_distribution_percentage",
+      "raw_value": "peak concentration of EEP in CSF as percentage of uniform distribution"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Peak concentrations in CSF"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak concentrations in CSF"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak concentrations in the CSF"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "csf_plasma_cmax_ratio",
+      "raw_value": "peak concentrations in the CSF / plasma Cmax"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak CSF ara-C concentrations"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Peak CSF concentration"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak CSF concentration"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak CSF concentrations"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "csf_plasma_cmax_ratio",
+      "raw_value": "peak CSF concentrations / plasma Cmax"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "csf_total_concentration",
+      "raw_value": "peak CSF total concentration (bound and free)"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "csf_serum_ratio",
+      "raw_value": "Peak CSF/S concentration ratio"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "ecf_concentration",
+      "raw_value": "peak ECF concentration"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak geometric mean concentration in CSF"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "peak mean CSF concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "peak ventricular CSF concentration"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "csf_mtx_percentage",
+      "raw_value": "percentage of the MTX concentration in the CSF"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "phenobarbital concentration in CSF"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "PLP concentrations in CSF"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "predose CSF concentration"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Pt concentration in CSF"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "csf_radioactivity",
+      "raw_value": "radioactive substances measured in the CSF"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "csf_radioactivity",
+      "raw_value": "radioactivity in the CSF"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "csf_mic_ratio",
+      "raw_value": "ratio of achievable CSF concentrations to MIC levels"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "RBV concentration in the CSF"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "Regression equation (y=CSF concentration, x=plasma concentration)"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "RPV concentration in CSF"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Site concentration (CSF)"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "steady_state_ventricular_csf_concentration",
+      "raw_value": "steady state ventricular CSF concentration"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "steady_state_unbound_csf_concentration",
+      "raw_value": "Steady-state average unbound CSF concentration"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "steady-state concentration in CSF"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "steady-state concentration levels in CSF"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "steady-state CSF concentration"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "Steady-state CSF concentrations"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "steady_state_csf_concentration",
+      "raw_value": "steady-state CSF concentrations"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "sulbactam concentrations in the CSF"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Tacrine concentration in CSF"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "thiamine concentration in CSF"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "csf_tmax",
+      "raw_value": "time to peak concentration in CSF"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "csf_tmax",
+      "raw_value": "time to peak radioactivity in CSF"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "total area under the curve of MTX concentration in CSF"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "csf_total_concentration",
+      "raw_value": "total concentration in CSF"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "csf_total_concentration",
+      "raw_value": "total concentration of nitroxide and its reduced form in CSF"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "csf_total_concentration",
+      "raw_value": "total CSF concentration"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "csf_total_concentration",
+      "raw_value": "total CSF concentrations"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "csf_total_concentration",
+      "raw_value": "total lopinavir concentrations reaching the CSF"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "trough concentration in CSF"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "trough concentration in CSF vs systemic concentration"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Trough concentration in the CSF"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Trough CSF concentration"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "trough CSF concentration"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "unbound concentration in CSF"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "unbound concentration of acoziborole in CSF"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "unbound_csf_unrestricted_distribution_ratio",
+      "raw_value": "unbound concentrations achieved in CSF / theoretically achievable in unrestricted distribution"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "unbound_cranial_csf_concentration",
+      "raw_value": "unbound cranial CSF concentration"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "unbound CSF concentrations"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "unbound DRV concentration (CSF)"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Venglustat concentration in CSF"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "Ventricular CSF concentration"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "ventricular CSF concentration"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "VPA concentrations in CSF"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "髄液中 MPN 濃度 (CSF MPN concentration)"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "髄液中濃度 (CSF concentration)"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "髄液内濃度 (CSF concentration)"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "髄液濃度 (CSF concentration)"
+    }
+  ],
+  "cluster_id": "cluster_e6135a44d235ff31",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

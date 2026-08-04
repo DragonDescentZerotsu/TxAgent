@@ -1,0 +1,1247 @@
+{
+  "assignment_count": 248,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "24 h brain exposure"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "absolute accumulation in the brain"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulated in the brain"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "human_brain_accumulation_factor",
+      "raw_value": "accumulation factor in the human brain"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation in brain"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_tissue_accumulation",
+      "raw_value": "accumulation in brain tissue"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_tissue_accumulation",
+      "raw_value": "accumulation in brain tissues"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brainstem_accumulation",
+      "raw_value": "accumulation in brainstem"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "cerebral_cortex_accumulation",
+      "raw_value": "accumulation in cerebral cortex"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation in mice brain"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation in mice brains"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation in mouse brains"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation in rat whole brain"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation in the brain"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brainstem_accumulation",
+      "raw_value": "accumulation in the brain stem"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_tissue_accumulation",
+      "raw_value": "accumulation in the brain tissue"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation in the brains"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "cerebellum_accumulation",
+      "raw_value": "accumulation in the cerebellum"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "cerebral_cortex_accumulation",
+      "raw_value": "accumulation in the cerebral cortex"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "cerebral_cortex_accumulation",
+      "raw_value": "accumulation in the cortex"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "fetal_brain_accumulation",
+      "raw_value": "accumulation in the fetal brain"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "head_region_accumulation",
+      "raw_value": "accumulation in the head region"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "hippocampus_accumulation",
+      "raw_value": "accumulation in the hippocampus"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "maternal_brain_accumulation",
+      "raw_value": "accumulation in the maternal brain"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "cerebral_cortex_accumulation",
+      "raw_value": "accumulation in the rat cortex"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "regional_brain_accumulation",
+      "raw_value": "accumulation in various brain regions"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation into the brain"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation within the brain"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_tissue_accumulation",
+      "raw_value": "accumulation within the brain tissue"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "striatum_accumulation",
+      "raw_value": "accumulation within the striatum"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "aluminum_brain_distribution",
+      "raw_value": "Aluminum brain distribution"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_detected_amount",
+      "raw_value": "amount detectable in brain"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "cortex_amount",
+      "raw_value": "amount entering the cortex"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "amount eventually reaching the brain"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "Amount in brain"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "amount in brain"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_homogenate_amount",
+      "raw_value": "amount in brain homogenate"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "amount reached the brain"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "amount reaching the brain"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "amount that reached the brain"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "u_brain_amount",
+      "raw_value": "amounts of U in the brain"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "maternal_brain_amount",
+      "raw_value": "amounts reaching the maternal brain"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_influx_clearance",
+      "raw_value": "apparent brain influx clearance"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_parenchyma_fraction",
+      "raw_value": "apparent distribution volume (brain parenchyma fraction)"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "apparent volume of distribution (brain)"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "area under the curve (brain)"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "area under the curve achieved in the brain"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "area under the curve and mean residence time in brain"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_tissue_auc",
+      "raw_value": "area under the tissue curve in brain tissue"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "area-under-the curve values in the brain"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_availability",
+      "raw_value": "average availability to the brain"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "average brain exposure"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "average conc. in brain"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_biodistribution",
+      "raw_value": "biodistribution in brain"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_biodistribution",
+      "raw_value": "biodistribution in the brain"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "Brain accumulation"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "brain accumulation"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "brain accumulation (knockout vs wild-type)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_accumulation_increase",
+      "raw_value": "brain accumulation increase"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_to_liver_accumulation_ratio",
+      "raw_value": "brain accumulation relative to liver"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_to_liver_accumulation_ratio",
+      "raw_value": "brain accumulation relative to liver accumulation"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_to_nontumor_brain_tissue_accumulation_ratio",
+      "raw_value": "brain accumulation relative to non-tumor brain tissues"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "brain accumulations"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "Brain amount"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "brain amount"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "brain amounts"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "cns_distribution",
+      "raw_value": "brain and spinal cord distribution"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "brain area under the curve"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_biodistribution",
+      "raw_value": "Brain biodistribution"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_content_fold_increase",
+      "raw_value": "brain content fold-increase"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_content_increase",
+      "raw_value": "brain content increase over control value"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_to_heart_or_lung_content_ratio",
+      "raw_value": "brain content relative to heart or lung"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_deposition",
+      "raw_value": "brain deposition"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "Brain distribution"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "brain distribution"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_distribution_fold_increase",
+      "raw_value": "brain distribution (fold increase)"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_to_equal_body_distribution_ratio",
+      "raw_value": "brain distribution (relative to equal body distribution)"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_to_gefitinib_distribution_ratio",
+      "raw_value": "brain distribution (relative to gefitinib)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_distribution_clearance",
+      "raw_value": "brain distribution clearance"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_distribution_coefficient",
+      "raw_value": "brain distribution coefficient"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_distribution_coefficient",
+      "raw_value": "brain distribution coefficient (BDC)"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_distribution_enhancement",
+      "raw_value": "brain distribution enhancement"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_distribution_enhancement_index",
+      "raw_value": "brain distribution enhancement index after correction for free fraction"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_distribution_increase",
+      "raw_value": "brain distribution increase"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "Brain distribution volume"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "brain distribution volume"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "brain distribution volumes (DV)"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "brain distributional volume"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_efflux_intrinsic_clearance",
+      "raw_value": "brain efflux intrinsic clearance"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_entry_fraction",
+      "raw_value": "brain entry fraction"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_efflux_clearance",
+      "raw_value": "brain exit rate constant and clearance out of the brain"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "Brain Exposure"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "Brain exposure"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "brain exposure"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_exposure_reduction",
+      "raw_value": "brain exposure reduction"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "brain exposures"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_homogenate_content",
+      "raw_value": "brain homogenate content"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_incorporation_level",
+      "raw_value": "brain incorporation level"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_parenchymal_accumulation",
+      "raw_value": "brain parenchymal accumulation"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "brain quantity"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "brain reaching rate"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_relative_bioavailability",
+      "raw_value": "brain relative bioavailability"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_residence_time",
+      "raw_value": "brain residence time"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_retention",
+      "raw_value": "brain retention"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "saquinavir_brain_distribution",
+      "raw_value": "brain saquinavir distribution"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_slice_distribution",
+      "raw_value": "brain slice distribution"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_sucrose_space",
+      "raw_value": "Brain sucrose Space (%)"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_supernatant_accumulation",
+      "raw_value": "brain supernatant accumulation"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_tissue_accumulation",
+      "raw_value": "brain tissue accumulation"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_tissue_accumulation",
+      "raw_value": "brain tissue accumulation level"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_tissue_availability",
+      "raw_value": "brain tissue availability"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_tissue_content",
+      "raw_value": "brain tissue content"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_tissue_distribution",
+      "raw_value": "brain tissue distribution"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_tumor_to_normal_brain_accumulation_ratio",
+      "raw_value": "brain tumor accumulation / normal brain"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_tumor_distribution_coefficient",
+      "raw_value": "brain tumour distribution coefficient"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "Brain volume of distribution"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "brain volume of distribution"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "Brain volume of distribution (VD)"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "Brain volume of distribution (Vd)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "brain volume of distribution (VD)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "brain volume of distribution (VT)"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_activity",
+      "raw_value": "c.p.m. per 10 gr. brain tissue X 10³"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_homogenate_recovered_amount",
+      "raw_value": "calculated amount recovered in whole brain homogenate"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "cerebral_accumulation",
+      "raw_value": "cerebral accumulations"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_distribution_change",
+      "raw_value": "change in brain distribution (KO mice versus WT mice)"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_clearance_to_entry_ratio",
+      "raw_value": "clearance of IS from the brain compared to its entry"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_distribution_coefficient",
+      "raw_value": "coefficient de distribution cérébral"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_parenchyma_concentration",
+      "raw_value": "concentraciones en el parénquima cerebral"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "hippocampus_content",
+      "raw_value": "content per hippocampus"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "contralateral_striatum_to_cerebellum_ratio",
+      "raw_value": "contralateral striatum to cerebellum ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "cortex_to_cerebellum_activity_ratio",
+      "raw_value": "cortex-to-cerebellum activity ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_detected_amount",
+      "raw_value": "detected amount in brain"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distributed to the brain"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_distribution_coefficient",
+      "raw_value": "Distribution coefficient brain"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "frontal_cortex_distribution_half_life",
+      "raw_value": "distribution half life into the frontal cortex"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution in brain"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_tissue_distribution",
+      "raw_value": "distribution in brain tissue"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_tissue_distribution",
+      "raw_value": "distribution in brain tissues"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution in the brain"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "cns_distribution",
+      "raw_value": "distribution in the central nervous system"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution in the contralateral brain"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "cerebral_cortex_distribution",
+      "raw_value": "Distribution into cerebral cortex"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution into the brain"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution into the human brain"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "maternal_brain_distribution",
+      "raw_value": "distribution into the maternal brain"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution into the normal brain"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_distribution_space",
+      "raw_value": "distribution space in brain"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution to brain"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_parenchymal_cell_distribution",
+      "raw_value": "distribution to brain parenchymal cells"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_distribution_reduction",
+      "raw_value": "distribution to brain reduction"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "Distribution to the brain"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution to the brain"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "cns_distribution",
+      "raw_value": "distribution to the brain and the spinal cord"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution to the rat brain"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "brain_parenchyma_volume_of_distribution",
+      "raw_value": "distribution volume (brain parenchyma)"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "distribution volume in the brain"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distribution within the brain"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "cns_distribution_clearance_ratio",
+      "raw_value": "distributional clearance into the CNS / clearance outside the brain"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "ko_to_wt_brain_exposure_ratio",
+      "raw_value": "enhancement ratio in brain exposure (KO/WT)"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_tissue_enrichment",
+      "raw_value": "enrichment in brain tissue"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "brain_estimated_value",
+      "raw_value": "Estimated value in brain"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "brain_expected_distribution",
+      "raw_value": "expected brain distribution"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "exposure in brain"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "exposure in the brain"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_accumulation_fold_increase",
+      "raw_value": "fold increase in brain accumulation"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_entry_fraction",
+      "raw_value": "fraction entering brain"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "brain_reaching_fraction",
+      "raw_value": "fraction reaching the brain"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "brain_recovery_fraction",
+      "raw_value": "fraction recovered in the brain"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "frontal_cortex_to_cerebellum_ratio",
+      "raw_value": "frontal cortex to cerebellum ratio"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "frontal_cortex_to_cerebellum_activity_ratio",
+      "raw_value": "Frontal cortex-cerebellum activity ratio"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_gd_dtpa_space",
+      "raw_value": "Gd-DTPA–accessible space per unit volume of the brain"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "hippocampal_exposure",
+      "raw_value": "hippocampal exposure"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "hippocampus_accumulation",
+      "raw_value": "hippocampus accumulation"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "hippocampus_to_cerebellum_ratio",
+      "raw_value": "hippocampus to cerebellum ratio"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "hypothalamus_to_cerebellum_or_cerebrum_accumulation_ratio",
+      "raw_value": "hypothalamus/cerebellum or cerebrum accumulation ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "ibu_brain_burden",
+      "raw_value": "IBU burden in the brain"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_distribution_increase",
+      "raw_value": "increase in brain distribution relative to baseline scans"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "lop_brain_distribution_increase",
+      "raw_value": "increase in Lop brain distribution"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "pgp_brain_distribution_fold_difference",
+      "raw_value": "influence of P-gp (brain distribution fold difference)"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_local_accumulation",
+      "raw_value": "local accumulation in brain"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "maternal_brain_distribution",
+      "raw_value": "maternal brain distribution"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "maximal brain exposure"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_occupancy",
+      "raw_value": "maximal brain occupancy (Emax)"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "maximal distribution in the brain"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "maximum exposure in the brain"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_occupancy",
+      "raw_value": "maximum occupancy in brain"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_sucrose_space",
+      "raw_value": "Mean Apparent Brain Sucrose Space %"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_enhancement",
+      "raw_value": "mean brain enhancement"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "dorsal_hippocampal_voxel_intensity_increase",
+      "raw_value": "mean increase in dorsal hippocampal voxel intensity"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_residence_time",
+      "raw_value": "mean residence time in the brain"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_entry_counts",
+      "raw_value": "movement into brain (counts)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_distribution_coefficient",
+      "raw_value": "normal brain distribution coefficient"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_normalized_exposure",
+      "raw_value": "Normalized Brain Exposure"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "overall brain exposure"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "Overall exposure to the brain over a 6 h period"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "Percentage of brain KYN coming from the periphery"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "Percentage of brain Kyn coming from the periphery"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_preferential_distribution",
+      "raw_value": "preferential distribution into the brain"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_homogenate_content",
+      "raw_value": "presence in brain homogenate"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "quantities in the brain"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_amount_delivered",
+      "raw_value": "quantity delivered in the brain"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "quantity in the brain"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_turnover_rate_constant",
+      "raw_value": "rate constant for turnover in brain"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "fetal_brain_distribution_rate",
+      "raw_value": "rate of TCDD distribution to fetal brain"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "periventricular_zone_to_nonenhancing_cortex_signal_intensity_ratio",
+      "raw_value": "ratio of signal intensity in the periventricular zone versus the nonenhancing region in the cortex"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "administration_to_brain_transition_ratio",
+      "raw_value": "ratio of transition from administration to brain"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "roi_to_cerebellum_ratio",
+      "raw_value": "ratios of the brain regions of interest to the cerebellum"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "regional_brain_extraction_fraction",
+      "raw_value": "regional brain extraction fraction"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "regional_brain_content",
+      "raw_value": "Regional Brain ³H Content"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_tissue_relative_availability",
+      "raw_value": "relative availability in brain tissue"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "brain_relative_bioavailability",
+      "raw_value": "relative bioavailability in brain"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "brain_relative_bioavailability",
+      "raw_value": "Relative bioavailability in the brain"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "brain_relative_bioavailability",
+      "raw_value": "relative bioavailability in the brain"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_relative_accumulation",
+      "raw_value": "relative brain accumulation"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_relative_accumulation",
+      "raw_value": "relative brain accumulations"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "brain_relative_distribution",
+      "raw_value": "Relative brain distribution"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_relative_distribution_coefficient",
+      "raw_value": "Relative brain distribution coefficient"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_relative_distribution_coefficient",
+      "raw_value": "relative brain distribution coefficient"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_relative_exposure",
+      "raw_value": "relative brain exposure"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_relative_exposure",
+      "raw_value": "relative brain exposure (re)"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_residence_time",
+      "raw_value": "residence time in the brain"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_retention",
+      "raw_value": "residual body burden retained in the brain"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_retention",
+      "raw_value": "retention in the brain"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "brain_retention",
+      "raw_value": "retention values in the brain"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_retention",
+      "raw_value": "retention within the brain"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "brain_tissue_space",
+      "raw_value": "space of brain tissue"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "brain_tissue_steady_state_level",
+      "raw_value": "steady state level in brain tissue"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "brain_steady_state_distribution",
+      "raw_value": "steady-state brain distribution"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "striatal_accumulation",
+      "raw_value": "striatal accumulation"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "striatum_to_cerebellum_ratio",
+      "raw_value": "striatum to cerebellum ratio"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "striatum_to_cerebellum_ratio",
+      "raw_value": "striatum-cerebellum/cerebellum ratio"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "striatum_to_cerebellum_distribution_volume_ratio",
+      "raw_value": "striatum-to-cerebellum distribution volume ratio (DVR)"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "striatum_to_cerebellum_ratio",
+      "raw_value": "striatum-to-cerebellum ratio"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "striatum_to_cerebellum_ratio",
+      "raw_value": "striatum/cerebellum ratio"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "striatum_to_cerebellum_ratio",
+      "raw_value": "striatum: cerebellum ratio"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "striatum_to_cerebellum_ratio",
+      "raw_value": "striatum:cerebellum ratio"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "striatum_time_to_first_measurement",
+      "raw_value": "time to first measurement in the striatum"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "brain_tissue_distribution",
+      "raw_value": "tissue distribution in brain"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "brain_tissue_distribution",
+      "raw_value": "tissue distribution in the brain"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_activity",
+      "raw_value": "total activity in the brain"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "total brain exposure"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_homogenate_retention",
+      "raw_value": "Total brain homogenate retention"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_activity",
+      "raw_value": "Total counts/min/g brain tissue"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "total load in the brain"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "brain_unbound_fraction",
+      "raw_value": "unbound brain fraction"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_tissue_unbound_fraction",
+      "raw_value": "unbound fraction, brain tissue"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_transition_rate",
+      "raw_value": "whole brain transition rate"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "whole brain volume of distribution (VT)"
+    }
+  ],
+  "cluster_id": "cluster_f5fa8d98e0122682",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

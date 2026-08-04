@@ -1,0 +1,2332 @@
+{
+  "assignment_count": 465,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "% Brain permeability"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "[¹⁴C]sucrose uptake into the brain"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "ability to enter the brain"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "ability to penetrate the brain"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_bioavailability",
+      "raw_value": "absolute bioavailability in brain"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_absorption",
+      "raw_value": "absorbed into the brain"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_absorption",
+      "raw_value": "absorption in the brain"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_ecf_accumulation",
+      "raw_value": "accumulation in the extracellular fluid of the brain"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_ammonia_flux",
+      "raw_value": "ammonia flux into brain"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "Amount entering brain"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "amount entering the brain"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "amount of free iron transported to brain side"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_tissue_entry",
+      "raw_value": "amount of GABA that entered the brain tissue"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "amount of NaF entering the brain from the blood circulation"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "amount of tracer reaching the brain"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "amount penetrating the brain"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_bioavailability",
+      "raw_value": "amount that can reach the brain through the systemic circulation"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_transfer",
+      "raw_value": "amount transferred into the brain"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_parenchyma_transport",
+      "raw_value": "amount transported in brain parenchyma"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "amount transported to the brain"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "fetal_brain_entry",
+      "raw_value": "amounts reaching the fetal brain"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "apparent brain transport"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_transport_availability",
+      "raw_value": "availability for transport into brain"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_regional_transport",
+      "raw_value": "average transport into brain regions"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "whole_brain_extraction",
+      "raw_value": "average whole brain extraction"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "initial_brain_uptake",
+      "raw_value": "BBB penetration; initial brain uptake"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "bioaccumulation in the brain"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_bioavailability",
+      "raw_value": "bioavailability for the brain"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_bioavailability",
+      "raw_value": "bioavailability in brain"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_bioavailability",
+      "raw_value": "bioavailability in the brain"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_tissue_bioavailability",
+      "raw_value": "bioavailability in the brain tissue"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_bioavailability",
+      "raw_value": "bioavailability of CU in the brain"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_tissue_bioavailability",
+      "raw_value": "bioavailability to brain tissue"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "cns_tumor_bioavailability",
+      "raw_value": "bioavailability to the tumors of the central nervous system"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "biodistribution into the brain"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_retention",
+      "raw_value": "body content retained into the brain"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_abscess_fluid_concentration",
+      "raw_value": "Brain abscess fluid concentration"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_abscess_purulent_material_concentration",
+      "raw_value": "brain abscess purulent material concentration"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_absorption",
+      "raw_value": "brain absorption"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "brain accretion"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_ammonia_extraction",
+      "raw_value": "Brain ammonia extraction"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_ammonia_flux",
+      "raw_value": "brain ammonia flux"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_and_csf_transfer",
+      "raw_value": "brain and CSF transfer"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_ascorbate_concentration",
+      "raw_value": "brain ascorbate"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_bioavailability",
+      "raw_value": "brain bioavailability"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_initial_extraction",
+      "raw_value": "brain capillary initial extraction"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_capillary_permeability",
+      "raw_value": "brain capillary permeability"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_cortex_transfer",
+      "raw_value": "brain cortex transfer"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "Brain delivery"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "brain delivery"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_delivery",
+      "raw_value": "brain delivery (CSF)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "brain delivery (relative to marketed DOC formulation)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "brain delivery increase"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_diffusion",
+      "raw_value": "brain diffusion"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_ecf_penetration",
+      "raw_value": "brain ECF penetration"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_endothelium_absorption",
+      "raw_value": "brain endothelium absorption"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "Brain Entry"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "Brain entry"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "brain entry"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "brain entry at 2 min"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_entry_efficiency",
+      "raw_value": "brain entry efficiency"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "brain entry rate"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_entry_time",
+      "raw_value": "brain entry time"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_to_systemic_exposure_ratio",
+      "raw_value": "brain exposure / systemic exposure"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_ecf_exposure",
+      "raw_value": "brain extracellular fluid exposure"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_ecf_lactate_concentration",
+      "raw_value": "brain extracellular fluid lactate levels"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "brain extracellular fluid level"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "brain extracellular fluid levels"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "Brain extraction"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "brain extraction"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "Brain extraction (E)"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "brain extraction (E)"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_extraction_coefficient",
+      "raw_value": "brain extraction coefficient"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_extraction_factor",
+      "raw_value": "brain extraction factor"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_extraction_rate",
+      "raw_value": "brain extraction rate"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_extravasation",
+      "raw_value": "Brain extravasation"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_extravasation",
+      "raw_value": "brain extravasation"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_extravascular_extraction",
+      "raw_value": "brain extravascular extraction"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_extravasation",
+      "raw_value": "brain fluorescein extravasation"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_flux",
+      "raw_value": "brain flux (Jin)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_glucose_entry",
+      "raw_value": "brain glucose entry"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_glucose_extraction",
+      "raw_value": "Brain Glucose Extraction"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_glucose_extraction",
+      "raw_value": "brain glucose extraction"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_glucose_influx",
+      "raw_value": "brain glucose influx"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "Brain influx"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "brain influx"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_influx_clearance",
+      "raw_value": "brain influx clearance"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_influx_clearance",
+      "raw_value": "brain influx clearance (Clil)"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_influx_rate",
+      "raw_value": "brain influx rate"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_interstitial_fluid_acetaldehyde_concentration",
+      "raw_value": "brain interstitial fluid acetaldehyde"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_iron_exchange",
+      "raw_value": "brain iron exchange"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_iron_uptake",
+      "raw_value": "brain iron uptake"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_lysine_influx",
+      "raw_value": "brain lysine influx"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_mn_transfer_coefficient",
+      "raw_value": "brain Mn transfer coefficient"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_parenchyma_delivery",
+      "raw_value": "brain parenchyma delivery improvement"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_parenchyma_penetration",
+      "raw_value": "brain parenchyma penetration"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_parenchyma_penetration_rate",
+      "raw_value": "brain parenchyma penetration rate"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_parenchyma_transfer",
+      "raw_value": "brain parenchyma transfer"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "brain passage"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "brain penetrability"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "Brain penetration"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "brain penetration"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_penetration_retention",
+      "raw_value": "brain penetration and retention"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_penetration_efficiency",
+      "raw_value": "brain penetration efficiency"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_penetration_factor",
+      "raw_value": "brain penetration factor"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_penetration_fold_change",
+      "raw_value": "brain penetration fold-change"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "brain penetration increase"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_penetration_index",
+      "raw_value": "brain penetration index"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_penetration_index",
+      "raw_value": "Brain Penetration Index (BPI)"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_penetration_index",
+      "raw_value": "brain penetration index (BPI)"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_penetration_level",
+      "raw_value": "brain penetration level"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_penetration_level",
+      "raw_value": "brain penetration levels"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_penetration_limitation",
+      "raw_value": "brain penetration limitation"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_penetration_rate",
+      "raw_value": "brain penetration rate"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "brain penetration reduction"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "brain permeability"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_permeability_clearance",
+      "raw_value": "brain permeability (expressed as clearance term)"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_permeability_parameter",
+      "raw_value": "brain permeability parameter"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_ps_product",
+      "raw_value": "brain permeability/surface area product"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_permeation",
+      "raw_value": "brain permeation"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_permeation_coefficient",
+      "raw_value": "brain permeation coefficient"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_permeation_rate",
+      "raw_value": "brain permeation rate"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_targeting",
+      "raw_value": "Brain targeting"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_targeting",
+      "raw_value": "brain targeting"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_targeting_delivery",
+      "raw_value": "brain targeting delivery"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_targeting_efficiency",
+      "raw_value": "brain targeting efficiency (TE)"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_tissue_deposition",
+      "raw_value": "brain tissue deposition"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_tissue_fluid_serum_penetration",
+      "raw_value": "Brain tissue fluid/serum penetration"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_tissue_penetration",
+      "raw_value": "Brain tissue penetration"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_tissue_penetration",
+      "raw_value": "brain tissue penetration"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_tissue_to_csf_gmr",
+      "raw_value": "brain tissue to CSF GMR"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_transfer",
+      "raw_value": "brain transfer"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_transfer_rate",
+      "raw_value": "Brain transfer rate"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "brain transport"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_transport_coefficient",
+      "raw_value": "Brain Transport Coefficient"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_transport_coefficient",
+      "raw_value": "brain transport coefficient"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_transport_coefficient",
+      "raw_value": "brain transport coefficient (Clup)"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_transport_coefficient",
+      "raw_value": "brain transport coefficients"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_transport_efficiency",
+      "raw_value": "brain transport efficiency"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_transport_rate",
+      "raw_value": "brain transport rates"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake (relative to tricarbonyl core)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake of preformed 22:6n-3"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "Calculated brain influx"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "calculated brain influx"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "calculated cerebral influx"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "calculated influx into the brain"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "cerebral_cortex_lactate_influx",
+      "raw_value": "calculated influx of lactate into cerebral cortex"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "calculated rates of entry into the brain"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "central nervous system entry"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "Central nervous system penetration"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "central nervous system penetration"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "cerebral_accumulation",
+      "raw_value": "cerebral accumulation"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "cerebral_ammonia_extraction",
+      "raw_value": "cerebral ammonia extraction"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "cerebral_ammonia_extraction",
+      "raw_value": "Cerebral ammonia extraction (%)"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "cerebral_arginine_influx",
+      "raw_value": "cerebral arginine influx"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "cerebral_cholesterol_accumulation",
+      "raw_value": "cerebral cholesterol accumulation"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "cerebral_delivery",
+      "raw_value": "Cerebral delivery (CD)"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "cerebral_deposition",
+      "raw_value": "cerebral deposition"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "cerebral_extraction",
+      "raw_value": "cerebral extraction"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "cerebral_extraction_fraction",
+      "raw_value": "cerebral extraction fraction"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "cerebral_lactate_extraction_fraction",
+      "raw_value": "cerebral fractional lactate extraction"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "cerebral_glucose_extraction",
+      "raw_value": "cerebral glucose extraction"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "cerebral_glucose_transport",
+      "raw_value": "cerebral glucose transport"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "cerebral_influx",
+      "raw_value": "Cerebral influx"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "cerebral_influx",
+      "raw_value": "cerebral influx"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "cerebral_lead_concentration",
+      "raw_value": "Cerebral lead"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "cerebral_net_exchange",
+      "raw_value": "cerebral net exchange"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "cerebral_partial_pressure",
+      "raw_value": "cerebral partial pressure (as fraction of inspired partial pressure)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "cerebral_passage",
+      "raw_value": "cerebral passage"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "cerebral_penetration",
+      "raw_value": "Cerebral penetration"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "cerebral_penetration",
+      "raw_value": "cerebral penetration"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "cerebral_retention",
+      "raw_value": "cerebral retention"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "cerebral_transfer_coefficient",
+      "raw_value": "cerebral transfer coefficient"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "cerebral_lactate_uptake",
+      "raw_value": "cerebral uptake of lactate as a % of glucose equivalents"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "cerebral_beta_hydroxybutyrate_permeability",
+      "raw_value": "cerebral β-hydroxybutyrate permeability"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "cerebral_beta_hydroxybutyrate_permeability",
+      "raw_value": "cerebral βHB permeability"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_influx_clearance",
+      "raw_value": "CL_brain,influx"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_to_systemic_clearance",
+      "raw_value": "clearance from the brain to the systemic circulation"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "systemic_to_brain_clearance",
+      "raw_value": "clearance from the systemic circulation to the brain"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "single_pass_brain_extraction",
+      "raw_value": "cleared by the brain on a single pass"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "single_pass_brain_extraction",
+      "raw_value": "cleared in a single rat brain passage"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_cobalt_accumulation",
+      "raw_value": "cobalt accumulation in the brain"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "fetal_brain_microdialysis_perfusate_concentration",
+      "raw_value": "Concentration in fetal brain microdialysis perfusate"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_tissue_content",
+      "raw_value": "contents in brain tissue"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_copper_transport",
+      "raw_value": "copper transport into the brain"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "cortical_glucose_influx",
+      "raw_value": "cortical L-glucose influx"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "curcumin delivery to the brain"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "curcumin release into the brain"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "daily influx from the peripheral circulation into the brain"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "delivered to the brain"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_delivery_efficiency",
+      "raw_value": "delivery efficiency to the brain"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "delivery into the brain"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "delivery to brain"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "delivery to the brain"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "cns_delivery_efficiency",
+      "raw_value": "delivery to the central nervous system efficiency"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_deposition",
+      "raw_value": "deposition in the brain"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_hg_deposition",
+      "raw_value": "deposition of Hg to the brain"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "difference in brain penetration between Pgp knockout and wild-type mice"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "difference in brain uptake between P-gp competent and P-gp-deficient mice"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_diffusion",
+      "raw_value": "diffusion into brain"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_diffusion",
+      "raw_value": "diffusion into the brain"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "digoxin brain uptake"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "digoxin penetration of the brain"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "cerebral_cortex_water_distribution",
+      "raw_value": "distribution into water of cerebral cortex"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_entry_dose",
+      "raw_value": "dose entering the brain"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brain_intact_delivery_dose",
+      "raw_value": "dose reaching the brain intact"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_leakage",
+      "raw_value": "dye leakage in the brain"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "cerebral_penetration_time",
+      "raw_value": "Délai de pénétration cérébrale"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "brain_entry_efficiency",
+      "raw_value": "efficiency of entering the brain"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "enhancement in brain delivery"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "enters the brain"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "entry into the brain"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "cerebral_entry",
+      "raw_value": "entry into the cerebral compartment"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "estimated brain entry rate"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "cerebral_flow_rate",
+      "raw_value": "estimated cerebral flow rate"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "Evans blue (EB) analysis of in vivo brain permeability"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_efflux_rate",
+      "raw_value": "exported from brain at rates"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "exposures of the CKD-602 into brain"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "Extent of brain penetration"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "extent of brain penetration"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_ecf_entry_extent",
+      "raw_value": "extent of entry into brain ECF (hyperammonemia group vs control group)"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "extracted by brain"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "extracted by the brain"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "extraction across the brain"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "extraction by brain"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "extraction by rat brain"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "single_pass_brain_extraction",
+      "raw_value": "extraction during a single pass through the brain"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "single_pass_brain_extraction",
+      "raw_value": "extraction in a single passage of the brain circulation"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "single_pass_brain_extraction",
+      "raw_value": "extraction in one passage through the brain"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "extraction in the brain"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "extraction into brain"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "extraction into the brain"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "brain_extraction_rate",
+      "raw_value": "extraction rate into brain"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "brain_influx_extraction_ratio",
+      "raw_value": "extraction ratio for DHED brain influx"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "first_pass_cerebral_extraction",
+      "raw_value": "first pass cerebral extraction (E)"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "first_pass_brain_extraction",
+      "raw_value": "first pass extraction by brain"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "first_pass_brain_extraction_efficiency",
+      "raw_value": "first pass extraction efficiency of the brain"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "first_pass_cerebral_extraction",
+      "raw_value": "first-pass cerebral extraction"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "first_pass_cerebral_extraction",
+      "raw_value": "first-pass cerebral extraction (E)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "flow into the brain"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "brain_efflux_flux",
+      "raw_value": "flux from brain into circulation"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_efflux_flux",
+      "raw_value": "flux from the brain into the circulation"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_to_liver_flux",
+      "raw_value": "flux from the brain to the liver"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "flux into the brain"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "brain_efflux_flux",
+      "raw_value": "flux of 24OHC from the brain enters the circulation"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_transport_fraction",
+      "raw_value": "fraction (f) of albumin-bound T3 transported into brain"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_transport_availability_fraction",
+      "raw_value": "fraction available for transport into the brain"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "brain_transport_fraction",
+      "raw_value": "fraction of albumin-bound T₃ transported into the brain"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_t3_circulatory_fraction",
+      "raw_value": "fraction of brain T3 directly coming from the circulation"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "brain_entry_fraction",
+      "raw_value": "fraction of circulating label entering the brain"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_parenchyma_entry_fraction",
+      "raw_value": "fraction of ddI entering the BBB cells which actually reaches the brain parenchyma"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "brain_equilibration_fraction",
+      "raw_value": "fraction of injected bolus freely equilibrated with brain"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "brain_transport_fraction",
+      "raw_value": "fraction of total T3 transported into the brain"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "single_pass_brain_transport_fraction",
+      "raw_value": "fraction transported into brain on a single pass"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "brain_transport_fraction",
+      "raw_value": "fraction transported into the brain"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "brain_lactate_extraction_fraction",
+      "raw_value": "fractional brain lactate extraction"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_iron_uptake_fraction",
+      "raw_value": "fractional uptake of plasma iron by the brain"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "brain_tissue_accumulation",
+      "raw_value": "free curcumin brain tissue accumulation"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "brain_iron_uptake",
+      "raw_value": "free iron uptake into the brain"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "brain_transport_rate",
+      "raw_value": "global brain transport rate"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "cerebral_penetration",
+      "raw_value": "Global cerebral penetration (%)"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "cerebral_tryptophan_uptake",
+      "raw_value": "global cerebral tryptophan uptake"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "brain_glucose_transport_rate",
+      "raw_value": "glucose transport rate in the brain"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "brain_glucose_transport_rate",
+      "raw_value": "glucose transport rate into brain"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "intracerebral_accumulation_gradient",
+      "raw_value": "gradient toward intracerebral accumulation"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "brain_urea_disappearance_half_life",
+      "raw_value": "half-life disappearance of Urea from the brain"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "brain_tissue_uptake_half_life",
+      "raw_value": "half-life for uptake into brain tissue"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "cerebral_build_up_half_time",
+      "raw_value": "half-time (T1/2) for the cerebral build-up"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "brain_washout_half_time",
+      "raw_value": "half-time for brain wash-out"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "brain_penetration_half_time",
+      "raw_value": "half-time for penetration into brain"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "in_situ_brain_transport",
+      "raw_value": "in situ brain transport"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "in_situ_bbb_transport",
+      "raw_value": "in situ cortical and hippocampal BBB transport"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "In Vivo Brain Kpuu"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "in vivo brain permeability"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "brain_phospholipid_incorporation",
+      "raw_value": "incorporation into brain phospholipids"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "brain_phospholipid_incorporation",
+      "raw_value": "incorporation into the brain phospholipid pool"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "increase in MTX delivery to the brain"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "increased delivery in the perfused vs. the nonperfused hemispheres"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "infiltration through BBB (brain concentration)"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "brain_influx_clearance",
+      "raw_value": "influx clearance into the brain"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "whole_brain_influx",
+      "raw_value": "Influx into brain"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "whole_brain_influx",
+      "raw_value": "influx into rat whole brain across cerebral capillaries"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "whole_brain_influx",
+      "raw_value": "Influx into whole brain"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "cerebral_cortex_lactate_influx",
+      "raw_value": "influx of lactate into cerebral cortex"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "brain_tryptophan_influx",
+      "raw_value": "influx of tryptophan into the brain"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "initial_brain_penetration",
+      "raw_value": "initial brain penetration"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "initial_cerebral_extraction",
+      "raw_value": "initial cerebral extraction"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "injected activity taken up into the brain"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "intracerebral_accumulation",
+      "raw_value": "intracerebral accumulation"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "intracerebral_bioavailability",
+      "raw_value": "intracerebral bioavailability"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "intracerebral_sucrose_concentration",
+      "raw_value": "intracerebral sucrose"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "intracranial_accumulation",
+      "raw_value": "intracranial accumulation"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "intracranial_penetration",
+      "raw_value": "intracranial penetration"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "k_in_brain",
+      "raw_value": "K_in (brain-permeation coefficient)"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Kp,brain (Reconstructed)"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu,brain (Estimated In Vivo)"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu,brain (Reconstructed)"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "brain_lactate_uptake",
+      "raw_value": "Lactate uptake by the brain"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "brain_leakage",
+      "raw_value": "leakage into brain tissue"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "brain_parenchyma_leakage",
+      "raw_value": "leakage into the brain parenchyma"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "cerebral_accumulation",
+      "raw_value": "localized cerebral accumulation"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "brain_lysine_flux",
+      "raw_value": "lysine flux into the brain"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "brain_tissue_bioavailability",
+      "raw_value": "maximal bioavailability in brain tissue"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "maximal brain extraction E(0)serum"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "brain_intracellular_free_magnesium_concentration",
+      "raw_value": "mean brain intracellular free magnesium"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "cerebral_extraction",
+      "raw_value": "mean cerebral extraction"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "MTX delivery to the brain"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "MTX per g wet wt brain tissue"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "outside_brain_fluorescence",
+      "raw_value": "NaF fluorescence outside the brain"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "brain_efflux_flux",
+      "raw_value": "net flux from the brain into the circulation"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "brain_magnesium_influx",
+      "raw_value": "net influxes of Mg into brain"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "choline_efflux",
+      "raw_value": "net loss of free choline to the venous return from the brain"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "cerebral_extraction",
+      "raw_value": "net steady-state cerebral extraction"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "net uptake from the circulation into the brain"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "ng/g Brain tissue"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "nonsaturable_brain_extraction",
+      "raw_value": "nonsaturable brain extraction"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "brainstem_transfer_permeability",
+      "raw_value": "olanzapine permeability (brainstem transfer)"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "brain_entry_half_saturation_concentration",
+      "raw_value": "one-half saturation concentration of entry into brain"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "overall brain penetration"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "whole_brain_ammonia_transfer_rate",
+      "raw_value": "overall mean transfer rate of tracer-labeled ammonia into whole brain"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "cerebral_capillary_ps_product",
+      "raw_value": "PA (product of cerebral capillary permeability and surface area)"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "brain_tumor_penetration",
+      "raw_value": "passage into the brain tumor"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "brain_noradrenaline_entry",
+      "raw_value": "passage of noradrenaline from the circulation into the brain"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetrates the brain"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "brain_tumor_penetration",
+      "raw_value": "penetrating ability into the brain tumors"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "perivascular_neuropil_penetration_distance",
+      "raw_value": "penetration distance into perivascular neuropil"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "brain_ecf_penetration",
+      "raw_value": "penetration from serum to brain ECF"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "brain_ecf_penetration_half_time",
+      "raw_value": "penetration half-time into brain extracellular fluid"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration in the brain"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "brain_tissue_penetration",
+      "raw_value": "penetration in the brain tissues"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetration in the central nervous system"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "brain_tissue_penetration",
+      "raw_value": "penetration into brain tissue"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "brain_and_csf_penetration",
+      "raw_value": "penetration into CSF and brain"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration into human brain"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration into rat brains"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration into the brain"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "brain_and_csf_penetration",
+      "raw_value": "penetration into the brain and CSF"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration into the brain of the abcb1ab(−/−) relative to control"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "brain_tissue_penetration",
+      "raw_value": "penetration into the brain tissues"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetration into the central nervous system"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration into the rat brain"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration of [³H]biotin from plasma into brain"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "brain_tissue_penetration",
+      "raw_value": "penetration of brain tissue"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "Penetration of the brain"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "brain_ecf_penetration_ratio",
+      "raw_value": "penetration ratios within the brain ECF"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration to the brain from the blood"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "brain_lactate_entry_fraction",
+      "raw_value": "per cent of arterial lactate entering the brain"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "brain_ammonia_bbb_passage_fraction",
+      "raw_value": "percentage of ammonia circulating through brain passing the BBB"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "brain_ammonia_bbb_passage_fraction",
+      "raw_value": "percentage of ammonia circulating through brain that passes the BBB"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "brain_intact_tissue_delivery_fraction",
+      "raw_value": "percentage of F-ddA arriving intact in brain tissue relative to amount absorbed across BBB"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "brain_kyn_transfer_fraction",
+      "raw_value": "percentage of KYN transferred from peripheral circulation to the brain"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "csf_osmolality_change_fraction",
+      "raw_value": "percentage of osmolality change in CSF accounted for by penetration into the brain"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "free_iron_transport_fraction_to_brain_side",
+      "raw_value": "percentage of total irons transported to the brain side as free iron"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "permeability (into the brain compartment)"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "permeability into the brain"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "permeability to the brain"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "brain_permeation",
+      "raw_value": "permeation into brain"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "brain_influx_rate",
+      "raw_value": "predicted brain influx rate"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "brain_influx_rate",
+      "raw_value": "predicted brain influx rate (BI-Trp)"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "brain_influx_rate",
+      "raw_value": "predicted brain influx rate (BI-Tyr)"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "brain_ps_product",
+      "raw_value": "PS product of brain capillaries"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "quercetin entry into the brain"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "cns_entry_rate_constant",
+      "raw_value": "rate constant for entry into the central nervous system"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "brain_entry_rate_constant",
+      "raw_value": "rate constant for sucrose entry into brain"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "rate for GABA entering the brain"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "brain_diffusion_rate",
+      "raw_value": "rate of brain diffusion"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "rate of brain entry"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "brain_choline_transport_rate",
+      "raw_value": "rate of choline transport into the brain"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "rate of entry into brain"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "brain_tumor_entry_rate",
+      "raw_value": "rate of entry into brain tumors"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "rate of entry into the brain"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "rate of entry into the brain from circulation"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "medulla_entry_rate",
+      "raw_value": "rate of entry into the medulla"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "brain_efflux_rate",
+      "raw_value": "rate of export from brain"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "brain_glucose_entry_rate",
+      "raw_value": "rate of glucose entry into brain"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "brain_entry_rate",
+      "raw_value": "rate of import to brain"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "brain_efflux_rate",
+      "raw_value": "rate of leaving the brain"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "brain_met_influx_rate",
+      "raw_value": "rate of Met influx into brain"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "brain_efflux_rate",
+      "raw_value": "rate of movement from the brain into the circulation"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "brain_ecs_penetration_rate",
+      "raw_value": "rate of penetration from the plasma to the brain extracellular space"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "brain_ecs_penetration_rate",
+      "raw_value": "rate of penetration into brain extracellular space"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "brain_ecf_secretion_rate",
+      "raw_value": "rate of secretion into the extracellular fluid of the brain"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "brain_transport_rate",
+      "raw_value": "rate of transport into the brain"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "brain_penetration_ratio",
+      "raw_value": "ratio of brain penetration between Pgp knockout animal and the wild-type"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Reconstructed Kp brain"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "brain_recovery",
+      "raw_value": "recovery from brain"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "brain_penetration_recovery",
+      "raw_value": "Recovery in brain penetration"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "brain_arsenic_recovery",
+      "raw_value": "Recovery of arsenic in the brain"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "brain_recovery_rate",
+      "raw_value": "recovery rate from mice brains"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "relative_brain_penetration",
+      "raw_value": "Relative brain penetration"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "relative_brain_penetration",
+      "raw_value": "relative brain penetration"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "relative_cns_penetration",
+      "raw_value": "relative penetration into the central nervous system"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "brain_cholesterol_replacement",
+      "raw_value": "replacement of brain cholesterol"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "brain_retention",
+      "raw_value": "retention in the rat brain"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "brain_riboflavin_concentration",
+      "raw_value": "riboflavin concentration (moiety actually transported) (brain)"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "single_pass_brain_extraction",
+      "raw_value": "single pass brain extraction"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "single_pass_cerebral_extraction",
+      "raw_value": "single pass cerebral extraction"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "single_pass_cerebral_extraction_efficiency",
+      "raw_value": "single-pass cerebral extraction efficiency"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "single_pass_cerebral_extraction_fraction",
+      "raw_value": "single-pass cerebral extraction fraction"
+    },
+    {
+      "item_id": "v0399",
+      "provisional_endpoint": "single_pass_brain_extraction",
+      "raw_value": "single-pass rat brain extraction"
+    },
+    {
+      "item_id": "v0400",
+      "provisional_endpoint": "steady_state_brain_penetration",
+      "raw_value": "steady-state brain penetration"
+    },
+    {
+      "item_id": "v0401",
+      "provisional_endpoint": "rapid_brain_compartment_entry_half_life",
+      "raw_value": "t/2 (entry into rapid brain compartment)"
+    },
+    {
+      "item_id": "v0402",
+      "provisional_endpoint": "slow_brain_compartment_entry_half_life",
+      "raw_value": "t/2 (entry into slow brain compartment)"
+    },
+    {
+      "item_id": "v0403",
+      "provisional_endpoint": "brain_diffusion_time",
+      "raw_value": "time to diffuse into the brain"
+    },
+    {
+      "item_id": "v0404",
+      "provisional_endpoint": "brain_entry_time",
+      "raw_value": "Time to enter brain"
+    },
+    {
+      "item_id": "v0405",
+      "provisional_endpoint": "brain_entry_time",
+      "raw_value": "time to enter brain"
+    },
+    {
+      "item_id": "v0406",
+      "provisional_endpoint": "brain_entry_time",
+      "raw_value": "time to enter the brain"
+    },
+    {
+      "item_id": "v0407",
+      "provisional_endpoint": "brain_penetration_time",
+      "raw_value": "Time to penetrate brain"
+    },
+    {
+      "item_id": "v0408",
+      "provisional_endpoint": "brain_penetration_time",
+      "raw_value": "time to penetrate brain"
+    },
+    {
+      "item_id": "v0409",
+      "provisional_endpoint": "cerebral_tissue_reach_time",
+      "raw_value": "time to reach cerebral tissues"
+    },
+    {
+      "item_id": "v0410",
+      "provisional_endpoint": "cns_reach_time",
+      "raw_value": "time to reach the central nervous system"
+    },
+    {
+      "item_id": "v0411",
+      "provisional_endpoint": "brain_tissue_penetration",
+      "raw_value": "tissue penetration in the brain"
+    },
+    {
+      "item_id": "v0412",
+      "provisional_endpoint": "brain_ecf_tmax",
+      "raw_value": "Tmax in the brain extracellular fluid"
+    },
+    {
+      "item_id": "v0413",
+      "provisional_endpoint": "brain_glucose_influx",
+      "raw_value": "total brain glucose influx"
+    },
+    {
+      "item_id": "v0414",
+      "provisional_endpoint": "brain_dye_extraction",
+      "raw_value": "Total dye extracted from brain"
+    },
+    {
+      "item_id": "v0415",
+      "provisional_endpoint": "brain_efflux_flux",
+      "raw_value": "total net flux from the brain"
+    },
+    {
+      "item_id": "v0416",
+      "provisional_endpoint": "brain_unidirectional_influx",
+      "raw_value": "total unidirectional flux into the brain"
+    },
+    {
+      "item_id": "v0417",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "tracer passing into the brain"
+    },
+    {
+      "item_id": "v0418",
+      "provisional_endpoint": "cerebral_extraction",
+      "raw_value": "transcerebral extraction"
+    },
+    {
+      "item_id": "v0419",
+      "provisional_endpoint": "brain_transfer_constant",
+      "raw_value": "transfer constant into brain"
+    },
+    {
+      "item_id": "v0420",
+      "provisional_endpoint": "brain_penetration_transfer_constant",
+      "raw_value": "transfer constants for penetration into brain"
+    },
+    {
+      "item_id": "v0421",
+      "provisional_endpoint": "brain_transfer",
+      "raw_value": "transfer into adult brain"
+    },
+    {
+      "item_id": "v0422",
+      "provisional_endpoint": "brain_transfer",
+      "raw_value": "transfer into brain"
+    },
+    {
+      "item_id": "v0423",
+      "provisional_endpoint": "brain_transfer",
+      "raw_value": "transfer into brain (newborn vs adult)"
+    },
+    {
+      "item_id": "v0424",
+      "provisional_endpoint": "fetal_brain_transfer",
+      "raw_value": "transfer into fetal brain"
+    },
+    {
+      "item_id": "v0425",
+      "provisional_endpoint": "brain_transfer",
+      "raw_value": "transfer into the brain"
+    },
+    {
+      "item_id": "v0426",
+      "provisional_endpoint": "brain_and_csf_transfer",
+      "raw_value": "transfer into the brain and CSF"
+    },
+    {
+      "item_id": "v0427",
+      "provisional_endpoint": "fetal_brain_transfer",
+      "raw_value": "transfer into the fetal brain"
+    },
+    {
+      "item_id": "v0428",
+      "provisional_endpoint": "cns_transfer",
+      "raw_value": "transfer to the central nervous system"
+    },
+    {
+      "item_id": "v0429",
+      "provisional_endpoint": "brain_transfer",
+      "raw_value": "transmitted to the brain"
+    },
+    {
+      "item_id": "v0430",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "transport from the circulation into the brain"
+    },
+    {
+      "item_id": "v0431",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "transport into and out of the brain"
+    },
+    {
+      "item_id": "v0432",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "transport into brain"
+    },
+    {
+      "item_id": "v0433",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "transport into the brain"
+    },
+    {
+      "item_id": "v0434",
+      "provisional_endpoint": "brain_parenchyma_transport",
+      "raw_value": "transport into the brain parenchyma"
+    },
+    {
+      "item_id": "v0435",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "transport of intact Tyr-Pro to the brain"
+    },
+    {
+      "item_id": "v0436",
+      "provisional_endpoint": "brain_efflux",
+      "raw_value": "transport out of the brain"
+    },
+    {
+      "item_id": "v0437",
+      "provisional_endpoint": "brain_parenchyma_transport_rate",
+      "raw_value": "transport rate into brain parenchyma"
+    },
+    {
+      "item_id": "v0438",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "transport to the brain"
+    },
+    {
+      "item_id": "v0439",
+      "provisional_endpoint": "single_pass_brain_transport",
+      "raw_value": "transported into brain on a single pass"
+    },
+    {
+      "item_id": "v0440",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "transported to brain"
+    },
+    {
+      "item_id": "v0441",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "transported to the brain"
+    },
+    {
+      "item_id": "v0442",
+      "provisional_endpoint": "brain_trapping",
+      "raw_value": "trapped in the brain"
+    },
+    {
+      "item_id": "v0443",
+      "provisional_endpoint": "brain_trapping",
+      "raw_value": "trapped into brain"
+    },
+    {
+      "item_id": "v0444",
+      "provisional_endpoint": "brain_tryptophan_influx",
+      "raw_value": "tryptophan influx to the brain"
+    },
+    {
+      "item_id": "v0445",
+      "provisional_endpoint": "brain_tungsten_deposition",
+      "raw_value": "tungsten deposition in the brain"
+    },
+    {
+      "item_id": "v0446",
+      "provisional_endpoint": "brain_unbound_exposure",
+      "raw_value": "unbound brain exposure"
+    },
+    {
+      "item_id": "v0447",
+      "provisional_endpoint": "hippocampus_ecf_to_blood_unbound_ratio",
+      "raw_value": "unbound colchicine in the hippocampus extracellular fluid / unbound colchicine in blood"
+    },
+    {
+      "item_id": "v0448",
+      "provisional_endpoint": "brain_extraction",
+      "raw_value": "unidirectional brain extraction"
+    },
+    {
+      "item_id": "v0449",
+      "provisional_endpoint": "brain_influx",
+      "raw_value": "unidirectional brain influx ($PS_1C_p$)"
+    },
+    {
+      "item_id": "v0450",
+      "provisional_endpoint": "brain_glucose_influx",
+      "raw_value": "unidirectional flux of glucose into the brain"
+    },
+    {
+      "item_id": "v0451",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake of 5-FU to the brain"
+    },
+    {
+      "item_id": "v0452",
+      "provisional_endpoint": "first_pass_brain_uptake",
+      "raw_value": "uptake of arterial ammonium by the brain during first pass"
+    },
+    {
+      "item_id": "v0453",
+      "provisional_endpoint": "brain_unidirectional_transport_maximum",
+      "raw_value": "V_Gln(in) (unidirectional transport maximum in the brain)"
+    },
+    {
+      "item_id": "v0454",
+      "provisional_endpoint": "brain_delivery_efficiency",
+      "raw_value": "VSD delivery efficiency to the brain"
+    },
+    {
+      "item_id": "v0455",
+      "provisional_endpoint": "brain_washout",
+      "raw_value": "wash-out from brain"
+    },
+    {
+      "item_id": "v0456",
+      "provisional_endpoint": "brain_washout",
+      "raw_value": "washout from the brain"
+    },
+    {
+      "item_id": "v0457",
+      "provisional_endpoint": "brain_washout",
+      "raw_value": "washout of brain"
+    },
+    {
+      "item_id": "v0458",
+      "provisional_endpoint": "whole_brain_extraction",
+      "raw_value": "whole brain extraction"
+    },
+    {
+      "item_id": "v0459",
+      "provisional_endpoint": "whole_brain_permeability",
+      "raw_value": "whole brain permeability"
+    },
+    {
+      "item_id": "v0460",
+      "provisional_endpoint": "whole_brain_suv",
+      "raw_value": "whole brain SUV at 3 min"
+    },
+    {
+      "item_id": "v0461",
+      "provisional_endpoint": "whole_brain_bbb_permeability",
+      "raw_value": "whole-brain BBB permeability"
+    },
+    {
+      "item_id": "v0462",
+      "provisional_endpoint": "whole_brain_single_pass_cerebral_extraction",
+      "raw_value": "whole-brain single-pass cerebral extraction"
+    },
+    {
+      "item_id": "v0463",
+      "provisional_endpoint": "whole_brain_water_exchange_rate",
+      "raw_value": "whole-brain water exchange rates"
+    },
+    {
+      "item_id": "v0464",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "µg equiv./g tissue (Brain)"
+    }
+  ],
+  "cluster_id": "cluster_99845da0e98508ec",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

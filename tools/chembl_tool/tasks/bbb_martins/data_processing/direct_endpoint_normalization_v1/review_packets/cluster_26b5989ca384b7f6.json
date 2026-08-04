@@ -1,0 +1,1152 @@
+{
+  "assignment_count": 229,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "%AUC brain/blood"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "(AUC0-t)brain"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AA in brain (AUC)"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "absolute AUC values of BE in brain"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "cerebrum_auc",
+      "raw_value": "area under the curve (AUC) in the brain cerebrum"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC (brain morphine concentration-time curve)"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "auc_brain_tissue",
+      "raw_value": "AUC (brain tissue)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC (Brain)"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC (brain)"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC 0-24 h (Brain)"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC 0-480 min (Brain)"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC 0-4h of brain concentration-time profile"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC 0-inf (Brain Concentration)"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC 0-Inf min (Brain)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC 0-t (Brain Concentration)"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC 0–4 (brain)"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC 0–7 h, brain"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC and MRT (brain)"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC and MRT in the brain"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "blood_to_brain_auc_ratio",
+      "raw_value": "AUC blood / AUC brain"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC Brain"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC brain"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "auc_brain_ecf",
+      "raw_value": "AUC brain ECF"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC Brain/AUC blood"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC brain/AUC blood"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "AUC brain/AUC serum"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "cortex_auc",
+      "raw_value": "AUC cortex"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC for brain"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC for brain TXD258"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC for the brain"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC in brain"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "auc_brain_ecf",
+      "raw_value": "AUC in brain extracellular fluid"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC in the brain"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "AUC in the brain / AUC in serum"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC in the brain, brain Cmax"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC of brain"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_contents_auc",
+      "raw_value": "AUC of brain contents"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC of brain Li concentrations"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC of brains"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC of caffeine in the brain"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC of DTX in brain"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "auc_intracerebral",
+      "raw_value": "AUC of intracerebral concentration"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC of TMP in the brain"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_relative_bioavailability",
+      "raw_value": "AUC oral/AUC intravenous (in the brain)"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC values in the brain"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC(0-10 h) in brain"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "auc_brain_ecf",
+      "raw_value": "AUC(0-t) (Brain extracellular fluid)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "auc_brain_tissue",
+      "raw_value": "AUC(0-t) (brain tissue)"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC(0-t) in brain"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "auc_brain_ecf",
+      "raw_value": "AUC(0-∞) (Brain extracellular fluid)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC(0-∞) Brain"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC(0-∞) in brain"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC(0→48) brain/AUC(0→48) blood"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC(0→t) (brain)"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC(brain)/AUC(blood)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC, brain"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC, in the brain"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC-brain, 0-24 h"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC-brain/AUCplasma"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-12 (Brain)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-12 (brain)"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-120min (brain)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-144 (Brain)"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-2 brain"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-2 in brain"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-24 h in brain"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "auc_tumor_bearing_brain",
+      "raw_value": "AUC0-24 h in the tumor-bearing brain"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-24h (Brain)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-24h in brain"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-2h (Brain)"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "auc_brain_homogenate",
+      "raw_value": "AUC0-2h in whole brain homogenates"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-4 (nmol·h/kg brain)"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "auc_brain_homogenate",
+      "raw_value": "AUC0-48 (brain homogenate concentration)"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-480 (Brain)"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-480 (brain)"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-4h of brain-time profile"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-6h (brain)"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-7h (Brain)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-8 (brain)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-8: Brain"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-8h (Brain)"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-inf (Brain)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-last Brain:Plasma"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-t (brain)"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "auc_brain_tissue",
+      "raw_value": "AUC0-t of brain tissue"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-t of brain–time profile"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-t,brain"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-t,brain/AUC0-t,plasma"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-∞ (Brain)"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-∞ (brain)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0-∞ in the brain"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "auc_brain_homogenate",
+      "raw_value": "AUC0-∞ in whole brain homogenates"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC0-∞, brain/AUC0-∞, blood"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0–2 h (brain)"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0–24 h (brain)"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0–t in brain"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0–∞ (brain)"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0→24 (Brain)"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0→480 (brain)"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0→∞ (Brain)"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC0→∞ in brain"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC10-240min in brain"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC90 (brain)/AUC90 (plasma)"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC:brain"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC_brain"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "relative_brain_auc",
+      "raw_value": "AUC_brain (C-SLNs relative to C-S)"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC_brain / AUC_plasma"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC_brain,0-24 h"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_to_liver_auc_ratio",
+      "raw_value": "AUC_brain/AUC_liver"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC_Brain/AUC_Plasma"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC_brain/AUC_plasma"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "relative_brain_auc",
+      "raw_value": "AUC_C-SLN/AUC_C-S (brain)"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC_ECF Brain/AUC_plasma"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "AUC_unbound brain/AUC_unbound plasma"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUCINF (brain)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUCinf (brain)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUCinf for the brain"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "auc_brain_ecf",
+      "raw_value": "AUCLast (Brain ECF)"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUClast (Brain)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUClast (brain)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "auc_brain_tissue",
+      "raw_value": "AUClast in brain tissue"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUCmean (Brain)"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUCs in the brain"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUCtotal (brain)"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCtotal brain/AUCtotal blood"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_tumor_to_plasma_auc_ratio",
+      "raw_value": "AUCtumor brain/AUCplasma"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "tumor_free_brain_to_plasma_auc_ratio",
+      "raw_value": "AUCtumor-free brain/AUCplasma"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "unbound_brain_auc",
+      "raw_value": "AUCu,brain 0-360 min"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "auc_tumor_bearing_brain",
+      "raw_value": "AUC~0-24h~ in tumor-bearing brain"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC₀-14440 min of the brain concentration"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_to_free_plasma_auc_ratio",
+      "raw_value": "AUC₀-₂₄ brain / AUC₀-₂₄ freeplasma"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC₀-₄h (brain concentration-time profile)"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC₀-₄₈ h (brain)"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC₀-₈h in the brain"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC₀-∞, brain"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC₀⁻∞ (brain)"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC₀⁻∞ in brain"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUC₀→∞ in brain"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "AUCₜ brain"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "aumc_brain",
+      "raw_value": "AUMClast (brain)"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain $\\text{AUC}_{0-360\\text{min}}$"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain area under curve (AUC)"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC (0-24 h)"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC (0-6 h)"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_to_muscle_auc_ratio",
+      "raw_value": "Brain AUC / muscle AUC"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain AUC / serum AUC"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC 0–∞"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC 0–∞"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC concentration-time profile"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC(0-480)"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC(0-8), DTE%, DTP%"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC(0-∞)"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC(0→600 min)"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC0-12 / plasma AUC0-12"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC0-12 h"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC0-24h"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC0-24h"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC0-48h / plasma AUC0-48h"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC0-60min"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC0-7h"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC0-inf"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC0-inf"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain AUC0-inf / Plasma AUC0-inf"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC0-t"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC0-t"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC0-∞"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC0-∞"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC0–24"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUC0–6h"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC4 - 24h"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC_{0→∞}"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC_{40 min}^{5h}"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUCinf"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUCinf"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain AUCm/AUCp"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUCtotal"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC₀-t"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain AUC₀⁻∞"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Brain AUD"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_bioavailability",
+      "raw_value": "brain bioavailability (AUC)"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain Cmax and AUC0-∞"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain Cmax, AUC0-∞"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain cocaine AUC"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain concentration (AUC)"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain drug AUC (0-t)"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "auc_brain_ecf",
+      "raw_value": "Brain ECF AUC"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "auc_brain_ecf",
+      "raw_value": "brain ECF AUC"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain exposure (AUC and t1/2)"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain exposure (AUC)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain exposure (AUC0-1 h)"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain exposures (AUC) 0.25–4 h"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "auc_brain_homogenate",
+      "raw_value": "brain homogenate AUC₀-24h"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain lapatinib AUC"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain levels AUC₂₄h"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "brain profile AUC"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "auc_brain_tissue",
+      "raw_value": "brain tissue AUC"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "auc_brain_tumor",
+      "raw_value": "Brain tumor AUC"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Brain-Kp (AUClast)"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "kpd_brain",
+      "raw_value": "Brain-Kpd(AUClast)"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma radioactivity AUC"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_to_free_plasma_auc_ratio",
+      "raw_value": "Brain: plasma (free AUC0-18 h)"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain:blood AUC"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "cerebral_auc",
+      "raw_value": "cerebral AUC24"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "cocaine AUC in the brain"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "CsA-induced change in AUCmaternal brain/AUCplasma"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "unbound_brain_auc",
+      "raw_value": "estimated free brain concentrations AUC"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Expected brain AUC"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_region_to_plasma_auc_ratio",
+      "raw_value": "F* (AUC_brain_region/AUC_plasma)"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "unbound_brain_auc",
+      "raw_value": "free brain AUC"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "auc_intracerebral",
+      "raw_value": "intracerebral area under the concentration–time curve (AUC0–12)"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "auc_intracranial",
+      "raw_value": "intracranial AUC"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "auc_intracranial_tumor",
+      "raw_value": "intracranial tumor sum total doxorubicin AUC"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Kp brain (AUCbrain/AUCplasma)"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kpuu,brain (AUC)"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "maternal brain AUC"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "maternal brain AUC0-240 GMR"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "striatum_auc",
+      "raw_value": "mean observed AUC in striatum"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "MK 801 conc. brain"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_to_total_auc_ratio",
+      "raw_value": "portion of total AUC₀-₃₆ reaching the brain"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "relative_brain_auc",
+      "raw_value": "relative brain AUC"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Ri (brain AUC0-24h/plasma AUC0-24h)"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "Total AUC across the brain"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "auc_brain",
+      "raw_value": "total brain exposure (AUC)"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "unbound_hippocampus_cerebellum_plasma_auc",
+      "raw_value": "unbound AUC (hippocampus, cerebellum, and plasma)"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "unbound_brain_auc",
+      "raw_value": "unbound AUC 0-24 h (Brain)"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "unbound_hippocampus_cerebellum_plasma_auc",
+      "raw_value": "unbound AUCs in hippocampus, cerebellum and plasma"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "unbound_brain_auc",
+      "raw_value": "Unbound brain AUC(0-10)"
+    }
+  ],
+  "cluster_id": "cluster_26b5989ca384b7f6",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

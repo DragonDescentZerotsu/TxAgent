@@ -1,0 +1,942 @@
+{
+  "assignment_count": 187,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "A-B; Efflux ratio"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "abluminal to luminal (B to A) efflux ratio"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "active_efflux",
+      "raw_value": "active efflux at the BBB"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "active_efflux_clearance",
+      "raw_value": "active efflux clearance"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "active_efflux_rate_constant",
+      "raw_value": "active efflux rate constant"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "active_efflux_reduction",
+      "raw_value": "active efflux reduction"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "apical_efflux_ratio",
+      "raw_value": "apical efflux ratio"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "apical_to_basal_efflux",
+      "raw_value": "Apical → Basal, efflux"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "apparent_bbb_efflux_clearance",
+      "raw_value": "apparent BBB efflux clearance"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "apparent_bbb_efflux_rate_constant",
+      "raw_value": "apparent BBB efflux rate constant"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "apparent_efflux_clearance",
+      "raw_value": "apparent efflux clearance"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "apparent_bbb_efflux_clearance",
+      "raw_value": "apparent efflux clearance across the BBB"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "apparent_efflux_rate_constant",
+      "raw_value": "apparent efflux rate constant"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "influx_to_efflux_ratio",
+      "raw_value": "apparent influx-to-efflux ratio"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "b-a/a-b efflux ratio"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "BA/AB efflux ratio"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "basal_to_apical_efflux",
+      "raw_value": "Basal → Apical, efflux"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "bbb_efflux_rate_to_influx_rate_ratio",
+      "raw_value": "BBB efflux rate relative to influx"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_glutamine_threshold",
+      "raw_value": "brain [GLN] threshold for efflux"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_efflux_rate_to_influx_rate_ratio",
+      "raw_value": "brain efflux rate / influx rate"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_efflux_rate_constant",
+      "raw_value": "brain efflux rate constant"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_to_blood_efflux_rate_constant",
+      "raw_value": "brain-to-blood efflux rate constant"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "caco_efflux_ratio",
+      "raw_value": "Caco efflux ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "apparent_efflux_clearance",
+      "raw_value": "CLapp, efflux"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "apparent_efflux_clearance",
+      "raw_value": "Clapp,efflux"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLout (efflux clearance)"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "corrected_efflux_ratio",
+      "raw_value": "corrected efflux ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "ecf_efflux_clearance",
+      "raw_value": "ECF efflux clearance"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "effective_efflux_ratio",
+      "raw_value": "Effective efflux ratio (EER)"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "effective_efflux_ratio",
+      "raw_value": "effective efflux ratio (EER)"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "efflux",
+      "raw_value": "Efflux"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "efflux",
+      "raw_value": "efflux"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "efflux",
+      "raw_value": "efflux (converted from influx)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux (E) ratio"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_efflux",
+      "raw_value": "efflux (out of the brain compartment)"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "efflux_activity",
+      "raw_value": "efflux activity"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "efflux CL"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "efflux clearance"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "Efflux clearance (CLef)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "efflux clearance (CLout)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "efflux_clearance_to_influx_clearance_ratio",
+      "raw_value": "efflux clearance / influx clearance"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "efflux_clearance_to_influx_clearance_ratio",
+      "raw_value": "efflux clearance / influx clearance ratio"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "efflux_clearance_to_influx_clearance_ratio",
+      "raw_value": "efflux clearance vs influx clearance"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "efflux coefficient (kout)"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "Efflux constant"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "efflux constant"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "efflux constant (ke)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_to_plasma_efflux",
+      "raw_value": "efflux from the brain to plasma"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "efflux_half_life",
+      "raw_value": "efflux half-life"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "lactate_efflux_to_blood",
+      "raw_value": "efflux of lactate to blood"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "efflux_rate",
+      "raw_value": "efflux rate"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux rate (Papp B–A/Papp A–B)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "efflux_rate_to_influx_rate_ratio",
+      "raw_value": "efflux rate / influx rate"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "efflux rate constant"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "efflux rate constant (K₀)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "ecf_efflux_rate_constant",
+      "raw_value": "efflux rate constant from ECF"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "efflux rate constants"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_to_blood_efflux",
+      "raw_value": "efflux rate from brain to blood"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Efflux Ratio"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Efflux ratio"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux ratio"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratio (B-A/A-B)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "Efflux ratio (B-to-A/A-to-B)"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratio (BA/AB)"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux ratio (Cl_up(-/-)/Cl_up(+/+))"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux ratio (Cl_up(prob+)/Cl_up(prob-))"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Efflux Ratio (ER)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Efflux ratio (ER)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux ratio (ER)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "mdck_mdr1_efflux_ratio",
+      "raw_value": "Efflux ratio (MDR1-MDCK)"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratio (Papp BA/Papp AB)"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratio (Papp(BL-AP)/Papp(AP-BL))"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratio (Papp, B-A/Papp, A-B)"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "Efflux ratio (PappB-to-A/PappA-to-B)"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratio (PeBA/PeAB)"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux ratio (r)"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux ratio (RE)"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratio BA/AB"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "active_transporter_efflux_ratio",
+      "raw_value": "efflux ratio by active transporters"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratio ER (BA/AB)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "mdck_mdr1_efflux_ratio",
+      "raw_value": "Efflux Ratio in MDR1-MDCK"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "Efflux ratio PBL-AP/PAP-BL"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux ratio_rat"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "efflux ratios"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "efflux_ratio_b_to_a_over_a_to_b",
+      "raw_value": "efflux ratios (B→A/A→B)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "efflux_transfer_constant",
+      "raw_value": "efflux transfer constant"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "efflux_rate",
+      "raw_value": "efflux transport rate"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "efflux_rate_to_influx_rate_ratio",
+      "raw_value": "efflux transport rate / influx transport rate"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "transport_efflux_ratio",
+      "raw_value": "efflux transport ratio r"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "efflux_to_influx_ratio",
+      "raw_value": "efflux/influx"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "efflux_to_influx_ratio",
+      "raw_value": "efflux/influx ratio"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "efflux_to_uptake_capacity_ratio",
+      "raw_value": "efflux/uptake capacity ratio"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "efflux_to_influx_ratio",
+      "raw_value": "efflux: influx ratio"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "efflux_to_influx_ratio",
+      "raw_value": "efflux:influx ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_to_blood_glutamate_efflux_rate",
+      "raw_value": "equivalent brain-to-blood [³H]Glu efflux rate"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "glucose_efflux",
+      "raw_value": "Glucose efflux"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "glucose_efflux",
+      "raw_value": "glucose efflux"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "efflux_half_life",
+      "raw_value": "half time of efflux"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "efflux_half_life",
+      "raw_value": "half-life (efflux)"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "abcb1_intrinsic_efflux_clearance",
+      "raw_value": "in vitro ABCB1-mediated intrinsic efflux clearance"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "abcg2_intrinsic_efflux_clearance",
+      "raw_value": "in vitro ABCG2 intrinsic efflux clearance"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "in vitro efflux ratio"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "in vivo efflux ratio"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "pgp_efflux_ratio",
+      "raw_value": "in vivo P-gp efflux ratio"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "efflux",
+      "raw_value": "in-vitro Efflux"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "influx_clearance_to_efflux_clearance_ratio",
+      "raw_value": "influx clearance / efflux clearance"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "influx_clearance_to_efflux_ratio",
+      "raw_value": "influx clearance / efflux ratio"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "influx_efflux_clearance",
+      "raw_value": "influx clearance, efflux clearance"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "influx_to_efflux_ratio",
+      "raw_value": "influx vs efflux"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "intrinsic_efflux_clearance",
+      "raw_value": "intrinsic efflux clearance"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "efflux",
+      "raw_value": "JISF_Efflux"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "k efflux"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "pgp_efflux_rate_constant",
+      "raw_value": "k2 (P-gp efflux rate constant)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "fractional_efflux_rate_constant",
+      "raw_value": "k4 (fractional transport rate constant for efflux from extravascular compartment to plasma)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_to_plasma_efflux_rate_constant",
+      "raw_value": "k4 (rate constant of drug efflux from brain to plasma across BBB)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_to_blood_efflux_rate_constant",
+      "raw_value": "kbc (efflux rate constant from brain-to-blood)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "Kefflux"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "efflux_km",
+      "raw_value": "Km (efflux)"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "efflux_kinetic_parameters",
+      "raw_value": "Km, Vmax (efflux)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "log_efflux_permeability",
+      "raw_value": "log Pefflux"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "lactate_efflux_max_rate",
+      "raw_value": "maximal rate of lactate efflux"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "mdck_efflux_ratio",
+      "raw_value": "MDCK efflux ratio"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "mdck_mdr_efflux_ratio",
+      "raw_value": "MDCK-MDR efflux ratio"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "mdck_mdr1_efflux_ratio",
+      "raw_value": "MDCK-MDR1 Efflux ratio"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "mdck_mdr1_efflux_ratio",
+      "raw_value": "MDCK-MDR1 efflux ratio"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "mdck_mdr1_efflux_ratio",
+      "raw_value": "MDCK-mdr1 efflux ratio"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "mdck_mdr1_bcrp_efflux_ratio",
+      "raw_value": "MDCK-MDR1_BCRP Efflux ratio"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "mdck_mdr1_efflux_ratio",
+      "raw_value": "MDCK-MDRI Efflux Ratio"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "mdck_mdr1_efflux_ratio",
+      "raw_value": "MDCK_MDR1 Efflux ratio"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "mdr_efflux_ratio",
+      "raw_value": "MDR efflux ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "mdr1_efflux_ratio",
+      "raw_value": "MDR-1 efflux ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "mdr_efflux_ratio",
+      "raw_value": "MDR-based efflux ratio"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "mdr1_efflux_ratio",
+      "raw_value": "MDR1 Efflux Ratio"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "mdr1_efflux_ratio",
+      "raw_value": "MDR1 Efflux ratio"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "mdr1_efflux_ratio",
+      "raw_value": "MDR1 efflux ratio"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "mdr1_efflux_ratio",
+      "raw_value": "MDR1 efflux ratio (ER)"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "mdr1_efflux_ratio",
+      "raw_value": "MDR1 efflux ratio (MDR BA/AB)"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "mdr1_llc_pk1_efflux_ratio",
+      "raw_value": "MDR1-LLC-PK1 efflux ratios"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "microvascular_efflux_rate_constant",
+      "raw_value": "microvascular efflux constant"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "net_efflux",
+      "raw_value": "net efflux"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "net_efflux_ratio",
+      "raw_value": "Net efflux ratio"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "net_efflux_ratio",
+      "raw_value": "net efflux ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "net_efflux_ratio",
+      "raw_value": "Net Efflux Ratio (NER)"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "net_efflux_ratio",
+      "raw_value": "Net efflux ratio (NER)"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "net_efflux_ratio",
+      "raw_value": "net efflux ratios"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "net_efflux_to_influx_ratio",
+      "raw_value": "net efflux/influx ratio"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "net_flux_ratio",
+      "raw_value": "net flux ratios (efflux ratio in MDCKII-MDR1 cells over that in MDCKII-WT cells)"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "pgp_mediated_efflux_extraction_ratio",
+      "raw_value": "P-glycoprotein mediated efflux extraction ratio"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "pgp_efflux",
+      "raw_value": "P-gp Efflux"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "pgp_efflux",
+      "raw_value": "P-gp efflux"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "pgp_efflux_ratio",
+      "raw_value": "P-gp efflux ratio"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "pgp_efflux_ratio",
+      "raw_value": "P-gp efflux ratio (ER)"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "pgp_efflux_ratio",
+      "raw_value": "P-gp efflux ratio and [plasma],u/[brain],u ratio"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "pgp_mediated_efflux",
+      "raw_value": "P-gp mediated efflux"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "pgp_mediated_efflux_ratio",
+      "raw_value": "P-gp mediated efflux ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "pgp_mediated_active_efflux_to_passive_clearance_ratio",
+      "raw_value": "P-gp-mediated active efflux / passive clearance"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "pgp_mediated_efflux_ratio",
+      "raw_value": "P-gp-mediated efflux ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "neuronal_efflux_media_percentage",
+      "raw_value": "percentage found in neuronal efflux media"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "pgp_efflux_ratio",
+      "raw_value": "PgP efflux ratio"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "pgp_efflux_ratio",
+      "raw_value": "Pgp Efflux Ratio"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "pgp_efflux_ratio",
+      "raw_value": "Pgp efflux ratio"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "pgp_efflux",
+      "raw_value": "Pgp-Efflux"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_efflux_rate_constant",
+      "raw_value": "rate constant for brain morphine efflux (ke0)"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "sodium_efflux_rate_constant",
+      "raw_value": "rate constant for sodium efflux (non-CSF')"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "rate constant for the efflux"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_efflux_rate_constant",
+      "raw_value": "rate constant of valproate efflux from brain"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "verapamil_inhibitable_efflux_rate_constant",
+      "raw_value": "Rate constants for verapamil-inhibitable efflux"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "efflux_rate",
+      "raw_value": "rate of efflux"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "efflux_rate_to_influx_rate_ratio",
+      "raw_value": "rate of efflux / rate of influx"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "brain_to_blood_glutamine_efflux_rate",
+      "raw_value": "rate of Gln efflux from brain to blood"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "net_efflux_to_unidirectional_influx_rate_ratio",
+      "raw_value": "rate of net efflux compared to rate of unidirectional influx"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "efflux_rate_to_bui_ratio",
+      "raw_value": "ratio of efflux rate (β) to BUI"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "pgp_apparent_efflux_intrinsic_clearance_ratio",
+      "raw_value": "Ratio of P-gp Apparent Efflux CLint"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "efflux_reduction",
+      "raw_value": "reduction in efflux"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "reflux_ratio",
+      "raw_value": "reflux ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "steady_state_efflux_ratio",
+      "raw_value": "steady state efflux ratio"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "striatal_efflux_to_serum_ratio",
+      "raw_value": "striatal efflux/serum ratio"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "efflux_half_life",
+      "raw_value": "t1/2 of efflux"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "texas_red_efflux_rate",
+      "raw_value": "Texas red efflux rate"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "total_active_efflux_clearance",
+      "raw_value": "total active efflux clearance"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "total_brain_efflux_rate_constant",
+      "raw_value": "total brain efflux constant"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "transcapillary_efflux_rate_constant",
+      "raw_value": "transcapillary efflux rate constant (kp)"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "transport_efflux_ratio",
+      "raw_value": "transport efflux ratio"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "efflux_half_life",
+      "raw_value": "t₁/₂ (efflux)"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "unidirectional_efflux",
+      "raw_value": "v2 (unidirectional efflux)"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "efflux_rate",
+      "raw_value": "velocity of efflux"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "vinblastine_efflux_ratio",
+      "raw_value": "Vinblastine efflux ratio"
+    }
+  ],
+  "cluster_id": "cluster_92998d75f0007fc2",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

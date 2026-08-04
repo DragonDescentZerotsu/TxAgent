@@ -1,0 +1,892 @@
+{
+  "assignment_count": 177,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "% CSF penetration"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "% CSF/plasma penetration"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "% CSF/serum penetration"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "% Penetration (CSF/serum at 1 hour)"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "% Penetration @ 1 h CSF/Plasma"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "% Penetration CSF/plasma × 100"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "% penetration into CSF"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "1-h CSF penetration rate"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "2-h CSF penetration rate"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "average CSF penetration"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "average penetration in CSF"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "average penetration into CSF"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Average penetration into the CSF"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "average penetration into the CSF"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "average penetration rate in the CSF"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "unbound_csf_penetration",
+      "raw_value": "average simulated CSF penetration of unbound drug"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "BBB penetration rate (CSF-to-plasma concentration ratio)"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "cns_csf_penetration",
+      "raw_value": "CNS/CSF penetration"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "CSF daptomycin penetration"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "csf_diffusion_ratio",
+      "raw_value": "CSF diffusion ratio"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "CSF Penetration"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "CSF penetration"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "CSF Penetration %"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF penetration (% of plasma concentration)"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF penetration (% of plasma)"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "CSF Penetration (%)"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "CSF penetration (%)"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF penetration (based on unbound plasma concentrations)"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF penetration (corrected for plasma protein binding)"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF penetration (CSF conc/plasma conc)"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "relative_csf_penetration",
+      "raw_value": "CSF penetration (relative to vancomycin)"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF penetration / plasma"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "csf_penetration_coefficient",
+      "raw_value": "CSF penetration coefficient"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "CSF penetration levels"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "active_csf_penetration",
+      "raw_value": "CSF penetration of active drug"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "CSF penetration percentage"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "CSF Penetration Rate"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "CSF penetration rate"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "CSF penetration rate (%)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "CSF penetration rate and CSF-UPR"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "CSF penetration rates"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "CSF penetration ratio"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF Penetration ratio (CSF concentration/blood concentration %)"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "CSF penetration ratios"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF penetration relative to total plasma drug exposure"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_penetration_score",
+      "raw_value": "CSF penetration score (CPS)"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "csf_penetration_score",
+      "raw_value": "CSF penetration scores"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "CSF penetration/levels"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "CSF vancomycin penetration rate"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF-blood penetration ratio"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF-to-serum penetration ratio"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood barrier penetration"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood penetration"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "CSF/plasma or CSF/blood penetration rate"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "CSF/plasma penetration rate"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma penetration ratio"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum penetration"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum penetration (%)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "CSF:penetration ratio"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "degree of CSF drug penetration"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "degree of penetration into CSF"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_diffusion_rate",
+      "raw_value": "diffusion rate into the CSF"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "drug penetration in the CSF"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_penetration_index",
+      "raw_value": "index of penetration from the blood into the CSF"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "Mean % CSF penetration"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "mean CSF penetration"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "Mean CSF penetration rate"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "mean CSF penetration rate"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "mean CSF penetration ratio"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Mean CSF/serum penetration"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "mean osimertinib CSF penetration rate"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "mean penetration in the CSF"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "mean penetration into CSF"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "mean penetration into the CSF"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "mean penetration of blood to CSF ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "mean penetration rate and CSF-UPR"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "mean penetration rate and CSF/unbound concentration ratios"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "mean penetration rate to the CSF"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "mean percent penetration [(CSF concentration/serum concentration) × 100%]"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "mean percent penetration into CSF"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "median CSF penetration"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "median CSF penetration rate"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "median ratio of abacavir penetration into CSF"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "median ratio of abacavir penetration into CSF (on the basis of the AUC from 0 to 6 h postdosing)"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "overall CSF penetration"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "overall penetration into CSF"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "peak CSF penetration"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "peak mean per cent penetration ([CSF]/[serum] × 100)"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "penetration (CSF to plasma concentration ratio)"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "penetration (CSF to serum)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Penetration (CSF/blood)"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "penetration (CSF/blood)"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Penetration (CSF/Serum)"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_penetration_half_time",
+      "raw_value": "penetration half-time for CSF"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Penetration in CSF"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration in CSF"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration in the CSF"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Penetration Into CSF"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Penetration into CSF"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into CSF"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Penetration into CSF (% of plasma concentration)"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_to_serum_penetration_ratio",
+      "raw_value": "penetration into CSF compared with penetration into serum"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "penetration into CSF/plasma"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into inflamed CSF"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Penetration into the CSF"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into the CSF"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into the CSF from blood"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetration into the entire CSN"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into the infected CSF"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into the liquor (CSF)"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into the lumbar CSF"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into ventricular CSF"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Penetration of ceftazidime into CSF"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of CSF"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of GCV into the CSF"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of HU into CSF"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of linezolid in CSF"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of normal CSF"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of the drug into the CSF"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate (CSF / plasma)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate (CSF/plasma)"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "penetration rate (max CSF concentration compared to serum concentration)"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "penetration rate (peak CSF/serum)"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate and concentration in the CSF"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate and CSF-UPR"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate from plasma to the CSF"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate in CSF"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate in the CSF"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate into the CSF"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate of CSF"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate to CSF"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate to the CSF from the plasma"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate, CSF-UPR"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "penetration ratio (CSF / plasma)"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "penetration ratio (CSF/plasma concentration ratio)"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_or_csf_to_plasma_auc_ratio",
+      "raw_value": "penetration ratio (fAUCbrain_or_CSF/fAUCplasma)"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "penetration ratio into CSF"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "penetration ratio into the CSF"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "penetration ratio to CSF"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration to CSF"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration to CSF from blood"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration to the CSF"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetrations into CSF"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "per cent penetration ([CSF]/[Serum] × 100)"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "per cent penetration (CSF concentration / Serum concentration) × 100%"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "per cent penetration (CSF concentration/serum concentration × 100)"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "Per cent penetration into CSF"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "Percent CSF penetration"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "percent penetration (CSF concentration/plasma concentration)"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percent penetration (CSF/peak serum concentration)"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percent penetration from serum to CSF"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percent penetration into CSF"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percent penetration into the CSF"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percentage CSF penetration"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage CSF penetration (CSF/serum concentration ratio)"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage CSF penetration (CSF/serum)"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_penetration_percentage_of_dose",
+      "raw_value": "percentage of administration penetrating CSF"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "csf_penetration_proportion",
+      "raw_value": "percentage of children with observed CSF penetration"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percentage of CSF penetration"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage of penetration ([concentration in CSF ÷ concentration in serum] × 100%)"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "percentage of penetration (ratio of the concentration in CSF to the simultaneous level in plasma)"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percentage of penetration into the CSF"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percentage of penetration of drug into CSF"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percentage penetrating the CSF"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage penetration ([CSF]/[serum] x 100)"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage penetration ([CSF]/[serum] × 100)"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage penetration ([mean CSF/serum drug concentration] × 100)"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage penetration ([ratio of concentration in CSF to concentration in serum]×100)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percentage penetration into CSF"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "csf_penetration_percentage",
+      "raw_value": "percentage penetration into the CSF"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "csf_penetration_proportion",
+      "raw_value": "proportion of penetration into CSF"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "rate of penetrating the CSF"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "brain_or_csf_penetration_rate",
+      "raw_value": "rate of penetration into the brain or CSF"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "rate of penetration into the CSF"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "rates of penetration into the CSF"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_to_serum_penetration_ratio",
+      "raw_value": "ratios of CSF penetration to serum penetration"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "unbound_csf_penetration",
+      "raw_value": "Unbound (free) A-80556 penetration into the CSF"
+    }
+  ],
+  "cluster_id": "cluster_f19d18ff5edbbb4a",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

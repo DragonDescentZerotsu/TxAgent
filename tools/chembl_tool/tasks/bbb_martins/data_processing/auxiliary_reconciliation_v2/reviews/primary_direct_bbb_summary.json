@@ -1,0 +1,106 @@
+{
+  "decision_status": "proposed",
+  "decisions": {
+    "action_counts": {
+      "merge": 112,
+      "rename": 8,
+      "retain": 6110
+    },
+    "change_decision_count": 120,
+    "changed_assignment_scope": 2833,
+    "decision_count": 6230,
+    "path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/reviews/primary_direct_bbb.jsonl",
+    "proposed_final_label_counts": {
+      "direct_bbb/global_context": 5741,
+      "direct_bbb/global_species_context": 489
+    },
+    "provisional_label_counts": {
+      "direct_bbb/global_context": 5861,
+      "direct_bbb/global_species_context": 502
+    },
+    "sha256": "23968479fa176f0e196cced95d4840332cd5907cd7b9444f6f7243cf3c75f200"
+  },
+  "independent_direct_coverage": {
+    "duplicate_ownership": [],
+    "expected_non_null_labels": 6363,
+    "extra": [],
+    "missing": [],
+    "owned_non_null_labels": 6363,
+    "valid": true,
+    "zero_duplicate": true,
+    "zero_extra": true,
+    "zero_missing": true
+  },
+  "inputs": {
+    "assignments_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/provenance/cluster_assignments.parquet",
+    "assignments_sha256": "60493ba502527e4189537154472cddd92ad7789d4b9d4c811dae697663eb1682",
+    "label_catalog_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/label_catalog.parquet",
+    "label_catalog_sha256": "6a10a7ffc1ddae8405b42322888da5a33b80f812cb163b85d0eab0d1a16f127d"
+  },
+  "packet_audit": {
+    "assignment_count": 28290,
+    "cluster_count": 284,
+    "exact_packet_to_provenance_row_parity": true,
+    "manifest_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/review_packets/manifest.json",
+    "manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+    "packet_count": 7,
+    "packet_sha256": {
+      "direct_bbb__global_context__packet_0001.json": "ddfc0a4f9864730837c982f3579aef873f97eb9d39fd2b255543d9ba0137fbfa",
+      "direct_bbb__global_context__packet_0002.json": "692c77918c236fa47a011ce8c3912c7974751ddea7ff4bc880db7bf0442e14c5",
+      "direct_bbb__global_context__packet_0003.json": "2a03ba34e9fe1a7a91d89b383dd30f513f7d6f1ca8f0deb10b23c10d4542fdac",
+      "direct_bbb__global_context__packet_0004.json": "522cc9a27c6fdb062ab6981af3b8c0c3f900071063c3f63a8d7c9e8e42aded48",
+      "direct_bbb__global_context__packet_0005.json": "6c5f71f48b24ea57ae9e5e53c9fa53662829f6dc07c46df0927be9caa5b5149b",
+      "direct_bbb__global_context__packet_0006.json": "9dce4cc7bc6866dbad0534d73677e0fbeb4faf695fea31d339c92ddabbd3512f",
+      "direct_bbb__global_species_context__packet_0001.json": "3fc50f67ecf337274bb8ad3775515e69e5f76650345e20f36b810d28b41f1919"
+    },
+    "reviewed_assignment_count": 28290,
+    "reviewed_cluster_count": 284,
+    "reviewed_packet_ids": [
+      "direct_bbb__global_context__packet_0001",
+      "direct_bbb__global_context__packet_0002",
+      "direct_bbb__global_context__packet_0003",
+      "direct_bbb__global_context__packet_0004",
+      "direct_bbb__global_context__packet_0005",
+      "direct_bbb__global_context__packet_0006",
+      "direct_bbb__global_species_context__packet_0001"
+    ]
+  },
+  "publication_status": "primary_review_only; independent checking and adjudication are still required",
+  "review_method": {
+    "candidate_checks": [
+      "punctuation and separator equivalence",
+      "abbreviation expansion",
+      "co-culture spelling and word order",
+      "exact grammatical-number equivalence",
+      "assay/model suffix equivalence only when raw examples preserve type",
+      "species common-name aliases, atom deduplication, and alphabetical order",
+      "raw-example inspection for every proposed change"
+    ],
+    "cluster_scope": "All direct_bbb local clusters and assignments were included via exact packet-to-provenance parity.",
+    "conservative_exclusions": [
+      "T2-weighted MRI versus T2*-weighted MRI",
+      "directional inverse ratios",
+      "generic BBB disruption/opening versus explicit disruption/opening models",
+      "generic primate versus explicitly nonhuman primate",
+      "generic assay/model/study suffix differences without raw-example equivalence"
+    ]
+  },
+  "reviewer_id": "bbb_rebuild_audit",
+  "scope": [
+    "direct_bbb/global_context",
+    "direct_bbb/global_species_context"
+  ],
+  "shared_validator": {
+    "action_counts": {
+      "merge": 112,
+      "rename": 8,
+      "retain": 6110
+    },
+    "decisions": 6230,
+    "labels_expected": 24274,
+    "labels_missing": 17911,
+    "labels_owned": 6363,
+    "valid": true
+  },
+  "summary_version": "bbb_auxiliary_primary_direct_review.v1"
+}

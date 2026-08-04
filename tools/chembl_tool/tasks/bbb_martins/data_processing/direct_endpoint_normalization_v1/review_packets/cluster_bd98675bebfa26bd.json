@@ -1,0 +1,1282 @@
+{
+  "assignment_count": 255,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "uptake_efficiency",
+      "raw_value": "(C0)PUE"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "uptake_efficiency",
+      "raw_value": "(C0)PUE-PBCN"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "maximum_concentration_ratio",
+      "raw_value": "(Cal/Cpmax)max"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "(Ccsf/Cp)×100"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "14C concn"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "[br]/[bl]"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "[Bu]predicted"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_to_permeability_ratio",
+      "raw_value": "B/Pe"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B:A/A:B"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_penetration_index",
+      "raw_value": "BPI"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_penetration_ratio",
+      "raw_value": "BPko/BPwt"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "binding_potential_non_displaceable",
+      "raw_value": "BPND"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_penetration_ratio",
+      "raw_value": "BPR"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Br. C3h"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Br/Bl"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "br/bl"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Br/P"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Br/Pl"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Br:Bl"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_extracellular_fluid_concentration",
+      "raw_value": "BrEC"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_slice_to_csf_ratio",
+      "raw_value": "Brs/Brc.s.f."
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Bru/Plu"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_tissue_to_plasma_tissue_ratio",
+      "raw_value": "BT/PT"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_tissue_to_plasma_tissue_ratio",
+      "raw_value": "Bt/Pt"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "Bu"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Bu/Pu"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Bu/Pub"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Bu/Puc"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Bui"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI (0)"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI (ET)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI (uncorrected) and BUI net (corrected)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI (water reference)"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI index"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI value"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI, ET"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUIcorr"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUIp"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUIsuc"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUItest"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI⁰"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI₀"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "unbound_extracellular_to_unbound_plasma_ratio",
+      "raw_value": "C*E,eq/C*P,eq"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "C.S.F./P"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "concentration",
+      "raw_value": "C0"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "c50",
+      "raw_value": "C_50"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "C_B/C_P"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "fluid_to_plasma_ratio",
+      "raw_value": "C_F/C_Pi"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "C_u,b / C_u,p"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "vascular_to_plasma_ratio",
+      "raw_value": "C_v/C_p"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "C_{b,u}:C_{p,u}"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "gadolinium_concentration",
+      "raw_value": "C_{Gd}"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "ratio",
+      "raw_value": "CAC/BAC"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "caco2_permeability",
+      "raw_value": "Caco-2"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_to_iv_ratio",
+      "raw_value": "Cbrain/Ci.v."
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "concentration",
+      "raw_value": "Cc"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "capillary_concentration",
+      "raw_value": "Ccap"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "cortex_to_plasma_ratio",
+      "raw_value": "Ccortex,iv/Cp"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CCSF"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Ccsf"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CCSF/CP"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CCSF/Cp"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Ccsf/Cp"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CCSF/Cp,ud"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CCSF/Cu"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "Ccsf/Cu"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CCSF/CuP"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CCSF:Cp,u"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "cortex_to_plasma_ratio",
+      "raw_value": "Ccst/Cp"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "extracellular_fluid_concentration",
+      "raw_value": "CE"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "extracellular_fluid_concentration",
+      "raw_value": "Ce"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "unbound_extracellular_to_unbound_plasma_ratio",
+      "raw_value": "Ce*/Cp*"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "cerebellum_to_plasma_ratio",
+      "raw_value": "CER/Cₚ"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "cerebellum_to_plasma_ratio",
+      "raw_value": "Cer_Pla"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cerebr./pl"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "extracellular_to_plasma_ratio",
+      "raw_value": "Cext/CPl"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "water_to_plasma_ratio",
+      "raw_value": "CH2O/CPl"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "intracellular_concentration",
+      "raw_value": "Ci"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "interstitial_fluid_concentration",
+      "raw_value": "CISF"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "interstitial_fluid_to_unbound_plasma_ratio",
+      "raw_value": "Cisf,ss/Cpu,ss or AUCisf/AUCp,u"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "interstitial_fluid_to_unbound_plasma_ratio",
+      "raw_value": "CISF:Cpu"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "clearance",
+      "raw_value": "CL"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "clearance",
+      "raw_value": "Cl"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "clearance_to_plasma_concentration_ratio",
+      "raw_value": "CL/CP"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "clearance_to_plasma_concentration_ratio",
+      "raw_value": "CL/Cp"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "clearance_to_volume_ratio",
+      "raw_value": "CL/V"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "clearance_1",
+      "raw_value": "CL1"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "clearance_13",
+      "raw_value": "CL13"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "clearance_2",
+      "raw_value": "CL2"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "clearance_ratio",
+      "raw_value": "CL2/CL1"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "clearance_3",
+      "raw_value": "CL3"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "clearance_31",
+      "raw_value": "CL31"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "clearance_4",
+      "raw_value": "CL4"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "CL_in"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "Cl_in"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "blood_influx_clearance",
+      "raw_value": "CL_in,blood"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CL_out"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "clearance",
+      "raw_value": "Cl_real"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "Cl_up"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "Cl_{in}"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "apical_efflux_clearance",
+      "raw_value": "CLae"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "apparent_brain_clearance",
+      "raw_value": "CLapp,br"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "last_concentration",
+      "raw_value": "Clast"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "clearance",
+      "raw_value": "CLbev"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "clearance",
+      "raw_value": "CLbev9OHR"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "clearance",
+      "raw_value": "CLbevRIS"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLBout"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "apparent_brain_clearance",
+      "raw_value": "CLbrain,app"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_influx_clearance",
+      "raw_value": "CLbrain,inf"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "distribution_clearance_in",
+      "raw_value": "CLD,in"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "distribution_clearance_out",
+      "raw_value": "CLD,out"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLeff"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "Cleff"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLeff9OHR"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLefflux"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "Clefflux"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLefflux-RIS"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLeffRIS"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "clearance",
+      "raw_value": "Clil"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "CLin"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "Clin"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "influx_to_efflux_clearance_ratio",
+      "raw_value": "CLin / CLout"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "blood_to_fluid_influx_clearance",
+      "raw_value": "CLin,B/F"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "influx_to_efflux_clearance_ratio",
+      "raw_value": "CLin/CLout"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "influx_to_efflux_clearance_ratio",
+      "raw_value": "Clin/Clout"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "apparent_influx_clearance",
+      "raw_value": "CLinf,app"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "CLinflux"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "clearance",
+      "raw_value": "CLlp"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "nonspecific_clearance",
+      "raw_value": "CLns"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "clogp",
+      "raw_value": "Clog P"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLout"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "Clout"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "efflux_to_influx_clearance_ratio",
+      "raw_value": "CLout / CLin"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLout and CLu,out"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "efflux_to_influx_clearance_ratio",
+      "raw_value": "CLout vs CLin"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLout,B/F"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "plasma_clearance",
+      "raw_value": "CLp"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "plasma_to_ecf_clearance",
+      "raw_value": "CLPAL,PL-ECF"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "plasma_to_brain_clearance",
+      "raw_value": "CLPL-DBR,p"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "plasma_to_ecf_clearance",
+      "raw_value": "CLPL-ECF,p"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "transport_clearance_efflux",
+      "raw_value": "CLT,ef"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "transport_clearance_influx",
+      "raw_value": "CLT,in"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "CLup"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "Clup"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "CLuptake"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "Cluptake"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "Clᵢₙ"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "clearance",
+      "raw_value": "CLₐₗₐₗ"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "concentration",
+      "raw_value": "conc"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "concentration",
+      "raw_value": "conc."
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "concentration",
+      "raw_value": "Concn"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "apparent_permeability",
+      "raw_value": "concPapp"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "cns_penetration_reference_score",
+      "raw_value": "CP reference score"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "parenchyma_concentration",
+      "raw_value": "Cparenchyma25"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "cns_penetration_effectiveness_score",
+      "raw_value": "CPE"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "cns_penetration_effectiveness_score",
+      "raw_value": "CPE CHARTER score"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "cns_penetration_effectiveness_score",
+      "raw_value": "CPE index score"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "cns_penetration_effectiveness_score",
+      "raw_value": "CPE ranking"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "cns_penetration_effectiveness_score",
+      "raw_value": "CPE Score"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "cns_penetration_effectiveness_score",
+      "raw_value": "CPE score"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "cns_penetration_effectiveness_score",
+      "raw_value": "CPE-score"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "cerebral_plasma_ratio",
+      "raw_value": "CPR"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "concentration_ratio",
+      "raw_value": "CR/Ctotal"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "reference_concentration",
+      "raw_value": "Cref"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "rrck_permeability",
+      "raw_value": "cRRCK"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "slice_to_plasma_ratio",
+      "raw_value": "Cslice/Cplasma"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "tissue_fluid_to_plasma_ratio",
+      "raw_value": "Ct,f : Cp"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Ct/Cp"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "unbound_concentration",
+      "raw_value": "CU"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "Cu,b"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cu,b/Cu,p"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cu,b/Cup"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "Cu,BR"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "Cu,br"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cu,br/Cu,pl"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "unbound_extracellular_fluid_to_plasma_ratio",
+      "raw_value": "Cu,ECF/Cp"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "unbound_brain_to_unbound_blood_ratio",
+      "raw_value": "Cu,ss,br/Cu,ss,bl"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "striatum_to_blood_ratio",
+      "raw_value": "Cu,STR/Cu,blood"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cu-b/Cu-p"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "unbound_plasma_to_unbound_brain_ratio",
+      "raw_value": "Cu-p/Cu-b"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CuCSF/Cup"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "drug_concentration",
+      "raw_value": "Drug conc."
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "corrected_extraction_ratio",
+      "raw_value": "E (corr)"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "apparent_permeability",
+      "raw_value": "Experimental Pe"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "fluorescein_permeability",
+      "raw_value": "FL Pe"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "free_tissue_to_plasma_ratio",
+      "raw_value": "FRT/Cₚ"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Liquor-Blut-Quotient"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "log_bui",
+      "raw_value": "log BUI"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "log_bui",
+      "raw_value": "log BUI*"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "maximal PaS product"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "mdck_ab_permeability",
+      "raw_value": "MDCK_AB_C"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Mean BUI"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Mean Pe"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "nCi/g"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "accumulation_ratio",
+      "raw_value": "OAC/BAC"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "occupancy_90",
+      "raw_value": "Occ90 [P]b"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "pampa_permeability",
+      "raw_value": "PAMPA Pe"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "pampa_effective_permeability",
+      "raw_value": "PAMPA Peff"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PaS"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PaS product"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PaS products"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Paso a LCR"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PE"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "apparent_permeability",
+      "raw_value": "Pe"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Pe (A to B)"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Pe (Ap > Bl / Bl > Ap)"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Pe (A→B)"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "experimental_permeability",
+      "raw_value": "Pe (exp)"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "lucifer_yellow_permeability",
+      "raw_value": "Pe (LY)"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "in_situ_permeability",
+      "raw_value": "Pe in situ"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "lucifer_yellow_permeability",
+      "raw_value": "Pe LY"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "sodium_fluorescein_permeability",
+      "raw_value": "Pe NaFl"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "sucrose_permeability",
+      "raw_value": "Pe sucrose"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "lucifer_yellow_permeability",
+      "raw_value": "Pe to LY"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pe · 10^6"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "doxorubicin_permeability",
+      "raw_value": "Pe(DOX)"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "experimental_permeability",
+      "raw_value": "Pe(exp)"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "experimental_permeability",
+      "raw_value": "Pe(exp.)"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "sucrose_permeability",
+      "raw_value": "Pe(sucrose)"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pe(tested)"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "urea_permeability",
+      "raw_value": "Pe(Urea)"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "vincristine_permeability",
+      "raw_value": "Pe(Vincristine)"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "gamma_cyclodextrin_permeability",
+      "raw_value": "Pe(γ-CD)"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pe*"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "sodium_fluorescein_permeability",
+      "raw_value": "Pe,NaFl"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Pe-AB/Pe-BA"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "astrocyte_permeability",
+      "raw_value": "PE-C(Ast)"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "sucrose_permeability",
+      "raw_value": "Pe-sucrose"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "sucrose_permeability",
+      "raw_value": "Pe[sucrose]"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "permeability_coefficient",
+      "raw_value": "PEC"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "cellular_permeability",
+      "raw_value": "PEcell"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "effective_permeability",
+      "raw_value": "Peff"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "lucifer_yellow_permeability",
+      "raw_value": "PeLY"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetración en el LCR"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "Penetración en el SNC"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetración en LCR"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "brain_permeability_coefficient",
+      "raw_value": "PerCBr"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "exact_permeability",
+      "raw_value": "Pexact"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_plaque_forming_units",
+      "raw_value": "pfu,br"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Pgp ER, BCRP ER"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "physical_concentration",
+      "raw_value": "Phy conc."
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "predicted_permeability",
+      "raw_value": "Predicted Pe"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_clearance_to_plasma_concentration_ratio",
+      "raw_value": "Qb/Cp"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "passive_ecf_to_plasma_clearance",
+      "raw_value": "QECF-PL (passive)"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "plasma_to_ecf_clearance",
+      "raw_value": "QPL_ECF"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "plasma_to_brain_clearance",
+      "raw_value": "QPLCOC-BRCOC"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "charter_score",
+      "raw_value": "score de Charter"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "steady_state_tissue_to_plasma_ratio",
+      "raw_value": "ss Ct/Cp"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "tissue_to_brain_ratio",
+      "raw_value": "T/Br"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "csf_transport_rate",
+      "raw_value": "taux dans le LCR"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "csf_and_blood_transport_rate",
+      "raw_value": "taux dans le LCR et dans le sang"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "taux LCR/taux sérique"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "glucose_transport_index",
+      "raw_value": "TCinGlc"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "total_cr",
+      "raw_value": "total Cr"
+    }
+  ],
+  "cluster_id": "cluster_bd98675bebfa26bd",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

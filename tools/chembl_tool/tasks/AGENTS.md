@@ -74,6 +74,43 @@ tools/chembl_tool/common/identity_blind.py
 
 任务代码不得复制公共 retrieval、source aggregation、LLM client、validation 或 batch orchestration。
 
+## Layered normalized-Starling evidence library
+
+分层 normalized-record library（`starling_normalized_v6`）的 staged driver 是共享的，不允许每个 task
+复制一份：
+
+```text
+tools/chembl_tool/common/starling/build_normalized_evidence_library.py
+  Shared, resumable clean -> normalize -> organize driver for Stages 01-03.
+
+tools/chembl_tool/common/starling/split_downstream.py
+  Shared transactional Stages 04-09: complete-data pair buckets and transfer policy, then
+  random/scaffold label-source filtering, molecule evidence, neighbor indices, and audits.
+
+tools/chembl_tool/common/starling/normalization/task_policy.py
+  StarlingTaskPolicy：source profiles、五个 normalization hooks、column contract、
+  manifest versions 等所有 task-specific 输入的唯一入口。
+
+tools/chembl_tool/common/starling/{compact_artifacts,auxiliary_metadata,policy_distance}.py
+  compact artifact/index、globally reconciled auxiliary attach、endpoint-policy distance 数学。
+  三者都由 task 提供 profile/版本号/标签，不得内联某个 task 的字符串。
+
+tools/chembl_tool/tasks/<task>/starling_policy.py
+  该 task 的 plug-in，必须导出 POLICY。builder 和 directory-index loader 按此约定
+  用 importlib 解析，不维护额外 registry。
+
+tools/chembl_tool/tasks/<task>/build_normalized_starling_evidence_library.py
+  Thin policy/downstream binding that preserves the task command line.
+```
+
+新 task 接入时只写 `starling_policy.py` 加若干 declarative 模块（source profiles、source column
+contract、spacing/spelling、normalization policy、record canonicalization、pair buckets、endpoint
+policies v2）；不得复制 staged 构建、stage invalidation、resume 校验或 manifest 组装逻辑。
+
+`compact_persisted_records` 会剥离 `assay_tier`、`endpoint_group`、`evidence_role`、
+`target_pref_name`（它们可推导）。因此 evidence catalog 必须接收 `family_resolver` 重新推导这些字段，
+否则 `--from-stage index` 的 resume 构建会与完整构建产生不同的 catalog。
+
 ## Starling direct gold benchmark
 
 Starling evidence ingestion 与 Starling gold-label 构建是两个独立模块，不能共用一套含义：

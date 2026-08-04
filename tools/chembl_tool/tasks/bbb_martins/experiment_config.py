@@ -68,7 +68,16 @@ STARLING = SourceExperimentConfig(
     ),
 )
 
-SOURCES = {"chembl": CHEMBL, "starling": STARLING}
+# The v6 normalized index preserves the same four paper-facing evidence
+# families. A distinct source name makes its provenance explicit without
+# changing the historical ``starling`` runtime or any default.
+STARLING_V6 = SourceExperimentConfig(
+    source_name="starling_v6",
+    direct_groups=STARLING.direct_groups,
+    mechanism_groups=STARLING.mechanism_groups,
+)
+
+SOURCES = {"chembl": CHEMBL, "starling": STARLING, "starling_v6": STARLING_V6}
 
 
 def get_source_config(source: str) -> SourceExperimentConfig:

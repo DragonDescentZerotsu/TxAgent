@@ -1,0 +1,59 @@
+{
+  "artifacts": {
+    "cleaned_raw_aliases": {
+      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/cleaned_raw_aliases.parquet",
+      "sha256": "1999fe58d3dea2e9aca917dbf45d3abf619d7039a42d297a671fd41dba73b8b8"
+    },
+    "cross_cluster_label_merges": {
+      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/cross_cluster_label_merges.json",
+      "sha256": "99edb6ba66cefbf27f381872931878d56d990ab5bfba39b86233a250285d73d7"
+    },
+    "proposal": {
+      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/proposed_endpoint_mapping.json",
+      "sha256": "dccace52917d2c01740988f4ed5bb0b50d75b11d90ffa1d00c306f43510e7b77"
+    },
+    "unresolved_near_duplicate_labels": {
+      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/unresolved_near_duplicate_labels.json",
+      "sha256": "05776b3b2d5b849a9b789b62d38fb2f77172351f9f2e0994b020fc11db59f8b2"
+    }
+  },
+  "counts": {
+    "accepted_catalog_merges": 332,
+    "accepted_changes": 145,
+    "catalog_checker_disagreements": 28,
+    "catalog_decisions": 8259,
+    "catalog_merge_decisions": 351,
+    "change_decisions": 150,
+    "checker_disagreements": 12,
+    "cleaned_alias_collision_groups": 53,
+    "cleaned_endpoint_keys": 22743,
+    "extra_raw_aliases": 55,
+    "final_endpoint_labels": 7927,
+    "final_labels_spanning_provisional_labels": 312,
+    "primary_decisions": 8012,
+    "raw_assignments": 22798,
+    "unresolved_near_duplicate_candidates": 38
+  },
+  "human_approved": false,
+  "manifest_version": "bbb_martins_direct_endpoint_subagent_reconciliation.v1",
+  "publication_blockers": [
+    "human_approval_not_recorded"
+  ],
+  "publication_status": "awaiting_human_approval",
+  "validations": {
+    "all_catalog_merges_independently_adjudicated": true,
+    "all_catalog_merges_independently_checked": true,
+    "all_changes_independently_adjudicated": true,
+    "all_changes_independently_checked": true,
+    "all_provisional_labels_reviewed": true,
+    "all_raw_values_mapped_once": true,
+    "cleaned_alias_conflicts": 0,
+    "generation_provenance_verified": true,
+    "global_catalog_review_complete": true,
+    "global_gpt_pass_disabled": true,
+    "human_approved": false,
+    "local_mapping_exactly_matches_cluster_assignments": true,
+    "review_history_verified": true,
+    "source_and_inventory_pins_verified": true
+  }
+}

@@ -1,0 +1,504 @@
+{
+  "artifact_version": "bbb_martins_direct_endpoint_local_provenance.v1",
+  "artifacts": {
+    "cluster_assignments": {
+      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/cluster_assignments.parquet",
+      "sha256": "965a21959193254d049a25fd146c3a730130e61cd723102566b92f4e6b510baf"
+    },
+    "provisional_label_catalog": {
+      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/provisional_label_catalog.parquet",
+      "sha256": "658ee973efdd0ec166fbd58b11ed8607180a7396458aa9b48fda73f29bb45559"
+    },
+    "review_packets": [
+      {
+        "assignments": 317,
+        "cluster_id": "cluster_001f621cb790342b",
+        "path": "review_packets/cluster_001f621cb790342b.json",
+        "sha256": "f3915f3d3333eb7b0935e9f1ef68a92a8d136d3076e5c677b2760330f3d0ebe2"
+      },
+      {
+        "assignments": 238,
+        "cluster_id": "cluster_019f8306fad73a88",
+        "path": "review_packets/cluster_019f8306fad73a88.json",
+        "sha256": "a14d3c704c3c7c3a377b57eb8a33ffc0163d104c3e8e49c9225f1535cfe37c26"
+      },
+      {
+        "assignments": 211,
+        "cluster_id": "cluster_034e60eba586498c",
+        "path": "review_packets/cluster_034e60eba586498c.json",
+        "sha256": "67d8405541e999d21d1c26365f936bac2220fe9fe76c71db0ab3bb900af4a80e"
+      },
+      {
+        "assignments": 322,
+        "cluster_id": "cluster_035398a6fc038576",
+        "path": "review_packets/cluster_035398a6fc038576.json",
+        "sha256": "974f95b1ca6bc1674bff2437a15dafe65292364686185eb58058f29efd023b13"
+      },
+      {
+        "assignments": 51,
+        "cluster_id": "cluster_047e888f7468e49e",
+        "path": "review_packets/cluster_047e888f7468e49e.json",
+        "sha256": "3620dfe652f8e43f6c7ddbd8160ec6aaa189029a581cad01a9957516c5a8227c"
+      },
+      {
+        "assignments": 387,
+        "cluster_id": "cluster_0f383364a3949d0a",
+        "path": "review_packets/cluster_0f383364a3949d0a.json",
+        "sha256": "369e8900507d25f80d03eb518299c193d6e41fbb7dd9ecfc9b2e65c33344e5e4"
+      },
+      {
+        "assignments": 442,
+        "cluster_id": "cluster_10a931b89d1f845e",
+        "path": "review_packets/cluster_10a931b89d1f845e.json",
+        "sha256": "a18e24ed67657377aa61ac66b1162a7e2ea3a64f7d7402e87bf8263421596088"
+      },
+      {
+        "assignments": 431,
+        "cluster_id": "cluster_10f211f672ea3167",
+        "path": "review_packets/cluster_10f211f672ea3167.json",
+        "sha256": "915f7fc4853ef236e049040b246e3e52f6e17485966658647e91c0d18448ec01"
+      },
+      {
+        "assignments": 357,
+        "cluster_id": "cluster_12638bae5eda1148",
+        "path": "review_packets/cluster_12638bae5eda1148.json",
+        "sha256": "d677c1daf6ed545e51eb9e2ca574b1b4e08e00c26d7fb3e069f187662b502ee6"
+      },
+      {
+        "assignments": 294,
+        "cluster_id": "cluster_196bd933e2b07742",
+        "path": "review_packets/cluster_196bd933e2b07742.json",
+        "sha256": "1d294799d8d35b8b5502a4359d384a2ab2bb6d7e825f6c4a77f624565e689ede"
+      },
+      {
+        "assignments": 126,
+        "cluster_id": "cluster_1a9b3384acb5d301",
+        "path": "review_packets/cluster_1a9b3384acb5d301.json",
+        "sha256": "7e531f3f13d26b4736ad1f48b22c0518a2650f9bca610842ae3942ce1f559697"
+      },
+      {
+        "assignments": 339,
+        "cluster_id": "cluster_22bd3b20334846f0",
+        "path": "review_packets/cluster_22bd3b20334846f0.json",
+        "sha256": "aff260826d4a83e736f0a0cca2b3679c748841e53100e3120dfd1775488acb44"
+      },
+      {
+        "assignments": 229,
+        "cluster_id": "cluster_26b5989ca384b7f6",
+        "path": "review_packets/cluster_26b5989ca384b7f6.json",
+        "sha256": "47e44b718d72f16f6ba07e9cb32ec676edc2174d2bcae5593ddb035250ee86e8"
+      },
+      {
+        "assignments": 154,
+        "cluster_id": "cluster_28bc5265c6a5b97f",
+        "path": "review_packets/cluster_28bc5265c6a5b97f.json",
+        "sha256": "5e68ddc98225afa99b0148f3c1fb6ee43cea546faae9f7580af624c51beace3a"
+      },
+      {
+        "assignments": 299,
+        "cluster_id": "cluster_2a237c50f8cbf6a1",
+        "path": "review_packets/cluster_2a237c50f8cbf6a1.json",
+        "sha256": "99e643bb57b8f408fc53f106d13f0369748413a22b065251f004e4abec584590"
+      },
+      {
+        "assignments": 235,
+        "cluster_id": "cluster_32ba859d2bc9db01",
+        "path": "review_packets/cluster_32ba859d2bc9db01.json",
+        "sha256": "c89f0eceabf1a86087a48c3b5933d3286d0154f45bd48558ea21d0bc4d48885e"
+      },
+      {
+        "assignments": 372,
+        "cluster_id": "cluster_380a1b172b151643",
+        "path": "review_packets/cluster_380a1b172b151643.json",
+        "sha256": "90ce4daecfb46be5580fb60cd187d8a5e589ad4746b79c75197f97c9d96766ab"
+      },
+      {
+        "assignments": 191,
+        "cluster_id": "cluster_3be5be95d9cfd4e6",
+        "path": "review_packets/cluster_3be5be95d9cfd4e6.json",
+        "sha256": "cdd19a5470d86691d3989b9668301db4f1960bb57a093dd0738ce765ba89e8a4"
+      },
+      {
+        "assignments": 471,
+        "cluster_id": "cluster_3c54c80ba727fd9d",
+        "path": "review_packets/cluster_3c54c80ba727fd9d.json",
+        "sha256": "64ac749d5ab2b165bb2c39fe8f81d5b3309096c3eb203bfa0769dc9d7db6ccf5"
+      },
+      {
+        "assignments": 499,
+        "cluster_id": "cluster_3eb00b6d76151c2e",
+        "path": "review_packets/cluster_3eb00b6d76151c2e.json",
+        "sha256": "b952da486ccbcec7a8a4903929e1991e61bbae95c0f2387c7579dae2a5f34df3"
+      },
+      {
+        "assignments": 200,
+        "cluster_id": "cluster_419ebc89e80ab5d3",
+        "path": "review_packets/cluster_419ebc89e80ab5d3.json",
+        "sha256": "4175c8ade5b1ef7aee4ac11ae9e7c667a53c9d078bfc0d868ad7278143ca6c01"
+      },
+      {
+        "assignments": 348,
+        "cluster_id": "cluster_4324a8612e8c067b",
+        "path": "review_packets/cluster_4324a8612e8c067b.json",
+        "sha256": "87179cad559c952ae30e11f38af44eb98eeb58668be149013d0ac255c61ad970"
+      },
+      {
+        "assignments": 419,
+        "cluster_id": "cluster_489cf3452a1c419d",
+        "path": "review_packets/cluster_489cf3452a1c419d.json",
+        "sha256": "f36f8e8dfe395b93405d623096aeba0570191f30551097f0df96152fa5b56d97"
+      },
+      {
+        "assignments": 243,
+        "cluster_id": "cluster_4c71356a4817e03d",
+        "path": "review_packets/cluster_4c71356a4817e03d.json",
+        "sha256": "34d8d573603ee2d71d36e2cc364c5cdec6f0f8e5653a35efbe4b33fc242a8a35"
+      },
+      {
+        "assignments": 150,
+        "cluster_id": "cluster_4e24dd1740a2ed6a",
+        "path": "review_packets/cluster_4e24dd1740a2ed6a.json",
+        "sha256": "ac7a6c0d811a12024f23a5e4eeb9534bd7896290f2d5f2e16abc23749fcfa00d"
+      },
+      {
+        "assignments": 257,
+        "cluster_id": "cluster_4fea38d4f4c8a438",
+        "path": "review_packets/cluster_4fea38d4f4c8a438.json",
+        "sha256": "66661e4e12c945a17375ebd87b557f1e99770b267c4e608ab5dc1fc1e6882cca"
+      },
+      {
+        "assignments": 56,
+        "cluster_id": "cluster_571b374b806358d2",
+        "path": "review_packets/cluster_571b374b806358d2.json",
+        "sha256": "c351f05c3bb149f7815c9650d3a2bb170a403759e8d36222a3c78d79ca5ec3db"
+      },
+      {
+        "assignments": 154,
+        "cluster_id": "cluster_5884e1b80db8bedf",
+        "path": "review_packets/cluster_5884e1b80db8bedf.json",
+        "sha256": "4fe7b37c79eaa8d209bd52cb9844b4b337dd9e0159517a2523a4bbd23c8f3cac"
+      },
+      {
+        "assignments": 314,
+        "cluster_id": "cluster_5a035afe336152bc",
+        "path": "review_packets/cluster_5a035afe336152bc.json",
+        "sha256": "c2a017eb210a6da0402284eb2b42b463c6d1af5fee9553f039bec1c1a3707615"
+      },
+      {
+        "assignments": 125,
+        "cluster_id": "cluster_5b502201aeae362e",
+        "path": "review_packets/cluster_5b502201aeae362e.json",
+        "sha256": "27c1a57200fbaae0a572e8392454221c4c06a1a74d51914d018fd8a266007470"
+      },
+      {
+        "assignments": 453,
+        "cluster_id": "cluster_63bb41319f7106cd",
+        "path": "review_packets/cluster_63bb41319f7106cd.json",
+        "sha256": "1a0bd80c56f8b4c6e73ff5f794e5266e0160637c240df54341799210044f182a"
+      },
+      {
+        "assignments": 159,
+        "cluster_id": "cluster_63fb29a0ce5e1894",
+        "path": "review_packets/cluster_63fb29a0ce5e1894.json",
+        "sha256": "8f715038a6045665ec8f7caabca1f0e154c93a21786307a0092155751ec7f846"
+      },
+      {
+        "assignments": 209,
+        "cluster_id": "cluster_67b53bd8c7bc3fa1",
+        "path": "review_packets/cluster_67b53bd8c7bc3fa1.json",
+        "sha256": "3f801339e1d2f3de296cb30206e1c20f49a515b2e194ca63961b1ec7ee4e4ad0"
+      },
+      {
+        "assignments": 372,
+        "cluster_id": "cluster_6d234159e920f714",
+        "path": "review_packets/cluster_6d234159e920f714.json",
+        "sha256": "a5a8f6703c521ee0d505177c399c0bf0e9493960b2d8b49df443ce38e47b406d"
+      },
+      {
+        "assignments": 485,
+        "cluster_id": "cluster_71912cf06db6dd6d",
+        "path": "review_packets/cluster_71912cf06db6dd6d.json",
+        "sha256": "ad8bbdf8248f531cb40fc347f6edcbdca16206d664b85e3e6a41f7171d057885"
+      },
+      {
+        "assignments": 221,
+        "cluster_id": "cluster_7320234596131e43",
+        "path": "review_packets/cluster_7320234596131e43.json",
+        "sha256": "56b15c510aa161c6c35b3ecc31425a7866c308185b4cf68589e2297d3f0f0fb5"
+      },
+      {
+        "assignments": 311,
+        "cluster_id": "cluster_7451f5541633f0f9",
+        "path": "review_packets/cluster_7451f5541633f0f9.json",
+        "sha256": "14769ae68bbbbfede1a9bb8c2ea325b00ee233fdea4873178be36494f9243edd"
+      },
+      {
+        "assignments": 321,
+        "cluster_id": "cluster_7ca75632c97e765d",
+        "path": "review_packets/cluster_7ca75632c97e765d.json",
+        "sha256": "ae35348b97d79ff67ae311d1f61e932272cb1404d6562d03fcabe86c026e585a"
+      },
+      {
+        "assignments": 399,
+        "cluster_id": "cluster_8bd40688c81da86d",
+        "path": "review_packets/cluster_8bd40688c81da86d.json",
+        "sha256": "dce0229a7c81125cd13409548cc1894fcb104710599fb75652b28a79e392d429"
+      },
+      {
+        "assignments": 268,
+        "cluster_id": "cluster_8c622f02f39a73a6",
+        "path": "review_packets/cluster_8c622f02f39a73a6.json",
+        "sha256": "e0066919221b1f2ac18c44bd130563714aedb0ecbe9556b8254068ec08c69084"
+      },
+      {
+        "assignments": 187,
+        "cluster_id": "cluster_92998d75f0007fc2",
+        "path": "review_packets/cluster_92998d75f0007fc2.json",
+        "sha256": "0803a8ddfe73aa7285eaafb60edc7d958d7ea9b7448cf55030904be2e48179c4"
+      },
+      {
+        "assignments": 465,
+        "cluster_id": "cluster_99845da0e98508ec",
+        "path": "review_packets/cluster_99845da0e98508ec.json",
+        "sha256": "9d1ab9f4d1212357420faac1c1e09118b2333edd6d17405d19a8a781312848dd"
+      },
+      {
+        "assignments": 471,
+        "cluster_id": "cluster_9c10e00d168fe5f4",
+        "path": "review_packets/cluster_9c10e00d168fe5f4.json",
+        "sha256": "cc46db42474b6c443f3c85a2dcc426d517f26875bd9394e7c0539a3795bc2406"
+      },
+      {
+        "assignments": 304,
+        "cluster_id": "cluster_a08d2934146ceede",
+        "path": "review_packets/cluster_a08d2934146ceede.json",
+        "sha256": "d2ac296be6a901166bd1aff37c528ab5606dd5dfe9335b8be00d1f8b4ef30ead"
+      },
+      {
+        "assignments": 313,
+        "cluster_id": "cluster_a5b7c3d1e7e705a7",
+        "path": "review_packets/cluster_a5b7c3d1e7e705a7.json",
+        "sha256": "42ae688bd3ae3fe73323e14cf67c23c0bdd664ca3c2304155d3fac79659e1a81"
+      },
+      {
+        "assignments": 397,
+        "cluster_id": "cluster_a5fde2bff9d013c9",
+        "path": "review_packets/cluster_a5fde2bff9d013c9.json",
+        "sha256": "5835a6654ee6e44824359db738c885843931530e64a153fc9deb03a364cb14b7"
+      },
+      {
+        "assignments": 336,
+        "cluster_id": "cluster_a68f8aed14608687",
+        "path": "review_packets/cluster_a68f8aed14608687.json",
+        "sha256": "1f7e884c7bce8307a3570cb42aca0819b6a59f464233c96a1aaf113955120c51"
+      },
+      {
+        "assignments": 317,
+        "cluster_id": "cluster_aa924c26b453c02f",
+        "path": "review_packets/cluster_aa924c26b453c02f.json",
+        "sha256": "df1c4a4d610b2b5e07f268b22cd1d024eeb3df44f466e10b0ada4feb790259d3"
+      },
+      {
+        "assignments": 284,
+        "cluster_id": "cluster_aeb66f8b0c486b1d",
+        "path": "review_packets/cluster_aeb66f8b0c486b1d.json",
+        "sha256": "3b04ce5f0f1b153009d35c3f3eef25fb1d14d494e5d2da5a941725f5a1071a49"
+      },
+      {
+        "assignments": 479,
+        "cluster_id": "cluster_b04f814e14f845e7",
+        "path": "review_packets/cluster_b04f814e14f845e7.json",
+        "sha256": "24597a609a3c110d35d8b01f6ac4947194b7f74941ad1bdde4f4d671f75af7bd"
+      },
+      {
+        "assignments": 446,
+        "cluster_id": "cluster_b2542ed516a9d38a",
+        "path": "review_packets/cluster_b2542ed516a9d38a.json",
+        "sha256": "4bdf2360c15522e2e1d7ce8a1fc39f03c9670fd9495030ee77dbc33513f63176"
+      },
+      {
+        "assignments": 235,
+        "cluster_id": "cluster_b4b44e07e6328036",
+        "path": "review_packets/cluster_b4b44e07e6328036.json",
+        "sha256": "8ec9e690f8dd10f6bd9904f09308ecd0cdcbb4c5a1b122c440a0d3fb3e8e2b16"
+      },
+      {
+        "assignments": 376,
+        "cluster_id": "cluster_b50b136f8d158b8d",
+        "path": "review_packets/cluster_b50b136f8d158b8d.json",
+        "sha256": "cbfa80e1754c96288c121e6e5ab517f30c496d24f1c3a19d1d00b4a4ba982810"
+      },
+      {
+        "assignments": 198,
+        "cluster_id": "cluster_b85acdf3c1a51487",
+        "path": "review_packets/cluster_b85acdf3c1a51487.json",
+        "sha256": "e0c11d31fbaf88a387298e2586e9269039d0706d40c9cb94c161919dcd2a0452"
+      },
+      {
+        "assignments": 274,
+        "cluster_id": "cluster_ba04d7e76c1959f2",
+        "path": "review_packets/cluster_ba04d7e76c1959f2.json",
+        "sha256": "1c58023b39a17be4264ef83b1547648bd7fda6d055cc2e49a175966921634c4f"
+      },
+      {
+        "assignments": 255,
+        "cluster_id": "cluster_bd98675bebfa26bd",
+        "path": "review_packets/cluster_bd98675bebfa26bd.json",
+        "sha256": "e4b017245afd5446964ff756e9d821103a3e7fc5fb43612f772d87443204ed01"
+      },
+      {
+        "assignments": 476,
+        "cluster_id": "cluster_c1248cda0c3499bd",
+        "path": "review_packets/cluster_c1248cda0c3499bd.json",
+        "sha256": "dfc16f1271d941cc61780416e5e93f4c7d2a98533e321de1cb9bc2d3fa8e7547"
+      },
+      {
+        "assignments": 397,
+        "cluster_id": "cluster_c3d4bbdc5d3e5735",
+        "path": "review_packets/cluster_c3d4bbdc5d3e5735.json",
+        "sha256": "1ccec34792da04fbfffafbff9e1a2fb0df6ed3b991fd04cbba511ed384a9ea70"
+      },
+      {
+        "assignments": 403,
+        "cluster_id": "cluster_c59bbe7d4700025b",
+        "path": "review_packets/cluster_c59bbe7d4700025b.json",
+        "sha256": "6b508a96f83fdcd48e386f4152dca675ffbcb943d567cfcc449bcee3d692a0fa"
+      },
+      {
+        "assignments": 468,
+        "cluster_id": "cluster_c71c7f691ef6f11e",
+        "path": "review_packets/cluster_c71c7f691ef6f11e.json",
+        "sha256": "daf1f9085539c346d271924d4a095121cdf038a2ebab4857246d4ce6ef4dedd1"
+      },
+      {
+        "assignments": 294,
+        "cluster_id": "cluster_d0526aaf9b3ac737",
+        "path": "review_packets/cluster_d0526aaf9b3ac737.json",
+        "sha256": "1a63a059ade1b113b0e58f0c88504f790d6cc9372c579c6dc7396f840beecdb4"
+      },
+      {
+        "assignments": 321,
+        "cluster_id": "cluster_d1c77978726e58d9",
+        "path": "review_packets/cluster_d1c77978726e58d9.json",
+        "sha256": "603a6be1cb88dea1e621ec0ab3e1abef802157e3679b46a74938c7f0c333941e"
+      },
+      {
+        "assignments": 200,
+        "cluster_id": "cluster_d216363d70bb5b73",
+        "path": "review_packets/cluster_d216363d70bb5b73.json",
+        "sha256": "6cbbde106f75ad8cd0a8c3df4e4a60c425987d967cd4c8296479c7e059c56710"
+      },
+      {
+        "assignments": 123,
+        "cluster_id": "cluster_d823a24102673370",
+        "path": "review_packets/cluster_d823a24102673370.json",
+        "sha256": "ba01a0a1f8febcbfd61ca50d0a063cae52353d2251209e0b8ef9c3209041b7fe"
+      },
+      {
+        "assignments": 66,
+        "cluster_id": "cluster_e0af296a3d40bf69",
+        "path": "review_packets/cluster_e0af296a3d40bf69.json",
+        "sha256": "34b1654b1d74c638edca924e696ab52abbbea603c16a7b6eae1719f186edbf81"
+      },
+      {
+        "assignments": 361,
+        "cluster_id": "cluster_e6135a44d235ff31",
+        "path": "review_packets/cluster_e6135a44d235ff31.json",
+        "sha256": "d859b1e2f6de3e73bb8c0b5df9b7c72b9037e42da593915437ac584547cd04bb"
+      },
+      {
+        "assignments": 397,
+        "cluster_id": "cluster_e9adf7d2ed6a346e",
+        "path": "review_packets/cluster_e9adf7d2ed6a346e.json",
+        "sha256": "ac82d379b3669b796cc85e24c735881204e55965cb78f98d9023ba6bda303099"
+      },
+      {
+        "assignments": 451,
+        "cluster_id": "cluster_e9f5aea968d1c708",
+        "path": "review_packets/cluster_e9f5aea968d1c708.json",
+        "sha256": "6045c45e48f7607d7c78161f6b7096e6c7818065b6d7f173d6bef875a8a43bba"
+      },
+      {
+        "assignments": 461,
+        "cluster_id": "cluster_ecc06eb47e82d52f",
+        "path": "review_packets/cluster_ecc06eb47e82d52f.json",
+        "sha256": "928d462cef371d97231bb5b35c0716a545b72f489e3be4e4f7d99b45741aa1b2"
+      },
+      {
+        "assignments": 177,
+        "cluster_id": "cluster_f19d18ff5edbbb4a",
+        "path": "review_packets/cluster_f19d18ff5edbbb4a.json",
+        "sha256": "5fad602e0af8a2e335fa6150bf1a7ac45201dc75b3a2d8bc45905fc3474270b6"
+      },
+      {
+        "assignments": 273,
+        "cluster_id": "cluster_f346c8016ab56b9e",
+        "path": "review_packets/cluster_f346c8016ab56b9e.json",
+        "sha256": "7c61b20d18c1709852c7730849a9c2dfe45a0a56645222c69d6737f00c2ffc93"
+      },
+      {
+        "assignments": 220,
+        "cluster_id": "cluster_f37b59b5bd4ea87b",
+        "path": "review_packets/cluster_f37b59b5bd4ea87b.json",
+        "sha256": "f6fb2fbe13bcc00d974d80470359cc2670c7db94c7c58aedc71fa781382c6af1"
+      },
+      {
+        "assignments": 364,
+        "cluster_id": "cluster_f4fd9a2c1f1ec930",
+        "path": "review_packets/cluster_f4fd9a2c1f1ec930.json",
+        "sha256": "32afa3cf29792151e946b26850a069189dbd35f465b1c4e8e5433efce5ea5758"
+      },
+      {
+        "assignments": 248,
+        "cluster_id": "cluster_f5fa8d98e0122682",
+        "path": "review_packets/cluster_f5fa8d98e0122682.json",
+        "sha256": "4fd64c1fd7f67294020e33d3ccd5415f1ae4804acc26e88a0cce5cc540d0ef4f"
+      },
+      {
+        "assignments": 332,
+        "cluster_id": "cluster_fd71ce975f129419",
+        "path": "review_packets/cluster_fd71ce975f129419.json",
+        "sha256": "92977382aac83ce7f9ef304ba63c28a0aa2e4b9d809fcb462177812fc1b045d5"
+      }
+    ]
+  },
+  "counts": {
+    "assignments": 22798,
+    "local_clusters": 75,
+    "max_cluster_size": 499,
+    "provisional_labels": 8012
+  },
+  "generation": {
+    "cluster_random_seed": 20260801,
+    "cluster_target_size": 500,
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "generation_audit_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provisional/local_endpoint_mapping.json.generation.json",
+    "generation_audit_sha256": "78c0191c8401ddca81d487f156a3360510f3d9995da9db0fea4bd376f5b5a852",
+    "mapping_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provisional/local_endpoint_mapping.json",
+    "mapping_sha256": "bc76937eb6ef9a13e0cbba098dbb83b608807bd7f2904a2c3cfdce0d2fba6b80",
+    "max_values_per_local_request": 500,
+    "model": "gpt-5.4-mini",
+    "reasoning_effort": "medium"
+  },
+  "human_approved": false,
+  "publication_blockers": [
+    "global_subagent_reconciliation",
+    "human_approval_not_recorded"
+  ],
+  "publication_status": "awaiting_human_approval",
+  "source": {
+    "non_null_raw_values": 22798,
+    "normalized_inventory_count_including_missing": 22744,
+    "normalized_inventory_sha256": "2441c887b9b0c2031e0de4ab54663ca23760e97cf1f095365fe3872d375ace8e",
+    "path": "/data1/joseph/TxAgent/data/starling_data/bbb_martins/Direct_BBB/records.parquet",
+    "sha256": "14c01314377b6c31f18e6ec9c1ee72a8605a06800d74385fc8a7273f2334df57"
+  },
+  "validations": {
+    "all_clusters_at_most_500_values": true,
+    "all_non_null_inventory_values_assigned_once": true,
+    "every_cluster_has_one_review_packet": true,
+    "global_gpt_reconciliation_disabled": true,
+    "publication_is_human_blocked": true,
+    "requested_model_is_gpt_5_4_mini": true
+  }
+}

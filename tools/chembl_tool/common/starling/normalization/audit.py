@@ -11,10 +11,13 @@ from typing import Any
 
 from .cleaning import file_sha256
 from .contracts import MeasurementPair, STAGE_REQUIRED_COLUMNS
+from tools.chembl_tool.common.units import canonicalize_unit
+
 from .measurements import (
     EndpointStandardizer,
     SourceMeasurementResolver,
     normalize_measurement_and_unit,
+    parse_point_measurement,
 )
 
 
@@ -128,6 +131,24 @@ def validate_measurement_pairs(
         baseline = normalize_measurement_and_unit(
             record.get("measurement_text"), record.get("unit_text")
         )
+        if record.get("categorical_encoder_id"):
+            # A categorically encoded record's canonical pair comes from a
+            # declared encoder, not from the source measurement, so the
+            # source-recompute invariant does not apply.  What must hold
+            # instead is that the encoder only ever filled a record the source
+            # path could not have scored: had the source yielded a value in a
+            # recognized unit, that measurement would be authoritative.
+            source_value = parse_point_measurement(baseline.canonical_measurement)
+            source_unit = canonicalize_unit(baseline.canonical_unit)
+            if source_value.value is not None and (
+                bool(source_unit.cleaned) and not source_unit.unknown_tokens
+            ):
+                errors.append(
+                    f"{record.get('normalized_record_id') or '<missing>'}: "
+                    "categorical encoding overwrote a scorable source measurement "
+                    f"({baseline.canonical_measurement!r}, {baseline.canonical_unit!r})"
+                )
+            continue
         expected = (
             endpoint_standardizer(str(record.get("canonical_endpoint") or ""), baseline)
             if endpoint_standardizer is not None

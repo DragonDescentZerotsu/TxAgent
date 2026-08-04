@@ -1,0 +1,1702 @@
+{
+  "assignment_count": 339,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "percent_crossed_bbb",
+      "raw_value": "% crossed BBB"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "percent_crossed_bbb",
+      "raw_value": "%BBB"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "a_to_b_permeability",
+      "raw_value": "AB"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "aBBB"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "logbb",
+      "raw_value": "AD-MET-BBB(log BB)"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "AdaBoost and Openbabel (FP2)"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "AdaBoost and PubChem"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "AdaBoost MACCSFP BBB score"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "ADME/T-BBB"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "ADMET BBB"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "ADMET BBB class"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "ADMET BBB Level"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "ADMET BBB level"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "ADMET BBB_level"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "ADMET-BBB"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "ADMET_BBB"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "ADMET_BBB_level"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Al (citrate) BBR"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "concentration",
+      "raw_value": "AmB concn"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "logbb",
+      "raw_value": "aQPlogBB"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "B score"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/Pb"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_to_whole_blood_ratio",
+      "raw_value": "B/WB"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "a_to_b_permeability",
+      "raw_value": "BA"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "BA/AB"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "BA:AB"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "content",
+      "raw_value": "background-corrected NBBS content"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BB"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BB (Cbrain/Cblood)"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "percent_crossed_bbb",
+      "raw_value": "BBB (%)"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBB (+/-)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "bbb_probability",
+      "raw_value": "BBB (0–1)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB (b/b)"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB (C.brain/C.blood)"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB (c.Brain/c.Blood)"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB (c.brain/c.blood)"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB (Cbrain/Cblood ratio)"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB (Cbrain/Cblood)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "BBB (level)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "bbb_probability",
+      "raw_value": "BBB (probability)"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBB (±)"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBB +"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "bbb_probability",
+      "raw_value": "BBB + probability"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB access"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "bbb_breakdown",
+      "raw_value": "BBB breakdown"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB crossover"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "bbb_indicator",
+      "raw_value": "BBB indicators"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "influx_rate_constant",
+      "raw_value": "BBB Kin"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "BBB LEVEL"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "BBB Level"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "BBB level"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "BBB Ligand Express®"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "permeability",
+      "raw_value": "BBB PAMPA"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB penetrance"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "BBB prediction score"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "BBB prediction server score"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "BBB predictor server"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "bbb_probability",
+      "raw_value": "BBB Probability"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "bbb_probability",
+      "raw_value": "BBB probability"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "BBB PS"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "BBB PS product"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "unbound_permeability_surface_area_product",
+      "raw_value": "BBB PSu"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "BBB Score"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "BBB score"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "BBB scores"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "bbb_probability",
+      "raw_value": "BBB(Probability)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBB+"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "bbb_probability",
+      "raw_value": "BBB+ probability"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBB- 95"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBB- 99"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "influx_rate_constant",
+      "raw_value": "BBB-Kin"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "BBB-Lev"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "BBB-Level"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "permeability",
+      "raw_value": "BBB-PAMPA Pe"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "permeability",
+      "raw_value": "BBB-Pe"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB-penetrable"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "penetration_index",
+      "raw_value": "BBB-PI"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "penetration_index",
+      "raw_value": "BBB-PI x 10^-4"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "unbound_permeability_surface_area_product",
+      "raw_value": "BBB-PSu"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "BBB-score"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBB1"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBB17"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "BBB: PSB"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "BBB_Filter"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "BBB_Leva"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBBa"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "bBBB"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBBCbrain/Cblood"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBBd"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBBe"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "bbb_class",
+      "raw_value": "BBBg"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "bbb_level",
+      "raw_value": "BBBLevel"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "permeability",
+      "raw_value": "BBBP"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "penetration_index",
+      "raw_value": "BBBPI"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "permeability_level",
+      "raw_value": "BBBPL"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "uptake_maximum",
+      "raw_value": "BBBUmax"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB—(C.BRAIN/C.BLOOD)"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "bbb_index",
+      "raw_value": "BBI"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBKO/BBWTa"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBR"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBr"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_to_intravenous_ratio",
+      "raw_value": "Bbrain IN/IV"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBRcorr"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "BCBM/Serum 4"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "BCmax"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "concentration",
+      "raw_value": "Bilirubin Received"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "BP"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "logbb",
+      "raw_value": "c log BB"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_to_unbound_ratio",
+      "raw_value": "C_{CSFbase, Nor} / C_{Ubase, Nor}"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Calc. log BBBe"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "logbb",
+      "raw_value": "calculated logBB"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Cb"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "Cb u"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb(A)/Cp(A)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb(S)/Cp(S)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "Cb,u"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cb,u/Cp,u"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cb,u/Cp,ud"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "unbound_brain_to_csf_ratio",
+      "raw_value": "Cb,u:CCSF"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cb,u:Cp,u"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cb,u:Cp,ub"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cb,u:Cp,uc"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "CB/CP"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb/Cp"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb/Cp and CCSF/Cp"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb/p"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "CB/PB"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb:Cp"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb:Cpa"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Cbr"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Cbr(T)"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cbr/Cp"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cbr/Cpf x 100"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cbr/Cpl"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "Cbr/Cserum"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cbr/pl"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Cbrain"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Cbrain,40-60min"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "CBrain/CBlood"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Cbrain/Cblood"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "Cbrain/Cserum"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cbrain/CSys.® (Cb/Cp)"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Cbrain_72h"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "CBrainCBlood"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "CBt/Cpl"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "Cbu"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cbu/Cpu"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cbu:Cpu"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Cbu:Cpus"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "concentration",
+      "raw_value": "CBZ"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "concentration",
+      "raw_value": "Ceb"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "Chemaxon BBB score"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CL_BBB,efflux"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CL_{BBB,efflux}"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "clearance_ratio",
+      "raw_value": "CLb-p/CLp-b"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "clearance",
+      "raw_value": "CLBBB"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "clearance",
+      "raw_value": "ClBBB"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLBBB, efflux"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLBBB,eff"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLBBB,efflux"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "CLBBB,inf"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "CLBBB,influx"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLeff,BBB"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLefflux,BBB"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "CLin,HB/F"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "logbb",
+      "raw_value": "ClogBB"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "logbb",
+      "raw_value": "cLogBB"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "logbb",
+      "raw_value": "clogBB"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "efflux_clearance",
+      "raw_value": "CLout,HB/F"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "cMDR1 BA/AB"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "plasma_to_unbound_brain_ratio",
+      "raw_value": "Cpu/Cbu"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "cross BBB"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "cross the BBB"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "crossing BBB"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "CS BBB"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "ERB"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Exp log BB"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "logbb",
+      "raw_value": "experimental logBB"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "plasma_to_unbound_brain_ratio",
+      "raw_value": "f_uP/f_uB"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "clearance",
+      "raw_value": "fBrCLe f Br"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "clearance",
+      "raw_value": "fBrCLefBr"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "logbb",
+      "raw_value": "fQP log BB"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "lower_compartment_concentration",
+      "raw_value": "Free UCB (Bf) Lower compartment"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "transfer_rate_constant",
+      "raw_value": "k_{BBB}"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "transfer_rate_constant",
+      "raw_value": "kbbb"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "efflux_rate_constant",
+      "raw_value": "keff,BBB"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "KOB/P/WTB/P"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Lg BBB"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "logbb",
+      "raw_value": "LgBB"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "logbb",
+      "raw_value": "lgBB"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log (BB)"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log (BB) Biovia ADMET"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log (Cbrain/Cblood)"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log [brain]/[blood] (logBB)"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log B"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log B.B."
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log B/Bm"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log BB"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BB"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BB (Ctx)"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BB (Hipp)"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BB (Model 1)"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BB (Model 2)"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log BB for brain/blood"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BB for brain/blood"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log BB measured"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BB(10)"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BB(7,8,9)"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log BBB"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BBB"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BBB partition coefficient"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BBB, log CNS"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BBexp"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log BBg"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log BBm"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log BBpred"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BBpred"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log BbR"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log BR/BL"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log Cbrain/Cblood"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log KBB"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "pampa_bbb_log_permeability",
+      "raw_value": "log P0 PAMPA-BBB"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "log_permeability",
+      "raw_value": "Log PB"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log(BB)"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log(BB)calcd"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log(BBB)"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log(Cbrain/Cblood)"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "logbb",
+      "raw_value": "log10 B/Bn"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logB/B"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "logbb",
+      "raw_value": "LogBB"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBB"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBB (BBB)"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBB (observed)"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "logbb",
+      "raw_value": "LogBBB"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBBB"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBBI"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBBk"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBBpred"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBbR"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "log_permeability",
+      "raw_value": "LogPB"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Max Cbr"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDCK BA/AB"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDCK-MDR1 BA/AB"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "efflux_transporter_activity",
+      "raw_value": "MDR1b"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Mean CB/CP"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "mean Cbrain"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "mean Cbrain,ub"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "oBBR"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "bbb_breakdown",
+      "raw_value": "opening of the BBB"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "permeability",
+      "raw_value": "P_BBB"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PA BBB"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PAMP-BBB"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "pampa_bbb_log_permeability",
+      "raw_value": "PAMPA BBB log P0"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "pampa_bbb_log_permeability",
+      "raw_value": "PAMPA BBB log Pm 7.4"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PAMPA-BBB"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PAMPA-BBB Pe"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PAMPA–BBB"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "passage thorough BBB"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PB"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pb"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pb,n"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pb,t"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "b_to_a_permeability",
+      "raw_value": "Pb-a"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "permeability_ratio",
+      "raw_value": "Pb/Pi"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "concentration",
+      "raw_value": "Pb2+ levels"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PBBB"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PBBB'"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PBBEC"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pbc"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PBr"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PBT"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pbt"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PCBr"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "permeability",
+      "raw_value": "Pe (PAMPA-BBB)"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "permeability_ratio",
+      "raw_value": "PF/PB"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "logbb",
+      "raw_value": "PlogBB"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "permeability",
+      "raw_value": "PNaBBB"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "bbb_probability",
+      "raw_value": "predicted BBB probability"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "predicted BBB values"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Predicted log BB"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Predicted logBB"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PS_BBB"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "influx_permeability_surface_area_product",
+      "raw_value": "PS_BBB, inf"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "influx_permeability_surface_area_product",
+      "raw_value": "PS_BBB,inf"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PS_{BBB}"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PSB"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PSb"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PSB+ CLefflux,BBB"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PSBBB"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "efflux_permeability_surface_area_product",
+      "raw_value": "PSBBB, eff"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "influx_permeability_surface_area_product",
+      "raw_value": "PSBBB,in"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "influx_permeability_surface_area_product",
+      "raw_value": "PSBBB,inf"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "efflux_permeability_surface_area_product",
+      "raw_value": "PSBBB,out"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PSbrn"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Q P log BB"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "Q_BBB"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "influx_transport_rate",
+      "raw_value": "Q_{BBB_in}"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "efflux_transport_rate",
+      "raw_value": "Q_{BBB_out}"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "QBBB"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Qlog BB"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QLogBB"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QlogBB"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QP log B/B"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QP log BB"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Qp log BB"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QP log BBbrain/blood"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "Qp_{BBB}"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "bbb_prediction",
+      "raw_value": "QPLBZE-BRBZE"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlog B"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlog BB"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Qplog BB"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlog BBg"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlog BBi"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPLog, BBB"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPLogBB"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlogBB"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QplogBB"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Qplogbb"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "logbb",
+      "raw_value": "qplogBB"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlogBBB"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlogBBd"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlogBBe"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "logbb",
+      "raw_value": "QPlogBBm"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "Qt_{BBB}"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "RB"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Rb"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "logbb",
+      "raw_value": "S+LogBBB"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "logbb",
+      "raw_value": "S+logBBB"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ss Cb/Cp"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "SVM MACCSFP BBB Score"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "SVM MACCSFP BBB score"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "SVM-MACCCSFP BBB score"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "bbb_score",
+      "raw_value": "SVM-MACCSFP BBB score"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "crossing_time",
+      "raw_value": "time to cross the BBB"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "volume",
+      "raw_value": "VBr"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "volume",
+      "raw_value": "Vbr"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "ratio",
+      "raw_value": "ΔJLACBBB/JLACBBB"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "logbb",
+      "raw_value": "–log BB"
+    }
+  ],
+  "cluster_id": "cluster_22bd3b20334846f0",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

@@ -1,0 +1,40 @@
+{
+  "adjudication_file": "adjudication_passive_by_efflux.jsonl",
+  "adjudication_file_sha256": "bacce64afe2503077040f8cec14eed615d5aaee20f5f8c2b8fa318e21d0de598",
+  "adjudication_verdict_counts": {
+    "accept": 28,
+    "reject": 5
+  },
+  "adjudicator_id": "bbb_vocab_audit",
+  "canonical_mapping_modified": false,
+  "change_decisions_expected": 33,
+  "checker_disagreement_count": 5,
+  "checker_disagreement_ids": [
+    "pp_context_001",
+    "pp_context_011",
+    "pp_context_018",
+    "pp_context_021",
+    "pp_context_027"
+  ],
+  "checker_disagreement_resolution_counts": {
+    "reject": 5
+  },
+  "checker_file": "checker_passive_by_direct.jsonl",
+  "checker_file_sha256": "1b63802469f4adf09514bd40659585d1d8e75bd9f04a798f39723fd71cb38747",
+  "checker_verdict_counts": {
+    "agree": 28,
+    "disagree": 5
+  },
+  "coverage": {
+    "adjudication_ids": 33,
+    "duplicate_ids": 0,
+    "every_checker_disagreement_explicitly_resolved": true,
+    "extra_ids": 0,
+    "missing_change_ids": 0,
+    "valid": true
+  },
+  "downstream_stages_modified": false,
+  "primary_file": "primary_passive_permeability.jsonl",
+  "primary_file_sha256": "e37ab0996d178fa17fbc3eb51dc06cc8a3d3869aeaab324f9ba01d62af4c7a4c",
+  "summary_version": "bbb_auxiliary_adjudication_passive_by_efflux.v1"
+}

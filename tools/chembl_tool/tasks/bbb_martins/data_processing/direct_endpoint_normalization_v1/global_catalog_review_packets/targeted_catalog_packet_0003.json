@@ -1,0 +1,33 @@
+{
+  "global_catalog_path": "global_candidate_catalog.json",
+  "global_catalog_sha256": "f4100359d319c94a3501319f164e19de6d3deb6c5cd41f54193116a4db68a947",
+  "owned_candidate_endpoints": [
+    "kp_brain_and_kp_uu_brain",
+    "kp_brain_auc",
+    "kp_cortex",
+    "kp_uu_brain_auc",
+    "logbb_and_logcns",
+    "maximum_csf_to_serum_ratio",
+    "negative_logbb",
+    "papp_a_to_b_and_efflux_ratio",
+    "penetration_percentage",
+    "penetration_relative_to_serum",
+    "permeability_a_to_l_over_l_to_a_ratio",
+    "pgp_and_bcrp_efflux_ratio",
+    "steady_state_csf_serum_ratio_direction_unspecified",
+    "tissue_to_plasma_auc_partition_coefficient",
+    "total_and_unbound_brain_and_csf_concentrations",
+    "total_and_unbound_brain_to_plasma_ratios",
+    "total_brain_and_csf_concentrations",
+    "total_brain_to_total_plasma_exposure_ratio",
+    "unbound_brain_and_unbound_plasma_concentrations",
+    "unbound_brain_ecf_to_unbound_plasma_steady_state_concentration_ratio",
+    "unbound_brain_exposure_to_unbound_plasma_concentration_ratio",
+    "unbound_brain_to_total_plasma_concentration_ratio",
+    "uptake_clearance_knockout_to_wildtype_ratio",
+    "uptake_clearance_prob_positive_to_negative_ratio"
+  ],
+  "packet_id": "targeted_catalog_packet_0003",
+  "packet_version": "bbb_martins_direct_endpoint_catalog_targeted_raw_round2.v1",
+  "require_full_catalog_comparison": true
+}

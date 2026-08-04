@@ -1,0 +1,463 @@
+{
+  "coverage": {
+    "assignments": 172308,
+    "namespaces": 6,
+    "packets": 49,
+    "section_clusters": 1726
+  },
+  "manifest_version": "bbb_auxiliary_cluster_review_packets.v1",
+  "max_packet_bytes": 750000,
+  "packets": [
+    {
+      "assignments": 4429,
+      "bytes": 729934,
+      "clusters": 40,
+      "namespace": "direct_bbb/global_context",
+      "packet_id": "direct_bbb__global_context__packet_0001",
+      "path": "direct_bbb__global_context__packet_0001.json",
+      "sha256": "ddfc0a4f9864730837c982f3579aef873f97eb9d39fd2b255543d9ba0137fbfa"
+    },
+    {
+      "assignments": 4522,
+      "bytes": 731559,
+      "clusters": 42,
+      "namespace": "direct_bbb/global_context",
+      "packet_id": "direct_bbb__global_context__packet_0002",
+      "path": "direct_bbb__global_context__packet_0002.json",
+      "sha256": "692c77918c236fa47a011ce8c3912c7974751ddea7ff4bc880db7bf0442e14c5"
+    },
+    {
+      "assignments": 4551,
+      "bytes": 749677,
+      "clusters": 52,
+      "namespace": "direct_bbb/global_context",
+      "packet_id": "direct_bbb__global_context__packet_0003",
+      "path": "direct_bbb__global_context__packet_0003.json",
+      "sha256": "2a03ba34e9fe1a7a91d89b383dd30f513f7d6f1ca8f0deb10b23c10d4542fdac"
+    },
+    {
+      "assignments": 4445,
+      "bytes": 740756,
+      "clusters": 43,
+      "namespace": "direct_bbb/global_context",
+      "packet_id": "direct_bbb__global_context__packet_0004",
+      "path": "direct_bbb__global_context__packet_0004.json",
+      "sha256": "522cc9a27c6fdb062ab6981af3b8c0c3f900071063c3f63a8d7c9e8e42aded48"
+    },
+    {
+      "assignments": 4265,
+      "bytes": 710215,
+      "clusters": 46,
+      "namespace": "direct_bbb/global_context",
+      "packet_id": "direct_bbb__global_context__packet_0005",
+      "path": "direct_bbb__global_context__packet_0005.json",
+      "sha256": "6c5f71f48b24ea57ae9e5e53c9fa53662829f6dc07c46df0927be9caa5b5149b"
+    },
+    {
+      "assignments": 3672,
+      "bytes": 599175,
+      "clusters": 36,
+      "namespace": "direct_bbb/global_context",
+      "packet_id": "direct_bbb__global_context__packet_0006",
+      "path": "direct_bbb__global_context__packet_0006.json",
+      "sha256": "9dce4cc7bc6866dbad0534d73677e0fbeb4faf695fea31d339c92ddabbd3512f"
+    },
+    {
+      "assignments": 2406,
+      "bytes": 344875,
+      "clusters": 25,
+      "namespace": "direct_bbb/global_species_context",
+      "packet_id": "direct_bbb__global_species_context__packet_0001",
+      "path": "direct_bbb__global_species_context__packet_0001.json",
+      "sha256": "3fc50f67ecf337274bb8ad3775515e69e5f76650345e20f36b810d28b41f1919"
+    },
+    {
+      "assignments": 3590,
+      "bytes": 746499,
+      "clusters": 36,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0001",
+      "path": "efflux_transport__global_context__packet_0001.json",
+      "sha256": "f4ef5a4ad460288d2d4c5a877b4b462658f463c6451c6664e1868b40037b6820"
+    },
+    {
+      "assignments": 3531,
+      "bytes": 728916,
+      "clusters": 35,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0002",
+      "path": "efflux_transport__global_context__packet_0002.json",
+      "sha256": "e78485ec7aaa0b2c49ef056a177cb2a97b1634c23df175f653c6966a4ce7973c"
+    },
+    {
+      "assignments": 3410,
+      "bytes": 723563,
+      "clusters": 40,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0003",
+      "path": "efflux_transport__global_context__packet_0003.json",
+      "sha256": "e7503bc36f6ea669148efd15e21a1efe2a60a181b978fb9de67a7eb32dce7b27"
+    },
+    {
+      "assignments": 3573,
+      "bytes": 748989,
+      "clusters": 30,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0004",
+      "path": "efflux_transport__global_context__packet_0004.json",
+      "sha256": "de3beab5455a378cc27075d079780856690f3e65b55416e727b2c70bb424b718"
+    },
+    {
+      "assignments": 3490,
+      "bytes": 728891,
+      "clusters": 30,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0005",
+      "path": "efflux_transport__global_context__packet_0005.json",
+      "sha256": "25746958e85be0694ae92abe52e8261ab1bd14b516dca14c6c3516693561583d"
+    },
+    {
+      "assignments": 3458,
+      "bytes": 744512,
+      "clusters": 36,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0006",
+      "path": "efflux_transport__global_context__packet_0006.json",
+      "sha256": "d4604a6832e5d63c8dcaf4592db77d97f2c7e24e11a485b61163652f457438d0"
+    },
+    {
+      "assignments": 3650,
+      "bytes": 749016,
+      "clusters": 37,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0007",
+      "path": "efflux_transport__global_context__packet_0007.json",
+      "sha256": "186aef0467ad9353a777c5487afeaee70aaa7021e9908d1a17ab2df12a368c4f"
+    },
+    {
+      "assignments": 3392,
+      "bytes": 734187,
+      "clusters": 35,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0008",
+      "path": "efflux_transport__global_context__packet_0008.json",
+      "sha256": "7161d3ddcf2e648c2860e61dc522554449b17b8ea08a88c4c0bbb181d25447f9"
+    },
+    {
+      "assignments": 3545,
+      "bytes": 748826,
+      "clusters": 40,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0009",
+      "path": "efflux_transport__global_context__packet_0009.json",
+      "sha256": "0b517015651cb60f011eb7ea5cec271f327116709a74f6523ab1929f91932eb3"
+    },
+    {
+      "assignments": 3416,
+      "bytes": 736951,
+      "clusters": 35,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0010",
+      "path": "efflux_transport__global_context__packet_0010.json",
+      "sha256": "b0468dce35894c4c3488c33f70e7d6662de5632f94f6dfb934bc932c823d4304"
+    },
+    {
+      "assignments": 3302,
+      "bytes": 727563,
+      "clusters": 34,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0011",
+      "path": "efflux_transport__global_context__packet_0011.json",
+      "sha256": "70c2328b90275ab9b6bf90fdd7f80f71c997b8d6f338da39a0e33bf5f2a0137f"
+    },
+    {
+      "assignments": 3545,
+      "bytes": 738466,
+      "clusters": 34,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0012",
+      "path": "efflux_transport__global_context__packet_0012.json",
+      "sha256": "dbd0d1fff762ae4c268b833042c730c736e7e8c852f02ce894530cd65143094f"
+    },
+    {
+      "assignments": 3455,
+      "bytes": 701650,
+      "clusters": 35,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0013",
+      "path": "efflux_transport__global_context__packet_0013.json",
+      "sha256": "b9c1be267fecbd870b5b106d45c2d30954ebb31b3c1e4634e1a2c4be313d7aaf"
+    },
+    {
+      "assignments": 3531,
+      "bytes": 742546,
+      "clusters": 37,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0014",
+      "path": "efflux_transport__global_context__packet_0014.json",
+      "sha256": "31991e0e8404aeff61e755067c87974520b9cd061ed36e3a79531b74fe554197"
+    },
+    {
+      "assignments": 3529,
+      "bytes": 730076,
+      "clusters": 35,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0015",
+      "path": "efflux_transport__global_context__packet_0015.json",
+      "sha256": "80869c1de6f26b16366b71784072e66886aadaa9344849aebef6c360afb3180d"
+    },
+    {
+      "assignments": 3499,
+      "bytes": 736960,
+      "clusters": 31,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0016",
+      "path": "efflux_transport__global_context__packet_0016.json",
+      "sha256": "4b59f5f8dc8a35f3e22fd202f4aabf5d6530b68444fb05efb3c24d61b331f3f4"
+    },
+    {
+      "assignments": 3503,
+      "bytes": 739196,
+      "clusters": 31,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0017",
+      "path": "efflux_transport__global_context__packet_0017.json",
+      "sha256": "50245ca643340d7e9b928def3f0df4a080432d7300ee3e21bf144e514503fad7"
+    },
+    {
+      "assignments": 3447,
+      "bytes": 732622,
+      "clusters": 33,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0018",
+      "path": "efflux_transport__global_context__packet_0018.json",
+      "sha256": "f98bc4d3efc538e8574a531e5a6695d6b41708d9cc445b2c97ff65b220e86afd"
+    },
+    {
+      "assignments": 3492,
+      "bytes": 737775,
+      "clusters": 38,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0019",
+      "path": "efflux_transport__global_context__packet_0019.json",
+      "sha256": "ad66b36385650dc0d0e673875e7c2dbb231ba1a28d1c850dee9f60021f13a0ee"
+    },
+    {
+      "assignments": 3536,
+      "bytes": 730396,
+      "clusters": 36,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0020",
+      "path": "efflux_transport__global_context__packet_0020.json",
+      "sha256": "969b3936b62da8a09ea54ab5ac8e8227270bdaef11dd4694edb0aa6f00799074"
+    },
+    {
+      "assignments": 1527,
+      "bytes": 320941,
+      "clusters": 17,
+      "namespace": "efflux_transport/global_context",
+      "packet_id": "efflux_transport__global_context__packet_0021",
+      "path": "efflux_transport__global_context__packet_0021.json",
+      "sha256": "cf6e123e0afaa7311d4ab79dd2019a24647523350d5b7424d1708100acf4a48b"
+    },
+    {
+      "assignments": 3894,
+      "bytes": 747179,
+      "clusters": 39,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0001",
+      "path": "efflux_transport__global_species_context__packet_0001.json",
+      "sha256": "a1d8a563c3e87ae19d98c35e5c555d5e80324cfc5f6dde83afd52850863b32bd"
+    },
+    {
+      "assignments": 3866,
+      "bytes": 736203,
+      "clusters": 39,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0002",
+      "path": "efflux_transport__global_species_context__packet_0002.json",
+      "sha256": "4e555611934fe7e7f52ad2ea56bafa88e476702d33b3feee54eeb0a6da72bdd1"
+    },
+    {
+      "assignments": 3752,
+      "bytes": 735712,
+      "clusters": 39,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0003",
+      "path": "efflux_transport__global_species_context__packet_0003.json",
+      "sha256": "b8fca9f9568ea1d5cf83878ac7228f3f2e648b0b6c68bc3ef36f02aebaa0d3f6"
+    },
+    {
+      "assignments": 3919,
+      "bytes": 744775,
+      "clusters": 35,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0004",
+      "path": "efflux_transport__global_species_context__packet_0004.json",
+      "sha256": "3f55ecfe27b0fd803f90ce9dbd362553b7641476815adf20aa4b6136bf0fa04b"
+    },
+    {
+      "assignments": 3645,
+      "bytes": 733420,
+      "clusters": 33,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0005",
+      "path": "efflux_transport__global_species_context__packet_0005.json",
+      "sha256": "be60115d0e786b9919b60f3b957b882632895217625b8788de16c6fd69c1bd8e"
+    },
+    {
+      "assignments": 3879,
+      "bytes": 743224,
+      "clusters": 37,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0006",
+      "path": "efflux_transport__global_species_context__packet_0006.json",
+      "sha256": "795ed362454c5df7bfd79c30e3e56729a96818f0c0807d5ace7f088d812e1e61"
+    },
+    {
+      "assignments": 3715,
+      "bytes": 729733,
+      "clusters": 44,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0007",
+      "path": "efflux_transport__global_species_context__packet_0007.json",
+      "sha256": "fe4c88684a80186c282609aa243edff9b677f39010a8fe9daf45a7d935ccf7e4"
+    },
+    {
+      "assignments": 3864,
+      "bytes": 745911,
+      "clusters": 39,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0008",
+      "path": "efflux_transport__global_species_context__packet_0008.json",
+      "sha256": "f7c34a45c64c9862365ca27669b316623c95bcb51b875c9efc8f23618b778a0e"
+    },
+    {
+      "assignments": 3663,
+      "bytes": 732846,
+      "clusters": 40,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0009",
+      "path": "efflux_transport__global_species_context__packet_0009.json",
+      "sha256": "ca72543bd7645fc8cbffad99d0972dcc6e95a5e789bdb4b8674887d58c0d3017"
+    },
+    {
+      "assignments": 3693,
+      "bytes": 738716,
+      "clusters": 38,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0010",
+      "path": "efflux_transport__global_species_context__packet_0010.json",
+      "sha256": "76d32d165772080a7c62c42439e3688e1209e225f2cab2569a465a3105f453ae"
+    },
+    {
+      "assignments": 3757,
+      "bytes": 735466,
+      "clusters": 36,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0011",
+      "path": "efflux_transport__global_species_context__packet_0011.json",
+      "sha256": "e48dc149fbe0b330db31852cd05e93000a0a16d39ae2dc3fb832803fb469fe5c"
+    },
+    {
+      "assignments": 3710,
+      "bytes": 694352,
+      "clusters": 38,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0012",
+      "path": "efflux_transport__global_species_context__packet_0012.json",
+      "sha256": "2ce89ecbfec60003636ecc174deb342f9be8665b4c630ea85624950e7e8c0a7f"
+    },
+    {
+      "assignments": 3803,
+      "bytes": 733162,
+      "clusters": 39,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0013",
+      "path": "efflux_transport__global_species_context__packet_0013.json",
+      "sha256": "a2dc0a0843811769f14df8e83ed6a74f922df93fdd77c258cfc2e4b9b1fd69e4"
+    },
+    {
+      "assignments": 3823,
+      "bytes": 740906,
+      "clusters": 40,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0014",
+      "path": "efflux_transport__global_species_context__packet_0014.json",
+      "sha256": "628837905a1a561406597501d71f71191bf469ba22282dfed85c4b193b6f4c9a"
+    },
+    {
+      "assignments": 3862,
+      "bytes": 730610,
+      "clusters": 31,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0015",
+      "path": "efflux_transport__global_species_context__packet_0015.json",
+      "sha256": "99788a8cd5460f18e38f664c2bc664fd81b5508361060c55e5a08c2de7e65c21"
+    },
+    {
+      "assignments": 3718,
+      "bytes": 743290,
+      "clusters": 35,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0016",
+      "path": "efflux_transport__global_species_context__packet_0016.json",
+      "sha256": "c8b37de7d0f4cd0a5599a97d40d5961b5b2fccc981975317c9ae45051ee401e0"
+    },
+    {
+      "assignments": 3826,
+      "bytes": 740792,
+      "clusters": 40,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0017",
+      "path": "efflux_transport__global_species_context__packet_0017.json",
+      "sha256": "a0d538900e5bae79f4a69fe0131c44e76c005824eee01e3f7f36e90f38829f68"
+    },
+    {
+      "assignments": 3903,
+      "bytes": 740378,
+      "clusters": 40,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0018",
+      "path": "efflux_transport__global_species_context__packet_0018.json",
+      "sha256": "09950a115e15c32657f3412ed1f159aaf5815bd2a2de9a4395e32cf4c253f775"
+    },
+    {
+      "assignments": 3129,
+      "bytes": 608438,
+      "clusters": 33,
+      "namespace": "efflux_transport/global_species_context",
+      "packet_id": "efflux_transport__global_species_context__packet_0019",
+      "path": "efflux_transport__global_species_context__packet_0019.json",
+      "sha256": "72bc8ba37342d4e2509a2b57fffc598d0280f16eba92b74ed3b07842f06453f7"
+    },
+    {
+      "assignments": 588,
+      "bytes": 100784,
+      "clusters": 6,
+      "namespace": "passive_permeability/global_context",
+      "packet_id": "passive_permeability__global_context__packet_0001",
+      "path": "passive_permeability__global_context__packet_0001.json",
+      "sha256": "bbfb10351b6d1246fc6f1f93b6e4c44920025b19b9e500e5907fd035ec2678c2"
+    },
+    {
+      "assignments": 588,
+      "bytes": 94454,
+      "clusters": 6,
+      "namespace": "passive_permeability/global_species_context",
+      "packet_id": "passive_permeability__global_species_context__packet_0001",
+      "path": "passive_permeability__global_species_context__packet_0001.json",
+      "sha256": "53fb994c940f83245e96acc9e8917ce0e3c7849809c2e7cb82b4766d90df7528"
+    }
+  ],
+  "policy": {
+    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_policy.json",
+    "sha256": "547088fc175febf7cf93ccbd69567e3e910378f5b35fe2d4d9bbabd29573d05c"
+  },
+  "validations": {
+    "clusters_are_atomic": true,
+    "every_assignment_owned_exactly_once": true,
+    "every_cluster_owned_exactly_once": true,
+    "namespaces_are_disjoint": true
+  }
+}

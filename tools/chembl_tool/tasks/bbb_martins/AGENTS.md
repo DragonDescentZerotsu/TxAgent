@@ -665,3 +665,120 @@ run_reasoning_pipeline.py
 
 ChEMBL neighbor retrieval 当前作为 pipeline 内部 evidence prefetch，不作为 LLM tool。
 后续新增其他 ChEMBL task 时，继续复用 `tools/chembl_tool/common/` 的通用工具。
+
+---
+
+## Normalized Starling v6 BBB library
+
+BBB now has a policy-decoupled normalized-v6 path alongside the historical
+Starling and ChEMBL libraries. The historical files, runtime source names, and
+defaults remain unchanged.
+
+Architecture:
+
+```text
+tools/chembl_tool/common/starling/
+  build_normalized_evidence_library.py   shared stages 01-03
+  split_downstream.py                    shared split-aware stages 04-09
+  clustered_auxiliary_mapping.py         shared embedding-cluster reconciliation
+  stage_artifact_store.py                shared deterministic packaging
+
+tools/chembl_tool/tasks/bbb_martins/
+  starling_*.py                           BBB source and normalization policies
+  build_normalized_starling_evidence_library.py
+  build_starling_downstream_artifacts.py
+  retrieve_normalized_starling_neighbors.py
+  starling_artifact_store.py
+```
+
+The complete layout is:
+
+```text
+01_cleaned/
+02_normalized/
+03_records/                 complete unfiltered normalized source records
+04_pair_buckets/            complete source-aware bucket membership
+05_assay_transfer_policy/   calibration excludes the union of benchmark heldout parents
+06_remove_heldout_overlap/  independent random/scaffold record views
+07_molecule_evidence/       split-specific relational evidence
+08_neighbor_index/          split-specific compact indices
+09_audits/
+```
+
+Only `direct_bbb` rows are removed for benchmark heldout parents. Passive,
+efflux, and influx mechanism records remain available even when their molecule
+identity appears in the benchmark. Pair-bucket membership remains a complete
+source audit; transfer-policy calibration explicitly records its direct-source
+heldout exclusion.
+
+The four LLM-visible group IDs remain exactly:
+
+```text
+Tier 1.starling_direct_bbb_evidence
+Mechanism.passive_permeability
+Mechanism.efflux_transport
+Mechanism.influx_transport
+```
+
+The direct snapshot is the complete `starling-labs/BBB` train split at revision
+`f50c638621fcc2dedfc9e00f7074f867640efc1b`, with a stable `source_index` and no
+row filtering or text rewriting. Assay context and species are reconciled by
+embedding distinct raw values with `sentence-transformers/all-MiniLM-L6-v2`,
+clustering with the frozen seed `20260801`, and mapping each cluster with
+`gpt-5.4-mini` at medium reasoning effort. The private API key is loaded at
+runtime and is never stored in mappings, manifests, caches, or traces.
+
+Endpoint and unit normalization is a separate, human-gated workflow:
+
+```text
+data_processing/build_direct_endpoint_mapping.py
+  Sends only distinct direct_bbb.quant_metric values to gpt-5.4-mini.
+  Embedding-local requests contain at most 500 values and write an unpublished
+  raw-to-provisional mapping plus response/cluster provenance.
+
+data_processing/reconcile_direct_endpoints.py
+  prepare          assigns every provisional label and all of its raw values to
+                   one primary subagent review packet
+  prepare-catalog  creates one full candidate-label catalog plus disjoint owner
+                   packets, so aliases from different GPT clusters can be merged
+  propose          requires independent checker and adjudicator records for every
+                   changed raw-level or catalog-level decision
+
+starling_endpoint_normalization.py
+  Loads only the explicitly human-approved Direct map. Passive, efflux, and
+  influx endpoints and their low-cardinality context fields use deterministic,
+  source-specific reviewed rules.
+```
+
+There is no automatic publication command. The proposal remains
+`human_approved=false` until a person copies an explicitly approved, signed-off
+mapping into `data_processing/direct_endpoint_normalization_v1/approved/`.
+Normalized stages 02-09 must not be rebuilt before that checkpoint. Physical
+permeability rows without an explicit source unit or unit embedded in the raw
+endpoint/measurement remain unit-unresolved and are excluded from pair buckets;
+they remain available as sidecar evidence. Binary categorical values are encoded
+as dimensionless scalar anchors with encoder-specific semantic endpoints before
+pair bucketing. Source-aware pair keys then use canonical endpoint, canonical
+unit, categorical encoder, and the relevant canonical context fields.
+
+Build and retrieve:
+
+```bash
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+  python -m tools.chembl_tool.tasks.bbb_martins.build_starling_direct_source
+
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+  python -m tools.chembl_tool.tasks.bbb_martins.data_processing.build_embedding_bucket_mapping
+
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+  python -m tools.chembl_tool.tasks.bbb_martins.build_normalized_starling_evidence_library \
+  --workers 128
+
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+  python -m tools.chembl_tool.tasks.bbb_martins.retrieve_normalized_starling_neighbors \
+  --benchmark-split random --query-smiles '<SMILES>'
+```
+
+Reasoning uses the explicit `--retrieval-source starling_v6` plus a matching
+split index passed through `--index`. This opt-in source does not change the
+legacy `chembl` default or the historical `starling` configuration.

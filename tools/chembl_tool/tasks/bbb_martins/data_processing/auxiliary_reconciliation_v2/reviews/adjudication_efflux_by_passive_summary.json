@@ -1,0 +1,147 @@
+{
+  "adjudication_file": "adjudication_efflux_by_passive.jsonl",
+  "adjudication_file_sha256": "105a8a3988bf467ed74c6a7816fa40d696906ecc2624438c4ba9337dd9994370",
+  "adjudication_verdict_counts": {
+    "accept": 1662,
+    "reject": 3
+  },
+  "adjudicator_id": "bio_reconcile_audit",
+  "canonical_mapping_modified": false,
+  "change_decisions_expected": 1665,
+  "checker_disagreement_count": 3,
+  "checker_disagreement_ids": [
+    "primary_efflux_5125ecb5a4137fab",
+    "primary_efflux_aca4a50669c6b4a3",
+    "primary_efflux_db2d30fbe3300311"
+  ],
+  "checker_disagreement_resolution_counts": {
+    "reject": 3
+  },
+  "checker_disagreement_resolutions": [
+    {
+      "decision_id": "primary_efflux_5125ecb5a4137fab",
+      "rationale": "Reject. I independently reopened all 13 affected raw value(s) for the proposed split from `human + lactococcus lactis` to `human`, `lactococcus lactis host; human gene` and confirm the checker's disagreement: The split is exhaustive, but `ATPase assay using plasma membranes from L. Lactis overexpressing human BCRP` is assigned to `human`. The raw value explicitly states an L. Lactis expression host and a human introduced transporter, so dropping the host violates the host/gene-role rule. It needs a role-qualified label retaining the literal abbreviated host (or an approved explicit taxonomic normalization), not human alone. Because adjudication cannot rewrite labels or raw-value assignments, the proposal is rejected in full.",
+      "verdict": "reject"
+    },
+    {
+      "decision_id": "primary_efflux_aca4a50669c6b4a3",
+      "rationale": "Reject. I independently reopened all 2 affected raw value(s) for the proposed rename from `zebrafish + insect` to `insect` and confirm the checker's disagreement: Both raw values explicitly state a baculovirus/insect expression system and `D. rerio Abcb4`. Renaming `zebrafish + insect` to `insect` discards the explicitly stated introduced-gene species. The supported result must retain both roles, for example `insect host; D. rerio gene` (or `insect host; zebrafish gene` only if that taxonomic normalization is explicitly approved). Because adjudication cannot rewrite labels or raw-value assignments, the proposal is rejected in full.",
+      "verdict": "reject"
+    },
+    {
+      "decision_id": "primary_efflux_db2d30fbe3300311",
+      "rationale": "Reject. I independently reopened all 22 affected raw value(s) for the proposed split from `human + xenopus laevis` to `human`, `xenopus laevis`, `xenopus laevis host; human gene` and confirm the checker's disagreement: The split covers all 22 values, but `X. laevis oocytes expressing human ABCG2` and `X. laevis oocytes expressing human MDR1` are assigned to `human`. Both host and introduced-gene species are explicit in those raw values; abbreviating the host does not authorize deleting it. Those records require a role-qualified label retaining X. laevis plus human gene. Because adjudication cannot rewrite labels or raw-value assignments, the proposal is rejected in full.",
+      "verdict": "reject"
+    }
+  ],
+  "checker_file": "checker_efflux_by_direct.jsonl",
+  "checker_file_sha256": "35e359fb2fb9273da4953a45cda5e68f402a56cc172f001b909f947e3d040ba1",
+  "checker_summary_file": "checker_efflux_by_direct_summary.json",
+  "checker_summary_file_sha256": "5cfd0309919dd6720e4bccff3773d48c353404678a4c6e6b3c785a1b135a37c3",
+  "checker_verdict_counts": {
+    "agree": 1662,
+    "disagree": 3
+  },
+  "coverage": {
+    "adjudication_ids": 1665,
+    "duplicate_ids": 0,
+    "every_checker_disagreement_explicitly_resolved": true,
+    "every_checker_verdict_incorporated": true,
+    "exact_required_fields": true,
+    "extra_ids": 0,
+    "missing_change_ids": 0,
+    "valid": true
+  },
+  "decision_rewriting_performed": false,
+  "downstream_stages_modified": false,
+  "independence": {
+    "adjudicator_id": "bio_reconcile_audit",
+    "all_roles_distinct": true,
+    "checker_id": "bbb_rebuild_audit",
+    "primary_reviewer_id": "bbb_vocab_audit"
+  },
+  "primary_file": "primary_efflux_transport.jsonl",
+  "primary_file_sha256": "9f4d6373d066ecbdb9a3f6762045dd283588750b1e62d6c5767e8e444f91b0d9",
+  "publication_status": "adjudicated_changes_only; human_approval_still_required",
+  "raw_evidence_audit": {
+    "all_context_alias_renames_reopened": true,
+    "all_context_merges_reopened": true,
+    "all_five_species_splits_reviewed_individually": true,
+    "gene_protein_alias_changes_explicitly_reviewed": true,
+    "packet_manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+    "reviewed_assignment_count": 142842,
+    "reviewed_cluster_count": 1430,
+    "reviewed_packet_count": 40,
+    "reviewed_packet_ids": [
+      "efflux_transport__global_context__packet_0001",
+      "efflux_transport__global_context__packet_0002",
+      "efflux_transport__global_context__packet_0003",
+      "efflux_transport__global_context__packet_0004",
+      "efflux_transport__global_context__packet_0005",
+      "efflux_transport__global_context__packet_0006",
+      "efflux_transport__global_context__packet_0007",
+      "efflux_transport__global_context__packet_0008",
+      "efflux_transport__global_context__packet_0009",
+      "efflux_transport__global_context__packet_0010",
+      "efflux_transport__global_context__packet_0011",
+      "efflux_transport__global_context__packet_0012",
+      "efflux_transport__global_context__packet_0013",
+      "efflux_transport__global_context__packet_0014",
+      "efflux_transport__global_context__packet_0015",
+      "efflux_transport__global_context__packet_0016",
+      "efflux_transport__global_context__packet_0017",
+      "efflux_transport__global_context__packet_0018",
+      "efflux_transport__global_context__packet_0019",
+      "efflux_transport__global_context__packet_0020",
+      "efflux_transport__global_context__packet_0021",
+      "efflux_transport__global_species_context__packet_0001",
+      "efflux_transport__global_species_context__packet_0002",
+      "efflux_transport__global_species_context__packet_0003",
+      "efflux_transport__global_species_context__packet_0004",
+      "efflux_transport__global_species_context__packet_0005",
+      "efflux_transport__global_species_context__packet_0006",
+      "efflux_transport__global_species_context__packet_0007",
+      "efflux_transport__global_species_context__packet_0008",
+      "efflux_transport__global_species_context__packet_0009",
+      "efflux_transport__global_species_context__packet_0010",
+      "efflux_transport__global_species_context__packet_0011",
+      "efflux_transport__global_species_context__packet_0012",
+      "efflux_transport__global_species_context__packet_0013",
+      "efflux_transport__global_species_context__packet_0014",
+      "efflux_transport__global_species_context__packet_0015",
+      "efflux_transport__global_species_context__packet_0016",
+      "efflux_transport__global_species_context__packet_0017",
+      "efflux_transport__global_species_context__packet_0018",
+      "efflux_transport__global_species_context__packet_0019"
+    ],
+    "split_raw_coverage_validated": true
+  },
+  "rejected_decision_ids": [
+    "primary_efflux_5125ecb5a4137fab",
+    "primary_efflux_aca4a50669c6b4a3",
+    "primary_efflux_db2d30fbe3300311"
+  ],
+  "summary_version": "bbb_auxiliary_adjudication_efflux_by_passive.v1",
+  "verdict_counts_by_action": {
+    "merge": {
+      "accept": 504
+    },
+    "rename": {
+      "accept": 1155,
+      "reject": 1
+    },
+    "split": {
+      "accept": 3,
+      "reject": 2
+    }
+  },
+  "verdict_counts_by_namespace": {
+    "efflux_transport/global_context": {
+      "accept": 1624
+    },
+    "efflux_transport/global_species_context": {
+      "accept": 38,
+      "reject": 3
+    }
+  }
+}

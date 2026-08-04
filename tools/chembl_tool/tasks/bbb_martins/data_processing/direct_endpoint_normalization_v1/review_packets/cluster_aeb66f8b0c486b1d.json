@@ -1,0 +1,1427 @@
+{
+  "assignment_count": 284,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "$P_{A→B}$"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "ps1",
+      "raw_value": "(PS)1"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "ps2_per_ve_over_ps1",
+      "raw_value": "(PS2/Ve)/PS1"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "logpe",
+      "raw_value": "-Log Pe"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "logpe",
+      "raw_value": "-log Pe"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "logpe",
+      "raw_value": "-LogPe"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "logpe",
+      "raw_value": "-logPe"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "rsa",
+      "raw_value": "10^3 RSA"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "[b]/[p]"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "aib_ps_product",
+      "raw_value": "AIB PS Product"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "aib_ps_product",
+      "raw_value": "AIB PS product"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "aib_ps_product",
+      "raw_value": "aPS product"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B : P"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "b/p"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P @20 min"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_to_plasma_free_ratio",
+      "raw_value": "B/P_free"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "B/Pc"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_to_plasma_free_ratio",
+      "raw_value": "B/Pf"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B:P"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "B:S"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "B_u/P_u"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Bf/Pf"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "bg_to_pg_ratio",
+      "raw_value": "BG/PG"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI; PS"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "p_gp_contribution",
+      "raw_value": "Contribution of P-gp"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "corrected_p_gp_functional_ratio",
+      "raw_value": "corrected P-gp FR (MDR1 FR / PK1 FR)"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "corrected_p_gp_functional_ratio",
+      "raw_value": "Corrected P-gp FRc"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "steady_state_brain_to_plasma_concentration_ratio",
+      "raw_value": "Css,b/Css,p"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "steady_state_unbound_brain_to_plasma_ratio",
+      "raw_value": "Css,u,b/Css,u,p"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "pc_p_difference",
+      "raw_value": "difference between PC and P values"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "dp",
+      "raw_value": "Dp"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "dv_p",
+      "raw_value": "DV (P)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "E(p)"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "E, PS"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "experimental_pm",
+      "raw_value": "Exp Pm"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "free_to_plasma_ratio",
+      "raw_value": "F/P"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "fraction_transported_by_p_gp",
+      "raw_value": "f_t(P-gp)"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free (b/p)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free B:P"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "gb_to_gp_ratio",
+      "raw_value": "Gb/Gp"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "global_ps_product",
+      "raw_value": "global PS product"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "human_p_gp_efflux_ratio",
+      "raw_value": "hP-gp ER"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "level_to_plasma_creatinine_ratio",
+      "raw_value": "level / [Cr]p"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "log_ps_times_fu_brain",
+      "raw_value": "Log (PS*fu,brain)"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "logp",
+      "raw_value": "log P"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "logp",
+      "raw_value": "log p"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "logp0",
+      "raw_value": "log P0"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "logp0",
+      "raw_value": "log P0 (wild type)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "logp0_logp_plus",
+      "raw_value": "log P0, log P+"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "logpc",
+      "raw_value": "log PC"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "logpe",
+      "raw_value": "Log Pe"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "logpe",
+      "raw_value": "log Pe"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "logpeh",
+      "raw_value": "log Peh"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "logp_octanol_water",
+      "raw_value": "log Po"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "logp_octanol_water",
+      "raw_value": "log Po/w"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "log_ps",
+      "raw_value": "Log PS"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "log_ps",
+      "raw_value": "log PS"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "log_ps",
+      "raw_value": "log PS predicted"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "log_ps_times_fu_brain",
+      "raw_value": "log PS*fu, b"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "log_ps_times_fu_brain",
+      "raw_value": "Log(PS*fu, brain)"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "log_ps_times_fu_brain",
+      "raw_value": "log(PSFubrain)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "log_kp",
+      "raw_value": "logKp"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "logp",
+      "raw_value": "LogP"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "log_papp",
+      "raw_value": "logPapp"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "logpc",
+      "raw_value": "logPc"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "logpe",
+      "raw_value": "LogPe"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "logpe",
+      "raw_value": "logPe"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "logpe",
+      "raw_value": "logPe pH 6.8"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "logpeff",
+      "raw_value": "logPeff"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "logpm",
+      "raw_value": "logPm"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "logp_octanol_water",
+      "raw_value": "logPoct"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "log_ps",
+      "raw_value": "LogPS"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "log_ps",
+      "raw_value": "logPS"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "log_ps_times_fu_brain",
+      "raw_value": "logPS*fu,brain"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "log_ps_times_fu_brain",
+      "raw_value": "logPSFu,brain"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "logp",
+      "raw_value": "lop P value"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "mb_to_mp_ratio",
+      "raw_value": "Mb/Mp"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Mouse B/P"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "mpe",
+      "raw_value": "MPE"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "mpo",
+      "raw_value": "MPO"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "mpo",
+      "raw_value": "MPO score"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "sodium_ps",
+      "raw_value": "Na PS"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "net_ps",
+      "raw_value": "Net PS"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "normalized_ps",
+      "raw_value": "Normalized PS"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "o_to_p_ratio",
+      "raw_value": "O/P"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "o_to_p_ratio",
+      "raw_value": "o/p"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "permeability_coefficient",
+      "raw_value": "P"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "permeability_coefficient",
+      "raw_value": "p"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "permeability_coefficient",
+      "raw_value": "p c"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "mdck_permeability",
+      "raw_value": "P MDCK"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "permeability_prime",
+      "raw_value": "P'"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "p_prime_ac_c1",
+      "raw_value": "P' A Cc1"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "p_plus",
+      "raw_value": "P+"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "p_plus_s",
+      "raw_value": "P+S"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "p_gp",
+      "raw_value": "P-gp"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "p_gp_affinity",
+      "raw_value": "P-gp affinity"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "p_gp_efflux_ratio",
+      "raw_value": "P-gp ER"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "p_gp_factor",
+      "raw_value": "P-gp factor"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "p_gp_shift",
+      "raw_value": "P-gp shift"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "permeability_quotient",
+      "raw_value": "P. Q."
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "permeability_quotient",
+      "raw_value": "P. Q. value"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "permeability_quotient",
+      "raw_value": "P.Q."
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "p_to_b_ratio",
+      "raw_value": "P/B"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "p0",
+      "raw_value": "P0"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "p0s",
+      "raw_value": "P0S"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "p1",
+      "raw_value": "P1"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "p1s",
+      "raw_value": "P1S"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "p1x",
+      "raw_value": "P1X"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "p1x_to_p2x_ratio",
+      "raw_value": "P1X/p2X"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "p2x",
+      "raw_value": "p2X"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "p3d",
+      "raw_value": "P3D"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "p_ab",
+      "raw_value": "P_AB"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "p_ba",
+      "raw_value": "P_BA"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "bmec_permeability",
+      "raw_value": "P_BMEC"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "contralateral_permeability",
+      "raw_value": "P_contralateral"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "ds_permeability",
+      "raw_value": "P_dS"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "effective_permeability",
+      "raw_value": "P_e"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "p_ly",
+      "raw_value": "P_LY"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "membrane_permeability",
+      "raw_value": "P_m"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "passive_permeability",
+      "raw_value": "P_Passive"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "phenytoin_permeability",
+      "raw_value": "P_Phenytoin"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "sucrose_permeability",
+      "raw_value": "P_sucrose"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "tumor_permeability",
+      "raw_value": "P_tumor"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "in_vivo_permeability",
+      "raw_value": "P_vivo"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "water_permeability",
+      "raw_value": "P_W†"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "contralateral_permeability",
+      "raw_value": "P_{contralateral}"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "p_ly",
+      "raw_value": "P_{LY}"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "sucrose_permeability",
+      "raw_value": "P_{sucrose}"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "tumor_permeability",
+      "raw_value": "P_{tumor}"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "pampa_permeability",
+      "raw_value": "PAMPA [Pm]"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "pampa_permeability",
+      "raw_value": "PAMPA at pH7.4"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "pbend3_to_ppia_ratio",
+      "raw_value": "PbEnd3 / Ppia"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "bmec_permeability",
+      "raw_value": "PBMEC"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "PBrain"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "Pbrain"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "permeability_coefficient",
+      "raw_value": "PC"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "permeability_coefficient",
+      "raw_value": "Pc"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "permeability_coefficient",
+      "raw_value": "pc"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "ps_per_100_wbrain",
+      "raw_value": "Pc S/100 Wbrain"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "pcall",
+      "raw_value": "PCall"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "pcb",
+      "raw_value": "PCb"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "pcc_contents",
+      "raw_value": "PCC contents"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "cumulative_corrected_apparent_permeability",
+      "raw_value": "Pcum(corrected)app"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "cumulative_apparent_permeability",
+      "raw_value": "Pcumapp"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "pec_p1",
+      "raw_value": "PEC-p1"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "pec_p4",
+      "raw_value": "PEC-p4"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "p_free",
+      "raw_value": "Pf"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "fluorescein_permeability",
+      "raw_value": "Pflu"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "glucuronide_permeability",
+      "raw_value": "PGLUC"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "p_gp_efflux_ratio",
+      "raw_value": "PGP B-A/ A-B"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "p_gp_efflux_ratio",
+      "raw_value": "PGP B-A/A-B"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "phbmcs",
+      "raw_value": "PHBMCs"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "permeability_index",
+      "raw_value": "PI"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "permeability_index_difference",
+      "raw_value": "PID"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "permeability_index_per_gram",
+      "raw_value": "PID/g"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "platinum_level",
+      "raw_value": "Platinum levels"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "platinum_level",
+      "raw_value": "platinum levels"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "pmalal",
+      "raw_value": "Pmalal"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "mannitol_permeability",
+      "raw_value": "PMAN"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "mdck_permeability",
+      "raw_value": "PMDCK"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "pmea_content",
+      "raw_value": "PMEA content"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "pns",
+      "raw_value": "PNS"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "logp_octanol_water",
+      "raw_value": "Pow Log"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "paracellular_permeability",
+      "raw_value": "Ppara"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "paracellular_permeability",
+      "raw_value": "Pparac"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "passive_permeability",
+      "raw_value": "Ppass"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "ppc",
+      "raw_value": "PPC"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "ppe",
+      "raw_value": "pPe"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "phenytoin_permeability",
+      "raw_value": "PPHENYTOIN"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "permeability_ratio",
+      "raw_value": "PR"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "probability",
+      "raw_value": "Prob."
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "ps",
+      "raw_value": "PS"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "ps",
+      "raw_value": "Ps"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "diazepam_ps",
+      "raw_value": "PS [3H]diazepam"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "ps_area",
+      "raw_value": "PS Area"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "ps_product",
+      "raw_value": "PS Product"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "ps_product",
+      "raw_value": "PS product"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "ps_product",
+      "raw_value": "PS products"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "total_ps",
+      "raw_value": "PS total"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "ps",
+      "raw_value": "PS values"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "ps_prime",
+      "raw_value": "PS'"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "3omg_ps_product",
+      "raw_value": "PS-3OMG products"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "ps_product",
+      "raw_value": "PS-product"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "ps_per_f",
+      "raw_value": "PS/F"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "ps_per_q_gamma_b",
+      "raw_value": "PS/Q·γb"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "ps_per_vc",
+      "raw_value": "PS/Vc"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "ps1",
+      "raw_value": "PS1"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "ps1",
+      "raw_value": "PS1*"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "ps1_ps2_e",
+      "raw_value": "PS1, PS2, E"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "ps2",
+      "raw_value": "PS2"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "ps2",
+      "raw_value": "PS2*"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "ps2_to_ps1_ratio",
+      "raw_value": "PS2/PS1"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "ps2_per_ve",
+      "raw_value": "PS2/Ve"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "ps2c",
+      "raw_value": "PS2C"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "ps3",
+      "raw_value": "PS3"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "ps3_per_ve",
+      "raw_value": "PS3/Ve"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "ps3c",
+      "raw_value": "PS3C"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "fdopa_ps",
+      "raw_value": "PS^FDOPA"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "effective_ps",
+      "raw_value": "PS_e"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "effective_ps",
+      "raw_value": "PS_eff"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "ps_f",
+      "raw_value": "PS_F"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "hoh_ps",
+      "raw_value": "PS_HOH"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "nh3_ps",
+      "raw_value": "PS_NH3"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "nh4_ps",
+      "raw_value": "PS_NH4+"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "p_gp_bcrp_ps",
+      "raw_value": "PS_P-gp and PS_Bcrp"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "total_ps",
+      "raw_value": "PS_total"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "unbound_ps",
+      "raw_value": "PS_u"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "vaso_global_ps",
+      "raw_value": "PS_VASO,global"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "water_ps",
+      "raw_value": "PS_w"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "water_ps",
+      "raw_value": "PS_water"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "wepcast_ps",
+      "raw_value": "PS_WEPCAST"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "polar_surface_area",
+      "raw_value": "PSA"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "psa_product",
+      "raw_value": "PSA product"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "psal_l",
+      "raw_value": "PSAL-L"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "apparent_ps",
+      "raw_value": "PSapp"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "bcrp_ps",
+      "raw_value": "PSBcrp"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_to_plasma_ratio_ko_wt",
+      "raw_value": "PSBcrp, PSP-gp, R (C_brain/C_plasma KO/WT)"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_to_plasma_ratio_ko_wt",
+      "raw_value": "PSBcrp, PSP-gp, RMdr1a/1b(-/-)/Bcrp(-/-)"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_ps",
+      "raw_value": "PSBrain"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_ps",
+      "raw_value": "PSbrain"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_ps_free",
+      "raw_value": "PSBrain_F"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "ps_e",
+      "raw_value": "PSe"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "ps_f",
+      "raw_value": "PSF"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "ps_f",
+      "raw_value": "PSf"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "fdopa_ps",
+      "raw_value": "PSFDOPA"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "hoh_ps",
+      "raw_value": "PSHOH"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "ps_l_al",
+      "raw_value": "PSL-AL"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "ps_mg",
+      "raw_value": "PSMG"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "nh3_ps",
+      "raw_value": "PSNH3"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "p_gp_ps",
+      "raw_value": "PSP-gp"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "ps_pi",
+      "raw_value": "PSPI"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "ps_ratio",
+      "raw_value": "PSR"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "total_ps",
+      "raw_value": "PSt"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "total_ps",
+      "raw_value": "PST × 100"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "pstc",
+      "raw_value": "PSTC"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "trans_ps",
+      "raw_value": "PStrans"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "unbound_ps",
+      "raw_value": "PSu"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "unbound_apparent_ps",
+      "raw_value": "PSu,app"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "sucrose_ps",
+      "raw_value": "PSUC"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "sucrose_ps",
+      "raw_value": "Psuc"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "sucrose_ps",
+      "raw_value": "PSUCROSE"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "sucrose_ps",
+      "raw_value": "Psucrose"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "in_vivo_apparent_ps_per_brain_volume",
+      "raw_value": "PSvivo, app/Vbr"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "water_ps",
+      "raw_value": "PSw"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_water_ps",
+      "raw_value": "PSwb"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "ps1",
+      "raw_value": "PS₁"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "permeability_transport",
+      "raw_value": "PT"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "permeability_transport",
+      "raw_value": "Pt"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "total_permeability",
+      "raw_value": "Ptot"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "in_vitro_permeability",
+      "raw_value": "Pvitro"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "in_vivo_permeability",
+      "raw_value": "Pvivo"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "osmotic_water_permeability",
+      "raw_value": "Pw,osmotic"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "P·S"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "P·S product"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "P·S products"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "pns",
+      "raw_value": "P̄N̄S"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "p_plus",
+      "raw_value": "P⁺"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "p_plus_s_hat",
+      "raw_value": "P⁺Ŝ"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "p0",
+      "raw_value": "P₀"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "p0s_hat",
+      "raw_value": "P₀Ŝ"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "p1_d",
+      "raw_value": "P₁^D"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "p_plus",
+      "raw_value": "P₊"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "qp_pmdck",
+      "raw_value": "QP PMDCK"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "qplogmdck",
+      "raw_value": "QPLogMDCK"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "qp_pmdck",
+      "raw_value": "QPPM-DCK"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "qp_pmdck",
+      "raw_value": "QPPMDCK"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "qppmdck",
+      "raw_value": "QppMDCK"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "qppmdck",
+      "raw_value": "QPPMDCKn"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "rubidium_ps_product",
+      "raw_value": "Rb PS product"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "rat_p_gp_efflux_ratio",
+      "raw_value": "rP-gp ER"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "rat_ps",
+      "raw_value": "rPS"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "relative_surface_area",
+      "raw_value": "RSA"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "surface_ratio",
+      "raw_value": "SR"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "T/P"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "permeability_half_life",
+      "raw_value": "t0.5(P)"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "TP"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "TPR"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "topological_polar_surface_area",
+      "raw_value": "TPSA"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "topological_polar_surface_area",
+      "raw_value": "tPSA"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "ttp",
+      "raw_value": "TTP"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "minus_logpe",
+      "raw_value": "–logPe"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "dk1_acpc",
+      "raw_value": "∂K1^ACPC"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "minus_logpe",
+      "raw_value": "−logPe"
+    }
+  ],
+  "cluster_id": "cluster_aeb66f8b0c486b1d",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

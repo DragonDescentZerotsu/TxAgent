@@ -1,0 +1,93 @@
+{
+  "audit_version": "bbb_auxiliary_reconciliation.final_integrity.v1",
+  "status": "passed",
+  "issues": [],
+  "canonical_lineage": {
+    "required_sha256": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4",
+    "canonical_mapping_sha256": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4",
+    "pre_reconciliation_mapping_sha256": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4",
+    "pre_reconciliation_mapping_byte_identical_to_canonical": true
+  },
+  "manifest_integrity": {
+    "proposal_manifest_files_verified": 8,
+    "proposal_manifest_file_sha256_all_match": true,
+    "packet_manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+    "packet_manifest_sha256_matches_proposal_manifest": true,
+    "packet_files_verified": 49,
+    "packet_file_sha256_all_match": true,
+    "packet_policy_sha256_matches": true,
+    "provisional_manifest_files_verified": 15,
+    "provisional_manifest_file_sha256_all_match": true
+  },
+  "mapping_integrity": {
+    "sections": 6,
+    "proposal_tuple_coverage_matches_provisional_and_current": true,
+    "proposal_null_masks_match_provisional_and_current": true,
+    "explicit_null_tuple_preserved_in_every_section": true,
+    "section_counts": {
+      "direct_bbb/global_context": {
+        "tuples": 25885,
+        "null_mask_tuples": 1
+      },
+      "direct_bbb/global_species_context": {
+        "tuples": 2407,
+        "null_mask_tuples": 258
+      },
+      "efflux_transport/global_context": {
+        "tuples": 71422,
+        "null_mask_tuples": 1
+      },
+      "efflux_transport/global_species_context": {
+        "tuples": 71422,
+        "null_mask_tuples": 40471
+      },
+      "passive_permeability/global_context": {
+        "tuples": 589,
+        "null_mask_tuples": 1
+      },
+      "passive_permeability/global_species_context": {
+        "tuples": 589,
+        "null_mask_tuples": 380
+      }
+    }
+  },
+  "review_integrity": {
+    "assignments": 172308,
+    "primary_decisions": 23412,
+    "primary_labels_expected": 24274,
+    "primary_labels_owned_exactly_once": 24274,
+    "primary_label_coverage_exact": true,
+    "reviewers": 3,
+    "review_packets_owned_exactly_once": 49,
+    "section_clusters_reviewed": 1726,
+    "change_decision_ids": 1818,
+    "checker_rows": 1818,
+    "exactly_one_checker_per_change": true,
+    "adjudication_rows": 1818,
+    "exactly_one_adjudication_per_change": true,
+    "reviewer_checker_adjudicator_pairwise_distinct_per_change": true,
+    "accepted_decisions": 1792,
+    "rejected_decisions": 26,
+    "accepted_decision_file_exactly_reconsolidates_from_reviews": true
+  },
+  "replay_integrity": {
+    "accepted_decisions_replayed": 1792,
+    "proposal_mapping_sha256": "dcd8ddfa534f26cad2109d9fd07ca75110260af3394ba031e55c4274de8aa8ab",
+    "replayed_mapping_sha256": "dcd8ddfa534f26cad2109d9fd07ca75110260af3394ba031e55c4274de8aa8ab",
+    "proposal_mapping_exact": true,
+    "changed_assignments": 11470,
+    "changes_parquet_values_and_column_order_exact": true,
+    "changes_parquet_serialization_note": "The only pre-write versus post-read dtype normalization is decision_id: Python object to pandas string; all values, nulls, row order, columns, and row count are exact.",
+    "accepted_decisions_do_not_overlap": true,
+    "one_final_label_per_assignment": true,
+    "proposal_replayed_from_provisional": true
+  },
+  "publication_gate": {
+    "publication_status": "awaiting_human_approval",
+    "publication_blockers": [
+      "human_approval_not_recorded"
+    ],
+    "human_approved": false,
+    "publication_remains_blocked": true
+  }
+}

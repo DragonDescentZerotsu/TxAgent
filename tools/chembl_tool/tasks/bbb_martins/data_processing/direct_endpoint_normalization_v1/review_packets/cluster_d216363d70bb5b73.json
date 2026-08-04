@@ -1,0 +1,1007 @@
+{
+  "assignment_count": 200,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "percent",
+      "raw_value": "%"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "percent_applied_dose",
+      "raw_value": "% appl. Dosis"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "percent_associated_with_brain",
+      "raw_value": "% associated with brain"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "ati_per_g",
+      "raw_value": "% ATI/g"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "bui",
+      "raw_value": "% BUI"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "% C.S.F. P"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "percent_crossed",
+      "raw_value": "% crossed"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "percent_delivery",
+      "raw_value": "% delivery"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "percent_detected_in_brain",
+      "raw_value": "% detected in brain"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "percent_detected_in_bc",
+      "raw_value": "% detected in the BC"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "percent_entered_brain",
+      "raw_value": "% entered the brain"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "percent_extraction",
+      "raw_value": "% Extraction"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "percent_extraction",
+      "raw_value": "% extraction"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "% I.D."
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "percent_injected_dose_per_g",
+      "raw_value": "% I.D./g"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "percent_injected_dose_per_g",
+      "raw_value": "% I.D./g of tissue"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "percent_injected_dose_per_organ",
+      "raw_value": "% I.D./g organ"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "percent_id",
+      "raw_value": "% ID"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "% ID / g"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_percent_id_per_g",
+      "raw_value": "% ID / g brain tissue"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "% ID g⁻¹"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "percent_id_in_brain",
+      "raw_value": "% ID in the brain"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "percent_id_per_ml",
+      "raw_value": "% ID per mL"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "percent_id_per_100_ml",
+      "raw_value": "% ID/100 mL"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "percent_id_per_100_ml",
+      "raw_value": "% ID/100 ml of tissue"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "percent_id_per_ml",
+      "raw_value": "% ID/cc"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "% ID/g"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_percent_id_per_g",
+      "raw_value": "% ID/g brain"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_percent_id_per_g",
+      "raw_value": "% ID/g brain tissue"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "% ID/g of tissue"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "% ID/g Tissue"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "% ID/g tissue"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "% ID/g-Tissue"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "% ID/g; brain/tumor ratio"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "percent_id_per_gc",
+      "raw_value": "% ID/gc"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "percent_id_per_l",
+      "raw_value": "% ID/L"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "percent_id_per_ml",
+      "raw_value": "% ID/mL"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "percent_id_per_organ",
+      "raw_value": "% ID/Organ"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "percent_id_per_organ",
+      "raw_value": "% ID/organ"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "percent_idi",
+      "raw_value": "% IDI"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "percent_in_brain",
+      "raw_value": "% in Brain"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "percent_in_brain",
+      "raw_value": "% in brain"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "percent_increase_over_normal_left_hemisphere",
+      "raw_value": "% increase over normal left hemisphere"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "percent_inj_per_g",
+      "raw_value": "% Inj/g"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "percent_lactate_extraction",
+      "raw_value": "% Lactate Extraction"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "normalized_percent_id_per_g",
+      "raw_value": "% normalized ID/g"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "percent_of_control",
+      "raw_value": "% of control"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "percent_of_control_value",
+      "raw_value": "% of Control Value"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "percent_of_control_value",
+      "raw_value": "% of control value"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "percent_id",
+      "raw_value": "% of I.D."
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "rbr",
+      "raw_value": "% RBR"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "percent_reaching_brain",
+      "raw_value": "% reaching the brain"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "percent_recovered",
+      "raw_value": "% Recovered"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "percent_recovery",
+      "raw_value": "% Recovery"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "percent_recovery",
+      "raw_value": "% recovery at 48 h"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "sucrose_space",
+      "raw_value": "% Sucrose"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "supernatant",
+      "raw_value": "% Supernatant"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "suv",
+      "raw_value": "% SUV"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "percent_total_fauc_0_180",
+      "raw_value": "% total fAUC0-180"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "percent_transfer",
+      "raw_value": "% transfer"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "percent_unbound_fauc_0_180",
+      "raw_value": "% unbound fAUC0-180"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "3h_m",
+      "raw_value": "% ³H-M"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "percent_ad",
+      "raw_value": "%AD"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "ati",
+      "raw_value": "%ATI"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "ati_per_g",
+      "raw_value": "%ATI/g"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "percent_available",
+      "raw_value": "%Availability"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "bx",
+      "raw_value": "%Bx"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "percent_d_in_whole_brain",
+      "raw_value": "%D in the whole brain"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "percent_id",
+      "raw_value": "%I.D."
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "%I.D./g Tissue"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "percent_iv_per_g",
+      "raw_value": "%i.v./g"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "ia_per_g",
+      "raw_value": "%IA/g"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "ia_per_g",
+      "raw_value": "%IA/g tissue"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "percent_id",
+      "raw_value": "%ID"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "percent_id_in_brain",
+      "raw_value": "%ID in brain"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "%ID per g"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_percent_id_per_g",
+      "raw_value": "%ID per g brain tissue"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "percent_id_kg_per_g",
+      "raw_value": "%ID-kg/g"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "percent_id_per_100_ml",
+      "raw_value": "%ID/100 mL"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "percent_id_per_100_ml",
+      "raw_value": "%ID/100 ml"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "percent_id_per_ml",
+      "raw_value": "%ID/cc of tissue"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "percent_id_per_ml",
+      "raw_value": "%ID/cm3"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "percent_id_per_ml",
+      "raw_value": "%ID/cm³"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "%ID/g"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "%ID/g (t)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_percent_id_per_g",
+      "raw_value": "%ID/g brain"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_percent_id_per_g",
+      "raw_value": "%ID/g in the brain"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "percent_id_per_g_max",
+      "raw_value": "%ID/g max"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "percent_id_per_organ",
+      "raw_value": "%ID/g of organ"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "%ID/g tissue"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "percent_id_per_l",
+      "raw_value": "%ID/L"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "percent_id_per_l",
+      "raw_value": "%ID/l"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "percent_id_per_mg",
+      "raw_value": "%ID/mg"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "percent_id_per_ml",
+      "raw_value": "%ID/mL"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "percent_id_per_ml",
+      "raw_value": "%ID/ml"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "percent_id_per_organ",
+      "raw_value": "%ID/Organ"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "percent_id_per_organ",
+      "raw_value": "%ID/organ"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "percent_id_per_kg",
+      "raw_value": "%ID/p/kg"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_max_percent_id",
+      "raw_value": "%IDmax, brain"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "percent_inj_per_g",
+      "raw_value": "%Inj/g"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "percent_inj_per_g",
+      "raw_value": "%inj/g"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "percent_iv_per_g",
+      "raw_value": "%iv/g"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "rbr",
+      "raw_value": "%Rbr"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "rbrain",
+      "raw_value": "%Rbrain"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "suv",
+      "raw_value": "%SUV"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "suv",
+      "raw_value": "%SUV@20 min"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "t_and_q",
+      "raw_value": "%T and %Q"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "tee",
+      "raw_value": "%TEE"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "hundred_minus_bei",
+      "raw_value": "100 – BEI (%)"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "hundred_minus_bei",
+      "raw_value": "100-BEI (%)"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "131i",
+      "raw_value": "131I (%)"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "131i",
+      "raw_value": "131Iodine%"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "59fe_uptake",
+      "raw_value": "59Fe uptake (%)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "131i",
+      "raw_value": "[131]Iodine %"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "a_to_b",
+      "raw_value": "A to B (%)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "bei",
+      "raw_value": "BEI(%)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_percent_id_per_g",
+      "raw_value": "Brain % ID/g"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_percent_id_per_g",
+      "raw_value": "Brain %ID/g"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_percent",
+      "raw_value": "Brain (%)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "bui",
+      "raw_value": "BUI % of ethanol"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "bui",
+      "raw_value": "BUI (%)"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "bui",
+      "raw_value": "BUI Percent"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "bui",
+      "raw_value": "BUI%"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "cmax_percent_id",
+      "raw_value": "C max, %ID"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "cmax_percent_id",
+      "raw_value": "C max,%ID"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "ccompart_to_cplasma_ratio",
+      "raw_value": "Ccompart/Cplasma (%)"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "cm",
+      "raw_value": "CM%"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "cvout",
+      "raw_value": "CVOUT (%)"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "distribution_percentage",
+      "raw_value": "distribution percentage"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "distribution_space",
+      "raw_value": "Distribution space (%)"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "dte",
+      "raw_value": "DTE%"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "e",
+      "raw_value": "E (%)"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "e",
+      "raw_value": "E%"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "e_acac",
+      "raw_value": "E% AcAc"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "e_40_percent",
+      "raw_value": "E(40%)"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "enhancement",
+      "raw_value": "enhancement percentage"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "extraction",
+      "raw_value": "Extraction (%)"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "extraction",
+      "raw_value": "extraction percentage"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "extraction",
+      "raw_value": "Extraction percentage (relative to 3H2O)"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "extravasation",
+      "raw_value": "Extravasation (%)"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "extravasation",
+      "raw_value": "extravasation (%)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "percent_found",
+      "raw_value": "Found, %"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "percent_id",
+      "raw_value": "ID%"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "ID% per g"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "incorporation",
+      "raw_value": "Incorporation (%)"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "increase",
+      "raw_value": "Increase (%)"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "inhibition",
+      "raw_value": "Inhibition [%]"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "initial_extraction",
+      "raw_value": "initial extraction percentage"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "lp_percent",
+      "raw_value": "L/P x %"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "l_r_percentage",
+      "raw_value": "L/R-percentage"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_max_percent_id",
+      "raw_value": "maximal % ID in the brain"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "maximal_signal",
+      "raw_value": "Maximal signal (%)"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "mdck_mdr1",
+      "raw_value": "MDCK-mdr1 (%)"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "mean_extraction",
+      "raw_value": "Mean extraction (%)"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "pcauc",
+      "raw_value": "PCAUC (%)"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "pcm",
+      "raw_value": "PCM (%)"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "percent",
+      "raw_value": "Per.%"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "percent_activity",
+      "raw_value": "Percent activity"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "percent_available",
+      "raw_value": "Percent Available"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "percent_change_in_er",
+      "raw_value": "percent change in ER"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "percent_delivery",
+      "raw_value": "percent delivery"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "percent_extracted",
+      "raw_value": "Percent Extracted"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "percent_extraction",
+      "raw_value": "Percent extraction"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "percent_extraction",
+      "raw_value": "percent extraction"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "percent_increase_in_striatal_da",
+      "raw_value": "Percent increase in striatal DA"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "percent_of_total_cpms_input",
+      "raw_value": "percent of total cpms input"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "percent",
+      "raw_value": "percentage"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "percent_crossed",
+      "raw_value": "percentage crossed"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "percent_crossing",
+      "raw_value": "percentage crossing"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "percent_crossing_barrier",
+      "raw_value": "percentage crossing the barrier"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "percent_delivered",
+      "raw_value": "percentage delivered"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "percent_delivered_across",
+      "raw_value": "percentage delivered across"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "percent_extracted",
+      "raw_value": "percentage extracted"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "percent_extraction",
+      "raw_value": "percentage extraction"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "percent_id_per_g",
+      "raw_value": "percentage ID per gram"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "percent_id_per_g_tissue",
+      "raw_value": "Percentage ID per Gram of Tissue"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "percent_in_lower_compartment",
+      "raw_value": "percentage in lower compartment"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "percent_of_extraction",
+      "raw_value": "percentage of extraction"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "percent_of_id",
+      "raw_value": "percentage of ID"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "percent_of_initial_quantity_crossed",
+      "raw_value": "percentage of initial quantity crossed"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "percent_passive_diffusion",
+      "raw_value": "percentage passively diffusing"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "percent_reaching_csf",
+      "raw_value": "percentage reaching the C.S.F."
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "percent_recovered_in_lower_chamber",
+      "raw_value": "percentage recovered in lower chamber"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "ps_change",
+      "raw_value": "PS % change"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "rb_extraction_per_ps",
+      "raw_value": "Rb extraction (%) / PS"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "rbr",
+      "raw_value": "Rbr %"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "rbr",
+      "raw_value": "RBr%"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "rbrain",
+      "raw_value": "RBrain %"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "rbrain",
+      "raw_value": "Rbrain%"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "rcell",
+      "raw_value": "Rcell%"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "sulfate_space",
+      "raw_value": "Sulfate space (%)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "t50_t95",
+      "raw_value": "T50%, T95%"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "te",
+      "raw_value": "Te(%)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "tissue_extraction",
+      "raw_value": "tissue extraction (%)"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "total_se75_activity_left_right_quotient",
+      "raw_value": "Total Se75-activity Left/Right quotient"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "turnover",
+      "raw_value": "Turnover (%)"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "whole_brain_id_percent",
+      "raw_value": "Whole brain ID (%)"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "whole_brain_max_percent_id",
+      "raw_value": "Whole brain Max %ID"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "whole_brain_max_percent_id",
+      "raw_value": "whole-brain maximum %ID"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "delta_t1",
+      "raw_value": "ΔT1%"
+    }
+  ],
+  "cluster_id": "cluster_d216363d70bb5b73",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

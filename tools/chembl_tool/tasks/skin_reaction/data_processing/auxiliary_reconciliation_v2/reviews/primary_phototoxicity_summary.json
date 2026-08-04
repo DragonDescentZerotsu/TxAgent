@@ -1,0 +1,472 @@
+{
+  "decision_file": "primary_phototoxicity.jsonl",
+  "decision_file_sha256": "dc78e28c73c851288835f706792b550c49ba6a858b14feae9cc8f3d4257a1701",
+  "namespace_local_coverage": {
+    "labels_duplicated": 0,
+    "labels_expected": 14220,
+    "labels_missing": 0,
+    "labels_owned": 14220,
+    "valid": true
+  },
+  "namespaces": {
+    "phototoxicity_irritation_local_damage/global_context": {
+      "action_counts": {
+        "merge": 765,
+        "retain": 12588
+      },
+      "assignment_count": 157737,
+      "change_decision_count": 765,
+      "input_labels_owned": 14207,
+      "local_cluster_count": 937,
+      "namespace_local_duplicate_labels": 0,
+      "namespace_local_missing_labels": 0,
+      "primary_decision_count": 13353,
+      "proposed_final_label_count": 13353,
+      "provisional_non_null_label_count": 14207
+    },
+    "phototoxicity_irritation_local_damage/global_species_context": {
+      "action_counts": {
+        "rename": 1,
+        "retain": 7,
+        "split": 5
+      },
+      "assignment_count": 87,
+      "change_decision_count": 6,
+      "input_labels_owned": 13,
+      "local_cluster_count": 1,
+      "namespace_local_duplicate_labels": 0,
+      "namespace_local_missing_labels": 0,
+      "primary_decision_count": 13,
+      "proposed_final_label_count": 14,
+      "provisional_non_null_label_count": 13
+    }
+  },
+  "packet_coverage": {
+    "assignments": 157824,
+    "clusters_are_namespace_local_and_atomic": true,
+    "every_packet_owned_exactly_once": true,
+    "packet_hashes_valid": true,
+    "packet_items_exactly_match_provenance_assignments": true,
+    "packets": 42,
+    "reviewers": 1,
+    "section_clusters": 938
+  },
+  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "partial_global_validator": {
+    "action_counts": {
+      "merge": 765,
+      "rename": 1,
+      "retain": 12595,
+      "split": 5
+    },
+    "decisions": 13366,
+    "labels_expected": 14220,
+    "labels_missing": 0,
+    "labels_owned": 14220,
+    "valid": true
+  },
+  "policy_sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017",
+  "publication_status": "primary_review_proposed",
+  "review_method": {
+    "context_equivalence": "strict typography, generic assay/test suffix, and explicitly licensed method-abbreviation normalization; phase labels excluded from punctuation normalization",
+    "exact_raw_assignment_rows_checked": 157824,
+    "protected_distinctions_preserved": [
+      "3t3 nru versus mtt versus reconstructed epidermis",
+      "photopatch versus patch versus clinical observation",
+      "in vivo versus ex vivo versus in vitro versus clinical",
+      "photochemical versus non-photochemical method"
+    ],
+    "species_splits_are_exhaustive": true
+  },
+  "reviewed_assignment_count": 157824,
+  "reviewed_cluster_count": 938,
+  "reviewed_namespaces": [
+    "phototoxicity_irritation_local_damage/global_context",
+    "phototoxicity_irritation_local_damage/global_species_context"
+  ],
+  "reviewed_packet_count": 42,
+  "reviewed_packet_ids": [
+    "phototoxicity_irritation_local_damage__global_context__packet_0001",
+    "phototoxicity_irritation_local_damage__global_context__packet_0002",
+    "phototoxicity_irritation_local_damage__global_context__packet_0003",
+    "phototoxicity_irritation_local_damage__global_context__packet_0004",
+    "phototoxicity_irritation_local_damage__global_context__packet_0005",
+    "phototoxicity_irritation_local_damage__global_context__packet_0006",
+    "phototoxicity_irritation_local_damage__global_context__packet_0007",
+    "phototoxicity_irritation_local_damage__global_context__packet_0008",
+    "phototoxicity_irritation_local_damage__global_context__packet_0009",
+    "phototoxicity_irritation_local_damage__global_context__packet_0010",
+    "phototoxicity_irritation_local_damage__global_context__packet_0011",
+    "phototoxicity_irritation_local_damage__global_context__packet_0012",
+    "phototoxicity_irritation_local_damage__global_context__packet_0013",
+    "phototoxicity_irritation_local_damage__global_context__packet_0014",
+    "phototoxicity_irritation_local_damage__global_context__packet_0015",
+    "phototoxicity_irritation_local_damage__global_context__packet_0016",
+    "phototoxicity_irritation_local_damage__global_context__packet_0017",
+    "phototoxicity_irritation_local_damage__global_context__packet_0018",
+    "phototoxicity_irritation_local_damage__global_context__packet_0019",
+    "phototoxicity_irritation_local_damage__global_context__packet_0020",
+    "phototoxicity_irritation_local_damage__global_context__packet_0021",
+    "phototoxicity_irritation_local_damage__global_context__packet_0022",
+    "phototoxicity_irritation_local_damage__global_context__packet_0023",
+    "phototoxicity_irritation_local_damage__global_context__packet_0024",
+    "phototoxicity_irritation_local_damage__global_context__packet_0025",
+    "phototoxicity_irritation_local_damage__global_context__packet_0026",
+    "phototoxicity_irritation_local_damage__global_context__packet_0027",
+    "phototoxicity_irritation_local_damage__global_context__packet_0028",
+    "phototoxicity_irritation_local_damage__global_context__packet_0029",
+    "phototoxicity_irritation_local_damage__global_context__packet_0030",
+    "phototoxicity_irritation_local_damage__global_context__packet_0031",
+    "phototoxicity_irritation_local_damage__global_context__packet_0032",
+    "phototoxicity_irritation_local_damage__global_context__packet_0033",
+    "phototoxicity_irritation_local_damage__global_context__packet_0034",
+    "phototoxicity_irritation_local_damage__global_context__packet_0035",
+    "phototoxicity_irritation_local_damage__global_context__packet_0036",
+    "phototoxicity_irritation_local_damage__global_context__packet_0037",
+    "phototoxicity_irritation_local_damage__global_context__packet_0038",
+    "phototoxicity_irritation_local_damage__global_context__packet_0039",
+    "phototoxicity_irritation_local_damage__global_context__packet_0040",
+    "phototoxicity_irritation_local_damage__global_context__packet_0041",
+    "phototoxicity_irritation_local_damage__global_species_context__packet_0001"
+  ],
+  "reviewed_packets": [
+    {
+      "assignments": 3964,
+      "bytes": 744995,
+      "clusters": 20,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0001",
+      "sha256": "17a001446cd2ed40e753fd49d23a0c61f8b786c96165db18cc9b756aeb7c7c8b"
+    },
+    {
+      "assignments": 3968,
+      "bytes": 749413,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0002",
+      "sha256": "bc538babce3a048fc631d9d9af8f1b7359182f31c617467b758b1a9947adec5f"
+    },
+    {
+      "assignments": 4033,
+      "bytes": 747489,
+      "clusters": 26,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0003",
+      "sha256": "0572b358e1cb63429ab42dc4dc1bc9d509cfebd28518aee96b5f8bd2218e2eba"
+    },
+    {
+      "assignments": 3887,
+      "bytes": 731246,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0004",
+      "sha256": "48db4bc76538dbeec4ac03c7e86466e86123c870bedb5f0f7aead706fa91f5d5"
+    },
+    {
+      "assignments": 3867,
+      "bytes": 712286,
+      "clusters": 26,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0005",
+      "sha256": "c1d91d2f2f07c2c9f6abcd5490eabde50d28931289005ed7cc3d0fc460c2e171"
+    },
+    {
+      "assignments": 4003,
+      "bytes": 738830,
+      "clusters": 25,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0006",
+      "sha256": "1d0479d7600e5eca2e790a7883c3eced870e14febcf13fa7b1be62124c9a575c"
+    },
+    {
+      "assignments": 3868,
+      "bytes": 732753,
+      "clusters": 21,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0007",
+      "sha256": "5b0ccd99e8e55ef31e00cdc97bccb9e13b0194dd9d67ef9d57ac9c673ac39b0e"
+    },
+    {
+      "assignments": 3752,
+      "bytes": 710986,
+      "clusters": 25,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0008",
+      "sha256": "f23bb0ac849c607379a53c20dd8ce116549d63cf5279931db37704b540ad798e"
+    },
+    {
+      "assignments": 3862,
+      "bytes": 730290,
+      "clusters": 25,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0009",
+      "sha256": "6e80c5884ab50b4b4704971331f34878a97675ab253839019f49c109d834451e"
+    },
+    {
+      "assignments": 4043,
+      "bytes": 733704,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0010",
+      "sha256": "737f155b330fd3a619fe1ed1ce9d7fa7922105b92a3f3cfe19cc3ded9a87d4a1"
+    },
+    {
+      "assignments": 3829,
+      "bytes": 717165,
+      "clusters": 22,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0011",
+      "sha256": "f617f77736d69e5a530069d236a9ede3ad2d74fec60e2298111aa21d72ab64f4"
+    },
+    {
+      "assignments": 3838,
+      "bytes": 715684,
+      "clusters": 24,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0012",
+      "sha256": "993c4d69ea2ce38eaaa9d562cff23ce3ae3ff59cc0c309d231f3d2136f458720"
+    },
+    {
+      "assignments": 3918,
+      "bytes": 728960,
+      "clusters": 22,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0013",
+      "sha256": "5bbbf17ebe7a4a9f1289963273833579cfc774356f133c06b9e8dea65a088680"
+    },
+    {
+      "assignments": 3816,
+      "bytes": 715802,
+      "clusters": 25,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0014",
+      "sha256": "a60474c8ee0e8cba0f5823426fcdc88be885743ba69bf61138e318181430a55f"
+    },
+    {
+      "assignments": 4001,
+      "bytes": 748080,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0015",
+      "sha256": "e616ce025ec602791d7dc577dd3d12ef61d175c20ae490255c349a07d1163b90"
+    },
+    {
+      "assignments": 4107,
+      "bytes": 746605,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0016",
+      "sha256": "4acfbd3964d97d85aafadd6d39e536a23d6c133909af0b10d256a9068d799dc1"
+    },
+    {
+      "assignments": 3734,
+      "bytes": 720292,
+      "clusters": 21,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0017",
+      "sha256": "db5ab49b450022f0623ed8482c6a2bf870847d442001d9754f4ae9163036264d"
+    },
+    {
+      "assignments": 3955,
+      "bytes": 735183,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0018",
+      "sha256": "cb872696ff3bbb84b72cf2b5a0b57c09d1a9024d4aa8eb9a03d3893ee35d7b40"
+    },
+    {
+      "assignments": 4130,
+      "bytes": 742657,
+      "clusters": 22,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0019",
+      "sha256": "9e5275ab58aa07570911624d10c830925b34efadc711d67bb2ec2fa7fedb5ed2"
+    },
+    {
+      "assignments": 3876,
+      "bytes": 707954,
+      "clusters": 20,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0020",
+      "sha256": "e18d8e4eb8d3334a9528a0f5aaed28044e499a481d9f96a6a62aed6cbf380a22"
+    },
+    {
+      "assignments": 3979,
+      "bytes": 722194,
+      "clusters": 21,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0021",
+      "sha256": "6d72ff01fce6b54d67082a8a0796e18e2d31a43509d9edec8ad322c0cec8baa2"
+    },
+    {
+      "assignments": 3962,
+      "bytes": 732530,
+      "clusters": 25,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0022",
+      "sha256": "b7d5a8b7a65b9d4a03baa6d8bf0835ae4bd2e149275f903508e9788d36f9f141"
+    },
+    {
+      "assignments": 3958,
+      "bytes": 724895,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0023",
+      "sha256": "2d813407f145123b45d53bb029adbc1999f4e5df20dcbf69a9c9150ca695aefe"
+    },
+    {
+      "assignments": 3762,
+      "bytes": 720600,
+      "clusters": 20,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0024",
+      "sha256": "db6b6a6f9830acecc137b5b12bc7a04538446b8cb1d05519565e3ba9ce69f442"
+    },
+    {
+      "assignments": 3871,
+      "bytes": 724057,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0025",
+      "sha256": "708e1ef3cd49e8ef82a35836b01fabfa2f9382c252f6bc5ad11a88d8b9816382"
+    },
+    {
+      "assignments": 3849,
+      "bytes": 728685,
+      "clusters": 25,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0026",
+      "sha256": "8e313c130e8e4588252714137b657bbe3c7b1b1bfe6a116f400a0f138a5c8b3c"
+    },
+    {
+      "assignments": 4011,
+      "bytes": 739755,
+      "clusters": 30,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0027",
+      "sha256": "d526eb8b87c8892786ee9f3fceffc95431f7cf6840c90ccd09e2a9b0318f4512"
+    },
+    {
+      "assignments": 3973,
+      "bytes": 742219,
+      "clusters": 26,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0028",
+      "sha256": "d72396e308e3b7b8dd01af12b7f4512bc5a63a7515b42c7e8927713d32309559"
+    },
+    {
+      "assignments": 3882,
+      "bytes": 736057,
+      "clusters": 21,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0029",
+      "sha256": "1045fdba42e4c05d08ff1b096efe5d0d00af85fbfe67816545a3e7a4a1cfd343"
+    },
+    {
+      "assignments": 3918,
+      "bytes": 724341,
+      "clusters": 26,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0030",
+      "sha256": "b177926bee2c00f38f7a5770ec35e766fde67512e3eab278fde420ff3071732a"
+    },
+    {
+      "assignments": 3786,
+      "bytes": 712682,
+      "clusters": 24,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0031",
+      "sha256": "e687116decc3c69fd7521c4d42d9ae3e43f8f521ad61e96512096e14b55b164c"
+    },
+    {
+      "assignments": 3848,
+      "bytes": 708362,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0032",
+      "sha256": "8febf21352e377b3f98247e316a3169e2be36a719f918ff7b9839e3e71a2202c"
+    },
+    {
+      "assignments": 3889,
+      "bytes": 722556,
+      "clusters": 21,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0033",
+      "sha256": "3a345e146e59622e652a7113ac6000d4d33fe5bf0ed47ac29438979bd624f786"
+    },
+    {
+      "assignments": 3755,
+      "bytes": 706564,
+      "clusters": 21,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0034",
+      "sha256": "0df97f4de948e08a5eec523d1e8e0d037c030c5b663e649039d5816916a50113"
+    },
+    {
+      "assignments": 3996,
+      "bytes": 747895,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0035",
+      "sha256": "a883b2874c3b2c37e673adebc130d3d9e55fd92ddc3033677d30f608ca47cc2f"
+    },
+    {
+      "assignments": 3889,
+      "bytes": 741439,
+      "clusters": 21,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0036",
+      "sha256": "34b21008789035ab2eb0e9567edd08460f2bf6f1cb6a752675cd3e71fd614932"
+    },
+    {
+      "assignments": 3827,
+      "bytes": 740975,
+      "clusters": 25,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0037",
+      "sha256": "04612670bc2690307905e2ad4ac6fb049615046ccf16eaf3f21fb38aebb7240b"
+    },
+    {
+      "assignments": 4043,
+      "bytes": 745629,
+      "clusters": 22,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0038",
+      "sha256": "4cbf29f71346edbaba6b1a31ffed1afdce40bf6a037d4bc48ca83f924bdec32a"
+    },
+    {
+      "assignments": 3917,
+      "bytes": 731142,
+      "clusters": 26,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0039",
+      "sha256": "34a567949c6e352ec4c4edc474fff5124f2cc63243bb9175a3effd3bf0e3d2b3"
+    },
+    {
+      "assignments": 3880,
+      "bytes": 716160,
+      "clusters": 23,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0040",
+      "sha256": "ee76614245d5d794ba968a3c43c217d17cdfee4e37f0fa38db54cbc8c8bf470e"
+    },
+    {
+      "assignments": 1291,
+      "bytes": 243476,
+      "clusters": 6,
+      "namespace": "phototoxicity_irritation_local_damage/global_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_context__packet_0041",
+      "sha256": "28cfabc2808573ef2a67f122148011a724e30022493edabf93dc328ecb55540d"
+    },
+    {
+      "assignments": 87,
+      "bytes": 13582,
+      "clusters": 1,
+      "namespace": "phototoxicity_irritation_local_damage/global_species_context",
+      "packet_id": "phototoxicity_irritation_local_damage__global_species_context__packet_0001",
+      "sha256": "effe8123caead10d1ef7b2c518e8401898f3e4860fc872512f26538c3e88a0ae"
+    }
+  ],
+  "reviewer_id": "skin_phototoxicity_audit",
+  "summary_version": "skin_reaction_auxiliary_primary_phototoxicity_review.v1"
+}

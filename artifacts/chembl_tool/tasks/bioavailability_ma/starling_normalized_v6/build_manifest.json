@@ -18,6 +18,17 @@
   "artifact_version": "starling_normalized_evidence.v6",
   "auxiliary_attachment_version": "starling_auxiliary_attachment.v1",
   "compact_artifact_version": "bioavailability_ma.compact_v6.v1",
+  "completed_artifact_stages": [
+    "01_cleaned",
+    "02_normalized",
+    "03_records",
+    "04_pair_buckets",
+    "05_assay_transfer_policy",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits"
+  ],
   "completed_stages": [
     "clean",
     "normalize",
@@ -35,6 +46,51 @@
     "schema_version": "contextual_canonical_unit_policy.schema.v1",
     "sha256": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef"
   },
+  "downstream_artifact_hashes": {
+    "assay_transfer_policy": "3fd9d2b47b14e1f3edebd45c5670a240dd8f8f8c4ac87559c6cbf3fbcd5c7bb4",
+    "heldout_exclusions": "0fe0011b0b714551cc9bc578e68f614e024cc3197a5d6a17eff1dc08cae046ce",
+    "heldout_overlap_manifest": "a2789d1fcebff2a4d2d4942152feadd66af209d951a5d788a8b48ef25acad11b",
+    "pair_bucket_metadata": "89b3dc13e55aa456a7deaa61352a6835b9cc794b808820181e4ae57193555391",
+    "pair_bucket_records": "4bd7edfdcb3b097a9fc3973752047c6072d5e4d54f6e2f7a0662069084ac971d",
+    "random_filtered_records": "8e03b2e4bee996ba188deaabb209ce1c137678190f48244f5040db163711b8e1",
+    "random_molecule_families": "5713348130b0eac68e0c730342fb8a619e2610c4bd8be6cdc0ff2958d262d632",
+    "random_molecule_family_records": "cbd83f8068a6452c6f9f19aaa0f8a3230b8c5d451a0e536e055bde6491952409",
+    "random_neighbor_index_manifest": "3cd2851c6fbc37cae42f498f4681c9f9aeed0c19a13ddade3a360a8eb1ee3fda",
+    "scaffold_filtered_records": "3574f77835830ec612082f36e0063348befc972468f32662fb4436409e6a4c67",
+    "scaffold_molecule_families": "cbfcaa91af04315079a60f19f52aba69db1647fd75eb280911aa8c3d15d3b740",
+    "scaffold_molecule_family_records": "12641de04a231d6ea47cef1d49a3d269afb39fbd238663de3c5d295758b1d47a",
+    "scaffold_neighbor_index_manifest": "78ea39c6022697ba10e326ae132aeb92dde9a5dae6592fc62ac6374c91e68dab"
+  },
+  "downstream_scope": {
+    "filtered_splits": [
+      "random",
+      "scaffold"
+    ],
+    "unfiltered_molecule_evidence_retained": false,
+    "unfiltered_neighbor_index_retained": false,
+    "unfiltered_pair_bucket_stage": "04_pair_buckets",
+    "unfiltered_record_stage": "03_records",
+    "unfiltered_transfer_policy_stage": "05_assay_transfer_policy"
+  },
+  "downstream_stats": {
+    "assay_transfer_eligible_buckets": 289,
+    "pair_buckets": 5221,
+    "splits": {
+      "random": {
+        "excluded_direct_hf_records": 20555,
+        "filtered_records": 443004,
+        "index_molecules": 26893,
+        "molecule_families": 36713
+      },
+      "scaffold": {
+        "excluded_direct_hf_records": 21820,
+        "filtered_records": 441739,
+        "index_molecules": 26886,
+        "molecule_families": 36718
+      }
+    }
+  },
+  "elapsed_downstream_s": 455.599,
   "elapsed_s": 222.182,
   "endpoint_inventory": {
     "direct_hf": {
@@ -1636,6 +1692,7 @@
   "index_version": "bioavailability_ma.compact_neighbor_index.v1",
   "invalidated_artifacts": [],
   "normalization_domain_rules_version": "bioavailability_normalization_domains.v3",
+  "pipeline_layout_version": "bioavailability_ma.normalized_v6_layout.v2",
   "rebuild_request": {
     "from_stage": "index",
     "through_stage": "index"

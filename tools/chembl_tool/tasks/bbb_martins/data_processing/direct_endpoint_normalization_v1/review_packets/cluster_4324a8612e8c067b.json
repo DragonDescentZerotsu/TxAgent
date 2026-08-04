@@ -1,0 +1,1747 @@
+{
+  "assignment_count": 348,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "% of KYN in the brain derived from peripheral sources"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_neu5ac_fraction",
+      "raw_value": "% of total [14C]-Neu5Ac localized in the brain"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_6_mam_content",
+      "raw_value": "6-MAM levels in brain tissue"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "cerebral_cortex_inhibition",
+      "raw_value": "[Cerebral cortex] % inh."
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_metastasis_accumulation_ratio",
+      "raw_value": "accumulation in brain metastases relative to extracranial metastases"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_parenchyma_accumulation",
+      "raw_value": "accumulation in brain parenchyma"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "glioma_brain_accumulation",
+      "raw_value": "accumulation in glioma induced brain"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_parenchyma_accumulation",
+      "raw_value": "accumulation in the brain parenchyma"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_tumor_accumulation",
+      "raw_value": "accumulation in the brain tumor tissue"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "left_ca1_accumulation",
+      "raw_value": "accumulation in the targeted brain region (left CA1)"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_imi_accumulation",
+      "raw_value": "accumulation of IMI within the brain"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_int131_accumulation",
+      "raw_value": "accumulation of INT131 in the brain"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "cortical_miglustat_accumulation",
+      "raw_value": "accumulation of miglustat in the cortex"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_ptx_accumulation",
+      "raw_value": "accumulation of PTX in the brain tissue"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_quercetin_accumulation",
+      "raw_value": "accumulation of Que in the brain"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_parenchyma_accumulation",
+      "raw_value": "accumulation within brain parenchyma"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_parenchyma_accumulation",
+      "raw_value": "accumulation within the brain parenchyma"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_acetate_uptake",
+      "raw_value": "acetate taken up by the brain"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_parent_compound_activity",
+      "raw_value": "activity in the brain due to parent compound"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "kp_brain_fold_change",
+      "raw_value": "Actual fold change in Kp,brain (ERα)"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "hippocampal_aluminum_content",
+      "raw_value": "aluminum content in hippocampus"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "hippocampal_aluminum_content",
+      "raw_value": "aluminum level in the hippocampus"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_aluminum_content",
+      "raw_value": "aluminum levels in brain tissue"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_parenchyma_delivery_amount",
+      "raw_value": "amount delivered to brain parenchyma"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_parenchyma_amount",
+      "raw_value": "amount found in brain parenchyma"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_13c_amount",
+      "raw_value": "amount of 13C in the brain"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "whole_brain_13c_amount",
+      "raw_value": "amount of 13C in the whole brain"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_choline_amount",
+      "raw_value": "amount of choline that accumulated in the brain"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_curcumin_amount",
+      "raw_value": "amount of curcumin that reached the brain"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_dye_content",
+      "raw_value": "amount of dye in the brain"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_free_fluorescent_tracer_amount",
+      "raw_value": "amount of free fluorescent tracer inside the brain"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_levodopa_amount",
+      "raw_value": "amount of levodopa reaching the brain"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "hippocampal_naf_amount",
+      "raw_value": "amount of NaF in the hippocampal homogenates"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_pht_amount",
+      "raw_value": "amount of PHT in brain"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_parenchyma_peptide_amount",
+      "raw_value": "amount of the peptide found in the brain parenchyma"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "whole_brain_tritium_amount",
+      "raw_value": "amount of tritium found in the whole brain"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_fe59_amount",
+      "raw_value": "amounts of ⁵⁹Fe in brains"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "area under the curve for exposure of dasatinib within the brain"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "mri_enhancement_area",
+      "raw_value": "areas of MRI enhancement"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_arsenic_content",
+      "raw_value": "Arsenic in the brain"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_parenchyma_association",
+      "raw_value": "associated with brain parenchyma"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_region_rapamycin_content",
+      "raw_value": "Average rapamycin levels in different brain regions"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_bcnu_concentration",
+      "raw_value": "BCNU concentration in sonicated brains"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_bhb_content",
+      "raw_value": "BHB in the human brain"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_boron_concentration",
+      "raw_value": "boron concentrations in normal brain"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_boron_content",
+      "raw_value": "boron content in brain"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_h3_verapamil_accumulation",
+      "raw_value": "brain [³H] verapamil accumulation"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "brain accumulation (Abcb1a/1b;Abcg2-/- vs wild-type)"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "brain accumulation (MM-MTX vs MTX solution)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_acetaldehyde_content",
+      "raw_value": "brain acetaldehyde"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_aluminum_concentration",
+      "raw_value": "brain aluminium concentrations"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_ammonia_content",
+      "raw_value": "brain ammonia content"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_arsenic_content",
+      "raw_value": "Brain arsenic content"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_bilirubin_content",
+      "raw_value": "brain bilirubin content"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_bilirubin_content",
+      "raw_value": "brain bilirubin contents"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_cadmium_content",
+      "raw_value": "brain cadmium content increase"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_cesium_content",
+      "raw_value": "brain cesium content"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain concentration (Abcb1a/b-/- vs wildtype)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain concentration (fold-increase vs Abcg2 deficiency alone)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain concentrations (P-gp knockout vs wildtype)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_creatine_content",
+      "raw_value": "brain creatine increase"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_copper_content",
+      "raw_value": "Brain Cu accumulation"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_curcumin_accumulation",
+      "raw_value": "brain curcumin accumulation"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_cytoplasmic_sap_succinate_content",
+      "raw_value": "brain cytoplasmic sap succinate equivalent content"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_dye_accumulation",
+      "raw_value": "brain dye accumulation"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_dye_content",
+      "raw_value": "brain dye content"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_efflux_index",
+      "raw_value": "brain efflux index (BEI)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "brain elimination half-life"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_enhancement_factor",
+      "raw_value": "brain enhancement factor"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_epa_enrichment",
+      "raw_value": "brain EPA enrichment"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "brain exposure (P-gp knockout vs wildtype)"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_efflux_index",
+      "raw_value": "brain extraction index (BEI) relative to butanol"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_fluorescein_accumulation",
+      "raw_value": "brain fluorescein accumulation"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_fluorescein_content",
+      "raw_value": "brain fluorescein content"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_fluorescence",
+      "raw_value": "brain fluorescence"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_fluorescence_ratio",
+      "raw_value": "brain fluorescence relative to controls"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_fluoride_ratio",
+      "raw_value": "brain fluoride levels relative to control"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_glucose_content",
+      "raw_value": "brain glucose increment"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_h1_receptor_occupancy",
+      "raw_value": "brain H1 receptor occupancy"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_h1_receptor_occupancy",
+      "raw_value": "brain H1 receptor occupancy (H1RO)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_h1_receptor_occupancy",
+      "raw_value": "brain H1-receptor occupancy"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "hemispheric_ammonia_content",
+      "raw_value": "Brain hemisphere ammonia content"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_homogenate_association",
+      "raw_value": "Brain homogenate association (%)"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_icg_fluorescence_ratio",
+      "raw_value": "brain ICG fluorescence / whole fluorescence intensity of the major organs"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "brain KYN contribution from periphery"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_free_cu_content",
+      "raw_value": "brain levels of free CU"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_metastasis_exposure_ratio",
+      "raw_value": "brain metastasis exposure relative to normal brain tissue"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_mitochondrial_succinate_content",
+      "raw_value": "brain mitochondrial fraction succinate equivalent content"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_manganese_concentration",
+      "raw_value": "brain Mn concentrations"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_manganese_influx",
+      "raw_value": "brain Mn influx"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_parenchyma_deposition",
+      "raw_value": "brain parenchyma deposition"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_parenchyma_content",
+      "raw_value": "brain parenchyma values"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_puerarin_accumulation",
+      "raw_value": "brain puerarin accumulation"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_receptor_occupancy",
+      "raw_value": "brain receptor occupancy"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_selenium_content",
+      "raw_value": "brain selenium content"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_sterol_enrichment",
+      "raw_value": "brain sterol enrichment"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_aluminum_concentration",
+      "raw_value": "Brain tissue aluminium concentration"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_manganese_concentration",
+      "raw_value": "Brain tissue manganese concentration"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_tritium_content",
+      "raw_value": "Brain tritium content"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_tryptophan_accumulation",
+      "raw_value": "brain tryptophan accumulation"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_tumor_accumulation",
+      "raw_value": "brain tumour accumulation"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_zonisamide_concentration",
+      "raw_value": "brain ZNS concentrations"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_alpha_tocopherol_content",
+      "raw_value": "brain α-tocopherol content"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-toplasma ratio"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_blood_ratio",
+      "raw_value": "brain/blood fold difference (mdr1a-/- / mdr1a+/-)"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_plasma_ratio",
+      "raw_value": "brain/plasma fold difference (mdr1a-/- / mdr1a+/-)"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_serum_ratio",
+      "raw_value": "Brain/serum conc. (P-gp I/control)"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "cortical_bbb_breakdown",
+      "raw_value": "breakdown of the cortical BBB"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_lanthanum_concentration",
+      "raw_value": "bulk brain lanthanum concentrations"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_methionine_influx",
+      "raw_value": "calculated brain methionine influx"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_c14_activity",
+      "raw_value": "carbon-14 activity in the brain"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "cns_penetrance",
+      "raw_value": "central nervous system penetrance"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "cerebellar_bilirubin_content",
+      "raw_value": "cerebellar brain bilirubin content"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "cerebellar_gadolinium_concentration",
+      "raw_value": "cerebellar gadolinium concentrations"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "cerebellar_receptor_occupancy",
+      "raw_value": "cerebellar receptor occupancy"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "cerebral_cortex_manganese_concentration",
+      "raw_value": "cerebral cortex manganese concentration"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "cortical_mitochondrial_concentration",
+      "raw_value": "cerebral cortex mitochondrial concentrations"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "cerebral_krypton_content",
+      "raw_value": "cerebral Kr content"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "cerebral_alpha_tocopherol_content",
+      "raw_value": "cerebral αTocH content"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_region_to_spleen_ratio",
+      "raw_value": "cerebrum:spleen ratio and metencephalon:spleen ratio"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_cisplatin_concentration",
+      "raw_value": "cisplatin level in brain tissue"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Concn in brain tissue"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_odap_concentration",
+      "raw_value": "Concn. of ODAP in brain"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "frontal_cortex_atra_content",
+      "raw_value": "content of ATRA in the frontal cortex"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "cns_csa_content",
+      "raw_value": "content of CsA in the central nervous system"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_lev_content",
+      "raw_value": "content of LEV in the brain"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_naflu_content",
+      "raw_value": "content of NaFlu in the brain"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_nb_dnj_content",
+      "raw_value": "content of NB-DNJ in brain tissue"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "cerebral_cortex_colistin_content",
+      "raw_value": "contents of colistin in the cerebral cortex"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_dox_content",
+      "raw_value": "contents of DOX in the brain tissues"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "corrected_brain_concentration",
+      "raw_value": "Corrected brain concentrations (Cbr)"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_isotope_content",
+      "raw_value": "Corrected Brain Isotope Content"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_iodide_space",
+      "raw_value": "corrected iodide space of the brain"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "cortex_to_serum_ratio",
+      "raw_value": "cortex/serum (%)"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "cortical_gd_enhancement",
+      "raw_value": "cortical Gd enhancement"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "cortical_thallium_content",
+      "raw_value": "cortical thallium content"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_tritiated_water_radioactivity",
+      "raw_value": "cpm [³H]-H₂O/g brain"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_cu_content",
+      "raw_value": "CU in mouse brain"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "deep_brain_region_curcumin_delivery_amount",
+      "raw_value": "curcumin amount delivered into the deep-seated brain region"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_curcumin_content",
+      "raw_value": "curcumin content in the brain"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_curcumin_content",
+      "raw_value": "curcumin in the brain"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_curcumin_content",
+      "raw_value": "curcumin levels detected in the brain"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_curcumin_content",
+      "raw_value": "curcumin levels in brain"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_curcumin_content",
+      "raw_value": "curcumin levels in brain tissue"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_curcumin_content",
+      "raw_value": "curcumin levels in the brain"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "cortical_bmax",
+      "raw_value": "decrease in cerebral cortical [¹²⁵I]Sar¹, Ile⁸-AII binding (Bmax)"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_urea_content",
+      "raw_value": "decrease in urea in the brain"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "hippocampal_specific_binding_decrease",
+      "raw_value": "decreased specific binding of [3H]RO0154513 in hippocampus"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_curcumin_detection",
+      "raw_value": "detectable curcumin in the brain"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_extract_detection",
+      "raw_value": "detectable in brain extracts"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "hypothalamic_dialysate_detection",
+      "raw_value": "detected in the hypothalamic dialysate"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "brain_27_hydroxycholesterol_deuterium_enrichment",
+      "raw_value": "deuterium enrichment of brain 27-hydroxycholesterol"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_tumor_deposition_ratio",
+      "raw_value": "DOX deposition at the brain tumor relative to normal brain tissue"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "cerebellar_doxorubicin_concentration",
+      "raw_value": "doxorubicin concentration in the cerebellum"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "brain_tumor_doxorubicin_concentration",
+      "raw_value": "doxorubicin levels in brain tumors"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_dpx_content",
+      "raw_value": "DPX-content in the brain"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "hippocampal_dye_concentration",
+      "raw_value": "dye concentrations in the hippocampus"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "brain_dye_content",
+      "raw_value": "dye content in brain"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain_tissue_homogenate_dye_content",
+      "raw_value": "dye content in brain tissue homogenate"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_dye_content",
+      "raw_value": "dye content in the brain"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "brain_perivascular_parenchyma_dye_content",
+      "raw_value": "dye content in the brain perivascular parenchyma"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "cortical_dye_content",
+      "raw_value": "dye content in the cortex tissue"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_extraction_ed50",
+      "raw_value": "ED₅₀ for the saturable brain extraction"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_parenchyma_clearance",
+      "raw_value": "elimination clearance from the brain parenchymal region across the BBB"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "cerebellar_enrichment",
+      "raw_value": "enrichment in cerebellum"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_enrichment",
+      "raw_value": "enrichment in mouse brains"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "exposured in rat brain"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "brain_extracellular_mg_concentration",
+      "raw_value": "extracellular brain [Mg²⁺]"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "hippocampal_extracellular_pht_concentration",
+      "raw_value": "extracellular levels of PHT in the hippocampus"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "brain_extracellular_urd_content",
+      "raw_value": "extracellular Urd level of the brain tissue"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_c0",
+      "raw_value": "Extrapolated intercept (C0; brain)"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_parenchyma_f_dda_concentration",
+      "raw_value": "F-ddA concentration in brain parenchyma"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "brain_fluorescein_content",
+      "raw_value": "fluorescein level in brain"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_fluorescein_content",
+      "raw_value": "fluorescein level of the brain"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_fluorescein_content",
+      "raw_value": "fluorescein levels in brain"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_slice_fluorescence",
+      "raw_value": "fluorescence in brain slices"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_region_fluorescence_intensity",
+      "raw_value": "Fluorescence intensity (comprehensive for 5 brain regions)"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_region_fluorescence_intensity",
+      "raw_value": "Fluorescence intensity (summed over 8 brain regions)"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "brain_fluorescence_intensity",
+      "raw_value": "Fluorescent intensity in brain"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "cerebral_cortex_fluoride_content",
+      "raw_value": "Fluoride content in cerebral cortex"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "hippocampal_fluoride_content",
+      "raw_value": "Fluoride content in hippocampus"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_entry_fraction",
+      "raw_value": "fraction [that] actually enters the brain"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_fraction",
+      "raw_value": "fraction found in the brain"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_intact_tracer_fraction",
+      "raw_value": "fraction of activity in brain in the form of intact tracer"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_dietary_iron_fraction",
+      "raw_value": "fraction of brain iron traced back to diet"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_intact_laniquidar_fraction",
+      "raw_value": "Fraction of intact [¹¹C]laniquidar in brain"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_palmitate_extraction_fraction",
+      "raw_value": "fraction of palmitate extracted by brain (E)"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_parenchyma_transfer_fraction",
+      "raw_value": "fraction transferred into brain parenchyma"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_retention_fraction",
+      "raw_value": "fractional retention values in brain tissue"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_free_5_fu_concentration",
+      "raw_value": "free 5-FU concentration in the brain"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_free_bmaa_content",
+      "raw_value": "free BMAA levels in rat brain"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_gaba_content",
+      "raw_value": "GABA in brain tissue"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_gadolinium_concentration",
+      "raw_value": "gadolinium concentration in brain"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_tissue_gadolinium_concentration",
+      "raw_value": "gadolinium concentration in brain tissue"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "cerebellar_gadolinium_concentration",
+      "raw_value": "gadolinium concentration in cerebellum"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "left_hemisphere_gadolinium_content",
+      "raw_value": "Gadolinium in the left hemisphere of the brain"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_gadolinium_retention",
+      "raw_value": "gadolinium retention in the brain"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "cerebellar_gd_content",
+      "raw_value": "Gd concentrations in the cerebellum"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_gd_content",
+      "raw_value": "Gd content in the brain"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "cerebral_structure_glycine_content",
+      "raw_value": "glycine content in cerebral structures"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_glyphosate_content",
+      "raw_value": "glyphosate levels in the brain"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_gold_concentration",
+      "raw_value": "gold concentrations within the brain"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "cortical_h1_receptor_occupancy",
+      "raw_value": "H1 receptor occupancy in the cerebral cortex"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "brain_h1_receptor_occupancy",
+      "raw_value": "H1-receptor occupancy in the brain"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "half-life in brain"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "half-life in the brain"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "half-life in the mouse brain"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "brain_elimination_half_life",
+      "raw_value": "half-life of elimination from the brain"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "hippocampal_mercury_content",
+      "raw_value": "Hg content in the hippocampus"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_hi6_content",
+      "raw_value": "HI-6 in the rat brain"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "brain_methylmercury_content",
+      "raw_value": "incorporated methylmercury in the human head (brain)"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "synaptosome_incorporation",
+      "raw_value": "incorporation into the synaptosome"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "human_brain_verapamil_distribution_increase",
+      "raw_value": "increase in [¹¹C]-verapamil distribution into the human brain"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_aluminum_content",
+      "raw_value": "increase in brain aluminium content relative to control"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_inosine_content",
+      "raw_value": "increase in brain inosine"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "brain_coq10_content",
+      "raw_value": "increase in the level of CoQ10 in the rat brains"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_creatine_content",
+      "raw_value": "increase in total brain creatine"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_riboflavin_content",
+      "raw_value": "increase in total riboflavin in brain"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "increase of the substance in the brain"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "Increased accumulation in Mdr1a (-/-) brain"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_free_choline_content",
+      "raw_value": "incremental increase of brain free choline"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "cortical_cerebellar_pindolol_binding_inhibition",
+      "raw_value": "inhibition of ¹²⁵I-pindolol binding in cerebral cortex and cerebellum in vivo"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "cortical_naf_intensity",
+      "raw_value": "intensity of NaF in the supernatant of the dissected cortex tissue"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "hippocampal_nafl_intensity",
+      "raw_value": "intensity of NaF in the supernatant of the dissected hippocampus"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp value of the brain"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "forebrain_cortex_lead_concentration",
+      "raw_value": "lead concentration in forebrain cortex"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "brain_lead_content",
+      "raw_value": "lead content in brain"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "brain_curcumin_content",
+      "raw_value": "level of curcumin within brain tissues"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "brainstem_doxorubicin_content",
+      "raw_value": "level of doxorubicin detected in the brainstem"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "brain_to_nonbrain_organ_ratio",
+      "raw_value": "levels of bendamustine relative to non-brain organs"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "cerebellar_gd_content",
+      "raw_value": "levels of Gd in rat cerebellum"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "brain_region_mefloquine_content",
+      "raw_value": "levels of mefloquine observed in various regions of the brain"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "brain_tumor_deposition",
+      "raw_value": "local deposition at the brain tumor site"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "brain_tmz_accumulation",
+      "raw_value": "local TMZ accumulation in the brain"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "brain_parenchyma_localization",
+      "raw_value": "localization in brain parenchyma"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "brain_magnesium_content",
+      "raw_value": "magnesium levels in the brain"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "brain_ms275_content",
+      "raw_value": "mass of MS-275 in the brain"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "brain_intact_ziconotide_amount",
+      "raw_value": "maximal amount of intact ziconotide in brain"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "brain_extraction_fraction",
+      "raw_value": "maximal brain extraction E(0)AAG"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_extraction_fraction",
+      "raw_value": "maximal brain extraction E(0)HSA"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "brain_cbd_exposure",
+      "raw_value": "maximal CBD brain exposure"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_rbv_content",
+      "raw_value": "maximal RBV content in the brain"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_ethylmercury_content",
+      "raw_value": "maximum ethylmercury content in the brains"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "frontoparietal_cortex_mda_concentration",
+      "raw_value": "MDA concentration in the frontoparietal cortex"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "frontoparietal_cortex_mdma_concentration",
+      "raw_value": "MDMA concentration in the frontoparietal cortex"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "cerebellar_gadolinium_concentration",
+      "raw_value": "mean gadolinium concentrations in the cerebellum"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_rbv_content",
+      "raw_value": "mean RBV content in the brain"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "roi_signal_intensity",
+      "raw_value": "mean signaling intensity per voxel in the region of interest"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_arsenic_content",
+      "raw_value": "mean total arsenic content in the brain"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "brain_mercury_content",
+      "raw_value": "mercury content in brain"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_mercury_content_fraction",
+      "raw_value": "mercury content in brain as percentage of residual body burden"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "brain_mercury_content",
+      "raw_value": "mercury content in the brain"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "brain_mercury_content",
+      "raw_value": "Mercury in brain"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "brain_mercury_content",
+      "raw_value": "Mercury in the brain (µg/gm brain weight)"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "ipsilateral_cerebral_parenchyma_methotrexate_content",
+      "raw_value": "methotrexate level in the ipsilateral cerebral parenchyma"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "brain_region_to_cerebellum_ratio",
+      "raw_value": "midbrain-to-cerebellum and thalamus-to-cerebellum ratios"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_mean_transit_time",
+      "raw_value": "MTT (single-pass mean transit time in the brain)"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "ipsilateral_cerebral_parenchyma_methotrexate_content",
+      "raw_value": "MTX level in ipsilateral cerebral parenchyma"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "brain_mvc_content",
+      "raw_value": "MVC in brain tissues"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "hippocampal_nafl_content",
+      "raw_value": "NaFL levels in the hippocampus"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "brain_dye_content",
+      "raw_value": "nanogram dye per gram brain weight"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "brain_free_choline_efflux",
+      "raw_value": "net output of free choline from the brain"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "brain_cortex_nickel_content",
+      "raw_value": "nickel content in the brain and the cerebral cortex"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "brain_nickel_content",
+      "raw_value": "nickel levels in brain"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "cortical_nk1_receptor_binding",
+      "raw_value": "NK-1 receptor binding in the cortex"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "brain_nmd_retention",
+      "raw_value": "NMD retention in the brain"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "brain_equivalent_amount",
+      "raw_value": "nmol equiv. g⁻¹ of brain"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "brain_gbr12909_amount",
+      "raw_value": "nmols of GBR12909 in the Brain"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "brain_cb1_receptor_occupancy",
+      "raw_value": "occupancy at CB₁R in mouse brain"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "cortical_h1_receptor_occupancy",
+      "raw_value": "occupancy of H₁-receptors in the cerebral cortex"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "brain_homogenate_optical_units",
+      "raw_value": "optical units in the homogenized dye-infiltrated brain"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "brain_osimertinib_exposure",
+      "raw_value": "osimertinib exposure in the brain"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "whole_brain_homogenate_particulate_fraction",
+      "raw_value": "particulate fraction in the whole brain homogenate"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_pas_content",
+      "raw_value": "PAS in tissues (Brain)"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "myelin_lead_content",
+      "raw_value": "Pb in myelin"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "basal_ganglia_accumulation",
+      "raw_value": "peak accumulation in the basal ganglia"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "cortical_arecoline_cmax",
+      "raw_value": "Peak cerebral cortex arecoline concentrations"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "striatal_tmax",
+      "raw_value": "peak time in striatum"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "whole_brain_tritium_cmax",
+      "raw_value": "peak tritium activity detected in the whole mouse brain"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "whole_brain_tracer_cmax",
+      "raw_value": "peak whole-brain tracer activity"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "brain_24ohc_bbb_excretion_fraction",
+      "raw_value": "Percentage of 24OHC leaving brain via BBB"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "ipsilateral_hemisphere_progesterone_fraction",
+      "raw_value": "percentage of 3H-labeled progesterone in the ipsilateral brain hemisphere"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "brain_entry_fraction",
+      "raw_value": "percentage of aluminum-protein complexes entering the brain"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "brain_retention_fraction",
+      "raw_value": "percentage of body-incorporated MMC retained in brain"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "brain_coq9_coq10_precursor_fraction",
+      "raw_value": "percentage of brain CoQ9 and CoQ10 derived from precursor"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "percentage of brain KYN coming from periphery"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "percentage of brain KYN contributed from periphery"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "percentage of brain Kyn from periphery"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "percentage of brain KYN of exogenous origin"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "brain_staining",
+      "raw_value": "Percentage of brains showing staining"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "brain_dietary_hg_fraction",
+      "raw_value": "percentage of dietary Hg found in the brain"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "brain_mitochondrial_exogenous_coq10_fraction",
+      "raw_value": "percentage of exogenous CoQ10 incorporated into brain mitochondria"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "brain_entry_fraction",
+      "raw_value": "percentage of metal complexes entering the brain"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "cortical_rt3_retrieval_fraction",
+      "raw_value": "percentage of serum rT₃ retrieved from brain cortex"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "brain_d7_cholesterol_fraction",
+      "raw_value": "percentage of total cholesterol as D-7 isotopomer in brain"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "brain_total_cholesterol_fraction",
+      "raw_value": "percentage of total cholesterol present in brain at 5 weeks"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "brain_perdeuterated_fatty_acid_fraction",
+      "raw_value": "percentage of total fatty acid as perdeuterated isotopomer in brain"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "brain_homogenate_unchanged_ligand_fraction",
+      "raw_value": "percentage of unchanged ligand in brain homogenate"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "brain_kyn_peripheral_fraction",
+      "raw_value": "peripheral contribution to brain KYN"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "cerebral_cortex_pipecolic_acid_content",
+      "raw_value": "Pipecolic acid levels in cerebral cortex"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "brain_parenchyma_platinum_content",
+      "raw_value": "platinum content in brain parenchyma"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "brain_sections_platinum_content",
+      "raw_value": "platinum content in brain sections"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "brain_fraction",
+      "raw_value": "portion of administered [3H]EGCG found in the brain"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "brain_parenchyma_presence",
+      "raw_value": "presence in the brain parenchyma"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "cns_h1_receptor_occupancy",
+      "raw_value": "propensity to occupy central nervous system H1-receptors"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "brain_entry_fraction",
+      "raw_value": "proportion of circulating PMX53 reaching the brain"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "brain_protein_associated_bmaa_concentration",
+      "raw_value": "protein-associated BMAA concentrations in the brains"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "putamen_to_cerebellum_ratio",
+      "raw_value": "putamen:cerebellum ratio"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "brain_flavin_content",
+      "raw_value": "Quantity of flavin in the brain"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "cortex_to_serum_ratio",
+      "raw_value": "Quotient Cortex/Serum"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "cerebellar_radioactivity",
+      "raw_value": "Radioactive signal in cerebellum homogenates; Brain to blood ratio"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "brain_free_fraction",
+      "raw_value": "Rat brain free fraction"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "brain_concentration_ratio",
+      "raw_value": "ratio of brain levels in mdr1a(-/-) to wild-type mice"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "brain_parenchyma_to_cbv_fluorescence_ratio",
+      "raw_value": "ratio of FI in the brain parenchyma to FI in the CBV"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "brain_metastasis_signal_ratio",
+      "raw_value": "ratio of signal intensity at sites shown to contain metastases vs equivalent regions in the contralateral hemisphere"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "striatal_receptor_occupancy",
+      "raw_value": "receptor occupancy in the striatum"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "brain_parenchyma_recovery",
+      "raw_value": "recovered in brain parenchyma"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "cortical_ki_reduction",
+      "raw_value": "reduction in cortical Ki"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "brain_mtx_accumulation",
+      "raw_value": "Relative accumulation of MTX in the brain"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "brain_lysate_fluorescence_intensity",
+      "raw_value": "relative fluorescence intensity in brain lysates"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "brain_gd_retention",
+      "raw_value": "residual Gd in the brain"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "brain_ritonavir_content",
+      "raw_value": "ritonavir levels in the brains"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "brain_scan_intensity_ratio",
+      "raw_value": "scan intensity normalized to scan intensity in normal brain"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "brain_staining",
+      "raw_value": "staining of brain"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "striatal_extracellular_concentration",
+      "raw_value": "striatal extracellular levels"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "striatum_to_thalamus_auc_ratio",
+      "raw_value": "striatum-to-thalamus (target-to-non-target) area under the curve ratio"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "cerebral_cortex_thallium_content",
+      "raw_value": "thallium content in cerebral cortex"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "brain_parenchyma_therapeutic_level",
+      "raw_value": "Therapeutic level in brain parenchyma"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "brain_serum_ratio",
+      "raw_value": "tissue level of AZT in maternal brain / serum level"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "brain_a317491_content",
+      "raw_value": "tissue of A-317491 in the brain"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "brain_tmax",
+      "raw_value": "Tmax (brain tissue)"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "brain_tmz_concentration",
+      "raw_value": "TMZ concentrations in the brain"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "brain_intact_18f_icf24027_fraction",
+      "raw_value": "total activity represented by intact [18F]ICF24027 in brain"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "brain_cbz_concentration",
+      "raw_value": "total brain CBZ concentrations"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "brain_cbz_concentration",
+      "raw_value": "total brain concentrations of CBZ"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "brain_methionine_content",
+      "raw_value": "total brain methionine increase"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "brain_24hc_excretion",
+      "raw_value": "total excretion of 24HC by the brain"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "brain_selenium_content",
+      "raw_value": "total selenium content in the brain"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "brain_tracer_accumulation",
+      "raw_value": "tracer brain accumulation"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "cortical_striatal_triac_content",
+      "raw_value": "TRIAC content in the cerebral cortex or the striatum"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "brain_dnl343_unbound_concentration",
+      "raw_value": "unbound concentrations of DNL343 in the brain"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "whole_brain_parenchyma_concentration",
+      "raw_value": "whole-brain parenchyma concentrations"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "brain_radioactivity",
+      "raw_value": "x10⁻³ DPM/g Brain Tissue"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "brain_y2_receptor_occupancy",
+      "raw_value": "Y₂ receptor occupancy in brain"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "brain_alpha_tocopherol_content",
+      "raw_value": "α-tocopherol levels in brain"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "brain_cadmium_content",
+      "raw_value": "µg Cd/brain"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "brain_txl_content",
+      "raw_value": "µg Txl/g brain"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "brain_molar_amount",
+      "raw_value": "µmoles/g brain"
+    }
+  ],
+  "cluster_id": "cluster_4324a8612e8c067b",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

@@ -1,0 +1,2102 @@
+{
+  "assignment_count": 419,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "percent_injected_radioactivity",
+      "raw_value": "% injected radioactivity"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "percent_administered_radioactivity",
+      "raw_value": "% of administered radioactivity"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "percent_applied_radioactivity",
+      "raw_value": "% of applied radioactivity"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "percent_initial_radioactivity_in_abluminal_medium",
+      "raw_value": "% of initial radioactivity in abluminal medium"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "percent_initial_radioactivity_in_brain",
+      "raw_value": "% of initial radioactivity located in brain"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "% of injected radioactivity in brain"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "% of Injected Radioactivity in the Brain"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "% of injected radioactivity localizes in the brain"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "percent_injected_radioactivity_per_g_brain",
+      "raw_value": "% of injected radioactivity per g brain tissue"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "% of injected radioactivity transferred into the brain"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "% of radioactivity injected present in the brain"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "percent_total_radioactivity",
+      "raw_value": "% of total radioactivity"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "percent_total_radioactivity_in_brain",
+      "raw_value": "% of total radioactivity injected in brain"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_radioactivity",
+      "raw_value": "% radioactivity in brain"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "radioactivity_incorporation",
+      "raw_value": "% Radioactivity incorporated"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "% radioactivity injected in the brain"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "percent_total_radioactivity",
+      "raw_value": "% Total radioactivity"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "radioactivity",
+      "raw_value": "14C-Radioactivity"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "radioactivity",
+      "raw_value": "[14C] radioactivity levels"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "radioactivity_uptake",
+      "raw_value": "absolute uptake of radioactivity"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_radioactivity_accumulation",
+      "raw_value": "accumulation of radioactivity in brain tissue"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "cerebrum_to_plasma_radioactivity_ratio",
+      "raw_value": "accumulation of radioactivity in the cerebrum in relation to the plasma level"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "administered_radioactivity",
+      "raw_value": "administered radioactivity"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "administered_radioactivity_in_brain",
+      "raw_value": "administered radioactivity found in the brain"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "administered_radioactivity_in_brain",
+      "raw_value": "administered radioactivity in brain"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "administered_radioactivity_per_g_brain",
+      "raw_value": "administered radioactivity/g of brain"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "radioactivity_amount",
+      "raw_value": "amount of radioactivity"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_radioactivity_amount",
+      "raw_value": "amount of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "amount of radioactivity taken up by brain"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "radioactivity_amount_per_organ",
+      "raw_value": "amount of radioactivity/organ"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_radioactivity_entry",
+      "raw_value": "amount of radiotracer reaching the brain"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_total_radioactivity_concentration",
+      "raw_value": "apparent concentration of total radioactivity/brain"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_radioactivity_auc_to_blood_ratio",
+      "raw_value": "AUC brain radioactivity concentration-time curve/blood radioactivity ratio"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_radioactivity_amount",
+      "raw_value": "average amount of radioactivity in brain"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "average radioactivity concentration"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_radiotracer_radioactivity",
+      "raw_value": "brain [¹¹C]-loperamide-radioactivity"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_butanol_radioactivity_per_g_brain",
+      "raw_value": "brain [¹⁴C]butanol radioactivity per gram of brain"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_to_serum_radioactivity_ratio",
+      "raw_value": "brain [¹⁴C]urea radioactivity as percentage of serum [¹⁴C]urea radioactivity"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "brain concentration of radioactivity"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "percent_ingested_radioactivity_in_brain",
+      "raw_value": "Brain content (% of ingested radioactivity)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_11c_radioactivity_distribution",
+      "raw_value": "brain distribution of ¹¹C radioactivity"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_radioactivity_level",
+      "raw_value": "brain level of radioactivity"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "percent_administered_radioactivity_in_brain",
+      "raw_value": "brain levels (% of administered radioactivity)"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_radioactivity_level",
+      "raw_value": "brain levels of radioactivity"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_plasma_radioactivity_ratio",
+      "raw_value": "brain levels of radioactivity / plasma levels"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_total_radioactivity_level",
+      "raw_value": "brain levels of total radioactivity (mdr1a KO vs mdr1a +/+)"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_fraction_of_brain_and_liver_total_radioactivity",
+      "raw_value": "brain percentage of total radioactivity in the brain and liver"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_radioactivity",
+      "raw_value": "Brain radioactivity"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_radioactivity",
+      "raw_value": "brain radioactivity"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "brain radioactivity (% of injected radioactivity)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain radioactivity / blood level"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "brain radioactivity / plasma level"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_to_serum_radioactivity_ratio",
+      "raw_value": "brain radioactivity / serum radioactivity"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_to_injected_radioactivity_ratio",
+      "raw_value": "brain radioactivity / total radioactivity injected"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_radioactivity_accumulation",
+      "raw_value": "brain radioactivity accumulation"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_capillary_fraction_radioactivity",
+      "raw_value": "brain radioactivity associated with the capillary fraction"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "Brain radioactivity concentration"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "brain radioactivity concentration"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "brain radioactivity concentration (mdr1a-/- vs wildtype)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_concentration_ratio",
+      "raw_value": "brain radioactivity concentration / plasma radioactivity concentration"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_radioactivity_deposition",
+      "raw_value": "brain radioactivity deposition"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_radioactivity_increase",
+      "raw_value": "brain radioactivity increase"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_radioactivity_level",
+      "raw_value": "Brain radioactivity level"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_radioactivity_level",
+      "raw_value": "brain radioactivity level"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_radioactivity_level_ratio",
+      "raw_value": "brain radioactivity level ratio (KO/WT)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_radioactivity_relative_to_scalp_and_skull",
+      "raw_value": "brain radioactivity level relative to scalp and skull"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_radioactivity_levels",
+      "raw_value": "brain radioactivity levels"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_radioactivity_normalized_for_plasma_exposure",
+      "raw_value": "Brain radioactivity normalized for plasma exposure"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_radioactivity_normalized_to_integrated_plasma_radioactivity",
+      "raw_value": "brain radioactivity normalized to integrated plasma radioactivity"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_radioactivity_percentage",
+      "raw_value": "brain radioactivity percentage"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_radioactivity_ratio",
+      "raw_value": "brain radioactivity ratio (mdr1a -/- vs +/+)"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_radioactivity_ratio",
+      "raw_value": "brain radioactivity ratio (mdr1a(-/-) / wildtype)"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_radioactivity_ratio",
+      "raw_value": "brain radioactivity ratio (relative to other organs or serum)"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "Brain radioactivity ratio to 1 µl blood"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain radioactivity relative to blood content"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_radioactivity_sequestration",
+      "raw_value": "Brain radioactivity sequestration"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "brain radioactivity uptake"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "brain radioactivity/plasma concentrations"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_csf_radioactivity_increase",
+      "raw_value": "brain tissue and CSF radioactivities (increase)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_csf_to_plasma_radioactivity_ratio",
+      "raw_value": "brain tissue and CSF radioactivities / plasma activities"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_csf_to_plasma_radioactivity_ratio",
+      "raw_value": "brain tissue and CSF radioactivities / plasma radioactivities"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain to blood radioactivity ratio"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_total_radioactivity",
+      "raw_value": "brain total radioactivity"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "brain uptake (% of total radioactivity injected)"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_radioactivity_uptake_normalized_to_radioactivity_levels",
+      "raw_value": "brain uptake / radioactivity levels"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "Brain-blood radioactivity ratio"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "brain-plasma radioactivity ratio"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain-to-blood [3H]-radioactivity (increase)"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain-to-blood radioactivity ratio"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_concentration_ratio",
+      "raw_value": "brain-to-plasma radioactivity concentration ratio"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "brain-to-plasma ratio of total radioactivity"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "brain-to-plasma total 3H radioactivity ratio"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain/blood radioactivity"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_to_blood_radioactivity_concentration_ratio",
+      "raw_value": "brain/blood radioactivity concentration ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain/blood radioactivity ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_to_blood_specific_radioactivity_ratio",
+      "raw_value": "Brain/blood ratio (specific radioactivity)"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "Brain/blood ratio (total radioactivity)"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_concentration_ratio",
+      "raw_value": "brain/plasma radioactivity concentration ratio"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "brain/plasma radioactivity ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "brain/plasma radioactivity ratios"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_to_serum_radioactivity_concentration_ratio",
+      "raw_value": "brain/serum radioactivity concentration ratio"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_to_serum_radioactivity_ratio",
+      "raw_value": "brain/serum radioactivity ratio"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain:blood radioactivity"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain:blood radioactivity ratio"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "brain:blood ratio of radioactivity"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "brain:plasma radioactivity ratio"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "cerebellum_to_whole_blood_f18_radioactivity_ratio",
+      "raw_value": "cerebellar-to-whole-blood 18F radioactivity ratio"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "Cerebral uptake of radioactivity"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax of radioactivity in the brain / Cmax in plasma"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "drug_radioactivity_concentration",
+      "raw_value": "Concentration of drug-derived radioactivity"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "Concentration of radioactivity"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "concentration of radioactivity"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "Concentration of radioactivity in brain"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_homogenate_radioactivity_concentration",
+      "raw_value": "concentration of radioactivity in brain homogenate"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "csf_to_plasma_radioactivity_concentration_ratio",
+      "raw_value": "concentration of radioactivity in spinal fluid / plasma level"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "concentration of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "radiotracer_extravasation_concentration",
+      "raw_value": "concentration of radiotracer extravasation"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "total_radioactivity_concentration",
+      "raw_value": "Concentration of total radioactivity"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "total_radioactivity_concentration",
+      "raw_value": "concentration of total radioactivity"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "Concentrations of radioactivity"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "cortex_to_cerebellum_radioactivity_ratio",
+      "raw_value": "cortex/cerebellum radioactivity ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_to_serum_radioactivity_gradient",
+      "raw_value": "CSF: serum radioactivity gradient"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_to_serum_radioactivity_ratio",
+      "raw_value": "CSF:serum radioactivity"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_to_serum_radioactivity_gradient",
+      "raw_value": "CSF:serum radioactivity gradient"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "cumulative_radioactivity",
+      "raw_value": "Cumulated radioactivity"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_to_blood_cumulative_radioactivity_ratio",
+      "raw_value": "cumulative radioactivity in the brain / radioactivity in the blood"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "radioactivity_distribution",
+      "raw_value": "distribution of radioactivity"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_radioactivity_distribution",
+      "raw_value": "distribution of radioactivity to the brain (% of total injected)"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "cns_radioactivity_distribution",
+      "raw_value": "Distribution of radioactivity to the CNS"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "cns_radioactivity_distribution_to_blood",
+      "raw_value": "Distribution of radioactivity to the CNS as percent blood levels"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_region_to_unbound_plasma_radioactivity_ratio",
+      "raw_value": "distribution ratio [radioactivity in a brain region/\"free\" (not protein-bound) radioactivity in plasma]"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_to_unbound_plasma_radioligand_ratio",
+      "raw_value": "Distribution ratios of radioligand in brain to 'free' radioligand in plasma"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "cns_to_blood_radioactivity_ratio",
+      "raw_value": "drug radioactivity in CNS tissues compared to blood levels"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_manganese_radioactivity_entry",
+      "raw_value": "entry of radioactive manganese into the brain"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "drug_equivalent_based_on_radioactivity",
+      "raw_value": "equivalent of drug based on radioactivity"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "extracted_brain_radioactivity",
+      "raw_value": "extracted brain radioactivity"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "fraction_administered_radioactivity_in_brain",
+      "raw_value": "fraction of administered radioactivity in brain"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "fraction_injected_radioactivity_in_whole_brain",
+      "raw_value": "fraction of injected radioactivity in whole brain"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "frontal_cortex_to_whole_blood_f18_radioactivity_ratio",
+      "raw_value": "frontal-cortex-to-whole-blood 18F radioactivity ratio"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "global_brain_radioactivity_uptake",
+      "raw_value": "global brain radioactivity uptake"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "cortical_radioactivity_mean",
+      "raw_value": "Grand mean cortical radioactivity"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "hippocampus_to_cerebellum_radioactivity_ratio",
+      "raw_value": "hippocampus/cerebellum radioactivity ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "basolateral_medium_radioactivity_incorporation",
+      "raw_value": "incorporation of radioactivity into the basolateral medium"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_11c_radioactivity_distribution_increase",
+      "raw_value": "increase in brain distribution of 11C-radioactivity"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_11c_radioactivity_distribution_increase",
+      "raw_value": "increase in the distribution of 11C radioactivity into the brain"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "radioactivity_index",
+      "raw_value": "indices of radioactivity"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_initial_radioactivity",
+      "raw_value": "Initial radioactivity in the brain"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "blood_radioactivity_appearance_rate",
+      "raw_value": "initial rate of appearance of radioactivity in blood"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_radioactivity_entry",
+      "raw_value": "injected radioactivity reached the brain"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "intact_radioligand_in_brain",
+      "raw_value": "intact radioligand in the brain"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "intact_radiotracer_activity_in_brain",
+      "raw_value": "intact radiotracer activity in brain"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "ischemia_control_radioactivity_ratio",
+      "raw_value": "Ischemia/Control radioactivity ratio"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "plasma_radioactivity_level",
+      "raw_value": "level of plasma radioactivity"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "brain_radioactivity_level",
+      "raw_value": "level of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "radioactivity_levels",
+      "raw_value": "levels of radioactivity"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "cerebral_tissue_radioactivity_levels",
+      "raw_value": "levels of radioactivity in cerebral tissues"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_radioactivity_levels",
+      "raw_value": "levels of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "brain_total_radioactivity_peak_concentration",
+      "raw_value": "maximal concentration of total radioactivity in the brain"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain_radioactivity_peak",
+      "raw_value": "maximal radioactivity peak in the brain"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "maximum cerebral radioactivity concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "maximum_fraction_of_radioactivity_in_brain",
+      "raw_value": "maximum fraction of radioactivity in brain"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "mean_brain_radiotracer_accumulation",
+      "raw_value": "mean accumulation of radiotracer in the brain"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "radioactivity_mean",
+      "raw_value": "mean radioactivity"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "tissue_radioactivity_concentration",
+      "raw_value": "mean tissue concentration of radioactivity"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "tissue_radioactivity",
+      "raw_value": "Mean tissue radioactivity"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_radioisotopic_influx",
+      "raw_value": "Measured radio-isotopic influx into brain"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "net brain radioactivity as percentage of injected radioactivity"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "net_radioactivity",
+      "raw_value": "Net radioactivity"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "radioactivity_uptake",
+      "raw_value": "net uptake of radioactivity"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "net uptake of radioactivity by brain"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "organ_to_blood_radioactivity_ratio",
+      "raw_value": "organ/blood radioactivity ratio"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "parent_tracer_fraction_of_brain_radioactivity",
+      "raw_value": "Parent tracer (% of total radioactivity in brain tissue)"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "particulate_fraction_of_brain_radioactivity",
+      "raw_value": "particulate fraction as % of total brain radioactivity"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_to_blood_peak_radioactivity_ratio",
+      "raw_value": "Peak brain levels of radioactivity / peak blood levels"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_radioactivity_peak",
+      "raw_value": "Peak brain radioactivity"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_radioactivity_peak",
+      "raw_value": "peak brain radioactivity"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_radioactivity_peak_concentration",
+      "raw_value": "peak brain radioactivity concentration"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_radioactivity_peak_uptake",
+      "raw_value": "peak brain radioactivity uptake"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "brain_radioactivity_peak_uptake",
+      "raw_value": "peak brain uptake of radioactivity"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_radioactivity_peak",
+      "raw_value": "peak in brain radioactivity"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "peak_radioactivity",
+      "raw_value": "peak radioactivities"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "peak_radioactivity_concentration",
+      "raw_value": "peak radioactivity concentration"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "peak_radioactivity_in_brain",
+      "raw_value": "peak radioactivity in brain"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "whole_brain_radioactivity_peak",
+      "raw_value": "peak whole brain radioactivity"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "whole_brain_radioactivity_peak_uptake",
+      "raw_value": "peak whole brain radioactivity uptake"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "percent_administered_radioactivity",
+      "raw_value": "Percent of administered radioactivity"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "percent_administered_radioactivity_in_whole_organ",
+      "raw_value": "percent of administered radioactivity found in the whole organ"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "percent_blood_radioactivity",
+      "raw_value": "Percent of Blood Radioactivity"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "percent_injected_radioactivity_recovered_in_brain",
+      "raw_value": "percent of injected radioactivity recovered in the brain"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "percent_injected_radioactivity_recovered_in_whole_brain",
+      "raw_value": "percent of the injected radioactivity that was recovered in whole brain"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "percent_radioactivity_in_right_cerebrum",
+      "raw_value": "Percent of the radioactivity in the right cerebrum"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "percent_total_injected_radioactivity_in_brain",
+      "raw_value": "Percent of total injected radioactivity in brain"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "whole_blood_radioactivity_increase_percentage",
+      "raw_value": "percentage increase over whole blood radioactivity"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "percent_administered_radioactivity_in_brain",
+      "raw_value": "percentage of administered radioactivity present in the brain"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "percent_administered_radiolabeled_agent_in_brain",
+      "raw_value": "percentage of administered radiolabelled agent observed in brain"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "percent_unchanged_f18_radioactivity_in_brain_homogenate",
+      "raw_value": "percentage of F-18 radioactivity originating from unchanged tracer in brain homogenates"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_to_blood_radioactivity_increase_percentage",
+      "raw_value": "percentage of increase in the brain-to-blood [3H]-radioactivity (Emax)"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "percentage of injected radioactivity in the brain"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "percentage of injected radioactivity present in brain"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "percentage of injected radioactivity present in the brain"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "percent_injected_radioactivity_recovered_in_brain",
+      "raw_value": "percentage of injected radioactivity recovered in the brain"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "percent_injected_radioactivity_reached_brain",
+      "raw_value": "percentage of injected radioactivity that reached the brain"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "intact_compound_fraction_of_radioactivity",
+      "raw_value": "percentage of radioactivity as intact compound"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "percent_radioactivity_associated_with_brain",
+      "raw_value": "Percentage of Radioactivity Associated With Brain"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "percent_radioactivity_in_brain_of_total_administered_activity",
+      "raw_value": "percentage of radioactivity found in the brain compared to the total activity administered"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "percent_radioactivity_in_brain",
+      "raw_value": "percentage of radioactivity in brain"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "percentage of radioactivity injected in brain 5 min after i.v. injection"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "percentage of radioactivity injected present in brain"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "percent_radioactivity_in_brain",
+      "raw_value": "percentage of radioactivity present in brain"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "percent_radioactivity_in_brain",
+      "raw_value": "percentage of radioactivity present in the brain"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "percent_radioactivity_recovered_in_csf",
+      "raw_value": "percentage of radioactivity recovered in CSF"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "percent_radiolabeled_gsh_in_brain_extracts",
+      "raw_value": "percentage of radiolabeled GSH detected in brain extracts"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "percent_radiolabeled_qa_in_brain_and_csf",
+      "raw_value": "percentage of subcutaneously-infused radiolabeled QA detected in the brain and CSF"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "percent_total_brain_radioactivity",
+      "raw_value": "percentage of total brain radioactivity"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "percent_total_injected_radioactivity_in_brain",
+      "raw_value": "percentage of total injected radioactivity present in the brain"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "percent_total_injected_radioactivity_recovered_in_brain",
+      "raw_value": "percentage of total injected radioactivity recovered in the brain"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "percent_total_radioactivity",
+      "raw_value": "percentage of total radioactivity"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "percent_total_radioactivity_in_basolateral_medium",
+      "raw_value": "percentage of total radioactivity accumulating in the basolateral medium"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "percent_total_radioactivity_in_brain",
+      "raw_value": "percentage of total radioactivity in the brain"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "percent_total_radioactivity_in_cerebral_cortex",
+      "raw_value": "percentage of total radioactivity in the cerebral cortex"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "percent_total_radioactivity_in_brain",
+      "raw_value": "percentage of total radioactivity injected in brain"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "percent_total_radioactivity_in_brain",
+      "raw_value": "percentage of total radioactivity injected in the brain"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "percent_total_radioactivity_in_brain",
+      "raw_value": "percentage of total radioactivity injected present in brain"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "percent_total_radioactivity_in_brain",
+      "raw_value": "percentage of total radioactivity injected present in the brain"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "percent_unchanged_radiotracer_in_brain",
+      "raw_value": "percentage of unchanged radiotracer in brain"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "percent_unchanged_radiotracer_in_brain",
+      "raw_value": "percentage of unchanged radiotracer in the brain"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "percent_radioactivity_in_brain",
+      "raw_value": "percentage radioactivity in brain"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "radiolabeled_compound_fraction_associated_with_brain",
+      "raw_value": "proportion of radiolabelled compound associated with the brain"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "percent_injected_radioactivity_in_brain",
+      "raw_value": "proportion of the injected radioactivity found in the brain"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "remaining_brain_radioactivity_fraction",
+      "raw_value": "Proportion of total radioactivity remaining in the brain"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "brain_radioactivity_accumulation",
+      "raw_value": "radioactive accumulation in the brain"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "radioactive brain uptake"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "radioactive concentration in brain"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "radioactivity_intensity",
+      "raw_value": "radioactive intensity"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "brain_homogenate_radioactivity_signal",
+      "raw_value": "Radioactive signal in brain homogenates"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "brain_radioactivity_fraction_of_total_signal",
+      "raw_value": "radioactive signal in the brain as % of total radioactive signals"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "radioactivity",
+      "raw_value": "Radioactivity"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "radioactivity",
+      "raw_value": "radioactivity"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "percent_injected_radioactivity_per_g_tissue",
+      "raw_value": "Radioactivity (% id/g)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "percent_radioactivity",
+      "raw_value": "radioactivity (%)"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "percent_radioactivity_per_g_tissue",
+      "raw_value": "Radioactivity (%/g tissue)"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "radioactivity (brain/blood)"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "radioactivity (brain/plasma)"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "radioactivity",
+      "raw_value": "radioactivity (dpm/mg)"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "percent_total_radioactivity",
+      "raw_value": "Radioactivity (per cent of total)"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_radioactivity_accumulated",
+      "raw_value": "radioactivity accumulated in the brain"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "radioactivity_accumulation",
+      "raw_value": "Radioactivity accumulation"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "brain_radioactivity_accumulation",
+      "raw_value": "radioactivity accumulation in brain"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_radioactivity_accumulation",
+      "raw_value": "Radioactivity accumulation in the brain"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "percent_dose_radioactivity",
+      "raw_value": "Radioactivity as % dose"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "percent_dose_radioactivity",
+      "raw_value": "Radioactivity as % dose after administration"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "vascular_pellet_radioactivity",
+      "raw_value": "radioactivity associated with the vascular pellet"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "radioactivity brain uptake"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "Radioactivity concentration"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "radioactivity concentration"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "Radioactivity concentration in brain"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "radioactivity concentration in brain"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "cerebellum_radioactivity_concentration",
+      "raw_value": "radioactivity concentration in cerebellum"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "Radioactivity concentration in the brain"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "radioactivity concentration in the brain"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "mouse_brain_radioactivity_concentration",
+      "raw_value": "radioactivity concentration in the mouse brains"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "whole_brain_radioactivity_concentration",
+      "raw_value": "radioactivity concentration in the whole brain"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "brain_radioactivity_concentration",
+      "raw_value": "radioactivity concentration of [¹²⁵I]9 in the brain"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "radioactivity_concentration_average",
+      "raw_value": "radioactivity concentrations average at 50 min"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "brain_spinal_cord_to_serum_radioactivity_ratio",
+      "raw_value": "radioactivity concentrations in the brain and spinal cord vs serum"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "radioactivity_content",
+      "raw_value": "radioactivity content"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "radioactivity_counts",
+      "raw_value": "radioactivity counts"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "radioactivity_detected",
+      "raw_value": "Radioactivity detected"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "percent_injected_radioactivity_per_g_tissue",
+      "raw_value": "Radioactivity distribution (% ID/g)"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "brain_radioactivity_distribution",
+      "raw_value": "Radioactivity distribution in Brain"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "brain_radioactivity_entry",
+      "raw_value": "radioactivity entered brain"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "radioactivity_fraction",
+      "raw_value": "radioactivity fraction"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "brain_medium_radioactivity",
+      "raw_value": "radioactivity in BM"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_radioactivity",
+      "raw_value": "Radioactivity in brain"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "brain_radioactivity",
+      "raw_value": "radioactivity in brain"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "brain_radioactivity_fold_change",
+      "raw_value": "radioactivity in brain (fold-change)"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "brain_radioactivity_relative_to_maximum",
+      "raw_value": "radioactivity in brain (relative to maximum at 30 min)"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "brain_tissue_radioactivity",
+      "raw_value": "Radioactivity in brain tissue"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "brain_tissue_radioactivity",
+      "raw_value": "radioactivity in brain tissue"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "brain_tissue_radioactivity",
+      "raw_value": "radioactivity in brain tissues"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "brain_water_radioactivity",
+      "raw_value": "Radioactivity in brain water"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "cerebral_cortex_homogenate_radioactivity",
+      "raw_value": "radioactivity in cerebral cortex homogenate"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "cns_radioactivity",
+      "raw_value": "radioactivity in CNS"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "cns_to_plasma_radioactivity_ratio",
+      "raw_value": "radioactivity in CNS compared with plasma"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "hippocampus_to_pituitary_radioactivity_ratio",
+      "raw_value": "radioactivity in hippocampus relative to pituitary"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "brain_radioactivity",
+      "raw_value": "radioactivity in the brain"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "percent_administered_radioactivity_in_brain",
+      "raw_value": "radioactivity in the brain (% of administered dose)"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "percent_radioactivity_in_brain",
+      "raw_value": "radioactivity in the brain (%)"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "brain_radioactivity_at_tmax",
+      "raw_value": "radioactivity in the brain at T max[brain]"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "brain_tissue_radioactivity",
+      "raw_value": "radioactivity in the brain tissue samples (including the olfactory bulbs)"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "cns_to_blood_radioactivity_ratio",
+      "raw_value": "Radioactivity in the central nervous system / blood"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "cerebrum_radioactivity",
+      "raw_value": "radioactivity in the cerebrum"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "cortex_striatum_radioactivity_normalized_to_injected_dose",
+      "raw_value": "radioactivity in the cortex and striatum normalized to the injected dose"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "cup_solution_to_plasma_radioactivity_ratio",
+      "raw_value": "radioactivity in the cup solution as a percentage of radioactivity found in 1 ml of plasma"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "hippocampus_radioactivity",
+      "raw_value": "radioactivity in the hippocampus"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "inflammatory_area_radioactivity",
+      "raw_value": "radioactivity in the inflammatory area"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "monkey_brain_radioactivity",
+      "raw_value": "radioactivity in the monkey brain"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "radioactivity_incorporation",
+      "raw_value": "radioactivity incorporation"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "radioactivity_level",
+      "raw_value": "radioactivity level"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "brain_radioactivity_level",
+      "raw_value": "radioactivity level in brain"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "brain_preparation_radioactivity_level",
+      "raw_value": "radioactivity level in brain preparations"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "brain_radioactivity_level",
+      "raw_value": "radioactivity level in the brain"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "radioactivity_levels",
+      "raw_value": "radioactivity levels"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "radioactivity_auc",
+      "raw_value": "radioactivity levels (AUC₀-90 min, SUV × min)"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "radioactivity levels (brain vs plasma)"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "brain_radioactivity_levels",
+      "raw_value": "radioactivity levels in brain"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "brain_radioactivity_levels",
+      "raw_value": "Radioactivity levels in the brain"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "brain_water_radioactivity",
+      "raw_value": "Radioactivity of brain water"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "dowex_eluate_radioactivity",
+      "raw_value": "Radioactivity of Dowex eluate"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "radioactivity of the brain / radioactivity of the blood"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "radioactivity of ¹⁴C-labeled rebamipide in brain / blood levels"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "radioactivity of ¹⁴C-labeled rebamipide in brain / plasma levels"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "radioactivity per unit weight of brain / plasma radioactivity"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "radioactivity_plateau",
+      "raw_value": "radioactivity plateau"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "brain_radioactivity_present",
+      "raw_value": "radioactivity present within the brain"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "radioactivity_ratio",
+      "raw_value": "radioactivity ratio"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "radioactivity ratio in brain-blood"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "whole_brain_to_plasma_radioactivity_ratio",
+      "raw_value": "radioactivity ratio of whole brain to plasma"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "radioactivity_ratio",
+      "raw_value": "radioactivity ratios and PS products"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "brain_radioactivity_recovery",
+      "raw_value": "radioactivity recovered from the brain"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "cell_lipid_radioactivity_recovery",
+      "raw_value": "radioactivity recovered in cell lipids"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "intact_phenytoin_in_brain_radioactivity",
+      "raw_value": "radioactivity representing intact [11C]phenytoin in the brain"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "cerebral_cortex_radioactivity_retention",
+      "raw_value": "radioactivity retained by cerebral cortex"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "radioactivity_retention",
+      "raw_value": "radioactivity retention"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "brain_radioactivity_entry_time",
+      "raw_value": "radioactivity to appear in the brain"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "radioactivity_uptake",
+      "raw_value": "Radioactivity uptake"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "radioactivity_uptake",
+      "raw_value": "radioactivity uptake"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "peak_radioactivity_uptake",
+      "raw_value": "radioactivity uptake (peak)"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "brain_radioactivity_washout",
+      "raw_value": "radioactivity washed out of the brain"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "radioactivity, brain to plasma"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "radioisotope_space",
+      "raw_value": "radioisotope space"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "radiotracer_uptake",
+      "raw_value": "radiotracer uptake"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "brain_radiotracer_uptake",
+      "raw_value": "radiotracer uptake in the brain"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "ratio brain/blood radioactivity"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "brain_acid_soluble_radioactivity_to_blood_glucose_specific_activity_ratio",
+      "raw_value": "ratio of brain acid soluble radioactivity to blood glucose specific activity"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "brain_region_to_plasma_radioactivity_ratio",
+      "raw_value": "ratio of brain structures/plasma radioactivity"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "ratio of brain to blood radioactivity"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "ratio of brain to plasma radioactivity"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "brain_radioactivity_to_baseline_ratio",
+      "raw_value": "ratio of maximal brain radioactivity to baseline"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "infused_side_to_control_side_radioactivity_ratio",
+      "raw_value": "Ratio of radioactivity (infused side)/(control side)"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "radioactivity_peak_to_60min_ratio",
+      "raw_value": "ratio of radioactivity at maximal uptake to that at 60 min"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity between brain and plasma"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "brain_to_plasma_radioactivity_concentration_ratio",
+      "raw_value": "ratio of radioactivity concentration in brain to that in plasma"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity in (brain:blood) x 10³"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity in (brain:blood) × 10³"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "blood_to_brain_radioactivity_ratio",
+      "raw_value": "Ratio of Radioactivity in Blood/Brain"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity in brain to that in blood"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "forebrain_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity in knockout mice forebrain to that in wild type mice"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity in the brain to blood"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "brain_to_perfusate_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity in the brain to that in the perfusate"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "cingulate_cortex_to_cerebellum_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity in the cingulate cortex to the cerebellum"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "hippocampus_to_cerebellum_radioactivity_ratio",
+      "raw_value": "ratio of radioactivity in the hippocampus to the cerebellum"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "hippocampus_to_cerebellum_radioactivity_uptake_ratio",
+      "raw_value": "ratio of radioactivity uptake (hippocampus over cerebellum)"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "cerebellum_radioactivity_uptake_ratio",
+      "raw_value": "ratio of radioactivity uptake over cerebellum"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "whole_brain_to_plasma_radioactivity_ratio",
+      "raw_value": "ratio of total brain radioactivity to that in plasma"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "brain_to_blood_radioactivity_ratio",
+      "raw_value": "ratios of brain/blood radioactivity"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "frontal_cortex_to_cerebellum_radioactivity_ratio",
+      "raw_value": "Ratios of radioactivity in the frontal cortex relative to the cerebellum"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "raw_tissue_total_radioactivity_concentration",
+      "raw_value": "Raw tissue concentration of total radioactivity"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "brain_radioactivity_recovery",
+      "raw_value": "Recoveries of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "radioactivity_recovery",
+      "raw_value": "recovery of radioactivity"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "brain_radioactivity_recovery",
+      "raw_value": "recovery of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "regional_brain_radioactivity",
+      "raw_value": "regional brain radioactivity"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "brain_radiotracer_fraction",
+      "raw_value": "relative amount of radiotracer in the target tissue brain"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "heart_blood_radioactivity_ratio",
+      "raw_value": "Relative radioactivity with respect to heart blood"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "brain_radioactivity_residual",
+      "raw_value": "residual radioactivity in the brain"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "specific_radioactivity",
+      "raw_value": "Specific radioactivity"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "specific_radioactivity",
+      "raw_value": "specific radioactivity"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "brain_to_blood_specific_radioactivity_ratio",
+      "raw_value": "specific radioactivity (brain/blood ratio)"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "striatum_specific_radioactivity",
+      "raw_value": "specific striatal radioactivity"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "steady_state_brain_radioactivity_levels",
+      "raw_value": "steady-state brain radioactivity levels"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "striata_to_cerebellum_radioactivity_ratio",
+      "raw_value": "striata VOIs to cerebellum radioactivity ratios"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "thalamus_radioactivity",
+      "raw_value": "thalamic radioactivity"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "time_to_maximum_brain_radioactivity",
+      "raw_value": "time to maximum brain radioactivity"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "time_to_peak_radioactivity",
+      "raw_value": "time to peak radioactivity"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "tissue_radioactivity_concentration",
+      "raw_value": "Tissue concentration of radioactivity"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "tissue_total_radioactivity_concentration",
+      "raw_value": "Tissue concentration of total radioactivity"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "tissue_radioactivity_level",
+      "raw_value": "Tissue Levels of Radioactivity"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "brain_tissue_radioactivity_level",
+      "raw_value": "Tissue levels of radioactivity (Brain)"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "tissue_radioactivity_concentration",
+      "raw_value": "tissue radioactivity concentration"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "tissue_radioactivity_level",
+      "raw_value": "tissue radioactivity level"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "tissue_to_blood_radioactivity_ratio",
+      "raw_value": "tissue-to-blood radioactivity ratio"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "brain_total_radioactivity_accumulation",
+      "raw_value": "total accumulation of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "brain_total_radioactivity",
+      "raw_value": "total administered radioactivity found in brain"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "mouse_brain_total_radioactivity_amount",
+      "raw_value": "total amount of radioactivity in mouse brain"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "total_radioactivity_amount",
+      "raw_value": "total amounts of radioactivity"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "whole_brain_total_radioactivity",
+      "raw_value": "Total brain radioactivity"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "whole_brain_total_radioactivity",
+      "raw_value": "total brain radioactivity"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "brain_total_radioactivity_entry",
+      "raw_value": "total injected radioactivity entered the brain"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "brain_total_radioactivity",
+      "raw_value": "total injected radioactivity in brain"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "brain_total_radioactivity",
+      "raw_value": "total injected radioactivity present in the brain"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "monkey_brain_total_radioactivity",
+      "raw_value": "total injected radioactivity present in the monkey brain"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "brain_total_radioactivity_remaining",
+      "raw_value": "total injected radioactivity remaining in the brain after 90 min"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "brain_total_nonvolatile_radioactivity",
+      "raw_value": "total nonvolatile brain radioactivity"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "total_radioactivity",
+      "raw_value": "Total radioactivity"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "total_radioactivity",
+      "raw_value": "total radioactivity"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "total_radioactivity_concentration",
+      "raw_value": "total radioactivity concentration"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "brain_total_radioactivity",
+      "raw_value": "total radioactivity in brain"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "brain_homogenate_total_radioactivity",
+      "raw_value": "total radioactivity in brain homogenate"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "brain_total_radioactivity",
+      "raw_value": "total radioactivity in the brain"
+    },
+    {
+      "item_id": "v0399",
+      "provisional_endpoint": "brain_tissue_total_radioactivity_incorporation",
+      "raw_value": "total radioactivity incorporated into brain tissue"
+    },
+    {
+      "item_id": "v0400",
+      "provisional_endpoint": "whole_brain_total_radioactivity",
+      "raw_value": "total radioactivity of the whole brain"
+    },
+    {
+      "item_id": "v0401",
+      "provisional_endpoint": "cerebral_cortex_to_plasma_total_radioactivity_ratio",
+      "raw_value": "total radioactivity ratio (cerebral cortex/plasma)"
+    },
+    {
+      "item_id": "v0402",
+      "provisional_endpoint": "brain_total_radioactivity_recovery",
+      "raw_value": "total radioactivity recovered in brain"
+    },
+    {
+      "item_id": "v0403",
+      "provisional_endpoint": "brain_total_radioactivity_uptake",
+      "raw_value": "total radioactivity uptake into the brain"
+    },
+    {
+      "item_id": "v0404",
+      "provisional_endpoint": "total_radioactivity_uptake",
+      "raw_value": "total radioactivity uptake values"
+    },
+    {
+      "item_id": "v0405",
+      "provisional_endpoint": "brain_total_radioactivity_uptake",
+      "raw_value": "total uptake of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0406",
+      "provisional_endpoint": "percent_unchanged_drug_of_total_radioactivity",
+      "raw_value": "unchanged drug as percentage of total radioactivity"
+    },
+    {
+      "item_id": "v0407",
+      "provisional_endpoint": "radioactivity_uptake",
+      "raw_value": "uptake of radioactivity"
+    },
+    {
+      "item_id": "v0408",
+      "provisional_endpoint": "rat_brain_radioactivity_uptake",
+      "raw_value": "uptake of radioactivity by rat brain"
+    },
+    {
+      "item_id": "v0409",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "uptake of radioactivity in brain"
+    },
+    {
+      "item_id": "v0410",
+      "provisional_endpoint": "brain_radioactivity_uptake",
+      "raw_value": "uptake of radioactivity in the brain"
+    },
+    {
+      "item_id": "v0411",
+      "provisional_endpoint": "brain_radioactivity_entry",
+      "raw_value": "uptake of radioactivity into the brain"
+    },
+    {
+      "item_id": "v0412",
+      "provisional_endpoint": "whole_brain_radioactivity_uptake",
+      "raw_value": "uptake of radioactivity into whole brain"
+    },
+    {
+      "item_id": "v0413",
+      "provisional_endpoint": "brain_radiotracer_uptake",
+      "raw_value": "uptake of the radiotracer in the brain"
+    },
+    {
+      "item_id": "v0414",
+      "provisional_endpoint": "brain_tissue_uranium_accumulation",
+      "raw_value": "uranium accumulation in brain tissue"
+    },
+    {
+      "item_id": "v0415",
+      "provisional_endpoint": "brain_uranium_concentration",
+      "raw_value": "Uranium concentration in brain"
+    },
+    {
+      "item_id": "v0416",
+      "provisional_endpoint": "brain_uranium_concentration",
+      "raw_value": "Uranium concentrations in brain"
+    },
+    {
+      "item_id": "v0417",
+      "provisional_endpoint": "whole_brain_total_radioactivity_concentration",
+      "raw_value": "Whole brain concentrations of total radioactivity"
+    },
+    {
+      "item_id": "v0418",
+      "provisional_endpoint": "whole_brain_radioactivity",
+      "raw_value": "whole brain radioactivity"
+    }
+  ],
+  "cluster_id": "cluster_489cf3452a1c419d",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

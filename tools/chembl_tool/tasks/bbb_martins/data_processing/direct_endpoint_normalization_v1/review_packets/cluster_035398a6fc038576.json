@@ -1,0 +1,1617 @@
+{
+  "assignment_count": 322,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "transport_percentage",
+      "raw_value": "% Transport"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "transport_percentage",
+      "raw_value": "% transport"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "2dg_transport",
+      "raw_value": "2DG transport"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "45ca2_transport",
+      "raw_value": "45Ca2+ transport"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "transport",
+      "raw_value": "A to B transport"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "transport",
+      "raw_value": "A-B transport"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "abcb1_mediated_transport_rate",
+      "raw_value": "Abcb1-mediated transport rate"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "abcb1_mediated_transport_rate",
+      "raw_value": "Abcb1a-mediated transport rate"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "abluminal_to_luminal_over_luminal_to_abluminal_transport_ratio",
+      "raw_value": "abluminal-to-luminal / luminal-to-abluminal transport ratio"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "transport_affinity",
+      "raw_value": "affinity of the transport system"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "aib_transfer_constant",
+      "raw_value": "AIB transfer constant"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "aib_transport",
+      "raw_value": "AIB transport"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "albumin_bound_to_free_transport_ratio",
+      "raw_value": "albumin-bound to free transport ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "free_59fe_transport_amount",
+      "raw_value": "amount of free ⁵⁹Fe transported"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "mtx_transport_amount",
+      "raw_value": "amount of MTX transported"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "transport_amount",
+      "raw_value": "amount of transport"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "transport_amount",
+      "raw_value": "amount transported"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "antibiotic_transfer",
+      "raw_value": "antibiotic transfer"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "apical_to_basal_over_basal_to_apical_transport_ratio",
+      "raw_value": "apical to basal transport / basal to apical transport"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "apical_to_basolateral_transport_increase",
+      "raw_value": "apical to basolateral transport increase"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "apical_to_basolateral_transport",
+      "raw_value": "apical-to-basolateral transport (basolateral AUC and apical-to-basolateral Papp)"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "apical_to_basolateral_transport_rate",
+      "raw_value": "apical-to-basolateral transport rate"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "apparent_phe_transport_michaelis_constant",
+      "raw_value": "apparent Phe transport Michaelis constant (Kt,app)"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "apparent transfer constant"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "average_transport_rate",
+      "raw_value": "average transfer rate"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "whole_tumor_transfer_constant",
+      "raw_value": "averaged whole-tumor transfer constant"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "b_to_a_over_a_to_b_transport_ratio",
+      "raw_value": "B-A/A-B transport ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "b_to_a_over_a_to_b_transport_ratio",
+      "raw_value": "B-to-A/A-to-B transport ratio"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "barrier_transit",
+      "raw_value": "barrier transit"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "basal_glucose_transport",
+      "raw_value": "Basal glucose transport"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "basal_to_apical_over_apical_to_basal_transport_ratio",
+      "raw_value": "basal to apical / apical to basal transport ratio"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "basal_apical_directional_transport",
+      "raw_value": "basal-apical directional transport"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "basal_apical_transport",
+      "raw_value": "basal-apical transport"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "basal_to_apical_over_apical_to_basal_transport_ratio",
+      "raw_value": "basal-to-apical / apical-to-basal transport ratio"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "basolateral_to_apical_transport_rate",
+      "raw_value": "basolateral-to-apical transport rate"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "blood_to_tissue_transport",
+      "raw_value": "blood to tissue transport (BTT)"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "blood_to_tissue_transport",
+      "raw_value": "blood-to-tissue transport"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "blood_to_tissue_transport_coefficient",
+      "raw_value": "blood-to-tissue transport coefficient"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "blood_to_tissue_transport_constant",
+      "raw_value": "blood-to-tissue transport constant Ki"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "b_to_a_over_a_to_b_transport_ratio",
+      "raw_value": "B→A/A→B transport ratio"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "monocarboxylic_acid_transport_capacity",
+      "raw_value": "capacity of the monocarboxylic acid transport system"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "glucose_transport_capacity",
+      "raw_value": "capacity of the transport system to shuttle glucose across the BBB"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "lactate_transport_capacity",
+      "raw_value": "capacity to transport lactate"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "capillary_transport_rate",
+      "raw_value": "capillary transport rate"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "carrier_mediated_glucose_transport",
+      "raw_value": "Carrier-mediated glucose transport"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "carrier_mediated_glucose_transport",
+      "raw_value": "carrier-mediated glucose transport"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "carrier_mediated_influx",
+      "raw_value": "carrier-mediated influx"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "carrier_mediated_influx_to_passive_diffusion_rate_ratio",
+      "raw_value": "carrier-mediated influx rate relative to passive diffusion rate"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "carrier_mediated_transport_rate",
+      "raw_value": "carrier-mediated transport rate"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "cellular_accumulation_and_apical_to_basolateral_transport",
+      "raw_value": "cellular accumulation and apical-to-basolateral transport"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "passive_diffusion_clearance",
+      "raw_value": "clearance for passive diffusion"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "copper_transport_level",
+      "raw_value": "copper transport level"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "cumulative_transport_efficiency",
+      "raw_value": "cumulative transport efficiency"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "cumulative_transport_amount",
+      "raw_value": "cumulative transported amount"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "diffusion",
+      "raw_value": "diffusion"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "diffusion_coefficient",
+      "raw_value": "Diffusion coefficient"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "diffusion_coefficient",
+      "raw_value": "diffusion coefficient"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "diffusion_coefficient",
+      "raw_value": "diffusion constant"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "diffusion_rate_constant",
+      "raw_value": "diffusion rate constant"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "diffusion_ratio",
+      "raw_value": "diffusion ratio"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "diffusion_influx",
+      "raw_value": "diffusional influx"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "diffusion_component",
+      "raw_value": "Diffusionary component"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "direct_transport_percentage",
+      "raw_value": "direct transport efficiency (DTE%) and direct transport percentage (DTP%)"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "doxorubicin_transport",
+      "raw_value": "doxorubicin transport"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "passage_efficiency",
+      "raw_value": "efficiency of passage"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "simple_diffusion",
+      "raw_value": "entry by means of simple diffusion"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "equilibrium_transfer_constant",
+      "raw_value": "equilibrium transfer constant"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "export_rate",
+      "raw_value": "export rate"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "single_transcapillary_transit_extraction",
+      "raw_value": "extracted during a single transcapillary transit"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "filtrate_14c_uptake",
+      "raw_value": "Filtrate-C¹⁴ Uptake"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "first_order_passage_rate",
+      "raw_value": "first-order rate of passage"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "flux",
+      "raw_value": "flux (rate of transfer)"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "transport_fold_change",
+      "raw_value": "fold-increase in transport"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "forward_transport_constant",
+      "raw_value": "forward transport constant"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "transported_tracer_fraction",
+      "raw_value": "Fraction of transported tracer (FTT)"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "transport_fraction",
+      "raw_value": "fraction transported"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "free_to_tf_bound_fe_uptake_ratio",
+      "raw_value": "free to Tf-bound Fe uptake ratio"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "methyl_glucose_transport_vmax_over_km",
+      "raw_value": "Fs (Vmax/Km for methyl glucose transport)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "glucose_flux_rate",
+      "raw_value": "glucose flux rate"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "glucose_flux_rate_constant",
+      "raw_value": "glucose fluxes (rate constants for entry and exit)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "glucose_influx_velocity",
+      "raw_value": "glucose influx velocity (v)"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "glucose_transport",
+      "raw_value": "glucose transport"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "glucose_transport_activity",
+      "raw_value": "glucose transport activity"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "glucose_transport_parameters",
+      "raw_value": "glucose transport parameters"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "glucose_transport_rate",
+      "raw_value": "glucose transport rate"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "glucose_transport_rate",
+      "raw_value": "glucose transport rate (Kin)"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "transport_kinetics_parameters",
+      "raw_value": "half-saturation constant (Km) and the transport capacity (Vmax)"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "transcapillary_transit_half_time",
+      "raw_value": "half-time transcapillary transit"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "hg_transport_rate_to_acceptor_compartment",
+      "raw_value": "Hg transfer rates towards the acceptor compartment"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "import_rate",
+      "raw_value": "import rate"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "transport_increase",
+      "raw_value": "increase in transfer"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "influx_transport",
+      "raw_value": "influx transport"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "influx_transport_clearance",
+      "raw_value": "influx transport clearance"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "transport_inhibition",
+      "raw_value": "inhibition of transport by tariquidar"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "intercompartmental_transport_clearance",
+      "raw_value": "intercompartmental transport clearances"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "transcapillary_influx_rate",
+      "raw_value": "K (transcapillary influx rate)"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "transport_rate_constant_ratio",
+      "raw_value": "K5/K1 (transport rate-constant relative to FDOPA)"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "lactate_transport",
+      "raw_value": "lactate transport"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "luminal_to_abluminal_transport",
+      "raw_value": "luminal to abluminal transport"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "luminal_to_abluminal_transport",
+      "raw_value": "luminal-to-abluminal transport"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "lumped_model_transfer_constant",
+      "raw_value": "lumped model transfer constant (PA)"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "mass_transfer_coefficient",
+      "raw_value": "mass transfer coefficient (h)"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "lactate_transport_rate",
+      "raw_value": "maximal rate of lactate transport"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "saturable_transport_velocity",
+      "raw_value": "maximal saturable transport velocity"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "transport_capacity",
+      "raw_value": "maximal transport capacity"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "glucose_transport_capacity",
+      "raw_value": "maximal transport capacity for glucose"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "maximal transport rate (Tmax)"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "maximal transport rate Tmax"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "glucose_transport_velocity",
+      "raw_value": "maximal velocity for glucose transport"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "lactate_transport_rate",
+      "raw_value": "maximum rate of lactate transport"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "transport_capacity",
+      "raw_value": "maximum transport capacity"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "glucose_transport_capacity",
+      "raw_value": "Maximum transport capacity for glucose"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "maximum transport rate"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "transport_velocity",
+      "raw_value": "Maximum transport velocity"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "maximum_unidirectional_transport",
+      "raw_value": "maximum unidirectional transport"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "unidirectional_transport_velocity",
+      "raw_value": "maximum unidirectional transport velocity"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "lactate_transport_velocity",
+      "raw_value": "maximum velocity (Vmax) for lactate transport"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "mdr1_transport",
+      "raw_value": "MDCK-mdr1 transport"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "mdr1_directional_transport_ratio",
+      "raw_value": "MDR1 Directional Transport Ratio (B to A)/(A to B)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "mdr1_directional_transport_ratio",
+      "raw_value": "MDR1 directional transport ratio (B to A)/(A to B)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "mdr1_directional_transport_ratio",
+      "raw_value": "MDR1 directional transport ratio (B to A/A to B)"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "mdr1_directional_transport_ratio",
+      "raw_value": "MDR1(human) and MDR1a(rat) directional transport ratio"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "mean_diffusion_rate",
+      "raw_value": "mean diffusion rate"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "mean_net_transport_rate",
+      "raw_value": "mean net transport rate"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "membrane_diffusion",
+      "raw_value": "membrane diffusion"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "transport_kinetics_parameters",
+      "raw_value": "Michaelis constant and maximum transport velocity"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "iron_to_transferrin_transport_ratio",
+      "raw_value": "molar ratio of iron to transferrin transport"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "mouse_p_gp_transcellular_transport_ratio",
+      "raw_value": "mouse P-gp transcellular transport ratio (B-to-A/A-to-B ratio)"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "net_active_transport",
+      "raw_value": "net active transport"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "net_ammonia_transport",
+      "raw_value": "net ammonia transport"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "net_glutamine_transendothelial_transport_to_isf",
+      "raw_value": "net Gln transendothelial transport to the ISF"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "net_basal_to_apical_transfer",
+      "raw_value": "net greater transfer (basal to apical)"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "carrier_mediated_net_transport",
+      "raw_value": "net transport (carrier-mediated)"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "passive_diffusion_net_transport",
+      "raw_value": "net transport (passive diffusion)"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "net_uptake",
+      "raw_value": "Net uptake (cell-to-medium ratio)"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "non_saturable_transport_rate_constant",
+      "raw_value": "non-saturable transport rate constant"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "glucose_transport_rate",
+      "raw_value": "normal rate of glucose transport"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "oatp_mediated_transport",
+      "raw_value": "Oatp-mediated transport"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "osmotic_filtration_coefficient",
+      "raw_value": "osmotic filtration coefficient"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "overall_transport_rate",
+      "raw_value": "overall transport rate"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "p_gp_transport_ratio",
+      "raw_value": "P-glycoprotein Transport Ratio"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "p_gp_transport_activity_ratio",
+      "raw_value": "P-gp transport activity ratio (WT to hMDR1-MAC)"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "p_gp_transport_ratio",
+      "raw_value": "P-gp transport ratio BA/AB"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "paracellular_flux",
+      "raw_value": "paracellular flux"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "paracellular_route_contribution_to_passive_transport",
+      "raw_value": "paracellular route contribution to passive transport"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "paracellular_transport",
+      "raw_value": "paracellular transport"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "passive_diffusion",
+      "raw_value": "passive diffusion"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "passive_diffusion_clearance",
+      "raw_value": "passive diffusion clearance"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "passive_diffusion_clearance",
+      "raw_value": "Passive diffusion clearance (CLdiff)"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "passive_diffusion_clearance",
+      "raw_value": "passive diffusion clearance (PSB)"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "glucose_passive_diffusion_fraction",
+      "raw_value": "passive diffusion component of total glucose crossing the BBB"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "passive_diffusion_rate",
+      "raw_value": "passive diffusion rate"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "passive_diffusion_rate_constant",
+      "raw_value": "passive diffusion rate constant"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "passive_diffusion_to_active_uptake_ratio",
+      "raw_value": "passive diffusion vs active uptake ratio"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "passive_transport_rate",
+      "raw_value": "passive transport rate"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "pb_transport_increase",
+      "raw_value": "Pb transport increase"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "pb_transport_inhibition",
+      "raw_value": "Pb transport inhibition"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "passive_diffusion_clearance",
+      "raw_value": "Pdiff (non-saturable diffusional uptake clearance)"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "transport_percentage",
+      "raw_value": "percent transported"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "chlorine_diffusion_percentage_relative_to_no_obstacle_diffusion",
+      "raw_value": "percentage of chlorine relative to no-obstacle diffusion"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "diffusion_percentage",
+      "raw_value": "Percentage of diffusion"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "diffusion_percentage",
+      "raw_value": "percentage of diffusion"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "thiamine_transport_percentage",
+      "raw_value": "percentage of total thiamine transport"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "transport_percentage",
+      "raw_value": "percentage of transport"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "transport_efficiency_percentage",
+      "raw_value": "percentage of transport efficiency"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "transport_percentage",
+      "raw_value": "percentage transported"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "non_tf_route_transport_percentage",
+      "raw_value": "percentage transported via non-Tf route"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "glucose_transport_half_maximal_concentration",
+      "raw_value": "Plasma glucose concentration of half-maximal transport Ki"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "polar_transport",
+      "raw_value": "polar transport"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "diffusion_percentage",
+      "raw_value": "Pourcentage de diffusion (% de taux sériques)"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "pyruvate_transport",
+      "raw_value": "pyruvate transport"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "passive_diffusion_rate_constant",
+      "raw_value": "rate constant for passive diffusion"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "rb_back_diffusion_rate_constant",
+      "raw_value": "rate constant for Rb back-diffusion"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "diffusion_rate",
+      "raw_value": "rate of diffusion"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "export_rate",
+      "raw_value": "rate of export"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "glucose_transport_rate",
+      "raw_value": "rate of glucose transport"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "glucose_transport_rate",
+      "raw_value": "rate of glucose transport across the BBB"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "import_rate",
+      "raw_value": "rate of import"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "net_movement_rate",
+      "raw_value": "rate of net movement"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "simple_diffusion_rate",
+      "raw_value": "rate of simple diffusion"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "sucrose_movement_rate",
+      "raw_value": "rate of sucrose movement"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "rate of transfer"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "Rate of transport"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "rate of transport"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "tryptophan_transport_rate",
+      "raw_value": "rate of tryptophan transport"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "zinc_transport_rate",
+      "raw_value": "rate of zinc transport"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "passage_rate",
+      "raw_value": "rates of passage"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "rates of transport"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "apical_to_basolateral_over_basolateral_to_apical_transport_ratio",
+      "raw_value": "ratio between apical to basolateral and basolateral to apical transport"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "b_to_a_over_a_to_b_transport_ratio",
+      "raw_value": "ratio of (B-A) over (A-B) transport"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "a_to_b_over_b_to_a_transport_ratio",
+      "raw_value": "ratio of transport A to B divided by B to A"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "reconstructed_transport_rate",
+      "raw_value": "reconstructed transport rate"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "transport_decrease",
+      "raw_value": "reduction in transport"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "glutamate_transport_decrease",
+      "raw_value": "Reduction of glutamate transport"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "regional_transfer_coefficient",
+      "raw_value": "regional transfer coefficients"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "transport_rate_ratio",
+      "raw_value": "relative transport rate"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "glutamate_bbb_saturable_transport",
+      "raw_value": "saturable part of the glutamate BBB transport"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "secretory_transport",
+      "raw_value": "secretory transport"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "simple_diffusion_rate",
+      "raw_value": "simple diffusion rate"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "simple_diffusion_transport",
+      "raw_value": "simple diffusion transport"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "single_pass_transfer_rate",
+      "raw_value": "single-pass transfer rate"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "specific_unidirectional_transfer_constant",
+      "raw_value": "specific unidirectional transfer constant (Si)"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "sucrose_transport",
+      "raw_value": "sucrose transport"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "t4_transport",
+      "raw_value": "T4 transport"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "labelled_thiamine_transport_amount",
+      "raw_value": "total transport of labelled thiamine"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "total_transport",
+      "raw_value": "Total transport; Corr. Transport"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "tracer_delivery_ratio",
+      "raw_value": "tracer delivery ratio (R1)"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "tracer_transfer_coefficient",
+      "raw_value": "tracer transfer coefficient"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "transcapillary_flow_rate",
+      "raw_value": "transcapillary flow rates"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "transcellular_diffusion_efficiency",
+      "raw_value": "transcellular diffusion efficiency"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "transcellular_flux",
+      "raw_value": "transcellular flux"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "transcellular_transport_ratio",
+      "raw_value": "transcellular transport ratio ((B-to-A)/(A-to-B))"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "transcellular_transport_ratio",
+      "raw_value": "Transcellular transport ratio (B-to-A)/(A-to-B)"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "transcellular_transport_ratio",
+      "raw_value": "transcellular transport ratio (B-to-A)/(A-to-B)"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "transcellular_transport_ratio",
+      "raw_value": "transcellular transport ratio B-A/A-B"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "transendothelial_transport",
+      "raw_value": "transendothelial transport"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "transport",
+      "raw_value": "transfer"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "transport_across_monolayer",
+      "raw_value": "transfer across a hCMEC/d3 monolayer"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "transport_clearance",
+      "raw_value": "transfer clearance"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "transport_coefficient",
+      "raw_value": "transfer coefficient"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "transport_coefficient",
+      "raw_value": "transfer coefficient ($K_i$)"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "transport_coefficient",
+      "raw_value": "Transfer coefficient (Ki)"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "transport_coefficient",
+      "raw_value": "transfer coefficient (Ki)"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "transport_coefficient",
+      "raw_value": "transfer coefficient (Kₘₙ)"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "Transfer Constant"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "transfer constant"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "Transfer constant (F·E*)"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "transport_constant_ratio",
+      "raw_value": "transfer constant (irradiated/control ratio)"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "Transfer Constant (K)"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "transfer constant (K)"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "Transfer constant (Ki)"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "transfer constant (Kᵢ)"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "transfer constant (Kᵢₙ)"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "simple_unidirectional_diffusion_transfer_constant",
+      "raw_value": "transfer constant for simple, unidirectional diffusion"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "transfer constant k"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "Transfer constant, k"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "transfer constant, K"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "Transfer constants"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "transfer constants"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "transport_efficiency",
+      "raw_value": "transfer efficiency"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "transport_half_life",
+      "raw_value": "transfer half-life"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "transport_index",
+      "raw_value": "transfer index"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "transfer rate"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "transport_rate_constant",
+      "raw_value": "transfer rate constant"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "transfer rates"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "transport_half_life",
+      "raw_value": "transfer t₁/₂"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "translocation",
+      "raw_value": "translocation"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "translocation",
+      "raw_value": "translocation value"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "transmembrane_transport",
+      "raw_value": "transmembrane transport"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "transmigration",
+      "raw_value": "transmigration"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "transmission_rate",
+      "raw_value": "transmission rate"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "transmittance",
+      "raw_value": "transmittance"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "transmittance_coefficient",
+      "raw_value": "transmittance coefficient (P)"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "transport",
+      "raw_value": "Transport"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "transport",
+      "raw_value": "transport"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "transport",
+      "raw_value": "transport (4 h)"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "transport_across_monolayer",
+      "raw_value": "transport across the monolayer"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "transport_activity",
+      "raw_value": "transport activity"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "transport_affinity",
+      "raw_value": "transport affinity"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "transport_affinity_coefficient",
+      "raw_value": "transport affinity coefficients"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "transport_amount",
+      "raw_value": "transport amount"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "transport_capacity",
+      "raw_value": "transport capacity"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "transport_coefficient",
+      "raw_value": "transport coefficient"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "transport_constant",
+      "raw_value": "transport constant"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "transport_efficiency",
+      "raw_value": "Transport efficiency"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "transport_efficiency",
+      "raw_value": "transport efficiency"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "transport_efficiency",
+      "raw_value": "Transport efficiency (%)"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "transport_efficiency",
+      "raw_value": "transport efficiency (%)"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "transport_efficiency_percentage",
+      "raw_value": "Transport efficiency percentage"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "apical_to_basal_transport",
+      "raw_value": "transport from apical to basal side of membrane"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "apical_to_basolateral_transport",
+      "raw_value": "transport from apical to basolateral medium"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "apical_to_basolateral_transport",
+      "raw_value": "transport from the apical to basolateral chamber"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "basolateral_to_apical_transport",
+      "raw_value": "transport from the basolateral to apical chamber"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "transport_increase",
+      "raw_value": "transport increase"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "transport_increase",
+      "raw_value": "transport increase following cyclosporine A inhibition"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "transport_index",
+      "raw_value": "transport index"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "capillary_transport",
+      "raw_value": "transport into capillaries"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "transport_dissociation_constant",
+      "raw_value": "transport KD"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "transport_capacity",
+      "raw_value": "transport maxima"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "dha_transport",
+      "raw_value": "transport of 14C-DHA"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "transport_percentage",
+      "raw_value": "transport percentage"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "transport_percentage",
+      "raw_value": "transport percentage (%)"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "Transport rate"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "transport rate"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "Transport Rate (T)"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "transport rate at physiological plasma levels"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "transport_rate_constant",
+      "raw_value": "transport rate constant"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "transport_rate_constant",
+      "raw_value": "transport rate constants"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "apical_to_basolateral_over_basolateral_to_apical_transport_rate",
+      "raw_value": "transport rate from apical to basolateral than from basolateral to apical"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "b_to_a_over_a_to_b_transport_rate_ratio",
+      "raw_value": "transport rate ratio (B → A / A → B)"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "transport_rate_ratio",
+      "raw_value": "transport rate relative to uncatalyzed transmembrane diffusion"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "transport_ratio",
+      "raw_value": "Transport ratio"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "transport_ratio",
+      "raw_value": "transport ratio"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "transport_ratio",
+      "raw_value": "transport ratio r"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "transport_speed",
+      "raw_value": "transport speed"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "transport_to_apical_compartment",
+      "raw_value": "transport to AP compartment"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "transport_velocity",
+      "raw_value": "Transport velocity (saturable component Y)"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "transport_ratio",
+      "raw_value": "transportation ratio"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "transport_across_monolayer",
+      "raw_value": "transported across the bEnd.3 monolayer"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "transport_amount",
+      "raw_value": "transported amount"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "drug_transport_amount",
+      "raw_value": "transported drug amount"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "transport_efficiency",
+      "raw_value": "transporting efficiency"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "transvascular_transport",
+      "raw_value": "transvascular transport"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "unidirectional_glucose_transport",
+      "raw_value": "unidirectional glucose transport"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "unidirectional_sucrose_transport",
+      "raw_value": "unidirectional sucrose transport"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "unidirectional_transport_coefficient",
+      "raw_value": "unidirectional transfer coefficient (Kin)"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "unidirectional_transport_coefficient",
+      "raw_value": "unidirectional transfer coefficient k"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "unidirectional_transport_constant",
+      "raw_value": "unidirectional transfer constant (Kᵢₗ)"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "unidirectional_transport_constant",
+      "raw_value": "unidirectional transfer constant, K"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "unidirectional_transport_constant",
+      "raw_value": "unidirectional transfer constant, k"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "unidirectional_transport_rate_constant",
+      "raw_value": "unidirectional transfer rate constant"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "unidirectional_transport_rate_constant",
+      "raw_value": "unidirectional transfer rate constant (K)"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "unidirectional_transport",
+      "raw_value": "unidirectional transport"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "influx_transporter_uptake_clearance",
+      "raw_value": "uptake clearance by the influx transporter"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "luminal_membrane_uptake_coefficient",
+      "raw_value": "uptake coefficient at the luminal membrane"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "saturable_transport_rate",
+      "raw_value": "V (maximum rate of the saturable transport process)"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "transport_rate",
+      "raw_value": "V_max (maximal transport rate)"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "net_transport_rate",
+      "raw_value": "vitesse du transport net"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "transport_velocity",
+      "raw_value": "vitesse maximale de transport"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "transport_fold_change",
+      "raw_value": "Vmax of transport (fold-change)"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "zinc_transport",
+      "raw_value": "zinc transport"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "na24_transfer_rate",
+      "raw_value": "²⁴Na Transfer Rate"
+    }
+  ],
+  "cluster_id": "cluster_035398a6fc038576",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

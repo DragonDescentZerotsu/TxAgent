@@ -2,6 +2,15 @@
   "imported_on": "2026-07-22",
   "source_host": "Mac",
   "source_root": "/Users/kirianozan/Downloads/data/runs/analogies",
+  "direct_bbb": {
+    "dataset": "starling-labs/BBB",
+    "revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+    "split": "train",
+    "destination": "data/starling_data/bbb_martins/Direct_BBB/records.parquet",
+    "parquet_rows": 304845,
+    "parquet_sha256": "14c01314377b6c31f18e6ec9c1ee72a8605a06800d74385fc8a7273f2334df57",
+    "construction": "Complete pinned snapshot with stable source_index; no row filtering or text rewriting."
+  },
   "mapping": [
     {
       "source_run": "bbb_v1",

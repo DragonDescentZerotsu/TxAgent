@@ -1,0 +1,33 @@
+{
+  "global_catalog_path": "global_candidate_catalog.json",
+  "global_catalog_sha256": "f4100359d319c94a3501319f164e19de6d3deb6c5cd41f54193116a4db68a947",
+  "owned_candidate_endpoints": [
+    "brain_to_plasma_auc_ratio_knockout_to_wild_type_ratio",
+    "brain_to_plasma_exposure_ratio_knockout_to_wild_type_ratio",
+    "brain_to_plasma_ratio_and_kp_uu_brain_and_csf_to_unbound_plasma_ratio",
+    "brain_to_plasma_ratio_and_plasma_auc",
+    "brain_to_plasma_ratio_knockout_to_wild_type_ratio",
+    "brain_to_serum_and_csf_to_serum_ratios",
+    "change_in_maternal_brain_to_plasma_auc_ratio",
+    "cmax_and_auc",
+    "cmax_and_te",
+    "cmax_and_trough",
+    "csf_amount_to_unbound_plasma_concentration_ratio",
+    "csf_and_plasma_cmax",
+    "csf_auc_to_unbound_brain_concentration_ratio",
+    "csf_cmax_to_plasma_concentration_ratio",
+    "csf_cmax_to_unbound_plasma_concentration_ratio",
+    "csf_exposure_to_unbound_plasma_concentration_ratio",
+    "csf_plasma_ratio_direction_unspecified",
+    "csf_radioactivity_max_concentration",
+    "csf_serum_ratio_direction_unspecified",
+    "csf_to_plasma_and_brain_to_plasma_ratios",
+    "csf_to_unbound_plasma_auc_and_cmax_ratio",
+    "flux_a_to_b_over_b_to_a_ratio",
+    "fu_brain_to_fu_plasma_ratio",
+    "fu_brain_to_fu_plasma_ratio_corrected_in_vivo_papp"
+  ],
+  "packet_id": "targeted_catalog_packet_0002",
+  "packet_version": "bbb_martins_direct_endpoint_catalog_targeted_raw_round2.v1",
+  "require_full_catalog_comparison": true
+}

@@ -1,0 +1,1572 @@
+{
+  "assignment_count": 313,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "10b_infiltrating_tumor_to_main_tumor_ratio",
+      "raw_value": "[¹⁰B] concentration in infiltrating tumor relative to main tumor (IT/MT ratio)"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "abscess_concentration",
+      "raw_value": "Abscess Concentration"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "13c12_sucrose_concentration",
+      "raw_value": "absolute concentrations of [13C12]sucrose"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "intratumoral_concentration",
+      "raw_value": "absolute intratumoral concentration"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "accumulated_gd_dtpa_concentration",
+      "raw_value": "accumulated Gd-DTPA concentration"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "acetaminophen_concentration",
+      "raw_value": "Acetaminophen Concentration"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "administered_activity_accumulation",
+      "raw_value": "administered activity accumulation"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "alkali_metal_concentration",
+      "raw_value": "Alkali Metal Concentration"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "aluminium_concentration",
+      "raw_value": "aluminium concentrations"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "amino_acid_concentration",
+      "raw_value": "Amino acid concentration"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "analyte_concentration",
+      "raw_value": "analyte concentration"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "antibiotic_concentration",
+      "raw_value": "Antibiotic Concentration"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "apical_concentration",
+      "raw_value": "apical concentration"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "apical_to_basolateral_ratio",
+      "raw_value": "apical concentration/basolateral concentration"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "apomorphine_concentration",
+      "raw_value": "apomorphine concentration"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "intracellular_relative_concentration",
+      "raw_value": "apparent intracellular relative concentration"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "cytarabine_concentration",
+      "raw_value": "ara-c concentrations"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "area under the drug concentration-time curve ratio"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "arsenic_concentration",
+      "raw_value": "arsenic concentration"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "arterial_jugular_venous_concentration_difference",
+      "raw_value": "arterial-jugular venous concentration difference"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "extracellular_fluid_concentration",
+      "raw_value": "average concentration in the extracellular fluid"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "Average tissue concentration"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "tumor_concentration",
+      "raw_value": "average tumor concentration"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "basal_chamber_concentration",
+      "raw_value": "basal chamber concentration"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "basolateral_to_apical_ratio",
+      "raw_value": "basolateral concentration/apical concentration"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "bcnu_concentration",
+      "raw_value": "BCNU concentration"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "bilirubin_concentration",
+      "raw_value": "Bilirubin concentration"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "bioavailable_concentration",
+      "raw_value": "bioavailable concentration"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "biotin_concentration",
+      "raw_value": "biotin concentration"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "tissue_bismuth_concentration",
+      "raw_value": "bismuth concentration in the tissue"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "blood_concentration",
+      "raw_value": "blood concentration"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "cerebrum_boron_concentration",
+      "raw_value": "Boron concentration (cerebrum)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "bp_exposure",
+      "raw_value": "BP exposure"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "bpa_to_tissue_ratio",
+      "raw_value": "BPA/tissue concentration"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "c.s.f. concentration / blood concentration"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "caudate_concentration",
+      "raw_value": "Caudate concentration"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "cbd_concentration",
+      "raw_value": "CBD concentration"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "central_availability_to_plasma_ratio",
+      "raw_value": "central availability / plasma concentration"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "cerebrum_concentration",
+      "raw_value": "Cerebrum concentration"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "cerebrum_concentration",
+      "raw_value": "cerebrum concentration"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "chloroform_extractable_14c_to_total_14c_ratio",
+      "raw_value": "CHCl₃-extractable ¹⁴C/total ¹⁴C concentration"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "cisplatin_concentration",
+      "raw_value": "cisplatin concentration"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "Concentration (%ID/g tissue)"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "ache_inhibitory_ratio",
+      "raw_value": "concentration capable of inhibiting AChE relative to original concentration"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "concentration dans le liquide céphalorachidien / concentration plasmatique"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "mtx_csf_concentration",
+      "raw_value": "concentration en MTX dans le liquide céphalorachidien (LCR)"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "abscess_fluid_concentration",
+      "raw_value": "concentration in abscess fluid"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "basolateral_chamber_concentration",
+      "raw_value": "concentration in basolateral chamber"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "basolateral_compartment_concentration",
+      "raw_value": "concentration in basolateral compartment"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_metastases_to_peripheral_metastases_ratio",
+      "raw_value": "concentration in BMs / concentration in peripheral metastases"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "cell_nuclei_to_control_ratio",
+      "raw_value": "concentration in cell nuclei (relative to control)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "cerebrum_concentration",
+      "raw_value": "concentration in cerebrum"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "cisternal_fluid_concentration",
+      "raw_value": "Concentration in cisternal fluid"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "dialysate_concentration",
+      "raw_value": "concentration in Dialysate"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "diencephalon_concentration",
+      "raw_value": "concentration in diencephalon"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "extracellular_space_concentration",
+      "raw_value": "concentration in extracellular space"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "forebrain_concentration",
+      "raw_value": "concentration in forebrain"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "fresh_tissue_concentration",
+      "raw_value": "concentration in fresh tissue"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "gbm_tissue_concentration",
+      "raw_value": "concentration in GBM tissue"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "concentration in liquor / plasma concentration"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "microdialysate_concentration",
+      "raw_value": "concentration in microdialysate"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "microdialysate_concentration",
+      "raw_value": "concentration in microdialysates"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "peritumoral_tissue_concentration",
+      "raw_value": "concentration in peritumoral tissue"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "synaptosomal_fraction_concentration",
+      "raw_value": "concentration in synaptosomal fraction"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "thalamus_concentration",
+      "raw_value": "concentration in thalamus"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "basolateral_compartment_concentration",
+      "raw_value": "concentration in the basolateral compartment"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "cystic_wall_concentration",
+      "raw_value": "concentration in the cystic wall"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "dialysate_concentration",
+      "raw_value": "concentration in the dialysate"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "isolated_tumor_area_concentration",
+      "raw_value": "concentration in the isolated tumor area"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "microdialysate_concentration",
+      "raw_value": "concentration in the microdialysate"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "normal_parenchyma_concentration",
+      "raw_value": "concentration in the normal parenchyma"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "substantia_nigra_concentration",
+      "raw_value": "concentration in the substantia nigra"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "synaptosomal_p2_fraction_concentration",
+      "raw_value": "concentration in the synaptosomal, P2 fraction"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "tumor_area_concentration",
+      "raw_value": "concentration in the tumor area"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "tumor_region_concentration",
+      "raw_value": "concentration in the tumor region"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "concentration in tissue"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "tumor_concentration",
+      "raw_value": "concentration in tumor"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "tumor_bed_to_administered_ratio",
+      "raw_value": "concentration in tumor bed / administered concentration"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "tumor_central_area_concentration",
+      "raw_value": "Concentration in tumor central area"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "tumor_peripheral_area_concentration",
+      "raw_value": "Concentration in tumor peripheral area"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "tumor_tissue_concentration",
+      "raw_value": "concentration in tumor tissue"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "ventricular_fluid_concentration",
+      "raw_value": "concentration in ventricular fluid"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "tumor_concentration",
+      "raw_value": "Concentration in whole tumor"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "tumor_accumulation",
+      "raw_value": "concentration increase to the tumor"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "14c_bilastine_concentration",
+      "raw_value": "Concentration of [¹⁴C]-bilastine"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "adrenaline_concentration",
+      "raw_value": "concentration of adrenaline"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "cisplatin_concentration",
+      "raw_value": "concentration of cisplatin"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "compound_54_concentration",
+      "raw_value": "concentration of compound 54"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "unbound_drug_concentration",
+      "raw_value": "concentration of extractable free drug"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "unbound_extracellular_concentration",
+      "raw_value": "concentration of free drug in the ECF"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "Concentration of free sulphonamide in C.S.F."
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "guanethidine_concentration",
+      "raw_value": "Concentration of guanethidine"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "forebrain_homogenate_metal_concentration",
+      "raw_value": "Concentration of metal in forebrain homogenates"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "mn_edta_concentration",
+      "raw_value": "Concentration of Mn-EDTA"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "mtx_concentration",
+      "raw_value": "Concentration of MTX"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "mtx_concentration",
+      "raw_value": "concentration of MTX"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "sodium_fluorescein_concentration",
+      "raw_value": "concentration of Na-fluorescein"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "noradrenaline_concentration",
+      "raw_value": "concentration of noradrenaline"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "sodium_fluorescein_concentration",
+      "raw_value": "concentration of sodium fluorescein"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "vitamin_b12_concentration",
+      "raw_value": "Concentration of vitamin B12"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "3h_melatonin_concentration",
+      "raw_value": "Concentration of ³H-melatonin"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "3h_nicardipine_concentration",
+      "raw_value": "Concentration of ³H-nicardipine"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "74as_concentration",
+      "raw_value": "Concentration of ⁷⁴As"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "blood_concentration_ratio",
+      "raw_value": "concentration ratio against blood"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "abluminal_to_luminal_glucose_concentration_ratio",
+      "raw_value": "concentration ratio of abluminal to luminal glucose"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "serum_free_drug_ratio",
+      "raw_value": "concentration relative to level of free drug in the serum"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "basolateral_compartment_concentration",
+      "raw_value": "concentration that passed into the basolateral chamber"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Concentration tissulaire/plasmatique LCR"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "fungal_abscess_concentration",
+      "raw_value": "concentration within the fungal abscess"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations atteintes dans le LCR"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations dans le LCR"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "ventricular_fluid_concentration",
+      "raw_value": "concentrations in ventricular fluid"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "meningeal_concentration",
+      "raw_value": "concentrations méningées"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "unbound_drug_concentration",
+      "raw_value": "concentrations of free drug"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "total_pcb_concentration",
+      "raw_value": "Concentrations of total PCBs"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "14c_concentration",
+      "raw_value": "Concentrations of ¹⁴C"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "bilirubin_concentration",
+      "raw_value": "Corrected mean bilirubin concentration"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "crocetin_concentration",
+      "raw_value": "Crocetin concentration"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "curcumin_concentration",
+      "raw_value": "Curcumin Concentration"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "curcumin_concentration",
+      "raw_value": "curcumin concentrations"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "cytarabine_concentration",
+      "raw_value": "Cytarabine concentration"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "dha_concentration",
+      "raw_value": "DHA concentrations"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "dialysate_concentration",
+      "raw_value": "dialysate concentration"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "dialysate_concentration",
+      "raw_value": "dialysate concentrations"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "digoxin_concentration",
+      "raw_value": "Digoxin concentration"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "dnj_concentration",
+      "raw_value": "DNJ concentration"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "doxorubicin_concentration",
+      "raw_value": "Doxo concentration"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "doxorubicin_concentration",
+      "raw_value": "Doxorubicin concentration"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "doxorubicin_concentration",
+      "raw_value": "doxorubicin concentration"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "drug_concentration",
+      "raw_value": "drug concentration"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "drug_concentration",
+      "raw_value": "Drug concentrations"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "drug_concentration",
+      "raw_value": "drug concentrations"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "bbb_drug_concentration",
+      "raw_value": "drug concentrations in the BBB"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "drug_mass_concentration",
+      "raw_value": "Drug Mass Concentration"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "bbb_drug_concentration",
+      "raw_value": "drug molecule concentrations in the BBB"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "dry_weight_platinum_concentration",
+      "raw_value": "dry-weight platinum concentration"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "dye_concentration",
+      "raw_value": "Dye concentration"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "dye_concentration",
+      "raw_value": "dye concentration"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "effective_donepezil_concentration",
+      "raw_value": "effective donepezil concentration"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "gadolinium_concentration",
+      "raw_value": "elemental gadolinium concentration"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "epirubicin_concentration",
+      "raw_value": "epirubicin concentration"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "serum_equilibration_concentration",
+      "raw_value": "equilibration with serum concentration"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "serum_equilibration_concentration",
+      "raw_value": "equilibration with serum concentrations"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "escitalopram_concentration",
+      "raw_value": "escitalopram concentration"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "dialysate_concentration",
+      "raw_value": "estimated concentration in the dialyzate"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "ethanol_concentration",
+      "raw_value": "ethanol concentration"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "extracellular_concentration",
+      "raw_value": "Extracellular concentration"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "extracellular_concentration",
+      "raw_value": "extracellular concentration"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "extracellular_concentration",
+      "raw_value": "extracellular concentrations"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "forebrain_concentration",
+      "raw_value": "forebrain concentration"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "unbound_bud_concentration",
+      "raw_value": "free BUD concentrations"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "unbound_drug_concentration",
+      "raw_value": "free drug concentration"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "unbound_drug_concentration",
+      "raw_value": "free drug concentrations"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "unbound_extracellular_concentration",
+      "raw_value": "free extracellular concentration"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "gadolinium_concentration",
+      "raw_value": "Gadolinium concentration"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "gadolinium_concentration",
+      "raw_value": "gadolinium concentration"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "gadolinium_concentration",
+      "raw_value": "Gd concentrations"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "gadolinium_tissue_concentration",
+      "raw_value": "Gd tissue concentration"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "gentamicin_concentration",
+      "raw_value": "Gentamicin Concentration"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "gentamicin_concentration",
+      "raw_value": "gentamicin concentration"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "ghb_concentration",
+      "raw_value": "GHB concentration"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "glycoside_concentration",
+      "raw_value": "Glycoside concentration"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "harmine_concentration",
+      "raw_value": "Harmine concentration"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "hi_6_concentration",
+      "raw_value": "HI-6 concentrations"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "hypericin_concentration",
+      "raw_value": "Hypericin concentration"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "gadolinium_concentration",
+      "raw_value": "ICP-MS Gd concentration"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "interstitial_fluid_concentration",
+      "raw_value": "interstitial concentration"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "interstitial_fluid_concentration",
+      "raw_value": "Interstitial fluid concentration"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "abscess_concentration",
+      "raw_value": "intra-abscess concentration"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "intratumoral_concentration",
+      "raw_value": "intra-tumoral concentration"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "intratumoral_concentration",
+      "raw_value": "intra-tumoural concentration"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "intrabrain concentration"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "intracellular_concentration",
+      "raw_value": "intracellular concentration"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "intracellular_concentration",
+      "raw_value": "intracellular concentration (Ci)"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "intracellular_to_extracellular_ratio",
+      "raw_value": "intracellular to extracellular concentration ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "intracellular_to_extracellular_ratio",
+      "raw_value": "intracellular/extracellular concentration ratio"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "intratumoral_concentration",
+      "raw_value": "intratumor concentration"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "intratumoral_concentration",
+      "raw_value": "intratumoral concentration"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "intratumoral_to_serum_ratio",
+      "raw_value": "intratumoral concentration / serum concentration"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "intratumoral_concentration",
+      "raw_value": "intratumoral concentrations"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "intratumoral_concentration",
+      "raw_value": "intratumoral maximal concentration"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "intratumoral_concentration",
+      "raw_value": "intratumoral peak concentrations"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "iodine_concentration",
+      "raw_value": "iodine concentration (ppm)"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "ipsilateral_to_contralateral_doxorubicin_ratio",
+      "raw_value": "ipsilateral to contralateral doxorubicin concentration ratio"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "ivermectin_concentration",
+      "raw_value": "ivermectin concentration"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "l_lysine_concentration",
+      "raw_value": "L-lysine concentration"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "lcm_concentration",
+      "raw_value": "LCM concentration"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "compound_accumulation",
+      "raw_value": "levels of compound accumulation"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "lipid_adjusted_concentration",
+      "raw_value": "lipid-adjusted concentration"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "liquor concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquor concentration / serum concentration"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquor concentration relative to serum level"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "nimodipine_csf_to_plasma_ratio",
+      "raw_value": "liquor-nimodipine concentration / plasma-nimodipine concentration"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Liquor/blood concentration"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor/plasma concentration"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "liquor/plasma concentration"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquor/Serum concentration"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "lpv_concentration",
+      "raw_value": "LPV concentration"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "luminal_to_abluminal_ratio",
+      "raw_value": "luminal and abluminal concentrations ratio"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "luteolin_concentration",
+      "raw_value": "luteolin concentrations"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "ly231617_concentration",
+      "raw_value": "LY231617 concentration"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "nicotine_concentration_normalized_to_administered_dose",
+      "raw_value": "maximal nicotine concentration (Cmax), normalized to total administered 11C-nicotine dose (TAD)"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "phenytoin_dialysate_concentration",
+      "raw_value": "maximum average phenytoin dialysate concentration"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "thalamus_concentration",
+      "raw_value": "maximum concentration in the thalamus"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "drug_concentration",
+      "raw_value": "Maximum drug concentration"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "drug_concentration",
+      "raw_value": "maximum drug concentration"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "extracellular_fluid_concentration",
+      "raw_value": "maximum extracellular concentration"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "extracellular_fluid_concentration",
+      "raw_value": "maximum extracellular fluid concentration"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "in_vivo_concentration",
+      "raw_value": "maximum in vivo concentration"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "intratumoral_drug_concentration",
+      "raw_value": "maximum intratumoral drug concentration"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "ivermectin_concentration",
+      "raw_value": "maximum ivermectin concentrations"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "phloretin_concentration",
+      "raw_value": "maximum phloretin concentrations"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "extracellular_fluid_concentration",
+      "raw_value": "maximum possible concentration in the extracellular fluid"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "thalamus_concentration",
+      "raw_value": "maximum thalamus concentration"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "maximum tissue concentration"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "azlocillin_concentration",
+      "raw_value": "mean azlocillin concentration"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "drug_concentration",
+      "raw_value": "Mean drug concentration"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "gadolinium_concentration",
+      "raw_value": "mean gadolinium concentration"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "morphine_concentration",
+      "raw_value": "mean morphine concentration"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "ko_to_wt_concentration_ratio",
+      "raw_value": "mean ratio of the concentrations between KO and WT animals"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "tissue_silver_concentration",
+      "raw_value": "Mean tissue silver concentration"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "vancomycin_concentration",
+      "raw_value": "mean vancomycin concentration"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "acitretin_concentration",
+      "raw_value": "measured acitretin concentration"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "olutasidenib_concentration",
+      "raw_value": "measured olutasidenib concentration"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "meningeal_to_serum_ratio",
+      "raw_value": "meningeal concentration / serum concentration"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "metformin_concentration",
+      "raw_value": "metformin concentration"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "microdialysate_concentration",
+      "raw_value": "microdialysate concentration"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "mitoxantrone_concentration",
+      "raw_value": "Mitoxantrone concentration"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "moxalactam_concentration",
+      "raw_value": "Moxalactam Concentration"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "moxalactam_concentration",
+      "raw_value": "moxalactam peak concentration"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "mtx_concentration",
+      "raw_value": "MTX concentration"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "mtx_concentration",
+      "raw_value": "MTX concentrations"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "3h_mtx_concentration",
+      "raw_value": "MTX-³H Concentration"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "sodium_fluorescein_concentration",
+      "raw_value": "NaFl concentration"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "nb_dnj_concentration",
+      "raw_value": "NB-DNJ Concentration"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "methionine_k_net_accumulation_rate",
+      "raw_value": "net accumulation rate of methionine K"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "nipecotic_acid_concentration",
+      "raw_value": "Nipecotic Acid concentration"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "norleucine_concentration",
+      "raw_value": "Norleucine concentrations"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "organ_concentration",
+      "raw_value": "Organ Concentration"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "organ_concentration",
+      "raw_value": "organ concentration"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "organ_concentration_per_gram_daily_intake",
+      "raw_value": "Organ concentration per gram related to daily intake"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "oxantrazole_concentration",
+      "raw_value": "Oxantrazole concentration"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "paclitaxel_concentration",
+      "raw_value": "paclitaxel concentration"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "parenchyma_concentration",
+      "raw_value": "Parenchyma concentration"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "passive_diffusion_percentage_of_total_cocaine_influx",
+      "raw_value": "passive diffusion as percentage of total cocaine influx"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "passive_diffusion_flux",
+      "raw_value": "passive diffusion flux (% of total cocaine influx)"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "pca_concentration",
+      "raw_value": "PCA concentration"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "dialysate_concentration",
+      "raw_value": "peak concentration in dialysates"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "blood_concentration_ratio",
+      "raw_value": "peak concentration relative to that present in the blood"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "dialysate_concentration",
+      "raw_value": "Peak dialysate concentration"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "dialysate_concentration",
+      "raw_value": "peak dialysate concentrations"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "ventricular_fluid_concentration",
+      "raw_value": "peak ventricular fluid concentration"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "csf_penicillin_concentration",
+      "raw_value": "penicillin concentration in C.S.F."
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "acid_extract_260nm_extinction_increase_percentage",
+      "raw_value": "percentage increase of extinction at 260 mµ of acid extracts"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "percent_of_blood_concentration",
+      "raw_value": "percentage of blood concentration"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "perfusate_concentration",
+      "raw_value": "perfusate concentration"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "perfusate_to_blood_ratio",
+      "raw_value": "perfusate concentration / peak blood concentration"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "phenobarbital_concentration",
+      "raw_value": "Phenobarbital concentration"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "pituitary_gland_concentration",
+      "raw_value": "pituitary gland concentration"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "platinum_concentration",
+      "raw_value": "platinum (Pt) concentration"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "platinum_concentration",
+      "raw_value": "Platinum concentration"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "platinum_concentration",
+      "raw_value": "platinum concentration"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "ppix_concentration",
+      "raw_value": "PpIX concentrations"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "paclitaxel_concentration",
+      "raw_value": "PTX concentration"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "p32_concentration",
+      "raw_value": "P³² concentration"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "quinidine_concentration",
+      "raw_value": "Quinidine concentration"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "radioactive_residue_percentage_of_blood_concentration",
+      "raw_value": "radioactive residues (% of blood concentration)"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "carnitine_above_to_below_filter_ratio",
+      "raw_value": "ratio of carnitine concentration above to its concentration below the filters"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "regional_3h_mk801_concentration",
+      "raw_value": "Regional ³H-MK-801 concentration"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "dialysate_to_blood_ratio",
+      "raw_value": "relative amount in dialysate vs blood concentration"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "salicylate_concentration",
+      "raw_value": "salicylate concentration"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "serum_saturation_concentration",
+      "raw_value": "saturation serum concentration"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "selenium_concentration",
+      "raw_value": "selenium concentration"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "silver_concentration",
+      "raw_value": "silver concentrations"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "sodium_fluorescein_concentration",
+      "raw_value": "sodium fluorescein concentration"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "sodium_influx",
+      "raw_value": "sodium influx"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "striatal_6fd_concentration",
+      "raw_value": "striatal 6FD concentrations"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "striatal_amino_acid_concentration",
+      "raw_value": "striatal AA concentration"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "striatal_concentration",
+      "raw_value": "striatal concentrations"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "striatal_pea_concentration",
+      "raw_value": "striatal PEA concentration"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "striatum_pea_to_plasma_pea_ratio",
+      "raw_value": "striatum PEA concentration / plasma PEA concentration"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "t3_concentration",
+      "raw_value": "T3 concentrations"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "thalamus_concentration",
+      "raw_value": "thalamic concentration"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "thalamus_concentration",
+      "raw_value": "thalamus concentration"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "thallium_concentration",
+      "raw_value": "Thallium concentration"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "therapeutic_concentration",
+      "raw_value": "therapeutic concentrations"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "Tissue Concentration"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "Tissue concentration"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "tissue concentration"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "tissue_lead_concentration",
+      "raw_value": "Tissue lead concentration"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "Tissue-concentration"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "total_bud_concentration",
+      "raw_value": "total BUD concentrations"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "total_gadolinium_concentration",
+      "raw_value": "total gadolinium concentration"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "total_gadolinium_concentration",
+      "raw_value": "Total Gd concentrations"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "total_genistein_concentration",
+      "raw_value": "total genistein concentration"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "total_gne_0723_concentration",
+      "raw_value": "total GNE-0723 concentrations"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "total_senicapoc_concentration",
+      "raw_value": "total senicapoc concentration"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "total_topotecan_concentration",
+      "raw_value": "total topotecan concentration"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "tracer_concentration",
+      "raw_value": "tracer concentrations"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "tumor_concentration",
+      "raw_value": "tumor concentrations"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "tumor_concentration",
+      "raw_value": "tumour concentrations"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "tyrosine_concentration",
+      "raw_value": "tyrosine concentration"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "udca_concentration",
+      "raw_value": "UDCA concentration"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "unbound_extracellular_concentration",
+      "raw_value": "unbound (extracellular) concentrations"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "unbound_dnl343_concentration",
+      "raw_value": "unbound concentrations of DNL343"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "unbound_extracellular_concentration",
+      "raw_value": "unbound extracellular concentration"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "valproate_concentration",
+      "raw_value": "valproate concentration"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "vancomycin_dialysate_concentration",
+      "raw_value": "VCM concentrations in dialysates"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "ventricular_fluid_concentration",
+      "raw_value": "ventricular concentration"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "ventricular_fluid_concentration",
+      "raw_value": "ventricular fluid concentration"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "wet_weight_concentration",
+      "raw_value": "wet weight concentration"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "zt_1a_concentration",
+      "raw_value": "ZT-1a concentration"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "ply_to_ph_ratio",
+      "raw_value": "ΔPLY / -Δ pH"
+    }
+  ],
+  "cluster_id": "cluster_a5b7c3d1e7e705a7",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

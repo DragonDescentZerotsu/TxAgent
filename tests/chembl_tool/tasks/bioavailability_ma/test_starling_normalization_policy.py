@@ -573,11 +573,26 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
 
     preserved_paths = [
         out_dir / normalized_builder.RECORDS_FILENAME,
-        out_dir / normalized_builder.EVIDENCE_FAMILIES_FILENAME,
-        out_dir / normalized_builder.EVIDENCE_BRIDGE_FILENAME,
-        out_dir / normalized_builder.INDEX_MOLECULES_FILENAME,
-        out_dir / normalized_builder.INDEX_FINGERPRINTS_FILENAME,
-        out_dir / normalized_builder.INDEX_MEMBERSHIP_FILENAME,
+        out_dir / "04_pair_buckets/pair_bucket_records.parquet",
+        out_dir / "04_pair_buckets/pair_bucket_metadata.json",
+        out_dir / "05_assay_transfer_policy/pair_bucket_transfer_policy.json.gz",
+        out_dir / "06_remove_heldout_overlap/random/records.parquet",
+        out_dir / "06_remove_heldout_overlap/scaffold/records.parquet",
+        out_dir / normalized_builder.EVIDENCE_FAMILIES_TEMPLATE.format(
+            benchmark_split="random"
+        ),
+        out_dir / normalized_builder.EVIDENCE_BRIDGE_TEMPLATE.format(
+            benchmark_split="random"
+        ),
+        out_dir / normalized_builder.INDEX_MOLECULES_TEMPLATE.format(
+            benchmark_split="random"
+        ),
+        out_dir / normalized_builder.INDEX_FINGERPRINTS_TEMPLATE.format(
+            benchmark_split="random"
+        ),
+        out_dir / normalized_builder.INDEX_MEMBERSHIP_TEMPLATE.format(
+            benchmark_split="random"
+        ),
         out_dir / normalized_builder.MANIFEST_FILENAME,
         out_dir / normalized_builder.VALIDITY_POLICY_FILENAME,
         out_dir / normalized_builder.AUXILIARY_MAPPING_MANIFEST_FILENAME,
@@ -592,14 +607,9 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         normalized_builder.main(failed_args)
     assert all(path.read_bytes() == preserved_bytes[path] for path in preserved_paths)
 
-    for directory in (
-        "06_pair_buckets",
-        "07_assay_transfer_policy",
-        "07_endpoint_policies",
-        "08_audits",
-    ):
+    for directory in normalized_builder.ARTIFACT_STAGES[3:]:
         target = out_dir / directory
-        target.mkdir()
+        target.mkdir(exist_ok=True)
         (target / "stale.txt").write_text("stale", encoding="utf-8")
     for filename in normalized_builder.RECORD_DEPENDENT_FILES:
         (out_dir / filename).write_text("stale", encoding="utf-8")
@@ -625,26 +635,16 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "through_stage": "organize",
     }
     assert {
-        "04_evidence_catalog/molecule_families.parquet",
-        "04_evidence_catalog/molecule_family_records.parquet",
-        "05_neighbor_index/molecules.parquet",
-        "05_neighbor_index/fingerprints.npz",
-        "06_pair_buckets",
-        "07_assay_transfer_policy",
-        "07_endpoint_policies",
-        "08_audits",
+        "04_pair_buckets",
+        "05_assay_transfer_policy",
+        "06_remove_heldout_overlap",
+        "07_molecule_evidence",
+        "08_neighbor_index",
+        "09_audits",
     } <= set(restarted["invalidated_artifacts"])
-    assert not (out_dir / normalized_builder.EVIDENCE_FAMILIES_FILENAME).exists()
-    assert not (out_dir / normalized_builder.INDEX_MOLECULES_FILENAME).exists()
-    assert not (out_dir / normalized_builder.INDEX_META_FILENAME).exists()
     assert all(
         not (out_dir / directory).exists()
-        for directory in (
-            "06_pair_buckets",
-            "07_assay_transfer_policy",
-            "07_endpoint_policies",
-            "08_audits",
-        )
+        for directory in normalized_builder.ARTIFACT_STAGES[3:]
     )
     assert not any("-stage-" in path.name for path in out_dir.iterdir())
 

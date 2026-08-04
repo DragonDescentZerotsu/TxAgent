@@ -169,6 +169,12 @@ def test_starling_index_retrieval_excludes_exact_query(tmp_path):
 
 
 def test_evidence_builder_clis_reject_removed_pinned_hf_modes():
+    assert direct_builder.INDEX_VERSION == (
+        "bioavailability_ma_starling_neighbor_index.v3"
+    )
+    assert factor_builder.INDEX_VERSION == (
+        "bioavailability_ma_starling_factor_neighbor_index.v4"
+    )
     with pytest.raises(SystemExit):
         direct_builder._parse_args(["--source-mode", "pinned-hf"])
     with pytest.raises(SystemExit):
@@ -221,6 +227,9 @@ def test_factor_builder_include_direct_hf_reads_complete_parquet(monkeypatch, tm
     assert calls == [(records, True)]
     meta = json.loads((tmp_path / "index" / factor_builder.META_FILENAME).read_text(encoding="utf-8"))
     assert meta["include_direct_hf"] is True
+    assert meta["index_version"] == (
+        "bioavailability_ma_starling_factor_neighbor_index.v4.full.full"
+    )
     assert meta["direct_hf_provenance"]["source_mode"] == "complete_parquet"
     assert meta["direct_source_stats"]["n_source_rows_kept"] == 80808
     assert meta["prepared_hf_row_counts"] == {

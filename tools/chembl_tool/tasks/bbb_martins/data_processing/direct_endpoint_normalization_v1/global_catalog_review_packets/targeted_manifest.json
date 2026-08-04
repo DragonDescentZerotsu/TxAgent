@@ -1,0 +1,24 @@
+{
+  "global_catalog_sha256": "f4100359d319c94a3501319f164e19de6d3deb6c5cd41f54193116a4db68a947",
+  "human_approved": false,
+  "manifest_version": "bbb_martins_direct_endpoint_catalog_targeted_raw_round2.v1",
+  "new_candidate_labels": 73,
+  "obsolete_round1_labels": 2,
+  "packets": [
+    {
+      "owned_labels": 25,
+      "path": "targeted_catalog_packet_0001.json",
+      "sha256": "bd112d40d34a0d06578fd2fbea8ae2cb5e4643cd9efdb6fa691ce945c62157ef"
+    },
+    {
+      "owned_labels": 24,
+      "path": "targeted_catalog_packet_0002.json",
+      "sha256": "5a1d0eb90fd446832b8c40124bf4e20148128166945401474a3ac80fc0ed8541"
+    },
+    {
+      "owned_labels": 24,
+      "path": "targeted_catalog_packet_0003.json",
+      "sha256": "e5bb9aad739d2729273d9c621d99c4c0d01722eefd076029f1ffea8b7c6230a1"
+    }
+  ]
+}

@@ -1,0 +1,802 @@
+{
+  "assignment_count": 159,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "abluminal_detection",
+      "raw_value": "abluminal side detection"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "absorbance",
+      "raw_value": "absorbance"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "absorption",
+      "raw_value": "absorption"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "absorption",
+      "raw_value": "absorption value"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "contrast_enhancement_area",
+      "raw_value": "Area of contrast enhancement"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "positive_fluorescein_signal_area",
+      "raw_value": "average area of positive fluorescein signal"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "background_noise",
+      "raw_value": "average background noise"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "fluorescence",
+      "raw_value": "average fluorescence"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "photoacoustic_intensity",
+      "raw_value": "average PA intensity"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "percent_enhancement",
+      "raw_value": "average percentage of enhancement"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "biodistribution_effect",
+      "raw_value": "biodistribution effects"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "bioluminescence_flux",
+      "raw_value": "bioluminescence total flux"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "free_form_concentration_ratio",
+      "raw_value": "concentration of free form in non-contrast enhancing regions relative to contrast enhancing regions"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "concentration_gradient",
+      "raw_value": "Concn gradient"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "contrast_enhancement",
+      "raw_value": "Contrast enhancement"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "contrast_enhancement",
+      "raw_value": "contrast enhancement"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "contrast_volume",
+      "raw_value": "contrast volume"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "contrast_enhancement",
+      "raw_value": "contrast-enhancement"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "ct_gray_matter_percent_enhancement",
+      "raw_value": "CT-% enhancement in gray matter"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "extravasation_degree",
+      "raw_value": "degree of extravasation"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "distribution_enhancement",
+      "raw_value": "distribution enhancement"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "dtpa_signal",
+      "raw_value": "DTPA signal"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "enhancement",
+      "raw_value": "enhancement"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "relative_enhancement",
+      "raw_value": "enhancement relative to control"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "exposure",
+      "raw_value": "exposure"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "exposure",
+      "raw_value": "exposure levels"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "exposure_multiple",
+      "raw_value": "exposure multiple"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "exposure",
+      "raw_value": "exposure values"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "extravasation_distance",
+      "raw_value": "extravasation distance"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "extravasation_radius",
+      "raw_value": "extravasation radius"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "extravasation",
+      "raw_value": "extravasation values"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "fluorescence_intensity",
+      "raw_value": "Florescent intensity"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "fluorescence_intensity",
+      "raw_value": "fluoresce intensity"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "fluorescence_efficiency",
+      "raw_value": "fluorescence efficiency"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "fluorescence_intensity",
+      "raw_value": "fluorescence intensity"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "fluorescence_intensity",
+      "raw_value": "fluorescence intensity (INT/mm2)"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "fluorescence",
+      "raw_value": "fluorescence mean value"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "fluorescent_signal_intensity",
+      "raw_value": "fluorescence signal intensity"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "fluorescence_intensity",
+      "raw_value": "fluorescent intensity"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "fluorescent_signal_intensity",
+      "raw_value": "fluorescent signal intensity"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "tracer_coverage",
+      "raw_value": "fluorescent tracer coverage"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "grayscale_intensity_fold_change",
+      "raw_value": "fold change in greyscale intensity above pre-sonication baseline"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "lesion_frequency",
+      "raw_value": "frequency of lesion"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "forward_scatter_intensity",
+      "raw_value": "FSC intensity"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "gd_dtpa_intensity",
+      "raw_value": "Gad-DTPA intensity"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "gd_dtpa_intensity",
+      "raw_value": "Gd-DTPA intensity"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "half_saturation_constant",
+      "raw_value": "half-saturation"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "hz_levels",
+      "raw_value": "HZ levels"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "image_analysis",
+      "raw_value": "Image Analysis"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "signal_intensity_increase",
+      "raw_value": "increase in signal intensity"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "integrated_optical_density",
+      "raw_value": "integral optical density (IOD)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "integrated_optical_density",
+      "raw_value": "Integrated optical density"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "intensity",
+      "raw_value": "intensity"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "mean_fluorescence_intensity",
+      "raw_value": "Intensity of Fluorescence (mean)"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "intensity_ratio",
+      "raw_value": "intensity ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "intensity_score",
+      "raw_value": "intensity score"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "half_saturation_constant",
+      "raw_value": "K_m (half-saturation constant)"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "mean_dextran_fluorescence_intensity",
+      "raw_value": "linear pixel-by-pixel mean dextran fluorescence intensity"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "local_exposure_fraction",
+      "raw_value": "Local exposure fraction"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "local_exposure_fraction",
+      "raw_value": "local exposure fraction"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "maximal_fluorescence_intensity",
+      "raw_value": "maximal fluorescence intensity"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "maximal_signal_intensity_percent_change",
+      "raw_value": "maximal percentage change in signal intensity"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "maximum_fluorescence",
+      "raw_value": "maximum mean fluorescence"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "maximum_dmso_signal_increase",
+      "raw_value": "maximum relative increase in DMSO signal"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "maximum_se500_28_intensity_increase",
+      "raw_value": "maximum SE 500/28 intensity increase"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "maximum_signal_intensity",
+      "raw_value": "maximum signal intensity"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "maximum_signal_intensity_enhancement",
+      "raw_value": "maximum signal intensity (SI) enhancement"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "mean_percent_enhancement",
+      "raw_value": "mean % enhancement"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "mean_extravasation",
+      "raw_value": "mean extravasation (ME)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "mean_fluorescent_signal_intensity",
+      "raw_value": "mean fluorescent signal intensities"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "mean_global_gray_matter_incorporation",
+      "raw_value": "mean global gray matter incorporation"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "mean_voxel_intensity_increase",
+      "raw_value": "mean increase in voxel intensity"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "mean_mri_signal_increase",
+      "raw_value": "mean increments in MRI signal"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "mean_intensity",
+      "raw_value": "mean intensity"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "mean_optical_intensity",
+      "raw_value": "mean optical intensity"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "mean_signal_intensity_recovery_percent",
+      "raw_value": "mean percentage of signal intensity recovery"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "ipsilateral_to_contralateral_fluorescence_intensity_ratio",
+      "raw_value": "mean ratio of ipsilateral to contralateral fluorescence intensity"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "mri_enhancement_signal",
+      "raw_value": "MRI enhancement signal"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "nafl_pixel_intensity",
+      "raw_value": "NaFl pixel intensity"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "normalized_deposition",
+      "raw_value": "normalized deposition"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "normalized_gd_deposition_ratio",
+      "raw_value": "normalized Gd deposition ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "normalized_optical_density",
+      "raw_value": "normalized optical density"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "normalized_t1_weighted_signal",
+      "raw_value": "normalized T1-weighted signal"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "fluorescent_sections_count",
+      "raw_value": "Number of Sections that Fluoresced (median)"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "optical_density",
+      "raw_value": "OD, 600 nm"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "half_saturation_constant",
+      "raw_value": "one-half saturation constant"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "optical_density",
+      "raw_value": "optical density"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "optical_density",
+      "raw_value": "optical density at 620 nm"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "osmotic_reflection_coefficient",
+      "raw_value": "osmotic reflection coefficient"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "osmotic_reflection_coefficient",
+      "raw_value": "osmotic reflection coefficient (σsuc)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "osmotic_reflection_coefficient",
+      "raw_value": "osmotic reflection coefficient, σ"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "overall_exposure",
+      "raw_value": "overall exposure"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "overall_fluorescence_intensity",
+      "raw_value": "overall fluorescence intensity"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "pgp_effect",
+      "raw_value": "P-gp effect"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "parenchymal_intensity",
+      "raw_value": "parenchymal intensity"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "peak_gray_matter_xenon_concentration",
+      "raw_value": "peak gray matter xenon concentration"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "peak_signal",
+      "raw_value": "peak signal"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "mr_image_percent_enhancement",
+      "raw_value": "percent enhancement of MR images"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "above_threshold_pixel_percentage",
+      "raw_value": "percent of the total number of image pixels with a fluorescence intensity at or above threshold"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "gd_dtpa_intensity_percentage",
+      "raw_value": "percentage intensity of Gd-DTPA"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "percent_enhancement",
+      "raw_value": "percentage of enhancement"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "fluorescence_intensity_percentage",
+      "raw_value": "percentage of fluorescence intensity"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "above_mean_plus_2sd_pixel_percentage",
+      "raw_value": "percentage of pixels > mean + 2 SD"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "ipsilateral_hemisphere_stained_volume_percentage",
+      "raw_value": "percentage of stained volume compared with the total volume of the ipsilateral hemisphere"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "passive_diffusion_percentage",
+      "raw_value": "percentage passively diffused"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "pgp_effect",
+      "raw_value": "Pgp effect"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "pgp_effect",
+      "raw_value": "Pgp effects"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "above_mean_plus_2sd_pixels",
+      "raw_value": "pixels > mean + 2 SD"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "pixels_per_roi",
+      "raw_value": "pixels/ROI"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "radiant_efficiency",
+      "raw_value": "radiant efficiency"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "mean_regional_mri_intensity_rate_of_change",
+      "raw_value": "rate of change in mean regional MRI intensity"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "ipsilateral_to_contralateral_fluorescence_intensity_ratio",
+      "raw_value": "Ratio of fluorescence intensity ipsilateral/contralateral"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "ipsilateral_to_contralateral_fluorescence_intensity_ratio",
+      "raw_value": "ratio of ipsilateral to contralateral fluorescence intensity"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "red_autofluorescence_signal_intensity",
+      "raw_value": "red auto-fluorescence signal intensity (rank 0-3)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection co-efficient"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "Reflection coefficient"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection coefficient"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection coefficient (RC)"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection coefficient (s)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection coefficient (σ)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection coefficient [RC]"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection coefficient σ"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "sodium_reflection_coefficient",
+      "raw_value": "reflection coefficient σNa⁺"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection coefficients (σ)"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflection-coefficient"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "relative_absorbance",
+      "raw_value": "relative absorbance"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "relative_absorbance",
+      "raw_value": "relative absorbancy comparison value"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "relative_enhancement",
+      "raw_value": "relative enhancement"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "relative_exposure",
+      "raw_value": "relative exposure (re)"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "relative_fluorescence_intensity",
+      "raw_value": "Relative fluorescence intensity"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "relative_fluorescence_intensity",
+      "raw_value": "relative fluorescence intensity (F/%)"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "relative_fluorescent_units",
+      "raw_value": "relative fluorescent units (RFU)"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "relative_mr_signal_intensity",
+      "raw_value": "relative MR signal intensity"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "relative_signal_intensity",
+      "raw_value": "relative signal intensity"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "roi_signal_to_background_ratio",
+      "raw_value": "ROI signal to background"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "saturation",
+      "raw_value": "saturation"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "sf_fluorescence",
+      "raw_value": "SF mean fluorescence"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "signal_enhancement",
+      "raw_value": "Signal enhancement"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "signal_enhancement",
+      "raw_value": "signal enhancement"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "signal_increase",
+      "raw_value": "signal increase"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "signal_intensity",
+      "raw_value": "Signal intensities"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "signal_intensity",
+      "raw_value": "signal intensities"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "signal_intensity_reduction",
+      "raw_value": "signal intensities (reduction from initial signal)"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "signal_intensity_change",
+      "raw_value": "signal intensity (SI) change"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "signal_intensity_enhancement",
+      "raw_value": "signal intensity (SI) enhancement"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "contralateral_signal_intensity_ratio",
+      "raw_value": "signal intensity (with respect to signals from the contralateral side)"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "log_intensity_slope",
+      "raw_value": "slope of d(ln(intensity))/dt"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "staining_intensity",
+      "raw_value": "staining intensity"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "staining_score",
+      "raw_value": "staining score"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "t1_intensity_increase",
+      "raw_value": "T1 intensity increase"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "t1_signal",
+      "raw_value": "T1 signal"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "t1_signal_increase",
+      "raw_value": "T1 signal increase"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "t1_signal_intensity",
+      "raw_value": "T1 signal intensity"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "t1_weighted_signal_intensity",
+      "raw_value": "T1-weighted signal intensities"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "spotty_extravasation_time",
+      "raw_value": "time to spotty extravasations"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "thresholded_pixel_cluster_area",
+      "raw_value": "total area of pixel clusters within the thresholded range"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "thresholded_pixel_cluster_count",
+      "raw_value": "total number of pixel clusters within the thresholded range"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "total_radiant_efficiency",
+      "raw_value": "total radiant efficiency"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "white_to_gray_matter_distribution_ratio",
+      "raw_value": "white-to-gray matter distribution ratio"
+    }
+  ],
+  "cluster_id": "cluster_63fb29a0ce5e1894",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

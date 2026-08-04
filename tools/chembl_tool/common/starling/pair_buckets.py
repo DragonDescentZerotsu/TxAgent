@@ -17,8 +17,16 @@ def materialize_pair_buckets(
     source_required_fields: Mapping[str, tuple[str, ...]],
     contract_version: str = PAIR_BUCKET_CONTRACT_VERSION,
     unknown_token: str = UNKNOWN_TOKEN,
+    endpoint_field_by_source: Mapping[str, str] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Map persisted canonical fields to one source-aware key per eligible row."""
+    """Map persisted canonical fields to one source-aware key per eligible row.
+
+    ``endpoint_field_by_source`` lets a source nominate a different record field
+    to occupy the endpoint slot of the bucket key.  A source whose raw endpoint
+    is free text can then compare on a reconciled concept while
+    ``canonical_endpoint`` stays on the record at full granularity: the
+    substitution changes the comparison stratum, never the endpoint's identity.
+    """
     output: list[dict[str, Any]] = []
     seen_ids: set[str] = set()
     buckets: dict[str, list[tuple[str, str]]] = defaultdict(list)
@@ -38,7 +46,15 @@ def materialize_pair_buckets(
         fields = source_required_fields.get(source_id)
         if fields is None:
             raise ValueError(f"no pair-bucket field mapping for source_id={source_id!r}")
-        endpoint = str(record.get("canonical_endpoint") or "")
+        canonical_endpoint = str(record.get("canonical_endpoint") or "")
+        endpoint_field = (endpoint_field_by_source or {}).get(
+            source_id, "canonical_endpoint"
+        )
+        endpoint = (
+            canonical_endpoint
+            if endpoint_field == "canonical_endpoint"
+            else str(record.get(endpoint_field) or "")
+        )
         unit = str(record.get("canonical_unit") or "")
         canonical_fields = {
             field: _persisted_value(record.get(field), unknown_token=unknown_token)
@@ -49,7 +65,9 @@ def materialize_pair_buckets(
             if value == unknown_token:
                 unknown_counts[field] += 1
 
-        exclusion = _exclusion_reason(record, endpoint, unit)
+        exclusion = _exclusion_reason(
+            record, endpoint, unit, endpoint_field=endpoint_field
+        )
         bucket_values = [
             source_id,
             endpoint,
@@ -71,7 +89,7 @@ def materialize_pair_buckets(
             {
                 "normalized_record_id": record_id,
                 "source_id": source_id,
-                "canonical_endpoint": endpoint or None,
+                "canonical_endpoint": canonical_endpoint or None,
                 "canonical_unit": unit or None,
                 "canonical_pair_fields_json": _canonical_json(canonical_fields),
                 "pair_bucket_key": bucket_key,
@@ -89,18 +107,27 @@ def materialize_pair_buckets(
         for bucket, members in buckets.items()
     }
     eligible_count = sum(bool(row["bucket_eligible"]) for row in output)
+    has_endpoint_override = any(
+        (endpoint_field_by_source or {}).get(source, "canonical_endpoint")
+        != "canonical_endpoint"
+        for source in source_required_fields
+    )
     audit = {
         "contract_version": contract_version,
         "unknown_token": unknown_token,
         "bucket_tuple_order": [
             "source_id",
-            "canonical_endpoint",
+            "bucket_endpoint" if has_endpoint_override else "canonical_endpoint",
             "canonical_unit",
             "source_specific_canonical_fields_in_mapping_order",
         ],
         "source_required_fields": {
             source: list(fields)
             for source, fields in sorted(source_required_fields.items())
+        },
+        "bucket_endpoint_field_by_source": {
+            source: (endpoint_field_by_source or {}).get(source, "canonical_endpoint")
+            for source in sorted(source_required_fields)
         },
         "stats": {
             "input_records": len(records),
@@ -148,12 +175,16 @@ def _exclusion_reason(
     record: Mapping[str, Any],
     endpoint: str,
     unit: str,
+    *,
+    endpoint_field: str = "canonical_endpoint",
 ) -> str | None:
     status = str(record.get("normalization_validity_status") or "")
     if status != "valid":
         return status or "missing_normalization_validity_status"
     if not endpoint:
-        return "missing_canonical_endpoint"
+        # Name the field that was actually missing, so a source using a
+        # substituted bucket endpoint does not report a misleading reason.
+        return f"missing_{endpoint_field}"
     if not unit:
         return "missing_canonical_unit"
     return None

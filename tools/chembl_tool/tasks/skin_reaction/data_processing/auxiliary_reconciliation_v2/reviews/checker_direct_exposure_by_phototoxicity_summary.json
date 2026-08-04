@@ -1,0 +1,78 @@
+{
+  "checker_file": "checker_direct_exposure_by_phototoxicity.jsonl",
+  "checker_id": "skin_phototoxicity_audit",
+  "checker_row_count": 30,
+  "checker_sha256": "b1d51e23b7387cadbda890ee0ed496aba0bdb103b3c68987348f8245834f3fd1",
+  "disagreement_ids": [
+    "exposure_species_split_0003"
+  ],
+  "disagreements": [
+    {
+      "decision_id": "exposure_species_split_0003",
+      "reason": "Rechecked all 2,212 exact raw assignments across 57 clusters. The guinea-pig correction is otherwise supported, but the exhaustive split assigns 'rat skin vs porcine epidermis', 'rodent and pig skin', and 'rodent or porcine skin' to pig alone. Those rows explicitly contain a second species/category and require pig + rat or pig + rodent children under the policy's multi-species rule."
+    }
+  ],
+  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "policy_sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017",
+  "primary_change_count": 30,
+  "primary_file": "primary_direct_exposure.jsonl",
+  "primary_sha256": "87a0c999c488062b10a47e9137c364f0446a45ebf0665430742f03705d4f89fd",
+  "reviewed_assignment_count": 40443,
+  "reviewed_cluster_count": 406,
+  "reviewed_namespaces": [
+    "direct_skin_reaction/global_context",
+    "direct_skin_reaction/global_species_context",
+    "skin_exposure/global_species_context"
+  ],
+  "reviewed_packet_count": 10,
+  "reviewed_packet_ids": [
+    "direct_skin_reaction__global_context__packet_0001",
+    "direct_skin_reaction__global_context__packet_0002",
+    "direct_skin_reaction__global_species_context__packet_0001",
+    "direct_skin_reaction__global_species_context__packet_0002",
+    "direct_skin_reaction__global_species_context__packet_0003",
+    "skin_exposure__global_species_context__packet_0001",
+    "skin_exposure__global_species_context__packet_0002",
+    "skin_exposure__global_species_context__packet_0003",
+    "skin_exposure__global_species_context__packet_0004",
+    "skin_exposure__global_species_context__packet_0005"
+  ],
+  "shared_consolidation_validation": {
+    "accepted_changes": 29,
+    "change_decisions": 30,
+    "checker_disagreements": 1,
+    "primary": {
+      "action_counts": {
+        "merge": 24,
+        "rename": 1,
+        "retain": 708,
+        "split": 5
+      },
+      "decisions": 738,
+      "labels_expected": 762,
+      "labels_missing": 0,
+      "labels_owned": 762,
+      "valid": true
+    },
+    "rejected_changes": 1,
+    "valid": true
+  },
+  "summary_version": "skin_reaction_auxiliary_independent_direct_exposure_checker.v1",
+  "validations": {
+    "affected_counts_match_provenance": true,
+    "checker_identity_is_uniform": true,
+    "checker_is_independent_from_primary": true,
+    "every_changed_primary_decision_checked_exactly_once": true,
+    "no_retain_decisions_checked": true,
+    "packet_hashes_valid": true,
+    "packet_items_exactly_match_provenance": true,
+    "rationales_are_substantive": true,
+    "runtime_and_primary_artifacts_unchanged": true,
+    "split_raw_assignments_are_exhaustive": true,
+    "verdicts_are_allowed": true
+  },
+  "verdict_counts": {
+    "agree": 29,
+    "disagree": 1
+  }
+}

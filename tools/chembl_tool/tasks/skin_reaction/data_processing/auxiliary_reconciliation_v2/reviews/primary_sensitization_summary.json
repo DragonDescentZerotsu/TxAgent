@@ -1,0 +1,108 @@
+{
+  "decision_file": "primary_sensitization.jsonl",
+  "decision_file_sha256": "7ba473b9b8d4113f76c23f3e73df0bdb1d1a92bcade660efc10feed8482fc24c",
+  "namespace_local_coverage": {
+    "action_counts": {
+      "merge": 52,
+      "retain": 2277,
+      "split": 3
+    },
+    "decisions": 2332,
+    "labels_expected": 2386,
+    "labels_missing": 0,
+    "labels_owned": 2386,
+    "valid": true
+  },
+  "namespaces": {
+    "sensitization_aop/global_context": {
+      "action_counts": {
+        "merge": 29,
+        "retain": 928
+      },
+      "assignment_count": 6291,
+      "change_decision_count": 29,
+      "input_labels_owned": 987,
+      "local_cluster_count": 63,
+      "namespace_local_duplicate_labels": 0,
+      "namespace_local_missing_labels": 0,
+      "primary_decision_count": 957,
+      "proposed_final_label_count": 957,
+      "provisional_non_null_label_count": 987
+    },
+    "sensitization_aop/global_endpoint_context": {
+      "action_counts": {
+        "merge": 23,
+        "retain": 1334
+      },
+      "assignment_count": 7349,
+      "change_decision_count": 23,
+      "input_labels_owned": 1381,
+      "local_cluster_count": 74,
+      "namespace_local_duplicate_labels": 0,
+      "namespace_local_missing_labels": 0,
+      "primary_decision_count": 1357,
+      "proposed_final_label_count": 1357,
+      "provisional_non_null_label_count": 1381
+    },
+    "sensitization_aop/global_species_context": {
+      "action_counts": {
+        "retain": 15,
+        "split": 3
+      },
+      "assignment_count": 6291,
+      "change_decision_count": 3,
+      "input_labels_owned": 18,
+      "local_cluster_count": 63,
+      "namespace_local_duplicate_labels": 0,
+      "namespace_local_missing_labels": 0,
+      "primary_decision_count": 18,
+      "proposed_final_label_count": 19,
+      "provisional_non_null_label_count": 18
+    }
+  },
+  "packet_coverage": {
+    "clusters_are_namespace_local_and_atomic": true,
+    "packet_hashes_valid": true,
+    "packet_items_exactly_match_provenance_assignments": true
+  },
+  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "partial_global_validator": {
+    "action_counts": {
+      "merge": 52,
+      "retain": 2277,
+      "split": 3
+    },
+    "decisions": 2332,
+    "labels_expected": 17368,
+    "labels_missing": 14982,
+    "labels_owned": 2386,
+    "valid": true
+  },
+  "policy_sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017",
+  "protected_distinction_audit": {
+    "cd86_cd54_il8_preserved": true,
+    "cysteine_lysine_gsh_preserved": true,
+    "distinct_regulatory_methods_preserved": true,
+    "ec3_stimulation_index_preserved": true,
+    "species_splits_use_exhaustive_raw_value_assignments": true
+  },
+  "publication_status": "primary_review_proposed",
+  "reviewed_assignment_count": 19931,
+  "reviewed_cluster_count": 200,
+  "reviewed_namespaces": [
+    "sensitization_aop/global_context",
+    "sensitization_aop/global_species_context",
+    "sensitization_aop/global_endpoint_context"
+  ],
+  "reviewed_packet_count": 6,
+  "reviewed_packet_ids": [
+    "sensitization_aop__global_context__packet_0001",
+    "sensitization_aop__global_context__packet_0002",
+    "sensitization_aop__global_endpoint_context__packet_0001",
+    "sensitization_aop__global_endpoint_context__packet_0002",
+    "sensitization_aop__global_species_context__packet_0001",
+    "sensitization_aop__global_species_context__packet_0002"
+  ],
+  "reviewer_id": "skin_sensitization_audit",
+  "summary_version": "skin_reaction_auxiliary_primary_sensitization_review.v1"
+}

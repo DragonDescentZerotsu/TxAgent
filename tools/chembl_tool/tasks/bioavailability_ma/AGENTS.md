@@ -217,11 +217,12 @@ starling_normalized_v6/
                  record_validity_policy.json, auxiliary_mapping_manifest.json, source_contract.json}
   03_records/{records.parquet, duplicates.parquet, exclusions.parquet,
               scalar_distribution.parquet, manifest.json}
-  04_evidence_catalog/{molecule_families.parquet, molecule_family_records.parquet, manifest.json}
-  05_neighbor_index/{molecules.parquet, fingerprints.npz, group_membership.parquet, manifest.json}
-  06_pair_buckets/
-  07_assay_transfer_policy/
-  08_audits/
+  04_pair_buckets/{pair_bucket_records.parquet, pair_bucket_metadata.json}
+  05_assay_transfer_policy/{pair_bucket_transfer_policy.json.gz}
+  06_remove_heldout_overlap/{random,scaffold}/records.parquet
+  07_molecule_evidence/{random,scaffold}/
+  08_neighbor_index/{random,scaffold}/
+  09_audits/
   manifest.json
 ```
 
@@ -287,7 +288,7 @@ datasets must select only records with non-null `absolute_and_continuous_value`.
 The v1-v5 directories are historical audit artifacts. The v6 code does not reproduce or rewrite them.
 The read-only `audit_starling_v5_v6_migration.py` records both artifact hashes, normalized-record identity
 overlap, removal of the heuristic columns, and per-source global attachment status under
-`starling_normalized_v6/08_audits/v5_v6_migration/`.
+`starling_normalized_v6/09_audits/v5_v6_migration/`.
 
 Direct oral-bioavailability evidence is loaded from the single complete pinned source
 `data/starling_data/bioavailability_ma/Direct_HF/records.parquet`. It contains all 163,815 rows from
@@ -341,11 +342,11 @@ Caco-2 Fa flux pg/ng reconciliation with unspecified species and human liver-mic
 reconciliation; context-conditioned intestinal-perfusion candidates remain unmerged.
 
 ```text
-starling_normalized_v6/06_pair_buckets/
+starling_normalized_v6/04_pair_buckets/
   pair_bucket_records.parquet
   pair_bucket_metadata.json
 
-starling_normalized_v6/07_assay_transfer_policy/
+starling_normalized_v6/05_assay_transfer_policy/
   pair_bucket_transfer_policy.json.gz
 ```
 
@@ -389,8 +390,8 @@ inside one bucket and are not a shared physical scale across buckets.
 
 The frozen build has 5,221 buckets and 246,385 records. Of these, 365 buckets /
 226,913 records meet n=25; the variance gate removes 76 buckets / 27,318 records;
-289 buckets / 199,595 records remain assay-transfer eligible. All 289 have positive
-finite sample SD.
+289 buckets / 199,595 records remain assay-transfer eligible. Every eligible
+bucket has positive finite sample SD.
 
 The downstream pair-bucket membership and combined transfer policy can be rebuilt
 without rewriting normalized-v6 records:
@@ -407,6 +408,14 @@ The second command performs no LLM call. The compressed policy contains its sour
 hashes, complete gate contract, exact counts, bucket-local SD curves, and one entry
 per v8 key. Downstream consumers join only by `pair_bucket_key`; there is no
 record-level endpoint-policy assignment.
+
+Stages 04 and 05 intentionally use the complete unfiltered Stage-03 records. Therefore
+held-out Direct-HF measurements contribute to global bucket support, SD, variance-gate,
+and percentile statistics. Stage 06 then materializes separate random/scaffold record
+views by parent identity, removing matches only from `direct_hf`. Fa, Fg, Fh, and oral
+exposure are retained even for held-out molecules. Only these filtered views feed Stage
+07 molecule evidence and Stage 08 neighbor indices; no unfiltered evidence/index branch
+is published.
 
 Staged normalized-v6 rebuilds publish each stage only after its temporary outputs
 have been written and validated. A successful `clean`, `normalize`, or `organize`
@@ -434,27 +443,28 @@ Build with the local project environment:
 
 Use `--from-stage` and `--through-stage` with `clean|normalize|organize|index` to inspect or restart a hashed
 stage. The legacy factor/direct consumers now reconstruct their views from the same complete Direct-HF
-Parquet; v1-v5 outputs remain frozen historical artifacts. Experiments opt into the directory index at
-`starling_normalized_v6/05_neighbor_index/`; `load_index()` detects its manifest and joins referenced
-finalized records once at startup. Normalized-v5 is not rewritten by the v6 builder.
+Parquet; v1-v5 outputs remain frozen historical artifacts. Experiments must select either
+`starling_normalized_v6/08_neighbor_index/random/` or `.../scaffold/`; `load_index()` detects the
+split manifest and joins the corresponding filtered Stage-06 records once at startup. There is no
+unfiltered normalized-v6 neighbor index. Normalized-v5 is not rewritten by the v6 builder.
 
 ## Commands
 
-构建 Starling index：
+Build a new complete-Parquet Starling factor index:
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
   python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v2 \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v4 \
   --workers 32
 ```
 
-用通用 pipeline 跑 Starling source：
+Run the shared reasoning pipeline with that index:
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
   python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
-  --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v2/starling_factor_neighbor_index.pkl \
+  --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v4/starling_factor_neighbor_index.pkl \
   --api-key-env GLM_API_KEY \
   --base-url https://litellm.parcc.upenn.edu/v1 \
   --model zai-org/GLM-5.2-FP8 \

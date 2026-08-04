@@ -1,0 +1,47 @@
+{
+  "publication_version": "skin_reaction_auxiliary_reconciliation_publication.v1",
+  "publication_date": "2026-08-03",
+  "approval_basis": "Explicit user approval to use the globally reconciled columns in the Skin pair-bucket policy.",
+  "mapping_version": "starling_auxiliary.skin_reaction.globally_reconciled.v2",
+  "proposal": {
+    "path": "proposal/proposed_globally_reconciled_mapping.json",
+    "sha256": "5cd011cbd536dd5e720e9e7e42c18619788b54e33ec384f56933ee24bb50c6b5",
+    "final_integrity_audit": "proposal/FINAL_INTEGRITY_AUDIT.json"
+  },
+  "runtime_mapping": {
+    "path": "../globally_reconciled_auxiliary_value_mapping.json",
+    "sha256": "34db0efcd64769699e4b86f7cdcb16e9dc12e466e5f04eb2352eca43440ebd45"
+  },
+  "runtime_compatibility_resolutions": {
+    "namespace": "phototoxicity_irritation_local_damage/global_context",
+    "cleaned_tuple_conflicts_resolved": 6,
+    "proposal_raw_keys_changed": 7,
+    "rule": "Typography-equivalent raw tuples must map identically; use an existing reviewed label that preserves the exact method text.",
+    "resolutions": [
+      {"cleaned_tuple": ["51Cr release assay"], "final_label": "chromium release assay"},
+      {"cleaned_tuple": ["51Cr release cytotoxicity assay"], "final_label": "51cr release assay"},
+      {"cleaned_tuple": ["H2O2 measurement"], "final_label": "h2o2 measurement"},
+      {"cleaned_tuple": ["PGE2 assay"], "final_label": "pge2 assay"},
+      {"cleaned_tuple": ["Western blot for COX-2 and ELISA for PGE2"], "final_label": "western blot and elisa"},
+      {"cleaned_tuple": ["dermal LD50 test"], "final_label": "dermal ld50 test"}
+    ]
+  },
+  "published_build": {
+    "root": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6",
+    "pipeline_layout_version": "skin_reaction.normalized_v6_layout.v2",
+    "pair_bucket_version": "skin_reaction_pair_buckets.v3",
+    "pair_buckets": 27081,
+    "pairable_buckets_distinct_molecules_ge_2": 13319,
+    "minimum_support_buckets_n_ge_25": 1957,
+    "assay_transfer_eligible_buckets": 1099,
+    "records_in_pair_buckets": 385825
+  },
+  "validations": {
+    "runtime_attacher_compatible": true,
+    "conflicting_cleaned_tuple_mappings": 0,
+    "all_applicable_records_mapped": true,
+    "pair_bucket_tree_published": true,
+    "heldout_filtered_evidence_only": true,
+    "heldout_filtered_neighbor_indices_only": true
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "change_decision_count": 33,
+  "checked_change_ids": [
+    "pp_context_001",
+    "pp_context_002",
+    "pp_context_003",
+    "pp_context_004",
+    "pp_context_005",
+    "pp_context_006",
+    "pp_context_007",
+    "pp_context_008",
+    "pp_context_009",
+    "pp_context_010",
+    "pp_context_011",
+    "pp_context_012",
+    "pp_context_013",
+    "pp_context_014",
+    "pp_context_015",
+    "pp_context_016",
+    "pp_context_017",
+    "pp_context_018",
+    "pp_context_019",
+    "pp_context_020",
+    "pp_context_021",
+    "pp_context_022",
+    "pp_context_023",
+    "pp_context_024",
+    "pp_context_025",
+    "pp_context_026",
+    "pp_context_027",
+    "pp_species_001",
+    "pp_species_002",
+    "pp_species_003",
+    "pp_species_004",
+    "pp_species_005",
+    "pp_species_006"
+  ],
+  "checker_id": "bbb_rebuild_audit",
+  "checker_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/reviews/checker_passive_by_direct.jsonl",
+  "checker_sha256": "1b63802469f4adf09514bd40659585d1d8e75bd9f04a798f39723fd71cb38747",
+  "disagreement_ids": [
+    "pp_context_001",
+    "pp_context_011",
+    "pp_context_018",
+    "pp_context_021",
+    "pp_context_027"
+  ],
+  "disagreements": [
+    {
+      "decision_id": "pp_context_001",
+      "reason": "The merge is not model-type preserving. RBT-24 explicitly contains endothelial cells, pericytes, and astrocytes (a triple co-culture), MBT-24H explicitly contains primate endothelial cells with rat pericytes (a co-culture), while RTU states bovine brain capillary endothelial cells without either support-cell configuration. Product identifiers may be removable, but collapsing these explicit single/co-/triple-culture formats to `bbb kit` erases a protected assay/model distinction."
+    },
+    {
+      "decision_id": "pp_context_011",
+      "reason": "The split is exhaustive, but it assigns `hCMEC/D3 monoculture`, `hCMEC/D3 monoculture under shear stress`, `human monoculture BBB model using hBMEC cells`, and `immortalized human BBB mono-culture model` to `brain endothelial monolayer`. Monoculture specifies the number of cell types, not monolayer geometry, so the child label adds an assay/model property absent from those raw values; the shear-stress record also carries an explicit flow-related state that the proposed child discards."
+    },
+    {
+      "decision_id": "pp_context_018",
+      "reason": "The split covers every raw value, but `LUVs mimicking BBB` is assigned to `liposome partitioning`. That raw value explicitly supports a large-unilamellar-vesicle/liposome model, not a partitioning measurement or mechanism. The split contract forbids adding information absent from the raw source, so this child assignment needs a literal label such as `bbb-mimicking liposomes` rather than `liposome partitioning`."
+    },
+    {
+      "decision_id": "pp_context_021",
+      "reason": "The split is exhaustive but not inference-safe. `mono-culture hiPS-EC` is mapped to `ipsc-derived brain endothelial monolayer`: `hiPS-EC` and monoculture do not explicitly establish brain-endothelial identity or monolayer geometry, and the policy forbids deriving those properties from an abbreviation or outside model knowledge. `ECV304 cell layers` is likewise stronger evidence for a cell-layer label than for an explicit monolayer. These assignments need literal, less specific children."
+    },
+    {
+      "decision_id": "pp_context_027",
+      "reason": "The raw value explicitly states both a primary rat brain endothelial cell monolayer and co-culture on glial cells. Renaming it to generic `bbb co-culture` preserves co-culture but drops the explicitly stated endothelial-monolayer modality, which the policy lists as a protected major BBB modality. A combined co-culture-monolayer label or retention is required."
+    }
+  ],
+  "duplicate_change_ids": [],
+  "extra_change_ids": [],
+  "format_validation": {
+    "allowed_verdicts_only": true,
+    "checker_id_constant": true,
+    "every_passive_change_checked_exactly_once": true,
+    "exact_required_fields": true,
+    "nonempty_substantive_rationales": true
+  },
+  "missing_change_ids": [],
+  "packet_audit": {
+    "exact_packet_to_provenance_row_parity": true,
+    "packet_manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+    "reviewed_assignment_count": 1176,
+    "reviewed_cluster_count": 12,
+    "reviewed_packet_ids": [
+      "passive_permeability__global_context__packet_0001",
+      "passive_permeability__global_species_context__packet_0001"
+    ]
+  },
+  "primary_change_validation": {
+    "action_counts": {
+      "merge": 12,
+      "rename": 5,
+      "split": 16
+    },
+    "decisions": 33,
+    "labels_expected": 24274,
+    "labels_missing": 24187,
+    "labels_owned": 87,
+    "valid": true
+  },
+  "primary_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/reviews/primary_passive_permeability.jsonl",
+  "primary_sha256": "e37ab0996d178fa17fbc3eb51dc06cc8a3d3869aeaab324f9ba01d62af4c7a4c",
+  "scope": [
+    "passive_permeability/global_context",
+    "passive_permeability/global_species_context"
+  ],
+  "summary_version": "bbb_auxiliary_checker_passive_by_direct.v1",
+  "valid": true,
+  "verdict_counts": {
+    "agree": 28,
+    "disagree": 5
+  }
+}

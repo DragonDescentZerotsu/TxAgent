@@ -1,0 +1,337 @@
+{
+  "assignment_count": 66,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "(bromide/unit vol. serum)/(bromide/unit vol. c.s.f.)"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "C.S.F. Li / Serum Li"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "CCTW/Serum"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "cerebrum_to_blood_ratio",
+      "raw_value": "Cerebrum Blood"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "concentraciones de colistina en LCR / plasmáticas"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentraciones detectadas en el líquido cefalorraquí- deo (LCR)"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "concentraciones en el líquido cefalorraquídeo vs sangre"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "concentraciones en LCR / plasmáticas"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentración en el líquido cefalorraquídeo"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "concentración en el líquido cefalorráqueo / plasmática"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentración en líquido cerebroespinal"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "concentrações no líquido cefalo-raquidiano / nível plasmático"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "dialysate_ethanol_level",
+      "raw_value": "dialysate ethanol levels"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "csf_digoxin_concentration",
+      "raw_value": "Digoxinwerte in Liquor"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "ethanol_to_blood_ratio",
+      "raw_value": "ethanol level (relative to blood)"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "ethanol_to_blood_ratio",
+      "raw_value": "ethanol level relative to blood ethanol level"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "ethanol_to_blood_ratio",
+      "raw_value": "ethanol levels (normalized to blood)"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Gentamicin-Liquorkonzentration/Serumspiegel"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "Gewebe/Serum-Quotient"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Gewebekonzentration / Plasmaspiegel"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "isf_ethanol_level",
+      "raw_value": "ISF ethanol levels"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Konzentration im Liquor im Vergleich zum Serumwert"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "level in liquor"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "liquide céphalorachidien"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor- versus Plasmakonzentration"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor-konzentrationen / Plasmakonzentration"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor-Plasma-Verhältnis"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquor-Serum-Quotient"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor/Plasma-Verhältnis"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquor/Serum-spiegel"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "csf_permeability",
+      "raw_value": "Liquorgängigkeit (% of serum concentrations)"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquorkonzentration zu Serumkonzentration"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Liquorkonzentration/Blutkonzentration"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquorkonzentration/Serumkonzentration"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquorkonzentrationen (% of simultaneous serum concentrations)"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "csf_permeation",
+      "raw_value": "Liquorpermeation"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquorraum/Plasmakonzentration"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquorspiegel (% Serum)"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquorspiegel / Serumspiegel"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "Liquorspiegel/nicht proteingebundenen Serumspiegels"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquorspiegel/Serum-werte"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "peak_csf_to_peak_serum_ratio",
+      "raw_value": "maximale Liquorkonzentration / Serum Höchstwert"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "mes_to_serum_ratio",
+      "raw_value": "Mes/Serum"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "cerebrum_to_blood_ratio",
+      "raw_value": "Methanolgehalt des Gehirns / Methanolspiegel des Blutes"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "steady_state_csf_distribution",
+      "raw_value": "Organverteilung im Fließgleichgewicht (Liquor)"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "bbb_passage",
+      "raw_value": "paso a través de la barrera hematoencefálica"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "dialysate_ethanol_peak_concentration",
+      "raw_value": "peak dialysate ethanol concentrations"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetración en el líquido cefalorraquídeo"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Penetración en LCR (LCR:plasma)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "Plasma-Liquor-Verhältnis"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Prozentualer Anteil der Liquorkonzentration bezogen auf Serumkonzentration"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "Quotient aus Plasmakonzentration durch Liquorkonzentration"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Quotient Liquoralkohol/Blutalkohol"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "Quotient Plasma Liquor"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Quotienten aus Liquor- und Blutkonzentration"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_plasma_ultrafiltration_ratio",
+      "raw_value": "rapport d'ultra filtration entre le liquide céphalo-rachidien et le plasma"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "meninge_to_serum_ratio",
+      "raw_value": "rapport « méninge/sérum »"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "free_phenytoin_serum_to_csf_ratio",
+      "raw_value": "rapports entre taux de PHT libre dans le sérum et dans le LI"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio de lapatinib entre le liquide céphalorachidien et le sérum"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "ethanol_to_blood_ratio",
+      "raw_value": "revised ethanol concentration relative to blood ethanol level"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "specific_activity_brain_to_plasma_ratio",
+      "raw_value": "SAbrain/SAplasma"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_sorbitol_level",
+      "raw_value": "Sorbitspiegel im Liquor (CSF sorbitol level)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "peak_concentration_ratio",
+      "raw_value": "Verhältnis der Maximalkonzentrationen"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Verhältnis der Tracerkonzentration Gehirn-zu-Plasma"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "water_ps_product",
+      "raw_value": "water P·S product"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ZS.-Fl. Serum-Quotient"
+    }
+  ],
+  "cluster_id": "cluster_e0af296a3d40bf69",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

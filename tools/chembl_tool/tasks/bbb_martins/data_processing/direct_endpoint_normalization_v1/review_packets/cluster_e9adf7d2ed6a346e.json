@@ -1,0 +1,1992 @@
+{
+  "assignment_count": 397,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_14c_level",
+      "raw_value": "14C-Levels in the brain"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_verapamil_level",
+      "raw_value": "[¹¹C]-verapamil brain levels"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "absolute_brain_level",
+      "raw_value": "absolute brain levels"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "absolute_brain_sitosterol_level",
+      "raw_value": "absolute brain sitosterol levels"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "absolute_brain_level",
+      "raw_value": "absolute levels in the brain"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "absolute_brain_compound_level",
+      "raw_value": "absolute levels of compound in the brain"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_ac_level",
+      "raw_value": "AC levels in the brain"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "achievable_brain_level",
+      "raw_value": "Achievable level in brain"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_activity_level",
+      "raw_value": "activity levels in brain"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "cortical_acy_738_level",
+      "raw_value": "ACY-738 levels in cortical samples"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_atr_level",
+      "raw_value": "ATR levels in the brain"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "average_brain_level",
+      "raw_value": "average brain level"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "average_brain_level",
+      "raw_value": "Average brain levels"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "average_brain_level",
+      "raw_value": "average brain levels"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "average_brain_c2_8_level",
+      "raw_value": "average C2-8 levels in the brains"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "average_mouse_brain_level",
+      "raw_value": "average level in the mouse-brain"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "average_brain_level",
+      "raw_value": "average levels in the brain"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "average_peak_brain_level",
+      "raw_value": "average peak brain levels"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "average_brain_level",
+      "raw_value": "Avg. Brain Levels"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_bcnu_level",
+      "raw_value": "BCNU levels in the brain"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "cortex_benzoate_level",
+      "raw_value": "benzoate level in cortex"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_14c_level",
+      "raw_value": "brain 14C-levels"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_5_ht_increase",
+      "raw_value": "brain 5-HT increase"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_accumulation_level",
+      "raw_value": "brain accumulation levels"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_acetaldehyde_level",
+      "raw_value": "brain acetaldehyde level"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_activity_level",
+      "raw_value": "brain activity level"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_activity_level",
+      "raw_value": "brain activity levels"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_activity_level",
+      "raw_value": "brain activity levels (Abcb1a/1b;Abcg2-/- vs wild-type)"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_aglycone_level",
+      "raw_value": "brain aglycone levels"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_allo_level",
+      "raw_value": "brain Allo levels"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_amino_acid_level",
+      "raw_value": "brain amino acid level"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_and_csf_level",
+      "raw_value": "brain and CSF levels"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_and_spinal_cord_level",
+      "raw_value": "brain and spinal cord levels"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "time_to_peak_brain_level",
+      "raw_value": "brain appearance and peak time"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_arsenic_level",
+      "raw_value": "brain As level"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_ascorbic_acid_level",
+      "raw_value": "brain AsA levels"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_bcnu_level",
+      "raw_value": "brain BCNU level"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_bilirubin_level",
+      "raw_value": "Brain bilirubin level"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_bilirubin_level",
+      "raw_value": "brain bilirubin level"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_catechol_level",
+      "raw_value": "Brain catechol levels"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_choline_level",
+      "raw_value": "brain choline level"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_cocaine_level",
+      "raw_value": "Brain cocaine level"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_colchicine_level",
+      "raw_value": "brain colchicine levels"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_content_increase",
+      "raw_value": "brain content increase over basal level"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_coq10_level",
+      "raw_value": "brain CoQ10 levels"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_cotinine_level",
+      "raw_value": "brain cotinine level"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_cotinine_level",
+      "raw_value": "brain cotinine levels"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_cr_increase",
+      "raw_value": "brain Cr increase"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_curcumin_level",
+      "raw_value": "brain curcumin levels"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_d4_tca_level",
+      "raw_value": "brain d4-TCA levels"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_dopamine_level",
+      "raw_value": "brain DA levels"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_darunavir_level",
+      "raw_value": "brain darunavir level"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_delivery_level",
+      "raw_value": "brain delivery level"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_dialysate_level",
+      "raw_value": "brain dialysate levels"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_distribution_level",
+      "raw_value": "brain distribution levels"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_doxorubicin_level",
+      "raw_value": "brain doxorubicin levels"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_dpi_level",
+      "raw_value": "brain DPI levels"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_dxt_level",
+      "raw_value": "Brain DXT levels"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_ecf_level",
+      "raw_value": "brain ECF levels"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_endothelium_level",
+      "raw_value": "brain endothelium levels"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_escitalopram_level",
+      "raw_value": "brain escitalopram levels"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_estradiol_level",
+      "raw_value": "brain estradiol level"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_estradiol_level",
+      "raw_value": "brain estradiol levels"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_exposure_level",
+      "raw_value": "brain exposure level"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_exposure_level",
+      "raw_value": "Brain exposure levels"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_exposure_level",
+      "raw_value": "brain exposure levels"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_fluorescein_level",
+      "raw_value": "brain fluorescein levels"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_fluoride_level",
+      "raw_value": "brain fluoride levels"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_gadolinium_level",
+      "raw_value": "brain gadolinium levels"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_genistein_level",
+      "raw_value": "brain genistein levels"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_glucose_level",
+      "raw_value": "brain glucose level"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_glyphosate_level",
+      "raw_value": "brain glyphosate levels"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_homogenate_level",
+      "raw_value": "brain homogenate levels"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_ipra_fold_increase",
+      "raw_value": "brain IPrA fold-increase"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_isatin_level",
+      "raw_value": "brain isatin level"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_lactate_increase",
+      "raw_value": "Brain lactate levels (increase)"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_lead_level",
+      "raw_value": "Brain lead level"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_lead_level",
+      "raw_value": "brain lead levels"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Brain Level"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Brain level"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "brain level"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "brain level enhancement"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "brain level increase"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_lead_level",
+      "raw_value": "brain level of lead"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_udca_level",
+      "raw_value": "brain level of UDCA"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_level_ratio",
+      "raw_value": "brain level ratio between Mdr1a-deficient and normal mice"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Brain Levels"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Brain levels"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "brain levels"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_active_form_level",
+      "raw_value": "brain levels (active form)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_level_fold_change",
+      "raw_value": "brain levels (fold increase vs untreated)"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_level_fold_change",
+      "raw_value": "brain levels (fold-increase)"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_inactive_form_level",
+      "raw_value": "brain levels (inactive form)"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "brain levels (increase in ABCB1 knock-out vs wild-type)"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "brain levels (increase in P-gp deficient mice)"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_level_ratio",
+      "raw_value": "brain levels (P-gp knockout vs wildtype)"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_level_ratio",
+      "raw_value": "brain levels (relative to WT mice)"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_to_csf_ratio",
+      "raw_value": "brain levels / CSF levels"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_to_peripheral_organ_ratio",
+      "raw_value": "Brain levels / peripheral organ levels"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_to_systemic_circulation_ratio",
+      "raw_value": "brain levels / systemic circulation levels"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_to_systemic_ratio",
+      "raw_value": "brain levels / systemic levels"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Brain levels at ED50"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_level_ratio",
+      "raw_value": "brain levels compared with wild-type"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "brain levels increase"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_6_mam_level",
+      "raw_value": "brain levels of 6-MAM"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_arsenic_level",
+      "raw_value": "Brain Levels of Arsenic"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_bumetanide_level",
+      "raw_value": "brain levels of bumetanide"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_db75_level",
+      "raw_value": "brain levels of DB75"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_mercury_level",
+      "raw_value": "brain levels of mercury"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_organic_moiety_level",
+      "raw_value": "Brain levels of organic moiety"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_pentobarbital_level",
+      "raw_value": "Brain levels of pentobarbital"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_vpa_level",
+      "raw_value": "brain levels of VPA"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_to_peripheral_organ_ratio",
+      "raw_value": "brain levels relative to peripheral organs"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_lithium_level",
+      "raw_value": "Brain lithium level"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_mercury_level",
+      "raw_value": "brain mercury level"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_mercury_level",
+      "raw_value": "Brain mercury levels"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_methanol_level",
+      "raw_value": "brain methanol level"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_magnesium_level",
+      "raw_value": "brain Mg²⁺ levels"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_melatonin_level",
+      "raw_value": "brain MLT levels"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_myo_inositol_level",
+      "raw_value": "brain myo-inositol levels"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_nbi_level",
+      "raw_value": "brain NBI levels"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_nelfinavir_level",
+      "raw_value": "brain nelfinavir levels"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_parenchyma_level",
+      "raw_value": "brain parenchyma levels"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_parenchymal_to_serum_ratio",
+      "raw_value": "brain parenchymal levels / serum level"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_lead_level",
+      "raw_value": "Brain Pb level"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_lead_level",
+      "raw_value": "brain Pb level"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_pbn_level",
+      "raw_value": "brain PBN levels"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "peak_brain_level",
+      "raw_value": "brain peak level"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_phe_level",
+      "raw_value": "brain Phe level"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_phe_level",
+      "raw_value": "Brain Phe levels"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_phe_level",
+      "raw_value": "brain Phe levels"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_pipecolic_acid_level",
+      "raw_value": "Brain pipecolic acid level"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_propranolol_level",
+      "raw_value": "brain propranolol levels"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_ptz_level",
+      "raw_value": "brain PTZ levels"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_pus_trough_level",
+      "raw_value": "brain pus trough levels"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_pyroga_increase",
+      "raw_value": "brain pyroGA increase"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_residue_peak_level",
+      "raw_value": "brain residue peak value"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_ritonavir_level",
+      "raw_value": "brain ritonavir level"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_ritonavir_level",
+      "raw_value": "brain ritonavir levels"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_salicylate_level",
+      "raw_value": "brain salicylate level"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_scyllo_inositol_level",
+      "raw_value": "brain scyllo-inositol levels"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_senicapoc_level",
+      "raw_value": "brain senicapoc levels"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_shikonin_level",
+      "raw_value": "brain shikonin levels"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_sitosterol_level",
+      "raw_value": "brain sitosterol levels"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_sobetirome_level",
+      "raw_value": "brain sobetirome level"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "steady_state_brain_level",
+      "raw_value": "brain steady-state level"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_sucrose_level",
+      "raw_value": "brain sucrose levels"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_theophylline_level",
+      "raw_value": "brain theophylline levels"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_thpo_level",
+      "raw_value": "brain THPO level"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_tissue_ascorbic_acid_level",
+      "raw_value": "brain tissue AsA levels"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "Brain tissue level"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "brain tissue level"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "Brain tissue levels"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "brain tissue levels"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "brain_tissue_level_increase",
+      "raw_value": "brain tissue levels increase"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_tissue_rpv_level",
+      "raw_value": "brain tissue RPV levels"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_toluene_level",
+      "raw_value": "brain toluene levels"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "trough_brain_level",
+      "raw_value": "Brain trough levels"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "trough_brain_level",
+      "raw_value": "brain trough levels"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_tryptophan_level",
+      "raw_value": "brain tryptophan levels"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "brain_tumor_tissue_level",
+      "raw_value": "Brain tumor tissue levels"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "brain_tyrosine_level",
+      "raw_value": "brain tyrosine level"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_udca_level",
+      "raw_value": "brain UDCA levels"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_to_systemic_ratio",
+      "raw_value": "brain/systemic levels"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_to_tissue_ratio",
+      "raw_value": "brain:tissue levels"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brainstem_doxorubicin_level",
+      "raw_value": "brainstem doxorubicin level"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "brain_caffeine_level",
+      "raw_value": "Caffeine brain level"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "brain_cbd_level",
+      "raw_value": "CBD levels in brain"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "cns_to_liver_tissue_ratio",
+      "raw_value": "central nervous system level relative to liver tissue"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "cns_level",
+      "raw_value": "central nervous system levels"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "cerebellar_lead_level",
+      "raw_value": "cerebellar lead level"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "cerebellar_level",
+      "raw_value": "cerebellar levels"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "cerebellar_ro0711401_level",
+      "raw_value": "Cerebellar Ro0711401 levels"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "cerebellum_level",
+      "raw_value": "cerebellum levels"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "cerebral_cortex_coq10_level",
+      "raw_value": "cerebral cortex CoQ10 levels"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "cerebral_cortex_level",
+      "raw_value": "cerebral cortex level"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "cerebral_cortex_level",
+      "raw_value": "cerebral cortex levels"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "cerebral_cortex_level",
+      "raw_value": "cerebral cortical levels"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "cerebral_dha_level",
+      "raw_value": "cerebral DHA levels"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "cerebral_level",
+      "raw_value": "cerebral level"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "cerebral_level",
+      "raw_value": "Cerebral levels"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "cerebral_level",
+      "raw_value": "cerebral levels"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "cerebral_mtx_level",
+      "raw_value": "Cerebral MTX levels"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "peak_cerebral_level",
+      "raw_value": "cerebral peak"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "cerebral_szr72_level",
+      "raw_value": "cerebral SZR72 levels"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "csf_level",
+      "raw_value": "cerebrospinal SS level"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "contralateral_cortex_level",
+      "raw_value": "Contralateral cortex levels"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "contralateral_striatum_level",
+      "raw_value": "Contralateral striatum levels"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_copper_level",
+      "raw_value": "copper level in the brain"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "cortex_level",
+      "raw_value": "Cortex Levels"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "cortex_to_blood_ratio",
+      "raw_value": "cortex levels / blood levels"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "cortical_lidocaine_level",
+      "raw_value": "cortical brain lidocaine level"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "cortical_d_serine_level",
+      "raw_value": "cortical D-serine levels"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "cortical_inositol_level",
+      "raw_value": "cortical inositol levels"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_curcumin_level",
+      "raw_value": "curcumin level in brain"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_curcumin_level",
+      "raw_value": "curcumin level in the brain"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "target_brain_region_dha_level",
+      "raw_value": "DHA levels in target brain regions"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "regional_brain_dhea_level",
+      "raw_value": "DHEA levels in the hippocampus, hypothalamus, and frontal cortex of the brain"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_dlx_level",
+      "raw_value": "DLX levels in brain"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_dtx_level",
+      "raw_value": "DTX level in brain"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_coq10_level_increase",
+      "raw_value": "elevation of CoQ10 in the brain"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "estimated_unbound_brain_level",
+      "raw_value": "estimated free brain levels"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "estimated_brain_level",
+      "raw_value": "estimated level in brain"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "brain_ethg_level",
+      "raw_value": "etHg levels in Brain"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_ecf_level",
+      "raw_value": "extracellular brain level"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brain_ecf_level",
+      "raw_value": "extracellular level in the brain"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_microdialysate_fa_level",
+      "raw_value": "FA levels in the microdialysate of the brain"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "fetal_to_maternal_brain_ratio",
+      "raw_value": "fetal brain levels relative to maternal brain levels"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "brain_level_fold_change",
+      "raw_value": "Fold change of brain levels (ko/wt)"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "forebrain_cinn_level",
+      "raw_value": "forebrain CINN levels"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "unbound_brain_level",
+      "raw_value": "free brain levels"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "unbound_brain_diflunisal_level",
+      "raw_value": "free diflunisal brain levels"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "unbound_swine_brain_level",
+      "raw_value": "free levels in the swine brain"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_tissue_fluoride_level",
+      "raw_value": "F⁻ levels in brain tissues"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_gadolinium_level",
+      "raw_value": "Gadolinium levels in the brain"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Gd content in the brain / blood levels"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_mercury_level",
+      "raw_value": "Hg level in the regions of the wet brain samples"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "highest_brain_level",
+      "raw_value": "highest brain levels"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "hippocampal_kyna_level",
+      "raw_value": "hippocampal KYNA levels"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "hippocampal_level",
+      "raw_value": "hippocampal level"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "hippocampal_level",
+      "raw_value": "hippocampal levels"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "hippocampal_magnesium_level_increase",
+      "raw_value": "hippocampal Mg²⁺ level increase"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "hypothalamic_level",
+      "raw_value": "hypothalamic levels"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "brain_ibuprofen_level",
+      "raw_value": "IBU levels in the brain"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_distribution_increase",
+      "raw_value": "increase in 11C-Lop brain distribution"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "Increase in Brain Level"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "increase in brain levels"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "increase in host brain"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "increase in the brain"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "brain_level_increase",
+      "raw_value": "increase in the host brain"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "intracerebral_level",
+      "raw_value": "intra-cerebral level"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "intracranial_level",
+      "raw_value": "intra-cranial levels"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "intracerebral_level",
+      "raw_value": "intracerebral level"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "intracerebral_level",
+      "raw_value": "intracerebral levels"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "intraparenchymal_brain_level",
+      "raw_value": "intraparenchymal brain levels"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "intratumoral_to_normal_brain_tissue_ratio",
+      "raw_value": "intratumoral levels relative to normal brain tissue"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "intratumoral_to_normal_brain_hemisphere_ratio",
+      "raw_value": "intratumoral vs normal brain hemisphere levels"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "ipsilateral_cortex_level",
+      "raw_value": "Ipsilateral cortex levels"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "brain_isatin_level",
+      "raw_value": "IS levels in brain"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "cortex_ldopa_level",
+      "raw_value": "L-DOPA brain levels in the cortex"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "human_brain_level",
+      "raw_value": "level achieved in the human brain"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "level in brain"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_dialysate_level",
+      "raw_value": "level in brain dialysate"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_homogenate_extract_level",
+      "raw_value": "level in brain homogenate extract"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "cortex_level",
+      "raw_value": "level in cortex"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "hippocampal_level",
+      "raw_value": "level in hippocampus"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "ischaemic_tissue_to_cerebellum_ratio",
+      "raw_value": "level in ischaemic tissue / level in cerebellum"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "mouse_brain_level",
+      "raw_value": "level in mouse brain"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "myelin_level",
+      "raw_value": "level in myelin"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "normal_brain_level",
+      "raw_value": "level in normal brain"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "level in the brain"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "cerebral_cortex_level",
+      "raw_value": "level in the cerebral cortex"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "human_brain_level",
+      "raw_value": "level in the human brain"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "brain_2_pmpa_level",
+      "raw_value": "level of 2-PMPA in brain"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "brain_isatin_level",
+      "raw_value": "level of brain isatin"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "brain_dopamine_level",
+      "raw_value": "level of dopamine in the brain"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_gemfibrozil_level",
+      "raw_value": "level of gemfibrozil in the brain"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "brain_ivm_level",
+      "raw_value": "level of IVM in the brain"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "brain_loperamide_level",
+      "raw_value": "level of loperamide in their brains"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "brain_mtx_level",
+      "raw_value": "level of MTX in brain"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "levels found in the brain"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "levels in brain"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "levels in brain tissue"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "levels in brains"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "normal_brain_tissue_level",
+      "raw_value": "levels in normal brain tissue"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "rat_brain_level",
+      "raw_value": "levels in rat brain"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "levels in the brain"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "levels in the brains"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "cns_level",
+      "raw_value": "levels in the central nervous system"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "cerebral_cortex_level",
+      "raw_value": "levels in the cerebral cortex"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "putamen_level",
+      "raw_value": "levels in the putamen (brain)"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "striatum_and_accumbens_level",
+      "raw_value": "levels in the striatum and the accumbens"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "mouse_brain_level",
+      "raw_value": "levels in vivo in the mouse brain"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_pterin_level",
+      "raw_value": "levels of brain pterins"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "cerebellar_cortisol_reduction",
+      "raw_value": "levels of cerebellar cortisol (reduction)"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "brain_dom_level",
+      "raw_value": "levels of DOM in the brain"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "unbound_brain_egcg_level",
+      "raw_value": "levels of free EGCG in the brain"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "brain_hpbcd_level",
+      "raw_value": "levels of HPβCD in the brain"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "brain_mh_level",
+      "raw_value": "levels of MH in the brain"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "brain_mhg_level",
+      "raw_value": "levels of mHg in the brain"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "brain_homogenate_lead_level",
+      "raw_value": "levels of Pb in brain homogenates"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "human_brain_posiphen_level",
+      "raw_value": "levels of Posiphen in human brain"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "brain_dialysate_tak_285_level",
+      "raw_value": "levels of the TAK-285 in the brain dialysate samples"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "brain_3h_t_level",
+      "raw_value": "levels of ³H-T in brain"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "brain_lvfx_level",
+      "raw_value": "LVFX levels in the brain"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "brain_lycopene_level",
+      "raw_value": "lycopene levels in the brain"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "brain_m3g_level",
+      "raw_value": "M3G levels in brain"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "maximal_brain_bcnu_level",
+      "raw_value": "Maximal BCNU Level (Brain)"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "maximal_brain_level",
+      "raw_value": "maximal brain level"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "maximal_brain_level",
+      "raw_value": "maximal brain levels"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "maximal_endogenous_brain_level",
+      "raw_value": "maximal endogenous levels in the brain"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "maximal_brain_level",
+      "raw_value": "maximal level in brain"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "maximal_brain_to_blood_ratio",
+      "raw_value": "Maximal levels in brain / blood"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "maximum_bound_and_unbound_brain_level",
+      "raw_value": "Maximum bound and unbound brain levels"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "maximum_bound_brain_level",
+      "raw_value": "Maximum bound brain level"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "maximum_bound_brain_level",
+      "raw_value": "maximum bound brain level"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "maximum_brain_level",
+      "raw_value": "Maximum brain level"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "maximum_brain_level",
+      "raw_value": "maximum brain level"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "maximum_brain_level",
+      "raw_value": "maximum brain levels"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "maximum_brain_level",
+      "raw_value": "maximum level in brain"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "maximum_rat_brain_level",
+      "raw_value": "maximum level in the rat brain"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "maximum_unbound_brain_level",
+      "raw_value": "Maximum unbound brain level"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "maximum_unbound_brain_level",
+      "raw_value": "maximum unbound brain level"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "brain_level_ratio",
+      "raw_value": "mdr1(−/−):mdr1(+/+) brain levels"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "mean_brain_gentamicin_level_reduction",
+      "raw_value": "mean brain gentamicin level reduction"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "mean_brain_level",
+      "raw_value": "mean brain level"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "mean_brain_level",
+      "raw_value": "mean brain levels"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "mean_brain_ltg_level",
+      "raw_value": "mean brain LTG level"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "mean_brain_tissue_level",
+      "raw_value": "mean brain-tissue levels"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "mean_human_brain_level",
+      "raw_value": "mean level in the human brain"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "mean_brain_level",
+      "raw_value": "mean levels in the brain"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "mean_maximum_cerebral_level",
+      "raw_value": "mean maximum cerebral level"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "mean_brain_tissue_mvc_level",
+      "raw_value": "mean MVC levels in brain tissues"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "pup_cortical_manganese_level",
+      "raw_value": "Mn levels of the pups’ corticals"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "mouse_brain_level",
+      "raw_value": "Mouse brain level"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "brain_mt_level",
+      "raw_value": "MT levels in the brain"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "brain_nor_bni_level",
+      "raw_value": "nor-BNI levels in the brain"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "normal_brain_boron_10_level",
+      "raw_value": "normal brain boron-10 levels"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "normal_brain_tissue_level",
+      "raw_value": "normal brain tissue levels"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "brain_oleanolic_acid_level",
+      "raw_value": "Oleanolic acid level in brain"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "brain_organic_fraction_level",
+      "raw_value": "organic fraction levels in Brain"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "overall_brain_level",
+      "raw_value": "overall brain level"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "overall_brain_tissue_level",
+      "raw_value": "overall brain tissue levels"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "whole_brain_percent_id_peak",
+      "raw_value": "peak %ID in whole-brain"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "peak_brain_activity",
+      "raw_value": "Peak brain activity"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "peak_brain_activity",
+      "raw_value": "peak brain activity"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "peak_brain_content",
+      "raw_value": "peak brain content"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "peak_brain_ecf_level",
+      "raw_value": "peak brain ECF levels"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "peak_brain_exposure",
+      "raw_value": "peak brain exposure"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "peak_brain_level",
+      "raw_value": "peak brain level"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "time_to_peak_brain_level",
+      "raw_value": "peak brain level time"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "peak_brain_level",
+      "raw_value": "peak brain levels"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "peak_cerebral_level",
+      "raw_value": "peak cerebral level"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "peak_brain_content",
+      "raw_value": "peak content in the brain"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "peak_brain_level",
+      "raw_value": "peak level in brain"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "peak_brain_tissue_level",
+      "raw_value": "peak level in brain tissue"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "peak_frontal_cortex_level",
+      "raw_value": "peak level in frontal cortex"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "peak_brain_rg1_level",
+      "raw_value": "peak level of Rg1 in the brain"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "peak_brain_bumetanide_level",
+      "raw_value": "peak levels of bumetanide in brain"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "peak_unbound_brain_level",
+      "raw_value": "peak unbound brain levels"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "brain_phb_level",
+      "raw_value": "PhB level in the brain"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "brain_pht_level",
+      "raw_value": "PHT brain levels"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "brain_pio_level",
+      "raw_value": "PIO level in brain samples"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "brain_dlm_proportional_increase",
+      "raw_value": "proportional increase in brain DLM levels"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "regional_brain_level",
+      "raw_value": "regional brain levels"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "brain_ritonavir_level",
+      "raw_value": "RTV level in the brain"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "brain_silver_level",
+      "raw_value": "silver levels in the brain"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "brain_sitosterol_level",
+      "raw_value": "SIT levels in the brain"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "brain_sitosterol_level",
+      "raw_value": "sitosterol level in brain"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "steady_state_brain_level",
+      "raw_value": "steady-state brain levels"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "steady_state_brain_tissue_level",
+      "raw_value": "steady-state brain tissue level"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "steady_state_brain_tissue_level",
+      "raw_value": "Steady-state brain tissue levels"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "steady_state_brain_tissue_level",
+      "raw_value": "steady-state brain tissue levels"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "striatal_ldopa_level",
+      "raw_value": "striatal L-dopa level"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "striatal_level",
+      "raw_value": "striatal levels"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "striatal_ma_level",
+      "raw_value": "Striatal MA levels"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "striatal_mdma_level",
+      "raw_value": "striatal MDMA levels"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "rat_brain_t_588_level",
+      "raw_value": "T-588 levels in the rat brain"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "brain_temozolomide_level",
+      "raw_value": "Temozolomide levels in the brain"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "brain_thc_level",
+      "raw_value": "THC level in the brain"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "brain_theanine_level",
+      "raw_value": "Theanine level in the brain"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "time_to_max_brain_level",
+      "raw_value": "time to maximal brain levels"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "time_to_peak_brain_level",
+      "raw_value": "time to peak brain level"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "time_to_peak_brain_level",
+      "raw_value": "time to peak brain levels"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "time_to_peak_brain_level",
+      "raw_value": "time to reach peak levels in brain"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "tissue levels in the brain"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "brain_titanium_level",
+      "raw_value": "titanium level in brain"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "tmax_brain_level",
+      "raw_value": "Tmax (brain levels)"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "total_brain_level",
+      "raw_value": "total brain level"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "total_brain_level",
+      "raw_value": "Total brain levels"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "total_brain_level",
+      "raw_value": "total brain levels"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "total_brain_lysate_level",
+      "raw_value": "total brain lysates levels"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "total_brain_siponimod_level",
+      "raw_value": "total brain siponimod levels"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "total_cerebral_level",
+      "raw_value": "total cerebral levels"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "total_brain_glp1_level",
+      "raw_value": "total GLP-1 levels in the brain"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "total_brain_tissue_level",
+      "raw_value": "total level in brain tissue"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "total_brain_tak_285_level",
+      "raw_value": "total TAK-285 levels in the brain"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "max_total_brain_tak_285_level",
+      "raw_value": "total TAK-285 levels in the brain (Cmax)"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "total_brain_udca_level",
+      "raw_value": "total UDCA levels in the brain"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "trough_brain_level",
+      "raw_value": "trough brain level"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "trough_brain_level",
+      "raw_value": "Trough Level Brain"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "trough_brain_tissue_level",
+      "raw_value": "trough levels in brain tissue"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "hippocampal_u_level",
+      "raw_value": "U level in the hippocampus"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "whole_brain_u_level",
+      "raw_value": "U levels in the whole brain"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "brain_udca_level",
+      "raw_value": "UDCA levels in the brain"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "brain_microdialysate_vgb_level",
+      "raw_value": "VGB levels in brain microdialysates"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "whole_brain_lead_level",
+      "raw_value": "whole brain lead levels"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "whole_brain_level",
+      "raw_value": "Whole Brain Level"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "whole_brain_level",
+      "raw_value": "whole brain level"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "whole_brain_level",
+      "raw_value": "Whole brain levels"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "whole_brain_level",
+      "raw_value": "whole brain levels"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "whole_brain_lithium_level",
+      "raw_value": "Whole brain lithium level"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "whole_brain_percent_id_peak",
+      "raw_value": "Whole brain peak %ID"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "whole_brain_tissue_level",
+      "raw_value": "Whole brain tissue levels"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "whole_rat_brain_tissue_level",
+      "raw_value": "whole rat brain tissue levels"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "whole_brain_level",
+      "raw_value": "whole-brain levels"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "brain_alpha_tocopherol_level",
+      "raw_value": "αTocH levels in the brain"
+    }
+  ],
+  "cluster_id": "cluster_e9adf7d2ed6a346e",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

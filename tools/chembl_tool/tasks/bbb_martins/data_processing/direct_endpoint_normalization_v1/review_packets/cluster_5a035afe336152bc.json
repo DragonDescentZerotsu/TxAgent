@@ -1,0 +1,1577 @@
+{
+  "assignment_count": 314,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "csf_fraction",
+      "raw_value": "% Antibiotic in CSF"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "afatinib concentrations in the CSF"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "bbb_to_csf_amount",
+      "raw_value": "amount of toxin crossing BBB to CSF"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "ampicillin level in the CSF"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Antibiotic concentrations in CSF"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "antibiotic CSF concentration"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "antileukemic CSF levels"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "csf_bioavailability",
+      "raw_value": "apparent CSF bioavailability"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "csf_free_plasma_auc_ratio",
+      "raw_value": "area under the cisplatin CSF concentration/time curve / areas under the coresponding free cisplatin plasma curves"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "csf_free_plasma_auc_ratio",
+      "raw_value": "area under the concentration-time curves (AUC) for CSF-free cisplatin vs plasma-free cisplatin"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "csf_free_plasma_auc_ratio",
+      "raw_value": "area under the concentration–time curve from time 0.5–12 h (AUC0.5–12) in CSF vs. plasma (free-drug concentration)"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_plasma_auc_ratio",
+      "raw_value": "area under the curve for drug in CSF to drug in plasma"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average CSF drug concentration"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average drug concentration (csf)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average drug concentration in CSF"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "csf_bioavailability",
+      "raw_value": "bioavailability in the CSF"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Biotin concentration in CSF"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "brain and CSF concentrations"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Carbenicillin CSF"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "csf_serum_concentration_ratio",
+      "raw_value": "ceftriaxone concentrations in CSF / concurrent serum concentrations"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "cefuroxime_concentration",
+      "raw_value": "cefuroxime concentrations"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cisplatin concentration in the CSF"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "cisternal CSF morphine base / plasma morphine base ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "colistin CSF concentrations"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "Concentration in human lumbar CSF"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "concentration in lumbar CSF"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in rat CSF"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "concentration in the lumbar CSF"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of amikacin in CSF"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentration of ampicillin in CSF"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentration of antibiotic in CSF"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of caffeine in CSF"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "concentration of drug in the CSF / plasma"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of fluconazole in CSF"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "free_csf_plasma_concentration_ratio",
+      "raw_value": "concentration of free ibuprofen in the CSF at steady state / plasma"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of phenytoin in the CSF"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of the antibiotic in the CSF"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentration of tubocurarine in CSF"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "concentrations in CSF and several brain regions"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "csf_plasma_concentration",
+      "raw_value": "concentrations of active metabolite (PCI-45227) between synchronous measurements of plasma and CSF"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations of ampicillin in the CSF"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations of topotecan lactone in the CSF"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF afatinib concentration"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF amoxicillin level"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF amphotericin B concentrations"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_plasma_concentration",
+      "raw_value": "CSF and plasma moxalactam concentration"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF antibiotic concentration"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF antibiotic level"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF antibiotic level (Peak 2 h)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF antibiotic level (Peak 26 h)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF antibiotic level (Trough 24 h)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF cefazolin concentrations"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF ceftriaxone concentration"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF clonidine concentration"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration (bactericidal dilution)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "CSF concentration (lumbar)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF concentration / plasma drug concentration"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "CSF concentration / unbound free-drug plasma concentration"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration at 2 hours post dose"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF concentration of biopterin"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF concentration of crizotinib relative to plasma"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "CSF concentration relative to free drug concentration in plasma"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF concentrations / concurrent plasma etoposide concentrations"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF concentrations / concurrent plasma paclitaxel concentration"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF concentrations / plasma Ara-C concentrations"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "CSF concentrations / plasma concentrations of free drug"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF concentrations / plasma drug concentrations"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "csf_total_plasma_concentration_ratio",
+      "raw_value": "CSF concentrations / total plasma drug concentrations"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "CSF concentrations / unbound plasma naproxen concentrations"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF D-alanine concentration"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF dexmedetomidine concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF digoxin concentration"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF dopamine concentration"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF drug concentration"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF drug concentration / plasma ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "CSF drug concentration / unbound drug concentration in plasma"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF drug concentrations"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "CSF drug concentrations / free plasma drug concentration"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF drug concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "csf_drug_efficacy",
+      "raw_value": "CSF drug efficacy (%)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "csf_exposure",
+      "raw_value": "CSF drug exposure"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "csf_free_plasma_exposure_ratio",
+      "raw_value": "CSF drug exposure / free (non-protein bound) plasma drug exposure"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "csf_plasma_exposure_ratio",
+      "raw_value": "CSF drug exposure / plasma drug exposure"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "csf_free_plasma_exposure_ratio",
+      "raw_value": "CSF drug exposure / plasma free drug exposure"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "csf_ultrafiltrate_exposure_ratio",
+      "raw_value": "CSF drug exposure / plasma ultrafiltrate (UF) drug exposure"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "csf_systemic_exposure_ratio",
+      "raw_value": "CSF drug exposure / systemic exposure"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF drug level"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF drug levels"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF ergotamine concentration"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF etoposide concentrations / plasma levels"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_unbound_plasma_exposure_ratio",
+      "raw_value": "CSF exposure relative to plasma concentrations of unbound drug"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF fluconazole concentration"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF folate concentration"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_folate_increase",
+      "raw_value": "CSF folate concentration increase"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF glycerol concentration / plasma level"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF glycerol level / highest plasma glycerol concentration"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF glycine concentration"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF glycine concentration / plasma glycine concentration"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF imatinib concentration"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF imatinib concentrations / concomitant plasma concentrations"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF imatinib concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "CSF level / unbound drug concentration in plasma"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF mean drug concentration / blood plasma concentration"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF melphalan concentrations"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF methotrexate concentration"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF methotrexate concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF methotrexate concentrations"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "csf_total_plasma_concentration_ratio",
+      "raw_value": "CSF metoprolol concentration as % of the total drug concentration in the plasma"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF micafungin concentrations"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF MTX concentrations relative to the plasma MTX levels"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF nafcillin concentration"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_nicotinamide_increase",
+      "raw_value": "CSF nicotinamide above baseline levels detected"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF omeprazole concentration"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "CSF or brain concentrations"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "CSF peak drug levels"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "csf_free_plasma_exposure_ratio",
+      "raw_value": "CSF penetration relative to free (non-protein bound) plasma drug exposure"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF penicillin concentration"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF penicillin concentrations"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF penicillin levels"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF penicillin values"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF phenytoin concentration"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF physostigmine concentration"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF piperacillin concentration"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF stavudine concentrations / concomitant plasma concentrations"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF teicoplanin concentrations"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "csf_therapeutic_concentration",
+      "raw_value": "CSF therapeutic drug levels"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF tigecycline concentration"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "CSF to free drug concentration in plasma"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF to plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "CSF to plasma free drug concentration ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_total_plasma_concentration_ratio",
+      "raw_value": "CSF to plasma total drug concentration ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF tyrosine/plasma tyrosine"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF uric acid concentration"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF vancomycin concentration"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF vancomycin concentration (mg/L)"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF vancomycin concentrations"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_serum_concentration_ratio",
+      "raw_value": "CSF vancomycin concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF vancomycin levels"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF zidovudine concentration"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF-plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF-to-plasma fluconazole concentration ratio"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "csf_blood_concentration_ratio",
+      "raw_value": "CSF/blood arsenic concentration"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "CSF/free drug plasma concentrations"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "csf_plasma_auc_ratio",
+      "raw_value": "CSF/plasma area under the drug concentration-time curve ratio"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF/plasma ceftriaxone concentration ratios"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "csf_plasma_concentration",
+      "raw_value": "CSF/plasma drug concentration"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF/plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "csf_plasma_concentration",
+      "raw_value": "CSF/plasma drug concentrations"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF/plasma melatonin concentration ratio"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF/plasma morphine concentration ratio"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF/plasma morphine ratio"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "csf_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio for area under the drug concentration–time curve"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "csf_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio for the area under the drug concentration–time curve"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF/plasma ratio of trough drug concentrations"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "CSF/plasma unbound drug concentration ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "csf_total_plasma_auc_ratio",
+      "raw_value": "CSF/total plasma concentration ratio (CSF-TPR), ratio of drug exposure (24-h AUC)"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF: plasma gabapentin concentration ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "csf_plasma_cmax_ratio",
+      "raw_value": "CSF: plasma peak drug concentration ratio"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "CSF:free P drug concn ratio"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF:plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF:plasma morphine concentration ratio"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "CSF:plasma morphine ratio"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "csf_cytotoxic_concentration",
+      "raw_value": "cytotoxic levels in CSF"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "csf_diffusion",
+      "raw_value": "diffusion of the fosfomycin in the CSF"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_dose",
+      "raw_value": "dose in CSF"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Doxorubicin concentration in CSF"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "doxycycline levels in CSF"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "csf_plasma_auc_ratio",
+      "raw_value": "drug concentration area under the curve (AUC) ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Drug concentration in CSF"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentration in CSF"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "csf_blood_concentration_ratio",
+      "raw_value": "drug concentration in CSF / blood concentration"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "csf_total_plasma_concentration_ratio",
+      "raw_value": "drug concentration in CSF / total plasma concentration"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentration in the CSF"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Drug concentrations in CSF"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentrations in CSF"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "plasma_csf_concentration",
+      "raw_value": "drug concentrations in plasma and CSF"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentrations in the CSF"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "csf_detection",
+      "raw_value": "drug detection in the CSF"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Drug level (CSF)"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug level in CSF"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Drug Levels (CSF)"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug levels in CSF"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug levels in the CSF"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "drug levels in the CSF / concentration of unbound vismodegib"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "csf_effective_concentration",
+      "raw_value": "Effective drug level (CSF)"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "csf_equivalent_total_concentration",
+      "raw_value": "equivalent total concentration in vitro (CSF)"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "extracellular_csf_plasma_glutamate_ratio",
+      "raw_value": "extracellular and CSF to plasma glutamate ratios"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "fluorouracil concentrations in CSF / plasma concentrations"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "fraction of oral dose detected in CSF"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "csf_fraction",
+      "raw_value": "fraction of the drug in systemic circulation found in CSF"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "free_csf_concentration",
+      "raw_value": "free concentrations in human CSF"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "free_csf_free_plasma_exposure_ratio",
+      "raw_value": "free drug exposure in the CSF / free plasma exposure"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "free_csf_free_plasma_concentration_ratio",
+      "raw_value": "free imatinib levels in CSF / free concentration in plasma"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "free_csf_free_plasma_concentration_ratio",
+      "raw_value": "free-drug concentrations in CSF as in plasma"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "gadobutrol concentration in the CSF"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "ibrutinib concentrations in the 2 h postdosing CSF"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Intraoperative CSF concentration"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "intraoperative CSF concentration"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "csf_dose_ratio",
+      "raw_value": "level by dose ratio in CSF"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Level of drug in CSF"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels of ampicillin in CSF"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels of drug in the CSF"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lidocaine level in the CSF"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "Lumbar CSF concentration"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "lumbar CSF concentration"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "magnesium levels within the CSF and parenchyma"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "csf_free_plasma_cmax_ratio",
+      "raw_value": "maximum concentration (Cmax) in CSF vs. plasma (free-drug concentration)"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "maximum drug concentration in the CSF"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean carbenicillin concentration in the CSF"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF drug concentration"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "csf_serum_concentration_ratio",
+      "raw_value": "mean CSF nimodipine concentration / mean serum total concentration"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean CSF penicillin concentration"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF penicillin concentrations"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean CSF vancomycin concentrations"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean CSF vancomycin level"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean drug concentrations in CSF"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean drug concn in CSF"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean drug levels in CSF"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean drug levels in the CSF"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "csf_total_plasma_cmax_ratio",
+      "raw_value": "mean peak CSF/plasma total cisplatin ratio"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "mean penetration of ampicillin into CSF"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean penicillin level in the CSF"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "plasma_csf_concentration_ratio",
+      "raw_value": "Mean plasma/CSF drug concentration ratio"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "Mean ratio of CSF/plasma drug concentration"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "mean ratio of CSF/plasma vemurafenib concentration"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "csf_m3g_morphine_concentration_ratio",
+      "raw_value": "mean steady state M3G concentration in the CSF / respective CSF morphine concentration"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "csf_m3g_morphine_concentration_ratio",
+      "raw_value": "mean steady-state CSF M3G/morphine concentration ratio"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "plasma_csf_concentration",
+      "raw_value": "mean steady-state plasma and CSF methotrexate concentrations"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean vancomycin concentrations in the CSF"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "median CSF concentration / unbound drug concentration in plasma"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "ventricular_csf_concentration",
+      "raw_value": "median drug concentration in ventricular CSF"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "csf_plasma_cmax_ratio",
+      "raw_value": "median peak CSF-to-plasma paclitaxel concentration ratio"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Melatonin concentration in CSF"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "melatonin concentrations in CSF of the cisterna magna"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "methionine concentration in the CSF"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "minimal mean CSF vancomycin levels"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "minocycline levels observed in the CSF"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "csf_blood_concentration_ratio",
+      "raw_value": "morphine ratio of CSF-blood"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Nimodipine concentration (CSF)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "observed concentrations of afatinib in CSF"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak CSF ketoconazole concentrations"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "peak CSF penicillin levels"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "peak drug concentration in the CSF"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "free_csf_plasma_cmax_ratio",
+      "raw_value": "peak levels of free cisplatin in the CSF / equivalent levels in plasma"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of grepafloxacin into the CSF"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of vancomycin into CSF"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "penicillin 'peak' concentration in the CSF"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin concentration in CSF"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Penicillin G concentration (CSF)"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin in the CSF"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin level in the CSF"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin levels in CSF"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin levels in the CSF"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage in CSF post-dose"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "Percentage of administered dose appearing in CSF at steady state"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "csf_fraction",
+      "raw_value": "percentage of antibiotic in CSF"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage of drug in CSF from intravenous infusion route"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "free_csf_fraction",
+      "raw_value": "percentage of free drug crossing into CSF"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "plasma_csf_concentration_ratio",
+      "raw_value": "plasma:CSF drug concentrations"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "proportion of an intravenous dose that enters the CSF"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "proportion of drug reaching the CSF / free plasma concentration"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "free_drug_plasma_csf_distribution_rate_constant",
+      "raw_value": "rate constant for the distribution of the free drug between plasma and CSF"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratio between the concentrations of antibiotic in the CSF and plasma"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratio between the nevirapine concentration in CSF and plasma"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "ratio concentration in CSF/concentration of unbound drug in plasma"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "csf_blood_concentration_ratio",
+      "raw_value": "ratio for theophylline concentration in CSF relative to blood"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "Ratio of concentration of cisplatin in CSF:plasma (%)"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratio of concentration of fluconazole in CSF to concentration of fluconazole in plasma"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "ratio of concentrations in CSF to plasma (free drug only)"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "ratio of CSF drug concentration to plasma unbound drug concentration"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "ratio of CSF to plasma free drug concentration"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "csf_total_plasma_concentration_ratio",
+      "raw_value": "ratio of CSF to plasma total drug concentration"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "ratio of CSF vismodegib to unbound drug in plasma"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratio of CSF:plasma paclitaxel concentration"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "csf_total_plasma_concentration_ratio",
+      "raw_value": "ratio of diflunisal concentration in CSF to the total drug concentration in plasma"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratio of drug concentration in CSF to that in plasma"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratio of fluconazole concentration in CSF to fluconazole concentration in plasma"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "plasma_csf_unbound_concentration_ratio",
+      "raw_value": "ratio of mean calculated unbound nimodipine concentrations to CSF concentration"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratio of melatonin concentrations in CSF/plasma"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "ratio of PTC518 concentrations in CSF to unbound free-drug concentrations in plasma"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "subdural_csf_free_plasma_concentration_ratio",
+      "raw_value": "ratio of subdural CSF:free plasma drug"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "ratio of the concentration of vismodegib in the CSF to that of the unbound drug in plasma"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratio of the CSF concentration of crizotinib to the plasma concentration"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "ratio of the mean voriconazole concentrations in CSF samples to free voriconazole concentrations in plasma samples"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "csf_total_plasma_concentration_ratio",
+      "raw_value": "ratio of the mean voriconazole concentrations in CSF samples to total voriconazole concentrations in plasma samples"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "csf_free_plasma_concentration_ratio",
+      "raw_value": "ratio of total propofol concentration in CSF to the free drug concentration in plasma"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "plasma_csf_unbound_concentration_ratio",
+      "raw_value": "ratio of unbound plasma to CSF drug concentrations"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "plasma_csf_concentration_ratio",
+      "raw_value": "ratio of urapidil plasma-concentration to CSF-concentration"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "ratios of CSF paclitaxel concentration to plasma paclitaxel concentration"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "csf_bioavailability",
+      "raw_value": "Relative CSF bioavailability"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "sodium_fluorescein_relative_fluorescence_intensity",
+      "raw_value": "relative fluorescence intensities of NaF"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Ribavirin Concentration (CSF)"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Saquinavir concentration (CSF)"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "csf_diffusion_ratio",
+      "raw_value": "Sitosterol diffusion CSF/ (blood + CSF)"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "unbound_plasma_csf_regression_slope",
+      "raw_value": "slope of regression line (unbound drug in plasma vs concentration in CSF)"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Sodium fluorescein in CSF"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "csf_unbound_plasma_concentration_ratio",
+      "raw_value": "steady-state CSF drug concentration / unbound plasma drug concentration"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "csf_plasma_concentration_ratio",
+      "raw_value": "steady-state CSF zidovudine:plasma zidovudine concentration ratio"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "blood_to_csf_transfer_half_life",
+      "raw_value": "t1/2 for the transfer of the drug from blood into the CSF"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "csf_therapeutic_concentration",
+      "raw_value": "therapeutic concentrations in CSF"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "csf_thiamine_activity",
+      "raw_value": "Thiamine activity in CSF"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "csf_tmax",
+      "raw_value": "time required to reach the peak drug concentration in CSF"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "total_csf_concentration",
+      "raw_value": "total amphotericin B in CSF"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "total_csf_concentration",
+      "raw_value": "total benzylpenicillin concentration in the CSF"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "plasma_csf_total_exposure",
+      "raw_value": "total drug exposure for plasma and CSF"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "csf_total_exposure",
+      "raw_value": "total drug exposure in CSF"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "plasma_csf_total_exposure",
+      "raw_value": "total drug exposure in the CSF and in plasma"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "csf_treponemicidal_concentration",
+      "raw_value": "Treponemicidal CSF drug levels"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "trough CSF drug level"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "unbound_plasma_tissue_csf_concentration",
+      "raw_value": "unbound concentrations (plasma and tumor tissue vs CSF)"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "unbound_plasma_csf_concentration",
+      "raw_value": "unbound topiramate concentrations in plasma and CSF"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "vancomycin levels in the CSF"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "ventricular_lumbar_csf_concentration",
+      "raw_value": "ventricle and lumbar CSF concentrations"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "ventricular_lumbar_csf_concentration",
+      "raw_value": "ventricular fluid and lumbar CSF concentration"
+    }
+  ],
+  "cluster_id": "cluster_5a035afe336152bc",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

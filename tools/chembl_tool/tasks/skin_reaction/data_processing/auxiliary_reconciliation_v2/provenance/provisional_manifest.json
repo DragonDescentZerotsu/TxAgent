@@ -1,0 +1,336 @@
+{
+  "aggregated_mapping": {
+    "bytes": 19966830,
+    "mapping_version": "starling_auxiliary.skin_reaction.globally_reconciled.v2",
+    "sha256": "29ca01c3ae54644d0bf6a8bbdc2079222a69200b911bf8db8ca709a13eb24e4a"
+  },
+  "artifact_version": "skin_reaction_auxiliary.provisional_manifest.v1",
+  "counts": {
+    "frozen_namespaces": 2,
+    "llm_assignments": 228639,
+    "local_to_aggregated_deltas": 2395,
+    "output_namespaces": 10,
+    "review_assignments": 218198,
+    "review_namespaces": 8,
+    "section_clusters": 1649
+  },
+  "downstream_artifacts_before": [
+    {
+      "bytes": 2355349,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/01_cleaned/endpoint_inventory.json",
+      "sha256": "ef962a9c2fb24f7d6dd5ba5d6ba03fab37f8721405be471a9bd41b3887bc9b67"
+    },
+    {
+      "bytes": 1288,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/01_cleaned/manifest.json",
+      "sha256": "3d2bbcd2efd1b932a2a9671622d5f47abcae3854091b4a7622b0592852b9df27"
+    },
+    {
+      "bytes": 129818403,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/01_cleaned/records.parquet",
+      "sha256": "7a4eadfc4b1278fa51b140f8f5930f044e34a0dc666c96448d7f1b73772e527e"
+    },
+    {
+      "bytes": 662,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/01_cleaned/source_inventory.json",
+      "sha256": "d52794137ba9f28b33d1c9aa0d9ef06146916c61b6d3d1fa3951995424c8e707"
+    },
+    {
+      "bytes": 711,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/02_normalized/auxiliary_mapping_manifest.json",
+      "sha256": "eb2e64f17830ec9209855d22f57c632dd1c342111d5d672212a05d44fc74c4b6"
+    },
+    {
+      "bytes": 2249069,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/02_normalized/endpoint_registry.json",
+      "sha256": "6efc73ccc31d922fb69b565d9b4842465b5ce65fe9023a566623ee3471002c2d"
+    },
+    {
+      "bytes": 1480,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/02_normalized/manifest.json",
+      "sha256": "e86d24c3b2058a99d4d26bf97d2294baf6422b8365498ade9d0b74fcef637ce5"
+    },
+    {
+      "bytes": 3038,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/02_normalized/record_validity_policy.json",
+      "sha256": "e8dc9b9e8e382e64c7dc9124b19b5148d503aceaf4ce3b0e17d7eba7007cc64c"
+    },
+    {
+      "bytes": 165120495,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/02_normalized/records.parquet",
+      "sha256": "d967a496206bc3c0ac088963bac070fc3d9ad088fb0d2a980e8e7c6135fffc16"
+    },
+    {
+      "bytes": 30670,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/02_normalized/source_contract.json",
+      "sha256": "43c6ab79d612aad089e2f50a03d61fa25ee3677f26aedbf0a6dec90853816555"
+    },
+    {
+      "bytes": 1020771,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/03_records/duplicates.parquet",
+      "sha256": "dc7f9d3c03650921ee7db1cd44fc4939b0ac83792149391205843ded1dd12684"
+    },
+    {
+      "bytes": 18843652,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/03_records/exclusions.parquet",
+      "sha256": "b333beb8413ac930539d8b6f99add770d10ee50cbf221925d7b673c60a928d63"
+    },
+    {
+      "bytes": 933,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/03_records/manifest.json",
+      "sha256": "a90b59fa78f02b5d6c3ab58db5b8d20929a5c0b698881bf1421c45c39567573f"
+    },
+    {
+      "bytes": 192378382,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/03_records/records.parquet",
+      "sha256": "c7640a31c520cde55f94cecba87610593cddc07289d7e5be230335388c34ba36"
+    },
+    {
+      "bytes": 273709,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/03_records/scalar_distribution.parquet",
+      "sha256": "35171b47038645925e66b8bff76fabf749cb73d71b9758ea45c44d6099a062bd"
+    },
+    {
+      "bytes": 496,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/04_evidence_catalog/manifest.json",
+      "sha256": "0109e487a0daadf0e2200209137c21d222d8db7980843b5760adcf6d856499f0"
+    },
+    {
+      "bytes": 1740571,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/04_evidence_catalog/molecule_families.parquet",
+      "sha256": "5bf5bba3095990aa53dd0897177824e584a03414f898e0c70e3a904285bf9c65"
+    },
+    {
+      "bytes": 20889501,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/04_evidence_catalog/molecule_family_records.parquet",
+      "sha256": "0a0206cdb112d975a1479063aee7cc0f58af1972bca6756c82877e6b28c13ca5"
+    },
+    {
+      "bytes": 858047,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/05_neighbor_index/fingerprints.npz",
+      "sha256": "3fa8a74cf55a52d452a529795becb420522f881987267283d1b10c8eb2d9ad1f"
+    },
+    {
+      "bytes": 1296165,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/05_neighbor_index/group_membership.parquet",
+      "sha256": "139a985b4f80cac0ebde1b943621529db3680429b1402fc23cdbc1152ffb8a0e"
+    },
+    {
+      "bytes": 1153,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/05_neighbor_index/manifest.json",
+      "sha256": "aa99d8e0e464390fae7186f3c49e83068ddfe29e3c979350fc5fb30cfaef2fe5"
+    },
+    {
+      "bytes": 1631448,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/05_neighbor_index/molecules.parquet",
+      "sha256": "af3d04e8823a3ad1b68e0199bef87990988ee4f56d5f54d33577a541f7b4b971"
+    },
+    {
+      "bytes": 2730,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/06_pair_buckets/pair_bucket_metadata.json",
+      "sha256": "78fc8fc35df9c1549d7e82bc515e628997ee92f345108341a34da23be40fec5b"
+    },
+    {
+      "bytes": 29802827,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/06_pair_buckets/pair_bucket_records.parquet",
+      "sha256": "ab4bd49fd7dc8c016ef3a38e004ef5acad4ffb7ed85e9b906b67d3a47b53e66b"
+    },
+    {
+      "bytes": 2466566,
+      "path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6/manifest.json",
+      "sha256": "17ba7b8b3e82ad4355a9f6166be78090a99b1ca9b6e1fc36d807de702c1efa08"
+    }
+  ],
+  "generation": {
+    "cluster_random_seed": 20260801,
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "models_by_source": {
+      "direct_skin_reaction": "gpt-5.4",
+      "phototoxicity_irritation_local_damage": "gpt-5.4-mini",
+      "sensitization_aop": "gpt-5.4",
+      "skin_exposure": "gpt-5.4-mini"
+    },
+    "prompt_version": "starling_skin_embedding_bucket_mapping.v3",
+    "reasoning_effort": "low"
+  },
+  "inputs": [
+    {
+      "filename": "direct_skin_reaction.complete.json",
+      "requested_model": "gpt-5.4",
+      "role": "complete_source_snapshot",
+      "sha256": "8ef073a586c2f9a7e9466e73c027085055ab153b8a64c55b8e243feed10d6952",
+      "source_id": "direct_skin_reaction"
+    },
+    {
+      "filename": "phototoxicity_irritation_local_damage.complete.json",
+      "requested_model": "gpt-5.4-mini",
+      "role": "complete_source_snapshot",
+      "sha256": "a0ac410072c52176b269c4ce6da47fff7191c622bacecb9d97cd8a34dde9e20b",
+      "source_id": "phototoxicity_irritation_local_damage"
+    },
+    {
+      "filename": "sensitization_aop.complete.json",
+      "requested_model": "gpt-5.4",
+      "role": "complete_source_snapshot",
+      "sha256": "e9141a32334b223740c879abdaa99d559eff4c59194adde6c531e8520004c06e",
+      "source_id": "sensitization_aop"
+    },
+    {
+      "filename": "skin_exposure.complete.json",
+      "requested_model": "gpt-5.4-mini",
+      "role": "complete_source_snapshot",
+      "sha256": "f656f52cfd5120a19aec143877c83cb4219fc4b83a43bffbae1a9cb9e5fd1561",
+      "source_id": "skin_exposure"
+    },
+    {
+      "filename": "auxiliary_mapping_helpers/reconciliation.py",
+      "role": "mapping_implementation",
+      "sha256": "25e3e6f693dc0e6be4c498121a9392af524ba8f3a6eb97c63db19f375f7ee8b8"
+    },
+    {
+      "filename": "build_embedding_bucket_mapping.py",
+      "role": "mapping_implementation",
+      "sha256": "bcaa963a6424bb6b0dce5718e6122c81cc76db819479823ffc1c04984eb0628e"
+    },
+    {
+      "filename": "auxiliary_value_prompts.json",
+      "role": "prompt_registry",
+      "sha256": "f05102e394b4cca2ed1b806889203e475f26f5d0aa3b54335dc23d61acd3d264"
+    },
+    {
+      "filename": "direct_skin_reaction__global_context.jsonl",
+      "requested_model": "gpt-5.4",
+      "role": "response_cache",
+      "section": "direct_skin_reaction/global_context",
+      "sha256": "6a44f0c14f4a8ff7f8e27f26efb08b425ee563b578eacc1a040b1f62587ac8b2"
+    },
+    {
+      "filename": "direct_skin_reaction__global_severity_grade.jsonl",
+      "requested_model": "gpt-5.4",
+      "role": "response_cache",
+      "section": "direct_skin_reaction/global_severity_grade",
+      "sha256": "34280d9574d6d603926eb7102d88a9ff6884f0cb39b743ada2ffc223a5f143c8"
+    },
+    {
+      "filename": "direct_skin_reaction__global_species_context.jsonl",
+      "requested_model": "gpt-5.4",
+      "role": "response_cache",
+      "section": "direct_skin_reaction/global_species_context",
+      "sha256": "67af9c30e31417336956a3b2f6132a5407afe6b29eb49a09f8f6234c2086e603"
+    },
+    {
+      "filename": "phototoxicity_irritation_local_damage__global_context.jsonl",
+      "requested_model": "gpt-5.4-mini",
+      "role": "response_cache",
+      "section": "phototoxicity_irritation_local_damage/global_context",
+      "sha256": "a5c11e2fc3e45b6c31d11ab967cad81a2dea7bcb61466b34482b85518308e7c9"
+    },
+    {
+      "filename": "phototoxicity_irritation_local_damage__global_species_context.jsonl",
+      "requested_model": "gpt-5.4-mini",
+      "role": "response_cache",
+      "section": "phototoxicity_irritation_local_damage/global_species_context",
+      "sha256": "cd744645b696fc79c7230dafd94f1c71172b76d5655c12b28f90594c66b72035"
+    },
+    {
+      "filename": "sensitization_aop__global_context.jsonl",
+      "requested_model": "gpt-5.4",
+      "role": "response_cache",
+      "section": "sensitization_aop/global_context",
+      "sha256": "2f3c620fff4a64f98532e033b3afc19bcef38b064d13a8531735c137604b1051"
+    },
+    {
+      "filename": "sensitization_aop__global_endpoint_context.jsonl",
+      "requested_model": "gpt-5.4",
+      "role": "response_cache",
+      "section": "sensitization_aop/global_endpoint_context",
+      "sha256": "889b887a839d44f1882d6de72a1335c31ffabc4c757a9b67e8c52f60d7f57d7a"
+    },
+    {
+      "filename": "sensitization_aop__global_species_context.jsonl",
+      "requested_model": "gpt-5.4",
+      "role": "response_cache",
+      "section": "sensitization_aop/global_species_context",
+      "sha256": "90b7f9f625ade93510efab0d0bfab115b4d61e2e2e369acc2f0aac1af9dc74cf"
+    },
+    {
+      "filename": "skin_exposure__global_species_context.jsonl",
+      "requested_model": "gpt-5.4-mini",
+      "role": "response_cache",
+      "section": "skin_exposure/global_species_context",
+      "sha256": "bcabd228d58beb31f8de3ffd3bc8bc6a9c4a3784262b9ce6c65665368f9e0120"
+    },
+    {
+      "filename": "study_design_reviewed_mapping.json",
+      "role": "reviewed_table",
+      "section": "skin_exposure/global_context",
+      "sha256": "9316db76af5412f086b372bd23a6092e35cace97171144486c6ec03404583107"
+    },
+    {
+      "path": "/data1/joseph/TxAgent/data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet",
+      "role": "source_parquet",
+      "sha256": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1",
+      "source_id": "direct_skin_reaction"
+    },
+    {
+      "path": "/data1/joseph/TxAgent/data/starling_data/skin_reaction/phototoxicity_irritation_local_damage/extractions.parquet",
+      "role": "source_parquet",
+      "sha256": "c942e956be13c80d3f6075922dcc3731ffaea298dd824b2cf8f09598238501db",
+      "source_id": "phototoxicity_irritation_local_damage"
+    },
+    {
+      "path": "/data1/joseph/TxAgent/data/starling_data/skin_reaction/sensitization_aop/extractions.parquet",
+      "role": "source_parquet",
+      "sha256": "3eca3f70d1243795bc37f06e31795566295ce8ea3bf03e810efd3807152cf2c8",
+      "source_id": "sensitization_aop"
+    },
+    {
+      "path": "/data1/joseph/TxAgent/data/starling_data/skin_reaction/skin_exposure/extractions.parquet",
+      "role": "source_parquet",
+      "sha256": "14f9ba586b6744e7412867110080ad9bf7b51b2ae39be0d12572f9ce66fd7713",
+      "source_id": "skin_exposure"
+    },
+    {
+      "filename": "openai_guard.neighborhood_v3.mini.token_ledger.json",
+      "role": "token_ledger",
+      "sha256": "bfb5b62063684a6946c7de0674fbc6f98ed0bfb25a1782ff8ef9e9ae56bbd141"
+    },
+    {
+      "filename": "openai_guard.neighborhood_v3.token_ledger.json",
+      "role": "token_ledger",
+      "sha256": "89c532042b4bba3c7e3e727d3ed0d230c116cedba5106b1aa032f493611dfb80"
+    }
+  ],
+  "outputs": {
+    "cluster_assignments": {
+      "bytes": 7399567,
+      "filename": "cluster_assignments.parquet",
+      "sha256": "54a9780d3ae8fe10ba42d2f0efcc452e9f5a3467cf755e9fd41f1dc6ac973642"
+    },
+    "pre_reconciliation_mapping": {
+      "bytes": 19966830,
+      "filename": "pre_reconciliation_mapping.json",
+      "sha256": "29ca01c3ae54644d0bf6a8bbdc2079222a69200b911bf8db8ca709a13eb24e4a"
+    },
+    "provisional_cluster_mapping": {
+      "bytes": 100859811,
+      "filename": "provisional_cluster_mapping.json",
+      "sha256": "9595d9900a767d7bda94721b4d820280db46d5dd7fa11aa7e5600d9b969fec49"
+    }
+  },
+  "runtime_mapping": {
+    "exists": false,
+    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json"
+  },
+  "validations": {
+    "aggregated_local_mapping_valid": true,
+    "all_cache_identities_match_frozen_inputs": true,
+    "all_cache_items_match_complete_source_snapshots": true,
+    "all_source_tuples_covered": true,
+    "expected_assignment_count": true,
+    "expected_cluster_count": true,
+    "expected_local_to_aggregated_delta_count": true,
+    "output_hashes_recorded": true,
+    "runtime_mapping_absent": true
+  }
+}

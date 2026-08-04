@@ -1,0 +1,2002 @@
+{
+  "assignment_count": 399,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "rate_constant",
+      "raw_value": "(rate of change of [lactate⁻])/[lactate⁻]"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "uptake",
+      "raw_value": "2-[¹⁴C]DG uptake"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "suv_ratio",
+      "raw_value": "2-to-60 min SUV ratio"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "suv_ratio",
+      "raw_value": "2-to-90 min SUV ratio"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "a_v_difference",
+      "raw_value": "A-V difference"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "amount",
+      "raw_value": "absolute amount"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "absorption_capacity",
+      "raw_value": "absorption capacity"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "Accumulation of FBPA by PET based on average count"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "accumulation within the SNc"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "fold_change_in_kbrain_eq",
+      "raw_value": "Actual fold change in Kbrain,eq (ERA)"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "unbound_distribution_space",
+      "raw_value": "actual FU distribution space"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "affinity_constant",
+      "raw_value": "affinity constant"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "influx_rate",
+      "raw_value": "afflux rate"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "amount_delivered",
+      "raw_value": "amount delivered"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "amount_expected_for_even_distribution",
+      "raw_value": "amount expected for an even distribution"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "amount_in_forebrain",
+      "raw_value": "amount in forebrain"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "amount_in_lower_chamber",
+      "raw_value": "amount of [³H]-TMZ in the lower chamber of Transwell"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "amount_delivered_gd",
+      "raw_value": "amount of Gd delivered"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "amount_in_csf",
+      "raw_value": "amount reaching the C.S.F."
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "amount_recovered_in_recipient_chamber",
+      "raw_value": "amount recovered in recipient chamber"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "amount_traversing_rbe4_monolayers",
+      "raw_value": "amount traversing RBE4 monolayers"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "a_to_b_clearance_rate",
+      "raw_value": "Ap -> Bas clearance rate"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "a_to_b_direction",
+      "raw_value": "apical (A) to basal (B)"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "apparent_clearance",
+      "raw_value": "apparent clearance"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "apparent_diffusion_coefficient",
+      "raw_value": "apparent diffusion coefficient (Kd)"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "apparent_distribution_volume",
+      "raw_value": "Apparent distribution volume"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "apparent_distribution_volume",
+      "raw_value": "apparent distribution volume (Vd)"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "apparent_distribution_volume",
+      "raw_value": "apparent distribution volume (VT*)"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "apparent_elimination_rate",
+      "raw_value": "apparent elimination rate"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "apparent_elimination_rate_constant",
+      "raw_value": "apparent elimination rate constant"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "apparent_elimination_rate_constant",
+      "raw_value": "apparent elimination rate constant (kel)"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "apparent_elimination_rate_constant",
+      "raw_value": "apparent elimination rate constant (ktest)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "apparent_elimination_rate_constant",
+      "raw_value": "apparent elimination rate constant, kel"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "apparent_km",
+      "raw_value": "apparent Km"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "apparent_km_for_binding",
+      "raw_value": "apparent Km for binding"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "apparent_km",
+      "raw_value": "apparent Km value"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "michaelis_constant",
+      "raw_value": "apparent Michaelis constant"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "michaelis_menten_constant",
+      "raw_value": "apparent Michaelis–Menten constant"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "apparent_passive_clearance",
+      "raw_value": "apparent passive clearance"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "suv",
+      "raw_value": "approximate SUV @ 80 min"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "auc",
+      "raw_value": "Area Under Curve"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "auc",
+      "raw_value": "area under curves (0-180 min)"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "auc",
+      "raw_value": "area under the [¹⁸F]-MPPF curve"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "auc",
+      "raw_value": "Area under the curve"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "auc",
+      "raw_value": "area under the curve"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "auc",
+      "raw_value": "area-under-the-curve"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "auc",
+      "raw_value": "area-under-the-curve values"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "percent_content_in_perfusate",
+      "raw_value": "Au¹⁹⁸-content (% of Au¹⁹⁸-content in the perfusate)"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "average_level",
+      "raw_value": "average level"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "maximal_cadv",
+      "raw_value": "average maximal CADV"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "average_number_of_leaky_spots",
+      "raw_value": "average number of leaky spots"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "mean_k",
+      "raw_value": "averaged mean K"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "tumor_k",
+      "raw_value": "averaged mean tumor K"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "measured_concentration",
+      "raw_value": "Avg. measured conc."
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "barrier_clearance",
+      "raw_value": "barrier clearance"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "b_to_a_clearance_rate",
+      "raw_value": "Bas -> Ap clearance rate"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_penetration_index",
+      "raw_value": "BPI value"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "BrAUC₀→₂₄₀/PlAUC₀→₂₄₀"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "BrAUC₀→∞/PlAUC₀→∞"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "mean_concentration",
+      "raw_value": "C average"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "cardiac_output_distribution",
+      "raw_value": "Cardiac output distribution"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "carrier_affinity",
+      "raw_value": "carrier affinity"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "Cbrain/Cplasma t→∞"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "threshold",
+      "raw_value": "Central GR (threshold)"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "clearance_coefficient",
+      "raw_value": "clearance coefficient"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "clearance_constant",
+      "raw_value": "Clearance Constant"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "clearance_half_time",
+      "raw_value": "clearance half time"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "single_pass_clearance",
+      "raw_value": "clearance in a single capillary passage"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "clearance_measure",
+      "raw_value": "clearance measure"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "clearance_rate",
+      "raw_value": "clearance rate"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "clearance_to_tritiated_water_ratio",
+      "raw_value": "clearance relative to tritiated water"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "clearance_slope",
+      "raw_value": "clearance slope"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "clearance_value",
+      "raw_value": "clearance value"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "coefficient_value",
+      "raw_value": "coefficient value"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "computed_probability_value",
+      "raw_value": "computed probability value"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "central_nervous_system_tissue_concentration",
+      "raw_value": "concentraciones en el tejido del sistema nervioso central"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "concentration_time_curve",
+      "raw_value": "concentration-time curves"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "concentration_ratio",
+      "raw_value": "Concₐₗₐₗ/Concₐₗₐₗ"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "corrected_steady_state_line_slope",
+      "raw_value": "corrected steady-state line slope"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "cross_sectional_area",
+      "raw_value": "cross-sectional area"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "cumulative_mass",
+      "raw_value": "Cumulative mass"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "non_saturable_rate_constant",
+      "raw_value": "D (first order rate constant of the non-saturable process)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "d_asp_levels",
+      "raw_value": "d-Asp levels"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "declinemax",
+      "raw_value": "Declinemax"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "delivery_decrease",
+      "raw_value": "delivery (decrease)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "delivery_efficiency",
+      "raw_value": "delivery efficiency"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "delivery_levels",
+      "raw_value": "delivery levels"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "a_v_difference_increase",
+      "raw_value": "Difference A-V increase"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "diffusibility",
+      "raw_value": "diffusibility"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "distribution",
+      "raw_value": "Distribution"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "distribution",
+      "raw_value": "distribution"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "sucrose_corrected_distribution",
+      "raw_value": "distribution (corrected for [14C]sucrose space)"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "sucrose_corrected_distribution",
+      "raw_value": "distribution (sucrose-corrected)"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "distribution_by_weight",
+      "raw_value": "Distribution by weight"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "distribution_coefficient",
+      "raw_value": "Distribution co-efficient (Kd)"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "distribution_coefficient",
+      "raw_value": "Distribution Coefficient"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "distribution_coefficient",
+      "raw_value": "Distribution coefficient"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "distribution_coefficient",
+      "raw_value": "distribution coefficient"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "distribution_equilibrium_time",
+      "raw_value": "distribution equilibrium time"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "distribution_factor",
+      "raw_value": "Distribution factor"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "distribution_half_life",
+      "raw_value": "distribution half-life"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "distribution_into_nac",
+      "raw_value": "distribution into the NAc"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "distribution_of_3h_dmso",
+      "raw_value": "Distribution of [³H]DMSO"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "distribution_space",
+      "raw_value": "distribution space"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "distribution_space",
+      "raw_value": "distribution spaces"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "Distribution volume"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "distribution volume"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "Distribution Volume (DV)"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "distribution volume (V)"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "distribution volume V"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "distributive_clearance",
+      "raw_value": "distributional clearance"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "distribution_space",
+      "raw_value": "DS (distribution space)"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "dtc_levels",
+      "raw_value": "DTC levels"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "quantity_in_lower_chamber",
+      "raw_value": "DTX quantity in the lower chamber"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "DV (1TCM)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "e0",
+      "raw_value": "E(0)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "e0_ep",
+      "raw_value": "E(0) and E(p)"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "e_average",
+      "raw_value": "E(average)"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "effect_site_equilibration_time",
+      "raw_value": "effect-site equilibration time"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "effect_site_tmax_lag",
+      "raw_value": "effect-site Tmax lag"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "efficiency",
+      "raw_value": "efficiency"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "eg0",
+      "raw_value": "EG (0)"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "eg_20_s",
+      "raw_value": "EG (20 s)"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "elimination_constant",
+      "raw_value": "elimination constant"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "elimination_constant",
+      "raw_value": "elimination constant - λz"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "elimination_half_life",
+      "raw_value": "elimination half-life"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "elimination_rate",
+      "raw_value": "elimination rate"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "elimination_rate_constant",
+      "raw_value": "elimination rate constant"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "energy_barrier",
+      "raw_value": "energy barrier"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "energy_peak",
+      "raw_value": "energy peak"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "enhanced_passage",
+      "raw_value": "enhanced passage"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "entry_half_time",
+      "raw_value": "entry half-time"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "equilibration",
+      "raw_value": "equilibration"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "equilibration_half_life",
+      "raw_value": "equilibration half-life"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "equilibration_half_time",
+      "raw_value": "equilibration half-time"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "equilibration_time",
+      "raw_value": "equilibration time"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "equilibrium_distribution_coefficient",
+      "raw_value": "equilibrium distribution coefficient"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "equilibrium_distribution_volume",
+      "raw_value": "equilibrium distribution volume (K1/k2)"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "equilibrium_half_life",
+      "raw_value": "equilibrium half-life"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "equilibrium_of_distribution",
+      "raw_value": "equilibrium of distribution"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "equilibrium_partition_volume",
+      "raw_value": "equilibrium partition volume (VeD)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "equilibrium_sucrose_space",
+      "raw_value": "equilibrium sucrose space"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "equilibrium_sulfate_space",
+      "raw_value": "equilibrium sulfate space"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "equilibrium_suv",
+      "raw_value": "Equilibrium SUV"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "equilibrium_time",
+      "raw_value": "equilibrium time"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "ER value"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "total_concentration",
+      "raw_value": "ESI LC-MS/MS (total)"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "estimated_clearance",
+      "raw_value": "estimated clearance"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "estimated_counts",
+      "raw_value": "estimated counts"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "estimated_half_time",
+      "raw_value": "Estimated half-time"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "exchange_half_time",
+      "raw_value": "exchange half-time"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "exchange_rate",
+      "raw_value": "exchange rate"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "expected_change_in_kbrain_eq",
+      "raw_value": "Expected change in Kbrain,eq (ERA)"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "unbound_distribution_extent",
+      "raw_value": "extent of unbound distribution"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "extrapolated_volume",
+      "raw_value": "Extrapolated volume"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "factor_i_activity",
+      "raw_value": "Factor I activity"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "filtration_coefficient",
+      "raw_value": "filtration coefficient"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "fold_increase",
+      "raw_value": "Fold increase"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "fold_increase",
+      "raw_value": "fold increase"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "fold_increase_in_uptake",
+      "raw_value": "fold increase in [¹⁸F] uptake"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "fold_increase_in_distribution_volume",
+      "raw_value": "Fold increase in distribution volume"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "fold_increase_in_delivery",
+      "raw_value": "fold-increase in delivery"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "fluoride_accumulation",
+      "raw_value": "F⁻ accumulation"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "gd_and_spatial_leakage_extent",
+      "raw_value": "Gd-leakage and spatial leakage extent"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "h1r_occupancy",
+      "raw_value": "H1R occupancy"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "h1r_occupancy",
+      "raw_value": "H1R occupancy (H1RO)"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "half_life_time",
+      "raw_value": "half life time"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "half_time_slow_component",
+      "raw_value": "half time (slow component)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "half_equilibration",
+      "raw_value": "half-equilibration"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "half_equilibrium",
+      "raw_value": "half-equilibrium"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "half_life_time",
+      "raw_value": "half-life time"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "half_maximal_accumulation_time",
+      "raw_value": "half-maximal accumulation (T1/2)"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "half_time",
+      "raw_value": "half-time (t/2)"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "half_time_for_equilibration",
+      "raw_value": "half-time for equilibration"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "half_time_for_exchange",
+      "raw_value": "half-time for exchange"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "half_time_of_elimination",
+      "raw_value": "half-time of elimination"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "hexose_distribution_volume",
+      "raw_value": "hexose distribution volume (k1/k2)"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "incorporation_coefficient",
+      "raw_value": "incorporation coefficient"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "incorporation_coefficient",
+      "raw_value": "incorporation coefficient (K*)"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "incorporation_time",
+      "raw_value": "incorporation time"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "increase_in_levels",
+      "raw_value": "increase in levels"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "increase_over_control_levels",
+      "raw_value": "increase over control levels"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "increment_over_control",
+      "raw_value": "Increment over control"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "indicator_clearance_rate",
+      "raw_value": "Indicator Clearance Rate"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "initial_maximum_suv",
+      "raw_value": "initial maximum SUV"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "initial_distribution_volume",
+      "raw_value": "initial volume of distribution"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "impulse_response_integral",
+      "raw_value": "integral of the impulse response"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "integrated_density",
+      "raw_value": "integrated density"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "intercept",
+      "raw_value": "Intercept"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "vd_intercept",
+      "raw_value": "Intercept (VD)"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "intrinsic_clearance",
+      "raw_value": "Intrinsic clearance"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "intrinsic_clearance",
+      "raw_value": "intrinsic clearance"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "iodide_space",
+      "raw_value": "Iodide space (as % of plasma)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "efflux_maximal_velocity",
+      "raw_value": "Jefflux (maximal velocity)"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "kin_constant",
+      "raw_value": "kin constant"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "km",
+      "raw_value": "Km value (Michaelis constant)"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "labeling_time",
+      "raw_value": "labeling time"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "leakage_area",
+      "raw_value": "leakage area"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "leakage_incidence",
+      "raw_value": "leakage incidence"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "leakage_space",
+      "raw_value": "leakage space"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "leakage_volume",
+      "raw_value": "leakage volume"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "length_constant",
+      "raw_value": "length constant"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "iodine_125_levels",
+      "raw_value": "levels of ¹²⁵I"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "log_units_per_ml",
+      "raw_value": "log (100 × mean of units per ml)"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "log_p0",
+      "raw_value": "log P0 ('passive')"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "log_ps",
+      "raw_value": "log PS calculated"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "log_ps",
+      "raw_value": "log PS observed"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "log_kin_over_s",
+      "raw_value": "log(Kin/S)"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "log_p_no",
+      "raw_value": "logP-(N + O)"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "loss_term",
+      "raw_value": "loss term"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "maximal_capacity",
+      "raw_value": "maximal capacity"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "maximal_velocity",
+      "raw_value": "maximal velocity"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "maximal_velocity",
+      "raw_value": "maximal velocity (Vmax)"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "vmax_and_apparent_km",
+      "raw_value": "maximal velocity (Vmax) and apparent Km"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "maximum_activity",
+      "raw_value": "maximum activity"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "maximum_levels",
+      "raw_value": "maximum levels"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "maximum_peak",
+      "raw_value": "maximum peak"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "maximum_suv",
+      "raw_value": "maximum SUV"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "maximum_tracer_accumulation",
+      "raw_value": "maximum tracer accumulation"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "maximum_velocity",
+      "raw_value": "maximum velocity"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "maximum_vt",
+      "raw_value": "maximum VT"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "maximum_vt_increase",
+      "raw_value": "maximum VT increase"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "mdck_value",
+      "raw_value": "MDCK value"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "mean_a_v_difference",
+      "raw_value": "mean A-V difference"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "mean_accumulation",
+      "raw_value": "Mean accumulation"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "normalized_auc_0_15_min",
+      "raw_value": "mean area under the time activity curve from 0 to 15 min normalized to TAD"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "mean_concentration",
+      "raw_value": "Mean conc"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "mean_decrease_in_qout",
+      "raw_value": "mean decrease in Qout"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "mean_difference_normalized_to_sham_control",
+      "raw_value": "mean difference ± SEM normalized to sham control"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "mean_distribution_volume",
+      "raw_value": "mean distribution volumes"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "gd_deposition_ratio",
+      "raw_value": "Mean Gd Deposition Ratio"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "barrier_closure_half_time",
+      "raw_value": "mean half time for closure of the barrier"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "mean_half_time",
+      "raw_value": "mean half-time"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "mean_equilibration_half_time",
+      "raw_value": "mean half-time to equilibrium"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "mean_increase",
+      "raw_value": "mean increase"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "mean_level",
+      "raw_value": "mean level"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "mean_passage",
+      "raw_value": "mean passage"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "mean_peak_level",
+      "raw_value": "mean peak level"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "ipsilateral_to_contralateral_ratio",
+      "raw_value": "mean ratio of the ipsilateral hemisphere to the contralateral hemisphere"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "mean_receptor_occupancy",
+      "raw_value": "mean receptor occupancy"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "mean_residence_time",
+      "raw_value": "mean residence time"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "mean_residence_time",
+      "raw_value": "mean residential time"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "mean_silver_levels",
+      "raw_value": "mean silver levels"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "total_binding",
+      "raw_value": "mean total binding"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "mean_total_pcb_residues",
+      "raw_value": "Mean Total PCB Residues"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "mean_unbound_pcp_levels",
+      "raw_value": "mean unbound PCP levels"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "mean_delta_auc",
+      "raw_value": "mean ∆AUC (0.2–2.0 ppm)"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "measured_change",
+      "raw_value": "measured change"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "measured_clearance",
+      "raw_value": "Measured clearance"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "median_levels",
+      "raw_value": "median levels"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "median_period",
+      "raw_value": "median period"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "median_time",
+      "raw_value": "median time"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "median_value",
+      "raw_value": "median value"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "michaelis_menten_constant",
+      "raw_value": "Michaelis–Menten constant"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "michaelis_menten_constant",
+      "raw_value": "Michaelis–Menten constant (KM)"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "mrt_0_inf",
+      "raw_value": "MRT 0–∞"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "mrt_0_t",
+      "raw_value": "MRT(0-t)"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "net_output",
+      "raw_value": "net output"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "nonsaturable_coefficient",
+      "raw_value": "nonsaturable coefficient"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "normalized_number_of_disintegrations",
+      "raw_value": "Normalized number of disintegrations"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "disintegrations",
+      "raw_value": "Numbers of disintegrations"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "observed_log_ps",
+      "raw_value": "Observed Log PS"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "observed_ps1",
+      "raw_value": "Observed PS1"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "one_pass_clearance",
+      "raw_value": "one-pass clearance"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "overlap_coefficient",
+      "raw_value": "overlap coefficient"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "P_diffusion x S"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "parenchyma_apparent_distribution_volume",
+      "raw_value": "parenchyma apparent distribution volume"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "pass_rate",
+      "raw_value": "pass rate"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "passage_coefficient",
+      "raw_value": "passage coefficient"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "monolayer_passage",
+      "raw_value": "passage through the monolayer"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "Pdiffusion × S"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "pe_coefficient",
+      "raw_value": "Pe coefficient"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "pe_coefficient",
+      "raw_value": "pe-coefficient"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "peak_activity_time",
+      "raw_value": "peak activity time"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "peak_and_trough_levels",
+      "raw_value": "peak and trough levels"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "peak_cur_levels",
+      "raw_value": "peak Cur levels"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "peak_ethanol",
+      "raw_value": "Peak ethanol"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "peak_thalamus",
+      "raw_value": "peak in thalamus"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "peak_level",
+      "raw_value": "Peak level"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "peak_levels",
+      "raw_value": "peak levels"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "peak_maximum",
+      "raw_value": "peak maximum"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "peak_total_pt",
+      "raw_value": "Peak total Pt"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "peak_traversal_time",
+      "raw_value": "peak traversal time"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "peak_value",
+      "raw_value": "peak value"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "peak_enr_values",
+      "raw_value": "peak values of ENR"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "single_pass_clearance_percent",
+      "raw_value": "percent clearance on a single pass"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "vt_percent_increase",
+      "raw_value": "percent increase in VT"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "hbmec_monolayer_crossing_percent",
+      "raw_value": "percentage crossing the HBMEC monolayer"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "applied_tracer_restricted_percent",
+      "raw_value": "percentage of applied tracer restricted"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "lead_crossing_barrier_percent",
+      "raw_value": "percentage of total lead crossing the barrier"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "luminal_u_percent",
+      "raw_value": "Percentage of Total U in the luminal compartment"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "perivascular_channel_percent",
+      "raw_value": "percentage reaching the perivascular channel"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "point_estimate",
+      "raw_value": "point estimate"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "polar_surface_area",
+      "raw_value": "Polar surface area"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "pooled_effect_size",
+      "raw_value": "pooled effect size"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "predicted_mdck_value",
+      "raw_value": "predicted MDCK value"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "projected_maximal_human_levels",
+      "raw_value": "projected maximal human levels"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "bcec_monolayer_crossing_proportion",
+      "raw_value": "proportion across the BCEC monolayer"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "ps",
+      "raw_value": "PS estimates"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "ps1",
+      "raw_value": "PS1(average)"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "ps3",
+      "raw_value": "PS3(average)"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "pseudo_first_order_rate_constant",
+      "raw_value": "pseudo first-order rate constant k_Lac"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "pseudo_first_order_parameter",
+      "raw_value": "pseudo-first order parameter"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "qout_decrease",
+      "raw_value": "Qout decrease"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "quantification",
+      "raw_value": "Quantification"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "quantity_of_mb_delivered",
+      "raw_value": "quantity of MB delivered"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "r_value",
+      "raw_value": "R value"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "r1_values",
+      "raw_value": "R1 values"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "radiocarbon_level",
+      "raw_value": "Radiocarbon level"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "exchange_rate_constant",
+      "raw_value": "rate constant of exchange (E)"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "right_to_left_hemisphere_ratio",
+      "raw_value": "ratio between right (opened barrier) and left (intact barrier) hemispheres"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "head_to_tail_decay_constant_ratio",
+      "raw_value": "ratio between the first-order decay constant in head and in tail"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "brain_auc_io_iv_ratio",
+      "raw_value": "ratio of the AUCbrain value between the io route and iv injection"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "rauc_0_inf",
+      "raw_value": "RAUC_0-∞"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "recovery_rate",
+      "raw_value": "recovery rates"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "recovery_relative_to_t_1824",
+      "raw_value": "recovery relative to T-1824"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "km_and_vmax_reduction",
+      "raw_value": "reductions in both, Km as well as Vmax"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflexion coefficient"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "reflexion coefficient (σ)"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "regional_clearance",
+      "raw_value": "regional clearance"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "regional_distribution",
+      "raw_value": "regional distribution"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "regional_distribution_space",
+      "raw_value": "regional distribution spaces"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "regional_linear_diffusion_coefficient",
+      "raw_value": "regional linear diffusion coefficients"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "regression_coefficient",
+      "raw_value": "Regression coefficient"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "regression_coefficient",
+      "raw_value": "regression coefficient"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "relative_distribution_coefficient",
+      "raw_value": "relative coefficient of distribution"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "relative_distribution",
+      "raw_value": "Relative distribution"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "relative_specific_activity",
+      "raw_value": "Relative Specific Activity at 2 hr"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "residence_time",
+      "raw_value": "residence time"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "retention",
+      "raw_value": "retention"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "rule_of_thumb_score",
+      "raw_value": "rule of thumb score"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "selenate_distribution_space",
+      "raw_value": "selenate distribution space"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "simulated_residue",
+      "raw_value": "Simulated residue"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "single_pass_clearance",
+      "raw_value": "single pass clearance"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "slope",
+      "raw_value": "slope"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "slope",
+      "raw_value": "slope (m)"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "csf_to_plasma_bicarbonate_slope",
+      "raw_value": "slope (Δmeq HCO₃⁻ CSF/Δmeq HCO₃⁻ P)"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "clearance_curve_slope",
+      "raw_value": "slope of the clearance curve"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "ph_vs_e_slope",
+      "raw_value": "slope of the line pH versus E"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "sodium_space",
+      "raw_value": "sodium space X 10^2"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "specific_enrichment",
+      "raw_value": "specific enrichment"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "steady_state_partition_coefficient",
+      "raw_value": "steady-state partition coefficient (λ)"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "sucrose_corrected_distribution",
+      "raw_value": "sucrose-corrected distribution"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "suv_ratio",
+      "raw_value": "SUV 2-to-90 min ratio"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV 50 – 60 min"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "suv_maximum",
+      "raw_value": "SUV maximum"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "suv_ratio",
+      "raw_value": "SUV(120 s)/SUV(3600 s)"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "targeting_efficiency",
+      "raw_value": "Targeting efficiency"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "equilibration_half_time",
+      "raw_value": "Teq (half time for equilibration)"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "theoretical_equilibrium_distribution_space",
+      "raw_value": "theoretical equilibrium distribution space"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "time_constant",
+      "raw_value": "time constant"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "time_to_equilibrate",
+      "raw_value": "time to equilibrate"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "time_to_equilibrium",
+      "raw_value": "time to equilibrium"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "time_to_peak_level",
+      "raw_value": "time to peak level"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "time_to_peak_level",
+      "raw_value": "time to peak levels"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "time_to_peak_value",
+      "raw_value": "time to peak value"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "topological_polar_surface_area",
+      "raw_value": "topological polar surface area"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "topological_polar_surface_area",
+      "raw_value": "topological polar surface area (TPSA)"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "total_activity",
+      "raw_value": "Total activity"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "total_load",
+      "raw_value": "total load"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "total_distribution_volume",
+      "raw_value": "total volume of distribution (V T)"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "total_distribution_volume",
+      "raw_value": "total volume of distribution [Vt]"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "total_distribution_volume",
+      "raw_value": "total volume of distribution VT"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "tq_distribution",
+      "raw_value": "TQ distribution"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "tracer_displacement_half_time",
+      "raw_value": "tracer displacement half-time"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "transfilter_clearance_rate",
+      "raw_value": "transfilter clearance rate"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "trough_level",
+      "raw_value": "trough level"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "trough_levels",
+      "raw_value": "trough levels"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "half_time",
+      "raw_value": "t₁/₂kₐ₀"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "effect_site_half_time",
+      "raw_value": "t₁/₂kₑ₀"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "unidirectional_clearance",
+      "raw_value": "unidirectional clearance"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "uptake",
+      "raw_value": "uptake of ³H-2DG"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "vmax",
+      "raw_value": "V_{max}"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "vmax_and_apparent_km",
+      "raw_value": "Vmax and apparent Km"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "vmax_and_km",
+      "raw_value": "Vmax and Km"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "vmax",
+      "raw_value": "Vmax apparent"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "vmax_tmax",
+      "raw_value": "Vmax(Tmax)"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "vmax_and_km",
+      "raw_value": "Vmax, Km"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "vmax_over_km",
+      "raw_value": "Vmax/Km"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "volume distribution"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "Volume of distribution"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "volume of distribution"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "volume of distribution (VD)"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "volume of distribution (Vd)"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "volume of distribution (VT)"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "total_distribution_volume",
+      "raw_value": "VT (Total distribution volume)"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "washout_rate",
+      "raw_value": "washout rate"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "white_matter_vt",
+      "raw_value": "White matter VT"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "yield",
+      "raw_value": "yield"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "cns_to_plasma_distribution",
+      "raw_value": "ZNS-Plasmaverteilung"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "delta_ps_over_delta_f",
+      "raw_value": "Δ(PS)/ΔF"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "delta_hco3_e_over_delta_hco3_a",
+      "raw_value": "Δ[HCO3]e / Δ[HCO3]a"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "delta_f_over_fo",
+      "raw_value": "ΔF/Fo"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "delta_influx_constant",
+      "raw_value": "Δinflux constant"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "delta_logd",
+      "raw_value": "ΔlogD"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "delta_r1_over_delta_t",
+      "raw_value": "ΔR₁/Δt"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "delta_snr",
+      "raw_value": "ΔSNR"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "delta_t_over_t",
+      "raw_value": "ΔT/T"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "k1_over_capillary_surface_area",
+      "raw_value": "∂K₁^ACPC ÷ capillary surface area"
+    }
+  ],
+  "cluster_id": "cluster_8bd40688c81da86d",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

@@ -353,11 +353,28 @@ def load_compact_neighbor_index(
     from rdkit import DataStructs
 
     index_root = Path(index_dir)
-    artifact_root = index_root.parent
-    catalog_root = Path(evidence_dir) if evidence_dir else artifact_root / "04_evidence_catalog"
-    final_records = Path(records_path) if records_path else artifact_root / "03_records" / "records.parquet"
-
     manifest = json.loads((index_root / "manifest.json").read_text(encoding="utf-8"))
+    artifact_root = index_root.parent
+    manifest_evidence_dir = str(manifest.get("evidence_dir") or "").strip()
+    manifest_records_path = str(manifest.get("records_path") or "").strip()
+    catalog_root = (
+        Path(evidence_dir)
+        if evidence_dir
+        else (
+            (index_root / manifest_evidence_dir).resolve()
+            if manifest_evidence_dir
+            else artifact_root / "04_evidence_catalog"
+        )
+    )
+    final_records = (
+        Path(records_path)
+        if records_path
+        else (
+            (index_root / manifest_records_path).resolve()
+            if manifest_records_path
+            else artifact_root / "03_records" / "records.parquet"
+        )
+    )
     molecules_rows = pd.read_parquet(index_root / "molecules.parquet").to_dict(
         orient="records"
     )

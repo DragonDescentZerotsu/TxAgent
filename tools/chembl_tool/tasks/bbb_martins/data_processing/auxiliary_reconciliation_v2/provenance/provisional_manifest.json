@@ -1,0 +1,142 @@
+{
+  "artifact_version": "bbb_martins_auxiliary.provisional_manifest.v1",
+  "counts": {
+    "explicit_null_tuples": 6,
+    "non_null_assignments": 172308,
+    "published_deltas": 2,
+    "section_clusters": 1726,
+    "sections": 6
+  },
+  "generation": {
+    "cluster_random_seed": 20260801,
+    "cluster_target_size": 100,
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "mapping_version": "bbb_martins_auxiliary.globally_reconciled.v1",
+    "model": "gpt-5.4-mini",
+    "prompt_version": "bbb_martins_embedding_bucket_mapping.v1",
+    "reasoning_effort": "medium"
+  },
+  "inputs": [
+    {
+      "filename": "clusters__direct_bbb__assay_model.json",
+      "inventory": "direct_bbb/assay_model",
+      "role": "cluster_cache",
+      "sha256": "39c348c05a9f5bd390bbd9540a7b01679ae9f684abab650f4502c67c3394b84e"
+    },
+    {
+      "filename": "clusters__direct_bbb__species.json",
+      "inventory": "direct_bbb/species",
+      "role": "cluster_cache",
+      "sha256": "16b1f0d084741fbf827c90136d30bb6fc600dce4a4b04030c2f4677a2badde37"
+    },
+    {
+      "filename": "clusters__efflux_transport__assay_system.json",
+      "inventory": "efflux_transport/assay_system",
+      "role": "cluster_cache",
+      "sha256": "4198b63e9931ad4dc7660429e25542851e3729c81ca066e89e1aa3f85bd9f1e4"
+    },
+    {
+      "filename": "clusters__passive_permeability__biological_system.json",
+      "inventory": "passive_permeability/biological_system",
+      "role": "cluster_cache",
+      "sha256": "b7dbae345257e3d8abe9eea1eb5cf60b1942cf9eabe8867cfe4b791e1a03b2a4"
+    },
+    {
+      "filename": "globally_reconciled_auxiliary_value_mapping.json.generation.json",
+      "role": "generation_audit",
+      "sha256": "1f497265ce3cc0e9774e508e921fd84024b95e0432a81f54497c5190a58bbc95"
+    },
+    {
+      "filename": "globally_reconciled_auxiliary_value_mapping.json",
+      "role": "published_mapping",
+      "sha256": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4"
+    },
+    {
+      "filename": "direct_bbb__global_context.jsonl",
+      "role": "response_cache",
+      "section": "direct_bbb/global_context",
+      "sha256": "d69b140e0edea0a3978706531f8939f902bf8f15570b547b3bc4c75fc7514aaa"
+    },
+    {
+      "filename": "direct_bbb__global_species_context.jsonl",
+      "role": "response_cache",
+      "section": "direct_bbb/global_species_context",
+      "sha256": "c06011cf8fa34f0b0307c7269c52cc07087a73438bae205c40737a7486fcc78e"
+    },
+    {
+      "filename": "efflux_transport__global_context.jsonl",
+      "role": "response_cache",
+      "section": "efflux_transport/global_context",
+      "sha256": "2fc047925e7c22604224d96d39a7ea5a3b5c4dbf24490c78c94449d83aa03e80"
+    },
+    {
+      "filename": "efflux_transport__global_species_context.jsonl",
+      "role": "response_cache",
+      "section": "efflux_transport/global_species_context",
+      "sha256": "bdf77720ae963ea47a98479b7d8d085e42049c7a1fcb747a84cb222a92ece9ce"
+    },
+    {
+      "filename": "passive_permeability__global_context.jsonl",
+      "role": "response_cache",
+      "section": "passive_permeability/global_context",
+      "sha256": "8a3cffc3719c444e46e625ed123ada516fff60cf91fa47d9cc3b07a6ea45c3ab"
+    },
+    {
+      "filename": "passive_permeability__global_species_context.jsonl",
+      "role": "response_cache",
+      "section": "passive_permeability/global_species_context",
+      "sha256": "cabb934bacc0e107cce6c4420ae839eb34c0f04541178bc32942f7cb0e08ddbe"
+    }
+  ],
+  "outputs": {
+    "cluster_assignments": {
+      "bytes": 7186720,
+      "filename": "cluster_assignments.parquet",
+      "sha256": "60493ba502527e4189537154472cddd92ad7789d4b9d4c811dae697663eb1682"
+    },
+    "pre_reconciliation_mapping": {
+      "bytes": 17809058,
+      "filename": "pre_reconciliation_mapping.json",
+      "sha256": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4"
+    },
+    "provisional_cluster_mapping": {
+      "bytes": 74863504,
+      "filename": "provisional_cluster_mapping.json",
+      "sha256": "4f5c380ca2f60d571fac0d25bfa309cd99aef971588699fef22e5a2467fe071b"
+    }
+  },
+  "published_deltas": [
+    {
+      "cache_identity": "648f98de3caa1a348358baba2af404064e89346bc744978b8046bad9460c0993",
+      "cluster_id": "cluster_f791baf680889d2c",
+      "item_id": "v0021",
+      "output_field": "global_context",
+      "provisional_label": "gadolinium-enhanced t1wi",
+      "published_label": "gadolinium-enhanced mri",
+      "raw_value": "GdET1WI",
+      "source_id": "direct_bbb",
+      "tuple_key": "[\"GdET1WI\"]"
+    },
+    {
+      "cache_identity": "441ac2d3a1ca86e557c80203340855842ea0f6a483adfa5f7bd40ce50b034e6a",
+      "cluster_id": "cluster_3ee603c75dbcdddc",
+      "item_id": "v0139",
+      "output_field": "global_context",
+      "provisional_label": "mri",
+      "published_label": "gadolinium-enhanced mri",
+      "raw_value": "GdET₁WI",
+      "source_id": "direct_bbb",
+      "tuple_key": "[\"GdET₁WI\"]"
+    }
+  ],
+  "validations": {
+    "all_cluster_items_reconstructed": true,
+    "cache_generation_matches_generation_audit": true,
+    "cache_identities_match_frozen_prompts": true,
+    "expected_current_published_delta_count": true,
+    "expected_non_null_assignment_count": true,
+    "expected_section_cluster_count": true,
+    "output_hashes_recorded": true,
+    "provisional_and_published_tuple_coverage_match": true
+  }
+}

@@ -31,6 +31,34 @@ class _Lookup:
     values: Mapping[tuple[Any, ...], str | None]
 
 
+def _resolve_output_fields(
+    output_fields: Sequence[str] | Mapping[str, Sequence[str]],
+    applicable_sources: Sequence[str],
+) -> dict[str, tuple[str, ...]]:
+    """Normalize the declaration to one explicit field tuple per source."""
+    if isinstance(output_fields, Mapping):
+        missing = set(applicable_sources) - set(output_fields)
+        if missing:
+            raise ValueError(
+                f"no auxiliary output fields declared for {sorted(missing)}"
+            )
+        extra = set(output_fields) - set(applicable_sources)
+        if extra:
+            raise ValueError(
+                f"auxiliary output fields declared for inapplicable sources {sorted(extra)}"
+            )
+        resolved = {source: tuple(output_fields[source]) for source in applicable_sources}
+    else:
+        shared = tuple(output_fields)
+        resolved = {source: shared for source in applicable_sources}
+    for source, fields in resolved.items():
+        if not fields:
+            raise ValueError(f"source {source!r} declares no auxiliary output fields")
+        if len(set(fields)) != len(fields):
+            raise ValueError(f"source {source!r} declares duplicate auxiliary output fields")
+    return resolved
+
+
 class AuxiliaryMetadataAttacher:
     """Validated, immutable lookup over one task's reconciled mapping sidecar."""
 
@@ -41,10 +69,30 @@ class AuxiliaryMetadataAttacher:
         mapping_version: str,
         applicable_sources: Sequence[str],
         null_like: Sequence[str],
+        output_fields: Sequence[str] | Mapping[str, Sequence[str]] = OUTPUT_FIELDS,
+        attachment_version: str = AUXILIARY_ATTACHMENT_VERSION,
     ):
+        """``output_fields`` is either one field set for every source, or a
+        per-source mapping when sources reconcile different things -- one may
+        carry a reconciled endpoint concept that another has no analogue for.
+        """
         self.path = Path(path)
         self.applicable_sources = tuple(applicable_sources)
         self._null_like = frozenset(null_like)
+        self.attachment_version = attachment_version
+        self._per_source_output_fields = isinstance(output_fields, Mapping)
+        self._output_fields_by_source = _resolve_output_fields(
+            output_fields, self.applicable_sources
+        )
+        # Ordered union, used for the manifest and for the not-applicable
+        # branch, which must return the same keys whatever the source.
+        self._all_output_fields: tuple[str, ...] = tuple(
+            dict.fromkeys(
+                field
+                for fields in self._output_fields_by_source.values()
+                for field in fields
+            )
+        )
         payload = json.loads(self.path.read_text(encoding="utf-8"))
         if set(payload) != {"mapping_version", "sources"}:
             raise ValueError("invalid globally reconciled mapping root")
@@ -66,9 +114,12 @@ class AuxiliaryMetadataAttacher:
 
         for source_id in self.applicable_sources:
             source_outputs = sources[source_id]
-            if not isinstance(source_outputs, Mapping) or set(source_outputs) != set(OUTPUT_FIELDS):
+            expected_fields = self._output_fields_by_source[source_id]
+            if not isinstance(source_outputs, Mapping) or set(source_outputs) != set(
+                expected_fields
+            ):
                 raise ValueError(f"auxiliary output inventory mismatch for {source_id}")
-            for output_field in OUTPUT_FIELDS:
+            for output_field in expected_fields:
                 section = source_outputs[output_field]
                 columns = section.get("source_columns")
                 raw_mapping = section.get("mapping")
@@ -115,7 +166,7 @@ class AuxiliaryMetadataAttacher:
                 )
 
         self._manifest = {
-            "attachment_version": AUXILIARY_ATTACHMENT_VERSION,
+            "attachment_version": self.attachment_version,
             "mapping_version": self.mapping_version,
             "mapping_path": str(self.path),
             "mapping_sha256": self.sha256,
@@ -123,7 +174,7 @@ class AuxiliaryMetadataAttacher:
                 "whitespace_and_null_cleaning": "clean_scalar",
                 "null_like_values": sorted(self._null_like),
             },
-            "output_fields": list(OUTPUT_FIELDS),
+            "output_fields": list(self._all_output_fields),
             "applicable_sources": list(self.applicable_sources),
             "sections": {
                 f"{source}/{field}": {
@@ -136,9 +187,17 @@ class AuxiliaryMetadataAttacher:
                     "conflicting_cleaned_key_collisions": 0,
                 }
                 for source in self.applicable_sources
-                for field in OUTPUT_FIELDS
+                for field in self._output_fields_by_source[source]
             },
         }
+        # Preserve the frozen v1 manifest shape when every source uses the
+        # historical shared field tuple.  Only task-specific field inventories
+        # need the additional declaration.
+        if self._per_source_output_fields:
+            self._manifest["output_fields_by_source"] = {
+                source: list(fields)
+                for source, fields in sorted(self._output_fields_by_source.items())
+            }
 
     def _tuple_key(self, values: tuple[Any, ...]) -> tuple[Any, ...]:
         cleaned: list[Any] = []
@@ -157,13 +216,14 @@ class AuxiliaryMetadataAttacher:
         source_id = str(record.get("source_id") or "")
         if source_id not in self.applicable_sources:
             return {
-                "global_context": None,
-                "global_species_context": None,
+                **{field: None for field in self._all_output_fields},
                 "auxiliary_mapping_status": "not_applicable",
-                "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
+                "auxiliary_attachment_version": self.attachment_version,
             }
-        output: dict[str, Any] = {}
-        for output_field in OUTPUT_FIELDS:
+        # Every source emits the full union so the persisted schema is stable;
+        # fields this source does not reconcile stay explicitly null.
+        output: dict[str, Any] = {field: None for field in self._all_output_fields}
+        for output_field in self._output_fields_by_source[source_id]:
             lookup = self._lookups[(source_id, output_field)]
             key = self._tuple_key(
                 tuple(record.get(column) for column in lookup.source_columns)
@@ -177,7 +237,7 @@ class AuxiliaryMetadataAttacher:
         output.update(
             {
                 "auxiliary_mapping_status": "mapped",
-                "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
+                "auxiliary_attachment_version": self.attachment_version,
             }
         )
         return output

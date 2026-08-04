@@ -1,0 +1,2387 @@
+{
+  "assignment_count": 476,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "organ_to_plasma_auc_ratio",
+      "raw_value": "% AUC organ vs. AUC plasma"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "area under the curve (AUC) value for brain compared to plasma"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC (brain vs plasma)"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC (brain) / AUC (plasma) ratio"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC (Brain) to AUC (Plasma)"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC (Brain) to AUC (Plasma) Cmax ratio"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC (brain)/AUC (plasma)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC (tissue/plasma) ratio"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC 0-24h brain / AUC 0-24h plasma"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC [0–∞] brain/plasma ratio"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC at 0–48 h in brain compared with plasma"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain / AUC plasma"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "AUC brain / AUC serum ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC brain ECF / AUC plasma"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC brain ECF / plasma"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain to AUC plasma ratio"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain to plasma"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain to plasma ratio"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC brain to plasma unbound ratio"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC brain-to-blood ratio"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain/AUC plasma"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC Brain/AUC Plasma Ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain/AUC plasma ratio"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC brain/blood ratio"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain/plasma"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain/plasma ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC brain: AUC plasma ratio"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC cerebrospinal fluid /AUC plasma"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "AUC exposure ratio"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_tissue_and_csf_to_plasma_auc_ratio",
+      "raw_value": "AUC in brain tissues and cerebrospinal fluid / plasma"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC in brain/AUC in blood (%)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC in brain/AUC in plasma"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC in cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_tissue_auc",
+      "raw_value": "AUC of brain tissue concentrations"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC of IVZ in brain / AUC of IVZ in plasma"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "unbound_brain_ecf_auc",
+      "raw_value": "AUC of unbound GCV in brain ECF"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "olfactory_bulb_to_plasma_auc_ratio",
+      "raw_value": "AUC olfactory bulb/ AUC plasma"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "AUC plasma/brain ratio"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio (0–180) brain/blood"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "unbound_striatum_to_unbound_venous_blood_auc_ratio",
+      "raw_value": "AUC ratio (AUCu,striatum / AUCu,venous blood)"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_ecf_to_total_plasma_auc_ratio",
+      "raw_value": "AUC ratio (Brain ECF/Total plasma)"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (brain/plasma)"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "AUC ratio (brain/serum)"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio (Brain: Blood)"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (brain: plasma)"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "cerebellum_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (cerebellum/plasma)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (cerebrospinal fluid/plasma)"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "cns_to_muscle_auc_ratio",
+      "raw_value": "AUC ratio (CNS/muscle)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "fetus_to_dam_auc_ratio",
+      "raw_value": "AUC ratio (fetus/dam)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "frontal_cortex_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (frontal cortex/plasma)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "hippocampal_ecf_to_blood_auc_ratio",
+      "raw_value": "AUC ratio (hippocampal ECF / blood)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "hippocampus_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (hippocampus/plasma)"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "olfactory_bulb_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (olfactory bulb/plasma)"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "AUC ratio (plasma/brain)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "spinal_cord_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (spinal cord/plasma)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "striatum_to_blood_auc_ratio",
+      "raw_value": "AUC ratio (striatum/blood)"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "thalamus_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (thalamus/plasma)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_to_muscle_auc_ratio",
+      "raw_value": "AUC ratio between brain and muscle"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio between brain and plasma"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio between brain and venous blood"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_ecf_to_total_plasma_auc_ratio",
+      "raw_value": "AUC ratio between brain ECF and total plasma concentration"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_grey_matter_to_plasma_input_auc_ratio",
+      "raw_value": "AUC ratio between whole brain grey matter and the metabolite-corrected plasma input function"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_ecf_to_serum_auc_ratio",
+      "raw_value": "AUC ratio brain extracellular fluid/serum"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio brain/blood"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio brain/plasma"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "unbound_brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio brain/plasma (unbound morphine concentrations in the ECF)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio brain/plasma (unbound morphine)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "unbound_brain_ecf_to_blood_auc_ratio",
+      "raw_value": "AUC ratio for unbound morphine (brain extracellular fluid/blood)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio of brain : plasma"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio of brain and blood"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_ecf_to_blood_auc_ratio",
+      "raw_value": "AUC ratio of brain ECF to blood"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio of brain ECF to plasma"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio of brain-to-plasma"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio of brain/blood"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio of brain/plasma"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "unbound_brain_to_unbound_blood_auc_ratio",
+      "raw_value": "AUC ratio of unbound cefuroxime in rat brain and blood"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "unbound_brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio of unbound morphine concentration (injured brain/blood)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "unbound_brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio of unbound morphine concentration (uninjured brain/blood)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio of unbound morphine in brain tissue to plasma"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "unbound_brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio of unbound topotecan in brain parenchymal ECF to plasma"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "AUC ratio or concentration ratio"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC ratios (brain/plasma)"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratios in brain ECF and plasma"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_microdialysate_to_blood_auc_ratio",
+      "raw_value": "AUC ratios of brain microdialysate and blood"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratios of brain to blood"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC ratios of free brain to free plasma"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC tissue to AUC plasma ratio"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC tissue/AUC plasma"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC Tissue/AUC Plasma (Brain)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC tissue: plasma ratio"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC values between free plasma and brain ECF"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC values in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC(%) cerebrospinal fluid/serum ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC(0 -> tlast)brain/AUC(0 -> tlast)plasma"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC(0-12 h) ratio of brain FB₁ to plasma FB₁"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC(0-24) tissue/AUC (0-24) plasma"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC(0-7h) ratio (tissue/plasma)"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC(0-t) brain / AUC(0-t) plasma"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC(0-t, tissue)/AUC(0-t, plasma)"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC(0→tlast)brain/AUC(0→tlast)plasma"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC(brain)/AUC(plasma)"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC(brain/blood) ratio"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC(Brain/Plasma)"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC,brain/AUC,plasma"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC-based brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-24 (brain compared with plasma levels)"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC0-90 min, brain/blood ratio"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-inf brain/plasma ratio"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC0-inf ratio between the brain tissue and plasma"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-infinity brain versus plasma ratio"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-t brain to AUC0-t average plasma ratio"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-t brain to AUC0-t plasma ratio"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ (brain)/AUC0-∞ (plasma)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ brain tissue-to-plasma ratio"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ brain tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ brain/plasma ratio"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "striatum_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ striatum/plasma"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞, brain tissue/AUC0-∞, plasma ratio"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0–8h [brain]/AUC0–8h [plasma]"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC0–90 min (brain/blood ratio)"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0–90min brain/plasma"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC0–inf brain–to–blood distribution ratio"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC0–t brain–to–blood distribution ratio"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0–∞ ratio in the brain relative to plasma"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC0−t brain to AUC0−t plasma ratio"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "site_to_tissue_auc_ratio",
+      "raw_value": "AUC24 ratio site/tissue"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC_brain ECF/AUC_plasma"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "AUC_brain ratio (C-SLNs/C-S)"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC_brainECF/AUC_plasma"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "cortex_to_plasma_auc_ratio",
+      "raw_value": "AUC_cortex/AUC_plasma ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "ecf_auc_ratio",
+      "raw_value": "AUC_ECF 0-4 h ratio between mdr1a (−/−) and (+/+) mice"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain/blood ratio"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCfree brain/AUCfree plasma"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUClast brain/plasma ratio"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCt brain/plasma ratio"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "total_brain_to_total_blood_auc_ratio",
+      "raw_value": "AUCtotal brain/AUCtotal blood ratio"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCu brain/AUCu plasma"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "unbound_brain_to_unbound_blood_auc_ratio",
+      "raw_value": "AUCu ratio brain:blood"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "unbound_brain_ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCu,brain ECF/AUCu,plasma"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCu,brain/AUCu,plasma"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_interstitial_fluid_to_plasma_auc_ratio",
+      "raw_value": "AUC₀-360 ratio of the brain interstitial fluid and plasma"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC₀-∞ brain / AUC₀-∞ plasma ratio"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "cerebral_emission_auc",
+      "raw_value": "AUC₀⁻²¹₀min of cerebral emission intensity"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC₀⁻ᵢ brain to AUC₀⁻ᵢ plasma ratio"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC₀⁻₆₀ brain/ AUC₀⁻₆₀ plasma"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC₀⁻∞ brain / AUC₀⁻∞ plasma"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC₀⁻∞ in the brain versus that in plasma"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC₀⁻∞ ratio (brain/plasma)"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_tissue_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC₀⁻∞, brain tissue/fAUC₀⁻∞, plasma ratio"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_auc_to_plasma_concentration_ratio",
+      "raw_value": "AUC₀→∞ of brain divided by the plasma drug concentration"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "average_concentration",
+      "raw_value": "average concentration during the 12 hours of the AUC"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "blood-brain AUC ratio"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "tissue_to_blood_auc_ratio",
+      "raw_value": "blood-brain distribution ratio (AUCtissue/AUCblood)"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain : plasma AUC ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "brain accumulation (corrected for plasma AUCs)"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_and_plasma_auc",
+      "raw_value": "brain and plasma AUC"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain AUC / Plasma AUC"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC / plasma AUC"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC / plasma AUC ratio"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "brain AUC ratio"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "brain AUC ratio (human vs rat)"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "brain AUC ratio (mdr1a(-/-) / wild-type)"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "brain AUC ratio Pronetupitant/Netupitant"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain AUC to blood AUC ratio"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC to plasma AUC"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC to plasma AUC ratio (B/P)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "brain_auc_to_ec50_ratio",
+      "raw_value": "brain AUC/EC₅₀ ratio"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC/plasma AUC"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain AUC0-1h to plasma AUC0-1h ratio"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "Brain AUC0-60 ratio (Scan 2/Scan 1)"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain AUC0-t/plasma AUC0-t ratio"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC:plasma AUC ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "brain AUC₀-₂₄ h ratio (mdr1a-/- vs wild-type)"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC₀-₃₀min/plasma AUC₀-₃₀min"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain AUC₀.₂₅–₄h to plasma AUC₀.₂₅–₄h ratio"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain AUC₀⁻∞ / Plasma AUC₀⁻∞"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain distribution ratio (area under the curve [AUC]brain/AUCblood)"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "brain ECF to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "unbound_brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "brain ECF to plasma AUC ratio of unbound topotecan lactone"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_ecf_and_csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "brain ECF- and CSF-to-unbound plasma AUC0-360 ratios"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_ecf_to_total_plasma_auc_ratio",
+      "raw_value": "brain ECF-to-plasma total AUC ratio"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "brain ECF-to-unbound plasma AUC0–240 ratio"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "brain ECF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain exposure (AUC) / plasma exposure (AUC)"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain exposure / blood AUC ratio"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain exposure ratio (AUCbrain/AUCplasma)"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "brain extracellular fluid AUC versus plasma AUC ratio"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "brain extracellular fluid to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_hemispheres_to_plasma_auc_ratio",
+      "raw_value": "brain hemispheres/plasma morphine AUC ratio"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_hemispheres_to_plasma_auc_ratio",
+      "raw_value": "brain hemispheres/plasma morphine AUC ratios"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_homogenate_to_plasma_auc_ratio",
+      "raw_value": "brain homogenate-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_interstitial_fluid_to_plasma_auc_ratio",
+      "raw_value": "brain interstitium/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_isf_to_plasma_auc_ratio",
+      "raw_value": "brain ISF-to-plasma AUC ratio of unbound topotecan lactone"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain levels (both AUC and Cmax) / plasma levels"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain morphine AUC to plasma morphine AUC ratio"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_penetration_index",
+      "raw_value": "brain penetration index (AUCbrain/plasma ratio)"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "brain tissue AUC / plasma AUC"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "brain tissue to plasma ratio based on AUC0-t"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "brain tissue- to-plasma total AUC ratio"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "brain tissue-to-plasma AUC0-60min ratio"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "brain tissue-to-plasma AUC0→∞ ratio"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "brain tissue-to-plasma AUCs ratio"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "brain tissue: plasma AUC0–24 h ratio"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain to blood AUC ratio"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma area under the curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma AUC (0-4h) ratio"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma AUC0-240min ratio"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma AUC0-t ratio"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma AUClast ratio"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma AUC₀⁻₄ ratio"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma AUC₀⁻∞ ratio"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma AUC₀→∞ ratio"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma exposure (AUC) ratio"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma ratio (AUC8h brain/AUC8h plasma)"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma ratio calculated on the AUC0-t"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma ratio of the area under the concentration-time curves (AUC)"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma ratios (Cmax and AUC)"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma SN-38 AUC0-t ratio"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain to serum AUC ratio"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain to serum AUC(0-6 h) ratio"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "brain to unbound plasma AUC0-τ ratio"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "brain_tumor_distribution_coefficient",
+      "raw_value": "brain tumor distribution coefficient (the ratio of brain tumor ECF platinum AUC to plasma protein unbound platinum AUC)"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "brain_tumor_distribution_coefficient",
+      "raw_value": "brain tumour distribution coefficient (the ratio of brain tumour platinum AUC to plasma free platinum AUC)"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain uptake ratio (brain AUC/plasma AUC)"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain-AUC₀-72h / Plasma-AUC₀-72h ratio"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-blood AUC ratios"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-blood AUC0-t ratio"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood AUC ratio"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood AUC ratio of (+)-mefloquine relative to its enantiomer"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood AUC ratios"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "Brain-to-blood AUC0-60 ratio"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood AUC₀-60 ratios"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood AUC₀-₆₀ ratio"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood drug concentration ratio (AUC)"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood exposure (AUC) ratio"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood exposure ratio (AUCinf)"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "Brain-to-blood ratios of AUCs and Cmax values"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "Brain-to-free plasma AUC(0→4 h) ratio"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain-to-plasma % ratio (AUC)"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma 'area under the curve' (AUC) ratio"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma [AUC0-240] ratio"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma area under concentration curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma area under the concentration versus time curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma area under the curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma area under the curve (AUC, 0-24 hours)"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "brain_to_plasma_auc_difference",
+      "raw_value": "brain-to-plasma AUC differences"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC exposure ratio"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain-to-Plasma AUC Ratio"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC ratio (BPR)"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC(4h) ratio"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC0-4 ratio"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC0-t ratio"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC0-∞"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC0–240 ratio (brain ECF)"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC0–240 ratio (CSF_CM)"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC0–240 ratio (CSF_LV)"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC0→∞ ratio"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC_t ratio"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUCt ratio"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC₀⁻₁₂h ratio"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma AUC₀→∞ ratio"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma distribution ratio (AUC₀⁻₈ h)"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "brain-to-plasma distribution ratio (plasma/brain AUC)"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma percent ratio (AUC Brain / AUC Plasma * 100)"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma ratio (AUC)"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma ratio (AUC₀-24h)"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma ratio (based on AUC72 values)"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma ratio calculated from the area under curves (AUC₀⁻t)"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma ratios (AUC₀-₂₄-based analysis)"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma treosulfan AUC ratio"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma-AUC ratio"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain-to-serum area under the curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "Brain-to-serum AUC ratio"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain-to-serum AUC ratio"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain-to-serum AUC0-t ratio"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain-to-serum AUClast ratio"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/ metabolite-corrected plasma AUC ratio"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/AUC plasma ratio"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "Brain/Blood AUC ratio"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain/blood AUC ratio"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain/blood AUC ratio decrease"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "unbound_brain_to_unbound_blood_auc_ratio",
+      "raw_value": "brain/blood AUCu ratio"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain/blood AUC₀−₃₀₀ min. ratio"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain/blood distribution AUC ratio"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "Brain/blood ratio (AUC(0–t))"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain/blood ratio of AUC₀⁻∞"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain/blood ratios of fluorescein AUC₀–₆₀ min"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "brain_to_muscle_auc_ratio",
+      "raw_value": "brain/muscle AUC₀-180 ratio"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma (AUC for the 8-h dosage)"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/Plasma (AUC)"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma (AUClast) ratio"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma (B/P) AUC ratio"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma area under the concentration (AUC) ratio"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma area under the curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "brain/plasma area under the curve (AUC) ratio for unbound"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma AUC"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "Brain/plasma AUC ratio, unbound"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma AUC(0-24) ratio"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/Plasma AUC0-12h ratio"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma AUC0-24"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma AUC0-4 ratio"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/Plasma AUC0-t ratio"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/Plasma AUC0-∞ ratio"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma AUC0-∞ ratio"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma AUC0–90 min ratio"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma AUC0–t ratio"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma AUClast ratio"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma AUC₀-24"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma AUC₀⁻ᵗ Ratio"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma AUC₀⁻₃₀ ratio"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma AUC₀⁻₆ ratio"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma Cmax ratio and brain/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma exposure (AUC) ratio"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma exposure ratio (AUC0-∞)"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio (AUC)"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio (AUC0-480 min)"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio (AUC0-6h)"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio (for total exposure AUC)"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma ratio based on AUC"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio based on AUC0–6 h"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio for mean area under the concentration-time curve (AUC)"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio of AUC"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio of AUC of unbound treosulfan"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio of AUC0-24"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma ratio of AUCs"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain/plasma total concentration ratio (AUCa)"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "Brain/serum (%) AUC"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "Brain/serum AUC ratio"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain/serum AUC ratio"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain/serum AUC0-last ratio"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain: Plasma AUC Ratio"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "Brain:Blood AUC0-t ratio"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain:plasma AUC ratio"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain:plasma AUC ratios"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain:plasma Cmax ratio (AUC ratio)"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "brain:plasma distribution ratios (48-h AUCtissue:AUCplasma)"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain:plasma ratio (AUC0-24, brain/AUC0-24hr, plasma)"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "BrainAUCI,V ratio (AUCC-SLNs/AUCC-S)"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "BrainAUCOral ratio (AUCC-SLNs/AUCC-S)"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "brainECF/plasmau AUC0-360 ratio"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "Brainunbound AUC/Plasmaunbound AUC"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain–blood AUC ratio"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "brain–serum AUC ratio"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "cerebral-spinal fluid area under the curve (AUC) / plasma AUC"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "cerebrospinal fluid AUC / plasma AUC"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "cerebrospinal fluid/ serum ratio [AUC(%)]"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "cerebrospinal fluid/plasma AUC0-12 ratio"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "cerebrospinal fluid/serum AUC ratio"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "cerebrospinal fluid/serum ratios calculated from AUC(%)"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Cmax and AUC0-∞ brain/plasma ratios"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Cmax or AUC0-12 brain/plasma ratio"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "cortex_auc_to_plasma_concentration_ratio",
+      "raw_value": "cortex tissue concentration (AUC) / plasma concentration"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "dialysate_to_plasma_auc_ratio",
+      "raw_value": "dialysate : plasma imipramine AUC ratio"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "dialysate_to_blood_auc_ratio",
+      "raw_value": "dialysate brain-blood AUC ratio"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "dose_normalized_auc_ratio",
+      "raw_value": "dose-normalized AUC ratio"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "fetal_brain_to_fetal_plasma_auc_ratio",
+      "raw_value": "fetal brain AUC / fetal plasma AUC"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "fetal_brain_to_maternal_brain_auc_ratio",
+      "raw_value": "foetal brain to maternal brain AUC ratio"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "free brain-to-free plasma (AUC) ratio"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "free brain-to-free plasma AUC ratio"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "free brain-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "free brain-to-plasma ratio (AUClast)"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "cns_ecf_to_plasma_auc_ratio",
+      "raw_value": "free extracellular fluid (ECF) AUC in the CNS / plasma AUC"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "unbound_striatum_to_total_plasma_auc_ratio",
+      "raw_value": "free striatal/total plasma AUC ratio"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "hypothalamus_to_plasma_auc_ratio",
+      "raw_value": "hypothalamus AUC to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "intracranial_tumor_to_brain_auc_ratio",
+      "raw_value": "intracranial tumor/brain AUClast ratio"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "intracranial_tumor_to_plasma_auc_ratio",
+      "raw_value": "intracranial tumor/plasma AUClast ratio"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "intracranial_tumor_to_brain_auc_ratio",
+      "raw_value": "intracranial tumour/brain AUC ratio"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "intracranial_tumor_to_plasma_auc_ratio",
+      "raw_value": "intracranial tumour/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "maternal_brain_to_maternal_plasma_auc_ratio",
+      "raw_value": "maternal brain-to-maternal plasma AUC ratio"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "maternal_brain_to_plasma_auc_ratio",
+      "raw_value": "Maternal brain-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "maternal_brain_to_maternal_plasma_auc_ratio",
+      "raw_value": "maternal brain/maternal plasma AUC0-240 GMR"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "brain_interstitial_fluid_or_csf_to_plasma_auc_ratio",
+      "raw_value": "mean brain interstitium or CSF AUC to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "mean brain: plasma ratio (AUC0-480)"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "non-contrast enhancing brain:plasma AUC ratio"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "organ_to_blood_auc_ratio",
+      "raw_value": "organ-to-blood AUC ratio"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "overall brain to plasma AUC ratio (AUC₀⁻∞ ratio)"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "overall brain-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "overall brain-to-plasma ratio (based on AUC72 values)"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "plasma AUC / brain AUC"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "plasma Cmax/brain Cmax and plasma AUC₀-24 h/brain AUC₀-24 h ratio"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "plasma-brain-AUC relation"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "plasma/brain area under the concentration time-curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "plasma/brain AUC ratio"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "plasma_to_total_brain_auc_ratio",
+      "raw_value": "plasma/brain AUCtotal ratio"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "plasma_to_total_brain_auc_ratio",
+      "raw_value": "plasma/brain AUCtotal ratios"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "plasma/brain ratio (AUC0-last in plasma/AUC0-last in brain)"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "plasma:brain ratio (AUC)"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "Ratio AUC (Brain/Plasma, unbound)"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio between the area under the curve (AUC) between brain and plasma"
+    },
+    {
+      "item_id": "v0399",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of Area Under the Curve (AUC) in cerebrospinal fluid to AUC in plasma"
+    },
+    {
+      "item_id": "v0400",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "ratio of area under the curve (AUC)₀⁻₂₆ h (brain diabetic/non-diabetic)"
+    },
+    {
+      "item_id": "v0401",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUC (0-24) tissue /AUC (0-24) plasma"
+    },
+    {
+      "item_id": "v0402",
+      "provisional_endpoint": "brain_ecf_to_serum_auc_ratio",
+      "raw_value": "ratio of AUC brain ECF to AUC serum"
+    },
+    {
+      "item_id": "v0403",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUC brain to plasma"
+    },
+    {
+      "item_id": "v0404",
+      "provisional_endpoint": "brain_auc_ratio",
+      "raw_value": "Ratio of AUC in brain (C-SLNs/C-S)"
+    },
+    {
+      "item_id": "v0405",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUC in brain:plasma"
+    },
+    {
+      "item_id": "v0406",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUC of bepotastine in the brain to the AUC in the plasma"
+    },
+    {
+      "item_id": "v0407",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUC of BPA in brain to that in plasma"
+    },
+    {
+      "item_id": "v0408",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of AUC of cerebrospinal fluid and serum"
+    },
+    {
+      "item_id": "v0409",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Ratio of AUC(0-t) (brain/plasma)"
+    },
+    {
+      "item_id": "v0410",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUC0-inf brain to AUC0-inf plasma"
+    },
+    {
+      "item_id": "v0411",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Ratio of AUC0-t Brain/Plasma"
+    },
+    {
+      "item_id": "v0412",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUClast of brain to plasma"
+    },
+    {
+      "item_id": "v0413",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "ratio of AUC₀⁻₂₆ h in brain / blood"
+    },
+    {
+      "item_id": "v0414",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of brain area under the concentration-time curve (AUC) to plasma AUC"
+    },
+    {
+      "item_id": "v0415",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "ratio of brain AUC to blood AUC"
+    },
+    {
+      "item_id": "v0416",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of brain AUC to plasma AUC"
+    },
+    {
+      "item_id": "v0417",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Ratio of Brain to Plasma AUC Ratio between KO and WT Mice"
+    },
+    {
+      "item_id": "v0418",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of brain to plasma AUC₁⁻₇"
+    },
+    {
+      "item_id": "v0419",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of brain-to-plasma AUC(0- ¥ )"
+    },
+    {
+      "item_id": "v0420",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Ratio of Brain-to-Plasma AUC(0-∞)"
+    },
+    {
+      "item_id": "v0421",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of brain/plasma AUClast"
+    },
+    {
+      "item_id": "v0422",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of brain:plasma AUC"
+    },
+    {
+      "item_id": "v0423",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "ratio of cocaine AUC in brain extracellular fluid to that in plasma"
+    },
+    {
+      "item_id": "v0424",
+      "provisional_endpoint": "brain_ecf_to_serum_auc_ratio",
+      "raw_value": "ratio of drug in brain ECF to drug in serum (AUC ratio)"
+    },
+    {
+      "item_id": "v0425",
+      "provisional_endpoint": "dialysate_to_plasma_auc_ratio",
+      "raw_value": "Ratio of imipramine dialysate AUC: plasma AUC"
+    },
+    {
+      "item_id": "v0426",
+      "provisional_endpoint": "mean_tissue_to_plasma_auc_ratio",
+      "raw_value": "ratio of mean tissue levels to mean plasma AUC0-24"
+    },
+    {
+      "item_id": "v0427",
+      "provisional_endpoint": "pet_auc_to_plasma_auc_ratio",
+      "raw_value": "ratio of PET area under the time-radioactivity curve (AUC) to plasma AUC"
+    },
+    {
+      "item_id": "v0428",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the AUC in brain ECF-to-plasma"
+    },
+    {
+      "item_id": "v0429",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "ratio of the drug area under the curve (AUC) in brain to the AUC in plasma"
+    },
+    {
+      "item_id": "v0430",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "ratios of AUC for plasma / AUC for brain"
+    },
+    {
+      "item_id": "v0431",
+      "provisional_endpoint": "unbound_brain_to_unbound_venous_blood_auc_ratio",
+      "raw_value": "ratios of unbound AUC between brain and venous blood"
+    },
+    {
+      "item_id": "v0432",
+      "provisional_endpoint": "relative_auc",
+      "raw_value": "relative AUC (brain/plasma and liver)"
+    },
+    {
+      "item_id": "v0433",
+      "provisional_endpoint": "brain_ecf_distribution_coefficient",
+      "raw_value": "relative brain distribution coefficient (AUCbrain ecf/AUCplasma)"
+    },
+    {
+      "item_id": "v0434",
+      "provisional_endpoint": "relative_exposure_index",
+      "raw_value": "relative exposure index (AUC CNS / AUC plasma)"
+    },
+    {
+      "item_id": "v0435",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Ri of AUC0-24h (brain/plasma)"
+    },
+    {
+      "item_id": "v0436",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "steady-state brain-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0437",
+      "provisional_endpoint": "steady_state_brain_ecf_ratio",
+      "raw_value": "Steady-state conc or AUC ratio (Brain ECF)"
+    },
+    {
+      "item_id": "v0438",
+      "provisional_endpoint": "striatum_to_plasma_auc_ratio",
+      "raw_value": "striatum:plasma dialysate AUC ratio"
+    },
+    {
+      "item_id": "v0439",
+      "provisional_endpoint": "tissue_penetration_factor",
+      "raw_value": "tissue penetration factor (fT, AUC0-∞,free, brain/AUC0-∞,free, plasma)"
+    },
+    {
+      "item_id": "v0440",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue to plasma AUC0-480 ratio"
+    },
+    {
+      "item_id": "v0441",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue to plasma AUC₀→∞ ratio"
+    },
+    {
+      "item_id": "v0442",
+      "provisional_endpoint": "kp_tissue_plasma",
+      "raw_value": "Tissue-plasma ratio (Kp)-AUC"
+    },
+    {
+      "item_id": "v0443",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Tissue-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0444",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0445",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue-to-plasma AUC0→∞ ratio"
+    },
+    {
+      "item_id": "v0446",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue-to-plasma AUC₀→∞ ratio"
+    },
+    {
+      "item_id": "v0447",
+      "provisional_endpoint": "brain_tissue_to_blood_auc_ratio",
+      "raw_value": "tissue/blood AUC ratio (Brain)"
+    },
+    {
+      "item_id": "v0448",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Tissue/Plasma (AUC0-last)"
+    },
+    {
+      "item_id": "v0449",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Tissue/plasma (AUC0-last)"
+    },
+    {
+      "item_id": "v0450",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Tissue/Plasma AUC ratio"
+    },
+    {
+      "item_id": "v0451",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Tissue/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0452",
+      "provisional_endpoint": "unbound_tissue_to_unbound_plasma_auc_ratio",
+      "raw_value": "tissue/plasma AUC ratio for unbound TREO"
+    },
+    {
+      "item_id": "v0453",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue/plasma AUC0-∞ ratio"
+    },
+    {
+      "item_id": "v0454",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue/plasma exposure ratio (AUC)"
+    },
+    {
+      "item_id": "v0455",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Tissue/Plasma ratio AUC0-72"
+    },
+    {
+      "item_id": "v0456",
+      "provisional_endpoint": "total_brain_to_blood_auc_ratio",
+      "raw_value": "total brain to blood AUC ratio"
+    },
+    {
+      "item_id": "v0457",
+      "provisional_endpoint": "total_brain_to_plasma_auc_ratio",
+      "raw_value": "total brain to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0458",
+      "provisional_endpoint": "total_brain_to_plasma_auc_ratio",
+      "raw_value": "total brain-to-plasma area under the curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0459",
+      "provisional_endpoint": "total_brain_to_plasma_auc_ratio",
+      "raw_value": "total brain-to-plasma ratio (AUClast)"
+    },
+    {
+      "item_id": "v0460",
+      "provisional_endpoint": "total_brain_to_plasma_auc_ratio",
+      "raw_value": "Total brain/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0461",
+      "provisional_endpoint": "total_brain_to_plasma_auc_ratio",
+      "raw_value": "Total brain/plasma AUC ratio; Unbound brain/unbound plasma AUC ratio"
+    },
+    {
+      "item_id": "v0462",
+      "provisional_endpoint": "total_brain_to_plasma_auc_ratio",
+      "raw_value": "total brain: plasma AUC ratio"
+    },
+    {
+      "item_id": "v0463",
+      "provisional_endpoint": "total_brain_to_total_plasma_auc_ratio",
+      "raw_value": "total brain: total plasma AUC ratio"
+    },
+    {
+      "item_id": "v0464",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "total exposure (AUC) ratio"
+    },
+    {
+      "item_id": "v0465",
+      "provisional_endpoint": "unbound_brain_and_plasma_auc",
+      "raw_value": "unbound AUC (brain and plasma)"
+    },
+    {
+      "item_id": "v0466",
+      "provisional_endpoint": "unbound_brain_to_unbound_venous_blood_auc_ratio",
+      "raw_value": "unbound AUC ratio between brain and venous blood"
+    },
+    {
+      "item_id": "v0467",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "unbound AUC ratio of brain to plasma"
+    },
+    {
+      "item_id": "v0468",
+      "provisional_endpoint": "unbound_brain_and_plasma_auc",
+      "raw_value": "unbound AUCs in brain and plasma"
+    },
+    {
+      "item_id": "v0469",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "unbound brain to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0470",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "unbound brain to plasma AUC₀-τ ratio"
+    },
+    {
+      "item_id": "v0471",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "unbound brain to unbound plasma area under the curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0472",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "unbound brain to unbound plasma AUC ratio"
+    },
+    {
+      "item_id": "v0473",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "unbound brain-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0474",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "unbound brain-to-unbound plasma AUC ratio"
+    },
+    {
+      "item_id": "v0475",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "Unbound brain/unbound plasma AUC ratio; CSF/unbound plasma AUC ratio"
+    }
+  ],
+  "cluster_id": "cluster_c1248cda0c3499bd",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

@@ -1,0 +1,453 @@
+{
+  "clusters": [
+    {
+      "assignment_count": 87,
+      "cache_identity": "e1134a1d7afd8128ab60b36cb053ed865a60fc2fd60e3a9e7b450ea1e4b580ab",
+      "cluster_id": "cluster_2aae8243ca493681",
+      "items": [
+        {
+          "item_id": "v0000",
+          "provisional_label": null,
+          "raw_value": "..."
+        },
+        {
+          "item_id": "v0001",
+          "provisional_label": "guinea pig",
+          "raw_value": "animal (guinea-pig)"
+        },
+        {
+          "item_id": "v0002",
+          "provisional_label": "rat",
+          "raw_value": "animal (rat)"
+        },
+        {
+          "item_id": "v0003",
+          "provisional_label": "animal in vivo",
+          "raw_value": "animal in vivo"
+        },
+        {
+          "item_id": "v0004",
+          "provisional_label": "in vitro cells",
+          "raw_value": "animal_in_vitro_cells; purified_proteins"
+        },
+        {
+          "item_id": "v0005",
+          "provisional_label": "animal in vivo",
+          "raw_value": "animal_in_vivo"
+        },
+        {
+          "item_id": "v0006",
+          "provisional_label": "animal in vivo",
+          "raw_value": "animal_in_vivo (passive transfer ex vivo exposure)"
+        },
+        {
+          "item_id": "v0007",
+          "provisional_label": "animal in vivo",
+          "raw_value": "animal_in_vivo and in_vitro_cells"
+        },
+        {
+          "item_id": "v0008",
+          "provisional_label": "animal in vivo",
+          "raw_value": "animal_in_vivo; in_vitro_cells"
+        },
+        {
+          "item_id": "v0009",
+          "provisional_label": "animal in vivo",
+          "raw_value": "animal_vivo"
+        },
+        {
+          "item_id": "v0010",
+          "provisional_label": "in vitro cells",
+          "raw_value": "cell-based (in vitro)"
+        },
+        {
+          "item_id": "v0011",
+          "provisional_label": "in vitro cells",
+          "raw_value": "cell-based_in_vitro"
+        },
+        {
+          "item_id": "v0012",
+          "provisional_label": "in vitro cells",
+          "raw_value": "cell_line"
+        },
+        {
+          "item_id": "v0013",
+          "provisional_label": "ex vivo tissue",
+          "raw_value": "ex_vitro_tissue"
+        },
+        {
+          "item_id": "v0014",
+          "provisional_label": "ex vivo tissue",
+          "raw_value": "ex_vivo"
+        },
+        {
+          "item_id": "v0015",
+          "provisional_label": "ex vivo tissue",
+          "raw_value": "ex_vivo (human skin explants)"
+        },
+        {
+          "item_id": "v0016",
+          "provisional_label": "ex vivo tissue",
+          "raw_value": "ex_vivo_tissue"
+        },
+        {
+          "item_id": "v0017",
+          "provisional_label": "ex vivo tissue",
+          "raw_value": "ex_vivo_tissue (substance in solution)"
+        },
+        {
+          "item_id": "v0018",
+          "provisional_label": "rat",
+          "raw_value": "F344 rat"
+        },
+        {
+          "item_id": "v0019",
+          "provisional_label": "animal in vivo",
+          "raw_value": "F344 rat, B6C3F1 mouse"
+        },
+        {
+          "item_id": "v0020",
+          "provisional_label": "in vitro cells",
+          "raw_value": "HaCaT cells (immortalised keratinocyte cell line)"
+        },
+        {
+          "item_id": "v0021",
+          "provisional_label": "human",
+          "raw_value": "Human"
+        },
+        {
+          "item_id": "v0022",
+          "provisional_label": "human",
+          "raw_value": "human"
+        },
+        {
+          "item_id": "v0023",
+          "provisional_label": "human",
+          "raw_value": "Human (bulb growers vs controls)"
+        },
+        {
+          "item_id": "v0024",
+          "provisional_label": "human",
+          "raw_value": "Human (bulb growers)"
+        },
+        {
+          "item_id": "v0025",
+          "provisional_label": "human",
+          "raw_value": "human (clinical case)"
+        },
+        {
+          "item_id": "v0026",
+          "provisional_label": "human",
+          "raw_value": "human (in vivo)"
+        },
+        {
+          "item_id": "v0027",
+          "provisional_label": "human",
+          "raw_value": "human clinical"
+        },
+        {
+          "item_id": "v0028",
+          "provisional_label": "human",
+          "raw_value": "human clinical observation"
+        },
+        {
+          "item_id": "v0029",
+          "provisional_label": "human",
+          "raw_value": "human clinical observation (FAERS)"
+        },
+        {
+          "item_id": "v0030",
+          "provisional_label": "human",
+          "raw_value": "human clinical trials"
+        },
+        {
+          "item_id": "v0031",
+          "provisional_label": "human",
+          "raw_value": "human in vivo"
+        },
+        {
+          "item_id": "v0032",
+          "provisional_label": "human",
+          "raw_value": "human patient (clinical case)"
+        },
+        {
+          "item_id": "v0033",
+          "provisional_label": "human",
+          "raw_value": "Human patient (in vivo)"
+        },
+        {
+          "item_id": "v0034",
+          "provisional_label": "human",
+          "raw_value": "human patients"
+        },
+        {
+          "item_id": "v0035",
+          "provisional_label": "in vitro cells",
+          "raw_value": "human primary monocytes in vitro"
+        },
+        {
+          "item_id": "v0036",
+          "provisional_label": "human",
+          "raw_value": "human tissue"
+        },
+        {
+          "item_id": "v0037",
+          "provisional_label": "human",
+          "raw_value": "human_clinical_observation"
+        },
+        {
+          "item_id": "v0038",
+          "provisional_label": "ex vivo tissue",
+          "raw_value": "human_ex_vivo"
+        },
+        {
+          "item_id": "v0039",
+          "provisional_label": "human",
+          "raw_value": "human_experimental"
+        },
+        {
+          "item_id": "v0040",
+          "provisional_label": "mixed",
+          "raw_value": "human_experimental, animal_in_vivo"
+        },
+        {
+          "item_id": "v0041",
+          "provisional_label": "human",
+          "raw_value": "human_in_vivo"
+        },
+        {
+          "item_id": "v0042",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in vitro"
+        },
+        {
+          "item_id": "v0043",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in vitro cell co-culture"
+        },
+        {
+          "item_id": "v0044",
+          "provisional_label": "animal in vivo",
+          "raw_value": "in vivo"
+        },
+        {
+          "item_id": "v0045",
+          "provisional_label": "animal in vivo",
+          "raw_value": "in vivo (nude mice)"
+        },
+        {
+          "item_id": "v0046",
+          "provisional_label": "animal in vivo",
+          "raw_value": "in vivo (unspecified model, likely animal or human skin)"
+        },
+        {
+          "item_id": "v0047",
+          "provisional_label": "rat",
+          "raw_value": "in vivo animal (Wistar aged rat)"
+        },
+        {
+          "item_id": "v0048",
+          "provisional_label": "dog",
+          "raw_value": "in vivo dog"
+        },
+        {
+          "item_id": "v0049",
+          "provisional_label": "rat",
+          "raw_value": "in vivo rat"
+        },
+        {
+          "item_id": "v0050",
+          "provisional_label": "rat",
+          "raw_value": "in vivo rat dental pulp model"
+        },
+        {
+          "item_id": "v0051",
+          "provisional_label": "rat",
+          "raw_value": "in vivo rat liver tissue"
+        },
+        {
+          "item_id": "v0052",
+          "provisional_label": "rat",
+          "raw_value": "in vivo rat model"
+        },
+        {
+          "item_id": "v0053",
+          "provisional_label": "rabbit",
+          "raw_value": "in vivo: New Zealand white rabbit eyelid"
+        },
+        {
+          "item_id": "v0054",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in_vitro"
+        },
+        {
+          "item_id": "v0055",
+          "provisional_label": "non-biological/computational context",
+          "raw_value": "in_vitro (solution)"
+        },
+        {
+          "item_id": "v0056",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in_vitro_cells"
+        },
+        {
+          "item_id": "v0057",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in_vitro_cells (lipofuscin chromophore extract in organic solvent)"
+        },
+        {
+          "item_id": "v0058",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in_vitro_cells (purified lipofuscin granules)"
+        },
+        {
+          "item_id": "v0059",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in_vitro_cells (RPE cells)"
+        },
+        {
+          "item_id": "v0060",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in_vitro_cells, ex_vivo_tissue"
+        },
+        {
+          "item_id": "v0061",
+          "provisional_label": "in vitro cells",
+          "raw_value": "in_vitro_cells, ex_vivo_tissue, reconstructed_tissue"
+        },
+        {
+          "item_id": "v0062",
+          "provisional_label": "animal in vivo",
+          "raw_value": "in_vitro_cells; animal_in_vivo"
+        },
+        {
+          "item_id": "v0063",
+          "provisional_label": "non-biological/computational context",
+          "raw_value": "in_vitro_cells_or_chemical"
+        },
+        {
+          "item_id": "v0064",
+          "provisional_label": "reconstructed tissue",
+          "raw_value": "in_vitro_reconstructed_tissue"
+        },
+        {
+          "item_id": "v0065",
+          "provisional_label": "non-biological/computational context",
+          "raw_value": "in_vitro_solution"
+        },
+        {
+          "item_id": "v0066",
+          "provisional_label": "animal in vivo",
+          "raw_value": "in_vivo"
+        },
+        {
+          "item_id": "v0067",
+          "provisional_label": "animal in vivo",
+          "raw_value": "in_vivo_animal"
+        },
+        {
+          "item_id": "v0068",
+          "provisional_label": "mixed",
+          "raw_value": "mixed"
+        },
+        {
+          "item_id": "v0069",
+          "provisional_label": "mouse",
+          "raw_value": "mouse_in_vivo"
+        },
+        {
+          "item_id": "v0070",
+          "provisional_label": "multiple_test_systems",
+          "raw_value": "multiple_test_systems"
+        },
+        {
+          "item_id": "v0071",
+          "provisional_label": "rabbit",
+          "raw_value": "New Zealand white rabbit"
+        },
+        {
+          "item_id": "v0072",
+          "provisional_label": null,
+          "raw_value": "not specified (from prior studies; likely cell-free or cellular)"
+        },
+        {
+          "item_id": "v0073",
+          "provisional_label": null,
+          "raw_value": "not specified (implied in vivo or in vitro)"
+        },
+        {
+          "item_id": "v0074",
+          "provisional_label": null,
+          "raw_value": "not specified (likely human or animal from reference 11)"
+        },
+        {
+          "item_id": "v0075",
+          "provisional_label": "human",
+          "raw_value": "not specified (likely human or animal in vivo)"
+        },
+        {
+          "item_id": "v0076",
+          "provisional_label": null,
+          "raw_value": "not specified (likely in vitro)"
+        },
+        {
+          "item_id": "v0077",
+          "provisional_label": null,
+          "raw_value": "not specified (likely in vivo or in vitro; 'tumor accumulation' suggests in vivo)"
+        },
+        {
+          "item_id": "v0078",
+          "provisional_label": null,
+          "raw_value": "not_applicable"
+        },
+        {
+          "item_id": "v0079",
+          "provisional_label": null,
+          "raw_value": "not_classified"
+        },
+        {
+          "item_id": "v0080",
+          "provisional_label": null,
+          "raw_value": "not_classified_experimental"
+        },
+        {
+          "item_id": "v0081",
+          "provisional_label": null,
+          "raw_value": "not_specified"
+        },
+        {
+          "item_id": "v0082",
+          "provisional_label": "in vitro cells",
+          "raw_value": "primary human fibroblasts (in vitro cell-based)"
+        },
+        {
+          "item_id": "v0083",
+          "provisional_label": "in vitro cells",
+          "raw_value": "primary human keratinocytes (in vitro cell-based)"
+        },
+        {
+          "item_id": "v0084",
+          "provisional_label": "in vitro cells",
+          "raw_value": "primary vitiligo melanocyte–keratinocyte co-culture"
+        },
+        {
+          "item_id": "v0085",
+          "provisional_label": "reconstructed tissue",
+          "raw_value": "reconstructed_tissue"
+        },
+        {
+          "item_id": "v0086",
+          "provisional_label": "ex vivo tissue",
+          "raw_value": "reconstructed_tissue and ex_vivo_tissue"
+        }
+      ],
+      "namespace": "phototoxicity_irritation_local_damage/global_species_context",
+      "requested_model": "gpt-5.4-mini",
+      "response_sha256": "7f77cdbc68ad35f02f6b72c02a14eacc36b0d7723bb0ccda76ac139089b36716"
+    }
+  ],
+  "namespace": "phototoxicity_irritation_local_damage/global_species_context",
+  "packet_id": "phototoxicity_irritation_local_damage__global_species_context__packet_0001",
+  "packet_version": "skin_reaction_auxiliary_cluster_review_packet.v1",
+  "policy_version": "skin_reaction_auxiliary_reconciliation_policy.v1"
+}

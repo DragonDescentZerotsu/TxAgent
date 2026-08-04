@@ -1,0 +1,2278 @@
+[
+  {
+    "final_endpoint": "a_to_b_over_b_to_a_transport_ratio",
+    "provisional_origins": [
+      "a_to_b_over_b_to_a_transport_ratio",
+      "apical_to_basal_over_basal_to_apical_transport_ratio",
+      "apical_to_basolateral_over_basolateral_to_apical_transport_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "a_to_b_transport",
+    "provisional_origins": [
+      "a_to_b_transport",
+      "apical_to_basal_transport",
+      "apical_to_basolateral_transport"
+    ]
+  },
+  {
+    "final_endpoint": "a_to_b_transport_percentage",
+    "provisional_origins": [
+      "a_to_b",
+      "apical_to_basal_transport_percentage",
+      "apical_to_basolateral_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "apical_to_basal_permeability",
+    "provisional_origins": [
+      "a_to_b_permeability",
+      "apical_to_basal_permeability",
+      "apical_to_basolateral_permeability",
+      "permeability_surface_area_product"
+    ]
+  },
+  {
+    "final_endpoint": "auc0_inf_ratio",
+    "provisional_origins": [
+      "auc0_inf_ratio",
+      "auc_0_inf_ratio",
+      "auc_inf_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "auc_0_180min",
+    "provisional_origins": [
+      "auc",
+      "auc_0_180min"
+    ]
+  },
+  {
+    "final_endpoint": "auc_0_inf_obs",
+    "provisional_origins": [
+      "auc_0_inf_obs",
+      "auc_obs_0_inf"
+    ]
+  },
+  {
+    "final_endpoint": "auc_0_t",
+    "provisional_origins": [
+      "auc0_t",
+      "auc_0_t"
+    ]
+  },
+  {
+    "final_endpoint": "auc_and_cmax",
+    "provisional_origins": [
+      "auc",
+      "cmax"
+    ]
+  },
+  {
+    "final_endpoint": "b_to_a_over_a_to_b_transport_ratio",
+    "provisional_origins": [
+      "b_to_a_over_a_to_b_transport_ratio",
+      "basal_to_apical_over_apical_to_basal_transport_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "b_to_a_transport",
+    "provisional_origins": [
+      "b_to_a_transport",
+      "basal_apical_transport",
+      "basolateral_to_apical_transport"
+    ]
+  },
+  {
+    "final_endpoint": "basolateral_to_apical_permeability",
+    "provisional_origins": [
+      "a_to_b_permeability",
+      "b_to_a_permeability",
+      "basal_to_apical_permeability",
+      "basolateral_to_apical_permeability"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_absorption",
+    "provisional_origins": [
+      "bbb_absorption",
+      "blood_brain_barrier_absorption"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_clearance",
+    "provisional_origins": [
+      "bbb_clearance",
+      "blood_brain_barrier_clearance"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_crossing_extent",
+    "provisional_origins": [
+      "bbb_crossing_extent",
+      "blood_brain_barrier_crossing_extent"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_crossing_rate",
+    "provisional_origins": [
+      "bbb_crossing_rate",
+      "blood_brain_barrier_crossing_rate"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_diffusion",
+    "provisional_origins": [
+      "bbb_diffusion",
+      "blood_brain_barrier_diffusion"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_equilibration_half_life",
+    "provisional_origins": [
+      "bbb_equilibration_half_life",
+      "blood_brain_barrier_equilibration_half_life"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_index",
+    "provisional_origins": [
+      "bbb_index",
+      "blood_brain_barrier_index"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_influx",
+    "provisional_origins": [
+      "bbb_influx",
+      "blood_brain_barrier_influx"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_leakage",
+    "provisional_origins": [
+      "bbb_leakage",
+      "blood_brain_barrier_leakage"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_level",
+    "provisional_origins": [
+      "bbb_level",
+      "blood_brain_barrier_level"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_opening",
+    "provisional_origins": [
+      "bbb_opening",
+      "blood_brain_barrier_opening"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_partitioning",
+    "provisional_origins": [
+      "bbb_partitioning",
+      "blood_brain_barrier_partitioning"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_passage",
+    "provisional_origins": [
+      "bbb_passage",
+      "blood_brain_barrier_passage"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_penetration_index",
+    "provisional_origins": [
+      "bbb_penetration_index",
+      "blood_brain_barrier_penetration_index"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_penetration_percentage",
+    "provisional_origins": [
+      "bbb_penetration_percentage",
+      "blood_brain_barrier_penetration_percentage"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_penetration_ratio",
+    "provisional_origins": [
+      "bbb_penetration_ratio",
+      "blood_brain_barrier_penetration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_permeability_index",
+    "provisional_origins": [
+      "bbb_permeability_index",
+      "blood_brain_barrier_permeability_index"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_permeability_surface_area_product",
+    "provisional_origins": [
+      "bbb_permeability_surface_area_product",
+      "blood_brain_barrier_permeability_surface_area_product"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_prediction",
+    "provisional_origins": [
+      "bbb_prediction",
+      "blood_brain_barrier_prediction"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_probability",
+    "provisional_origins": [
+      "bbb_probability",
+      "blood_brain_barrier_probability"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_ratio",
+    "provisional_origins": [
+      "bbb_ratio",
+      "blood_brain_barrier_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_transfer_rate",
+    "provisional_origins": [
+      "bbb_transfer_rate",
+      "blood_brain_barrier_transfer_rate"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_translocation",
+    "provisional_origins": [
+      "bbb_translocation",
+      "blood_brain_barrier_translocation"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_transport",
+    "provisional_origins": [
+      "bbb_transport",
+      "blood_brain_barrier_transport"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_transport_fraction",
+    "provisional_origins": [
+      "bbb_transport_fraction",
+      "blood_brain_barrier_transport_fraction"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_transport_rate",
+    "provisional_origins": [
+      "bbb_transport_rate",
+      "blood_brain_barrier_transport_rate"
+    ]
+  },
+  {
+    "final_endpoint": "bbb_uptake",
+    "provisional_origins": [
+      "bbb_uptake",
+      "blood_brain_barrier_uptake"
+    ]
+  },
+  {
+    "final_endpoint": "blood_and_brain_tissue_concentration",
+    "provisional_origins": [
+      "blood_and_brain_tissue_concentration",
+      "brain_tissue_and_blood_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_coefficient",
+    "provisional_origins": [
+      "bbb_coefficient",
+      "blood_brain_barrier_coefficient"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_concentration",
+    "provisional_origins": [
+      "bbb_concentration",
+      "blood_brain_barrier_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_crossing_percentage",
+    "provisional_origins": [
+      "bbb_crossing_percentage",
+      "blood_brain_barrier_crossing_percentage"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_crossing_time",
+    "provisional_origins": [
+      "bbb_crossing_time",
+      "blood_brain_barrier_crossing_time"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_distribution_percentage",
+    "provisional_origins": [
+      "bbb_distribution_percentage",
+      "blood_brain_barrier_distribution_percentage"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_extraction",
+    "provisional_origins": [
+      "bbb_extraction",
+      "blood_brain_barrier_extraction"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_flux",
+    "provisional_origins": [
+      "bbb_flux",
+      "blood_brain_barrier_flux"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_penetration",
+    "provisional_origins": [
+      "bbb_penetration",
+      "blood_brain_barrier_penetration"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_penetration_efficiency",
+    "provisional_origins": [
+      "bbb_penetration_efficiency",
+      "blood_brain_barrier_penetration_efficiency"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_penetration_level",
+    "provisional_origins": [
+      "bbb_penetration_level",
+      "blood_brain_barrier_penetration_level"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_penetration_probability",
+    "provisional_origins": [
+      "bbb_penetration_probability",
+      "blood_brain_barrier_penetration_probability"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_penetration_rate",
+    "provisional_origins": [
+      "bbb_penetration_rate",
+      "blood_brain_barrier_penetration_rate"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_penetration_score",
+    "provisional_origins": [
+      "bbb_penetration_score",
+      "blood_brain_barrier_penetration_score"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_permeability",
+    "provisional_origins": [
+      "bbb_permeability",
+      "blood_brain_barrier_permeability"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_permeability_probability",
+    "provisional_origins": [
+      "bbb_permeability_probability",
+      "blood_brain_barrier_permeability_probability"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_permeability_rate",
+    "provisional_origins": [
+      "bbb_permeability_rate",
+      "blood_brain_barrier_permeability_rate"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_permeability_score",
+    "provisional_origins": [
+      "bbb_permeability_score",
+      "blood_brain_barrier_permeability_score"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_transfer",
+    "provisional_origins": [
+      "bbb_transfer",
+      "blood_brain_barrier_transfer"
+    ]
+  },
+  {
+    "final_endpoint": "blood_brain_barrier_value",
+    "provisional_origins": [
+      "bbb_value",
+      "blood_brain_barrier_value"
+    ]
+  },
+  {
+    "final_endpoint": "blood_effect_site_equilibration_half_life",
+    "provisional_origins": [
+      "blood_effect_site_equilibration_half_life",
+      "ke0_blood_effect_site_equilibration_half_life"
+    ]
+  },
+  {
+    "final_endpoint": "brain_and_csf_to_serum_ratio",
+    "provisional_origins": [
+      "brain_and_csf_to_serum_ratio",
+      "csf_brain_serum_ratio",
+      "csf_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_and_plasma_concentrations",
+    "provisional_origins": [
+      "brain_and_plasma_concentration",
+      "brain_and_plasma_concentrations",
+      "brain_plasma_concentration",
+      "brain_plasma_concentrations"
+    ]
+  },
+  {
+    "final_endpoint": "brain_and_plasma_levels",
+    "provisional_origins": [
+      "brain_and_plasma_levels",
+      "brain_plasma_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_auc",
+    "provisional_origins": [
+      "auc_brain",
+      "brain_auc"
+    ]
+  },
+  {
+    "final_endpoint": "brain_auc_and_cmax",
+    "provisional_origins": [
+      "auc_brain",
+      "brain_auc_and_cmax",
+      "brain_cmax"
+    ]
+  },
+  {
+    "final_endpoint": "brain_auc_and_mean_residence_time",
+    "provisional_origins": [
+      "auc_brain",
+      "brain_auc"
+    ]
+  },
+  {
+    "final_endpoint": "brain_bcnu_level",
+    "provisional_origins": [
+      "brain_bcnu_concentration",
+      "brain_bcnu_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_blood_concentration",
+    "provisional_origins": [
+      "brain_blood_concentration",
+      "brain_blood_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_cmax",
+    "provisional_origins": [
+      "brain_cmax",
+      "brain_max_concentration",
+      "brain_maximum_concentration",
+      "brain_peak_concentration",
+      "brain_tissue_cmax"
+    ]
+  },
+  {
+    "final_endpoint": "brain_cmax_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_cmax_to_plasma_ratio",
+      "brain_tissue_cmax_to_plasma_ratio",
+      "brain_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_concentration",
+    "provisional_origins": [
+      "brain_concentration",
+      "brain_tissue_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_concentration_fold_increase",
+    "provisional_origins": [
+      "brain_concentration",
+      "brain_concentration_fold_increase"
+    ]
+  },
+  {
+    "final_endpoint": "brain_concentration_increase",
+    "provisional_origins": [
+      "brain_concentration",
+      "brain_concentration_increase"
+    ]
+  },
+  {
+    "final_endpoint": "brain_concentration_knockout_vs_wildtype",
+    "provisional_origins": [
+      "brain_concentration",
+      "brain_tissue_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_csf_concentration",
+    "provisional_origins": [
+      "brain_and_csf_concentration",
+      "brain_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_csf_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_and_csf_to_plasma_ratio",
+      "brain_csf_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_dialysate_concentration",
+    "provisional_origins": [
+      "brain_dialysate_concentration",
+      "brain_dialysate_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_dose",
+    "provisional_origins": [
+      "brain_concentration",
+      "brain_dose"
+    ]
+  },
+  {
+    "final_endpoint": "brain_eb_concentration",
+    "provisional_origins": [
+      "brain_eb_concentration",
+      "brain_eb_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_ecf_auc",
+    "provisional_origins": [
+      "auc_brain_ecf",
+      "brain_ecf_auc"
+    ]
+  },
+  {
+    "final_endpoint": "brain_ecf_auc_unbound",
+    "provisional_origins": [
+      "brain_ecf_auc_unbound",
+      "brain_ecf_unbound_auc",
+      "unbound_brain_ecf_auc"
+    ]
+  },
+  {
+    "final_endpoint": "brain_ecf_cmax",
+    "provisional_origins": [
+      "brain_ecf_cmax",
+      "brain_ecf_peak_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_ecf_concentration",
+    "provisional_origins": [
+      "brain_ecf_concentration",
+      "brain_ecf_level",
+      "brain_ecs_concentration",
+      "brain_extracellular_compartment_concentration",
+      "brain_extracellular_concentration",
+      "brain_extracellular_fluid_concentration",
+      "brain_extracellular_space_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_ecf_to_blood_ratio",
+    "provisional_origins": [
+      "brain_ecf_to_blood_ratio",
+      "brain_extracellular_fluid_to_blood_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_ecf_to_unbound_plasma_ratio",
+    "provisional_origins": [
+      "brain_ecf_to_free_plasma_ratio",
+      "brain_ecf_to_unbound_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_fluoride_concentration",
+    "provisional_origins": [
+      "brain_fluoride_concentration",
+      "brain_fluoride_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_gadolinium_level",
+    "provisional_origins": [
+      "brain_gadolinium_concentration",
+      "brain_gadolinium_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_glucose_concentration",
+    "provisional_origins": [
+      "brain_glucose_concentration",
+      "brain_glucose_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_homogenate_concentration",
+    "provisional_origins": [
+      "brain_homogenate_concentration",
+      "brain_homogenate_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_interstitial_fluid_concentration",
+    "provisional_origins": [
+      "brain_interstitial_concentration",
+      "brain_interstitial_fluid_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_kp_and_kp_uu",
+    "provisional_origins": [
+      "brain_kp",
+      "kp_uu_brain"
+    ]
+  },
+  {
+    "final_endpoint": "brain_kp_cortex",
+    "provisional_origins": [
+      "brain_kp_cortex",
+      "kp_brain"
+    ]
+  },
+  {
+    "final_endpoint": "brain_metastases_to_serum_ratio",
+    "provisional_origins": [
+      "brain_metastases_to_serum_ratio",
+      "brain_metastasis_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_metastasis_to_peripheral_metastasis_ratio",
+    "provisional_origins": [
+      "brain_metastases_to_peripheral_metastases_ratio",
+      "brain_metastasis_to_peripheral_metastasis_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_or_csf_concentration",
+    "provisional_origins": [
+      "brain_or_csf_concentration",
+      "csf_or_brain_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_parenchyma_accumulation",
+    "provisional_origins": [
+      "brain_parenchyma_accumulation",
+      "brain_parenchymal_accumulation"
+    ]
+  },
+  {
+    "final_endpoint": "brain_parenchyma_concentration",
+    "provisional_origins": [
+      "brain_parenchyma_concentration",
+      "brain_parenchymal_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_parenchyma_to_serum_ratio",
+    "provisional_origins": [
+      "brain_parenchyma_to_serum_ratio",
+      "brain_parenchymal_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_penetration_percentage",
+    "provisional_origins": [
+      "brain_penetration",
+      "brain_penetration_percentage"
+    ]
+  },
+  {
+    "final_endpoint": "brain_plasma_csf_concentration",
+    "provisional_origins": [
+      "brain_plasma_csf_concentration",
+      "brain_plasma_csf_concentrations"
+    ]
+  },
+  {
+    "final_endpoint": "brain_plasma_csf_levels",
+    "provisional_origins": [
+      "brain_plasma_csf_levels",
+      "plasma_brain_csf_levels"
+    ]
+  },
+  {
+    "final_endpoint": "brain_plasma_partition_coefficient",
+    "provisional_origins": [
+      "brain_plasma_partition_coefficient",
+      "brain_to_plasma_partition_coefficient"
+    ]
+  },
+  {
+    "final_endpoint": "brain_radioactivity_level",
+    "provisional_origins": [
+      "brain_radioactivity_level",
+      "brain_radioactivity_levels"
+    ]
+  },
+  {
+    "final_endpoint": "brain_radioactivity_percentage",
+    "provisional_origins": [
+      "brain_radioactivity",
+      "brain_radioactivity_percentage"
+    ]
+  },
+  {
+    "final_endpoint": "brain_serum_distribution",
+    "provisional_origins": [
+      "brain_serum_distribution",
+      "brain_to_serum_distribution"
+    ]
+  },
+  {
+    "final_endpoint": "brain_steady_state_concentration",
+    "provisional_origins": [
+      "brain_steady_state_concentration",
+      "steady_state_brain_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_tissue_auc",
+    "provisional_origins": [
+      "auc_brain_tissue",
+      "brain_tissue_auc"
+    ]
+  },
+  {
+    "final_endpoint": "brain_tissue_csf_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_tissue_csf_to_plasma_ratio",
+      "csf_and_brain_tissue_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_tissue_max_concentration",
+    "provisional_origins": [
+      "brain_tissue_max_concentration",
+      "brain_tissue_peak_level",
+      "peak_brain_tissue_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_tmax",
+    "provisional_origins": [
+      "brain_tmax",
+      "time_to_max_brain_level",
+      "time_to_peak_brain_level",
+      "tmax_brain_level"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_blood_auc_ratio",
+    "provisional_origins": [
+      "auc_brain_blood_ratio",
+      "brain_auc_to_blood_auc_ratio",
+      "brain_to_blood_auc_ratio",
+      "ri"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_blood_cmax_ratio",
+    "provisional_origins": [
+      "brain_cmax_to_blood_cmax_ratio",
+      "brain_to_blood_cmax_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_blood_over_blood_to_brain_permeability_ratio",
+    "provisional_origins": [
+      "efflux_ratio",
+      "permeability_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_blood_specific_activity_ratio",
+    "provisional_origins": [
+      "brain_to_blood_specific_activity_ratio",
+      "specific_activity_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_peak_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_peak_plasma_ratio",
+      "brain_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_peripheral_blood_ratio",
+    "provisional_origins": [
+      "brain_peripheral_blood_ratio",
+      "brain_to_peripheral_blood_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_plasma_auc_ratio",
+    "provisional_origins": [
+      "brain_auc_to_plasma_ratio",
+      "brain_to_plasma_auc_ratio",
+      "brain_to_tplasma_auc_ratio",
+      "tissue_to_plasma_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_plasma_cmax_ratio",
+    "provisional_origins": [
+      "brain_tissue_to_plasma_cmax_ratio",
+      "brain_to_plasma_cmax_ratio",
+      "brain_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_plasma_partition_ratio",
+    "provisional_origins": [
+      "brain_plasma_partition_ratio",
+      "brain_to_plasma_partition_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_plasma_radioactivity_ratio",
+    "provisional_origins": [
+      "brain_plasma_radioactivity_ratio",
+      "brain_to_plasma_radioactivity_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_plasma_ratio_and_csf_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_ratio_and_csf_to_plasma_ratio",
+      "csf_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_plasma_specific_activity_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_specific_activity_ratio",
+      "specific_activity_brain_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_plasma_steady_state_concentration_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_steady_state_concentration_ratio",
+      "steady_state_brain_to_plasma_concentration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_plasma_steady_state_ratio",
+    "provisional_origins": [
+      "brain_plasma_ratio_steady_state",
+      "brain_to_plasma_steady_state_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_unbound_plasma_auc_ratio",
+    "provisional_origins": [
+      "brain_to_free_plasma_auc_ratio",
+      "brain_to_unbound_plasma_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_unbound_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_free_plasma_ratio",
+      "brain_to_plasma_free_ratio",
+      "brain_to_unbound_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_to_unbound_serum_ratio",
+    "provisional_origins": [
+      "brain_to_free_serum_ratio",
+      "brain_to_unbound_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "brain_unbound_concentration",
+    "provisional_origins": [
+      "brain_unbound_concentration",
+      "unbound_brain_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "brain_unbound_fraction",
+    "provisional_origins": [
+      "brain_free_fraction",
+      "brain_unbound_fraction",
+      "free_brain_fraction",
+      "unbound_fraction_brain"
+    ]
+  },
+  {
+    "final_endpoint": "brain_unbound_max_concentration",
+    "provisional_origins": [
+      "brain_unbound_cmax",
+      "brain_unbound_concentration",
+      "brain_unbound_max_concentration",
+      "brain_unbound_maximum_concentration",
+      "maximum_unbound_brain_level",
+      "unbound_brain_cmax"
+    ]
+  },
+  {
+    "final_endpoint": "carboplatin_levels",
+    "provisional_origins": [
+      "carboplatin_concentration",
+      "carboplatin_levels"
+    ]
+  },
+  {
+    "final_endpoint": "cerebellar_suv",
+    "provisional_origins": [
+      "cerebellar_suv",
+      "cerebellum_suv"
+    ]
+  },
+  {
+    "final_endpoint": "cerebellum_concentration",
+    "provisional_origins": [
+      "cerebellar_concentration",
+      "cerebellar_level",
+      "cerebellum_concentration",
+      "cerebellum_level"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_auc",
+    "provisional_origins": [
+      "cerebral_auc",
+      "cerebrum_auc"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_concentration",
+    "provisional_origins": [
+      "cerebral_concentration",
+      "cerebral_level",
+      "cerebral_tissue_concentration",
+      "cerebrum_concentration",
+      "cerebrum_levels"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_concentration_ratio",
+    "provisional_origins": [
+      "cerebral_concentration_ratio",
+      "cerebrum_concentration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_content",
+    "provisional_origins": [
+      "cerebral_content",
+      "cerebral_tissue_content"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_cortex_concentration",
+    "provisional_origins": [
+      "cerebral_cortex_concentration",
+      "cerebral_cortex_level"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_entry",
+    "provisional_origins": [
+      "cerebral_entry",
+      "cerebrum_entry"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_tissue_to_plasma_ratio",
+    "provisional_origins": [
+      "cerebral_plasma_ratio",
+      "cerebral_tissue_to_plasma_ratio",
+      "cerebral_to_plasma_ratio",
+      "cerebrum_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_to_serum_ratio",
+    "provisional_origins": [
+      "cerebral_to_serum_ratio",
+      "cerebrum_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "cerebral_uptake",
+    "provisional_origins": [
+      "cerebral_tissue_uptake",
+      "cerebral_uptake",
+      "cerebrum_uptake"
+    ]
+  },
+  {
+    "final_endpoint": "cerebrum_to_blood_ratio",
+    "provisional_origins": [
+      "cerebral_tissue_to_blood_ratio",
+      "cerebral_to_blood_ratio",
+      "cerebrum_to_blood_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "ces_to_serum_ratio",
+    "provisional_origins": [
+      "ces_serum_ratio",
+      "ces_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "cmax",
+    "provisional_origins": [
+      "cmax",
+      "concentration",
+      "maximum_concentration",
+      "peak_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "cmax_ratio",
+    "provisional_origins": [
+      "cmax_ratio",
+      "maximum_concentration_ratio",
+      "peak_concentration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "cns_kp_uu",
+    "provisional_origins": [
+      "cns_kp_uu",
+      "kp_uu_cns"
+    ]
+  },
+  {
+    "final_endpoint": "cns_peak_concentration",
+    "provisional_origins": [
+      "cns_cmax",
+      "cns_maximum_concentration",
+      "cns_peak_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "concentration_to_plasma_ratio",
+    "provisional_origins": [
+      "concentration_to_plasma_ratio",
+      "ratio_to_plasma_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "cortex_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_ratio",
+      "cortex_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_and_plasma_levels",
+    "provisional_origins": [
+      "csf_and_plasma_level",
+      "csf_and_plasma_levels",
+      "plasma_and_csf_level"
+    ]
+  },
+  {
+    "final_endpoint": "csf_and_serum_concentration",
+    "provisional_origins": [
+      "csf_and_serum_concentration",
+      "csf_and_serum_concentrations"
+    ]
+  },
+  {
+    "final_endpoint": "csf_blood_partition_coefficient",
+    "provisional_origins": [
+      "csf_blood_partition_coefficient",
+      "csf_to_blood_partition_coefficient"
+    ]
+  },
+  {
+    "final_endpoint": "csf_cmax",
+    "provisional_origins": [
+      "csf_cmax",
+      "csf_max_concentration",
+      "csf_peak_concentration",
+      "maximum_csf_concentration",
+      "peak_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "csf_mtx_concentration",
+    "provisional_origins": [
+      "csf_mtx_concentration",
+      "mtx_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "csf_peak_to_peak_serum_ratio",
+    "provisional_origins": [
+      "csf_peak_to_peak_serum_ratio",
+      "peak_csf_to_peak_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_peak_to_plasma_peak_ratio",
+    "provisional_origins": [
+      "csf_peak_to_plasma_peak_ratio",
+      "peak_csf_to_peak_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_peak_to_plasma_ratio",
+    "provisional_origins": [
+      "csf_peak_to_plasma_ratio",
+      "csf_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_peak_to_unbound_plasma_ratio",
+    "provisional_origins": [
+      "csf_peak_to_unbound_plasma_ratio",
+      "csf_to_unbound_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_penicillin_level",
+    "provisional_origins": [
+      "csf_penicillin_level",
+      "csf_penicillin_levels"
+    ]
+  },
+  {
+    "final_endpoint": "csf_plasma_concentration",
+    "provisional_origins": [
+      "csf_and_plasma_concentration",
+      "csf_plasma_concentration",
+      "plasma_and_csf_concentration",
+      "plasma_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "csf_radioactivity_concentration",
+    "provisional_origins": [
+      "csf_radioactivity_concentration",
+      "radioactivity_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "csf_steady_state_concentration",
+    "provisional_origins": [
+      "csf_steady_state_concentration",
+      "steady_state_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "csf_systemic_circulation_ratio",
+    "provisional_origins": [
+      "csf_systemic_circulation_ratio",
+      "csf_to_systemic_circulation_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_therapeutic_concentration",
+    "provisional_origins": [
+      "csf_therapeutic_concentration",
+      "therapeutic_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_blood_auc_ratio",
+    "provisional_origins": [
+      "csf_blood_auc_ratio",
+      "csf_to_blood_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_blood_ratio",
+    "provisional_origins": [
+      "blood_to_csf_ratio",
+      "csf_blood_ratio",
+      "csf_to_blood_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_free_blood_auc_ratio",
+    "provisional_origins": [
+      "csf_to_free_blood_auc_ratio",
+      "csf_to_unbound_blood_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_ic50_ratio",
+    "provisional_origins": [
+      "csf_ic50_ratio",
+      "csf_to_ic50_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_peak_serum_ratio",
+    "provisional_origins": [
+      "csf_to_peak_serum_ratio",
+      "csf_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_plasma_auc_ratio",
+    "provisional_origins": [
+      "csf_plasma_auc_ratio",
+      "csf_to_plasma_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_plasma_cmax_ratio",
+    "provisional_origins": [
+      "csf_to_plasma_cmax_ratio",
+      "csf_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_plasma_exposure_ratio",
+    "provisional_origins": [
+      "csf_exposure_to_plasma_ratio",
+      "csf_plasma_exposure_ratio",
+      "csf_to_plasma_exposure_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_plasma_free_fraction_ratio",
+    "provisional_origins": [
+      "csf_to_free_plasma_fraction_ratio",
+      "csf_to_plasma_free_fraction_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_plasma_or_blood_ratio",
+    "provisional_origins": [
+      "csf_to_plasma_or_blood_ratio",
+      "csf_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_plasma_peak_ratio",
+    "provisional_origins": [
+      "csf_to_peak_plasma_ratio",
+      "csf_to_plasma_peak_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_plasma_penetration_ratio",
+    "provisional_origins": [
+      "csf_penetration_to_plasma_ratio",
+      "csf_to_plasma_penetration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_plasma_ratio",
+    "provisional_origins": [
+      "csf_plasma_ratio",
+      "csf_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_serum_auc_ratio",
+    "provisional_origins": [
+      "csf_auc_serum_ratio",
+      "csf_to_serum_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_serum_or_plasma_ratio",
+    "provisional_origins": [
+      "csf_to_serum_or_plasma_ratio",
+      "csf_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_serum_peak_concentration_ratio",
+    "provisional_origins": [
+      "csf_to_serum_cmax_ratio",
+      "csf_to_serum_peak_concentration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_serum_ratio",
+    "provisional_origins": [
+      "csf_serum_ratio",
+      "csf_to_blood_ratio",
+      "csf_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_serum_trough_ratio",
+    "provisional_origins": [
+      "csf_to_serum_trough_ratio",
+      "trough_csf_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_steady_state_plasma_ratio",
+    "provisional_origins": [
+      "csf_to_plasma_steady_state_ratio",
+      "csf_to_steady_state_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_total_plasma_cmax_ratio",
+    "provisional_origins": [
+      "csf_to_total_plasma_cmax_ratio",
+      "csf_total_plasma_cmax_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_total_serum_ratio",
+    "provisional_origins": [
+      "csf_to_serum_ratio",
+      "csf_to_total_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_unbound_plasma_auc_ratio",
+    "provisional_origins": [
+      "csf_to_free_plasma_auc_ratio",
+      "csf_to_unbound_plasma_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_unbound_plasma_cmax_ratio",
+    "provisional_origins": [
+      "csf_to_unbound_plasma_cmax_ratio",
+      "csf_to_unbound_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_unbound_plasma_ratio",
+    "provisional_origins": [
+      "csf_to_free_plasma_ratio",
+      "csf_to_plasma_ratio",
+      "csf_to_unbound_plasma_ratio",
+      "csf_unbound_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_unbound_ratio",
+    "provisional_origins": [
+      "csf_free_ratio",
+      "csf_to_free_ratio",
+      "csf_to_unbound_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_to_unbound_serum_ratio",
+    "provisional_origins": [
+      "csf_to_free_serum_ratio",
+      "csf_to_unbound_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "csf_total_concentration",
+    "provisional_origins": [
+      "csf_total_concentration",
+      "total_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "csf_trough_concentration",
+    "provisional_origins": [
+      "csf_trough_concentration",
+      "trough_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "csf_unbound_plasma_concentration_ratio",
+    "provisional_origins": [
+      "csf_free_plasma_concentration_ratio",
+      "csf_unbound_plasma_concentration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "delta_r1_over_delta_t",
+    "provisional_origins": [
+      "delta_r1_over_delta_t",
+      "r1_change_rate"
+    ]
+  },
+  {
+    "final_endpoint": "distribution_volume",
+    "provisional_origins": [
+      "distribution_volume",
+      "volume_of_distribution"
+    ]
+  },
+  {
+    "final_endpoint": "ecf_cmax",
+    "provisional_origins": [
+      "ecf_cmax",
+      "ecf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "ecf_to_plasma_ratio",
+    "provisional_origins": [
+      "ecf_to_plasma_ratio",
+      "extracellular_fluid_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "ecf_to_serum_ratio",
+    "provisional_origins": [
+      "ecf_to_serum_ratio",
+      "extracellular_fluid_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "effective_permeability_surface_area_product",
+    "provisional_origins": [
+      "effective_permeability_surface_area_product",
+      "effective_ps"
+    ]
+  },
+  {
+    "final_endpoint": "evans_blue_absorbance",
+    "provisional_origins": [
+      "evans_blue_absorbance",
+      "evans_blue_content"
+    ]
+  },
+  {
+    "final_endpoint": "evans_blue_concentration",
+    "provisional_origins": [
+      "evans_blue_concentration",
+      "evans_blue_content"
+    ]
+  },
+  {
+    "final_endpoint": "evans_blue_extravasation_concentration",
+    "provisional_origins": [
+      "evans_blue_extravasation",
+      "evans_blue_extravasation_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "extracellular_concentration",
+    "provisional_origins": [
+      "extracellular_concentration",
+      "extracellular_level"
+    ]
+  },
+  {
+    "final_endpoint": "extracellular_fluid_concentration",
+    "provisional_origins": [
+      "ecf_concentration",
+      "extracellular_fluid_concentration",
+      "extracellular_space_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "fluid_or_tissue_to_serum_ratio",
+    "provisional_origins": [
+      "fluid_or_tissue_to_serum_ratio",
+      "tissue_or_fluid_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "forebrain_concentration",
+    "provisional_origins": [
+      "forebrain_concentration",
+      "forebrain_tissue_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "fraction_transport",
+    "provisional_origins": [
+      "fraction_transport",
+      "transport_fraction"
+    ]
+  },
+  {
+    "final_endpoint": "free_extraction_ratio",
+    "provisional_origins": [
+      "free_extraction_ratio",
+      "unbound_extraction_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "gadolinium_tissue_concentration",
+    "provisional_origins": [
+      "gadolinium_tissue_concentration",
+      "tissue_gadolinium_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "glucose_flux_net",
+    "provisional_origins": [
+      "glucose_flux_net",
+      "net_glucose_flux"
+    ]
+  },
+  {
+    "final_endpoint": "hippocampus_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_ratio",
+      "hippocampus_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "influx_permeability_surface_area_product",
+    "provisional_origins": [
+      "influx_permeability_surface_area_product",
+      "permeability_surface_area_product_influx",
+      "permeability_surface_area_product_influx_inf"
+    ]
+  },
+  {
+    "final_endpoint": "influx_rate_constant",
+    "provisional_origins": [
+      "influx_rate_constant",
+      "kin"
+    ]
+  },
+  {
+    "final_endpoint": "influx_transport_clearance",
+    "provisional_origins": [
+      "influx_transport_clearance",
+      "transport_clearance_influx"
+    ]
+  },
+  {
+    "final_endpoint": "initial_concentration",
+    "provisional_origins": [
+      "concentration",
+      "initial_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "intratumoral_levels",
+    "provisional_origins": [
+      "intratumoral_level",
+      "intratumoral_levels"
+    ]
+  },
+  {
+    "final_endpoint": "jmax_km",
+    "provisional_origins": [
+      "jmax_km",
+      "km_jmax"
+    ]
+  },
+  {
+    "final_endpoint": "k1_k2_ratio",
+    "provisional_origins": [
+      "k1_k2_ratio",
+      "k1_to_k2_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "ke0_half_life",
+    "provisional_origins": [
+      "effect_site_half_time",
+      "ke0_half_life"
+    ]
+  },
+  {
+    "final_endpoint": "km_vmax",
+    "provisional_origins": [
+      "km_vmax",
+      "vmax_km"
+    ]
+  },
+  {
+    "final_endpoint": "knockout_to_wild_type_brain_concentration_ratio",
+    "provisional_origins": [
+      "knockout_to_wild_type_brain_concentration_ratio",
+      "knockout_to_wildtype_brain_concentration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "kp_brain",
+    "provisional_origins": [
+      "brain_kp",
+      "kp_brain"
+    ]
+  },
+  {
+    "final_endpoint": "kp_brain_blood",
+    "provisional_origins": [
+      "kp_brain",
+      "kp_brain_blood"
+    ]
+  },
+  {
+    "final_endpoint": "kp_brain_to_plasma",
+    "provisional_origins": [
+      "brain_to_plasma_exposure_ratio",
+      "brain_to_plasma_ratio",
+      "kp_brain_to_plasma"
+    ]
+  },
+  {
+    "final_endpoint": "kt_vmax",
+    "provisional_origins": [
+      "kt_vmax",
+      "vmax_kt"
+    ]
+  },
+  {
+    "final_endpoint": "ktrans",
+    "provisional_origins": [
+      "ktran",
+      "ktrans"
+    ]
+  },
+  {
+    "final_endpoint": "level",
+    "provisional_origins": [
+      "level",
+      "levels"
+    ]
+  },
+  {
+    "final_endpoint": "manganese_tissue_concentration",
+    "provisional_origins": [
+      "manganese_tissue_concentration",
+      "tissue_manganese_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "maximal_rate",
+    "provisional_origins": [
+      "maximal_rate",
+      "maximum_rate"
+    ]
+  },
+  {
+    "final_endpoint": "maximal_velocity",
+    "provisional_origins": [
+      "maximal_velocity",
+      "maximum_velocity"
+    ]
+  },
+  {
+    "final_endpoint": "maximum_brain_level",
+    "provisional_origins": [
+      "brain_maximum_level",
+      "maximal_brain_level",
+      "maximum_brain_level",
+      "peak_brain_level"
+    ]
+  },
+  {
+    "final_endpoint": "maximum_brain_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_ratio",
+      "maximum_brain_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "maximum_levels",
+    "provisional_origins": [
+      "maximum_levels",
+      "peak_levels"
+    ]
+  },
+  {
+    "final_endpoint": "maximum_striatal_uptake",
+    "provisional_origins": [
+      "maximum_striatal_uptake",
+      "peak_striatal_uptake"
+    ]
+  },
+  {
+    "final_endpoint": "mean_brain_concentration",
+    "provisional_origins": [
+      "brain_mean_concentration",
+      "brain_mean_level",
+      "mean_brain_concentration",
+      "mean_brain_level"
+    ]
+  },
+  {
+    "final_endpoint": "mean_brain_tissue_concentration",
+    "provisional_origins": [
+      "mean_brain_tissue_concentration",
+      "mean_brain_tissue_level"
+    ]
+  },
+  {
+    "final_endpoint": "mean_concentration",
+    "provisional_origins": [
+      "mean_concentration",
+      "mean_level"
+    ]
+  },
+  {
+    "final_endpoint": "mean_maximum_concentration",
+    "provisional_origins": [
+      "mean_maximum_concentration",
+      "mean_peak_level"
+    ]
+  },
+  {
+    "final_endpoint": "median_concentration",
+    "provisional_origins": [
+      "median_concentration",
+      "median_levels"
+    ]
+  },
+  {
+    "final_endpoint": "mercury_concentration",
+    "provisional_origins": [
+      "mercury_concentration",
+      "mercury_levels"
+    ]
+  },
+  {
+    "final_endpoint": "microdialysate_concentration",
+    "provisional_origins": [
+      "microdialysate_concentration",
+      "microdialysate_level"
+    ]
+  },
+  {
+    "final_endpoint": "nicotine_concentration",
+    "provisional_origins": [
+      "nicotine_concentration",
+      "nicotine_levels"
+    ]
+  },
+  {
+    "final_endpoint": "normal_brain_concentration",
+    "provisional_origins": [
+      "normal_brain_concentration",
+      "normal_brain_level"
+    ]
+  },
+  {
+    "final_endpoint": "normal_brain_tissue_concentration",
+    "provisional_origins": [
+      "normal_brain_tissue_concentration",
+      "normal_brain_tissue_level"
+    ]
+  },
+  {
+    "final_endpoint": "organ_concentration",
+    "provisional_origins": [
+      "organ_concentration",
+      "organ_level"
+    ]
+  },
+  {
+    "final_endpoint": "p_gp_factor",
+    "provisional_origins": [
+      "p_gp_factor",
+      "pgp_factor"
+    ]
+  },
+  {
+    "final_endpoint": "papp",
+    "provisional_origins": [
+      "papp",
+      "permeability_surface_area_product"
+    ]
+  },
+  {
+    "final_endpoint": "papp_a_to_b",
+    "provisional_origins": [
+      "p_ab",
+      "papp",
+      "papp_a_to_b",
+      "papp_apical_to_basal"
+    ]
+  },
+  {
+    "final_endpoint": "papp_a_to_b_to_b_to_a_ratio",
+    "provisional_origins": [
+      "papp_a_to_b_to_b_to_a_ratio",
+      "papp_apical_to_basal_to_basal_to_apical_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "papp_b_to_a",
+    "provisional_origins": [
+      "p_ba",
+      "papp",
+      "papp_b_to_a",
+      "papp_basal_to_apical"
+    ]
+  },
+  {
+    "final_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+    "provisional_origins": [
+      "papp_b_to_a_to_a_to_b_ratio",
+      "papp_ba_ab_ratio",
+      "papp_basal_to_apical_to_apical_to_basal_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "papp_cumulative",
+    "provisional_origins": [
+      "cumulative_apparent_permeability",
+      "papp_cumulative"
+    ]
+  },
+  {
+    "final_endpoint": "peak_brain_activity",
+    "provisional_origins": [
+      "brain_max_activity",
+      "peak_brain_activity"
+    ]
+  },
+  {
+    "final_endpoint": "peak_csf_to_serum_ratio",
+    "provisional_origins": [
+      "csf_to_serum_ratio",
+      "peak_csf_to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "peak_standardized_uptake_value",
+    "provisional_origins": [
+      "peak_standardized_uptake_value",
+      "suv_max",
+      "suv_maximum",
+      "suv_peak"
+    ]
+  },
+  {
+    "final_endpoint": "percent_id_in_brain",
+    "provisional_origins": [
+      "brain_concentration",
+      "percent_id_in_brain"
+    ]
+  },
+  {
+    "final_endpoint": "percent_injected_dose_per_gram_organ",
+    "provisional_origins": [
+      "percent_injected_dose_per_gram_organ",
+      "percent_injected_dose_per_organ"
+    ]
+  },
+  {
+    "final_endpoint": "percent_injected_dose_per_gram_tissue",
+    "provisional_origins": [
+      "percent_injected_dose_per_gram_tissue",
+      "percent_injection_dose_per_gram_tissue"
+    ]
+  },
+  {
+    "final_endpoint": "percent_penetration",
+    "provisional_origins": [
+      "penetration",
+      "percent_penetration"
+    ]
+  },
+  {
+    "final_endpoint": "permeability_surface_area_product",
+    "provisional_origins": [
+      "permeability_surface_area_product",
+      "permeability_surface_product",
+      "ps"
+    ]
+  },
+  {
+    "final_endpoint": "permeability_surface_area_product_ratio",
+    "provisional_origins": [
+      "permeability_surface_area_product_ratio",
+      "ps_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "pet_auc_to_plasma_auc_ratio",
+    "provisional_origins": [
+      "pet_auc_to_plasma_auc_ratio",
+      "pet_to_plasma_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "plasma_brain_equilibration_half_time",
+    "provisional_origins": [
+      "brain_plasma_equilibration_half_time",
+      "plasma_brain_equilibration_half_time",
+      "plasma_to_brain_equilibration_half_time"
+    ]
+  },
+  {
+    "final_endpoint": "plasma_csf_concentration_ratio",
+    "provisional_origins": [
+      "plasma_csf_concentration_ratio",
+      "plasma_to_csf_concentration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "plasma_to_ecf_ratio",
+    "provisional_origins": [
+      "plasma_to_ecf_ratio",
+      "plasma_to_extracellular_fluid_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "pons_medulla_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_ratio",
+      "pons_medulla_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "ps2_to_ps1_ratio",
+    "provisional_origins": [
+      "ps2_to_ps1_ratio",
+      "ratio"
+    ]
+  },
+  {
+    "final_endpoint": "r1_value",
+    "provisional_origins": [
+      "r1_values",
+      "ratio"
+    ]
+  },
+  {
+    "final_endpoint": "r_value",
+    "provisional_origins": [
+      "r_value",
+      "ratio"
+    ]
+  },
+  {
+    "final_endpoint": "radioactivity_levels",
+    "provisional_origins": [
+      "radioactivity_level",
+      "radioactivity_levels"
+    ]
+  },
+  {
+    "final_endpoint": "serum_concentration_ratio",
+    "provisional_origins": [
+      "serum_concentration_ratio",
+      "serum_level_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "serum_penetration_ratio",
+    "provisional_origins": [
+      "penetration",
+      "serum_penetration_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "serum_ratio",
+    "provisional_origins": [
+      "serum_ratio",
+      "to_serum_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "steady_state_brain_tissue_level",
+    "provisional_origins": [
+      "brain_tissue_steady_state_level",
+      "steady_state_brain_tissue_level"
+    ]
+  },
+  {
+    "final_endpoint": "striatal_accumulation",
+    "provisional_origins": [
+      "striatal_accumulation",
+      "striatum_accumulation"
+    ]
+  },
+  {
+    "final_endpoint": "striatal_ecf_concentration",
+    "provisional_origins": [
+      "ecf_concentration",
+      "striatal_ecf_concentration",
+      "striatal_extracellular_concentration",
+      "striatal_extracellular_fluid_concentration",
+      "striatal_interstitial_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "striatal_uptake",
+    "provisional_origins": [
+      "striatal_uptake",
+      "striatum_uptake"
+    ]
+  },
+  {
+    "final_endpoint": "striatum_concentration",
+    "provisional_origins": [
+      "striatal_concentration",
+      "striatal_level",
+      "striatum_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "striatum_to_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_ratio",
+      "striatal_to_plasma_ratio",
+      "striatum_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "suv",
+    "provisional_origins": [
+      "standardized_uptake_value",
+      "suv"
+    ]
+  },
+  {
+    "final_endpoint": "time_to_equilibrium",
+    "provisional_origins": [
+      "equilibrium_time",
+      "time_to_equilibrium"
+    ]
+  },
+  {
+    "final_endpoint": "time_to_peak_level",
+    "provisional_origins": [
+      "time_to_peak_concentration",
+      "time_to_peak_level"
+    ]
+  },
+  {
+    "final_endpoint": "tissue_blood_partition_coefficient",
+    "provisional_origins": [
+      "tissue_blood_partition_coefficient",
+      "tissue_to_blood_partition_coefficient",
+      "tissue_to_blood_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "tissue_concentration",
+    "provisional_origins": [
+      "tissue_concentration",
+      "tissue_level"
+    ]
+  },
+  {
+    "final_endpoint": "tissue_plasma_partition_coefficient",
+    "provisional_origins": [
+      "tissue_plasma_partition_coefficient",
+      "tissue_to_plasma_partition_coefficient"
+    ]
+  },
+  {
+    "final_endpoint": "tissue_radioactivity_concentration",
+    "provisional_origins": [
+      "tissue_radioactivity_concentration",
+      "tissue_radioactivity_level"
+    ]
+  },
+  {
+    "final_endpoint": "tissue_to_plasma_concentration_ratio",
+    "provisional_origins": [
+      "tissue_to_plasma_concentration_ratio",
+      "tissue_to_plasma_level_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "tissue_to_plasma_or_serum_ratio",
+    "provisional_origins": [
+      "tissue_to_plasma_or_serum_ratio",
+      "tissue_to_serum_or_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "tmax_to_cmrglc_ratio",
+    "provisional_origins": [
+      "ratio",
+      "tmax_to_cmrglc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "total_brain_concentration",
+    "provisional_origins": [
+      "brain_total_concentration",
+      "total_brain_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "total_brain_to_total_plasma_ratio",
+    "provisional_origins": [
+      "brain_to_plasma_ratio",
+      "total_brain_to_plasma_ratio",
+      "total_brain_to_total_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "total_csf_to_plasma_ratio",
+    "provisional_origins": [
+      "csf_to_plasma_ratio",
+      "total_csf_to_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "total_csf_to_unbound_plasma_ratio",
+    "provisional_origins": [
+      "csf_to_unbound_plasma_ratio",
+      "total_csf_to_unbound_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "trough_level",
+    "provisional_origins": [
+      "trough_level",
+      "trough_levels"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_brain_and_plasma_concentrations",
+    "provisional_origins": [
+      "free_brain_and_plasma_levels",
+      "kp_uu_brain",
+      "unbound_brain_and_plasma_concentrations"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_brain_ecf_concentration",
+    "provisional_origins": [
+      "brain_ecf_unbound_concentration",
+      "free_brain_ecf_concentration",
+      "unbound_brain_ecf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_brain_to_plasma_auc_ratio",
+    "provisional_origins": [
+      "free_brain_to_plasma_auc_ratio",
+      "unbound_brain_to_plasma_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_brain_to_total_plasma_ratio",
+    "provisional_origins": [
+      "free_brain_to_total_plasma_ratio",
+      "kp_uu_brain",
+      "unbound_brain_to_plasma_ratio",
+      "unbound_brain_to_total_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_brain_to_unbound_blood_ratio",
+    "provisional_origins": [
+      "free_brain_to_free_blood_ratio",
+      "unbound_brain_to_unbound_blood_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+    "provisional_origins": [
+      "tissue_penetration_factor",
+      "unbound_brain_to_unbound_plasma_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+    "provisional_origins": [
+      "unbound_brain_to_plasma_ratio",
+      "unbound_brain_to_unbound_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_concentration",
+    "provisional_origins": [
+      "free_concentration",
+      "unbound_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_csf_concentration",
+    "provisional_origins": [
+      "csf_unbound_concentration",
+      "free_csf_concentration",
+      "unbound_csf_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_csf_to_plasma_ratio",
+    "provisional_origins": [
+      "unbound_csf_to_plasma_ratio",
+      "unbound_csf_to_unbound_plasma_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_drug_concentration",
+    "provisional_origins": [
+      "free_drug_level",
+      "unbound_drug_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_plasma_to_csf_ratio",
+    "provisional_origins": [
+      "free_plasma_to_csf_ratio",
+      "unbound_plasma_to_csf_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "unbound_tissue_to_unbound_plasma_auc_ratio",
+    "provisional_origins": [
+      "free_tissue_to_free_plasma_auc_ratio",
+      "unbound_tissue_to_unbound_plasma_auc_ratio"
+    ]
+  },
+  {
+    "final_endpoint": "ventricular_csf_cmax",
+    "provisional_origins": [
+      "ventricular_csf_cmax",
+      "ventricular_csf_concentration",
+      "ventricular_csf_max_concentration"
+    ]
+  },
+  {
+    "final_endpoint": "ventricular_fluid_cmax",
+    "provisional_origins": [
+      "ventricular_fluid_concentration",
+      "ventricular_fluid_peak_level"
+    ]
+  },
+  {
+    "final_endpoint": "vmax_km_kd",
+    "provisional_origins": [
+      "km_vmax_kd",
+      "vmax_km_kd"
+    ]
+  },
+  {
+    "final_endpoint": "whole_brain_max_concentration",
+    "provisional_origins": [
+      "whole_brain_concentration",
+      "whole_brain_max_concentration"
+    ]
+  }
+]

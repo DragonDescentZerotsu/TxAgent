@@ -1,0 +1,55 @@
+{
+  "coverage": {
+    "local_clusters": 75,
+    "packets": 4,
+    "provisional_labels": 8012,
+    "raw_assignments": 22798
+  },
+  "input": {
+    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/cluster_assignments.parquet",
+    "sha256": "965a21959193254d049a25fd146c3a730130e61cd723102566b92f4e6b510baf"
+  },
+  "manifest_version": "bbb_martins_direct_endpoint_subagent_reconciliation.v1",
+  "max_packet_bytes": 750000,
+  "packets": [
+    {
+      "assignments": 6203,
+      "bytes": 735951,
+      "labels": 2249,
+      "packet_id": "direct_endpoint_global_packet_0001",
+      "path": "direct_endpoint_global_packet_0001.json",
+      "sha256": "bc708a0d7d67fe94b2f7213246c1308e430db7be49160ac1b3d884d1aece6191"
+    },
+    {
+      "assignments": 8597,
+      "bytes": 745404,
+      "labels": 1703,
+      "packet_id": "direct_endpoint_global_packet_0002",
+      "path": "direct_endpoint_global_packet_0002.json",
+      "sha256": "89aeeac8ed544ca57c644c1afdea670b8adf819730af5d6291c1056089560045"
+    },
+    {
+      "assignments": 5450,
+      "bytes": 746315,
+      "labels": 2755,
+      "packet_id": "direct_endpoint_global_packet_0003",
+      "path": "direct_endpoint_global_packet_0003.json",
+      "sha256": "9505af12825de12ab8930e974a97bac66b150af92e70d39e7cf7c50019539d54"
+    },
+    {
+      "assignments": 2548,
+      "bytes": 369439,
+      "labels": 1305,
+      "packet_id": "direct_endpoint_global_packet_0004",
+      "path": "direct_endpoint_global_packet_0004.json",
+      "sha256": "28dfc7525b180b32bc2f101edb0751a5ebab2d5c9a47cd427c1a300450013a80"
+    }
+  ],
+  "validations": {
+    "every_local_cluster_represented": true,
+    "every_provisional_label_owned_once": true,
+    "every_raw_assignment_represented": true,
+    "no_second_gpt_pass": true,
+    "source_and_inventory_pins_verified": true
+  }
+}

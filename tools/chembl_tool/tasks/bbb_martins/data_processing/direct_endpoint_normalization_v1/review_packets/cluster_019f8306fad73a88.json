@@ -1,0 +1,1197 @@
+{
+  "assignment_count": 238,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "absolute brain concentrations"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_serum_accumulation",
+      "raw_value": "accumulation in brain versus serum"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "achievable brain concentrations"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_tissue_amount",
+      "raw_value": "amount found in brain tissue"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_tissue_amount",
+      "raw_value": "amount in brain tissue"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_to_other_fluids_and_tissues_amount_ratio",
+      "raw_value": "amounts detected in the brain relative to amounts found in other body fluids and tissues"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "area-under-the-curve of brain concentrations"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "average concentrations in the human brain tissue"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_relative_bioavailability",
+      "raw_value": "average relative bioavailability in the brain"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_and_blood_concentration",
+      "raw_value": "blood and brain concentrations"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_and_blood_concentration",
+      "raw_value": "blood and brain Phe concentrations"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "brain (CSF) concentrations"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_activity_concentration",
+      "raw_value": "brain activity concentrations"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain ammonia concentrations"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain ammonia concentrations / blood concentrations"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain AMP concentrations"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_and_blood_concentration",
+      "raw_value": "Brain and blood concentrations"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_and_blood_concentration",
+      "raw_value": "brain and blood concentrations"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_and_csf_concentration",
+      "raw_value": "brain and cerebrospinal concentrations"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain arsenic concentration relative to blood concentration"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain caffeine concentrations"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain concentrations"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain concentrations"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain concentrations (% of simultaneous serum values)"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain concentrations (magnitude)"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "knockout_to_wild_type_brain_concentration_ratio",
+      "raw_value": "brain concentrations (wild-type vs knockout mice)"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain concentrations / blood concentration"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain concentrations / blood concentrations"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain concentrations / blood concentrations"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain concentrations / blood level"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain concentrations / blood levels"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_to_peak_serum_ratio",
+      "raw_value": "brain concentrations / peak serum concentrations"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "Brain concentrations / serum levels"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain concentrations / serum levels"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_to_systemic_exposure_ratio",
+      "raw_value": "brain concentrations / systemic exposure"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_to_ventricular_perfusate_ratio",
+      "raw_value": "brain concentrations / ventricular perfusate concentrations"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_to_whole_blood_ratio",
+      "raw_value": "brain concentrations / whole blood concentrations"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain concentrations as percentage of blood concentrations"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_to_capillary_concentration_ratio",
+      "raw_value": "brain concentrations as percentage of presumed capillary concentration"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "knockout_to_wild_type_brain_concentration_ratio",
+      "raw_value": "brain concentrations in the knockout mice compared to the wild-type mice"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain concentrations increase"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "brain concentrations of free VOR"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_to_cardiac_blood_ratio",
+      "raw_value": "brain concentrations relative to cardiac blood"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain concentrations relative to serum concentrations"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_to_systemic_ratio",
+      "raw_value": "brain concentrations relative to the rest of the system (liver, plasma)"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain concentrations vs blood concentrations"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain CQ concentrations"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_dialysate_concentration",
+      "raw_value": "brain dialysate concentrations"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "brain ECF concentrations"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain EPPS concentrations"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_to_peripheral_blood_ratio",
+      "raw_value": "brain exposure / peripheral blood level"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "brain extracellular concentrations"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_ecf_to_serum_ratio",
+      "raw_value": "brain extracellular fluid concentrations / serum"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain glucose concentrations"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_to_peripheral_concentration_ratio",
+      "raw_value": "brain glucose concentrations / peripheral concentrations"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain Hg concentrations"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_to_whole_blood_ratio",
+      "raw_value": "brain lead levels / whole blood concentration"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain levels / serum concentrations"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain levels as % of serum concentrations"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_lipid_concentration",
+      "raw_value": "Brain lipid HCB concentration"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain M6G concentrations"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_or_brain_tumor_to_serum_ratio",
+      "raw_value": "brain or brain tumor concentrations / serum levels"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain paraquat concentrations"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_parenchymal_concentration",
+      "raw_value": "brain parenchyma concentrations"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_parenchymal_concentration",
+      "raw_value": "brain parenchymal concentrations"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_parenchymal_to_serum_ratio",
+      "raw_value": "brain parenchymal concentrations / serum"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_parenchymal_to_serum_ratio",
+      "raw_value": "brain parenchymal concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_parenchymal_tissue_to_serum_ratio",
+      "raw_value": "brain parenchymal tissue concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_parenchymal_tumor_to_serum_ratio",
+      "raw_value": "brain parenchymal tumor concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain PCB concentrations"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain PCP concentrations relative to serum PCP concentrations"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain PEA concentrations"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain PFOS concentrations"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain Phe concentrations"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain Pro concentrations"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain Pro concentrations"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain rhodamine concentrations"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_tissue_and_blood_concentration",
+      "raw_value": "brain tissue and blood concentrations"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Brain tissue concentrations"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "brain tissue concentrations"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue concentrations / concurrent serum concentrations"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue concentrations / serum levels"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue concentrations / serum values"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue concentrations / serum VPA concentrations"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_tissue_to_cisplatin_ratio",
+      "raw_value": "brain tissue concentrations relative to cisplatin"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue concentrations relative to serum"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue concentrations relative to serum concentrations"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_tissue_to_blood_ratio",
+      "raw_value": "brain tissue concentrations vs blood"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_tissue_to_blood_ratio",
+      "raw_value": "brain tissue levels / blood levels"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue levels / serum levels"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue levels / serum peak levels"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "brain tissue levels / serum values"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "brain tissue TCB concentrations"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_tumor_concentration",
+      "raw_value": "brain tumor concentrations"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_tumor_tissue_concentration",
+      "raw_value": "brain tumor tissue concentrations"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain UA concentrations / plasma levels"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain vs. serum concentrations"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_water_concentration",
+      "raw_value": "brain water concentrations"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_specific_activity_to_serum_ratio",
+      "raw_value": "brain's specific activity (% of serum)"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma total platinum concentrations"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain/serum concentrations"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_serum_distribution",
+      "raw_value": "brain/serum distribution"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain:plasma lapatinib concentrations"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "brainECF concentrations"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "calculated RUXO brain concentrations"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "calculated unbound brain concentrations"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "central nervous system concentrations"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "cerebral concentrations"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "cerebral concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "cerebral Met concentrations"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "cerebral_tissue_concentration",
+      "raw_value": "cerebral tissue concentrations"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_homogenate_concentration",
+      "raw_value": "concentration of hydrogen in brain homogenates"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "glioma_concentration",
+      "raw_value": "concentrations in 9 L gliomas"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_and_blood_concentration",
+      "raw_value": "concentrations in blood and brain"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Concentrations in brain"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations in brain"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_abscess_to_serum_ratio",
+      "raw_value": "concentrations in brain abscesses / serum concentrations"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_lipid_concentration",
+      "raw_value": "concentrations in brain lipids"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_metastasis_to_surrounding_tissue_ratio",
+      "raw_value": "concentrations in brain metastases compared to surrounding tissue"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_metastasis_to_tumor_and_serum_ratio",
+      "raw_value": "concentrations in brain metastases relative to tumor and serum"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Concentrations in brain tissue"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "concentrations in brain tissue"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "concentrations in brain tissue than in serum"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations in brains"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "cerebral_fluid_to_serum_ratio",
+      "raw_value": "concentrations in cerebral fluid / concentrations in serum"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "cerebral_tissue_concentration",
+      "raw_value": "concentrations in cerebral tissue"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "cerebral_tissue_homogenate_concentration",
+      "raw_value": "concentrations in cerebral tissue homogenates"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "regional_brain_concentration",
+      "raw_value": "concentrations in different brain regions"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_ecf_whole_brain_tissue_csf_to_unbound_plasma_ratio",
+      "raw_value": "concentrations in extracellular fluid, whole brain tissue, and cerebrospinal fluid / plasma unbound concentrations"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_tissue_or_abscess_concentration",
+      "raw_value": "concentrations in human brain tissue or brain abscess material"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "intracranial_tumor_concentration",
+      "raw_value": "concentrations in intracranial tumors"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "concentrations in normal brain tissues"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations in the brain"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations in the brains"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "cerebellar_granule_cell_concentration",
+      "raw_value": "concentrations in the cerebellar granule brain cells"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "cerebral_cortex_concentration",
+      "raw_value": "concentrations in the cerebral cortex"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "concentrations in the extracellular brain compartment"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations in the fetal brains"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "concentrations in the intact (non-ischaemic) brain tissue"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations in the neonatal rat brain"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "whole_brain_homogenate_concentration",
+      "raw_value": "concentrations in whole brain homogenates"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "whole_brain_tissue_homogenate_concentration",
+      "raw_value": "concentrations in whole brain tissue homogenates"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "concentrations obtained in brain tissues"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_plasma_csf_concentration",
+      "raw_value": "concentrations of bromide in brain, plasma and CSF"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations reached in the brain"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "regional_brain_concentration",
+      "raw_value": "concentrations recovered in various parts of the brain"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "cerebral_cortex_to_serum_ratio",
+      "raw_value": "cortical concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "CQ concentrations in the brain"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "csf_and_total_brain_to_plasma_or_serum_ratio",
+      "raw_value": "CSF and total brain AZT concentrations (as percentage of plasma or serum)"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "dry-weight brain concentrations"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "effective concentrations achieved in brain tissue"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "effective concentrations in brain"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "unbound_brain_to_unbound_serum_ratio",
+      "raw_value": "effective free brain concentrations / free serum levels"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "elevated brain concentrations"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "estimated human brain concentrations"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "Extracellular brain concentrations"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain_ecf_to_serum_ratio",
+      "raw_value": "extracellular brain/serum levels"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "free (unbound) brain concentrations"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "free brain concentrations"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "unbound_brain_to_blood_ratio",
+      "raw_value": "free brain concentrations / blood concentrations"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "unbound_brain_to_blood_ratio",
+      "raw_value": "free, unbound brain concentrations / blood concentrations"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Gd concentrations in the brain"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Global brain concentrations"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "increase in brain concentrations"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "initial brain than blood concentrations"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "intracerebral_concentration",
+      "raw_value": "intra-cerebral concentrations"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "intracerebral_concentration",
+      "raw_value": "intra-cerebral XA concentrations"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "intracranial_concentration",
+      "raw_value": "intracranial concentrations"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "levels in brain / serum concentrations"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_metastasis_to_serum_ratio",
+      "raw_value": "levels in breast cancer brain metastatic tissues compared to serum concentrations"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "maximum brain extracellular concentrations"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "maximum concentrations in brain / those in blood"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "maximum statin concentrations in rodent brains"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "mean brain concentrations"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_to_systemic_exposure_ratio",
+      "raw_value": "mean brain concentrations / equivalent systemic exposure"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "mean brain tissue concentrations"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "total_brain_concentration",
+      "raw_value": "Mean brain total VPA concentrations"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "measured concentrations in the brain tissue"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "brain_and_csf_concentration",
+      "raw_value": "median brain and CSF concentrations"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "median brain concentrations"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Median brain tissue concentrations"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "median difference in rat brain concentrations"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Median lanthanum concentrations in brain tissue"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "neuronal_concentration",
+      "raw_value": "neuronal concentrations"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "normal brain concentrations"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "OX concentrations in the brain"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Pb concentrations among brain tissues"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "PB concentrations in brain"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Peak brain concentrations"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "peak brain concentrations"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "peak brain ECF concentrations"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "peak brain tissue concentrations"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "peak concentrations in brain / serum levels"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "peak concentrations in the brain"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_interstitium_csf_concentration",
+      "raw_value": "peak concentrations in the brain interstitium/CSF"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "peak concentrations in the fetal brain"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "peak free brain concentrations"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_lesion_to_peripheral_metastatic_lesion_ratio",
+      "raw_value": "percentage of brain lesions where concentrations approach peripheral metastatic lesions"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "PHT concentrations in the brain"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_uptake_fraction",
+      "raw_value": "portion of blood concentrations entering discrete areas of the brain"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Predicted maximum concentrations in brain tissue"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "brain_to_ecf_ratio",
+      "raw_value": "Projected brain/ECF concentrations"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "unbound_brain_concentration",
+      "raw_value": "protein unbound concentrations in the brain"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "unbound_brain_tissue_concentration",
+      "raw_value": "protein-unbound concentrations in the brain tissue"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_to_systemic_ratio",
+      "raw_value": "ratio entre les concentrations moyennes cérébrale et systémique"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "knockout_to_wild_type_brain_concentration_ratio",
+      "raw_value": "ratio of brain concentrations in knockout to wild-type mice"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "ratio of free concentrations in brain and plasma (Cu,br/Cup)"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "ratio of unbound concentrations in the brain and plasma (Cu,br/Cup)"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "unbound_serum_to_hippocampal_ecf_ratio",
+      "raw_value": "ratio of unbound serum concentrations to hippocampal extracellular fluid concentrations"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "regional_brain_concentration",
+      "raw_value": "regional brain concentrations"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "relative_brain_concentration",
+      "raw_value": "relative brain concentrations"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Ru concentrations in the brain"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "serum concentrations pass into the brain"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "serum concentrations vs brain levels"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "serum_to_brain_ratio",
+      "raw_value": "serum PCP concentrations relative to brain PCP concentrations"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "steady state brain / serum levels"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "steady-state brain concentrations"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_and_csf_concentration",
+      "raw_value": "steady-state iodide concentrations in brain and CSF"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "therapeutic brain concentrations"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_equilibration_time",
+      "raw_value": "Time for 95% equilibration of brain concentrations to step changes in arterial concentrations"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "tissue concentrations in the brain"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "cortical_tissue_concentration",
+      "raw_value": "tissue concentrations in the cortex"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_tissue_amount",
+      "raw_value": "total amount in brain tissue"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "total_brain_concentration",
+      "raw_value": "Total brain concentrations"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "total_brain_concentration",
+      "raw_value": "total brain concentrations"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "total_brain_to_unbound_serum_ratio",
+      "raw_value": "total brain concentrations / free serum concentrations"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "total_brain_tissue_concentration",
+      "raw_value": "total brain tissue concentrations"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "total_brain_tissue_concentration",
+      "raw_value": "total brain tissue curcumin concentrations"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "brain_tissue_to_csf_ratio",
+      "raw_value": "total concentrations in brain tissue compared to CSF"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "total_brain_tissue_exposure",
+      "raw_value": "total exposure in rat brain tissues"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "hippocampal_tissue_concentration",
+      "raw_value": "total hippocampal tissue concentrations"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "trough concentrations in brain tissue"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "unbound_brain_and_blood_concentration",
+      "raw_value": "unbound concentrations in blood and brain"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "unbound_brain_and_blood_concentration",
+      "raw_value": "unbound concentrations in the brain and in blood"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "whole_brain_concentration",
+      "raw_value": "whole brain concentrations"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "whole_brain_concentration",
+      "raw_value": "Whole-brain concentrations"
+    }
+  ],
+  "cluster_id": "cluster_019f8306fad73a88",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

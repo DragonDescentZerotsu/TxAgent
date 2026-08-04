@@ -1,0 +1,757 @@
+{
+  "assignment_count": 150,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "eb_stained_area_percentage",
+      "raw_value": "% of the hemisphere stained with EB"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "aib_extraction",
+      "raw_value": "AIB extraction"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "aib_extraction",
+      "raw_value": "AIB extraction %"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "amount of brain EB"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "eb_amount",
+      "raw_value": "amount of EB"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "amount of EB dye leakage"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "amount of EB dye leakage in brain tissue"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "amount of EB extravasation"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "amount of EB leakage"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "eb_penetration",
+      "raw_value": "amount of EB penetrating the tissue"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "amount of EB per mg of tissue"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "amount of leaked EB"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "eb_amount",
+      "raw_value": "amounts of EB"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "amounts of EB per g of brain"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "eb_area",
+      "raw_value": "area on EB"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "barrier_opening_to_eb",
+      "raw_value": "Barrier opening to EB"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_eb_concentration",
+      "raw_value": "brain concentration of EB"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "brain content of EB dye"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "Brain EB content"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "brain EB content"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "brain EB dye content"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "ebd_accumulation",
+      "raw_value": "brain EBD accumulation"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "brain tissue EB content"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_eb_concentration",
+      "raw_value": "cerebral EBD concentrations"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "eb_concentration",
+      "raw_value": "concentration of EB"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_eb_concentration",
+      "raw_value": "concentration of EB in the brain tissue"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "eb_extravasation_concentration",
+      "raw_value": "concentration of extravasated EB"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "eb_concentration",
+      "raw_value": "concentrations of EB dye"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_eb_concentration",
+      "raw_value": "concentrations of EB in the encephala"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "Content of EB"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "content of EB"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "content of EB in perihematomal brain tissues"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "content of EB in rat brains"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "content of EB in the brain"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "content of EB inside the brain tissue"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "ebd_content",
+      "raw_value": "content of EBD, measured in whole brain lysate"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "content of extravagated EB"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "cortical EB content"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "eb_fluorescence_score",
+      "raw_value": "CS for EB fluorescence"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "eb_fluorescence_score",
+      "raw_value": "CSs of EB fluorescence"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "detectable_eb",
+      "raw_value": "detectable EB"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "eb",
+      "raw_value": "EB"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "eb",
+      "raw_value": "Eb"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB (µg/g wet wt) in brain"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "eb_absorbance",
+      "raw_value": "EB absorbance"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "eb_accumulation",
+      "raw_value": "EB accumulation"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "eb_amount",
+      "raw_value": "EB amount"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "eb_penetration",
+      "raw_value": "EB amount penetrated the brain"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_eb_concentration",
+      "raw_value": "EB brain concentration"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB brain leakage"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "eb_concentration",
+      "raw_value": "EB concentration"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_eb_concentration",
+      "raw_value": "EB concentration in brain tissues"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "eb_concentration_increase",
+      "raw_value": "EB concentration increase"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "eb_concentration",
+      "raw_value": "EB concentrations"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "EB content"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB content in brain tissue"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB content in brain tissues"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB content in ischemic brain"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB content in the amygdalar homogenates"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB content in the brain"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB content of brain tissues"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB content of the brain"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "EB contents"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB contents of the brain tissue"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_eb_concentration",
+      "raw_value": "EB dye concentration in brain tissue"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "EB dye content"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB dye extravasation"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB dye extravasations"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "eb_extraction",
+      "raw_value": "EB eluted from the lesion side of the brain"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "eb_extraction",
+      "raw_value": "EB extracted from brain tissue"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB extravasation"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "eb_extravasation_area",
+      "raw_value": "EB extravasation area"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "eb_extravasation_grade",
+      "raw_value": "EB extravasation grade"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB extravasation in brain tissue"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB extravasation into brain tissue"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "eb_extravasation_level",
+      "raw_value": "EB extravasation level"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "ipsilateral_to_contralateral_eb_ratio",
+      "raw_value": "EB extravasation ratio [ipsilateral hemisphere EB (µg/g)/contralateral hemisphere EB (µg/g)]"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "eb_extravasation_value",
+      "raw_value": "EB extravasation value"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB extravasations"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "eb_fluorescence_score",
+      "raw_value": "EB fluorescence comprehensive score (EB-CS)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "eb_grade",
+      "raw_value": "EB grades"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB in brain"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "EB in brain (1 h)"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "Eb in the brain parenchyma"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "eb_index",
+      "raw_value": "EB index (EBI)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "eb_intensity",
+      "raw_value": "EB intensity"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "eb_leak_rate",
+      "raw_value": "EB leak rate"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB leakage"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "EB leakage into brain parenchyma"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "eb_level",
+      "raw_value": "EB level"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "eb_level",
+      "raw_value": "EB levels"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "eb_penetration",
+      "raw_value": "EB penetration"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "eb_penetration",
+      "raw_value": "EB permeation"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "eb_quantification",
+      "raw_value": "EB quantification"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "eb_ratio",
+      "raw_value": "EB ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "eb_staining",
+      "raw_value": "EB staining"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "eb_staining_intensity",
+      "raw_value": "EB staining intensity"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "EB tissue content"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "eb_uptake",
+      "raw_value": "EB uptake"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "eb_value",
+      "raw_value": "Eb value"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "eba",
+      "raw_value": "EBA"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "eba_content",
+      "raw_value": "EBA mg %"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "eba_content",
+      "raw_value": "EBA mg%"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "ebac_extravasation",
+      "raw_value": "EBAC leakage"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "ebd",
+      "raw_value": "EBD"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "ebd_concentration",
+      "raw_value": "EBD concentration"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "ebd_content",
+      "raw_value": "EBD content"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_ebd_content",
+      "raw_value": "EBD content in the brain tissue"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "ebd_delivery_to_brain",
+      "raw_value": "EBD delivered to the brain"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "ebd_extravasation",
+      "raw_value": "EBD extravasation"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_ebd_content",
+      "raw_value": "EBD in the brain"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "ebd_extravasation",
+      "raw_value": "EBD leakage"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "ebd_tbr",
+      "raw_value": "EBD TBR"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "ebd_transfer",
+      "raw_value": "EBD transfer"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "ebe",
+      "raw_value": "EBE"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "eb_penetration",
+      "raw_value": "EB渗透量"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "eb_penetration_extent",
+      "raw_value": "extent of EB to brain tissue"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "ebd_extraction",
+      "raw_value": "extracted EBD"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "eb_extravasated_area_percentage",
+      "raw_value": "extravasated EB area percentage"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "extravasation of EB"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "eb_extravasation_content",
+      "raw_value": "extravascular EB content"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "leaked_ebd_fluorescence_intensity",
+      "raw_value": "fluorescence intensity of leaked EBD"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "inside_to_total_eb_ratio",
+      "raw_value": "inside/total EB ratio"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "intracranial_ebd_fluorescence",
+      "raw_value": "intracranial EBD fluorescence"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "leakage of albumin-bound EB into the brain"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "leakage of EB"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "leakage of EB into the brain parenchyma"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "eb_leak_rate",
+      "raw_value": "leakage rate of EB"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "leaked EB"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "ebac_content",
+      "raw_value": "level of EBAC in the brain tissues"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "eb_extravasation_level",
+      "raw_value": "level of extravasated EB"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "eb_extravasation_level",
+      "raw_value": "Levels of EB extravasation"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "eb_extravasation_level",
+      "raw_value": "magnitudes of EB leakage"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "eb_absorbance",
+      "raw_value": "OD value of EB extracted from brains"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_eb_level",
+      "raw_value": "parenchymal EB levels"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "ebd_extravasation_percentage",
+      "raw_value": "percent EBD extravasation"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "eb_brain_reaching_percentage",
+      "raw_value": "percentage of EB reaching the brain"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "eb_positive_pixel_percentage",
+      "raw_value": "percentage of pixels with positive EB fluorescence"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "quantity of Eb in ng/mg lesion fragment"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "quantity of EB in the brain"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "quantity of extravasated EB"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "ipsilateral_to_contralateral_eb_concentration_ratio",
+      "raw_value": "ratio of EB concentration (ipsilateral/contralateral hemisphere)"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "eb_absorbance",
+      "raw_value": "relative absorbance of EB dye"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "ebd_concentration",
+      "raw_value": "tissue concentration of EBD"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "tissue EB content"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "eb_extravasation",
+      "raw_value": "Tissue EB extravasation"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "eb_fluorescence",
+      "raw_value": "total EB red fluorescence"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "eb_uptake",
+      "raw_value": "uptake of EB into brain"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_eb_content",
+      "raw_value": "µg of EB g−1 of brain tissue"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "eb_content",
+      "raw_value": "μg of EB/g tissue"
+    }
+  ],
+  "cluster_id": "cluster_4e24dd1740a2ed6a",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

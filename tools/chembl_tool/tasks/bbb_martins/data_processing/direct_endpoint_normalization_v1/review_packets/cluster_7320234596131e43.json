@@ -1,0 +1,1112 @@
+{
+  "assignment_count": 221,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "forward_reverse_flux_ratio",
+      "raw_value": "$\\alpha$ (ratio of forward-to-reverse flux)"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "sucrose_flux",
+      "raw_value": "[¹⁴C]sucrose flux"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "flux_a_to_b",
+      "raw_value": "A to B flux"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "absolute accumulation"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "passage_percentage",
+      "raw_value": "abundance percentage crossed"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "Accumulation"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "accumulation"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "accumulation_efficiency",
+      "raw_value": "accumulation efficiency"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "accumulation_factor",
+      "raw_value": "accumulation factor"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "accumulation_factor",
+      "raw_value": "accumulation factors"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "accumulation_increase",
+      "raw_value": "accumulation increase"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "accumulation level"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "accumulation levels"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "accumulation_rate",
+      "raw_value": "accumulation rate"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "activity_increase",
+      "raw_value": "Activity increased"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "released_amount",
+      "raw_value": "amount released"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "flux_a_to_b",
+      "raw_value": "apical to basal flux"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "flux_a_to_b",
+      "raw_value": "apical-to-basal flux"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "apparent_flux",
+      "raw_value": "apparent flux"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "apparent influx clearance"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "apparent influx clearance value"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "influx_constant",
+      "raw_value": "apparent influx constant"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "influx_constant",
+      "raw_value": "apparent influx constants"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "auc_partitioning_rate",
+      "raw_value": "Area under the partitioning rate versus time profile"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "influx_change",
+      "raw_value": "Average influx change observed"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "net_flux",
+      "raw_value": "Avg Net Flux"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "flux_b_to_a",
+      "raw_value": "B to A flux"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "flux_b_to_a_vs_a_to_b_ratio",
+      "raw_value": "B:A flux vs A:B flux"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "flux_b_to_a",
+      "raw_value": "basal to apical flux"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "flux_b_to_a_vs_a_to_b_ratio",
+      "raw_value": "basal to apical flux / apical to basal flux"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "flux_b_to_a_vs_a_to_b_ratio",
+      "raw_value": "basal-to-apical (B-to-A) versus apical-to-basal (A-to-B) flux ratio"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "flux_b_to_a",
+      "raw_value": "basal-to-apical flux"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "flux_b_to_a_vs_a_to_b_ratio",
+      "raw_value": "basal-to-apical vs apical-to-basal flux ratio"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "basolateral_flux",
+      "raw_value": "Basolateral flux"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "calcium_influx",
+      "raw_value": "Ca influx"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "influx_rate_change",
+      "raw_value": "Calculated changes in influx rate"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "relative_influx_rate_change",
+      "raw_value": "Calculated changes in relative influx rate"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "influx",
+      "raw_value": "Calculated influx"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "capillary_exchange_half_time",
+      "raw_value": "capillary exchange half-time"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "central_ld_influx",
+      "raw_value": "central LD influx"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "CLin (influx clearance)"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "non_saturable_influx_constant",
+      "raw_value": "constant for non-saturable influx"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "flux",
+      "raw_value": "continuous flux"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "crossing_rate",
+      "raw_value": "crossing rate"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "CsA accumulation"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "cumulative_amount",
+      "raw_value": "Cumulative Mn amounts"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "flux",
+      "raw_value": "daily flux"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "influx",
+      "raw_value": "daily influx"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "delivery_increase",
+      "raw_value": "delivery increase"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "deposition_rate",
+      "raw_value": "deposition rate"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "flux_b_to_a_vs_a_to_b_difference",
+      "raw_value": "difference in BL to AP vs. AP to BL fluxes"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "absorption_ratio",
+      "raw_value": "differential absorption ratio at 30 min"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "accumulation_difference",
+      "raw_value": "differential accumulation"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "time_to_steady_state",
+      "raw_value": "distribution time to steady state"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "volume_of_distribution_and_influx_rate_constant",
+      "raw_value": "distribution volume and influx rate constants"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "ECF influx clearance"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "effective_rate_constant",
+      "raw_value": "effective rate constant k'_3"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "glucose_influx_efficiency",
+      "raw_value": "efficiency of glucose influx"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "entry_rate",
+      "raw_value": "entry rate"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "exit_rate_constant",
+      "raw_value": "estimated exit rate constant"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "influx",
+      "raw_value": "estimated influx"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "estimated influx clearance"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "exogenous_percentage",
+      "raw_value": "exogenous origin percentage"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "extraction_rate",
+      "raw_value": "extraction rate"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "influx_extraction_ratio",
+      "raw_value": "extraction ratio of influx"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "extravasation_frequency",
+      "raw_value": "extravasation frequency"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "extravasation_rate",
+      "raw_value": "extravasation rate"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "accumulation_increase_factor",
+      "raw_value": "F (accumulation increase factor)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "first pass extraction of unidirectional influx"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "flow_rate_50_max_recovery",
+      "raw_value": "flow rate for 50% maximal recovery"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "flux",
+      "raw_value": "Flux"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "flux",
+      "raw_value": "flux"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "relative_flux",
+      "raw_value": "flux (relative to Ga-DTPA)"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "flux",
+      "raw_value": "flux of NaFl across the monolayer over 2 hours"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "flux_rate",
+      "raw_value": "flux rate"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "flux_ratio_a_to_l_vs_l_to_a",
+      "raw_value": "Flux ratio (A-L/L-A)"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "flux",
+      "raw_value": "flux values"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "flux",
+      "raw_value": "fluxes"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "deposition_rate",
+      "raw_value": "Gd deposition rate"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "leakage_rate",
+      "raw_value": "Gd-leakage rate"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "rate",
+      "raw_value": "global rate"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "sodium_entry_half_time",
+      "raw_value": "half-time of sodium entry"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "incorporation_rate",
+      "raw_value": "incorporation rate"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "incorporation_rate",
+      "raw_value": "incorporation rates"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "accumulation_increase",
+      "raw_value": "Increase in accumulation (% control)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "vpm_increase",
+      "raw_value": "increase of VPM"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "vpm_k1_increase",
+      "raw_value": "increase of VPM-K₁"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "endogenous_level_increment",
+      "raw_value": "increment over endogenous level"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "induced_flux",
+      "raw_value": "induced flux"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "influx",
+      "raw_value": "Influx"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "influx",
+      "raw_value": "influx"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "influx",
+      "raw_value": "Influx (obs)"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "influx",
+      "raw_value": "influx across BCECs"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "Influx clearance"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "influx_clearance",
+      "raw_value": "influx clearance"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "influx_coefficient",
+      "raw_value": "influx coefficient (kso)"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "influx_constant",
+      "raw_value": "influx constant"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "influx_constant",
+      "raw_value": "influx constant (K1)"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "influx_rate",
+      "raw_value": "Influx rate"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "influx_rate",
+      "raw_value": "influx rate"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "influx_rate_constant",
+      "raw_value": "influx rate constant"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "influx_rate_constant",
+      "raw_value": "influx rate constant (K1-An)"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "influx_rate_constant",
+      "raw_value": "influx rate constant (Ki)"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "influx_rate_reduction",
+      "raw_value": "influx rate reduction"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "influx_saturation",
+      "raw_value": "influx saturation"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "influx_time",
+      "raw_value": "influx time"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "influx_z_score",
+      "raw_value": "influx Z-score"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "influx_outflux_ratio",
+      "raw_value": "Influx/Outflux ratio"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "influx_outflux_ratio",
+      "raw_value": "influx/outflux ratio"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "initial_influx_phase",
+      "raw_value": "initial influx phase"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "initial_rate",
+      "raw_value": "initial rate"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "initial_rate_constant",
+      "raw_value": "initial rate constant"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "unidirectional_influx_rate",
+      "raw_value": "initial unidirectional influx rate"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "ketone_influx_rate",
+      "raw_value": "ketone influx rate"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "unidirectional_influx_rate_constant",
+      "raw_value": "Ki (unidirectional influx rate)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "influx_parameter",
+      "raw_value": "kinetic influx parameter"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "lead accumulation"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "max_ratio",
+      "raw_value": "Max Ratio: µg Injected Cu/µg Cu, Endogenous + Exogenous"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "maximal_influx_rate",
+      "raw_value": "maximal influx rate"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "maximal_rate",
+      "raw_value": "Maximal rate"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "maximum_rate",
+      "raw_value": "maximum rate"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "sustainable_unidirectional_flux",
+      "raw_value": "maximum sustainable unidirectional flux"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "influx_extraction_ratio",
+      "raw_value": "mean extraction ratio of influx (E)"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "influx_constant",
+      "raw_value": "mean influx constant"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "influx",
+      "raw_value": "Measured influx"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "manganese_influx",
+      "raw_value": "Mn influx"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "accumulation",
+      "raw_value": "MX accumulation"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "net_accumulation_rate",
+      "raw_value": "Net accumulation rate"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "net_accumulation_rate",
+      "raw_value": "net accumulation rate"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "net_entry_rate",
+      "raw_value": "net entry rate"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "net_flow",
+      "raw_value": "net flow"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "net_flux",
+      "raw_value": "net flux"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "net_flux_ratio",
+      "raw_value": "net flux ratio"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "net_influx",
+      "raw_value": "net influx"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "net_entry_rate",
+      "raw_value": "net rate of entry"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "influx",
+      "raw_value": "obs influx"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "influx",
+      "raw_value": "Observed influx"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "influx_rate",
+      "raw_value": "observed influx rate"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "occupancy_rate",
+      "raw_value": "occupancy rate"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "palmitate_flux",
+      "raw_value": "palmitate flux"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "passive_influx",
+      "raw_value": "passive influx"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "peak_ldopa_influx",
+      "raw_value": "peak L-DOPA influx"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "peak_net_influx",
+      "raw_value": "peak net influx"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "influx_extraction_percentage",
+      "raw_value": "percent extraction of unidirectional influx"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "passage_percentage",
+      "raw_value": "percentage of passage"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "passage_rate",
+      "raw_value": "percentage of passage per min"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "passage_ratio",
+      "raw_value": "percentage of passage versus filter"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "delivery_rate",
+      "raw_value": "perilesional MH delivery rate"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "accumulation_rate",
+      "raw_value": "PET-estimated accumulation rate"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "phenylalanine_influx",
+      "raw_value": "PHE influx"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "phenylalanine_influx",
+      "raw_value": "PHE-influx"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "inward_net_flux_threshold_plasma_level",
+      "raw_value": "plasma level threshold for inward net flux"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "plateau_level",
+      "raw_value": "plateau level of time-activity curves"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "influx",
+      "raw_value": "Predicted influx"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "unidirectional_influx",
+      "raw_value": "predicted unidirectional influx"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "passage_proportion",
+      "raw_value": "proportion of its passage"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "rate",
+      "raw_value": "rate"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "rate_a_to_b",
+      "raw_value": "rate (apical to basolateral)"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "rate_constant",
+      "raw_value": "rate constant"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "rate_constant",
+      "raw_value": "rate constant (B)"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "rate_constant",
+      "raw_value": "rate constant (k/v_i)"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "methyl_glucose_influx_rate_constant",
+      "raw_value": "rate constant for methyl glucose influx"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "sodium_influx_rate_constant",
+      "raw_value": "rate constant for sodium influx"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "equilibrium_approach_rate_constant",
+      "raw_value": "rate constant for the approach to equilibrium"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "fluid_turnover_rate_constant",
+      "raw_value": "rate constant for turnover in fluid"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "accumulation_rate",
+      "raw_value": "rate of accumulation"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "crossing_rate",
+      "raw_value": "rate of crossing"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "egress_rate",
+      "raw_value": "rate of egress"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "entry_rate",
+      "raw_value": "rate of entry"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "flux_rate",
+      "raw_value": "rate of flux"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "influx_rate",
+      "raw_value": "rate of influx"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "magnesium_influx_rate",
+      "raw_value": "rate of Mg influx"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "release_rate",
+      "raw_value": "rate of release"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "sucrose_entry_rate",
+      "raw_value": "rate of sucrose entry"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "tryptophan_influx_rate",
+      "raw_value": "rate of tryptophan influx"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "unidirectional_sodium_flux_rate",
+      "raw_value": "rate of unidirectional flux of isotopic sodium"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "chloride36_influx_rate",
+      "raw_value": "rate of ³⁶Cl influx"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "influx_rate",
+      "raw_value": "rates of influx"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "regional_accumulation",
+      "raw_value": "regional accumulation"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "palmitate_flux",
+      "raw_value": "regional palmitate flux, J"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "regional_rate",
+      "raw_value": "regional rates"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "relative_influx_rate",
+      "raw_value": "relative influx rate"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "retention_time",
+      "raw_value": "retention time"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "single_pass_influx",
+      "raw_value": "single pass influx"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "uptake_rate",
+      "raw_value": "slope of uptake against time"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "specific_flux",
+      "raw_value": "Specific flux"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "steady_state_accumulation",
+      "raw_value": "steady-state accumulation"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "steady_state_uptake_amount",
+      "raw_value": "steady-state amount taken up"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "steady_state_net_influx_rate_constant",
+      "raw_value": "steady-state net influx rate constant (Ki)"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "steady_state_volume_of_distribution",
+      "raw_value": "steady-state volume of distribution"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "sucrose_flux",
+      "raw_value": "sucrose flux"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "half_time_tp_ratio_increase",
+      "raw_value": "t0.5 (rate of increase of T/P)"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "convulsion_onset_time",
+      "raw_value": "time of onset of convulsions"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "retention_time",
+      "raw_value": "time retention"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "time_to_steady_state",
+      "raw_value": "time to reach steady-state"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "total_influx",
+      "raw_value": "Total influx at 5 mM"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "total_influx_rate",
+      "raw_value": "total influx rates"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "transient_steady_state",
+      "raw_value": "Transient Steady State"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "transient_steady_state_da",
+      "raw_value": "Transient steady-state DA"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "tryptophan_influx",
+      "raw_value": "TRP influx"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "tryptophan_influx",
+      "raw_value": "TRP-influx"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "tyrosine_influx",
+      "raw_value": "TYR-influx"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "unidirectional_flux",
+      "raw_value": "Unidirectional flux"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "unidirectional_flux",
+      "raw_value": "unidirectional flux"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "unidirectional_flux",
+      "raw_value": "unidirectional flux $\\phi$"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "unidirectional_incorporation_rate_constant",
+      "raw_value": "unidirectional incorporation rate constant (k*)"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "unidirectional_influx",
+      "raw_value": "Unidirectional influx"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "unidirectional_influx",
+      "raw_value": "unidirectional influx"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "unidirectional_influx_coefficient",
+      "raw_value": "unidirectional influx coefficient (Kin)"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "unidirectional_influx_constant",
+      "raw_value": "unidirectional influx constant"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "unidirectional_influx_constant",
+      "raw_value": "unidirectional influx constant Ki"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "unidirectional_influx_rate_constant",
+      "raw_value": "unidirectional influx rate constant"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "unidirectional_influx_rate_constant",
+      "raw_value": "unidirectional influx-rate (Ki)"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "unidirectional_ne_flux",
+      "raw_value": "unidirectional NE flux"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "free_tryptophan_influx_rate",
+      "raw_value": "v(influx) free Trp"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "total_tryptophan_influx_rate",
+      "raw_value": "v(influx) total Trp"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "unidirectional_influx_rate",
+      "raw_value": "v1 (unidirectional influx)"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "extravasation_volume",
+      "raw_value": "volume of extravasation"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "water_exchange",
+      "raw_value": "water exchange"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "potassium42_influx",
+      "raw_value": "⁴²K Influx"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "potassium42_influx",
+      "raw_value": "⁴²K influx"
+    }
+  ],
+  "cluster_id": "cluster_7320234596131e43",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

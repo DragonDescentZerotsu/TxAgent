@@ -1,0 +1,1592 @@
+{
+  "assignment_count": 317,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "% ID/g brain at 5 min postinjection"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "1 h-Brain conc."
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "14C concs in brain"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain",
+      "raw_value": "[26]Brain"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain",
+      "raw_value": "[brain]"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "[brain]free"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "[Pb2+] Brain"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "[Phe]brain"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "AA in brain"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_access",
+      "raw_value": "ability to reach the brain"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_activity",
+      "raw_value": "activity in brain"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_activity",
+      "raw_value": "activity in the brain"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "adjacent_brain_activity",
+      "raw_value": "adjacent brain activity"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "appearance in the brain"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_availability",
+      "raw_value": "availability in the brain"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "AZT in brain"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "bci",
+      "raw_value": "BCI"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_binding",
+      "raw_value": "binding in the brain"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain",
+      "raw_value": "Brain"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain",
+      "raw_value": "brain"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Brain (% of I.D.)"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain (nM)"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain (nM) 10 mpk"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "brain (nmol/g, free)"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "pabrnc",
+      "raw_value": "Brain (PABRNC)"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain (µM)"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain 5-HT content"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain",
+      "raw_value": "brain 6 h"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain 6-MAM"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain [ALLO]"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain [minzasolmin]"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_access",
+      "raw_value": "brain access"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_ache_inhibition",
+      "raw_value": "brain AChE inhibition"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_activity",
+      "raw_value": "brain activity"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_pet_activity",
+      "raw_value": "brain activity on PET"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_aggregation",
+      "raw_value": "brain aggregation"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain Al+3 content"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain aluminum"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain ammonia"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_availability",
+      "raw_value": "brain availability"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain BHB"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain bilirubin"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain bilirubin"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain BMS-299897"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain C3h, Pl. C3h"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain CBZ"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_cholinesterase_inhibition",
+      "raw_value": "Brain ChEI (%)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_clearance",
+      "raw_value": "brain Cl_imap"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_clearance",
+      "raw_value": "brain clearance"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_uptake_clearance",
+      "raw_value": "brain Clup"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain CNB-001"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain Conc"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain conc"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain conc."
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain conc."
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain conc. at steady state"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain conc. corrected"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain concn"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain concn"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain concnc"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "Brain content"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain content"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain contents of DOX"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain CurDD contents"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain C₃h"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain DDT"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_detectability",
+      "raw_value": "brain detectability"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_detection",
+      "raw_value": "brain detection"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain digoxin"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_disposition",
+      "raw_value": "brain disposition"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_distribution_space",
+      "raw_value": "Brain distribution space"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_distribution_space",
+      "raw_value": "brain distribution space"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain DMI"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain Dopa"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain DPDPE"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain DPDPE"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_activity",
+      "raw_value": "Brain dpm/g"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "Brain DV"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_availability",
+      "raw_value": "brain DXM availability"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_availability",
+      "raw_value": "brain DXT availability"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_e",
+      "raw_value": "brain E"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain EPA content"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "brain half-life"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain Hcy content"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_incorporation",
+      "raw_value": "Brain incorporation"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_incorporation",
+      "raw_value": "brain incorporation"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_index",
+      "raw_value": "brain index"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_iodide_space",
+      "raw_value": "brain iodide space"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_influx_rate",
+      "raw_value": "Brain Kin"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_partition_coefficient",
+      "raw_value": "Brain Kpf"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain L-dopa"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_label_content",
+      "raw_value": "brain label content"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_label_incorporation",
+      "raw_value": "brain label incorporation"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_labeling",
+      "raw_value": "brain labeling"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain lead"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "brain level of free Cur"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain Lithium"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain lithium"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_load",
+      "raw_value": "brain load"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_localization",
+      "raw_value": "brain localization"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain mannitol"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "Brain mannitol contents"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_mannitol_space",
+      "raw_value": "brain mannitol space"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "Brain MPTP content"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain MTX"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_no_movement",
+      "raw_value": "Brain No Move"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_partitioning",
+      "raw_value": "brain partitioning"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain Pb"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain Pb"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "brain penetrance"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "brain penetrant"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain Phe"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain Phenylalanine"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain platinum content"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain ppb"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_presence_duration",
+      "raw_value": "brain presence duration"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain PTZ conc."
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_access",
+      "raw_value": "brain reach"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_recovery",
+      "raw_value": "brain recovery"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_signal",
+      "raw_value": "brain signal"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_signal_enhancement",
+      "raw_value": "brain signal enhancement"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain Sn"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_space",
+      "raw_value": "brain space"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_space",
+      "raw_value": "Brain space x 10^2"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_specific_activity",
+      "raw_value": "Brain Specific Activity"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_sulfate_space",
+      "raw_value": "Brain Sulfate Space"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_sulfate_space",
+      "raw_value": "Brain sulfate space"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "brain SUV"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "brain SUVs"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "brain t1/2 (total [14C])"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain T4 content"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_tac_slope",
+      "raw_value": "brain TAC slope"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_targeting_efficiency",
+      "raw_value": "brain targeting efficiency"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_targeting_efficiency",
+      "raw_value": "brain targeting efficiency (TEC)"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_targeting_index",
+      "raw_value": "brain targeting index (DTI)"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_targeting_efficiency",
+      "raw_value": "brain TE"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain thiopental"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_partition_coefficient",
+      "raw_value": "brain tissue PC"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_tissue",
+      "raw_value": "brain tissues"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_tmax",
+      "raw_value": "brain Tmax"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_total_recovery",
+      "raw_value": "Brain total recovery"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_tracer_space",
+      "raw_value": "brain tracer space"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain Trp"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain tryptophan"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "Brain tryptophan content"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain Up-take Index"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "Brain VD"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "brain VT"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_washout",
+      "raw_value": "brain washout"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_washout_ratio",
+      "raw_value": "brain washout (1 min/60 min ratio ID)"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_washout_slope",
+      "raw_value": "brain washout slope"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain-associated itraconazole"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_free_ed50",
+      "raw_value": "Brain-free @ ED50"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "brain_targeting_index",
+      "raw_value": "brain-targeting index (DTI)"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "brain_to_body_ratio",
+      "raw_value": "Brain/body"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain",
+      "raw_value": "brain2min"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_washout_ratio",
+      "raw_value": "brain2min/brain30min"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "brain_washout_ratio",
+      "raw_value": "brain2min/brain60min"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain",
+      "raw_value": "Braine"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brainstem_value",
+      "raw_value": "brainstem value"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "brain",
+      "raw_value": "brain₂ min"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "C max, brain"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "muscle_to_brain_ratio",
+      "raw_value": "C_Muscle/C_Brain"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "apparent_brain_and_csf_entry",
+      "raw_value": "calculated apparent brain and CSF entry"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "cerebral_content",
+      "raw_value": "cerebral content"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "cerebral_cortex_concentration",
+      "raw_value": "cerebral cortex CoQ10"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "cerebral_concentration",
+      "raw_value": "cerebral H1RO"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "cerebral_concentration",
+      "raw_value": "cerebral ketones"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "cerebral_mannitol_space",
+      "raw_value": "cerebral mannitol space"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "cerebral_volume_of_distribution",
+      "raw_value": "Cerebral VT"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "cerebral_volume_of_distribution",
+      "raw_value": "cerebral VT"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_clearance_in",
+      "raw_value": "clearance into brain"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "frontal_cortex_clearance_in",
+      "raw_value": "Clearance into frontal cortex"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_clearance_out",
+      "raw_value": "clearance out of brain"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_clearance_out",
+      "raw_value": "clearance out of the brain"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_tissue_clearance",
+      "raw_value": "CLtissue (brain)"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_uptake_clearance",
+      "raw_value": "CLuptake,brain"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Cm,brain"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "normal_brain_concentration",
+      "raw_value": "Cnormal brain"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Conc mouse brain"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "Conc mouse brain free"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Conc. in brain"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Concn in brain"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Concn. of 14C-material (Brain)"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "content in brain"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "Content in the brain"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "content in the brain"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "content per brain"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "cortex_no_movement",
+      "raw_value": "Cortex No Move"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "cortex_concentration",
+      "raw_value": "Cortex TRP"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "cortex_concentration",
+      "raw_value": "Cortex TYR"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_activity",
+      "raw_value": "Counts/g fresh brain/min"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "whole_brain_activity",
+      "raw_value": "CPM/whole brain"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Ctotal,brain, CCSF"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Ctotal,brain, Cu,brain, CCSF"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "Cu brain"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "Cu, brain"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "Cu,brain"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_to_csf_ratio",
+      "raw_value": "Cu,brain/CCSF"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_detection",
+      "raw_value": "detected in the brain"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_detection",
+      "raw_value": "detection in brain tissues"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_detection_time",
+      "raw_value": "detection time in brain"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "distributed to brain"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "whole_brain_concentration",
+      "raw_value": "DOPA in whole brain"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "dose reaching the brain"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brainstem_concentration",
+      "raw_value": "DTPA in the brainstem"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_elimination",
+      "raw_value": "elimination from the brain"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "epassive_cationic_brain",
+      "raw_value": "Epassive,cationic,brain"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "etotal_brain",
+      "raw_value": "Etotal,brain"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_washout_slope",
+      "raw_value": "first-pass brain washout slope"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "brain_unbound_exposure",
+      "raw_value": "free brain exposure"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "brain_unbound_multiple",
+      "raw_value": "free brain multiple"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "brain_unbound_fraction",
+      "raw_value": "fu brain"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_unbound_fraction",
+      "raw_value": "Fu,brain"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_unbound_fraction",
+      "raw_value": "fu,brain"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "fu_brain_to_ic50_ratio",
+      "raw_value": "Fu,brain/cellular PERK IC50"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_staining_grade",
+      "raw_value": "grade of brain staining"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "half-life (brain)"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Hg in brain"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "hippocampal_content",
+      "raw_value": "Hippocampal content"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "hippocampal_concentration",
+      "raw_value": "Hippocampus (ng/g)"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "hippocampal_content",
+      "raw_value": "hippocampus content"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "ID/g brain tissue"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "IDmax[brain]"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_incorporation",
+      "raw_value": "incorporation into brain"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "intact [CBN] in the brain"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "central_to_brain_rate_constant",
+      "raw_value": "k12 (central → brain)"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "brain_to_central_rate_constant",
+      "raw_value": "k21 (brain → central)"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "brain_influx_rate",
+      "raw_value": "Kin brain"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "brain_parenchyma_influx_rate",
+      "raw_value": "Kin brain parenchyma"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "brain_influx_rate",
+      "raw_value": "Kin,brain"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "brain_partition_coefficient",
+      "raw_value": "Kp,brain,40-60min"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "brain_partition_coefficient",
+      "raw_value": "Kplasma, brain"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "brain_partition_coefficient",
+      "raw_value": "Kplasma-brain"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "brain_uptake_rate",
+      "raw_value": "Kuptake,brain and VT brain"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "brain_label_content",
+      "raw_value": "label in brain"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "fetal_brain_label_recovery",
+      "raw_value": "label recovery in fetal brain"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "local brain content"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "brain_localization",
+      "raw_value": "localization in brain"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_localization",
+      "raw_value": "localization in the brain"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "log_ps_fu_brain",
+      "raw_value": "log (PS * f_{u,brain})"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "whole_brain_suv",
+      "raw_value": "max SUV total brain"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "max. brain concn."
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "maximum brain SUV"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "brain_silver_concentration",
+      "raw_value": "mean brain silver"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_sucrose_space",
+      "raw_value": "mean brain sucrose space"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Measured brain conc."
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "brain_efflux",
+      "raw_value": "net brain efflux"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "nmol ALA or THP-ALA/g brain"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "normal_brain_concentration",
+      "raw_value": "Normal brain (CSSbrain)"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "P_Brain"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "brain_permeability",
+      "raw_value": "P_brain"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "cerebellum_suv",
+      "raw_value": "peak cerebellum SUV"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "ps_fu_brain",
+      "raw_value": "PS×fu,brain"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Pt:p (Brain)"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "qc_brain",
+      "raw_value": "Qc in brain"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_ratio",
+      "raw_value": "R_brain"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "serum_to_brain_ratio",
+      "raw_value": "R_PFOS (PFOS_Serum/PFOS_Brain)"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Rblood-brain"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "brain_recovery",
+      "raw_value": "recovered in the brain"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "brain_recovery",
+      "raw_value": "recovery in brain"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "brain_recovery",
+      "raw_value": "recovery in the brain"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "relative_brain_targeting_coefficient",
+      "raw_value": "relative brain targeted coefficient Re"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "relative_brain_targeting_coefficient",
+      "raw_value": "relative brain targeted coefficients (Re)"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "brain_space",
+      "raw_value": "Space (Brain %)"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "brain_space",
+      "raw_value": "space of brain"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "steady-state brain conc."
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "striatum_to_cerebellum_dvr",
+      "raw_value": "striatum-to-cerebellum DVR"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "SUV (total brain)"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "SUV brain"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "SUV Brain (18-61 min p.i.)"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "cortex_suv",
+      "raw_value": "SUV in the cortex"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "t1/2 (brain)"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "t1/2 in brain"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "t1/2,brain"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "t1/2-brain"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "brain_equilibrium_half_life",
+      "raw_value": "t1/2;eq,brain"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "brain_equilibrium_half_life",
+      "raw_value": "t1/2eq,brain"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "THg in brain"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "THPO in brain"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "brain_time_to_reach",
+      "raw_value": "time required to reach the brain"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "brain_time_to_appearance",
+      "raw_value": "time to appear in brain"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "brain_detection_time",
+      "raw_value": "time to brain detection"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "brain_region_detection_time",
+      "raw_value": "time to detection in specific brain regions"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "brain_equilibration_time",
+      "raw_value": "time to equilibrate with brain"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "brain_time_to_reach",
+      "raw_value": "time to reach brain"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "brain_time_to_therapeutic_level",
+      "raw_value": "time to reach therapeutic brain level"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "brain_tmax",
+      "raw_value": "Tmax for brain"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "total_brain_activity",
+      "raw_value": "Total brain 14C"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "total_brain_concentration",
+      "raw_value": "total brain [14C]mannitol"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "total_brain_content",
+      "raw_value": "total brain content"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "total_brain_concentration",
+      "raw_value": "total brain D-serine"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "brain_influx_rate",
+      "raw_value": "Total brain Kᵢₙ"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "TPA contents (Brain)"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "whole_brain_concentration",
+      "raw_value": "Tryptophan in whole brain"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "brain_incorporation_half_life",
+      "raw_value": "t½ for the incorporation into brain"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "t₁/₂λ to brain"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "brain_unbound_css_avg",
+      "raw_value": "unbound Css,avg in human brain"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "Vd,brain"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "brain_vrc_concentration",
+      "raw_value": "VRC concn (Brain)"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "brain_volume_of_distribution",
+      "raw_value": "VT,brain"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "brain_vtr_pyr",
+      "raw_value": "Vtr Pyr brain"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "brain_unbound_volume_of_distribution",
+      "raw_value": "Vu,brain"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "whole_brain",
+      "raw_value": "whole brain"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "whole_brain_activity",
+      "raw_value": "Whole brain 14C activity"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "whole_brain",
+      "raw_value": "Whole brain 2 min pi"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "whole_brain_activity",
+      "raw_value": "Whole brain activity"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "whole_brain_content",
+      "raw_value": "whole brain ADR content"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "whole_brain_concentration",
+      "raw_value": "Whole brain barbital"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "whole_brain_concentration",
+      "raw_value": "Whole brain bilirubin"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "whole_brain_content",
+      "raw_value": "whole brain MPP+ content"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "whole_brain_concentration",
+      "raw_value": "whole brain NE"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "whole_brain_suv",
+      "raw_value": "whole brain SUV"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "whole_brain_suv",
+      "raw_value": "Whole brain SUV30–60 min"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "whole_brain_volume_of_distribution",
+      "raw_value": "Whole brain VT"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "whole_brain_volume_of_distribution",
+      "raw_value": "whole brain VT"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "whole_brain_volume_of_distribution",
+      "raw_value": "whole-brain V_T"
+    }
+  ],
+  "cluster_id": "cluster_aa924c26b453c02f",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

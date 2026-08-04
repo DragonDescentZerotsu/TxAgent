@@ -1,0 +1,1502 @@
+{
+  "assignment_count": 299,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "bbb_penetration_percentage",
+      "raw_value": "% BBB penetration"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "% of injected amount passing through BBB"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "% of original amount able to cross the BBB"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "% of serum crossing the BBB"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "bbb_crossing_ability",
+      "raw_value": "ability to cross BBB"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "bbb_crossing_ability",
+      "raw_value": "ability to cross the BBB"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "bbb_crossing_ability",
+      "raw_value": "ability to cross the BBB endothelium"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "active_efflux_clearance_fold_change",
+      "raw_value": "Active efflux clearance fold change (BTB over BBB)"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "bbb_penetration_ratio",
+      "raw_value": "adjusted BBB penetration ratio"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "bbb_penetration_level",
+      "raw_value": "ADMET BBB penetration level"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "ADMET calculated BBB permeability"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "bbb_transport_amount",
+      "raw_value": "amount crossing the BBB"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "bbb_transport_amount",
+      "raw_value": "amount of MTX-transported across BBB"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "bbb_transport_amount",
+      "raw_value": "amount passing across the BBB"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "bbb_transport_amount",
+      "raw_value": "amount transported across BBB"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "bbb_transport_amount",
+      "raw_value": "amount transported across the BBB"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "bbb_influx_clearance",
+      "raw_value": "apparent BBB influx clearance"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "bbb_transport_km",
+      "raw_value": "apparent BBB Km"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "beta_hb_equilibrium",
+      "raw_value": "apparent L-βHB equilibrium"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "average BBB permeability"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "bb_penetration",
+      "raw_value": "BB penetration"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "bb_ratio",
+      "raw_value": "BB ratio"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "aib_permeability",
+      "raw_value": "BBB [³H]AIB permeability"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "bbb_absorption",
+      "raw_value": "BBB absorption"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "bbb_and_tumor_accumulation",
+      "raw_value": "BBB and tumor accumulation"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "bbb_biological_score",
+      "raw_value": "BBB biological score"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "bbb_calculated_transport",
+      "raw_value": "BBB Calculated Transport"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "bbb_clearance",
+      "raw_value": "BBB clearance"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "bbb_coefficient",
+      "raw_value": "BBB coefficient"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB concentrations / blood concentrations"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "bbb_crossing_efficiency",
+      "raw_value": "BBB crossing efficiency"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "bbb_crossing_increase",
+      "raw_value": "BBB crossing increase"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "bbb_crossing_probability",
+      "raw_value": "BBB crossing probability"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "bbb_crossing_rate",
+      "raw_value": "BBB crossing rate"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "bbb_diffusibility",
+      "raw_value": "BBB diffuse-ability"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "bbb_disruption",
+      "raw_value": "BBB disruption"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "bbb_efflux_to_influx_ratio",
+      "raw_value": "BBB efflux / BBB influx ratio"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "bbb_efflux_clearance",
+      "raw_value": "BBB efflux clearance"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "bbb_equilibration_half_life",
+      "raw_value": "BBB equilibration half-life"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "bbb_filter",
+      "raw_value": "BBB filter"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "glucose_clearance",
+      "raw_value": "BBB GLU clearance"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "bbb_glucose_transporter_activity",
+      "raw_value": "BBB glucose-transporter activity"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "bbb_influx",
+      "raw_value": "BBB influx"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "bbb_influx_clearance",
+      "raw_value": "BBB influx clearance"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "bbb_influx_permeability",
+      "raw_value": "BBB influx permeability"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "bbb_influx_rate_constant",
+      "raw_value": "BBB influx rate constant"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "bbb_intensity",
+      "raw_value": "BBB intensity"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "bbb_leakage",
+      "raw_value": "BBB leakage"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "mbcec_bbb_permeability",
+      "raw_value": "BBB MBCEC permeability"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "bbb_net_flux",
+      "raw_value": "BBB net flux"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "bbb_passage_rate",
+      "raw_value": "BBB passage rate"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "bbb_penetrability",
+      "raw_value": "BBB penetrability"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB Penetration"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB penetration"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "bbb_penetration_percentage",
+      "raw_value": "BBB penetration %"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "bbb_penetration_percentage",
+      "raw_value": "BBB penetration (%)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB penetration (Cbrain/Cblood)"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "frontal_cortex_to_cerebellum_ratio",
+      "raw_value": "BBB penetration (frontal cortex/cerebellum ratio)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB penetration (P)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "BBB penetration (percentage of plasma concentration)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "bbb_penetration_probability",
+      "raw_value": "BBB penetration (probability)"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "bbb_penetration_prediction",
+      "raw_value": "BBB penetration (QSAR value)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "bbb_penetration_prediction",
+      "raw_value": "BBB penetration (TP value)"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "bbb_penetrability",
+      "raw_value": "BBB penetration ability"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "bbb_penetration_and_bioavailability",
+      "raw_value": "BBB penetration and bioavailability"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "bbb_penetrability",
+      "raw_value": "BBB penetration capacities"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "bbb_penetration_efficiency",
+      "raw_value": "BBB penetration efficiency"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "bbb_penetration_index",
+      "raw_value": "BBB penetration index"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "bbb_penetration_index",
+      "raw_value": "BBB penetration index (BBBd)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "bbb_penetration_level",
+      "raw_value": "BBB penetration level"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "bbb_penetration_prediction",
+      "raw_value": "BBB penetration prediction level"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "bbb_penetration_probability",
+      "raw_value": "BBB penetration probabilities"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "bbb_penetration_probability",
+      "raw_value": "BBB penetration probability"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "bbb_penetration_rate",
+      "raw_value": "BBB penetration rate"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "bbb_penetration_ratio",
+      "raw_value": "BBB penetration ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "bbb_penetration_ratio",
+      "raw_value": "BBB penetration ratios"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "bbb_penetration_relative_to_2_pam",
+      "raw_value": "BBB penetration relative to 2-PAM"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "bbb_penetration_score",
+      "raw_value": "BBB Penetration Score"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "bbb_penetration_score",
+      "raw_value": "BBB penetration score"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB penetration value"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB penetration values"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBB penetrations"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "BBB Permeability"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "BBB permeability"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "BBB permeability (C. brain/C. blood)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "bbb_eb_permeability",
+      "raw_value": "BBB permeability (EB method)"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "bbb_efflux_permeability",
+      "raw_value": "BBB permeability (efflux)"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "bbb_influx_permeability",
+      "raw_value": "BBB permeability (influx)"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "logbb",
+      "raw_value": "BBB permeability (log BB)"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "logbb",
+      "raw_value": "BBB permeability (logBB)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "sodium_permeability",
+      "raw_value": "BBB permeability [131I]sodium"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "bbb_permeability_clearance",
+      "raw_value": "BBB permeability clearance"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "bbb_permeability_efficiency",
+      "raw_value": "BBB permeability efficiency"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "bbb_efflux_permeability",
+      "raw_value": "BBB permeability for efflux"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "bbb_influx_permeability",
+      "raw_value": "BBB permeability for influx"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "bbb_permeability_percentage",
+      "raw_value": "BBB permeability percentage"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "bbb_permeability_prediction",
+      "raw_value": "BBB permeability prediction"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "bbb_permeability_rate",
+      "raw_value": "BBB permeability rate"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "bbb_permeability_rating",
+      "raw_value": "BBB permeability rating"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "bbb_permeability_score",
+      "raw_value": "BBB permeability score"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "bbb_eb_permeability",
+      "raw_value": "BBB permeability to EB"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "BBB permeability value"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "bbb_permeant",
+      "raw_value": "BBB permeant"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "logbb",
+      "raw_value": "BBB permeant (log)"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "bbb_permeant_probability",
+      "raw_value": "BBB permeant probability"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "bbb_permeation",
+      "raw_value": "BBB Permeation"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "bbb_permeation",
+      "raw_value": "BBB permeation"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "bbb_permeation_index",
+      "raw_value": "BBB permeation index"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "bbb_permeation_rate",
+      "raw_value": "BBB permeation or diffusion rates"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "bbb_permeation_prediction",
+      "raw_value": "BBB permeation prediction"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "bbb_permeation_probability",
+      "raw_value": "BBB permeation probability"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "bbb_permeation_rate",
+      "raw_value": "BBB permeation rate"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "bbb_permeation_score",
+      "raw_value": "BBB permeation score"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "bbb_penetration_prediction",
+      "raw_value": "BBB prediction by Volsurf"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "bbb_penetration_prediction",
+      "raw_value": "BBB prediction value"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "bbb_ratio",
+      "raw_value": "BBB ratio"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "bbb_reflection_coefficient",
+      "raw_value": "BBB reflection coefficient"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "bbb_sucrose_permeability",
+      "raw_value": "BBB sucrose permeability"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "bbb_transfer",
+      "raw_value": "BBB transfer"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "bbb_transmigration",
+      "raw_value": "BBB transmigration"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "bbb_transmigration_ability",
+      "raw_value": "BBB transmigration ability"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "bbb_transport",
+      "raw_value": "BBB transport"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "bbb_transport_clearance",
+      "raw_value": "BBB Transport Clearance"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "bbb_transport_clearance",
+      "raw_value": "BBB transport clearance"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "bbb_transport_efficiency",
+      "raw_value": "BBB transport efficiency"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "bbb_transport_inhibition",
+      "raw_value": "BBB transport inhibition"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "bbb_transport_km",
+      "raw_value": "BBB transport Km"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "bbb_transport_rate",
+      "raw_value": "BBB transport rate"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "bbb_transport_ratio",
+      "raw_value": "BBB transport ratio"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "bbb_transport_ratio",
+      "raw_value": "BBB transport ratios"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "bbb_transport_ratio",
+      "raw_value": "BBB transportation ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "bbb_uptake",
+      "raw_value": "BBB uptake"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "bbb_uptake_clearance",
+      "raw_value": "BBB uptake CL"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "bbb_uptake_clearance",
+      "raw_value": "BBB uptake clearance (CL)"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "bbb_uptake_clearance",
+      "raw_value": "BBB uptake clearance (Vmax/Km)"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "bbb_value",
+      "raw_value": "BBB value"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "bbb_value",
+      "raw_value": "BBB values"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "bbb_water_exchange_rate",
+      "raw_value": "BBB water exchange rate (kw)"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "bbb_water_permeability",
+      "raw_value": "BBB water permeability"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "bbb_barrier",
+      "raw_value": "BBB-barrier"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "bbb_penetration_probability",
+      "raw_value": "BBB-Penetration (Probability)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "bbb_permeability_score",
+      "raw_value": "BBB-permeability score"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "BBBPenetration"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "bhb_clearance_rate",
+      "raw_value": "BHB clearance rate"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "bbb_transport_bioavailability",
+      "raw_value": "Bioavailability attributable to transport via initial absorption into the central compartment and subsequent transport across the BBB (F1)"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "bbb_permeability_probability",
+      "raw_value": "calculated BBB permeability probability"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "bbb_crossing_ability",
+      "raw_value": "capability to cross BBB"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "bbb_crossing_ability",
+      "raw_value": "capacity to cross the BBB"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "central_beta_hb_to_plasma_ratio",
+      "raw_value": "central β-HB concentration / β-HB plasma concentration"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "bbb_influx_clearance",
+      "raw_value": "CL_{BBB,influx}"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "bbb_clearance",
+      "raw_value": "clearance by the BBB"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "trans_bbb_concentration",
+      "raw_value": "concentration across the BBB"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "concentration in the BBB compared to plasma"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "trans_bbb_concentration",
+      "raw_value": "concentrations across the BBB"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "bbb_crossing_ability",
+      "raw_value": "crosses the BBB"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "bbb_hyperpermeability_degree",
+      "raw_value": "degree of BBB hyperpermeability"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "bbb_penetration_degree",
+      "raw_value": "degree of BBB penetration"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "bbb_breakdown_degree",
+      "raw_value": "Degrees BBB breakdown"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "bbb_delivery",
+      "raw_value": "delivery across the BBB"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "bbb_diffusion",
+      "raw_value": "diffusion across the BBB"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "bbb_distribution_percentage",
+      "raw_value": "Distribution (BBB) %"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "bbb_distribution",
+      "raw_value": "distribution across the BBB"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "bbb_permeation",
+      "raw_value": "drug permeation across the BBB"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "bbb_crossing_efficiency",
+      "raw_value": "efficiency of crossing BBB"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "bbb_permeation_efficiency",
+      "raw_value": "efficiency of permeating the BBB"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "bbb_penetration_prediction",
+      "raw_value": "Estimated BBB penetration"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "bbb_passage_percentage",
+      "raw_value": "Estimation of Passage through the BBB (%)"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "bbb_crossing_extent",
+      "raw_value": "extent of BBB crossing"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "bbb_crossing_extent",
+      "raw_value": "extent of crossing the BBB"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "bbb_extraction",
+      "raw_value": "extraction across the BBB"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "bbb_concentration",
+      "raw_value": "final concentration transported to BBB"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "bbb_flux",
+      "raw_value": "flux across the BBB"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "glucose_flux_forward",
+      "raw_value": "forward flux of glucose through the BBB"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "nicotine_passage_fraction",
+      "raw_value": "fraction of inhaled nicotine passing through BBB"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "glucose_transport",
+      "raw_value": "glucose transport across the BBB"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "glucose_transport",
+      "raw_value": "glucose transport through the BBB"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "in vitro BBB permeability"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "bbb_transmigration",
+      "raw_value": "in vitro BBB transmigration"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "In vivo BBB penetration"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "bbb_penetration_efficiency",
+      "raw_value": "in vivo BBB penetration efficiency"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "In-vitro BBB permeability"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "bbb_permeability_increase",
+      "raw_value": "increase in BBB permeability"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "bbb_transport_increase",
+      "raw_value": "increase on SN-38 BBB transport"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "bbb_influx_permeability",
+      "raw_value": "influx BBB permeability"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "bbb_initial_transport_rate",
+      "raw_value": "initial transport BBB rate"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "bbb_initial_uptake_rate_constant",
+      "raw_value": "K1 (initial uptake across the BBB)"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "bbb_penetration_maximum",
+      "raw_value": "maximal BBB penetration"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "glucose_transport_capacity_maximum",
+      "raw_value": "maximum glucose transport capacity of the BBB"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "choline_transport_vmax",
+      "raw_value": "maximum velocity of the BBB choline transport"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "bbb_passage",
+      "raw_value": "mean BBB passage"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "mean BBB penetration"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "bbb_penetration_ratio",
+      "raw_value": "mean BBB penetration ratio"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "mean BBB permeability"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "glucose_flux_net",
+      "raw_value": "net glucose flux across the BBB"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "bbb_partitioning",
+      "raw_value": "partitioning across the BBB"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "bbb_passage",
+      "raw_value": "passage across the BBB"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "bbb_passage",
+      "raw_value": "passage through BBB model"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "penetrance across the BBB"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "penetrate the BBB"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "penetrating the BBB"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "penetration across BBB"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "penetration of the BBB"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "unbound_bbb_penetration_from_plasma",
+      "raw_value": "penetration of unbound erlotinib from plasma across the BBB"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "unbound_bbb_penetration_from_plasma",
+      "raw_value": "penetration of unbound OSI-420 from plasma across the BBB"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "penetration through BBB"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "bbb_penetration",
+      "raw_value": "penetration through the BBB"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percent of content crossing BBB"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage crossing BBB"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "bbb_crossing_to_blood_percentage",
+      "raw_value": "percentage crossing BBB into blood"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage crossing the BBB"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "bbb_delivery_percentage",
+      "raw_value": "percentage delivered across the BBB within 2 h"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage of administered agent crossing the BBB"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "bbb_penetration_percentage",
+      "raw_value": "percentage of BBB penetration"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "percentage of blood concentration penetrating the BBB"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "unbound_bbb_crossing_percentage",
+      "raw_value": "percentage of free Trp crossing the BBB"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage of gadolinium crossing BBB"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "bbb_passage_percentage",
+      "raw_value": "percentage of HT following BBB passage"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage of intact substance crossing the BBB"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage of KYN crossing the BBB"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage of non-heme iron crossing BBB"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "percentage of plasma concentration penetrating the BBB"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage of plasmatic DON crossing the BBB"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "first_pass_bbb_crossing_percentage",
+      "raw_value": "percentage of tracer crossing the BBB on the first pass"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "unbound_bbb_crossing_percentage",
+      "raw_value": "percentage of unbound drug crossing BBB"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "water_bbb_crossing_percentage",
+      "raw_value": "percentage of water molecules crossing the BBB"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "bbb_passage_percentage",
+      "raw_value": "percentage passing the BBB"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "bbb_passage_percentage",
+      "raw_value": "percentage passing through the BBB"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "bbb_crossing_percentage",
+      "raw_value": "percentage successfully able to cross BBB"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "bbb_translocation_percentage",
+      "raw_value": "percentage translocated across the BBB"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "bbb_retention",
+      "raw_value": "permanence in the BBB"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "bbb_and_bcsfb_permeability",
+      "raw_value": "Permeability across BBB and BCSFB"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "bbb_efflux_permeability",
+      "raw_value": "permeability from BBB"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "permeability of the BBB"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "permeability through the BBB"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "permeability to cross the BBB"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "permeability to the BBB"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "permeability values of the BBB"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "bbb_permeation",
+      "raw_value": "permeation through the BBB"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "bbb_clearance",
+      "raw_value": "plasma clearance across the BBB"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "bbb_penetration_potency",
+      "raw_value": "potency in penetrating the BBB"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "bbb_penetration_prediction",
+      "raw_value": "predicted BBB penetration"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "bbb_permeability_prediction",
+      "raw_value": "predicted BBB permeability"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "bbb_penetration_prediction",
+      "raw_value": "predicted value for the BBB penetration"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "bbb_permeability_probability",
+      "raw_value": "probability of BBB permeability"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "bbb_positive_probability",
+      "raw_value": "probability of being BBB +"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "bbb_positive_probability",
+      "raw_value": "probability of being BBB+"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "bbb_penetration_probability",
+      "raw_value": "probability of penetrating the BBB"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "bbb_crossing_probability",
+      "raw_value": "probability to cross the BBB"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "bbb_passage_probability",
+      "raw_value": "probability to pass the BBB"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "bbb_transport_amount",
+      "raw_value": "quantity of methotrexate transported across BBB"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "bbb_uptake",
+      "raw_value": "radioactive uptake across the BBB"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "bbb_opening",
+      "raw_value": "radiometric analysis of BBB opening"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "bbb_breakdown_degree",
+      "raw_value": "Rapoport criteria Degree of BBB breakdown"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "bbb_transport_rate",
+      "raw_value": "rate of BBB transport"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "bbb_entry_rate",
+      "raw_value": "rate of entry through the BBB"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "ost_transport_rate",
+      "raw_value": "rate of Ost across the BBB"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "bbb_passage_rate",
+      "raw_value": "rate of passage through the BBB"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "bbb_penetration_rate",
+      "raw_value": "rate of penetration through the BBB"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "bbb_transport_rate",
+      "raw_value": "rate of transport across the BBB"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "bbb_uptake_rate",
+      "raw_value": "rate of uptake through the BBB"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "bbb_penetration_ratio",
+      "raw_value": "ratio of BBB penetration"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "regional_bbb_permeability",
+      "raw_value": "Regional BBB permeability"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "regional_bbb_transport",
+      "raw_value": "regional BBB transport"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "relative_bbb_permeability",
+      "raw_value": "Relative BBB Permeability"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "relative_bbb_permeability",
+      "raw_value": "relative BBB permeability"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "paracellular_diffusion_impact",
+      "raw_value": "relative impact of paracellular diffusion on QBBB or QBCSFB"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "glucose_flux_reverse",
+      "raw_value": "reverse flux of glucose through the BBB"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "bbb_penetration_score",
+      "raw_value": "score to penetrate BBB"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "bbb_uptake_time",
+      "raw_value": "time to BBB uptake"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "bbb_crossing_time",
+      "raw_value": "time to cross BBB"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "time_to_peak_concentration",
+      "raw_value": "time to cross the BBB and reach the peak concentration"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "bbb_penetration_time",
+      "raw_value": "time to penetrate BBB"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "bbb_crossing_time",
+      "raw_value": "time to traverse BBB"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "trans_bbb_concentration",
+      "raw_value": "trans-BBB concentrations"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "trans_bbb_transport",
+      "raw_value": "trans-BBB transport"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "bbb_transfer_rate",
+      "raw_value": "transfer rate across the BBB"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "bbb_translocation",
+      "raw_value": "translocation across the BBB"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "bbb_transmigration",
+      "raw_value": "transmigration across the BBB"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "bbb_transport",
+      "raw_value": "transport across BBB"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "bbb_transport",
+      "raw_value": "Transport across the BBB"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "bbb_transport",
+      "raw_value": "transport across the BBB"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "intact_bbb_transport",
+      "raw_value": "transport across the intact BBB"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "bbb_transport",
+      "raw_value": "transport cross BBB"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "bbb_transport_efficiency",
+      "raw_value": "transport efficiency across the BBB"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "glucose_transport",
+      "raw_value": "transport of glucose across the BBB"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "bbb_transport_rate",
+      "raw_value": "transport rate across the BBB"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "bbb_transport_rate_constant",
+      "raw_value": "transport rate constants across the BBB (k34, k43)"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "bbb_transport_ratio",
+      "raw_value": "transport ratio across the BBB"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "bbb_transport_ratio",
+      "raw_value": "transport ratio across the BBB model"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "bbb_transport",
+      "raw_value": "transport through the BBB"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "bbb_transport",
+      "raw_value": "transportation across the BBB model"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "unbound_fraction_to_penetrate_bbb",
+      "raw_value": "unbound fraction available to penetrate BBB"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "unbound_fraction_crossing_bbb",
+      "raw_value": "unbound fraction crossing BBB"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "glucose_flux_unidirectional",
+      "raw_value": "unidirectional flux of glucose across the BBB"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "beta_ohb_influx",
+      "raw_value": "unidirectional β-OHB influx"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "bbb_uptake",
+      "raw_value": "uptake across the BBB"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "bbb_uptake",
+      "raw_value": "uptake through the BBB"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "bbb_efflux_transport_velocity",
+      "raw_value": "velocity of BBB efflux transport"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "white_matter_bbb_permeability",
+      "raw_value": "white matter BBB permeability"
+    }
+  ],
+  "cluster_id": "cluster_2a237c50f8cbf6a1",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

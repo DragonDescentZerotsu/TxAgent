@@ -1,0 +1,1372 @@
+{
+  "assignment_count": 273,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "(AUC0-∞)PUE"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "(AUC0-∞)PUE-PBCN"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "auc_24h",
+      "raw_value": "24-h AUC"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "auc",
+      "raw_value": "area under curve (AUC)"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "Area under curve (AUC) (0→∞)"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "auc",
+      "raw_value": "area-under-the-curve (AUC) values"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "auc_0_90min",
+      "raw_value": "Areas-under the curve (AUC) between 0 and 90 min"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "auc",
+      "raw_value": "AU"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "auc",
+      "raw_value": "AUC"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "auc_percentage",
+      "raw_value": "AUC (%)"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC (0-24 h)"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC (0-24)"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC (0-24h)"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "auc_0_48h",
+      "raw_value": "AUC (0-48 hr)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC (0-t)"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "auc_0_240min",
+      "raw_value": "AUC (0–240 min)"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "auc_0_600min",
+      "raw_value": "AUC (0–600mins)"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "auc_0_7h",
+      "raw_value": "AUC (0–7h)"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC (0–inf)"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC (0–T)"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "auc_log_fold_increase",
+      "raw_value": "AUC (log fold increase)"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC 0-24 h"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "auc_0_48h",
+      "raw_value": "AUC 0-48h"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "auc_0_8h",
+      "raw_value": "AUC 0-8"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "auc_0_inf_obs",
+      "raw_value": "AUC 0-inf_obs"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC 0-t"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC 0–∞"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "auc_0_6h",
+      "raw_value": "AUC 0→6 h"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "auc_3_48min",
+      "raw_value": "AUC 3-48 min"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "auc",
+      "raw_value": "AUC and Cmax"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "auc",
+      "raw_value": "AUC and Mean Residence Time (MRT)"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "auc",
+      "raw_value": "AUC and mean residence time (MRT)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC B/P"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "auc_based_da",
+      "raw_value": "AUC based DA"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_homogenate_to_plasma_auc_ratio",
+      "raw_value": "AUC BH/AUC PL"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC BP/AUC PL"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_slice_to_plasma_auc_ratio",
+      "raw_value": "AUC BS/AUC PL"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "auc_cumulative_exposure",
+      "raw_value": "AUC cumulative exposure"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "auc_relative_fluorescence_intensity_change",
+      "raw_value": "AUC of relative fluorescence intensity changes (I/I0)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "auc_percentage",
+      "raw_value": "AUC percentage"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "AUC ratio"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "auc_ratio_intranasal_to_intraperitoneal",
+      "raw_value": "AUC ratio (i.n./i.p.)"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "unbound_auc_ratio",
+      "raw_value": "AUC ratio (unbound)"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "auc_ratio_pronetu_to_netu_percent",
+      "raw_value": "AUC ratio pronetu/netu %"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "auc_0_60min",
+      "raw_value": "AUC S0-60"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "auc_0_4h",
+      "raw_value": "AUC till 4 h"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "auc_0_2h",
+      "raw_value": "AUC$_{0-2h}$"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC$_{0-∞}$"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "auc_0_2h",
+      "raw_value": "AUC(0-2 h)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC(0-24)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "auc_0_4h",
+      "raw_value": "AUC(0-4h)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "auc_0_6h",
+      "raw_value": "AUC(0-6 h)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "auc_0_720min",
+      "raw_value": "AUC(0-720)"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "auc_0_7h",
+      "raw_value": "AUC(0-7h)"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "auc_0_8h",
+      "raw_value": "AUC(0-8 h)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC(0-inf)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "auc_0_last",
+      "raw_value": "AUC(0-last)"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC(0-t)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC(0-∞ h)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC(0-∞)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "auc_0_5_15h",
+      "raw_value": "AUC(0.5-15h)"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC(0~∞)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC(0–24 h)"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "auc_0_48h",
+      "raw_value": "AUC(0→48)"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC(0→t)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "auc",
+      "raw_value": "AUC(s0)"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "auc",
+      "raw_value": "AUC/0"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "auc",
+      "raw_value": "AUC0"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC0 → t"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "auc_0_12h",
+      "raw_value": "AUC0-12"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "auc_0_120min",
+      "raw_value": "AUC0-120"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "auc_0_12h",
+      "raw_value": "AUC0-12h"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "auc_0_12h_ratio",
+      "raw_value": "AUC0-12h ratio (ADM-CHSP-SAN i.v. / ADM-Sol i.v.)"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "auc_0_1440min",
+      "raw_value": "AUC0-1440"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "auc_0_15min",
+      "raw_value": "AUC0-15 min"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "auc_0_180min",
+      "raw_value": "AUC0-180"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "auc_0_180min",
+      "raw_value": "AUC0-180min"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "auc_0_1h",
+      "raw_value": "AUC0-1h"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "auc_0_2h",
+      "raw_value": "AUC0-2"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "cns_auc_0_2h",
+      "raw_value": "AUC0-2 CNS"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "auc_0_2h",
+      "raw_value": "AUC0-2 h"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "auc_0_20h",
+      "raw_value": "AUC0-20 h"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0-24"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0-24 h"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "auc_0_240min",
+      "raw_value": "AUC0-240"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "auc_0_240min",
+      "raw_value": "AUC0-240min"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0-24h"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0-24hr"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "auc_0_290min",
+      "raw_value": "AUC0-290"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "auc_0_2h",
+      "raw_value": "AUC0-2h"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "auc_0_30min",
+      "raw_value": "AUC0-30"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "auc_0_30min",
+      "raw_value": "AUC0-30 min"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "auc_0_30min",
+      "raw_value": "AUC0-30min"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "auc_0_360min",
+      "raw_value": "AUC0-360 min"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "auc_0_360min",
+      "raw_value": "AUC0-360min"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "auc_0_4h",
+      "raw_value": "AUC0-4"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "auc_0_4h",
+      "raw_value": "AUC0-4 h"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "auc_0_48h",
+      "raw_value": "AUC0-48"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "auc_0_48h",
+      "raw_value": "AUC0-48 h"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "auc_0_480min",
+      "raw_value": "AUC0-480"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "auc_0_48h",
+      "raw_value": "AUC0-48h"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_auc_0_48h",
+      "raw_value": "AUC0-48h (CSF)"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "auc_0_4h",
+      "raw_value": "AUC0-4h"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_to_vein_auc_ratio_0_4h",
+      "raw_value": "AUC0-4hBrain:AUC0-4hVein"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "auc_0_5h",
+      "raw_value": "AUC0-5h"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "auc_0_6h",
+      "raw_value": "AUC0-6 h"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "auc_0_60min",
+      "raw_value": "AUC0-60 min"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "auc_0_600min",
+      "raw_value": "AUC0-600"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "auc_0_60min_ratio",
+      "raw_value": "AUC0-60min ratio"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "auc_0_7h",
+      "raw_value": "AUC0-7 h"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "auc_0_72h",
+      "raw_value": "AUC0-72"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "auc_0_72h",
+      "raw_value": "AUC0-72 h"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "auc_0_8h",
+      "raw_value": "AUC0-8"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "auc_0_8h",
+      "raw_value": "AUC0-8 h"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "auc_0_8h",
+      "raw_value": "AUC0-8h"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "auc_0_8h_penetration_ratio",
+      "raw_value": "AUC0-8h penetration ratio"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "auc_0_8h_ratio",
+      "raw_value": "AUC0-8h ratio (geniposide-SLNs to geniposide solution)"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC0-inf"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "auc_0_inf_ratio",
+      "raw_value": "AUC0-infinity ratio"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "auc_0_inf_per_dose",
+      "raw_value": "AUC0-infinity/dose"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "auc_0_inf_obs",
+      "raw_value": "AUC0-infobs"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "auc_0_last",
+      "raw_value": "AUC0-last"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "auc_0_last",
+      "raw_value": "AUC0-last (ng.h/g), b / pd"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC0-t"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "auc_0_last",
+      "raw_value": "AUC0-Tlast"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "auc_0_x_to_auc_0_12h_ratio",
+      "raw_value": "AUC0-x/AUC0-12"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "auc_0_mu",
+      "raw_value": "AUC0-μ"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC0-∞"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "auc_0_inf_increase",
+      "raw_value": "AUC0-∞ increase"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC0-∞, Cmax, Te"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC0-∞, Cmax, Te, Re, Ce"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC0-∞, PO"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_auc_0_inf_percent",
+      "raw_value": "AUC0-∞CSF (%)"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "auc_0_5_24h",
+      "raw_value": "AUC0.5-24"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "auc_0_12h",
+      "raw_value": "AUC0–12"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "auc_0_12h",
+      "raw_value": "AUC0–12 h"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "auc_0_120min",
+      "raw_value": "AUC0–120 min"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "auc_0_12h",
+      "raw_value": "AUC0–12h"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "auc_0_16h",
+      "raw_value": "AUC0–16h"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "auc_0_180min",
+      "raw_value": "AUC0–180 min"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "auc_0_2h",
+      "raw_value": "AUC0–2 h"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0–24 h"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0–24 hr"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0–24h"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "auc_0_360min",
+      "raw_value": "AUC0–360"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "auc_0_6h",
+      "raw_value": "AUC0–6 h"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "auc_0_6h",
+      "raw_value": "AUC0–6h"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC0–inf"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC0–t"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_auc_0_t",
+      "raw_value": "AUC0–t,br1"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC0–∞"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "auc_0_180min",
+      "raw_value": "AUC0→180"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0→24 h"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC0→24h"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "auc_0_360min",
+      "raw_value": "AUC0→360"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "auc_0_480min",
+      "raw_value": "AUC0→480"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "auc_0_480min",
+      "raw_value": "AUC0→480 min"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC0→t"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "auc_0_last",
+      "raw_value": "AUC0→t last"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC0→∞"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC0−t"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "auc_10_30min",
+      "raw_value": "AUC10-30"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "auc_10_30min",
+      "raw_value": "AUC10–30"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "auc_120_144min",
+      "raw_value": "AUC120–144"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "auc_24h",
+      "raw_value": "AUC24"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "auc_24h_ratio",
+      "raw_value": "AUC24 ratio"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "csf_to_serum_auc_24h_ratio",
+      "raw_value": "AUC24CSF/AUC24Serum"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "auc_2_inf",
+      "raw_value": "AUC2∞"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "auc_48_72h",
+      "raw_value": "AUC48–72"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "AUC4a3a4/AUC4a3a4"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "auc_5_60min",
+      "raw_value": "AUC5-60 min"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "auc_0_6h",
+      "raw_value": "AUC6"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "auc_0_6h",
+      "raw_value": "AUC6 h"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "auc_0_60min",
+      "raw_value": "AUC60min"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "auc_0_8h",
+      "raw_value": "AUC8"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_to_serum_auc_0_12h_ratio",
+      "raw_value": "AUC_CSF 0-12h / AUC_S 0-12h"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "auc_gd_dota",
+      "raw_value": "AUC_Gd-DOTA"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "auc_max",
+      "raw_value": "AUC_MAX"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "AUC_ratio"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC_{0-∞}"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "brain_auc_0_24h",
+      "raw_value": "AUCbrain 0-24"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_auc_0_60min",
+      "raw_value": "AUCbrain 0-60"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_auc_0_6h",
+      "raw_value": "AUCbrain 0-6h"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_auc_0_8h",
+      "raw_value": "AUCbrain 0–8h(IN)"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_to_blood_auc_ratio_0_24h",
+      "raw_value": "AUCbrain, 0-24h/AUCblood, 0-24h"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_auc_0_24h",
+      "raw_value": "AUCbrain,0-24 h"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_auc_to_c20min_ratio",
+      "raw_value": "AUCbrain/C20 min"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_auc_0_45min",
+      "raw_value": "AUCbrain0-45"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_auc_0_240min",
+      "raw_value": "AUCbrain0–240"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_auc_0_72h",
+      "raw_value": "AUCbrain_0-72h"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "c_to_f_auc_ratio",
+      "raw_value": "AUCc/AUCf"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "csf_to_serum_auc_0_12h_ratio",
+      "raw_value": "AUCCSF 0-12h/ AUCS 0-12h"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "auc_n_0_inf",
+      "raw_value": "AUCN (0- infinity)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "auc_n_0_inf",
+      "raw_value": "AUCN (0-inf)"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "auc_n_0_inf",
+      "raw_value": "AUCN (0-infinity)"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "nb_to_p_auc_ratio",
+      "raw_value": "AUCnb/AUCp"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "auc_obs_0_inf",
+      "raw_value": "AUCobs(0-inf)"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "auc_ped_0_inf",
+      "raw_value": "AUCped(0-inf)"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "auc_r10min",
+      "raw_value": "AUCR₁₀min"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "auc_0_6h",
+      "raw_value": "AUCs0-6h"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "auc_suv",
+      "raw_value": "AUCSUV"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "auc_t60",
+      "raw_value": "AUCt60"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "auc_t90",
+      "raw_value": "AUCt90"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "test_to_ref_auc_ratio_0_inf",
+      "raw_value": "AUCtest0-∞/AUCref0-∞"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "auc_t_inf",
+      "raw_value": "AUCt→∞"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "auc_v",
+      "raw_value": "AUCv"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "auc_t_and_auc_inf",
+      "raw_value": "AUC~t~ and AUC~inf~"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "auc_0_1440min",
+      "raw_value": "AUC₀-1440 min"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC₀-24h"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "auc_0_480min",
+      "raw_value": "AUC₀-480"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "auc_0_loq",
+      "raw_value": "AUC₀-LOQ"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "AUC₀-t"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "auc_0_20h",
+      "raw_value": "AUC₀-₂₀"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "auc_0_3h",
+      "raw_value": "AUC₀-₃"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "auc_0_60min",
+      "raw_value": "AUC₀-₆₀"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "auc_0_60min",
+      "raw_value": "AUC₀-₆₀ min"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "csf_auc_0_720min",
+      "raw_value": "AUC₀-₇₂₀ (CSF)"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "auc_0_5_16h",
+      "raw_value": "AUC₀.₅–₁₆h"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "csf_auc_0_12h",
+      "raw_value": "AUC₀–₁₂ (CSF)"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "auc_0_t_ratio",
+      "raw_value": "AUC₀⁻t ratio"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "auc_0_3h",
+      "raw_value": "AUC₀⁻₃"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "auc_0_4h",
+      "raw_value": "AUC₀⁻₄h: AUC₀⁻₄h"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "auc_0_5h",
+      "raw_value": "AUC₀⁻₅"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "auc_0_60min",
+      "raw_value": "AUC₀⁻₆₀"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "auc_0_60min",
+      "raw_value": "AUC₀⁻₆₀ min"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "auc_0_8h_ratio",
+      "raw_value": "AUC₀⁻₈ h ratio (geniposide-SLNs to geniposide solution)"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "auc_0_8h",
+      "raw_value": "AUC₀⁻₈h"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC₀⁻∞"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "auc_0_4h",
+      "raw_value": "AUC₀₄ h"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC₀→INF"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "auc_0_24h",
+      "raw_value": "AUC₀→₂₄h"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "auc_0_360min",
+      "raw_value": "AUC₀→₃₆₀"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "AUC₀→∞"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "auc_4_25h",
+      "raw_value": "AUC₄⁻₂₅"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "auc_5_120min",
+      "raw_value": "AUC₅-12₀"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "auc_5_120min",
+      "raw_value": "AUC₅-₁₂₀"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "auc_inf",
+      "raw_value": "AUC∞"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "aumc_0_t",
+      "raw_value": "AUMC0-t"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "aumc_0_t",
+      "raw_value": "AUMC0–t"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "aumc_0_inf",
+      "raw_value": "AUMC0→∞"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "aurc_12h",
+      "raw_value": "AURC12h"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "B/P AUC"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_to_plasma_auc_0_8h_ratio",
+      "raw_value": "B/P AUC0-8h"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "caco2_value",
+      "raw_value": "Caco-2 value"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "auc_0_inf",
+      "raw_value": "Cmax and AUC₀⁻∞"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "auc",
+      "raw_value": "Cmax; AUC"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "Cmax; AUC0-t"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "cns_auc_0_inf",
+      "raw_value": "CNS AUC0-∞"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "dialysate_auc",
+      "raw_value": "Dialysate AUC"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "dialysate_auc",
+      "raw_value": "dialysate AUC"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "ecf_auc",
+      "raw_value": "ECF AUC"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "auc_0_t",
+      "raw_value": "exposure (AUC(0-t))"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "auc_last",
+      "raw_value": "last AUC"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "mean_auc_0_6h",
+      "raw_value": "mean area under the curve (AUC$_{0-6}$)"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "mean_auc",
+      "raw_value": "mean AUC"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "mpfc_auc",
+      "raw_value": "mPFC AUC"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "normalized_auc",
+      "raw_value": "normalized AUC"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "percent_change_in_gd_dtpa_auc",
+      "raw_value": "percent change in Gd-DTPA AUC"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "percent_of_5_auc",
+      "raw_value": "percent of 5 AUC"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "r_auc",
+      "raw_value": "R_AUC"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "r_auc_0_t",
+      "raw_value": "R_{AUC_{0-t}}"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "r_auc_0_inf",
+      "raw_value": "R_{AUC_{0-∞}}"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "relative_auc",
+      "raw_value": "Relative AUC"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "ri_auc_0_24h",
+      "raw_value": "Ri of AUC0-24h"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "tissue_to_brain_auc_ratio",
+      "raw_value": "T/B AUC ratio"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "total_auc_heroin",
+      "raw_value": "total AUC (AUC_Heroin)"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "total_auc_8h_ratio",
+      "raw_value": "Total AUC8 ratio"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "total_auc_6_mam",
+      "raw_value": "total AUC_6-MAM"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "unbound_auc",
+      "raw_value": "unbound AUC"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "unbound_auc_0_24h",
+      "raw_value": "unbound AUC 0-24 h"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "unbound_auc",
+      "raw_value": "unbound AUC and Cmax in the mPFC"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "unbound_auc_ratio",
+      "raw_value": "unbound AUC ratio"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "unbound_auc_8h_ratio",
+      "raw_value": "Unbound AUC8 ratio"
+    }
+  ],
+  "cluster_id": "cluster_f346c8016ab56b9e",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

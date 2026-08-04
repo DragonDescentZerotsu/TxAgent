@@ -1,0 +1,131 @@
+{
+  "decision_status": "proposed",
+  "decisions": {
+    "action_counts": {
+      "merge": 24,
+      "rename": 1,
+      "retain": 708,
+      "split": 5
+    },
+    "change_decision_count": 30,
+    "changed_assignment_scope": 2884,
+    "decision_count": 738,
+    "path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/reviews/primary_direct_exposure.jsonl",
+    "proposed_final_label_counts": {
+      "direct_skin_reaction/global_context": 502,
+      "direct_skin_reaction/global_species_context": 24,
+      "skin_exposure/global_species_context": 212
+    },
+    "provisional_label_counts": {
+      "direct_skin_reaction/global_context": 522,
+      "direct_skin_reaction/global_species_context": 24,
+      "skin_exposure/global_species_context": 216
+    },
+    "sha256": "87a0c999c488062b10a47e9137c364f0446a45ebf0665430742f03705d4f89fd"
+  },
+  "independent_direct_coverage": {
+    "duplicate_ownership": [],
+    "expected_non_null_labels": 762,
+    "extra": [],
+    "missing": [],
+    "owned_non_null_labels": 762,
+    "valid": true,
+    "zero_duplicate": true,
+    "zero_extra": true,
+    "zero_missing": true
+  },
+  "inputs": {
+    "assignments_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/provenance/cluster_assignments.parquet",
+    "assignments_sha256": "54a9780d3ae8fe10ba42d2f0efcc452e9f5a3467cf755e9fd41f1dc6ac973642",
+    "label_catalog_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/label_catalog.parquet",
+    "label_catalog_sha256": "4cdc3ac99a19f32889eb763d18b16256e73329e0d95cb31c2e7f4d951a08a160"
+  },
+  "packet_audit": {
+    "assignment_count": 40443,
+    "cluster_count": 406,
+    "exact_packet_to_provenance_row_parity": true,
+    "manifest_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/review_packets/manifest.json",
+    "manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+    "packet_count": 10,
+    "packet_sha256": {
+      "direct_skin_reaction__global_context__packet_0001.json": "f1e2b32012528b9bd879f558b5d3d4752fb8408f699345263cd4db4efbe3312c",
+      "direct_skin_reaction__global_context__packet_0002.json": "36e5759dfd4e6075ccd020ba088a45ccc547f01de6804502baad8c973ecb0e45",
+      "direct_skin_reaction__global_species_context__packet_0001.json": "5da6dbc616ef13ba5fc5cd1755cdcff2cf4046e73235ae3ee02c2bff9a4cacc5",
+      "direct_skin_reaction__global_species_context__packet_0002.json": "62617ca321d59933e6d6ea2a5dc8701dd6355f2d679d2e0c8dc0e28c9ac2a964",
+      "direct_skin_reaction__global_species_context__packet_0003.json": "2a3e87d413dd8c162249cd6c5f0cfcda9364e20e07094f9b5ace21236c4f9d40",
+      "skin_exposure__global_species_context__packet_0001.json": "3f0eb7acee58c69a03f8e36930b170e24c740585fb2a3204575523b9439267a6",
+      "skin_exposure__global_species_context__packet_0002.json": "6dd4a4333f853bda936f97f0a652060c2e3d78c25adaf638d2c25053b461ab9e",
+      "skin_exposure__global_species_context__packet_0003.json": "7fafcfcdabb1d34bfd3c86053d61cfb3a90a7a510241d74d7d31a0ae0525263f",
+      "skin_exposure__global_species_context__packet_0004.json": "57af73888cbdec778b303733b51f6311641d01ac90a667183c0f156235035bb7",
+      "skin_exposure__global_species_context__packet_0005.json": "466d9457b020bb4396a8eeaadb8bed02c823769ed26859686540e0306594b593"
+    },
+    "reviewed_assignment_count": 40443,
+    "reviewed_cluster_count": 406,
+    "reviewed_packet_ids": [
+      "direct_skin_reaction__global_context__packet_0001",
+      "direct_skin_reaction__global_context__packet_0002",
+      "direct_skin_reaction__global_species_context__packet_0001",
+      "direct_skin_reaction__global_species_context__packet_0002",
+      "direct_skin_reaction__global_species_context__packet_0003",
+      "skin_exposure__global_species_context__packet_0001",
+      "skin_exposure__global_species_context__packet_0002",
+      "skin_exposure__global_species_context__packet_0003",
+      "skin_exposure__global_species_context__packet_0004",
+      "skin_exposure__global_species_context__packet_0005"
+    ]
+  },
+  "publication_status": "primary_review_only; independent checking and adjudication are still required; runtime mapping and downstream stages are unchanged",
+  "review_method": {
+    "candidate_checks": [
+      "orthographic and suffix equivalence",
+      "method and route preservation",
+      "photochemical distinction preservation",
+      "base-species alias equivalence",
+      "explicit raw-species conflict detection",
+      "raw-example inspection for every proposed change"
+    ],
+    "cluster_scope": "All assigned direct reaction and skin exposure local clusters and assignments were included through exact packet-to-provenance item parity.",
+    "conservative_exclusions": [
+      "generic assay, test, study, and model labels without exact method equivalence",
+      "induction versus elicitation or challenge distinctions",
+      "LLNA and other named test variants",
+      "photopatch, photochallenge, photoallergy, photosensitization, and phototoxicity distinctions",
+      "generic species versus explicit species unless dataset-local evidence proves an alias"
+    ]
+  },
+  "reviewed_assignment_count": 40443,
+  "reviewed_cluster_count": 406,
+  "reviewed_packet_ids": [
+    "direct_skin_reaction__global_context__packet_0001",
+    "direct_skin_reaction__global_context__packet_0002",
+    "direct_skin_reaction__global_species_context__packet_0001",
+    "direct_skin_reaction__global_species_context__packet_0002",
+    "direct_skin_reaction__global_species_context__packet_0003",
+    "skin_exposure__global_species_context__packet_0001",
+    "skin_exposure__global_species_context__packet_0002",
+    "skin_exposure__global_species_context__packet_0003",
+    "skin_exposure__global_species_context__packet_0004",
+    "skin_exposure__global_species_context__packet_0005"
+  ],
+  "reviewer_id": "skin_direct_audit",
+  "scope": [
+    "direct_skin_reaction/global_context",
+    "direct_skin_reaction/global_species_context",
+    "skin_exposure/global_species_context"
+  ],
+  "shared_validator": {
+    "action_counts": {
+      "merge": 24,
+      "rename": 1,
+      "retain": 708,
+      "split": 5
+    },
+    "decisions": 738,
+    "labels_expected": 762,
+    "labels_missing": 0,
+    "labels_owned": 762,
+    "require_complete_label_coverage": true,
+    "valid": true
+  },
+  "summary_version": "skin_reaction_auxiliary_primary_direct_exposure_review.v1"
+}

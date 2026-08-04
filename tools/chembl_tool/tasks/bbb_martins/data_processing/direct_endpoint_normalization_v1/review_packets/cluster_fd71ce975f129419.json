@@ -1,0 +1,1667 @@
+{
+  "assignment_count": 332,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_uptake_percent",
+      "raw_value": "% Brain Uptake"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_uptake_percent",
+      "raw_value": "% Brain uptake"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "2 min mouse brain uptake"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "2-min-to-60 min ratio of brain uptake"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "30 min mouse brain uptake"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "striatal_uptake",
+      "raw_value": "absolute striatal uptake"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "active_influx_contribution_to_brain_uptake",
+      "raw_value": "active influx contribution to total brain uptake"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_activity_uptake",
+      "raw_value": "activity uptake in brain"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "apparent_brain_uptake",
+      "raw_value": "apparent brain uptake"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "apparent_brain_uptake_clearance",
+      "raw_value": "apparent brain uptake clearance"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "apparent_brain_uptake_clearance",
+      "raw_value": "apparent brain uptake clearance (K_in)"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "apparent_brain_uptake_clearance",
+      "raw_value": "apparent in vivo brain uptake clearance"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "regional_brain_uptake_auc",
+      "raw_value": "AUC of regional brain uptake (%SUV)"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Average brain uptake"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "average brain uptake"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "average brain uptake value"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "average brain uptake values"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "cerebral_uptake",
+      "raw_value": "average cerebral uptake"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "average total brain uptake"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "average uptake in the whole brain"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "baseline_brain_uptake",
+      "raw_value": "baseline brain uptake"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_uptake_clearance",
+      "raw_value": "Brain (uptake clearance)"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_3h_ddc_uptake",
+      "raw_value": "Brain [³H]ddC uptake"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_activity_uptake",
+      "raw_value": "brain activity uptake"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_capillary_uptake_rate",
+      "raw_value": "brain capillary uptake rate"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_cholesterol_uptake_index",
+      "raw_value": "brain cholesterol-uptake index"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_dha_uptake",
+      "raw_value": "brain DHA uptake"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_uptake_distribution_volume",
+      "raw_value": "brain distributional volume (uptake)"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_drug_uptake_index",
+      "raw_value": "brain drug uptake index (Y)"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_glucose_uptake",
+      "raw_value": "Brain glucose uptake"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_glucose_uptake",
+      "raw_value": "brain glucose uptake"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_mercury_uptake",
+      "raw_value": "brain Hg uptake"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_lysine_uptake",
+      "raw_value": "brain lysine uptake"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_parenchyma_uptake",
+      "raw_value": "Brain parenchyma uptake"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_parenchyma_uptake",
+      "raw_value": "brain parenchyma uptake"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "brain peak uptake"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_rizatriptan_uptake",
+      "raw_value": "brain rizatriptan uptake"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_tissue_uptake",
+      "raw_value": "Brain tissue uptake"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_tissue_uptake",
+      "raw_value": "brain tissue uptake"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_tissue_uptake_rate",
+      "raw_value": "brain tissue uptake rate (% ID/g)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_tracer_uptake_ratio",
+      "raw_value": "brain tracer uptake ratio levels"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_tryptophan_uptake",
+      "raw_value": "brain tryptophan uptake"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_tryptophan_uptake_index",
+      "raw_value": "brain tryptophan uptake index"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Brain Uptake"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Brain uptake"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_uptake_percent",
+      "raw_value": "Brain uptake (%ID-peak)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake (2 min)"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "Brain uptake (AUCinfinity brain / AUCinfinity plasma)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "brain uptake (increase)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake (KO vs WT)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake (Oldendorf brain-uptake index)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake (percentage of diffusible reference substance)"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "brain uptake (relative increase)"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake (relative to wild type)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_uptake_auc",
+      "raw_value": "Brain uptake (SUV · min)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_to_water_uptake_ratio",
+      "raw_value": "brain uptake / [3H]water uptake ratio"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_to_pituitary_gland_uptake_ratio",
+      "raw_value": "brain uptake / pituitary gland uptake ratio"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake 2 min"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "brain uptake 2 min/30 min"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_uptake_and_retention",
+      "raw_value": "brain uptake and retention"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Brain uptake at 1 h p.i."
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Brain uptake at 120 min"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Brain uptake at 2 min"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Brain uptake at 30 min"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "brain uptake at peak"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "brain uptake at peak time"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_uptake_capacity",
+      "raw_value": "brain uptake capacity"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_uptake_clearance",
+      "raw_value": "Brain uptake clearance"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_uptake_clearance",
+      "raw_value": "brain uptake clearance"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_uptake_clearance",
+      "raw_value": "brain uptake clearance (Clup)"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_uptake_clearance",
+      "raw_value": "brain uptake clearance (Kin)"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_uptake_clearance_ratio",
+      "raw_value": "brain uptake clearance ratio"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_uptake_coefficient",
+      "raw_value": "brain uptake coefficient"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_uptake_concentration_range",
+      "raw_value": "brain uptake concentration range"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_uptake_efficiency",
+      "raw_value": "brain uptake efficiency"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_uptake_fold_increase",
+      "raw_value": "brain uptake fold-increase"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_uptake_from_periphery",
+      "raw_value": "brain uptake from periphery"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake in 5 min"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake in relation to a highly diffusible reference substance"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "brain uptake increase"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "brain uptake increase (KO vs WT)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "brain uptake increase after tariquidar"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "brain uptake increase factor"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain Uptake Index"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain uptake index"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain Uptake Index (BUI)"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain uptake Index (BUI)"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain uptake index (BUI)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index (BUI)"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain Uptake Index (BUI) at 15 s"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index (BUI) relative to butanol"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain Uptake Index (BUI, %)"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index (Ib)"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index (relative to water)"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index [BUI]"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index relative to 14C-butanol"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index relative to 3H2O"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain uptake index relative to sucrose"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain uptake index relative to water"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake index value"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake indexes"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake indexes (BUI)"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake indices"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain uptake indicies (BUIs)"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_uptake_inhibition",
+      "raw_value": "brain uptake inhibition"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_uptake_level",
+      "raw_value": "brain uptake level"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_to_liver_uptake_ratio",
+      "raw_value": "brain uptake normalized against liver"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_activity_uptake",
+      "raw_value": "brain uptake of activity"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_glucose_uptake",
+      "raw_value": "brain uptake of D-glucose"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_tryptophan_uptake_index",
+      "raw_value": "brain uptake of TRP (BUI-TRP)"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "first_pass_brain_uptake",
+      "raw_value": "brain uptake on the first pass"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_uptake_parameter",
+      "raw_value": "brain uptake parameters"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_uptake_percent",
+      "raw_value": "brain uptake percent"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_uptake_percent",
+      "raw_value": "brain uptake percentage"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_uptake_ps_product",
+      "raw_value": "brain uptake permeability-surface area product"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_uptake_rate",
+      "raw_value": "Brain uptake rate"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_uptake_rate",
+      "raw_value": "brain uptake rate"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "Brain uptake ratio"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "brain uptake ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "Brain uptake ratio (2 min/60 min)"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "brain uptake ratio (CsA pretreated / saline)"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "brain uptake ratio (LPS/saline)"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_uptake_reduction",
+      "raw_value": "brain uptake reduction"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_to_glucose_uptake_ratio",
+      "raw_value": "brain uptake relative to glucose uptake"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain uptake relative to H2O"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_to_serum_uptake_ratio",
+      "raw_value": "brain uptake relative to serum"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake value"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake values"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain Uptake, % of 3HOH"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain Uptake, % of Water-3H"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptake2 min"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Brain uptakes"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain uptakes"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_45ca_uptake",
+      "raw_value": "Brain ⁴⁵Ca uptake ([brain dpm/mg protein (10³)] / [blood specific activity at 5 h])"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_45ca_uptake",
+      "raw_value": "Brain ⁴⁵Ca uptake ([brain dpm/mg protein (10⁸)] / Integral of blood specific activity)"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_99mtc_o4_uptake",
+      "raw_value": "brain ⁹⁹mTcO₄⁻ uptake"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain's uptake"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_area_uptake_index",
+      "raw_value": "Brain-area uptake index"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "brain-uptake"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_uptake_clearance",
+      "raw_value": "brain-uptake clearance"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain-uptake index"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "brain-uptake index (BUI)"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "Brain-Uptake-Index (BUI)"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_to_plasma_uptake_ratio",
+      "raw_value": "brain/plasma uptake"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_to_plasma_uptake_ratio",
+      "raw_value": "brain:plasma uptake ratio"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "BUI (Brain Uptake Index)"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Calculated brain uptake"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "calculated brain uptake"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_uptake_velocity",
+      "raw_value": "Calculated brain uptake velocity"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "cerebral_uptake",
+      "raw_value": "calculated cerebral uptake"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "first_pass_brain_uptake",
+      "raw_value": "calculated first-pass brain uptake"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "cerebellar_uptake",
+      "raw_value": "cerebellar uptake"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "cerebellar_uptake",
+      "raw_value": "Cerebellum uptake"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "cerebral_net_uptake",
+      "raw_value": "cerebral net uptake"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "cerebral_uptake",
+      "raw_value": "Cerebral uptake"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "cerebral_uptake",
+      "raw_value": "cerebral uptake"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "apparent_brain_uptake_clearance",
+      "raw_value": "CLup (apparent brain uptake clearance)"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "control_brain_uptake",
+      "raw_value": "control brain uptake"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "corrected_brain_uptake",
+      "raw_value": "corrected brain uptake"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "cortical_uptake",
+      "raw_value": "cortical uptake"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "degree of uptake in the rat brain"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_dha_uptake",
+      "raw_value": "DHA uptake in the brain"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_uptake_difference",
+      "raw_value": "difference in brain uptake after nasal administration"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Distribution and brain uptake"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "final_brain_uptake",
+      "raw_value": "Final brain uptake"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "first_pass_brain_uptake",
+      "raw_value": "first-pass brain uptake"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "cerebral_uptake_increase",
+      "raw_value": "fold-increase in cerebral uptake"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "brain_uptake_fold_increase",
+      "raw_value": "fold-uptake relative to normal brain"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_uptake_fraction",
+      "raw_value": "fraction of uptake in the brain"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_uptake_fraction",
+      "raw_value": "fractional brain uptake"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "glioma_to_brain_uptake_ratio",
+      "raw_value": "Glioma:brain uptake"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "Global brain uptake"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "global brain uptake"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_glucose_uptake",
+      "raw_value": "glucose uptake by the brain"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "highest brain uptake"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "hippocampal_uptake",
+      "raw_value": "hippocampal uptake"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "in vivo brain uptake"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "increase in brain uptake"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "increase in brain uptake (mdr1a/1b(-/-) vs wild-type)"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "initial_brain_uptake",
+      "raw_value": "Initial brain uptake"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "initial_brain_uptake",
+      "raw_value": "initial brain uptake"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "initial_brain_uptake",
+      "raw_value": "initial brain uptake (2 min p.i.)"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "initial_brain_uptake",
+      "raw_value": "Initial brain uptake at 2 min"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "initial_brain_uptake",
+      "raw_value": "initial brain uptake at 2 min"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "initial_brain_uptake_clearance",
+      "raw_value": "initial brain uptake clearance"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "initial_brain_uptake",
+      "raw_value": "initial brain uptake levels at 2 min p.i"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "initial_brain_uptake_ratio",
+      "raw_value": "initial brain uptake ratio"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "initial_brain_uptake",
+      "raw_value": "initial brain uptake value"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "initial_whole_brain_uptake",
+      "raw_value": "initial whole brain uptake"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "initial_whole_brain_uptake",
+      "raw_value": "initial whole-brain uptake"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_uptake_km",
+      "raw_value": "Km for brain uptake"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "KO-WT brain uptake ratio"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_uptake_index",
+      "raw_value": "log brain uptake index (BUI)"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_manganese_uptake",
+      "raw_value": "Manganese uptake in the brain"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "maximal average brain uptake"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "Maximal brain uptake"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "maximal brain uptake"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "maximum_cerebral_uptake",
+      "raw_value": "maximal cerebral uptake"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "maximum_brain_ligand_uptake",
+      "raw_value": "maximal ligand uptake in the brain"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "maximum_regional_brain_uptake",
+      "raw_value": "maximal regional brain uptake"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "maximum_striatal_uptake",
+      "raw_value": "maximal striatal uptake"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "Maximum brain uptake"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "maximum brain uptake"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "maximum brain uptake (%ID/g max)"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "maximum_cerebral_uptake",
+      "raw_value": "maximum cerebral uptake"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "maximum_striatal_uptake",
+      "raw_value": "maximum uptake in striatum"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "maximum_whole_brain_uptake",
+      "raw_value": "maximum whole brain uptake"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Mean brain uptake"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "mean brain uptake increase"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "midbrain_to_cerebellum_uptake_ratio",
+      "raw_value": "midbrain-to-cerebellum uptake ratio"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "brain_sodium_uptake",
+      "raw_value": "Na+ uptake in brain"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "net_brain_uptake",
+      "raw_value": "net brain uptake"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "net_phenylalanine_uptake",
+      "raw_value": "net phenylalanine uptake (cerebral concentration)"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "net_brain_uptake",
+      "raw_value": "net uptake by the brain"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "normal_brain_uptake",
+      "raw_value": "normal brain uptake"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "normalized_cerebellar_uptake",
+      "raw_value": "normalized cerebellar uptake"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "organ_uptake",
+      "raw_value": "Organ uptake"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "overall brain uptake"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "overall brain uptake; brain region activity"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_cystine_uptake_rate",
+      "raw_value": "overall rate of cystine uptake by the brain at the BBB"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "p_glycoprotein_effect_on_brain_uptake_clearance",
+      "raw_value": "P-glycoprotein effect of brain uptake clearance"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "maximum_brain_activity_uptake_suv",
+      "raw_value": "Peak brain activity uptake (SUV)"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "Peak brain uptake"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "peak brain uptake"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "cerebellum_to_forebrain_uptake_ratio",
+      "raw_value": "peak cerebellum/forebrain uptake ratio"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "maximum_brain_uptake",
+      "raw_value": "peak uptake in the brain"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "maximum_striatal_uptake",
+      "raw_value": "peak uptake in the striatum"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "maximum_temporal_cortex_uptake",
+      "raw_value": "peak uptake in the temporal cortex"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "maximum_whole_brain_uptake",
+      "raw_value": "Peak whole brain uptake"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "maximum_whole_brain_uptake",
+      "raw_value": "peak whole brain uptake"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "brain_uptake_percent",
+      "raw_value": "percent brain uptake"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "whole_brain_uptake_percent",
+      "raw_value": "percentage of whole brain uptake (p)"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "brain_uptake_percent",
+      "raw_value": "percentage ⁸⁶Rb uptake by brain"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "putamen_uptake",
+      "raw_value": "Putamen uptake"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "rat brain uptake"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "cerebellar_uptake_rate_constant",
+      "raw_value": "rate constant for cerebellum uptake (Q3/V3)"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "striatal_uptake_rate_constant",
+      "raw_value": "rate constant for uptake of 6-FD from blood to the whole striatum"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_mercury_uptake_rate_constant",
+      "raw_value": "rate constants of brain Hg uptake"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "brain_uptake_rate",
+      "raw_value": "rate of brain uptake"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "cerebral_uptake_rate",
+      "raw_value": "rate of cerebral uptake"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_leucine_uptake_rate",
+      "raw_value": "rate of leucine uptake by the brain"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_tryptophan_uptake_rate",
+      "raw_value": "rate of tryptophan uptake into the brain"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "striatum_to_cerebellum_uptake_ratio",
+      "raw_value": "ratio of uptake (striatum to cerebellum)"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "frontal_cortex_to_cerebellum_uptake_ratio",
+      "raw_value": "ratio of uptake in frontal cortex over cerebellum"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "occipital_cortex_to_cerebellum_uptake_ratio",
+      "raw_value": "ratio of uptake in occipital cortex over cerebellum"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "striatum_to_cerebellum_uptake_ratio",
+      "raw_value": "ratio of uptake in striatum over cerebellum"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "stimulated_hemisphere_to_contralateral_hemisphere_uptake_ratio",
+      "raw_value": "ratio of uptake in the stimulated hemisphere over the contralateral hemisphere"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "uptake_to_cerebellum_ratio",
+      "raw_value": "Ratio of Uptake over Cerebellum"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_uptake_reduction",
+      "raw_value": "reduction in brain uptake"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "regional_brain_uptake",
+      "raw_value": "Regional Brain Uptake"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "regional_brain_uptake",
+      "raw_value": "Regional brain uptake"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "regional_brain_uptake",
+      "raw_value": "regional brain uptake"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "brain_uptake_increase",
+      "raw_value": "relative brain uptake increase"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "relative_brain_uptake_index",
+      "raw_value": "relative brain uptake index"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "oatp1a4_contribution_to_brain_uptake",
+      "raw_value": "relative contribution of Oatp1a4 to brain uptake"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "first_pass_brain_uptake",
+      "raw_value": "single-pass brain uptake"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "specific_brain_uptake",
+      "raw_value": "specific brain uptake"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "striatal_uptake",
+      "raw_value": "striatal uptake"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "striatal_fdopa_uptake",
+      "raw_value": "striatal uptake of the unmetabolised [¹⁸F]dopa"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "striatal_uptake",
+      "raw_value": "Striatum uptake"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "striatal_uptake",
+      "raw_value": "striatum uptake"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "brain_uptake_suv",
+      "raw_value": "SUV (Brain uptake)"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "brain_uptake_time_to_peak",
+      "raw_value": "time to reach peak uptake in the brain"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "total brain up-take"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "Total brain uptake"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "total brain uptake"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "whole_brain_uptake_suv",
+      "raw_value": "Total brain uptake (%SUV)"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "whole_brain_uptake_percent_of_whole_body",
+      "raw_value": "total brain uptake as % of whole body"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "total brain-uptake"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "total daily brain uptake"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "initial_whole_brain_uptake",
+      "raw_value": "Total initial brain uptake"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "total mouse brain uptake"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "Total uptake in brain"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "total uptake in whole brain"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "unidirectional_brain_uptake_index",
+      "raw_value": "Unidirectional brain uptake index"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "brain_glucocorticoid_target_site_uptake_and_retention",
+      "raw_value": "uptake and retention in brain glucocorticoid target sites"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake by brain"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "cerebral_tissue_uptake",
+      "raw_value": "uptake by cerebral tissues"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake by the brain"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "brain_uptake_per_gram",
+      "raw_value": "Uptake by the gram of rat brain"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "striatal_uptake",
+      "raw_value": "uptake by the striatum"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "normal_brain_uptake",
+      "raw_value": "uptake in a normal brain"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake in brain"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "brain_glucocorticoid_target_site_uptake",
+      "raw_value": "uptake in brain glucocorticoid target sites"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "brain_tissue_uptake",
+      "raw_value": "uptake in brain tissue"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "brain_to_plasma_uptake_ratio",
+      "raw_value": "uptake in brain tissue relative to that in plasma"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "brain_tumor_uptake",
+      "raw_value": "uptake in brain tumors"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "cerebellar_uptake",
+      "raw_value": "Uptake in cerebellum"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "cerebellar_and_cortical_uptake",
+      "raw_value": "uptake in cerebellum and cortex"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "cerebral_matter_uptake",
+      "raw_value": "uptake in cerebral matter"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "brain_glucocorticoid_target_region_uptake",
+      "raw_value": "uptake in glucocorticoid target regions of the brain"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Uptake in mouse brain (2 min)"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "normal_brain_tissue_uptake",
+      "raw_value": "uptake in normal rat brain tissue"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Uptake in the brain"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake in the brain"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "cerebral_hemisphere_uptake",
+      "raw_value": "uptake in the cerebral hemispheres"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake in the human brain"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "midbrain_uptake",
+      "raw_value": "uptake in the midbrain (% of individual brain average)"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake in the monkey brain"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "occipital_cortex_uptake",
+      "raw_value": "uptake in the occipital cortex"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake in the rat brain"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "striatal_uptake",
+      "raw_value": "uptake in the striatum"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake into brain"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "brain_metastasis_uptake",
+      "raw_value": "uptake into brain metastases"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "cerebellum_and_cerebrum_uptake",
+      "raw_value": "Uptake into cerebellum and cerebrum"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "cerebrum_and_cerebellum_to_liver_uptake_ratio",
+      "raw_value": "uptake into cerebrum and cerebellum relative to liver"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake into macaque brain"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "spinal_cord_tissue_uptake",
+      "raw_value": "uptake into spinal cord tissues"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "basal_ganglia_uptake",
+      "raw_value": "uptake into the basal ganglia"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake into the brain"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake into the brains"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "cortical_uptake",
+      "raw_value": "uptake into the cortex"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake into the monkey brain"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "uptake into the mouse brain"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "brain_mercury_uptake",
+      "raw_value": "uptake of Hg in brain"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "brain_mercury_uptake",
+      "raw_value": "uptake of mercury by brain"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "brain_32p_uptake",
+      "raw_value": "uptake of ³²P into the brain"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "cerebral_cortical_slice_to_medium_uptake_ratio",
+      "raw_value": "uptake ratio (cerebral cortical slices to medium)"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "striatum_to_cortex_and_cerebellum_uptake_ratio",
+      "raw_value": "uptake ratio (striatum/cortex and striatum/cerebellum)"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "uptake_to_cerebellum_ratio",
+      "raw_value": "uptake ratio (with the cerebellum as the reference region)"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "brain_uptake_ratio",
+      "raw_value": "Uptake Ratio in mouse brain"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "uptake_to_cerebellum_ratio",
+      "raw_value": "uptake relative to cerebellum"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "Whole Brain uptake"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "Whole brain uptake"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "whole brain uptake"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "whole_brain_uptake_increase",
+      "raw_value": "Whole brain uptake increase"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "whole_brain_suv",
+      "raw_value": "whole-brain standard uptake value"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "Whole-brain uptake"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "whole-brain uptake"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "whole_brain_uptake",
+      "raw_value": "Whole-brain uptake values"
+    }
+  ],
+  "cluster_id": "cluster_fd71ce975f129419",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

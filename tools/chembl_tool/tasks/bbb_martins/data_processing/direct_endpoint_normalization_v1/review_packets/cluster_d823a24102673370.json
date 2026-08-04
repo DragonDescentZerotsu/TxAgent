@@ -1,0 +1,622 @@
+{
+  "assignment_count": 123,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "arterial_jugular_venous_difference",
+      "raw_value": "A-JV"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "arteriovenous_ratio",
+      "raw_value": "A-V/A"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "arteriovenous_difference_free_trp",
+      "raw_value": "a-vD free TRP"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "arteriovenous_lactate_difference",
+      "raw_value": "A-Vlact"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "blood_corrected_suv",
+      "raw_value": "blood corrected SUV"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "cmax",
+      "raw_value": "C max"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "cmax",
+      "raw_value": "C-max"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "cmax",
+      "raw_value": "C_max"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "cadv",
+      "raw_value": "CADV"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "ceqmax",
+      "raw_value": "Ceqmax"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "cerebellar_suv",
+      "raw_value": "cerebellar SUV"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "corrected_vd",
+      "raw_value": "corrected VD"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "css_max",
+      "raw_value": "Css,max"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "duv",
+      "raw_value": "DUV"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "dv",
+      "raw_value": "DV"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "dv",
+      "raw_value": "DV (2C)"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "dv",
+      "raw_value": "DV (AB)"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "dv",
+      "raw_value": "DV (FP)"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "dv",
+      "raw_value": "DV (Logan)"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "dvt",
+      "raw_value": "DVt,3par"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "ermax",
+      "raw_value": "ERmax"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "jmax",
+      "raw_value": "J_max"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "jmax",
+      "raw_value": "Jmax"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "kin_max",
+      "raw_value": "Kin,max"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "jnet_max",
+      "raw_value": "Max Jnet"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "suv_max",
+      "raw_value": "max SUV"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "suv_max",
+      "raw_value": "max SUVBW"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "suv_mean",
+      "raw_value": "mean SUV"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "vt_mean",
+      "raw_value": "mean VT"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "suv_peak",
+      "raw_value": "Peak SUV"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "suv_peak",
+      "raw_value": "peak SUV"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "rcmax",
+      "raw_value": "RCmax"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "SUV (Braina)"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV at 15 min"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "suv_peak",
+      "raw_value": "SUV at peak"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "suv_peak",
+      "raw_value": "SUV peak"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "suv_ratio",
+      "raw_value": "SUV(90s p.i.)/SUV(30 min p.i.)"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "SUV-Brain"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV30min"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV3min"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV60-120"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV75-90"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "blood_suv",
+      "raw_value": "SUVb"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_suv",
+      "raw_value": "SUVbrain"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "suv_max",
+      "raw_value": "SUVmax"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "suv_max_mean",
+      "raw_value": "SUVmax, SUVmean"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "suv_mean",
+      "raw_value": "SUVmean"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "suv_peak",
+      "raw_value": "SUVpeak"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "suvr",
+      "raw_value": "SUVR (SUVwhole brain/SUVblood)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUVs"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV₂₀min"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "suv",
+      "raw_value": "SUV₆₀min"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "tmax",
+      "raw_value": "T max"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "tmax",
+      "raw_value": "t max"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "tmax",
+      "raw_value": "Tmax"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "tmax",
+      "raw_value": "tmax"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "tmax_app",
+      "raw_value": "Tmax app"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_tmax",
+      "raw_value": "Tmax,br"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "tmax_over_vgly",
+      "raw_value": "Tmax/Vgly"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "tmax_over_vmax",
+      "raw_value": "Tmax/Vmax"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "tmax_over_vmet",
+      "raw_value": "Tmax/Vmet"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "tmax_over_vmet",
+      "raw_value": "Tmax/vmet"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "vd",
+      "raw_value": "V"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "vmax",
+      "raw_value": "V max"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "vt",
+      "raw_value": "V T"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "vt",
+      "raw_value": "V T (2T4K)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "v2",
+      "raw_value": "V2"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "v_gln_in",
+      "raw_value": "V_Gln(in)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "v_i",
+      "raw_value": "V_i"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "v_in",
+      "raw_value": "V_in"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "vmax",
+      "raw_value": "V_max"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "vmax",
+      "raw_value": "v_max"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "vt",
+      "raw_value": "V_T"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "v_a",
+      "raw_value": "Va"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "v_app",
+      "raw_value": "Vapp"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_vd",
+      "raw_value": "Vbrain"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_vd",
+      "raw_value": "Vbrain at 2 min"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_vd",
+      "raw_value": "Vbrain; Kin"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "vd",
+      "raw_value": "VD"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "vd",
+      "raw_value": "Vd"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "corrected_vd",
+      "raw_value": "Vd (corrected)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "vd",
+      "raw_value": "Vd (space)"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "vd_urea_to_vd_mannitol_ratio",
+      "raw_value": "Vd urea / Vd mannitol"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "vd",
+      "raw_value": "Vd, λz/F"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "corrected_vd",
+      "raw_value": "VDcorrected"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "vdss",
+      "raw_value": "VDss"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "v_g",
+      "raw_value": "Vg"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "v_i",
+      "raw_value": "Vi"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "v_in",
+      "raw_value": "Vin"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "vin_over_vtca_plus_vout",
+      "raw_value": "Vin/(VTCA + Vout)"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "vleak",
+      "raw_value": "vleak"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "v_m",
+      "raw_value": "Vm"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "vmax",
+      "raw_value": "VMAX"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "vmax",
+      "raw_value": "Vmax"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_vmax",
+      "raw_value": "Vmax Br"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "vmax",
+      "raw_value": "Vmax*"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "vmax_i",
+      "raw_value": "Vmax,i"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "vmax",
+      "raw_value": "Vmax,LACm"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "vmax",
+      "raw_value": "Vmax,PHT1"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "vmax",
+      "raw_value": "Vmax1"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "vmax",
+      "raw_value": "Vmax2"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "vmax_over_ccap",
+      "raw_value": "Vmax:Ccap"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "vmax_t",
+      "raw_value": "Vmax^t"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "vmax_in",
+      "raw_value": "Vmax_in"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "vmax_a",
+      "raw_value": "Vmaxa"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "vmax_t",
+      "raw_value": "Vmaxt"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "v_nbr",
+      "raw_value": "Vnbr"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "v_nd",
+      "raw_value": "VND"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "vt",
+      "raw_value": "VT"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "vt",
+      "raw_value": "Vt"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "vt",
+      "raw_value": "VT Logan"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "vt",
+      "raw_value": "VT model"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "vt",
+      "raw_value": "VT*"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "vt",
+      "raw_value": "VT,Logan"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "vt_over_fp",
+      "raw_value": "VT/fP"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "vt_over_fp",
+      "raw_value": "VT/fp"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "vt",
+      "raw_value": "V~T~"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "v_il",
+      "raw_value": "Vᵢₗ"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "v_al",
+      "raw_value": "Vₐₗ"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "whole_brain_dv",
+      "raw_value": "Wholebrain DV"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "ymax",
+      "raw_value": "Ymax"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "ymax",
+      "raw_value": "ymax"
+    }
+  ],
+  "cluster_id": "cluster_d823a24102673370",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

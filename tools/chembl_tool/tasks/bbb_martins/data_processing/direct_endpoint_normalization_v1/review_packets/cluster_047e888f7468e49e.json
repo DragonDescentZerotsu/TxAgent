@@ -1,0 +1,262 @@
+{
+  "assignment_count": 51,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "extraction",
+      "raw_value": "average extraction"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "extraction",
+      "raw_value": "average extraction value"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "average first pass extraction"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "integral_extraction",
+      "raw_value": "average integral extraction of sodium"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "extraction",
+      "raw_value": "calculated extraction of sodium"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "corrected first-pass extraction"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "E (first-pass extraction)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "extraction",
+      "raw_value": "estimated extraction"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "single_pass_extraction",
+      "raw_value": "extracted in a single pass"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "extraction",
+      "raw_value": "Extraction"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "extraction",
+      "raw_value": "extraction"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "extraction",
+      "raw_value": "Extraction (E)"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "extraction",
+      "raw_value": "extraction (E)"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "unidirectional_extraction",
+      "raw_value": "extraction (unidirectional)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "extraction_coefficient",
+      "raw_value": "extraction coefficient"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "extraction",
+      "raw_value": "extraction E"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "extraction_efficiency",
+      "raw_value": "Extraction efficiency"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "extraction_efficiency",
+      "raw_value": "extraction efficiency"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "single_pass_extraction",
+      "raw_value": "extraction in a single pass"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "extraction",
+      "raw_value": "Ē (degree of extraction)"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "First pass extraction"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "first pass extraction"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "first pass extractions"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "first passage extraction"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "first_pass_extraction",
+      "raw_value": "first-pass extraction"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "first_pass_extraction_rate",
+      "raw_value": "first-pass extraction rate"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "extraction",
+      "raw_value": "maximal extraction"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "extraction",
+      "raw_value": "Mean extraction"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "extraction_coefficient",
+      "raw_value": "mean extraction coefficient"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "integral_extraction",
+      "raw_value": "mean integral extraction"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "extraction",
+      "raw_value": "Measured extraction"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "net_extraction",
+      "raw_value": "Net Extraction"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "net_extraction",
+      "raw_value": "net extraction"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "free_net_extraction",
+      "raw_value": "net extraction (free)"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "total_net_extraction",
+      "raw_value": "net extraction (total)"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "passive_extraction",
+      "raw_value": "passive extraction"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "extraction",
+      "raw_value": "peak extraction"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "extraction",
+      "raw_value": "peak instantaneous extraction"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "extraction",
+      "raw_value": "per cent extraction (E_H2O)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "potential_extraction_rate",
+      "raw_value": "potential extraction rate"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "relative_extraction",
+      "raw_value": "Relative extraction"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "single_pass_extraction",
+      "raw_value": "removal in a single pass"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "single_pass_extraction",
+      "raw_value": "single pass extraction"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "single_pass_extraction",
+      "raw_value": "single pass extraction measurements"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "single_pass_extraction",
+      "raw_value": "single pass extraction value"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "single_pass_extraction",
+      "raw_value": "single-pass extraction"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "single_pass_extraction",
+      "raw_value": "single-pass extraction value"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "net_extraction",
+      "raw_value": "steady state (or net) extraction"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "unidirectional_extraction",
+      "raw_value": "Unidirectional extraction"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "unidirectional_extraction",
+      "raw_value": "unidirectional extraction"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "unidirectional_extraction",
+      "raw_value": "unidirectional extraction, E"
+    }
+  ],
+  "cluster_id": "cluster_047e888f7468e49e",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

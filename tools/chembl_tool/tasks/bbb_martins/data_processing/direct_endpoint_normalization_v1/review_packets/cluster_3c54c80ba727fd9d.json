@@ -1,0 +1,2362 @@
+{
+  "assignment_count": 471,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "k1",
+      "raw_value": "$K_1^D$"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "km",
+      "raw_value": "absolute K_m"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "k3",
+      "raw_value": "accumulation constant K3"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "km_app",
+      "raw_value": "apparent $K_m$"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "ki_app",
+      "raw_value": "apparent Ki"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "kp",
+      "raw_value": "Apparent Kp"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "k1",
+      "raw_value": "arterial input K₁"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "auc_kp",
+      "raw_value": "AUC-based Kp"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "k",
+      "raw_value": "Av. K"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "B/P in KO/WT"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "B/P or Kₚ"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "binding_potential",
+      "raw_value": "binding potential (K3/K4)"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_nk1_ro",
+      "raw_value": "Brain NK-1 RO"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "km",
+      "raw_value": "corrected Km"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "km",
+      "raw_value": "effective Km"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "eket",
+      "raw_value": "Eket"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "ER (K1/rCBF)"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "kp",
+      "raw_value": "Exp 5min Kp"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "kp",
+      "raw_value": "In Vivo Kp"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "k_star",
+      "raw_value": "Incorporation constant k*"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "k1",
+      "raw_value": "Increase in K1"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "k_eff_inhibition",
+      "raw_value": "inhibition of k_eff"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "jmax_km",
+      "raw_value": "Jmax, km"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "jmax_km_kd",
+      "raw_value": "Jmax, Km, kd"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "jmax_kt_d_prime",
+      "raw_value": "Jmax, Kt, D'"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "jmax_kt_kd",
+      "raw_value": "Jmax, Kt, kd"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "jmax_over_kt",
+      "raw_value": "Jmax/Kt"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "k",
+      "raw_value": "K"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "k",
+      "raw_value": "k"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "k1",
+      "raw_value": "K 1"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "k2",
+      "raw_value": "k 2"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "k_efficiency",
+      "raw_value": "K efficiency"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "ki",
+      "raw_value": "K i"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "kin",
+      "raw_value": "K in"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "k_io",
+      "raw_value": "k io"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "k_mannitol",
+      "raw_value": "k mannitol"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "k_aib",
+      "raw_value": "K of AIB"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "k_passive",
+      "raw_value": "K passive"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "k",
+      "raw_value": "K value"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "k",
+      "raw_value": "k value"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "k_prime",
+      "raw_value": "k'"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "k_prime_01",
+      "raw_value": "k'01"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "k_prime_1",
+      "raw_value": "K'1"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "k_prime_10",
+      "raw_value": "k'10"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "k_prime_p",
+      "raw_value": "k'_p"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "k_iam_prime",
+      "raw_value": "k'IAM"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "ko_wt_ratio",
+      "raw_value": "K(-/-)/wt"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "K(brain/blood)"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "k_star",
+      "raw_value": "K*"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "k_star",
+      "raw_value": "k*"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "k_star",
+      "raw_value": "K* (brain trapping constant)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "k_star_in",
+      "raw_value": "K*in"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "k_over_v1",
+      "raw_value": "k/v1"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "k0",
+      "raw_value": "k0"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "k01",
+      "raw_value": "k01"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "k0_a",
+      "raw_value": "K0A"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "k1",
+      "raw_value": "k1"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1 (CLuptake, brain)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1 (percent increase)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1 (relative increase)"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1 (relative to occipital cortex)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "k1",
+      "raw_value": "k1 constant"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "k1_prime",
+      "raw_value": "K1'"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1(P2S)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "k_star",
+      "raw_value": "K1*"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "k_star",
+      "raw_value": "k1*"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "k_star_k1_ratio",
+      "raw_value": "K1*/K1"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "k_star_k1_ratio",
+      "raw_value": "k1*/k1"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "k1_plus",
+      "raw_value": "K1+"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "k1_k2",
+      "raw_value": "K1, k2"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "k1_k2",
+      "raw_value": "k1,2"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1,FDG"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "k1_ratio",
+      "raw_value": "K1,FDG/K1,glc"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1-FDG"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "k1_ratio",
+      "raw_value": "K1-FDG/K1-CMG"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1-PiB"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "k1_over_k2star_plus_k5",
+      "raw_value": "k1/(k2* + k5)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "k1_k2_ratio",
+      "raw_value": "K1/k2"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "k1_k2_ratio",
+      "raw_value": "k1/k2"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "k1_k2_ratio",
+      "raw_value": "K1/k2 pharmacokinetic ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "k10",
+      "raw_value": "K10"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "k10",
+      "raw_value": "k10"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "k12",
+      "raw_value": "K12"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "k12",
+      "raw_value": "k12"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "k13",
+      "raw_value": "k13"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "k13_plus_k34",
+      "raw_value": "K13 + K34"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1^ACPC"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1^D"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1^DOPA"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1^FDOPA"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1^Ga-DTPA"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1^{DOPA}"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1b"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1D"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1DOPA"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1FDOPA"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1G"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1glc"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "k1",
+      "raw_value": "K1M"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "k2",
+      "raw_value": "K2"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "k2",
+      "raw_value": "k2"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "k2",
+      "raw_value": "k2 (PS2/Ve)"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "k2_star",
+      "raw_value": "k2*"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "k2_star_plus_k5",
+      "raw_value": "k2* + k5"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "k21",
+      "raw_value": "k21"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "k21_over_v",
+      "raw_value": "k21/V"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "k23",
+      "raw_value": "K23"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "k3",
+      "raw_value": "k3"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "k31",
+      "raw_value": "k31"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "k3_td",
+      "raw_value": "k3td"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "k4",
+      "raw_value": "k4"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "k4_6",
+      "raw_value": "k4,6 (T entry from plasma)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "k40",
+      "raw_value": "k40"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "k4_gd",
+      "raw_value": "K4Gd"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "k5_k1_ratio",
+      "raw_value": "K5/K1"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "k9",
+      "raw_value": "K9"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "ktrans",
+      "raw_value": "k^trans"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "k1",
+      "raw_value": "K_1"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "k2",
+      "raw_value": "K_2"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "k_brain_star",
+      "raw_value": "k_brain^*"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "kd",
+      "raw_value": "K_D"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "k_eff",
+      "raw_value": "k_eff"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "k_fp",
+      "raw_value": "k_fp"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "k_go",
+      "raw_value": "k_go"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "k_h",
+      "raw_value": "k_H"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "ki",
+      "raw_value": "K_i"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "ki",
+      "raw_value": "k_i"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "kin",
+      "raw_value": "K_in"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "kin",
+      "raw_value": "k_in"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "km",
+      "raw_value": "K_m"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "km",
+      "raw_value": "k_m"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "km",
+      "raw_value": "K_m (Michaelis constant)"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "km_vmax",
+      "raw_value": "K_m and maximum velocity"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "km_vmax",
+      "raw_value": "K_m and V_max"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "km_app",
+      "raw_value": "K_m(app)"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "km_app",
+      "raw_value": "K_m^app"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "km",
+      "raw_value": "K_m^Trp"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "km_app",
+      "raw_value": "K_m^{app}"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "k_mannitol",
+      "raw_value": "k_mannitol"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "kout",
+      "raw_value": "k_out"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "k_pt",
+      "raw_value": "k_p t"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "K_puu"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "k_ref",
+      "raw_value": "k_ref"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "k_x",
+      "raw_value": "k_x"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "ka",
+      "raw_value": "K_{IAM}"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "kin",
+      "raw_value": "K_{in}"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "kin_app",
+      "raw_value": "K_{in}^{app}"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "km_up",
+      "raw_value": "K_{M,UP}"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "kout",
+      "raw_value": "k_{out} coefficient"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "kp_tbrain",
+      "raw_value": "K_{p_{tBrain}}"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "k_passive",
+      "raw_value": "K_{passive}"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "k_sucrose",
+      "raw_value": "k_{sucrose}"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "kt_app",
+      "raw_value": "K_{t,app}"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "ka",
+      "raw_value": "Ka"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "ka",
+      "raw_value": "ka"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "ka",
+      "raw_value": "KA (effective affinity constant)"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "ka",
+      "raw_value": "Ka75"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "kacc",
+      "raw_value": "Kacc"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "kal",
+      "raw_value": "Kal"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "kao",
+      "raw_value": "kao"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "kapp",
+      "raw_value": "Kapp"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "kb",
+      "raw_value": "KB"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "kb",
+      "raw_value": "Kb"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "kb",
+      "raw_value": "kb"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "kb_brain",
+      "raw_value": "Kb,brain"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "Kb/p"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "kb_in",
+      "raw_value": "kB_in"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "kb_out",
+      "raw_value": "kB_out"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "kbb_er_kbba",
+      "raw_value": "Kbb/ER, Kbba"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "kbbr",
+      "raw_value": "kBBr"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "kbc5fc",
+      "raw_value": "Kbc5FC"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "Kbp"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "kbp"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "blood_to_plasma_ratio_over_deff",
+      "raw_value": "kbp/Deff"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "Kbp_fd"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "Kbp_md"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "kbr",
+      "raw_value": "Kbr"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "kbr",
+      "raw_value": "kBR"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "KBr/P"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "kbrain",
+      "raw_value": "Kbrain"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "kbrain-blood"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Kbrain-plasma"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Kbrain/blood"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Kbrain/plasma"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "kbrb",
+      "raw_value": "kBrB"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "kbri",
+      "raw_value": "kbri"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "kbrnc",
+      "raw_value": "kBrnC"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "kbtevv",
+      "raw_value": "Kbtevv"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "kbtevv",
+      "raw_value": "Kbtvev"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "kc",
+      "raw_value": "Kc"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "kca",
+      "raw_value": "KCa"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "kcb",
+      "raw_value": "Kcb"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "kcell",
+      "raw_value": "Kcell"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "kcl",
+      "raw_value": "kCl"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "kcp_app",
+      "raw_value": "Kcp,app"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "kcsf",
+      "raw_value": "kCSF"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "csf_to_brain_ratio",
+      "raw_value": "KCSF-brain"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "KCSF-plasma"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "kd",
+      "raw_value": "KD"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "kd",
+      "raw_value": "Kd"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "kd",
+      "raw_value": "kD"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "kd",
+      "raw_value": "kd"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "kd_cga",
+      "raw_value": "KD CGa"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "kd_calc",
+      "raw_value": "Kd(calc)"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "kd1",
+      "raw_value": "KD1"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "kd2",
+      "raw_value": "kd2"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "kdiff",
+      "raw_value": "kdiff"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "kdl",
+      "raw_value": "kdl"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "kdp",
+      "raw_value": "Kdp"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "k_el",
+      "raw_value": "ke"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "k_el_brain",
+      "raw_value": "kE,brain"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "k_eff",
+      "raw_value": "Keff"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "k_eff",
+      "raw_value": "keff"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "k_eff_i",
+      "raw_value": "Keff(i)"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "k_el",
+      "raw_value": "kel"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "k_el",
+      "raw_value": "kelimination"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "kep",
+      "raw_value": "Kep"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "kepx",
+      "raw_value": "kepx"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "kf",
+      "raw_value": "Kf"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "kg0",
+      "raw_value": "KG0"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "kgad",
+      "raw_value": "kGad"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "kgd",
+      "raw_value": "KGd"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "kh",
+      "raw_value": "kh"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "ki",
+      "raw_value": "KI"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "ki",
+      "raw_value": "Ki"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "ki",
+      "raw_value": "ki"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "ki_transfer",
+      "raw_value": "Ki (transfer coefficient)"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "ki",
+      "raw_value": "Ki max"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "ki",
+      "raw_value": "Ki mean"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "ki",
+      "raw_value": "Ki Slope"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "ki",
+      "raw_value": "Ki values"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "ki_p",
+      "raw_value": "Ki(p)"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "ki_star",
+      "raw_value": "Ki*"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "kil",
+      "raw_value": "KiL"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "kil",
+      "raw_value": "Kil"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "kim",
+      "raw_value": "Kim"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "ki_mod",
+      "raw_value": "KiMod"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "kin_kout_ratio",
+      "raw_value": "kin/kout (×102)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "kin_kout_ratio",
+      "raw_value": "kin:kout"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "ki_occ",
+      "raw_value": "KiOCC"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "kket",
+      "raw_value": "Kket"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "kl",
+      "raw_value": "Kl"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "km",
+      "raw_value": "KM"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "km",
+      "raw_value": "Km"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "km",
+      "raw_value": "km"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "km_app",
+      "raw_value": "Km (app)"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "km_ki_ratio",
+      "raw_value": "Km / Ki"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "km_tmax",
+      "raw_value": "Km and Tmax"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "km_vmax",
+      "raw_value": "Km and Vmax"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "km_app",
+      "raw_value": "Km app"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "km_app",
+      "raw_value": "Km apparent"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "km",
+      "raw_value": "Km value"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "km_app",
+      "raw_value": "Km(app)"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "km_ki",
+      "raw_value": "Km(Ki)"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "km_star",
+      "raw_value": "Km*"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "km_jmax",
+      "raw_value": "km, Jmax"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "km_lacm",
+      "raw_value": "Km, LACm"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "km_vm",
+      "raw_value": "Km, Vm"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "km_vmax",
+      "raw_value": "Km, Vmax"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "km_vmax_kd",
+      "raw_value": "Km, Vmax, KD"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "km_vmax_kd",
+      "raw_value": "Km, Vmax, Kd"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "km_app",
+      "raw_value": "Km,app"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "km_app",
+      "raw_value": "km,app"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "km_br",
+      "raw_value": "Km,BR"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "km_pht1",
+      "raw_value": "Km,PHT1"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "km1",
+      "raw_value": "Km1"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "km1_km2_vm1_vm2",
+      "raw_value": "Km1, Km2, Vm1, Vm2"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "km1_km2_vmax1_vmax2",
+      "raw_value": "Km1, Km2, Vmax1, Vmax2"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "km1_vmax1",
+      "raw_value": "Km1, Vmax1"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "km2",
+      "raw_value": "Km2"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "km2_vmax2",
+      "raw_value": "Km2, Vmax2"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "km_vmax",
+      "raw_value": "Km; Vmax"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "km_app",
+      "raw_value": "Km^app"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "km_in",
+      "raw_value": "Km_in"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "kma",
+      "raw_value": "Kma"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "kmax",
+      "raw_value": "Kmax"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "kmb",
+      "raw_value": "Kmb"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "kmn",
+      "raw_value": "KMn"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "kmt",
+      "raw_value": "KMt"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "kn",
+      "raw_value": "Kn"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "knbevv",
+      "raw_value": "Knbevv"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "knbvev",
+      "raw_value": "Knbvev"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "knet",
+      "raw_value": "Knet"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "knet_max",
+      "raw_value": "Knet,max"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "knet_min",
+      "raw_value": "Knet,min"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "kns",
+      "raw_value": "Kns"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "kns",
+      "raw_value": "kns"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "kout",
+      "raw_value": "Kout"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "kout",
+      "raw_value": "kOUT"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "kout",
+      "raw_value": "kout"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "kp",
+      "raw_value": "KP"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "kp",
+      "raw_value": "kp"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "auc_kp",
+      "raw_value": "Kp (AUCtot,br,0-24h/AUCtot,pl,0-24h)"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "Kp (B/P)"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "Kp (Cb/Cp)"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Kp (Cbr/Cpl)"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Kp (Ctissue/Cblood)"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp (in vivo)"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp (observed)"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp (predicted)"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "kp_ratio",
+      "raw_value": "Kp (WT), Kp (KO), KO/WT"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp [TE]@1hour"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp in vivo"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "kp_ratio",
+      "raw_value": "Kp ratio"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "kpt",
+      "raw_value": "kp t"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp value"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp values"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "kp",
+      "raw_value": "KP(0-1h)"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "kp_app",
+      "raw_value": "Kp, app"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "kp_kp_uu",
+      "raw_value": "Kp, Kp,free"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "Kp, tumor"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "kp_aa",
+      "raw_value": "Kp,a,a"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "kp_app",
+      "raw_value": "Kp,app"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "Kp,b"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Kp,br"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "brain_to_muscle_ratio",
+      "raw_value": "Kp,br/mu"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "kp_ratio",
+      "raw_value": "Kp,brain ratio between KO and WT"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "kp_bt",
+      "raw_value": "Kp,BT"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "kp_cmax_fu",
+      "raw_value": "Kp,Cmax,fu"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "kp_exp",
+      "raw_value": "Kp,exp"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "kp_f",
+      "raw_value": "Kp,f"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp,free"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp,increase"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp,iv"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp,ko"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "kp_mal",
+      "raw_value": "Kp,mal"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "kp_roi",
+      "raw_value": "Kp,ROI"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp,vivo"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp,wt"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "kp_beta",
+      "raw_value": "Kp,β"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp-unbound"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp-value"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp1h"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp2hr"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "auc_kp",
+      "raw_value": "Kp^0-24h"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "kp",
+      "raw_value": "KP_KO"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "kp_ot",
+      "raw_value": "KP_OT"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "spinal_cord_to_plasma_ratio",
+      "raw_value": "Kp_spinal cord"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kp_total"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp_unbound"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "kp",
+      "raw_value": "KP_WT"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "kpa",
+      "raw_value": "KPa"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "kpa",
+      "raw_value": "Kpa"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "kp_app",
+      "raw_value": "Kpapp"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "kp_passive",
+      "raw_value": "Kpassive"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "auc_kp",
+      "raw_value": "KPAUC"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "Kpb"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Kpbr"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "kpBR"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "KpBrain"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Kpbrain"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "kpcd",
+      "raw_value": "KpCD"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "KpCSF"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "kpd",
+      "raw_value": "Kpd"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "kpe",
+      "raw_value": "Kpe"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "kp_efflux",
+      "raw_value": "kpEfflux"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "kpex",
+      "raw_value": "kpex"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "kpf",
+      "raw_value": "Kpf"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "kpfdda",
+      "raw_value": "kpFddA"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "kpfddi",
+      "raw_value": "kpFddI"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "pgp_efflux",
+      "raw_value": "kPgp"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "kpi",
+      "raw_value": "Kpi"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "kpi",
+      "raw_value": "kpi"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "kpl_to_v",
+      "raw_value": "Kpl→v"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "kp_nd",
+      "raw_value": "KPND"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "kpo",
+      "raw_value": "Kpo"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "kpo",
+      "raw_value": "kpo"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "kpoo_csf",
+      "raw_value": "Kpoo, csf"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "kppat",
+      "raw_value": "KpPat"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "kpr",
+      "raw_value": "Kpr"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "ps",
+      "raw_value": "Kps"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "ps",
+      "raw_value": "kPS"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "spinal_cord_to_plasma_ratio",
+      "raw_value": "KpSpinal Cord"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "pss",
+      "raw_value": "Kpss"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "kpt",
+      "raw_value": "KPT"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "kpu",
+      "raw_value": "Kpu"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "kpub",
+      "raw_value": "Kpub"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "KPUU"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kpuu"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "kpuu"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "kpuua",
+      "raw_value": "Kpuua"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "kpw",
+      "raw_value": "KpW"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "kr",
+      "raw_value": "Kr"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "ks",
+      "raw_value": "Ks"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "ks5_ks1_ratio",
+      "raw_value": "Ks5/Ks1"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "kso",
+      "raw_value": "kso"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "kt",
+      "raw_value": "KT"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "kt",
+      "raw_value": "Kt"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "kt",
+      "raw_value": "kT"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "kt",
+      "raw_value": "kt"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "kt_app",
+      "raw_value": "Kt app"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "kt_br",
+      "raw_value": "KT Br"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "kt_vmax",
+      "raw_value": "Kt, Vmax"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "kt1",
+      "raw_value": "Kt,1"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "kt2",
+      "raw_value": "Kt,2"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "kt_app",
+      "raw_value": "Kt,app"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "kt_br",
+      "raw_value": "Kt,br"
+    },
+    {
+      "item_id": "v0399",
+      "provisional_endpoint": "kt_p",
+      "raw_value": "Kt:p"
+    },
+    {
+      "item_id": "v0400",
+      "provisional_endpoint": "kt_pl",
+      "raw_value": "Kt:pl"
+    },
+    {
+      "item_id": "v0401",
+      "provisional_endpoint": "ktr1",
+      "raw_value": "Ktr1"
+    },
+    {
+      "item_id": "v0402",
+      "provisional_endpoint": "ktr2",
+      "raw_value": "Ktr2"
+    },
+    {
+      "item_id": "v0403",
+      "provisional_endpoint": "ktran",
+      "raw_value": "Ktran"
+    },
+    {
+      "item_id": "v0404",
+      "provisional_endpoint": "ktrans",
+      "raw_value": "Ktrans"
+    },
+    {
+      "item_id": "v0405",
+      "provisional_endpoint": "ktrans",
+      "raw_value": "Ktrans (Peak Position)"
+    },
+    {
+      "item_id": "v0406",
+      "provisional_endpoint": "ktrans",
+      "raw_value": "Ktrans change"
+    },
+    {
+      "item_id": "v0407",
+      "provisional_endpoint": "ktrans",
+      "raw_value": "Ktrans^GKM"
+    },
+    {
+      "item_id": "v0408",
+      "provisional_endpoint": "ktrans",
+      "raw_value": "Ktrans^RRM"
+    },
+    {
+      "item_id": "v0409",
+      "provisional_endpoint": "ku_free",
+      "raw_value": "Ku, free"
+    },
+    {
+      "item_id": "v0410",
+      "provisional_endpoint": "ku60019_content",
+      "raw_value": "KU60019 content"
+    },
+    {
+      "item_id": "v0411",
+      "provisional_endpoint": "kup_i",
+      "raw_value": "kup,i"
+    },
+    {
+      "item_id": "v0412",
+      "provisional_endpoint": "kuptake",
+      "raw_value": "Kuptake"
+    },
+    {
+      "item_id": "v0413",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "kuptake,brain"
+    },
+    {
+      "item_id": "v0414",
+      "provisional_endpoint": "kw",
+      "raw_value": "Kw"
+    },
+    {
+      "item_id": "v0415",
+      "provisional_endpoint": "kw",
+      "raw_value": "kW"
+    },
+    {
+      "item_id": "v0416",
+      "provisional_endpoint": "kw",
+      "raw_value": "kw"
+    },
+    {
+      "item_id": "v0417",
+      "provisional_endpoint": "k1",
+      "raw_value": "K~1~"
+    },
+    {
+      "item_id": "v0418",
+      "provisional_endpoint": "ki",
+      "raw_value": "Kᵢ"
+    },
+    {
+      "item_id": "v0419",
+      "provisional_endpoint": "ki",
+      "raw_value": "kᵢ"
+    },
+    {
+      "item_id": "v0420",
+      "provisional_endpoint": "kil",
+      "raw_value": "Kᵢₗ"
+    },
+    {
+      "item_id": "v0421",
+      "provisional_endpoint": "kil",
+      "raw_value": "kᵢₗ"
+    },
+    {
+      "item_id": "v0422",
+      "provisional_endpoint": "kil_brain",
+      "raw_value": "Kᵢₗ, brain"
+    },
+    {
+      "item_id": "v0423",
+      "provisional_endpoint": "kim_app",
+      "raw_value": "Kᵢₘ (app)"
+    },
+    {
+      "item_id": "v0424",
+      "provisional_endpoint": "kin",
+      "raw_value": "Kᵢₙ"
+    },
+    {
+      "item_id": "v0425",
+      "provisional_endpoint": "k0",
+      "raw_value": "k₀"
+    },
+    {
+      "item_id": "v0426",
+      "provisional_endpoint": "k1",
+      "raw_value": "K₁"
+    },
+    {
+      "item_id": "v0427",
+      "provisional_endpoint": "k1_k2",
+      "raw_value": "K₁ and k₂"
+    },
+    {
+      "item_id": "v0428",
+      "provisional_endpoint": "k1_k2",
+      "raw_value": "k₁ and k₂"
+    },
+    {
+      "item_id": "v0429",
+      "provisional_endpoint": "k1",
+      "raw_value": "K₁ relative to occipital cortex"
+    },
+    {
+      "item_id": "v0430",
+      "provisional_endpoint": "k1_k2_ratio",
+      "raw_value": "K₁/k₂"
+    },
+    {
+      "item_id": "v0431",
+      "provisional_endpoint": "k12_k21",
+      "raw_value": "k₁₂ and k₂₁"
+    },
+    {
+      "item_id": "v0432",
+      "provisional_endpoint": "k2",
+      "raw_value": "k₂"
+    },
+    {
+      "item_id": "v0433",
+      "provisional_endpoint": "k2_prime",
+      "raw_value": "k₂'"
+    },
+    {
+      "item_id": "v0434",
+      "provisional_endpoint": "k21_k12_ratio",
+      "raw_value": "k₂₁/k₁₂"
+    },
+    {
+      "item_id": "v0435",
+      "provisional_endpoint": "kal",
+      "raw_value": "kₐₗ"
+    },
+    {
+      "item_id": "v0436",
+      "provisional_endpoint": "k_e0",
+      "raw_value": "kₑ₀"
+    },
+    {
+      "item_id": "v0437",
+      "provisional_endpoint": "kl",
+      "raw_value": "Kₗ"
+    },
+    {
+      "item_id": "v0438",
+      "provisional_endpoint": "kmn",
+      "raw_value": "Kₘₙ"
+    },
+    {
+      "item_id": "v0439",
+      "provisional_endpoint": "kp",
+      "raw_value": "Kₚ"
+    },
+    {
+      "item_id": "v0440",
+      "provisional_endpoint": "log_k",
+      "raw_value": "log k"
+    },
+    {
+      "item_id": "v0441",
+      "provisional_endpoint": "log_kp",
+      "raw_value": "Log Kp"
+    },
+    {
+      "item_id": "v0442",
+      "provisional_endpoint": "log_kp",
+      "raw_value": "Log kp"
+    },
+    {
+      "item_id": "v0443",
+      "provisional_endpoint": "log_kp",
+      "raw_value": "log Kp"
+    },
+    {
+      "item_id": "v0444",
+      "provisional_endpoint": "log_kp",
+      "raw_value": "log Kp (cm/s)"
+    },
+    {
+      "item_id": "v0445",
+      "provisional_endpoint": "log_kpb",
+      "raw_value": "Log Kpb"
+    },
+    {
+      "item_id": "v0446",
+      "provisional_endpoint": "ktrans",
+      "raw_value": "maximum Ktrans"
+    },
+    {
+      "item_id": "v0447",
+      "provisional_endpoint": "mdr1a_lb_ratio",
+      "raw_value": "mdr1a/lb KO/WT"
+    },
+    {
+      "item_id": "v0448",
+      "provisional_endpoint": "kd",
+      "raw_value": "non-saturable Kd"
+    },
+    {
+      "item_id": "v0449",
+      "provisional_endpoint": "kp",
+      "raw_value": "Observed Kp"
+    },
+    {
+      "item_id": "v0450",
+      "provisional_endpoint": "kp_ratio",
+      "raw_value": "observed Kp,monkey/Kp,mouse"
+    },
+    {
+      "item_id": "v0451",
+      "provisional_endpoint": "potassium_passage",
+      "raw_value": "passage of potassium"
+    },
+    {
+      "item_id": "v0452",
+      "provisional_endpoint": "pk",
+      "raw_value": "PK"
+    },
+    {
+      "item_id": "v0453",
+      "provisional_endpoint": "potassium_influx",
+      "raw_value": "potassium influx"
+    },
+    {
+      "item_id": "v0454",
+      "provisional_endpoint": "ps_kin",
+      "raw_value": "PS (Kᵢₙ)"
+    },
+    {
+      "item_id": "v0455",
+      "provisional_endpoint": "k1_slope",
+      "raw_value": "Slope of regression relating K1 to plasma osmolality"
+    },
+    {
+      "item_id": "v0456",
+      "provisional_endpoint": "vmax_over_km_plus_kd",
+      "raw_value": "sum of Vmax/Km and Kd"
+    },
+    {
+      "item_id": "v0457",
+      "provisional_endpoint": "t_half_k_e0",
+      "raw_value": "T1/2 kE0"
+    },
+    {
+      "item_id": "v0458",
+      "provisional_endpoint": "t_half_k_e0",
+      "raw_value": "T1/2 ke0"
+    },
+    {
+      "item_id": "v0459",
+      "provisional_endpoint": "kp_transient_steady_state",
+      "raw_value": "Transient steady-state Kp"
+    },
+    {
+      "item_id": "v0460",
+      "provisional_endpoint": "t_half_k_e0",
+      "raw_value": "t½,ke0"
+    },
+    {
+      "item_id": "v0461",
+      "provisional_endpoint": "vt_k1",
+      "raw_value": "V_T and K1"
+    },
+    {
+      "item_id": "v0462",
+      "provisional_endpoint": "vmax_km",
+      "raw_value": "Vm and Km"
+    },
+    {
+      "item_id": "v0463",
+      "provisional_endpoint": "vmax_km_kd",
+      "raw_value": "Vmax, Km, and Kd"
+    },
+    {
+      "item_id": "v0464",
+      "provisional_endpoint": "vmax_km_kd",
+      "raw_value": "Vmax, Km, KD"
+    },
+    {
+      "item_id": "v0465",
+      "provisional_endpoint": "vmax_km_kd",
+      "raw_value": "Vmax, Km, Kd"
+    },
+    {
+      "item_id": "v0466",
+      "provisional_endpoint": "vmax_kt",
+      "raw_value": "Vmax, Kt"
+    },
+    {
+      "item_id": "v0467",
+      "provisional_endpoint": "vt",
+      "raw_value": "VT (equivalent to Kp)"
+    },
+    {
+      "item_id": "v0468",
+      "provisional_endpoint": "vt_kp",
+      "raw_value": "VT Kp (in vivo)"
+    },
+    {
+      "item_id": "v0469",
+      "provisional_endpoint": "kappa",
+      "raw_value": "κ"
+    },
+    {
+      "item_id": "v0470",
+      "provisional_endpoint": "k1_derivative",
+      "raw_value": "∂K1"
+    }
+  ],
+  "cluster_id": "cluster_3c54c80ba727fd9d",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

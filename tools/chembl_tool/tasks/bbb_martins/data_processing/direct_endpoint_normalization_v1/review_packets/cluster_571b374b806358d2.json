@@ -1,0 +1,287 @@
+{
+  "assignment_count": 56,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "brain : plasma free ratio"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "Brain distribution of plasma unbound fraction"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_ecf_to_unbound_plasma_ratio",
+      "raw_value": "brain ECF/plasma unbound ratio"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_icf_to_unbound_plasma_ratio",
+      "raw_value": "brain ICF/plasma unbound ratio"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "brain tissue-to-plasma ratio (free drug)"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "brain to free plasma ratio"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_tumor_to_unbound_plasma_ratio",
+      "raw_value": "brain tumor-to-plasma ratio (free drug)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "brain unbound/free plasma level ratio"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "brain-to-unbound plasma minocycline ratios"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "Brain-to-unbound plasma ratio"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "brain-to-unbound plasma ratio"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma ratio (free)"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma ratio, unbound brain/unbound plasma ratio, CSF/free plasma ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "brain:plasma ratio (free:free)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "cerebral:plasma free ratio"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "extraneuronal_brain_space_to_unbound_plasma_ratio",
+      "raw_value": "extraneuronal brain space / unbound plasma ratio"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "free brain to free plasma ratio"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "free brain to free plasma ratios"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free brain to plasma (b/p) ratio"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free brain to plasma ratio"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "free brain-free plasma ratio"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Free brain-plasma ratio"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free brain-plasma ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "Free Brain-to-Free Plasma Ratio"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "Free Brain-to-Plasma Ratio"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Free brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Free brain-to-plasma ratio (Kpuu)"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "free brain/free plasma ratio"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "free brain/free plasma ratio (fT)"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free brain/plasma ratio"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free drug brain to plasma ratio"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free drug brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "unbound_plasma_to_unbound_brain_ratio",
+      "raw_value": "free plasma to brain ratio"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "hippocampus_ecf_to_plasma_ratio",
+      "raw_value": "hippocampus extracellular fluid/plasma ratio"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "ratio between unbound brain levels and total plasma levels"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "ratio of brain to free plasma level"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "ratio of brain to unbound plasma letrozole concentrations"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "ratio of free exposure in brain versus the free exposure in plasma"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "ratio of free unbound MB243 in the brain/plasma"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "ratio of unbound brain (Cbu) to unbound plasma (Cpu)"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "unbound_plasma_to_unbound_brain_ratio",
+      "raw_value": "ratio of unbound plasma to unbound brain"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "ratios between free brain and free plasma levels"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "total and unbound (free) brain-to-plasma ratios"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "unbound brain to plasma ratio"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "unbound brain to unbound plasma ratio"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "unbound brain-plasma ratio"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "unbound_brain_to_plasma_auc_ratio",
+      "raw_value": "unbound brain-to-plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "unbound brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Unbound Brain/Plasma Ratio"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Unbound brain/plasma ratio"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "unbound brain/plasma ratio"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_ratio",
+      "raw_value": "unbound brain/unbound plasma ratio"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "unbound brain: plasma ratio"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "unbound brain–plasma ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_and_plasma_unbound_fraction",
+      "raw_value": "unbound fractions in both the brain and plasma"
+    }
+  ],
+  "cluster_id": "cluster_571b374b806358d2",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

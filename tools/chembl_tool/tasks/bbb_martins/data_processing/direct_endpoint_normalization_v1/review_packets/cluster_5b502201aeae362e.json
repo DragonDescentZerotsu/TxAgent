@@ -1,0 +1,632 @@
+{
+  "assignment_count": 125,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "AUC-based Kp,uu"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "B/P, Kp,uu"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "B/P; Kp,uu"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Brain Kp"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "brain Kp"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "brain Kp value"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Brain Kp,uu"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "kp_uu_brain_csf",
+      "raw_value": "brain or CSF Kp,uu"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Brain-Kp"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Ex vivo Kp,uu"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Exp Kp,uu"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "K p,uu,CSF"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "K p,uu,ECF"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "K'_{p,uu,brain}"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "K'p,uu,brain"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "K'p,uu,CSF"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "k_brain",
+      "raw_value": "k*brain"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "k_e_brain",
+      "raw_value": "k_{E,brain}"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "k_{p,uu, CSF}"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "K_{p,uu,brain}"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "k_{p,uu,CSF}"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "K_{p,uu}"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "KBr/P,uu"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "KECF/B,uu"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "KECF/P,uu"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp (Kp,uu)"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp / Kp,uu"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp brain"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp u,u"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp uu,brain"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp, brain"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_kp_perfusate",
+      "raw_value": "Kp, brain/perfusate"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp, Kp,uu"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp, ubrain"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp, uu"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp, uu, brain"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "kp_uu_whole_brain",
+      "raw_value": "Kp, uu, whole brain"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "kp_app_brain",
+      "raw_value": "Kp,app,brain"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp,AUC,fu"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp,Brain"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp,brain"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp,brain,30min"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_kp_cortex",
+      "raw_value": "Kp,brain,Cx"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_kp_hippocampus",
+      "raw_value": "Kp,brain,HIP"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp,brain,ss"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp,brain; Kp,uu"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,brain; Kp,uu,brain"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "ecf_kp",
+      "raw_value": "Kp,ECF"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_kp_left",
+      "raw_value": "Kp,l brain"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "kp_observed",
+      "raw_value": "Kp,obs"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "kp_ss",
+      "raw_value": "Kp,ss"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "kp_u",
+      "raw_value": "Kp,u"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "kp_u_brain",
+      "raw_value": "Kp,u, brain"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "kp_u_brain",
+      "raw_value": "Kp,u,brain"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "kp_u_ss",
+      "raw_value": "Kp,u,ss"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp,u,u"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "KP,uu"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp,uu"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "kp,uu"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kp,uu (CSF)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu brain"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "kp,uu CSF"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "Kp,uu ECF"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp,uu ratio"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu, brain"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp,uu, drug in lipo / Kpuu, free"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu,b/p"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "kp_uu_bbb",
+      "raw_value": "Kp,uu,BBB"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu,br"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu,brain"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "kp_uu_brain_csf",
+      "raw_value": "Kp,uu,brain and Kp,uu,CSF"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu,brain(hom)"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "kp_uu_cortex",
+      "raw_value": "Kp,uu,brain,Cx"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "kp_uu_hippocampus",
+      "raw_value": "Kp,uu,brain,HIP"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "kp_uu_cell",
+      "raw_value": "Kp,uu,cell"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "kp_uu_cortex",
+      "raw_value": "Kp,uu,cortex"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kp,uu,CSF"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kp,uu,csf"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kp,uu,CSF (0-inf)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kp,uu,CSF (0–420)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kp,uu,CSF(0-360)"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "Kp,uu,ECF"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "Kp,uu,ECF (0-inf)"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "Kp,uu,ECF (0–420)"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "Kp,uu,ECF/Plasma"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "kp_uu_isf",
+      "raw_value": "Kp,uu,ISF"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "kp_uu_isf_cortex",
+      "raw_value": "Kp,uu,ISF,Cx"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "kp_uu_isf_hippocampus",
+      "raw_value": "Kp,uu,ISF,HIP"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "kp_uu_lumbar_csf",
+      "raw_value": "Kp,uu,lumbar CSF"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp,uu,pred"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "kp_uu_roi",
+      "raw_value": "Kp,uu,ROI"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "kp_uu_spinal_cord",
+      "raw_value": "Kp,uu,spinal cord"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "kp_uu_striatum",
+      "raw_value": "Kp,uu,STR"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "kp_uu_whole_brain",
+      "raw_value": "Kp,uu,WB"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "kp_uu_whole_brain",
+      "raw_value": "Kp,uu,whole brain"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp,uu; Kp"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uu_brain"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp,uub"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "Kp,uue"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "kp_uu_fluid",
+      "raw_value": "Kp,uuf"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kp,uus"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kp.uu"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp/brain"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_kp",
+      "raw_value": "Kp_brain"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp_uu brain"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kp_uu,brain"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "kp_uu_spinal_cord",
+      "raw_value": "Kp_uu,spinal cord"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "kp_app_brain",
+      "raw_value": "Kpapp,brain"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kpt,uu"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kpu,u"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "kpu,u"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kpu,u (Cb/Cp)"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kpuu, brain"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kpuu, CSF"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "kp_uu_bbb",
+      "raw_value": "Kpuu,BBB"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kpuu,brain"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kpuu,brain (at 6 h)"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "kp_uu_brain_csf",
+      "raw_value": "Kpuu,brain and Kpuu,CSF"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "kp_uu_brain_ecf",
+      "raw_value": "Kpuu,brainECF"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kpuu,CSF"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "kp_uu_ecf",
+      "raw_value": "Kpuu,ECF"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Kuu,brain"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "kp_uu",
+      "raw_value": "Kₚ,uu"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "log_kp_uu_brain",
+      "raw_value": "log Kp,uu,brain"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "p_kp_uu",
+      "raw_value": "pKp,uu"
+    }
+  ],
+  "cluster_id": "cluster_5b502201aeae362e",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

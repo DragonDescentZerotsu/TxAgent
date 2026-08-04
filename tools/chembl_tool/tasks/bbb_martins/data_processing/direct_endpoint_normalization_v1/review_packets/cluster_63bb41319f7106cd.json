@@ -1,0 +1,2272 @@
+{
+  "assignment_count": 453,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "(blood concentration)/(brain concentration) ratio"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "(concentration in blood)/(concentration in brain) ratio"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "blood_to_brain_glucose_ratio",
+      "raw_value": "[Brain glucose] to [blood glucose] ratio"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "[brain]/[blood] ratio"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "[Brain]:[Blood] ratio"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "[brain]:[blood] ratio"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "[Phe]blood to [Phe]brain ratio"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "[¹⁴C]sucrose ratio [(dpm/mg) brain/(dpm/µl) blood]"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_to_heart_ratio",
+      "raw_value": "amount retained in brain relative to heart"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "average brain blood level"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "average brain to blood ratio"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "average brain-to-blood Hg ratio"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "average brain-to-blood ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "average brain/blood ratio"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "AZT brain to blood ratio"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_blood_level",
+      "raw_value": "blood and brain levels"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "blood brain concentration ratio"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "blood_brain_distribution",
+      "raw_value": "blood brain distribution"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Blood brain distribution (logBB)"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "blood_brain_penetration_index",
+      "raw_value": "blood brain penetration index (BBB Level)"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood brain ratio"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_blood_value",
+      "raw_value": "blood brain values"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "blood to brain concentration ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood to brain ratio"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "blood_to_brain_transfer_rate_constant",
+      "raw_value": "blood to brain transfer rate constant"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood-brain alcohol ratio"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "blood_brain_distribution_coefficient",
+      "raw_value": "blood-brain coefficient"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "blood-brain concentration ratio"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "blood_brain_distribution",
+      "raw_value": "blood-brain distribution"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "blood_brain_distribution_coefficient",
+      "raw_value": "blood-brain distribution coefficient"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "blood_brain_equilibration_rate",
+      "raw_value": "Blood-brain equilibration rate"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "blood_brain_extraction_fraction",
+      "raw_value": "blood-brain extraction fraction"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "blood_brain_penetration_ratio",
+      "raw_value": "blood-brain penetration (clearance ratio)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood-brain Phe ratios"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Blood-brain ratio"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood-brain ratio"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Blood-brain ratios"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood-brain-ratio"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "blood_to_brain_distribution_ratio",
+      "raw_value": "blood-to brain distribution ratio"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood-to-brain ammonia ratio"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "blood-to-brain concentration ratio"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "blood_to_brain_distribution_coefficient",
+      "raw_value": "blood-to-brain distribution coefficient"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "blood_to_brain_exposure_ratio",
+      "raw_value": "blood-to-brain exposure ratio"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "blood_to_brain_extraction_fraction",
+      "raw_value": "blood-to-brain extraction fraction"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "blood_to_brain_influx_rate_constant",
+      "raw_value": "blood-to-brain influx rate constant"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "blood_to_brain_influx_rate_constant",
+      "raw_value": "blood-to-brain Kᵢₙ value"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood-to-brain mercury ratio"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "blood_to_brain_penetration_ratio",
+      "raw_value": "blood-to-brain penetration ratio"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood-to-brain ratio"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "blood_to_brain_transfer_rate_constant",
+      "raw_value": "blood-to-brain transfer rate constant"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood-to-brain transition ratio"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "blood_to_striatum_penetration_ratio",
+      "raw_value": "blood-to-striatum penetration ratio"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "blood/brain 5-HTP concentration ratio"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "blood_to_brain_activity_ratio",
+      "raw_value": "blood/brain activity ratio"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "Blood/Brain concentration ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "blood/brain concentration ratio"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "blood_brain_distribution",
+      "raw_value": "blood/brain distribution"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "blood_brain_distribution_factor",
+      "raw_value": "blood/brain distribution factor"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "blood_brain_distribution_ratio",
+      "raw_value": "blood/brain distribution ratio"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "blood_brain_equilibration_half_life",
+      "raw_value": "blood/brain equilibrium t1/2"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "blood_to_brain_glucose_ratio",
+      "raw_value": "blood/brain glucose ratio"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "blood/brain parenchyma concentration ratio"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Blood/Brain ratio"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Blood/brain ratio"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood/brain ratio"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Blood/brain ratios"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Blood/brain tryptophan ratio"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "blood_to_cns_activity_ratio",
+      "raw_value": "blood/central nervous system activity ratio"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "blood_to_striatum_ratio",
+      "raw_value": "blood/corpus striatum ratio"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood: brain ratio"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood:brain ammonia ratio"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "blood:brain concentration ratio"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood:brain mercury ratio"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood:brain ratio"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood‒brain ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Blood–Brain Ratio"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "blood–brain ratio"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain / circulating concentration ratio"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain /blood ratio"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain : Blood ratio"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain : blood ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_to_blood_steady_state_ratio",
+      "raw_value": "brain : blood ratio at steady state"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain : blood ratios"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain alcohol/blood alcohol ratio"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain ammonia/blood ammonia ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_to_arterial_blood_ratio",
+      "raw_value": "Brain average / arterial blood"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_to_cerebral_venous_blood_ratio",
+      "raw_value": "Brain average / cerebral venous blood"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain Blood ratio"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain blood ratio"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain blood ratio"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_to_cerebral_venous_blood_concentration_ratio",
+      "raw_value": "brain concentration / cerebral venous blood concentration ratio"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_to_blood_content_ratio",
+      "raw_value": "brain content/blood content ratio"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_ecf_to_blood_concentration_ratio",
+      "raw_value": "brain ECF/blood concentration ratio"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_ecf_to_blood_glucose_ratio",
+      "raw_value": "brain ECF/blood glucose ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_ecf_to_blood_ratio",
+      "raw_value": "brain ECF/blood ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_ecf_to_blood_unbound_concentration_ratio",
+      "raw_value": "brain ECF/blood unbound concentration ratio"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_ecf_to_blood_ratio",
+      "raw_value": "brain extracellular fluid/blood ratio"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_to_blood_glucose_ratio",
+      "raw_value": "brain extracellular glucose / blood glucose ratio"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_to_blood_glucose_ratio",
+      "raw_value": "brain glucose / blood glucose ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_to_blood_glucose_ratio",
+      "raw_value": "Brain glucose-blood glucose ratio"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain homogenates/blood levels"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_isf_to_arterial_blood_concentration_ratio",
+      "raw_value": "brain ISF/internal carotid arterial blood concentration ratio"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_to_blood_level_ratio",
+      "raw_value": "brain level / blood level"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_to_blood_level_ratio",
+      "raw_value": "brain level / blood level ratio"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_to_blood_level_ratio",
+      "raw_value": "brain level relative to simultaneous blood level"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_to_blood_level_ratio",
+      "raw_value": "brain level/blood level"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_to_blood_level_ratio",
+      "raw_value": "brain levels / blood levels"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_to_blood_level_ratio",
+      "raw_value": "brain levels / blood levels ratio"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain levels compared to the blood"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain levels relative to blood"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain levels/blood levels"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "fetal_brain_to_maternal_blood_ratio",
+      "raw_value": "brain of the fetus to blood of the pregnant rat ratio"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain PCP levels relative to blood levels"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain region/blood toluene concentration ratio (BBCR)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain serum levels / blood levels"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain T: Blood T ratio"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_to_peripheral_blood_ratio",
+      "raw_value": "Brain tissue/ Peripheral blood ratio"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain tissue/blood concentration ratio"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain tissue/blood levels ratio"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain tissue/blood ratio"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain to blood concentration ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain to blood concentrations ratio"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_to_blood_distribution_ratio",
+      "raw_value": "brain to blood distribution ratio"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain to blood ethanol ratio"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_to_blood_exposure_ratio",
+      "raw_value": "brain to blood exposure ratio"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_to_blood_glucose_ratio",
+      "raw_value": "brain to blood glucose ratio"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain to blood mercury concentration ratio"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain to blood NBBS concentration ratio"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain to blood ratio"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain to blood ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain to blood ratio (per gram)"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain to blood ratio concentration at steady state"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain to blood ratios"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain to blood styrene level ratio"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain to cerebral venous blood and brain to arterial blood ratios"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_to_whole_blood_ratio",
+      "raw_value": "brain to whole blood ratio"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain tumor levels as % of blood levels"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain tumour tissue/blood ratio"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_to_peripheral_blood_concentration_ratio",
+      "raw_value": "brain vs peripheral blood concentration ratio"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain vs. blood tissue levels ratio"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain ³H-Ch/blood ³H-Ch quotient"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_to_blood_exposure_ratio",
+      "raw_value": "brain- to-blood exposure ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain-blood ammonia concentration ratio"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-blood ammonia ratio"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-blood ceftriaxone level ratio"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "Brain-blood concentration ratio"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain-blood concentration ratio"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_blood_contact_rate",
+      "raw_value": "brain-blood contact rate"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "blood_brain_distribution",
+      "raw_value": "brain-blood distribution"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_to_blood_distribution_ratio",
+      "raw_value": "Brain-blood distribution ratio"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-blood mercury ratio"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain-blood phenobarbital ratio"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain-blood phenytoin concentration ratio"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain-Blood Ratio"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain-blood ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-blood ratio"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain-blood ratio (%)"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-blood ratio (Cbrain/Cblood)"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-blood-ratio"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-mg/100 gm blood-mg/100 ml"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain-to-blood (concentration) ratio"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "brain_to_blood_activity_concentration_ratio",
+      "raw_value": "brain-to-blood 11C-activity concentration ratio"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_to_blood_activity_ratio",
+      "raw_value": "brain-to-blood activity ratio"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain-to-blood ammonia concentration ratio"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood ammonia ratio"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood area under the curve ratio"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "Brain-to-blood concentration ratio"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain-to-blood concentration ratio"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain-to-blood concentration ratio (fold-increase upon Mdr-1 inhibition)"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain-to-blood concentrations ratio"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_to_blood_distribution_ratio",
+      "raw_value": "brain-to-blood distribution ratio"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_to_blood_distribution_ratio",
+      "raw_value": "brain-to-blood distribution ratio (k value)"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "brain_to_blood_distribution_ratio",
+      "raw_value": "brain-to-blood distribution ratio (λIAP)"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood drug level ratio"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood exposure (area under the curve from 0 to infinity) ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood exposure (AUCinf) ratio"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "brain-to-blood exposure (AUCᵢₐ₈)— ratio"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_to_blood_exposure_ratio",
+      "raw_value": "brain-to-blood exposure ratio"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "brain_to_blood_glucose_ratio",
+      "raw_value": "brain-to-blood glucose ratio"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain-to-blood ratio"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood ratio"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood ratio (BBR)"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood ratio (of I-Hg)"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood ratio increase"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "brain-to-blood ratio of the unbound TAK-285"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "brain-to-blood ratio of unbound amprenavir"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "brain-to-blood ratio of unbound TAK-285"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood ratios"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_to_blood_activity_ratio",
+      "raw_value": "brain-to-blood ratios of activity"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "brain-to-blood unbound concentration ratio"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood-Al-ratio"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood-ratio"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood-ratio (BBr)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "permeability_ratio",
+      "raw_value": "brain-to-blood/blood-to-brain ratio of permeability"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_to_liver_concentration_ratio",
+      "raw_value": "brain-to-liver concentration ratio"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_to_perfusate_ratio",
+      "raw_value": "brain-to-perfusate ratio (Rbr)"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain-to-serum phenobarbital ratios"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_to_whole_blood_concentration_ratio",
+      "raw_value": "brain-to-whole-blood concentration ratio"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_to_whole_blood_ratio",
+      "raw_value": "brain-to-whole-blood ratio"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/ blood concentration ratio"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/ blood ratio"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_to_arterial_blood_ratio",
+      "raw_value": "brain/arterial blood ratio"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_to_arterial_glucose_ratio",
+      "raw_value": "brain/arterial glucose ratio"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/blood (%)"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood (B/B) concentration ratio"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/blood (ratio)"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood 13C-acetate concentration ratio"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood 5-HTP-14C ratio"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "brain_to_blood_accumulation_ratio",
+      "raw_value": "brain/blood accumulation ratio"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood Al ratio"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/Blood Alcohol Ratio"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood alcohol ratio"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood ammonia concn. ratio"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood and muscle concentration ratio"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood boron concentration ratio"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood chloride concentration ratio"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "Brain/blood concentration ratio"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood concentration ratio"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "Brain/blood concn ratio"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_to_blood_content_ratio",
+      "raw_value": "brain/blood content ratio"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_to_blood_distribution_ratio",
+      "raw_value": "brain/blood distribution"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_to_blood_distribution_ratio",
+      "raw_value": "brain/blood distribution ratio"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_to_blood_distribution_ratio",
+      "raw_value": "brain/blood distribution ratios of 10B"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood drug ratio"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood ethanol concentration ratio"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood ethanol ratio"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood EtOH concentration ratio"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "brain_to_blood_exposure_ratio",
+      "raw_value": "brain/blood exposure ratio"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "brain/blood free concentration ratio"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "brain_to_blood_glucose_ratio",
+      "raw_value": "brain/blood glucose level ratio"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "brain_to_blood_glucose_ratio",
+      "raw_value": "Brain/Blood glucose ratio"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/Blood lactate ratio"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood lactate ratio"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood level"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood level ratio"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood levels"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood levels ratio"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood lithium concentration ratio"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood max"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood mean ratio"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood or brain/liver concentration ratio"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_to_blood_partial_pressure_ratio",
+      "raw_value": "Brain/blood partial press. ratio"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_to_blood_partial_pressure_ratio",
+      "raw_value": "brain/blood partial pressure ratio"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood peak ratio"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood propofol concentration ratio"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/Blood Ratio"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/Blood ratio"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/blood ratio"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood ratio"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/blood ratio (%)"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood ratio (B/B)"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/blood ratio (total tissue)"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "Brain/blood ratio (unbound)"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/Blood ratio at 30 min"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood ratio of Hg"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood ratio of mercury concentration"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood ratio of the PGD₂ concentration"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood ratios"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood THC ratio"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain/blood THC ratios"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain/blood theobromine concentrations ratio"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "brain/blood unbound concentration ratio"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "brain_to_blood_uptake_ratio",
+      "raw_value": "Brain/blood uptake ratio"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "brain_to_blood_uptake_ratio",
+      "raw_value": "brain/blood uptake ratio"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "brain_to_blood_uptake_ratio",
+      "raw_value": "brain/blood uptake ratios"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood value"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "brain_to_cerebral_venous_blood_ratio",
+      "raw_value": "brain/cerebral venous blood ratio"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "brain_to_circulating_blood_concentration_ratio",
+      "raw_value": "brain/circulation concentration ratio"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "brain_to_femoral_blood_concentration_ratio",
+      "raw_value": "brain/femoral blood concentration ratio"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "brain_to_whole_blood_concentration_ratio",
+      "raw_value": "brain/full blood concentration ratio"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "brain_to_liver_concentration_ratio",
+      "raw_value": "Brain/liver concentration ratio"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "brain_to_maternal_blood_concentration_ratio",
+      "raw_value": "brain/maternal blood concentration ratio"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "brain_to_maternal_blood_ratio",
+      "raw_value": "brain/maternal blood level ratio"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_to_perfusion_ratio",
+      "raw_value": "brain/perfusion ratio"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "brain_to_peripheral_blood_concentration_ratio",
+      "raw_value": "brain/peripheral blood concentration ratio"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "brain_to_peripheral_blood_glucose_concentration_ratio",
+      "raw_value": "brain/peripheral blood glucose concentration ratio"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "brain_to_peripheral_blood_ratio",
+      "raw_value": "brain/peripheral blood levels"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "brain_to_vascular_concentration_ratio",
+      "raw_value": "brain/vascular concentration ratio"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "brain_to_venous_blood_ratio",
+      "raw_value": "brain/venous blood alcohol ratio"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "brain_to_venous_blood_concentration_ratio",
+      "raw_value": "brain/venous blood concentration ratio"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "brain_to_venous_blood_ratio",
+      "raw_value": "brain/venous blood ethanol ratio"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "brain_to_whole_blood_concentration_ratio",
+      "raw_value": "brain/whole blood concentration ratio"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain: blood ammonia concentration ratios"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain: blood concentration ratio"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain: Blood ratio"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain: blood ratio"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain: blood ratio"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain: blood ratios"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "brain_to_arterial_blood_concentration_ratio",
+      "raw_value": "brain:arterial blood concentration ratio"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "brain_to_blood_activity_concentration_ratio",
+      "raw_value": "brain:blood 11C-activity concentration ratio"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain:blood ammonia ratio"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain:blood boron concentration ratio"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain:blood concentration ratio"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "brain_to_blood_exposure_ratio",
+      "raw_value": "brain:blood exposure ratio"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "brain_to_blood_glucose_ratio",
+      "raw_value": "brain:blood glucose ratio"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "brain_to_blood_partition_ratio",
+      "raw_value": "brain:blood partition ratio"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain:Blood ratio"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain:blood ratio"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain:blood ratio"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain:blood ratios"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain:blood ¹⁰B ratio"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain[leucine]/blood[leucine] ratio"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brainto-blood ratio"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "brain–blood and spinal cord–blood concentration ratio"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain–blood Ratio"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain–blood ratio"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain–blood ratio"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain–blood ratios"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "brain_to_blood_uptake_ratio",
+      "raw_value": "brain–blood uptake ratio"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain₂ min/blood₂ min ratio"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "cerebral_to_blood_distribution_ratio",
+      "raw_value": "cerebral blood distribution ratio"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "cerebral_to_blood_concentration_ratio",
+      "raw_value": "cerebral concentration / blood concentration ratio"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "cerebral_to_maternal_blood_concentration_ratio",
+      "raw_value": "cerebral concentration / maternal blood concentration ratio"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "cerebral_to_systemic_blood_ratio",
+      "raw_value": "cerebral-to-systemic blood ratio"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "cerebral_to_blood_concentration_ratio",
+      "raw_value": "cerebral/blood concentration ratio"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "cerebral_to_blood_ratio",
+      "raw_value": "cerebral/blood value ratio"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "cerebral_to_total_plasma_ratio",
+      "raw_value": "cerebral:total plasma phenytoin ratio"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "Conc. ratio brain:blood"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "telencephalon_to_serum_concentration_ratio",
+      "raw_value": "concentration ratio (telencephalon/serum)"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "concentration ratio between blood and brain"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "concentration ratio between the blood and brain"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "brain_to_blood_activity_concentration_ratio",
+      "raw_value": "counts/gm in the brain slices relative to blood"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "csf_brain_to_blood_exposure_ratio",
+      "raw_value": "CSF/brain-to-blood ratio of exposure"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "brain_to_blood_steady_state_concentration_ratio",
+      "raw_value": "Css ratio of brain to blood"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "Cu,brain/Cu,blood ratio"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "diencephalon_to_blood_ratio",
+      "raw_value": "diencephalon to blood ratio"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "blood_cerebral_cortex_level_difference",
+      "raw_value": "difference in blood and cerebral cortex levels"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "blood_brain_distribution_coefficient",
+      "raw_value": "distribution coefficient between the brain and blood"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "equilibration brain to blood ratio"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "equilibrium brain-to-blood ratio"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "blood_brain_exchange_rate",
+      "raw_value": "exchange rate between the blood and brain"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "blood_to_brain_extraction_ratio",
+      "raw_value": "extraction ratio (from blood to brain)"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "fetal_brain_to_fetal_blood_ratio",
+      "raw_value": "Fetal brain/fetal blood ratio"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "fetal_brain_to_maternal_blood_concentration_ratio",
+      "raw_value": "fetal brain/maternal blood concentration ratio"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "blood_brain_extraction_fraction",
+      "raw_value": "fraction toward equilibrium between brain and blood during a single microcirculatory passage"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "free [brain]/[blood] ratio"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "frontal_lobe_to_blood_ratio",
+      "raw_value": "frontal lobe-to-blood ammonia ratio"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "frontal_lobe_to_blood_ratio",
+      "raw_value": "frontal lobe/blood ratio"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "frontal_lobe_to_femoral_blood_ratio",
+      "raw_value": "frontal lobe/femoral blood ratio"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "blood_brain_equilibration_half_life",
+      "raw_value": "half-lives of equilibration between blood and the brain"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "hypothalamus_to_blood_concentration_ratio",
+      "raw_value": "hypothalamic / circulating concentration ratio"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "hypothalamus_to_peripheral_organ_concentration_ratio",
+      "raw_value": "hypothalamus/peripheral organ concentration ratio"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ID ratios of brain/blood"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "increase in the brain, compared with the blood"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Kp (brain/ blood concentration ratio)"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "levels in brain vs blood"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "liver_to_brain_concentration_ratio",
+      "raw_value": "liver/brain concentration ratio"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "logbb",
+      "raw_value": "LogBB (Blood Brain Distribution)"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "logbb",
+      "raw_value": "logBB (Brain-Blood Distribution)"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "maternal_brain_to_maternal_blood_ratio",
+      "raw_value": "Maternal brain/maternal blood ratio"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "mean brain/blood ammonia ratio"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "mean brain:blood concentration ratio"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "medulla_to_blood_ratio",
+      "raw_value": "medulla/blood ratio"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Mepivacaine Brain-to-Blood Ratio"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "mouse brain:blood ratio"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "nervous_tissue_to_blood_concentration_ratio",
+      "raw_value": "nervous tissue/blood concentration ratio"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "normal brain levels as % of blood levels"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "brain_to_whole_blood_ratio",
+      "raw_value": "normal brain to whole blood ratio"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "logbb",
+      "raw_value": "observed logarithms of brain/blood concentration ratios"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Overall brain/blood ratio"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "blood_to_brain_transfer_coefficient_percent_difference",
+      "raw_value": "percent difference in blood-to-brain transfer coefficients (Ki)"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "brain_to_blood_return_percentage",
+      "raw_value": "percentage return from brain to blood"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "peripheral_blood_to_brain_concentration_ratio",
+      "raw_value": "peripheral blood/brain concentration ratio"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "permeability_ratio",
+      "raw_value": "permeability coefficient ratio (brain-to-blood / blood-to-brain)"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "rat brain/blood ratio"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "blood_brain_equilibration_rate_constant",
+      "raw_value": "rate constant of blood-brain equilibration (keo)"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Ratio (blood/brain)"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Ratio (brain/blood)"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio between blood and brain levels"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "ratio between the blood and brain ethanol concentrations"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "brain_to_blood_unbound_steady_state_concentration_ratio",
+      "raw_value": "ratio between the unbound concentration of M6G in the brain to that in blood at steady state"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "Ratio Blood/Brain"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Ratio Brain/blood"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Ratio brain/blood"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio brain/blood"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio for concentration of RHT in the brain/blood"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Ratio of 99mTcO4- in brain: blood x 10^-3"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "ratio of areas under the curve for brain and blood"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "blood_to_brain_glucose_transport_to_cerebral_glucose_metabolism_ratio",
+      "raw_value": "ratio of blood-to-brain glucose transport to cerebral glucose metabolism"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "ratio of boron in blood to normal brain tissue"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "brain_ecf_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain extracellular to blood concentrations"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain lorlatinib concentration to blood concentration"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of brain tissue levels (intra-arterial versus intravenous infusion)"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of brain to blood"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain to blood ammonia concentrations"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain to blood concentration"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain to blood concentrations"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of brain to blood GT1061"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of brain to blood levels"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of brain to blood NH4"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of brain to blood nicotine levels"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain to blood Phe concentrations"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of brain to blood toluene level"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "brain_to_serum_concentration_ratio",
+      "raw_value": "ratio of brain to serum bilirubin concentration"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain-blood concentration"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Ratio of Brain/Blood"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain/blood concentration"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of brain/blood concentrations"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "cerebral_to_blood_activity_ratio",
+      "raw_value": "ratio of cerebral tissue activity per gram to blood activity per gram"
+    },
+    {
+      "item_id": "v0399",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of concentration in brain vs blood"
+    },
+    {
+      "item_id": "v0400",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of concentration in the brain relative to its concentration in blood"
+    },
+    {
+      "item_id": "v0401",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of concentration of MK1775 in brain to blood"
+    },
+    {
+      "item_id": "v0402",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "ratio of mercury concentration in blood to that in brain"
+    },
+    {
+      "item_id": "v0403",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of mercury concentration in brain to that in blood"
+    },
+    {
+      "item_id": "v0404",
+      "provisional_endpoint": "brain_to_blood_content_ratio",
+      "raw_value": "ratio of mercury content in the brain to that of the blood"
+    },
+    {
+      "item_id": "v0405",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of mercury levels in brain to blood"
+    },
+    {
+      "item_id": "v0406",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "ratio of mercury values between the blood and brain"
+    },
+    {
+      "item_id": "v0407",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of mg/g of brain tissue to µg/ml of blood"
+    },
+    {
+      "item_id": "v0408",
+      "provisional_endpoint": "specific_activity_ratio",
+      "raw_value": "ratio of specific activity in the brain to blood"
+    },
+    {
+      "item_id": "v0409",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of the amount of CsA in 1 g brain tissue/1 ml blood"
+    },
+    {
+      "item_id": "v0410",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "ratio of the area under the concentration-time curve of AZT for brain to that for blood"
+    },
+    {
+      "item_id": "v0411",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of the brain and blood ethanol concentration"
+    },
+    {
+      "item_id": "v0412",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of the concentration in brain and blood"
+    },
+    {
+      "item_id": "v0413",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "ratio of the concentration in the brain (cortex) to that in blood"
+    },
+    {
+      "item_id": "v0414",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "ratio of the concentration in whole blood to that in brain"
+    },
+    {
+      "item_id": "v0415",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of the mercury level in the brain to that of the blood"
+    },
+    {
+      "item_id": "v0416",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "ratio of the unbound concentration of M3G in brain to that in blood"
+    },
+    {
+      "item_id": "v0417",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "ratio of unbound codeine in the brain to unbound codeine in the blood"
+    },
+    {
+      "item_id": "v0418",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "ratio of unbound concentration in the brain to that of blood"
+    },
+    {
+      "item_id": "v0419",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "ratio of unbound concentrations in brain and blood"
+    },
+    {
+      "item_id": "v0420",
+      "provisional_endpoint": "brain_ecf_to_blood_unbound_ratio",
+      "raw_value": "ratio of unbound M3G in brain ECF to blood"
+    },
+    {
+      "item_id": "v0421",
+      "provisional_endpoint": "striatum_to_blood_ratio",
+      "raw_value": "Ratio striatum/blood"
+    },
+    {
+      "item_id": "v0422",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Ratio: Brain/Blood"
+    },
+    {
+      "item_id": "v0423",
+      "provisional_endpoint": "cerebral_glucose_gain_to_plasma_glucose_ratio",
+      "raw_value": "ratio: cerebral glucose gain plasma glucose"
+    },
+    {
+      "item_id": "v0424",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "RT brain/blood ratio"
+    },
+    {
+      "item_id": "v0425",
+      "provisional_endpoint": "brain_blood_slope",
+      "raw_value": "slope over the linear relationship between brain and blood levels"
+    },
+    {
+      "item_id": "v0426",
+      "provisional_endpoint": "specific_activity_ratio",
+      "raw_value": "specific activity ratio (brain/blood)"
+    },
+    {
+      "item_id": "v0427",
+      "provisional_endpoint": "brain_to_blood_steady_state_ratio",
+      "raw_value": "steady-state brain/blood ratio"
+    },
+    {
+      "item_id": "v0428",
+      "provisional_endpoint": "brain_to_blood_steady_state_ratio",
+      "raw_value": "steady-state brain:blood ratio"
+    },
+    {
+      "item_id": "v0429",
+      "provisional_endpoint": "striatal_ecf_to_blood_concentration_ratio",
+      "raw_value": "striatal extracellular/blood concentration ratio"
+    },
+    {
+      "item_id": "v0430",
+      "provisional_endpoint": "striatum_to_blood_ratio",
+      "raw_value": "striatum to blood ratio"
+    },
+    {
+      "item_id": "v0431",
+      "provisional_endpoint": "striatum_to_blood_ratio",
+      "raw_value": "striatum-to-blood ratio"
+    },
+    {
+      "item_id": "v0432",
+      "provisional_endpoint": "striatum_to_blood_ratio",
+      "raw_value": "Striatum/blood ratio"
+    },
+    {
+      "item_id": "v0433",
+      "provisional_endpoint": "striatum_to_blood_ratio",
+      "raw_value": "striatum/blood ratio at steady state"
+    },
+    {
+      "item_id": "v0434",
+      "provisional_endpoint": "striatum_to_blood_ratio",
+      "raw_value": "striatum:blood ratio"
+    },
+    {
+      "item_id": "v0435",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Te (brain/blood drug ratio)"
+    },
+    {
+      "item_id": "v0436",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "tissue:blood ratio for brain"
+    },
+    {
+      "item_id": "v0437",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "total and free brain/blood ratio"
+    },
+    {
+      "item_id": "v0438",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "total blood:- brain ration"
+    },
+    {
+      "item_id": "v0439",
+      "provisional_endpoint": "brain_to_blood_concentration_ratio",
+      "raw_value": "total brain/blood concentration ratio"
+    },
+    {
+      "item_id": "v0440",
+      "provisional_endpoint": "blood_brain_clearance",
+      "raw_value": "total weighted blood-brain clearance"
+    },
+    {
+      "item_id": "v0441",
+      "provisional_endpoint": "brain_ecf_to_total_blood_ratio",
+      "raw_value": "unbound brain ECF / total blood ratio"
+    },
+    {
+      "item_id": "v0442",
+      "provisional_endpoint": "brain_ecf_to_blood_unbound_ratio",
+      "raw_value": "unbound brain ECF / unbound blood ratio"
+    },
+    {
+      "item_id": "v0443",
+      "provisional_endpoint": "brain_to_blood_unbound_steady_state_concentration_ratio",
+      "raw_value": "unbound brain to blood steady-state concentration ratio"
+    },
+    {
+      "item_id": "v0444",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "unbound brain/blood concentration ratio"
+    },
+    {
+      "item_id": "v0445",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "unbound brain/blood ratio"
+    },
+    {
+      "item_id": "v0446",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "unbound brain/blood ratios"
+    },
+    {
+      "item_id": "v0447",
+      "provisional_endpoint": "brain_isf_to_blood_unbound_concentration_ratio",
+      "raw_value": "unbound concentration ratio (brain ISF/blood)"
+    },
+    {
+      "item_id": "v0448",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "unbound concentration ratio (brain/blood)"
+    },
+    {
+      "item_id": "v0449",
+      "provisional_endpoint": "brain_isf_to_blood_unbound_concentration_ratio",
+      "raw_value": "unbound concentration ratio between brain ISF and blood"
+    },
+    {
+      "item_id": "v0450",
+      "provisional_endpoint": "brain_to_blood_unbound_concentration_ratio",
+      "raw_value": "unbound concentrations (brain/blood ratio)"
+    },
+    {
+      "item_id": "v0451",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "unbound erinacine A fractions in brain to blood ratio"
+    },
+    {
+      "item_id": "v0452",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "unbound, steady-state brain-to-blood-ratio"
+    }
+  ],
+  "cluster_id": "cluster_63bb41319f7106cd",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

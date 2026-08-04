@@ -1,0 +1,1182 @@
+{
+  "assignment_count": 235,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "percent_delivered_dose",
+      "raw_value": "% delivered dose"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "percent_dose",
+      "raw_value": "% Dose"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "percent_dose",
+      "raw_value": "% dose"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "percent_dose_permeation",
+      "raw_value": "% dose permeation"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "percent_dose_recovered",
+      "raw_value": "% dose recovered"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "percent_dose_uptake",
+      "raw_value": "% dose uptake"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "max_percent_dose_per_ml_tissue",
+      "raw_value": "% dose/cm3 (peak)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "% Dose/g"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "% dose/g"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "percent_dose_per_gram_organ",
+      "raw_value": "% dose/g organ"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "% Dose/g tissue"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "% dose/g tissue"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "% dose/gm."
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "percent_dose_per_organ",
+      "raw_value": "% dose/organ"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "drug_transport_percentage",
+      "raw_value": "% DTP (drug transport percentage)"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% inj dose/g of tissue"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "percent_injected_activity_per_gram_tissue",
+      "raw_value": "% Injected activity/g"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "% injected dose"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose (ID) per gram tissue"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "percent_injected_dose_per_brain_weight",
+      "raw_value": "% injected dose (ID)/brain weight (g)"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose (ID)/g"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% Injected dose / g wet tissue"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% Injected dose per gram"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose per gram"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose per gram (D/g) wet tissue"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose per gram of wet tissue"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose per gram of wet tissue (%ID/g)"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "percent_injected_dose_per_organ",
+      "raw_value": "% Injected dose per organ"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "percent_injected_dose_per_ml_tissue",
+      "raw_value": "% injected dose/cc"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose/g"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose/g of tissue"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% Injected dose/g tissue"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose/g tissue (x 10-3)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% injected dose/g wet weight"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% Injected Dose/gm"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "percent_injected_dose_per_ml_tissue",
+      "raw_value": "% injected dose/ml"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "percent_injected_dose_per_organ",
+      "raw_value": "% Injected dose/organ"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% Injection dose/g tissue"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "percent_injected_dose_per_organ",
+      "raw_value": "% Injection dose/organ"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "percent_lca_dose_recovered_per_gram_tissue",
+      "raw_value": "% LCA Dose (recovered per gram of tissue)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "percent_administered_dose",
+      "raw_value": "% of administered dose"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "percent_administered_dose_incorporated",
+      "raw_value": "% of administered dose incorporated"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "percent_administered_dose",
+      "raw_value": "% of administrated dose"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "percent_administered_dose_per_gram_tissue",
+      "raw_value": "% of Administrated dose per g wet weight"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "percent_label_injected",
+      "raw_value": "% of amount of label injected"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "percent_dose",
+      "raw_value": "% of dose"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "% of dose per gram"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "percent_dose_per_kg_fresh_tissue",
+      "raw_value": "% of dose/kg fresh tissue"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "% of injected dose"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "% of injected dose (ID)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "percent_injected_dose_per_100_ml_tissue",
+      "raw_value": "% of injected dose per 100 ml tissue"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% of injected dose per gram of tissue"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% of injected dose per gram of wet tissue"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% of injected dose per gram wet tissue"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "percent_injected_dose_recovered",
+      "raw_value": "% of injected dose recovered"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% of injected dose/g tissue"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% of injected dose/gm tissue"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% of injected dose/gram of tissue"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "percent_injected_radioactivity",
+      "raw_value": "% of injected radioactivity"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% of Injected ⁶⁴Cu Dose/Gram Tissue"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "percent_intravenously_given_dose_crossing_bbb",
+      "raw_value": "% of intravenously given dose crossing BBB"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% of Intravenously Injected Digoxin-³H per Gram of Tissue"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "percent_labeled_dose",
+      "raw_value": "% of labeled dose"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "percent_administered_dose",
+      "raw_value": "% of the administered dose"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "percent_administered_dose_per_organ",
+      "raw_value": "% of the administered dose/total organ"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "percent_dose",
+      "raw_value": "% of the dose"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "percent_administered_dose_per_gram_tissue",
+      "raw_value": "% of the dose administered/g wet wt"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "percent_initial_dose_recovered",
+      "raw_value": "% of the initial dose recovered"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "% of the injected dose"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "% of the total injected dose"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "percent_dose_recovered",
+      "raw_value": "% of total AmB dose recovered"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "% of total DFP injected"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "percent_injected_radioactivity",
+      "raw_value": "% of total injected radioactivity"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "percent_total_dose",
+      "raw_value": "% total dose"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "max_total_dose_per_gram_tissue",
+      "raw_value": "% Total dose/gram tissue at maximum concentration"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "% total injected dose"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "% total sucrose injected/g tissue"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "%dose/g"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "percent_dose_per_gram_organ",
+      "raw_value": "%Dose/g organ"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "percent_dose_per_organ",
+      "raw_value": "%dose/organ"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "absorbed_dose",
+      "raw_value": "Absorbed dose"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "activity_normalized_to_injected_dose_and_body_weight",
+      "raw_value": "Activity (normalized to injected dose and body weight)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "administered_dose",
+      "raw_value": "administered dose"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "percent_administered_dose",
+      "raw_value": "Administered dose (%)"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "amount_delivered_drug",
+      "raw_value": "amount of delivered drug"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "amount_injected_dose_crossing_bbb",
+      "raw_value": "amount of injected dose crossing the BBB"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "percent_injected_dose_per_l_csf",
+      "raw_value": "average percent of injected dose/L in CSF"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "percent_dose_in_organ",
+      "raw_value": "Average percentage of dose reached in each organ (%)"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "cd_percent_dose",
+      "raw_value": "Cd (% dose)"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "percent_dose_distribution",
+      "raw_value": "Distribution (% of dose)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "dose_ratio_intravenous_vs_central",
+      "raw_value": "dose ratio (intravenous vs central)"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "dose_per_organ",
+      "raw_value": "dose/organ"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "drug_distribution_coefficient",
+      "raw_value": "drug distribution coefficient"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "percent_drug_recovery",
+      "raw_value": "drug recovery percentage"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "drug_targeting_efficiency",
+      "raw_value": "Drug targeting efficiency (%DTE)"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "drug_transport_percentage",
+      "raw_value": "drug transport percentage (DTP)"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "equivalence_dose_ratio",
+      "raw_value": "equivalence dose-ratio"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "injected_dose_estimation",
+      "raw_value": "estimation of injected dose"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "injected_dose_exposure_at_tmax",
+      "raw_value": "exposure of injected dose at Tmax"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "percent_extraction_relative_to_antipyrine",
+      "raw_value": "Extraction percentage (relative to antipyrine)"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "fraction_administered_dose_crossing_bbb",
+      "raw_value": "fraction of administered dose crossing the BBB"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "fraction_injected_dose_per_gram_tissue",
+      "raw_value": "fraction of injected dose/g × 10⁵"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "in_vitro_rate",
+      "raw_value": "in vitro rates"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "injected_dose",
+      "raw_value": "injected dose"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "injected_dose_per_gram_tissue",
+      "raw_value": "injected dose per gram"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "injected_dose_per_gram_tissue",
+      "raw_value": "Injected Dose per Gram of Tissue"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "injected_dose_per_gram_tissue",
+      "raw_value": "injected dose per gram of wet tissue"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "injected_dose_per_gram_tissue",
+      "raw_value": "injected dose per gram tissue"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "injected_dose_per_gram_tissue",
+      "raw_value": "injected dose/g"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "injected_dose_per_gram_tissue",
+      "raw_value": "injected dose/gram (ID/g)"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "percent_injected_dose_in_organ",
+      "raw_value": "Injected ³H in organ (%)"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "injection_dose_per_ml_tissue",
+      "raw_value": "injection dose/mL"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "total_administered_radioactivity_labeling",
+      "raw_value": "labeling (percentage of total administered radioactivity)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "max_percent_injected_dose_per_gram_tissue",
+      "raw_value": "Max. % of Injected Cu Per g Tissue"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "max_percent_injected_dose_per_ml_tissue",
+      "raw_value": "maximum percent injection dose per cubic centimeter (% ID/cc)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "max_uptake_percent_total_injected_radioactivity",
+      "raw_value": "maximum uptake (% of total injected radioactivity)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "Mean % injected dose/g tissue"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "mean percent injected dose/g"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "nci_per_cc_per_mci_injected_dose",
+      "raw_value": "nCi/cc/mCi of injected dose"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "percent_gram_tissue_per_gram_dose",
+      "raw_value": "Per cent gram tissue/gram dose"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "per cent injected dose"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "per cent injected dose/g tissue"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "Per cent of injected dose/gram of tissue"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "percent_recovered_dose_per_organ",
+      "raw_value": "per cent of recovered dose per total organ"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "per cent of the dose per gram of tissue"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "percent_injected_dose_uptake",
+      "raw_value": "per cent of the injected dose taken up"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "percent_delivered_dose",
+      "raw_value": "percent delivered dose"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "percent_dose",
+      "raw_value": "Percent Dose"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "percent_administered_dose_per_gram_tissue",
+      "raw_value": "percent dose administered per gram of tissue"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "percent dose per gram fresh tissue"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "percent_dose_recovered",
+      "raw_value": "Percent dose recovered"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "percent_dose_transport",
+      "raw_value": "percent dose transport"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "percent dose/g tissue"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "percent_drug_recovered",
+      "raw_value": "Percent drug recovered"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "percent_drug_recovered",
+      "raw_value": "Percent drugs recovered"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "fraction_injected_dose",
+      "raw_value": "Percent fraction of injected dose"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "percent injected dose"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percent injected dose per gram"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "Percent Injected Dose per Gram of Tissue"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percent injected dose per gram of tissue"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percent injected dose per gram of wet tissue"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "percent_injected_dose_per_organ",
+      "raw_value": "Percent injected dose per organ"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "percent_injected_dose_per_gram_organ",
+      "raw_value": "Percent injected dose/gm organ"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "Percent Injected Dose/Gram"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "Percent injected dose/gram of tissue"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "percent_injection_dose_per_gram_tissue",
+      "raw_value": "Percent injection dose/gram tissue"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "percent_administered_dose",
+      "raw_value": "Percent of administered dose"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "percent_administered_dose",
+      "raw_value": "percent of administered dose"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "percent_dose",
+      "raw_value": "percent of dose"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "percent_injected_dose_crossing_bbb",
+      "raw_value": "percent of injected dose crossing the BBB"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "percent_injected_dose_per_region",
+      "raw_value": "Percent of injected dose per region"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "percent_injected_radioactivity",
+      "raw_value": "percent of radioactivity injected"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "percent_administered_dose_per_gram_or_ml_tissue",
+      "raw_value": "Percent of the Administered Dose per g or ml of Tissue"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "percent_dose_transport",
+      "raw_value": "percent of the dose transported"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "percent_initial_injection_per_tissue_weight",
+      "raw_value": "Percent of the initial injection per tissue weight"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percent of the injected dose per g"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percent of the injected dose per gram"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "percent_total_dose",
+      "raw_value": "percent of total dose"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "percent_tissue_tryptamine",
+      "raw_value": "percent tissue tryptamine"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "percent_injected_dose_per_organ",
+      "raw_value": "percent-injected dose/organ"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "percent_accumulated_dose",
+      "raw_value": "percentage accumulated dose"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "percent_dose_per_gram_tissue",
+      "raw_value": "percentage dose/g"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "Percentage injected dose"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "percent_injected_dose_per_gram_striatum",
+      "raw_value": "percentage injected dose per g in the striatal area"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage injected dose per gram"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage injected dose per gram of tissue"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "percent_injected_dose_per_gram_organ_or_tissue",
+      "raw_value": "Percentage injected dose/gram of organ/tissue"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "percent_absorbed_dose_crossing_bbb",
+      "raw_value": "percentage of absorbed dose crossing BBB"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "percent_absorbed_drug_remaining_in_systemic_circulation",
+      "raw_value": "percentage of absorbed drug remaining in the systemic circulation"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "percent_administered_amount",
+      "raw_value": "percentage of administered amount"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "percent_administered_dose",
+      "raw_value": "percentage of administered dose"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "percent_administered_dose_crossing_bbb",
+      "raw_value": "percentage of administered dose crossing BBB"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "percent_administered_dose_per_gram_tissue",
+      "raw_value": "percentage of administered dose per gram of tissue"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "percent_administered_dose_uptake_per_gram_tissue",
+      "raw_value": "percentage of administered dose taken up per g"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "percent_administered_drug_crossing_bbb",
+      "raw_value": "percentage of administered drug crossing BBB"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "percent_administered_dose_retained",
+      "raw_value": "Percentage of administered ³H-melatonin retained (1 × 10⁻³)"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "percent_injected_amount_remaining_in_organ",
+      "raw_value": "Percentage of amount injected remaining in organ after 2 hours"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "percent_apical_dose_appearing_in_basolateral_chamber",
+      "raw_value": "percentage of apical dose appearing in the basolateral chamber"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "percent_blood_14c_methylhistamine",
+      "raw_value": "percentage of blood [¹⁴C]methylhistamine"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "percent_dose",
+      "raw_value": "percentage of dose"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "percent_dose_in_organ",
+      "raw_value": "Percentage of dose in organ"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "percent_dose_per_kg_sample",
+      "raw_value": "Percentage of Dose/kg. of Sample Normalized to 70 kg. of Body Weight"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "percent_drug_crossing_bbb",
+      "raw_value": "percentage of drug crossing the BBB"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "percent_plasma_drug_crossing_bbb",
+      "raw_value": "percentage of drug in plasma crossing the BBB"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "percent_exchangeable_drug_penetrating_bbb",
+      "raw_value": "percentage of exchangeable drug penetrate the BBB"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "percent_exchangeable_drug_transport_in_vivo",
+      "raw_value": "percentage of exchangeable drug transported in vivo"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "percent_free_drug_crossing_bbb",
+      "raw_value": "percentage of free drug crossing the BBB"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "percent_plasma_free_drug_crossing_bbb",
+      "raw_value": "percentage of free drug in plasma crossing the BBB"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "percent_ingested_dose_available_after_bbb_diffusion",
+      "raw_value": "percentage of ingested dose available after BBB diffusion"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "percent_initial_dose",
+      "raw_value": "percentage of initial dose"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "percent_initial_dose_recovered_per_gram_tissue",
+      "raw_value": "Percentage of initial dose recovered per gram tissue [x103]"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "Percentage of injected dose"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "percent_injected_dose",
+      "raw_value": "percentage of injected dose"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "percent_injected_dose_crossing_bbb",
+      "raw_value": "percentage of injected dose crossing the BBB"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "percent_injected_dose_in_csf",
+      "raw_value": "percentage of injected dose in CSF"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage of injected dose per gram"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage of injected dose per gram (% ID/g)"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage of injected dose per gram of tissue"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage of injected dose per gram of wet weight"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage of injected dose per gram tissue"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "percent_injected_dose_per_ml_tissue",
+      "raw_value": "percentage of injected dose per mL tissue volume"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "percent_injected_dose_crossing_bbb",
+      "raw_value": "percentage of injected GSH that could pass the BBB"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage of injected tritium per g wet tissue"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "percent_intravenously_injected_dose_crossing_bbb",
+      "raw_value": "percentage of intravenously injected endotoxin that could cross the BBB"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "percent_original_dose",
+      "raw_value": "percentage of original dose"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "percent_parenterally_administered_dose_crossing_bbb",
+      "raw_value": "percentage of parenterally administered dose crossing the BBB"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "percent_plasma_drug_concentrations",
+      "raw_value": "percentage of plasma drug concentrations"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "percent_plasma_drug_crossing_bbb",
+      "raw_value": "percentage of plasma drug crossing the BBB"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "percent_systemically_administered_drug_penetrating_bbb",
+      "raw_value": "percentage of systemically administered drug penetrating the BBB"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "percent_administered_dose",
+      "raw_value": "percentage of the administered dose"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "percent_injected_dose_per_gram_tissue",
+      "raw_value": "percentage of the dose injected per g of tissue"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "percent_drug_crossing_bbb",
+      "raw_value": "percentage of the drug to cross the BBB"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "percent_injected_dose_per_organ",
+      "raw_value": "Percentage of the injected dose per organ"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "percent_total_administered_dose_reaching_active_site",
+      "raw_value": "percentage of total administered dose reaching active site"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "percent_total_ala_in_body",
+      "raw_value": "Percentage of total ALA in the body"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "percent_total_cases_with_extravasation",
+      "raw_value": "percentage of total cases with extravasation"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "percent_injected_radioactivity",
+      "raw_value": "percentage of total injected radioactivity"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "percent_reaching_basolateral_compartment",
+      "raw_value": "percentage reaching basolateral compartment"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "percent_initial_dose_uptake",
+      "raw_value": "percentage uptake of the initial dose"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "percent_injected_dose_per_mg",
+      "raw_value": "Percentage X 10-4 of Injected Rb86/mg"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "percent_injected_dose_per_gram_striatum",
+      "raw_value": "percentages of the injected dose/gram of striatum"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "dose_normalized_auc_ratio_complex_vs_suspension",
+      "raw_value": "Ratio of dose-normalized AUC₀→t (complex vs suspension)"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "ratio_percent_dose_per_gram_striatum_to_percent_dose_per_ml_plasma",
+      "raw_value": "ratio of percent dose per g of striatum to percent dose per ml of plasma"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "head_counts_to_standardized_injected_dose_ratio",
+      "raw_value": "ratio of total number of counts in the head to the standardized injected dose"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "retained_dose",
+      "raw_value": "retained dose"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "original_dose_retention",
+      "raw_value": "retention of original dose"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "single_pass_clearance_percentage_relative_to_tritiated_water_standard",
+      "raw_value": "single-pass clearance of drug as a percentage of a simultaneously injected tritiated water internal standard"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "total_percent_dose_per_l",
+      "raw_value": "Total (% Dose/L 50-70 min)"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "total_injected_dose_extracted",
+      "raw_value": "total injected dose extracted"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "percent_injected_dose_recovery_total",
+      "raw_value": "total recovery percentage of the injection dose"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "percent_dose_uptake_per_gram_tissue",
+      "raw_value": "Uptake (% dose/g)"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "percent_dose_uptake_per_gram_tissue",
+      "raw_value": "Uptake (%dose/g)"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "injected_activity_uptake",
+      "raw_value": "uptake of injected activity"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "injected_dose_uptake",
+      "raw_value": "uptake of injected dose"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "percent_dose_uptake_per_gram_tissue",
+      "raw_value": "Uptake percentage of dose per gram of tissue"
+    }
+  ],
+  "cluster_id": "cluster_b4b44e07e6328036",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

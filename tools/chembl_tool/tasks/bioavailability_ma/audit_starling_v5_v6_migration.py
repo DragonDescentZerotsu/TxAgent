@@ -24,7 +24,7 @@ DEFAULT_AUXILIARY_MANIFEST = (
 )
 DEFAULT_OUTPUT = (
     EVIDENCE_ROOT
-    / "starling_normalized_v6/08_audits/v5_v6_migration/migration_summary.json"
+    / "starling_normalized_v6/09_audits/v5_v6_migration/migration_summary.json"
 )
 
 HEURISTIC_FIELDS = (

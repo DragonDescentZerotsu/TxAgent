@@ -1,0 +1,1292 @@
+{
+  "assignment_count": 257,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "% standardized uptake value (% SUV)"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "14c_uptake",
+      "raw_value": "14C uptake"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "uptake_ratio",
+      "raw_value": "2-to-30 min uptake ratio"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "uptake_ratio",
+      "raw_value": "2-to-60 min uptake ratio"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "59fe_uptake",
+      "raw_value": "59Fe uptake"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "face_uptake",
+      "raw_value": "[¹⁸F]FACE uptake"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "abluminal_uptake",
+      "raw_value": "abluminal uptake"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "absolute_uptake",
+      "raw_value": "absolute uptake"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "activity_uptake",
+      "raw_value": "activity uptake"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "uptake_increase",
+      "raw_value": "Activity/uptake increased"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "adjusted_uptake",
+      "raw_value": "Adjusted Uptake"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "abluminal_uptake",
+      "raw_value": "antiluminal uptake"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "initial_uptake_clearance",
+      "raw_value": "apparent initial uptake clearance"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "leucine_uptake_rate",
+      "raw_value": "apparent rate of leucine uptake"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "glutamic_acid_uptake",
+      "raw_value": "average glutamic acid uptake"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "gross_uptake",
+      "raw_value": "average gross uptake"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "uptake",
+      "raw_value": "average uptake"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "uptake_rate",
+      "raw_value": "basal uptake rates"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "basolateral_uptake",
+      "raw_value": "basolateral uptake"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "blood_uptake_index",
+      "raw_value": "blood uptake index"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "bm_uptake",
+      "raw_value": "BM uptake"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "blood_uptake_index",
+      "raw_value": "BUI uptake"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "capillary_uptake",
+      "raw_value": "capillary uptake"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "cell_to_medium_uptake_ratio",
+      "raw_value": "cell-to-medium ratio of uptake"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "cellular_uptake",
+      "raw_value": "cellular uptake"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "cerebrum_uptake",
+      "raw_value": "cerebrum uptake"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "uptake_change",
+      "raw_value": "change in uptake"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "Cl_uptake"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "CL~uptake~"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "colchicine_uptake",
+      "raw_value": "Colchicine uptake"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "continuous_uptake",
+      "raw_value": "continuous uptake"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "fatp1_contribution_to_total_uptake",
+      "raw_value": "contribution of FATP1 to the total uptake"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "control_uptake",
+      "raw_value": "Control uptake"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "cumulative_uptake",
+      "raw_value": "cumulated uptake"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "cumulative_net_uptake",
+      "raw_value": "cumulative net uptake"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "cumulative_uptake",
+      "raw_value": "cumulative uptake"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "glucose_uptake",
+      "raw_value": "D-glucose uptake"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "uptake_change",
+      "raw_value": "differential uptake"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "differential_uptake_ratio",
+      "raw_value": "Differential Uptake Ratio"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "differential_uptake_ratio",
+      "raw_value": "differential uptake ratio (lesion vs normal tissue)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "uptake",
+      "raw_value": "diffusional uptake"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "dox_uptake",
+      "raw_value": "DOX uptake"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "dox_uptake",
+      "raw_value": "Dox uptake"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "drug_uptake",
+      "raw_value": "drug uptake"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "drug_uptake_ratio",
+      "raw_value": "drug uptake relative to systemic lesions"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "dye_uptake",
+      "raw_value": "dye uptake"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "uptake_change",
+      "raw_value": "extents of alterations (uptake)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "fatp1_mediated_uptake",
+      "raw_value": "FATP1-mediated uptake"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "fatp1_contribution_to_total_dha_uptake",
+      "raw_value": "FATP1-mediated uptake as percentage of total [14C]-DHA uptake"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "first_pass_uptake",
+      "raw_value": "first pass uptake"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "first_pass_uptake",
+      "raw_value": "first-pass uptake"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "first_pass_11c_uptake",
+      "raw_value": "first-pass ¹¹C uptake"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "fractional_uptake",
+      "raw_value": "Fractional uptake"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "fractional_uptake",
+      "raw_value": "fractional uptake"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "gd_dtpa_uptake_index",
+      "raw_value": "Gd-DTPA uptake index"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "glucose_uptake",
+      "raw_value": "glucose uptake"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "gross_uptake",
+      "raw_value": "Gross Uptake"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "uptake_half_time",
+      "raw_value": "half-time of uptake"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "hdl_associated_alpha_t_uptake_ratio",
+      "raw_value": "HDL-associated αT uptake vs HDL holoparticle uptake"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "highest uptake"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "in_vitro_uptake",
+      "raw_value": "in vitro uptake"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "in_vivo_uptake",
+      "raw_value": "in vivo uptake"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "tumor_uptake_increase",
+      "raw_value": "increase in tumor uptake"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "uptake_increase",
+      "raw_value": "increase in uptake"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "uptake_inhibition",
+      "raw_value": "Inhibition of uptake"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "initial_uptake_rate",
+      "raw_value": "initial rate of uptake"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "initial_uptake",
+      "raw_value": "Initial uptake"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "initial_uptake",
+      "raw_value": "initial uptake"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "initial_standardized_uptake_value",
+      "raw_value": "initial uptake (SUV)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "initial_uptake",
+      "raw_value": "initial uptake at 2 min post-injection"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "initial_uptake_clearance",
+      "raw_value": "initial uptake clearance"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "initial_uptake_rate",
+      "raw_value": "initial uptake rate"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "initial_uptake_rate",
+      "raw_value": "initial uptake rate K1"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "integrated_uptake",
+      "raw_value": "Integrated Uptake (IU)"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "ipsilateral_to_contralateral_uptake_ratio",
+      "raw_value": "ipsilateral-to-contralateral uptake ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "tryptophan_uptake_kd",
+      "raw_value": "KD of tryptophan uptake"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "leucine_uptake_km",
+      "raw_value": "Km of leucine uptake"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "uptake_km_vmax",
+      "raw_value": "Km, Vmax (uptake)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "unidirectional_uptake_rate",
+      "raw_value": "Kᵢₙ (unidirectional uptake rate)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "luminal_gsh_uptake",
+      "raw_value": "Luminal GSH uptake"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "luminal_uptake",
+      "raw_value": "luminal uptake"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "Max uptake"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "maximal_ligand_uptake",
+      "raw_value": "maximal ligand uptake"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "maximal_specific_uptake_value",
+      "raw_value": "maximal specific uptake value"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "maximal uptake"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "maximal uptake value"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "maximum_high_affinity_uptake",
+      "raw_value": "maximum high affinity uptake"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "maximum_gsh_uptake_rate",
+      "raw_value": "maximum net rate of GSH uptake"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "maximum_uptake_rate",
+      "raw_value": "maximum rate of uptake"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "peak_standardized_uptake_value",
+      "raw_value": "maximum standardized uptake curve (SUV)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "peak_standardized_uptake_value",
+      "raw_value": "maximum standardized uptake values"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "maximum uptake"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "peak_standardized_uptake_value",
+      "raw_value": "Maximum uptake (SUV)"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "mean_uptake",
+      "raw_value": "Mean Uptake"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "mean_uptake",
+      "raw_value": "mean uptake"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "mean_uptake_ratio",
+      "raw_value": "Mean uptake ratio"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "net_uptake_coefficient",
+      "raw_value": "Minimum net uptake coefficient"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "net_uptake",
+      "raw_value": "Net Uptake"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "net_uptake",
+      "raw_value": "net uptake"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "net_uptake",
+      "raw_value": "net uptake (first 2 min)"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "net_uptake_clearance",
+      "raw_value": "net uptake clearance"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "net_uptake_coefficient",
+      "raw_value": "Net uptake coefficient"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "choline_uptake",
+      "raw_value": "net uptake of choline"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "net_uptake_rate",
+      "raw_value": "net uptake rate"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "normalized_midbrain_uptake",
+      "raw_value": "normalized peak specific midbrain uptake"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "normalized_uptake",
+      "raw_value": "normalized uptake"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "parenchymal_uptake",
+      "raw_value": "parenchymal uptake"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "parenchymal_uptake_clearance",
+      "raw_value": "parenchymal uptake clearance"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "peak_standardized_uptake_value",
+      "raw_value": "peak standard uptake value"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "peak_standardized_uptake_value",
+      "raw_value": "peak standardized uptake value"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "peak_standardized_uptake_value",
+      "raw_value": "peak standardized uptake value (SUV)"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "peak_standardized_uptake_value",
+      "raw_value": "peak standardized uptake value (SUV) at 0.8 min"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "peak_striatal_uptake",
+      "raw_value": "peak striatal uptake"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "Peak Uptake"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "peak uptake"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "peak uptake (% Dose/cc)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "peak uptake activity value"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "peak uptake levels"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "uptake_retention_percentage",
+      "raw_value": "percentage of maximal uptake remaining after 10 min"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "uptake_retention_percentage",
+      "raw_value": "percentage of maximal uptake remaining after 30 min"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "glucose_uptake_rate_percentage",
+      "raw_value": "percentage of the glucose uptake rate"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "total_body_uptake_percentage",
+      "raw_value": "Percentage of total body uptake"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "uptake_percentage",
+      "raw_value": "Percentage of Uptake"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "regional_organ_uptake_percentage",
+      "raw_value": "Percentage regional organ uptake"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "pertechnetate_uptake",
+      "raw_value": "Pertechnetate Uptake"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "pertechnetate_uptake",
+      "raw_value": "Pertechnetate uptake"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "pertechnetate_uptake",
+      "raw_value": "pertechnetate uptake"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "pertechnetate_uptake",
+      "raw_value": "pertechnetate uptake figure"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "pertechnetate_uptake",
+      "raw_value": "pertechnetate-uptake"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "radioactive_uptake",
+      "raw_value": "radioactive uptake"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "cur_uptake_rate",
+      "raw_value": "rate of Cur uptake"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "net_uptake_rate",
+      "raw_value": "rate of net uptake"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "sucrose_uptake_rate",
+      "raw_value": "rate of sucrose uptake"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "uptake_rate",
+      "raw_value": "Rate of uptake"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "uptake_rate",
+      "raw_value": "rate of uptake"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "leucine_uptake_rate",
+      "raw_value": "Rate of ¹⁴C-Leu uptake"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "vpa_to_inulin_uptake_ratio",
+      "raw_value": "ratio of VPA to inulin uptake"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "leucine_uptake_rate",
+      "raw_value": "real rate of leucine uptake"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "regional_uptake",
+      "raw_value": "regional uptake"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "relative_uptake",
+      "raw_value": "relative uptake"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "relative_uptake_efficiency",
+      "raw_value": "relative uptake efficiency"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "relative_uptake_efficiency",
+      "raw_value": "relative uptake efficiency (Re)"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "relative_uptake_ratio",
+      "raw_value": "relative uptake ratio (vs D-lactate)"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "right_to_left_uptake_ratio",
+      "raw_value": "right/left uptake ratio"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "roi_to_pons_uptake_ratio",
+      "raw_value": "ROI to pons uptake ratio"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "rubidium_uptake",
+      "raw_value": "Rubidium uptake"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "uptake_clearance_ratio",
+      "raw_value": "R₁ (uptake clearance ratio)"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "saturable_uptake",
+      "raw_value": "Saturable uptake"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "saturable_uptake_rate",
+      "raw_value": "Saturable uptake rate"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "saturable_uptake_rate",
+      "raw_value": "saturable uptake rate"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "hdl_associated_alpha_t_uptake_ratio",
+      "raw_value": "selective uptake of αT from HDL vs HDL holoparticle uptake"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "selective_alpha_tocopherol_uptake",
+      "raw_value": "selective αTocH uptake"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "single_pass_uptake",
+      "raw_value": "single pass uptake"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "single_pass_uptake",
+      "raw_value": "single-pass uptake"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "specific_uptake",
+      "raw_value": "Specific uptake"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "specific_uptake",
+      "raw_value": "specific uptake"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "specific_uptake_index",
+      "raw_value": "specific uptake index (S/C)-1"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "meth_uptake_rate",
+      "raw_value": "speed of the Meth uptake"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "stable_uptake",
+      "raw_value": "stable uptake"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "standard uptake value"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "Standard uptake value (SUV)"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "standard uptake value (SUV)"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "Standard uptake values"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "standard uptake values"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "Standardized uptake value"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "standardized uptake value"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "standardized uptake value (%SUV)"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "standardized uptake value (SUV)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "standardized uptake values (SUV)"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "standardized uptake values (SUVs)"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "steady_state_uptake",
+      "raw_value": "steady-state uptake"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "steady_state_uptake_increase",
+      "raw_value": "steady-state uptake (increase)"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "sucrose_uptake",
+      "raw_value": "sucrose uptake"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "sucrose_corrected_uptake",
+      "raw_value": "sucrose-corrected uptake"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "t1gd_uptake_volume",
+      "raw_value": "T1Gd uptake volumes"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "uptake_time_constant",
+      "raw_value": "time constants for the uptake"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "tissue_uptake",
+      "raw_value": "Tissue uptake"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "tissue_uptake",
+      "raw_value": "tissue uptake"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "increased_uptake_area",
+      "raw_value": "total area of increased uptake"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "imp_uptake",
+      "raw_value": "total IMP uptake"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "total_uptake",
+      "raw_value": "Total uptake"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "total_uptake",
+      "raw_value": "total uptake"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "14c_uptake",
+      "raw_value": "Total uptake of 14C"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "tracer_uptake",
+      "raw_value": "tracer uptake"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "tryptophan_uptake",
+      "raw_value": "tryptophan uptake"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "tumor_uptake",
+      "raw_value": "tumoral uptake"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "ammonia_uptake",
+      "raw_value": "unidirectional ammonia uptake"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "unidirectional_uptake",
+      "raw_value": "unidirectional uptake"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "unidirectional_uptake_excess_of_oxidation_rate",
+      "raw_value": "unidirectional uptake in excess of oxidation rate"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "uptake",
+      "raw_value": "Uptake"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "uptake",
+      "raw_value": "uptake"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "uptake_percentage",
+      "raw_value": "Uptake % (mL/100 g)"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "uptake",
+      "raw_value": "uptake (% cpm)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "first_phase_uptake",
+      "raw_value": "Uptake (1st phase)"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "second_phase_uptake",
+      "raw_value": "Uptake (2nd phase)"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "sucrose_corrected_uptake",
+      "raw_value": "uptake (corrected for [14C]sucrose)"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "vascular_space_corrected_uptake",
+      "raw_value": "uptake (corrected for vascular space)"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "dar_uptake",
+      "raw_value": "Uptake (DAR)"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "dar_star_uptake",
+      "raw_value": "Uptake (DAR*)"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "distribution_volume",
+      "raw_value": "uptake (distribution volume [DV])"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "pet_uptake",
+      "raw_value": "Uptake (PET)"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "standardized_uptake_value",
+      "raw_value": "Uptake (SUV) at 60 min"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "amentoflavone_to_sucrose_uptake_ratio",
+      "raw_value": "uptake [%] amentoflavone to uptake [%] sucrose"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "uptake_capacity",
+      "raw_value": "uptake capacity"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "uptake clearance"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "uptake clearance (V_max/K_m)"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "uptake clearance (Vmax/Km)"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "uptake clearances"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "uptake_coefficient",
+      "raw_value": "uptake coefficient"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "uptake_efficiency",
+      "raw_value": "uptake efficiency"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "uptake_from_blood",
+      "raw_value": "Uptake from blood"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "uptake_from_plasma",
+      "raw_value": "uptake from plasma"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "uptake_from_blood",
+      "raw_value": "uptake from the blood"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "uptake_from_circulation",
+      "raw_value": "uptake from the circulation"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "uptake_half_time",
+      "raw_value": "Uptake half-time"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "uptake_half_time",
+      "raw_value": "uptake half-time"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "tumor_uptake_percentage",
+      "raw_value": "Uptake in tumour (%)"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "in_vivo_uptake",
+      "raw_value": "uptake in vivo"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "uptake_increase",
+      "raw_value": "uptake increase"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "uptake_index",
+      "raw_value": "Uptake Index"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "uptake_index",
+      "raw_value": "uptake index"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "water_relative_uptake_index",
+      "raw_value": "uptake index relative to water (100%)"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "uptake_index",
+      "raw_value": "Uptake Indices"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "cerebrum_uptake",
+      "raw_value": "uptake into the cerebrum"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "tissue_uptake",
+      "raw_value": "uptake into the tissue"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "uptake_levels",
+      "raw_value": "uptake levels"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "peak_uptake",
+      "raw_value": "uptake maxima"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "11c_uptake",
+      "raw_value": "uptake of 11C"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "52mn_uptake",
+      "raw_value": "Uptake of 52Mn"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "99mtc_uptake",
+      "raw_value": "Uptake of 99mTc"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "dha_uptake",
+      "raw_value": "uptake of [14C]DHA"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "glucose_uptake",
+      "raw_value": "uptake of D-glucose"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "uptake_half_saturation",
+      "raw_value": "uptake one-half saturation"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "uptake_quantity",
+      "raw_value": "uptake quantity"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "uptake_rate",
+      "raw_value": "Uptake rate"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "uptake_rate",
+      "raw_value": "uptake rate"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "uptake_ratio",
+      "raw_value": "Uptake ratio"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "uptake_ratio",
+      "raw_value": "uptake ratio"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "irradiated_to_nonirradiated_hemisphere_uptake_ratio",
+      "raw_value": "uptake ratio (irradiated vs non-irradiated hemisphere)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "cya_to_control_uptake_ratio",
+      "raw_value": "Uptake ratio CyA:control"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "treated_to_control_uptake_ratio",
+      "raw_value": "uptake ratio treated/control"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "treated_to_control_uptake_ratio",
+      "raw_value": "uptake ratio treated/controls"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "uptake_ratio",
+      "raw_value": "Uptake ratios"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "uptake_slope",
+      "raw_value": "Uptake Slope"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "uptake_space",
+      "raw_value": "uptake space"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "uptake_half_time",
+      "raw_value": "uptake t1/2"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "uptake_time",
+      "raw_value": "uptake time"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "uptake_to_total_protein_ratio",
+      "raw_value": "uptake to total protein"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "uptake_value",
+      "raw_value": "uptake value"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "uptake_value",
+      "raw_value": "uptake values"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "uptake_rate",
+      "raw_value": "uptake velocity"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "uptake_retention",
+      "raw_value": "uptake/retention"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "initial_uptake",
+      "raw_value": "uptakes at 2 min"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "uptake_clearance",
+      "raw_value": "Vmax/Km (uptake clearance)"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "whole_tissue_5ht_uptake",
+      "raw_value": "Whole-tissue 5-HT uptake"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "zinc_uptake",
+      "raw_value": "Zn uptake"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "11c_uptake",
+      "raw_value": "¹¹C uptake"
+    }
+  ],
+  "cluster_id": "cluster_4fea38d4f4c8a438",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

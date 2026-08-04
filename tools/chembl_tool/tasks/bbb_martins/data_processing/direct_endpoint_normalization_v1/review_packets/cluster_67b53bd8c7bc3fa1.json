@@ -1,0 +1,1052 @@
+{
+  "assignment_count": 209,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "% Penetration (AUCCSF/AUCserum)"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "%AUCbrain/AUCplasma"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "auc_20_60_min_post_injection",
+      "raw_value": "AUC (20–60 min post-injection)"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC Cb,u/Cp,u"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF / AUCPLASMA"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC ratio (AUCbrain/AUCblood)"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "liposome_to_solution_auc_ratio",
+      "raw_value": "AUC ratio (liposomes/solution)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "dose_normalized_auc",
+      "raw_value": "AUC/Dose"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "dose_normalized_auc",
+      "raw_value": "AUC/dose"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio_0_4h",
+      "raw_value": "AUC0-4hCSF:AUC0-4hPlasma UF"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "tumor_to_tumor_free_auc_ratio_0_8h",
+      "raw_value": "AUC0-8h (tumor/tumor-free ratio)"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio_0_8h",
+      "raw_value": "AUC0-8hCSF/AUC0-8hplasma"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "dose_normalized_auc_inf",
+      "raw_value": "AUC0-inf / Dose"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio_0_last",
+      "raw_value": "AUC0-lastBrain:Plasma"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "dialysis_auc",
+      "raw_value": "AUC_dialysis"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "pet_to_plasma_auc_ratio",
+      "raw_value": "AUC_PET/AUC_plasma"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUC_tissue/AUC_plasma"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "auc_a",
+      "raw_value": "AUCa"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "dose_normalized_total_auc",
+      "raw_value": "AUCall / Dose"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_to_free_plasma_auc_ratio",
+      "raw_value": "AUCb/AUCf"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCb/AUCp"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCbECF / AUCuplasma"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbr/AUCp"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbr/AUCpl"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCBr/AUCplasma"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "AUCBrain"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "AUCbrain"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "AUCbrain (min)"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain / AUCblood"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_to_heart_auc_ratio",
+      "raw_value": "AUCbrain / AUCheart"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCBrain / AUCPlasma"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain / AUCplasma"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_to_free_plasma_auc_ratio",
+      "raw_value": "AUCbrain / AUCplasma-free"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_auc_0_last",
+      "raw_value": "AUCbrain 0-last"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_bci_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain BCI/AUCplasma"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_ecf_auc",
+      "raw_value": "AUCbrain ECF"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain ECF / AUCplasma"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain ECF /AUCplasma"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain ECF/AUCplasma"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain tissue/AUCplasma"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain tissue/AUCplasma (B/P ratio)"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain to AUCblood"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain to AUCblood ratio"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain to AUCplasma ratio"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "vt",
+      "raw_value": "AUCbrain, VT"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_auc_0_2_5_min",
+      "raw_value": "AUCbrain,0–2.5 min"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_auc_0_24",
+      "raw_value": "AUCbrain,0–24"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "oseltamivir_brain_auc_0_120",
+      "raw_value": "AUCbrain-oseltamivir, 0–120"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain-to-AUCblood ratio"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain-to-AUCplasma ratio"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain/ AUCblood ratio"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_to_free_plasma_auc_ratio",
+      "raw_value": "AUCbrain/ AUCfree plasma"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCBrain/ AUCPlasma"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/ AUCplasma"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_to_a_auc_ratio",
+      "raw_value": "AUCbrain/A"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCBrain/AUCBlood"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain/AUCblood"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain/AUCblood (0–180 min)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain/AUCblood (infusion period)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain/AUCblood ratio"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCplas"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCPlasma"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCplasma"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCplasma (%)"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCplasma (B/P ratio)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCplasma (blood)"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCplasma ratio"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_to_free_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCplasma-free"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "AUCbrain/AUCserum ratio"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_to_subcutaneous_auc_ratio",
+      "raw_value": "AUCbrain/AUCsubcutaneous"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_to_systemic_plasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCsystemic plasma"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_to_tplasma_auc_ratio",
+      "raw_value": "AUCbrain/AUCtplasma"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain/blood (%)"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCbrain/blood, I/C"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_to_free_auc_ratio",
+      "raw_value": "AUCbrain/fAUC ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "intranasal_to_intravenous_brain_auc_ratio",
+      "raw_value": "AUCbrain/IN / AUCbrain/IV"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCBrain/Plasma"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/plasma"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain/plasma (%)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio_0_6h",
+      "raw_value": "AUCbrain0→6h/AUCplasma0→6h"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCbrain:AUCplasma ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "AUCbrain:AUCserum"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "AUCbrainECF/AUCplasma"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio_0_6h",
+      "raw_value": "AUCbrain₀⁻₆h/AUCplasma₀⁻₆h"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "AUCBRN"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUCBRN/AUCPLM"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_tissue_to_plasma_auc_ratio",
+      "raw_value": "AUCbt/AUCp"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "butanoate_to_hexanoate_auc_ratio",
+      "raw_value": "AUCbutanoate/AUChexanoate"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "cortex_to_plasma_auc_ratio",
+      "raw_value": "AUCc/AUCp"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "cerebellum_to_serum_auc_ratio",
+      "raw_value": "AUCce/AUCse"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "cerebellum_auc",
+      "raw_value": "AUCcereb"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "cerebellum_auc_and_cmax",
+      "raw_value": "AUCcereb, Cmax cereb"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "cerebellum_to_blood_auc_ratio",
+      "raw_value": "AUCcereb/AUCblood ratio"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "cerebrum_to_plasma_auc_ratio",
+      "raw_value": "AUCcerebrum / AUCplasma"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "cerebrum_to_plasma_auc_ratio",
+      "raw_value": "AUCcerebrum/AUCplasma ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "cns_to_plasma_auc_ratio",
+      "raw_value": "AUCCNS/AUCplasma"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "cortex_to_plasma_auc_ratio",
+      "raw_value": "AUCcortex/AUCplasma"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF / AUCplasma"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF / AUCplasma ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCcsf / AUCplasma ratio"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF : AUCP"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCcsf : AUCplasma"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF to ACUplasma"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF to AUCplasma ratio"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio_inf",
+      "raw_value": "AUCCSF ∞ / AUCplasma ∞"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "csf_to_free_blood_auc_ratio",
+      "raw_value": "AUCCSF/AUCfree blood"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCp"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCcsf/AUCp,u"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCpl"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCPlasma"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCplasma"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCcsf/AUCplasma"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCPlasma (%)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCplasma (%)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCcsf/AUCplasma (%)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "csf_to_free_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCplasma free"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCplasma rate"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUCplasma ratio"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF/AUCS"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF/AUCs"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF/AUCSerum"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF/AUCserum"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCcsf/AUCserum"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF/serum"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF: AUCP"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF: AUCplasma"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF:AUCP"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF:AUCplasma"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCcsf:AUCplasma"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCCSF:AUCplasma ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF:AUCserum"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCcsfAUCplasma ratio"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "ecf_auc",
+      "raw_value": "AUCECF"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCECF/AUCp,u"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUCECF/AUCPlasma"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUCecf/AUCplasma"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUCECF/AUCPlasma (%)"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCECF/AUCplasma,u"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "estimated_auc",
+      "raw_value": "AUCest"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "i_to_plasma_auc_ratio",
+      "raw_value": "AUCi/AUCPL"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUCIA (CSF)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "auc_inf",
+      "raw_value": "AUCINF"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "auc_inf",
+      "raw_value": "AUCinf"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "predicted_auc_inf",
+      "raw_value": "AUCinf (predicted)"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "auc_inf_ratio",
+      "raw_value": "AUCinf ratio"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "auc_last",
+      "raw_value": "AUClast"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "csf_auc_last",
+      "raw_value": "AUClast (CSF)"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCLCR/AUCSUERO"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "left_auc",
+      "raw_value": "AUCleft"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "non_tumor_to_unbound_auc_ratio",
+      "raw_value": "AUCnon-tumor/AUCunbound ratio"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "normalized_auc",
+      "raw_value": "AUCnorm"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "observed_auc",
+      "raw_value": "AUCobs"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "octanoate_to_hexanoate_auc_ratio",
+      "raw_value": "AUCoctanoate/AUChexanoate"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "olfactory_bulb_to_plasma_auc_ratio",
+      "raw_value": "AUColfactory bulb/AUCplasma"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "organ_to_plasma_auc_ratio",
+      "raw_value": "AUCorgan AUCplasma"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "AUCplasma/AUCbrain"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "pons_auc",
+      "raw_value": "AUCpons (min)"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "aucr",
+      "raw_value": "AUCR"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUCR (AUCbrain/AUCblood)"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "tissue_to_blood_auc_ratio",
+      "raw_value": "AUCR (AUCtissue/AUCblood)"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "relative_auc",
+      "raw_value": "AUCrel"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "serum_to_brain_auc_ratio",
+      "raw_value": "AUCserum:AUCbrain"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "auc_t",
+      "raw_value": "AUCt"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "auc_t_and_auc_inf",
+      "raw_value": "AUCt and AUCinf"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "t_to_plasma_auc_ratio",
+      "raw_value": "AUCt/AUCp"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "dose_normalized_t_auc",
+      "raw_value": "AUCt/Dose"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "t_ecf_auc",
+      "raw_value": "AUCtECF"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "tissue_to_blood_auc_ratio",
+      "raw_value": "AUCtissue/AUCblood"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUCtissue/AUCplasma"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio_percent_change_0_9_min",
+      "raw_value": "AUCtissue:AUCplasma 0-9 min (% change)"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "total_auc",
+      "raw_value": "AUCtotal"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "unbound_brain_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCu,b/AUCu,p"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "unbound_brain_to_unbound_blood_auc_ratio",
+      "raw_value": "AUCu,br/AUCu,bl"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "unbound_auc",
+      "raw_value": "AUCunbound"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "v_to_plasma_auc_ratio",
+      "raw_value": "AUCv/AUCp"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "tau_plasma_to_tau_ecf_auc_ratio",
+      "raw_value": "AUCτ,PL/AUCτ,ECF"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "t_brain_to_t_plasma_auc_ratio",
+      "raw_value": "AUCₜbrain/AUCₜplasma"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "t_brain_to_t_free_plasma_auc_ratio",
+      "raw_value": "AUCₜbrain/AUCₜplasma-free"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "bioavailability (AUCCSF/AUCPlasma)"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_plasma_index",
+      "raw_value": "BPI (AUC0–infbrain/AUC0–infplasma)"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "csf_aureomycin_level",
+      "raw_value": "C.S.F.-aureomycin level"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "cbr_to_unbound_plasma_auc_ratio_0_240",
+      "raw_value": "CBR:AUCPLu,0–240"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "cellular_accumulation_auc",
+      "raw_value": "cellular accumulation (AUC)"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "cerebrum_to_blood_auc_ratio",
+      "raw_value": "cerebrum-to-blood AUC"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "cmax_and_auc_last",
+      "raw_value": "Cmax, AUClast"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "dose_normalized_auc",
+      "raw_value": "dose-normalized AUC"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "distribution_target_efficiency",
+      "raw_value": "DTE (AUCbrain/AUCplasma)"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "empirical_distribution_ratio",
+      "raw_value": "Empirical Distribution Ratio (AUCbrain:AUCblood)"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "free_brain_to_plasma_auc_ratio",
+      "raw_value": "fAUCbrain/AUC-plasma"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "free_tissue_to_free_plasma_auc_ratio",
+      "raw_value": "fAUCtissue/fAUCplasma"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "k",
+      "raw_value": "k (AUCbrain/AUCblood)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "k",
+      "raw_value": "k value (AUCbrain/AUCblood)"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Kp (AUCbr/AUCpl)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Kp (AUCbrain/AUCplasma)"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "organ_auc",
+      "raw_value": "organ AUC"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "overall_exposure_ratio",
+      "raw_value": "overall exposure (AUClast) ratio"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Ratio (AUCCSF/AUCplasma)"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "ratio of AUCbrain to AUCblood"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_to_heart_auc_ratio",
+      "raw_value": "Ratio of AUCbrain to AUCheart"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Ratio of AUCCSF/AUCplasma"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the AUCbrain ECF over AUCplasma"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "cortex_to_plasma_auc_ratio",
+      "raw_value": "relative penetration (AUCcortex/AUCplasma)"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "ri",
+      "raw_value": "Ri (AUCbrain/AUCblood)"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "tissue_auc",
+      "raw_value": "Tissue AUC"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "tissue_auc_0_tn",
+      "raw_value": "Tissue AUC0→tn"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "total_morphine_auc",
+      "raw_value": "total AUC_Morphine"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "total_ecf_morphine_auc",
+      "raw_value": "total ECF AUC_Morphine"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "unbound_brain_to_blood_auc_ratio",
+      "raw_value": "unbound AUCbrain to AUCblood ratio"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "c11_verapamil_aucc_normalized_to_rcbfc",
+      "raw_value": "¹¹C-verapamil AUCc normalized to rCBFc"
+    }
+  ],
+  "cluster_id": "cluster_67b53bd8c7bc3fa1",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

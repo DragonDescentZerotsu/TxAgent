@@ -1,0 +1,1612 @@
+{
+  "assignment_count": 321,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "arterial_fructose_percentage",
+      "raw_value": "% of arterial fructose"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "available_arterial_glucose_percentage",
+      "raw_value": "% of available arterial glucose"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "cholesterol_barrier_crossing_percentage",
+      "raw_value": "% of total 24(S)-[3H]OH-cholesterol crossed the in vitro barrier"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "cholesterol_monolayer_crossing_percentage",
+      "raw_value": "% of total [3H]-cholesterol crossed the monolayer"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "hg_extravasation",
+      "raw_value": "197 Hg extravasation"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "noradrenaline_uptake",
+      "raw_value": "[³H]noradrenaline uptake"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "spinal_cord_serum_fluorescence_ratio",
+      "raw_value": "[µg fluorescence spinal cord/mg protein]/[µg fluorescence sera/µl blood]"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "aba_tissue_concentration",
+      "raw_value": "ABA detected (ng/gr tissue)"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "gbm_tumor_plasma_accumulation_ratio",
+      "raw_value": "accumulation in glioblastoma (GBM) tumor tissue compared to plasma values"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "parenchymal_tissue_accumulation",
+      "raw_value": "accumulation in parenchymal tissue"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "extracellular_compartment_accumulation_ratio",
+      "raw_value": "accumulation over extracellular compartment levels"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "active_simvastatin_level",
+      "raw_value": "active simvastatin levels"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "albumin_glucose_crossing_rate_ratio",
+      "raw_value": "albumin/glucose crossing rate ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "amino_acid_influx",
+      "raw_value": "Amino acid influx"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "dye_extravasation_amount",
+      "raw_value": "amount of extravasated dye"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "sodium_fluorescein_extravasation_amount",
+      "raw_value": "amount of extravasated sodium fluorescein"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "lsd_csf_plasma_unbound_ratio",
+      "raw_value": "amount of LSD in CSF / unbound form in blood plasma"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "rivastigmine_amount",
+      "raw_value": "amount of rivastigmine"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "bilirubin_apical_to_basal_movement",
+      "raw_value": "apical bilirubin to the basal compartment movement"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "cholesterol_b_to_a_flux",
+      "raw_value": "apical flux of cholesterol after basolateral administration"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "a_to_b_passage",
+      "raw_value": "Apical-to-basolateral passage"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "glucose_apparent_distribution_volume",
+      "raw_value": "apparent distribution volume of glucose (M/C)"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "gd_dtpa_leakage_area",
+      "raw_value": "Area of Gd-DTPA leakage"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "arh_glucose_level",
+      "raw_value": "ARH glucose levels"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "arterial_ammonia_extraction",
+      "raw_value": "arterial ammonia extraction"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "arterial_blood_acetaldehyde_concentration",
+      "raw_value": "arterial blood acetaldehyde concentrations"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "arteriojugular_lactate_concentration_difference",
+      "raw_value": "arterio-jugularvenöse Laktatkonzentrationsdifferenz (AVDL)"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "arteriovenous_difference",
+      "raw_value": "arterio-venous difference"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "arteriovenous_difference",
+      "raw_value": "arteriovenous difference"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "tumor_blood_auc_ratio",
+      "raw_value": "AUCtumor/blood"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "extravascular_fluorescence_intensity",
+      "raw_value": "average fluorescence intensity in the extravascular compartment"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "tissue_dpm_per_gram",
+      "raw_value": "Average ¹⁴C-labeled DPM counts per gram of tissue"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "basal_extracellular_concentration",
+      "raw_value": "basal extracellular concentrations"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "basal_ganglia_ecf_plasma_ldopa_ratio",
+      "raw_value": "basal ganglia ECF/plasma L-dopa levels"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "basolateral_to_apical_ratio",
+      "raw_value": "basolateral : apical ratio (B:A)"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "b_to_a_over_a_to_b_flux_ratio",
+      "raw_value": "basolateral-to-apical flux / apical-to-basolateral flux ratio"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "bcnu_equivalent_per_gram_tissue",
+      "raw_value": "BCNU-equivalent per g organ or tissue"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "blood_effect_site_equilibration_half_life",
+      "raw_value": "blood effect-site equilibration half-life"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "blood_effect_site_equilibration_half_life",
+      "raw_value": "blood effect-site equilibration half-life (t½k₀)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "blood_extraction",
+      "raw_value": "blood extraction"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "blood_effect_site_equilibration",
+      "raw_value": "blood-effect site equilibration"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "blood_effect_site_equilibration_half_life",
+      "raw_value": "blood-effect site equilibration half-life"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "blood_effect_site_equilibration_half_life",
+      "raw_value": "blood-effect-site equilibration half-life"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "blood_effect_site_equilibration_half_life",
+      "raw_value": "blood–effect site equilibration half-life (t₁/₂kₐ₀)"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "ventricular_brain_csf_ratio",
+      "raw_value": "Brs/Brc.s.f. (ventricular)"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_blood_promizole_ratio",
+      "raw_value": "C.S.F.-promizole level / blood-promizole level"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "capillary_exchange_half_life",
+      "raw_value": "capillary exchange t1/2"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "capillary_extraction",
+      "raw_value": "capillary extraction"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "cellular_accumulation",
+      "raw_value": "cellular accumulation"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "central_muscarinic_receptor_occupancy",
+      "raw_value": "central muscarinic receptor occupancy"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "cerebellar_blood_lead_ratio",
+      "raw_value": "cerebellar lead content / whole blood lead concentration"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "cerebrovascular_km_app",
+      "raw_value": "Cerebrovascular Km (app)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "cerebrovascular_pa_product",
+      "raw_value": "Cerebrovascular PA product"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "medullary_surface_arterial_ph_change",
+      "raw_value": "change in arterial pH measurable at the surface of the medulla"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "cisternal_effluent_output",
+      "raw_value": "cisternal effluent output"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "clast_tissue_unbound_blood_ratio",
+      "raw_value": "Clast tissue/Clast blood (unbound)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "single_transcapillary_pass_clearance",
+      "raw_value": "cleared during a single transcapillary passage"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "intraparenchymal_extracranial_tumor_concentration_ratio",
+      "raw_value": "concentration in intraparenchymal tumors compared to extracranial tumors"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "mpfc_tissue_concentration",
+      "raw_value": "concentration in the mPFC tissue"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "dialysate_edaravone_concentration",
+      "raw_value": "concentration of edaravone in dialysates"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "new_inositol_tissue_concentration",
+      "raw_value": "concentration of new inositol appearing in tissue from plasma inositol"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "rhodamine_b_tissue_concentration",
+      "raw_value": "concentration of rhodamine B in the tissues"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "inflamed_meningeal_concentration",
+      "raw_value": "concentrations in the inflamed meninges"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "noninflamed_meningeal_concentration",
+      "raw_value": "concentrations in the noninflamed meninges"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "oatp1a2_contribution_to_a_to_b_permeability",
+      "raw_value": "contribution of OATP1A2-mediated influx to apical-to-basolateral transcellular permeability"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "tissue_dpm_per_gram",
+      "raw_value": "cpm/g tissue (wet weight)"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "tissue_dpm_per_gram",
+      "raw_value": "cpm/mg dry weight of tissue"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "mn_transcellular_traversal_amount",
+      "raw_value": "cumulative amount of Mn traversing the cells"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "dapi_leakage",
+      "raw_value": "DAPI leakage"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "delivered_drug_increase",
+      "raw_value": "delivered drug increase"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "dheas_influx_efflux_ratio",
+      "raw_value": "DHEAS influx compared to DHEAS efflux"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "dialysate_level",
+      "raw_value": "dialysate levels"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "arteriojugular_difference",
+      "raw_value": "Différences artériojugulaires"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "tissue_dpm_per_gram",
+      "raw_value": "DPM/g of Tissue"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "tissue_dpm_per_gram",
+      "raw_value": "dpm/g wet tissue"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "dye_extravasation",
+      "raw_value": "dye extravasation"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "ecf_glucose_level",
+      "raw_value": "ECF glucose levels"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "ecf_pht_level",
+      "raw_value": "ECF levels of PHT"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "plasma_cholesterol_single_pass_clearance",
+      "raw_value": "endogenous plasma cholesterol cleared in a single pass"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "endothelial_transmission",
+      "raw_value": "endothelial transmission value"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "epr_spectral_intensity_remaining_after_saline_perfusion",
+      "raw_value": "EPR spectral intensity remaining after saline perfusion"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "creatine_level",
+      "raw_value": "estimated levels of creatine"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "excretion_rate",
+      "raw_value": "excretion rate"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "extravasation_extent",
+      "raw_value": "extent of extravasation"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "extravasation_extent",
+      "raw_value": "extent of extravasation (i.e., edema volume)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "extravasation_extent_increase",
+      "raw_value": "extent of extravasation increase"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "extracellular_6r_bh4_concentration",
+      "raw_value": "extracellular 6R-BH₄ concentration"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "extracellular_d_asp_level",
+      "raw_value": "extracellular d-Asp"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "extracellular_d_asp_level",
+      "raw_value": "extracellular D-Asp levels"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "extracellular_d_serine_level",
+      "raw_value": "extracellular D-serine levels"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "ecf_level",
+      "raw_value": "extracellular fluid (ECF) levels"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "extracellular_kynurenine_level",
+      "raw_value": "extracellular kynurenine levels"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "extracellular_level",
+      "raw_value": "Extracellular levels"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "extracellular_level",
+      "raw_value": "extracellular levels"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "pfc_venous_blood_microdialysate_ratio",
+      "raw_value": "extracellular levels in PFC / microdialysates from venous blood"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "striatal_venous_blood_free_concentration_ratio",
+      "raw_value": "extracellular levels in rat striatum / free concentrations in venous blood"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "raphe_extracellular_level",
+      "raw_value": "extracellular levels in the raphe"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "hypothalamic_fructose_serum_ratio",
+      "raw_value": "extracellular levels of fructose in the hypothalamic area / serum levels"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "extracellular_ppx_level",
+      "raw_value": "extracellular PPX levels"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "extracellular_space_transcapillary_exchange_half_time",
+      "raw_value": "extracellular space-transcapillary exchange half-time"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "extracellular_uridine_level",
+      "raw_value": "extracellular uridine level"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "single_capillary_pass_extraction",
+      "raw_value": "extracted in a single capillary passage"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "blood_extraction",
+      "raw_value": "extraction from blood"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "arterial_plasma_glucose_extraction",
+      "raw_value": "extraction of glucose from arterial plasma"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "extratubular_nut_3a_concentration",
+      "raw_value": "extratubular nut-3a concentration"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "dye_extravasation",
+      "raw_value": "extravasated dye"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "extravasation",
+      "raw_value": "extravasation"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "extravasation_area",
+      "raw_value": "extravasation area"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "extravasation_grade",
+      "raw_value": "extravasation grade"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "extravasation_level",
+      "raw_value": "extravasation level"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "contrast_agent_extravasation",
+      "raw_value": "extravasation of contrast agent"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "dye_extravasation",
+      "raw_value": "extravasation of dye"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "extravascular_accumulation",
+      "raw_value": "Extravascular accumulation"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "extravascular_accumulation",
+      "raw_value": "extravascular accumulation"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "extravascular_coverage",
+      "raw_value": "extravascular coverage"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "extravascular_extraction",
+      "raw_value": "extravascular extraction"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "fitc_leakage",
+      "raw_value": "extravascular FITC leakage"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "vd_factor_increase",
+      "raw_value": "factor increase (Vd in presence of verapamil/Vd in control)"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "fitc_extravasation",
+      "raw_value": "FITC extravasation"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "fitc_leakage",
+      "raw_value": "FITC leakage"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "dialysate_fluorescence_concentration",
+      "raw_value": "fluorescence concentration in dialysate"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "dialysate_fluorescence_concentration",
+      "raw_value": "fluorescence in the dialysate"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "co2_flux_to_blood",
+      "raw_value": "Flux of 14CO2 to blood"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "cellular_accumulation_fold_enhancement",
+      "raw_value": "fold enhancement in cellular accumulation"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "extravasation_fold_change",
+      "raw_value": "fold extravasation"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "fold_increase",
+      "raw_value": "fold increase over mock-infected mice"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "serum_fold_increase",
+      "raw_value": "fold increase relative to serum"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "blood_level_fold_change",
+      "raw_value": "fold of blood levels"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "forebrain_tissue_concentration",
+      "raw_value": "forebrain tissue concentration"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "cerebrovascular_fractional_extraction",
+      "raw_value": "fractional extraction across the cerebrovascular circulation"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "gadolinium_deposition_level",
+      "raw_value": "gadolinium deposition level"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "gadolinium_extravasation_ratio",
+      "raw_value": "gadolinium extravasation ratio (LN: CH)"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "gadolinium_retention",
+      "raw_value": "gadolinium retention"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "gadolinium_deposition_level",
+      "raw_value": "Gd Deposition"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "gadolinium_leakage",
+      "raw_value": "Gd leakage"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "gadolinium_retention",
+      "raw_value": "Gd retention"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "gd_dtpa_accumulation",
+      "raw_value": "Gd-DTPA accumulation"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "gd_dtpa_enhancement",
+      "raw_value": "Gd-DTPA enhancing"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "gadolinium_leakage",
+      "raw_value": "Gd-leakage"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "gfm_extravasation_volume",
+      "raw_value": "GfM-Extravasation volume"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "glucose_extraction",
+      "raw_value": "glucose extraction"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "glucose_flux",
+      "raw_value": "glucose flux"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "glucose_influx",
+      "raw_value": "Glucose Influx"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "glucose_influx",
+      "raw_value": "Glucose influx"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "glucose_influx",
+      "raw_value": "glucose influx"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "gsh_level",
+      "raw_value": "GSH levels"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "h1_receptor_occupancy",
+      "raw_value": "H1 receptor occupancy"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "hdl_associated_alpha_t_uptake",
+      "raw_value": "HDL-associated αT uptake"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "hepatic_phosphate_buffer_partition_coefficient",
+      "raw_value": "hepatic/phosphate buffer partition coefficient"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "hg_accumulation",
+      "raw_value": "Hg accumulation"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "apical_compartment_hg_amount",
+      "raw_value": "Hg amount present in the apical compartment"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "hg_b_to_a_transfer",
+      "raw_value": "Hg transfer towards the blood side"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "h1_receptor_occupancy",
+      "raw_value": "H₁-receptor occupancy"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "in_vitro_partition_parameter",
+      "raw_value": "in vitro partition parameter"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "pgp_efflux_ratio",
+      "raw_value": "in vivo P-gp ER"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "pgp_factor",
+      "raw_value": "in vivo P-gp factor"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "in_vivo_ps_product",
+      "raw_value": "In vivo PS"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "in_vivo_recovery",
+      "raw_value": "in vivo recovery"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "contrast_agent_extravasation_incidence",
+      "raw_value": "incidence of contrast agent extravasation"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "extravasation_incidence",
+      "raw_value": "incidence of extravasation"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "dialysate_escitalopram_level_increase",
+      "raw_value": "increase in dialysate escitalopram levels"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "extravasation_increase",
+      "raw_value": "increase in extravasation"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "rcerebrum_rcerebellum_rcsf_increase",
+      "raw_value": "increase in Rcerebrum, Rcerebellum and RcSF"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "retinal_rbc_acetylcholinesterase_activity_ratio",
+      "raw_value": "increase in retinal acetylcholinesterase activity relative to red blood cell acetylcholinesterase activity"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "free_tryptophan_influx_blood_concentration_ratio",
+      "raw_value": "influx/concentration of free tryptophan in the blood"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "interhemispheric_sodium_fluorescein_extravasation_ratio",
+      "raw_value": "interhemispheric ratio of extravasated sodium fluorescein"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "intracellular_accumulation",
+      "raw_value": "Intracellular accumulation"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "intracellular_accumulation",
+      "raw_value": "intracellular accumulation"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "intracellular_mx_accumulation",
+      "raw_value": "intracellular MX accumulation"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "intracellular_r123_level",
+      "raw_value": "intracellular R123 levels"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "intracerebral_creatine_phosphocreatine_level",
+      "raw_value": "intracerebral creatine and phosphocreatine levels"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "intracerebral_lycopene",
+      "raw_value": "intracerebral lycopene"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "intravenous_intraventricular_ed10_ratio",
+      "raw_value": "intravenous to the intraventricular ED10 ratio"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "iodine_extravasation",
+      "raw_value": "iodine extravasation"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "ipsilateral_tissue_mn_concentration",
+      "raw_value": "Ipsilateral tissue [Mn²⁺]"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "blood_to_brain_absorption_constant",
+      "raw_value": "k23 (blood-to-brain absorption constant)"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "testosterone_influx_rate_constant",
+      "raw_value": "k3 (rate constant for testosterone influx through the BBB)"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "lactate_flux",
+      "raw_value": "Lactate flux"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "lactate_influx",
+      "raw_value": "Lactate influx"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "lesion_contralateral_ccmax_ratio",
+      "raw_value": "lesion/contralateral %IA/ccmax ratio"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "lesion_contralateral_ccmean_ratio",
+      "raw_value": "lesion/contralateral %IA/ccmean ratio"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "leucine_influx",
+      "raw_value": "leucine influx"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "dialysate_level",
+      "raw_value": "level in dialysate"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_microdialysate_free_ribavirin_level",
+      "raw_value": "level of free ribavirin in brain microdialysates"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "sodium_fluorescein_extravasation_level",
+      "raw_value": "level of sodium fluorescein extravasation"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "microdialysate_level",
+      "raw_value": "levels in microdialysate"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "lumbar_csf_level",
+      "raw_value": "lumbar C.S.F. level"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "luminal_cellular_accumulation_ratio",
+      "raw_value": "luminal/cellular accumulation ratio"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "lysine_flux",
+      "raw_value": "lysine flux"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "dialysate_glutamate_maximum_increase",
+      "raw_value": "maximal increase of Glu concentrations in dialysates"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "tissue_normalized_absorbance",
+      "raw_value": "mean absorbance (nm) normalized to tissue weight (grams)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "tissue_normalized_absorbance",
+      "raw_value": "mean absorbance/mg tissue"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "csf_arterial_blood_nh3_ratio",
+      "raw_value": "mean CSF NH3 / mean bulk phase arterial blood NH3"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "in_vivo_recovery",
+      "raw_value": "mean in vivo recoveries"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "solid_tumor_level",
+      "raw_value": "mean levels in solid tumor"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "peritumoral_tmz_peak_concentration",
+      "raw_value": "mean peak TMZ concentration in the peritumoral tissue"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "ventricular_fluid_peak_level",
+      "raw_value": "mean peak ventricular fluid levels"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "pentobarbital_level",
+      "raw_value": "Mean Pentobarbital Level"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "protein_extravasation_percentage",
+      "raw_value": "mean percentage protein extravasation"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "gadolinium_tissue_concentration",
+      "raw_value": "median concentrations of gadolinium per gram of tissue"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "methotrexate_infused_vs_noninfused_hemisphere_ratio",
+      "raw_value": "methotrexate levels (infused hemisphere vs noninfused side)"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "microdialysate_level",
+      "raw_value": "microdialysate level"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "manganese_tissue_concentration",
+      "raw_value": "Mn²⁺/g tissue wet weight"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "mri_gadolinium_enhancement",
+      "raw_value": "MRI Gd enhancement"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "methotrexate_infused_vs_noninfused_hemisphere_ratio",
+      "raw_value": "MTX level (ratio of infused vs noninfused hemisphere)"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "methotrexate_tissue_level",
+      "raw_value": "MTX Tissue Level"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "sodium_fluorescein_extravasation",
+      "raw_value": "NaFl extravasation (%)"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "sodium_fluorescein_extravasation_grade",
+      "raw_value": "NaFl extravasation (Grade 2 + 3)"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "net_glucose_flux",
+      "raw_value": "net glucose flux"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "tissue_retinoic_acid_concentration",
+      "raw_value": "ng of RA/g of tissue"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "ng/mg fresh tissue"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "nk1_receptor_occupancy",
+      "raw_value": "NK₁ receptor occupancy rates"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "normal_glucose_influx",
+      "raw_value": "normal glucose influx"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "tissue_absorbance_per_gram",
+      "raw_value": "O.D./gram tissue"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "odap_tissue_concentration",
+      "raw_value": "ODAP concentration in tissue"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "gd_dtpa_extravasation_optical_density",
+      "raw_value": "optical densities (Gd-DTPA extravasation)"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "organ_level",
+      "raw_value": "organ levels"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "organ_normalized_cumulative_activity",
+      "raw_value": "organ-normalized cumulative activity"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "adrenaline_output",
+      "raw_value": "output of adrenaline"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "papp_ba_ab_ratio",
+      "raw_value": "Papp basolateral to apical (BA)/apical to basolateral (AB) ratio"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "paracellular_sucrose_flux",
+      "raw_value": "paracellular sucrose flux"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "ventral_midbrain_paraquat_content",
+      "raw_value": "paraquat content in ventral midbrain"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "sagittal_sinus_arterial_peak_concentration_time",
+      "raw_value": "peak concentration and time to peak concentration in sagittal sinus relative to arterial blood"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "sagittal_sinus_arterial_peak_concentration",
+      "raw_value": "peak concentration in sagittal sinus relative to arterial quantities"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "microdialysate_melatonin_peak_concentration",
+      "raw_value": "peak concentration of microdialysate melatonin"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "db75_tissue_peak_level",
+      "raw_value": "peak DB75 tissue levels"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "dialysate_peak_level",
+      "raw_value": "peak dialysate level"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "extracellular_nicotine_peak_level",
+      "raw_value": "peak extracellular nicotine levels"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "striatal_microdialysate_ghb_peak_concentration",
+      "raw_value": "peak GHB concentration in striatal microdialysates"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "sagittal_sinus_peak_concentration",
+      "raw_value": "peak sagittal sinus concentration"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "tumor_ecf_uptake_peak_value",
+      "raw_value": "peak tumor ECF uptake value"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "serum_to_ventricular_fluid_penetration",
+      "raw_value": "penetration from serum into ventricular fluid"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "vascular_leakage_percent_increase",
+      "raw_value": "percent increase in vascular leakage"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "microdialysate_recovery_percentage",
+      "raw_value": "percentage injected ⁹⁹mTc-Sestamibi activity recovered in the microdialysates"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "extracellular_quin_blood_import_percentage",
+      "raw_value": "percentage of extracellular QUIN imported from blood"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "ht_basolateral_reaching_percentage",
+      "raw_value": "percentage of HT reaching the basolateral compartment"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "abluminal_fluid_lead_percentage",
+      "raw_value": "percentage of lead in abluminal fluid"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "norepinephrine_systemic_circulation_percentage",
+      "raw_value": "percentage of norepinephrine reaching systemic circulation"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "plasma_palmitate_bbb_crossing_percentage",
+      "raw_value": "percentage of plasma palmitate crossing the BBB"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "quin_blood_derived_percentage",
+      "raw_value": "percentage of QUIN in extracellular fluid and CSF derived from blood"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "abluminal_compartment_uranium_percentage",
+      "raw_value": "Percentage of Total U in the abluminal compartment"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "plasma_unbound_inositol_entry_percentage",
+      "raw_value": "percentage of total unbound inositol entering from plasma"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "noninflamed_meningeal_reaching_percentage",
+      "raw_value": "percentage reaching non-inflamed meninges"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "phenylalanine_influx",
+      "raw_value": "phenylalanine influx"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "plasma_choline_level",
+      "raw_value": "plasma choline levels for reversal of negative AVD to positive values"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "post_injection_enhancement",
+      "raw_value": "post-injection enhancement"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "epr_signal_percent_of_preperfusion",
+      "raw_value": "post-perfusion EPR signal as a percentage of the pre-perfusion EPR signal"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "postvascular_supernatant_v0",
+      "raw_value": "postvascular supernatant V₀"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "ecf_quin_blood_origin_proportion",
+      "raw_value": "proportion of ECF QUIN levels originating from blood"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "new_inositol_endogenous_inositol_ratio",
+      "raw_value": "ratio of new inositol from blood to total endogenous inositol"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "sinus_to_caudate_deflection_ratio",
+      "raw_value": "ratio of sinus to caudate deflections"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "striatal_to_plasma_activity_ratio",
+      "raw_value": "ratio of striatal activity to FESP activity in plasma"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "brain_blood_ratio",
+      "raw_value": "Rbrain:blood"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "receptor_occupancy",
+      "raw_value": "receptor occupancy"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "lower_chamber_recovery",
+      "raw_value": "recovery in lower chamber"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "abluminal_side_recovery",
+      "raw_value": "recovery on the abluminal side"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "oxycodone_str_lv_delivery_ratio",
+      "raw_value": "relative extent of oxycodone delivery to STR compared with that to LV"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "total_cholesterol_pool_replacement",
+      "raw_value": "replacement of total cholesterol pool"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "gadolinium_retention",
+      "raw_value": "residual Gd retention"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "gadolinium_retention",
+      "raw_value": "retention of Gd"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "roi_plasma_ratio",
+      "raw_value": "ROI/HPLC plasma"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "rtissue_corrected_for_vascular_space",
+      "raw_value": "RTissue (corrected for vascular space)"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "serum_basal_ganglia_ratio",
+      "raw_value": "serum:basal ganglia ratio"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "sodium_fluorescein_extravasation",
+      "raw_value": "sodium fluorescein extravasation"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "spontaneous_leakage",
+      "raw_value": "spontaneous leakage"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "steady_state_sterol_content",
+      "raw_value": "steady-state sterol content"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "steady_state_ventriculocisternal_extraction",
+      "raw_value": "steady-state ventriculocisternal extraction"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "ischemic_hemisphere_steroid_level",
+      "raw_value": "Steroid levels in the ischemied hemisphere"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "striatal_ecf_blood_levodopa_ratio",
+      "raw_value": "striatal extracellular fluid/blood levodopa ratio"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "striatal_mpp_level",
+      "raw_value": "striatal levels of MPP+"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "striatal_mpp_level",
+      "raw_value": "striatal levels of MPP⁺"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "sucrose_influx",
+      "raw_value": "sucrose influx"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "capillary_exchange_half_time",
+      "raw_value": "t1 (capillary exchange half-time)"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "anesthesia_onset_time",
+      "raw_value": "time of onset of anesthesia"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "blood_equilibration_time",
+      "raw_value": "time to equilibrium with the blood"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "blood_equilibration_time",
+      "raw_value": "time to reach equilibrium with blood"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "tissue_accumulation",
+      "raw_value": "tissue accumulation"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "Tissue concentr."
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "tissue_extraction",
+      "raw_value": "tissue extraction"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "tissue_fluorescein_concentration",
+      "raw_value": "tissue fluorescein concentration"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "tissue_gadolinium_concentration",
+      "raw_value": "tissue gadolinium concentration"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "tissue_manganese_concentration",
+      "raw_value": "Tissue manganese concentration"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "tissue_penetrance",
+      "raw_value": "tissue penetrance"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "tissue_specific_activity",
+      "raw_value": "tissue sp. activity"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "tissue_space",
+      "raw_value": "tissue space"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "tissue_specific_activity",
+      "raw_value": "tissue specific activity"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "peritumoral_tmz_concentration",
+      "raw_value": "TMZ concentration in the peritumoral tissue"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "gd_dtpa_total_accumulation",
+      "raw_value": "total Gd-DTPA accumulation"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "total_glucose_influx",
+      "raw_value": "total glucose influx"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "extravasation_incidence",
+      "raw_value": "Total incidence of extravasation"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "cisternal_fluid_lactate_total",
+      "raw_value": "total lactate in cisternal fluid"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "trans_endothelial_exchange",
+      "raw_value": "trans endothelial exchange (TEE)"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "serum_transference",
+      "raw_value": "transference from serum"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "ecf_blood_unbound_colchicine_ratio",
+      "raw_value": "unbound colchicine in the ECF / unbound colchicine in the blood"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "ecf_plasma_unbound_probenecid_ratio",
+      "raw_value": "Unbound concentrations of probenecid in extracellular fluid / plasma"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "unidirectional_blood_clearance",
+      "raw_value": "unidirectional blood clearance"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "carrier_mediated_influx",
+      "raw_value": "Unidirectional carrier-mediated influx"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "unidirectional_glucose_influx",
+      "raw_value": "Unidirectional glucose influx"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "unidirectional_glucose_influx",
+      "raw_value": "unidirectional glucose influx"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "unidirectional_glucose_influx",
+      "raw_value": "Unidirectional glucose influx (R1)"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "unidirectional_lactate_influx_rate",
+      "raw_value": "unidirectional lactate influx rate"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "unidirectional_leucine_influx",
+      "raw_value": "unidirectional leucine influx"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "unidirectional_glutamine_influx_rate",
+      "raw_value": "unidirectional rate of glutamine influx"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "fdopa_plasma_to_striatum_uptake_constant",
+      "raw_value": "uptake constant of FDOPA from plasma to striatum"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "vascular_pellet_v0",
+      "raw_value": "vascular pellet V₀"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "ventricular_fluid_level",
+      "raw_value": "Ventricular fluid level"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "ventricular_fluid_level",
+      "raw_value": "ventricular fluid level"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "ventricular_fluid_level",
+      "raw_value": "ventricular fluid levels"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "ventricular_fluid_serum_ratio",
+      "raw_value": "Ventricular Fluid/Serum"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "ventricular_level",
+      "raw_value": "ventricular levels"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "ventromedial_hypothalamus_microdialysate_level",
+      "raw_value": "ventromedial hypothalamus microdialysate levels"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "tracer_extravasation_vessels",
+      "raw_value": "vessels with tracer extravasation"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "vin_vtca_vout_ratio",
+      "raw_value": "Vin/(VTCA + Vout) normalized to average plasma lactate level of control group"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "glucose_penetration_volume",
+      "raw_value": "volume available for glucose penetration"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "vt_arterial",
+      "raw_value": "VT arterial"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "vt_venous",
+      "raw_value": "VT venous"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "odap_tissue_concentration",
+      "raw_value": "µg ODAP/g wet.wt. tissue"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "rhein_equivalent_tissue_concentration",
+      "raw_value": "µg rhein equivalent per gram wet tissue"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "drug_tissue_concentration",
+      "raw_value": "µmol drug/g tissue"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "valine_tissue_concentration",
+      "raw_value": "µmol valine/g fresh tissue"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "lysine_tissue_concentration",
+      "raw_value": "µmoles lysine per 100 g fresh tissue"
+    }
+  ],
+  "cluster_id": "cluster_d1c77978726e58d9",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

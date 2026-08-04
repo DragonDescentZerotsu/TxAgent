@@ -1,0 +1,157 @@
+{
+  "accepted_change_ids": [
+    "direct_context_merge_0001",
+    "direct_context_merge_0002",
+    "direct_context_merge_0003",
+    "direct_context_merge_0004",
+    "direct_context_merge_0005",
+    "direct_context_merge_0006",
+    "direct_context_merge_0007",
+    "direct_context_merge_0008",
+    "direct_context_merge_0009",
+    "direct_context_merge_0010",
+    "direct_context_merge_0011",
+    "direct_context_merge_0012",
+    "direct_context_merge_0013",
+    "direct_context_merge_0014",
+    "direct_context_merge_0015",
+    "direct_context_merge_0016",
+    "direct_context_merge_0017",
+    "direct_context_merge_0018",
+    "direct_context_merge_0019",
+    "direct_context_merge_0020",
+    "exposure_species_merge_0001",
+    "exposure_species_merge_0002",
+    "exposure_species_merge_0003",
+    "exposure_species_merge_0004",
+    "exposure_species_rename_0001",
+    "exposure_species_split_0001",
+    "exposure_species_split_0002",
+    "exposure_species_split_0004",
+    "exposure_species_split_0005"
+  ],
+  "adjudicated_change_ids": [
+    "direct_context_merge_0001",
+    "direct_context_merge_0002",
+    "direct_context_merge_0003",
+    "direct_context_merge_0004",
+    "direct_context_merge_0005",
+    "direct_context_merge_0006",
+    "direct_context_merge_0007",
+    "direct_context_merge_0008",
+    "direct_context_merge_0009",
+    "direct_context_merge_0010",
+    "direct_context_merge_0011",
+    "direct_context_merge_0012",
+    "direct_context_merge_0013",
+    "direct_context_merge_0014",
+    "direct_context_merge_0015",
+    "direct_context_merge_0016",
+    "direct_context_merge_0017",
+    "direct_context_merge_0018",
+    "direct_context_merge_0019",
+    "direct_context_merge_0020",
+    "exposure_species_merge_0001",
+    "exposure_species_merge_0002",
+    "exposure_species_merge_0003",
+    "exposure_species_merge_0004",
+    "exposure_species_rename_0001",
+    "exposure_species_split_0001",
+    "exposure_species_split_0002",
+    "exposure_species_split_0003",
+    "exposure_species_split_0004",
+    "exposure_species_split_0005"
+  ],
+  "adjudication_file": "adjudication_direct_exposure_by_sensitization.jsonl",
+  "adjudication_sha256": "9530b14fa762c18751a405f3ff8b041e8d01b978f485816ef7e85edd49b69cd6",
+  "adjudicator_id": "skin_sensitization_audit",
+  "canonical_mapping_modified": false,
+  "change_decisions_expected": 30,
+  "checker_disagreement_ids": [
+    "exposure_species_split_0003"
+  ],
+  "checker_disagreement_resolution": {
+    "exposure_species_split_0003": "reject"
+  },
+  "checker_file": "checker_direct_exposure_by_phototoxicity.jsonl",
+  "checker_sha256": "b1d51e23b7387cadbda890ee0ed496aba0bdb103b3c68987348f8245834f3fd1",
+  "coverage": {
+    "adjudication_ids": 30,
+    "duplicate_ids": 0,
+    "every_changed_decision_adjudicated_exactly_once": true,
+    "every_checker_disagreement_explicitly_resolved": true,
+    "extra_ids": 0,
+    "missing_change_ids": 0,
+    "valid": true
+  },
+  "downstream_stages_modified": false,
+  "packet_audit": {
+    "exact_packet_to_provenance_row_parity": true,
+    "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+    "reviewed_assignment_count": 40443,
+    "reviewed_cluster_count": 406,
+    "reviewed_packet_count": 10,
+    "reviewed_packet_ids": [
+      "direct_skin_reaction__global_context__packet_0001",
+      "direct_skin_reaction__global_context__packet_0002",
+      "direct_skin_reaction__global_species_context__packet_0001",
+      "direct_skin_reaction__global_species_context__packet_0002",
+      "direct_skin_reaction__global_species_context__packet_0003",
+      "skin_exposure__global_species_context__packet_0001",
+      "skin_exposure__global_species_context__packet_0002",
+      "skin_exposure__global_species_context__packet_0003",
+      "skin_exposure__global_species_context__packet_0004",
+      "skin_exposure__global_species_context__packet_0005"
+    ]
+  },
+  "policy_sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017",
+  "primary_file": "primary_direct_exposure.jsonl",
+  "primary_scope_validation": {
+    "action_counts": {
+      "merge": 24,
+      "rename": 1,
+      "retain": 708,
+      "split": 5
+    },
+    "decisions": 738,
+    "labels_expected": 762,
+    "labels_missing": 0,
+    "labels_owned": 762,
+    "valid": true
+  },
+  "primary_sha256": "87a0c999c488062b10a47e9137c364f0446a45ebf0665430742f03705d4f89fd",
+  "rejected_change_ids": [
+    "exposure_species_split_0003"
+  ],
+  "scope": [
+    "direct_skin_reaction/global_context",
+    "direct_skin_reaction/global_species_context",
+    "skin_exposure/global_species_context"
+  ],
+  "shared_consolidation_validation": {
+    "accepted_changes": 29,
+    "change_decisions": 30,
+    "checker_disagreements": 1,
+    "primary": {
+      "action_counts": {
+        "merge": 24,
+        "rename": 1,
+        "retain": 708,
+        "split": 5
+      },
+      "decisions": 738,
+      "labels_expected": 762,
+      "labels_missing": 0,
+      "labels_owned": 762,
+      "valid": true
+    },
+    "rejected_changes": 1,
+    "valid": true
+  },
+  "summary_version": "skin_reaction_auxiliary_adjudication_direct_exposure_by_sensitization.v1",
+  "valid": true,
+  "verdict_counts": {
+    "accept": 29,
+    "reject": 1
+  }
+}

@@ -1,0 +1,1992 @@
+{
+  "assignment_count": 397,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "% CSF drug concn to serum drug concnc"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "% CSF/serum concnb"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "% Penetration (CSF/serum) at 1 h"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "[CSF]/[Serum] x 100"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "[CSF]/[serum] × 100"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "[CSF]/[SERUM] × 100%"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "[Drug]CSF:[Drug]plasma ratio"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "adjusted CSF/serum ratio"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ascorbate CSF/serum ratio"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "average CSF/blood ratio"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "bcbm_to_serum_ratio",
+      "raw_value": "BCBM-to-serum ratio"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "blood and CSF ratio"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "blood to CSF ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "blood versus CSF ratio"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "blood/CSF ratio"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "blood: CSF ratio"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "blood:CSF ratio"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "brain-serum and CSF-serum ratios"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "bromide ratio (serum/C.S.F. bromide)"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "btf_to_serum_percentage",
+      "raw_value": "BTF/Serum (%)"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "C.S.F. to serum ratio"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "C.S.F.-to-serum ratio"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "C_CSF/C_s ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "C_CSF/C_serum"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "cctw_to_serum_ratio",
+      "raw_value": "CCTW/Serum ratio"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "csf_to_total_serum_cmax_ratio",
+      "raw_value": "Cmax CSF/total serum ratio"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_to_serum_cmin_ratio",
+      "raw_value": "Cmin CSF/serum ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "csf_to_serum_cmin_ratio",
+      "raw_value": "Cmin-CSF:Cmin-serum"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_to_serum_cmin_ratio",
+      "raw_value": "Cmin-CSF:Cmin-serum ratio"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Colistin ratio (CSF/sera)"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Concn in CSF/ serum ratio (7 h)"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Concn in CSF/concn in serum"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "concn in CSF/concn in serum"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Concn ratio of CSF/serum"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF / serum"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF : serum cimetidine ratio"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF : serum ratio"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF : serum ratio (%)"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF blood ratio"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF conc./Serum conc. %"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "csf_to_total_serum_ratio",
+      "raw_value": "CSF conc.: Total serum conc."
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "csf_to_blood_percentage",
+      "raw_value": "CSF concn / Blood concn × 100"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF concn/ serum concn"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF gentamicin level / serum level"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_to_blood_glucose_ratio",
+      "raw_value": "CSF glucose / blood glucose ratio"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_to_blood_glucose_ratio",
+      "raw_value": "CSF glucose/blood glucose ratio"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "csf_to_arterial_lactate_ratio",
+      "raw_value": "CSF La / arterial La ratio"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_to_blood_lactate_ratio",
+      "raw_value": "CSF La / blood La ratio"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF Level (% Serum)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF level / Serum level (%)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF level / serum level ratio"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF level relative to unbound serum form"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF levels relative to serum free fraction"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF lithium/blood lithium ratio"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF MTX/serum MTX ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF MTX24h/serum MTX24h ratio"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF P ratio"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_to_serum_penetration_ratio",
+      "raw_value": "CSF penetration to serum ratio"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "csf_ratio",
+      "raw_value": "CSF ratio"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF serum ratio"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF to blood level ratio"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF to blood ratio"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma drug ratio"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma ratio for active drug"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF to serum area under the curve ratio"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF to serum aztreonam ratio"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF to serum BR ratio"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "csf_to_serum_cmin_ratio",
+      "raw_value": "CSF to serum Cmin ratio"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF to serum fluconazole ratio"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF to serum fraction"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_to_serum_glucose_ratio",
+      "raw_value": "CSF to serum glucose ratio"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF to serum ratio"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF to serum ratios"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "csf_to_serum_uric_acid_ratio",
+      "raw_value": "CSF to serum UA ratio"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF to serum/plasma ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "csf_to_whole_blood_ratio",
+      "raw_value": "CSF to whole blood ratio"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "csf_to_total_serum_ratio",
+      "raw_value": "CSF total serum ratios"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF-blood ratio"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "csf_to_p_hg_ratio",
+      "raw_value": "CSF-Hg/P-Hg ratio"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "peak_csf_to_peak_serum_ratio",
+      "raw_value": "CSF-peak-to-serum-peak ratio"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "csf_to_serum_distribution_ratio",
+      "raw_value": "CSF-serum distribution ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF-serum QUIN ratio"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "csf_serum_range",
+      "raw_value": "CSF-serum range"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "csf_serum_percentage_range",
+      "raw_value": "CSF-Serum Range (%)"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF-serum ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "csf_to_blood_glucose_ratio",
+      "raw_value": "CSF-to-blood glucose ratio"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "csf_to_blood_glucose_ratio",
+      "raw_value": "CSF-to-blood glucose ratios"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF-to-blood ratio"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF-to-blood ratios"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF-to-free serum-level ratio"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma drug ratio"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma drug ratios"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF-to-serum concn (%)"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF-to-serum fosfomycin AUC ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF-to-serum ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF-to-serum ratio of the area under the curve"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF-to-serum ratio of the areas under the curves"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF-to-serum ratios"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_to_blood_glucose_ratio",
+      "raw_value": "CSF/ blood glucose ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/ serum"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_to_serum_distribution_ratio",
+      "raw_value": "CSF/ serum distribution ratio"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/ serum percentage"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/ serum ratio"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/ serum ratios"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_to_blood_percentage",
+      "raw_value": "CSF/blood (%)"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood ascorbate ratio"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood CDDP level ratio"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "csf_to_blood_cmax_ratio",
+      "raw_value": "CSF/blood Cmax ratio"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "csf_to_blood_glucose_ratio",
+      "raw_value": "CSF/Blood Glucose Ratio"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_to_blood_glucose_ratio",
+      "raw_value": "CSF/blood glucose ratio"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_to_blood_lactate_ratio",
+      "raw_value": "CSF/blood L-lactate concentration ratio"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood level ratio"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood levels ratio"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood phenytoin ratio"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood quotient"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/Blood Ratio"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood ratio"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "csf/blood ratio"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood ratios"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/blood serum ratio"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_to_bloodstream_ratio",
+      "raw_value": "CSF/bloodstream ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_to_cpu_ratio",
+      "raw_value": "CSF/Cpu ratio"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_to_css_ratio",
+      "raw_value": "CSF/CSS ratio"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_to_cu_p_ratio",
+      "raw_value": "CSF/Cu,p ratio"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF/free quinine ratio"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF/free serum digitoxin ratio"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/P ratio"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/P- Ratio"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "csf_to_peak_serum_ratio",
+      "raw_value": "CSF/peak serum ratio"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "csf_to_peripheral_blood_ratio",
+      "raw_value": "CSF/peripheral blood ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma drug concn ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma drug level ratio"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma folate ratio"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "csf_to_plasma_glucose_ratio",
+      "raw_value": "CSF/plasma glucose ratio"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma phenytoin ratio"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/plasma ratio or CSF/blood ratio"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/plasma ratios of free drug"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ribavirin concn ratio"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_to_plu_ratio",
+      "raw_value": "CSF/Plu ratio"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "csf_to_protein_free_serum_ratio",
+      "raw_value": "CSF/protein-free serum ratio"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_to_right_heart_blood_ratio",
+      "raw_value": "CSF/right heart blood ratio"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/S ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/SERUM"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/Serum"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/Serum %"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum %"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/Serum (%)"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum (%)"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "csf_to_serum_penetration_ratio",
+      "raw_value": "CSF/serum (penetration ratio)"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum (percentage) ratio"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/SERUM (x 100)"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum 9-CMMG ratios"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum acyclovir ratio"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum ara-C ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/serum area under the curve ratio"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum cimetidine ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "csf_to_serum_cmax_ratio",
+      "raw_value": "CSF/serum Cmax ratio"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "csf_to_serum_cmax_ratio",
+      "raw_value": "CSF/serum Cmax ratios"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_to_serum_cmin_ratio",
+      "raw_value": "CSF/serum Cmin ratio"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum colistin concentration ratio"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum concn (%)"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum content ratio"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum daptomycin ratio"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_to_serum_distribution_ratio",
+      "raw_value": "CSF/serum distribution ratio"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum drug ratio"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum flucloxacillin ratio"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum fluconazole concentration ratio"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum folate"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum folate ratio"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum folic acid ratio"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "csf_to_serum_glucose_ratio",
+      "raw_value": "CSF/serum glucose ratio"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum INH ratio"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum level ratio"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum levels (ratio)"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum levels ratio"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum MTX ratio"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum percentage"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum percentages"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "csf_to_serum_rate",
+      "raw_value": "CSF/serum rate"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/Serum Ratio"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/Serum ratio"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum ratio"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum ratio (% serum level)"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum ratio (%)"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/serum ratio (AUC0-8)"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "csf_to_serum_cmax_ratio",
+      "raw_value": "CSF/serum ratio (Cmax)"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF/serum ratio (free serum)"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "peak_csf_to_serum_ratio",
+      "raw_value": "CSF/serum ratio (Peak)"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "csf_to_total_serum_ratio",
+      "raw_value": "CSF/serum ratio (total serum)"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "csf_to_total_serum_ratio",
+      "raw_value": "CSF/serum ratio (total, CCSF/Ctot)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "csf_to_serum_trough_ratio",
+      "raw_value": "CSF/serum ratio (Trough)"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF/serum ratio (unbound fraction, CCSF/Cfree)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/Serum Ratio of DFMO"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum ration"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum ratios"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum ratios of active drug"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/serum ratios of the areas under the curves"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum tiagabine concentration ratio"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_to_serum_trough_ratio",
+      "raw_value": "CSF/serum trough ratio"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "csf_to_serum_uric_acid_ratio",
+      "raw_value": "CSF/serum UA ratio"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "csf_to_ultrafiltrate_ratio",
+      "raw_value": "CSF/serum ultrafiltrate ratio"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "csf_to_serum_uric_acid_ratio",
+      "raw_value": "CSF/serum uric acid ratio"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum zidovudine ratio"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF/serum% ratio"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF/serum-ratio"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "csf_to_trough_percentage",
+      "raw_value": "CSF/trough% ratio"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/Uplasma ratio"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "csf_to_whole_blood_ratio",
+      "raw_value": "CSF/whole blood ratio"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "csf_to_whole_blood_ratio",
+      "raw_value": "CSF/whole-blood ratio"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "csf_to_peak_serum_percentage",
+      "raw_value": "CSF: peak serum (%)"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF: plasma drug ratio"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "csf_to_plasma_glucose_ratio",
+      "raw_value": "CSF: plasma glucose ratio"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF: serum"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF: serum area under the curve ratio"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF: serum conc."
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF: Serum ratio"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF: serum ratio"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF: serum ratio (%)"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF: serum ratios"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "csf_to_venous_plasma_glucose_ratio",
+      "raw_value": "CSF: Venous plasma glucose ratio"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF:Blood ratio"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF:blood ratio"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:P drug concn ratio"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:P ratio"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma drug ratio"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma drug ratios"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "csf_to_plasma_glucose_ratio",
+      "raw_value": "CSF:plasma glucose ratio"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma neopterin ratio"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum BR ratio"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum bromide ratio"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum cimetidine ratio"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:Serum conc. ratio"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "csf_to_serum_glucose_ratio",
+      "raw_value": "CSF:serum glucose ratio"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "csf_to_serum_penetration_ratio",
+      "raw_value": "CSF:serum penetration ratio"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum QUIN ratio"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:Serum Ratio"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum ratio"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "CSF:serum ratio (%)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum ratio of 25(OH)D ([Q25(OH)DCSF:serum]/[QAlbuminCSF:serum])"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum ratios"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "time_matched_csf_to_serum_ratio",
+      "raw_value": "CSF:serum time matched ratio"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum vancomycin ratios"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF:serum-ratio"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "CSF:total plasma drug ratio"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "csf_to_total_serum_ratio",
+      "raw_value": "CSF:total serum ratio"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "csf_to_ultrafiltrate_platinum_ratio",
+      "raw_value": "CSF:ultrafiltrate platinum ratio"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF:unbound serum ratio"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "CSF:unbound serum testosterone ratio"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF–blood ratio"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CSF–serum ratio"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "csf_to_serum_distribution_ratio",
+      "raw_value": "distribution ratio between CSF and serum"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "ecf_to_serum_glucose_ratio",
+      "raw_value": "ECF glucose levels / serum levels"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "ecf_to_serum_ratio",
+      "raw_value": "ECF-to-serum ratio"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "ecf_to_serum_ratio",
+      "raw_value": "ECF/serum level ratio"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "ecf_to_serum_ratio",
+      "raw_value": "ECF/serum ratio"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "ecf_to_plasma_glucose_ratio",
+      "raw_value": "ECF:plasma glucose ratio"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "ecf_to_serum_percentage",
+      "raw_value": "ECS% serumf"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "unbound_csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "fAUCCSF/fAUCplasma ratio"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "FPV CSF/serum ratio"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "free_csf_to_serum_ratio",
+      "raw_value": "free CSF level / serum level"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "free_csf_to_serum_ratio",
+      "raw_value": "free CSF/serum concentration ratio"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "galactose CSF/blood ratio"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "csf_to_blood_glucose_percentage",
+      "raw_value": "Glucose concn in CSF / Glucose concn in Blood × 100"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "csf_to_blood_glucose_ratio",
+      "raw_value": "Glucose CSF/blood ratio"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "csf_to_plasma_glucose_ratio",
+      "raw_value": "glucose CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "plasma_to_csf_glucose_ratio",
+      "raw_value": "glucose plasma/CSF ratio"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "hct_csf_to_serum_ratio",
+      "raw_value": "HCT ratio CSF/serum"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "hct_csf_to_unbound_serum_ratio",
+      "raw_value": "HCT ratio CSF/serumfree"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "LCR / serum ratio"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "LCR/serum folic acid ratio"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "LCR/serum ratio"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "level in CSF / serum ratio"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "protein_free_serum_to_csf_ratio",
+      "raw_value": "level in protein-free serum vs CSF"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquor/Serum Verhältnis (CSF/serum ratio)"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquorkonzentrationen im Verhältnis zur Serumkonzentration (CSF/serum ratio)"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "lumbar_csf_fraction",
+      "raw_value": "lumbar CSF fraction"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "lumbar CSF:serum MTX ratio"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "maximal CSF:serum vancomycin ratio"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "max_csf_to_blood_ratio",
+      "raw_value": "maximum CSF to blood ratio"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "max_csf_to_max_blood_level_ratio",
+      "raw_value": "maximum CSF to maximum blood level ratio"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "mean_csf_to_serum_ratio",
+      "raw_value": "mean CSF to serum ratio"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "mean_csf_to_serum_ratio",
+      "raw_value": "mean CSF-to-serum ratio"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "mean_csf_to_blood_ratio",
+      "raw_value": "mean CSF/blood ratio"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "mean_csf_to_plasma_ratio",
+      "raw_value": "mean CSF/plasma ratio by protein binding"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "mean_csf_to_serum_ratio",
+      "raw_value": "mean CSF/serum ratio"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "mean_csf_to_unbound_serum_ratio",
+      "raw_value": "mean CSF/serum ratio (unbound fraction)"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "mean_csf_to_serum_ratio",
+      "raw_value": "mean CSF:serum ratio"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "mean_csf_to_serum_ratio",
+      "raw_value": "mean ratio (CSF to serum)"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "Mean ratio of CSF to unbound serum quinidine"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Mean Ratio Serum Lithium to CSF Lithium"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "mean serum/c.s.f. bromide ratio"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "csf_to_cu_p_ratio",
+      "raw_value": "Measured CSF/Cu,p ratio"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "median_csf_to_serum_ratio",
+      "raw_value": "median CSF to serum ratio"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "median_csf_to_serum_ratio",
+      "raw_value": "median CSF/serum ratio"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "P-Cobalamin/CSF-Cobalamin ratio"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "csf_to_total_serum_partition_coefficient",
+      "raw_value": "partition coefficient between CSF and total serum"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "csf_to_serum_partition_coefficient",
+      "raw_value": "partition coefficient for CSF/serum levels"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "peak_csf_to_serum_ratio",
+      "raw_value": "peak CSF/serum ratio"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "percent CSF/serum ratio"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "percent of vancomycin in the CSF to that in the serum"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "Percentage CSF/Serum"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma/CSF homocysteine ratio"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "posaconazole CSF/serum ratio"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "proportional levels in CSF compared to blood"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Q(CSF/Serum)"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "csf_to_bloodstream_ratio",
+      "raw_value": "R (CSF/bloodstream ratio)"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ramiprilate ratio CSF/serum"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "Ramiprilate ratio CSF/serumfree"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "blood_to_csf_rate_constant",
+      "raw_value": "rate constant (blood to CSF)"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "csf_to_serum_ratio_rate",
+      "raw_value": "rate of increase in CSF/serum drug ratios"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "median_csf_to_serum_percentage",
+      "raw_value": "Ratio (%) median (CSF/serum)"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "Ratio (%) of CSF/serum levels at 2h"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Ratio (CSF/blood)"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio (CSF/serum ratio)"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio (CSF/serum)"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "site_to_serum_ratio",
+      "raw_value": "Ratio (site:serum)"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ratio [CSF]/[serum]"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "csf_upr",
+      "raw_value": "ratio and CSF-UPR"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ratio CSF/ serum MTX"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "csf_to_cav_ratio",
+      "raw_value": "Ratio CSF/Cav"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ratio CSF/Serum"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ratio CSF/serum"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ratio CSF/Serum Concentration"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ratio CSF:Serum"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "csf_ratio",
+      "raw_value": "ratio in the CSF"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of area under the curve for CSF versus serum"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of areas under the curve of CSF to serum"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ratio of concn in CSF/serum"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "ratio of CSF levels to blood levels"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "ratio of CSF to blood"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "ratio of CSF to blood ACV"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "ratio of CSF to free serum moxifloxacin"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio of CSF to serum"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "ratio of CSF to serum free T₄"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "csf_to_serum_glucose_ratio",
+      "raw_value": "ratio of CSF to serum glucose"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio of CSF to serum level"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio of CSF to serum levels"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "ratio of CSF to unbound serum quinidine"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio of CSF trimetrexate to serum trimetrexate"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio of CSF: serum"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio of CSF:serum"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Ratio of drug conc. (CSF/blood)"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "unbound_csf_to_unbound_serum_ratio",
+      "raw_value": "ratio of free T₃ values in CSF to those in serum"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio of linezolid in the CSF to that in the serum"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio of lorlatinib in CSF to serum"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "max_csf_to_blood_ratio",
+      "raw_value": "ratio of maximum CSF to blood levels"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of mean CSF area under the curve to mean serum area under the curve"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "mean_max_csf_to_mean_max_serum_ratio",
+      "raw_value": "ratio of mean maximum CSF to mean maximum serum levels"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "peak_csf_to_peak_serum_ratio",
+      "raw_value": "ratio of peak CSF to peak serum"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "ratio of serum to CSF levels"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "ratio of serum to CSF lithium"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "ratio of serum:CSF"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of the area under the curve (AUC) of CSF and serum"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "ratio of the concentration of fluconazole in serum to that in CSF"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "ratio of total serum found in the CSF"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Ratio Serum/CSF"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "ratio serum/CSF"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "to_serum_ratio",
+      "raw_value": "Ratio to serum"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Ratio, CSF: serum"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Ratio: Serum/CSF"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "cerebrum_to_serum_fluorescence_ratio",
+      "raw_value": "ratios of cerebrum to serum NaFl fluorescence"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratios of fluconazole concentration in CSF to that in serum"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "rifampin/CSF serum ratios"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum : CSF ratio"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum C.S.F. bromide ratio"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Serum CSF Ratio"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "serum_to_csf_penetration_ratio",
+      "raw_value": "serum to CSF penetration ratios"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Serum to CSF ratio"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum to CSF ratio"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "serum_to_csf_uric_acid_ratio",
+      "raw_value": "serum UA / CSF UA ratio"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum-to-CSF ratio"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Serum/C.S.F.-bromide ratio"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum/CSF bromide ratio"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "serum_to_csf_partition_ratio",
+      "raw_value": "serum/CSF partition ratio"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Serum/CSF Ratio"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Serum/CSF ratio"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum/CSF ratio"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "serum_to_ventricular_csf_ratio",
+      "raw_value": "serum/ventricular CSF ratio"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum: CSF ratio"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum:CSF Br⁸² ratio"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum:CSF QUIN levels ratio"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum:CSF ratio"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "steady_state_blood_to_csf_ratio",
+      "raw_value": "steady-state blood:CSF ratio"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "tmax_serum_vs_csf",
+      "raw_value": "Tmax (serum) vs. Tmax (CSF)"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "total_blood_to_csf_ratio",
+      "raw_value": "total blood to CSF propofol ratio"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "csf_to_total_serum_ratio",
+      "raw_value": "Total CSF conc / Total serum conc"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "csf_to_unbound_serum_ratio",
+      "raw_value": "Total CSF conc / Unbound serum conc"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "csf_to_serum_percentage",
+      "raw_value": "TRIM in CSF as % of the serum level"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "csf_to_serum_trough_ratio",
+      "raw_value": "trough CSF: serum fluconazole ratios"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "typical_csf_to_serum_ratio",
+      "raw_value": "typical CSF/serum ratio"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "unbound_csf_to_unbound_serum_ratio",
+      "raw_value": "unbound concentration ratio (CSF/serum)"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "unbound_csf_to_unbound_serum_ratio",
+      "raw_value": "Unbound CSF conc / Unbound serum conc"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "unbound_csf_to_unbound_plasma_ratio",
+      "raw_value": "unbound CSF to plasma drug ratio"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "VCM CSF/serum ratio"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "venous_blood_to_csf_ratio",
+      "raw_value": "venous blood-to-CSF ratio"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "ventricular_csf_to_serum_ratio",
+      "raw_value": "ventricular CSF:serum ratio"
+    }
+  ],
+  "cluster_id": "cluster_a5fde2bff9d013c9",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

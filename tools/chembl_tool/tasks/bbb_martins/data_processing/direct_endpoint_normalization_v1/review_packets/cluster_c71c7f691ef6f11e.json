@@ -1,0 +1,2347 @@
+{
+  "assignment_count": 468,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "% In brain versus plasma"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "% of brain to plasma ratio"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_water_to_plasma_water_ratio",
+      "raw_value": "(brain water) : (plasma water) ratio"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "3H-activity brain/plasma ratio"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "[Brain]/[Plasma] ratio"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "[brain]/[plasma] ratio"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "[brain]:[plasma] ratio"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "area under the curve ratio of the brain versus plasma"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC₀₋ₜ brain to AUC₀₋ₜ plasma ratio"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "average brain to plasma ratio"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "average brain/ plasma ratio"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "average brain/plasma ratio"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "average plasma brain ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Blood flow method brain/plasma ratio"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_ecf_csf_to_plasma_ratio",
+      "raw_value": "brain (cortical ECF and ventricle CSF) to plasma ratio"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain (ng/ml) to plasma (ng/g) ratio"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain (µg/g)-to-plasma (µg/ml) ratio"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain / plasma ratio"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_to_plasma_activity_ratio",
+      "raw_value": "brain 14C activity to plasma 14C activity ratio"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain : plasma ratio"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain : plasma ratio"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain : plasma ratios"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "Brain acid-soluble to plasma distribution ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_and_csf_to_plasma_ratio",
+      "raw_value": "Brain and CSF PA / plasma PA ratio"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain and plasma ratio"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_spinal_cord_to_plasma_ratio",
+      "raw_value": "brain and spinal cord / plasma ratio"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_area_to_plasma_ratio",
+      "raw_value": "brain area/plasma ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_cell_to_plasma_ratio",
+      "raw_value": "brain cell/plasma ratio"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "Brain conc / plasma ratio"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_cortical_tissue_to_plasma_ratio",
+      "raw_value": "brain cortical tissue to plasma ratio"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "brain Css / Plasma Css ratio"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_dialysate_to_plasma_ratio",
+      "raw_value": "brain dialysate to plasma ratio"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_distribution_enhancement_ratio",
+      "raw_value": "brain distribution enhancement ratio (KO/WT)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_distribution_enhancement_ratio",
+      "raw_value": "brain distribution enhancement ratio (Kp,ss KO/WT)"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_distribution_percentage",
+      "raw_value": "brain distribution percentage from plasma"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_ecf_to_plasma_distribution_ratio",
+      "raw_value": "brain ECF to plasma distribution ratio"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_ecf_to_plasma_ratio",
+      "raw_value": "brain ECF to plasma ratio"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_ecf_to_plasma_ratio",
+      "raw_value": "brain ECF-to-plasma ratio"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_ecf_to_plasma_auc_ratio",
+      "raw_value": "Brain ECF/plasma area under the curve ratios"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_ecf_to_plasma_distribution_ratio",
+      "raw_value": "brain ECF/plasma distribution ratio"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_ecf_to_plasma_ratio",
+      "raw_value": "brain ECF/plasma ratio"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_ecf_to_unbound_plasma_ratio",
+      "raw_value": "brain ECF/plasmaub ratio"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_ecf_to_plasma_ratio",
+      "raw_value": "brain ECF: plasma bafetinib ratio"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_ecf_to_plasma_ratio",
+      "raw_value": "brain ECF:plasma ratios"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain exposure / plasma exposure ratio"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain exposure/plasma exposure ratio"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain exposure/plasma ratio"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_homogenate_to_plasma_ratio",
+      "raw_value": "brain homogenate-to-plasma ratio"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_intestinum_to_plasma_ratio",
+      "raw_value": "brain intestinum:plasma ratio"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_isf_to_plasma_ratio",
+      "raw_value": "brain ISF: plasma ratio"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain level/plasma level ratio"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "brain levels (% of plasma)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain levels and brain:plasma ratios"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "brain levels as % of plasma"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain levels/plasma level ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_or_csf_to_plasma_ratio",
+      "raw_value": "brain or CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_parenchyma_to_plasma_ratio",
+      "raw_value": "brain parenchyma to plasma ratio"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_penetration_ratio",
+      "raw_value": "brain penetration (brain-to-plasma ratio)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_penetration_percentage",
+      "raw_value": "brain penetration rate (%, C brain/C plasma)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_to_plasma_activity_ratio",
+      "raw_value": "brain plasma activity ratio"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain plasma exposure ratio"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain plasma glucose distribution ratio"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain plasma level ratio"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain Plasma Ratio"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain plasma ratio"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain plasma ratio"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain plasma ratios"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_region_to_plasma_ratio",
+      "raw_value": "brain region to plasma ratio"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brainstem_to_plasma_ratio",
+      "raw_value": "brain stem/plasma biperiden ratios"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue content/plasma ratio"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue to plasma fluoride ratio"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_tissue_to_plasma_partition_ratio",
+      "raw_value": "brain tissue to plasma partition ratio"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue to plasma ratio"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue-plasma penetration ratio"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue-plasma ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue-to-plasma ratio"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "total_brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue-to-plasma ratio (total drug)"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue/plasma glucose ratio"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_tissue_to_plasma_concentration_ratio",
+      "raw_value": "brain tissue/plasma level ratio"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue:plasma penetration ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "brain tissue:plasma ratio"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_to_blood_plasma_ratio",
+      "raw_value": "brain to blood plasma ratio"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_to_blood_plasma_ratio",
+      "raw_value": "brain to blood/plasma ratio"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma (B/P) ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma (b/p) ratio"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain to plasma (Cb/Cp) ratio"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain to plasma (kp) exposure ratio"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain to plasma (ratio)"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma (urea) ratio"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain to plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_to_plasma_activity_ratio",
+      "raw_value": "brain to plasma CPM ratios"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain to plasma distribution ratios"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain to plasma drug level ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "Brain to plasma exposure ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain to plasma exposure ratio"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma glucose ratio"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain to plasma level ratio"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "brain_to_plasma_or_serum_ratio",
+      "raw_value": "brain to plasma or serum ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma phenylalanine ratio"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain to plasma ratio"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma ratio"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma ratio (B/r)"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma ratio (B:P)"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain to plasma ratio (Cmax)"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "brain to plasma ratio (Kp)"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma ratio (mdr1a/b knockout vs wild-type)"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain to plasma ratio / Cbrain / Pbrain"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain to plasma ratio at 2 h"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma ratio, B/P"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma ratios"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_to_plasma_total_exposure_ratio",
+      "raw_value": "brain to plasma total exposure ratio"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_to_plasma_or_blood_ratio",
+      "raw_value": "brain to plasma/blood ratio"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_to_plasma_or_blood_ratio",
+      "raw_value": "brain to plasma/blood ratios"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to the plasma ratio"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_tumor_tissue_to_plasma_ratio",
+      "raw_value": "brain tumor tissue:plasma ratio"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_tumor_to_plasma_ratio",
+      "raw_value": "brain tumor to plasma ratio"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "brain_tumor_to_plasma_ratio_and_brain_to_plasma_ratio",
+      "raw_value": "brain tumor-to-plasma and brain-to-plasma ratios"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "brain_tumor_to_plasma_auc_ratio",
+      "raw_value": "brain tumor-to-plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_tumor_to_plasma_ratio",
+      "raw_value": "brain tumor-to-plasma ratio"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "total_brain_tumor_to_plasma_ratio",
+      "raw_value": "brain tumor-to-plasma ratio (total drug)"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_tumor_to_plasma_ratio",
+      "raw_value": "Brain tumor/Plasma ratio"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_uptake_to_plasma_concentration_ratio",
+      "raw_value": "brain uptake/plasma levels ratio"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain versus plasma ratio"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_spinal_cord_to_plasma_ratio",
+      "raw_value": "Brain, spinal cord / plasma ratio"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain- to-plasma exposure ratio"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_to_blood_plasma_ratio",
+      "raw_value": "brain-blood/plasma ratio"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "Brain-plasma distribution ratio"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-plasma drug ratio"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-Plasma Ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-plasma ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-plasma ratio"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "brain-plasma steady-state ratio"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_tissue_to_plasma_exposure_ratio",
+      "raw_value": "brain-tissue-to-plasma exposure ratio"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to plasma ratio"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_to_blood_or_plasma_ratio",
+      "raw_value": "Brain-to-blood or -plasma ratios"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_to_blood_plasma_ratio",
+      "raw_value": "brain-to-blood plasma ratio"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Brain-to-plasma % ratio (Cmax)"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-to-plasma (B/P) ratio"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma (B/P) ratio"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma (B:P) ratio"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma (BP) ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_to_blood_ratio_and_brain_to_plasma_ratio",
+      "raw_value": "Brain-to-plasma and brain-to-blood ratios"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-to-plasma bilirubin ratios"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain-to-plasma distribution ratio"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma drug ratio"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "Brain-to-plasma exposure ratio"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain-to-plasma exposure ratio"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain-to-plasma exposure ratios"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma glucose ratio"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma lapatinib ratio"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma Li ratio"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma lithium ratio"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "brain_to_plasma_partition_ratio",
+      "raw_value": "brain-to-plasma partition ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_to_plasma_partition_ratio",
+      "raw_value": "brain-to-plasma partitioning ratio"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-to-Plasma Ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-to-Plasma ratio"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma ratio (B/P ratio)"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-to-plasma ratio (B/P)"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma ratio (B/P)"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma ratio (b/p)"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain-to-plasma ratio (Cb:Cp)"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain-to-plasma ratio (Cbrain/Cplasma)"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "brain-to-plasma ratio (Kp)"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma ratio (parent compound)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-to-Plasma Ratio (PC)"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma ratio (total)"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma ratio area under the curve"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain-to-plasma ratio based on AUC₀₋ₜ"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "brain_to_plasma_activity_ratio",
+      "raw_value": "brain-to-plasma ratio of activity"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain-to-plasma ratios"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma ratios"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain-to-plasma relative exposure ratio"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma-glucose ratio"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_to_total_plasma_ratio",
+      "raw_value": "brain-to-total-plasma ratio"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/ Plasma ratio"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/ plasma ratio"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/ plasma ratio"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_to_blood_ratio_and_brain_to_plasma_ratio",
+      "raw_value": "brain/blood and brain/plasma ratio"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "Brain/Plasma %"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma (B/ P) ratio"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma (B/P) ratio"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma (B/P) ratio"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma (b/p) ratio"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_to_plasma_equilibrium_ratio",
+      "raw_value": "Brain/plasma (eq) ratio"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma (ratio ± SE)"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma (Ratio)"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_to_plasma_accumulation_ratio",
+      "raw_value": "brain/plasma accumulation ratio (penetration power)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_to_plasma_ratio_and_csf_to_plasma_ratio",
+      "raw_value": "brain/plasma and CSF/plasma ratios"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain/plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma BE ratio"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma BNZ mean ratio"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma chloride ratio"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma Clozapine ratio"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma cocaine ratios"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "Brain/plasma Conc. KO/WT ratio"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain/plasma conc. ratio"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain/plasma content ratio"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma cortisol ratio"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "Brain/plasma distribution ratio"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain/plasma distribution ratio"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain/plasma distribution ratios"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "Brain/plasma drug concn ratio"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma drug ratio"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma drug ratios"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "Brain/plasma exposure ratio"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain/plasma exposure ratio"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma Glucose Ratio"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma glucose ratio"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma glucose ratios"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "Brain/plasma histidine%"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_to_plasma_isotopic_ratio",
+      "raw_value": "Brain/Plasma Isotopic Ratio (B/P)"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma KO/WT ratio"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma lactate ratio"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain/plasma level ratio"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain/plasma levels ratio"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain/plasma molar ratio"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma phenylalanine ratio"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma Ratio"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma ratio"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma ratio"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma ratio"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma Ratio (1hr)"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain/plasma ratio (at Cmax)"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma Ratio (B/P)"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma ratio (B/P)"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma ratio (b/p)"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "brain/plasma ratio (Kp)"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma ratio (total)"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma ratio at 2 ha"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/Plasma ratio of AMI"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma ratio quotient (KO/WT)"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "brain_to_plasma_ratio_and_csf_to_plasma_ratio",
+      "raw_value": "brain/plasma ratio; CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma ratios"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma ratios"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain/plasma sucrose ratio"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma sucrose ratio"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma thiocyanate ratio"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_tissue_to_plasma_concentration_ratio",
+      "raw_value": "brain/plasma tissue level ratio"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "brain_to_plasma_uptake_ratio",
+      "raw_value": "brain/plasma uptake ratio"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma urea ratio"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma-ratio (B/P-ratio)"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_to_trunk_plasma_ratio",
+      "raw_value": "Brain/trunk plasma ratio"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_to_plasma_activity_ratio",
+      "raw_value": "brain: plasma activity ratio"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain: plasma distribution ratio"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain: plasma glucose distribution ratio"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain: Plasma Ratio"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain: plasma ratio"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain: plasma ratio"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "brain_to_plasma_ratio_slope",
+      "raw_value": "brain: plasma ratio slope"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain:-plasma ratio"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "brain_csf_plasma_ratio",
+      "raw_value": "brain:CSF:plasma ratio"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain:plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "Brain:plasma distribution ratio"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain:plasma distribution ratio"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain:plasma exposure ratio"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "brain:plasma exposure ratios"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "brain:plasma level ratio"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain:Plasma Ratio"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain:Plasma ratio"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain:plasma ratio"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain:plasma ratio"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain:plasma ratio (Abcb1a-/- / Wild type)"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "brain_space_to_plasma_ratio",
+      "raw_value": "brain:plasma ratio (brain space)"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "total_brain_to_total_plasma_ratio",
+      "raw_value": "brain:plasma ratio (total:total)"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain:plasma ratios"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "brainstem_to_plasma_ratio",
+      "raw_value": "brainstem/plasma ratio"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "brain–plasma distribution ratio"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain–plasma drug ratio"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain–plasma drug ratios"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain–plasma ratio"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "C(Brain)/ C(Plasma) ratio"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "C_brain/C_plasma ratio"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "central nervous system-to-plasma ratio"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "cns_to_plasma_distribution_rate",
+      "raw_value": "central nervous system/ plasma distribution rate"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "central nervous system:plasma ratio"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "cerebellum_to_plasma_ratio",
+      "raw_value": "cerebellum to plasma ratio"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "cerebellum_to_plasma_ratio",
+      "raw_value": "cerebellum/plasma ratio"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "cerebellum_to_plasma_ratio",
+      "raw_value": "cerebellum:plasma ratio"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "cerebral_cortex_to_plasma_ratio",
+      "raw_value": "cerebral cortex/plasma ratio"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "cerebral_cortex_to_plasma_ratio",
+      "raw_value": "cerebral cortex:plasma ratio"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral fluid/plasma ratio"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "cerebral_isf_to_plasma_ratio",
+      "raw_value": "cerebral interstitial fluid/plasma ratio"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "cerebral_tissue_to_plasma_ratio",
+      "raw_value": "cerebral tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "cerebral_to_plasma_ratio",
+      "raw_value": "cerebral to plasma ratio"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "conc. brain/conc. plasma ratio"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Corrected brain/plasma ratio"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "cortex_tissue_to_plasma_ratio",
+      "raw_value": "cortex tissue to plasma ratio"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "cortex_to_plasma_ratio",
+      "raw_value": "cortex/plasma ratio"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "cortical_brain_to_plasma_ratio",
+      "raw_value": "cortical brain plasma ratios"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "cortical_tissue_to_plasma_ratio",
+      "raw_value": "cortical tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "cortical_to_plasma_ratio",
+      "raw_value": "cortical to plasma ratio"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "csf_to_plasma_ratio_or_brain_to_plasma_ratio",
+      "raw_value": "CSF/Plasma Ratio or Brain/Plasma Ratio"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "distribution ratio (brain/plasma)"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "distribution ratio of brain versus plasma"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "Distribution ratios between brain and plasma"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "brain_distribution_percentage",
+      "raw_value": "distribution to the brain as a percent of plasma levels"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "brain_to_plasma_effective_ratio",
+      "raw_value": "effective brain vs. plasma ratio"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "brain_to_plasma_elimination_rate",
+      "raw_value": "elimination rate from brain relative to plasma"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "maximum_brain_to_plasma_ratio",
+      "raw_value": "Emax (maximum brain-to-plasma ratio)"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "brain_to_plasma_equilibrium_distribution_ratio",
+      "raw_value": "equilibrium distribution ratio for brain versus plasma urea"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "fetal_brain_to_maternal_plasma_ratio",
+      "raw_value": "fetal brain to maternal plasma ratio"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "fetal_brain_to_maternal_plasma_ratio",
+      "raw_value": "fetal brain/average maternal plasma ratio (%)"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "fetal_brain_to_fetal_plasma_ratio",
+      "raw_value": "Fetal brain/fetal plasma ratio"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "fetal_brain_to_plasma_ratio",
+      "raw_value": "fetal brain/plasma ratio"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "brain_to_plasma_fraction",
+      "raw_value": "fraction in the brain relative to plasma levels"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "GHB brain/plasma ratio"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "hypothalamus_to_plasma_ratio",
+      "raw_value": "hypothalamus to plasma ratio"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "hypothalamus_to_plasma_ratio",
+      "raw_value": "hypothalamus/plasma ratio"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "brain_to_plasma_ratio_or_dialysate_to_plasma_ratio",
+      "raw_value": "Increase in Brain/Plasma or Dialysate/Plasma Ratio"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "intracranial_tumor_to_plasma_ratio",
+      "raw_value": "intracranial tumor-to-plasma ratio"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "intracranial_tumor_to_plasma_exposure_ratio",
+      "raw_value": "intracranial tumor-to-plasma relative exposure ratio"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "k (brain/plasma ratio)"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Kp (brain/plasma ratio)"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Kp brain-plasma ratio"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Kp value (brain/plasma ratio)"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "maternal_brain_to_maternal_plasma_ratio",
+      "raw_value": "maternal brain to maternal plasma ratio"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "maximum unperfused brain/plasma ratio"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Mean (SD) brain/plasma ratio"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "brain_tissue_to_blood_plasma_ratio",
+      "raw_value": "Mean brain tissue-to-blood plasma ratio"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "mean brain to plasma level ratio"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "Mean brain to plasma percent ratio"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "mean brain to plasma ratio (BPR)"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "brain_tumor_to_plasma_ratio",
+      "raw_value": "mean brain tumor to plasma ratio"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "mean brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "mean brain/plasma benznidazole ratio"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "mean brain/plasma ratio"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "brain_to_plasma_integral_ratio",
+      "raw_value": "mean brain:plasma integral ratio"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Mean ratio (brain/plasma)"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "mean ratio of brain to plasma levels"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "brain_to_plasma_steady_state_distribution_ratio",
+      "raw_value": "mean steady-state brain-to-plasma distribution ratio"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "median brain/plasma ratio"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Mouse Brain:Plasma ratio"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "non-malignant brain tissue to plasma ratio"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "Normal brain % plasma"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "normal brain/plasma ratio"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "overall brain-to-plasma exposure ratio"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "overall brain/plasma ratio"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "peak brain levels / plasma levels ratio"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "peak brain/peak plasma ratio"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Pentobarbital brain/plasma (ratio ± SE)"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Pentobarbital brain/plasma (ratio)"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "percent of brain/plasma"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "percentage brain to plasma ratio"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "brain_to_plasma_exposure_percentage",
+      "raw_value": "percentage of brain-plasma exposure"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "brain_distribution_percentage",
+      "raw_value": "percentage of cerebral pool entering from plasma"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "plasma_to_brain_percentage",
+      "raw_value": "percentage of plasma amount entering brain"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "plasma_to_brain_percentage",
+      "raw_value": "percentage of plasma DA reaching the brain"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "plasma_to_brain_percentage",
+      "raw_value": "percentage of plasma detected in brain"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "plasma_to_brain_percentage",
+      "raw_value": "percentage of plasma distributed to the brain"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "plasma_to_brain_percentage",
+      "raw_value": "percentage of plasma NEP distributed to the brain"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma brain ratio"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma cesium/brain cesium ratio"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "plasma_to_brain_concentration_ratio",
+      "raw_value": "plasma to brain GA level ratio"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "Plasma to brain ratio"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma to brain ratio"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "plasma_to_brain_uptake_ratio",
+      "raw_value": "plasma to brain uptake ratio"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma urea/brain urea ratio"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "plasma_to_brain_concentration_ratio",
+      "raw_value": "plasma-brain level ratio"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma-brain ratio"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "Plasma-to-brain ratio"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma-to-brain ratio"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "plasma_to_brain_dialysate_ratio",
+      "raw_value": "plasma/ brain dialysate ratio"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "Plasma/Brain Phenylalanine Ratio"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "Plasma/Brain ratio"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "Plasma/brain ratio"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma/brain ratio"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "Plasma/brain ratio Phe"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma:brain ammonia ratio"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "plasma_to_brain_distribution_ratio",
+      "raw_value": "plasma:brain distribution ratio"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "plasma_to_brain_ecf_ratio",
+      "raw_value": "plasma:brain ECF ratio"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma:brain ratio"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "plasma_to_cerebral_tissue_ratio",
+      "raw_value": "plasma:cerebral tissue ratio"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "plasma–brain ratio"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Predicted brain to plasma ratio"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Proportion (brain/plasma)"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "quotient of brain/plasma ratios"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "quotient of brain/plasma ratios (KO vs WT)"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "quotients of the brain-to-plasma ratios (P-gp double-knockout versus wild-type)"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "rat brain/plasma ratio"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio (Brain/Plasma)"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio (brain/plasma)"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "Ratio (brain/plasmaub)"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "brain_to_plasma_uptake_ratio",
+      "raw_value": "ratio between brain and plasma uptake"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "brain_dialysate_to_plasma_ratio",
+      "raw_value": "ratio between CBZ in brain dialysate and plasma"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "hippocampal_dialysate_to_plasma_ratio",
+      "raw_value": "ratio between PHT in hippocampal dialysates and plasma"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio between the brain and plasma"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "ratio brain-plasma exposure"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio Brain/Plasma"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio brain/plasma"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio brain/plasma"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio Brain: Plasma"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio brain: plasma"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio in brain to plasma"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of (3H)dT in whole brain to plasma"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "ratio of brain 14C to unbound plasma [14C]MeTHF"
+    },
+    {
+      "item_id": "v0399",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio of brain to plasma"
+    },
+    {
+      "item_id": "v0400",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain to plasma"
+    },
+    {
+      "item_id": "v0401",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain to plasma (skeletal muscle)"
+    },
+    {
+      "item_id": "v0402",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain to plasma cyclophosphamide"
+    },
+    {
+      "item_id": "v0403",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain to plasma fluorescein"
+    },
+    {
+      "item_id": "v0404",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain to plasma glucose"
+    },
+    {
+      "item_id": "v0405",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain to plasma penicillin"
+    },
+    {
+      "item_id": "v0406",
+      "provisional_endpoint": "brain_tumor_to_plasma_ratio",
+      "raw_value": "ratio of brain tumors/plasma"
+    },
+    {
+      "item_id": "v0407",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain-to-plasma [¹⁴C]AIB"
+    },
+    {
+      "item_id": "v0408",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "Ratio of brain-to-plasma concn"
+    },
+    {
+      "item_id": "v0409",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "ratio of brain-to-plasma exposure"
+    },
+    {
+      "item_id": "v0410",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain-to-plasma glucose"
+    },
+    {
+      "item_id": "v0411",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "ratio of brain-to-plasma levels"
+    },
+    {
+      "item_id": "v0412",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio of Brain/Plasma"
+    },
+    {
+      "item_id": "v0413",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain/plasma"
+    },
+    {
+      "item_id": "v0414",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "ratio of brain/plasma levels"
+    },
+    {
+      "item_id": "v0415",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of compound in brain vs. in plasma"
+    },
+    {
+      "item_id": "v0416",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "ratio of counts g⁻¹ brain / counts g⁻¹ plasma"
+    },
+    {
+      "item_id": "v0417",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "Ratio of d.p.m./g brain to d.p.m./ml plasma"
+    },
+    {
+      "item_id": "v0418",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "ratio of DA in blood plasma to brain"
+    },
+    {
+      "item_id": "v0419",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "ratio of fluorescence in the brain tissue to plasma"
+    },
+    {
+      "item_id": "v0420",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "ratio of fluoride level in brain to plasma"
+    },
+    {
+      "item_id": "v0421",
+      "provisional_endpoint": "brain_tissue_to_plasma_concentration_ratio",
+      "raw_value": "ratio of isavuconazole brain tissue to plasma concentrations"
+    },
+    {
+      "item_id": "v0422",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of LM11A-31 in the brain versus plasma"
+    },
+    {
+      "item_id": "v0423",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "ratio of Quin from plasma to brain"
+    },
+    {
+      "item_id": "v0424",
+      "provisional_endpoint": "brain_to_blood_plasma_activity_ratio",
+      "raw_value": "ratio of specific activity in brain to blood-plasma"
+    },
+    {
+      "item_id": "v0425",
+      "provisional_endpoint": "brain_to_plasma_steady_state_distribution_ratio",
+      "raw_value": "ratio of steady-state brain/plasma distribution ratio"
+    },
+    {
+      "item_id": "v0426",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "ratio of the exposure in brain over the exposure in plasma"
+    },
+    {
+      "item_id": "v0427",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "Ratio plasma/brain"
+    },
+    {
+      "item_id": "v0428",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio, brain to plasma"
+    },
+    {
+      "item_id": "v0429",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratios between plasma and brain"
+    },
+    {
+      "item_id": "v0430",
+      "provisional_endpoint": "brain_to_plasma_concentration_ratio",
+      "raw_value": "ratios of oleandrin content in brain relative to that in plasma"
+    },
+    {
+      "item_id": "v0431",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "Ratios plasma/brain"
+    },
+    {
+      "item_id": "v0432",
+      "provisional_endpoint": "kp_brain",
+      "raw_value": "Reconstructed Kp,brain Ratio"
+    },
+    {
+      "item_id": "v0433",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Relative brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0434",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "relative ratio of brain to plasma ³H-melatonin"
+    },
+    {
+      "item_id": "v0435",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "steady state brain to plasma ratio"
+    },
+    {
+      "item_id": "v0436",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "steady state brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0437",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "steady state brain/ plasma ratio"
+    },
+    {
+      "item_id": "v0438",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "steady-state brain-plasma ratio"
+    },
+    {
+      "item_id": "v0439",
+      "provisional_endpoint": "brain_to_plasma_steady_state_distribution_ratio",
+      "raw_value": "Steady-State Brain-to-Plasma Distribution Ratio"
+    },
+    {
+      "item_id": "v0440",
+      "provisional_endpoint": "brain_to_plasma_steady_state_distribution_ratio",
+      "raw_value": "Steady-state brain-to-plasma distribution ratio"
+    },
+    {
+      "item_id": "v0441",
+      "provisional_endpoint": "brain_to_plasma_steady_state_distribution_ratio",
+      "raw_value": "steady-state brain-to-plasma distribution ratio"
+    },
+    {
+      "item_id": "v0442",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "Steady-state brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0443",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "steady-state brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0444",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "steady-state brain/plasma ratio"
+    },
+    {
+      "item_id": "v0445",
+      "provisional_endpoint": "brain_to_plasma_steady_state_ratio",
+      "raw_value": "steady-state brain:plasma ratio"
+    },
+    {
+      "item_id": "v0446",
+      "provisional_endpoint": "brain_to_plasma_steady_state_distribution_ratio",
+      "raw_value": "steady-state distribution ratio between brain and plasma"
+    },
+    {
+      "item_id": "v0447",
+      "provisional_endpoint": "striatum_to_plasma_ratio",
+      "raw_value": "Striatum/Plasma Ratio"
+    },
+    {
+      "item_id": "v0448",
+      "provisional_endpoint": "brain_tissue_distribution_to_plasma_ratio",
+      "raw_value": "tissue distribution in the brain to plasma ratio"
+    },
+    {
+      "item_id": "v0449",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "tissue-to-plasma ratio (brain)"
+    },
+    {
+      "item_id": "v0450",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "Tissue-to-plasma ratio (Brain/Plasma)"
+    },
+    {
+      "item_id": "v0451",
+      "provisional_endpoint": "brain_tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma Ratio (Brain)"
+    },
+    {
+      "item_id": "v0452",
+      "provisional_endpoint": "brain_to_plasma_percentage",
+      "raw_value": "total amount percentage of brain/plasma"
+    },
+    {
+      "item_id": "v0453",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "total brain to plasma ratio"
+    },
+    {
+      "item_id": "v0454",
+      "provisional_endpoint": "total_brain_to_total_plasma_ratio",
+      "raw_value": "total brain to total plasma ratio"
+    },
+    {
+      "item_id": "v0455",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "Total Brain-to-Plasma Ratio"
+    },
+    {
+      "item_id": "v0456",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "Total brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0457",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "total brain-to-plasma ratio"
+    },
+    {
+      "item_id": "v0458",
+      "provisional_endpoint": "total_kp_brain",
+      "raw_value": "total brain-to-plasma ratio (Kp)"
+    },
+    {
+      "item_id": "v0459",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "total brain/plasma lapatinib ratio"
+    },
+    {
+      "item_id": "v0460",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "total brain/plasma ratio"
+    },
+    {
+      "item_id": "v0461",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "total brain:plasma ratio"
+    },
+    {
+      "item_id": "v0462",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "total diflunisal plasma to brain ratio"
+    },
+    {
+      "item_id": "v0463",
+      "provisional_endpoint": "brain_to_plasma_activity_ratio",
+      "raw_value": "Total ³H-activity brain / plasma ratio"
+    },
+    {
+      "item_id": "v0464",
+      "provisional_endpoint": "whole_brain_to_fetal_plasma_ratio",
+      "raw_value": "whole brain / fetal plasma ratio"
+    },
+    {
+      "item_id": "v0465",
+      "provisional_endpoint": "whole_brain_to_plasma_ratio",
+      "raw_value": "whole brain/plasma ratio"
+    },
+    {
+      "item_id": "v0466",
+      "provisional_endpoint": "whole_brain_to_plasma_ratio",
+      "raw_value": "whole-brain/plasma ratio"
+    },
+    {
+      "item_id": "v0467",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "¹⁴C in brain ÷ ¹⁴C in plasma"
+    }
+  ],
+  "cluster_id": "cluster_c71c7f691ef6f11e",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

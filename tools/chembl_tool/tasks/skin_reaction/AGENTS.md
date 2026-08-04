@@ -282,6 +282,280 @@ metrics after idx00074 final-only rerun:
   prediction distribution: no_risk=37 risk=45
 ```
 
+## Layered normalized-record library (v6)
+
+Skin_Reaction uses the same layered Starling builder as Bioavailability_Ma. The staged driver is shared:
+
+```text
+tools/chembl_tool/common/starling/build_normalized_evidence_library.py
+```
+
+Everything task-specific is supplied by a `StarlingTaskPolicy` published as `POLICY` in
+`tools/chembl_tool/tasks/skin_reaction/starling_policy.py`. The builder and the directory-index loader
+resolve it by that convention; there is no separate registry. The task entry point is a thin wrapper:
+
+```bash
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+  python -m tools.chembl_tool.tasks.skin_reaction.build_normalized_starling_evidence_library \
+  --workers 128
+```
+
+Stages 01-03 are built by the shared normalized-record driver. The split-aware stages 04-09 are built
+transactionally by `common/starling/split_downstream.py`, with thin task bindings in
+`build_starling_downstream_artifacts.py`:
+
+```text
+starling_normalized_v6/
+  01_cleaned/{records.parquet, manifest.json, source_inventory.json, endpoint_inventory.json}
+  02_normalized/{records.parquet, manifest.json, endpoint_registry.json,
+                 record_validity_policy.json, auxiliary_mapping_manifest.json, source_contract.json}
+  03_records/{records.parquet, duplicates.parquet, exclusions.parquet,
+              scalar_distribution.parquet, manifest.json}
+  04_pair_buckets/{pair_bucket_records.parquet, pair_bucket_metadata.json}
+  05_assay_transfer_policy/pair_bucket_transfer_policy.json.gz
+  06_remove_heldout_overlap/{excluded_direct_skin_reaction_records.parquet,
+                             random/records.parquet, scaffold/records.parquet, manifest.json}
+  07_molecule_evidence/{random,scaffold}/{molecule_families.parquet,
+                                          molecule_family_records.parquet, manifest.json}
+  08_neighbor_index/{random,scaffold}/{molecules.parquet, fingerprints.npz,
+                                       group_membership.parquet, manifest.json}
+  09_audits/
+  manifest.json
+```
+
+### How the four skin sources differ from Bioavailability_Ma
+
+Two structural differences drive most of the task-specific policy, and neither is incidental.
+
+First, every skin source carries its own structure column, spelled `SMILES` in uppercase, so all four
+profiles use `structure_mode="direct"`. There is no shared identifier-to-SMILES mapping and no
+separately pinned HuggingFace direct snapshot. Row counts and file digests are pinned from
+`data/starling_data/skin_reaction/SOURCE_MANIFEST.json` and asserted on every build.
+
+Second, only two of the four sources carry numeric measurements:
+
+| source | rows | endpoint column | measurement / unit | scalar |
+|---|---:|---|---|---|
+| `direct_skin_reaction` | 66,597 | `reaction_type` | `effect_metric`, embedded | no |
+| `sensitization_aop` | 45,985 | `endpoint_or_target` | `result_value` / `result_unit` | yes |
+| `phototoxicity_irritation_local_damage` | 382,726 | `evidence_endpoint` | `observed_effect`, free prose | no |
+| `skin_exposure` | 311,834 | `evidence_type` | `result_value` / `result_unit` | yes |
+
+`direct_skin_reaction` and `phototoxicity_irritation_local_damage` are categorical: their outcome lives
+in `outcome_label` / `result_label`, and their measurement columns are semi-quantitative scores (`++`,
+`+++`) or free prose. The v6 contract keeps such records as retrieval evidence with a **null scalar**,
+which meant they could never reach a pair bucket — 296,567 structurally resolved records excluded for
+`missing_canonical_unit` alone, a larger pool than the entire measured set. They reach a bucket now, but
+only through the explicit encoders below; they are still never coerced into a number by the measurement
+parser.
+
+### Categorical response encoding
+
+`starling_categorical_response.py` places the informative subset of the categorical records on a named
+latent scale, after which nothing downstream changes: bucket membership, the within-bucket SD
+standardisation, the empirical percentile curve and the transfer label all work unmodified.
+
+Five encoders on three scales. Each is confined to one source, and precedence is strict — the first that
+matches wins, so a record backed by real counts is never downgraded to an anchor:
+
+| encoder | rows | `canonical_unit` | definition |
+|---|---:|---|---|
+| `count_logit` | 19,025 | `logit_response` | `η = logit((k + ½)/(n + 1))`, Jeffreys, for `n >= 2` |
+| `ordinal_severity_grade` | 3,789 | `ordinal_severity_grade` | the `+`/`++`/`+++`/`++++` ladder, 0-4 |
+| `percent_positive_logit` | 2,106 | `logit_response` | `logit` of a reported percentage with no denominator |
+| `single_subject_logit` | 12,662 | `logit_response` | the count computation for `n == 1` |
+| `signed_direction` | 356,976 | `signed_effect_direction` | `protective −1`, `negative 0`, `positive +1` |
+
+Four decisions here are load-bearing and were made against the data, not by analogy:
+
+**Shrinkage is mandatory, not cosmetic.** 9,308 count rows report `p = 0` and 12,057 report `p = 1`;
+an unshrunk logit is infinite for both. The Jeffreys posterior mean also makes the sample size matter
+rather than only the ratio: `0/1 → −1.10`, `0/10 → −3.04`, `0/100 → −5.30`.
+
+**The `+` ladder is severity, not incidence.** Of the graded rows that also carry counts, 94.7% have
+`n == 1` — the grade says how strongly one subject reacted, not what fraction of a group did. Encoding
+`++` as "50% positive" would conflate the two, so it gets its own ordinal scale. Because the transfer
+policy standardises by within-bucket SD, the absolute spacing of the ladder is irrelevant; only the
+ratios between grades matter.
+
+**A single subject is not an incidence study.** 42.7% of count rows are `n == 1`. `single_subject_logit`
+is held apart from `count_logit` so a 1/1 report can never set the comparison scale for a 45/50 one.
+It takes only two values (`±1.10`), which the distinct-level gate then handles.
+
+**`protective` is a direction, not a weaker positive.** It is 95,392 phototoxicity rows, and an ordinal
+ladder would place it on the wrong side of `negative`. `not_classified` (22,896) and
+`mixed_or_inconclusive` (2,336) receive **no value at all** — they are absence of information, and
+mapping them to the midpoint would fabricate evidence of no effect. 518 junk rows (LLM output leakage
+such as `positivetext>`) are dropped, not repaired.
+
+Three guards keep the encoded records honest:
+
+- `categorical_encoder_id` is part of the pair-bucket key for both categorical sources. `canonical_unit`
+  alone is not enough, because three encoders share `logit_response`.
+- An encoder only ever fills a record with no scalar of its own, and
+  `validate_measurement_pairs` fails the build if an encoding ever overwrote a source measurement the
+  parser could have scored.
+- Encoded units are validated by `encoded_unit_validity_status`, not by the physical domains — a
+  log-odds is legitimately negative, and the physical check would otherwise reject roughly half of them
+  as `nonpositive_positive_scalar`.
+
+### Auxiliary context reconciliation
+
+Pair buckets need reconciled `global_context` and `global_species_context`, produced by:
+
+```text
+tools/chembl_tool/tasks/skin_reaction/data_processing/
+  auxiliary_value_prompts.json                       data-driven prompt registry
+  build_embedding_bucket_mapping.py                  MiniLM cluster builder, budget ledger and resume
+  study_design_reviewed_mapping.json                 reviewed table, no LLM calls
+  auxiliary_mapping_helpers/reconciliation.py        global reconciler; owns MAPPING_VERSION, NULL_LIKE
+```
+
+All four sources are covered because categorical encoding lets every source reach a pair bucket:
+
+| source | outputs | planned calls |
+|---|---|---:|
+| `direct_skin_reaction` | context, species, explicit severity grade | 288 |
+| `sensitization_aop` | context, species, reconciled endpoint concept | 200 |
+| `phototoxicity_irritation_local_damage` | context, species | 938 actual |
+| `skin_exposure` | reviewed study-design context, species | 223 |
+| **total** |  | **1,649 actual** |
+
+The runner clusters roughly 100 embedding-neighbour values per ordinary request. The 157,737-value
+phototoxicity assay inventory alone uses MiniBatchKMeans with a target and hard request cap of 250;
+oversized uneven clusters are split deterministically. Every smaller inventory uses exact Lloyd KMeans.
+The recommended run order is the 711-call non-phototoxicity phase, then the 938-call
+phototoxicity phase. Each invocation has a 500,000-token guard and a lifetime ledger; status 75 is a
+clean resumable budget stop, and completed caches are removed only after final publication.
+
+The accepted prompt lineage is `starling_skin_embedding_bucket_mapping.v3`, currently using standard
+OpenAI `gpt-5.4-mini` with `reasoning_effort=low`. The completed direct and sensitization snapshots retain
+their earlier `gpt-5.4` provenance and are accepted during mixed-source finalization only through the
+explicit compatible-snapshot model flag. Every open-vocabulary request performs neighbourhood-level
+reconciliation: it considers all values in the embedding cluster together, reuses the same label for
+the same core concept, and minimizes the scientifically defensible label inventory. The earlier v2
+row-wise prompt semantics were rejected before publication and its cache must never be resumed into v3.
+All species outputs are base species; human occupations, nationalities, ages, and clinical populations
+normalize to `human` rather than creating comparison strata.
+
+The completed local pass is preserved separately from the cross-cluster proposal under
+`data_processing/auxiliary_reconciliation_v2/`. Its 2026-08-03 review covers all 17,368 non-null labels
+in the eight open namespaces across 58 cluster-atomic packets and 218,198 assignments. Three independent
+primary/checker/adjudicator rotations accepted 839 of 856 proposed changes and rejected 17; the accepted
+changes affect 8,316 assignments. `proposal/FINAL_INTEGRITY_AUDIT.json` passes with no issues and the
+runtime-shaped proposal has SHA-256
+`5cd011cbd536dd5e720e9e7e42c18619788b54e33ec384f56933ee24bb50c6b5`.
+After explicit approval on 2026-08-03, six cleaned-tuple conflicts in phototoxicity context were resolved
+to existing reviewed labels and recorded in `auxiliary_reconciliation_v2/PUBLICATION_RECORD.json`.
+The published runtime mapping SHA-256 is
+`34db0efcd64769699e4b86f7cdcb16e9dc12e466e5f04eb2352eca43440ebd45`.
+Stages 02-09 were rebuilt and atomically published: Stage 04 now contains 27,081 pair buckets, including
+1,957 with at least 25 records and 1,099 that pass every assay-transfer eligibility gate.
+
+Until that mapping exists, `--allow-missing-auxiliary-mapping` builds stages 01-03 with
+`auxiliary_mapping_status=not_available`. Such a build deliberately fails its
+`globally_reconciled_auxiliary_coverage` validation so it can never be mistaken for a complete artifact,
+and does not attempt pair buckets or later stages. `build_starling_pair_bucket_transfer_policy.py`
+also refuses an incomplete mapping: its
+`global_context_contract` check compares the recorded `mapping_version` against
+`auxiliary_mapping_helpers/reconciliation.MAPPING_VERSION`, and a `not_built` manifest carries
+`null`. Do not work around either gate.
+
+### Evidence-catalog family labels
+
+`compact_persisted_records` strips `assay_tier`, `endpoint_group`, `evidence_role` and
+`target_pref_name` from the organize-stage artifact because they are derivable. The evidence catalog
+therefore takes a `family_resolver` and re-derives them, so a resumed `--from-stage index` build and a
+full end-to-end build produce the same catalog. Without it a resumed build silently emits empty labels.
+
+### Downstream rebuilds
+
+```bash
+python -m tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_sidecar
+python -m tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy
+```
+
+A successful `clean`, `normalize`, or `organize` stage invalidates every active downstream artifact.
+Stages 04 and 05 are rebuilt from the complete Stage-03 records. Stage 06 then materializes separate
+random/scaffold record views; Stages 07 and 08 are built only from those filtered views. The shared
+publisher validates the complete candidate tree and atomically replaces Stages 04-09, restoring the
+previous tree if publication fails.
+
+### Assay-transfer policy and the heldout filter
+
+Stage 05 follows the same contract Bioavailability_Ma uses: the pair bucket is the only comparison
+stratum, eligible buckets need at least 25 records, the raw candidate columns feed an ω² heterogeneity
+gate that can disqualify a bucket but never subdivides it, and distance is
+`|left − right| / bucket_SD` with a boolean label at 1 SD and a within-bucket empirical percentile.
+Skin adds two things to the shared builder:
+
+- `minimum_distinct_levels = 3`. An anchor-encoded bucket can clear the record-count gate while
+  carrying almost no spread; `single_subject_logit` in particular takes only two values. A bucket
+  rejected for this reason is reported as `fewer_than_minimum_distinct_levels`, not silently dropped.
+
+  A candidate column must never also be a pair-bucket identity field: identity fields are constant
+  inside their own bucket, so they can only ever score zero levels and are dead configuration. This is
+  why `sensitization_aop` lists neither `aop_event` (a bucket field) nor `assay_type` (the raw input to
+  its reconciled context and species). `test_candidate_fields_never_double_as_bucket_identity` pins it.
+- Stage 06 filters only `direct_skin_reaction`, separately for random and scaffold. A direct record is
+  the benchmark label source and would leak; flux, phototoxicity, and AOP rows remain legitimate assay
+  evidence. This filtering is deliberately downstream of the complete-data pair-bucket and transfer
+  policy statistics.
+
+The heldout key set is the union of `{random,scaffold}/heldout_molecule_labels.jsonl` — **880 parents**
+(490 per split, overlapping by 100), which is the valid+test union, not the 2,456 binary parents in the
+benchmark as a whole.
+
+### Soft transfer target
+
+Stage 05 publishes `distance_contract.soft_transfer_target`
+(`assay_transfer_soft_probability.v1`) alongside the boolean label:
+
+```text
+y = 1 / (1 + exp((d − 1.0) / tau)),  tau = 0.5 / ln(9) = 0.2275980...
+```
+
+The midpoint is the boolean decision boundary, so the two never disagree about which side of the
+threshold a pair falls on: `y = 0.5` exactly at `d = 1` SD, and `tau → 0` recovers the step. The
+temperature is derived rather than tuned — half an SD either side reads as 0.9 and 0.1.
+
+This matters most for the encoded categorical records. A signed direction takes three values and a
+severity grade five, so their raw distances are discrete; the sigmoid is where their continuity comes
+from. Like every other score in this pipeline, it is **not** a calibrated probability, and the contract
+says so explicitly.
+
+### Contract handoff to the assay-transfer repo
+
+TxAgent stops before pair enumeration — `04_pair_buckets/pair_bucket_metadata.json` asserts
+`{"pair_enumeration": false, "pair_labels": false, "modeling_dataset": false}`. The modeling target
+itself lives in `/data1/joseph/starling_assay_transfer`: `continuous_target = mean_j |y_A − y_Bj|`
+normalised as `continuous_target / not_transfer_min` (`ml/starling_ml/data.py`), plus
+`transfer_fraction = n_transfer / n_records` (`pipeline/stages/pairs.py`).
+
+What that repo can now consume from here:
+
+- The eligible record set contains categorical records carrying `finite_scalar_value`,
+  `canonical_unit ∈ {logit_response, ordinal_severity_grade, signed_effect_direction}`,
+  `categorical_encoder_id`, and `categorical_sample_size` where a denominator was reported. The sample
+  size is the natural per-record weight — a 1/1 report and a 45/50 report are both single records but
+  are not equally informative.
+- `soft_transfer_probability` replaces the linear `/ not_transfer_min` normalisation with a bounded
+  target that is already commensurable across buckets, since the distance is SD-standardised first.
+- `ml/starling_ml/data.py:_binary_to_int_present` already tolerates a `None` label behind a `present`
+  mask; that is the existing mechanism for the records the encoders deliberately decline
+  (`not_classified`, `mixed_or_inconclusive`, `inconclusive`).
+
+### Tests
+
+```bash
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+  python -m pytest tests/chembl_tool/tasks/skin_reaction -q
+```
+
+Covers the pinned source contracts, the policy plug-in contract, the catalog family-label round-trip,
+endpoint-policy v2, and a bounded end-to-end build asserting that the two qualitative sources produce
+zero scalars while the two scalar sources produce canonical units.
+
 ## Historical TRIM / DeepSeek properties-only baselines
 
 2026-06-29 跑了 3 个 Intern-S1/TRIM no-retrieval properties-only DeepSeek-v4-pro baseline，

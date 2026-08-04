@@ -1,0 +1,3008 @@
+{
+  "clusters": [
+    {
+      "assignment_count": 83,
+      "cache_identity": "052ae1bea87663f4cbc07ca937a1ccdf02798d24f1fe7674bd05b8def6740a17",
+      "cluster_id": "cluster_4e79c322a84d9ded",
+      "items": [
+        {
+          "item_id": "v0000",
+          "provisional_label": null,
+          "raw_value": "10% in-house brain lipid extract artificial membrane"
+        },
+        {
+          "item_id": "v0001",
+          "provisional_label": "pig",
+          "raw_value": "10% porcine brain extract lipids in alkane artificial membrane"
+        },
+        {
+          "item_id": "v0002",
+          "provisional_label": null,
+          "raw_value": "2% in-house brain lipid extract artificial membrane"
+        },
+        {
+          "item_id": "v0003",
+          "provisional_label": null,
+          "raw_value": "2% in-house brain lipid extract PAMPA"
+        },
+        {
+          "item_id": "v0004",
+          "provisional_label": "pig",
+          "raw_value": "2% porcine brain lipid (PBL) artificial membrane"
+        },
+        {
+          "item_id": "v0005",
+          "provisional_label": "pig",
+          "raw_value": "2% porcine brain lipid PAMPA (PBL or in-house brain lipid extract)"
+        },
+        {
+          "item_id": "v0006",
+          "provisional_label": null,
+          "raw_value": "artificial brain lipid membrane PAMPA"
+        },
+        {
+          "item_id": "v0007",
+          "provisional_label": "pig",
+          "raw_value": "artificial porcine polar brain lipid (PBL) membrane"
+        },
+        {
+          "item_id": "v0008",
+          "provisional_label": null,
+          "raw_value": "brain lipid extract PAMPA"
+        },
+        {
+          "item_id": "v0009",
+          "provisional_label": "pig",
+          "raw_value": "brain lipid porcine membrane"
+        },
+        {
+          "item_id": "v0010",
+          "provisional_label": null,
+          "raw_value": "brain polar lipid PAMPA"
+        },
+        {
+          "item_id": "v0011",
+          "provisional_label": "pig",
+          "raw_value": "brain–lipid porcine membrane"
+        },
+        {
+          "item_id": "v0012",
+          "provisional_label": null,
+          "raw_value": "CNS membrane lipids"
+        },
+        {
+          "item_id": "v0013",
+          "provisional_label": null,
+          "raw_value": "in-house brain lipid extract 10% (w/v)"
+        },
+        {
+          "item_id": "v0014",
+          "provisional_label": null,
+          "raw_value": "in-house brain lipid extract 2% (w/v)"
+        },
+        {
+          "item_id": "v0015",
+          "provisional_label": null,
+          "raw_value": "in-house brain lipid extract in n-dodecane"
+        },
+        {
+          "item_id": "v0016",
+          "provisional_label": null,
+          "raw_value": "in-house brain lipid extract PAMPA"
+        },
+        {
+          "item_id": "v0017",
+          "provisional_label": null,
+          "raw_value": "lipid membrane extract"
+        },
+        {
+          "item_id": "v0018",
+          "provisional_label": null,
+          "raw_value": "lipid/water at physiological pH"
+        },
+        {
+          "item_id": "v0019",
+          "provisional_label": null,
+          "raw_value": "lipid–oil–lipid trilayer PAMPA"
+        },
+        {
+          "item_id": "v0020",
+          "provisional_label": "pig",
+          "raw_value": "PAMPA-BBB with porcine brain lipid extract (PBLE)"
+        },
+        {
+          "item_id": "v0021",
+          "provisional_label": "pig",
+          "raw_value": "parallel artificial membrane permeability assay (PAMPA) layering porcine polar brain lipid extract"
+        },
+        {
+          "item_id": "v0022",
+          "provisional_label": "pig",
+          "raw_value": "parallel artificial membrane permeation assay (PAMPA) with porcine brain lipid"
+        },
+        {
+          "item_id": "v0023",
+          "provisional_label": null,
+          "raw_value": "PBL (Polar Brain Lipid) PAMPA"
+        },
+        {
+          "item_id": "v0024",
+          "provisional_label": null,
+          "raw_value": "phosphatidylcholine 10% (w/v)"
+        },
+        {
+          "item_id": "v0025",
+          "provisional_label": null,
+          "raw_value": "phosphatidylcholine 2% (w/v)"
+        },
+        {
+          "item_id": "v0026",
+          "provisional_label": "pig",
+          "raw_value": "pig brain lipid extract"
+        },
+        {
+          "item_id": "v0027",
+          "provisional_label": "pig",
+          "raw_value": "polar brain (porcine) lipid extract"
+        },
+        {
+          "item_id": "v0028",
+          "provisional_label": null,
+          "raw_value": "polar brain lipid extract PAMPA"
+        },
+        {
+          "item_id": "v0029",
+          "provisional_label": null,
+          "raw_value": "polar brain lipid PAMPA"
+        },
+        {
+          "item_id": "v0030",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain artificial lipid membrane extract"
+        },
+        {
+          "item_id": "v0031",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid"
+        },
+        {
+          "item_id": "v0032",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PAMPA-BBB)"
+        },
+        {
+          "item_id": "v0033",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL)"
+        },
+        {
+          "item_id": "v0034",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL) 10% (w/v)"
+        },
+        {
+          "item_id": "v0035",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL) 2% (w/v)"
+        },
+        {
+          "item_id": "v0036",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL) artificial membrane"
+        },
+        {
+          "item_id": "v0037",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL) artificial membrane in dodecane"
+        },
+        {
+          "item_id": "v0038",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL) coated membrane"
+        },
+        {
+          "item_id": "v0039",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL) PAMPA"
+        },
+        {
+          "item_id": "v0040",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL) PAMPA membrane"
+        },
+        {
+          "item_id": "v0041",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid (PBL) polar membrane"
+        },
+        {
+          "item_id": "v0042",
+          "provisional_label": "pig",
+          "raw_value": "Porcine brain lipid (PBL) with cholesterol in n-dodecane artificial membrane"
+        },
+        {
+          "item_id": "v0043",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid artificial membrane"
+        },
+        {
+          "item_id": "v0044",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract"
+        },
+        {
+          "item_id": "v0045",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract (2% w/v in n-dodecane)"
+        },
+        {
+          "item_id": "v0046",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract (BBB PAMPA)"
+        },
+        {
+          "item_id": "v0047",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract (lipid extract of porcine brain) in 70:30 PBS/EtOH"
+        },
+        {
+          "item_id": "v0048",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract (PBLE) based artificial membrane in n-dodecane"
+        },
+        {
+          "item_id": "v0049",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract in PBS/ethanol (70:30)"
+        },
+        {
+          "item_id": "v0050",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract PAMPA"
+        },
+        {
+          "item_id": "v0051",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract PAMPA in 70:30 PBS:EtOH"
+        },
+        {
+          "item_id": "v0052",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid extract PAMPA-BBB"
+        },
+        {
+          "item_id": "v0053",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid membrane"
+        },
+        {
+          "item_id": "v0054",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid membrane extract"
+        },
+        {
+          "item_id": "v0055",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid membrane PAMPA"
+        },
+        {
+          "item_id": "v0056",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid PAMPA"
+        },
+        {
+          "item_id": "v0057",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid PAMPA (2% w/v porcine brain tissue extract in n-dodecane)"
+        },
+        {
+          "item_id": "v0058",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid PAMPA (inferred from PAMPA-BBB notation)"
+        },
+        {
+          "item_id": "v0059",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid PAMPA (with unstirred water layer)"
+        },
+        {
+          "item_id": "v0060",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid PAMPA membrane"
+        },
+        {
+          "item_id": "v0061",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid PAMPA-BBB"
+        },
+        {
+          "item_id": "v0062",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipid? (not specified; PAMPA membrane)"
+        },
+        {
+          "item_id": "v0063",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain lipids"
+        },
+        {
+          "item_id": "v0064",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain membrane lipid PAMPA"
+        },
+        {
+          "item_id": "v0065",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain polar lipid extract"
+        },
+        {
+          "item_id": "v0066",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain polar lipid extract (BPLE) PAMPA"
+        },
+        {
+          "item_id": "v0067",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain polar lipid PAMPA"
+        },
+        {
+          "item_id": "v0068",
+          "provisional_label": "pig",
+          "raw_value": "porcine brain polar lipids PAMPA"
+        },
+        {
+          "item_id": "v0069",
+          "provisional_label": "pig",
+          "raw_value": "porcine lipid PAMPA"
+        },
+        {
+          "item_id": "v0070",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid"
+        },
+        {
+          "item_id": "v0071",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid (PBL) artificial membrane"
+        },
+        {
+          "item_id": "v0072",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid (PBL) in dodecane"
+        },
+        {
+          "item_id": "v0073",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid (PBL) PAMPA"
+        },
+        {
+          "item_id": "v0074",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid artificial membrane"
+        },
+        {
+          "item_id": "v0075",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid extract (PBLEP)"
+        },
+        {
+          "item_id": "v0076",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid extract (PBLEP) PAMPA"
+        },
+        {
+          "item_id": "v0077",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid extract PAMPA"
+        },
+        {
+          "item_id": "v0078",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid membrane"
+        },
+        {
+          "item_id": "v0079",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid PAMPA"
+        },
+        {
+          "item_id": "v0080",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid PAMPA membrane"
+        },
+        {
+          "item_id": "v0081",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar brain lipid PAMPA-BBB"
+        },
+        {
+          "item_id": "v0082",
+          "provisional_label": "pig",
+          "raw_value": "porcine polar lipid extract PAMPA"
+        }
+      ],
+      "namespace": "passive_permeability/global_species_context",
+      "response_sha256": "1da8e3dd9b1ffaa553995dcb291fb10ddf3bcb392912551f96969e5584bf34a7",
+      "served_model": "gpt-5.4-mini-2026-03-17"
+    },
+    {
+      "assignment_count": 132,
+      "cache_identity": "29c938e3fa037a6bfcbf5161f3e6deac0e153eb37717a7a9b4f1e728c9064b3b",
+      "cluster_id": "cluster_74386ad31c0fc218",
+      "items": [
+        {
+          "item_id": "v0000",
+          "provisional_label": null,
+          "raw_value": "BCRP-MDCKII"
+        },
+        {
+          "item_id": "v0001",
+          "provisional_label": null,
+          "raw_value": "Bcrp1-MDCKII"
+        },
+        {
+          "item_id": "v0002",
+          "provisional_label": null,
+          "raw_value": "brain endothelial MDR-MDCK cells monolayer"
+        },
+        {
+          "item_id": "v0003",
+          "provisional_label": null,
+          "raw_value": "Caco-2 and MDCK cells"
+        },
+        {
+          "item_id": "v0004",
+          "provisional_label": null,
+          "raw_value": "Caco-2 and MDCKII-MDR1"
+        },
+        {
+          "item_id": "v0005",
+          "provisional_label": null,
+          "raw_value": "hMDR1-MDCK"
+        },
+        {
+          "item_id": "v0006",
+          "provisional_label": null,
+          "raw_value": "hMDR1-MDCK cells"
+        },
+        {
+          "item_id": "v0007",
+          "provisional_label": null,
+          "raw_value": "hMDRI-MDCK"
+        },
+        {
+          "item_id": "v0008",
+          "provisional_label": null,
+          "raw_value": "human MDR1-MDCK cells"
+        },
+        {
+          "item_id": "v0009",
+          "provisional_label": null,
+          "raw_value": "LLC-PK cells expressing human MDR1"
+        },
+        {
+          "item_id": "v0010",
+          "provisional_label": null,
+          "raw_value": "low efflux MDCKII cells"
+        },
+        {
+          "item_id": "v0011",
+          "provisional_label": null,
+          "raw_value": "low-efflux MDCKII cells"
+        },
+        {
+          "item_id": "v0012",
+          "provisional_label": "dog",
+          "raw_value": "Madin-Darby canine kidney-multidrug resistance 1 (MDCK-MDR1) monolayer cells"
+        },
+        {
+          "item_id": "v0013",
+          "provisional_label": null,
+          "raw_value": "MDCK"
+        },
+        {
+          "item_id": "v0014",
+          "provisional_label": "dog",
+          "raw_value": "MDCK (Madin-Darby Canine Kidney) cells"
+        },
+        {
+          "item_id": "v0015",
+          "provisional_label": null,
+          "raw_value": "MDCK (wild-type)"
+        },
+        {
+          "item_id": "v0016",
+          "provisional_label": null,
+          "raw_value": "MDCK and MDCK-MDR1"
+        },
+        {
+          "item_id": "v0017",
+          "provisional_label": null,
+          "raw_value": "MDCK and MDCK-MDR1 cells"
+        },
+        {
+          "item_id": "v0018",
+          "provisional_label": null,
+          "raw_value": "MDCK and MDCK-MDR1 monolayer cell model"
+        },
+        {
+          "item_id": "v0019",
+          "provisional_label": null,
+          "raw_value": "MDCK and MDCK-MDR1 monolayers"
+        },
+        {
+          "item_id": "v0020",
+          "provisional_label": null,
+          "raw_value": "MDCK cell line over-expressing human MDR-1 (P-gp)"
+        },
+        {
+          "item_id": "v0021",
+          "provisional_label": null,
+          "raw_value": "MDCK cell monolayer"
+        },
+        {
+          "item_id": "v0022",
+          "provisional_label": null,
+          "raw_value": "MDCK cells"
+        },
+        {
+          "item_id": "v0023",
+          "provisional_label": null,
+          "raw_value": "MDCK cells expressing human MDR1 in the presence of P-gp inhibitor GF120918"
+        },
+        {
+          "item_id": "v0024",
+          "provisional_label": null,
+          "raw_value": "MDCK cells expressing human P-glycoprotein"
+        },
+        {
+          "item_id": "v0025",
+          "provisional_label": null,
+          "raw_value": "MDCK cells overexpressing human P-gp"
+        },
+        {
+          "item_id": "v0026",
+          "provisional_label": null,
+          "raw_value": "MDCK cells transfected with human MDR1"
+        },
+        {
+          "item_id": "v0027",
+          "provisional_label": null,
+          "raw_value": "MDCK II"
+        },
+        {
+          "item_id": "v0028",
+          "provisional_label": null,
+          "raw_value": "MDCK II continuous cell line"
+        },
+        {
+          "item_id": "v0029",
+          "provisional_label": null,
+          "raw_value": "MDCK mdr-1 cell line"
+        },
+        {
+          "item_id": "v0030",
+          "provisional_label": null,
+          "raw_value": "MDCK mdr-1 cells"
+        },
+        {
+          "item_id": "v0031",
+          "provisional_label": null,
+          "raw_value": "MDCK monolayer"
+        },
+        {
+          "item_id": "v0032",
+          "provisional_label": null,
+          "raw_value": "MDCK monolayer (wild-type)"
+        },
+        {
+          "item_id": "v0033",
+          "provisional_label": null,
+          "raw_value": "MDCK monolayer with U87-MG co-culture"
+        },
+        {
+          "item_id": "v0034",
+          "provisional_label": null,
+          "raw_value": "MDCK or LLC-PK1 transfected cells overexpressing P-gp or BCRP"
+        },
+        {
+          "item_id": "v0035",
+          "provisional_label": null,
+          "raw_value": "MDCK parent cell line"
+        },
+        {
+          "item_id": "v0036",
+          "provisional_label": null,
+          "raw_value": "MDCK pHaMDR cell monolayer"
+        },
+        {
+          "item_id": "v0037",
+          "provisional_label": null,
+          "raw_value": "MDCK wild-type cell line"
+        },
+        {
+          "item_id": "v0038",
+          "provisional_label": null,
+          "raw_value": "MDCK WT"
+        },
+        {
+          "item_id": "v0039",
+          "provisional_label": null,
+          "raw_value": "MDCK-BCRP"
+        },
+        {
+          "item_id": "v0040",
+          "provisional_label": null,
+          "raw_value": "MDCK-hMDR1cMDR1-ko cells"
+        },
+        {
+          "item_id": "v0041",
+          "provisional_label": null,
+          "raw_value": "MDCK-II cells"
+        },
+        {
+          "item_id": "v0042",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR"
+        },
+        {
+          "item_id": "v0043",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR cell monolayers"
+        },
+        {
+          "item_id": "v0044",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR cells"
+        },
+        {
+          "item_id": "v0045",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1"
+        },
+        {
+          "item_id": "v0046",
+          "provisional_label": null,
+          "raw_value": "MDCK-mdr1"
+        },
+        {
+          "item_id": "v0047",
+          "provisional_label": "dog",
+          "raw_value": "MDCK-mdr1 (Madin-Darby canine kidney cells transfected with human MDR1 gene)"
+        },
+        {
+          "item_id": "v0048",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell"
+        },
+        {
+          "item_id": "v0049",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell assay"
+        },
+        {
+          "item_id": "v0050",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell line"
+        },
+        {
+          "item_id": "v0051",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell line expressing P-gp"
+        },
+        {
+          "item_id": "v0052",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell lines"
+        },
+        {
+          "item_id": "v0053",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell model"
+        },
+        {
+          "item_id": "v0054",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell monolayer"
+        },
+        {
+          "item_id": "v0055",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell monolayers"
+        },
+        {
+          "item_id": "v0056",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cell monolayers pretreated with P-glycoprotein inhibitor"
+        },
+        {
+          "item_id": "v0057",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cells"
+        },
+        {
+          "item_id": "v0058",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cells overexpressing human MDR1 P-glycoprotein"
+        },
+        {
+          "item_id": "v0059",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 cells with 2 µM elacridar"
+        },
+        {
+          "item_id": "v0060",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 human Pgp transfected cell lines"
+        },
+        {
+          "item_id": "v0061",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 monolayer"
+        },
+        {
+          "item_id": "v0062",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 monolayer cells"
+        },
+        {
+          "item_id": "v0063",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 monolayer with U87-MG co-culture"
+        },
+        {
+          "item_id": "v0064",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 monolayers"
+        },
+        {
+          "item_id": "v0065",
+          "provisional_label": null,
+          "raw_value": "MDCK-MDR1 monolayers mimicking the blood-brain barrier"
+        },
+        {
+          "item_id": "v0066",
+          "provisional_label": null,
+          "raw_value": "MDCK-MR1"
+        },
+        {
+          "item_id": "v0067",
+          "provisional_label": null,
+          "raw_value": "MDCK-MR1 cell assay"
+        },
+        {
+          "item_id": "v0068",
+          "provisional_label": null,
+          "raw_value": "MDCK-P-gp"
+        },
+        {
+          "item_id": "v0069",
+          "provisional_label": null,
+          "raw_value": "MDCK-pHaMDR"
+        },
+        {
+          "item_id": "v0070",
+          "provisional_label": null,
+          "raw_value": "MDCK-pHaMDR cell monolayer"
+        },
+        {
+          "item_id": "v0071",
+          "provisional_label": null,
+          "raw_value": "MDCK-wild cell monolayer"
+        },
+        {
+          "item_id": "v0072",
+          "provisional_label": null,
+          "raw_value": "MDCK-WT"
+        },
+        {
+          "item_id": "v0073",
+          "provisional_label": null,
+          "raw_value": "MDCK/MDCK-MDR1"
+        },
+        {
+          "item_id": "v0074",
+          "provisional_label": null,
+          "raw_value": "MDCK/MDR1"
+        },
+        {
+          "item_id": "v0075",
+          "provisional_label": null,
+          "raw_value": "MDCK:MDR1 monolayers"
+        },
+        {
+          "item_id": "v0076",
+          "provisional_label": null,
+          "raw_value": "MDCK_MDR1_BCRP"
+        },
+        {
+          "item_id": "v0077",
+          "provisional_label": null,
+          "raw_value": "MDCKII"
+        },
+        {
+          "item_id": "v0078",
+          "provisional_label": null,
+          "raw_value": "MDCKII cell line"
+        },
+        {
+          "item_id": "v0079",
+          "provisional_label": null,
+          "raw_value": "MDCKII cell monolayer"
+        },
+        {
+          "item_id": "v0080",
+          "provisional_label": null,
+          "raw_value": "MDCKII cell monolayers"
+        },
+        {
+          "item_id": "v0081",
+          "provisional_label": null,
+          "raw_value": "MDCKII cells expressing human MDR1"
+        },
+        {
+          "item_id": "v0082",
+          "provisional_label": null,
+          "raw_value": "MDCKII-BCRP"
+        },
+        {
+          "item_id": "v0083",
+          "provisional_label": null,
+          "raw_value": "MDCKII-hMDR1"
+        },
+        {
+          "item_id": "v0084",
+          "provisional_label": null,
+          "raw_value": "MDCKII-hMDR1 cell line"
+        },
+        {
+          "item_id": "v0085",
+          "provisional_label": null,
+          "raw_value": "MDCKII-hMDR1 cell monolayers"
+        },
+        {
+          "item_id": "v0086",
+          "provisional_label": null,
+          "raw_value": "MDCKII-hMDR1 cells"
+        },
+        {
+          "item_id": "v0087",
+          "provisional_label": null,
+          "raw_value": "MDCKII-hMDR1 monolayer"
+        },
+        {
+          "item_id": "v0088",
+          "provisional_label": null,
+          "raw_value": "MDCKII-hMDR1 with GF120918 (P-gp inhibitor)"
+        },
+        {
+          "item_id": "v0089",
+          "provisional_label": null,
+          "raw_value": "MDCKII-MDR1"
+        },
+        {
+          "item_id": "v0090",
+          "provisional_label": null,
+          "raw_value": "MDCKII-MDR1 cell monolayer"
+        },
+        {
+          "item_id": "v0091",
+          "provisional_label": null,
+          "raw_value": "MDCKII-MDR1 cells"
+        },
+        {
+          "item_id": "v0092",
+          "provisional_label": null,
+          "raw_value": "MDCKII-MDR1 monolayer"
+        },
+        {
+          "item_id": "v0093",
+          "provisional_label": null,
+          "raw_value": "MDCKII-MDR1 monolayers"
+        },
+        {
+          "item_id": "v0094",
+          "provisional_label": null,
+          "raw_value": "MDCKII-WT"
+        },
+        {
+          "item_id": "v0095",
+          "provisional_label": null,
+          "raw_value": "MDCKII-WT parent cell monolayers"
+        },
+        {
+          "item_id": "v0096",
+          "provisional_label": null,
+          "raw_value": "MDR-MDCK"
+        },
+        {
+          "item_id": "v0097",
+          "provisional_label": null,
+          "raw_value": "MDR-MDCK cell line"
+        },
+        {
+          "item_id": "v0098",
+          "provisional_label": null,
+          "raw_value": "MDR-MDCK cell monolayer"
+        },
+        {
+          "item_id": "v0099",
+          "provisional_label": null,
+          "raw_value": "MDR-MDCK cell monolayers"
+        },
+        {
+          "item_id": "v0100",
+          "provisional_label": null,
+          "raw_value": "MDR-MDCK cells"
+        },
+        {
+          "item_id": "v0101",
+          "provisional_label": null,
+          "raw_value": "MDR-MDCK monolayer"
+        },
+        {
+          "item_id": "v0102",
+          "provisional_label": null,
+          "raw_value": "MDR1 expressed MDCK-cell monolayers"
+        },
+        {
+          "item_id": "v0103",
+          "provisional_label": "pig",
+          "raw_value": "MDR1-LLC-PK (porcine kidney epithelial cells transfected with human MDR1)"
+        },
+        {
+          "item_id": "v0104",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK"
+        },
+        {
+          "item_id": "v0105",
+          "provisional_label": null,
+          "raw_value": "mdr1-MDCK"
+        },
+        {
+          "item_id": "v0106",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK assay (MDCK cells expressing MDR1)"
+        },
+        {
+          "item_id": "v0107",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK cell monolayer"
+        },
+        {
+          "item_id": "v0108",
+          "provisional_label": null,
+          "raw_value": "mdr1-MDCK cell monolayer"
+        },
+        {
+          "item_id": "v0109",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK cell monolayers"
+        },
+        {
+          "item_id": "v0110",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK cells"
+        },
+        {
+          "item_id": "v0111",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK cells, P-gp inhibited"
+        },
+        {
+          "item_id": "v0112",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK monolayer"
+        },
+        {
+          "item_id": "v0113",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK monolayers"
+        },
+        {
+          "item_id": "v0114",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCK, AB direction"
+        },
+        {
+          "item_id": "v0115",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCKI"
+        },
+        {
+          "item_id": "v0116",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCKII"
+        },
+        {
+          "item_id": "v0117",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCKII cell monolayer"
+        },
+        {
+          "item_id": "v0118",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCKII cells"
+        },
+        {
+          "item_id": "v0119",
+          "provisional_label": null,
+          "raw_value": "MDR1-MDCKII monolayer"
+        },
+        {
+          "item_id": "v0120",
+          "provisional_label": null,
+          "raw_value": "MDR1-transfected MDCK cells in the presence of Pgp inhibitor (GF120918)"
+        },
+        {
+          "item_id": "v0121",
+          "provisional_label": null,
+          "raw_value": "MDR1-transfected MDCK cells in the presence of Pgp inhibitor GF120918"
+        },
+        {
+          "item_id": "v0122",
+          "provisional_label": null,
+          "raw_value": "MDR1/MDCK"
+        },
+        {
+          "item_id": "v0123",
+          "provisional_label": null,
+          "raw_value": "Mdr1a-LLC-PK"
+        },
+        {
+          "item_id": "v0124",
+          "provisional_label": null,
+          "raw_value": "MDRI-MDCK cell monolayers"
+        },
+        {
+          "item_id": "v0125",
+          "provisional_label": null,
+          "raw_value": "P-glycoprotein transfected MDCK epithelial cells"
+        },
+        {
+          "item_id": "v0126",
+          "provisional_label": null,
+          "raw_value": "P-gp- and BCRP-overexpressing MDCK cell lines"
+        },
+        {
+          "item_id": "v0127",
+          "provisional_label": null,
+          "raw_value": "parental MDCKII cell monolayers"
+        },
+        {
+          "item_id": "v0128",
+          "provisional_label": null,
+          "raw_value": "RRCK"
+        },
+        {
+          "item_id": "v0129",
+          "provisional_label": null,
+          "raw_value": "RRCK cells"
+        },
+        {
+          "item_id": "v0130",
+          "provisional_label": null,
+          "raw_value": "WT MDCK"
+        },
+        {
+          "item_id": "v0131",
+          "provisional_label": null,
+          "raw_value": "WT MDCK cell monolayers"
+        }
+      ],
+      "namespace": "passive_permeability/global_species_context",
+      "response_sha256": "a667974d06c64f3d8eaef4eef380069f6c90ec3c2acf917a761aef747ab6e099",
+      "served_model": "gpt-5.4-mini-2026-03-17"
+    },
+    {
+      "assignment_count": 120,
+      "cache_identity": "c8ef757972fc8dea113df33c3886e317a7a2c0c5a08334fe5ea5f50554255ca2",
+      "cluster_id": "cluster_8a830a319f8ec6dc",
+      "items": [
+        {
+          "item_id": "v0000",
+          "provisional_label": null,
+          "raw_value": "BB19 cells"
+        },
+        {
+          "item_id": "v0001",
+          "provisional_label": null,
+          "raw_value": "BBB cell-based model"
+        },
+        {
+          "item_id": "v0002",
+          "provisional_label": null,
+          "raw_value": "BBB kit"
+        },
+        {
+          "item_id": "v0003",
+          "provisional_label": null,
+          "raw_value": "BBB model"
+        },
+        {
+          "item_id": "v0004",
+          "provisional_label": null,
+          "raw_value": "BBB model kit"
+        },
+        {
+          "item_id": "v0005",
+          "provisional_label": null,
+          "raw_value": "BBB triple co-culture model"
+        },
+        {
+          "item_id": "v0006",
+          "provisional_label": null,
+          "raw_value": "BBB-1 Lipid"
+        },
+        {
+          "item_id": "v0007",
+          "provisional_label": null,
+          "raw_value": "BBB-1 lipid"
+        },
+        {
+          "item_id": "v0008",
+          "provisional_label": null,
+          "raw_value": "BBMEC"
+        },
+        {
+          "item_id": "v0009",
+          "provisional_label": null,
+          "raw_value": "bEnd.3"
+        },
+        {
+          "item_id": "v0010",
+          "provisional_label": null,
+          "raw_value": "bEnd3 cell monolayers"
+        },
+        {
+          "item_id": "v0011",
+          "provisional_label": null,
+          "raw_value": "BLEC monolayer"
+        },
+        {
+          "item_id": "v0012",
+          "provisional_label": null,
+          "raw_value": "BMEC monolayers"
+        },
+        {
+          "item_id": "v0013",
+          "provisional_label": null,
+          "raw_value": "Caco-2"
+        },
+        {
+          "item_id": "v0014",
+          "provisional_label": null,
+          "raw_value": "Caco-2 bidirectional assay"
+        },
+        {
+          "item_id": "v0015",
+          "provisional_label": null,
+          "raw_value": "Caco-2 cell monolayer"
+        },
+        {
+          "item_id": "v0016",
+          "provisional_label": null,
+          "raw_value": "Caco-2 cell monolayers"
+        },
+        {
+          "item_id": "v0017",
+          "provisional_label": null,
+          "raw_value": "Caco-2 cells"
+        },
+        {
+          "item_id": "v0018",
+          "provisional_label": null,
+          "raw_value": "Caco-2 monolayer"
+        },
+        {
+          "item_id": "v0019",
+          "provisional_label": null,
+          "raw_value": "Caco2"
+        },
+        {
+          "item_id": "v0020",
+          "provisional_label": null,
+          "raw_value": "cell uptake kinetics"
+        },
+        {
+          "item_id": "v0021",
+          "provisional_label": null,
+          "raw_value": "CMEC/D3"
+        },
+        {
+          "item_id": "v0022",
+          "provisional_label": null,
+          "raw_value": "co-culture of BBMECs and astrocytes"
+        },
+        {
+          "item_id": "v0023",
+          "provisional_label": null,
+          "raw_value": "cryopreserved BC1-GFP dhBMEC microvessels"
+        },
+        {
+          "item_id": "v0024",
+          "provisional_label": null,
+          "raw_value": "dodecane/hexane 1:1"
+        },
+        {
+          "item_id": "v0025",
+          "provisional_label": null,
+          "raw_value": "ECV-304 bladder carcinoma cells and C6 glioma cells co-culture"
+        },
+        {
+          "item_id": "v0026",
+          "provisional_label": null,
+          "raw_value": "ECV304 cell layers"
+        },
+        {
+          "item_id": "v0027",
+          "provisional_label": null,
+          "raw_value": "ECV304 cell line"
+        },
+        {
+          "item_id": "v0028",
+          "provisional_label": null,
+          "raw_value": "ECV304 cell monolayers (in vitro BBB model)"
+        },
+        {
+          "item_id": "v0029",
+          "provisional_label": null,
+          "raw_value": "ECV304 cells co-cultured with C6 glioma cells"
+        },
+        {
+          "item_id": "v0030",
+          "provisional_label": null,
+          "raw_value": "ECV304 cells grown in presence of C6 glioma supernatant"
+        },
+        {
+          "item_id": "v0031",
+          "provisional_label": null,
+          "raw_value": "ECV304 cells grown with C6 supernatant"
+        },
+        {
+          "item_id": "v0032",
+          "provisional_label": null,
+          "raw_value": "ECV304 monolayer"
+        },
+        {
+          "item_id": "v0033",
+          "provisional_label": null,
+          "raw_value": "ECV304/C6 co-culture"
+        },
+        {
+          "item_id": "v0034",
+          "provisional_label": null,
+          "raw_value": "ECV304/C6 co-culture BBB model"
+        },
+        {
+          "item_id": "v0035",
+          "provisional_label": null,
+          "raw_value": "GFP-labeled hBMECs cultured with retinoic acid"
+        },
+        {
+          "item_id": "v0036",
+          "provisional_label": null,
+          "raw_value": "GFP-labeled hBMECs treated with retinoic acid"
+        },
+        {
+          "item_id": "v0037",
+          "provisional_label": null,
+          "raw_value": "HBEC-5i"
+        },
+        {
+          "item_id": "v0038",
+          "provisional_label": null,
+          "raw_value": "HBMEC"
+        },
+        {
+          "item_id": "v0039",
+          "provisional_label": null,
+          "raw_value": "hBMEC"
+        },
+        {
+          "item_id": "v0040",
+          "provisional_label": null,
+          "raw_value": "hBMEC BBB model"
+        },
+        {
+          "item_id": "v0041",
+          "provisional_label": null,
+          "raw_value": "hBMEC cell line"
+        },
+        {
+          "item_id": "v0042",
+          "provisional_label": "human",
+          "raw_value": "hBMEC cell line-based immortalized human BBB model"
+        },
+        {
+          "item_id": "v0043",
+          "provisional_label": "human",
+          "raw_value": "hBMEC immortalized human BBB model"
+        },
+        {
+          "item_id": "v0044",
+          "provisional_label": null,
+          "raw_value": "HBMEC/ciβ"
+        },
+        {
+          "item_id": "v0045",
+          "provisional_label": null,
+          "raw_value": "hBMECs"
+        },
+        {
+          "item_id": "v0046",
+          "provisional_label": null,
+          "raw_value": "hBMECs with the addition of retinoic acid"
+        },
+        {
+          "item_id": "v0047",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3"
+        },
+        {
+          "item_id": "v0048",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 cell layers"
+        },
+        {
+          "item_id": "v0049",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 cell line"
+        },
+        {
+          "item_id": "v0050",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 cell monolayer"
+        },
+        {
+          "item_id": "v0051",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 cells"
+        },
+        {
+          "item_id": "v0052",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 cells and SH-SY5Y cells co-culture in Transwell"
+        },
+        {
+          "item_id": "v0053",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 monoculture"
+        },
+        {
+          "item_id": "v0054",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 monoculture under shear stress"
+        },
+        {
+          "item_id": "v0055",
+          "provisional_label": null,
+          "raw_value": "HCMEC/D3 monolayer"
+        },
+        {
+          "item_id": "v0056",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 tri-culture (BMECs, astrocytes, neurons) static"
+        },
+        {
+          "item_id": "v0057",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 tri-culture (BMECs, astrocytes, neurons) under shear stress"
+        },
+        {
+          "item_id": "v0058",
+          "provisional_label": null,
+          "raw_value": "hexadecane in hexane (5% v/v) organic layer on filter plate"
+        },
+        {
+          "item_id": "v0059",
+          "provisional_label": "human",
+          "raw_value": "human BBB"
+        },
+        {
+          "item_id": "v0060",
+          "provisional_label": "human",
+          "raw_value": "human BBB in vitro model"
+        },
+        {
+          "item_id": "v0061",
+          "provisional_label": "human",
+          "raw_value": "human BLEC BBB model"
+        },
+        {
+          "item_id": "v0062",
+          "provisional_label": "human",
+          "raw_value": "human cell-based BBB model"
+        },
+        {
+          "item_id": "v0063",
+          "provisional_label": "human",
+          "raw_value": "human iBEC monolayer on Transwell"
+        },
+        {
+          "item_id": "v0064",
+          "provisional_label": "human",
+          "raw_value": "human in vitro BBB model"
+        },
+        {
+          "item_id": "v0065",
+          "provisional_label": "human",
+          "raw_value": "human iPSC-derived BMEC"
+        },
+        {
+          "item_id": "v0066",
+          "provisional_label": "human",
+          "raw_value": "human iPSC-derived BMECs"
+        },
+        {
+          "item_id": "v0067",
+          "provisional_label": "human",
+          "raw_value": "human monoculture BBB model using hBMEC cells"
+        },
+        {
+          "item_id": "v0068",
+          "provisional_label": null,
+          "raw_value": "IAM chromatography"
+        },
+        {
+          "item_id": "v0069",
+          "provisional_label": null,
+          "raw_value": "IAM phosphotidylcholine column chromatography"
+        },
+        {
+          "item_id": "v0070",
+          "provisional_label": null,
+          "raw_value": "IAM-chromatography"
+        },
+        {
+          "item_id": "v0071",
+          "provisional_label": null,
+          "raw_value": "IAMC"
+        },
+        {
+          "item_id": "v0072",
+          "provisional_label": null,
+          "raw_value": "IAMC HPLC column"
+        },
+        {
+          "item_id": "v0073",
+          "provisional_label": null,
+          "raw_value": "iBECs"
+        },
+        {
+          "item_id": "v0074",
+          "provisional_label": null,
+          "raw_value": "iBMEC (IMR90-4 hiPSC-derived)"
+        },
+        {
+          "item_id": "v0075",
+          "provisional_label": null,
+          "raw_value": "immortalized hBMEC and BLEC models"
+        },
+        {
+          "item_id": "v0076",
+          "provisional_label": "human",
+          "raw_value": "immortalized human BBB mono-culture model"
+        },
+        {
+          "item_id": "v0077",
+          "provisional_label": null,
+          "raw_value": "in vitro BBB cellular model"
+        },
+        {
+          "item_id": "v0078",
+          "provisional_label": null,
+          "raw_value": "in vitro cell model of the BBB"
+        },
+        {
+          "item_id": "v0079",
+          "provisional_label": null,
+          "raw_value": "in vitro model"
+        },
+        {
+          "item_id": "v0080",
+          "provisional_label": null,
+          "raw_value": "in vitro triple co-culture BBB model"
+        },
+        {
+          "item_id": "v0081",
+          "provisional_label": null,
+          "raw_value": "LLC-PK1"
+        },
+        {
+          "item_id": "v0082",
+          "provisional_label": "migratory locust",
+          "raw_value": "Locusta migratoria ex vivo brain barrier model"
+        },
+        {
+          "item_id": "v0083",
+          "provisional_label": null,
+          "raw_value": "LUVs mimicking BBB"
+        },
+        {
+          "item_id": "v0084",
+          "provisional_label": "dog",
+          "raw_value": "Madin Darby canine kidney type II cells transfected with the human multidrug resistance 1 gene"
+        },
+        {
+          "item_id": "v0085",
+          "provisional_label": "dog",
+          "raw_value": "Madin-Darby Canine Kidney (MDCK) cell line as a model of BBB"
+        },
+        {
+          "item_id": "v0086",
+          "provisional_label": "dog",
+          "raw_value": "Madin-Darby Canine Kidney (MDCK) cells"
+        },
+        {
+          "item_id": "v0087",
+          "provisional_label": "dog",
+          "raw_value": "Madin-Darby canine kidney (MDCK) cells"
+        },
+        {
+          "item_id": "v0088",
+          "provisional_label": "dog",
+          "raw_value": "Madin-Darby canine kidney (MDCK) epithelial cell line"
+        },
+        {
+          "item_id": "v0089",
+          "provisional_label": "dog",
+          "raw_value": "Madin-Darby canine kidney cell line (MDCK) monolayer cells"
+        },
+        {
+          "item_id": "v0090",
+          "provisional_label": "dog",
+          "raw_value": "Madin-Darby canine kidney cell monolayer"
+        },
+        {
+          "item_id": "v0091",
+          "provisional_label": "dog",
+          "raw_value": "Madin-Darby canine kidney cells"
+        },
+        {
+          "item_id": "v0092",
+          "provisional_label": null,
+          "raw_value": "mBECs"
+        },
+        {
+          "item_id": "v0093",
+          "provisional_label": null,
+          "raw_value": "MOCK-transfected LLC-PK1 cells"
+        },
+        {
+          "item_id": "v0094",
+          "provisional_label": "mouse",
+          "raw_value": "model kit of mouse ECs"
+        },
+        {
+          "item_id": "v0095",
+          "provisional_label": "monkey + rat",
+          "raw_value": "monkey and rat in vitro co-culture BBB model (EPA)"
+        },
+        {
+          "item_id": "v0096",
+          "provisional_label": null,
+          "raw_value": "mono-culture hiPS-EC"
+        },
+        {
+          "item_id": "v0097",
+          "provisional_label": null,
+          "raw_value": "monolayer assay"
+        },
+        {
+          "item_id": "v0098",
+          "provisional_label": null,
+          "raw_value": "octanol-water shake-flask method"
+        },
+        {
+          "item_id": "v0099",
+          "provisional_label": "dog",
+          "raw_value": "P-glycoprotein-transfected Madin Darby canine kidney cells"
+        },
+        {
+          "item_id": "v0100",
+          "provisional_label": null,
+          "raw_value": "P-gp-transfected epithelial cells"
+        },
+        {
+          "item_id": "v0101",
+          "provisional_label": null,
+          "raw_value": "PBEC"
+        },
+        {
+          "item_id": "v0102",
+          "provisional_label": null,
+          "raw_value": "plastic-grown cell monolayers (cell culture-biophysical model for BBB)"
+        },
+        {
+          "item_id": "v0103",
+          "provisional_label": "pig + rat",
+          "raw_value": "porcine BCECs co-cultured with rat CTX-TNA2 astrocytes, puromycin-pretreated"
+        },
+        {
+          "item_id": "v0104",
+          "provisional_label": "rat",
+          "raw_value": "primary rat BBB triple co-culture model"
+        },
+        {
+          "item_id": "v0105",
+          "provisional_label": "rat",
+          "raw_value": "primary rat in vitro BBB model"
+        },
+        {
+          "item_id": "v0106",
+          "provisional_label": "rat",
+          "raw_value": "primary rat triple co-culture model of BBB"
+        },
+        {
+          "item_id": "v0107",
+          "provisional_label": "cow + rat",
+          "raw_value": "primary rat/bovine BBB co-culture model"
+        },
+        {
+          "item_id": "v0108",
+          "provisional_label": null,
+          "raw_value": "primary triple co-culture model of BBB"
+        },
+        {
+          "item_id": "v0109",
+          "provisional_label": null,
+          "raw_value": "quadruple culture hiPS-EC"
+        },
+        {
+          "item_id": "v0110",
+          "provisional_label": "dog",
+          "raw_value": "Ralph Russ Canine Kidney (RRCK) cell line"
+        },
+        {
+          "item_id": "v0111",
+          "provisional_label": "rat",
+          "raw_value": "rat BMEC/astrocyte co-culture BBB cell model"
+        },
+        {
+          "item_id": "v0112",
+          "provisional_label": "rat",
+          "raw_value": "rat triple co-culture BBB model"
+        },
+        {
+          "item_id": "v0113",
+          "provisional_label": null,
+          "raw_value": "RBE-4 and hCMEC/D3 cell lines"
+        },
+        {
+          "item_id": "v0114",
+          "provisional_label": null,
+          "raw_value": "surface activity profiling (Kibron microtensiometer)"
+        },
+        {
+          "item_id": "v0115",
+          "provisional_label": null,
+          "raw_value": "SV-ARBEC"
+        },
+        {
+          "item_id": "v0116",
+          "provisional_label": null,
+          "raw_value": "triple co-culture BBB model"
+        },
+        {
+          "item_id": "v0117",
+          "provisional_label": null,
+          "raw_value": "triple co-culture model of BBB"
+        },
+        {
+          "item_id": "v0118",
+          "provisional_label": null,
+          "raw_value": "VB-Caco-2"
+        },
+        {
+          "item_id": "v0119",
+          "provisional_label": null,
+          "raw_value": "Z310"
+        }
+      ],
+      "namespace": "passive_permeability/global_species_context",
+      "response_sha256": "7d773b3990c4072c053d1192c026e7e01a452873fa26e1cd7caa7b7c9c517e83",
+      "served_model": "gpt-5.4-mini-2026-03-17"
+    },
+    {
+      "assignment_count": 128,
+      "cache_identity": "3db1e72d5977631075f0517e04dedc3d8dd572117715300b73b1b9006f5b20c7",
+      "cluster_id": "cluster_d55029e53a052296",
+      "items": [
+        {
+          "item_id": "v0000",
+          "provisional_label": null,
+          "raw_value": "artificial blood–brain barrier"
+        },
+        {
+          "item_id": "v0001",
+          "provisional_label": "mouse + rat",
+          "raw_value": "b.END5 (mouse) and RBE-4 (rat) brain endothelial cell lines"
+        },
+        {
+          "item_id": "v0002",
+          "provisional_label": "rat",
+          "raw_value": "BBB kit (RBT-24) - primary rat brain endothelial cells with pericytes and astrocytes"
+        },
+        {
+          "item_id": "v0003",
+          "provisional_label": "bovine",
+          "raw_value": "BBB kit (RTU) - bovine brain capillary endothelial cells"
+        },
+        {
+          "item_id": "v0004",
+          "provisional_label": null,
+          "raw_value": "BBB reconstituted model (brain endothelial cells)"
+        },
+        {
+          "item_id": "v0005",
+          "provisional_label": "mouse",
+          "raw_value": "bEnd.3 (immortalized mouse brain endothelial cell line)"
+        },
+        {
+          "item_id": "v0006",
+          "provisional_label": "mouse",
+          "raw_value": "bEnd.3 immortalized mouse brain endothelial cells"
+        },
+        {
+          "item_id": "v0007",
+          "provisional_label": "mouse",
+          "raw_value": "bEnd.3 monolayers (immortalized mouse brain microvascular endothelial cell line)"
+        },
+        {
+          "item_id": "v0008",
+          "provisional_label": "bovine + rat",
+          "raw_value": "bovine brain capillary endothelial cells (BBCEC) with rat glial cells"
+        },
+        {
+          "item_id": "v0009",
+          "provisional_label": "bovine",
+          "raw_value": "bovine brain capillary endothelial cells (BCECs)"
+        },
+        {
+          "item_id": "v0010",
+          "provisional_label": "bovine + rat",
+          "raw_value": "bovine brain capillary endothelial cells co-cultured with rat glial cells"
+        },
+        {
+          "item_id": "v0011",
+          "provisional_label": "bovine + rat",
+          "raw_value": "bovine brain endothelial cell and rat glial cell co-culture BBB model"
+        },
+        {
+          "item_id": "v0012",
+          "provisional_label": "bovine",
+          "raw_value": "bovine brain endothelial cell model with astrocyte-conditioned medium"
+        },
+        {
+          "item_id": "v0013",
+          "provisional_label": "bovine",
+          "raw_value": "bovine brain endothelial cells (BBEC assay)"
+        },
+        {
+          "item_id": "v0014",
+          "provisional_label": "bovine + rat",
+          "raw_value": "bovine brain endothelial cells co-cultured with newborn rat astrocytes"
+        },
+        {
+          "item_id": "v0015",
+          "provisional_label": "bovine",
+          "raw_value": "bovine brain microvessel endothelial cells (BBMEC)"
+        },
+        {
+          "item_id": "v0016",
+          "provisional_label": "bovine + rat",
+          "raw_value": "bovine brain microvessel endothelial cells co-cultured with rat astrocytes (Cecchelli model)"
+        },
+        {
+          "item_id": "v0017",
+          "provisional_label": "bovine",
+          "raw_value": "bovine cerebral microvascular endothelial cell monolayer on collagen-coated insert (Biocoat system)"
+        },
+        {
+          "item_id": "v0018",
+          "provisional_label": "bovine",
+          "raw_value": "bovine cerebral microvascular endothelial cell monolayer on polycarbonate membrane (Snapwell, vertical diffusion chamber system)"
+        },
+        {
+          "item_id": "v0019",
+          "provisional_label": "bovine",
+          "raw_value": "bovine cerebral microvascular endothelial cell monolayer on polyester membrane (Snapwell, vertical diffusion chamber system)"
+        },
+        {
+          "item_id": "v0020",
+          "provisional_label": "bovine",
+          "raw_value": "bovine endothelial cell assay"
+        },
+        {
+          "item_id": "v0021",
+          "provisional_label": "bovine + rat",
+          "raw_value": "bovine endothelial/rat astrocyte co-culture BBB model"
+        },
+        {
+          "item_id": "v0022",
+          "provisional_label": null,
+          "raw_value": "brain capillary endothelial cell monolayers"
+        },
+        {
+          "item_id": "v0023",
+          "provisional_label": null,
+          "raw_value": "brain capillary endothelial cells and astrocytes co-culture"
+        },
+        {
+          "item_id": "v0024",
+          "provisional_label": "mouse + rat",
+          "raw_value": "brain endothelial cell lines (b.END5 and RBE4) and ECV304/C6 co-culture model"
+        },
+        {
+          "item_id": "v0025",
+          "provisional_label": null,
+          "raw_value": "brain endothelial cell model"
+        },
+        {
+          "item_id": "v0026",
+          "provisional_label": null,
+          "raw_value": "brain endothelial cell monolayer (unspecified species)"
+        },
+        {
+          "item_id": "v0027",
+          "provisional_label": "bovine + rat",
+          "raw_value": "co-culture of bovine brain capillary endothelial cells and rat astrocytes"
+        },
+        {
+          "item_id": "v0028",
+          "provisional_label": "bovine + rat",
+          "raw_value": "co-culture of bovine brain endothelial cells and rat astrocytes"
+        },
+        {
+          "item_id": "v0029",
+          "provisional_label": "mouse + rat",
+          "raw_value": "coculture of mouse brain capillary endothelial cells and rat astrocytes"
+        },
+        {
+          "item_id": "v0030",
+          "provisional_label": null,
+          "raw_value": "cultured brain microvascular endothelial cells (BMEC)"
+        },
+        {
+          "item_id": "v0031",
+          "provisional_label": "rat",
+          "raw_value": "cultured rat brain microvascular endothelial cells (rBMECs)"
+        },
+        {
+          "item_id": "v0032",
+          "provisional_label": "human",
+          "raw_value": "dynamic in vitro BBB (DIV-BBB) coculture of human brain microvascular endothelial cells with normal human astrocytes"
+        },
+        {
+          "item_id": "v0033",
+          "provisional_label": "human",
+          "raw_value": "Dynamic in vitro blood-brain barrier (DIV-BBB) model with human brain endothelial cells and glial cells"
+        },
+        {
+          "item_id": "v0034",
+          "provisional_label": null,
+          "raw_value": "EPA model (brain endothelial cell monolayers co-cultured with pericytes and astrocytes)"
+        },
+        {
+          "item_id": "v0035",
+          "provisional_label": "rat",
+          "raw_value": "EPA triple co-culture model of rat brain endothelial cells with astrocytes and pericytes"
+        },
+        {
+          "item_id": "v0036",
+          "provisional_label": "human",
+          "raw_value": "HBMEC (human brain microvascular endothelial cells)"
+        },
+        {
+          "item_id": "v0037",
+          "provisional_label": "human",
+          "raw_value": "hBMEC cell line (immortalized human brain capillary endothelial cells)"
+        },
+        {
+          "item_id": "v0038",
+          "provisional_label": "human",
+          "raw_value": "hBMEC cell line (immortalized human brain microvascular endothelial cell monoculture)"
+        },
+        {
+          "item_id": "v0039",
+          "provisional_label": "human",
+          "raw_value": "HCMEC/D3 (human cerebral microvessel endothelial cells)"
+        },
+        {
+          "item_id": "v0040",
+          "provisional_label": null,
+          "raw_value": "hCMEC/D3 brain microvascular endothelial cell monolayer transwell"
+        },
+        {
+          "item_id": "v0041",
+          "provisional_label": null,
+          "raw_value": "hiPSC-derived brain endothelial cell model"
+        },
+        {
+          "item_id": "v0042",
+          "provisional_label": null,
+          "raw_value": "hiPSC-derived brain endothelial cell model (hiPS-EC)"
+        },
+        {
+          "item_id": "v0043",
+          "provisional_label": "human",
+          "raw_value": "human BBB co-culture model (brain endothelial cells)"
+        },
+        {
+          "item_id": "v0044",
+          "provisional_label": "bovine + human",
+          "raw_value": "human BLEC co-culture with bovine brain pericytes"
+        },
+        {
+          "item_id": "v0045",
+          "provisional_label": "bovine + human",
+          "raw_value": "human brain capillary endothelial cells derived from pluripotent stem cells and bovine pericytes co-cultured on semipermeable membranes"
+        },
+        {
+          "item_id": "v0046",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cell (HBMEC) monolayer"
+        },
+        {
+          "item_id": "v0047",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (hBMEC)"
+        },
+        {
+          "item_id": "v0048",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (HBMEC) confluent monolayers"
+        },
+        {
+          "item_id": "v0049",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (HBMECs) co-cultured with human astrocytes (HAs) under flow (dynamic in vitro BBB, DIV-BBB) (control and epileptic, no statistical difference)"
+        },
+        {
+          "item_id": "v0050",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (HBMECs) from control brain co-cultured with human astrocytes (HAs) under flow (dynamic in vitro BBB, DIV-BBB)"
+        },
+        {
+          "item_id": "v0051",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (HBMECs) from control brain co-cultured with human astrocytes (HAs) under flow (dynamic in vitro BBB, DIV-BBB) after hyperosmotic mannitol opening"
+        },
+        {
+          "item_id": "v0052",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (HBMECs) from control brain co-cultured with human astrocytes (HAs) under flow (dynamic in vitro BBB, DIV-BBB) pretreated with MDR1 blocker XR9576"
+        },
+        {
+          "item_id": "v0053",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (HBMECs) from epileptic brain co-cultured with human astrocytes (HAs) under flow (dynamic in vitro BBB, DIV-BBB)"
+        },
+        {
+          "item_id": "v0054",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (HBMECs) from epileptic brain co-cultured with human astrocytes (HAs) under flow (dynamic in vitro BBB, DIV-BBB) after hyperosmotic mannitol opening"
+        },
+        {
+          "item_id": "v0055",
+          "provisional_label": "human",
+          "raw_value": "human brain microvascular endothelial cells (HBMECs) from epileptic brain co-cultured with human astrocytes (HAs) under flow (dynamic in vitro BBB, DIV-BBB) pretreated with MDR1 blocker XR9576"
+        },
+        {
+          "item_id": "v0056",
+          "provisional_label": "human",
+          "raw_value": "human brain-like endothelial cells (BLEC) BBB model"
+        },
+        {
+          "item_id": "v0057",
+          "provisional_label": "human",
+          "raw_value": "human brain-like endothelial cells from cord blood-derived hematopoietic stem cells co-cultured with pericytes"
+        },
+        {
+          "item_id": "v0058",
+          "provisional_label": "human",
+          "raw_value": "human cerebral microvascular endothelial cells (HCMEC/D3) monolayer"
+        },
+        {
+          "item_id": "v0059",
+          "provisional_label": "human",
+          "raw_value": "human iBEC (induced brain endothelial cells from hiPSC) monolayer on Transwell"
+        },
+        {
+          "item_id": "v0060",
+          "provisional_label": "human",
+          "raw_value": "human iBEC model (iPSC-derived brain endothelial cell model)"
+        },
+        {
+          "item_id": "v0061",
+          "provisional_label": "human + rat",
+          "raw_value": "immortalized human brain microvascular endothelial cell line (hBMEC) and primary rat brain capillary endothelial cell triple-co-culture"
+        },
+        {
+          "item_id": "v0062",
+          "provisional_label": "human",
+          "raw_value": "IMR90-derived BMEC monolayers (iPSC-derived human brain microvascular endothelial cells)"
+        },
+        {
+          "item_id": "v0063",
+          "provisional_label": "human",
+          "raw_value": "in vitro coculture model of BBB (human pericytes, brain endothelial cells, and astrocytes)"
+        },
+        {
+          "item_id": "v0064",
+          "provisional_label": null,
+          "raw_value": "iPSC-derived brain microvascular endothelial cell (BMEC) model"
+        },
+        {
+          "item_id": "v0065",
+          "provisional_label": null,
+          "raw_value": "iPSC-derived brain microvascular endothelial cell (iBMEC) monolayer"
+        },
+        {
+          "item_id": "v0066",
+          "provisional_label": null,
+          "raw_value": "iPSC-derived brain microvascular endothelial cells (BMECs)"
+        },
+        {
+          "item_id": "v0067",
+          "provisional_label": null,
+          "raw_value": "iPSC-derived brain microvascular endothelial cells (BMECs) on Transwell inserts"
+        },
+        {
+          "item_id": "v0068",
+          "provisional_label": "human",
+          "raw_value": "iPSC-derived human brain microvascular endothelial cells (hBMECs) (BC1 and BC1-GFP) cultured with retinoic acid"
+        },
+        {
+          "item_id": "v0069",
+          "provisional_label": "mouse",
+          "raw_value": "mBEC (mouse brain endothelial cell model derived from mESC-D3)"
+        },
+        {
+          "item_id": "v0070",
+          "provisional_label": null,
+          "raw_value": "MBEC co-cultured with brain pericytes (EP0)"
+        },
+        {
+          "item_id": "v0071",
+          "provisional_label": "rat",
+          "raw_value": "MBEC co-cultured with rat astrocytes and brain pericytes (EPA)"
+        },
+        {
+          "item_id": "v0072",
+          "provisional_label": "mouse",
+          "raw_value": "MBEC4 cells (mouse brain endothelial cell line)"
+        },
+        {
+          "item_id": "v0073",
+          "provisional_label": "mouse",
+          "raw_value": "MBEC4 monolayer (mouse brain endothelial cell line)"
+        },
+        {
+          "item_id": "v0074",
+          "provisional_label": "monkey",
+          "raw_value": "Monkey brain endothelial cell (MBEC) monolayer (E00)"
+        },
+        {
+          "item_id": "v0075",
+          "provisional_label": "mouse",
+          "raw_value": "mouse embryonic stem cell-derived brain endothelial-like cells (mBEC)"
+        },
+        {
+          "item_id": "v0076",
+          "provisional_label": "mouse + porcine + rat",
+          "raw_value": "Mouse, rat, and porcine brain capillary endothelial cells (mBECs, rBECs, pBECs)"
+        },
+        {
+          "item_id": "v0077",
+          "provisional_label": "mouse",
+          "raw_value": "murine Bend 3.0 brain endothelial cells"
+        },
+        {
+          "item_id": "v0078",
+          "provisional_label": "porcine",
+          "raw_value": "PBCEC (porcine brain capillary endothelial cells)"
+        },
+        {
+          "item_id": "v0079",
+          "provisional_label": "porcine",
+          "raw_value": "pBCEC (porcine brain capillary endothelial cells)"
+        },
+        {
+          "item_id": "v0080",
+          "provisional_label": "porcine",
+          "raw_value": "PBEC (porcine brain endothelial cell) model"
+        },
+        {
+          "item_id": "v0081",
+          "provisional_label": "porcine",
+          "raw_value": "PBEC (porcine brain endothelial cells)"
+        },
+        {
+          "item_id": "v0082",
+          "provisional_label": "porcine",
+          "raw_value": "PBEC monolayer (porcine brain endothelial cell)"
+        },
+        {
+          "item_id": "v0083",
+          "provisional_label": "porcine",
+          "raw_value": "porcine blood cerebrospinal fluid barrier (BCSFB)"
+        },
+        {
+          "item_id": "v0084",
+          "provisional_label": "porcine",
+          "raw_value": "porcine blood cerebrospinal fluid barrier (BCSFB) cells"
+        },
+        {
+          "item_id": "v0085",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain capillary endothelial cell (pBCEC) monolayer"
+        },
+        {
+          "item_id": "v0086",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain capillary endothelial cells (BCEC)"
+        },
+        {
+          "item_id": "v0087",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain capillary endothelial cells (PBCEC)"
+        },
+        {
+          "item_id": "v0088",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain capillary endothelial cells (PBCEC) cultured in serum-free medium with hydrocortisone"
+        },
+        {
+          "item_id": "v0089",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain capillary endothelial cells (PBCEC) monolayer"
+        },
+        {
+          "item_id": "v0090",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain endothelial cell (PBEC) monolayer"
+        },
+        {
+          "item_id": "v0091",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain endothelial cell model"
+        },
+        {
+          "item_id": "v0092",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain endothelial cell monolayer"
+        },
+        {
+          "item_id": "v0093",
+          "provisional_label": "porcine",
+          "raw_value": "porcine brain endothelial cells (PBEC)"
+        },
+        {
+          "item_id": "v0094",
+          "provisional_label": "bovine + rat",
+          "raw_value": "primary bovine capillary endothelial cells and primary rat brain glial cells"
+        },
+        {
+          "item_id": "v0095",
+          "provisional_label": "bovine + rat",
+          "raw_value": "primary bovine endothelial/rat astrocytes co-culture"
+        },
+        {
+          "item_id": "v0096",
+          "provisional_label": "bovine + rat",
+          "raw_value": "primary bovine endothelial/rat astrocytes co-culture BBB model"
+        },
+        {
+          "item_id": "v0097",
+          "provisional_label": "bovine + rat",
+          "raw_value": "primary bovine endothelial/rat astrocytes co-culture in vitro BBB model"
+        },
+        {
+          "item_id": "v0098",
+          "provisional_label": "bovine + rat",
+          "raw_value": "primary co-culture rat/bovine brain endothelial cells (BBECs)"
+        },
+        {
+          "item_id": "v0099",
+          "provisional_label": "bovine + rat",
+          "raw_value": "primary coculture rat/bovine BBB model (bovine brain microvessel endothelial cells co-cultured with rat glial cells)"
+        },
+        {
+          "item_id": "v0100",
+          "provisional_label": "mouse",
+          "raw_value": "primary mouse brain microvascular endothelial cells (BMEC)"
+        },
+        {
+          "item_id": "v0101",
+          "provisional_label": "porcine",
+          "raw_value": "primary porcine brain capillary endothelial cell monolayers"
+        },
+        {
+          "item_id": "v0102",
+          "provisional_label": "porcine",
+          "raw_value": "primary porcine brain capillary endothelial cells (pBCECs)"
+        },
+        {
+          "item_id": "v0103",
+          "provisional_label": "porcine",
+          "raw_value": "primary porcine brain endothelial cell (PBEC) model"
+        },
+        {
+          "item_id": "v0104",
+          "provisional_label": "porcine",
+          "raw_value": "primary porcine brain endothelial cell model"
+        },
+        {
+          "item_id": "v0105",
+          "provisional_label": "porcine",
+          "raw_value": "primary porcine brain endothelial cells"
+        },
+        {
+          "item_id": "v0106",
+          "provisional_label": "porcine",
+          "raw_value": "primary porcine brain endothelial cells (PBEC)"
+        },
+        {
+          "item_id": "v0107",
+          "provisional_label": "porcine",
+          "raw_value": "primary porcine brain endothelial cells (PBECs)"
+        },
+        {
+          "item_id": "v0108",
+          "provisional_label": "rat",
+          "raw_value": "primary rat brain endothelial cell monolayer cocultured on glial cells"
+        },
+        {
+          "item_id": "v0109",
+          "provisional_label": "rat",
+          "raw_value": "primary rat brain endothelial cells (co-culture)"
+        },
+        {
+          "item_id": "v0110",
+          "provisional_label": "rat",
+          "raw_value": "primary rat brain endothelial cells co-cultured with pericytes and astrocytes"
+        },
+        {
+          "item_id": "v0111",
+          "provisional_label": "rat",
+          "raw_value": "primary rat brain endothelial cells, pericytes and astrocytes"
+        },
+        {
+          "item_id": "v0112",
+          "provisional_label": "rat",
+          "raw_value": "primary rat brain endothelial monolayer co-cultured with astrocytes, in presence of cAMP, puromycin-treated"
+        },
+        {
+          "item_id": "v0113",
+          "provisional_label": "rat",
+          "raw_value": "primary rat brain microvascular endothelial cell (RBMVEC) monolayer"
+        },
+        {
+          "item_id": "v0114",
+          "provisional_label": "rat",
+          "raw_value": "primary triple co-culture rat brain endothelial cells (RBECs) with pericytes and glial cells"
+        },
+        {
+          "item_id": "v0115",
+          "provisional_label": "rat",
+          "raw_value": "primary triple coculture rat BBB model (rat brain microvessel endothelial cells, pericytes, and glial cells)"
+        },
+        {
+          "item_id": "v0116",
+          "provisional_label": "monkey + rat",
+          "raw_value": "primary triple-co-culture monkey (Macaca fascicularis) brain endothelial cell model (with rat pericytes and astrocytes)"
+        },
+        {
+          "item_id": "v0117",
+          "provisional_label": "primate + rat",
+          "raw_value": "primate brain endothelial cell co-culture with rat pericytes (BBB Kit MBT-24H, PharmaCo-Cell)"
+        },
+        {
+          "item_id": "v0118",
+          "provisional_label": "rat",
+          "raw_value": "rat brain capillary endothelial cell triple co-culture with astrocytes and pericytes"
+        },
+        {
+          "item_id": "v0119",
+          "provisional_label": "rat",
+          "raw_value": "rat brain capillary endothelial cells"
+        },
+        {
+          "item_id": "v0120",
+          "provisional_label": "rat",
+          "raw_value": "rat brain endothelial cell (RBEC) co-culture model"
+        },
+        {
+          "item_id": "v0121",
+          "provisional_label": "rat",
+          "raw_value": "rat brain microvessel endothelial cells (BMEC)"
+        },
+        {
+          "item_id": "v0122",
+          "provisional_label": "rat",
+          "raw_value": "rat triple co-culture BBB model using primary rat brain endothelial cells, pericytes and astrocytes"
+        },
+        {
+          "item_id": "v0123",
+          "provisional_label": "rat",
+          "raw_value": "SV-ARBEC (immortalized rat brain endothelial cell line)"
+        },
+        {
+          "item_id": "v0124",
+          "provisional_label": null,
+          "raw_value": "Triple BBB co-culture model (brain microvascular endothelial cells co-cultured with pericytes and astrocytes)"
+        },
+        {
+          "item_id": "v0125",
+          "provisional_label": null,
+          "raw_value": "triple cell neurovascular unit (NVU) co-culture with primary HBMEC, astrocytes, and neurons"
+        },
+        {
+          "item_id": "v0126",
+          "provisional_label": "rat",
+          "raw_value": "Triple co-culture of primary rat brain endothelial cells, pericytes, and astrocytes on porous membrane"
+        },
+        {
+          "item_id": "v0127",
+          "provisional_label": null,
+          "raw_value": "triple coculture of brain endothelial cells, pericytes, and astrocytes (Nakagawa et al.)"
+        }
+      ],
+      "namespace": "passive_permeability/global_species_context",
+      "response_sha256": "6a58d25f31d94196e259a4a0947df1aac354cb4bf5958360d81d2a04906f74fa",
+      "served_model": "gpt-5.4-mini-2026-03-17"
+    },
+    {
+      "assignment_count": 48,
+      "cache_identity": "bb457cf5fb5c75bfa49285143d984cf8cc1d6a0d61c38037ec7a6115940bf687",
+      "cluster_id": "cluster_d5cc76f2d7d770d4",
+      "items": [
+        {
+          "item_id": "v0000",
+          "provisional_label": null,
+          "raw_value": "2% dioleoylphosphatidylcholine in dodecane PAMPA"
+        },
+        {
+          "item_id": "v0001",
+          "provisional_label": null,
+          "raw_value": "BBB PAMPA"
+        },
+        {
+          "item_id": "v0002",
+          "provisional_label": null,
+          "raw_value": "BBB PAMPA model"
+        },
+        {
+          "item_id": "v0003",
+          "provisional_label": null,
+          "raw_value": "BBB-1 Lipid PAMPA"
+        },
+        {
+          "item_id": "v0004",
+          "provisional_label": null,
+          "raw_value": "BBB-PAMPA"
+        },
+        {
+          "item_id": "v0005",
+          "provisional_label": null,
+          "raw_value": "BBB-PAMPA system"
+        },
+        {
+          "item_id": "v0006",
+          "provisional_label": null,
+          "raw_value": "BBB-specific PAMPA"
+        },
+        {
+          "item_id": "v0007",
+          "provisional_label": null,
+          "raw_value": "blood-brain barrier specific PAMPA"
+        },
+        {
+          "item_id": "v0008",
+          "provisional_label": null,
+          "raw_value": "Corning Gentest™ Pre-coated PAMPA Plate System"
+        },
+        {
+          "item_id": "v0009",
+          "provisional_label": null,
+          "raw_value": "double sink PAMPA (PAMPA-DS)"
+        },
+        {
+          "item_id": "v0010",
+          "provisional_label": null,
+          "raw_value": "gastrointestinal PAMPA membrane assay"
+        },
+        {
+          "item_id": "v0011",
+          "provisional_label": null,
+          "raw_value": "PAMBA dodecane/hexane 1:1 with PBL"
+        },
+        {
+          "item_id": "v0012",
+          "provisional_label": null,
+          "raw_value": "PAMPA"
+        },
+        {
+          "item_id": "v0013",
+          "provisional_label": null,
+          "raw_value": "PAMPA (double-sink, pH 7.4, 40 µm ABL)"
+        },
+        {
+          "item_id": "v0014",
+          "provisional_label": null,
+          "raw_value": "PAMPA (generic)"
+        },
+        {
+          "item_id": "v0015",
+          "provisional_label": null,
+          "raw_value": "PAMPA (in vitro BBB model)"
+        },
+        {
+          "item_id": "v0016",
+          "provisional_label": null,
+          "raw_value": "PAMPA (modified monolayer PBL in dodecane:hexane 1:1)"
+        },
+        {
+          "item_id": "v0017",
+          "provisional_label": null,
+          "raw_value": "PAMPA (not further specified)"
+        },
+        {
+          "item_id": "v0018",
+          "provisional_label": null,
+          "raw_value": "PAMPA 20 mg/mL PBL in 100% dodecane"
+        },
+        {
+          "item_id": "v0019",
+          "provisional_label": null,
+          "raw_value": "PAMPA assay"
+        },
+        {
+          "item_id": "v0020",
+          "provisional_label": null,
+          "raw_value": "PAMPA BBB"
+        },
+        {
+          "item_id": "v0021",
+          "provisional_label": null,
+          "raw_value": "PAMPA BBB assay"
+        },
+        {
+          "item_id": "v0022",
+          "provisional_label": null,
+          "raw_value": "PAMPA BBB model"
+        },
+        {
+          "item_id": "v0023",
+          "provisional_label": null,
+          "raw_value": "PAMPA BBB model (lipid composition not specified)"
+        },
+        {
+          "item_id": "v0024",
+          "provisional_label": null,
+          "raw_value": "PAMPA dissolved in PBS/EtOH 70:30"
+        },
+        {
+          "item_id": "v0025",
+          "provisional_label": null,
+          "raw_value": "PAMPA dissolved in PBS/EtOH 80:20"
+        },
+        {
+          "item_id": "v0026",
+          "provisional_label": null,
+          "raw_value": "PAMPA model"
+        },
+        {
+          "item_id": "v0027",
+          "provisional_label": null,
+          "raw_value": "PAMPA model simulating BBB"
+        },
+        {
+          "item_id": "v0028",
+          "provisional_label": null,
+          "raw_value": "PAMPA test"
+        },
+        {
+          "item_id": "v0029",
+          "provisional_label": null,
+          "raw_value": "PAMPA with PC in dodecane/hexane 1:1"
+        },
+        {
+          "item_id": "v0030",
+          "provisional_label": null,
+          "raw_value": "PAMPA, pH 7.4"
+        },
+        {
+          "item_id": "v0031",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB"
+        },
+        {
+          "item_id": "v0032",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB (Di et al. protocol)"
+        },
+        {
+          "item_id": "v0033",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB (Plon Inc. kit)"
+        },
+        {
+          "item_id": "v0034",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB assay"
+        },
+        {
+          "item_id": "v0035",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB commercial kit"
+        },
+        {
+          "item_id": "v0036",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB commercial kit (not further specified)"
+        },
+        {
+          "item_id": "v0037",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB model"
+        },
+        {
+          "item_id": "v0038",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB with BBB-1 Lipid coating and Brain Sink Buffer"
+        },
+        {
+          "item_id": "v0039",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB with PBS/EtOH (70:30)"
+        },
+        {
+          "item_id": "v0040",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB-UWL"
+        },
+        {
+          "item_id": "v0041",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BLM"
+        },
+        {
+          "item_id": "v0042",
+          "provisional_label": null,
+          "raw_value": "PAMPA-DS"
+        },
+        {
+          "item_id": "v0043",
+          "provisional_label": null,
+          "raw_value": "PAMPA–BBB"
+        },
+        {
+          "item_id": "v0044",
+          "provisional_label": null,
+          "raw_value": "Pion PAMPA-BBB"
+        },
+        {
+          "item_id": "v0045",
+          "provisional_label": null,
+          "raw_value": "Pre-coated PAMPA Plate System Gen-test™ (Corning, Tewksbury, MA, USA)"
+        },
+        {
+          "item_id": "v0046",
+          "provisional_label": null,
+          "raw_value": "predictive PAMPA-BBB model"
+        },
+        {
+          "item_id": "v0047",
+          "provisional_label": null,
+          "raw_value": "standard PAMPA"
+        }
+      ],
+      "namespace": "passive_permeability/global_species_context",
+      "response_sha256": "9b9bedb7b96c473b867517860195c195df9617ec7886e18dc29ca1b776f29688",
+      "served_model": "gpt-5.4-mini-2026-03-17"
+    },
+    {
+      "assignment_count": 77,
+      "cache_identity": "3f21a38d5b146855bf51c7ec378f69a4a3c8616699b283ddef84b1bce194de79",
+      "cluster_id": "cluster_fa9669416bfca4e8",
+      "items": [
+        {
+          "item_id": "v0000",
+          "provisional_label": null,
+          "raw_value": "artificial BBB (PAMPA membrane, composition not specified)"
+        },
+        {
+          "item_id": "v0001",
+          "provisional_label": null,
+          "raw_value": "artificial BBB lipid membrane"
+        },
+        {
+          "item_id": "v0002",
+          "provisional_label": null,
+          "raw_value": "artificial BBB lipid membrane (PAMPA Explorer kit, Pion Inc.)"
+        },
+        {
+          "item_id": "v0003",
+          "provisional_label": null,
+          "raw_value": "artificial brain membrane"
+        },
+        {
+          "item_id": "v0004",
+          "provisional_label": null,
+          "raw_value": "artificial lipid membrane"
+        },
+        {
+          "item_id": "v0005",
+          "provisional_label": null,
+          "raw_value": "artificial lipid membrane (pION Explorer kit)"
+        },
+        {
+          "item_id": "v0006",
+          "provisional_label": null,
+          "raw_value": "artificial lipidic membrane"
+        },
+        {
+          "item_id": "v0007",
+          "provisional_label": null,
+          "raw_value": "artificial membrane"
+        },
+        {
+          "item_id": "v0008",
+          "provisional_label": null,
+          "raw_value": "artificial membrane (dodecane and polar lipids) in Franz cell"
+        },
+        {
+          "item_id": "v0009",
+          "provisional_label": null,
+          "raw_value": "Artificial membrane (PAMPA-BBB)"
+        },
+        {
+          "item_id": "v0010",
+          "provisional_label": null,
+          "raw_value": "artificial membrane containing BBB phospholipids"
+        },
+        {
+          "item_id": "v0011",
+          "provisional_label": null,
+          "raw_value": "artificial membrane PAMPA"
+        },
+        {
+          "item_id": "v0012",
+          "provisional_label": null,
+          "raw_value": "artificial membrane that models the BBB"
+        },
+        {
+          "item_id": "v0013",
+          "provisional_label": null,
+          "raw_value": "artificial membrane that models the blood-brain barrier"
+        },
+        {
+          "item_id": "v0014",
+          "provisional_label": null,
+          "raw_value": "artificial membranes (PAMPA-BBB)"
+        },
+        {
+          "item_id": "v0015",
+          "provisional_label": null,
+          "raw_value": "BBB lipid membranes"
+        },
+        {
+          "item_id": "v0016",
+          "provisional_label": null,
+          "raw_value": "BBB membrane models"
+        },
+        {
+          "item_id": "v0017",
+          "provisional_label": null,
+          "raw_value": "BBB Parallel Artificial Membrane Permeability Assay"
+        },
+        {
+          "item_id": "v0018",
+          "provisional_label": null,
+          "raw_value": "BBB-1 lipid artificial membrane (commercial PAMPA-BBB system)"
+        },
+        {
+          "item_id": "v0019",
+          "provisional_label": null,
+          "raw_value": "BBB-1 Lipid coated membrane (Pion) with Brain Sink Buffer"
+        },
+        {
+          "item_id": "v0020",
+          "provisional_label": null,
+          "raw_value": "BBB-1 lipid membrane"
+        },
+        {
+          "item_id": "v0021",
+          "provisional_label": null,
+          "raw_value": "BBB-1 lipid membrane (pION Inc.)"
+        },
+        {
+          "item_id": "v0022",
+          "provisional_label": null,
+          "raw_value": "BBB-1 Lipid membrane (Pion Pampa Explorer Kit)"
+        },
+        {
+          "item_id": "v0023",
+          "provisional_label": null,
+          "raw_value": "BBB-mimicking membrane"
+        },
+        {
+          "item_id": "v0024",
+          "provisional_label": null,
+          "raw_value": "BBB-PAMPA (artificial membrane)"
+        },
+        {
+          "item_id": "v0025",
+          "provisional_label": null,
+          "raw_value": "BBB-PAMPA (parallel artificial membrane permeability assay)"
+        },
+        {
+          "item_id": "v0026",
+          "provisional_label": null,
+          "raw_value": "BBB-PAMPA artificial membrane"
+        },
+        {
+          "item_id": "v0027",
+          "provisional_label": null,
+          "raw_value": "BBB-PAMPA lipid membrane"
+        },
+        {
+          "item_id": "v0028",
+          "provisional_label": null,
+          "raw_value": "BBB-specific PAMPA membrane"
+        },
+        {
+          "item_id": "v0029",
+          "provisional_label": null,
+          "raw_value": "brain lipid-coated filter membrane"
+        },
+        {
+          "item_id": "v0030",
+          "provisional_label": null,
+          "raw_value": "filter-immobilized BBB lipid formulation"
+        },
+        {
+          "item_id": "v0031",
+          "provisional_label": null,
+          "raw_value": "HDC/NPOE membrane"
+        },
+        {
+          "item_id": "v0032",
+          "provisional_label": null,
+          "raw_value": "hexadecane artificial membrane"
+        },
+        {
+          "item_id": "v0033",
+          "provisional_label": null,
+          "raw_value": "immobilized artificial membrane (IAM) phosphatidylcholine column"
+        },
+        {
+          "item_id": "v0034",
+          "provisional_label": null,
+          "raw_value": "Immobilized artificial membrane chromatography (IAMC)"
+        },
+        {
+          "item_id": "v0035",
+          "provisional_label": null,
+          "raw_value": "in vitro BBB permeability assay (cell monolayer, unspecified)"
+        },
+        {
+          "item_id": "v0036",
+          "provisional_label": null,
+          "raw_value": "lecithin/dodecane-treated polyvinylidene fluoride membrane in phosphate-buffered saline"
+        },
+        {
+          "item_id": "v0037",
+          "provisional_label": null,
+          "raw_value": "lipid-infused artificial membrane"
+        },
+        {
+          "item_id": "v0038",
+          "provisional_label": null,
+          "raw_value": "neutral phospholipid bilayer membranes model"
+        },
+        {
+          "item_id": "v0039",
+          "provisional_label": null,
+          "raw_value": "non-cell parallel artificial membrane permeability assay"
+        },
+        {
+          "item_id": "v0040",
+          "provisional_label": null,
+          "raw_value": "PAMPA (artificial membrane mimicking the BBB)"
+        },
+        {
+          "item_id": "v0041",
+          "provisional_label": null,
+          "raw_value": "PAMPA (parallel artificial membrane permeability assay)"
+        },
+        {
+          "item_id": "v0042",
+          "provisional_label": null,
+          "raw_value": "PAMPA (unspecified artificial membrane)"
+        },
+        {
+          "item_id": "v0043",
+          "provisional_label": null,
+          "raw_value": "PAMPA artificial membrane"
+        },
+        {
+          "item_id": "v0044",
+          "provisional_label": null,
+          "raw_value": "PAMPA lipid membrane (commercial drugs validation)"
+        },
+        {
+          "item_id": "v0045",
+          "provisional_label": null,
+          "raw_value": "PAMPA membrane"
+        },
+        {
+          "item_id": "v0046",
+          "provisional_label": null,
+          "raw_value": "PAMPA model (artificial membrane)"
+        },
+        {
+          "item_id": "v0047",
+          "provisional_label": null,
+          "raw_value": "PAMPA with artificial biological membranes, BBB conditions (pH ≈ 7.4)"
+        },
+        {
+          "item_id": "v0048",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB (parallel artificial membrane permeability assay for BBB)"
+        },
+        {
+          "item_id": "v0049",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB (parallel artificial membrane permeability assay)"
+        },
+        {
+          "item_id": "v0050",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB (parallel artificial membrane permeation assay for BBB)"
+        },
+        {
+          "item_id": "v0051",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB (parallel artificial membrane permeation assay)"
+        },
+        {
+          "item_id": "v0052",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB artificial lipid membrane"
+        },
+        {
+          "item_id": "v0053",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB artificial membrane"
+        },
+        {
+          "item_id": "v0054",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB assay (parallel artificial membrane)"
+        },
+        {
+          "item_id": "v0055",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB lipid membrane"
+        },
+        {
+          "item_id": "v0056",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB membrane"
+        },
+        {
+          "item_id": "v0057",
+          "provisional_label": null,
+          "raw_value": "PAMPA-BBB model (specific membrane not stated)"
+        },
+        {
+          "item_id": "v0058",
+          "provisional_label": null,
+          "raw_value": "PAMPA-phosphatidylcholine model on PVDF filter"
+        },
+        {
+          "item_id": "v0059",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane"
+        },
+        {
+          "item_id": "v0060",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane (lipid bilayer)"
+        },
+        {
+          "item_id": "v0061",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane assay for the blood-brain barrier (PAMPA-BBB)"
+        },
+        {
+          "item_id": "v0062",
+          "provisional_label": null,
+          "raw_value": "Parallel Artificial Membrane Permeability Assay"
+        },
+        {
+          "item_id": "v0063",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeability assay"
+        },
+        {
+          "item_id": "v0064",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeability assay (continuous phospholipid bilayer)"
+        },
+        {
+          "item_id": "v0065",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeability assay (PAMPA)"
+        },
+        {
+          "item_id": "v0066",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeability assay (PAMPA) blood-brain barrier (BBB) kit"
+        },
+        {
+          "item_id": "v0067",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeability assay (PAMPA) for BBB"
+        },
+        {
+          "item_id": "v0068",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeability assay for BBB (PAMPA-BBB)"
+        },
+        {
+          "item_id": "v0069",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeability assay model of BBB (PAMPA-BBB)"
+        },
+        {
+          "item_id": "v0070",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeability assay with phospholipid pre-coated filter plate"
+        },
+        {
+          "item_id": "v0071",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeation assay"
+        },
+        {
+          "item_id": "v0072",
+          "provisional_label": null,
+          "raw_value": "parallel artificial membrane permeation assay for the blood-brain barrier"
+        },
+        {
+          "item_id": "v0073",
+          "provisional_label": null,
+          "raw_value": "parallel artificial permeation assay (PAMPA) for prediction of BBB penetration"
+        },
+        {
+          "item_id": "v0074",
+          "provisional_label": null,
+          "raw_value": "PBLE membrane dissolved in 3:1 n-hexane:n-dodecane mixture"
+        },
+        {
+          "item_id": "v0075",
+          "provisional_label": null,
+          "raw_value": "PBLE membrane dissolved in n-dodecane"
+        },
+        {
+          "item_id": "v0076",
+          "provisional_label": null,
+          "raw_value": "pION BBB-1 lipid membrane"
+        }
+      ],
+      "namespace": "passive_permeability/global_species_context",
+      "response_sha256": "6a717a6f7f0e71a2193eab4cfc53f6f4748b6e4cc188bdd8120d1c54eb8f8a46",
+      "served_model": "gpt-5.4-mini-2026-03-17"
+    }
+  ],
+  "namespace": "passive_permeability/global_species_context",
+  "packet_id": "passive_permeability__global_species_context__packet_0001",
+  "packet_version": "bbb_auxiliary_cluster_review_packet.v1",
+  "policy_version": "bbb_martins_auxiliary_reconciliation_policy.v1"
+}

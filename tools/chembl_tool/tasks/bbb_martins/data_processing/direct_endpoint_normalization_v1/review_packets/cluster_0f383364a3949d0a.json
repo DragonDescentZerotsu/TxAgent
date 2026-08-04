@@ -1,0 +1,1942 @@
+{
+  "assignment_count": 387,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "% of circulating drug reaching the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_blood_ratio",
+      "raw_value": "%, cerebrospinal fluid [CSF]/blood"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "absolute mean cerebrospinal-fluid penicillin concentration"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_accumulation",
+      "raw_value": "accumulation in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "acetaldehyde level in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "active_csf_concentration",
+      "raw_value": "active drug present in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Alprenolol concentration (cerebrospinal fluid)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "amount found in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "amount in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_csf_amount",
+      "raw_value": "amount passing into the brain and cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "amounts in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "amoxycillin concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "amphotericin B levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Antibiotic concentrations in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "arsenic concentration in cerebrospinal fluid (CSF) / plasma concentration"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "arsenic levels in the cerebrospinal fluid and plasma"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "csf_systemic_exposure_ratio",
+      "raw_value": "AUC cerebrospinal fluid / systemic exposure"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "csf_auc_ratio",
+      "raw_value": "AUC₀-₂₄ penetration ratio into the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "average cerebrospinal fluid (CSF) penetration"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "average concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "bedaquiline levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_bioavailability",
+      "raw_value": "bioavailability in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "csf_bioavailability",
+      "raw_value": "bioavailability in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "biopterin concentrations in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "blood_to_csf_transfer",
+      "raw_value": "blood to cerebrospinal fluid (CSF) transfer"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "blood_to_csf_penetration_rate",
+      "raw_value": "blood to cerebrospinal fluid penetration rates"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "boric acid level in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "brain and cerebrospinal fluid (CSF) levels of that in the systemic circulation"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "brain and cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "brain and cerebrospinal fluid concentrations"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_parenchyma_csf_ratio",
+      "raw_value": "brain parenchyma / cerebrospinal fluid concentration ratio"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "subdural_fluid_concentration",
+      "raw_value": "Cefuroxime concentrations in subdural fluid"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cephalothin level in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerbrospinal fluid level"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "cerebellar_concentration",
+      "raw_value": "cerebellar concentration"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "cerebellar_succinic_acid_ratio",
+      "raw_value": "cerebellar succinic acid concentration relative to endogenous levels"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Cerebospinal fluid penetration"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal AZT levels"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal concentration"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "cerebrospinal_fluid",
+      "raw_value": "Cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "cerebrospinal_fluid",
+      "raw_value": "cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "cerebrospinal_fluid",
+      "raw_value": "cerebrospinal fluid (C.S.F.) level"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "cerebrospinal_fluid",
+      "raw_value": "cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid (CSF) caffeine concentration"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid (CSF) concentration"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid (CSF) concentration"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid (CSF) concentrations"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid (CSF) concentrations"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid (CSF) level"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid (CSF) levels"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid (CSF) levels"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "cerebrospinal fluid (CSF) maximum concentration"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Cerebrospinal fluid (CSF) penetration"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "cerebrospinal fluid (CSF) penetration"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "cerebrospinal fluid (CSF) penetration rate"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "cerebrospinal fluid (CSF) penetration ratio"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid 5-fluorocytosine level"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid acyclovir concentration"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid amitriptyline concentration"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid ara-C concentrations"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "cerebrospinal fluid AUC"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid baclofen levels"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid caffeine concentration"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid ceftriaxone levels"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid cephalexin levels"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid chloramphenicol concentration"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal Fluid Concentration"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid concentration (CSF)"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_unbound_blood_ratio",
+      "raw_value": "cerebrospinal fluid concentration / unbound blood concentration"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid concentrations"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid concentrations"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "cerebrospinal fluid content"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "cerebrospinal fluid contents"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "csf_detectability",
+      "raw_value": "cerebrospinal fluid detection"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "csf_distribution",
+      "raw_value": "cerebrospinal fluid distribution"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid drug level"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid drug levels"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid drug levels"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "csf_exposure",
+      "raw_value": "cerebrospinal fluid exposure"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "free_sulfonamide_concentration",
+      "raw_value": "cerebrospinal fluid free sulfonamide level"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid ganciclovir concentration"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "csf_blood_ratio",
+      "raw_value": "cerebrospinal fluid gantrosan concentration / blood concentration"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid hematin concentration"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal Fluid Level"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid level"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid level"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid levels"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid levels"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid levels of platinum"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid lidocaine concentration"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "magnesium_concentration",
+      "raw_value": "Cerebrospinal fluid magnesium concentration"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "magnesium_concentration",
+      "raw_value": "cerebrospinal fluid magnesium concentration"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_concentration_increase",
+      "raw_value": "Cerebrospinal fluid magnesium concentration increase"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_concentration_increase",
+      "raw_value": "cerebrospinal fluid magnesium concentration increase"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_serum_ratio",
+      "raw_value": "Cerebrospinal fluid magnesium concentration increase relative to serum concentration"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid MTX concentrations"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid MTX level"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid MVC concentrations"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "brain_or_csf_concentration",
+      "raw_value": "cerebrospinal fluid or brain concentrations"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "lead_concentration",
+      "raw_value": "cerebrospinal fluid Pb"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "cerebrospinal fluid peak"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "cerebrospinal fluid peak levels"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Cerebrospinal fluid penetration"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "cerebrospinal fluid penetration"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Cerebrospinal fluid penetration (%)"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "Cerebrospinal fluid penetration rate"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "cerebrospinal fluid penetration rate"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "cerebrospinal fluid penetration rates"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid penicillin level"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_permeability_rate",
+      "raw_value": "cerebrospinal fluid permeability rate"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal fluid PTZ conc."
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "cerebrospinal fluid ristocetin content"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid ritonavir"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid salicylate concentration"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal fluid TMZ levels"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_trough_concentration",
+      "raw_value": "cerebrospinal fluid trough levels"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_uptake_half_time",
+      "raw_value": "cerebrospinal fluid uptake half-time"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "cerebrospinal fluid, mean Cmax"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal level"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal levels"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_migration_rate",
+      "raw_value": "cerebrospinal migration rate"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal PHT level"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "csf_transfer",
+      "raw_value": "cerebrospinal transitivity"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal-fluid concentration"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal-fluid drug concentration"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal-fluid level"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Cerebrospinal-fluid levels"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebrospinal-fluid levels"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_accumulation",
+      "raw_value": "cerebrospinale Anreicherung"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "cerebrovascular_pa",
+      "raw_value": "Cerebrovascular PA"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "cerebrum_csf_ratio",
+      "raw_value": "cerebrum-to-cerebrospinal fluid lidocaine ratio"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "clinically_achievable_csf_concentration",
+      "raw_value": "clinically achievable concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_or_csf_concentration",
+      "raw_value": "concentration in cerebrospinal fluid or brain parenchyma"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in cerebrospinal fluida"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in human cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in human cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the cerebrospinal fluid (LCR)"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "csf_blood_ratio",
+      "raw_value": "concentration in the cerebrospinal fluid / concentration in the blood"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "csf_periphery_ratio",
+      "raw_value": "concentration in the cerebrospinal fluid / concentration in the periphery"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "concentration in the cerebrospinal fluid and brain"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the liquor cerebrospinalis (CSF)"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "noninfected_cerebellar_tissue_concentration",
+      "raw_value": "concentration in the non-infected cerebellar tissue"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration level in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of ALC in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "concentration of arsenic in the cerebrospinal fluid / plasma levels"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of atropine found in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "csf_blood_ratio",
+      "raw_value": "concentration of drug in cerebrospinal fluid relative to blood"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "free_serum_csf_ratio",
+      "raw_value": "concentration of free unbound praziquantel in serum vs cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "magnesium_concentration",
+      "raw_value": "concentration of magnesium in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "concentration of penicillin G in the cerebrospinal fluid / plasma concentration"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "concentration of radioactivity in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "blood_csf_ratio",
+      "raw_value": "concentration of the drug in the blood / concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of the drug in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "csf_serum_ratio",
+      "raw_value": "concentration of TMZ in cerebrospinal fluid / serum concentration"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "free_csf_intravenous_ratio",
+      "raw_value": "concentration of unbound, active valdecoxib in the cerebrospinal fluid (CSF) / intravenous concentration"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "csf_concentration_rate",
+      "raw_value": "concentration rate in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_abscess_fluid_csf_concentration",
+      "raw_value": "concentrations in brain abscess fluid and CSF"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentrations in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in Cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "concentrations in cerebrospinal fluid and brain tissue"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in cerebrospinal fluids"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in rat cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentrations in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations measured in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentrations of aztreonam in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations of formed colistin in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations of vancomycin in cerebral ventricular fluid or cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "csf_concentration_gradient",
+      "raw_value": "Concn gradient (Cerebrospinal fluid)"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "DA concentrations in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "DAMPA concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "csf_detectability",
+      "raw_value": "detectability in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "csf_whole_blood_ratio",
+      "raw_value": "diffusion in cerebrospinal fluid / whole-blood concentration"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_csf_distribution",
+      "raw_value": "distribution in brain and cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "csf_distribution",
+      "raw_value": "distribution in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "csf_detectability",
+      "raw_value": "dose detectable in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "csf_detectability",
+      "raw_value": "dose detectable in the cerebrospinal fluid at peak concentrations"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "doxorubicin levels in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "csf_accumulation",
+      "raw_value": "drug accumulation in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "clinically_achievable_csf_concentration",
+      "raw_value": "drug concentration attainable in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentration found in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentration within cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug concentrations in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug levels in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Drug penetration into the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "csf_serum_ratio",
+      "raw_value": "Drug penetration into the cerebrospinal fluid / serum drug concentration"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_entry",
+      "raw_value": "entry into the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "csf_unbound_plasma_ratio",
+      "raw_value": "Entry into the cerebrospinal fluid (relative to unbound plasma drug concentration)"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "csf_unbound_plasma_ratio",
+      "raw_value": "Exposure in cerebrospinal fluid (CSF) / unbound drug in plasma"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "cns_csf_dose_fraction",
+      "raw_value": "fraction of administered dose reaching the central nervous system (CNS) or cerebrospinal fluid compartment"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "fraction of orally administered dose detected in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "free_csf_concentration",
+      "raw_value": "Free CGS 26303 in the Cerebrospinal Fluid"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "free_csf_serum_ratio",
+      "raw_value": "free drug concentration in the cerebrospinal fluid / serum concentration"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "free_csf_concentration",
+      "raw_value": "free FTY720-P in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "free_csf_serum_ratio",
+      "raw_value": "free sulfadiazine levels in cerebrospinal fluid / serum levels"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "gentamicin in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "glucose level in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "csf_half_life",
+      "raw_value": "half-life in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "csf_entry_half_life",
+      "raw_value": "half-life of cerebrospinal fluid (CSF) entry"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "highest cerebrospinal fluid level of cefoxitin"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "csf_concentration_increase",
+      "raw_value": "increase in levels of GABA in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "csf_concentration_increase",
+      "raw_value": "increase in magnesium concentration in cerebrospinal fluid upon doubling serum magnesium"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "csf_concentration_increase",
+      "raw_value": "increase in magnesium concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "iodide content of the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "csf_tmax",
+      "raw_value": "latency time to peak cerebrospinal fluid (CSF) concentrations"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "level in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "level in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "level of ketamine measured in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "csf_achievable_concentration",
+      "raw_value": "levels attainable in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels attained in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels of doxycycline in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels of drug in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "levels of penetration into the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels within cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Liquor cerebrospinalis concentration"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lithium concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lithium level in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "local_csf_concentration",
+      "raw_value": "local concentration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "lumbar cerebrospinal fluid (CSF) concentration"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "lumbar_csf_concentration",
+      "raw_value": "lumbar cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "magnesium_concentration",
+      "raw_value": "magnesium concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "magnesium_concentration",
+      "raw_value": "magnesium concentration within the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximal cerebrospinal fluid concentrations"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximal concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximal concentrations in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximal level in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "maximal level of radioactivity in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum cerebrospinal fluid (CSF) concentration"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum concentration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "cisternal_csf_max_concentration",
+      "raw_value": "maximum concentration in the cisternal cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum concentration of gefitinib in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum concentrations achieved in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum concentrations achieved in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum concentrations in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum concentrations in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum drug level present in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum levels in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "maximum methotrexate level in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean and range of concentrations in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean cerebrospinal fluid concentrations"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean cerebrospinal fluid level"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean cerebrospinal fluid level"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean cerebrospinal fluid levels"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "magnesium_concentration",
+      "raw_value": "mean cerebrospinal fluid magnesium level"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean Concentration (Cerebrospinal fluid)"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mean concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "csf_exposure",
+      "raw_value": "mean exposure in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean level [in the cerebrospinal fluid] after termination of the infusion"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "tritium_concentration",
+      "raw_value": "mean levels of tritium in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mean lithium concentrations in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "mean maximum drug concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "mean peak cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "mean peak cerebrospinal fluid concentrations"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "mean peak cerebrospinal-fluid penicillin concentration"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "mean penetration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "csf_steady_state_concentration",
+      "raw_value": "mean steady-state concentrations in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median cerebrospinal fluid (CSF) concentration"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "median voriconazole level in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mercury concentration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "mercury level in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "methotrexate concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "methotrexate levels in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "csf_concentration_ratio",
+      "raw_value": "morphine/M3G/M6G concentration ratio in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "MTX concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "MTX concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Mtx concentration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "MTX concentration in the cerebrospinal fluid / plasma concentration"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "MTX level (cerebrospinal fluid)"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "oseltamivir concentration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "csf_entry",
+      "raw_value": "passage into cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "csf_entry",
+      "raw_value": "passage to cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "csf_entry",
+      "raw_value": "passage to cerebrospinal fluid (LCR)"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak cerebrospinal fluid (CSF) drug concentration"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak cerebrospinal fluid (CSF) levels"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "Peak cerebrospinal fluid ampicillin concentrations"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak cerebrospinal fluid concentration"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak cerebrospinal fluid concentrations"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak cerebrospinal fluid DCS levels"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak cerebrospinal fluid levels"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak concentration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak concentrations in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "csf_max_concentration",
+      "raw_value": "peak level in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "ventricular_csf_max_concentration",
+      "raw_value": "peak level in the ventricular cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "csf_penetration_accumulation",
+      "raw_value": "penetration and accumulation into the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "blood_to_csf_penetration",
+      "raw_value": "penetration from blood into cerebrospinal fluid (ventricular fluid)"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Penetration in cerebrospinal fluid (%)"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Penetration into cerebrospinal fluid (%)"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "Penetration into the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration of the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "penetration of the drug in the cerebrospinal fluid / plasma concentrations"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate into the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "penetration rate to the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "penetration ratio in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration to cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration to the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "penetrations into the cerebrospinal fluid (CSF) in relation to the amount of drug in serum"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin levels in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "percent penetration into cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percent reaching cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage delivered into the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage entering cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage found in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "percentage of cerebrospinal fluid (CSF) penetration"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "active_alkylating_fraction_in_csf",
+      "raw_value": "percentage of drug-derived material in the cerebrospinal fluid present as active alkylating agents"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage of oral dose appearing in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage of oral dose in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage of orally administered dose in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "percentage of plasma rifampicin penetrating into cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "percentage penetration into purulent cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "percentage reaching the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "posaconazole levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "proportion entering cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "PYR levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "radioactivity_concentration",
+      "raw_value": "radioactivity concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "blood_to_cerebroventricular_entry_rate",
+      "raw_value": "rate of entry from blood to cerebroventricular system as a percentage of total rate of appearance"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "rate of penetration into the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "rates of penetration into the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "csf_blood_auc_ratio",
+      "raw_value": "ratio of the area under the concentration-time curve of AZT for cerebrospinal fluid to that for blood"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "csf_plasma_ratio",
+      "raw_value": "ratio of the cerebrospinal fluid rapamycin concentration to the plasma rapamycin concentration"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "sodium fluorescein concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "csf_steady_state_concentration",
+      "raw_value": "steady state cerebrospinal fluid (CSF) concentrations"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "csf_steady_state_concentration",
+      "raw_value": "steady-state average concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "csf_steady_state_concentration",
+      "raw_value": "steady-state cerebrospinal fluid (CSF) concentration"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "csf_steady_state_concentration",
+      "raw_value": "Steady-state concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "csf_steady_state_concentration",
+      "raw_value": "steady-state concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "csf_steady_state_concentration",
+      "raw_value": "steady-state concentration in the cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "steady-state drug cerebrospinal fluid levels"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Streptomycin Concentration in Cerebrospinal Fluid"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "streptomycin level in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "striatal_extracellular_fluid_concentration",
+      "raw_value": "striatal extracellular fluid concentrations"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "sulphadiazine content of the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "suramin level in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "csf_dose_fraction",
+      "raw_value": "systemic dose found in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "therapeutic_csf_concentration",
+      "raw_value": "therapeutic concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "brain_csf_concentration",
+      "raw_value": "therapeutic concentrations in brain and cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "csf_tmax",
+      "raw_value": "time required to reach the peak drug concentration in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "lumbar_csf_equilibration_time",
+      "raw_value": "time to equilibrate with the lumbar cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "csf_tmax",
+      "raw_value": "time to maximum concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "csf_tmax",
+      "raw_value": "time to maximum levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "ventricular_csf_tmax",
+      "raw_value": "time to peak concentration in ventricular cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "total_csf_concentration",
+      "raw_value": "total concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "csf_transfer_rate",
+      "raw_value": "transfer rate to cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "csf_transfer",
+      "raw_value": "transfer to the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "csf_trough_concentration",
+      "raw_value": "trough cerebrospinal fluid vancomycin concentration"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "csf_trough_concentration",
+      "raw_value": "trough concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "csf_trough_concentration",
+      "raw_value": "trough levels in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "csf_trough_concentration",
+      "raw_value": "trough linezolid concentrations in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "unbound_csf_concentration",
+      "raw_value": "unbound concentration in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Vancomycin levels in cerebrospinal fluid"
+    }
+  ],
+  "cluster_id": "cluster_0f383364a3949d0a",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

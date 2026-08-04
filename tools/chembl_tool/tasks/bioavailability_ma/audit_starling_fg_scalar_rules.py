@@ -24,7 +24,7 @@ DEFAULT_INPUT = Path(
 )
 DEFAULT_OUTPUT_DIR = Path(
     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-    "starling_normalized_v6/08_audits/fg_scalar_rules_v2"
+    "starling_normalized_v6/09_audits/fg_scalar_rules_v2"
 )
 AUDIT_VERSION = "bioavailability_fg_scalar_rule_audit.v2"
 MANUAL_SAMPLE_SEED = 20260731

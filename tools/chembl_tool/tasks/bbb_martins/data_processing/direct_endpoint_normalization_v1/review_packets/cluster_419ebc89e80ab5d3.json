@@ -1,0 +1,1007 @@
+{
+  "assignment_count": 200,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "permeability_surface_area_product_ratio",
+      "raw_value": "(PA)_s/(PA)_d"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "effective_permeability_surface_area_product",
+      "raw_value": "(PA)b^eff"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "effective_permeability_surface_area_product",
+      "raw_value": "(PA)eff"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "total_effective_permeability_surface_area_product",
+      "raw_value": "(PA)tot^eff"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "A-B Papp"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "A-to-B Papp"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "A2B meanPapp"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "apical-to-basolateral Papp"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "apparent_permeability_surface_area_product",
+      "raw_value": "apparent PA"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "B-A Papp"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+      "raw_value": "B-A/A-B Papp ratio"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+      "raw_value": "B-to-A/A-to-B Papp ratio"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/Pa"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "B/Pa (AUC0-t)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B:Pa"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "free_paa",
+      "raw_value": "Free PAA"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "papp",
+      "raw_value": "In vivo Papp"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Intrinsic Caco2 pH 7.4/7.4 Papp A to B"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "log_papp",
+      "raw_value": "log Papp"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "log_papp",
+      "raw_value": "log Papp in vivo"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "papp",
+      "raw_value": "MDCK (Papp)"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "MDCK MDR-1 AB Papp"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "papp",
+      "raw_value": "MDCK PApp"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "papp",
+      "raw_value": "MDCK Papp"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "MDCK Papp A-B"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "MDCK-MDR1 AB Papp"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "papp_a_to_b_to_b_to_a_ratio",
+      "raw_value": "MDCK-mdr1 AB/BA Papp"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+      "raw_value": "MDCK-MDR1 PappB-A/A-B"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "MDR1 Papp A→B"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "papp",
+      "raw_value": "mean PA values"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "papp",
+      "raw_value": "Mean Papp"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Mean Papp B→A + GF120918"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PA"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "pa"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PA (s-1)"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PA product"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PA value"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PA values"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PA(s⁻¹)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "Pa-b"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "permeability_surface_area_product_ratio",
+      "raw_value": "Pa/Pc"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PA21"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PAb"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PABrC"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "papp",
+      "raw_value": "PAMPA BBB Papp"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "papp",
+      "raw_value": "PAMPA PAPP"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "PAP-BL"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "papp",
+      "raw_value": "papp"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (a > b)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A to B)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A → B)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A->B)"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A-B)"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A-to-B)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A2B)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (AB)"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "papp_a_to_b_to_b_to_a_ratio",
+      "raw_value": "Papp (AB/BA)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "papp_apical_to_basal_to_basal_to_apical_ratio",
+      "raw_value": "Papp (Ap > Bl / Bl > Ap)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp (AP)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp (AP-BL)"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp (AP-to-BL)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp (ave)"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A → B)"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A–B)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp (A–B) and Papp (B–A)"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (A→B)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp (a→b)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp (B to A)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp (B → A)"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp (B-to-A)"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+      "raw_value": "Papp (B-to-A)/Papp (A-to-B)"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp (B2A)"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+      "raw_value": "Papp (BA/AB)"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp (basolateral to apical)"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp (BL)"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp (BL-AP)"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp (BL-to-AP)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "papp_basal_to_apical_to_apical_to_basal_ratio",
+      "raw_value": "Papp (BL-to-AP)/Papp (AP-to-BL)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp (BL/AP)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp (B→A)"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp (b→a)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp +Elacridar"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp -Elacridar"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A > B"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A to B"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A → B"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A->B"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A-B"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A2B"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A:B"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A> B"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A>B"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp AB"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp AP"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp AP ---> BL"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp AP → BL"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp AP, Papp BL, ER"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp AP; Papp BL; ER"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp apical to basal"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp apical–basal coefficients"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp AP→BL"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A–B"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp A→B"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "papp_a_to_b_to_b_to_a_ratio",
+      "raw_value": "Papp A→B / Papp B→A"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+      "raw_value": "Papp B > A/Papp A > B ratio"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp B to A"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp B → A"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp B-A"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+      "raw_value": "Papp B-A/Papp A-B ratio"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp B2A"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp basolateral-to-apical"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp BL"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp BL ---> AP"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp BL → AP"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "papp_basal_to_apical_to_apical_to_basal_ratio",
+      "raw_value": "Papp BL-AP/Papp AP-BL"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "papp_basal_to_apical_to_apical_to_basal_ratio",
+      "raw_value": "Papp BL-to-AP/Papp AP-to-BL ratio"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp BL→AP"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp B–A"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp B→A"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "papp_enhancement_ratio",
+      "raw_value": "Papp enhancement ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "papp_max",
+      "raw_value": "Papp max"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp MDCKII-MDR1"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp PAMPA"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "papp_ratio",
+      "raw_value": "Papp Ratio"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "papp_ratio",
+      "raw_value": "Papp ratio"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "papp_b_to_a_to_a_to_b_ratio",
+      "raw_value": "Papp Ratio B-A/A-B"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "papp",
+      "raw_value": "PAPP(+inh)"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp(a to b)"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp(A → B)"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp(A-B)"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp(AB)"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp(AP-BL)"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp(AP→BL)"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp(A–B)"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp(A→B)"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "papp_a_to_b_to_b_to_a_ratio",
+      "raw_value": "Papp(A→B/B→A)"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp(B-A)"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp(BL-AP)"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "papp_basal_to_apical",
+      "raw_value": "Papp(BL→AP)"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp(B→A)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp(sucrose)"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp, A to B"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp, A-B"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp, A>B"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp, AB(inhibited)"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp, AP-BL"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp, AP-to-BL"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp, A–B direction"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp, B-A vs Papp, A-B"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp,A->B"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp,A-B"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp,A-B/λ"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp,AB"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp,AB,inhibited"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "papp_apical_to_basal",
+      "raw_value": "Papp,AP-BL"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Papp,A→B"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp,B-A"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Papp,BA"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp,MDCK-MDR1"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp,vivo"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "papp_cumulative",
+      "raw_value": "Papp-cum"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "papp_cumulative",
+      "raw_value": "Papp-cum(corrected)"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "papp_incremental",
+      "raw_value": "Papp-incre"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "papp_incremental",
+      "raw_value": "Papp-incre(corrected)"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "papp",
+      "raw_value": "Papp-value"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "papp_to_efflux_ratio",
+      "raw_value": "Papp/ER"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "Pappa"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Pappa (A-B)"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "papp",
+      "raw_value": "PappA,B, PappB,A"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "papp",
+      "raw_value": "PappA->B and PappB->A"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "PappA-B"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "papp_a_to_b_to_b_to_a_ratio",
+      "raw_value": "PappA-B/ PappB-A/Ratio"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "PappAB"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "Pappab"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "papp",
+      "raw_value": "PappAP"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "PappAtoB"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "PappA→B"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "papp",
+      "raw_value": "Pappb"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "PappB-A"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "PappBA"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "Pappba"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "papp",
+      "raw_value": "PappBL"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "papp_b_to_a",
+      "raw_value": "PappB→A"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "papp",
+      "raw_value": "Pappcalc"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "papp_cumulative",
+      "raw_value": "Pappcum"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "papp_cumulative",
+      "raw_value": "Pappcum (corrected)"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "papp_incremental",
+      "raw_value": "Pappincre"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "papp_incremental",
+      "raw_value": "Pappincre (corrected)"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "papp",
+      "raw_value": "PappPD"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "paracellular_papp",
+      "raw_value": "paracellular Papp"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PAvitro"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "permeability_surface_area_product",
+      "raw_value": "PAvivo"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "permeability_ratio",
+      "raw_value": "Pe; Papp; Pe ratio; Papp ratio"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "peapp",
+      "raw_value": "Peapp"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "qpp",
+      "raw_value": "QPP MDCK"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "papp",
+      "raw_value": "RRCK Papp"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "RRCK Papp AB"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "papp_a_to_b",
+      "raw_value": "RRCK Papp,A→B"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "secretory_papp",
+      "raw_value": "secretory Papp"
+    }
+  ],
+  "cluster_id": "cluster_419ebc89e80ab5d3",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

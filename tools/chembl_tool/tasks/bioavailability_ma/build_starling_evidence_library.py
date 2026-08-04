@@ -36,7 +36,7 @@ EVIDENCE_FILENAME = "starling_oral_bioavailability_evidence.jsonl"
 INDEX_FILENAME = "starling_oral_bioavailability_neighbor_index.pkl"
 META_FILENAME = "starling_oral_bioavailability_neighbor_index.meta.json"
 GROUP_ID = "Observed.direct_oral_bioavailability"
-INDEX_VERSION = "bioavailability_ma_starling_neighbor_index.v2"
+INDEX_VERSION = "bioavailability_ma_starling_neighbor_index.v3"
 SOURCE_DATASET = "starling-labs/Oral_Bioavailability"
 
 

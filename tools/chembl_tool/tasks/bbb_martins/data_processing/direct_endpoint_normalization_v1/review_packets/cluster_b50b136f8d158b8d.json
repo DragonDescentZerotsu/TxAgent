@@ -1,0 +1,1887 @@
+{
+  "assignment_count": 376,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "3h CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "[NLF]CSF / free [NLF]plasma ratio"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "acyclovir CSF/acyclovir plasma ratio"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "acyclovir CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_to_plasma_amount_ratio",
+      "raw_value": "Amount ventricular CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "plasma_to_csf_transfer_ratio",
+      "raw_value": "apparent plasma:CSF transfer ratio"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "csf_to_plasma_area_ratio",
+      "raw_value": "Area ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "csf_to_plasma_area_ratio",
+      "raw_value": "area ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "average CSF:unbound plasma ratio"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "average peak CSF: plasma ratio"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "ecf_to_unbound_plasma_ratio",
+      "raw_value": "bECF/unbound plasma steady-state concentration ratio"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_to_plasma_distribution_ratio",
+      "raw_value": "C.S.F.-plasma distribution ratio"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ceftobiprole CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "cerebrum/plasma ratio"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax CSF : plasma ratio"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax ratio between CSF and plasma"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax ratio CSF/plasma"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "cnf_to_plasma_ratio",
+      "raw_value": "CNF/plasma ratios"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "corrected CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "corrected mean CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "cp_to_plasma_ratio",
+      "raw_value": "CP-to-plasma ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF / plasma ratio"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "csf / plasma ratios"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "csf_to_plasma_exposure_ratio",
+      "raw_value": "CSF / plasma total exposure ratio"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF : free plasma ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF : plasma ratio"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF : plasma ratio (%)"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF : plasma ratios"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF agmatine / plasma agmatine peak ratio"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "correlation_ratio",
+      "raw_value": "CSF and plasma level correlation ratios"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF Cmax / plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF Cmax to plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "CSF conc/total plasma conc ratio"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "csf_to_plasma_exposure_ratio",
+      "raw_value": "CSF exposure / plasma exposure ratio"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF level / plasma level ratio"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "csf_to_plasma_free_fraction_ratio",
+      "raw_value": "CSF levels relative to plasma free fraction"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF peak levels / plasma levels ratio"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF PLASMA RATIO"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF plasma ratio"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "csf_to_unbound_plasma_exposure_ratio",
+      "raw_value": "CSF to free plasma exposure ratio"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF to free plasma osimertinib ratio"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF to free plasma ratio"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "CSF to plasma (total) ratio"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma and brain to plasma ratios"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF to plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF to plasma Cmax ss ratio"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "csf_to_plasma_distribution_ratio",
+      "raw_value": "CSF to plasma distribution ratio"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "csf_to_plasma_exposure_ratio",
+      "raw_value": "CSF to plasma exposure ratio"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma methotrexate ratio"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma MTX ratio"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to Plasma Ratio"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma ratio"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma ratios"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma ratios (CPRs)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma sorbitol ratio"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF to plasma VRCZ concentration ratio"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "csf_to_total_plasma_cmax_ratio",
+      "raw_value": "CSF to total plasma ratio of Cmax"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF to unbound plasma ratio"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "csf_to_unbound_plasma_cmax_ratio",
+      "raw_value": "CSF to unbound plasma ratio of Cmax"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_uptake_ratio",
+      "raw_value": "CSF uptake ratio ([CSF/plasma water] ratio × 100)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF versus plasma ratio"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF- to-plasma ratio"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF-free plasma ratio"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-plasma conc. ratio × 100"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-Plasma Ratio"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-plasma ratio"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-plasma ratio (%)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-plasma ratios"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-plasma-ratio"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF-to-free plasma ratio"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF-to-free plasma ratios"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF-to-free plasma-level ratios"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "CSF-to-plasma (total) ratio"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma AA ratio"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma area-under-the-curve ratio"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma fAUC0−∞ ratio"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma gefitinib ratio"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma mean ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF-to-plasma peak ratio"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-Plasma Ratio"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma ratio"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma ratio (C/P)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF-to-plasma ratio (Peak level)"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "csf_to_plasma_trough_ratio",
+      "raw_value": "CSF-to-plasma ratio (Trough level)"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma ratio value"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma ration"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF-to-plasma ratios"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF-to-plasma unbound ratio"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "CSF-to-total plasma ratio"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF-to-unbound plasma ratio"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF-to-unbound plasma ratios"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF-to-unbound-plasma ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/ Plasma ratio"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/ plasma ratio"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/ plasma ratio (%)"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/first plasma ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_to_unbound_plasma_exposure_ratio",
+      "raw_value": "CSF/free plasma exposure ratios"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/free plasma ratio"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/plasma (free) ratio"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma (ratio)"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma abacavir ratio"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma and brain/plasma ratios"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ara-C level ratio"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma area-under-the-curve ratio"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma arsenic ratio"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC₀₋₂₄ ratio"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma cimetidine ratio"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF/plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma conc. ratio"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma conc. ratio (%)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF/plasma conc. ratio [%] at t max"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma conc. ratio at 1.5 h"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "csf_to_plasma_trough_ratio",
+      "raw_value": "CSF/plasma Ctrough ratio"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma DHA ratio"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_to_plasma_distribution_ratio",
+      "raw_value": "CSF/plasma distribution ratio"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma dolutegravir ratio"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_to_plasma_exposure_ratio",
+      "raw_value": "CSF/plasma exposure ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF/plasma exposure ratio (Cmax)"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma level ratio"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma level ratio at 24 hr"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma levels ratio"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma Li⁺ ratio"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma methotrexate ratio"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma mma ratio"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma NE ratio"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/plasma Nonprotein-bound ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma or brain/plasma ratios"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "csf_to_plasma_distribution_ratio",
+      "raw_value": "CSF/plasma partitioning ratio"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma percentage"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma radioactivity ratio"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/PLASMA RATIO"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/Plasma Ratio"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/Plasma ratio"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "csf/plasma ratio"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/Plasma ratio %"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratio (%)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF/plasma ratio (based on Cmax)"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratio (based on predose)"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF/plasma ratio (Cmax)"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratio (predose)"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "csf_to_plasma_trough_ratio",
+      "raw_value": "CSF/plasma ratio (trough concn)"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF/plasma ratio for Cmax"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratio of free NNZ 2591"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratio × 100"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratio, %"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratio, C2.5h"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "csf_to_plasma_trough_ratio",
+      "raw_value": "CSF/plasma ratio, Ctrough"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ration"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma ratios"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma theophylline ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma theophylline ratios"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma total ceftriaxone ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "csf_to_plasma_trough_ratio",
+      "raw_value": "CSF/plasma trough level ratio"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/plasma ultrafiltrate ratio"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/plasma unbound ratio"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma venetoclax percentage"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma VOR concentration ratio"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF/plasma-ratio"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/plasma<sub>u</sub> ratio"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/plasmaunbound ratio"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "CSF/total plasma ratio"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF/unbound plasma ratio"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF: plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF: Plasma Ratio"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF: plasma ratio"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF: plasma ratios"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:Blood Plasma ratio"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF:free plasma ratio"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF:plasma (unbound) ratio"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma Ara-C ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF:plasma area-under-curve ratio"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma laudanosine ratio"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma laudanosine ratios"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma lithium ratio"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:Plasma MTX Ratio"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma percentage ratio"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma phenobarbital ratio"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma point ratio"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma point ratios"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:Plasma Ratio"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:Plasma ratio"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma ratio"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:Plasma ratio (%)"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma ratio (%)"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "CSF:plasma ratio (Cmax)"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "CSF:plasma ratio (total bound + unbound)"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF:plasma ratio (total:free)"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "CSF:plasma ratio (total:total)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma ratio of free tolebrutinib"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:Plasma ratios"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF:plasma ratios"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_to_plasma_water_ratio",
+      "raw_value": "CSF:plasma water ratio"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "CSF:unbound plasma ratio"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF‐to‐plasma ratio"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CSF–plasma ratio"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "csf_to_plasma_distribution_ratio",
+      "raw_value": "distribution ratio CSF/plasma"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "ecf_to_plasma_ratio",
+      "raw_value": "ECF plasma ratios"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "ecf_to_plasma_ratio",
+      "raw_value": "ECF to plasma ratio"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "ecf_to_plasma_ratio",
+      "raw_value": "ECF-to-plasma ratio"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "ecf_to_unbound_plasma_ratio",
+      "raw_value": "ECF-to-unbound plasma concentration ratio"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "ecf_to_plasma_ratio",
+      "raw_value": "ECF/plasma ratio"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "EFV CSF to plasma ratio, %"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "EFV CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "accumulation_ratio_vs_plasma",
+      "raw_value": "f (accumulation ratio vs. plasma)"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "fetal CSF/average maternal plasma ratio (%)"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Foscarnet CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "fraction of CSF:plasma"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "free CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "unbound_plasma_to_csf_ratio",
+      "raw_value": "free plasma-CSF ratio"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "unbound_plasma_to_csf_ratio",
+      "raw_value": "free plasma/CSF ratio"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "free ramipril CSF/Plasma ratio"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "free ramiprilat CSF/Plasma ratio"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "fT (ratio between levels of FLC in CSF and free plasma)"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "gcsf_to_plasma_ratio",
+      "raw_value": "GCSF/plasma ratio"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "geometric mean CSF/free plasma ratio"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "geometric mean ratio of the areas under the curve for CSF to plasma"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "isf_to_plasma_ratio",
+      "raw_value": "ISF/Plasma concentration ratio"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "isf_to_plasma_ratio",
+      "raw_value": "ISF/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "k (CSF/plasma ratio)"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "kp_uu_csf",
+      "raw_value": "Kpu,u (unbound CSF drug vs plasma ratio)"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "LCR/plasma ratio"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "LPV CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "lumbar CSF : plasma ratio"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Lumbar CSF/plasma conc. ratio"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "lumbar CSF/plasma peak conc. ratio"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "csf_to_plasma_trough_ratio",
+      "raw_value": "Lumbar CSF/plasma trough conc. ratio"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "Lumbar CSF/plasma unbound conc. ratio"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "lumbar CSF/plasma, conc. ratio"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "Lumbar CSF/plasma, unbound conc. ratio"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "lumbar CSF/total plasma ratio"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "lumbar/thoracic CSF/plasma conc. ratio"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Max. CSF/plasma conc. ratio [%]"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Maximal CSF/plasma conc. ratio"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "maximum CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "maximum percentage of edaravone CSF to plasma"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "mean CSF to plasma ara-C levels ratio"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "mean CSF to plasma level ratio"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "mean CSF to plasma ratio"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "mean CSF-plasma ratio"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "mean CSF-to-plasma ratio"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "mean CSF-to-plasma ratio (unbound)"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Mean CSF-to-plasma ratios"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Mean CSF/plasma concn ratio"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "mean CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Mean CSF: plasma ratio"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "mean CSF:plasma ratio"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "mean peak CSF-to-plasma ratio"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "csf_to_plasma_free_fraction_ratio",
+      "raw_value": "mean ratio (CSF/free plasma fraction)"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "mean ratio (subdural CSF / unbound plasma levels)"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "Mean Ratio Plasma:CSF"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "median CFS/plasma ratio"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "median CSF to plasma VRCZ concentration ratio"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "median CSF-plasma ratio"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "median CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "median CSF/plasma ratios"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "median CSF: plasma ratio"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "MVC CSF: plasma ratio"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "central_to_plasma_ratio",
+      "raw_value": "peak central/plasma ratio"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Peak CSF / peak plasma ratio"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Peak CSF/plasma level ratio"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "peak CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "peak CSF/plasma TP ratio"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "percentage CSF to plasma ratio"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "percentage CSF/plasma"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "percentage ratio of CSF to plasma temazepam"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "pfc_csf_plasma_free_fraction_ratio",
+      "raw_value": "PFC:CSF:plasma-free fraction ratio"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "plasma_to_ecf_ratio",
+      "raw_value": "plasma : ECF ratio"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma CSF ratio"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma lead-CSF lead mean ratio"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma tHcy / CSF tHcy ratio"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma to CSF ratio"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "plasma_csf_equilibration_rate_constant",
+      "raw_value": "Plasma-CSF equilibration rate constant (Keq)"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "Plasma-CSF ratio"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma-CSF ratio"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma-CSF ratio of ara-C"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma-to-CSF platinum ratio"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma-to-CSF ratio"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma/-CSF ratio"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma/C.S.F. ratio"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma/cisternal CSF ratio"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma/CSF LY3202626 concentration ratios"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "Plasma/CSF ratio"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma/CSF ratio"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma/CSF ratios"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma: CSF DMSO₂ ratio"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma: CSF ratio"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma:CSF caffeine ratio"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma:CSF ratio"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "plasma_to_csf_transfer_ratio",
+      "raw_value": "Plasma:CSF transfer ratio"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "plasma_to_csf_transfer_ratio",
+      "raw_value": "plasma:CSF transfer ratio"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "unbound_plasma_to_csf_ratio",
+      "raw_value": "ratio between free pexacerfont in plasma and CSF"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio between the area under the curve in CSF and plasma"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Ratio CSF/ plasma concn"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Ratio CSF/Plasma"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Ratio CSF/plasma"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio CSF/plasma"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio CSF/plasma lead"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "Ratio CSF:total plasma"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "ratio for CSF to unbound plasma levels"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of (3H)dT in CSF to plasma"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of calculated areas under the curve in CSF to plasma times 100"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "ccsf_to_cp_plasma_ratio",
+      "raw_value": "ratio of CCSF to CP plasma"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of CSF and plasma levels"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "ratio of CSF platinum to unbound plasma platinum"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "ratio of CSF to free (unbound) plasma quinine"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "ratio of CSF to free plasma"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "ratio of CSF to peak plasma levels"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of CSF to plasma"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of CSF to plasma DHA"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "csf_to_plasma_exposure_ratio",
+      "raw_value": "ratio of CSF to plasma exposure"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "csf_to_plasma_exposure_ratio",
+      "raw_value": "ratio of CSF to plasma exposures"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Ratio of CSF to plasma level"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of CSF to plasma level"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of CSF to plasma mannitol"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of CSF to plasma MTX levels"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "csf_to_total_plasma_cmax_ratio",
+      "raw_value": "ratio of CSF to total plasma for Cmax"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "csf_to_unbound_plasma_cmax_ratio",
+      "raw_value": "ratio of CSF to unbound plasma for Cmax"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of CSF-plasma AZT"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Ratio of CSF-to-plasma concn"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of CSF/plasma levels"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of INH in CSF to plasma"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of inhibitor in the CSF to plasma"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of MCFG in CSF compared to that in plasma"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "ratio of osimertinib in CSF to free plasma"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "ratio of peak CSF to peak plasma"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "plasma_to_csf_auc_ratio",
+      "raw_value": "ratio of plasma AUC₀₋₂₄ to CSF AUC₀₋₂₄"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "ratio of plasma caffeine to CSF caffeine"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "ratio of plasma to CSF"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "ratio of plasma/CSF levels"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of prednisolone in the CSF to the plasma"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of radioactivity in CSF to that in the plasma"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of rubidium in CSF to plasma"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "ratio of simultaneously measured plasma to CSF levels"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of temozolomide in CSF to plasma"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "ratio of the $C_{max}$ ss in CSF to the $C_{max}$ ss in plasma"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the CSF area under the curve from 0 to 12 h to the plasma area under the curve from 0 to 12 h"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "ratio of the ion in plasma to that in CSF"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "ratio of total progesterone in plasma and in CSF"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "ratio of unbound CSF: plasma Nilotinib"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Ratio of Vor in CSF to Vor in plasma"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratios of CSF and plasma levels"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratios of MCFG in CSF and plasma"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratios of raltegravir in the CSF and plasma"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "relación de concentraciones en LCR y plasma"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "relative_change_in_plasma_to_csf_ratio",
+      "raw_value": "relative change in the plasma/CSF ratio"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "specific_activity_ratio",
+      "raw_value": "specific activities (CSF/plasma ratio)"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "steady state CSF to free plasma ratio"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "steady state CSF to plasma ratio"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Steady state CSF-to-plasma ratio"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "steady-state B/P plasma ratio"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "steady-state CSF to plasma ratio"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "steady-state CSF-to-plasma ratio"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "steady-state CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "ecf_to_unbound_plasma_ratio",
+      "raw_value": "steady-state ECF-to-plasma u ratio"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "TMZ CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "total BIC CSF to plasma ratio"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "csf_to_plasma_exposure_ratio",
+      "raw_value": "total CSF exposure / plasma ratio"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "total CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "csf_to_total_plasma_ratio",
+      "raw_value": "total CSF/total plasma ratio"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "csf_to_unbound_plasma_ratio",
+      "raw_value": "total CSF:unbound plasma ratio"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "unbound_csf_to_unbound_plasma_ratio",
+      "raw_value": "unbound CSF / unbound plasma ratio"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "unbound CSF-to-plasma ratio"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "unbound_csf_to_unbound_plasma_ratio",
+      "raw_value": "Unbound CSF-to-unbound plasma ratio"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "Unbound CSF/plasma geometric mean ratio"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "unbound CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "unbound CSF:plasma ratio"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "unbound_csf_to_plasma_ratio",
+      "raw_value": "Unbound ESB1609 CSF:plasma ratio"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ventricular CSF/plasma conc. ratio"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ventricular CSF:plasma ratio"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "vf_to_plasma_cmax_ratio",
+      "raw_value": "VF levels as % of plasma Cmax"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "vf_to_plasma_ratio",
+      "raw_value": "VF:plasma ratio"
+    }
+  ],
+  "cluster_id": "cluster_b50b136f8d158b8d",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

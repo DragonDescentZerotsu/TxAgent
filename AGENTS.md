@@ -8,6 +8,16 @@
 - This English-first policy overrides historical Chinese-language wording in this file and in nested Markdown
   documentation. New or regenerated user-visible artifacts must not default to Chinese.
 
+## Rules
+
+All communication should be truthful but also concise and easy to understand; don’t use weird jargon but stick to language that NLPers and MLers use; assume I don’t have background context on what you’re building; start with a high level description of the changes and then go in more detail.
+
+When you communicate new implementations with me, whether we’re planning or brainstorming, always discuss the changes we’re making on a file system/architectural/structural level; what files we’re adding and how it connects to other files etc. and what is the scope of the change.
+
+Most code should be implemented in a modular coherent manner; for instance, if I wanted to have a pipeline that normalizes molecules, splits them, etc. this should not sprawl many many files or directories. It should be self contained in a clear manner so we can easily import it to perhaps new repositories. Modular refactors are welcome but they should be simple and clear. Whenever we do this, suggest multiple options and I’ll let you know.
+
+Don’t over-engineer the infrastructure. While we want good testing it should not be overkill.
+
 ## Env instruction
 This checkout is owned and run from `/data1/joseph/TxAgent` on `node002`. For RDKit, the tool service,
 and the reasoning pipeline, use the local `txagent-glm` environment, cloned from `vllm` and provisioned

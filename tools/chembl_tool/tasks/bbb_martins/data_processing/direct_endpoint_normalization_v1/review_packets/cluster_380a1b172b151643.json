@@ -1,0 +1,1867 @@
+{
+  "assignment_count": 372,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "ratio",
+      "raw_value": "$PS_2/PS_1$ ratio"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "ratio",
+      "raw_value": "(1/r - 1) / 1/D39"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "ratio",
+      "raw_value": "(B/A)/(A/B)"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "ratio",
+      "raw_value": "10% truncated mean BBB +/BBB- ratio"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "activity_ratio",
+      "raw_value": "14C-activity ratio"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "ratio",
+      "raw_value": "2- to 30-min ratio"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "ratio",
+      "raw_value": "2-to-30 min ratio"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "ratio",
+      "raw_value": "2-to-60 min ratio"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "ratio",
+      "raw_value": "5min/60min ratio"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "[B]/[P] ratio"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "[B]u/[P]u ratio"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "A – B/B – A"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "A-B/B-A ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "AB/BA ratio"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Ac/Ap ratio"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "accumulation_ratio",
+      "raw_value": "accumulation ratio"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "acid_soluble_fraction",
+      "raw_value": "Acid soluble fraction"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "ammonia_extraction_fraction",
+      "raw_value": "ammonia extraction fraction"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "ampicillin_ratio",
+      "raw_value": "ampicillin ratio"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "area_ratio",
+      "raw_value": "area ratio"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "plasma_to_brain_auc_ratio",
+      "raw_value": "AUClast ratio (P/B)"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "average extraction ratio"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "average fractional extraction"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "A–B/B–A"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B to A/A to B"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B to A/A to B ratio"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "b to a/a to b ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B – A/A – B"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B → A/A → B ratio"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "B(f)/P(f)"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "B(t)/P(t)"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B-A/A-B (Bcrp1)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B-A/A-B (MDR1)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B-A/A-B ratio"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B-to-A/A-to-B ratio"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "proportion",
+      "raw_value": "B/(A+B)"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "ratio",
+      "raw_value": "B/B ratio"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P (6 h)"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "ratio",
+      "raw_value": "B/P and AUC ratios"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "B/P AUC ratio"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "B/P AUC ratio (knockout vs wild type)"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "B/P AUC(0-7h) ratio"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P coefficient"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P concentration ratio"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_to_plasma_exposure_ratio",
+      "raw_value": "B/P exposure ratio"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P Ratio"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P ratio"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "b/p ratio"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "B/P ratio (%) AUClast"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "B/P ratio (AUC0-inf)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "B/P ratio (Cmax)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P Ratio 4 h"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P ratio at 72 h"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P ratio at time 0 s"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P Ratio C(0)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "ratio",
+      "raw_value": "B/P Ratio Half-Lives"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P ratios"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P value"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P values"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P- Ratio"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P-ratio"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "B/P_total"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "B/P_{c,max}"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "B/S ratio"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "ratio",
+      "raw_value": "B:P AUC ratios"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B:P ratio"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B:P ratios"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "B:S ratio"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B>A/A>B ratio"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "BA/AB Ratio"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "BA/AB ratio"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "BB_KO/BB_WT ratio"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "logbb",
+      "raw_value": "BBB, log ratio"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "ratio",
+      "raw_value": "BBB/liver PeS ratio"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "mass_fraction",
+      "raw_value": "Bismuth mass fraction"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "BP ratio"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Br/Bl ratio"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Br/P ratio"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Br/Pl ratio"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Br:Bl Ratio"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Br:Bl ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "bromide distribution ratio (Brs/Brcsf)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "bromide_partition_ratio",
+      "raw_value": "bromide partition ratio"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "bromide_ratio",
+      "raw_value": "bromide ratio"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B–A/A–B (Bcrp1)"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B–A/A–B (MDR1)"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "B→A to A→B ratio"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "concentration_ratio",
+      "raw_value": "C/P ratio"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Caco-2 A–B/B–A"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb/Cp ratio"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cb:Cp ratio"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Cbrain/Cblood ratio"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "CBrain/CPlasma ratio"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Cbrain/Cplasma ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Cbu/Cpu ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "CCSF,5h/CBP,5h ratio"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_to_unbound_ratio",
+      "raw_value": "Ccsf/Cu ratio"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "central_to_peripheral_ratio",
+      "raw_value": "central: peripheral ratio"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "cerebellum_to_plasma_ratio",
+      "raw_value": "CER/Cp ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "cerebrum_to_plasma_ratio",
+      "raw_value": "Cerebr./pl ratio"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "cerebrum_concentration_ratio",
+      "raw_value": "cerebrum concentration ratio (abcb1ab(-/-)/(+/+))"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "inflow_to_outflow_ratio",
+      "raw_value": "CLin/CLout ratio"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "cmax_ratio",
+      "raw_value": "Cmax ratio (geniposide-SLNs to geniposide solution)"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "plasma_to_brain_cmax_ratio",
+      "raw_value": "Cmax ratio (P/B)"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentraciones en LCR"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentración en LCR"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentración en LCR"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Concn ratio (Bcrp1-/- / wild type)"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "cortex_to_cerebellum_ratio",
+      "raw_value": "COR/CER ratio"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "core_to_contralateral_ratio",
+      "raw_value": "core/contralateral ratio"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "corrected_flux_ratio",
+      "raw_value": "Corrected Flux Ratio"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "corrected_flux_ratio",
+      "raw_value": "corrected flux ratio"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "count_ratio",
+      "raw_value": "count ratio"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Cp/Cp (ratio)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "blood_to_brain_concentration_ratio",
+      "raw_value": "cPHEbl (mM)/ cPHEb (mmol/kg)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "ratio",
+      "raw_value": "CR values"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "ratio",
+      "raw_value": "CSD/non-CSD ratio"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Ct/Cp ratio"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Cup/Cm ratio"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "ratio",
+      "raw_value": "DCN/REF ratio (percent increase compared to baseline)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "distribution_ratio",
+      "raw_value": "Distribution ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "distribution_ratio",
+      "raw_value": "distribution ratio"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "distribution_ratio",
+      "raw_value": "distribution ratio (Rb/Rp)"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "distribution_ratio",
+      "raw_value": "Distribution ratios"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "distribution_ratio",
+      "raw_value": "Distribution ratios (mL/mg)"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "E (extraction fraction)"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "ratio",
+      "raw_value": "E ratio"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "eliminated_fraction",
+      "raw_value": "eliminated fraction"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "enhancement_ratio",
+      "raw_value": "enhancement ratio"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "enhancement_ratio",
+      "raw_value": "enhancement ratio (%)"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "enrichment_ratio",
+      "raw_value": "enrichment ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "equilibrium_distribution_ratio",
+      "raw_value": "equilibrium distribution ratio (req)"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Estimated B/P ratio at steady state"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "ethanol_ratio",
+      "raw_value": "ethanol ratio"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "extracted fraction"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "Extraction Fraction"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "Extraction fraction"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "extraction fraction"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "extraction fraction (E)"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "extraction fraction (E_R)"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "extraction fraction (EF)"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "ratio",
+      "raw_value": "extraction fraction ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "extraction fractions"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "extraction proportion"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "Extraction ratio"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "extraction ratio"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "extraction ratios (Et)"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "fetal_to_maternal_ratio",
+      "raw_value": "Fetal/maternal ratio"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "fetal_to_maternal_ratio",
+      "raw_value": "fetal/maternal ratio"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "first_pass_extraction_fraction",
+      "raw_value": "First pass extraction fraction"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "first_pass_extraction_fraction",
+      "raw_value": "first pass extraction fraction"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "first_pass_extraction_fraction",
+      "raw_value": "first pass extraction fraction (K1/CBF)"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "first_pass_extraction_fraction",
+      "raw_value": "first-pass extraction fraction"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "first_pass_extraction_fraction",
+      "raw_value": "first-pass extraction fraction (E)"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "flux_ratio",
+      "raw_value": "Flux Ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Flux ratio (AtoB vs BtoA)"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "fraction_crossing_bbb",
+      "raw_value": "fraction crossing BBB"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "fraction_crossing_bbb",
+      "raw_value": "fraction crossing the BBB"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "Fractional Extraction"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "Fractional extraction"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "fractional extraction"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "Fractional extraction (E)"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "fractional extraction E"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "ammonia_extraction_fraction",
+      "raw_value": "fractional extraction of ammonia"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "rubidium_extraction_fraction",
+      "raw_value": "fractional extraction of rubidium"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "fractional extraction rates"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "fractional extractions"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "fractional_loss",
+      "raw_value": "fractional losses"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "fractional_penetrance",
+      "raw_value": "fractional penetrance"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "retention_fraction",
+      "raw_value": "fractional retention"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Free B/P ratio"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free B/P ratio"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "free compound B/P ratio"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "unbound_brain_to_plasma_ratio",
+      "raw_value": "Free exposure ratio (b/p)"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "frontal_to_cerebellum_ratio",
+      "raw_value": "FRT/CER ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "frontal_to_plasma_ratio",
+      "raw_value": "FRT/Cp ratio"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Gf/M ratio"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "glucose_distribution_ratio",
+      "raw_value": "glucose distribution ratios"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "ratio",
+      "raw_value": "H/S, CSF/S and P/S ratios"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "pgp_ratio",
+      "raw_value": "hPgp ratio"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "potency_ratio",
+      "raw_value": "i.c.v. : p.o. potency ratio"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "intracerebroventricular_to_oral_ratio",
+      "raw_value": "i.c.v. : p.o. ratio"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "intraperitoneal_to_intracerebroventricular_ratio",
+      "raw_value": "i.p. to i.c.v. ratio"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "inside_to_outside_ratio",
+      "raw_value": "i/o ratio"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "ratio",
+      "raw_value": "I/U ratio"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "Initial extraction ratio"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "inside_to_outside_ratio",
+      "raw_value": "Inside/outside ratio"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "internalized_fraction_rate",
+      "raw_value": "internalized fraction rate"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "ipsilateral_to_contralateral_ratio",
+      "raw_value": "ipsilateral/contralateral ratios"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "K(-/-)/wt ratio"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "k1_ratio",
+      "raw_value": "K1 ratios"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "k1_to_k2_ratio",
+      "raw_value": "K1/k2 ratio"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "k1d_to_k2d_ratio",
+      "raw_value": "K1D/k2D ratio"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "ratio",
+      "raw_value": "kBO/β ratio"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "knockout_to_wildtype_brain_to_plasma_ratio",
+      "raw_value": "KO : WT B/P ratio"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "knockout_to_wildtype_brain_to_plasma_ratio",
+      "raw_value": "KO/WT B/P ratio"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "KO/WT ratio"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "kp_ratio",
+      "raw_value": "Kp ratio (10-OH-NBP to 3-OH-NBP)"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "kt_to_kr_ratio",
+      "raw_value": "Kt/Kr ratio"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "LCR/séricos ratio"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "logbb",
+      "raw_value": "Log(B/B)"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "lq/p ratio"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "ratio",
+      "raw_value": "mannitol/PEG P ratio"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDCK MDR-1 BA/AB"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "ratio",
+      "raw_value": "MDCK ratio"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "apical_to_basolateral_ratio",
+      "raw_value": "MDCK-mdr1 A to B (%)"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR BA/AB"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR Er ratio"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR ratio"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1 (B to A)/(A to B)"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1 BA/AB"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1 BA/AB (AB)"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1 BA/AB ratio"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1 Pba/Pab ratio"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1 ratio (B to A / A to B)"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1 ratio (B to A/A to B)"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1-MDCK BA/AB"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1-MDCK BA/AB Ratio"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1/MDCK BA/AB"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1_BA/AB"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "MDR1a B → A/A → B"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "mdr1a(-/-)/mdr1a(+/+) ratio (corrected for blood concentrations)"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "mdr1a/lb(−/−)/ wild-type ratio"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "knockout_to_heterozygous_ratio",
+      "raw_value": "mdr1ab(-/-)/(+/-) ratio"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "mean_ratio",
+      "raw_value": "mean OD ratios"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "mean_ratio",
+      "raw_value": "Mean Ratio"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "mean_ratio",
+      "raw_value": "Mean ratio"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Measured rat B/P ratio at 1 h"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "methotrexate_ratio",
+      "raw_value": "MTX ratio (%)"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Na/AIB ratio"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "extraction_fraction",
+      "raw_value": "net extraction fraction"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "net extraction ratio"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "normalized_delta_r2_star",
+      "raw_value": "normalized ΔR*₂"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "ratio",
+      "raw_value": "one-hour ratio"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "outflow_ratio",
+      "raw_value": "outflow ratio"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "ratio",
+      "raw_value": "P ratio"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "p_values",
+      "raw_value": "P values"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "P-gp (B to A/A to B)"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "P-gp ER (B-A/A-B)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "enhancement_ratio",
+      "raw_value": "P-gp KO/WT enhancement ratio"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "pgp_ratio",
+      "raw_value": "P-gp ratio"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "ratio",
+      "raw_value": "PA ratio (45Ca/36Cl)"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "ratio",
+      "raw_value": "PA ratio of [¹⁴C]sucrose to that of [³H]inulin"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "ratio",
+      "raw_value": "PA ratio ³⁶Cl/[³H]Mannitol"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "ratio",
+      "raw_value": "PA ratio ⁴⁵Ca/[³H]Mannitol"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "ratio",
+      "raw_value": "PA ratio ⁴⁵Ca/³⁶Cl"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "parenchymal_fraction",
+      "raw_value": "Parenchymal fraction"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "partition_ratio",
+      "raw_value": "partition ratio"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "partition_ratio",
+      "raw_value": "Partitioning ratio"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "permeability_ratio",
+      "raw_value": "Pe ratio"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Pe/D ratio"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "peak_ratio",
+      "raw_value": "Peak/60 min ratio"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Pf/Pd ratio"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Pgp (BA/AB ratio; h/r)"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "pgp_ratio",
+      "raw_value": "Pgp ratio"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "point_ratio",
+      "raw_value": "point ratio"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "potency_ratio",
+      "raw_value": "potency ratio (mTF/mWT)"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "proportion",
+      "raw_value": "Proportion blue/clear"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "ps_ratio",
+      "raw_value": "PS ratio"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "ps_ratio",
+      "raw_value": "PS ratio (Mannitol/Sucrose and Mannitol/Inulin)"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "ps_to_flow_ratio",
+      "raw_value": "PS/F ratio"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "ps_eff_to_ps_inf_ratio",
+      "raw_value": "PS<sub>eff</sub>: PS<sub>inf</sub> ratio"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "ratio",
+      "raw_value": "PSC833/vehicle ratio"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "q_ratio",
+      "raw_value": "Q ratio"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "quotient",
+      "raw_value": "Quotient"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "quotient",
+      "raw_value": "quotient"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Quotient CSerum/CLiquor"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Rat cassette IV B/P ratio"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Ratio"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "ratio",
+      "raw_value": "ratio"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "ratio",
+      "raw_value": "ratio %"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "ratio",
+      "raw_value": "ratio 'SUV with/without tariquidar'"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Ratio (%)"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio (- / -) : (+ / +)"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio (-/-)/(+/+)"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio (-/-): (+/+)"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio (-/-):(+/+)"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "knockout_to_heterozygous_ratio",
+      "raw_value": "ratio (-/-):(+/-)"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "cerebrum_concentration_ratio",
+      "raw_value": "Ratio (abcb1ab-/- / wildtype cerebrum concentration)"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "b_to_a_ratio",
+      "raw_value": "Ratio (B/A)"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "condition_b_to_condition_a_ratio",
+      "raw_value": "Ratio (Condition B / Condition A)"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio (mdr1-/-/w.t.)"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio (mdr1a(-/-)/wild-type)"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "ratio (mdr1a(−/−) / mdr1a(+/+))"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio (−/−):(+/+)"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio -/- / wt"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "isotope_ratio",
+      "raw_value": "ratio 14C/3H"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Ratio 2 min/60 min"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Ratio [B]/[P] %"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "ratio abcb1ab(-/-)/wt"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "ratio al → l/l → al (brain→blood/blood→brain)"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Ratio at 1 h"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "average_ratio",
+      "raw_value": "ratio average"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Ratio B/A over A/B"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "Ratio b/s"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "Ratio BA/AB"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "ratio",
+      "raw_value": "ratio between propranolol and sucrose"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "efflux_ratio",
+      "raw_value": "ratio B→A/A→B"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "unbound_brain_to_blood_ratio",
+      "raw_value": "Ratio Cu ss,br/Cu ss,bl"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Ratio i.p./i.vt. x 10^3"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "left_to_right_ratio",
+      "raw_value": "ratio left:right"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "knockout_to_wildtype_ratio",
+      "raw_value": "Ratio mdr1a(−/−): wildtype"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "normalized_ratio",
+      "raw_value": "ratio normalized to internal control diazepam"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "knockout_to_control_ratio",
+      "raw_value": "ratio of abcb1ab(−/−)/ control animals"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "ratio of AUC for the LM+PL pools, relative to the LT0 pool"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "distribution_volume_ratio",
+      "raw_value": "ratio of distribution volume (PSC-833 vs control)"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "kp_ratio",
+      "raw_value": "ratio of Kp with and without blockers"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "permeability_ratio",
+      "raw_value": "ratio of permeabilities"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "ps_ratio",
+      "raw_value": "ratio of PS sodium/PS AIB"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Ratio of Ratios in MDR1-MDCK/MDCK"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "ratio",
+      "raw_value": "ratio of the total M3G"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "peak_ratio",
+      "raw_value": "ratio of the unshifted to the shifted sodium peak"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "Ratio of tot. I131 (ser./CSF)"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "area_ratio",
+      "raw_value": "ratio of total area labeled to total area scanned"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "suv_ratio",
+      "raw_value": "Ratio peak SUV vs. SUV at 60 min p.i."
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "normalized_ratio",
+      "raw_value": "ratio to diazepam"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "normalized_ratio",
+      "raw_value": "Ratio to geometric mean of control"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "normalized_ratio",
+      "raw_value": "ratio vs. control"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "brain_ratio",
+      "raw_value": "Ratiobrain"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "ratio",
+      "raw_value": "ratios"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "ratios tissu/sang"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "Ratiotot br/tot plb"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "water_extraction_fraction",
+      "raw_value": "rEFw (water extraction fraction)"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "accumulation_ratio",
+      "raw_value": "Regional accumulation ratio"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "first_pass_extraction_fraction",
+      "raw_value": "regional first pass extraction fraction"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "targeting_ratio",
+      "raw_value": "Relative targeting ratio (Tf-TMD-PLGA-NP/TMDS)"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "replacement_ratio",
+      "raw_value": "replacement ratio"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "replacement_ratio",
+      "raw_value": "replacement ratios of ⁶⁵Zn to zinc"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "retention_fraction",
+      "raw_value": "Retention fraction"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "retention_ratio",
+      "raw_value": "retention ratio"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Ri/Rp ratio"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "right_to_left_hemisphere_ratio",
+      "raw_value": "Right/Left hemisphere Pertechnetate Space ratio"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Rt/Rp ratio"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "ratio",
+      "raw_value": "RT/RP ratios"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "subcutaneous_to_intracerebroventricular_ratio",
+      "raw_value": "s.c./i.c.v. ratio"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "S/C ratio"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "ratio",
+      "raw_value": "S/M ratio"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "specific_binding_ratio",
+      "raw_value": "SBR ratio"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "first_pass_extraction_fraction",
+      "raw_value": "single pass extraction fraction"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "first_pass_extraction_fraction",
+      "raw_value": "single-pass extraction fraction"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "concentration_ratio",
+      "raw_value": "Specimen conc. ratio"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "steady_state_ratio",
+      "raw_value": "steady state ratio"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "steady_state_distribution_ratio",
+      "raw_value": "steady-state distribution ratio"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "stimulation_ratio",
+      "raw_value": "stimulation ratio"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "striatum_to_cerebellum_ratio",
+      "raw_value": "STR/CER ratio"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "tissue_to_brain_ratio",
+      "raw_value": "T/B ratio"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "tissue_to_brain_ratio",
+      "raw_value": "T/B value"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "tissue_to_muscle_ratio",
+      "raw_value": "T/M ratio"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "tissue_to_normal_ratio",
+      "raw_value": "T/N ratio"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "T/P Ratio"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "T/P ratio"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "t/p ratio"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "T/S ratio"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "tissue_to_tissue_ratio",
+      "raw_value": "T/T ratio"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "tissue_to_unbound_ratio",
+      "raw_value": "T/U ratio"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "T:Bl ratio"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "theoretical steady-state ratio (Ccsf:Cpl)"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Tmax/CMRglc ratio"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "ratio",
+      "raw_value": "Tmax/ΔJ ratio"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "total_brain_to_plasma_ratio",
+      "raw_value": "Total B/P"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "transition_ratio",
+      "raw_value": "transition ratio"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "trunk_to_head_ratio",
+      "raw_value": "Trunk/Head ratio"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "trunk_to_head_ratio",
+      "raw_value": "trunk/head ratio"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "half_life",
+      "raw_value": "t₁/₂"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "unidirectional_extraction_fraction",
+      "raw_value": "unidirectional extraction fraction"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "unidirectional_extraction_ratio",
+      "raw_value": "unidirectional extraction ratio"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "vm_to_km_ratio",
+      "raw_value": "V_m/K_m ratio"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "water_extraction_fraction",
+      "raw_value": "water extraction fraction"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "water_extraction_fraction",
+      "raw_value": "water extraction fraction (E)"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "white_to_gray_ratio",
+      "raw_value": "White/Gray Ratio"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "r1_change_rate",
+      "raw_value": "ΔR1/Δt"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "ratio",
+      "raw_value": "⁴²K/T-mannitol ratio"
+    }
+  ],
+  "cluster_id": "cluster_380a1b172b151643",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

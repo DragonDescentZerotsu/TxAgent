@@ -1,0 +1,1592 @@
+{
+  "assignment_count": 317,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "cns_fraction_detected_in_cns",
+      "raw_value": "% detected in the CNS"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "% Dose in CNS"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "% of administered dose in CNS"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "% of daily orally administered dose reaching the CNS"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "% of injected oxytocin reaching the CNS"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "cns_fraction_reaching_cns",
+      "raw_value": "% passing to the CNS"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "cns_to_free_plasma_ratio",
+      "raw_value": "[CNS]/[free plasma]"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "[CNS]/[total plasma]"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "cns_absorption",
+      "raw_value": "absorption in CNS"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "cns_accumulation",
+      "raw_value": "accumulation in CNS sites"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "cns_accumulation",
+      "raw_value": "accumulation in the CNS"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "cns_amount_delivered",
+      "raw_value": "amount delivered to the CNS"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "cns_amount",
+      "raw_value": "amount in CNS structures"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "cns_amount",
+      "raw_value": "amount in the central nervous system (CNS)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "cns_amount",
+      "raw_value": "amounts of drug found in the CNS"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "Animal CNS penetration"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "cns_auc_to_plasma_auc_ratio",
+      "raw_value": "area under the concentration-time curve CNS to plasma ratios"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "cns_bioavailability",
+      "raw_value": "bioavailability to the CNS"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "central nervous system (CNS) concentration"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "central nervous system (CNS) penetration"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "cns_entry_probability",
+      "raw_value": "chance for entering the CNS"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "cns_delivery",
+      "raw_value": "circulating level delivered to the CNS"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "cns_clearance",
+      "raw_value": "cleared by the CNS"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "cns",
+      "raw_value": "CNS"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "cns_abscess_fluid_to_serum_ratio",
+      "raw_value": "CNS abscess fluid/serum levels"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "cns_absorption",
+      "raw_value": "CNS absorption"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "cns_absorption",
+      "raw_value": "CNS absorption value"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "cns_accumulation",
+      "raw_value": "CNS accumulation"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "cns_accumulation",
+      "raw_value": "CNS accumulation levels"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "cns_accumulation",
+      "raw_value": "CNS ACD"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "cns_trough_concentration",
+      "raw_value": "CNS antimicrobial trough levels"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "cns_auc_to_plasma_auc_ratio",
+      "raw_value": "CNS AUC₀₋∞ to plasma AUC₀₋∞ ratio"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "cns_availability",
+      "raw_value": "CNS availability"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS b/p ratio"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "cns_bioavailability_relative_to_plasma",
+      "raw_value": "CNS bio-availability relative to plasma level"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "cns_bioavailability",
+      "raw_value": "CNS bioavailability"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "cns_biodistribution_to_blood_ratio",
+      "raw_value": "CNS biodistribution compared to blood levels"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "cns_biodistribution_to_blood_ratio",
+      "raw_value": "CNS biodistribution compared with blood levels"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS br/bl"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "cns_compartment_to_vascular_compartment_ratio",
+      "raw_value": "CNS compartment / vascular compartment concentration ratio"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "cns_compartment_concentration",
+      "raw_value": "CNS compartment concentration"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS concentration"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "cns_to_blood_and_muscle_ratio",
+      "raw_value": "CNS concentration / (blood and muscle concentration)"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS concentration / blood concentration"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS concentration / blood drug level"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "cns_to_free_plasma_ratio",
+      "raw_value": "CNS concentration / free plasma concentration"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "cns_to_peak_plasma_ratio",
+      "raw_value": "CNS concentration / peak plasma concentration"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "cns_to_peripheral_blood_ratio",
+      "raw_value": "CNS concentration / peripheral blood concentration"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "cns_to_peripheral_blood_ratio",
+      "raw_value": "CNS concentration / peripheral blood exposure"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS concentration / plasma level"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS concentration / serum concentration"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS concentration / serum level"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS concentration as percentage of plasma concentration"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "cns_concentration_rate",
+      "raw_value": "CNS concentration rate"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "cns_intrathecal_to_systemic_ratio",
+      "raw_value": "CNS concentration ratio (intrathecal vs systemic)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS concentration relative to blood serum"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS concentration relative to plasma concentration"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "cns_to_plasma_or_serum_ratio",
+      "raw_value": "CNS concentration relative to plasma or serum concentration"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS concentrations"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "cns_to_free_plasma_ratio",
+      "raw_value": "CNS concentrations / free plasma concentrations"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "cns_to_peak_plasma_ratio",
+      "raw_value": "CNS concentrations / peak plasma concentration"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS concentrations / plasma levels"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS concentrations / serum levels"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS concentrations relative to blood concentrations"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS concentrations relative to blood stream"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS concentrations relative to plasma concentrations"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "cns_to_systemic_ratio",
+      "raw_value": "CNS concentrations relative to systemic concentrations"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "cns_delivery",
+      "raw_value": "CNS delivery"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "cns_diffusion",
+      "raw_value": "CNS diffusion"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "cns_distribution",
+      "raw_value": "CNS distribution"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "cns_distribution",
+      "raw_value": "CNS distribution levels"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS doxorubicin concentrations"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS drug levels"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "cns_drug_targeting_index",
+      "raw_value": "CNS drug targeting index"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "cns_drug_targeting_index",
+      "raw_value": "CNS drug-targeting index"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "CNS entry"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "cns_exposure",
+      "raw_value": "CNS exposure"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "cns_auc",
+      "raw_value": "CNS exposure (AUC0-6)"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "cns_exposure_to_peripheral_blood_ratio",
+      "raw_value": "CNS exposure / peripheral blood concentration"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "cns_exposure_increase",
+      "raw_value": "CNS exposure increase"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "cns_penetration_rate",
+      "raw_value": "CNS fluid penetration rate"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "cns_fluid_to_plasma_ratio",
+      "raw_value": "CNS fluid/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "cns_h1_receptor_occupancy",
+      "raw_value": "CNS H1 receptor occupancy"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "cns_half_life",
+      "raw_value": "CNS half-life"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "cns_hg_concentration",
+      "raw_value": "CNS Hg concentration"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "cns_incorporation",
+      "raw_value": "CNS incorporation"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS ivermectin level"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS level / blood level"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS level of 1"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS levels"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS levels / blood levels"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS levels / plasma concentration"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "cns_to_plasma_exposure_ratio",
+      "raw_value": "CNS levels / plasma exposure"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS levels / plasma levels"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS levels / plasma venetoclax concentrations"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS levels / serum levels"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "cns_to_systemic_ratio",
+      "raw_value": "CNS levels / systemic levels"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS levels relative to blood (plasma)"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS levels relative to plasma levels"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "cns_to_plasma_trough_ratio",
+      "raw_value": "CNS levels relative to plasma trough concentrations"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "cns_to_systemic_ratio",
+      "raw_value": "CNS levels relative to systemic levels"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS M6G"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "cns_mpo",
+      "raw_value": "CNS MPO"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "cns_mpo_score",
+      "raw_value": "CNS MPO score"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "cns_partitioning",
+      "raw_value": "CNS partitioning"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "CNS penetrance"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "CNS penetrance ability"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "CNS Penetration"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "CNS penetration"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "cns_auc_penetration",
+      "raw_value": "CNS penetration (AUC)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "CNS penetration (concentrations)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "cns_minimum_concentration",
+      "raw_value": "CNS penetration (minimum concentration)"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS penetration (relative to serum level)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS penetration / serum concentrations"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "CNS penetration capability"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "cns_penetration_effectiveness",
+      "raw_value": "CNS penetration effectiveness (CPE)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "CNS penetration rate (CSF/serum levels)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS penetration related to plasma concentration"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS penetration relative to blood levels"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "cns_penetration_relative_to_peripheral_nerves",
+      "raw_value": "CNS penetration relative to peripheral nerves"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "cns_penetration_effectiveness",
+      "raw_value": "CNS penetration-effectiveness"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "CNS penetration/levels"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "log_cns_permeant",
+      "raw_value": "CNS permeant (log)"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "cns_log_ps",
+      "raw_value": "CNS permeation (Log PS)"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "cns_pet_mpo",
+      "raw_value": "CNS PET MPO"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "cns_pet_mpo_score",
+      "raw_value": "CNS PET MPO score"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "cns_region_to_plasma_ratio",
+      "raw_value": "CNS region-to-plasma concentration ratios"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "cns_score",
+      "raw_value": "CNS Score"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "cns_score",
+      "raw_value": "CNS score"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS serum concentration ratio"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "cns_share",
+      "raw_value": "CNS share"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "cns_tissue_to_plasma_ratio",
+      "raw_value": "CNS tissue / plasma concentration ratio"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "cns_tissue_concentration",
+      "raw_value": "CNS tissue concentration"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "cns_tissue_to_thyroid_and_liver_ratio",
+      "raw_value": "CNS tissue concentration relative to thyroid and liver tissues"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "cns_tissue_concentration",
+      "raw_value": "CNS tissue concentrations"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "cns_tissue_to_plasma_ratio",
+      "raw_value": "CNS tissue concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "cns_tissue_to_blood_ratio",
+      "raw_value": "CNS tissue-to-blood concentration ratio"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "cns_tissue_to_plasma_ratio",
+      "raw_value": "CNS tissue/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS to blood ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS to plasma concentration ratio"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS to plasma ratio"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "cns_transfer",
+      "raw_value": "CNS transfer"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "cns_tumor_to_serum_ratio",
+      "raw_value": "CNS tumor concentration / serum concentration"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "cns_uptake",
+      "raw_value": "CNS uptake"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "cns_uptake_and_clearance",
+      "raw_value": "CNS uptake and clearance"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "cns_mpo",
+      "raw_value": "CNS-MPO"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "cns_mpo_score",
+      "raw_value": "CNS-MPO Score"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "cns_mpo_score",
+      "raw_value": "CNS-MPO score"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "CNS-penetration"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "cns_penetration_effectiveness",
+      "raw_value": "CNS-penetration effectiveness (CPE)"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "cns_penetration_effectiveness",
+      "raw_value": "CNS-Penetrationsindex (CPE)"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS-plasma ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS-to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS-to-plasma ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "cns_volume_of_distribution",
+      "raw_value": "CNS-volumes of distribution"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS/ plasma (%)"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "cns_to_blood_concentration_ratio",
+      "raw_value": "CNS/blood concentration ratio"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "cns_to_blood_exposure_ratio",
+      "raw_value": "CNS/blood drug exposure ratio"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "cns_to_blood_exposure_ratio",
+      "raw_value": "CNS/blood exposure ratio"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "cns_to_blood_level_ratio",
+      "raw_value": "CNS/blood level ratio"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "CNS/blood ratio"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS/blood serum concentration ratio"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "cns_blood_der",
+      "raw_value": "CNS/BloodDER"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "cns_blood_der",
+      "raw_value": "CNS/bloodDER"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "cns_to_peripheral_blood_ratio",
+      "raw_value": "CNS/peripheral blood concentration ratio"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "cns_plasma_accumulation_ratio",
+      "raw_value": "CNS/plasma accumulation ratio"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS/plasma concentration"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS/plasma levels ratio"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS/plasma ratio"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS/plasma ratios"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS/serum concentration ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS/serum levels"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "CNS/serum ratio"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "cns_systemic_circulation_concentration",
+      "raw_value": "CNS/systemic circulation concentrations"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "compound levels in the CNS"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "concentration enters the CNS tissue"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "cns_tissue_concentration",
+      "raw_value": "concentration in CNS tissue"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "cns_tissue_concentration",
+      "raw_value": "concentration in CNS tissues"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "cns_tumor_to_plasma_ratio",
+      "raw_value": "Concentration in CNS tumors / concurrent plasma concentration"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "fetal_cns_concentration",
+      "raw_value": "Concentration in Fetal CNS"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "concentration in the CNS"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "concentration in the CNS / measured in the serum"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "cns_to_peripheral_compartment_ratio",
+      "raw_value": "concentration in the CNS compared to peripheral compartment"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "cns_tissue_to_blood_ratio",
+      "raw_value": "concentration in the CNS tissue (relative to blood)"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "peripheral_circulation_to_cns_ratio",
+      "raw_value": "concentration in the peripheral circulation vs CNS"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "concentration of PQ in CNS"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "concentrations in CNS"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "concentrations in the CNS"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "cns_to_steady_state_blood_ratio",
+      "raw_value": "concentrations in the CNS / steady-state blood concentration"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "concentrations in the CNS compared to the serum"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "concentrations of AmB in the CNS"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "concentrations within the CNS"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "cns_delivery",
+      "raw_value": "delivery into CNS"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "cns_delivery",
+      "raw_value": "delivery to CNS"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "cns_delivery",
+      "raw_value": "delivery to the CNS"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "cns_distribution",
+      "raw_value": "distribution in the central nervous system (CNS)"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "dose reaches the CNS"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "dose reaching the CNS"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "cns_accumulation",
+      "raw_value": "drug accumulation into the CNS"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "drug entering the CNS"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "drug level in the CNS"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "cns_to_peripheral_blood_ratio",
+      "raw_value": "drug levels in the CNS relative to peripheral blood"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "drug penetration in the CNS"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "cns_effective_concentration",
+      "raw_value": "effective concentrations in the CNS"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "enters the central nervous system (CNS)"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "entry into the CNS"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "entry of radiolabeled corticosterone into the CNS"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "entry of TSB to CNS"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "cns_plasma_cns_equilibration_half_life",
+      "raw_value": "equilibration half-life between plasma and the CNS"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "cns_mean_concentration",
+      "raw_value": "estimated average CNS concentration"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "extent of colistin penetration into the CNS"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "cns_extravasation_into_tissue",
+      "raw_value": "extravasation into the CNS tissue"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "cns_flux",
+      "raw_value": "flux across the CNS"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "fraction of injected dose entering the CNS"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "fraction of intravenously administered dose penetrating the entire CNS"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "cns_fraction_reaching_cerebral_circulation_and_cns",
+      "raw_value": "fraction reaching cerebral circulation and CNS"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "cns_half_life",
+      "raw_value": "half-life in the CNS"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "cns_plasma_cns_equilibration_half_time",
+      "raw_value": "half-time for ⁴⁵Ca equilibration between plasma and CNS"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "cns_uptake_half_time",
+      "raw_value": "half-time of CNS uptake"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "cns_plasma_cns_equilibration_half_time",
+      "raw_value": "half-time of equilibration between plasma and CNS"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "cns_hg_concentration",
+      "raw_value": "Hg levels in CNS areas"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "cns_cr_concentration_increase",
+      "raw_value": "increase in CNS Cr levels"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "injected dose localized in the CNS"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "levels in the CNS"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "cns_tumor_concentration",
+      "raw_value": "levels within CNS tumors"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "cns_log_ps",
+      "raw_value": "LogPS (CNS)"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "cns_maximum_concentration",
+      "raw_value": "maximal CNS concentration"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "cns_metastasis_to_serum_ratio",
+      "raw_value": "MBC CNS metastasis-to-serum ratio"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "median CNS penetration"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "cns_injected_dose_per_gram",
+      "raw_value": "overall CNS mean % injected dose/g of tissue"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "passage into the CNS"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "cns_peak_concentration",
+      "raw_value": "peak CNS concentration"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "cns_peak_to_blood_ratio",
+      "raw_value": "peak CNS concentration / blood concentration"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "cns_peak_concentration",
+      "raw_value": "peak concentration in CNS"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "cns_peak_concentration",
+      "raw_value": "peak concentrations in the central nervous system (CNS)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "cns_peak_free_concentration",
+      "raw_value": "peak free CNS concentrations"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetrability to the CNS"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetrance to CNS"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetrates the central nervous system (CNS)"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetrates the CNS"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "cns_penetration_efficiency",
+      "raw_value": "penetration efficiency into the central nervous system (CNS)"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "Penetration into the CNS"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetration into the CNS"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "cns_auc_penetration",
+      "raw_value": "Penetration into the CNS (based on AUC)"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "cns_cmin_penetration",
+      "raw_value": "Penetration into the CNS (based on Cmin)"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetration of CNS"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "penetration of the central nervous system (CNS)"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "penetration to CNS"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "cns_entry",
+      "raw_value": "penetration to the CNS"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "Percent of plasma concentration in CNS"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "Percent penetration into the CNS"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "cns_fraction_reaching_cns",
+      "raw_value": "percentage enter the CNS"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "cns_fraction_reaching_cns",
+      "raw_value": "percentage entering the CNS"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "cns_exclusion_from_cns",
+      "raw_value": "percentage excluded from the CNS"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "percentage of 2,4-D that reached the CNS in relation to that detected in the serum"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "cns_kynurenine_from_periphery",
+      "raw_value": "percentage of CNS Kyn from the periphery"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "cns_l_kynurenine_from_periphery",
+      "raw_value": "percentage of CNS L-kynurenine from periphery"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "cns_from_periphery",
+      "raw_value": "percentage of CNS origin from periphery"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "cns_l_kynurenine_transport_through_bbb",
+      "raw_value": "percentage of CNS resident L-KYN transported through the BBB"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "percentage of dose reaching the CNS"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "percentage of i.v. dose entering CNS"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "percentage of ingested dose reaching the CNS"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "percentage of oral administered Teriflunomide reaching the CNS"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "cns_fraction_dose_in_cns",
+      "raw_value": "percentage of peripheral teriflunomide reaching the CNS"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "percentage of plasma colistin able to diffuse into the CNS"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "cns_fraction_plasma_entering_cns",
+      "raw_value": "percentage of plasma entering CNS"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "cns_fraction_plasma_level_reaching_cns",
+      "raw_value": "percentage of plasma level reaching the CNS"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "cns_quin_from_blood",
+      "raw_value": "percentage of QUIN within the CNS imported from blood"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "cns_fraction_serum_concentration_reaching_cns",
+      "raw_value": "percentage of serum concentration reaching the CNS"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "cns_fraction_serum_concentration_reaching_cns",
+      "raw_value": "percentage of serum concentrations reaching the CNS"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "cns_fraction_systemic_drug_reaching_cns",
+      "raw_value": "percentage of systemic drug reaching the CNS"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "cns_fraction_systemically_applied_dose_accessing_cns",
+      "raw_value": "percentage of systemically administered dose gaining access to the CNS"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "cns_fraction_dose_in_extracellular_fluid",
+      "raw_value": "percentage of systemically applied dose found in the CNS extracellular fluid"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "cns_fraction_total_drug_in_cns",
+      "raw_value": "percentage of the total drug administered present in the CNS"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "cns_fraction_total_agonist_in_cns",
+      "raw_value": "percentage of total agonist within the CNS"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "cns_fraction_total_counts_in_cns",
+      "raw_value": "percentage of total counts accumulated in the CNS 10 min after ³H-NA injection"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "cns_fraction_total_counts_in_cns",
+      "raw_value": "percentage of total counts of ³H-NA detected in the CNS after 10 min"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "cns_fraction_total_dose",
+      "raw_value": "Percentage of total dose (Total CNS)"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "cns_fraction_total_dose_reaching_cns",
+      "raw_value": "percentage of total dose reaching CNS"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "cns_fraction_reaching_cns",
+      "raw_value": "percentage reaching the CNS"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "cns_exposure_to_peripheral_blood_ratio",
+      "raw_value": "peripheral blood exposure reaching the CNS"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "plasma_to_cns_ratio",
+      "raw_value": "plasma/CNS concentration ratio"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "cns_plasma_cns_equilibration_half_life",
+      "raw_value": "plasma:CNS equilibration half-life (t½ke₀)"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "cns_plasma_cns_equilibration_half_life",
+      "raw_value": "plasma:CNS equilibration t₁/₂kₑ₀"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "cns_fraction_reaching_cns",
+      "raw_value": "portion entering the CNS"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "cns_concentration",
+      "raw_value": "predicted CNS concentration"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "cns_entry_probability",
+      "raw_value": "probability for entering the CNS"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "cns_kynurenine_from_periphery",
+      "raw_value": "proportion of CNS metabolites derived from peripheral kynurenine"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "blood_to_cns_ps_index",
+      "raw_value": "PS index of blood-to-CNS transport"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "blood_cns_equilibrium_rate_constant",
+      "raw_value": "rate constant for the equilibrium between blood and the CNS"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "blood_cns_equilibrium_rate_constant",
+      "raw_value": "rate constant for the equilibrium of fentanyl between the blood and CNS"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "cns_entry_rate",
+      "raw_value": "Rate of entry in the CNS (BUI)"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "plasma_to_cns_transfer_rate",
+      "raw_value": "rate of transfer from the plasma to the CNS"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "ratio between CNS and total plasma concentrations"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "ratio CNS to serum concentration"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "cns_tissue_to_blood_ratio",
+      "raw_value": "ratio of CNS tissue/CNS blood concentration"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "ratio of CNS to serum concentration"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "cns_to_periphery_ratio",
+      "raw_value": "ratio of erlotinib content in the CNS versus the periphery"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "cns_to_serum_ratio",
+      "raw_value": "ratio of total compound in the CNS vs. serum"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "cns_tissue_to_blood_ratio",
+      "raw_value": "ratios of CNS tissue/blood concentrations"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "cns_regional_tissue_concentration",
+      "raw_value": "Regional CNS tissue concentrations"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "Relative CNS penetrability"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "serum_to_cns_ratio",
+      "raw_value": "serum: CNS concentrations ratio"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "cns_vs_plasma_regression_slope",
+      "raw_value": "slope of regression line of CNS versus plasma HU"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "t4_to_cns",
+      "raw_value": "T4 passage to the Mct8-deficient murine CNS"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "cns_thyromimetic_exposure",
+      "raw_value": "thyromimetic exposure to the CNS"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "time_to_max_cns_concentration",
+      "raw_value": "time to maximal CNS concentration"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "cns_total_concentration",
+      "raw_value": "total CNS concentration"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "cns_volume_of_distribution",
+      "raw_value": "total distribution volume in the CNS"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "cns_to_plasma_exposure_ratio",
+      "raw_value": "total intravenous CNS exposure / plasma ratio"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "cns_transport",
+      "raw_value": "transport to CNS"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "cns_kp_uu",
+      "raw_value": "unbound exposure between the CNS and plasma"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "cns_v1a_receptor_occupancy",
+      "raw_value": "V1a receptor occupancy in the CNS"
+    }
+  ],
+  "cluster_id": "cluster_001f621cb790342b",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

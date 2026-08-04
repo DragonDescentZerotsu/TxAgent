@@ -1,0 +1,2022 @@
+{
+  "assignment_count": 403,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "24-h AUC (CSF)"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC (CSF / plasma)"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC (CSF)"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC (CSF) / AUC (plasma)"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC (CSF) / AUC (serum)"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC (CSF/serum)"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_to_serum_auc_ratio",
+      "raw_value": "AUC (normalized for sampling time) for Cbrain/Cserum versus time"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC achieved in CSF / AUC in plasma"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC at steady state in CSF / plasma"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "AUC B/P ratio"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "cns_to_plasma_auc_ratio",
+      "raw_value": "AUC CNS / AUC plasma"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF / AUC plasma"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF / AUC plasma ratio"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF / AUC Plasma ratio (total)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC CSF / AUC serum"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "ventricular_csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF ventricle / AUC plasma"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF-plasma ratio"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "csf_to_blood_auc_ratio",
+      "raw_value": "AUC CSF/AUC blood"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC CSF/AUC free plasma ratio"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF/AUC plasma"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF/AUC plasma ratio"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF/AUC plasma ratios"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF/AUC plasma × 100"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC CSF/AUC serum"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC CSF/AUC serum ratio"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC CSF/Cu,b"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC CSF/f AUC plasma ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF/Plasma ratio"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF/plasma ratios"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC CSF/serum"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC CSF/serum (%)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF: AUC P ratio"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC CSF:AUC plasma"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC CSF:AUC serum"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC CSF:serum ratio"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC ECF / unbound plasma AUC"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC ecf/ AUC plasma"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC ECF/AUC plasma"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "ventricular_csf_to_plasma_auc_ratio",
+      "raw_value": "AUC for apomorphine in ventricular CSF / AUC for plasma"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC for cerebrospinal fluid (CSF) to plasma ratio"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC for CSF / AUC for serum"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC for CSF to plasma"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC for CSF/AUC for serum"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC in cerebrospinal fluid (CSF) to serum"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC in CSF"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC in CSF / AUC in plasma"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC in CSF / AUC in plasma for unbound PQ912"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC in CSF / free plasma AUC"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC in CSF / free TAK-071 AUC in plasma"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_to_blood_auc_ratio",
+      "raw_value": "AUC in CSF over AUC in blood"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC in CSF versus the AUC in serum"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "ecf_auc",
+      "raw_value": "AUC in ECF"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC in the cerebrospinal fluid (CSF) / AUC in the plasma"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC in the CSF / AUC in the plasma"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC in the CSF / AUC in the serum"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC in the CSF / systemic TMZ exposure"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC of concentration-time profiles in CSF / plasma AUC"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC of CSF/plasma"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC of MTX in CSF / AUC of MTX in plasma"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "cofm_to_plasma_auc_ratio",
+      "raw_value": "AUC of the ratio (NaF concentration in cOFM samples / NaF concentration in plasma samples)"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC of unbound indinavir in CSF to that in plasma ratio"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "ce_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (CE/plasma)"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (CFS/Plasma)"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC ratio (CSF/serum)"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "fc_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (FC/plasma)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "p_mo_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio (P.MO/plasma)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "unbound_csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC ratio (unbound CSF and plasma)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio between CSF and plasma"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_to_blood_auc_ratio",
+      "raw_value": "AUC ratio CSF/blood"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC ratio of bECF to unbound plasma"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "bicf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC ratio of bICF to unbound plasma"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC ratio of CSF to plasma concentration (corrected for human plasma protein binding)"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC ratio of CSF to unbound plasma"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC ratio of PHT level in ECF/plasma"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC ratios of CSF to free plasma"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "ventricular_csf_to_plasma_auc_ratio",
+      "raw_value": "AUC ventricular CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC(0-12) (CSF)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC(0-720) (CSF)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "auc0_inf_ratio",
+      "raw_value": "AUC(0→inf) ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC(CSF)/AUC(plasma)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC(CSF)/AUC(serum)"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "csf_to_blood_auc_ratio",
+      "raw_value": "AUC(csf/blood)"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC-CSF-to-AUC-plasma ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC-CSF/AUC-serum"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "csf_auc_over_mic",
+      "raw_value": "AUC/MIC in CSF"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "site_to_serum_auc_ratio",
+      "raw_value": "AUC0 - 24 ratio (site:serum)"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0 >= 48 hours CSF/AUC0 >= 48 hours plasma"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-12 (CSF)/AUC0-12 (plasma)"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-12 CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC0-2 CSF"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC0-2 in CSF"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC0-24 (CSF)"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-24 CSF / AUC0-24 plasma ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "site_to_serum_auc_ratio",
+      "raw_value": "AUC0-24 ratio (site:serum)"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "isf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-360, ISF / AUC0-360, plasma"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-last (CSF)/AUC0-last (plasma)"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-last CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC0-T CSF"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC0-∞ (CSF)"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ CSF / (AUC0-∞ plasma * 0.07)"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ CSF / AUC0-∞ plasma"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC0-∞ in CSF"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "nac_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞ NAc/plasma"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0-∞, CSF/AUC0-∞, plasma"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "tissue_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC0-∞,tissue/fu·AUC0-∞,plasma"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC0-∞CSF/AUC0-∞S ratio"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC0‐4 (CSF)"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0–12 h CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC0–24 (CSF / serum)"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC0–24h (plasma vs CSF)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUC0→∞ (CSF)"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "striatum_to_plasma_auc_ratio",
+      "raw_value": "AUC0→∞,str/ AUC0→∞,plasma"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC12 ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC8 CSF/AUC8 plasma"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC8 for CSF / AUC8 for plasma"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC8 for CSF to the AUC8 for plasma ratio"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CNS/AUC_plasma"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF / AUC_P ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF / AUC_PLASMA"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF / AUC_plasma"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF / AUC_serum"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF / AUC_serum ratio"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF 0-t/AUC_S 0-t"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF 0→6 h / AUC_plasma 0→6 h"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF : AUC_plasma ratio"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF : AUC_s"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF to AUC_plasma ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF to total tiagabine AUC_plasma ratio"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "csf_to_blood_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_blood"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_plasma"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_plasma ratio"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_S"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_s"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_S ratio"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_serum"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_serum ratio"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "csf_to_unbound_serum_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_serum ratio of unbound cefotaxime"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_to_unbound_serum_auc_ratio",
+      "raw_value": "AUC_CSF/AUC_serum ratio of unbound ceftriaxone"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF/P"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC_CSF/serum ratios"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF:AUC_plasma"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF:AUC_plasma ratio"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF:plasma"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_CSF:plasma ratio"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "dialysis_to_plasma_auc_ratio",
+      "raw_value": "AUC_dialysis/AUC_plasma"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC_ECF / AUC_plasma"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUC_ECF/AUC_Plasma"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUC_ECF/AUC_plasma (ub)"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC_ISF to total tiagabine AUC_plasma ratio"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "blood_to_serum_auc_ratio",
+      "raw_value": "AUCb/AUCs ratio"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCCSF/AUC-free plasma ratio"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "csf_to_unbound_blood_auc_ratio",
+      "raw_value": "AUCCSF/AUCfree blood ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF/AUCS ratio"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF/AUCserum ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCcsf/AUCserum ratio"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF/AUCserun ratio"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_to_unbound_serum_auc_ratio",
+      "raw_value": "AUCCSF/AUCSf or CCSF/CSf"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF:AUCSERUM ratio"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCCSF:AUCserum ratio"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUCcsf:AUCserum ratio"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "AUCextracellular fluid (ECF)/plasma"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCinf (CSF vs plasma)"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUClast CSF : plasma ratio"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "AUCs in CSF"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUCSS CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "AUCtissue/plasma"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "AUCu,ECF/AUCu,plasma"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_to_blood_auc_ratio",
+      "raw_value": "AUC~cereb~/AUC~blood~ ratio"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "AUC~CSF~/AUC~serum~ ratio"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC~CSF~:AUC~plasma~"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC₀-72 CSF / AUC₀-72 plasma"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC₀-₂₄ (CSF) / AUC₀-₂₄ (plasma)"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC₀-₂₄ (CSF/plasma) ratio"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC₀-₂₄ CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC₀-₂₄ of pirarubicin in the CSF / AUC₀-₂₄ of pirarubicin in the plasma"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC₀-₇₂ CSF / AUC₀-₇₂ plasma"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC₀⁻∞ CSF/plasma ratio"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC₀⁻∞ ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "AUC∞ of A in CSF / AUC∞ of A in plasma"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "bECF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "bECF/unbound plasma AUC ratio"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "bicf_to_plasma_auc_ratio",
+      "raw_value": "bICF to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "bicf_to_plasma_auc_ratio",
+      "raw_value": "bICF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_ecf_and_csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "brainECF- and CSF-to-unbound plasma AUC0-360 ratios"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "cmax and AUC (CSF/serum ratio)"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "mpfc_to_plasma_auc_ratio",
+      "raw_value": "Cmax and AUC (mPFC/plasma ratio)"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Cmax and AUC0-t ratio between CSF and plasma"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Cmax and AUC0-t ratios between CSF and plasma"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "ecf_auc",
+      "raw_value": "Cmax and the area under the curve (AUC) of the concentrations in the ECF"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "cns_to_plasma_auc_ratio",
+      "raw_value": "CNS AUC₀-∞ to plasma AUC₀-∞"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "csf_auc_ratio",
+      "raw_value": "cranial CSF AUC-ratio"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF : plasma AUC ratio"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF and plasma AUC (0–24 h) ratio"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF area under the curve (AUC) [AUCs(O–24h)] as a percentage of the total AUC in plasma"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF AUC"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF AUC (total)"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC / plasma"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC / plasma AUC"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC / plasma AUC ratio"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF AUC / serum AUC"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF AUC / unbound plasma AUC"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF AUC 0-60 min"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF AUC 0–24"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC as % of plasma AUC"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "csf_auc_log_fold_change",
+      "raw_value": "CSF AUC log fold change normalized to Ang-(1-7)"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "csf_auc_ratio",
+      "raw_value": "CSF AUC ratio"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF AUC to plasma ultrafiltrate AUC ratio"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF AUC to total serum concentration AUC ratio"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF AUC-to-serum AUC ratio"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF AUC/ serum AUC"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC/plasma AUC"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF AUC/Plasmaunbound AUC"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF AUC/serum AUC"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF AUC0-12h"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC0-24/plasma AUC0-24"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF AUC0-4"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC0-6 to plasma AUC0-6 ratio"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF AUC0-∞"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF AUC0–24"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF AUC0–24 h/serum AUC0–24 h"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC12/plasma ratio"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC144–168/plasma AUC144–168"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC_inf/plasma AUC_inf"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC_last/plasma AUC_last"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF AUC₀-48h : plasma UF AUC₀-48h"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "csf_auc_over_mic",
+      "raw_value": "CSF AUC₀-₂₄/MIC"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC₀-₆ to plasma AUC₀-₆ ratio"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF AUC₀⁻₆ / plasma AUC₀⁻₆"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "csf_bioavailability",
+      "raw_value": "CSF bioavailability over 6 hours (AUC₀⁻₆)"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "CSF Cmax, t1/2, AUC"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF exposure (AUCCSF/AUCserum)"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "csf_to_blood_auc_ratio",
+      "raw_value": "CSF exposure / whole blood AUC"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF imatinib AUC / plasma AUC of free imatinib"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF Pemetrexed concentration AUCs / plasma AUCs"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF penetration (AUC0-4 in CSF/AUC0-4 in plasma)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF penetration (AUCCSF/AUCS ratio)"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF penetration (ratio of CSF AUC 0-24h to plasma AUC 0-24h)"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF penetration (ratio of CSF to plasma AUC)"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF to plasma abacavir AUC0-6 ratio"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF to plasma AUC ratio"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF to plasma AUC0-τ ratio"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF to plasma topotecan lactone AUC ratio"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF to serum AUC ratio"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF to total plasma ratio of AUC24"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF to unbound plasma AUC ratio"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-plasma AUC fluid value"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma AUC 0–24 h ratio"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma AUC~0--12 hr~ ratio"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma AUC₀−₁₂ hr ratio"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma ratio (AUC0-12 hr)"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma ratio (calculated AUC0-12 in CSF and plasma)"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF-to-plasma ratio of AUC0-24h"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF-to-serum AUC0-24 ratio"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF-to-serum AUC0–12 ratio"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "csf_to_blood_auc_ratio",
+      "raw_value": "CSF/blood AUC ratio"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF/free-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "csf_to_unbound_serum_auc_ratio",
+      "raw_value": "CSF/free-serum AUC ratio"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF/P_u AUC ratio"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/Plasma AUC"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC from time zero to infinity (AUC∞) ratio"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC0-12 ratio (total)"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC0-24 ratio"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC0-last ratio"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC0–50 ratio"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC24 ratio"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC24 ratio (free fraction)"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC[0-24 hrs]"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC[0-∞]"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma AUC₀-₂₄ ratio"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma Cmax and AUC₀-tlast ratios"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "csf_concentration_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma concentration (AUC 1–4h)"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma exposure ratio (AUC0-inf)"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma maximum concentration and AUC ratios"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio (AUC0-12)"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio (AUC0-48 hours)"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio (AUClast)"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio (based on AUC₀−₁₂)"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio AUC0–24h"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio based on AUC[0–24 hrs]"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratio based on AUC[0–∞]"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma ratios for AUC0-∞"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/plasma steady-state concentration or corresponding AUC ratio"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/serum AUC (%)"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/serum AUC ratio"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/serum ratio based on the respective AUC"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/serum ratios of the AUC"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/total plasma AUC ratio"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/total plasma AUC12 ratio"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF/total plasma AUC8 ratio"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/total serum AUC∞ ratio"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF/total-serum AUC∞ ratio"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF/unbound plasma AUC ratio"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "csf_to_unbound_serum_auc_ratio",
+      "raw_value": "CSF/unbound serum AUC ratio"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF: free plasma AUC ratio"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF: plasma abacavir AUC6 ratio"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF: plasma AUC (0 to 6 hours) ratio"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF: plasma AUC ratio"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF: plasma AUC ratios"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF: serum concentration percentage ratio (AUC)"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSF:free plasma Cmax (AUC ratio)"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF:plasma AUC ratio"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF:plasma AUC0–24"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF:plasma raltegravir AUC ratio"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF:plasma ratio (AUC)"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "CSF:Plasma ratio (AUC_CSF / AUC_Plasma)"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "CSF:serum AUC ratio"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "csfcm_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSFCM-to-unbound plasma AUC0–240 ratio"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "csflv_to_unbound_plasma_auc_ratio",
+      "raw_value": "CSFLV-to-unbound plasma AUC0–240 ratio"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "ECF AUC/Plasmaunbound AUC"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "ecf_to_blood_auc_ratio",
+      "raw_value": "ECF dialysate exposure / whole blood AUC"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "ECF to unbound plasma AUC ratio"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "ECF-to-plasma AUC ratio"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "ecf_to_serum_auc_ratio",
+      "raw_value": "ECF-to-serum AUC ratio"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "ecf_to_unbound_plasma_auc_ratio",
+      "raw_value": "ECF/Free plasma AUC0-5 h (%)"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "ECF/plasma areas under curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "ECF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "ECFbrain/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "fractional appearance (F = AUC_{CSF}/AUC_{Plasma})"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "csf_unbound_auc",
+      "raw_value": "free indinavir AUC~0-24~ hr in the CSF"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "In vivo AUC CSF"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "isf_to_plasma_auc_ratio",
+      "raw_value": "interstitial fluid-to-plasma ratio of AUC"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "isf_to_serum_auc_ratio",
+      "raw_value": "ISF AUC to total serum AUC ratio"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "isf_to_unbound_serum_auc_ratio",
+      "raw_value": "ISF/unbound serum AUC ratio"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "knockout_to_normal_aucinf_ratio",
+      "raw_value": "knockout/normal AUCinf ratio"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "lumbar_csf_to_plasma_auc_ratio",
+      "raw_value": "Lumbar CSF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "mean_auc_ratio",
+      "raw_value": "mean AUC ratio"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "mean_csf_to_plasma_auc_ratio",
+      "raw_value": "mean AUC ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "mean AUC(0-∞) in CSF / total AUC(0-∞) observed in plasma"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "Mean AUC, CSF"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "mean CSF AUC (3–9 h) and mean free plasma AUC (3–9 h)"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "mean CSF AUC / plasma AUC ratio"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "mean CSF AUC to total plasma phenytoin AUC ratio"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "mean CSF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "isf_to_plasma_auc_ratio",
+      "raw_value": "mean ISF AUC to total plasma phenytoin AUC ratio"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "Mean penetration (AUC in CSF/AUC in serum × 100)"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "plasma_to_csf_auc_ratio",
+      "raw_value": "mean plasma to CSF AUC ratio"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "microdialysate_to_plasma_auc_ratio",
+      "raw_value": "mean ratio between AUC's microdialysate and plasma"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "mean steady-state AUC CSF to plasma ratio"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "csf_lactone_to_total_drug_auc_ratio",
+      "raw_value": "median CSF AUC ratio of lactone to total drug"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Median CSF/plasma AUC"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "parenchyma_to_csf_auc_ratio",
+      "raw_value": "parenchyma AUC / CSF AUC"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "Penetrability (CSF/serum AUC)"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Penetration ratio (AUC in CSF/AUC in plasma)"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "penetration ratio AUC0-T CSF:AUC0-T serum"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "penetration ratio for the AUC for CSF to the AUC for serum"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "percentage of the area under the concentration-time curve (AUC) in CSF relative to the AUC in plasma"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "plasma_to_csf_auc_ratio",
+      "raw_value": "plasma/CSF AUC ratio"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "population mean CSF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio (percent) derived from the AUCs in CSF and plasma"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio between CSF and serum AUC0-12"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Ratio CSF AUC0-12 h to plasma AUC0-12 h"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio CSF AUC0-12h to plasma AUC0-12h"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio CSF/plasma AUCs"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of area under the concentration time-curve (AUC) in CSF to that in plasma"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "auc_ratio",
+      "raw_value": "ratio of AUC"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Ratio of AUC (CSF/plasma)"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of AUC in CSF and serum"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUC in CSF to AUC in plasma"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of AUC in CSF to AUC in serum × 100"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "csf_to_blood_auc_ratio",
+      "raw_value": "ratio of AUC in CSF to blood"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUC_CSF to AUC_Plasma"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of AUCCSF to AUCserum"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUCs in CSF to plasma"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of AUCSS (CSF/plasma)"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "Ratio of AUC₀–₂₄ in CSF to serum"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "ecf_to_plasma_auc_ratio",
+      "raw_value": "ratio of bECF to plasma AUCs"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "csf_concentration_to_plasma_auc_ratio",
+      "raw_value": "Ratio of CSF concentration to plasma AUC0->4 (h)"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of CSF exposure (AUC0-last) to plasma"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of CSF to plasma AUC0-24"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of CSF to serum AUC"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of CSF to total plasma for AUC24"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of CSF:plasma AUC24"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of mean AUC0-∞ of CSF to plasma"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of median AUCs (CSF/plasma)"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the $AUC_{0-t}$ for CSF to the $AUC_{0-t}$ for plasma"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the area under the CSF concentration x time curve (AUC) to that in plasma"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of the AUC for CSF to the AUC for serum"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of the AUC of DXG in CSF to that in serum"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the AUCs in CSF and plasma"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "csf_to_serum_auc_ratio",
+      "raw_value": "ratio of the AUCs in CSF and serum"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the AUC₀⁻∞ for CSF to the AUC₀⁻∞ for plasma"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the CSF/plasma AUCs"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of the mean steady-state CSF AUC₀-₂₄ to the mean steady-state plasma AUC₀-₂₄"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "ratio of vismodegib AUC₀-₈ in CSF to total plasma"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "csf_to_unbound_plasma_auc_ratio",
+      "raw_value": "ratio of vismodegib AUC₀-₈ in CSF to unbound plasma"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "site_to_serum_auc_ratio",
+      "raw_value": "site to serum mean AUC0-24h ratio"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "site_to_serum_auc_ratio",
+      "raw_value": "site-to-serum ratio based on AUC₀⁻₂₄ values"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "site_to_serum_auc_ratio",
+      "raw_value": "site-to-serum ratios based on AUC0–24"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "steady_state_conc_or_auc_ratio",
+      "raw_value": "Steady-state conc or AUC ratio"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "csf_steady_state_conc_or_auc_ratio",
+      "raw_value": "Steady-state conc or AUC ratio (CSF)"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "steady-state ratio of AUCs of CSF and plasma concentrations"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "steady-state ratio of AUCs of CSF and plasma concentrations (R_{AUC})"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "csf_to_plasma_auc_ratio",
+      "raw_value": "Total concentration CSF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0399",
+      "provisional_endpoint": "unbound_csf_to_plasma_auc_ratio",
+      "raw_value": "unbound AUC CSF / AUC Plasma ratio"
+    },
+    {
+      "item_id": "v0400",
+      "provisional_endpoint": "unbound_csf_to_plasma_auc_ratio",
+      "raw_value": "unbound CSF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0401",
+      "provisional_endpoint": "ventricular_csf_to_plasma_auc_ratio",
+      "raw_value": "Ventricular CSF/plasma AUC ratio"
+    },
+    {
+      "item_id": "v0402",
+      "provisional_endpoint": "ventricular_csf_to_plasma_auc_ratio",
+      "raw_value": "ventricular CSF/plasma AUC ratio"
+    }
+  ],
+  "cluster_id": "cluster_c59bbe7d4700025b",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

@@ -181,7 +181,7 @@ def test_combined_policy_uses_25_records_gate_and_one_sd_boundary(tmp_path):
 def test_frozen_full_policy_counts_when_local_artifact_is_available():
     path = Path(
         "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-        "starling_normalized_v6/07_assay_transfer_policy/"
+        "starling_normalized_v6/05_assay_transfer_policy/"
         "pair_bucket_transfer_policy.json.gz"
     )
     if not path.exists():

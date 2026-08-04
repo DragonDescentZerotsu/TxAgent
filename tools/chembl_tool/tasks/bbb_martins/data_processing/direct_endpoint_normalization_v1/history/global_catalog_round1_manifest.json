@@ -1,0 +1,18 @@
+{
+  "history_version": "bbb_martins_direct_endpoint_catalog_review_round.v1",
+  "round": 1,
+  "status": "superseded_after_targeted_raw_adjudication_remediation",
+  "artifacts": {
+    "global_catalog_round1_packets/manifest.json": {
+      "sha256": "ab5ce212abc0f2fb8c0e718c686a5b5c10145c8f452835fd885057809cfd6bc7"
+    },
+    "global_catalog_round1_packets/global_candidate_catalog.json": {
+      "sha256": "93f4f3450aa8dbf0dc11d5e1ad345b14dc4c90cd3657f1681856ea1cc0f76330"
+    },
+    "../reviews/catalog_primary_review_round1.jsonl": {
+      "sha256": "02316dc52fb393a24bb566eeeeea71638160d91345df85f90aa19bbb1fe986da"
+    }
+  },
+  "reason": "The first global catalog was built from raw review round one. Adjudicator-guided raw corrections changed the candidate inventory, so the original catalog and primary decisions are retained as immutable history before regeneration.",
+  "human_approved": false
+}

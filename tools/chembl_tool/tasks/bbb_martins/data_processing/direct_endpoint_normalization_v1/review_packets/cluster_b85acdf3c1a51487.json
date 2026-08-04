@@ -1,0 +1,997 @@
+{
+  "assignment_count": 198,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "B/Pa (Cmax)"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Brain Cmax"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "brain Cmax"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain Cmax / plasma Cmax"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Brain Cmaxa"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_to_serum_cmax_ratio",
+      "raw_value": "brain concentration / serum Cmax"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "brain DB75 Cmax"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_ecf_cmax",
+      "raw_value": "Brain ECF Cmax"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "brain levels (Cmax)"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain levels / plasma Cmax"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain to plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain to plasma ratio at Cmax"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain to plasma ratio of the Cmax"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_unbound_cmax",
+      "raw_value": "Brain unbound Cmax"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Brain veledimex Cmax"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_kp_cmax",
+      "raw_value": "Brain-Kp (Cmax)"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_kpd_cmax",
+      "raw_value": "Brain-Kpd(Cmax)"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_to_serum_cmax_ratio",
+      "raw_value": "brain-to-serum Cmax ratio"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_to_blood_cmax_ratio",
+      "raw_value": "Brain/Blood Cmax ratio"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "brain_to_blood_cmax_ratio",
+      "raw_value": "brain/blood ratio of Cmax"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain/plasma Cmax"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Brain/Plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Brain/plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain/plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Brain/plasma ratio (Cmax)"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain/plasma ratio (Cmax)"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Brain/plasma ratio based on Cmax"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_to_serum_cmax_percent",
+      "raw_value": "Brain/serum (%) Cmax"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain: plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "brain:plasma Cmax ratio"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "BrCmax/PlCmax"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "cerebral Cmax,b"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "cmax",
+      "raw_value": "CMax"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "cmax",
+      "raw_value": "Cmax"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "cmax",
+      "raw_value": "cmax"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "cmax_percent_id",
+      "raw_value": "Cmax %ID"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "cmax_percent",
+      "raw_value": "Cmax (%)"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "cmax_percent_id",
+      "raw_value": "Cmax (%ID)"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax (Brain Concentration)"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax (brain concentration)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_ecf_cmax",
+      "raw_value": "Cmax (Brain ECF)"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_ecf_cmax",
+      "raw_value": "Cmax (Brain extracellular fluid)"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax (brain levels)"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_tissue_to_plasma_cmax_ratio",
+      "raw_value": "Cmax (brain tissue / plasma)"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_tissue_cmax",
+      "raw_value": "Cmax (brain tissue)"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "CMax (Brain)"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax (Brain)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax (brain)"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax (brain) / Cmax (plasma)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax (brain)/Cmax (plasma)"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_to_blood_cmax_ratio",
+      "raw_value": "cmax (brain/blood)"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "cns_cmax",
+      "raw_value": "Cmax (central nervous system)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "cortex_cmax",
+      "raw_value": "Cmax (cerebral cortex)"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax (cerebrospinal fluid)"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "cortex_cmax",
+      "raw_value": "Cmax (cortex)"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "cortex_cmax",
+      "raw_value": "Cmax (cortical levels)"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax (CSF)"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax (CSF/plasma)"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "pb_dialysate_cmax",
+      "raw_value": "Cmax (dialysate PB)"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "ecf_cmax",
+      "raw_value": "Cmax (ECF)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "cmax",
+      "raw_value": "Cmax (h)"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "hippocampus_cmax",
+      "raw_value": "Cmax (hippocampus)"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax (in CSF)"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "unbound_cmax",
+      "raw_value": "Cmax (in unbound form)"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "cmax_log_fold_change",
+      "raw_value": "Cmax (log fold increase)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "lumbar_csf_cmax",
+      "raw_value": "Cmax (lumbar CSF)"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "plasma_to_brain_cmax_ratio",
+      "raw_value": "Cmax (plasma) / Cmax (brain)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "cmax_suv",
+      "raw_value": "Cmax (SUV)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax (whole brain concentration)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax and AUC in the brain"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_serum_cmax_cmin_ratio",
+      "raw_value": "Cmax and Cmin CSF/serum ratio"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "cmax",
+      "raw_value": "Cmax and trough"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax at the brain"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax attained in the brain"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax Brain"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax brain"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax brain (obs)"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_to_blood_cmax_ratio",
+      "raw_value": "Cmax brain / Cmax blood ratio"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax brain / Cmax plasma"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax brain /Cmax plasma"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "brain_ecf_cmax",
+      "raw_value": "Cmax brain ECF"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax brain to plasma ratio"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_to_blood_cmax_ratio",
+      "raw_value": "Cmax brain-to-blood concentration ratio"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax brain/ plasma"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax brain/plasma ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_to_serum_cmax_ratio",
+      "raw_value": "Cmax brain/serum ratio"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax CSF / Plasma"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_tumor_space_to_plasma_cmax_ratio",
+      "raw_value": "Cmax CSF tumor space / Cmax plasma"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "ventricular_csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax CSF ventricle / Cmax plasma"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax CSF/Cmax plasma"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_to_plasma_cmax_percent",
+      "raw_value": "CMax CSF/Plasma (%)"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_to_serum_cmax_percent",
+      "raw_value": "Cmax CSF/serum (%)"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "ecf_to_plasma_unbound_cmax_ratio",
+      "raw_value": "Cmax ECF / unbound plasma Cmax"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "ecf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax ECF/plasma ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax in brain"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_ecf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax in brain ECF / Cmax in plasma"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "brain_microdialysate_cmax",
+      "raw_value": "Cmax in brain microdialysates"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "brain_tissue_cmax",
+      "raw_value": "Cmax in brain tissue"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax in cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax in cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax in cerebrospinal fluid / total plasma Cmax"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax in CSF"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "cortex_cmax",
+      "raw_value": "Cmax in mice cortices"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax in the brain"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_to_serum_cmax_ratio",
+      "raw_value": "Cmax in the brain / Cmax in serum"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_tissue_cmax",
+      "raw_value": "Cmax in the brain tissues"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax in the CSF"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax in whole brain"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "cmax_increase",
+      "raw_value": "Cmax increase"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax LCR / Cmax plasmatique"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "cmax",
+      "raw_value": "Cmax mean for plasma and cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax of tedizolid in the CSF"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax of the brain"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax Rat CSF"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "cmax_ratio",
+      "raw_value": "Cmax ratio"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax ratio (brain/plasma)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax ratio brain/plasma"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "tissue_to_blood_cmax_ratio",
+      "raw_value": "Cmax tissue/Cmax blood"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "tissue_to_blood_unbound_cmax_ratio",
+      "raw_value": "Cmax tissue/Cmax blood (unbound)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "tissue_to_plasma_cmax_ratio",
+      "raw_value": "Cmax tissue/Cmax plasma"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax values in the brain"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "tissue_to_plasma_cmax_ratio",
+      "raw_value": "Cmax(tissue)/Cmax(plasma)"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "cmax",
+      "raw_value": "Cmax, AUC"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "cmax",
+      "raw_value": "Cmax, AUCall"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax, brain"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_to_serum_cmax_ratio",
+      "raw_value": "Cmax, brain:Cserum"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "cmax_percent_id",
+      "raw_value": "Cmax,%ID"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax,br3"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax,brain"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "cmax,brain"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_to_plasma_unbound_cmax_ratio",
+      "raw_value": "Cmax,brain,u/Cmax,p,u"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax,brain/Cmax,p"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "Cmax,brain/Cmax,plasma"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax,CSF"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_to_serum_cmax_percent",
+      "raw_value": "Cmax,CSF as a percentage of Cmax,s"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Cmax,CSF/Cmax,BP ratio"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "plasma_to_ecf_cmax_ratio",
+      "raw_value": "Cmax,PL/Cmax,ECF"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "spinal_cord_cmax",
+      "raw_value": "Cmax,spinal cord"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "tumor_to_brain_auc_ratio",
+      "raw_value": "Cmax,tumor/AUCbrain"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "brain_unbound_cmax",
+      "raw_value": "Cmax,u,brain"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax-brain"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_to_blood_cmax_ratio",
+      "raw_value": "Cmax-brain/Cmax-blood ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Cmax-CSF"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "cmax_to_cmin_ratio",
+      "raw_value": "Cmax/Cmin ratio"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "dose_normalized_cmax",
+      "raw_value": "Cmax/Dose"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "dose_normalized_cmax",
+      "raw_value": "Cmax/dose"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "cmax_to_mic_ratio",
+      "raw_value": "Cmax/MIC ratio"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "cmax",
+      "raw_value": "Cmax; Te"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmax_brain"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "cerebellum_cmax",
+      "raw_value": "Cmax_cereb"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Cmaxbrain"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "CmaxCSF"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "free_to_total_cmax_ratio",
+      "raw_value": "Cmaxf/Cmax"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "cmean",
+      "raw_value": "Cmean"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "cmr_lac_to_cmr_glc_ratio",
+      "raw_value": "CMRlac/CMRglc"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "cns_cmax",
+      "raw_value": "CNS Cmax"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_to_serum_cmax_ratio",
+      "raw_value": "CSF Cmax-to-serum Cmax ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "csf_to_cmax_ratio",
+      "raw_value": "CSF/Cmax ratio"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "dose_detected_at_cmax",
+      "raw_value": "dose detected at the Cmax"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "dose_normalized_csf_cmax",
+      "raw_value": "dose-normalized Cmax ss (CSF)"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "ecf_cmax",
+      "raw_value": "ECF-TMZ mean-Cmax"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "ecf_to_serum_cmax_ratio",
+      "raw_value": "extracellular fluid/serum Cmax ratio"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "First Cmax, CSF/Cmax, plasma"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_unbound_cmax",
+      "raw_value": "free brain SAHA Cmax"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "In vivo Cmax CSF"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_tissue_increase",
+      "raw_value": "increase in brain tissue (AUC and Cmax)"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "Intracerebral Cmax"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "intracranial Cmax"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "maximum imatinib concentrations (Cmax) measured in brain"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "maximum steady state brain concentrations / mean plasma Cmax"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "mean brain Cmax"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "cmax",
+      "raw_value": "mean Cmax"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "csf_dialysate_cmax",
+      "raw_value": "mean Cmax in cerebrospinal fluid dialysate"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Mean Cmax in CSF"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "striatal_ecf_to_plasma_cmax_ratio",
+      "raw_value": "Mean Cmax in ECF of striatum / Mean Cmax in plasma"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_cmax_difference",
+      "raw_value": "Mean difference in Cmax, CSF"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_unbound_cmax_to_ec50_ratio",
+      "raw_value": "mouse brain Cmax(u)/muGlyRα3 EC50"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "cmax",
+      "raw_value": "Observed Cmax"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "plasma_to_brain_cmax_ratio",
+      "raw_value": "plasma Cmax / brain Cmax"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "pmax_s",
+      "raw_value": "Pmax·S"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "r_cmax",
+      "raw_value": "R_{Cmax}"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_to_plasma_cmax_ratio",
+      "raw_value": "ratio Cmax brain to Cmax plasma"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "ri_cmax",
+      "raw_value": "Ri of Cmax"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "csf_to_plasma_cmax_ratio",
+      "raw_value": "Second Cmax, CSF/Cmax, plasma"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "striatal_dialysate_cmax",
+      "raw_value": "Striatal dialysate Cmax"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_tmax",
+      "raw_value": "time to Cmax in the brain"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "csf_cmax",
+      "raw_value": "Tissue Cmax (CSF)"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "tissue_concentration_at_cmax",
+      "raw_value": "Tissue concentration at Cmax"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "tmax_to_cmrglc_ratio",
+      "raw_value": "Tmax/CMRglc"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "tmax_to_cmrgluc_ratio",
+      "raw_value": "Tmax/CMRgluc"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "total brain Cmax"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_cmax",
+      "raw_value": "total Cmax in bloodless brain"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "tumor_ecf_to_plasma_cmax_ratio",
+      "raw_value": "tumoral ECF Cmax / plasma ratio"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_unbound_cmax",
+      "raw_value": "Unbound brain Cmax"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "plasma_unbound_cmax",
+      "raw_value": "unbound Cmax,plasma"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "striatal_ecf_unbound_cmax",
+      "raw_value": "unbound extracellular Cmax in striatum"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "ventricular_csf_cmax",
+      "raw_value": "ventricular cerebrospinal fluid–methotrexate Cmax"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "delta_cmax",
+      "raw_value": "ΔCmax"
+    }
+  ],
+  "cluster_id": "cluster_b85acdf3c1a51487",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

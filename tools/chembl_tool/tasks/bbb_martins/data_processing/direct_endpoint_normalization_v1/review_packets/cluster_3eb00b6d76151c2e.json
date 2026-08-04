@@ -1,0 +1,2502 @@
+{
+  "assignment_count": 499,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "$\\\\lambda$ (tissue-to-blood concentration ratio at steady state)"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "plasma_level_ratio",
+      "raw_value": "% Concomitant CYC plasma level"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "tissue_radioactivity_concentration",
+      "raw_value": "% IA / 100 g tissue"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "% of concomitant serum concentrations"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "% of corresponding serum concentration"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "maximum_serum_concentration_ratio",
+      "raw_value": "% of maximum serum concentrations"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "maximum_serum_value_ratio",
+      "raw_value": "% of maximum serum values"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "mean_serum_concentration_ratio",
+      "raw_value": "% of mean serum concentrations"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "plasma_ratio",
+      "raw_value": "% of Plasma"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "plasma_ratio",
+      "raw_value": "% of plasma"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "plasma_concentration_ratio",
+      "raw_value": "% of plasma concentration"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "serum_ratio",
+      "raw_value": "% of serum"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "serum_concentration_ratio",
+      "raw_value": "% of serum concentrations"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "serum_level_ratio",
+      "raw_value": "% of serum levels"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "% of the concurrent serum concentration"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "% of the simultaneous serum concentration"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "plasma_level_ratio",
+      "raw_value": "% plasma level"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "serum_concentration_ratio",
+      "raw_value": "% Serum concentration"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "% Tissue/plasma"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "total_plasma_level_ratio",
+      "raw_value": "% total plasma level"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "(cpm/gm wet tissue / cpm/ml plasma) * 100"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "tissue_to_blood_radioactivity_ratio",
+      "raw_value": "100 × [tissue(µCi g-1)/ blood(µCi g-1)]"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "10B-concentration ratio between normal tissues and blood"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "fluid_to_blood_ratio",
+      "raw_value": "24-hour fluid : blood ratio"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "tissue_to_plasma_distribution_space",
+      "raw_value": "3H-mannitol distribution spaces (% Tissue/Plasma)"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "[125I]T4 tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "abscess_fluid_to_serum_ratio",
+      "raw_value": "abscess fluid/serum ratio"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "abscess_fluid_to_serum_ratio",
+      "raw_value": "Abscess:Serum Ratio"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "tissue_to_plasma_accumulation_ratio",
+      "raw_value": "Accumulation (RTISSUE/PLASMA%)"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "tissue_to_plasma_accumulation_ratio",
+      "raw_value": "accumulation relative to plasma levels"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "AIB dialysate/plasma ratio"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "vascular_space_corrected_amount",
+      "raw_value": "amount (corrected for vascular space)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "amount per gram of hemisphere tissue"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "Amount per gram of tissue"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "apparent tissue-to-plasma concentration"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "apparent_volume_of_distribution",
+      "raw_value": "apparent volume of distribution (tissue/plasma)"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "tissue_to_blood_auc_ratio",
+      "raw_value": "AUClast tissue/blood ratio"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "tissue_to_whole_blood_ratio",
+      "raw_value": "average tissue to whole blood ratio"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "B/P plasma ratio"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "B/P ratio (Rbrain/plasma)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "blood_ratio",
+      "raw_value": "blood concentration ratio"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "blood_level_threshold_for_net_inward_flux",
+      "raw_value": "blood level threshold for net inward flux"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "Blood to Liquor concentration ratio"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "blood to plasma ratio"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "blood_to_tissue_transfer_constant",
+      "raw_value": "blood to tissue transfer constants"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "blood_to_tissue_flux",
+      "raw_value": "blood-to-tissue flux"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "blood_to_tissue_transfer_coefficient",
+      "raw_value": "blood-to-tissue transfer coefficient (Ki)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "blood_to_tissue_transfer_constant",
+      "raw_value": "blood-to-tissue transfer constant"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "blood_to_tissue_transfer_constant",
+      "raw_value": "blood-to-tissue transfer constant (K)"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "blood_to_tissue_transfer_rate",
+      "raw_value": "blood-to-tissue transfer rates"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "blood_to_tumor_ratio",
+      "raw_value": "Blood-tumour ratio"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "blood_to_extracellular_compartment_ratio",
+      "raw_value": "blood/extracellular compartment concentration ratio"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "bone_marrow_to_plasma_ratio",
+      "raw_value": "BM-to-plasma ratio"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "body_fluid_to_plasma_ratio",
+      "raw_value": "body fluid/plasma ratio"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "body_fluid_to_plasma_ratio",
+      "raw_value": "body fluid:plasma concentration ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "C.S.F. ammonium as a percentage of blood levels"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "c.s.f./plasma sucrose ratio"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "capillary_to_serum_ratio",
+      "raw_value": "capillary/serum ratio"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "caudate_to_blood_ratio",
+      "raw_value": "caudate-to-blood ratio"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "cell_to_medium_ratio",
+      "raw_value": "Cell to medium ratio"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "cell_to_medium_ratio",
+      "raw_value": "cell to medium ratio"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "cell_to_medium_ratio",
+      "raw_value": "cell-to-medium ratio"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "cell_to_medium_ratio",
+      "raw_value": "cell/medium ratio"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "cerebrum_to_blood_ratio",
+      "raw_value": "cerebrum to blood ratio"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "cerebrum_to_blood_ratio",
+      "raw_value": "cerebrum/blood ratio"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Clast tissue/Clast blood"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "plasma_concentration_ratio",
+      "raw_value": "concentration percentage of plasma"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "matrix_to_femoral_blood_ratio",
+      "raw_value": "concentration ratio (matrix/femoral blood)"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "sample_to_plasma_ratio",
+      "raw_value": "Concentration ratio (sample vs plasma)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "tumor_to_blood_ratio",
+      "raw_value": "concentration ratio between tumors and blood"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "concentration relative to the circulating plasma concentrations"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "tissue_to_plasma_or_serum_ratio",
+      "raw_value": "concentration than in plasma or serum levels"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "concentrations as % of plasma concentrations"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "inflamed_meninges_to_plasma_ratio",
+      "raw_value": "concentrations in inflamed meninges / plasma concentrations"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "gbm_tissue_to_plasma_ratio",
+      "raw_value": "concentrations in the GBM tissues than in plasma"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "forebrain_tissue_concentration",
+      "raw_value": "Concentrations in total fraction of forebrain tissue"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "concentrations relative to serum levels"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "corrected_dialysate_to_serum_ratio",
+      "raw_value": "corrected dialysate to serum concentration ratio"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "tissue_radioactivity_concentration",
+      "raw_value": "counts per minute per milligram of tissue"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "dialysate-plasma ratio"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "dialysate/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "Dialysate/plasma ratio"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "dialysate/plasma ratio"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "dialysate/plasma ratios"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "dialysate: plasma ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "dialysate_to_total_plasma_ratio",
+      "raw_value": "dialysate: total plasma ratio"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "dialysate:plasma ratio"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Diffusion into C.S.F. (% of Blood Level)"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "tissue_to_blood_distribution_coefficient",
+      "raw_value": "distribution coefficients (tissue/blood concentration)"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "blood_free_tissue_distribution",
+      "raw_value": "Distribution in 'blood-free' tissue"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "tissue_water_distribution_ratio",
+      "raw_value": "distribution over tissue water"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "edema_fluid_to_serum_ratio",
+      "raw_value": "Distribution Ratio (Edema Fluid/Serum)"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "tissue_water_to_plasma_water_ratio",
+      "raw_value": "distribution ratio (¹⁴C in tissue water/¹⁴C in plasma water)"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "tissue_to_plasma_distribution_space",
+      "raw_value": "distribution space (tissue/plasma)"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "tissue_to_plasma_equilibrium_distribution_ratio",
+      "raw_value": "Equilibrium tissue/plasma distribution ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "vessel_to_medium_ratio",
+      "raw_value": "equilibrium vessel/medium ratio"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "extracellular_concentration_to_blood_ratio",
+      "raw_value": "Extracellular concentration / blood amount"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "extracellular_concentration_to_plasma_ratio",
+      "raw_value": "extracellular concentration / plasma level"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "extracellular_fluid_to_serum_ratio",
+      "raw_value": "extracellular fluid / serum concentration ratio"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "extracellular_fluid_to_plasma_ratio",
+      "raw_value": "extracellular fluid-to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "extracellular_fluid_to_blood_ratio",
+      "raw_value": "extracellular fluid/blood ratio"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "extracellular_to_blood_glucose_ratio",
+      "raw_value": "extracellular to blood glucose ratio"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "extraction_ratio",
+      "raw_value": "Extraction ratio [(arterial minus venous)/arterial:(A-V)/A]"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "fluid_or_tissue_to_serum_ratio",
+      "raw_value": "Fluid or tissue to serum concentration ratio (%)"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "fluid_to_plasma_ratio",
+      "raw_value": "Fluid/plasma ratio (%)"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "fluid_to_serum_ratio",
+      "raw_value": "fluid/serum concentration ratio"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "fluid_to_serum_ratio",
+      "raw_value": "fluid/serum ratio"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "fluid_to_serum_ratio",
+      "raw_value": "Fluid: serum ratio"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "fluid_to_plasma_ratio",
+      "raw_value": "fluid:plasma ratio"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "tissue_to_plasma_penetration_factor",
+      "raw_value": "Ft (penetration factor, tissue-to-plasma ratio)"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Gado's tissue-blood ratio"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "gbm_tissue_to_plasma_ratio",
+      "raw_value": "GBM tissue level / plasma level"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "gray_and_white_matter_to_plasma_ratio",
+      "raw_value": "Gray & White: Plasma Ratio"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "gray_matter_to_plasma_ratio",
+      "raw_value": "Gray: Plasma Ratio"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_parenchyma_to_serum_or_plasma_ratio",
+      "raw_value": "Hirnparenchym concentration / Serum/Plasma concentration"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "in_vitro_ratio",
+      "raw_value": "in vitro ratio"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "blood_to_plasma_ratio",
+      "raw_value": "In vivo B:P ratio"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "interstitial_fluid_to_plasma_ratio",
+      "raw_value": "interstitial fluid concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "intrathecal_to_plasma_ratio",
+      "raw_value": "intrathecal concentrations relative to plasma"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "intratumoral_to_plasma_ratio",
+      "raw_value": "intratumoral concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "intratumoral_to_plasma_ratio",
+      "raw_value": "intratumoral/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "iodide concentration in the c.s.f. (% of that of the plasma)"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "blood_to_tissue_transfer_constant",
+      "raw_value": "K (blood-to-tissue transfer constant)"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "brain_to_plasma_partition_coefficient",
+      "raw_value": "Kbrain/plasma ratio"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "blood_to_tissue_transfer_coefficient_ratio",
+      "raw_value": "Ki (blood-to-tissue transfer constant) ratios for diet to control"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Kp, AUC0–24 h,tissue/AUC0–24 h,plasma"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "LCR concentration / serum concentration"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "LCR/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "serum_ratio",
+      "raw_value": "levels % of serum"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "tumor_tissue_level",
+      "raw_value": "levels achieved in tumor tissue"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "levels ranging from 13 to 68% of the simultaneous concentration in plasma"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "unbound_plasma_ratio",
+      "raw_value": "levels relative to unbound plasma levels"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_to_serum_or_plasma_ratio",
+      "raw_value": "Liquor concentration / Serum/Plasma concentration"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor levels relative to plasma levels"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "liquor-blood concentration ratio"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquor-Serum-Ratio"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "liquor/blood ratio"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor/plasma levels"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor/plasma ratio"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor/Plasma-Ratio"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Liquor/Serum concentration ratio"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "liquor/serum concentration ratio"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "liquor: blood ratio"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "tissue_to_plasma_distribution_space",
+      "raw_value": "Mannitol distribution spaces (% Tissue/Plasma)"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "maximal_intraparenchymal_to_plasma_ratio",
+      "raw_value": "maximal intraparenchymal concentration / plasma levels"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "maximal_intraparenchymal_to_plasma_ratio",
+      "raw_value": "maximal intraparenchymal concentration relative to plasma levels"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "maximal_ratio_to_blood",
+      "raw_value": "maximal ratio vs. blood"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "maximal_tissue_to_plasma_ratio",
+      "raw_value": "maximal tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "mean_body_fluid_to_serum_ratio",
+      "raw_value": "mean body fluid/serum concentration ratio"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "fluid_to_tissue_serum_ratio",
+      "raw_value": "Mean Fluid : Tissue Serum Ratio"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "tissue_to_whole_blood_ratio",
+      "raw_value": "mean glioma tissue to whole blood boron concentrations"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "peak_tissue_or_tissue_fluid_concentration",
+      "raw_value": "Mean peak tissue or tissue fluid concentration"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "mean percentage of the concomitant serum concentration"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Mean percentage tissue/plasma concentration"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "mean tissue/serum concentration ratio"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "Mean tissue:plasma ratio total radioactivity"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "mean tumor:plasma ratio"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Median tissue/Plasma ratio"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "meningeal_to_serum_ratio",
+      "raw_value": "meningeal concentration / serum concentration ratio"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "meningeal_tissue_to_plasma_ratio",
+      "raw_value": "Meningeal tissue/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "meningeal_to_serum_ratio",
+      "raw_value": "meningeal/serum ratio"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "tissue_to_plasma_ratio_multiple",
+      "raw_value": "Multiples of atropine's tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "net_tissue_extraction_ratio",
+      "raw_value": "net tissue extraction ratio"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "nilotinib/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "normal tissue to blood ratio"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "normalized_tissue_homogenate_epr_signal_intensity",
+      "raw_value": "normalized EPR signal intensity of tissue homogenates"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "optical_density_per_tissue_weight",
+      "raw_value": "OD/tissue weight"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "optical_density_per_tissue_weight",
+      "raw_value": "optical density (OD) at 620 nm per gram of tissue"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "organ_to_plasma_ratio",
+      "raw_value": "organ plasma ratio (o/p)"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "organ_to_plasma_exposure_ratio",
+      "raw_value": "organ to plasma exposure ratio"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "organ_to_plasma_ratio",
+      "raw_value": "organ-to-plasma ratio"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "organ_to_blood_radioactivity_ratio",
+      "raw_value": "organ/blood ratios of γ-counts/ g organ"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "organ_to_plasma_ratio",
+      "raw_value": "organ/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "organ_to_plasma_ratio",
+      "raw_value": "Organ/Plasma Ratio"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "organ_to_plasma_ratio",
+      "raw_value": "organ/plasma ratio"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "organ_to_serum_ratio",
+      "raw_value": "organ/serum concentration rate"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "plasma_ratio",
+      "raw_value": "ouabain content as percentage of plasma concentration"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "tissue_to_blood_radioactivity_ratio",
+      "raw_value": "pCi per g of tissue per pCi per g of blood"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "fluid_to_blood_ratio",
+      "raw_value": "Peak fluid : blood ratio"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "peak_tissue_concentration",
+      "raw_value": "peak tissue concentrations"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "peak_tissue_level",
+      "raw_value": "peak tissue levels"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "peak_ventricular_fluid_to_peak_serum_ratio",
+      "raw_value": "peak ventricular fluid level / peak serum level"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "serum_penetration_ratio",
+      "raw_value": "penetration of serum levels"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "serum_to_site_penetration_ratio",
+      "raw_value": "Penetration ratio (peak concentration in serum / peak concentration in site)"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "accessible_tissue_space_percent",
+      "raw_value": "percent accessible tissue space"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "blood_level_ratio",
+      "raw_value": "percent blood levels"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "plasma_level_ratio",
+      "raw_value": "percent of plasma level"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "tissue_water_equilibration_percent",
+      "raw_value": "Percent of tissue water equilibrated with plasma"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "tissue_to_whole_body_specific_activity_ratio",
+      "raw_value": "Percent ratio of the specific activity in tissues and whole body"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "serum_ratio",
+      "raw_value": "Percent relative to serum"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "blood_percentage",
+      "raw_value": "Percentage blood"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "blood_delivery_contribution_percent",
+      "raw_value": "percentage contribution of Mn delivered via blood"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "systemic_circulation_diffusion_percent",
+      "raw_value": "percentage diffusing into systemic circulation"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "blood_entry_percent",
+      "raw_value": "percentage entering blood"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "arterial_peak_plasma_concentration_ratio",
+      "raw_value": "percentage of arterial peak plasma value"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "percentage of concomitant serum concentrations"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "serum_level_ratio",
+      "raw_value": "percentage of corresponding 1-h serum levels"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "maternal_serum_ratio",
+      "raw_value": "Percentage of maternal serum"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "plasma_concentration_ratio",
+      "raw_value": "percentage of plasma concentration"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "plasma_concentration_ratio",
+      "raw_value": "percentage of plasma concentrations achieved"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "plasma_level_ratio",
+      "raw_value": "percentage of plasma levels"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "plasma_nep_distribution_to_nac_percent",
+      "raw_value": "percentage of plasma NEP distributed to the NAc"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "serum_concentration_ratio",
+      "raw_value": "Percentage of serum concentration"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "serum_concentration_crossing_bbb_percent",
+      "raw_value": "percentage of serum concentration exceeding the BBB"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "serum_concentration_ratio",
+      "raw_value": "percentage of serum concentrations"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage of serum concentrations in liquor"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "blood_level_ratio",
+      "raw_value": "percentage of simultaneous blood levels"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "serum_level_ratio",
+      "raw_value": "percentage of simultaneous serum levels"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "serum_concentration_crossing_bbb_percent",
+      "raw_value": "percentage of the serum concentration crossing the BBB"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "blood_derived_total_pool_percent",
+      "raw_value": "percentage of total L-KYN pool derived from blood"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "total_plasma_concentration_ratio",
+      "raw_value": "percentage of total plasma concentrations"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "body_fluid_to_serum_ratio",
+      "raw_value": "Percentage ratio of body fluid level/ serum level"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "percentage ratio of tissue to plasma"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "percentage tissue/plasma ratios of 14C activities"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "serum_transference_percent",
+      "raw_value": "percentage transference from the serum"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "perfusate_to_blood_ratio",
+      "raw_value": "perfusate-to-blood ratio"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "perfusion_fluid_to_plasma_ratio",
+      "raw_value": "perfusion fluid content as % of mean plasma content"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "perifocal_tissue_to_serum_ratio",
+      "raw_value": "perifocal tissue/serum concentration ratio"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "peripheral_sample_to_serum_ratio",
+      "raw_value": "Peripheral sample:serum concentration ratio"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "plasma_to_csf_concentration_ratio",
+      "raw_value": "plasma crizotinib ratio concentration between plasma and liquor"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "jugular_venous_to_arterial_plasma_ratio",
+      "raw_value": "plasma HVA levels (jugular venous vs arterial blood)"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "plasma_ratio",
+      "raw_value": "Plasma ratio"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "plasma_ratio",
+      "raw_value": "plasma ratio"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "plasma_to_tissue_influx",
+      "raw_value": "Plasma to tissue influx"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "plasma_transcapillary_clearance_rate",
+      "raw_value": "plasma transcapillary clearance rate"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "Plasma-Liquor-Quotient"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "plasma_to_tissue_transfer_constant",
+      "raw_value": "plasma-tissue transfer constants"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "plasma_to_tissue_leakage",
+      "raw_value": "plasma-to-tissue leakage"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "plasma_to_extracellular_fluid_ratio",
+      "raw_value": "plasma/extracellular fluid BHB concentration ratio"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "Plasma/Liquor concentration ratio"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "pons_medulla_to_plasma_ratio",
+      "raw_value": "pons-medulla/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "tissue_proportion",
+      "raw_value": "proportion in tissue"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "vascular_pellet_proportion",
+      "raw_value": "proportion in vascular pellet"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "extravascular_to_intravascular_ratio",
+      "raw_value": "Q (ratio of the mean extravascular to the intravascular concentration)"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "tissue_to_plasma_water_ratio",
+      "raw_value": "quotient tissue/plasma water (T/P)"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "R ratio of tissue/serum antibiotic concentration"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "blood_to_tissue_transfer_rate_constant",
+      "raw_value": "rate constant of blood to tissue transfer"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "blood_extraction_rate",
+      "raw_value": "rate of extraction from the blood"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio (concn. in c.s.f.): (concn. in plasma)"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "fluid_to_plasma_ratio",
+      "raw_value": "ratio (concn. in fluid) : (concn. in plasma)"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "tumor_to_unbound_serum_ratio",
+      "raw_value": "Ratio (tumorous concentration / serum free)"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "tissue_to_blood_radioactivity_ratio",
+      "raw_value": "Ratio dpm/g tissue : dpm/g blood"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "fluid_to_blood_ratio",
+      "raw_value": "Ratio fluid : blood"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Ratio liquor-to blood-concentration"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "dialysate_to_plasma_auc_ratio",
+      "raw_value": "ratio of area-under-the-curve values in dialysate over those in plasma"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "striatum_to_venous_blood_auc_ratio",
+      "raw_value": "ratio of areas under the curve between striatum and venous blood"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "ratio of concentration of ³H in tissue to ³H in plasma"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "ratio of concentrations in dialysate over plasma"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "tissue_or_fluid_to_serum_concentration_or_auc_ratio",
+      "raw_value": "ratio of concentrations or area under the concentration-time curve (AUC) in tissue/fluid versus serum"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "tissue_to_blood_equilibrium_ratio",
+      "raw_value": "Ratio of Equilibrium Concentrations (Tissue/Blood)"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "extracellular_fluid_to_plasma_ratio",
+      "raw_value": "ratio of extracellular fluid MTX to plasma MTX"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "extravascular_to_intravascular_ratio",
+      "raw_value": "ratio of extravascular to intravascular FITC"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "interstitial_fluid_to_free_serum_ratio",
+      "raw_value": "ratio of IF to free serum PHT concentrations"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of liquor to plasma concentration"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "perfusate_to_blood_radioactivity_ratio",
+      "raw_value": "ratio of perfusate/blood radioactivity"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "arteriovenous_difference_ratio",
+      "raw_value": "ratio of the 1st 1 min integral activity of the difference (arterial vs venous) to that of arterial blood"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "ratio of the concentration of nonvolatile 3H in the tissue to nonvolatile 3H in the plasma"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "dialysate_to_plasma_ratio",
+      "raw_value": "ratio of the concentrations in dialysate to plasma"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "ratio of the tissue to blood concentrations"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "tissue_to_plasma_free_radioactivity_ratio",
+      "raw_value": "ratio of tissue free [³H]inositol activity to plasma free [³H]inositol activity"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "tissue_to_plasma_exposure_ratio",
+      "raw_value": "ratio of tissue to plasma exposure"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "tissue_to_plasma_uptake_ratio",
+      "raw_value": "ratio of tissue uptake (d.p.m./g) versus that of the plasma (d.p.m./ml; T/P)"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "ratio of tissue-to-blood concentrations"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "ratio of tissue:plasma concentrations"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "tumor_to_plasma_concentration_ratio",
+      "raw_value": "ratio of tumor to plasma concentration"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Ratio tissue/blood"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "ratio tissue/serum concentration"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "ratio_to_plasma",
+      "raw_value": "Ratio to plasma"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "ratio_to_plasma",
+      "raw_value": "ratio to plasma"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "ratio_to_plasma_concentration",
+      "raw_value": "ratio to plasma concentration"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "ratio_to_blood",
+      "raw_value": "ratio to the blood"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "ratio_to_plasma",
+      "raw_value": "ratio to the plasma"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "trough_plasma_ratio",
+      "raw_value": "ratio to trough plasma levels"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "plasma_ratio",
+      "raw_value": "ratio with plasma"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratiobrain/plasma"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "Ratios of blood to C.S.F. concentration"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "interstitial_fluid_to_free_serum_ratio",
+      "raw_value": "ratios of IF to free serum PHT concentrations"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "plasma_recovery_rate",
+      "raw_value": "recovery rates from the plasma concentration"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "relación entre concentración de LCR y concentración plasmática"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "tissue_to_plasma_level_ratio",
+      "raw_value": "Relation tissue/ plasma levels"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "cns_to_plasma_auc_ratio",
+      "raw_value": "relative exposure index (ratio between the area under the curve in the CNS and plasma)"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "intratumoral_to_serum_ratio",
+      "raw_value": "relative intratumoral concentration (percentage of serum concentration)"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "serum_ratio",
+      "raw_value": "Relative to serum concentration"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "sample_to_plasma_ratio",
+      "raw_value": "sample to plasma ratio"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "serum_normalized_level",
+      "raw_value": "serum-normalized levels"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "serum_to_body_fluid_ratio",
+      "raw_value": "Serum/body fluid ratio"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "serum/liquor concentration ratio"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "serum_to_tissue_ratio",
+      "raw_value": "Serum/tissue ratio"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "site_to_serum_ratio",
+      "raw_value": "Site to serum concentration ratio"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "site_to_serum_auc_ratio",
+      "raw_value": "site-to-serum area under the concentration-time curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "maternal_plasma_to_tissue_slope",
+      "raw_value": "slope of maternal plasma vs tissue concentration data"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "specimen_to_plasma_ratio",
+      "raw_value": "Specimen/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "tumor_to_plasma_trough_ratio",
+      "raw_value": "steady-state tumor trough levels of concomitant plasma concentrations"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "striatum_to_serum_ratio",
+      "raw_value": "striatum/serum ratio"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "systemic_to_icv_dose_ratio",
+      "raw_value": "systemic vs icv dose ratio"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "tissue_to_plasma_distribution_coefficient",
+      "raw_value": "TDC (tissue distribution coefficient relative to plasma)"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "thalamus_to_plasma_ratio",
+      "raw_value": "thalamus/plasma ratio"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "tissue_to_serum_or_plasma_ratio",
+      "raw_value": "Tissue : S or P ratio"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "Tissue : Serum concentration ratio"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "tissue_advantage_ratio",
+      "raw_value": "tissue advantage ratio"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "tissue_content",
+      "raw_value": "tissue ALA content"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "tissue_to_average_plasma_concentration_ratio",
+      "raw_value": "tissue concentration / average plasma concentration"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "Tissue concentration relative to serum"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "tissue concentrations"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue concentrations / blood concentrations"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue concentrations / plasma concentration"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue concentrations / plasma concentration ratio"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue concentrations compared to plasma"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue concentrations relative to blood"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "tissue_content",
+      "raw_value": "tissue content"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue DIM (µg/g)/Plasma DIM (µg/ml)"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "tissue_distribution_relative_to_wild_type",
+      "raw_value": "tissue distribution (relative to wild-type)"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "tissue_to_serum_distribution_coefficient",
+      "raw_value": "tissue distribution coefficients (tissue/serum concentrations)"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "Tissue DOX concentration"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "tissue DOX concentration"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "tissue_extracellular_fluid_to_plasma_ratio",
+      "raw_value": "tissue extracellular fluid/plasma ratio"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "tissue fluid/plasma concentration ratio (CSF/plasma)"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "tissue_level",
+      "raw_value": "Tissue level"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "tissue_level",
+      "raw_value": "tissue level"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "tissue_level",
+      "raw_value": "Tissue levels"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "tissue_level",
+      "raw_value": "tissue levels"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "tissue_or_body_fluid_to_plasma_ratio",
+      "raw_value": "Tissue or body fluid/ plasma ratio"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "tissue_or_fluid_to_serum_ratio",
+      "raw_value": "Tissue or fluid/serum concentration ratio (%)"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "tissue_or_fluid_to_plasma_ratio",
+      "raw_value": "Tissue or Fluid:Plasma Ratio"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "tissue_to_serum_percent",
+      "raw_value": "Tissue Serum x 100"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue to blood ratio"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue to blood ratio"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue to Blood Ratio (TBR)"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue to blood ratios"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "tissue_to_maternal_plasma_ratio",
+      "raw_value": "tissue to dam plasma ratio"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "tissue_to_peak_plasma_concentration_ratio",
+      "raw_value": "Tissue to peak plasma concentration ratio"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "TISSUE to PLASMA (TP) RATIO"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue to plasma concentration ratio"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue to plasma concentration ratio"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Tissue to plasma concentration ratio (CSF)"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue to plasma concentrations ratio"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "tissue_to_plasma_disposition_ratio",
+      "raw_value": "tissue to plasma disposition ratio"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "tissue_to_plasma_glucose_ratio",
+      "raw_value": "Tissue to Plasma Glucose"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "tissue_to_plasma_partition_coefficient",
+      "raw_value": "Tissue to plasma partition coefficient (Kp)"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue to Plasma Ratio"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue to plasma ratio"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue to plasma ratio"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Tissue to Plasma Ratio (AUC0-∞,tissue/AUC0-∞,plasma)"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue to plasma ratio (TPR)"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue to plasma ratios"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "TISSUE TO SERUM RATIO"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "Tissue to serum ratio"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "tissue to serum ratio"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "tissue to serum ratio (TSR)"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "tissue_to_whole_blood_ratio",
+      "raw_value": "tissue to whole blood ratio"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "tissue_to_plasma_concentration_ratio",
+      "raw_value": "tissue versus plasma concentration"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "tissue_to_blood_radioactivity_ratio",
+      "raw_value": "Tissue ³H/¹⁴C Blood ³H/¹⁴C"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue- to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "tissue_to_blood_coefficient",
+      "raw_value": "tissue-blood coefficient"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue-Blood Concentration Ratio"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue-Blood Ratio"
+    },
+    {
+      "item_id": "v0357",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue-blood ratio"
+    },
+    {
+      "item_id": "v0358",
+      "provisional_endpoint": "tissue_fluid_to_serum_ratio",
+      "raw_value": "Tissue-Fluid:Serum Ratio"
+    },
+    {
+      "item_id": "v0359",
+      "provisional_endpoint": "tissue_to_plasma_drug_concentration_ratio",
+      "raw_value": "tissue-plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0360",
+      "provisional_endpoint": "tissue_to_plasma_penetration_ratio",
+      "raw_value": "tissue-plasma penetration ratio"
+    },
+    {
+      "item_id": "v0361",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue-plasma ratio"
+    },
+    {
+      "item_id": "v0362",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue-plasma ratio"
+    },
+    {
+      "item_id": "v0363",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue-to-blood (T:B) ratio"
+    },
+    {
+      "item_id": "v0364",
+      "provisional_endpoint": "tissue_to_blood_auc_partition_coefficient",
+      "raw_value": "tissue-to-blood partitioning coefficient (ratio of the AUC of tissue arsenic concentrations to the AUC of blood concentrations)"
+    },
+    {
+      "item_id": "v0365",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue-to-blood ratio"
+    },
+    {
+      "item_id": "v0366",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue-to-blood ratio"
+    },
+    {
+      "item_id": "v0367",
+      "provisional_endpoint": "tissue_to_medium_ratio",
+      "raw_value": "tissue-to-medium ratio"
+    },
+    {
+      "item_id": "v0368",
+      "provisional_endpoint": "tissue_to_plasma_fluoride_concentration_ratio",
+      "raw_value": "tissue-to-plasma (T/P) fluoride concentration ratio"
+    },
+    {
+      "item_id": "v0369",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "tissue-to-plasma 35S ratio"
+    },
+    {
+      "item_id": "v0370",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue-to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0371",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue-to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0372",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue-to-plasma concentration ratios"
+    },
+    {
+      "item_id": "v0373",
+      "provisional_endpoint": "tissue_to_plasma_distribution_ratio",
+      "raw_value": "tissue-to-plasma distribution ratio"
+    },
+    {
+      "item_id": "v0374",
+      "provisional_endpoint": "tissue_to_plasma_exposure_ratio",
+      "raw_value": "tissue-to-plasma exposure ratio"
+    },
+    {
+      "item_id": "v0375",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue-to-plasma morphine ratio"
+    },
+    {
+      "item_id": "v0376",
+      "provisional_endpoint": "tissue_to_plasma_partition_ratio",
+      "raw_value": "tissue-to-plasma partition ratio"
+    },
+    {
+      "item_id": "v0377",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue-to-plasma ratio"
+    },
+    {
+      "item_id": "v0378",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue-to-plasma ratio"
+    },
+    {
+      "item_id": "v0379",
+      "provisional_endpoint": "tissue_to_plasma_suv_ratio",
+      "raw_value": "tissue-to-plasma SUV ratio"
+    },
+    {
+      "item_id": "v0380",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "tissue-to-plasma ³⁵S ratio"
+    },
+    {
+      "item_id": "v0381",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "Tissue-to-serum METH ratio"
+    },
+    {
+      "item_id": "v0382",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "tissue-to-serum ratio"
+    },
+    {
+      "item_id": "v0383",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/ plasma ratio"
+    },
+    {
+      "item_id": "v0384",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue/blood"
+    },
+    {
+      "item_id": "v0385",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue/blood concentration ratio"
+    },
+    {
+      "item_id": "v0386",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue/blood concentration ratio"
+    },
+    {
+      "item_id": "v0387",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue/Blood Ratio"
+    },
+    {
+      "item_id": "v0388",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue/Blood ratio"
+    },
+    {
+      "item_id": "v0389",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "Tissue/blood ratio"
+    },
+    {
+      "item_id": "v0390",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue/blood ratio"
+    },
+    {
+      "item_id": "v0391",
+      "provisional_endpoint": "tissue_to_blood_auc_ratio",
+      "raw_value": "tissue/blood ratio for AUCest"
+    },
+    {
+      "item_id": "v0392",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue/blood ratios"
+    },
+    {
+      "item_id": "v0393",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue/blood value"
+    },
+    {
+      "item_id": "v0394",
+      "provisional_endpoint": "tissue_fluid_to_serum_ratio",
+      "raw_value": "Tissue/fluid : serum concentration ratio"
+    },
+    {
+      "item_id": "v0395",
+      "provisional_endpoint": "tissue_to_fluid_ratio",
+      "raw_value": "tissue/fluid ratio"
+    },
+    {
+      "item_id": "v0396",
+      "provisional_endpoint": "tissue_to_free_serum_ratio",
+      "raw_value": "tissue/free serum concentration ratio"
+    },
+    {
+      "item_id": "v0397",
+      "provisional_endpoint": "tissue_to_medium_water_ratio",
+      "raw_value": "Tissue/medium H2O ratio"
+    },
+    {
+      "item_id": "v0398",
+      "provisional_endpoint": "tissue_to_medium_ratio",
+      "raw_value": "tissue/medium ratio"
+    },
+    {
+      "item_id": "v0399",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue/plasma"
+    },
+    {
+      "item_id": "v0400",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue/plasma %"
+    },
+    {
+      "item_id": "v0401",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma (%)"
+    },
+    {
+      "item_id": "v0402",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "Tissue/plasma (AUC %)"
+    },
+    {
+      "item_id": "v0403",
+      "provisional_endpoint": "tissue_to_plasma_cmax_ratio",
+      "raw_value": "Tissue/plasma (Cmax %)"
+    },
+    {
+      "item_id": "v0404",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue/plasma area under the concentration-time curve (AUC) ratio"
+    },
+    {
+      "item_id": "v0405",
+      "provisional_endpoint": "tissue_to_plasma_auc_ratio",
+      "raw_value": "tissue/plasma area under the curve ratio"
+    },
+    {
+      "item_id": "v0406",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/Plasma Conc. Ratio"
+    },
+    {
+      "item_id": "v0407",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0408",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0409",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue/plasma concentration ratios"
+    },
+    {
+      "item_id": "v0410",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma concn ratio"
+    },
+    {
+      "item_id": "v0411",
+      "provisional_endpoint": "tissue_to_plasma_dpm_ratio",
+      "raw_value": "Tissue/plasma DPM ratio"
+    },
+    {
+      "item_id": "v0412",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma fluconazole concentration ratio"
+    },
+    {
+      "item_id": "v0413",
+      "provisional_endpoint": "tissue_to_plasma_water_ratio",
+      "raw_value": "Tissue/plasma H2O ratio"
+    },
+    {
+      "item_id": "v0414",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma letrozole concentrations"
+    },
+    {
+      "item_id": "v0415",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "tissue/plasma radioactivity concentration ratio"
+    },
+    {
+      "item_id": "v0416",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "Tissue/Plasma radioactivity ratio"
+    },
+    {
+      "item_id": "v0417",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/Plasma Ratio"
+    },
+    {
+      "item_id": "v0418",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/Plasma ratio"
+    },
+    {
+      "item_id": "v0419",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0420",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0421",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma ratio (x10⁻¹)"
+    },
+    {
+      "item_id": "v0422",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue/plasma ratio × 100"
+    },
+    {
+      "item_id": "v0423",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue/plasma ratios"
+    },
+    {
+      "item_id": "v0424",
+      "provisional_endpoint": "tissue_to_plasma_radioactivity_ratio",
+      "raw_value": "Tissue/plasma ¹⁴C concentration ratio"
+    },
+    {
+      "item_id": "v0425",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue/plasma-ratio"
+    },
+    {
+      "item_id": "v0426",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "Tissue/serum"
+    },
+    {
+      "item_id": "v0427",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "tissue/serum concentration ratio"
+    },
+    {
+      "item_id": "v0428",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "Tissue/Serum Ratio"
+    },
+    {
+      "item_id": "v0429",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "Tissue/serum ratio"
+    },
+    {
+      "item_id": "v0430",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "tissue/serum ratio"
+    },
+    {
+      "item_id": "v0431",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue/subclavian blood concentration ratio"
+    },
+    {
+      "item_id": "v0432",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue: plasma ratio"
+    },
+    {
+      "item_id": "v0433",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue:blood concentration ratio"
+    },
+    {
+      "item_id": "v0434",
+      "provisional_endpoint": "tissue_to_blood_ratio",
+      "raw_value": "tissue:blood ratio"
+    },
+    {
+      "item_id": "v0435",
+      "provisional_endpoint": "tissue_to_peak_plasma_concentration_ratio",
+      "raw_value": "tissue:peak plasma concentration ratio"
+    },
+    {
+      "item_id": "v0436",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "tissue:plasma concentration ratio (CSF)"
+    },
+    {
+      "item_id": "v0437",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "Tissue:plasma ratio"
+    },
+    {
+      "item_id": "v0438",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissue:plasma ratio"
+    },
+    {
+      "item_id": "v0439",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "tissue:serum concentration ratio"
+    },
+    {
+      "item_id": "v0440",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "tissues to plasma ratio"
+    },
+    {
+      "item_id": "v0441",
+      "provisional_endpoint": "tissue_to_serum_ratio",
+      "raw_value": "TMP level in tissue/ TMP level in serum"
+    },
+    {
+      "item_id": "v0442",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "total bedaquiline tissue-to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0443",
+      "provisional_endpoint": "tissue_radioactivity_content",
+      "raw_value": "Total dpm per Tissue"
+    },
+    {
+      "item_id": "v0444",
+      "provisional_endpoint": "tissue_content",
+      "raw_value": "total tissue content"
+    },
+    {
+      "item_id": "v0445",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "total tumour-plasma ratio"
+    },
+    {
+      "item_id": "v0446",
+      "provisional_endpoint": "plasma_to_gray_matter_transcapillary_clearance_rate",
+      "raw_value": "transcapillary clearance rate from plasma into gray matter"
+    },
+    {
+      "item_id": "v0447",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor concentration as % of plasma level"
+    },
+    {
+      "item_id": "v0448",
+      "provisional_endpoint": "tumor_extracellular_fluid_to_unbound_plasma_ratio",
+      "raw_value": "tumor extracellular fluid concentrations / unbound plasma concentrations"
+    },
+    {
+      "item_id": "v0449",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "Tumor mean/plasma ratio (%)"
+    },
+    {
+      "item_id": "v0450",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor sucrose concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0451",
+      "provisional_endpoint": "tumor_tissue_concentration",
+      "raw_value": "tumor tissue concentration"
+    },
+    {
+      "item_id": "v0452",
+      "provisional_endpoint": "tumor_tissue_concentration",
+      "raw_value": "tumor tissue concentrations"
+    },
+    {
+      "item_id": "v0453",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor tissue concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0454",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor tissue concentrations expressed as a percentage of the corresponding plasma concentrations"
+    },
+    {
+      "item_id": "v0455",
+      "provisional_endpoint": "tumor_tissue_level",
+      "raw_value": "Tumor tissue level"
+    },
+    {
+      "item_id": "v0456",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor tissue versus plasma concentration"
+    },
+    {
+      "item_id": "v0457",
+      "provisional_endpoint": "tumor_to_serum_ratio",
+      "raw_value": "tumor tissue/serum concentration ratio"
+    },
+    {
+      "item_id": "v0458",
+      "provisional_endpoint": "tumor_to_whole_blood_ratio",
+      "raw_value": "tumor tissue/whole blood concentration ratio"
+    },
+    {
+      "item_id": "v0459",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor tissue:plasma ratio"
+    },
+    {
+      "item_id": "v0460",
+      "provisional_endpoint": "tumor_to_background_ratio",
+      "raw_value": "tumor to background ratio"
+    },
+    {
+      "item_id": "v0461",
+      "provisional_endpoint": "tumor_to_plasma_radiolabel_ratio",
+      "raw_value": "tumor to plasma radiolabel ratio"
+    },
+    {
+      "item_id": "v0462",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor to plasma ratio"
+    },
+    {
+      "item_id": "v0463",
+      "provisional_endpoint": "tumor_to_blood_ratio",
+      "raw_value": "tumor-to-blood boron ratio"
+    },
+    {
+      "item_id": "v0464",
+      "provisional_endpoint": "tumor_to_blood_ratio",
+      "raw_value": "tumor-to-blood concentration ratio"
+    },
+    {
+      "item_id": "v0465",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor-to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0466",
+      "provisional_endpoint": "tumor_to_plasma_level_ratio",
+      "raw_value": "Tumor-to-plasma drug level"
+    },
+    {
+      "item_id": "v0467",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor-to-plasma geometric mean ratio"
+    },
+    {
+      "item_id": "v0468",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor-to-plasma molar drug concentrations ratio"
+    },
+    {
+      "item_id": "v0469",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor-to-plasma ratio"
+    },
+    {
+      "item_id": "v0470",
+      "provisional_endpoint": "tumor_to_serum_ratio",
+      "raw_value": "tumor-to-serum ratio"
+    },
+    {
+      "item_id": "v0471",
+      "provisional_endpoint": "tumor_to_healthy_tissue_ratio",
+      "raw_value": "tumor/healthy tissue ratio"
+    },
+    {
+      "item_id": "v0472",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "Tumor/Plasma"
+    },
+    {
+      "item_id": "v0473",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0474",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor:plasma"
+    },
+    {
+      "item_id": "v0475",
+      "provisional_endpoint": "tumor_and_white_matter_to_plasma_ratios",
+      "raw_value": "tumor:plasma and white matter:plasma ratios"
+    },
+    {
+      "item_id": "v0476",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "Tumor:plasma concentration ratio"
+    },
+    {
+      "item_id": "v0477",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor:plasma concentration ratio"
+    },
+    {
+      "item_id": "v0478",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumor:plasma ratio"
+    },
+    {
+      "item_id": "v0479",
+      "provisional_endpoint": "tumor_to_blood_ratio",
+      "raw_value": "tumor‐to‐blood concentration ratio"
+    },
+    {
+      "item_id": "v0480",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumour : plasma ratio"
+    },
+    {
+      "item_id": "v0481",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumour concentration / plasma level"
+    },
+    {
+      "item_id": "v0482",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumour-to-plasma ratio"
+    },
+    {
+      "item_id": "v0483",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "tumour/plasma percentages"
+    },
+    {
+      "item_id": "v0484",
+      "provisional_endpoint": "tumor_to_plasma_ratio",
+      "raw_value": "Tumour/plasma ratio"
+    },
+    {
+      "item_id": "v0485",
+      "provisional_endpoint": "unbound_tumor_to_plasma_concentration_ratio",
+      "raw_value": "unbound tumor-to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0486",
+      "provisional_endpoint": "unbound_tumor_to_plasma_ratio",
+      "raw_value": "unbound tumor-to-plasma ratio"
+    },
+    {
+      "item_id": "v0487",
+      "provisional_endpoint": "blood_to_tissue_transfer_constant",
+      "raw_value": "unidirectional blood-to-tissue transfer constant (K)"
+    },
+    {
+      "item_id": "v0488",
+      "provisional_endpoint": "influx_to_plasma_concentration_ratio",
+      "raw_value": "v/s (ratio of influx to plasma concentration)"
+    },
+    {
+      "item_id": "v0489",
+      "provisional_endpoint": "ventricular_fluid_to_plasma_ratio",
+      "raw_value": "ventricular fluid concentration / plasma concentration ratio"
+    },
+    {
+      "item_id": "v0490",
+      "provisional_endpoint": "ventricular_fluid_to_serum_ratio",
+      "raw_value": "ventricular fluid concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0491",
+      "provisional_endpoint": "ventricular_fluid_to_serum_ratio",
+      "raw_value": "ventricular fluid concentrations as a percentage of serum concentrations"
+    },
+    {
+      "item_id": "v0492",
+      "provisional_endpoint": "blood_ratio",
+      "raw_value": "Versus blood ratio"
+    },
+    {
+      "item_id": "v0493",
+      "provisional_endpoint": "stained_tissue_volume",
+      "raw_value": "volume of tissue stained"
+    },
+    {
+      "item_id": "v0494",
+      "provisional_endpoint": "white_matter_to_blood_ratio",
+      "raw_value": "white matter/blood concentration ratio"
+    },
+    {
+      "item_id": "v0495",
+      "provisional_endpoint": "white_matter_to_plasma_ratio",
+      "raw_value": "White: Plasma Ratio"
+    },
+    {
+      "item_id": "v0496",
+      "provisional_endpoint": "tissue_to_plasma_ratio",
+      "raw_value": "¹⁸F tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0497",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "µg equivalents of SQ per g of tissue"
+    },
+    {
+      "item_id": "v0498",
+      "provisional_endpoint": "tissue_concentration",
+      "raw_value": "µgHg/g tissue"
+    }
+  ],
+  "cluster_id": "cluster_3eb00b6d76151c2e",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

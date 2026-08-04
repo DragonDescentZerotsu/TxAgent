@@ -1,0 +1,89 @@
+{
+  "action_counts": {
+    "merge": 12,
+    "rename": 5,
+    "retain": 46,
+    "split": 16
+  },
+  "by_namespace": {
+    "passive_permeability/global_context": {
+      "action_counts": {
+        "merge": 10,
+        "rename": 2,
+        "retain": 36,
+        "split": 15
+      },
+      "change_scope_assignment_rows": 516,
+      "decisions": 63,
+      "non_null_assignments": 588,
+      "packet_assignments": 588,
+      "proposed_changed_assignment_rows": 215,
+      "provisional_labels": 115,
+      "section_clusters": 6
+    },
+    "passive_permeability/global_species_context": {
+      "action_counts": {
+        "merge": 2,
+        "rename": 3,
+        "retain": 10,
+        "split": 1
+      },
+      "change_scope_assignment_rows": 117,
+      "decisions": 16,
+      "non_null_assignments": 209,
+      "packet_assignments": 588,
+      "proposed_changed_assignment_rows": 51,
+      "provisional_labels": 18,
+      "section_clusters": 6
+    }
+  },
+  "decision_count": 79,
+  "decision_file": "primary_passive_permeability.jsonl",
+  "namespaces": [
+    "passive_permeability/global_context",
+    "passive_permeability/global_species_context"
+  ],
+  "non_null_assignment_count": 797,
+  "provisional_label_count": 133,
+  "reviewed_assignment_count": 1176,
+  "reviewed_cluster_count": 12,
+  "reviewed_packet_ids": [
+    "passive_permeability__global_context__packet_0001",
+    "passive_permeability__global_species_context__packet_0001"
+  ],
+  "reviewer_id": "bio_reconcile_audit",
+  "summary_version": "bbb_auxiliary_primary_review_summary.v1",
+  "validation": {
+    "all_six_clusters_reviewed_in_each_namespace": true,
+    "every_non_null_provisional_label_owned_exactly_once": true,
+    "owned_namespaces_complete": {
+      "action_counts": {
+        "merge": 12,
+        "rename": 5,
+        "retain": 46,
+        "split": 16
+      },
+      "decisions": 79,
+      "labels_expected": 133,
+      "labels_missing": 0,
+      "labels_owned": 133,
+      "valid": true
+    },
+    "repository_partial_coverage": {
+      "action_counts": {
+        "merge": 12,
+        "rename": 5,
+        "retain": 46,
+        "split": 16
+      },
+      "decisions": 79,
+      "labels_expected": 24274,
+      "labels_missing": 24141,
+      "labels_owned": 133,
+      "valid": true
+    },
+    "reviewed_packet_manifest_matches": true,
+    "zero_duplicate_owned_namespace_labels": true,
+    "zero_missing_owned_namespace_labels": true
+  }
+}

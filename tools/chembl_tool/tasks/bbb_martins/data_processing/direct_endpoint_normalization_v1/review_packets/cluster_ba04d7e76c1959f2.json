@@ -1,0 +1,1377 @@
+{
+  "assignment_count": 274,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "evans_blue_fluorescence_percentage",
+      "raw_value": "% of Evans blue fluorescence/ROI"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Absolute dye content of hemispheres"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "amount of brain Evans blue dye"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "amount of brain-extracted Evans blue"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of Evan's blue dye bound to albumin that extravasated into the brain"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of Evan's blue extravasation"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "evans_blue_staining",
+      "raw_value": "amount of Evan's blue staining"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Amount of Evans Blue"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Amount of Evans blue"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "amount of Evans blue"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of Evans blue (EB) dye extravasations"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "amount of Evans blue detected"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "amount of Evans blue dye"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of Evans blue dye extravasated"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of Evans blue dye extravasation"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Amount of Evans Blue Dye in Brain"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "amount of Evans blue extracted from the brains"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of Evans blue exudation"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "amount of Evans Blue in the hemisphere"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "amount of Evans blue in the striatum"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of Evans blue leakage"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "evans_blue_retention",
+      "raw_value": "amount of Evans blue retained"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of extravasated Evans blue"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "amount of extravasated Evans blue dye"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "evans_blue_extravasation_area",
+      "raw_value": "area of Evans blue dye extravasation"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "evans_blue_extravasation_area",
+      "raw_value": "area of Evans blue stain extravasation"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "evans_blue_stained_area",
+      "raw_value": "area of Evans blue staining"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "evans_blue_leakage_area_ratio",
+      "raw_value": "area ratios of Evans blue leakage (postnatal rats/adult rats)"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "evans_blue_leakage_area",
+      "raw_value": "area with Evans blue leakage in brain parenchyma"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "trypan_blue_fluorescence",
+      "raw_value": "average Trypan blue fluorescence"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "basal_evans_blue_extravasation",
+      "raw_value": "basal Evans blue leakage"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "evans_blue_extravasation_index",
+      "raw_value": "BBB breakdown (Evans blue extravasation index)"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "bbb_permeability_to_evans_blue",
+      "raw_value": "BBB permeability to Evans blue"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "bbb_permeability_to_evans_blue",
+      "raw_value": "BBB permeability to Evans blue dye"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "brain Evans blue concentration"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "brain Evans blue content"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "brain Evans blue leakage"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "brain parenchyma-retained Evans blue"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "brain tissue content of Evans Blue"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "brain tissue Evans blue dye concentration"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "calculated content of Evans blue"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "cerebral Evans Blue dye extravasation"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "trypan_blue_content",
+      "raw_value": "cerebral trypan blue content"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentration of Evans Blue"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentration of Evans blue"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentration of Evans blue dye"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentration of Evans blue dye in the brain"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentration of Evans blue in brain tissue"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentration of Evans blue in the brain"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentration of Evans blue in the brain extracts"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentration of Evans blue in the mice brains"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "evans_blue_extravasation_concentration",
+      "raw_value": "concentration of Evans blue leaking into the brain parenchyma"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "evans_blue_extravasation_concentration",
+      "raw_value": "concentration of extravasated Evans Blue dye"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "relative_evans_blue_concentration",
+      "raw_value": "concentration ratio of extracted Evans blue dye from the brains to those from control mice"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentrations of Evans blue dye in brain extracts"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "concentrations of Evans blue in the brains"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "content of Evans Blue"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "content of Evans blue"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "content of Evans blue dye in the brain tissues"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "content of Evans blue extravasation"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Content of Evans blue in brain"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "content of Evans blue in brain tissue"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Content of Evans Blue in the brain"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "content of Evans Blue in the brain tissue"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "content of Evans blue in the ischemic hemisphere"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "cortical Evans blue concentration"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Cortical Evans Blue content"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CSF Evans Blue Concentration"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_content",
+      "raw_value": "CSF Evans blue content"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_content",
+      "raw_value": "CSF Evans blue level"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "CSF/blood Evans blue concentration"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "evans_blue_extravasation_diameter",
+      "raw_value": "Diameter of BBB leakage of Evans blue"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "dye_content",
+      "raw_value": "dye content"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "EB ratio (Evans blue (µg/g wet weight)/plasma Evans blue (µg/g))"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evan's Blue concentration in brain tissue"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evan's blue content"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evan's blue content in brain tissue"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evan's blue dye concentration"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evan's blue dye extravasation"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evan's blue dye µg/g brain"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evan's blue extravasation"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evan's Blue leakage"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "evans_blue_penetration",
+      "raw_value": "Evan's blue penetration"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "evans_blue_value",
+      "raw_value": "Evan's blue value"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "evans_blue",
+      "raw_value": "Evans Blue"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "evans_blue",
+      "raw_value": "Evans blue"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue (mg%)"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "relative_evans_blue_content",
+      "raw_value": "Evans blue (mg%) percentage of whole brain"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "evans_blue_absorbance",
+      "raw_value": "Evans blue absorbance levels"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "evans_blue_absorbance",
+      "raw_value": "Evans blue absorption"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "evans_blue_accumulation",
+      "raw_value": "Evans Blue accumulated in the brain"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "evans_blue_accumulation",
+      "raw_value": "Evans blue accumulation"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "evans_blue_accumulation",
+      "raw_value": "Evans blue accumulation in brain parenchyma"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "evans_blue_albumin_concentration",
+      "raw_value": "Evans blue albumin mg %"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "evans_blue_assay",
+      "raw_value": "Evans blue assay"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue brain concentration"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans Blue Concentration"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans Blue concentration"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue concentration"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue concentration in brain parenchyma"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Evans blue concentration in CSF"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans Blue concentration in the brain"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue concentration in the brains"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Evans blue concentration in the cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue concentration in the tissue"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans Blue concentrations"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue concentrations"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans Blue content"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue content"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue content (absorbance at 610 nm)"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue content in brain tissue"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans Blue content in the injured hemisphere"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue content of brain tissue"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue content per cubic millimeter of infarct"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue contents"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "evans_blue_dye",
+      "raw_value": "Evans Blue Dye"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "evans_blue_dye",
+      "raw_value": "Evans Blue dye"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "evans_blue_dye",
+      "raw_value": "Evans blue dye"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "evans_blue_accumulation",
+      "raw_value": "Evans blue dye accumulation"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue dye concentration"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue dye concentration extracted from whole brains normalized to dry brain weight"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans Blue dye content"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue dye content"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans Blue dye content in brain tissue"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue dye content in the brain tissue"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans Blue dye content in the whole brain"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue dye content in tissue"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue dye contents"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans Blue dye extravasation"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue dye extravasation"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans Blue dye leakage"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue dye leakage"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue dye level reaching the brain"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "evans_blue_penetration",
+      "raw_value": "Evans blue dye penetration"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "evans_blue_penetration",
+      "raw_value": "Evans blue dye permeation"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "evans_blue_extracted",
+      "raw_value": "Evans blue extracted from the brain"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "evans_blue_extraction",
+      "raw_value": "Evans blue extraction"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "evans_blue_extraction_ratio",
+      "raw_value": "Evans blue extraction ratio"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_extravasation",
+      "raw_value": "Evans blue extravasated into the CSF"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans Blue extravasation"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue extravasation"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue extravasation (EBE)"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue extravasation amount in brain parenchyma"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue extravasation in brain"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue extravasation in formamide (Abs. at 610 nm)"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "evans_blue_extravasation_index",
+      "raw_value": "Evans Blue Extravasation Index"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "evans_blue_extravasation_index",
+      "raw_value": "Evans blue extravasation index"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "evans_blue_extravasation_index",
+      "raw_value": "Evans Blue extravasation index (I/C)"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue extravasation into brain"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue extravasation per gram tissue"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue extravasation per ischemic hemisphere"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "evans_blue_fluorescence",
+      "raw_value": "Evans blue fluorescence in brain extracts"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "evans_blue_intensity",
+      "raw_value": "Evans Blue fluorescent intensity"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "evans_blue_pixel_density",
+      "raw_value": "Evans Blue fluorescent pixel density"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "ipsilateral_to_contralateral_ratio",
+      "raw_value": "Evans blue ic"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "csf_content",
+      "raw_value": "Evans blue in the CSF"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue in the wet tissue"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "evans_blue_influx",
+      "raw_value": "Evans blue influx"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "evans_blue_intensity",
+      "raw_value": "Evans blue intensity"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans Blue leakage"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue leakage"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue leakage from the whole brain"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans Blue level"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue level"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue level in brain"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue level in cerebral tissue"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans Blue levels"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue levels"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue levels in brain tissue"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans blue levels in the brain cortex"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue mg %"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans blue mg%"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "evans_blue_penetration",
+      "raw_value": "Evans blue penetration"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "evans_blue_penetration_score",
+      "raw_value": "Evans blue penetration score"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "evans_blue_permeability",
+      "raw_value": "Evans blue permeability"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "evans_blue_quantification",
+      "raw_value": "Evans blue quantification"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans Blue quantity relative to amount of tissue weight"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "evans_blue_retention",
+      "raw_value": "Evans blue retention"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "evans_blue_score",
+      "raw_value": "Evans Blue score"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "evans_blue_staining",
+      "raw_value": "Evans blue stain"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "evans_blue_stained_tissue",
+      "raw_value": "Evans Blue stained brain tissue"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "evans_blue_staining",
+      "raw_value": "Evans blue staining"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "evans_blue_staining",
+      "raw_value": "Evans blue staining within the brain"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "evans_blue_uptake",
+      "raw_value": "Evans blue uptake"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "evans_blue_staining",
+      "raw_value": "Evans blue visible in the brain tissue"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "evans_blue_permeability",
+      "raw_value": "Evans blue's permeability"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans blue-albumin leakage"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "evans_blue_positive_area_percentage",
+      "raw_value": "Evans blue-positive area percentage of the contralateral side"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "evans_blue_stained_volume",
+      "raw_value": "Evans blue-stained volume"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evans' blue extravasation"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans' blue in the brain"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans' blue levels in the supernatants of brain homogenates"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "evans_blue_spread",
+      "raw_value": "Evans' Blue Spread in Control Cats"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "evans_blue_spread",
+      "raw_value": "Evans' Blue Spread in White Matter"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans-Blue (EB) content"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans-blue concentrations"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans-blue content"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans-blue content (whole brain)"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans-blue content in whole brain"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans-blue contents in the brain"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "evans_blue_dye",
+      "raw_value": "Evans-blue dye"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans-blue dye concentration"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans-blue dye concentration in whole brain"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Evans-blue dye concentrations"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans-blue dye content"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evans-blue dye in the brain"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Evan’s blue extravasation"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Evens blue content"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "evans_blue_extravasation_extent",
+      "raw_value": "extent of Evans blue extravasation"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "evans_blue_extracted",
+      "raw_value": "extracted Evans Blue"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "evans_blue_extracted",
+      "raw_value": "extracted Evans blue"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "extravasated Evans Blue"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "extravasated Evans blue"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "normalized_evans_blue_extravasation",
+      "raw_value": "extravasated Evans blue normalized to the stroke volume"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "extravasated Evans-blue dye"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "extravasation of Evans blue dye"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "Extravasation of Evans' blue"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "extravascular Evans blue"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "evans_blue_extravascular_concentration",
+      "raw_value": "extravascular Evans blue concentration"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "evans_blue_fluorescence",
+      "raw_value": "fluorescence of Evans blue dye"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "evans_blue_intensity_fold_change",
+      "raw_value": "fold increase of Evans blue intensity"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Hemispheric Evans blue content"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "ipsilateral_to_contralateral_ratio",
+      "raw_value": "I/C ratio of Evans blue"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "evans_blue_increase",
+      "raw_value": "increase of Evans blue"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "blue_stained_area_index",
+      "raw_value": "index of the blue stained areas"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "evans_blue_intensity",
+      "raw_value": "intensity of Evans blue dye"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "evans_blue_extravasation_intensity",
+      "raw_value": "intensity of Evans blue extravasation"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "evans_blue_intensity",
+      "raw_value": "intensity of Evans blue in the brains"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "bbb_permeability_to_evans_blue",
+      "raw_value": "leakage of the BBB to Evans blue"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "level of Evan blue"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "level of Evans Blue"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "level of Evans blue"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "level of Evans Blue in brain tissues"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "level of Evans Blue in extracts from cerebral cortices"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "levels of Evans blue"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "levels of Evans blue in brain tumor"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "levels of Evans blue in the brains"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "evans_blue_to_brain_tissue_ratio",
+      "raw_value": "mass ratio of Evans blue/brain tissue"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "mean amount of Evans blue in brain stem tissue"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "evans_blue_extravasation",
+      "raw_value": "mean Evan's blue dye extravasation"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Mean Evans blue"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "Mean Evans blue concentration"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "evans_blue_surface_concentration",
+      "raw_value": "mean Evans blue surface concentration"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Mean levels of Evans blue in the brains"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "Mean levels of Evans blue in the whole brain"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "evans_blue_value",
+      "raw_value": "mean value for Evans-blue dye"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "evans_blue_value",
+      "raw_value": "Mean value for Evans-blue dye in the whole brain"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "evans_blue_value",
+      "raw_value": "mean value for Evans-blue dye in the whole brain"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "evans_blue_value",
+      "raw_value": "Mean values for Evans blue dye"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "ng Evans blue per g brain"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "normalized_evans_blue_extravasation",
+      "raw_value": "normalized Evans blue extravasation"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "parenchymal Evans blue"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "evans_blue_content",
+      "raw_value": "parenchymal Evans blue content"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "evans_blue_penetration",
+      "raw_value": "penetration of Evan's blue"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "evans_blue_penetration",
+      "raw_value": "penetration of Evans blue dye into the brain tissue"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "evans_blue_positive_area_percentage",
+      "raw_value": "Percentage of the area on the contralateral side positive for Evans blue staining"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "evans_blue_extravasation_percentage",
+      "raw_value": "percentage of the Evans blue extravasation"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "bbb_permeability_to_evans_blue",
+      "raw_value": "permeability (Evans blue leakage)"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "bbb_permeability_to_evans_blue",
+      "raw_value": "permeability to protein-bound Evans blue dye"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "ipsilateral_to_contralateral_ratio",
+      "raw_value": "ratio of Evans blue concentration (ipsilateral/contralateral hemisphere)"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "evans_blue_leakage_to_perfusion_ratio",
+      "raw_value": "ratio of Evans blue dye leakage (µg/g) versus the level of LDF perfusion (% preischemic baseline)"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "relative_evans_blue_accumulation",
+      "raw_value": "relative accumulation of Evans blue dye in extravascular brain tissue"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "relative_evans_blue_content",
+      "raw_value": "relative Evans blue contents"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "relative_evans_blue_content",
+      "raw_value": "relative Evans blue dye content"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "evans_blue_signal",
+      "raw_value": "signals of Evans blue dye in brain slices"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "evans_blue_spread",
+      "raw_value": "Spread of Evans Blue in White Matter"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "intracellular_evans_blue_accumulation_area",
+      "raw_value": "total area of intracellular Evans blue accumulation"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "evans_blue_accumulation",
+      "raw_value": "total Evan Blue accumulation"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "trypan_blue_fluorescence",
+      "raw_value": "Trypan blue fluorescence"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "trypan_blue_fluorescence",
+      "raw_value": "trypan blue fluorescence"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "evans_blue_extravasation_volume",
+      "raw_value": "Volume of Evan's Blue extravasation"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "evans_blue_extravasation_volume",
+      "raw_value": "volume of Evans blue extravasation"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "extravasation_volume",
+      "raw_value": "volumes of Evans blue and/or erythrocyte extravasation"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "evans_blue_concentration",
+      "raw_value": "µg of Evans Blue/g of tissue"
+    }
+  ],
+  "cluster_id": "cluster_ba04d7e76c1959f2",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

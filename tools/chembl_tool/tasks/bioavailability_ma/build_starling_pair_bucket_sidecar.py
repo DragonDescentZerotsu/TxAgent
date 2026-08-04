@@ -28,7 +28,7 @@ DEFAULT_NORMALIZED_DIR = (
     Path("outputs/chembl_tool/tasks/bioavailability_ma/evidence_library")
     / "starling_normalized_v6"
 )
-DEFAULT_OUT_DIR = DEFAULT_NORMALIZED_DIR / "06_pair_buckets"
+DEFAULT_OUT_DIR = DEFAULT_NORMALIZED_DIR / "04_pair_buckets"
 PAIR_BUCKET_RECORDS_FILENAME = "pair_bucket_records.parquet"
 PAIR_BUCKET_METADATA_FILENAME = "pair_bucket_metadata.json"
 LEGACY_FILENAMES = (

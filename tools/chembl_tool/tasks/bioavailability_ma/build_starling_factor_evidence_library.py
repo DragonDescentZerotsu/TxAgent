@@ -32,7 +32,7 @@ DEFAULT_OUT_DIR = "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library
 EVIDENCE_FILENAME = "starling_factor_evidence.jsonl"
 INDEX_FILENAME = "starling_factor_neighbor_index.pkl"
 META_FILENAME = "starling_factor_neighbor_index.meta.json"
-INDEX_VERSION = "bioavailability_ma_starling_factor_neighbor_index.v2"
+INDEX_VERSION = "bioavailability_ma_starling_factor_neighbor_index.v4"
 EXPECTED_DIRECT_HF_RAW_ROWS = 163_815
 EXPECTED_DIRECT_HF_CLEAN_NUMERIC_ROWS = 80_808
 

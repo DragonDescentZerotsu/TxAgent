@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 
-STORE_VERSION = "bioavailability_ma.normalized_v6_store.v2"
+STORE_VERSION = "bioavailability_ma.normalized_v6_store.v3"
 DEFAULT_LOCAL_ROOT = Path(
     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
     "starling_normalized_v6"
@@ -21,19 +21,17 @@ DEFAULT_LOCAL_ROOT = Path(
 DEFAULT_TRACKED_ROOT = Path(
     "artifacts/chembl_tool/tasks/bioavailability_ma/starling_normalized_v6"
 )
-STAGES = tuple(f"{number:02d}_{name}" for number, name in enumerate(
-    (
-        "cleaned",
-        "normalized",
-        "records",
-        "evidence_catalog",
-        "neighbor_index",
-        "pair_buckets",
-        "assay_transfer_policy",
-        "audits",
-    ),
-    start=1,
-))
+STAGES = (
+    "01_cleaned",
+    "02_normalized",
+    "03_records",
+    "04_pair_buckets",
+    "05_assay_transfer_policy",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits",
+)
 DEFAULT_PART_SIZE = 90_000_000
 
 

@@ -139,6 +139,12 @@ STAGE_UPSTREAM_INPUTS = {
     "organize": ("normalized_records", NORMALIZED_RECORDS_FILENAME),
 }
 RECORD_DEPENDENT_DIRECTORIES = (
+    "04_pair_buckets",
+    "05_assay_transfer_policy",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits",
     "06_pair_buckets",
     "07_assay_transfer_policy",
     "07_endpoint_policies",
@@ -185,6 +191,11 @@ def load_task_policy(task_id: str) -> StarlingTaskPolicy:
 
 def build(policy: StarlingTaskPolicy, argv: list[str] | None = None) -> int:
     return _run(policy, parse_args(policy, argv))
+
+
+def run_with_args(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
+    """Run an already-validated argument namespace through the shared stages."""
+    return _run(policy, args)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -303,7 +314,8 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             )
             _write_json(
                 stage_dir / ENDPOINT_REGISTRY_FILENAME,
-                {
+                documents.endpoint_registry
+                or {
                     source_id: inventory["endpoints"]
                     for source_id, inventory in endpoint_inventories.items()
                 },

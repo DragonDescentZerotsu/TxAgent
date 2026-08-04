@@ -1,0 +1,88 @@
+{
+  "audit_version": "skin_reaction_auxiliary_reconciliation.final_integrity.v1",
+  "issues": [],
+  "local_lineage": {
+    "aggregated_local_mapping_sha256": "29ca01c3ae54644d0bf6a8bbdc2079222a69200b911bf8db8ca709a13eb24e4a",
+    "downstream_stage_artifacts_unchanged": true,
+    "runtime_mapping_absent": true
+  },
+  "manifest_integrity": {
+    "packet_manifest_link_matches": true,
+    "policy_links_match": true,
+    "proposal_manifest_files_all_match": true,
+    "provisional_manifest_files_all_match": true,
+    "review_packet_files_all_match": true
+  },
+  "mapping_integrity": {
+    "frozen_passthrough_sections_unchanged": true,
+    "null_masks_preserved": true,
+    "proposal_mapping_valid": true,
+    "section_counts": {
+      "direct_skin_reaction/global_context": {
+        "null_tuples": 1,
+        "tuples": 7174
+      },
+      "direct_skin_reaction/global_severity_grade": {
+        "null_tuples": 8566,
+        "tuples": 10442
+      },
+      "direct_skin_reaction/global_species_context": {
+        "null_tuples": 65,
+        "tuples": 11031
+      },
+      "phototoxicity_irritation_local_damage/global_context": {
+        "null_tuples": 1,
+        "tuples": 157738
+      },
+      "phototoxicity_irritation_local_damage/global_species_context": {
+        "null_tuples": 11,
+        "tuples": 88
+      },
+      "sensitization_aop/global_context": {
+        "null_tuples": 1,
+        "tuples": 6292
+      },
+      "sensitization_aop/global_endpoint_context": {
+        "null_tuples": 1,
+        "tuples": 7350
+      },
+      "sensitization_aop/global_species_context": {
+        "null_tuples": 4481,
+        "tuples": 6292
+      },
+      "skin_exposure/global_context": {
+        "null_tuples": 14,
+        "tuples": 79
+      },
+      "skin_exposure/global_species_context": {
+        "null_tuples": 1228,
+        "tuples": 22241
+      }
+    },
+    "sections": 10,
+    "tuple_coverage_preserved": true
+  },
+  "publication_gate": {
+    "human_approved": false,
+    "publication_blockers": [
+      "human_approval_not_recorded"
+    ],
+    "publication_remains_blocked": true,
+    "publication_status": "awaiting_human_approval"
+  },
+  "replay_integrity": {
+    "accepted_decisions_do_not_overlap": true,
+    "changed_assignments": 8316,
+    "changes_parquet_exact": true,
+    "proposal_mapping_exact": true,
+    "proposal_mapping_sha256": "5cd011cbd536dd5e720e9e7e42c18619788b54e33ec384f56933ee24bb50c6b5"
+  },
+  "review_integrity": {
+    "accepted_decision_file_exact": true,
+    "accepted_decisions": 839,
+    "primary_labels_expected": 17368,
+    "primary_labels_owned": 17368,
+    "roles_pairwise_distinct_for_every_change": true
+  },
+  "status": "passed"
+}

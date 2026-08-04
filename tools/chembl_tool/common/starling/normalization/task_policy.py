@@ -74,6 +74,7 @@ class StageDocuments:
     auxiliary_mapping_manifest: dict[str, Any]
     source_column_contract: dict[str, Any]
     validations: dict[str, Any] = field(default_factory=dict)
+    endpoint_registry: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)

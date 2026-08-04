@@ -1,0 +1,122 @@
+{
+  "policy_version": "skin_reaction_auxiliary_reconciliation_policy.v1",
+  "objective": "Produce compact, method- and mechanism-preserving Skin_Reaction auxiliary vocabularies without imposing a fixed vocabulary size.",
+  "namespace_policy": {
+    "independent_namespaces": [
+      "direct_skin_reaction/global_context",
+      "direct_skin_reaction/global_species_context",
+      "phototoxicity_irritation_local_damage/global_context",
+      "phototoxicity_irritation_local_damage/global_species_context",
+      "sensitization_aop/global_context",
+      "sensitization_aop/global_endpoint_context",
+      "sensitization_aop/global_species_context",
+      "skin_exposure/global_species_context"
+    ],
+    "frozen_passthrough_namespaces": [
+      "direct_skin_reaction/global_severity_grade",
+      "skin_exposure/global_context"
+    ],
+    "cross_namespace_decisions_allowed": false,
+    "rule": "Every semantic decision applies to exactly one source/output namespace. Similar labels in another namespace require a separate decision and may remain different."
+  },
+  "ontology": {
+    "style": "compact_method_and_mechanism_preserving",
+    "hard_vocabulary_cap": null,
+    "context": {
+      "preserve_when_explicit": [
+        "core assay or study method",
+        "distinct regulatory test identity",
+        "in vivo, ex vivo, in vitro, or clinical setting",
+        "photochemical versus non-photochemical method",
+        "materially different biological model"
+      ],
+      "required_distinctions": [
+        "llna versus llna-da versus gpmt versus buehler test versus hript",
+        "patch test versus photopatch test",
+        "3t3 nru versus mtt versus reconstructed epidermis test",
+        "clinical observation versus case report"
+      ],
+      "remove_unless_method_defining": [
+        "compound",
+        "dose",
+        "vendor",
+        "instrument",
+        "anatomical site",
+        "readout",
+        "incidental protocol detail"
+      ]
+    },
+    "endpoint": {
+      "preserve_when_explicit": [
+        "measured biological concept",
+        "nucleophile identity",
+        "biomarker identity",
+        "activation versus depletion versus expression",
+        "clinical sensitization versus individual AOP key event"
+      ],
+      "required_distinctions": [
+        "cysteine depletion versus lysine depletion versus gsh depletion",
+        "cd86 versus cd54 versus il-8",
+        "ec3 versus stimulation index",
+        "keratinocyte activation versus dendritic activation"
+      ],
+      "allowed_equivalence": "Cysteine depletion and cysteine peptide depletion may share one concept when no other measurement distinction is explicit."
+    },
+    "species": {
+      "default_form": "Concise lowercase base species; deduplicate, alphabetize, and join multiple explicit species with ' + '.",
+      "remove": [
+        "strain",
+        "sex",
+        "age",
+        "disease",
+        "treatment",
+        "anatomical site",
+        "tissue preparation"
+      ],
+      "forbidden_inference_sources": [
+        "cell-line name",
+        "assay abbreviation except an explicitly licensed official expansion",
+        "reagent organism",
+        "outside knowledge"
+      ],
+      "phototoxicity_system_rule": "The phototoxicity species/system namespace may retain explicit broad systems such as animal in vivo, in vitro cells, ex vivo tissue, reconstructed tissue, or non-biological/computational context."
+    }
+  },
+  "allowed_actions": {
+    "retain": {"meaning": "Keep one provisional label unchanged."},
+    "merge": {"meaning": "Map two or more equivalent labels to one label within one namespace."},
+    "rename": {"meaning": "Replace one label without changing its raw-value scope."},
+    "split": {
+      "meaning": "Divide one heterogeneous provisional label using explicit raw-value assignments.",
+      "requirements": [
+        "Every affected raw value is assigned exactly once.",
+        "Assignments are deterministic, exhaustive, and non-overlapping.",
+        "Every child label has raw support.",
+        "No child label infers information absent from the raw source."
+      ]
+    }
+  },
+  "review_workflow": {
+    "stages": [
+      "primary_reviewer",
+      "independent_checker",
+      "independent_adjudicator",
+      "human_publication_checkpoint"
+    ],
+    "publication_requires": [
+      "Every non-null label has one primary disposition.",
+      "Every proposed change has a checker and adjudicator with identities distinct from the primary reviewer.",
+      "Every split has exact raw-value coverage.",
+      "No decision crosses a namespace.",
+      "Human approval is recorded."
+    ]
+  },
+  "forbidden_decisions": [
+    "Any merge, rename, or split spanning multiple source/output namespaces.",
+    "Any decision involving a frozen passthrough namespace.",
+    "Any merge that erases an explicit protected method, model, mechanism, nucleophile, biomarker, setting, or species distinction.",
+    "Any species or method inferred from a cell line, reagent, abbreviation not licensed by the source contract, or outside knowledge.",
+    "Any vocabulary-size target used as the sole justification for a semantic merge.",
+    "Any unreviewed change to the runtime mapping."
+  ]
+}

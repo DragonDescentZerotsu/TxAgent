@@ -1,0 +1,1107 @@
+{
+  "assignment_count": 220,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "percent_in_csf",
+      "raw_value": "% detected in the cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "amount [of penicillin] in spinal fluid"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "amount in the cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "amount of cholesterol in the spinal fluid"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "csf_amount",
+      "raw_value": "Amount of Streptomycin in the Spinal Fluid"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "csf_auc",
+      "raw_value": "area under the curve of cerebro-spinal fluid concentration"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "mean_csf_concentration",
+      "raw_value": "average spinal fluid concentration"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "mean_csf_concentration",
+      "raw_value": "average spinal fluid level"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "blood:cerebro-spinal fluid (CSF) ratio"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "blood:spinal fluid concentration ratio"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_spinal_cord_to_plasma_ratio",
+      "raw_value": "brain (the striatum) and spinal cord concentrations relative to plasma levels"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_spinal_cord_to_serum_ratio",
+      "raw_value": "brain and spinal cord concentration / serum concentration"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_spinal_cord_to_plasma_ratio",
+      "raw_value": "brain and spinal cord concentrations / plasma concentration"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_spinal_cord_to_serum_ratio",
+      "raw_value": "brain and spinal cord concentrations / serum level"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_spinal_cord_to_plasma_ratio",
+      "raw_value": "brain and spinal cord concentrations relative to plasma"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_spinal_cord_to_plasma_ratio",
+      "raw_value": "brain concentrations of GBP in spinal fluid relative to plasma"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_spinal_cord_to_serum_ratio",
+      "raw_value": "brain or spinal cord tissue concentrations relative to serum"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebellar spinal fluid concentrations / plasma levels"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "csf_to_caffeine_plasma_ratio",
+      "raw_value": "cerebral spinal concentration / caffeine plasma concentration"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebral spinal fluid (CSF) concentration"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid (CSF)-to-plasma ratio"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_and_brain_to_plasma_ratio",
+      "raw_value": "Cerebral Spinal Fluid (CSF)/plasma and brain/plasma concentration ratios"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid (CSF)/plasma ratio"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid (CSF):plasma ratio"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid / plasma levels"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid compared with plasma"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebral spinal fluid concentration"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebral spinal fluid concentrations"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "csf_to_free_plasma_ratio",
+      "raw_value": "cerebral spinal fluid concentrations / lorlatinib free plasma concentrations"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Cerebral spinal fluid concentrations / plasma levels"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid level / plasma level"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebral spinal fluid levels"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Cerebral spinal fluid levels / plasma levels"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid levels / plasma levels"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "cerebral spinal fluid penetration rate"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid to plasma ratio"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebral spinal fluid vancomycin concentrations"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid-to-plasma concentration ratio"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "cerebral spinal fluid/serum concentration ratio"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "cerebral spinal fluid/serum ratio"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "blood_to_csf_ratio",
+      "raw_value": "cerebral spinal fluid:blood ratio"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid:plasma ratio"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "cerebral spinal fluid:serum ratio"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebral spinal fluid–to–plasma concentration ratio"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebro-spinal fluid (CSF)/plasma ratio"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebro-spinal fluid / plasma concentration"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebro-spinal fluid /plasma ratio"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebro-spinal fluid concentration"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "cerebro-spinal fluid level"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "csf_penetration_rate",
+      "raw_value": "cerebro-spinal fluid penetration rate"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebro-spinal fluid to plasma ratio"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebro-spinal fluid(CSF)/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "cerebro-spinal fluid/plasma ratio"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "cerebro-spinal fluid/serum"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "csf_to_plasma_dialysate_ratio",
+      "raw_value": "cervical spinal fluid concentrations as percentage of plasma dialysate concentrations"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "spinal_cord_concentration",
+      "raw_value": "concentration at 144 h,spinal cord"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "spinal_cord_to_plasma_ratio",
+      "raw_value": "concentration at the site of action in the spinal cord / plasma concentration"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "concentration in cerebro-spinal fluid / plasmatic concentration"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in rabbit spinal fluid"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in spinal fluid"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the cerebral spinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "concentration in the cerebral spinal fluid / plasma"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "concentration in the cerebrum spinal fluid / concentration in the serum"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_spinal_cord_to_blood_ratio",
+      "raw_value": "concentration in the cerebrum, cerebellum and spinal cord in relation to the blood concentration"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the spinal cerebrospinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration in the spinal fluid"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "concentration in the spinal fluid as compared to serum"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "concentration of ampicillin in spinal fluid / simultaneous serum concentration"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentration of digitoxin in the spinal fluid"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "concentration ratio of amitriptyline in the cerebral spinal fluid vs blood"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Concentrations in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in spinal fluid"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in the cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "concentrations in the cerebro-spinal fluid"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "CYC level in spinal fluid"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "distribution ratio between serum and spinal fluid"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "drug levels in lumbar cerebrospinal fluid"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_spinal_cord_tissue_concentration",
+      "raw_value": "dye concentration per milligram of brain and spinal cord tissue"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "spinal_cord_exclusion",
+      "raw_value": "exclusion in the spinal cord"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "free_plasma_to_csf_ratio",
+      "raw_value": "free plasma/cerebral spinal fluid (CSF) ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "free_csf_concentration",
+      "raw_value": "free thyroid hormone concentration in cerebral spinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "maximum_csf_concentration",
+      "raw_value": "highest level of spinal fluid cefoxitin"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "spinal_cord_concentration",
+      "raw_value": "levels in spinal cord"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels in the cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "levels measured in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lumbar and intraventricular concentrations"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lumbar C.S.F. concentration"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "lumbar cerebrospinal fluid/ serum ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lumbar sac spinal fluid concentration"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "lumbar, cisternal and ventricular concentrations"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "lumbar-cerebrospinal-fluid levels / plasma levels"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "lumbar-cerebrospinal-fluid/plasma levels"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "maximum_spinal_cord_concentration",
+      "raw_value": "maximum concentration in spinal cord"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "maximum_csf_concentration",
+      "raw_value": "Maximum concentration in spinal fluid"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "maximum_csf_concentration",
+      "raw_value": "maximum concentration in spinal fluid"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "mean_csf_to_mean_plasma_ratio",
+      "raw_value": "mean cerebral spinal fluid concentration / mean plasma concentration"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "mean_csf_to_plasma_ratio",
+      "raw_value": "mean cerebral spinal fluid concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "mean_csf_to_plasma_ratio",
+      "raw_value": "mean cerebral spinal fluid levels / plasma values"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "mean_csf_to_plasma_ratio",
+      "raw_value": "mean cerebral spinal fluid/plasma concentration"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "mean_csf_penetration",
+      "raw_value": "mean penetration into spinal fluid"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "mean_serum_to_csf_ratio",
+      "raw_value": "mean percentage ratio between serum and spinal fluid values"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "measurable level of penicillin in the spinal fluid"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "median_csf_to_plasma_ratio",
+      "raw_value": "median ratio of concentrations in the cerebral spinal fluid vs. plasma"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "methotrexate concentration in the spinal fluid"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "peak_csf_concentration",
+      "raw_value": "peak cerebral spinal fluid concentrations"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "peak_csf_concentration",
+      "raw_value": "peak concentration in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "peak_csf_concentration",
+      "raw_value": "peak drug level in cerebral spinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "peak_csf_concentration",
+      "raw_value": "peak levels in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "peak_csf_concentration",
+      "raw_value": "peak lumbar fluid concentration"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "blood_to_csf_penetration",
+      "raw_value": "penetration from blood into cerebrospinal fluid (lumbar fluid)"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "serum_to_csf_penetration",
+      "raw_value": "penetration from serum into lumbar fluid"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into infected spinal fluid"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "csf_penetration_ratio",
+      "raw_value": "penetration into spinal fluid (% of serum concentration)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetration into the cerebral spinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "penetrations in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "penicillin concentration in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "percentage in cerebro-spinal fluid compared to serum levels"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "percent_in_csf",
+      "raw_value": "percentage of amine in spinal fluid"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "percent_in_csf",
+      "raw_value": "percentage of dose found in cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "percent_in_csf",
+      "raw_value": "percentage of systemic ondansetron detected in the cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "plasma_and_csf_concentration",
+      "raw_value": "plasma and cerebro-spinal fluid levels"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "plasma/cerebro-spinal fluid concentration"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "plasma_to_spinal_cord_ratio",
+      "raw_value": "plasma/spinal cord ratio"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Probenecid concentration in human lumbar CSF"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "quotient sulphathiazole concentration in spinal fluid/sulphathiazole concentration in blood"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio between the concentrations in the spinal fluid and in the blood plasma"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio between the drug concentrations in cerebral spinal fluid and plasma"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio between the drug concentrations in cerebro-spinal fluid and plasma"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "ratio cerebro-spinal fluid/serum"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of alectinib concentration in cerebral spinal fluid and plasma"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "csf_auc_to_plasma_auc_ratio",
+      "raw_value": "ratio of area under the cerebral spinal fluid concentration–time curve to that in plasma"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "ratio of cerebral spinal fluid to plasma concentration"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "free_plasma_to_csf_ratio",
+      "raw_value": "ratio of free alectinib in plasma and cerebral spinal fluid (CSF)"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "plasma_to_csf_ratio",
+      "raw_value": "ratio of plasma to cerebral spinal fluid concentration"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "ratio of serum lithium to cerebral spinal fluid lithium concentrations"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "serum_to_csf_ratio",
+      "raw_value": "ratio of serum: spinal fluid bromide concentrations"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_spinal_cord_to_serum_ratio",
+      "raw_value": "reduction in the spinal cord/brain compared to the serum"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "reduction of circulating acyclovir into cerebral spinal fluid"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "spinal_cord_concentration",
+      "raw_value": "riluzole spinal cord concentrations"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "serum drug concentration in spinal fluid"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "spinal_cord_and_serum_concentration",
+      "raw_value": "spinal cord and serum concentrations"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "spinal_cord_concentration",
+      "raw_value": "Spinal cord concentration"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "spinal_cord_concentration",
+      "raw_value": "spinal cord concentration"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "spinal_cord_concentration",
+      "raw_value": "spinal cord riluzole levels"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "spinal_cord_concentration",
+      "raw_value": "Spinal cord UA concentration"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "spinal_cord_to_blood_ratio",
+      "raw_value": "spinal cord-to-blood concentration ratio"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "spinal_cord_to_plasma_ratio",
+      "raw_value": "spinal cord-to-plasma ratio"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid / plasma streptomycin levels"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "csf_and_serum_concentration",
+      "raw_value": "Spinal fluid and serum levels"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Spinal fluid concentration"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "spinal fluid concentration"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "csf_to_blood_and_serum_ratio",
+      "raw_value": "spinal fluid concentration / blood and serum concentration ratio"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid concentration / blood concentration"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid concentration / blood level"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "csf_to_peak_serum_ratio",
+      "raw_value": "spinal fluid concentration / peak serum level"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid concentration / plasma concentration"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid concentration / plasma values"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid concentration / serum concentration"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid concentration / serum level"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "csf_to_whole_blood_ratio",
+      "raw_value": "spinal fluid concentration / whole blood concentration"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid concentration as % of blood concentration"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid concentration as % of plasma concentration"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "spinal fluid concentration of bilirubin"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid concentration relative to blood concentration"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Spinal fluid concentrations"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "spinal fluid concentrations"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid concentrations / blood levels"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Spinal fluid concentrations / serum concentrations"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "csf_content",
+      "raw_value": "spinal fluid content"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Spinal fluid drug level"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "spinal fluid glycine nitrogen concentration"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Spinal Fluid Level"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "spinal fluid level"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid level / blood level"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid level / serum level"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid level / serum levels"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Spinal fluid levels"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "spinal fluid levels"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid levels / blood level"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid levels / blood levels"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "csf_to_peripheral_blood_ratio",
+      "raw_value": "spinal fluid levels / peripheral blood levels"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid levels / plasma"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid levels / plasma cladribine level"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid levels / plasma levels"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid levels / serum concentration"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid levels / serum concentrations"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid levels as percent of concomitant serum levels"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid levels as percentage of the serum level"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid levels as ratio of the serum level"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid sulfa level / coexisting blood sulfa level"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid to blood concentration ratio"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid to serum ratio"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid-to-plasma ratio"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid/ serum ratios"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid/blood concentration ratio"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "spinal fluid/blood ratio"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal fluid/plasma ratio"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid/serum concentration"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid/serum concentration ratio"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "spinal fluid/serum ratio"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal-fluid concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "spinal-fluid/plasma concentration ratio"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "steady_state_csf_to_plasma_ratio",
+      "raw_value": "steady-state cerebrospinal spinal fluid (CSF)/plasma ratio"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "steady_state_trough_csf_to_plasma_ratio",
+      "raw_value": "steady-state trough concentration in the cerebral spinal fluid / plasma"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "steady_state_trough_csf_to_plasma_ratio",
+      "raw_value": "steady-state trough concentration in the cerebral spinal fluid / plasma concentration"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "streptomycin levels [in spinal fluid]"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "subdural_fluid_concentration",
+      "raw_value": "subdural fluid concentration"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Sucrose in spinal fluid"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "thiamine level in spinal fluid"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "serum_to_csf_transit_time",
+      "raw_value": "time for complete passage from serum to spinal fluid"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "trough_csf_concentration",
+      "raw_value": "trough concentration in the cerebro-spinal fluid"
+    }
+  ],
+  "cluster_id": "cluster_f37b59b5bd4ea87b",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

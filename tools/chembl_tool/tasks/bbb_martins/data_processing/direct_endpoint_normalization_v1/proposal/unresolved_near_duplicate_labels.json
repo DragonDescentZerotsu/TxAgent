@@ -1,0 +1,471 @@
+[
+  {
+    "left": "apparent_distribution_volume",
+    "right": "apparent_volume_of_distribution",
+    "token_signature": [
+      "apparent",
+      "distribution",
+      "volume",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "brain_average_steady_state_concentration",
+    "right": "brain_steady_state_average_concentration",
+    "token_signature": [
+      "average",
+      "brain",
+      "concentration",
+      "state",
+      "steady",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "average_csf_to_plasma_ratio",
+    "right": "csf_to_average_plasma_ratio",
+    "token_signature": [
+      "average",
+      "csf",
+      "plasma",
+      "ratio",
+      "__relation__",
+      "csf",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "brain_to_whole_blood_ratio",
+    "right": "whole_brain_to_blood_ratio",
+    "token_signature": [
+      "blood",
+      "brain",
+      "ratio",
+      "whole",
+      "__relation__",
+      "brain",
+      "to",
+      "blood"
+    ]
+  },
+  {
+    "left": "brain_cmax_to_plasma_ratio",
+    "right": "brain_to_plasma_cmax_ratio",
+    "token_signature": [
+      "brain",
+      "cmax",
+      "plasma",
+      "ratio",
+      "__relation__",
+      "brain",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "brain_concentration_to_plasma_exposure_ratio",
+    "right": "brain_exposure_to_plasma_concentration_ratio",
+    "token_signature": [
+      "brain",
+      "concentration",
+      "exposure",
+      "plasma",
+      "ratio",
+      "__relation__",
+      "brain",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "brain_concentration_percentage",
+    "right": "brain_percentage_concentration",
+    "token_signature": [
+      "brain",
+      "concentration",
+      "percentage",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "steady_state_unbound_brain_to_plasma_ratio",
+    "right": "unbound_brain_to_plasma_ratio_steady_state",
+    "token_signature": [
+      "brain",
+      "plasma",
+      "ratio",
+      "state",
+      "steady",
+      "unbound",
+      "__relation__",
+      "unbound",
+      "brain",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "brain_tissue_to_total_plasma_ratio",
+    "right": "total_brain_tissue_to_plasma_ratio",
+    "token_signature": [
+      "brain",
+      "plasma",
+      "ratio",
+      "tissue",
+      "total",
+      "__relation__",
+      "brain",
+      "tissue",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "brain_to_plasma_total_ratio",
+    "right": "brain_to_total_plasma_ratio",
+    "token_signature": [
+      "brain",
+      "plasma",
+      "ratio",
+      "total",
+      "__relation__",
+      "brain",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "brain_to_plasma_total_ratio",
+    "right": "total_brain_to_plasma_ratio",
+    "token_signature": [
+      "brain",
+      "plasma",
+      "ratio",
+      "total",
+      "__relation__",
+      "brain",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "brain_to_total_plasma_ratio",
+    "right": "total_brain_to_plasma_ratio",
+    "token_signature": [
+      "brain",
+      "plasma",
+      "ratio",
+      "total",
+      "__relation__",
+      "brain",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "efflux_clearance_to_influx_clearance_ratio",
+    "right": "influx_clearance_to_efflux_clearance_ratio",
+    "token_signature": [
+      "clearance",
+      "clearance",
+      "efflux",
+      "influx",
+      "ratio",
+      "__relation__",
+      "to"
+    ]
+  },
+  {
+    "left": "efflux_to_influx_clearance_ratio",
+    "right": "influx_clearance_to_efflux_ratio",
+    "token_signature": [
+      "clearance",
+      "efflux",
+      "influx",
+      "ratio",
+      "__relation__",
+      "to"
+    ]
+  },
+  {
+    "left": "efflux_to_influx_clearance_ratio",
+    "right": "influx_to_efflux_clearance_ratio",
+    "token_signature": [
+      "clearance",
+      "efflux",
+      "influx",
+      "ratio",
+      "__relation__",
+      "to"
+    ]
+  },
+  {
+    "left": "influx_clearance_to_efflux_ratio",
+    "right": "influx_to_efflux_clearance_ratio",
+    "token_signature": [
+      "clearance",
+      "efflux",
+      "influx",
+      "ratio",
+      "__relation__",
+      "to"
+    ]
+  },
+  {
+    "left": "csf_free_plasma_cmax_ratio",
+    "right": "free_csf_plasma_cmax_ratio",
+    "token_signature": [
+      "cmax",
+      "csf",
+      "free",
+      "plasma",
+      "ratio",
+      "__relation__",
+      "csf",
+      "plasma"
+    ]
+  },
+  {
+    "left": "csf_exposure_to_total_plasma_ratio",
+    "right": "total_csf_to_plasma_exposure_ratio",
+    "token_signature": [
+      "csf",
+      "exposure",
+      "plasma",
+      "ratio",
+      "total",
+      "__relation__",
+      "csf",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "csf_peak_to_plasma_ratio",
+    "right": "csf_to_plasma_peak_ratio",
+    "token_signature": [
+      "csf",
+      "peak",
+      "plasma",
+      "ratio",
+      "__relation__",
+      "csf",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "plasma_peak_to_csf_ratio",
+    "right": "plasma_to_csf_peak_ratio",
+    "token_signature": [
+      "csf",
+      "peak",
+      "plasma",
+      "ratio",
+      "__relation__",
+      "plasma",
+      "to",
+      "csf"
+    ]
+  },
+  {
+    "left": "csf_peak_serum_ratio",
+    "right": "peak_csf_serum_ratio",
+    "token_signature": [
+      "csf",
+      "peak",
+      "ratio",
+      "serum",
+      "__relation__",
+      "csf",
+      "serum"
+    ]
+  },
+  {
+    "left": "csf_peak_to_serum_ratio",
+    "right": "csf_to_peak_serum_ratio",
+    "token_signature": [
+      "csf",
+      "peak",
+      "ratio",
+      "serum",
+      "__relation__",
+      "csf",
+      "to",
+      "serum"
+    ]
+  },
+  {
+    "left": "csf_peak_to_serum_ratio",
+    "right": "peak_csf_to_serum_ratio",
+    "token_signature": [
+      "csf",
+      "peak",
+      "ratio",
+      "serum",
+      "__relation__",
+      "csf",
+      "to",
+      "serum"
+    ]
+  },
+  {
+    "left": "csf_to_peak_serum_ratio",
+    "right": "peak_csf_to_serum_ratio",
+    "token_signature": [
+      "csf",
+      "peak",
+      "ratio",
+      "serum",
+      "__relation__",
+      "csf",
+      "to",
+      "serum"
+    ]
+  },
+  {
+    "left": "csf_to_steady_state_plasma_ratio",
+    "right": "steady_state_csf_to_plasma_ratio",
+    "token_signature": [
+      "csf",
+      "plasma",
+      "ratio",
+      "state",
+      "steady",
+      "__relation__",
+      "csf",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "csf_to_total_plasma_ratio",
+    "right": "total_csf_to_plasma_ratio",
+    "token_signature": [
+      "csf",
+      "plasma",
+      "ratio",
+      "total",
+      "__relation__",
+      "csf",
+      "to",
+      "plasma"
+    ]
+  },
+  {
+    "left": "csf_steady_state_to_serum_ratio",
+    "right": "csf_to_steady_state_serum_ratio",
+    "token_signature": [
+      "csf",
+      "ratio",
+      "serum",
+      "state",
+      "steady",
+      "__relation__",
+      "csf",
+      "to",
+      "serum"
+    ]
+  },
+  {
+    "left": "csf_to_serum_trough_ratio",
+    "right": "csf_to_trough_serum_ratio",
+    "token_signature": [
+      "csf",
+      "ratio",
+      "serum",
+      "trough",
+      "__relation__",
+      "csf",
+      "to",
+      "serum"
+    ]
+  },
+  {
+    "left": "efflux_to_influx_ratio",
+    "right": "influx_to_efflux_ratio",
+    "token_signature": [
+      "efflux",
+      "influx",
+      "ratio",
+      "__relation__",
+      "to"
+    ]
+  },
+  {
+    "left": "percent_extraction",
+    "right": "percent_of_extraction",
+    "token_signature": [
+      "extraction",
+      "percent",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "percent_id",
+    "right": "percent_of_id",
+    "token_signature": [
+      "id",
+      "percent",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "k",
+    "right": "ks",
+    "token_signature": [
+      "k",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "kn",
+    "right": "kns",
+    "token_signature": [
+      "kn",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "logp",
+    "right": "logps",
+    "token_signature": [
+      "logp",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "maximum_peak",
+    "right": "peak_maximum",
+    "token_signature": [
+      "maximum",
+      "peak",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "me",
+    "right": "mes",
+    "token_signature": [
+      "me",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "p0",
+    "right": "p0s",
+    "token_signature": [
+      "p0",
+      "__relation__"
+    ]
+  },
+  {
+    "left": "p1",
+    "right": "p1s",
+    "token_signature": [
+      "p1",
+      "__relation__"
+    ]
+  }
+]

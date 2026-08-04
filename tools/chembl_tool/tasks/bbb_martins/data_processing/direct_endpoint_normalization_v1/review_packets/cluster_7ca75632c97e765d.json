@@ -1,0 +1,1612 @@
+{
+  "assignment_count": 321,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "brain_percentage",
+      "raw_value": "% drug in brain"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "brain_entry_percentage",
+      "raw_value": "% of drug crosses into mouse brain tissue"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "cns_access_percentage",
+      "raw_value": "% of the drug reaching the central nervous system"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "absolute drug concentration in the brain"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "absolute drug concentrations in the brain"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "brain_accumulation_to_serum_ratio",
+      "raw_value": "accumulation of drug in the brain compared to drug serum levels"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "accumulation of the drug in the brain"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "administered drug reaching the brain"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "amount of cocaine in brain tissue / amount of cocaine detected in blood"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "brain_entry_amount",
+      "raw_value": "amount of drug entering barrier-altered brain"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "brain_entry_amount",
+      "raw_value": "amount of drug entering the brain"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "amount of drug found in the brain"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "Amount of drug in brain"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "amount of drug in brain"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "amount of drug in brain tissue"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "amount of drug in the brain vs blood"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "brain_uptake_amount",
+      "raw_value": "amount of drug uptaken by the brain"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "Amount of the drug present in brain tissue"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "brain_penetration_amount",
+      "raw_value": "amount of the drug that penetrated to brain"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "cerebral_circulation_amount",
+      "raw_value": "amount of unchanged drug reaching the cerebral circulation"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Amphetamine concentration"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Antidepressants concentration in brain"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "brain_auc",
+      "raw_value": "area under the brain morphine concentration-time curve"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "cns_to_plasma_auc_ratio",
+      "raw_value": "area under the curve of the drug in the CNS / plasma"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "brain_auc_and_cmax",
+      "raw_value": "AUC and maximum drug concentration in the brain"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_ecf_unbound_auc",
+      "raw_value": "AUC of unbound morphine in brain extracellular fluid"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_accumulation_relative_to_free_drug",
+      "raw_value": "brain accumulation (relative to free drug)"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "brain_plasma_exposure",
+      "raw_value": "brain and plasma drug exposure"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain cocaine concentration"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "brain cocaine levels"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "brain_level_reduction",
+      "raw_value": "brain cocaine levels reduction"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "brain concentrations of free morphine"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "brain_content_relative_to_morphine",
+      "raw_value": "brain content (relative to morphine)"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "brain_bound_concentration",
+      "raw_value": "Brain diazepam concentrations (Specific bound)"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "brain_total_concentration",
+      "raw_value": "Brain diazepam concentrations (Total)"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_unbound_distribution",
+      "raw_value": "brain distribution of unbound morphine"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "brain_distribution_relative_to_morphine",
+      "raw_value": "brain distribution relative to morphine"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "brain drug accumulation"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain drug concentration"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain drug concentration (at 0.25 h)"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain drug concentration (at 0.5 h)"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain drug concentrations"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "brain_to_systemic_exposure_ratio",
+      "raw_value": "brain drug exposure / total systemic exposure"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "brain drug level"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain drug level vs. blood level"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "brain drug levels"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "brain drug levels (Pgp knockout vs WT)"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain drug levels / plasma drug levels"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "brain_localization",
+      "raw_value": "brain drug localization"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_targeting_efficiency",
+      "raw_value": "brain drug targeting efficiency"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "brain_exposure_relative_to_buprenorphine",
+      "raw_value": "brain exposure relative to buprenorphine"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "brain_ecf_concentration",
+      "raw_value": "brain extracellular fluid morphine concentrations"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain fentanyl concentration"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain fentanyl levels / plasma fentanyl levels"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "brain_to_plasma_auc_ratio",
+      "raw_value": "brain hemispheres/plasma morphine AUC₀-5 min ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "brain_interstitial_fluid_to_plasma_auc_ratio",
+      "raw_value": "brain interstitium to plasma area under the drug concentration-time curve"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain levels of the drug / plasma level"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "brain_to_systemic_ratio",
+      "raw_value": "brain levels relative to systemic drug levels"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain morphine concentration"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "brain_concentration_reduction",
+      "raw_value": "brain morphine concentration (reduction)"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "brain morphine concentrations"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "brain morphine content"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Brain morphine levels"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_transport",
+      "raw_value": "brain morphine transport"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Brain naloxone"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "brain naloxone levels"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "brain_penetration_percentage",
+      "raw_value": "brain parenchyma penetration (as % of free drug in plasma)"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "brain tissue drug concentration"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Brain tissue/blood drug concentration ratio"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain to blood drug concentration ratio"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Brain to plasma morphine concentration ratio"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain to plasma morphine concentration ratio"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_total_morphine",
+      "raw_value": "brain total morphine"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "brain-to-blood concentration ratio of unbound drug"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain-to-blood drug concentration ratio"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "brain-to-blood unbound drug concentration ratio"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_to_free_drug_ratio",
+      "raw_value": "brain-to-free drug concentration ratios"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain-to-plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "brain_to_plasma_total_ratio",
+      "raw_value": "brain-to-plasma total drug concentration ratio"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "brain-to-plasma unbound drug concentration ratio"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood concentration ratio (relative to morphine)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_to_blood_total_ratio",
+      "raw_value": "Brain/blood concentration ratio for total drug"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain/blood drug concentration ratio"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "brain_peripheral_blood_ratio",
+      "raw_value": "brain/peripheral blood drug levels"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma cocaine concentration ratio"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "brain_plasma_concentration",
+      "raw_value": "brain/plasma drug concentrations"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "brain_plasma_level",
+      "raw_value": "brain/plasma drug levels"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "brain/plasma norbuprenorphine concentration ratio"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "brain/plasma unbound drug concentration ratio"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain/serum drug levels"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "brain_to_systemic_ratio",
+      "raw_value": "brain/systemic drug level ratio"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "brain_to_systemic_ratio",
+      "raw_value": "brain/systemic drug levels ratio"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "brain:plasma ratio of unbound drug"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "brain:serum drug concentration ratio"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "brain–blood drug concentration ratio"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "Central nervous system drug levels / blood levels"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "cns_to_blood_ratio",
+      "raw_value": "central nervous system drug levels / blood levels"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "cerebral_accumulation",
+      "raw_value": "cerebral drug accumulation"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "cerebral_disposition",
+      "raw_value": "cerebral drug disposition"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "cerebral_uptake",
+      "raw_value": "cerebral morphine uptake"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "CNS clearance (ratio of brain to serum drug levels)"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "cns_to_plasma_ratio",
+      "raw_value": "CNS morphine concentrations / plasma morphine concentrations"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "cocaine in the brain"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Cocaine Level"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Conc. of drug in brain"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentration of ampicillin in the brain"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentration of drug in the brain"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "brain_region_concentration",
+      "raw_value": "concentration of drug in various parts of the brain"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_release",
+      "raw_value": "concentration of ibuprofen released in brain"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Concentration of morphine in the brain"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "concentration of the drug in brain tissue"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentration of the drug in the brain"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "concentration of the drug in the brain tissue"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentration of the drug in the rat brain"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations of the drug in brain"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "concentrations of the pro-drug in the brain"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "cortex_to_plasma_ratio",
+      "raw_value": "cortex: plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "csf_to_brain_ratio",
+      "raw_value": "CSF drug level as % of brain level"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "delivery of the drug to the brain"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "brain_blood_unbound_concentration_difference",
+      "raw_value": "difference in steady-state unbound drug concentrations between the brain and blood"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "brain_tissue_distribution",
+      "raw_value": "distribution of the drug in the brain tissues"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "drug accumulated in brain"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "drug_accumulation",
+      "raw_value": "drug accumulation"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "drug accumulation in brain"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "brain_tumor_accumulation",
+      "raw_value": "drug accumulation in brain tumors"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "drug accumulation in the brain"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "brain_tissue_accumulation",
+      "raw_value": "drug accumulation in the brain tissue"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "drug_accumulation_increase",
+      "raw_value": "drug accumulation increase"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "drug accumulations in brain"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "drug amount in brain"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "drug amounts in the brain"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Drug brain conc."
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "brain_content",
+      "raw_value": "drug brain content"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "drug brain level"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "drug brain levels / drug plasma levels"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "brain_targeting_efficiency",
+      "raw_value": "drug brain targeting efficiency"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "drug brain uptake"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Drug concentration (µg/g of brain)"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "cerebellum_concentration",
+      "raw_value": "drug concentration at the target tissue (cerebellum)"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "drug concentration in brain"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Drug concentration in brain tissue"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "drug concentration in brain tissue"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "drug concentration in brain tissue / plasma concentration"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "hippocampus_tissue_concentration",
+      "raw_value": "drug concentration in brain tissue homogenate (hippocampus tissue)"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "drug concentration in normal rat brain"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Drug concentration in rat brain"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "drug concentration in rat brains"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "abluminal_interface_concentration",
+      "raw_value": "drug concentration in the abluminal interface"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "drug concentration in the brain"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "drug concentration in the brain compared with those in plasma"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "drug concentration in the brain tissue"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "drug concentration in the brain tissues"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "brainstem_concentration",
+      "raw_value": "drug concentration in the brainstem region"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "drug concentration in the rat brain"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "drug concentrations detected in the brain tissue"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "brain_blood_concentration",
+      "raw_value": "drug concentrations in brain and blood"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "brain_parenchyma_concentration",
+      "raw_value": "drug concentrations in brain parenchyma"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "drug concentrations in brain tissue"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Drug concentrations in brain tissues"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "cns_brain_tumor_tissue_to_blood_ratio",
+      "raw_value": "drug concentrations in central-nervous-system and brain tumor tissue / blood values"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "drug concentrations in the brain"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "drug concentrations in the brain / concentrations in the blood"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "brain_to_peak_plasma_ratio",
+      "raw_value": "drug concentrations in the brain / peak plasma levels"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "brain_plasma_concentration",
+      "raw_value": "drug concentrations in the brain and plasma"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "brain_interstitial_space_to_serum_ratio",
+      "raw_value": "drug concentrations in the cerebral interstitial space / serum concentrations"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "drug concentrations in the normal brain"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "brain_amount",
+      "raw_value": "drug contents in the brain"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "drug delivered to the brain"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "drug delivery level to the brain"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "brain_deposition",
+      "raw_value": "drug deposition in brain"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "brain_tissue_distribution",
+      "raw_value": "drug distribution in brain tissue"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "drug distribution in the brain"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "brain_to_plasma_distribution_ratio",
+      "raw_value": "drug distribution in the mouse brain versus plasma"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "brain_distribution",
+      "raw_value": "drug distribution into the brain"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "drug distribution to the brain"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "brain_entry_half_time",
+      "raw_value": "drug entry half-time into brain"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "Drug entry to the brain"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "brain_entry",
+      "raw_value": "drug entry to the brain"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "drug exposure in the brain"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "brain_exposure",
+      "raw_value": "drug exposure to the brain"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "brain_tissue_to_circulating_concentration_ratio",
+      "raw_value": "drug fraction distributed in the brain tissue / circulating concentration"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "brain_concentration_relative_to_wild_type",
+      "raw_value": "drug in brain relative to wild type mice"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "drug in brain tissue"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "drug in the brain"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "drug_level",
+      "raw_value": "drug level"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "drug level in brain"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "drug level in brain tissue"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Drug level in the brain"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "drug level in the brain"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "drug level within the brain"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "drug_level",
+      "raw_value": "Drug levels"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "drug_level",
+      "raw_value": "drug levels"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "drug levels in brain"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "Drug levels in brain (ng/g) of those measured in plasma (ng/ml)"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "cns_spinal_cord_to_plasma_ratio",
+      "raw_value": "drug levels in brain and spinal cord / plasma"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "drug levels in brain tissue"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "brain_tissue_level",
+      "raw_value": "drug levels in brain tissues"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "drug levels in brain tissues / serum levels"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "drug levels in the brain"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Drug levels measured in the brain"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "drug penetration into the brain"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "brain_tissue_quantity",
+      "raw_value": "drug quantities measured in the brain tissue"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "brain_delivery",
+      "raw_value": "drug that reached the brain"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_level_ratio",
+      "raw_value": "drug-level ratio [mdr1a(-/-) versus wild-type] in the brain"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "brain_efflux",
+      "raw_value": "efflux of intracerebroventricularly administered radiolabeled morphine"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "human_brain_concentration",
+      "raw_value": "Estimated human brain drug concentration"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "extracellular_concentration",
+      "raw_value": "extracellular cocaine concentration"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "fentanyl concentration in the brain"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "brain_partitioning",
+      "raw_value": "fentanyl:brain partitioning"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "striatal_ecf_appearance_rate_constant",
+      "raw_value": "first-order rate constant for the appearance of cocaine in the extracellular fluid of the striatum"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "brain_tissue_delivery",
+      "raw_value": "fluorescent model drug delivery into brain tissue"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "brain_uptake_fold",
+      "raw_value": "fold uptake of drug over normal brain"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "plasma_to_brain_transport_fraction",
+      "raw_value": "fraction of plasma drug transported into brain"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "brain_unbound_exposure",
+      "raw_value": "free brain drug exposure"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "free brain drug exposure relative to free plasma concentration"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "free drug concentrations in the murine brain"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "free_drug_exposure",
+      "raw_value": "free drug exposure"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "Free drug levels in brain vs unbound in plasma"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "brain_tumor_unbound_to_plasma_ratio",
+      "raw_value": "free drug of brain tumor tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "free-drug concentrations (brain vs blood)"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "brain_half_life",
+      "raw_value": "half-life of the drug in the brain"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "brain_ecf_unbound_half_life",
+      "raw_value": "half-life of unbound morphine in brain extracellular fluid"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "hippocampus_level",
+      "raw_value": "hippocampal drug levels"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "intact_drug_concentration",
+      "raw_value": "intact drug in brain"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "intratumoral_to_blood_ratio",
+      "raw_value": "intra-tumoral drug concentrations / blood concentration"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "intracerebral_tissue_to_plasma_ratio",
+      "raw_value": "intracerebral tissue-to-plasma drug concentration ratio"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "intratumoral_level",
+      "raw_value": "intratumoural drug levels"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "brain_blood_transfer_rate_constant",
+      "raw_value": "k (transfer of drug between the blood and brain compartments)"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "level of drug in the brain"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "level of penicillin in the brain"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "levels of drug in brain versus blood"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "levels of drug in the blood compared to the brain"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "brain_csf_to_plasma_ratio",
+      "raw_value": "levels of drug in the brain and cerebrospinal fluid / plasma concentration"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "whole_brain_level",
+      "raw_value": "levels of drug in the whole brain"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "levels of the drug in the brain"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "local drug concentrations in the brain tissues"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "brain_unbound_maximum_concentration",
+      "raw_value": "maximal concentration of unbound drug in the brain"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "brain_maximum_concentration",
+      "raw_value": "maximal drug concentration reached in brain"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "brain_maximum_level",
+      "raw_value": "maximum brain drug levels at 8 h"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "brain_maximum_concentration",
+      "raw_value": "Maximum brain opiate concentrations"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "brain_maximum_concentration",
+      "raw_value": "maximum drug concentration in rat brain"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "cns_maximum_concentration",
+      "raw_value": "maximum drug concentration in the CNS"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "cortex_mean_concentration",
+      "raw_value": "mean concentration of cocaine in the cortex"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "brain_mean_concentration",
+      "raw_value": "mean concentration of the drug in the brain"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "brain_mean_level",
+      "raw_value": "mean drug levels in the brain"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "brain_peak_concentration",
+      "raw_value": "mean peak morphine concentration in the brain"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "mean ratio of the drug concentration in brain relative to serum"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "brain_mean_concentration",
+      "raw_value": "Mean Value of Cocaine (Brain)"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "brain_accumulation",
+      "raw_value": "methadone accumulation in the brain"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "methadone concentrations at brain"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "micrograms of cocaine per gram of brain tissue"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "micrograms of cocaine recovered per gram of brain tissue"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "morphine brain concentration"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "morphine concentration ratio (brain:serum)"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "morphine concentrations in the brain"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Morphine concn (Brain)"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Mouse brain drug concentration with convulsion/death"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "plasma_to_brain_ratio",
+      "raw_value": "P/B ratio (concentration of drug in plasma/concentration of drug in brain)"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "mesolimbic_dopamine_system_peak_concentration",
+      "raw_value": "peak cocaine concentration in the mesolimbic dopamine system"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "brain_peak_concentration",
+      "raw_value": "peak concentration of cocaine in brain"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "brain_peak_concentration",
+      "raw_value": "peak drug concentration (brain)"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "brain_tissue_peak_level",
+      "raw_value": "Peak drug levels in brain tissue"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "extracellular_peak_concentration",
+      "raw_value": "peak morphine concentrations in the extracellular space"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "brain_penetration",
+      "raw_value": "penetration of the drug in the brain"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "brain_level",
+      "raw_value": "Penicillin levels in brain"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "plasma_to_brain_percentage",
+      "raw_value": "percentage of drug in plasma entering the brain"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "plasma_to_brain_csf_percentage",
+      "raw_value": "percentage of plasma drug concentrated in the brain and CSF"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "cns_access_percentage",
+      "raw_value": "percentage of systemically administered morphine gaining access to the CNS"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "brain_to_blood_percentage",
+      "raw_value": "pharmacodynamic distribution in the brain as percentage of initial concentration in blood"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "plasma_to_brain_accumulation_ratio",
+      "raw_value": "plasma- to-brain drug accumulation ratio"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "plasma_to_brain_accumulation_ratio",
+      "raw_value": "plasma-to-brain drug accumulation ratio"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "target_engagement_ratio",
+      "raw_value": "predicted target engagement ratio (ratio of the average steady-state unbound drug brain concentration to the in vitro IC50 for CDK4/6 inhibition)"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "brain_blood_equilibrium_rate_constant",
+      "raw_value": "rate constant for the equilibrium of morphine between the blood and CNS"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "cerebral_concentration_ratio",
+      "raw_value": "Ratio (abcb1ab-/- / abcb1ab+/+) of cerebral drug concentrations"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "plasma_to_brain_amount_ratio",
+      "raw_value": "ratio between amounts of morphine in the plasma as against the brain"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "brain_to_venous_blood_auc_ratio",
+      "raw_value": "ratio between brain and venous blood morphine AUC"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "plasma_to_brain_amount_ratio",
+      "raw_value": "ratio between the amounts of morphine in plasma versus brain"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "plasma_to_brain_amount_ratio",
+      "raw_value": "ratio between the amounts of morphine in the plasma as against the brain"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "ratio between the concentration of morphine in blood over that in brain"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain : plasma morphine concentrations"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "ratio of brain drug concentration to serum concentration"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of brain: plasma drug levels"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "brain_tissue_to_blood_ratio",
+      "raw_value": "ratio of drug concentration in brain tissue and blood"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of drug concentration in brain to plasma"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of drug concentration in brain/plasma levels"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of drug concentration in the brain to the plasma"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "ratio of drug concentrations in brain over drug concentrations in serum"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of drug in brain and plasma"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "ratio of drug levels in blood to those in brain"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "brain_to_femoral_blood_ratio",
+      "raw_value": "Ratio of morphine concentrations in brain to femoral blood"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "brainstem_to_femoral_blood_ratio",
+      "raw_value": "Ratio of morphine concentrations in brainstem to femoral blood"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "cerebellum_to_femoral_blood_ratio",
+      "raw_value": "Ratio of morphine concentrations in cerebellum to femoral blood"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "blood_to_brain_ratio",
+      "raw_value": "ratio of the amounts of morphine in blood over those in brain"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "brain_tissue_to_serum_ratio",
+      "raw_value": "ratio of the concentration of drug in brain tissue to that in serum"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "ratio of the concentration of drug in the brain and blood"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "brain_to_plasma_ratio",
+      "raw_value": "ratio of the drug concentration in the brain over that in the plasma"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "ratio of unbound morphine between brain and blood"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "brain_to_blood_unbound_ratio",
+      "raw_value": "ratio of unbound morphine concentration in brain to that in blood"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "regional_brain_recovery",
+      "raw_value": "recovery of labelled drugs in different brain regions"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "brain_interstitial_fluid_to_blood_unbound_ratio",
+      "raw_value": "released, unbound, active drug in the brain interstitial fluid compared to the available, unbound drug in the blood"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "brain_retention",
+      "raw_value": "retention of the methadone enantiomers in the brain"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "brain_serum_slope",
+      "raw_value": "slope of brain and serum methadone levels"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "brain_to_plasma_total_ratio",
+      "raw_value": "total (bound and unbound) brain drug concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "brain_total_exposure",
+      "raw_value": "Total brain drug exposure"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "total_exposure",
+      "raw_value": "total drug exposure"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "brain_total_exposure",
+      "raw_value": "total drug exposure over time in the brain"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "brain_tumor_to_plasma_ratio",
+      "raw_value": "total drug of brain tumor tissue/plasma ratio"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "brain_blood_transfer_rate_constant",
+      "raw_value": "transport of cocaine between the blood and brain (k)"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "unbound brain drug concentrations / plasma concentrations"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "unbound drug brain to plasma ratio (Cb:Cp)"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "unbound drug concentration in the brain"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "unbound drug concentrations in the brain"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "kp_uu_brain",
+      "raw_value": "unbound drug in brain to unbound drug in plasma concentration ratio"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "brain_ecf_unbound_concentration",
+      "raw_value": "unbound extracellular concentration of morphine in the brain"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "brain_unbound_concentration",
+      "raw_value": "unbound morphine concentration in brain"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "brain_ecf_unbound_concentration",
+      "raw_value": "unbound morphine in the brain ECF (ratio mdr1a -/- to +/+)"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "cortex_to_plasma_ratio",
+      "raw_value": "unchanged drug concentration ratio (cerebral cortex/plasma)"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "whole_brain_concentration",
+      "raw_value": "Whole brain drug concentration"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "whole_brain_to_blood_ratio",
+      "raw_value": "whole brain/blood morphine concentration ratio"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "µg of morphine per g of brain tissue"
+    }
+  ],
+  "cluster_id": "cluster_7ca75632c97e765d",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

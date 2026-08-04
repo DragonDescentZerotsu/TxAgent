@@ -1,0 +1,18 @@
+{
+  "history_version": "bbb_martins_direct_endpoint_raw_review_round.v1",
+  "round": 1,
+  "status": "superseded_by_targeted_adjudication_remediation",
+  "artifacts": {
+    "primary_review.jsonl": {
+      "sha256": "86a05878d32ecd00560fda0fd8e09ade125dfec29badf9fdb0e7ee1276fff532"
+    },
+    "checker_review.jsonl": {
+      "sha256": "14ddc16f4e6dca94228d741654361d55133d311932d41c1d8b884c3e94446262"
+    },
+    "adjudication_review.jsonl": {
+      "sha256": "88347c0540e7bfb53a22ef40986a38a467b702d343ede9745ce6282728716566"
+    }
+  },
+  "reason": "Preserve the first complete independent review round before applying narrowly scoped corrections prompted by adjudicator rejections and cleaned-alias conflicts.",
+  "human_approved": false
+}

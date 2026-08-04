@@ -1,0 +1,107 @@
+{
+  "accepted_decision_count": 41,
+  "adjudication_file": "adjudication_sensitization_by_phototoxicity.jsonl",
+  "adjudication_row_count": 55,
+  "adjudication_sha256": "a759d05ed4c59478014067f0af6180e178e8d30113954af238358aac7e7ec2d5",
+  "adjudicator_departures_from_checker": [
+    "primary_sensitization_525ac19174bb08f4"
+  ],
+  "adjudicator_id": "skin_phototoxicity_audit",
+  "changed_assignment_scope": 2478,
+  "checker_disagreement_count": 13,
+  "checker_disagreement_ids": [
+    "primary_sensitization_0f003d23451a736e",
+    "primary_sensitization_24e689c2c7fdb763",
+    "primary_sensitization_4053c50b54366ac0",
+    "primary_sensitization_5085601e6f219d2b",
+    "primary_sensitization_6530fc25f9d8bb60",
+    "primary_sensitization_69124810b1994d2e",
+    "primary_sensitization_6cf3b93b84b6d396",
+    "primary_sensitization_7690dcd241dbbb59",
+    "primary_sensitization_81ddbb75b720a53e",
+    "primary_sensitization_8227e744d6826853",
+    "primary_sensitization_83fbc016c256ac1a",
+    "primary_sensitization_88ec2db2f09bb60f",
+    "primary_sensitization_e2bed948404bb89e"
+  ],
+  "checker_disagreement_resolution_counts": {
+    "reject": 13
+  },
+  "checker_file": "checker_sensitization_by_direct.jsonl",
+  "checker_sha256": "ba041cf84317221f50bfba395221e94bd838fccee0f74245b4569cc420d3e6f8",
+  "checker_summary_sha256": "e8ddaca1bca7775f0d76513245c7e15f3c24de0c74b502f6a888deb34e4baaa8",
+  "coverage": {
+    "adjudication_ids": 55,
+    "changed_decisions_expected": 55,
+    "duplicate_ids": 0,
+    "every_change_adjudicated_exactly_once": true,
+    "every_checker_disagreement_explicitly_resolved": true,
+    "extra_ids": [],
+    "missing_ids": []
+  },
+  "label_catalog_sha256": "4cdc3ac99a19f32889eb763d18b16256e73329e0d95cb31c2e7f4d951a08a160",
+  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "policy_sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017",
+  "primary_file": "primary_sensitization.jsonl",
+  "primary_sha256": "7ba473b9b8d4113f76c23f3e73df0bdb1d1a92bcade660efc10feed8482fc24c",
+  "primary_summary_sha256": "ea95b0f45bc376dc241c90690cbb61b9f40b9781f4b708d3f096a8b1040a1ffb",
+  "reviewed_assignment_count": 19931,
+  "reviewed_cluster_count": 200,
+  "reviewed_packet_count": 6,
+  "reviewed_packet_ids": [
+    "sensitization_aop__global_context__packet_0001",
+    "sensitization_aop__global_context__packet_0002",
+    "sensitization_aop__global_endpoint_context__packet_0001",
+    "sensitization_aop__global_endpoint_context__packet_0002",
+    "sensitization_aop__global_species_context__packet_0001",
+    "sensitization_aop__global_species_context__packet_0002"
+  ],
+  "shared_consolidation_validation": {
+    "accepted_changes": 41,
+    "change_decisions": 55,
+    "checker_disagreements": 13,
+    "primary": {
+      "action_counts": {
+        "merge": 52,
+        "retain": 2277,
+        "split": 3
+      },
+      "decisions": 2332,
+      "labels_expected": 2386,
+      "labels_missing": 0,
+      "labels_owned": 2386,
+      "valid": true
+    },
+    "rejected_changes": 14,
+    "valid": true
+  },
+  "summary_version": "skin_reaction_auxiliary_sensitization_adjudication.v1",
+  "validations": {
+    "adjudicator_identity_is_uniform": true,
+    "affected_counts_match_provenance": true,
+    "packet_hashes_match_manifest": true,
+    "packet_items_exactly_match_provenance": true,
+    "primary_checker_proposal_runtime_and_downstream_artifacts_unchanged": true,
+    "rationales_are_substantive": true,
+    "roles_are_pairwise_independent": true,
+    "split_raw_assignments_are_exhaustive": true,
+    "verdicts_are_allowed": true
+  },
+  "verdict_counts": {
+    "accept": 41,
+    "reject": 14
+  },
+  "verdict_counts_by_namespace": {
+    "sensitization_aop/global_context": {
+      "accept": 20,
+      "reject": 9
+    },
+    "sensitization_aop/global_endpoint_context": {
+      "accept": 21,
+      "reject": 2
+    },
+    "sensitization_aop/global_species_context": {
+      "reject": 3
+    }
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "assignments_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/provenance/cluster_assignments.parquet",
+  "assignments_sha256": "54a9780d3ae8fe10ba42d2f0efcc452e9f5a3467cf755e9fd41f1dc6ac973642",
+  "change_audit_by_namespace": {
+    "sensitization_aop/global_context": {
+      "change_decisions": 29,
+      "changed_assignments": 622,
+      "checked_decisions": 29
+    },
+    "sensitization_aop/global_endpoint_context": {
+      "change_decisions": 23,
+      "changed_assignments": 320,
+      "checked_decisions": 23
+    },
+    "sensitization_aop/global_species_context": {
+      "change_decisions": 3,
+      "changed_assignments": 1536,
+      "checked_decisions": 3
+    }
+  },
+  "changed_assignment_scope": 2478,
+  "checker_file": "checker_sensitization_by_direct.jsonl",
+  "checker_id": "skin_direct_audit",
+  "checker_row_count": 55,
+  "checker_sha256": "ba041cf84317221f50bfba395221e94bd838fccee0f74245b4569cc420d3e6f8",
+  "disagreement_ids": [
+    "primary_sensitization_0f003d23451a736e",
+    "primary_sensitization_24e689c2c7fdb763",
+    "primary_sensitization_4053c50b54366ac0",
+    "primary_sensitization_5085601e6f219d2b",
+    "primary_sensitization_6530fc25f9d8bb60",
+    "primary_sensitization_69124810b1994d2e",
+    "primary_sensitization_6cf3b93b84b6d396",
+    "primary_sensitization_7690dcd241dbbb59",
+    "primary_sensitization_81ddbb75b720a53e",
+    "primary_sensitization_8227e744d6826853",
+    "primary_sensitization_83fbc016c256ac1a",
+    "primary_sensitization_88ec2db2f09bb60f",
+    "primary_sensitization_e2bed948404bb89e"
+  ],
+  "disagreements": [
+    {
+      "decision_id": "primary_sensitization_0f003d23451a736e",
+      "reason": "The raw scopes segregate a protected experimental setting: 'glutathione assay' consists of ex vivo or in vivo mouse-skin measurements, while 'gsh assay' includes modeled, in-chemico, and static chemoassays. Mapping all rows to gsh assay removes the explicit in-vivo/ex-vivo versus in-chemico/model distinction; these scopes require separate labels or a setting-aware split."
+    },
+    {
+      "decision_id": "primary_sensitization_24e689c2c7fdb763",
+      "reason": "The raw scope includes 'GSH adduction / protein thiol adduction'. A protein-thiol-only final label drops the explicitly named GSH nucleophile, which the endpoint policy requires to remain distinct. That combined row needs its own combined concept or an evidence-supported split before consolidation."
+    },
+    {
+      "decision_id": "primary_sensitization_4053c50b54366ac0",
+      "reason": "The contact-sensitivity scope is not uniformly a test: it includes naturally acquired contact sensitivity assessment, human contact sensitivity, and in-vivo challenge observations. Mapping every row to contact sensitivity test invents a test method for observational/assessment rows, so the raw scope needs a study-type split before consolidation."
+    },
+    {
+      "decision_id": "primary_sensitization_5085601e6f219d2b",
+      "reason": "Several owned rows state only generic guinea-pig photosensitization/control testing, whereas the proposed final label asserts the narrower immune photoallergy concept. Other rows explicitly state photoallergy or photocontact sensitivity, but that does not license rewriting every generic photosensitization row as photoallergy; retain the generic label or split only explicitly allergic rows."
+    },
+    {
+      "decision_id": "primary_sensitization_6530fc25f9d8bb60",
+      "reason": "All five rows assigned to guinea pig + mouse infer mouse solely from LLNA/local-lymph-node wording; none explicitly says mouse, mice, or murine. The frozen sensitization species prompt explicitly states 'LLNA alone does not explicitly state a species', so these assignments violate the no-assay-inference contract and must remain guinea pig."
+    },
+    {
+      "decision_id": "primary_sensitization_69124810b1994d2e",
+      "reason": "The clinical input is explicitly a clinical human setting, while the target scope also includes a combined reconstructed-human-epidermis and volunteer record and generic human sensitization methods. The proposed label does not preserve clinical versus reconstructed/in-vitro model identity; this requires a setting-aware split rather than a blanket merge."
+    },
+    {
+      "decision_id": "primary_sensitization_6cf3b93b84b6d396",
+      "reason": "The sole guinea pig + human + mouse assignment adds mouse only because the row contains LLNA; it never explicitly states mouse, mice, or murine. The frozen source prompt says LLNA alone does not support species, so the proposed split is forbidden."
+    },
+    {
+      "decision_id": "primary_sensitization_7690dcd241dbbb59",
+      "reason": "The only protein-binding-study row is a 'T-cell clone protein binding study'; the raw text does not establish equivalence to the heterogeneous chemical/protein haptenation, albumin, SPR, radiolabel, epidermal, and plasma protein-binding assays in the other scope. Changing study to assay would infer a core method not supported by that singleton."
+    },
+    {
+      "decision_id": "primary_sensitization_81ddbb75b720a53e",
+      "reason": "The complete evidence is only one vague 'in vivo dermal study' row and one vague 'in vivo dermal test' row. With no shared named protocol or method, the policy does not permit assuming study and test are the same core method; both labels should remain until stronger source evidence exists."
+    },
+    {
+      "decision_id": "primary_sensitization_8227e744d6826853",
+      "reason": "The guinea-pig-sensitization scope is heterogeneous across explicit studies, models, assays, challenges, and named Buehler/GPMT/closed-epicutaneous methods. Mapping the whole scope plus a RIPT row to one generic test fails the required named-method and study-type preservation; these raw values need method-aware splits before any merge."
+    },
+    {
+      "decision_id": "primary_sensitization_83fbc016c256ac1a",
+      "reason": "The cysteine-and-GSH scope contains an explicit multi-nucleophile row naming GSH, cysteine, tryptophan, histidine, arginine, and valine, plus a row naming protein cysteine adducts. Mapping every row to cysteine and gsh adduct formation erases explicitly measured nucleophiles; the heterogeneous rows require exhaustive endpoint splits."
+    },
+    {
+      "decision_id": "primary_sensitization_88ec2db2f09bb60f",
+      "reason": "All six human + mouse assignments add mouse solely from LLNA/local-lymph-node wording and contain no explicit mouse, mice, or murine term. The frozen source prompt explicitly maps local lymph node assay to no species, so the split infers an unstated species and must be rejected."
+    },
+    {
+      "decision_id": "primary_sensitization_e2bed948404bb89e",
+      "reason": "The two exact rows are a nickel-induced hypersensitivity inhibition study and a human hypersensitivity test. They differ in objective, setting, and study type; mapping both to hypersensitivity study is not a wording-only reconciliation."
+    }
+  ],
+  "label_catalog_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/label_catalog.parquet",
+  "label_catalog_sha256": "4cdc3ac99a19f32889eb763d18b16256e73329e0d95cb31c2e7f4d951a08a160",
+  "packet_manifest_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/review_packets/manifest.json",
+  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "packet_sha256": {
+    "sensitization_aop__global_context__packet_0001.json": "f10191b23abd947f009b2a3cf3f262a2b61682bc0b8605f0b9b470f133f4dc64",
+    "sensitization_aop__global_context__packet_0002.json": "4f2614e3eea6b981bb18ffadd948ee8af42681eb1e2ae047c483a7ef852d41eb",
+    "sensitization_aop__global_endpoint_context__packet_0001.json": "5ebb084de97e8f68f95e53e285a0fcbd4adbf56ba04961a2ec3baa83cbe734ca",
+    "sensitization_aop__global_endpoint_context__packet_0002.json": "4b71a187e8992b6c15adee6fe5fb75e60f5be721073eac8b13266cf8849465b4",
+    "sensitization_aop__global_species_context__packet_0001.json": "613804a44f40cb4a1596fe34307c5b3f64ea7bda142eda3961578d8728539072",
+    "sensitization_aop__global_species_context__packet_0002.json": "5ca09846145b609ef5ffa37dc5d055cc74d63124e206d2106437a0995ee9418c"
+  },
+  "policy_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_policy.json",
+  "policy_sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017",
+  "primary_change_count": 55,
+  "primary_file": "primary_sensitization.jsonl",
+  "primary_sha256": "7ba473b9b8d4113f76c23f3e73df0bdb1d1a92bcade660efc10feed8482fc24c",
+  "publication_status": "independent_checker_only; adjudication and human publication approval remain required; runtime mapping and downstream stages are unchanged",
+  "reviewed_assignment_count": 19931,
+  "reviewed_cluster_count": 200,
+  "reviewed_namespaces": [
+    "sensitization_aop/global_context",
+    "sensitization_aop/global_endpoint_context",
+    "sensitization_aop/global_species_context"
+  ],
+  "reviewed_packet_count": 6,
+  "reviewed_packet_ids": [
+    "sensitization_aop__global_context__packet_0001",
+    "sensitization_aop__global_context__packet_0002",
+    "sensitization_aop__global_endpoint_context__packet_0001",
+    "sensitization_aop__global_endpoint_context__packet_0002",
+    "sensitization_aop__global_species_context__packet_0001",
+    "sensitization_aop__global_species_context__packet_0002"
+  ],
+  "shared_validation": {
+    "checker_schema_and_coverage": {
+      "accepted_changes": 55,
+      "change_decisions": 55,
+      "checker_disagreements": 13,
+      "primary": {
+        "action_counts": {
+          "merge": 52,
+          "retain": 2277,
+          "split": 3
+        },
+        "decisions": 2332,
+        "labels_expected": 2386,
+        "labels_missing": 0,
+        "labels_owned": 2386,
+        "valid": true
+      },
+      "rejected_changes": 0,
+      "valid": true
+    },
+    "primary": {
+      "action_counts": {
+        "merge": 52,
+        "retain": 2277,
+        "split": 3
+      },
+      "decisions": 2332,
+      "labels_expected": 2386,
+      "labels_missing": 0,
+      "labels_owned": 2386,
+      "valid": true
+    }
+  },
+  "summary_version": "skin_reaction_auxiliary_independent_sensitization_checker.v1",
+  "validations": {
+    "checker_identity_is_uniform": true,
+    "checker_is_independent_of_primary": true,
+    "every_sensitization_change_checked_exactly_once": true,
+    "no_retain_decisions_checked": true,
+    "packet_hashes_match_manifest": true,
+    "packet_items_exactly_match_provenance": true,
+    "primary_counts_and_input_labels_match_provenance": true,
+    "protected_method_setting_species_and_endpoint_distinctions_checked": true,
+    "rationales_are_substantive": true,
+    "split_raw_assignments_are_exhaustive": true,
+    "verdicts_are_allowed": true
+  },
+  "verdict_counts": {
+    "agree": 42,
+    "disagree": 13
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "checker_file": "checker_direct_by_passive.jsonl",
+  "checker_id": "bio_reconcile_audit",
+  "checker_row_count": 120,
+  "checker_sha256": "96db38232e845c232799aed4b9b69354d6d35e0d2b361d7d9f9908a97ea56c94",
+  "disagreement_ids": [
+    "direct_context_merge_0002",
+    "direct_context_merge_0003",
+    "direct_context_merge_0005",
+    "direct_context_merge_0033",
+    "direct_context_merge_0035",
+    "direct_context_merge_0039",
+    "direct_context_merge_0040",
+    "direct_context_merge_0046",
+    "direct_species_merge_0001",
+    "direct_species_merge_0002",
+    "direct_species_merge_0005",
+    "direct_species_merge_0006",
+    "direct_species_merge_0007",
+    "direct_species_merge_0009",
+    "direct_species_rename_0012",
+    "direct_species_rename_0013",
+    "direct_species_rename_0014",
+    "direct_species_rename_0015"
+  ],
+  "disagreements": [
+    {
+      "decision_id": "direct_context_merge_0002",
+      "reason": "Exact raw assignments are not uniformly a brain-to-plasma ratio: the scope includes 'plasma-to-brain transfer coefficient measurement', 'plasma-brain exchange', and non-ratio distribution records. Mapping the whole scope to brain/plasma ratio reverses or invents direction for those rows; the bucket requires an explicit direction/type split before consolidation."
+    },
+    {
+      "decision_id": "direct_context_merge_0003",
+      "reason": "The claimed CSF-to-plasma direction is contradicted by exact rows including 'plasma-to-CSF ratio', 'plasma/CSF concentration ratio', and 'Plasma/CSF ratio measurement'. A single csf/plasma final label reverses those explicit ratios, so direction-preserving reconciliation requires a split."
+    },
+    {
+      "decision_id": "direct_context_merge_0005",
+      "reason": "The raw scopes are not only punctuation variants: one includes diagnostic ultrasound with microbubbles, while the other is dominated by explicit FUS, HIFU, and LIPU systems. Focused/therapeutic versus diagnostic ultrasound is an assay and BBB-disruption modality distinction that the generic final label does not preserve."
+    },
+    {
+      "decision_id": "direct_context_merge_0033",
+      "reason": "The exact rows contain materially different models: MDCKII-MDR1 monolayers and a paired 'MDCK and MDCK-MDR1 cell monolayers' control/transfectant system. The proposed generic MDCK-MDR1 monolayer removes explicit MDCK-II subtype and paired-control model identity."
+    },
+    {
+      "decision_id": "direct_context_merge_0035",
+      "reason": "Two exact rows explicitly state 'MRI-guided FUS with MBs' or 'MRI-guided FUS-MB', whereas other rows state MRI-guided focused ultrasound without microbubbles. The proposed final drops the explicit microbubble-assisted barrier-opening configuration and therefore needs a mechanism-state split."
+    },
+    {
+      "decision_id": "direct_context_merge_0039",
+      "reason": "The two mri-imaging rows explicitly involve intravenous gadolinium/GdDTPA, and the wider owned scope also contains contrast-enhanced/DCE, T2-ASL, and T2-weighted FLAIR records. Consolidating all of them to plain mri erases explicit contrast and MRI-sequence modality rather than removing only a redundant imaging suffix."
+    },
+    {
+      "decision_id": "direct_context_merge_0040",
+      "reason": "The contrast-enhanced-mri scope contains explicit 'CE-T2-FLAIR imaging', 'contrast-enhanced FLAIR imaging', and 'delayed postcontrast FLAIR imaging'. The proposed generic contrast-enhanced MRI output does not preserve the explicit T2/FLAIR modality; these rows require a sequence-aware split."
+    },
+    {
+      "decision_id": "direct_context_merge_0046",
+      "reason": "The div-bbb provisional scope is heterogeneous: several rows are only BBB Kit/BBB-RTU products rather than DIV-BBB, and it separately includes GR-inhibited and untreated DIV-BBB states. Mapping every row to div-bbb model invents DIV identity for kit rows and removes an explicit inhibition state."
+    },
+    {
+      "decision_id": "direct_species_merge_0001",
+      "reason": "Cattle and cow are not safe canonical synonyms under the sex-removal policy: the cattle scope explicitly includes 'steers' and Bos taurus, while cow can denote an adult female. The neutral species label should be cattle, not cow."
+    },
+    {
+      "decision_id": "direct_species_merge_0002",
+      "reason": "The exact evidence says cattle/bovine plus rat and does not establish female cattle. Normalizing to cow + rat adds sex specificity; cattle + rat is the neutral explicit-species form."
+    },
+    {
+      "decision_id": "direct_species_merge_0005",
+      "reason": "The scopes are not uniformly equally specific: common marmoset and C. jacchus explicitly identify Callithrix jacchus, while two marmoset-monkey rows state only generic marmoset. Merging all to marmoset discards supported primate specificity; the generic rows and common-marmoset rows require separate dispositions."
+    },
+    {
+      "decision_id": "direct_species_merge_0006",
+      "reason": "The primate aliases themselves are equivalent, but the owned raw scope also contains 'rodents and cynomolgus monkeys'. The proposed cynomolgus-monkey-only output omits an explicit experimental species category, so that row must be split to cynomolgus monkey + rodent before alias consolidation."
+    },
+    {
+      "decision_id": "direct_species_merge_0007",
+      "reason": "The rhesus aliases are equivalent, but exact rows include 'rodent, rhesus monkey' and 'rodents and rhesus macaques'. The proposed rhesus-monkey-only label drops an explicit experimental species category and needs a mixed-species split."
+    },
+    {
+      "decision_id": "direct_species_merge_0009",
+      "reason": "Most rows support mouse normalization, but the owned mouse scope contains 'NHPs and humanized mice'. A mouse-only final label omits the explicitly stated non-human primate experimental category; that raw value requires a separate mouse + non-human primate disposition."
+    },
+    {
+      "decision_id": "direct_species_rename_0012",
+      "reason": "The raw value explicitly says cattle, not female cattle. Replacing cattle with cow adds sex specificity; buffalo + camel + cattle + rabbit preserves the exact neutral species categories."
+    },
+    {
+      "decision_id": "direct_species_rename_0013",
+      "reason": "The raw values say calves. Removing age supports the neutral label cattle, but not cow, which can add female/adult specificity. The final should retain chicken + cattle + pig + rat."
+    },
+    {
+      "decision_id": "direct_species_rename_0014",
+      "reason": "The evidence explicitly states rodents and cattle. Renaming cattle to cow adds unsupported sex specificity; cattle + rodent is already the neutral policy-compliant form."
+    },
+    {
+      "decision_id": "direct_species_rename_0015",
+      "reason": "Adding dog is supported by 'Collie dogs', but Murray Gray cattle must remain the sex-neutral cattle label rather than cow. The supported correction is cattle + dog + mouse, not cow + dog + mouse."
+    }
+  ],
+  "primary_change_count": 120,
+  "primary_file": "primary_direct_bbb.jsonl",
+  "primary_sha256": "23968479fa176f0e196cced95d4840332cd5907cd7b9444f6f7243cf3c75f200",
+  "reviewed_assignment_count": 28290,
+  "reviewed_cluster_count": 284,
+  "reviewed_namespaces": [
+    "direct_bbb/global_context",
+    "direct_bbb/global_species_context"
+  ],
+  "reviewed_packet_ids": [
+    "direct_bbb__global_context__packet_0001",
+    "direct_bbb__global_context__packet_0002",
+    "direct_bbb__global_context__packet_0003",
+    "direct_bbb__global_context__packet_0004",
+    "direct_bbb__global_context__packet_0005",
+    "direct_bbb__global_context__packet_0006",
+    "direct_bbb__global_species_context__packet_0001"
+  ],
+  "summary_version": "bbb_auxiliary_independent_checker_summary.v1",
+  "validations": {
+    "canonical_mapping_unchanged": true,
+    "checker_identity_is_uniform": true,
+    "every_direct_change_checked_exactly_once": true,
+    "exact_raw_assignments_and_packets_reopened": true,
+    "no_retain_decisions_checked": true,
+    "rationales_are_substantive": true,
+    "verdicts_are_allowed": true
+  },
+  "verdict_counts": {
+    "agree": 102,
+    "disagree": 18
+  }
+}

@@ -83,6 +83,7 @@ DEFAULT_V65_ELIGIBLE_RECORDS = (
     "/data1/joseph/starling_assay_transfer/datasets/eligible/"
     "assay_transfer_soft_evidence_v6_5/records.parquet"
 )
+DEFAULT_BENCHMARK_SPLIT_ROOT = "data/processed_starling/Bioavailability_Ma"
 
 
 def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
@@ -102,6 +103,14 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
         default=False,
     )
     parser.add_argument("--v65-eligible-records", default=DEFAULT_V65_ELIGIBLE_RECORDS)
+    parser.add_argument(
+        "--benchmark-split-root",
+        default=DEFAULT_BENCHMARK_SPLIT_ROOT,
+        help=(
+            "Directory containing random/scaffold train and heldout molecule "
+            "label mappings used by the post-record filtering stage."
+        ),
+    )
 
 
 def validate_arguments(

@@ -1,0 +1,1792 @@
+{
+  "assignment_count": 357,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "% passing across the blood brain barrier"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "ability to cross the blood brain barrier"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "ability to cross the blood-brain barrier"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "ability to cross the blood–brain barrier"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "ability to cross the blood–brain-barrier"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "blood_brain_barrier_accumulation",
+      "raw_value": "accumulation across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "blood_brain_barrier_level",
+      "raw_value": "ADMET Blood-Brain Barrier (BBB) Level"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "administered dose crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amount crossed blood-brain barrier"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amount crossed the blood-brain barrier"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amount crossing blood brain barrier"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amount crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amount of drug that crosses the blood brain barrier"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "blood_brain_barrier_crossing_rate",
+      "raw_value": "amount passing across the brain-blood barrier per day"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "amount that can cross the blood-brain barrier"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amount that crosses the blood brain barrier"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amount that crosses the blood-brain barrier"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amount which penetrates the blood brain barrier"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "amounts of lead penetrating the blood–brain barriers"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "BBB (Blood brain barrier) (%)"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "bioavailability to cross blood–brain barrier"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "blood_brain_barrier_probability",
+      "raw_value": "Blood Barrier penetrability (Probability) BBB"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "Blood Brain Barrier"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "Blood brain barrier"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "blood brain barrier"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "Blood Brain Barrier (BBB)"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "blood brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "BLOOD BRAIN BARRIER (BBB) & BLOOD-PLACENTA BARRIER (BPB)"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood brain barrier (BBB) permeability"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "blood_brain_barrier_permeability_score",
+      "raw_value": "Blood Brain Barrier (BBB) permeability score"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "blood_brain_barrier_concentration_ratio",
+      "raw_value": "blood brain barrier ammonia concentration / systemic circulation ammonia concentration"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "blood_brain_barrier_penetration_score",
+      "raw_value": "blood brain barrier cross score"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood brain barrier crossing ability"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "blood_brain_barrier_penetration_score",
+      "raw_value": "blood brain barrier crossing score"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "blood_brain_barrier_level",
+      "raw_value": "Blood Brain Barrier level"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood Brain Barrier penetrability"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood Brain Barrier Penetration"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood brain barrier penetration"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood brain barrier penetration"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "blood_brain_barrier_penetration_level",
+      "raw_value": "Blood brain barrier penetration level"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "Blood Brain Barrier permeability"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "Blood brain barrier Permeability"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "Blood brain barrier permeability"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood brain barrier permeability"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "blood_brain_barrier_permeability_score",
+      "raw_value": "blood brain barrier permeability probability score"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "blood_brain_barrier_permeability_rate",
+      "raw_value": "blood brain barrier permeability rate"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "blood_brain_barrier_probability",
+      "raw_value": "Blood brain barrier probability"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "blood_brain_barrier_transport",
+      "raw_value": "blood brain barrier transport"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "Blood-Brain Barrier"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "Blood-brain barrier"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "blood-brain barrier"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "Blood-Brain Barrier (BBB)"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "Blood-brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "blood-brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "blood_brain_barrier_coefficient",
+      "raw_value": "blood-brain barrier (BBB) coefficient"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "blood_brain_barrier_efflux_constant",
+      "raw_value": "blood-brain barrier (BBB) efflux constant"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood-brain barrier (BBB) Penetration"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood-brain barrier (BBB) penetration"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood-brain barrier (BBB) penetration"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood-brain barrier (BBB) penetration estimates"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "blood_brain_barrier_penetration_level",
+      "raw_value": "Blood-Brain Barrier (BBB) penetration level"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood-brain barrier (BBB) penetration value"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood-brain barrier (BBB) permeability"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "blood_brain_barrier_absorption",
+      "raw_value": "blood-brain barrier absorption"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "blood_brain_barrier_clearance",
+      "raw_value": "blood-brain barrier clearance"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "blood_brain_barrier_clearance_rate",
+      "raw_value": "blood-brain barrier clearance rates"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "blood_brain_barrier_coefficient",
+      "raw_value": "Blood-brain barrier coefficient"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood-brain barrier crossing ability"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "blood_brain_barrier_equilibration_time",
+      "raw_value": "blood-brain barrier equilibration time"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "blood_brain_barrier_glucose_permeability",
+      "raw_value": "blood-brain barrier glucose permeability"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "blood_brain_barrier_index",
+      "raw_value": "Blood-Brain Barrier Index"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "blood_brain_barrier_leakage",
+      "raw_value": "Blood-brain barrier leakage"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "blood_brain_barrier_partitioning",
+      "raw_value": "blood-brain barrier partitioning"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood-brain barrier penetrance"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood-brain barrier penetration"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood-brain barrier penetration"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood-brain barrier penetration (BBB)"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood-brain barrier penetration (BBB)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Blood-brain barrier penetration (BBB) (C, brain/C, blood)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "blood_brain_barrier_penetration_level",
+      "raw_value": "blood-brain barrier penetration (BBB) level"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood-brain barrier penetration ability"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "blood_brain_barrier_penetration_index",
+      "raw_value": "blood-brain barrier penetration index (BBB)"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "blood_brain_barrier_penetration_score",
+      "raw_value": "blood-brain barrier penetration prediction score"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "blood_brain_barrier_penetration_rate",
+      "raw_value": "blood-brain barrier penetration rate"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "blood_brain_barrier_penetration_ratio",
+      "raw_value": "blood-brain barrier penetration ratio"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "Blood-Brain Barrier Permeability"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "Blood-brain barrier permeability"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood-brain barrier permeability"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood-brain barrier permeability (Evans blue extravasation)"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "blood_brain_barrier_permeability_score",
+      "raw_value": "blood-brain barrier permeability score"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "blood_brain_barrier_permeability_surface_area_product",
+      "raw_value": "blood-brain barrier permeability times surface area product"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "blood_brain_barrier_permeability_rate",
+      "raw_value": "blood-brain barrier permeation rate"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "blood_brain_barrier_probability",
+      "raw_value": "Blood-Brain Barrier probability"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "blood_brain_barrier_ratio",
+      "raw_value": "blood-brain barrier ratio"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "blood_brain_barrier_transfer",
+      "raw_value": "blood-brain barrier transfer"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "blood_brain_barrier_transfer_constant",
+      "raw_value": "Blood-brain barrier transfer constant"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "blood_brain_barrier_transport",
+      "raw_value": "blood-brain barrier transport"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "blood_brain_barrier_value",
+      "raw_value": "blood-brain barrier value"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood-brain-barrier (BBB) permeability"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "blood_brain_barrier_penetration_rate",
+      "raw_value": "blood-brain-barrier penetration rate"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "Blood-brain-barrier permeabilities"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "Blood–brain barrier"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "blood–brain barrier"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "blood_brain_barrier",
+      "raw_value": "blood–brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood–brain barrier (BBB) penetration"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood–brain barrier (BBB) penetration"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "blood_brain_barrier_penetration_score",
+      "raw_value": "Blood–Brain Barrier (BBB) penetration (score)"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood–brain barrier (BBB) penetration calculations"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "blood_brain_barrier_penetration_rate",
+      "raw_value": "blood–brain barrier (BBB) penetration rate"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood–brain barrier (BBB) permeability"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "blood_brain_barrier_permeability_score",
+      "raw_value": "blood–brain barrier (BBB) permeability score"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "blood_brain_barrier_probability",
+      "raw_value": "Blood–brain barrier (BBB)(Probability)"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood–brain barrier access"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood–brain barrier crossing"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood–brain barrier penetrability"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood–brain barrier penetrance"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood–Brain Barrier Penetration"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "blood–brain barrier penetration"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Blood–brain barrier penetration (BBB)"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Blood–brain barrier penetration (C. brain/C. blood)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "blood_brain_barrier_penetration_efficiency",
+      "raw_value": "blood–brain barrier penetration efficiency"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "blood_brain_barrier_penetration_rate",
+      "raw_value": "blood–brain barrier penetration rate"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood–brain barrier permeability"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "blood_brain_barrier_permeability_probability",
+      "raw_value": "Blood–Brain Barrier Permeability (BBBP) Probability"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "blood_brain_barrier_permeability_index",
+      "raw_value": "blood–brain barrier permeability index"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "blood_brain_barrier_permeability_probability",
+      "raw_value": "blood–brain barrier permeability probability"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "blood_brain_barrier_permeability_surface_area_product",
+      "raw_value": "blood–brain barrier permeability–surface area product"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood–brain barrier permeation"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "blood_brain_barrier_transport",
+      "raw_value": "blood–brain barrier transport"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "blood–brain permeability"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "brain-barrier permeability"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "blood_brain_barrier_glucose_transport_capacity",
+      "raw_value": "capacity of the immature blood-brain barrier for glucose transport"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "capacity to cross the blood-brain barrier"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "capacity to penetrate the blood brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "blood_brain_barrier_clearance",
+      "raw_value": "CL_blood-brain barrier"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "blood_brain_barrier_concentration",
+      "raw_value": "concentration across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "blood_brain_barrier_concentration",
+      "raw_value": "concentration after penetration past the blood brain barrier"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "blood_brain_barrier_concentration_gradient",
+      "raw_value": "concentration gradient across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "blood_brain_barrier_concentration",
+      "raw_value": "concentration that crosses the blood brain barrier"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "cross the blood-brain barrier"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "cross the blood-brain-barrier"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "crosses the blood brain barrier"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "crosses the blood-brain barrier"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "crosses the blood-brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "crosses the blood-brain barrier compared to water"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "crossing of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "crossing through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "blood_brain_barrier_influx",
+      "raw_value": "decrease in influx of TRP across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "delay for crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "blood_brain_barrier_delivery_rate",
+      "raw_value": "delivery rate across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "blood_brain_barrier_delivery_time",
+      "raw_value": "delivery time across blood-brain barrier"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "blood_brain_barrier_diffusion",
+      "raw_value": "diffusion across the blood-brain barrier into the spinal fluid"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "blood_brain_barrier_crossing_amount",
+      "raw_value": "dose injected passed the blood-brain barrier"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "blood_brain_barrier_transport_rate",
+      "raw_value": "effective rate through the blood‐brain barrier"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "blood_brain_barrier_penetration_efficiency",
+      "raw_value": "efficiency in crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "blood_brain_barrier_penetration_efficiency",
+      "raw_value": "efficiency of crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "blood_brain_barrier_penetration_efficiency",
+      "raw_value": "efficiency of crossing the blood–brain barrier"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "blood_brain_barrier_efflux",
+      "raw_value": "efflux via blood-brain barrier"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "blood_brain_barrier_elimination_half_life",
+      "raw_value": "elimination half-life through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "blood_brain_barrier_entry",
+      "raw_value": "entry through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "blood_brain_barrier_equilibration_half_life",
+      "raw_value": "equilibration half-life across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "blood_brain_barrier_equilibration_time",
+      "raw_value": "equilibrium time across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "estimated blood–brain–barrier (BBB) penetrative ability"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "blood_brain_barrier_crossing_extent",
+      "raw_value": "extent of crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "blood_brain_barrier_crossing_extent",
+      "raw_value": "extent of crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "blood_brain_barrier_extraction",
+      "raw_value": "extracted across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "blood_brain_barrier_extraction",
+      "raw_value": "extraction across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "blood_brain_barrier_extraction",
+      "raw_value": "extraction along the blood-brain barrier"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "blood_brain_barrier_flux",
+      "raw_value": "flux of 24S-hydroxycholesterol through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "blood_brain_barrier_crossing_fraction",
+      "raw_value": "fraction crossing blood-brain barrier"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "blood_brain_barrier_crossing_fraction",
+      "raw_value": "fraction crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "blood_brain_barrier_crossing_fraction",
+      "raw_value": "fraction of administered GM1 crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "blood_brain_barrier_crossing_fraction",
+      "raw_value": "fraction of oral dose crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "blood_brain_barrier_crossing_fraction",
+      "raw_value": "fraction of serum concentration crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "blood_brain_barrier_crossing_fraction",
+      "raw_value": "fraction of total serum cortisol capable of crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "blood_brain_barrier_crossing_fraction",
+      "raw_value": "fraction that penetrates the blood-brain barrier"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "blood_brain_barrier_glucose_clearance",
+      "raw_value": "glucose clearance through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "blood_brain_barrier_glucose_diffusion_rate",
+      "raw_value": "glucose diffusion rate across the blood brain barrier"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "blood_brain_barrier_glucose_transport",
+      "raw_value": "glucose transport across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "blood_brain_barrier_glucose_transport_rate",
+      "raw_value": "glucose transport rate across the blood brain barrier"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "blood_brain_barrier_glucose_transport",
+      "raw_value": "glucose transport through the blood–brain barrier"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "blood_brain_barrier_opening",
+      "raw_value": "Gross Blood-Brain Barrier Opening"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "blood_brain_barrier_glucose_transport_half_saturation_concentration",
+      "raw_value": "half-saturation concentration of glucose transport across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Hematoencephalic Barrier Penetration (BHE)"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "in vitro blood-brain barrier permeability"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "In vivo BBB penetration ([brain]/[blood])"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "in vivo BBB penetration ([brain]/[blood])"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "In vivo BBB penetration (C. brain/C. blood)"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "in vivo BBB penetration (C.brain/C.blood)"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "In vivo blood brain-barrier penetration (c. brain/c. blood)"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "In vivo blood-brain barrier (BBB) penetration"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "in vivo blood-brain barrier penetration (C.brain/ C.blood)"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "In vivo blood-brain barrier penetration (C.brain/C.blood)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "in vivo blood-brain barrier penetration (C.brain/C.blood)"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "In vivo blood–brain barrier (BBB) penetration"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "In vivo blood–brain barrier penetration (C. brain/C. blood)"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "in vivo penetration percentage across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "In-vivo blood brain barrier (BBB) penetration"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "In-vivo blood-brain barrier penetration (C. brain/C.blood)"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "kp_brain_blood",
+      "raw_value": "kp, blood-brain barrier"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "logbb",
+      "raw_value": "LogBB (blood brain barrier)"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "logps",
+      "raw_value": "LogPS(Blood Brain Barrier Permeability)"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "blood_brain_barrier_mass_transfer_coefficient",
+      "raw_value": "mass transfer coefficient of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "blood_brain_barrier_glucose_transport_capacity",
+      "raw_value": "maximum glucose transport capacity of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "blood_brain_barrier_passage",
+      "raw_value": "mean blood–brain barrier (BBB) passage"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "median time of crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "blood_brain_barrier_clearance",
+      "raw_value": "Na clearance of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "blood_brain_barrier_efflux",
+      "raw_value": "Net efflux across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "blood_brain_barrier_flux",
+      "raw_value": "net glutamine flux across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "blood_brain_barrier_exchange",
+      "raw_value": "normal exchange across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "blood_brain_barrier_passage",
+      "raw_value": "passage across the blood–brain barrier"
+    },
+    {
+      "item_id": "v0211",
+      "provisional_endpoint": "blood_brain_barrier_passage",
+      "raw_value": "passage through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0212",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "passive blood-brain barrier permeability"
+    },
+    {
+      "item_id": "v0213",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration across the blood brain barrier"
+    },
+    {
+      "item_id": "v0214",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0215",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration across the blood–brain barrier"
+    },
+    {
+      "item_id": "v0216",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration across the normal blood-brain barrier"
+    },
+    {
+      "item_id": "v0217",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Penetration into the blood-brain barrier"
+    },
+    {
+      "item_id": "v0218",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "Penetration of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0219",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0220",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration of the blood-brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0221",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration of the blood–brain barrier"
+    },
+    {
+      "item_id": "v0222",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration of the blood–brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0223",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration of the normal blood-brain barrier"
+    },
+    {
+      "item_id": "v0224",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "penetration through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0225",
+      "provisional_endpoint": "brain_to_serum_ratio",
+      "raw_value": "penetration through the blood-brain barrier (relative to serum)"
+    },
+    {
+      "item_id": "v0226",
+      "provisional_endpoint": "blood_brain_barrier_clearance_percentage",
+      "raw_value": "percent cleared from brain across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0227",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percent that crosses the blood-brain barrier"
+    },
+    {
+      "item_id": "v0228",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage crossed the blood-brain barrier"
+    },
+    {
+      "item_id": "v0229",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage crossing blood-brain barrier"
+    },
+    {
+      "item_id": "v0230",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "Percentage crossing blood/brain barrier"
+    },
+    {
+      "item_id": "v0231",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0232",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0233",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage crossing the blood-brain-barrier"
+    },
+    {
+      "item_id": "v0234",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage crossing the blood–brain barrier"
+    },
+    {
+      "item_id": "v0235",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage crossing the intact blood-brain barrier"
+    },
+    {
+      "item_id": "v0236",
+      "provisional_endpoint": "blood_brain_barrier_distribution_percentage",
+      "raw_value": "percentage distributed across the blood-brain barrier into the CNS"
+    },
+    {
+      "item_id": "v0237",
+      "provisional_endpoint": "blood_brain_barrier_extraction_percentage",
+      "raw_value": "percentage extracted across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0238",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of absorbed tryptophan passing through blood brain barrier"
+    },
+    {
+      "item_id": "v0239",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of absorbed VGB crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0240",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of administered dose crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0241",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of blood level crossing the blood brain-barrier"
+    },
+    {
+      "item_id": "v0242",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of blood rosiglitazone crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0243",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of blood rosiglitazone that crossed the blood brain barrier"
+    },
+    {
+      "item_id": "v0244",
+      "provisional_endpoint": "blood_brain_barrier_clearance_percentage",
+      "raw_value": "percentage of brain clearance via blood-brain barrier"
+    },
+    {
+      "item_id": "v0245",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of chlorine passed through blood-brain barrier"
+    },
+    {
+      "item_id": "v0246",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of circulating cortisol able to cross the blood-brain barrier"
+    },
+    {
+      "item_id": "v0247",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of dietary TRP crossing the blood-brain-barrier"
+    },
+    {
+      "item_id": "v0248",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of dose crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0249",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of dose crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0250",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of dose crossing the blood-brain-barrier"
+    },
+    {
+      "item_id": "v0251",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of drug crossing blood-brain barrier"
+    },
+    {
+      "item_id": "v0252",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of drug in blood passing the blood brain barrier"
+    },
+    {
+      "item_id": "v0253",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of drug passing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0254",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of gadolinium that crossed the blood-brain barrier"
+    },
+    {
+      "item_id": "v0255",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of injected amount passing through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0256",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of injected dose per gram of tissue crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0257",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of intravenous dose passing through the blood brain barrier"
+    },
+    {
+      "item_id": "v0258",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of intravenously infused selenium entering the brain through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0259",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of intravenously injected dose passing through the blood–brain barrier"
+    },
+    {
+      "item_id": "v0260",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of L-dopa crossing the blood-brain-barrier"
+    },
+    {
+      "item_id": "v0261",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of levodopa crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0262",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of nicotine passing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0263",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of oral dose crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0264",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of oral dose passing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0265",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of orally administered dose crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0266",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of peripheral inositol crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0267",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of plasma BBR crossing the blood–brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0268",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of plasma edaravone passing through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0269",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of plasma inositol crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0270",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of plasma inositol crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0271",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of plasma salbutamol concentration penetrating the blood-brain barrier"
+    },
+    {
+      "item_id": "v0272",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of plasmatic resveratrol crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0273",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of radioactive material crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0274",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of serum crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0275",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of serum non-ceruloplasmin bound copper crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0276",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of the drug in serum passing the blood brain barrier"
+    },
+    {
+      "item_id": "v0277",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of total drug crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0278",
+      "provisional_endpoint": "blood_brain_barrier_flux_percentage",
+      "raw_value": "percentage of total flux from the brain occurring through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0279",
+      "provisional_endpoint": "blood_brain_barrier_diffusion_percentage",
+      "raw_value": "percentage of total glucose used in the brain passing the blood-brain barrier by diffusion"
+    },
+    {
+      "item_id": "v0280",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of total IV dose crossing the blood brain barrier"
+    },
+    {
+      "item_id": "v0281",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of tracers passing through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0282",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "Percentage of trehalose crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0283",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage of vigabatrin in the blood passing through the blood brain barrier"
+    },
+    {
+      "item_id": "v0284",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage passing blood-brain barrier"
+    },
+    {
+      "item_id": "v0285",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage passing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0286",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage passing through the blood brain barrier"
+    },
+    {
+      "item_id": "v0287",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage passing through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0288",
+      "provisional_endpoint": "blood_brain_barrier_crossing_percentage",
+      "raw_value": "percentage passing through the blood–brain barrier"
+    },
+    {
+      "item_id": "v0289",
+      "provisional_endpoint": "blood_brain_barrier_transport_percentage",
+      "raw_value": "percentage transported via the blood-brain barrier"
+    },
+    {
+      "item_id": "v0290",
+      "provisional_endpoint": "blood_brain_barrier_penetration_percentage",
+      "raw_value": "percentage with ability to traverse the blood-brain barrier"
+    },
+    {
+      "item_id": "v0291",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "permeability across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0292",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "permeability across the blood–brain barrier"
+    },
+    {
+      "item_id": "v0293",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "permeability at the blood-brain barrier"
+    },
+    {
+      "item_id": "v0294",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "permeability at the blood–brain barrier"
+    },
+    {
+      "item_id": "v0295",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "Permeability of blood-brain barrier"
+    },
+    {
+      "item_id": "v0296",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "permeability of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0297",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "permeability of the blood–brain barrier"
+    },
+    {
+      "item_id": "v0298",
+      "provisional_endpoint": "blood_brain_barrier_permeability",
+      "raw_value": "permeability to blood-brain barrier"
+    },
+    {
+      "item_id": "v0299",
+      "provisional_endpoint": "blood_brain_barrier_crossing_proportion",
+      "raw_value": "portion crossing the blood-brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0300",
+      "provisional_endpoint": "blood_brain_barrier_transport_fraction",
+      "raw_value": "portion of dose transported across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0301",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "potential to cross the blood-brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0302",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "potential to penetrate the blood–brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0303",
+      "provisional_endpoint": "blood_brain_barrier_value",
+      "raw_value": "predicted blood brain barrier (BBB) values"
+    },
+    {
+      "item_id": "v0304",
+      "provisional_endpoint": "blood_brain_barrier_prediction",
+      "raw_value": "predicted blood-brain barrier"
+    },
+    {
+      "item_id": "v0305",
+      "provisional_endpoint": "blood_brain_barrier_value",
+      "raw_value": "predicted blood–brain barrier (BBB) value"
+    },
+    {
+      "item_id": "v0306",
+      "provisional_endpoint": "blood_brain_barrier_value",
+      "raw_value": "predicted blood–brain barrier values"
+    },
+    {
+      "item_id": "v0307",
+      "provisional_endpoint": "blood_brain_barrier_penetration_probability",
+      "raw_value": "predicted possibility of crossing the blood–brain barrier"
+    },
+    {
+      "item_id": "v0308",
+      "provisional_endpoint": "blood_brain_barrier_distribution_percentage",
+      "raw_value": "Prediction of Distribution in Blood-Brain Barrier (%)"
+    },
+    {
+      "item_id": "v0309",
+      "provisional_endpoint": "blood_brain_barrier_penetration_probability",
+      "raw_value": "probability for juglanin to cross the blood-brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0310",
+      "provisional_endpoint": "blood_brain_barrier_permeability_probability",
+      "raw_value": "probability of blood brain barrier (BBB) permeability"
+    },
+    {
+      "item_id": "v0311",
+      "provisional_endpoint": "blood_brain_barrier_absorption_probability",
+      "raw_value": "probability of blood brain barrier (BBB+) absorption"
+    },
+    {
+      "item_id": "v0312",
+      "provisional_endpoint": "blood_brain_barrier_absorption_probability",
+      "raw_value": "probability of blood brain barrier absorption"
+    },
+    {
+      "item_id": "v0313",
+      "provisional_endpoint": "blood_brain_barrier_penetration_probability",
+      "raw_value": "Probability of Blood Brain Barrier penetration"
+    },
+    {
+      "item_id": "v0314",
+      "provisional_endpoint": "blood_brain_barrier_penetration_probability",
+      "raw_value": "probability of crossing the blood brain barrier (BBB+)"
+    },
+    {
+      "item_id": "v0315",
+      "provisional_endpoint": "blood_brain_barrier_penetration_probability",
+      "raw_value": "probability to cross the blood-brain barrier"
+    },
+    {
+      "item_id": "v0316",
+      "provisional_endpoint": "blood_brain_barrier_penetration_probability",
+      "raw_value": "probability to cross the blood–brain barrier"
+    },
+    {
+      "item_id": "v0317",
+      "provisional_endpoint": "blood_brain_barrier_crossing_proportion",
+      "raw_value": "proportion available to cross the blood-brain barrier"
+    },
+    {
+      "item_id": "v0318",
+      "provisional_endpoint": "blood_brain_barrier_crossing_proportion",
+      "raw_value": "proportion of an oral dose crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0319",
+      "provisional_endpoint": "blood_brain_barrier_crossing_proportion",
+      "raw_value": "proportion passing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0320",
+      "provisional_endpoint": "blood_brain_barrier_crossing_proportion",
+      "raw_value": "proportion passing the blood–brain barrier"
+    },
+    {
+      "item_id": "v0321",
+      "provisional_endpoint": "blood_brain_barrier_crossing_ratio",
+      "raw_value": "quotient to cross the blood-brain barrier (BBB)"
+    },
+    {
+      "item_id": "v0322",
+      "provisional_endpoint": "blood_brain_barrier_penetration_rate",
+      "raw_value": "rate of penetration of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0323",
+      "provisional_endpoint": "blood_brain_barrier_transfer_rate",
+      "raw_value": "rate of transfer across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0324",
+      "provisional_endpoint": "blood_brain_barrier_translocation",
+      "raw_value": "rate of translocation across the blood–brain barrier"
+    },
+    {
+      "item_id": "v0325",
+      "provisional_endpoint": "blood_brain_barrier_transport_rate",
+      "raw_value": "rate of transport from blood across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0326",
+      "provisional_endpoint": "blood_brain_barrier_transport_rate",
+      "raw_value": "rates of lactate transport across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0327",
+      "provisional_endpoint": "blood_brain_barrier_penetration_ratio",
+      "raw_value": "ratio of blood–brain barrier penetration"
+    },
+    {
+      "item_id": "v0328",
+      "provisional_endpoint": "blood_brain_barrier_influx_efflux_clearance_ratio",
+      "raw_value": "ratio of influx and efflux clearances through the blood–brain barrier"
+    },
+    {
+      "item_id": "v0329",
+      "provisional_endpoint": "blood_brain_barrier_penetration",
+      "raw_value": "readiness with which progesterone cross the blood brain barrier"
+    },
+    {
+      "item_id": "v0330",
+      "provisional_endpoint": "blood_brain_barrier_crossing_reduction",
+      "raw_value": "reduction of nicotine that was able to cross the blood–brain barrier"
+    },
+    {
+      "item_id": "v0331",
+      "provisional_endpoint": "blood_brain_barrier_threshold_dose",
+      "raw_value": "threshold dose for crossing the blood-brain barrier"
+    },
+    {
+      "item_id": "v0332",
+      "provisional_endpoint": "blood_brain_barrier_transfer_time_constant",
+      "raw_value": "time constant for transfer across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0333",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "time to cross blood-brain barrier"
+    },
+    {
+      "item_id": "v0334",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "time to cross blood–brain barrier"
+    },
+    {
+      "item_id": "v0335",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "time to cross the blood-brain barrier"
+    },
+    {
+      "item_id": "v0336",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "time to cross the blood–brain barrier"
+    },
+    {
+      "item_id": "v0337",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "time to pass through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0338",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "time to penetrate blood-brain barrier"
+    },
+    {
+      "item_id": "v0339",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "time to traverse the blood brain barrier"
+    },
+    {
+      "item_id": "v0340",
+      "provisional_endpoint": "blood_brain_barrier_crossing_time",
+      "raw_value": "time to traverse the blood-brain barrier"
+    },
+    {
+      "item_id": "v0341",
+      "provisional_endpoint": "blood_brain_barrier_transfer",
+      "raw_value": "transfer across the blood brain barrier"
+    },
+    {
+      "item_id": "v0342",
+      "provisional_endpoint": "blood_brain_barrier_transfer",
+      "raw_value": "transfer across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0343",
+      "provisional_endpoint": "blood_brain_barrier_transfer_coefficient",
+      "raw_value": "transfer coefficient of the blood-brain barrier"
+    },
+    {
+      "item_id": "v0344",
+      "provisional_endpoint": "brain_endothelial_barrier_translocation",
+      "raw_value": "translocation across the brain endothelial barrier"
+    },
+    {
+      "item_id": "v0345",
+      "provisional_endpoint": "brain_endothelial_barrier_translocation",
+      "raw_value": "translocation across the brain–endothelial barrier"
+    },
+    {
+      "item_id": "v0346",
+      "provisional_endpoint": "blood_brain_barrier_transport",
+      "raw_value": "transport across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0347",
+      "provisional_endpoint": "blood_brain_barrier_transport",
+      "raw_value": "transport across the blood/brain barrier"
+    },
+    {
+      "item_id": "v0348",
+      "provisional_endpoint": "blood_brain_barrier_transport",
+      "raw_value": "transport across the blood–brain barrier"
+    },
+    {
+      "item_id": "v0349",
+      "provisional_endpoint": "blood_brain_barrier_transport_capacity",
+      "raw_value": "transport capacity across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0350",
+      "provisional_endpoint": "blood_brain_barrier_transport_capacity",
+      "raw_value": "transport capacity of the blood–brain–barrier"
+    },
+    {
+      "item_id": "v0351",
+      "provisional_endpoint": "unbound_fraction_penetrating_cns_barriers",
+      "raw_value": "unbound fraction penetrating blood-CNS barriers"
+    },
+    {
+      "item_id": "v0352",
+      "provisional_endpoint": "blood_brain_barrier_transfer_constant",
+      "raw_value": "unidirectional blood-brain barrier transfer constant"
+    },
+    {
+      "item_id": "v0353",
+      "provisional_endpoint": "blood_brain_barrier_uptake",
+      "raw_value": "uptake across the blood-brain barrier"
+    },
+    {
+      "item_id": "v0354",
+      "provisional_endpoint": "blood_brain_barrier_uptake",
+      "raw_value": "uptake across the human blood-brain barrier (attributed to SLC5A6)"
+    },
+    {
+      "item_id": "v0355",
+      "provisional_endpoint": "blood_brain_barrier_uptake",
+      "raw_value": "uptake through the blood-brain barrier"
+    },
+    {
+      "item_id": "v0356",
+      "provisional_endpoint": "blood_brain_barrier_uptake_vmax",
+      "raw_value": "Vmax for uptake of lactate across the blood-brain barrier"
+    }
+  ],
+  "cluster_id": "cluster_12638bae5eda1148",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

@@ -1,0 +1,137 @@
+{
+  "artifacts": {
+    "global_catalog": {
+      "path": "global_candidate_catalog.json",
+      "sha256": "f4100359d319c94a3501319f164e19de6d3deb6c5cd41f54193116a4db68a947"
+    },
+    "ownership_packets": [
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0001",
+        "path": "direct_endpoint_catalog_packet_0001.json",
+        "sha256": "e94a125429ec0dbb27e826562717a0ec7aa539ab6f98fb5bba34e81ebdc4197b"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0002",
+        "path": "direct_endpoint_catalog_packet_0002.json",
+        "sha256": "08d7a99a42264b283bd2c7eb7630242c1aeb69574c5a9e7c29af47cd039c067d"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0003",
+        "path": "direct_endpoint_catalog_packet_0003.json",
+        "sha256": "d01ca6efbf140f408a0efd507b0251522ce807ce64cccfb829cde93921f1f2bd"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0004",
+        "path": "direct_endpoint_catalog_packet_0004.json",
+        "sha256": "f98be7e26d6f7a34d0699f6ac4448b79370eb2f342fb4a6caaecc0b6be7ea5e9"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0005",
+        "path": "direct_endpoint_catalog_packet_0005.json",
+        "sha256": "279b5f611e231c8438369e85b024cf72e78139d25cc1c6216bd4669d7f0b1b9f"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0006",
+        "path": "direct_endpoint_catalog_packet_0006.json",
+        "sha256": "aa0e2cc46fff4f7cc49cdabe1d1bed3951ec56cb8572d062150a60fd9c8cbae2"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0007",
+        "path": "direct_endpoint_catalog_packet_0007.json",
+        "sha256": "e1583fb0344a4d63f798f7e9e9f88e6bb8e612dfe8294226dbc69b04132ab8d0"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0008",
+        "path": "direct_endpoint_catalog_packet_0008.json",
+        "sha256": "ce1f274bf951c7f0c9d7a2d9e52599858763011251d73519c4ca6672b56bd687"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0009",
+        "path": "direct_endpoint_catalog_packet_0009.json",
+        "sha256": "994a9f9463c5c0e9d30e245aea2240b62a38e68d9c0f45bdbdef8c51f904c47a"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0010",
+        "path": "direct_endpoint_catalog_packet_0010.json",
+        "sha256": "8d50407388afb0d1997b4d63f492725c962a3f9f5fd2d11ecde7f507d84dacea"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0011",
+        "path": "direct_endpoint_catalog_packet_0011.json",
+        "sha256": "c5a5ac8b3779494e02bd2913d472f3856ebae5b30d684f8645732e147ec93586"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0012",
+        "path": "direct_endpoint_catalog_packet_0012.json",
+        "sha256": "905070a1c1eea9f8d9d52072981d6be36dca3bdb3828276c200b32e40c7dfaae"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0013",
+        "path": "direct_endpoint_catalog_packet_0013.json",
+        "sha256": "bb20d530a9c1de2061c5e922665f579ec33dbe7e2cb777dbc0b5f3ceb9588945"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0014",
+        "path": "direct_endpoint_catalog_packet_0014.json",
+        "sha256": "aae2397af804d18fc076eab624bbaf562bdac0ddbdf990d57f17dc494f3f1b42"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0015",
+        "path": "direct_endpoint_catalog_packet_0015.json",
+        "sha256": "1edd427cfc3443578c103543f07cc6d3569e9988a057b3b35b65b94f17e50cdb"
+      },
+      {
+        "owned_labels": 500,
+        "packet_id": "direct_endpoint_catalog_packet_0016",
+        "path": "direct_endpoint_catalog_packet_0016.json",
+        "sha256": "2dd48a5f028991504ba84506e9bbb85ba8b86d00b191cfa886afb4504e77043b"
+      },
+      {
+        "owned_labels": 259,
+        "packet_id": "direct_endpoint_catalog_packet_0017",
+        "path": "direct_endpoint_catalog_packet_0017.json",
+        "sha256": "cf08a0d721e64c32c2ae13d60aebb6c1da1935902dd522e2ac08a9c9db5b9ebe"
+      }
+    ]
+  },
+  "counts": {
+    "accepted_local_changes": 145,
+    "candidate_labels": 8259,
+    "catalog_packets": 17,
+    "cleaned_alias_groups_requiring_convergence": 4,
+    "cleaned_raw_alias_groups": 53,
+    "extra_raw_aliases": 55,
+    "provisional_labels": 8012,
+    "raw_assignments": 22798
+  },
+  "inputs": {
+    "adjudication_review_sha256": "449f161b8119e295d79d8aa6b8facffd4c8f9e4ee59847bc73e5a25b91387e05",
+    "assignments_sha256": "965a21959193254d049a25fd146c3a730130e61cd723102566b92f4e6b510baf",
+    "checker_review_sha256": "3a1b6714b78cdc8382b244c9c42807e54fd0b5062663d2960fde19ed5d703ffd",
+    "primary_review_sha256": "12cab88331548e8c1cb9add6cdd2d17f542a12aadb703a07c6b736a112d13779"
+  },
+  "manifest_version": "bbb_martins_direct_endpoint_subagent_reconciliation.v1",
+  "validations": {
+    "cleaned_alias_convergence_exposed_to_reviewers": true,
+    "cross_local_cluster_namespace_review_enabled": true,
+    "every_candidate_label_owned_once": true,
+    "every_reviewer_can_access_full_catalog": true,
+    "second_gpt_pass": false,
+    "source_and_inventory_pins_verified": true
+  }
+}

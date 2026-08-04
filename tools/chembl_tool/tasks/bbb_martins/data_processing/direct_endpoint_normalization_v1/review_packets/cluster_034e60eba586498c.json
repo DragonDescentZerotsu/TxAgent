@@ -1,0 +1,1062 @@
+{
+  "assignment_count": 211,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "kiam_mw4",
+      "raw_value": "(KIAM/MW^4) x10^10"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "one_hundred_minus_bei",
+      "raw_value": "100 – BEI"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "one_hundred_minus_bei",
+      "raw_value": "100-BEI"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "c14_dbde_equivalents",
+      "raw_value": "[14C]-DBDE equivalents"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "gadolinium_concentration",
+      "raw_value": "[Gd]c"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "lactate_0",
+      "raw_value": "[lac]₀"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "activity",
+      "raw_value": "Activity"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "activity",
+      "raw_value": "activity"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "adaboost_molprint2d",
+      "raw_value": "AdaBoost and Molprint 2D"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "score",
+      "raw_value": "AdaBoost score"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "admet_score",
+      "raw_value": "ADMET score"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "aluminum_content",
+      "raw_value": "Al content"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "apparent_sulfate_space",
+      "raw_value": "apparent SO₄²⁻ space"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "apparent_iodide_space",
+      "raw_value": "Apparent ¹³¹I⁻ space"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "bei",
+      "raw_value": "BEI"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "bibl"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "binding_potential",
+      "raw_value": "binding potential"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "body_burden",
+      "raw_value": "body burden"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "bound_compound",
+      "raw_value": "bound [3H] D-22"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "bui",
+      "raw_value": "BUI-Werte"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "bui_net",
+      "raw_value": "BUIₙet"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "csf_iodide_space",
+      "raw_value": "c.s.f. iodide space"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "csf_isoniazid_concentration",
+      "raw_value": "C.S.F.-isoniazid level"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "concentration",
+      "raw_value": "C24h"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "concentration",
+      "raw_value": "C25 min"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "brain_concentration",
+      "raw_value": "Cebrain"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "cerveau/sang"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "fold_change",
+      "raw_value": "change fold from naïve controls"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "chromium_index",
+      "raw_value": "chromium index"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "apparent_uptake_clearance",
+      "raw_value": "CLapparent,uptake"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "clearance",
+      "raw_value": "Clearance"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "clearance",
+      "raw_value": "clearance"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "reflection_coefficient",
+      "raw_value": "coeficiente de reflexão"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "content",
+      "raw_value": "content"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "barrier_crossing",
+      "raw_value": "crossing this barrier"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "brain_average_steady_state_concentration",
+      "raw_value": "Css,ave,br"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "concentration",
+      "raw_value": "Cₘₐₓ"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "entry",
+      "raw_value": "daily entry"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "dehp_content",
+      "raw_value": "DEHP contents"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "delivery_improvement",
+      "raw_value": "delivery improvement"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "deposition",
+      "raw_value": "deposition"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "dha_content",
+      "raw_value": "DHA contents"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "csf_entry",
+      "raw_value": "diffundiert in den Liquor"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_to_serum_ratio",
+      "raw_value": "Digoxin-spiegel i.L. / Digoxin-spiegel i.S."
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "direct_maldi_ms",
+      "raw_value": "Direct MALDI MS"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "disposition",
+      "raw_value": "disposition"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "dmo_space",
+      "raw_value": "DMO-14C space"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "passage",
+      "raw_value": "domperidone passage"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "ebrain",
+      "raw_value": "Ebrain"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "brain_tissue_half_life",
+      "raw_value": "Eliminationshalbwertszeit im Hirngewebe"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "enet",
+      "raw_value": "ENET"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "enrichment",
+      "raw_value": "enrichment"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "cdp_choline_entry",
+      "raw_value": "entrance of CDP-choline"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "extraction",
+      "raw_value": "extracted"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "fdopa_content",
+      "raw_value": "F-DOPA content"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "bioavailability",
+      "raw_value": "favail"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "fold_change",
+      "raw_value": "fold change"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "fold_change",
+      "raw_value": "fold changes"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "fluoride_content",
+      "raw_value": "F⁻ content"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "fluoride_content",
+      "raw_value": "F⁻ level"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "fluoride_content",
+      "raw_value": "F⁻ levels"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "gadolinium_content",
+      "raw_value": "Gd content"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Gehirn-zu-Blut Verhältnis"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "Gehirn/Blut"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "genistein_aglycone",
+      "raw_value": "Genistein Aglycone"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "genistein_aglycone",
+      "raw_value": "genistein aglycone"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "tissue_to_blood_partition_coefficient",
+      "raw_value": "Gewebe:Blut-Verteilungskoeffizient"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "tissue_content",
+      "raw_value": "Gewebsgehalt"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "gold_content",
+      "raw_value": "Gold Content"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "opening_grade",
+      "raw_value": "Grade of opening"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "hs_ratio",
+      "raw_value": "H/S × 10²"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "brain_mercury_concentration",
+      "raw_value": "Hg-Konzentration im Gehirn"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "brain_uptake",
+      "raw_value": "Hirnaufnahme"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Hirngewebekonzentrationen"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Hirngewebespiegel"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "activity",
+      "raw_value": "H³-Aktivität"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "tryptophan_incorporation",
+      "raw_value": "Incorporated tryptophan"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "index",
+      "raw_value": "index"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "fraction_activity_to_brain",
+      "raw_value": "ins Hirn gelangende Aktivitätsanteil"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "internalization",
+      "raw_value": "internalization"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "inulin_space",
+      "raw_value": "inulin space"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "iodide_space",
+      "raw_value": "iodide space"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "brain_tissue_concentration",
+      "raw_value": "Konzentration im Hirngewebe"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Konzentration im Liquor"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "kout_pd",
+      "raw_value": "kout_PD"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "kimal",
+      "raw_value": "Kᵢₘₐₗ"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "l_10_2",
+      "raw_value": "L(10,2)"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "lead_content",
+      "raw_value": "Lead content"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "lead_content",
+      "raw_value": "lead content"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "csf_mtx_concentration",
+      "raw_value": "Liquor-MTX-Spiegel"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquor/Plasmaspiegel"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "csf_to_blood_ratio",
+      "raw_value": "Liquor: Blut Verhältnis"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "csf_permeability",
+      "raw_value": "Liquorgängigkeit"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Liquorkonzentration"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Liquorkonzentrationen"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "liquorpenetráció"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Liquorspiegel"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "Liquorspiegel / Plasmaspiegel"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "Liquorwerte"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "localization",
+      "raw_value": "localization"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "lumbar_csf",
+      "raw_value": "lumbar CCSF"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "mean_od",
+      "raw_value": "mean O.D."
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "mttbrain",
+      "raw_value": "MTTbrain"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "neocortex_to_venous_blood_ratio",
+      "raw_value": "Neokortex zu venösem Blut"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "nigral_level",
+      "raw_value": "nigral level"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "cns_penetration",
+      "raw_value": "Nivel de penetración al SNC"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "levels",
+      "raw_value": "niveles"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "od_per_gram",
+      "raw_value": "OD/Gram"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "odap_content",
+      "raw_value": "ODAP content"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "brain_partition_coefficient",
+      "raw_value": "Organverteilung im Fließgleichgewicht (Hirn)"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "efflux",
+      "raw_value": "outflux"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "pactive",
+      "raw_value": "Pactive"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "flux",
+      "raw_value": "Palmitate flux, J"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "pampa_permeability",
+      "raw_value": "PAMPA"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "pampa_efflux",
+      "raw_value": "PAMPAe"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "passage",
+      "raw_value": "passage"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "bbb_passage",
+      "raw_value": "Passage de la BHE"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "patlak_slope",
+      "raw_value": "Patlak slope (K)"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "contralateral_permeability",
+      "raw_value": "Pcontralateral"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "pd_true",
+      "raw_value": "Pd(true)"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "pdiazepam",
+      "raw_value": "PDIAZEPAM"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "pdiff",
+      "raw_value": "Pdiff"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "pdiffusions",
+      "raw_value": "PdiffusionS"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "endothelial_permeability",
+      "raw_value": "Pendothel"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "endothelial_permeability",
+      "raw_value": "Pendothelial"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "penetration",
+      "raw_value": "penetración"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "meningeal_penetration",
+      "raw_value": "penetración meníngea"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "penetration",
+      "raw_value": "Penetrance"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "penetration",
+      "raw_value": "penetrance"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "penicillin_titer",
+      "raw_value": "Penicillin titers"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "permeability",
+      "raw_value": "permeabilities"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "permeability_coefficient",
+      "raw_value": "permeabilitási koefficiense"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "pertechnetate_space",
+      "raw_value": "pertechnetate space"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "pertechnetate_space",
+      "raw_value": "pertechnetate space X 10^2"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "pestly",
+      "raw_value": "PestLY"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "phebrain",
+      "raw_value": "Phebrain"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "pincre_corrected_app",
+      "raw_value": "Pincre(corrected)app"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "pincre_app",
+      "raw_value": "Pincreapp"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "platinum_content",
+      "raw_value": "platinum content"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "monolayer_permeability",
+      "raw_value": "Pmonolayer"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "preadmet_prediction",
+      "raw_value": "PreADMET prediction"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "presence",
+      "raw_value": "presence"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "free_plasma_fraction",
+      "raw_value": "prozent. Anteil der freien Plasmakonz."
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "qplnor_brnor",
+      "raw_value": "QPLNOR-BRNOR"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "corrected_tissue_ratio",
+      "raw_value": "R_corrTissue"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "brain_to_blood_ratio",
+      "raw_value": "rapport cerveau/sang"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "rauc_0_t",
+      "raw_value": "RAUC_0-t"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "rebrain",
+      "raw_value": "Rebrain"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "relative_content",
+      "raw_value": "relative contents"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "residue",
+      "raw_value": "residues"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "score",
+      "raw_value": "Score"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "score",
+      "raw_value": "score"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "left_to_right_activity_ratio",
+      "raw_value": "Se75-activity (CPM/g X 100) Quotient Left/Right"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "si",
+      "raw_value": "SI"
+    },
+    {
+      "item_id": "v0154",
+      "provisional_endpoint": "si_to_so_ratio",
+      "raw_value": "Si/[So]"
+    },
+    {
+      "item_id": "v0155",
+      "provisional_endpoint": "space",
+      "raw_value": "Space"
+    },
+    {
+      "item_id": "v0156",
+      "provisional_endpoint": "space",
+      "raw_value": "space"
+    },
+    {
+      "item_id": "v0157",
+      "provisional_endpoint": "specific_activity",
+      "raw_value": "Specific activity"
+    },
+    {
+      "item_id": "v0158",
+      "provisional_endpoint": "specific_activity",
+      "raw_value": "specific activity"
+    },
+    {
+      "item_id": "v0159",
+      "provisional_endpoint": "csf_peak_concentration",
+      "raw_value": "Spitzenspiegel im Liquor"
+    },
+    {
+      "item_id": "v0160",
+      "provisional_endpoint": "sucrose_crossing",
+      "raw_value": "sucrose crossing"
+    },
+    {
+      "item_id": "v0161",
+      "provisional_endpoint": "sucrose_entry",
+      "raw_value": "sucrose entry"
+    },
+    {
+      "item_id": "v0162",
+      "provisional_endpoint": "sucrose_space",
+      "raw_value": "sucrose space"
+    },
+    {
+      "item_id": "v0163",
+      "provisional_endpoint": "sur",
+      "raw_value": "SUR"
+    },
+    {
+      "item_id": "v0164",
+      "provisional_endpoint": "suv_peak",
+      "raw_value": "SUVₚeak"
+    },
+    {
+      "item_id": "v0165",
+      "provisional_endpoint": "score",
+      "raw_value": "SVM algorithm score (Molprint2DFP)"
+    },
+    {
+      "item_id": "v0166",
+      "provisional_endpoint": "score",
+      "raw_value": "SVM algorithm score (OpenbabelFP2)"
+    },
+    {
+      "item_id": "v0167",
+      "provisional_endpoint": "score",
+      "raw_value": "SVM algorithm score (PubChemFP)"
+    },
+    {
+      "item_id": "v0168",
+      "provisional_endpoint": "svm_molprint2d",
+      "raw_value": "SVM and Molprint 2D"
+    },
+    {
+      "item_id": "v0169",
+      "provisional_endpoint": "svm_pubchem",
+      "raw_value": "SVM and PubChem"
+    },
+    {
+      "item_id": "v0170",
+      "provisional_endpoint": "score",
+      "raw_value": "SVM score"
+    },
+    {
+      "item_id": "v0171",
+      "provisional_endpoint": "score",
+      "raw_value": "SVM_MACCSFB score"
+    },
+    {
+      "item_id": "v0172",
+      "provisional_endpoint": "svm_maccsfp",
+      "raw_value": "SVM_MACCSFP"
+    },
+    {
+      "item_id": "v0173",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "tasa de penetración"
+    },
+    {
+      "item_id": "v0174",
+      "provisional_endpoint": "serum_concentration",
+      "raw_value": "taux sériques"
+    },
+    {
+      "item_id": "v0175",
+      "provisional_endpoint": "mean_receptor_passage_time",
+      "raw_value": "temps moyen de passage jusqu'au récepteur"
+    },
+    {
+      "item_id": "v0176",
+      "provisional_endpoint": "thiocyanate_space",
+      "raw_value": "thiocyanate space"
+    },
+    {
+      "item_id": "v0177",
+      "provisional_endpoint": "third_slice_space",
+      "raw_value": "third slice space"
+    },
+    {
+      "item_id": "v0178",
+      "provisional_endpoint": "total_genistein",
+      "raw_value": "Total Genistein"
+    },
+    {
+      "item_id": "v0179",
+      "provisional_endpoint": "total_genistein",
+      "raw_value": "total genistein"
+    },
+    {
+      "item_id": "v0180",
+      "provisional_endpoint": "total_homogenate",
+      "raw_value": "Total Homogenate"
+    },
+    {
+      "item_id": "v0181",
+      "provisional_endpoint": "unbound_compound",
+      "raw_value": "unbound compound"
+    },
+    {
+      "item_id": "v0182",
+      "provisional_endpoint": "unidirectional_extraction",
+      "raw_value": "unidirectional E"
+    },
+    {
+      "item_id": "v0183",
+      "provisional_endpoint": "urea_content",
+      "raw_value": "urea content"
+    },
+    {
+      "item_id": "v0184",
+      "provisional_endpoint": "free_tryptophan",
+      "raw_value": "v free tryptophan"
+    },
+    {
+      "item_id": "v0185",
+      "provisional_endpoint": "csf_to_blood_partition_coefficient",
+      "raw_value": "Verteilungsquotient Liquor : Blut"
+    },
+    {
+      "item_id": "v0186",
+      "provisional_endpoint": "visual_score",
+      "raw_value": "Visual score"
+    },
+    {
+      "item_id": "v0187",
+      "provisional_endpoint": "volume_of_distribution",
+      "raw_value": "Vo"
+    },
+    {
+      "item_id": "v0188",
+      "provisional_endpoint": "wei",
+      "raw_value": "WEI"
+    },
+    {
+      "item_id": "v0189",
+      "provisional_endpoint": "white_matter",
+      "raw_value": "White matter"
+    },
+    {
+      "item_id": "v0190",
+      "provisional_endpoint": "brain_to_total_plasma_ratio",
+      "raw_value": "Xbrain/Css"
+    },
+    {
+      "item_id": "v0191",
+      "provisional_endpoint": "brain_to_unbound_plasma_ratio",
+      "raw_value": "Xbrain/Css,u"
+    },
+    {
+      "item_id": "v0192",
+      "provisional_endpoint": "cerebral_uptake_saturation",
+      "raw_value": "zerebrale Aufnahme (Sättigung)"
+    },
+    {
+      "item_id": "v0193",
+      "provisional_endpoint": "c14_activity",
+      "raw_value": "¹⁴C activity"
+    },
+    {
+      "item_id": "v0194",
+      "provisional_endpoint": "delta_auc",
+      "raw_value": "ΔAUC"
+    },
+    {
+      "item_id": "v0195",
+      "provisional_endpoint": "delta_av",
+      "raw_value": "ΔAV"
+    },
+    {
+      "item_id": "v0196",
+      "provisional_endpoint": "delta_av_taurine",
+      "raw_value": "ΔAV_taurine"
+    },
+    {
+      "item_id": "v0197",
+      "provisional_endpoint": "delta_g_dagger",
+      "raw_value": "ΔG‡"
+    },
+    {
+      "item_id": "v0198",
+      "provisional_endpoint": "delta_ki",
+      "raw_value": "ΔKi"
+    },
+    {
+      "item_id": "v0199",
+      "provisional_endpoint": "average_bbb_permeability",
+      "raw_value": "平均血脑屏障透过率"
+    },
+    {
+      "item_id": "v0200",
+      "provisional_endpoint": "maximum_brain_transfer_amount",
+      "raw_value": "最大脳移行量"
+    },
+    {
+      "item_id": "v0201",
+      "provisional_endpoint": "csf_to_plasma_ratio",
+      "raw_value": "脑脊液/血浆渗透比例"
+    },
+    {
+      "item_id": "v0202",
+      "provisional_endpoint": "csf_content",
+      "raw_value": "脑脊液含量"
+    },
+    {
+      "item_id": "v0203",
+      "provisional_endpoint": "csf_concentration",
+      "raw_value": "脑脊液浓度"
+    },
+    {
+      "item_id": "v0204",
+      "provisional_endpoint": "brain_transfer_rate",
+      "raw_value": "脳移行率"
+    },
+    {
+      "item_id": "v0205",
+      "provisional_endpoint": "bbb_permeation_rate",
+      "raw_value": "脳関門透過速度"
+    },
+    {
+      "item_id": "v0206",
+      "provisional_endpoint": "drug_permeability",
+      "raw_value": "药物渗透率"
+    },
+    {
+      "item_id": "v0207",
+      "provisional_endpoint": "bbb_permeability",
+      "raw_value": "血脑屏障渗透率"
+    },
+    {
+      "item_id": "v0208",
+      "provisional_endpoint": "permeability",
+      "raw_value": "透过率"
+    },
+    {
+      "item_id": "v0209",
+      "provisional_endpoint": "csf_transfer",
+      "raw_value": "髄液移行"
+    },
+    {
+      "item_id": "v0210",
+      "provisional_endpoint": "csf_to_serum_ratio_percentage",
+      "raw_value": "髄液血清比百分率"
+    }
+  ],
+  "cluster_id": "cluster_034e60eba586498c",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

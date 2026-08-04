@@ -1,0 +1,327 @@
+[
+  {
+    "decision_status": "proposed",
+    "decisions": {
+      "action_counts": {
+        "merge": 112,
+        "rename": 8,
+        "retain": 6110
+      },
+      "change_decision_count": 120,
+      "changed_assignment_scope": 2833,
+      "decision_count": 6230,
+      "path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/reviews/primary_direct_bbb.jsonl",
+      "proposed_final_label_counts": {
+        "direct_bbb/global_context": 5741,
+        "direct_bbb/global_species_context": 489
+      },
+      "provisional_label_counts": {
+        "direct_bbb/global_context": 5861,
+        "direct_bbb/global_species_context": 502
+      },
+      "sha256": "23968479fa176f0e196cced95d4840332cd5907cd7b9444f6f7243cf3c75f200"
+    },
+    "independent_direct_coverage": {
+      "duplicate_ownership": [],
+      "expected_non_null_labels": 6363,
+      "extra": [],
+      "missing": [],
+      "owned_non_null_labels": 6363,
+      "valid": true,
+      "zero_duplicate": true,
+      "zero_extra": true,
+      "zero_missing": true
+    },
+    "inputs": {
+      "assignments_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/provenance/cluster_assignments.parquet",
+      "assignments_sha256": "60493ba502527e4189537154472cddd92ad7789d4b9d4c811dae697663eb1682",
+      "label_catalog_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/label_catalog.parquet",
+      "label_catalog_sha256": "6a10a7ffc1ddae8405b42322888da5a33b80f812cb163b85d0eab0d1a16f127d"
+    },
+    "packet_audit": {
+      "assignment_count": 28290,
+      "cluster_count": 284,
+      "exact_packet_to_provenance_row_parity": true,
+      "manifest_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/review_packets/manifest.json",
+      "manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+      "packet_count": 7,
+      "packet_sha256": {
+        "direct_bbb__global_context__packet_0001.json": "ddfc0a4f9864730837c982f3579aef873f97eb9d39fd2b255543d9ba0137fbfa",
+        "direct_bbb__global_context__packet_0002.json": "692c77918c236fa47a011ce8c3912c7974751ddea7ff4bc880db7bf0442e14c5",
+        "direct_bbb__global_context__packet_0003.json": "2a03ba34e9fe1a7a91d89b383dd30f513f7d6f1ca8f0deb10b23c10d4542fdac",
+        "direct_bbb__global_context__packet_0004.json": "522cc9a27c6fdb062ab6981af3b8c0c3f900071063c3f63a8d7c9e8e42aded48",
+        "direct_bbb__global_context__packet_0005.json": "6c5f71f48b24ea57ae9e5e53c9fa53662829f6dc07c46df0927be9caa5b5149b",
+        "direct_bbb__global_context__packet_0006.json": "9dce4cc7bc6866dbad0534d73677e0fbeb4faf695fea31d339c92ddabbd3512f",
+        "direct_bbb__global_species_context__packet_0001.json": "3fc50f67ecf337274bb8ad3775515e69e5f76650345e20f36b810d28b41f1919"
+      },
+      "reviewed_assignment_count": 28290,
+      "reviewed_cluster_count": 284,
+      "reviewed_packet_ids": [
+        "direct_bbb__global_context__packet_0001",
+        "direct_bbb__global_context__packet_0002",
+        "direct_bbb__global_context__packet_0003",
+        "direct_bbb__global_context__packet_0004",
+        "direct_bbb__global_context__packet_0005",
+        "direct_bbb__global_context__packet_0006",
+        "direct_bbb__global_species_context__packet_0001"
+      ]
+    },
+    "publication_status": "primary_review_only; independent checking and adjudication are still required",
+    "review_method": {
+      "candidate_checks": [
+        "punctuation and separator equivalence",
+        "abbreviation expansion",
+        "co-culture spelling and word order",
+        "exact grammatical-number equivalence",
+        "assay/model suffix equivalence only when raw examples preserve type",
+        "species common-name aliases, atom deduplication, and alphabetical order",
+        "raw-example inspection for every proposed change"
+      ],
+      "cluster_scope": "All direct_bbb local clusters and assignments were included via exact packet-to-provenance parity.",
+      "conservative_exclusions": [
+        "T2-weighted MRI versus T2*-weighted MRI",
+        "directional inverse ratios",
+        "generic BBB disruption/opening versus explicit disruption/opening models",
+        "generic primate versus explicitly nonhuman primate",
+        "generic assay/model/study suffix differences without raw-example equivalence"
+      ]
+    },
+    "reviewed_assignment_count": 28290,
+    "reviewed_cluster_count": 284,
+    "reviewed_packet_ids": [
+      "direct_bbb__global_context__packet_0001",
+      "direct_bbb__global_context__packet_0002",
+      "direct_bbb__global_context__packet_0003",
+      "direct_bbb__global_context__packet_0004",
+      "direct_bbb__global_context__packet_0005",
+      "direct_bbb__global_context__packet_0006",
+      "direct_bbb__global_species_context__packet_0001"
+    ],
+    "reviewer_id": "bbb_rebuild_audit",
+    "scope": [
+      "direct_bbb/global_context",
+      "direct_bbb/global_species_context"
+    ],
+    "shared_validator": {
+      "action_counts": {
+        "merge": 112,
+        "rename": 8,
+        "retain": 6110
+      },
+      "decisions": 6230,
+      "labels_expected": 24274,
+      "labels_missing": 17911,
+      "labels_owned": 6363,
+      "require_complete_label_coverage": false,
+      "valid": true
+    },
+    "summary_version": "bbb_auxiliary_primary_direct_review.v1"
+  },
+  {
+    "action_counts": {
+      "merge": 12,
+      "rename": 5,
+      "retain": 46,
+      "split": 16
+    },
+    "by_namespace": {
+      "passive_permeability/global_context": {
+        "action_counts": {
+          "merge": 10,
+          "rename": 2,
+          "retain": 36,
+          "split": 15
+        },
+        "change_scope_assignment_rows": 516,
+        "decisions": 63,
+        "non_null_assignments": 588,
+        "packet_assignments": 588,
+        "proposed_changed_assignment_rows": 215,
+        "provisional_labels": 115,
+        "section_clusters": 6
+      },
+      "passive_permeability/global_species_context": {
+        "action_counts": {
+          "merge": 2,
+          "rename": 3,
+          "retain": 10,
+          "split": 1
+        },
+        "change_scope_assignment_rows": 117,
+        "decisions": 16,
+        "non_null_assignments": 209,
+        "packet_assignments": 588,
+        "proposed_changed_assignment_rows": 51,
+        "provisional_labels": 18,
+        "section_clusters": 6
+      }
+    },
+    "decision_count": 79,
+    "decision_file": "primary_passive_permeability.jsonl",
+    "namespaces": [
+      "passive_permeability/global_context",
+      "passive_permeability/global_species_context"
+    ],
+    "non_null_assignment_count": 797,
+    "provisional_label_count": 133,
+    "reviewed_assignment_count": 1176,
+    "reviewed_cluster_count": 12,
+    "reviewed_packet_ids": [
+      "passive_permeability__global_context__packet_0001",
+      "passive_permeability__global_species_context__packet_0001"
+    ],
+    "reviewer_id": "bio_reconcile_audit",
+    "summary_version": "bbb_auxiliary_primary_review_summary.v1",
+    "validation": {
+      "all_six_clusters_reviewed_in_each_namespace": true,
+      "every_non_null_provisional_label_owned_exactly_once": true,
+      "owned_namespaces_complete": {
+        "action_counts": {
+          "merge": 12,
+          "rename": 5,
+          "retain": 46,
+          "split": 16
+        },
+        "decisions": 79,
+        "labels_expected": 133,
+        "labels_missing": 0,
+        "labels_owned": 133,
+        "valid": true
+      },
+      "repository_partial_coverage": {
+        "action_counts": {
+          "merge": 12,
+          "rename": 5,
+          "retain": 46,
+          "split": 16
+        },
+        "decisions": 79,
+        "labels_expected": 24274,
+        "labels_missing": 24141,
+        "labels_owned": 133,
+        "valid": true
+      },
+      "reviewed_packet_manifest_matches": true,
+      "zero_duplicate_owned_namespace_labels": true,
+      "zero_missing_owned_namespace_labels": true
+    }
+  },
+  {
+    "decision_file": "primary_efflux_transport.jsonl",
+    "decision_file_sha256": "9f4d6373d066ecbdb9a3f6762045dd283588750b1e62d6c5767e8e444f91b0d9",
+    "namespace_local_coverage": {
+      "labels_duplicated": 0,
+      "labels_expected": 17778,
+      "labels_missing": 0,
+      "labels_owned": 17778,
+      "valid": true
+    },
+    "namespaces": {
+      "efflux_transport/global_context": {
+        "action_counts": {
+          "merge": 483,
+          "rename": 1141,
+          "retain": 15281
+        },
+        "assignment_count": 71421,
+        "change_decision_count": 1624,
+        "input_labels_owned": 17557,
+        "local_cluster_count": 715,
+        "namespace_local_duplicate_labels": 0,
+        "namespace_local_missing_labels": 0,
+        "primary_decision_count": 16905,
+        "proposed_final_label_count": 16905,
+        "provisional_non_null_label_count": 17557
+      },
+      "efflux_transport/global_species_context": {
+        "action_counts": {
+          "merge": 21,
+          "rename": 15,
+          "retain": 157,
+          "split": 5
+        },
+        "assignment_count": 71421,
+        "change_decision_count": 41,
+        "input_labels_owned": 221,
+        "local_cluster_count": 715,
+        "namespace_local_duplicate_labels": 0,
+        "namespace_local_missing_labels": 0,
+        "primary_decision_count": 198,
+        "proposed_final_label_count": 200,
+        "provisional_non_null_label_count": 221
+      }
+    },
+    "packet_coverage": {
+      "clusters_are_namespace_local_and_atomic": true,
+      "packet_hashes_valid": true,
+      "packet_items_exactly_match_provenance_assignments": true
+    },
+    "packet_manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+    "partial_global_validator": {
+      "action_counts": {
+        "merge": 504,
+        "rename": 1156,
+        "retain": 15438,
+        "split": 5
+      },
+      "decisions": 17103,
+      "labels_expected": 24274,
+      "labels_missing": 6496,
+      "labels_owned": 17778,
+      "valid": true
+    },
+    "policy_sha256": "547088fc175febf7cf93ccbd69567e3e910378f5b35fe2d4d9bbabd29573d05c",
+    "publication_status": "primary_review_proposed",
+    "reviewed_assignment_count": 142842,
+    "reviewed_cluster_count": 1430,
+    "reviewed_namespaces": [
+      "efflux_transport/global_context",
+      "efflux_transport/global_species_context"
+    ],
+    "reviewed_packet_count": 40,
+    "reviewed_packet_ids": [
+      "efflux_transport__global_context__packet_0001",
+      "efflux_transport__global_context__packet_0002",
+      "efflux_transport__global_context__packet_0003",
+      "efflux_transport__global_context__packet_0004",
+      "efflux_transport__global_context__packet_0005",
+      "efflux_transport__global_context__packet_0006",
+      "efflux_transport__global_context__packet_0007",
+      "efflux_transport__global_context__packet_0008",
+      "efflux_transport__global_context__packet_0009",
+      "efflux_transport__global_context__packet_0010",
+      "efflux_transport__global_context__packet_0011",
+      "efflux_transport__global_context__packet_0012",
+      "efflux_transport__global_context__packet_0013",
+      "efflux_transport__global_context__packet_0014",
+      "efflux_transport__global_context__packet_0015",
+      "efflux_transport__global_context__packet_0016",
+      "efflux_transport__global_context__packet_0017",
+      "efflux_transport__global_context__packet_0018",
+      "efflux_transport__global_context__packet_0019",
+      "efflux_transport__global_context__packet_0020",
+      "efflux_transport__global_context__packet_0021",
+      "efflux_transport__global_species_context__packet_0001",
+      "efflux_transport__global_species_context__packet_0002",
+      "efflux_transport__global_species_context__packet_0003",
+      "efflux_transport__global_species_context__packet_0004",
+      "efflux_transport__global_species_context__packet_0005",
+      "efflux_transport__global_species_context__packet_0006",
+      "efflux_transport__global_species_context__packet_0007",
+      "efflux_transport__global_species_context__packet_0008",
+      "efflux_transport__global_species_context__packet_0009",
+      "efflux_transport__global_species_context__packet_0010",
+      "efflux_transport__global_species_context__packet_0011",
+      "efflux_transport__global_species_context__packet_0012",
+      "efflux_transport__global_species_context__packet_0013",
+      "efflux_transport__global_species_context__packet_0014",
+      "efflux_transport__global_species_context__packet_0015",
+      "efflux_transport__global_species_context__packet_0016",
+      "efflux_transport__global_species_context__packet_0017",
+      "efflux_transport__global_species_context__packet_0018",
+      "efflux_transport__global_species_context__packet_0019"
+    ],
+    "reviewer_id": "bbb_vocab_audit",
+    "summary_version": "bbb_auxiliary_primary_efflux_transport_review.v1"
+  }
+]

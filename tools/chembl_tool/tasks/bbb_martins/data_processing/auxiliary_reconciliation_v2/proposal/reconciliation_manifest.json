@@ -1,0 +1,77 @@
+{
+  "files": {
+    "RECONCILIATION_PROPOSAL.md": "cb0d87cc569dcb4a1632f1c224125c1827c0d8f8f131e0190046f699dbd99724",
+    "accepted_reconciliation_decisions.jsonl": "aed93391d94f7303450e2460672556ec868c0615b5b275ccf8f4e83d27ce8154",
+    "adjudication_review.jsonl": "332e5875a2dacf44ccb1146a2b43e782b48fc9d77f29e6afc37e737263952370",
+    "checker_review.jsonl": "e58ce2025ddcc43e388a1ecc9bc79f705909300183002e0c31dafb1abbdfa75d",
+    "primary_review.jsonl": "972ccfafe8c06a73ca15d91d89ce798bfcc67f46596585162b8576ec269d61b8",
+    "primary_review_summaries.json": "e8c93a0b356acc38e251aac8d816ced2410b6cec7dcd41eec99a311176a84025",
+    "proposed_globally_reconciled_mapping.json": "dcd8ddfa534f26cad2109d9fd07ca75110260af3394ba031e55c4274de8aa8ab",
+    "reconciliation_changes.parquet": "e0b7a6362788183adfe6d8852480d2b54bc8b2fd06863e7ef0ed85ab46171db4"
+  },
+  "manifest_version": "bbb_auxiliary_reconciliation_proposal.v1",
+  "packet_manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+  "policy": {
+    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_policy.json",
+    "sha256": "547088fc175febf7cf93ccbd69567e3e910378f5b35fe2d4d9bbabd29573d05c"
+  },
+  "primary_packet_coverage": {
+    "assignments": 172308,
+    "every_packet_owned_exactly_once": true,
+    "packets": 49,
+    "reviewers": 3,
+    "section_clusters": 1726
+  },
+  "proposal": {
+    "accepted_decisions": 1792,
+    "after": {
+      "direct_bbb/global_context": 5752,
+      "direct_bbb/global_species_context": 497,
+      "efflux_transport/global_context": 16905,
+      "efflux_transport/global_species_context": 201,
+      "passive_permeability/global_context": 75,
+      "passive_permeability/global_species_context": 17
+    },
+    "assignments": 172308,
+    "before": {
+      "direct_bbb/global_context": 5861,
+      "direct_bbb/global_species_context": 502,
+      "efflux_transport/global_context": 17557,
+      "efflux_transport/global_species_context": 221,
+      "passive_permeability/global_context": 115,
+      "passive_permeability/global_species_context": 18
+    },
+    "changed_assignments": 11470,
+    "mapping_version": "bbb_martins_auxiliary.globally_reconciled.v2",
+    "validations": {
+      "accepted_decisions_do_not_overlap": true,
+      "human_approved": false,
+      "one_final_label_per_assignment": true,
+      "proposal_replayed_from_provisional": true
+    }
+  },
+  "publication_blockers": [
+    "human_approval_not_recorded"
+  ],
+  "publication_status": "awaiting_human_approval",
+  "review": {
+    "accepted_changes": 1792,
+    "change_decisions": 1818,
+    "checker_disagreements": 26,
+    "primary": {
+      "action_counts": {
+        "merge": 628,
+        "rename": 1169,
+        "retain": 21594,
+        "split": 21
+      },
+      "decisions": 23412,
+      "labels_expected": 24274,
+      "labels_missing": 0,
+      "labels_owned": 24274,
+      "valid": true
+    },
+    "rejected_changes": 26,
+    "valid": true
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "adjudication_file": "adjudication_direct_by_efflux.jsonl",
+  "adjudication_file_sha256": "ce7340c1fa10c3aa84166655b4fa4faa0d2547a1156370449165f07215986b70",
+  "adjudication_verdict_counts": {
+    "accept": 102,
+    "reject": 18
+  },
+  "adjudicator_id": "bbb_vocab_audit",
+  "canonical_mapping_modified": false,
+  "change_decisions_expected": 120,
+  "checker_disagreement_count": 18,
+  "checker_disagreement_ids": [
+    "direct_context_merge_0002",
+    "direct_context_merge_0003",
+    "direct_context_merge_0005",
+    "direct_context_merge_0033",
+    "direct_context_merge_0035",
+    "direct_context_merge_0039",
+    "direct_context_merge_0040",
+    "direct_context_merge_0046",
+    "direct_species_merge_0001",
+    "direct_species_merge_0002",
+    "direct_species_merge_0005",
+    "direct_species_merge_0006",
+    "direct_species_merge_0007",
+    "direct_species_merge_0009",
+    "direct_species_rename_0012",
+    "direct_species_rename_0013",
+    "direct_species_rename_0014",
+    "direct_species_rename_0015"
+  ],
+  "checker_disagreement_resolution_counts": {
+    "reject": 18
+  },
+  "checker_file": "checker_direct_by_passive.jsonl",
+  "checker_file_sha256": "96db38232e845c232799aed4b9b69354d6d35e0d2b361d7d9f9908a97ea56c94",
+  "checker_verdict_counts": {
+    "agree": 102,
+    "disagree": 18
+  },
+  "coverage": {
+    "adjudication_ids": 120,
+    "duplicate_ids": 0,
+    "every_checker_disagreement_explicitly_resolved": true,
+    "extra_ids": 0,
+    "missing_change_ids": 0,
+    "valid": true
+  },
+  "downstream_stages_modified": false,
+  "primary_file": "primary_direct_bbb.jsonl",
+  "primary_file_sha256": "23968479fa176f0e196cced95d4840332cd5907cd7b9444f6f7243cf3c75f200",
+  "summary_version": "bbb_auxiliary_adjudication_direct_by_efflux.v1"
+}

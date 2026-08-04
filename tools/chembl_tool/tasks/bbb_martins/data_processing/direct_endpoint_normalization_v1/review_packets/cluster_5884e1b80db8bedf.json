@@ -1,0 +1,777 @@
+{
+  "assignment_count": 154,
+  "assignments": [
+    {
+      "item_id": "v0000",
+      "provisional_endpoint": "cns_percent_penetration",
+      "raw_value": "% CNS Penetration"
+    },
+    {
+      "item_id": "v0001",
+      "provisional_endpoint": "cns_percent_penetration",
+      "raw_value": "% de pénétration"
+    },
+    {
+      "item_id": "v0002",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "% of Penetration"
+    },
+    {
+      "item_id": "v0003",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "% Penetration"
+    },
+    {
+      "item_id": "v0004",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "% penetration"
+    },
+    {
+      "item_id": "v0005",
+      "provisional_endpoint": "auc_percent_penetration",
+      "raw_value": "% Penetration (AUC)"
+    },
+    {
+      "item_id": "v0006",
+      "provisional_endpoint": "auc_percent_penetration",
+      "raw_value": "% penetration (AUC0–24)"
+    },
+    {
+      "item_id": "v0007",
+      "provisional_endpoint": "cmax_percent_penetration",
+      "raw_value": "% penetration (Cmax 0–24)"
+    },
+    {
+      "item_id": "v0008",
+      "provisional_endpoint": "cmax_percent_penetration",
+      "raw_value": "% Penetration (Cmax)"
+    },
+    {
+      "item_id": "v0009",
+      "provisional_endpoint": "adjusted_penetration",
+      "raw_value": "adjusted penetration"
+    },
+    {
+      "item_id": "v0010",
+      "provisional_endpoint": "administered_quantity_penetration",
+      "raw_value": "administered quantity penetrates"
+    },
+    {
+      "item_id": "v0011",
+      "provisional_endpoint": "apparent_forebrain_penetration",
+      "raw_value": "Apparent forebrain penetration"
+    },
+    {
+      "item_id": "v0012",
+      "provisional_endpoint": "penetration",
+      "raw_value": "average penetration"
+    },
+    {
+      "item_id": "v0013",
+      "provisional_endpoint": "penetration",
+      "raw_value": "average penetration (relative to serum)"
+    },
+    {
+      "item_id": "v0014",
+      "provisional_endpoint": "bbb_auc_penetration_ratio",
+      "raw_value": "BBB AUC penetration ratio"
+    },
+    {
+      "item_id": "v0015",
+      "provisional_endpoint": "btf_penetration",
+      "raw_value": "BTF penetration"
+    },
+    {
+      "item_id": "v0016",
+      "provisional_endpoint": "cpe_rank",
+      "raw_value": "Central Nervous System Penetration-Effectiveness Ranking (CPE)"
+    },
+    {
+      "item_id": "v0017",
+      "provisional_endpoint": "cns_percent_penetration",
+      "raw_value": "CNS penetration (%)"
+    },
+    {
+      "item_id": "v0018",
+      "provisional_endpoint": "cpe_index",
+      "raw_value": "CNS penetration effectiveness (CPE) index"
+    },
+    {
+      "item_id": "v0019",
+      "provisional_endpoint": "cpe_rank_score",
+      "raw_value": "CNS Penetration Effectiveness (CPE) rank score"
+    },
+    {
+      "item_id": "v0020",
+      "provisional_endpoint": "cpe_score",
+      "raw_value": "CNS Penetration Effectiveness (CPE) score"
+    },
+    {
+      "item_id": "v0021",
+      "provisional_endpoint": "cpe_score",
+      "raw_value": "CNS penetration effectiveness (CPE) score"
+    },
+    {
+      "item_id": "v0022",
+      "provisional_endpoint": "cpe_score",
+      "raw_value": "CNS penetration effectiveness score"
+    },
+    {
+      "item_id": "v0023",
+      "provisional_endpoint": "cpe_score",
+      "raw_value": "CNS penetration effectiveness score (CPE)"
+    },
+    {
+      "item_id": "v0024",
+      "provisional_endpoint": "cns_penetration_rate",
+      "raw_value": "CNS penetration rate"
+    },
+    {
+      "item_id": "v0025",
+      "provisional_endpoint": "cns_penetration_rate",
+      "raw_value": "CNS penetration rates"
+    },
+    {
+      "item_id": "v0026",
+      "provisional_endpoint": "cns_penetration_rating",
+      "raw_value": "CNS penetration rating"
+    },
+    {
+      "item_id": "v0027",
+      "provisional_endpoint": "cns_penetration_score",
+      "raw_value": "CNS penetration score"
+    },
+    {
+      "item_id": "v0028",
+      "provisional_endpoint": "cpe_score",
+      "raw_value": "CNS penetration-effectiveness (CPE) score"
+    },
+    {
+      "item_id": "v0029",
+      "provisional_endpoint": "cns_penetration_rate",
+      "raw_value": "CNS vancomycin penetration rate"
+    },
+    {
+      "item_id": "v0030",
+      "provisional_endpoint": "cpe_score",
+      "raw_value": "CNS-penetration effectiveness score"
+    },
+    {
+      "item_id": "v0031",
+      "provisional_endpoint": "cumulative_penetration_ratio",
+      "raw_value": "cumulative penetration ratio"
+    },
+    {
+      "item_id": "v0032",
+      "provisional_endpoint": "penetration_reduction",
+      "raw_value": "decrease in DTG penetration"
+    },
+    {
+      "item_id": "v0033",
+      "provisional_endpoint": "penetration",
+      "raw_value": "degree of penetration"
+    },
+    {
+      "item_id": "v0034",
+      "provisional_endpoint": "penetration",
+      "raw_value": "drug penetration"
+    },
+    {
+      "item_id": "v0035",
+      "provisional_endpoint": "dye_penetration_index",
+      "raw_value": "Dye penetration index (raw Score/ Δ BP)"
+    },
+    {
+      "item_id": "v0036",
+      "provisional_endpoint": "eb_penetration_amount",
+      "raw_value": "EB penetration amount"
+    },
+    {
+      "item_id": "v0037",
+      "provisional_endpoint": "eb_penetration_rate",
+      "raw_value": "EB penetration rates"
+    },
+    {
+      "item_id": "v0038",
+      "provisional_endpoint": "estimated_penetration_ratio",
+      "raw_value": "estimated penetration ratio"
+    },
+    {
+      "item_id": "v0039",
+      "provisional_endpoint": "penetration",
+      "raw_value": "extent of penetration"
+    },
+    {
+      "item_id": "v0040",
+      "provisional_endpoint": "penetration",
+      "raw_value": "extents of penetration"
+    },
+    {
+      "item_id": "v0041",
+      "provisional_endpoint": "unbound_penetration_ratio",
+      "raw_value": "free drug penetration ratio"
+    },
+    {
+      "item_id": "v0042",
+      "provisional_endpoint": "isf_penetration",
+      "raw_value": "ISF penetration"
+    },
+    {
+      "item_id": "v0043",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "LCR penetration"
+    },
+    {
+      "item_id": "v0044",
+      "provisional_endpoint": "penetration",
+      "raw_value": "level of penetration"
+    },
+    {
+      "item_id": "v0045",
+      "provisional_endpoint": "main_penetration",
+      "raw_value": "main penetration"
+    },
+    {
+      "item_id": "v0046",
+      "provisional_endpoint": "penetration",
+      "raw_value": "Mean % penetration"
+    },
+    {
+      "item_id": "v0047",
+      "provisional_endpoint": "dye_penetration_index",
+      "raw_value": "Mean dye penetration index"
+    },
+    {
+      "item_id": "v0048",
+      "provisional_endpoint": "eb_penetration_score",
+      "raw_value": "mean EB penetration score"
+    },
+    {
+      "item_id": "v0049",
+      "provisional_endpoint": "penetration_half_time",
+      "raw_value": "mean half-time of penetration"
+    },
+    {
+      "item_id": "v0050",
+      "provisional_endpoint": "penetration_half_time_to_equilibrium",
+      "raw_value": "mean half-time of penetration to equilibrium"
+    },
+    {
+      "item_id": "v0051",
+      "provisional_endpoint": "penetration",
+      "raw_value": "Mean penetration"
+    },
+    {
+      "item_id": "v0052",
+      "provisional_endpoint": "penetration",
+      "raw_value": "mean penetration"
+    },
+    {
+      "item_id": "v0053",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "mean penetration rate"
+    },
+    {
+      "item_id": "v0054",
+      "provisional_endpoint": "penetration_ratio",
+      "raw_value": "Mean penetration ratio"
+    },
+    {
+      "item_id": "v0055",
+      "provisional_endpoint": "penetration_ratio",
+      "raw_value": "mean penetration ratio"
+    },
+    {
+      "item_id": "v0056",
+      "provisional_endpoint": "penetration_ratio",
+      "raw_value": "Mean penetration ratios"
+    },
+    {
+      "item_id": "v0057",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "mean per cent penetration"
+    },
+    {
+      "item_id": "v0058",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "Mean percent penetration"
+    },
+    {
+      "item_id": "v0059",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "mean percent penetration"
+    },
+    {
+      "item_id": "v0060",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "Mean percentage of penetration"
+    },
+    {
+      "item_id": "v0061",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "mean percentage of penetration"
+    },
+    {
+      "item_id": "v0062",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "mean percentage penetration"
+    },
+    {
+      "item_id": "v0063",
+      "provisional_endpoint": "predicted_cranial_penetration_ratio",
+      "raw_value": "mean predicted cranial penetration ratio"
+    },
+    {
+      "item_id": "v0064",
+      "provisional_endpoint": "total_fractional_penetration",
+      "raw_value": "Median fractional penetration (total)"
+    },
+    {
+      "item_id": "v0065",
+      "provisional_endpoint": "unbound_fractional_penetration",
+      "raw_value": "Median fractional penetration (unbound)"
+    },
+    {
+      "item_id": "v0066",
+      "provisional_endpoint": "penetration",
+      "raw_value": "median penetration"
+    },
+    {
+      "item_id": "v0067",
+      "provisional_endpoint": "penetration",
+      "raw_value": "MTX penetration"
+    },
+    {
+      "item_id": "v0068",
+      "provisional_endpoint": "overall_penetration",
+      "raw_value": "Overall penetration"
+    },
+    {
+      "item_id": "v0069",
+      "provisional_endpoint": "overall_penetration",
+      "raw_value": "overall penetration"
+    },
+    {
+      "item_id": "v0070",
+      "provisional_endpoint": "protein_binding_corrected_penetration",
+      "raw_value": "Overall penetration (protein-binding corrected)"
+    },
+    {
+      "item_id": "v0071",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "overall percent penetration"
+    },
+    {
+      "item_id": "v0072",
+      "provisional_endpoint": "peak_penetration",
+      "raw_value": "peak penetration"
+    },
+    {
+      "item_id": "v0073",
+      "provisional_endpoint": "penetration",
+      "raw_value": "penetrating"
+    },
+    {
+      "item_id": "v0074",
+      "provisional_endpoint": "penetration",
+      "raw_value": "Penetration"
+    },
+    {
+      "item_id": "v0075",
+      "provisional_endpoint": "penetration",
+      "raw_value": "penetration"
+    },
+    {
+      "item_id": "v0076",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "Penetration (%)"
+    },
+    {
+      "item_id": "v0077",
+      "provisional_endpoint": "brain_blood_ratio",
+      "raw_value": "penetration (brain/blood ratio)"
+    },
+    {
+      "item_id": "v0078",
+      "provisional_endpoint": "plasma_cmax_penetration_ratio",
+      "raw_value": "penetration (compared with plasma Cmax)"
+    },
+    {
+      "item_id": "v0079",
+      "provisional_endpoint": "serum_penetration_ratio",
+      "raw_value": "penetration (relative to serum)"
+    },
+    {
+      "item_id": "v0080",
+      "provisional_endpoint": "penetration_ability",
+      "raw_value": "penetration ability"
+    },
+    {
+      "item_id": "v0081",
+      "provisional_endpoint": "steady_state_penetration",
+      "raw_value": "penetration at steady state"
+    },
+    {
+      "item_id": "v0082",
+      "provisional_endpoint": "penetration_coefficient",
+      "raw_value": "penetration coefficient"
+    },
+    {
+      "item_id": "v0083",
+      "provisional_endpoint": "penetration_distance",
+      "raw_value": "penetration distance"
+    },
+    {
+      "item_id": "v0084",
+      "provisional_endpoint": "penetration_efficacy",
+      "raw_value": "penetration efficacy"
+    },
+    {
+      "item_id": "v0085",
+      "provisional_endpoint": "penetration_efficiency",
+      "raw_value": "penetration efficiencies"
+    },
+    {
+      "item_id": "v0086",
+      "provisional_endpoint": "penetration_efficiency",
+      "raw_value": "penetration efficiency"
+    },
+    {
+      "item_id": "v0087",
+      "provisional_endpoint": "penetration_factor",
+      "raw_value": "penetration factor"
+    },
+    {
+      "item_id": "v0088",
+      "provisional_endpoint": "penetration_half_time",
+      "raw_value": "penetration half-time"
+    },
+    {
+      "item_id": "v0089",
+      "provisional_endpoint": "penetration_index",
+      "raw_value": "Penetration index"
+    },
+    {
+      "item_id": "v0090",
+      "provisional_endpoint": "inflamed_meninges_penetration",
+      "raw_value": "penetration into inflamed meninges"
+    },
+    {
+      "item_id": "v0091",
+      "provisional_endpoint": "inflamed_meninges_percent_penetration",
+      "raw_value": "penetration into inflamed meninges (% of serum drug concentration)"
+    },
+    {
+      "item_id": "v0092",
+      "provisional_endpoint": "meningeal_penetration",
+      "raw_value": "penetration into meninges"
+    },
+    {
+      "item_id": "v0093",
+      "provisional_endpoint": "noninflamed_meninges_penetration",
+      "raw_value": "penetration into non-inflamed meninges"
+    },
+    {
+      "item_id": "v0094",
+      "provisional_endpoint": "meningeal_penetration",
+      "raw_value": "penetration into the meninges"
+    },
+    {
+      "item_id": "v0095",
+      "provisional_endpoint": "subarachnoid_space_penetration",
+      "raw_value": "Penetration into the subarachnoid space"
+    },
+    {
+      "item_id": "v0096",
+      "provisional_endpoint": "tumor_penetration",
+      "raw_value": "penetration into tumors"
+    },
+    {
+      "item_id": "v0097",
+      "provisional_endpoint": "penetration_level",
+      "raw_value": "penetration level"
+    },
+    {
+      "item_id": "v0098",
+      "provisional_endpoint": "penetration_level",
+      "raw_value": "penetration levels"
+    },
+    {
+      "item_id": "v0099",
+      "provisional_endpoint": "inflamed_meninges_penetration",
+      "raw_value": "penetration of inflamed meninges"
+    },
+    {
+      "item_id": "v0100",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "penetration percentage"
+    },
+    {
+      "item_id": "v0101",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "Penetration Rate"
+    },
+    {
+      "item_id": "v0102",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "Penetration rate"
+    },
+    {
+      "item_id": "v0103",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "penetration rate"
+    },
+    {
+      "item_id": "v0104",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "Penetration Rate (%)"
+    },
+    {
+      "item_id": "v0105",
+      "provisional_endpoint": "penetration_rate_constant",
+      "raw_value": "penetration rate constant"
+    },
+    {
+      "item_id": "v0106",
+      "provisional_endpoint": "cns_penetration_rate",
+      "raw_value": "penetration rate in CNS"
+    },
+    {
+      "item_id": "v0107",
+      "provisional_endpoint": "brain_penetration_rate",
+      "raw_value": "penetration rate in the brain"
+    },
+    {
+      "item_id": "v0108",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "penetration rate of Na-F"
+    },
+    {
+      "item_id": "v0109",
+      "provisional_endpoint": "cns_penetration_rate",
+      "raw_value": "penetration rate to the CNS"
+    },
+    {
+      "item_id": "v0110",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "penetration rates"
+    },
+    {
+      "item_id": "v0111",
+      "provisional_endpoint": "penetration_ratio",
+      "raw_value": "Penetration Ratio"
+    },
+    {
+      "item_id": "v0112",
+      "provisional_endpoint": "penetration_ratio",
+      "raw_value": "Penetration ratio"
+    },
+    {
+      "item_id": "v0113",
+      "provisional_endpoint": "penetration_ratio",
+      "raw_value": "penetration ratio"
+    },
+    {
+      "item_id": "v0114",
+      "provisional_endpoint": "penetration_ratio",
+      "raw_value": "Penetration ratios"
+    },
+    {
+      "item_id": "v0115",
+      "provisional_endpoint": "penetration_ratio",
+      "raw_value": "penetration ratios"
+    },
+    {
+      "item_id": "v0116",
+      "provisional_endpoint": "penetration_reduction",
+      "raw_value": "penetration reduction"
+    },
+    {
+      "item_id": "v0117",
+      "provisional_endpoint": "peripheral_breast_tumor_penetration_ratio",
+      "raw_value": "penetration relative to peripheral breast tumor"
+    },
+    {
+      "item_id": "v0118",
+      "provisional_endpoint": "plasma_penetration_ratio",
+      "raw_value": "penetration relative to plasma concentration"
+    },
+    {
+      "item_id": "v0119",
+      "provisional_endpoint": "serum_penetration_ratio",
+      "raw_value": "penetration relative to that in serum"
+    },
+    {
+      "item_id": "v0120",
+      "provisional_endpoint": "penetration_time",
+      "raw_value": "penetration time"
+    },
+    {
+      "item_id": "v0121",
+      "provisional_endpoint": "dialysate_penetration",
+      "raw_value": "penetration to the dialysate"
+    },
+    {
+      "item_id": "v0122",
+      "provisional_endpoint": "last_time_point_penetration",
+      "raw_value": "penetration to the last time point"
+    },
+    {
+      "item_id": "v0123",
+      "provisional_endpoint": "penetration",
+      "raw_value": "penetration(3,4)"
+    },
+    {
+      "item_id": "v0124",
+      "provisional_endpoint": "penetration",
+      "raw_value": "penetrations"
+    },
+    {
+      "item_id": "v0125",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "per cent penetration"
+    },
+    {
+      "item_id": "v0126",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "Percent penetration"
+    },
+    {
+      "item_id": "v0127",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "percent penetration"
+    },
+    {
+      "item_id": "v0128",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "Percentage of penetration"
+    },
+    {
+      "item_id": "v0129",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "percentage of penetration"
+    },
+    {
+      "item_id": "v0130",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "Percentage penetration"
+    },
+    {
+      "item_id": "v0131",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "percentage penetration"
+    },
+    {
+      "item_id": "v0132",
+      "provisional_endpoint": "tissue_water_percent_penetration",
+      "raw_value": "percentage penetration into tissue water"
+    },
+    {
+      "item_id": "v0133",
+      "provisional_endpoint": "percent_penetration",
+      "raw_value": "percentages of penetration"
+    },
+    {
+      "item_id": "v0134",
+      "provisional_endpoint": "permeability_penetration_rate",
+      "raw_value": "permeability/penetration rate"
+    },
+    {
+      "item_id": "v0135",
+      "provisional_endpoint": "csf_percent_penetration",
+      "raw_value": "pourcentage de pénétration dans le L.C.R"
+    },
+    {
+      "item_id": "v0136",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "pénétration dans le LCR"
+    },
+    {
+      "item_id": "v0137",
+      "provisional_endpoint": "csf_penetration",
+      "raw_value": "pénétration dans le liquide céphalo-rachidien"
+    },
+    {
+      "item_id": "v0138",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "rate of penetration"
+    },
+    {
+      "item_id": "v0139",
+      "provisional_endpoint": "penetration_rate",
+      "raw_value": "rate of tryptophan penetration"
+    },
+    {
+      "item_id": "v0140",
+      "provisional_endpoint": "penetration_reduction",
+      "raw_value": "reduction in drug penetration"
+    },
+    {
+      "item_id": "v0141",
+      "provisional_endpoint": "relative_penetration",
+      "raw_value": "Relative penetration"
+    },
+    {
+      "item_id": "v0142",
+      "provisional_endpoint": "btf_penetration_ratio",
+      "raw_value": "Relative penetration (BTF)"
+    },
+    {
+      "item_id": "v0143",
+      "provisional_endpoint": "monolayer_penetration_ratio",
+      "raw_value": "relative penetration across the monolayer"
+    },
+    {
+      "item_id": "v0144",
+      "provisional_endpoint": "forebrain_penetration_ratio",
+      "raw_value": "relative penetration into the forebrain"
+    },
+    {
+      "item_id": "v0145",
+      "provisional_endpoint": "theoretical_penetration",
+      "raw_value": "theoretical penetration"
+    },
+    {
+      "item_id": "v0146",
+      "provisional_endpoint": "tissue_penetration",
+      "raw_value": "Tissue penetration"
+    },
+    {
+      "item_id": "v0147",
+      "provisional_endpoint": "tissue_penetration_factor",
+      "raw_value": "Tissue Penetration factor"
+    },
+    {
+      "item_id": "v0148",
+      "provisional_endpoint": "tissue_penetration_factor",
+      "raw_value": "tissue penetration factor (fT)"
+    },
+    {
+      "item_id": "v0149",
+      "provisional_endpoint": "total_penetration",
+      "raw_value": "total atazanavir penetration"
+    },
+    {
+      "item_id": "v0150",
+      "provisional_endpoint": "total_penetration_ratio",
+      "raw_value": "total penetration ratio"
+    },
+    {
+      "item_id": "v0151",
+      "provisional_endpoint": "tumor_penetration",
+      "raw_value": "tumor penetration"
+    },
+    {
+      "item_id": "v0152",
+      "provisional_endpoint": "unionized_unbound_penetration",
+      "raw_value": "unionized and unbound form penetration"
+    },
+    {
+      "item_id": "v0153",
+      "provisional_endpoint": "tissue_penetration_coefficient",
+      "raw_value": "VAN tissues penetration coefficient"
+    }
+  ],
+  "cluster_id": "cluster_5884e1b80db8bedf",
+  "packet_version": "bbb_direct_endpoint_local_cluster_review.v1"
+}

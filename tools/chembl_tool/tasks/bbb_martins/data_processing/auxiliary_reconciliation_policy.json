@@ -1,0 +1,147 @@
+{
+  "policy_version": "bbb_martins_auxiliary_reconciliation_policy.v1",
+  "objective": "Produce a compact, mechanism-preserving BBB auxiliary ontology without imposing a fixed vocabulary size.",
+  "namespace_policy": {
+    "independent_namespaces": [
+      "direct_bbb/global_context",
+      "direct_bbb/global_species_context",
+      "passive_permeability/global_context",
+      "passive_permeability/global_species_context",
+      "efflux_transport/global_context",
+      "efflux_transport/global_species_context"
+    ],
+    "cross_namespace_decisions_allowed": false,
+    "rule": "Every decision applies to exactly one source/output namespace. Similar labels in another namespace require a separate decision and may remain different."
+  },
+  "ontology": {
+    "style": "compact_mechanism_preserving",
+    "hard_vocabulary_cap": null,
+    "context": {
+      "preserve_when_explicit": [
+        "assay_or_model_type",
+        "in_vivo_or_in_vitro_setting",
+        "transport_mechanism",
+        "transport_direction",
+        "barrier_disruption_state",
+        "major_bbb_modality"
+      ],
+      "major_bbb_modality_examples": [
+        "pet",
+        "mri",
+        "autoradiography",
+        "microdialysis",
+        "brain perfusion",
+        "pampa-bbb",
+        "endothelial monolayer"
+      ],
+      "remove_unless_essential_to_a_preserved_dimension": [
+        "compound",
+        "target_or_transporter_name",
+        "dose",
+        "time",
+        "pathogen",
+        "cell_clone",
+        "protocol_detail"
+      ],
+      "rule": "Keep the shortest label that preserves every explicit decision-relevant dimension; do not merge mechanistically distinct contexts merely to reduce vocabulary size."
+    },
+    "species": {
+      "default_form": "Concise lowercase explicit species labels; deduplicate, alphabetize, and join multiple species with ' + '.",
+      "role_qualified_form": "<host_species> host; <gene_species> gene",
+      "role_qualification_rule": "Use host/gene role qualification only when the raw source explicitly states both the expression host species and the introduced gene species.",
+      "single_role_rule": "When both roles are not explicit, do not invent a role assignment; retain only species that are independently explicit under the namespace source contract.",
+      "forbidden_inference_sources": [
+        "cell_line_name",
+        "assay_abbreviation",
+        "gene_symbol",
+        "transporter_name",
+        "outside_knowledge"
+      ]
+    }
+  },
+  "allowed_actions": {
+    "retain": {
+      "meaning": "Keep one provisional label unchanged."
+    },
+    "merge": {
+      "meaning": "Map two or more semantically equivalent provisional labels to one canonical label within the same namespace.",
+      "minimum_input_labels": 2
+    },
+    "rename": {
+      "meaning": "Replace one provisional label with a clearer canonical label without changing its covered raw values.",
+      "minimum_input_labels": 1
+    },
+    "split": {
+      "meaning": "Divide one provisional label into two or more final labels using explicit raw-value assignments.",
+      "minimum_final_labels": 2,
+      "requirements": [
+        "Every affected raw value is assigned exactly once.",
+        "Selectors or raw-value lists are explicit, deterministic, exhaustive, and non-overlapping.",
+        "Each child label has supporting raw examples and an independent rationale.",
+        "The split does not infer information absent from the raw source."
+      ]
+    }
+  },
+  "decision_record_contract": {
+    "required_fields": [
+      "decision_id",
+      "namespace",
+      "action",
+      "input_labels",
+      "final_labels",
+      "affected_raw_value_count",
+      "supporting_raw_examples",
+      "evidence_summary",
+      "rationale",
+      "preserved_dimensions",
+      "removed_details",
+      "reviewer_id",
+      "checker_id",
+      "adjudicator_id",
+      "decision_status"
+    ],
+    "allowed_statuses": [
+      "proposed",
+      "checked_agree",
+      "checked_disagree",
+      "adjudicated_accept",
+      "adjudicated_reject",
+      "human_approved"
+    ],
+    "evidence_requirements": [
+      "Evidence quotes or examples come from raw values in the same namespace.",
+      "Merge and rename decisions show representative examples for every input label.",
+      "Split decisions identify all affected raw values and examples for every child label.",
+      "Rationale states why preserved ontology dimensions are equivalent or different."
+    ]
+  },
+  "review_workflow": {
+    "stages": [
+      "reviewer",
+      "checker",
+      "adjudicator",
+      "human_publication_checkpoint"
+    ],
+    "reviewer": "Proposes retain, merge, rename, or split decisions with complete evidence and rationale.",
+    "checker": "Independently checks source support, namespace scope, ontology preservation, and raw-value coverage.",
+    "adjudicator": "Resolves reviewer/checker disagreement and accepts or rejects each proposed change; the adjudicator may not silently rewrite a decision without a new rationale.",
+    "human_publication_checkpoint": "A human must approve the final manifest, unresolved-item report, and change summary before the reconciled mapping is published or used to rebuild downstream artifacts.",
+    "publication_requires": [
+      "All reviewed inputs have an explicit disposition.",
+      "All accepted changes have checker and adjudicator identities.",
+      "All splits pass exhaustive and non-overlapping raw-value coverage checks.",
+      "No forbidden cross-namespace decision is present.",
+      "No unresolved reviewer/checker disagreement is present.",
+      "Human approval is recorded."
+    ]
+  },
+  "forbidden_decisions": [
+    "Any merge, rename, or split spanning more than one source/output namespace.",
+    "Any decision that transfers a context label into a species namespace or a species label into a context namespace.",
+    "Any merge that removes an explicit assay/model type, in vivo/in vitro setting, transport mechanism or direction, barrier-disruption state, or major BBB modality.",
+    "Any label based on compound, target, dose, time, pathogen, clone, or protocol detail when that detail is not essential to a preserved ontology dimension.",
+    "Any species or host/gene role inferred from a model name, cell line, gene symbol, transporter name, assay abbreviation, or outside knowledge.",
+    "Any vocabulary-size target used as justification for a semantic merge.",
+    "Any unreviewed automatic change to the published mapping."
+  ]
+}
