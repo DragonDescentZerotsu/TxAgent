@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import math
 import os
+import hashlib
+import json
 from typing import Any
 
 from rdkit import Chem, RDLogger
@@ -9,6 +11,7 @@ from rdkit.Chem import Crippen, Descriptors
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
 from tools.service.config import ServiceSettings
+from tools.service.cache import ToolResultCache
 from tools.service.errors import InvalidInputError
 from tools.service.tools.base import BaseTool
 
@@ -185,25 +188,36 @@ class MoleculePropertiesTool(BaseTool):
         self._fg_error: str | None = None
         self._logd_ph = 7.4
         self._descriptor_funcs = dict(Descriptors._descList)
+        self._result_cache: ToolResultCache | None = None
 
     def initialize(self, settings: ServiceSettings) -> None:
         self.initialized = True
         self.initialization_error = None
         self._logd_ph = settings.logd_ph
+        self._result_cache = ToolResultCache(None, memory_entries=settings.cache_memory_entries)
         self._initialize_functional_group_detector()
         if not settings.enable_molgpka:
             self._pka_error = "MolGpKa initialization disabled by TXAGENT_ENABLE_MOLGPKA"
             return
         try:
-            from molgpka import MolGpKa
+            from tools.service.molgpka_predictor import ResidentMolGpKa
 
-            self._pka_predictor = MolGpKa(uncharged=True)
+            self._pka_predictor = ResidentMolGpKa(
+                uncharged=True,
+                max_concurrency=settings.batch_workers,
+            )
             if settings.prewarm_molgpka:
                 self._predict_pka("CC(=O)O")
         except Exception as exc:
             self._pka_predictor = None
             self._pka_error = f"{type(exc).__name__}: {exc}"
             self.initialization_error = self._pka_error
+
+    def close(self) -> None:
+        if self._result_cache is not None:
+            self._result_cache.close()
+            self._result_cache = None
+        self._pka_predictor = None
 
     def _initialize_functional_group_detector(self) -> None:
         try:
@@ -221,6 +235,29 @@ class MoleculePropertiesTool(BaseTool):
         logd_ph = float(payload.get("logd_ph", self._logd_ph))
         mol = _canonicalize_mol(_mol_from_smiles(input_smiles))
         canonical_smiles = Chem.MolToSmiles(mol, canonical=True, isomericSmiles=True)
+        cache_key = hashlib.sha256(
+            json.dumps(
+                ["molecule-properties-internal-v1", canonical_smiles, logd_ph, return_debug],
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+        if self._result_cache is not None:
+            output, _ = self._result_cache.get_or_compute(
+                cache_key,
+                lambda: self._invoke_canonical(canonical_smiles, logd_ph, return_debug),
+            )
+        else:
+            output = self._invoke_canonical(canonical_smiles, logd_ph, return_debug)
+        output["query"]["input_smiles"] = input_smiles
+        return output
+
+    def _invoke_canonical(
+        self,
+        canonical_smiles: str,
+        logd_ph: float,
+        return_debug: bool,
+    ) -> dict[str, Any]:
+        mol = _mol_from_smiles(canonical_smiles)
 
         raw_features = self._compute_rdkit_features(mol)
         warnings: list[str] = []
@@ -238,7 +275,7 @@ class MoleculePropertiesTool(BaseTool):
         ]
         output = {
             "query": {
-                "input_smiles": input_smiles,
+                "input_smiles": canonical_smiles,
                 "canonical_smiles": canonical_smiles,
                 "standard_inchi_key": _inchi_key(mol),
             },

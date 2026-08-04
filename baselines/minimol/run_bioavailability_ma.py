@@ -111,6 +111,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--embedding-cache-dir", type=Path, default=None)
+    parser.add_argument(
+        "--reuse-embedding-cache-dir",
+        type=Path,
+        action="append",
+        default=[],
+        help="Reuse frozen molecule-only embeddings by exact SMILES match; may be repeated.",
+    )
     parser.add_argument("--minimol-source", type=Path, default=DEFAULT_MINIMOL_SOURCE)
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--embedding-batch-size", type=int, default=100)
@@ -126,6 +133,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--threshold-strategy", choices=["fixed_0.5", "valid_macro_f1"], default="fixed_0.5")
+    parser.add_argument(
+        "--evaluation-split",
+        choices=("valid", "test"),
+        default="test",
+        help="Split evaluated after training; valid is supported with --train-all only.",
+    )
     parser.add_argument(
         "--train-all",
         action="store_true",
@@ -149,6 +162,14 @@ def load_split(path: Path) -> SplitData:
     return SplitData(smiles=smiles, labels=labels)
 
 
+def _json_safe(value):
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    return value
+
+
 def set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -166,23 +187,100 @@ def embedding_cache_path(args: argparse.Namespace, split_name: str) -> Path:
     return cache_path(args.output_dir, split_name)
 
 
-def featurize_split(split_name: str, split: SplitData, args: argparse.Namespace) -> torch.Tensor:
-    path = embedding_cache_path(args, split_name)
-    if path.exists() and not args.force_embed:
-        payload = torch.load(path, map_location="cpu")
-        if payload["smiles"] == split.smiles:
-            return payload["embeddings"].float()
-        print(f"[minimol] cache mismatch for {split_name}; recomputing embeddings")
+def featurize_splits(
+    splits: dict[str, SplitData],
+    args: argparse.Namespace,
+) -> dict[str, torch.Tensor]:
+    embeddings: dict[str, torch.Tensor] = {}
+    pending: dict[str, SplitData] = {}
+    for split_name, split in splits.items():
+        path = embedding_cache_path(args, split_name)
+        if path.exists() and not args.force_embed:
+            payload = torch.load(path, map_location="cpu")
+            if payload["smiles"] == split.smiles:
+                embeddings[split_name] = payload["embeddings"].float()
+                continue
+            print(f"[minimol] cache mismatch for {split_name}; recomputing embeddings")
+        pending[split_name] = split
 
-    print(f"[minimol] featurizing {split_name}: {len(split.smiles)} molecules")
-    featurizer = create_featurizer(
-        batch_size=args.embedding_batch_size,
-        minimol_source=args.minimol_source,
+    if pending:
+        reusable, reuse_files = _load_reusable_embeddings(args.reuse_embedding_cache_dir)
+        missing_smiles = list(
+            dict.fromkeys(
+                smiles
+                for split in pending.values()
+                for smiles in split.smiles
+                if smiles not in reusable
+            )
+        )
+        if missing_smiles:
+            featurizer = create_featurizer(
+                batch_size=args.embedding_batch_size,
+                minimol_source=args.minimol_source,
+                device=args.device,
+            )
+            missing_embeddings = embed_smiles(featurizer, missing_smiles)
+            reusable.update(zip(missing_smiles, missing_embeddings, strict=True))
+        missing_set = set(missing_smiles)
+        reuse_counts: dict[str, dict[str, int]] = {}
+        for split_name, split in pending.items():
+            n_reused = sum(smiles not in missing_set for smiles in split.smiles)
+            print(
+                f"[minimol] materializing {split_name}: {len(split.smiles)} molecules "
+                f"({n_reused} reused, {len(split.smiles) - n_reused} newly embedded)"
+            )
+            tensor = torch.stack([reusable[smiles] for smiles in split.smiles]).float()
+            path = embedding_cache_path(args, split_name)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            torch.save(
+                {"smiles": split.smiles, "labels": split.labels, "embeddings": tensor},
+                path,
+            )
+            embeddings[split_name] = tensor
+            reuse_counts[split_name] = {
+                "n_rows": len(split.smiles),
+                "n_reused": n_reused,
+                "n_newly_embedded": len(split.smiles) - n_reused,
+            }
+        reuse_manifest = {
+            "type": "minimol_embedding_cache_reuse.v1",
+            "match_key": "exact_smiles",
+            "label_fields_reused": False,
+            "source_cache_files": [str(path) for path in reuse_files],
+            "n_source_molecules": len(reusable) - len(missing_smiles),
+            "n_unique_newly_embedded": len(missing_smiles),
+            "splits": reuse_counts,
+        }
+        reuse_manifest_path = args.output_dir / "embedding_reuse_manifest.json"
+        reuse_manifest_path.write_text(
+            json.dumps(reuse_manifest, indent=2) + "\n",
+            encoding="utf-8",
+        )
+    return embeddings
+
+
+def _load_reusable_embeddings(
+    cache_dirs: list[Path],
+) -> tuple[dict[str, torch.Tensor], list[Path]]:
+    registry: dict[str, torch.Tensor] = {}
+    files = sorted(
+        path
+        for cache_dir in cache_dirs
+        for path in cache_dir.glob("*.pt")
+        if path.is_file()
     )
-    tensor = embed_smiles(featurizer, split.smiles)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    torch.save({"smiles": split.smiles, "labels": split.labels, "embeddings": tensor}, path)
-    return tensor
+    for path in files:
+        payload = torch.load(path, map_location="cpu")
+        smiles = list(map(str, payload["smiles"]))
+        tensor = payload["embeddings"].float()
+        if len(smiles) != len(tensor):
+            raise ValueError(f"Embedding cache row mismatch: {path}")
+        for molecule, row in zip(smiles, tensor, strict=True):
+            previous = registry.get(molecule)
+            if previous is not None and not torch.allclose(previous, row, rtol=1e-5, atol=1e-6):
+                raise ValueError(f"Conflicting cached MiniMol embedding for {molecule!r}")
+            registry[molecule] = row
+    return registry, files
 
 
 def make_model(args: argparse.Namespace, device: torch.device) -> tuple[nn.Module, optim.Optimizer, LambdaLR, nn.Module]:
@@ -274,6 +372,8 @@ def evaluate_metrics(y_true: list[int], y_score: np.ndarray, threshold: float) -
 
 def main() -> None:
     args = parse_args()
+    if args.evaluation_split == "valid" and not args.train_all:
+        raise ValueError("--evaluation-split valid requires --train-all to avoid validation selection leakage")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     matplotlib_cache_dir = args.output_dir / ".matplotlib"
     matplotlib_cache_dir.mkdir(parents=True, exist_ok=True)
@@ -282,18 +382,22 @@ def main() -> None:
 
     train = load_split(args.data_dir / "train.jsonl")
     valid = None if args.train_all else load_split(args.data_dir / "valid.jsonl")
-    test = load_split(args.data_dir / "test.jsonl")
+    test = load_split(args.data_dir / f"{args.evaluation_split}.jsonl")
 
     print(
         "[minimol] loaded splits: "
         f"train={len(train.labels)} "
         f"valid={len(valid.labels) if valid is not None else 'not_used'} "
-        f"test={len(test.labels)} device={device}"
+        f"evaluation={args.evaluation_split}:{len(test.labels)} device={device}"
     )
 
-    train_embeddings = featurize_split("train", train, args)
-    valid_embeddings = featurize_split("valid", valid, args) if valid is not None else None
-    test_embeddings = featurize_split("test", test, args)
+    embedding_splits = {"train": train, args.evaluation_split: test}
+    if valid is not None:
+        embedding_splits["valid"] = valid
+    split_embeddings = featurize_splits(embedding_splits, args)
+    train_embeddings = split_embeddings["train"]
+    valid_embeddings = split_embeddings.get("valid") if valid is not None else None
+    test_embeddings = split_embeddings[args.evaluation_split]
 
     valid_loader = (
         DataLoader(
@@ -398,13 +502,22 @@ def main() -> None:
     test_metrics = evaluate_metrics(test.labels, test_scores, threshold)
     test_metrics_fixed = evaluate_metrics(test.labels, test_scores, 0.5)
 
+    split_sizes = {
+        "train": len(train.labels),
+        "valid": len(valid.labels) if valid is not None else 0,
+        "test": 0,
+        args.evaluation_split: len(test.labels),
+        "evaluation": len(test.labels),
+    }
     output = {
-        "args": {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()},
-        "splits": {
-            "train": len(train.labels),
-            "valid": len(valid.labels) if valid is not None else 0,
-            "test": len(test.labels),
-        },
+        "args": {key: _json_safe(value) for key, value in vars(args).items()},
+        "splits": split_sizes,
+        "evaluation_split": args.evaluation_split,
+        "embedding_reuse_manifest": (
+            str(args.output_dir / "embedding_reuse_manifest.json")
+            if (args.output_dir / "embedding_reuse_manifest.json").exists()
+            else None
+        ),
         "model_selection": {
             "criterion": (
                 "fixed configured epochs using all training molecules"
@@ -421,12 +534,14 @@ def main() -> None:
         "test_metrics": test_metrics,
         "valid_metrics_fixed_0.5": valid_metrics_fixed,
         "test_metrics_fixed_0.5": test_metrics_fixed,
+        "evaluation_metrics": test_metrics,
+        "evaluation_metrics_fixed_0.5": test_metrics_fixed,
         "valid_metrics_valid_macro_f1_threshold": valid_metrics_tuned,
         "test_metrics_valid_macro_f1_threshold": test_metrics_tuned,
     }
 
     metrics_path = args.output_dir / "metrics.json"
-    predictions_path = args.output_dir / "test_predictions.jsonl"
+    predictions_path = args.output_dir / f"{args.evaluation_split}_predictions.jsonl"
     checkpoint_path = args.output_dir / "best_ensemble.pt"
     with metrics_path.open("w") as f:
         json.dump(output, f, indent=2)
@@ -446,7 +561,10 @@ def main() -> None:
     )
 
     print("[minimol] valid metrics:", json.dumps(valid_metrics, sort_keys=True))
-    print("[minimol] test metrics:", json.dumps(test_metrics, sort_keys=True))
+    print(
+        f"[minimol] {args.evaluation_split} metrics:",
+        json.dumps(test_metrics, sort_keys=True),
+    )
     print(f"[minimol] wrote {metrics_path}")
     print(f"[minimol] wrote {predictions_path}")
     print(f"[minimol] wrote {checkpoint_path}")

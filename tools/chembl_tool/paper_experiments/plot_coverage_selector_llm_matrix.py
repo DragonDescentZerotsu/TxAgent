@@ -11,7 +11,6 @@ from .paper_figure_style import (
     BLIND,
     CARD,
     GRID,
-    INK,
     MUTED,
     VISIBLE,
     append_vertical_grid,
@@ -61,6 +60,68 @@ def read_metrics(path: Path) -> dict[tuple[str, str, str], dict[str, str]]:
     return rows
 
 
+def _load_plot_contract(
+    path: Path,
+) -> tuple[
+    dict[tuple[str, str, str], dict[str, str]],
+    tuple[tuple[str, str, str], ...],
+    tuple[tuple[str, str, str], ...],
+]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        raw_rows = list(csv.DictReader(handle, delimiter="\t"))
+    rows = {
+        (row["task"], row["benchmark_split"], row["method"]): row
+        for row in raw_rows
+    }
+    method_order = list(dict.fromkeys(row["method"] for row in raw_rows))
+    if method_order == [method for method, _, _ in METHODS]:
+        return rows, CONDITIONS, METHODS
+    if not 2 <= len(method_order) <= 3:
+        raise ValueError(f"Expected two or three methods, found {method_order}")
+    task_order = {task: index for index, task in enumerate(TASK_LABELS)}
+    split_order = {"random": 0, "scaffold": 1}
+    pairs = sorted(
+        {(row["task"], row["benchmark_split"]) for row in raw_rows},
+        key=lambda pair: (
+            task_order.get(pair[0], len(task_order)),
+            split_order.get(pair[1], len(split_order)),
+        ),
+    )
+    conditions = tuple(
+        (
+            task,
+            split,
+            f"{TASK_LABELS.get(task, task)} · {split.title()}",
+        )
+        for task, split in pairs
+    )
+    palette = (BLIND, "#6C7A89", VISIBLE) if len(method_order) == 3 else (BLIND, VISIBLE)
+    methods = tuple(
+        (
+            method,
+            next(
+                (
+                    row.get("method_label") or method
+                    for row in raw_rows
+                    if row["method"] == method
+                ),
+                method,
+            ),
+            color,
+        )
+        for method, color in zip(method_order, palette, strict=True)
+    )
+    expected = {
+        (task, split, method)
+        for task, split, _ in conditions
+        for method, _, _ in methods
+    }
+    missing = sorted(expected - set(rows))
+    if missing:
+        raise ValueError(f"Missing matched matrix rows: {missing}")
+    return rows, conditions, methods
+
+
 def render_panel(
     parts: list[str],
     *,
@@ -71,6 +132,8 @@ def render_panel(
     metric: str,
     metric_label: str,
     rows: dict[tuple[str, str, str], dict[str, str]],
+    conditions: tuple[tuple[str, str, str], ...],
+    methods: tuple[tuple[str, str, str], ...],
 ) -> None:
     parts.append(rect(x, y, width, height, fill=CARD, stroke=GRID))
     parts.append(svg_text(x + 24, y + 38, metric_label, size=24, weight=750))
@@ -87,11 +150,11 @@ def render_panel(
         label_y=plot_bottom + 28,
     )
 
-    row_step = (plot_bottom - plot_top) / len(CONDITIONS)
+    row_step = (plot_bottom - plot_top) / len(conditions)
     bar_height = 16
-    for index, (task, split, condition_label) in enumerate(CONDITIONS):
+    for index, (task, split, condition_label) in enumerate(conditions):
         center_y = plot_top + row_step * (index + 0.5)
-        n_value = int(rows[(task, split, METHODS[0][0])]["n"])
+        n_value = int(rows[(task, split, methods[0][0])]["n"])
         parts.append(
             svg_text(
                 x + 22,
@@ -111,9 +174,10 @@ def render_panel(
                 anchor="end",
             )
         )
-        for method_index, (method, _, color) in enumerate(METHODS):
+        total_bar_height = (len(methods) - 1) * 22 + bar_height
+        for method_index, (method, _, color) in enumerate(methods):
             value = float(rows[(task, split, method)][metric])
-            bar_y = center_y - 20 + method_index * 22
+            bar_y = center_y - total_bar_height / 2 + method_index * 22
             bar_width = value * (plot_right - plot_left)
             parts.append(
                 rect(plot_left, bar_y, bar_width, bar_height, fill=color, rx=3)
@@ -130,35 +194,56 @@ def render_panel(
 
 
 def render(metrics_path: Path, output: Path) -> None:
-    rows = read_metrics(metrics_path)
+    rows, conditions, methods = _load_plot_contract(metrics_path)
+    legacy = methods == METHODS and conditions == CONDITIONS
+    title = (
+        "Retrieval Selector Comparison Across Starling"
+        if legacy
+        else "Coverage-Aware Reasoning Comparison"
+    )
+    subtitle = (
+        "Three tasks · random and scaffold splits · strict full-sample matched comparisons"
+        if legacy
+        else f"{len(conditions)} task/split conditions · strict full-sample matched comparisons"
+    )
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
         f'viewBox="0 0 {WIDTH} {HEIGHT}" role="img" aria-labelledby="chart-title chart-desc">',
-        '<title id="chart-title">Morgan similarity and coverage retrieval across Starling tasks</title>',
-        '<desc id="chart-desc">Two horizontal grouped-bar panels compare accuracy and macro-F1 for Morgan similarity and coverage retrieval on random and scaffold splits of three Starling tasks.</desc>',
+        f'<title id="chart-title">{title}</title>',
+        '<desc id="chart-desc">Two horizontal grouped-bar panels compare accuracy and macro-F1 for strictly matched Starling agent profiles.</desc>',
         f"<metadata>Source: {metrics_path}; generated {date.today().isoformat()}.</metadata>",
         rect(0, 0, WIDTH, HEIGHT, fill=BG, rx=0),
-        svg_text(70, 62, "Retrieval Selector Comparison Across Starling", size=36, weight=750),
+        svg_text(70, 62, title, size=36, weight=750),
         svg_text(
             70,
             100,
-            "Three tasks · random and scaffold splits · strict full-sample matched comparisons",
+            subtitle,
             size=19,
             fill=MUTED,
         ),
         svg_text(
             70,
             130,
-            "Full-mechanism GLM · parent-disjoint · top-k = 3 · minimum similarity = 0.30",
+            (
+                "Full-mechanism GLM · parent-disjoint · top-k = 3 · minimum similarity = 0.30"
+                if legacy
+                else "Full-mechanism agent · parent-disjoint · top-k = 3 · minimum similarity = 0.30"
+            ),
             size=14,
             fill=MUTED,
         ),
     ]
-    legend_x = 910
-    for _, label, color in METHODS:
-        parts.append(rect(legend_x, 68, 20, 20, fill=color, rx=3))
-        parts.append(svg_text(legend_x + 30, 84, label, size=15, weight=650))
-        legend_x += 330
+    if legacy:
+        legend_positions = ((910, 68), (1240, 68))
+    elif len(methods) == 2:
+        legend_positions = ((650, 68), (1150, 68))
+    else:
+        legend_positions = ((780, 58), (780, 94), (1190, 94))
+    for (_, label, color), (legend_x, legend_y) in zip(
+        methods, legend_positions, strict=True
+    ):
+        parts.append(rect(legend_x, legend_y, 20, 20, fill=color, rx=3))
+        parts.append(svg_text(legend_x + 30, legend_y + 16, label, size=15, weight=650))
 
     render_panel(
         parts,
@@ -169,6 +254,8 @@ def render(metrics_path: Path, output: Path) -> None:
         metric="accuracy",
         metric_label="Accuracy",
         rows=rows,
+        conditions=conditions,
+        methods=methods,
     )
     render_panel(
         parts,
@@ -179,13 +266,23 @@ def render(metrics_path: Path, output: Path) -> None:
         metric="macro_f1",
         metric_label="Macro-F1",
         rows=rows,
+        conditions=conditions,
+        methods=methods,
     )
     parts.extend(
         [
             svg_text(
                 70,
                 1080,
-                "Only the retrieval selector differs within each task/split pair; all other inference and evidence contracts are matched.",
+                (
+                    "Only the retrieval selector differs within each task/split pair; all other inference and evidence contracts are matched."
+                    if legacy
+                    else (
+                        "The two profiles use the same coverage-selected neighbors; only the LLM-visible coverage context differs."
+                        if len(methods) == 2
+                        else "Morgan is the original baseline; the two coverage profiles share neighbors and differ only in LLM-visible coverage context."
+                    )
+                ),
                 size=13,
                 fill=MUTED,
             ),

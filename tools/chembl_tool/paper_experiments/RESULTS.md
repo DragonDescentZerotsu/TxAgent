@@ -15,12 +15,11 @@ Test 可见性/执行矩阵共有 73 个 GLM 条件，另有 22 个完整 test-s
 - `deployment_visible_prefetched`：结构与允许身份信息可见，但 harness 提供与 identity-blind 完全一致的工具结果；它是 parity-controlled visibility 补充控制。
 - `deployment_visible`：query structure visible、query name hidden；retrieved molecule 的 structure、source ID 和数据源已有名称 visible；模型自主选择 group comparison tools。
 
-论文使用口径已更新：paper-facing structural-analog retrieval 主结果默认使用
-`deployment_visible + parent_disjoint`；`deployment_visible + operational` 是真实部署敏感性对照和选择性
-diff/reuse 的 staging reference。Identity-blind 和 matched-prefetch 只作为补充控制。当前 22 个已有
-retrieval 条件的 parent-disjoint 版本已在 test/valid 均完成；2026-07-22 新增的 5 个 BBB/Skin Starling
-条件也已补齐 test/valid identity-blind 和全部 valid 制度。Test matched-prefetch 仍保留原 21 条件，未补
-这 5 个新增条件。ClinTox Starling 仍未补齐，因此本文件中的数值仍是 exploratory result，不是最终论文主表。
+本文以下结果只保留旧 lineage 的原始制度含义：当时 paper-facing 候选是
+`deployment_visible + parent_disjoint`，operational 用作 diff/reuse staging。2026-08-01 起该口径已被 v4
+协议覆盖：新主结果改为 `identity_blind + parent_disjoint` fresh-run，deployment-visible/operational 只作
+显式补充，不再是 staging 依赖。旧 22 个 parent-disjoint retrieval 条件和 26-condition visibility matrix
+仍用于 historical mechanism/failure 分析，但不得据此覆盖当前 `STARLING_BENCHMARK_RESULTS.md`。
 
 Test identity-blind 和 deployment-visible operational 各有 26 个条件，matched-prefetch 有 21 个条件，
 parent-disjoint 有 22 个 retrieval 条件；全部满足 `n_successful == n_total` 且 `n_failed_runs == 0`。

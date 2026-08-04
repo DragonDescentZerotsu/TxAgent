@@ -20,7 +20,7 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Starling 二分类 benchmark（2026-08-02）
+## 当前 Starling 二分类 benchmark（2026-08-04）
 
 BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
 records 构建；ClinTox 因缺少与 clinical-trial toxicity failure 同定义的 Starling direct source，
@@ -85,6 +85,8 @@ tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 tools/chembl_tool/paper_experiments/summarize_minimol_retrieval_agent.py
 tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
 tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
+tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
+tools/chembl_tool/paper_experiments/watch_glm_tunnel_and_matrix.py
 tools/chembl_tool/paper_experiments/plot_starling_with_minimol_agent.py
 tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
 tools/chembl_tool/paper_experiments/analyze_coverage_selector_retrieval_changes.py
@@ -94,6 +96,18 @@ baselines/minimol/run_bioavailability_ma.py --train-all
 baselines/minimol/run_embedding_knn.py
 baselines/structure_knn/run.py
 ```
+
+`plot_starling_model_comparison.py` 是 GPT-OSS-20B、GPT-OSS-120B、train-label baselines 和后续
+ablation 的唯一 Starling 总图入口。新增完整 model/visibility summary 通过可重复的
+`--comparison-metrics` 追加；matched method experiment 继续通过可重复的 `--experiment-metrics` 追加。
+不得为单个新实验新增独立 overview/bar-chart 模块或正式小图。完整 comparison summary 必须与 reference
+使用相同 task/split/subset/sample count 和 baseline；experiment metrics 则必须按 task/split 提供一个与既有
+candidate condition 对齐的 anchor row，绘图器会校验 `n` 和 macro-F1 后隐藏重复 anchor，只绘制新增实验行。
+
+`watch_glm_tunnel_and_matrix.py` 是长 GLM matrix 的可恢复监控入口：检查 `/v1/models`、SSH tunnel 和唯一
+launcher，断线时停止当前 process group、重连后依靠 `--skip-existing` 恢复。完成计数必须通过 task prediction、
+single/final status、expected group count 和 group status 四层 gate；不能只数 final 文件。该入口不保存密码，
+Duo approval 仍由用户完成。
 
 数据构建入口：
 
@@ -129,13 +143,24 @@ Starling source 构建的 evidence index 不能直接用于新 benchmark。
 
 ```text
 tools/service/app.py
-  FastAPI app。注册工具并提供 /health、/tools、/tools/{tool_name}/invoke、/tools/invoke、/tools/{tool_name}。
+  FastAPI app。注册工具并提供 /health、/tools、/tools/batch、/tools/{tool_name}/invoke、
+  /tools/invoke、/tools/{tool_name}。
 
 tools/service/config.py
-  服务配置。MolGpKa 相关开关在这里读取；mmpdb 使用当前 Python 环境中已安装的 mmpdblib，不需要源码路径环境变量。
+  服务配置。读取 MolGpKa、bounded batch workers、persistent cache 和 native-thread budget；mmpdb 使用
+  当前 Python 环境中已安装的 mmpdblib，不需要源码路径环境变量。
 
 tools/service/registry.py
-  ToolRegistry。负责初始化工具、复用共享实例、统一 invoke。
+  ToolRegistry。负责初始化工具、复用共享实例、统一 invoke/batch invoke、persistent cache 和 single-flight。
+
+tools/service/cache.py
+  版本化 SQLite/WAL persistent cache、进程内 LRU 和 single-flight 的公共实现。
+
+tools/service/runtime.py
+  限制 PyTorch/OpenMP/MKL/OpenBLAS/NumExpr native threads，防止 request-level 并发再嵌套线程膨胀。
+
+tools/service/molgpka_predictor.py
+  ResidentMolGpKaPredictor；acid/base weights 每个 service process 只加载一次。
 
 tools/service/schemas.py
   ToolRequest / ToolResponse / ToolError 等统一 schema。
@@ -160,16 +185,29 @@ tools/service/tools/mmp_structure_compare.py
 
 ```text
 tests/service/test_registry.py
+tests/service/test_molgpka_predictor.py
 tests/service/test_rdkit_properties.py
 tests/service/test_properties_compare.py
 tests/service/test_mmp_structure_compare.py
 ```
 
-服务启动命令：
+单进程开发启动命令：
 
 ```bash
 uvicorn tools.service.app:app --host 127.0.0.1 --port 8765
 ```
+
+node002 正式高吞吐启动、缓存、batch endpoint、线程预算和滚动切换规范统一维护在：
+
+```text
+tools/service/README.md
+```
+
+正式 benchmark 使用 32 个 Uvicorn process workers、每进程 8 个 bounded batch workers、每次 native
+inference 1 thread，并将版本化 SQLite/WAL cache 放在 node-local `/local/tmp`。harness 将一个 sample 的固定
+tool bundle 通过 `/tools/batch` 一次提交；服务按 tool/input/version 做 persistent cache 和 single-flight
+去重。该层只消费统一 retrieval payload，不依赖 Morgan、MiniMol、coverage selector 或 future retriever
+的内部实现。不得在新的 retrieval 方法里复制 tool-prefetch/cache 逻辑。
 
 当前服务层暂时只冻结三个通用工具：
 
@@ -263,8 +301,12 @@ endpoint_concurrency_budget: 512
 
 这里的 512 是单次正式 launcher 的全局 endpoint request budget，不是允许每一层并行各自再乘 512。
 Reasoning-enabled valid 压力运行已证明 512/384 对长 group prompt 不稳定，因此当前默认执行形状为
-`--parallelism 128 --group-workers 1`，并且同一 endpoint 同时只启动一个 condition launcher；任何多 split、
+全局 prompt pool 的 `--parallelism 128`，并且同一 endpoint 同时只启动一个 matrix launcher；任何多 split、
 多 task 或多 condition 外层 fan-out 都必须共享这 512 个 slots。512 只表示硬上限，不是推荐并发。
+
+matrix 只使用一个跨 task/condition 的 ready queue；`--parallelism` 是全局 outstanding prompt 上限。
+single/group/final branch 共池，final 只在其依赖成功后入队；跨 condition 的 frozen single 依赖按 sample
+动态解锁。不得重新引入 condition lane、整批 phase barrier，或通过多个 launcher 绕过全局预算。
 
 新正式矩阵直接从 held-out-filtered index 做 fresh `parent_disjoint` retrieval，不再依赖 operational artifact、
 same-parent diff 或 `reuse_plan.json`。`none` 仍必须运行，但其 identity policy 标记为不适用。新数据集先跑 valid
@@ -277,7 +319,7 @@ lineage，不删除，也不混入新 v4 主结果。
 1. runner 默认改为 `identity_blind + parent_disjoint`，并允许该组合 fresh-run；
 2. parent-disjoint fresh-run 不要求 operational `reuse_plan.json`，且输出到独立
    `runs_identity_blind_parent_disjoint/`；
-3. 默认 launcher 为 128×1，并阻止 `parallelism * group_workers` 超过全局 512 budget；
+3. 默认 launcher 使用单一 128-slot global prompt pool，并阻止 `parallelism` 超过全局 512 budget；
 4. manifest 显式保存 endpoint、served model、reasoning、visibility、identity policy、effective concurrency、
    evaluation subset 和 `operational_staging_used=false`；
 5. valid/test 分区、manifest 和 held-out index 使用同一 valid+test union；完整矩阵仍必须通过
@@ -311,6 +353,8 @@ tools/chembl_tool/common/task_workflows/
   retrieve_neighbors.py
   chembl_exact_context.py
   reasoning_batch.py
+  global_prompt_pool.py
+  reasoning_stage_runtime.py
 
 tools/chembl_tool/common/evidence_contract.py
 tools/chembl_tool/common/identity_blind.py
@@ -320,6 +364,8 @@ tools/chembl_tool/common/reasoning_calls.py
 tools/chembl_tool/common/reasoning_validation.py
 tools/chembl_tool/common/molecule_identity.py
 tools/chembl_tool/common/retrieval_policy.py
+tools/chembl_tool/common/neighbor_selection.py
+tools/chembl_tool/common/coverage_reasoning.py
 tools/chembl_tool/common/retrieval_ablation.py
 tools/chembl_tool/common/retrieval_replay.py
 tools/chembl_tool/common/experiment_retrieval.py
@@ -367,12 +413,19 @@ chembl_exact_context.py
   避免 prospective evaluation 数据泄漏。
 
 reasoning_batch.py
-  多分子 batch orchestration，包括 molecule 级并行、日志、trace 合并、断点续跑、
-  predictions/metrics/report 输出。支持 `--groups` 透传给 task pipeline，用于 targeted
+  多分子 batch 的参数、manifest、日志、结果采集和 predictions/metrics/report 公共实现。实际 prompt 调度
+  统一委托给 global prompt pool。支持 `--groups` 透传给 task pipeline，用于 targeted
   group smoke test；支持 `--final-only-source-batch` 复用已有 single/group artifacts，
   并用 `--final-only-groups` 在重新汇总 final 前严格裁剪可见 group（不能用 `--groups`
   代替该过滤）；metrics 包含 positive-class precision/recall/F1、confusion matrix 和
   prediction distribution。
+
+global_prompt_pool.py / reasoning_stage_runtime.py
+  前者提供跨 task/condition 的唯一 ready queue 和全局 prompt 并发上限；后者提供 single/group/final stage
+  checkpoint、依赖解锁、原子 artifact 写入和断点恢复。成功 prerequisite 改写会使旧 final/trace 失效；final
+  只在 single 和精确 expected group set 全部成功后执行。五个现有 batch wrapper 都必须能接受公共
+  `--prepare-only` seed 命令；尚未迁移到共享 retrieval contract 的 DILI 只允许 native/operational/standard
+  默认组合，公共 parser 会拒绝伪装成 parent-disjoint 或 coverage ablation。
 
 evidence_contract.py
   `minimal_evidence.v1` 的唯一 schema/normalizer。旧 ChEMBL-like row 可以在 prompt-time 动态转换，
@@ -383,13 +436,25 @@ identity_blind.py
   runner 只能通过该模块选择 visibility/tool-execution contract，不能在 task 内复制脱敏或 replay 逻辑。
 
 reasoning_calls.py / json_utils.py
-  共享 single/group branch 调用、冻结 single analysis 复用、group payload transport bound 和 JSON 提取工具。
+  共享 single/group branch 调用、冻结 single analysis 复用、group payload transport bound、JSON 提取以及
+  JSON/JSONL/trace 同目录原子发布工具。
   Transport bound 只能确定性采样超大 evidence rows，不能改变 evidence source、label policy 或 inference setting。
 
 molecule_identity.py / retrieval_policy.py
   数据源和任务无关的 whole-record、RDKit fragment/molecular-parent 和 mixture-component 标准化及
   neighbor exclusion policy。Operational 保留 same-parent evidence；parent_disjoint 额外排除并在既有
   similarity threshold 内回填。这里的 parent 不是药理学 active moiety，也不推断 prodrug/metabolite 关系。
+
+neighbor_selection.py / coverage_reasoning.py
+  两个正交的可插拔 contract：前者只从已通过 similarity、identity 和 evidence gate 的候选中选择 neighbor；
+  后者只控制 LLM-visible analog-set context。`standard` context 是严格 no-op；`coverage_aware` 以匿名统计提供
+  query Morgan feature/atom-environment coverage、逐 neighbor marginal coverage 和 region size，不改变
+  retrieval.json、neighbor 集合、task JSON schema 或 tool-prefetch/cache。Coverage context 不暴露 SMILES、
+  fingerprint bit ID、元素标签或分子身份，且当前只支持 Morgan retrieval feature。Visible-only
+  `coverage_mmp_ledger` 是独立 opt-in profile：它复用常驻 `mmp_structure_compare` 的逐 neighbor MCS/MMP 文本，
+  再以 Morgan marginal feature 统计组织 rank-by-rank 的互补、冗余和未覆盖区域 ledger；不重复实现 MCS/MMP，
+  不修改 raw retrieval、neighbor set、task JSON schema 或默认 `standard` / `coverage_aware` 路径。Morgan feature
+  coverage 不能解释为 atom coverage；没有 matched-pair transformation 时具体 fragment 对应必须标为 unresolved。
 
 retrieval_ablation.py
   计算 LLM-visible retrieval/group input hash，支持完整 sample 和独立 mechanism branch 的确定性复用，
@@ -505,7 +570,6 @@ python -m tools.chembl_tool.tasks.<task_name>.retrieve_neighbors \
 python -m tools.chembl_tool.tasks.<task_name>.run_reasoning_batch \
   --input-jsonl <input.jsonl> \
   --parallelism 1 \
-  --group-workers 4 \
   --batch-id <batch_id>
 ```
 
@@ -576,9 +640,12 @@ artifact 保留。若将来需要 operational 对照，必须作为显式 opt-in
 query-SMILES leak、visibility-contract、parent identity 和 held-out overlap audit。旧 `identity_blind + operational`
 结果仍是 historical supplemental control，不得冒充当前主结果。
 
-2026-07-27 当前 artifact snapshot 虽然 random/scaffold 各已有 22 个 blind condition metrics，但仍分别有
-9/5 个 failed sample-condition，尚未通过正式 gate，也未进入 Starling 主 bar chart。具体失败分布、当前
-point estimates 和 repair 后必做 audit 见
+2026-08-04 当前 v4 scaffold-valid 已完成 GLM、GPT-OSS-20B/120B 三套 22-condition blind matrix；GLM 为
+6887/6887 严格成功，两个 GPT 各有一个不可修复 context-limit sample 并按预定 policy 计错。GPT 两套
+deployment-visible+parent-disjoint 补充矩阵也已完成；GLM visible 同合同矩阵同样达到 6887/6887 严格成功，
+并已加入 canonical blind+visible 总图。
+Random-valid GLM 仍有两个 Bioavailability ChEMBL full sample-condition 未通过严格 gate。完整路径、指标、
+failure policy 和 coverage context/MMP-ledger 结果见
 `tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
 
 ```bash
@@ -610,12 +677,12 @@ sample-condition 且 0 失败；prefetch audit 为 2,713/2,713；parent-disjoint
 2,275 个 sample-condition 且 0 失败。Test 的 identity-blind 和 deployment-visible 各 26 个条件，
 matched-prefetch 仍为原 21 个条件。实测结果见 `tools/chembl_tool/paper_experiments/RESULTS.md`。
 
-论文主 performance overview 仍以 `plot_retrieval_claims_overview.py` 的横向 grouped-bar chart 为唯一模板；
-coverage 与性能增幅的关系分析使用 `plot_coverage_performance.py`，并复用 `paper_figure_style.py` 的视觉规范。
-每个 split 的正式 figures 目录只保留 canonical SVG 和一份高分辨率 PNG，不保留
-preview、QA、pre-parent 或已被替代的 overview 代码/产物。
+旧 TDC performance overview 仍以 `plot_retrieval_claims_overview.py` 为唯一模板；当前 v4 的 model、visibility、
+baseline 和 matched ablation 总图统一由 `plot_starling_model_comparison.py` 生成。Coverage 与性能增幅的旧
+诊断图使用 `plot_coverage_performance.py`。所有入口复用 `paper_figure_style.py`，每个正式 figures 目录只
+保留 canonical SVG 和一份高分辨率 PNG，不保留 preview、QA 或一次性 overview。
 
-## MiniMol baseline（历史结果与当前 v4 待重跑边界）
+## MiniMol baseline（历史结果与当前 v4 scaffold-valid 边界）
 
 MiniMol baseline 代码放在：
 
@@ -638,9 +705,9 @@ train.jsonl / valid.jsonl / test.jsonl
 ```
 
 下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前 v4 已在
-`data/processed_starling/<Task>/{random,scaffold}/` 生成独立 `train/valid/test.jsonl`；新 baseline
-是否用 valid 选择 epoch/hyperparameter，必须在正式重跑前冻结，且不得用 test 做选择。新结果必须写入
-`record_agreement70_split811_v1` 隔离 output root，不能覆盖或与历史指标合并。
+`data/processed_starling/<Task>/{random,scaffold}/` 生成独立 `train/valid/test.jsonl`，并完成 scaffold-valid
+MiniMol `--train-all` head、Morgan KNN 和 MiniMol embedding KNN。该诊断不读取或调参于 test；正式 test
+前仍须冻结所有设置。v4 结果写入 model/split-specific 隔离 output roots，不能覆盖或与历史指标合并。
 
 上一版 strict-conflict formal Starling baseline 使用 `--train-all`：
 不读取 `valid.jsonl`，每个
@@ -662,7 +729,7 @@ outputs/baselines/minimol_embedding_knn_starling/<Task>/<random|scaffold>/
 
 MiniMol feature agent ablation 与上述 label-vote KNN 不同：它只把 agent pipeline 的 neighbor
 ranking 从 Morgan/Tanimoto 换成 L2-normalized MiniMol/cosine，保持 evidence source、top-k、GLM
-和 inference settings 不变。完整 random/scaffold operational -> parent-disjoint -> paired summary
+和 inference settings 不变。当前 v4 完整 random/scaffold fresh parent-disjoint -> paired summary
 -> figure 的可恢复入口为：
 
 ```bash
@@ -672,7 +739,7 @@ python -m tools.chembl_tool.paper_experiments.run_minimol_retrieval_agent_experi
 MiniMol agent retrieval 是另一条独立实验线：它不从 gold train label 做 KNN vote，而是把 ChEMBL /
 Starling evidence index 的 Morgan/Tanimoto neighbor ranking 替换为 MiniMol v1 embedding cosine，
 然后把检索到的 evidence 送入冻结 GLM agent pipeline。它保持 source/group/top-k/数值 min-similarity、
-prompt/tool/model 和 operational -> parent-disjoint 顺序不变，并写入独立 output root。正式入口、feature
+prompt/tool/model 和 fresh parent-disjoint contract 不变，并写入独立 output root。正式入口、feature
 store contract、checkpoint/cache parity、test-parent audit 和完整命令见
 `tools/chembl_tool/paper_experiments/AGENTS.md`；不得把这条 agent ablation 与
 `baselines/minimol/run_embedding_knn.py` 的 label-vote baseline 混为一项。
@@ -1931,7 +1998,6 @@ Viewer 默认分别注册 Starling random、Starling scaffold 和历史 TDC test
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
   --input-jsonl data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl \
   --parallelism 1 \
-  --group-workers 4 \
   --top-k-per-group 3 \
   --min-similarity 0.3 \
   --max-tool-rounds 10 \

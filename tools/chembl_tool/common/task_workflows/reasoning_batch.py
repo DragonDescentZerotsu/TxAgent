@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+from contextlib import contextmanager
+import fcntl
 import json
 import shutil
 import subprocess
@@ -14,6 +16,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from tools.chembl_tool.common.coverage_reasoning import (
+    NEIGHBOR_CONTEXT_PROFILES,
+    STANDARD_NEIGHBOR_CONTEXT,
+)
 from tools.chembl_tool.common.neighbor_selection import (
     NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,
@@ -36,6 +42,7 @@ class BatchConfig:
     canonical_negative: str
     positive_predictions: frozenset[str]
     negative_predictions: frozenset[str]
+    supports_shared_retrieval_contract: bool = True
 
 
 @dataclass(frozen=True)
@@ -44,8 +51,39 @@ class BatchItem:
     record: dict[str, Any]
 
 
+@dataclass
+class PreparedBatch:
+    """One batch prepared for either local or matrix-wide scheduling."""
+
+    config: BatchConfig
+    args: argparse.Namespace
+    batch_id: str
+    batch_dir: Path
+    logs_dir: Path
+    batch_run_root: Path
+    items: list[BatchItem]
+    manifest: dict[str, Any]
+
+
 def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     args = _parse_args(config, argv)
+    prepared = prepare_batch(config, args)
+    # Local import avoids a module cycle while making the task CLI and matrix
+    # launcher use exactly the same prompt scheduler and checkpoint semantics.
+    from tools.chembl_tool.common.task_workflows.global_prompt_pool import (
+        run_prepared_prompt_pool,
+    )
+
+    failed = run_prepared_prompt_pool(
+        {prepared.batch_id: prepared},
+        max_workers=args.parallelism,
+        max_stage_requeues=args.max_stage_requeues,
+    )
+    return 1 if failed else 0
+
+
+def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatch:
+    """Materialize stable batch metadata without choosing a scheduling policy."""
     records = _read_jsonl(Path(args.input_jsonl))
     indices = _select_indices(args, len(records))
     batch_id = args.batch_id or time.strftime(f"{config.batch_id_prefix}_%Y%m%d_%H%M%S")
@@ -62,7 +100,9 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "n_items": len(items),
         "indices": indices,
         "parallelism": args.parallelism,
-        "group_workers": args.group_workers,
+        # Retained as a compatibility field for existing viewers/manifests.
+        # Prompt fan-out is now exclusively governed by the global pool.
+        "group_workers": 1,
         "save_trace": args.save_trace,
         "combine_traces": args.combine_traces,
         "stream_logs": args.stream_logs,
@@ -71,6 +111,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         "retrieval_source": args.retrieval_source,
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
+        "neighbor_context_profile": args.neighbor_context_profile,
         "identity_blind": args.identity_blind,
         "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
         "visibility_mode": (
@@ -106,26 +147,76 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
 
     _log(config, f"batch_id={batch_id}")
     _log(config, f"items={len(items)} parallelism={args.parallelism}")
+    return PreparedBatch(
+        config=config,
+        args=args,
+        batch_id=batch_id,
+        batch_dir=batch_dir,
+        logs_dir=logs_dir,
+        batch_run_root=batch_run_root,
+        items=items,
+        manifest=manifest,
+    )
 
-    results: list[dict[str, Any]] = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallelism) as executor:
-        future_to_item = {
-            executor.submit(_run_one, config, args, item, batch_id, batch_run_root, logs_dir): item
-            for item in items
+
+def _resolve_item_future(
+    prepared: PreparedBatch,
+    item: BatchItem,
+    future: concurrent.futures.Future[dict[str, Any]],
+) -> dict[str, Any]:
+    try:
+        result = future.result()
+    except Exception as exc:  # noqa: BLE001 - a batch must keep making progress.
+        result = _error_result(
+            prepared.config,
+            prepared.args,
+            item,
+            prepared.batch_id,
+            str(exc),
+        )
+    return result
+
+
+def collect_completed_item(
+    prepared: PreparedBatch,
+    item: BatchItem,
+) -> dict[str, Any] | None:
+    """Return a complete existing result without consuming a worker slot."""
+    if not prepared.args.skip_existing:
+        return None
+    run_id = f"{prepared.batch_id}_idx{item.index:05d}"
+    run_dir = prepared.batch_run_root / run_id
+    if not _has_resume_artifacts(run_dir):
+        return None
+    result = _collect_result(
+        prepared.config,
+        prepared.args,
+        item,
+        run_id,
+        run_dir,
+    )
+    if not _result_is_complete(result):
+        return None
+    stdout_path = prepared.logs_dir / f"{run_id}.stdout.log"
+    stderr_path = prepared.logs_dir / f"{run_id}.stderr.log"
+    result.update(
+        {
+            "status": "ok",
+            "returncode": 0,
+            "latency_s": 0.0,
+            "stdout_log": str(stdout_path),
+            "stderr_log": str(stderr_path),
         }
-        for future in concurrent.futures.as_completed(future_to_item):
-            item = future_to_item[future]
-            try:
-                result = future.result()
-            except Exception as exc:  # noqa: BLE001 - batch should keep going.
-                result = _error_result(config, args, item, batch_id, str(exc))
-            results.append(result)
-            _log(
-                config,
-                f"progress {len(results)}/{len(items)} done; index={item.index} "
-                f"status={result.get('status')} prediction={result.get(config.prediction_field)} "
-                f"correct={result.get('correct')} latency_s={result.get('latency_s')}",
-            )
+    )
+    return result
+
+
+def finalize_batch(prepared: PreparedBatch, results: list[dict[str, Any]]) -> int:
+    """Write the same predictions/metrics/report contract as the legacy runner."""
+    config = prepared.config
+    args = prepared.args
+    batch_dir = prepared.batch_dir
+    manifest = prepared.manifest
 
     results.sort(key=lambda row: row["query_index"])
     if args.save_trace and args.combine_traces:
@@ -143,71 +234,16 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     return 0 if metrics["n_failed_runs"] == 0 else 1
 
 
-def _run_one(
-    config: BatchConfig,
-    args: argparse.Namespace,
-    item: BatchItem,
-    batch_id: str,
-    run_root: Path,
-    logs_dir: Path,
-) -> dict[str, Any]:
-    run_id = f"{batch_id}_idx{item.index:05d}"
-    run_dir = run_root / run_id
-    stdout_path = logs_dir / f"{run_id}.stdout.log"
-    stderr_path = logs_dir / f"{run_id}.stderr.log"
-    started = time.monotonic()
-
-    existing_final_path = run_dir / "final_reasoning_output.json"
-    should_skip_existing = False
-    if args.skip_existing and existing_final_path.exists():
-        existing_result = _collect_result(config, args, item, run_id, run_dir)
-        should_skip_existing = _result_is_complete(existing_result)
-        if not should_skip_existing:
-            _log(config, f"rerun invalid existing final index={item.index} run_id={run_id}")
-
-    if should_skip_existing:
-        returncode = 0
-        if not stdout_path.exists():
-            stdout_path.write_text("", encoding="utf-8")
-        if not stderr_path.exists():
-            stderr_path.write_text("skipped existing run\n", encoding="utf-8")
-    else:
-        if args.final_only_source_batch:
-            _prepare_final_only_run_dir(args, item.index, run_id, run_dir)
-            command = _final_only_command(config, args, run_dir)
-        else:
-            command = _single_run_command(config, args, item.index, run_id, run_root)
-        _log(config, f"start index={item.index} run_id={run_id}")
-        returncode = _run_subprocess_with_logs(
-            command,
-            stdout_path=stdout_path,
-            stderr_path=stderr_path,
-            stream_logs=args.stream_logs,
-            prefix=f"idx{item.index:05d}",
-        )
-
-    if not args.save_trace:
-        trace_path = run_dir / "trace_messages.jsonl"
-        if trace_path.exists():
-            trace_path.unlink()
-
-    result = _collect_result(config, args, item, run_id, run_dir)
-    result.update(
-        {
-            "status": (
-                "ok"
-                if returncode == 0 and _result_is_complete(result)
-                else "error"
-            ),
-            "returncode": returncode,
-            "latency_s": round(time.monotonic() - started, 3),
-            "stdout_log": str(stdout_path),
-            "stderr_log": str(stderr_path),
-        }
-    )
-    if returncode != 0:
-        result["error"] = _tail_text(stderr_path, stdout_path)
-    return result
+@contextmanager
+def _exclusive_run_lock(run_dir: Path):
+    """Serialize writers for one sample-condition across resume launchers."""
+    lock_path = run_dir / ".run.lock"
+    with lock_path.open("a+", encoding="utf-8") as handle:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 def _prepare_final_only_run_dir(args: argparse.Namespace, query_index: int, run_id: str, run_dir: Path) -> None:
@@ -319,41 +355,6 @@ def _filter_final_only_run_artifacts(run_dir: Path, requested_group_ids: list[st
     }
 
 
-def _final_only_command(config: BatchConfig, args: argparse.Namespace, run_dir: Path) -> list[str]:
-    command = [
-        args.python_executable,
-        "-m",
-        config.pipeline_module,
-        "--resume-final-from-run-dir",
-        str(run_dir),
-        "--env-file",
-        args.env_file,
-        "--api-key-env",
-        args.api_key_env,
-        "--base-url",
-        args.base_url,
-        "--tool-service-url",
-        args.tool_service_url,
-        "--model",
-        args.model,
-        "--timeout-s",
-        str(args.timeout_s),
-        "--max-tokens",
-        str(args.max_tokens),
-        "--temperature",
-        str(args.temperature),
-        "--max-tool-rounds",
-        str(args.max_tool_rounds),
-        "--reasoning-effort",
-        args.reasoning_effort,
-    ]
-    if not args.enable_thinking:
-        command.append("--disable-thinking")
-    else:
-        command.append("--enable-thinking")
-    return command
-
-
 def _single_run_command(
     config: BatchConfig,
     args: argparse.Namespace,
@@ -373,14 +374,6 @@ def _single_run_command(
         args.smiles_field,
         "--index",
         args.index,
-        "--experiment-mode",
-        args.experiment_mode,
-        "--retrieval-source",
-        args.retrieval_source,
-        "--neighbor-identity-policy",
-        args.neighbor_identity_policy,
-        "--neighbor-selector",
-        args.neighbor_selector,
         "--out-root",
         str(run_root),
         "--run-id",
@@ -395,8 +388,6 @@ def _single_run_command(
         args.tool_service_url,
         "--model",
         args.model,
-        "--max-workers",
-        str(args.group_workers),
         "--timeout-s",
         str(args.timeout_s),
         "--max-tokens",
@@ -410,6 +401,21 @@ def _single_run_command(
         "--min-similarity",
         str(args.min_similarity),
     ]
+    if config.supports_shared_retrieval_contract:
+        command.extend(
+            [
+                "--experiment-mode",
+                args.experiment_mode,
+                "--retrieval-source",
+                args.retrieval_source,
+                "--neighbor-identity-policy",
+                args.neighbor_identity_policy,
+                "--neighbor-selector",
+                args.neighbor_selector,
+                "--neighbor-context-profile",
+                args.neighbor_context_profile,
+            ]
+        )
     if not args.enable_thinking:
         command.append("--disable-thinking")
     else:
@@ -419,18 +425,18 @@ def _single_run_command(
     if args.groups:
         command.append("--groups")
         command.extend(args.groups)
-    if args.tier1_replacement_index:
+    if args.tier1_replacement_index and config.supports_shared_retrieval_contract:
         command.extend(["--tier1-replacement-index", args.tier1_replacement_index])
         if args.tier1_replacement_groups:
             command.append("--tier1-replacement-groups")
             command.extend(args.tier1_replacement_groups)
     if args.disable_group_tools:
         command.append("--disable-group-tools")
-    if args.identity_blind:
+    if args.identity_blind and config.supports_shared_retrieval_contract:
         command.append("--identity-blind")
-    elif args.harness_prefetch_tools:
+    elif args.harness_prefetch_tools and config.supports_shared_retrieval_contract:
         command.append("--harness-prefetch-tools")
-    if args.single_analysis_source_batch:
+    if args.single_analysis_source_batch and config.supports_shared_retrieval_contract:
         source_batch = Path(args.single_analysis_source_batch)
         source_run_id = f"{source_batch.name}_idx{query_index:05d}"
         command.extend(
@@ -439,7 +445,7 @@ def _single_run_command(
                 str(source_batch / "runs" / source_run_id),
             ]
         )
-    if args.group_analysis_source_batch:
+    if args.group_analysis_source_batch and config.supports_shared_retrieval_contract:
         source_batch = Path(args.group_analysis_source_batch)
         source_run_id = f"{source_batch.name}_idx{query_index:05d}"
         command.extend(
@@ -448,7 +454,7 @@ def _single_run_command(
                 str(source_batch / "runs" / source_run_id),
             ]
         )
-    if args.retrieval_replay_source_batch:
+    if args.retrieval_replay_source_batch and config.supports_shared_retrieval_contract:
         source_batch = Path(args.retrieval_replay_source_batch)
         source_run_id = f"{source_batch.name}_idx{query_index:05d}"
         command.extend(
@@ -457,7 +463,7 @@ def _single_run_command(
                 str(source_batch / "runs" / source_run_id),
             ]
         )
-    if args.prefetched_tool_replay_source_batch:
+    if args.prefetched_tool_replay_source_batch and config.supports_shared_retrieval_contract:
         source_batch = Path(args.prefetched_tool_replay_source_batch)
         source_run_id = f"{source_batch.name}_idx{query_index:05d}"
         command.extend(
@@ -467,6 +473,19 @@ def _single_run_command(
             ]
         )
     return command
+
+
+def _has_resume_artifacts(run_dir: Path) -> bool:
+    return any(
+        (run_dir / name).exists()
+        for name in (
+            "retrieval.json",
+            "single_molecule_reasoning_output.json",
+            "group_reasoning_outputs.jsonl",
+            "final_reasoning_output.json",
+            "manifest.json",
+        )
+    )
 
 
 def _run_subprocess_with_logs(
@@ -562,6 +581,8 @@ def _collect_result(
         "n_group_outputs": len(group_outputs),
         "n_failed_group_outputs": sum(row.get("status") != "ok" for row in group_outputs),
         "n_groups_with_neighbors": manifest.get("n_groups_with_neighbors"),
+        "expected_group_ids": manifest.get("expected_group_ids"),
+        "group_ids": [str(row.get("group_id") or "") for row in group_outputs],
         "trace_messages": str(run_dir / "trace_messages.jsonl") if (run_dir / "trace_messages.jsonl").exists() else "",
         "final_reasoning_output": str(final_path) if final_path.exists() else "",
         "final_summary": content.get("final_summary", ""),
@@ -578,6 +599,12 @@ def _result_is_complete(result: dict[str, Any]) -> bool:
     expected_groups = result.get("n_groups_with_neighbors")
     if expected_groups is not None and int(result.get("n_group_outputs") or 0) != int(expected_groups):
         return False
+    expected_group_ids = result.get("expected_group_ids")
+    if expected_group_ids is not None:
+        expected_ids = [str(group_id) for group_id in expected_group_ids]
+        actual_ids = [str(group_id) for group_id in result.get("group_ids") or []]
+        if len(actual_ids) != len(expected_ids) or set(actual_ids) != set(expected_ids):
+            return False
     return int(result.get("n_failed_group_outputs") or 0) == 0
 
 
@@ -843,7 +870,12 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--limit", type=int, default=0, help="0 means all records from --start.")
     parser.add_argument("--parallelism", type=int, default=1, help="Number of molecules to run concurrently.")
-    parser.add_argument("--group-workers", type=int, default=4, help="Per-molecule group-level LLM workers.")
+    parser.add_argument(
+        "--max-stage-requeues",
+        type=int,
+        default=0,
+        help="Immediate retries for a failed single, group, or final prompt stage.",
+    )
     parser.add_argument("--save-trace", dest="save_trace", action="store_true", default=True)
     parser.add_argument("--no-save-trace", dest="save_trace", action="store_false")
     parser.add_argument("--combine-traces", dest="combine_traces", action="store_true", default=True)
@@ -874,6 +906,11 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         choices=NEIGHBOR_SELECTORS,
         default=SIMILARITY_SELECTOR,
     )
+    parser.add_argument(
+        "--neighbor-context-profile",
+        choices=NEIGHBOR_CONTEXT_PROFILES,
+        default=STANDARD_NEIGHBOR_CONTEXT,
+    )
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     parser.add_argument(
         "--tier1-replacement-index",
@@ -895,6 +932,39 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     args.final_only_groups = _normalize_group_args(args.final_only_groups)
     if args.final_only_groups and not args.final_only_source_batch:
         parser.error("--final-only-groups requires --final-only-source-batch")
+    if args.max_stage_requeues < 0:
+        parser.error("--max-stage-requeues must be non-negative")
+    if not config.supports_shared_retrieval_contract:
+        unsupported = []
+        if args.experiment_mode != "native":
+            unsupported.append("--experiment-mode")
+        if args.retrieval_source != "chembl":
+            unsupported.append("--retrieval-source")
+        if args.neighbor_identity_policy != "operational":
+            unsupported.append("--neighbor-identity-policy")
+        if args.neighbor_selector != SIMILARITY_SELECTOR:
+            unsupported.append("--neighbor-selector")
+        if args.neighbor_context_profile != STANDARD_NEIGHBOR_CONTEXT:
+            unsupported.append("--neighbor-context-profile")
+        if args.identity_blind:
+            unsupported.append("--identity-blind")
+        if args.harness_prefetch_tools:
+            unsupported.append("--harness-prefetch-tools")
+        if any(
+            (
+                args.single_analysis_source_batch,
+                args.group_analysis_source_batch,
+                args.retrieval_replay_source_batch,
+                args.prefetched_tool_replay_source_batch,
+                args.tier1_replacement_index,
+            )
+        ):
+            unsupported.append("branch/retrieval reuse")
+        if unsupported:
+            parser.error(
+                f"{config.pipeline_module} does not support: "
+                + ", ".join(unsupported)
+            )
     return args
 
 

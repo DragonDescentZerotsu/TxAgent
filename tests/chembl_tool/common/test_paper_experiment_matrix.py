@@ -1,6 +1,8 @@
 import argparse
 import json
 
+import pytest
+
 from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
     DEPLOYMENT_VISIBLE_PREFETCHED,
@@ -19,6 +21,7 @@ from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     _matrix_manifest_path,
     _paper_root_for_evaluation_subset,
     _validate_concurrency,
+    _validate_retrieval_ablation_args,
     _write_json_atomic,
     experiments_for_starling_benchmark,
 )
@@ -223,7 +226,76 @@ def test_starling_matrix_accepts_manifest_only_mode():
     assert args.visibility_mode == IDENTITY_BLIND
     assert args.neighbor_identity_policy == PARENT_DISJOINT
     assert args.parallelism == 128
-    assert args.group_workers == 1
+    assert args.neighbor_selector == "similarity"
+    assert args.neighbor_context_profile == "standard"
+
+
+def test_starling_matrix_isolates_nonstandard_retrieval_profiles():
+    from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
+        _parse_args as parse_starling_args,
+    )
+
+    missing_root = parse_starling_args(
+        [
+            "--benchmark-split",
+            "scaffold",
+            "--neighbor-selector",
+            "query_feature_coverage",
+            "--neighbor-context-profile",
+            "coverage_aware",
+        ]
+    )
+    try:
+        _validate_retrieval_ablation_args(missing_root)
+    except SystemExit as error:
+        assert "explicit --output-root" in str(error)
+    else:
+        raise AssertionError("Expected a nonstandard profile to require an isolated root")
+
+    isolated = parse_starling_args(
+        [
+            "--benchmark-split",
+            "scaffold",
+            "--neighbor-selector",
+            "query_feature_coverage",
+            "--neighbor-context-profile",
+            "coverage_aware",
+            "--output-root",
+            "outputs/test-coverage-aware",
+        ]
+    )
+    _validate_retrieval_ablation_args(isolated)
+
+    blind_mmp_ledger = parse_starling_args(
+        [
+            "--benchmark-split",
+            "scaffold",
+            "--neighbor-selector",
+            "query_feature_coverage",
+            "--neighbor-context-profile",
+            "coverage_mmp_ledger",
+            "--output-root",
+            "outputs/test-coverage-mmp-ledger",
+        ]
+    )
+    with pytest.raises(SystemExit, match="visible-only"):
+        _validate_retrieval_ablation_args(blind_mmp_ledger)
+
+    visible_mmp_ledger = parse_starling_args(
+        [
+            "--benchmark-split",
+            "scaffold",
+            "--visibility-mode",
+            "deployment_visible",
+            "--neighbor-selector",
+            "query_feature_coverage",
+            "--neighbor-context-profile",
+            "coverage_mmp_ledger",
+            "--output-root",
+            "outputs/test-coverage-mmp-ledger",
+        ]
+    )
+    _validate_retrieval_ablation_args(visible_mmp_ledger)
 
 
 def test_starling_matrix_enforces_single_endpoint_concurrency_budget():
@@ -232,12 +304,12 @@ def test_starling_matrix_enforces_single_endpoint_concurrency_budget():
     )
 
     accepted = parse_starling_args(
-        ["--benchmark-split", "random", "--parallelism", "256", "--group-workers", "2"]
+        ["--benchmark-split", "random", "--parallelism", "256"]
     )
     _validate_concurrency(accepted)
 
     rejected = parse_starling_args(
-        ["--benchmark-split", "random", "--parallelism", "512", "--group-workers", "2"]
+        ["--benchmark-split", "random", "--parallelism", "513"]
     )
     try:
         _validate_concurrency(rejected)
@@ -249,9 +321,15 @@ def test_starling_matrix_enforces_single_endpoint_concurrency_budget():
 
 def test_starling_valid_root_is_isolated_from_formal_test_root(tmp_path):
     canonical = tmp_path / "starling_random_v4"
+    model_root = tmp_path / "starling_random_v4_valid_gpt_oss_20b"
 
     assert _paper_root_for_evaluation_subset(canonical, "test") == canonical
     assert _paper_root_for_evaluation_subset(canonical, "valid") == tmp_path / "starling_random_v4_valid"
+    assert _paper_root_for_evaluation_subset(
+        canonical,
+        "valid",
+        output_root=model_root,
+    ) == model_root
 
 
 def test_fresh_identity_blind_parent_disjoint_keeps_none_and_avoids_group_reuse(tmp_path):
@@ -259,7 +337,6 @@ def test_fresh_identity_blind_parent_disjoint_keeps_none_and_avoids_group_reuse(
         python_executable="python",
         api_key_env="GLM_LOCAL_API_KEY",
         parallelism=512,
-        group_workers=1,
         visibility_mode=IDENTITY_BLIND,
         neighbor_identity_policy=PARENT_DISJOINT,
         fresh_parent_disjoint=True,
@@ -283,6 +360,33 @@ def test_fresh_identity_blind_parent_disjoint_keeps_none_and_avoids_group_reuse(
         PARENT_DISJOINT,
         paper_root=tmp_path,
     ).name == "runs_identity_blind_parent_disjoint"
+
+
+def test_fresh_deployment_visible_parent_disjoint_keeps_none_and_avoids_reuse(tmp_path):
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GPT_OSS_LOCAL_API_KEY",
+        parallelism=256,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy=PARENT_DISJOINT,
+        fresh_parent_disjoint=True,
+        paper_root=str(tmp_path),
+        split="valid",
+        timeout_s=600,
+        limit=0,
+        experiments=[],
+    )
+    selected = _prepare_policy_selection(list(EXPERIMENTS), args)
+    assert any(item.mode == "none" for item in selected)
+
+    command = _command(EXPERIMENTS[1], args)
+    batch_root = command[command.index("--batch-root") + 1]
+    single_root = command[command.index("--single-analysis-source-batch") + 1]
+    assert "runs_deployment_visible_parent_disjoint" in batch_root
+    assert "runs_deployment_visible_parent_disjoint" in single_root
+    assert "--group-analysis-source-batch" not in command
+    assert "--identity-blind" not in command
+    assert command[command.index("--timeout-s") + 1] == "600"
 
 
 def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():
@@ -358,7 +462,6 @@ def test_matrix_command_freezes_glm_and_identity_conditions():
         python_executable="python",
         api_key_env="GLM_API_KEY",
         parallelism=2,
-        group_workers=3,
         visibility_mode="identity_blind",
     )
     command = _command(EXPERIMENTS[0], args)
@@ -383,7 +486,6 @@ def test_valid_split_changes_only_dataset_and_isolates_output_root():
         python_executable="python",
         api_key_env="GLM_API_KEY",
         parallelism=2,
-        group_workers=3,
         visibility_mode=DEPLOYMENT_VISIBLE,
         split="valid",
         paper_root="",
@@ -408,7 +510,6 @@ def test_deployment_visible_command_reuses_pipeline_without_blind_redaction():
         python_executable="python",
         api_key_env="GLM_API_KEY",
         parallelism=2,
-        group_workers=3,
         visibility_mode=DEPLOYMENT_VISIBLE,
     )
 
@@ -428,7 +529,6 @@ def test_parent_disjoint_command_uses_separate_root_and_operational_single_prior
         python_executable="python",
         api_key_env="GLM_API_KEY",
         parallelism=2,
-        group_workers=3,
         visibility_mode=DEPLOYMENT_VISIBLE,
         neighbor_identity_policy=PARENT_DISJOINT,
     )
@@ -449,7 +549,6 @@ def test_parent_disjoint_command_can_reuse_external_single_without_crossing_grou
         python_executable="python",
         api_key_env="GLM_API_KEY",
         parallelism=2,
-        group_workers=3,
         visibility_mode=DEPLOYMENT_VISIBLE,
         neighbor_identity_policy=PARENT_DISJOINT,
         paper_root="/tmp/minimol-paper-root",
@@ -470,7 +569,6 @@ def test_operational_feature_ablation_reuses_only_hash_identical_morgan_groups()
         python_executable="python",
         api_key_env="GLM_API_KEY",
         parallelism=2,
-        group_workers=3,
         visibility_mode=DEPLOYMENT_VISIBLE,
         neighbor_identity_policy="operational",
         paper_root="/tmp/minimol-paper-root",
@@ -492,7 +590,6 @@ def test_matrix_command_passes_explicit_smoke_limit_only_when_requested():
         python_executable="python",
         api_key_env="GLM_API_KEY",
         parallelism=1,
-        group_workers=1,
         visibility_mode=DEPLOYMENT_VISIBLE,
         neighbor_identity_policy="operational",
         limit=1,
@@ -508,7 +605,6 @@ def test_matched_prefetch_command_is_visible_but_disables_agentic_tool_choice():
         python_executable="python",
         api_key_env="GLM_API_KEY",
         parallelism=2,
-        group_workers=3,
         visibility_mode=DEPLOYMENT_VISIBLE_PREFETCHED,
     )
 

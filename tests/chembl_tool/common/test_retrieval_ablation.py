@@ -103,3 +103,23 @@ def test_load_reusable_group_outputs_reuses_only_unchanged_independent_branches(
 
     assert [output["group_id"] for output in outputs] == ["Mechanism.second"]
     assert outputs[0]["reuse_reason"] == "identical_llm_visible_group_input"
+
+
+def test_group_reuse_requires_matching_neighbor_context_profile(tmp_path):
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "retrieval.json").write_text(json.dumps(_retrieval()))
+    (source / "group_reasoning_outputs.jsonl").write_text(
+        json.dumps({"group_id": "Direct.outcome", "status": "ok"}) + "\n"
+    )
+    (source / "manifest.json").write_text(
+        json.dumps({"neighbor_context_profile": "standard"})
+    )
+
+    outputs = load_reusable_group_outputs(
+        str(source),
+        _retrieval(),
+        target_neighbor_context_profile="coverage_aware",
+    )
+
+    assert outputs == []

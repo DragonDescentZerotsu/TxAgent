@@ -26,7 +26,7 @@ FP_BITS = 2048
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     train_path = args.data_dir / "train.jsonl"
-    test_path = args.data_dir / "test.jsonl"
+    test_path = args.data_dir / f"{args.evaluation_split}.jsonl"
     train = _read_split(train_path)
     test = _read_split(test_path)
     if args.k <= 0:
@@ -123,11 +123,13 @@ def main(argv: list[str] | None = None) -> int:
     metrics.update(
         {
             "method": method,
+            "evaluation_split": args.evaluation_split,
             "k": args.k,
             "vote": "unweighted_majority",
             "score": "positive_neighbor_fraction",
             "n_train": len(train),
             "n_test": len(test),
+            "n_evaluation": len(test),
             "n_evaluated": len(evaluated_predictions),
             "n_skipped_insufficient_neighbors": len(test) - len(evaluated_predictions),
             "evaluation_coverage": len(evaluated_predictions) / len(test),
@@ -146,7 +148,10 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    _write_jsonl(args.output_dir / "test_predictions.jsonl", predictions)
+    _write_jsonl(
+        args.output_dir / f"{args.evaluation_split}_predictions.jsonl",
+        predictions,
+    )
     (args.output_dir / "metrics.json").write_text(
         json.dumps(metrics, indent=2) + "\n",
         encoding="utf-8",
@@ -157,6 +162,8 @@ def main(argv: list[str] | None = None) -> int:
                 "data_dir": str(args.data_dir),
                 "train_path": str(train_path),
                 "test_path": str(test_path),
+                "evaluation_path": str(test_path),
+                "evaluation_split": args.evaluation_split,
                 "output_dir": str(args.output_dir),
                 **{
                     key: metrics[key]
@@ -310,6 +317,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--evaluation-split",
+        choices=("valid", "test"),
+        default="test",
+    )
     parser.add_argument("--k", type=int, default=3)
     parser.add_argument(
         "--neighbor-selector",

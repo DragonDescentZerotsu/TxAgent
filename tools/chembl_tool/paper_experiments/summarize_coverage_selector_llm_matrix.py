@@ -13,6 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_OUTPUT_DIR = ROOT / "outputs/paper/coverage_selector_llm/analysis"
+DEFAULT_AGENT_BATCH_SUBDIR = "runs_identity_blind_parent_disjoint"
 
 CONDITIONS = (
     ("random", "bbb_martins", "BBB_Martins", 500),
@@ -32,7 +33,7 @@ METRIC_FIELDS = (
 )
 
 
-def read_predictions(path: Path, *, expected_n: int) -> dict[int, dict[str, Any]]:
+def read_predictions(path: Path, *, expected_n: int | None) -> dict[int, dict[str, Any]]:
     rows: dict[int, dict[str, Any]] = {}
     with path.open(encoding="utf-8") as handle:
         for line_number, line in enumerate(handle, start=1):
@@ -46,6 +47,7 @@ def read_predictions(path: Path, *, expected_n: int) -> dict[int, dict[str, Any]
                 raise ValueError(f"{path}: duplicate query_index={index}")
             rows[index] = row
 
+    expected_n = len(rows) if expected_n is None else expected_n
     expected = set(range(expected_n))
     if set(rows) != expected:
         missing = sorted(expected - set(rows))
@@ -205,8 +207,40 @@ def summarize_condition(
     seed: int,
 ) -> dict[str, Any]:
     control_path, coverage_path = prediction_paths(split, task)
+    return summarize_prediction_pair(
+        control_path=control_path,
+        candidate_path=coverage_path,
+        split=split,
+        task=task,
+        task_label=task_label,
+        expected_n=expected_n,
+        control_key="morgan_similarity",
+        candidate_key="query_feature_coverage",
+        bootstrap_iterations=bootstrap_iterations,
+        seed=seed,
+    )
+
+
+def summarize_prediction_pair(
+    *,
+    control_path: Path,
+    candidate_path: Path,
+    split: str,
+    task: str,
+    task_label: str,
+    expected_n: int | None,
+    control_key: str,
+    candidate_key: str,
+    bootstrap_iterations: int,
+    seed: int,
+) -> dict[str, Any]:
+    """Summarize any two complete, index-aligned binary agent batches."""
     control = read_predictions(control_path, expected_n=expected_n)
-    coverage = read_predictions(coverage_path, expected_n=expected_n)
+    coverage = read_predictions(candidate_path, expected_n=expected_n)
+    if set(control) != set(coverage):
+        raise ValueError(
+            f"{task}/{split}: prediction index sets differ between matched batches"
+        )
     indices = sorted(control)
     label_mismatches = [
         index for index in indices if control[index]["label"] != coverage[index]["label"]
@@ -220,14 +254,14 @@ def summarize_condition(
     control_predictions = [int(control[index]["pred_label"]) for index in indices]
     coverage_predictions = [int(coverage[index]["pred_label"]) for index in indices]
     metrics = {
-        "morgan_similarity": binary_metrics(labels, control_predictions),
-        "query_feature_coverage": binary_metrics(labels, coverage_predictions),
+        control_key: binary_metrics(labels, control_predictions),
+        candidate_key: binary_metrics(labels, coverage_predictions),
     }
-    morgan_only_correct = sum(
+    control_only_correct = sum(
         control[index]["correct"] is True and coverage[index]["correct"] is False
         for index in indices
     )
-    coverage_only_correct = sum(
+    candidate_only_correct = sum(
         control[index]["correct"] is False and coverage[index]["correct"] is True
         for index in indices
     )
@@ -236,22 +270,22 @@ def summarize_condition(
         for index in indices
         if control[index]["pred_label"] != coverage[index]["pred_label"]
     ]
-    return {
+    deltas = {
+        field: metrics[candidate_key][field] - metrics[control_key][field]
+        for field in METRIC_FIELDS
+    }
+    result = {
         "split": split,
         "task": task,
         "task_label": task_label,
-        "n_matched": expected_n,
+        "n_matched": len(indices),
         "metrics": metrics,
-        "deltas_coverage_minus_morgan": {
-            field: metrics["query_feature_coverage"][field]
-            - metrics["morgan_similarity"][field]
-            for field in METRIC_FIELDS
-        },
+        "deltas_candidate_minus_control": deltas,
         "paired_outcomes": {
             "prediction_flips": len(flip_indices),
             "prediction_flip_indices": flip_indices,
-            "morgan_only_correct": morgan_only_correct,
-            "coverage_only_correct": coverage_only_correct,
+            "control_only_correct": control_only_correct,
+            "candidate_only_correct": candidate_only_correct,
             "both_correct": sum(
                 control[index]["correct"] is True and coverage[index]["correct"] is True
                 for index in indices
@@ -261,7 +295,7 @@ def summarize_condition(
                 for index in indices
             ),
             "mcnemar_exact_p": exact_mcnemar_p(
-                morgan_only_correct, coverage_only_correct
+                control_only_correct, candidate_only_correct
             ),
         },
         "macro_f1_delta_bootstrap": bootstrap_macro_f1_delta(
@@ -272,10 +306,45 @@ def summarize_condition(
             seed=seed,
         ),
         "sources": {
-            "morgan_similarity": str(control_path),
-            "query_feature_coverage": str(coverage_path),
+            control_key: str(control_path),
+            candidate_key: str(candidate_path),
         },
     }
+    if (control_key, candidate_key) == (
+        "morgan_similarity",
+        "query_feature_coverage",
+    ):
+        result["deltas_coverage_minus_morgan"] = deltas
+        result["paired_outcomes"]["morgan_only_correct"] = control_only_correct
+        result["paired_outcomes"]["coverage_only_correct"] = candidate_only_correct
+    return result
+
+
+def _explicit_prediction_path(
+    root: Path,
+    task: str,
+    experiment: str,
+    *,
+    batch_subdir: str = DEFAULT_AGENT_BATCH_SUBDIR,
+) -> Path:
+    return (
+        root
+        / batch_subdir
+        / task
+        / experiment
+        / "predictions.jsonl"
+    )
+
+
+def _expected_size(split: str, evaluation_subset: str, data_name: str) -> int:
+    path = (
+        ROOT
+        / "data/processed_starling"
+        / data_name
+        / split
+        / f"{evaluation_subset}.jsonl"
+    )
+    return sum(1 for line in path.open(encoding="utf-8") if line.strip())
 
 
 def main() -> None:
@@ -283,29 +352,118 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--bootstrap-iterations", type=int, default=10_000)
     parser.add_argument("--seed", type=int, default=20260727)
+    parser.add_argument("--control-root", type=Path)
+    parser.add_argument("--candidate-root", type=Path)
+    parser.add_argument("--batch-subdir", default=DEFAULT_AGENT_BATCH_SUBDIR)
+    parser.add_argument("--benchmark-split", choices=("random", "scaffold"), default="scaffold")
+    parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
+    parser.add_argument(
+        "--tasks",
+        nargs="*",
+        choices=("bbb_martins", "bioavailability_ma", "skin_reaction"),
+        default=[],
+    )
+    parser.add_argument("--control-key", default="standard_context")
+    parser.add_argument("--candidate-key", default="coverage_aware_context")
+    parser.add_argument("--control-label", default="Coverage retrieve + standard context")
+    parser.add_argument("--candidate-label", default="Coverage retrieve + coverage-aware context")
+    parser.add_argument("--only-changed-factor", default="neighbor_context_profile")
+    parser.add_argument(
+        "--visibility-mode",
+        choices=("identity_blind", "deployment_visible", "deployment_visible_prefetched"),
+        default="identity_blind",
+    )
+    parser.add_argument("--report-title", default="Coverage-aware context matched LLM 对比")
     args = parser.parse_args()
 
-    conditions = [
-        summarize_condition(
-            split=split,
-            task=task,
-            task_label=task_label,
-            expected_n=expected_n,
-            bootstrap_iterations=args.bootstrap_iterations,
-            seed=args.seed + index,
+    if bool(args.control_root) != bool(args.candidate_root):
+        parser.error("--control-root and --candidate-root must be provided together")
+
+    if args.control_root:
+        task_specs = {
+            "bbb_martins": ("BBB_Martins", "BBB"),
+            "bioavailability_ma": ("Bioavailability_Ma", "Bioavailability"),
+            "skin_reaction": ("Skin_Reaction", "Skin reaction"),
+        }
+        selected_tasks = args.tasks or list(task_specs)
+        conditions = []
+        for index, task in enumerate(selected_tasks):
+            data_name, task_label = task_specs[task]
+            experiment = f"{task}__starling_full_mechanism"
+            conditions.append(
+                summarize_prediction_pair(
+                    control_path=_explicit_prediction_path(
+                        args.control_root,
+                        task,
+                        experiment,
+                        batch_subdir=args.batch_subdir,
+                    ),
+                    candidate_path=_explicit_prediction_path(
+                        args.candidate_root,
+                        task,
+                        experiment,
+                        batch_subdir=args.batch_subdir,
+                    ),
+                    split=args.benchmark_split,
+                    task=task,
+                    task_label=task_label,
+                    expected_n=_expected_size(
+                        args.benchmark_split,
+                        args.evaluation_subset,
+                        data_name,
+                    ),
+                    control_key=args.control_key,
+                    candidate_key=args.candidate_key,
+                    bootstrap_iterations=args.bootstrap_iterations,
+                    seed=args.seed + index,
+                )
+            )
+        method_specs = (
+            (args.control_key, args.control_label),
+            (args.candidate_key, args.candidate_label),
         )
-        for index, (split, task, task_label, expected_n) in enumerate(CONDITIONS)
-    ]
-    payload = {
-        "benchmark": "Starling binary benchmark",
-        "retrieval_contract": {
+        report_title = args.report_title
+        contract = {
+            "experiment_mode": "full_mechanism",
+            "retrieval_source": "starling",
+            "visibility_mode": args.visibility_mode,
+            "neighbor_identity_policy": "parent_disjoint",
+            "neighbor_selector": "query_feature_coverage",
+            "top_k_per_group": 3,
+            "min_similarity": 0.3,
+            "only_changed_factor": args.only_changed_factor,
+        }
+    else:
+        conditions = [
+            summarize_condition(
+                split=split,
+                task=task,
+                task_label=task_label,
+                expected_n=expected_n,
+                bootstrap_iterations=args.bootstrap_iterations,
+                seed=args.seed + index,
+            )
+            for index, (split, task, task_label, expected_n) in enumerate(CONDITIONS)
+        ]
+        method_specs = (
+            ("morgan_similarity", "Morgan similarity retrieve"),
+            ("query_feature_coverage", "Coverage retrieve"),
+        )
+        report_title = "Coverage selector Starling matched LLM 对比"
+        contract = {
             "experiment_mode": "full_mechanism",
             "retrieval_source": "starling",
             "neighbor_identity_policy": "parent_disjoint",
             "top_k_per_group": 3,
             "min_similarity": 0.3,
             "only_changed_factor": "neighbor_selector",
-        },
+        }
+    payload = {
+        "benchmark": "Starling binary benchmark",
+        "retrieval_contract": contract,
+        "methods": [
+            {"key": method, "label": label} for method, label in method_specs
+        ],
         "conditions": conditions,
     }
 
@@ -328,10 +486,7 @@ def main() -> None:
         writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
         writer.writeheader()
         for condition in conditions:
-            for method, method_label in (
-                ("morgan_similarity", "Morgan similarity retrieve"),
-                ("query_feature_coverage", "Coverage retrieve"),
-            ):
+            for method, method_label in method_specs:
                 metrics = condition["metrics"][method]
                 writer.writerow(
                     {
@@ -355,19 +510,19 @@ def main() -> None:
         encoding="utf-8",
     )
     report = [
-        "# Coverage selector Starling matched LLM 对比",
+        f"# {report_title}",
         "",
-        "所有行均为同一 task/split 上的严格全样本配对；模型、evidence source、"
-        "parent-disjoint policy、reasoning organization 和 decoding 均相同，仅 selector 不同。",
+        "所有行均为同一 task/split 上的严格全样本配对；除 retrieval_contract 中声明的"
+        " only_changed_factor 外，其余模型、evidence、visibility、identity policy 和 decoding 均相同。",
         "",
-        "| Task | Split | n | Morgan accuracy | Coverage accuracy | Δ accuracy | "
-        "Morgan macro-F1 | Coverage macro-F1 | Δ macro-F1 | flips | McNemar p |",
+        f"| Task | Split | n | {method_specs[0][1]} accuracy | {method_specs[1][1]} accuracy | Δ accuracy | "
+        f"{method_specs[0][1]} macro-F1 | {method_specs[1][1]} macro-F1 | Δ macro-F1 | flips | McNemar p |",
         "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for condition in conditions:
-        morgan = condition["metrics"]["morgan_similarity"]
-        coverage = condition["metrics"]["query_feature_coverage"]
-        delta = condition["deltas_coverage_minus_morgan"]
+        morgan = condition["metrics"][method_specs[0][0]]
+        coverage = condition["metrics"][method_specs[1][0]]
+        delta = condition["deltas_candidate_minus_control"]
         paired = condition["paired_outcomes"]
         report.append(
             f"| {condition['task_label']} | {condition['split']} | "

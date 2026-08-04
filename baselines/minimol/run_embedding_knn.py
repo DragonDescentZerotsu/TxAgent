@@ -21,14 +21,14 @@ def main(argv: list[str] | None = None) -> int:
         raise ValueError("--k must be positive")
 
     train_path = args.data_dir / "train.jsonl"
-    test_path = args.data_dir / "test.jsonl"
+    test_path = args.data_dir / f"{args.evaluation_split}.jsonl"
     train = _read_split(train_path)
     test = _read_split(test_path)
     if len(train) < args.k:
         raise ValueError(f"Training set has {len(train)} rows, fewer than k={args.k}")
 
     train_cache_path = args.embedding_cache_dir / "train.pt"
-    test_cache_path = args.embedding_cache_dir / "test.pt"
+    test_cache_path = args.embedding_cache_dir / f"{args.evaluation_split}.pt"
     train_embeddings = _load_embeddings(train_cache_path, train)
     test_embeddings = _load_embeddings(test_cache_path, test)
     if train_embeddings.shape[1] != test_embeddings.shape[1]:
@@ -81,11 +81,13 @@ def main(argv: list[str] | None = None) -> int:
     metrics.update(
         {
             "method": f"minimol_embedding_cosine_knn_k{args.k}",
+            "evaluation_split": args.evaluation_split,
             "k": args.k,
             "vote": "unweighted_majority",
             "score": "positive_neighbor_fraction",
             "n_train": len(train),
             "n_test": len(test),
+            "n_evaluation": len(test),
             "n_evaluated": len(test),
             "evaluation_coverage": 1.0,
             "retrieval_diagnostics": {
@@ -109,6 +111,7 @@ def main(argv: list[str] | None = None) -> int:
         "data_dir": str(args.data_dir),
         "train_path": str(train_path),
         "test_path": str(test_path),
+        "evaluation_path": str(test_path),
         "embedding_cache_dir": str(args.embedding_cache_dir),
         "train_embedding_cache": str(train_cache_path),
         "test_embedding_cache": str(test_cache_path),
@@ -126,7 +129,10 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    _write_jsonl(args.output_dir / "test_predictions.jsonl", predictions)
+    _write_jsonl(
+        args.output_dir / f"{args.evaluation_split}_predictions.jsonl",
+        predictions,
+    )
     (args.output_dir / "metrics.json").write_text(
         json.dumps(metrics, indent=2) + "\n",
         encoding="utf-8",
@@ -186,6 +192,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--data-dir", type=Path, required=True)
     parser.add_argument("--embedding-cache-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--evaluation-split",
+        choices=("valid", "test"),
+        default="test",
+    )
     parser.add_argument("--k", type=int, default=3)
     return parser.parse_args(argv)
 

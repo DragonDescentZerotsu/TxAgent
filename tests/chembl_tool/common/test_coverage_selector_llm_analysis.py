@@ -14,6 +14,7 @@ from tools.chembl_tool.paper_experiments.summarize_coverage_selector_llm_matrix 
     prediction_paths,
     read_predictions,
     run_paths,
+    summarize_prediction_pair,
 )
 from tools.chembl_tool.paper_experiments.plot_coverage_selector_llm_matrix import (
     CONDITIONS as PLOT_CONDITIONS,
@@ -73,6 +74,47 @@ def test_read_predictions_requires_complete_successful_matched_rows(tmp_path):
     path.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
     with pytest.raises(ValueError, match="invalid or failed rows"):
         read_predictions(path, expected_n=2)
+
+
+def test_generic_matched_profile_summary_uses_dynamic_method_keys(tmp_path):
+    control_path = tmp_path / "control.jsonl"
+    candidate_path = tmp_path / "candidate.jsonl"
+    labels = [0, 1]
+    for path, predictions in ((control_path, [0, 0]), (candidate_path, [0, 1])):
+        rows = [
+            {
+                "query_index": index,
+                "status": "ok",
+                "final_status": "ok",
+                "label": label,
+                "pred_label": prediction,
+                "correct": label == prediction,
+            }
+            for index, (label, prediction) in enumerate(
+                zip(labels, predictions, strict=True)
+            )
+        ]
+        path.write_text(
+            "\n".join(json.dumps(row) for row in rows) + "\n",
+            encoding="utf-8",
+        )
+
+    result = summarize_prediction_pair(
+        control_path=control_path,
+        candidate_path=candidate_path,
+        split="scaffold",
+        task="bbb_martins",
+        task_label="BBB",
+        expected_n=2,
+        control_key="standard_context",
+        candidate_key="coverage_aware_context",
+        bootstrap_iterations=20,
+        seed=17,
+    )
+
+    assert result["metrics"]["standard_context"]["accuracy"] == pytest.approx(0.5)
+    assert result["metrics"]["coverage_aware_context"]["accuracy"] == pytest.approx(1.0)
+    assert result["deltas_candidate_minus_control"]["accuracy"] == pytest.approx(0.5)
 
 
 def test_condition_paths_centralize_legacy_bbb_scaffold_location():
@@ -135,3 +177,44 @@ def test_coverage_selector_matrix_plot_reads_canonical_metrics(tmp_path):
     assert "Retrieval Selector Comparison Across Starling" in svg
     assert "Morgan similarity retrieve" in svg
     assert "Coverage retrieve" in svg
+
+
+def test_coverage_matrix_plot_accepts_generic_profile_methods(tmp_path):
+    metrics_path = tmp_path / "metrics.tsv"
+    output = tmp_path / "matrix.svg"
+    fieldnames = [
+        "task",
+        "benchmark_split",
+        "method",
+        "method_label",
+        "n",
+        "accuracy",
+        "macro_f1",
+    ]
+    with metrics_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
+        writer.writeheader()
+        for method, label in (
+            ("morgan_standard", "Morgan standard"),
+            ("coverage_standard", "Coverage standard"),
+            ("coverage_aware", "Coverage-aware context"),
+        ):
+            writer.writerow(
+                {
+                    "task": "bbb_martins",
+                    "benchmark_split": "scaffold",
+                    "method": method,
+                    "method_label": label,
+                    "n": 500,
+                    "accuracy": 0.7,
+                    "macro_f1": 0.6,
+                }
+            )
+
+    render(metrics_path, output)
+
+    svg = output.read_text(encoding="utf-8")
+    assert "Coverage-Aware Reasoning Comparison" in svg
+    assert "Morgan standard" in svg
+    assert "Coverage standard" in svg
+    assert "Coverage-aware context" in svg

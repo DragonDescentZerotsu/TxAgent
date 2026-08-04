@@ -6,12 +6,27 @@ import argparse
 from dataclasses import replace
 import hashlib
 import json
-import os
 from pathlib import Path
-import subprocess
 import sys
-import tempfile
 from typing import Any
+
+from tools.chembl_tool.common.coverage_reasoning import (
+    COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT,
+    NEIGHBOR_CONTEXT_PROFILES,
+    STANDARD_NEIGHBOR_CONTEXT,
+)
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    SIMILARITY_SELECTOR,
+)
+from tools.chembl_tool.common.json_utils import (
+    write_json_atomic as _write_json_atomic,
+)
+from tools.chembl_tool.common.task_workflows.global_prompt_pool import (
+    BatchCommand,
+    SCHEDULER_VERSION as GLOBAL_PROMPT_POOL_VERSION,
+    run_global_prompt_pool,
+)
 
 from .build_starling_benchmark_indices import (
     BENCHMARK_LINEAGE,
@@ -45,6 +60,9 @@ from .minimol_retrieval_contract import (
     descriptor_path_for_experiment,
     paper_root_for_minimol_retrieval,
 )
+
+
+GLOBAL_PROMPT_POOL_SCHEDULER = "global_prompt_pool"
 
 
 TASK_DATA_NAMES = {
@@ -110,8 +128,9 @@ def _starling_index_path(experiment: Experiment, paper_root: Path) -> Path:
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     _validate_concurrency(args)
+    _validate_retrieval_ablation_args(args)
     args.fresh_parent_disjoint = (
-        args.visibility_mode == IDENTITY_BLIND
+        args.visibility_mode in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}
         and args.neighbor_identity_policy == PARENT_DISJOINT
     )
     if (
@@ -150,6 +169,7 @@ def main(argv: list[str] | None = None) -> int:
     paper_root = _paper_root_for_evaluation_subset(
         canonical_paper_root,
         args.evaluation_subset,
+        output_root=args.output_root,
     )
     args.paper_root = str(paper_root)
     args.split = args.evaluation_subset
@@ -163,7 +183,8 @@ def main(argv: list[str] | None = None) -> int:
             PARENT_DISJOINT if args.fresh_parent_disjoint else "operational",
             paper_root=frozen_morgan_paper_root,
         )
-        args.single_analysis_root = str(frozen_morgan_root)
+        if not args.single_analysis_root:
+            args.single_analysis_root = str(frozen_morgan_root)
         if not args.fresh_parent_disjoint:
             args.group_analysis_root = str(frozen_morgan_root)
     _validate_inputs(selected)
@@ -192,15 +213,24 @@ def main(argv: list[str] | None = None) -> int:
         "visibility_mode": args.visibility_mode,
         "visibility_contract": _visibility_contract(args.visibility_mode),
         "neighbor_identity_policy": args.neighbor_identity_policy,
+        "neighbor_selector": args.neighbor_selector,
+        "neighbor_context_profile": args.neighbor_context_profile,
         "paper_root": str(paper_root),
+        "canonical_paper_root": str(canonical_paper_root),
         "single_analysis_root": str(getattr(args, "single_analysis_root", "")),
         "group_analysis_root": str(getattr(args, "group_analysis_root", "")),
         "temperature": 0.0,
         "max_tokens": 20480,
+        "timeout_s": args.timeout_s,
         "endpoint_concurrency_budget": DEFAULT_ENDPOINT_CONCURRENCY_BUDGET,
         "parallelism": args.parallelism,
-        "group_workers": args.group_workers,
-        "effective_concurrency": args.parallelism * args.group_workers,
+        "global_pool_parallelism": args.parallelism,
+        "scheduler": {
+            "name": GLOBAL_PROMPT_POOL_SCHEDULER,
+            "version": GLOBAL_PROMPT_POOL_VERSION,
+            "max_stage_requeues": getattr(args, "max_stage_requeues", 0),
+        },
+        "effective_concurrency": args.parallelism,
         "fresh_parent_disjoint": args.fresh_parent_disjoint,
         "operational_staging_used": (
             args.neighbor_identity_policy == PARENT_DISJOINT
@@ -233,30 +263,40 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     ensure_endpoint_api_key(args.api_key_env, args.base_url)
-    failed: list[dict[str, Any]] = []
-    for experiment in selected:
-        command = _command(experiment, args)
-        print(
-            f"[starling_benchmark_matrix] split={args.benchmark_split} "
-            f"starting={experiment.name}",
-            flush=True,
-        )
-        completed = subprocess.run(command, check=False)
-        if completed.returncode:
-            failed.append({"experiment": experiment.name, "returncode": completed.returncode})
+    failed = _run_selected_experiments(selected, args)
     if failed:
         print(json.dumps({"failed": failed}, indent=2), file=sys.stderr)
         return 1
     return 0
 
 
+def _run_selected_experiments(
+    selected: list[Experiment],
+    args: argparse.Namespace,
+) -> list[dict[str, Any]]:
+    """Share one ready queue and resolve frozen-single dependencies per sample."""
+    commands = [
+        BatchCommand(experiment.name, _command(experiment, args))
+        for experiment in selected
+    ]
+    return run_global_prompt_pool(
+        commands,
+        max_workers=args.parallelism,
+        max_stage_requeues=getattr(args, "max_stage_requeues", 0),
+    )
+
+
 def _paper_root_for_evaluation_subset(
     canonical_root: Path,
     evaluation_subset: str,
+    *,
+    output_root: str | Path | None = None,
 ) -> Path:
-    """Keep v4 validation traces isolated from the untouched formal test root."""
+    """Resolve an isolated result root without changing canonical evidence paths."""
     if evaluation_subset not in EVALUATION_SUBSETS:
         raise ValueError(f"Unknown evaluation subset: {evaluation_subset}")
+    if output_root:
+        return Path(output_root)
     if evaluation_subset == "test":
         return canonical_root
     return canonical_root.with_name(f"{canonical_root.name}_valid")
@@ -264,14 +304,40 @@ def _paper_root_for_evaluation_subset(
 
 def _validate_concurrency(args: argparse.Namespace) -> None:
     """Enforce the endpoint-wide request budget for the single-launcher protocol."""
-    if args.parallelism < 1 or args.group_workers < 1:
-        raise SystemExit("--parallelism and --group-workers must both be positive")
-    requested = args.parallelism * args.group_workers
+    if args.parallelism < 1:
+        raise SystemExit("--parallelism must be positive")
+    if getattr(args, "max_stage_requeues", 0) < 0:
+        raise SystemExit("--max-stage-requeues must be non-negative")
+    requested = args.parallelism
     if requested > DEFAULT_ENDPOINT_CONCURRENCY_BUDGET:
         raise SystemExit(
             "Requested concurrency exceeds the frozen endpoint budget: "
-            f"{args.parallelism} * {args.group_workers} = {requested} > "
+            f"{requested} > "
             f"{DEFAULT_ENDPOINT_CONCURRENCY_BUDGET}"
+        )
+
+
+def _validate_retrieval_ablation_args(args: argparse.Namespace) -> None:
+    """Keep experimental selectors/prompts out of canonical result roots."""
+    nonstandard = (
+        args.neighbor_selector != SIMILARITY_SELECTOR
+        or args.neighbor_context_profile != STANDARD_NEIGHBOR_CONTEXT
+    )
+    if nonstandard and not args.output_root:
+        raise SystemExit(
+            "Non-standard neighbor selection/context requires an explicit --output-root."
+        )
+    if args.retrieval_feature != MORGAN_RETRIEVAL_FEATURE and nonstandard:
+        raise SystemExit(
+            "Coverage selection/context currently requires --retrieval-feature morgan."
+        )
+    if (
+        args.neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT
+        and args.visibility_mode == IDENTITY_BLIND
+    ):
+        raise SystemExit(
+            "coverage_mmp_ledger is visible-only; choose deployment_visible or "
+            "deployment_visible_prefetched."
         )
 
 
@@ -363,30 +429,6 @@ def _matrix_manifest_path(
     return paper_root / f"experiment_matrix_{suffix}_{tasks}_{selection_hash}.json"
 
 
-def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
-    """Keep concurrent task-specific matrix launches from corrupting manifests."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w",
-            encoding="utf-8",
-            dir=path.parent,
-            prefix=f".{path.name}.",
-            suffix=".tmp",
-            delete=False,
-        ) as handle:
-            json.dump(payload, handle, indent=2)
-            handle.write("\n")
-            handle.flush()
-            os.fsync(handle.fileno())
-            temporary_path = Path(handle.name)
-        temporary_path.replace(path)
-    finally:
-        if temporary_path is not None:
-            temporary_path.unlink(missing_ok=True)
-
-
 def _sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -419,6 +461,14 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--api-key-env", default=GLM_API_KEY_ENV)
     parser.add_argument("--base-url", default=GLM_BASE_URL)
     parser.add_argument("--model", default=GLM_MODEL)
+    parser.add_argument(
+        "--output-root",
+        default="",
+        help=(
+            "Explicit model-specific result root. Canonical benchmark evidence "
+            "indices remain under the split lineage root."
+        ),
+    )
     parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
     parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=IDENTITY_BLIND)
     parser.add_argument(
@@ -426,13 +476,39 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         choices=NEIGHBOR_IDENTITY_POLICIES,
         default=PARENT_DISJOINT,
     )
+    parser.add_argument(
+        "--neighbor-selector",
+        choices=NEIGHBOR_SELECTORS,
+        default=SIMILARITY_SELECTOR,
+    )
+    parser.add_argument(
+        "--neighbor-context-profile",
+        choices=NEIGHBOR_CONTEXT_PROFILES,
+        default=STANDARD_NEIGHBOR_CONTEXT,
+    )
+    parser.add_argument(
+        "--single-analysis-root",
+        default="",
+        help="Optional frozen none-condition run root reused by retrieval conditions.",
+    )
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument(
         "--parallelism",
         type=int,
         default=DEFAULT_LAUNCHER_PARALLELISM,
     )
-    parser.add_argument("--group-workers", type=int, default=1)
+    parser.add_argument(
+        "--timeout-s",
+        type=int,
+        default=300,
+        help="Per OpenAI-compatible request timeout; raise only for targeted repairs.",
+    )
+    parser.add_argument(
+        "--max-stage-requeues",
+        type=int,
+        default=0,
+        help="Immediate stage-level retries after the built-in structured-output attempts.",
+    )
     parser.add_argument(
         "--limit",
         type=int,

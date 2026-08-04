@@ -243,7 +243,46 @@ class ToolServiceClient:
         if response.status_code >= 400:
             content = f"{tool_name} HTTP error {response.status_code}: {response.text[:1000]}"
             return {"tool_name": tool_name, "status": "error", "arguments": arguments, "content": content}
-        payload = response.json()
+        return self._format_result(tool_name, arguments, response.json())
+
+    def invoke_many(self, calls: list[tuple[str, dict[str, Any]]]) -> list[dict[str, Any]]:
+        """Invoke a prefetched tool bundle in one bounded service request."""
+        if not calls:
+            return []
+        try:
+            response = requests.post(
+                f"{self.base_url}/tools/batch",
+                json={
+                    "requests": [
+                        {
+                            "tool_name": tool_name,
+                            "version": "v1",
+                            "input": arguments,
+                            "options": {"timeout_s": self.timeout_s, "return_debug": False},
+                        }
+                        for tool_name, arguments in calls
+                    ]
+                },
+                timeout=self.timeout_s,
+            )
+            response.raise_for_status()
+            payloads = response.json().get("responses") or []
+            if len(payloads) != len(calls):
+                raise ValueError(f"batch response count mismatch: {len(payloads)} != {len(calls)}")
+        except (requests.RequestException, ValueError, TypeError, json.JSONDecodeError):
+            # Supports rolling upgrades while an older service is still bound.
+            return [self.invoke(tool_name, arguments) for tool_name, arguments in calls]
+        return [
+            self._format_result(tool_name, arguments, payload)
+            for (tool_name, arguments), payload in zip(calls, payloads)
+        ]
+
+    @staticmethod
+    def _format_result(
+        tool_name: str,
+        arguments: dict[str, Any],
+        payload: dict[str, Any],
+    ) -> dict[str, Any]:
         output = payload.get("output") or {}
         warnings = payload.get("warnings") or []
         errors = payload.get("errors") or []
@@ -262,6 +301,7 @@ class ToolServiceClient:
             "warnings": warnings,
             "errors": errors,
             "latency_ms": (payload.get("metadata") or {}).get("latency_ms"),
+            "cache_hit": bool((payload.get("metadata") or {}).get("cache_hit")),
         }
 
 

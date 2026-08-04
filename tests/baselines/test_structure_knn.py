@@ -72,6 +72,37 @@ def test_runner_uses_three_train_neighbors(tmp_path):
     assert all(len(row["neighbors"]) == 3 for row in predictions)
 
 
+def test_runner_can_evaluate_valid_split(tmp_path):
+    data_dir = tmp_path / "data"
+    output_dir = tmp_path / "output"
+    _write_jsonl(
+        data_dir / "train.jsonl",
+        [
+            {"drug": "CCO", "Y": 1},
+            {"drug": "CCCO", "Y": 1},
+            {"drug": "c1ccccc1", "Y": 0},
+        ],
+    )
+    _write_jsonl(data_dir / "valid.jsonl", [{"drug": "CCCCO", "Y": 1}])
+
+    assert main(
+        [
+            "--data-dir",
+            str(data_dir),
+            "--output-dir",
+            str(output_dir),
+            "--evaluation-split",
+            "valid",
+        ]
+    ) == 0
+
+    metrics = json.loads((output_dir / "metrics.json").read_text())
+    assert metrics["evaluation_split"] == "valid"
+    assert metrics["n_evaluation"] == 1
+    assert (output_dir / "valid_predictions.jsonl").exists()
+    assert not (output_dir / "test_predictions.jsonl").exists()
+
+
 def test_runner_supports_query_feature_coverage_selection(tmp_path):
     data_dir = tmp_path / "data"
     output_dir = tmp_path / "output"

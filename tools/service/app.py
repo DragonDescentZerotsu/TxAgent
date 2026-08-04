@@ -7,7 +7,8 @@ from fastapi import FastAPI, HTTPException
 
 from tools.service.config import get_settings
 from tools.service.registry import ToolRegistry
-from tools.service.schemas import ToolRequest
+from tools.service.runtime import configure_compute_runtime
+from tools.service.schemas import ToolBatchRequest, ToolRequest
 from tools.service.tools.mmp_structure_compare import MmpStructureCompareTool
 from tools.service.tools.properties_compare import PropertiesCompareTool
 from tools.service.tools.rdkit_properties import MoleculePropertiesTool
@@ -29,8 +30,13 @@ registry = build_registry()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    registry.initialize_all(get_settings())
-    yield
+    settings = get_settings()
+    configure_compute_runtime(settings)
+    registry.initialize_all(settings)
+    try:
+        yield
+    finally:
+        registry.close()
 
 
 app = FastAPI(title="TxAgent Resident Tool Service", version="0.1.0", lifespan=lifespan)
@@ -64,6 +70,16 @@ def invoke_tool(tool_name: str, request: ToolRequest):
 @app.post("/tools/invoke")
 def invoke_tool_from_body(request: ToolRequest):
     return registry.invoke(request).model_dump(mode="json")
+
+
+@app.post("/tools/batch")
+def invoke_tools_batch(request: ToolBatchRequest):
+    return {
+        "responses": [
+            response.model_dump(mode="json")
+            for response in registry.invoke_many(request.requests)
+        ]
+    }
 
 
 @app.post("/tools/{tool_name}")

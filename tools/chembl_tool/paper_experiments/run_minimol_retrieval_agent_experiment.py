@@ -10,13 +10,14 @@ from __future__ import annotations
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
-import tempfile
 from typing import Any
 
+from tools.chembl_tool.common.json_utils import (
+    write_json_atomic as _write_json_atomic,
+)
 from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import (
     BENCHMARK_SPLITS,
 )
@@ -55,7 +56,6 @@ def main(argv: list[str] | None = None) -> int:
         "type": "minimol_retrieval_agent_experiment_state.v1",
         "status": "running",
         "parallelism": args.parallelism,
-        "group_workers": args.group_workers,
         "model": args.model,
         "base_url": args.base_url,
         "api_key_env": args.api_key_env,
@@ -98,49 +98,48 @@ def _run_matrix(policy: str, args: argparse.Namespace) -> None:
     reasoning_effort = getattr(args, "reasoning_effort", GLM_REASONING_EFFORT)
     commands: list[tuple[str, list[str]]] = []
     for split in BENCHMARK_SPLITS:
-        by_task: dict[str, list[str]] = {}
-        for experiment in experiments_for_starling_benchmark(
-            split,
-            retrieval_feature="minimol",
-        ):
-            if experiment.mode == "none":
-                continue
-            by_task.setdefault(experiment.task, []).append(experiment.name)
-        for task, experiments in sorted(by_task.items()):
-            commands.append(
-                (
-                    f"{policy}/{split}_{task}.log",
-                    [
-                        args.python_executable,
-                        "-u",
-                        "-m",
-                        "tools.chembl_tool.paper_experiments.starling_benchmark_matrix",
-                        "--benchmark-split",
-                        split,
-                        "--retrieval-feature",
-                        "minimol",
-                        "--visibility-mode",
-                        "deployment_visible",
-                        "--neighbor-identity-policy",
-                        policy,
-                        "--experiments",
-                        *experiments,
-                        "--parallelism",
-                        str(args.parallelism),
-                        "--group-workers",
-                        str(args.group_workers),
-                        "--api-key-env",
-                        api_key_env,
-                        "--base-url",
-                        base_url,
-                        "--model",
-                        model,
-                        "--reasoning-effort",
-                        reasoning_effort,
-                    ],
-                )
+        experiments = [
+            experiment.name
+            for experiment in experiments_for_starling_benchmark(
+                split,
+                retrieval_feature="minimol",
             )
-    _run_commands(commands, log_root=args.output_dir / "launcher_logs")
+            if experiment.mode != "none"
+        ]
+        commands.append(
+            (
+                f"{policy}/{split}.log",
+                [
+                    args.python_executable,
+                    "-u",
+                    "-m",
+                    "tools.chembl_tool.paper_experiments.starling_benchmark_matrix",
+                    "--benchmark-split",
+                    split,
+                    "--retrieval-feature",
+                    "minimol",
+                    "--visibility-mode",
+                    "deployment_visible",
+                    "--neighbor-identity-policy",
+                    policy,
+                    "--experiments",
+                    *experiments,
+                    "--parallelism",
+                    str(args.parallelism),
+                    "--api-key-env",
+                    api_key_env,
+                    "--base-url",
+                    base_url,
+                    "--model",
+                    model,
+                    "--reasoning-effort",
+                    reasoning_effort,
+                ],
+            )
+        )
+    # Endpoint-consuming split matrices must not run as independent outer lanes.
+    for command in commands:
+        _run_commands([command], log_root=args.output_dir / "launcher_logs")
 
 
 def _run_parent_disjoint_materialization(args: argparse.Namespace) -> None:
@@ -274,27 +273,6 @@ def _run_command(command: list[str], log_path: Path) -> int:
         return completed.returncode
 
 
-def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w",
-            encoding="utf-8",
-            dir=path.parent,
-            prefix=f".{path.name}.",
-            suffix=".tmp",
-            delete=False,
-        ) as handle:
-            json.dump(payload, handle, indent=2)
-            handle.write("\n")
-            temporary = Path(handle.name)
-        os.replace(temporary, path)
-    finally:
-        if temporary is not None:
-            temporary.unlink(missing_ok=True)
-
-
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
@@ -304,7 +282,6 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--model", default=GLM_MODEL)
     parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
     parser.add_argument("--parallelism", type=int, default=8)
-    parser.add_argument("--group-workers", type=int, default=4)
     return parser.parse_args(argv)
 
 

@@ -86,6 +86,7 @@ def create_featurizer(
     *,
     batch_size: int,
     minimol_source: Path = DEFAULT_MINIMOL_SOURCE,
+    device: str | torch.device | None = None,
 ) -> Any:
     """Load MiniMol once with the compatibility patches required on this host."""
     ensure_minimol_import(minimol_source)
@@ -107,7 +108,28 @@ def create_featurizer(
     finally:
         torch.load = original_torch_load
     featurizer.datamodule.featurization_n_jobs = 1
+    if device is not None:
+        _place_featurizer_on_device(featurizer, torch.device(device))
     return featurizer
+
+
+def _place_featurizer_on_device(featurizer: Any, device: torch.device) -> None:
+    """Move the upstream MiniMol predictor and each graph batch together."""
+    if device.type == "cpu":
+        return
+    fingerprinter = featurizer.predictor
+    if fingerprinter.predictor is None:
+        raise RuntimeError("MiniMol Fingerprinter has no PredictorModule")
+    fingerprinter.predictor.to(device)
+    original_get_fingerprints = fingerprinter.get_fingerprints_for_batch
+
+    def get_fingerprints_on_device(batch: dict[str, Any]) -> torch.Tensor:
+        device_batch = dict(batch)
+        device_batch["features"] = device_batch["features"].to(device)
+        return original_get_fingerprints(device_batch)
+
+    fingerprinter.get_fingerprints_for_batch = get_fingerprints_on_device
+    featurizer._txagent_device = str(device)
 
 
 def embed_smiles(featurizer: Any, smiles: Sequence[str]) -> torch.Tensor:

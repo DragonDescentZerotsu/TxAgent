@@ -29,10 +29,43 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     rows: list[dict[str, Any]] = []
     for split in args.splits or BENCHMARK_SPLITS:
-        rows.extend(_pipeline_rows(split))
-        rows.extend(_minimol_rows(split))
-        rows.extend(_structure_knn_rows(split))
-        rows.extend(_minimol_embedding_knn_rows(split))
+        rows.extend(
+            _pipeline_rows(
+                split,
+                pipeline_root=Path(args.pipeline_root) if args.pipeline_root else None,
+                evaluation_subset=args.evaluation_subset,
+                model_label=args.model_label,
+                visibility_mode=args.visibility_mode,
+            )
+        )
+        baseline_roots = _baseline_roots(args)
+        if baseline_roots["minimol"] is not None:
+            rows.extend(
+                _minimol_rows(
+                    split,
+                    root=baseline_roots["minimol"],
+                    evaluation_subset=args.evaluation_subset,
+                    model_label=args.model_label,
+                )
+            )
+        if baseline_roots["structure_knn"] is not None:
+            rows.extend(
+                _structure_knn_rows(
+                    split,
+                    root=baseline_roots["structure_knn"],
+                    evaluation_subset=args.evaluation_subset,
+                    model_label=args.model_label,
+                )
+            )
+        if baseline_roots["minimol_embedding_knn"] is not None:
+            rows.extend(
+                _minimol_embedding_knn_rows(
+                    split,
+                    root=baseline_roots["minimol_embedding_knn"],
+                    evaluation_subset=args.evaluation_subset,
+                    model_label=args.model_label,
+                )
+            )
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     _write_tsv(output_dir / "metrics.tsv", rows)
@@ -45,37 +78,94 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def _pipeline_rows(split: str) -> list[dict[str, Any]]:
-    paper_root = paper_root_for_benchmark_split(split)
-    operational_root = paper_root / "runs_deployment_visible"
-    parent_root = paper_root / "runs_deployment_visible_parent_disjoint"
+def _baseline_roots(args: argparse.Namespace) -> dict[str, Path | None]:
+    """Never pull historical test baselines into an explicit v4/valid summary."""
+    use_historical_defaults = args.evaluation_subset == "test" and not args.pipeline_root
+    return {
+        "minimol": (
+            Path(args.minimol_root)
+            if args.minimol_root
+            else MINIMOL_ROOT if use_historical_defaults else None
+        ),
+        "structure_knn": (
+            Path(args.structure_knn_root)
+            if args.structure_knn_root
+            else STRUCTURE_KNN_ROOT if use_historical_defaults else None
+        ),
+        "minimol_embedding_knn": (
+            Path(args.minimol_embedding_knn_root)
+            if args.minimol_embedding_knn_root
+            else MINIMOL_EMBEDDING_KNN_ROOT if use_historical_defaults else None
+        ),
+    }
+
+
+def _pipeline_rows(
+    split: str,
+    *,
+    pipeline_root: Path | None = None,
+    evaluation_subset: str = "test",
+    model_label: str = "GLM-5.2",
+    visibility_mode: str = "identity_blind",
+) -> list[dict[str, Any]]:
+    if pipeline_root is None:
+        paper_root = paper_root_for_benchmark_split(split)
+        operational_root = paper_root / "runs_deployment_visible"
+        parent_root = paper_root / "runs_deployment_visible_parent_disjoint"
+    else:
+        run_directory = {
+            "identity_blind": "runs_identity_blind_parent_disjoint",
+            "deployment_visible": "runs_deployment_visible_parent_disjoint",
+        }[visibility_mode]
+        operational_root = pipeline_root / run_directory
+        parent_root = operational_root
     rows: list[dict[str, Any]] = []
     for experiment in experiments_for_starling_benchmark(split):
-        policy = "operational" if experiment.mode == "none" else "parent_disjoint"
-        root = operational_root if policy == "operational" else parent_root
+        is_query_only = experiment.mode == "none"
+        policy = "not_applicable" if is_query_only else "parent_disjoint"
+        root = operational_root if is_query_only else parent_root
         metrics_path = root / experiment.task / experiment.name / "metrics.json"
         if not metrics_path.exists():
             continue
         metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
-        confusion = metrics.get("confusion_matrix") or {}
+        failure_policy = ""
+        if metrics.get("n_failed_runs", 0):
+            predictions_path = metrics_path.parent / "predictions.jsonl"
+            predictions = _read_jsonl(predictions_path)
+            confusion = _failure_inclusive_confusion(predictions)
+            metric_values = _metrics_from_confusion(confusion)
+            failure_policy = "count_as_incorrect_opposite_label"
+        else:
+            confusion = metrics.get("confusion_matrix") or {}
+            metric_values = {
+                "accuracy": metrics.get("accuracy"),
+                "macro_f1": metrics.get("macro_f1"),
+                "positive_precision": metrics.get("positive_class_precision"),
+                "positive_recall": metrics.get("positive_class_recall"),
+                "positive_f1": metrics.get("positive_class_f1"),
+            }
         rows.append(
             {
                 "benchmark_split": split,
+                "evaluation_subset": evaluation_subset,
                 "task": experiment.task,
                 "method": experiment.name.split("__", 1)[1],
                 "method_family": "molecular_evidence_agent",
                 "source": experiment.source if experiment.mode != "none" else "none",
                 "reasoning_mode": experiment.mode,
                 "neighbor_identity_policy": policy,
-                "n_test": metrics.get("n_evaluable"),
+                "visibility_mode": visibility_mode,
+                "model_label": model_label,
+                "n_test": metrics.get("n_total", metrics.get("n_evaluable")),
                 "n_successful": metrics.get("n_successful"),
                 "n_failed": metrics.get("n_failed_runs"),
-                "accuracy": metrics.get("accuracy"),
-                "macro_f1": metrics.get("macro_f1"),
+                "failure_policy": failure_policy,
+                "accuracy": metric_values["accuracy"],
+                "macro_f1": metric_values["macro_f1"],
                 "auroc": "",
-                "positive_precision": metrics.get("positive_class_precision"),
-                "positive_recall": metrics.get("positive_class_recall"),
-                "positive_f1": metrics.get("positive_class_f1"),
+                "positive_precision": metric_values["positive_precision"],
+                "positive_recall": metric_values["positive_recall"],
+                "positive_f1": metric_values["positive_f1"],
                 "tn": confusion.get("tn"),
                 "fp": confusion.get("fp"),
                 "fn": confusion.get("fn"),
@@ -86,30 +176,42 @@ def _pipeline_rows(split: str) -> list[dict[str, Any]]:
     return rows
 
 
-def _minimol_rows(split: str) -> list[dict[str, Any]]:
+def _minimol_rows(
+    split: str,
+    *,
+    root: Path | None = None,
+    evaluation_subset: str = "test",
+    model_label: str = "GLM-5.2",
+) -> list[dict[str, Any]]:
+    root = MINIMOL_ROOT if root is None else root
     rows: list[dict[str, Any]] = []
     for task, data_name in TASK_DATA_NAMES.items():
-        metrics_path = MINIMOL_ROOT / data_name / split / "metrics.json"
-        predictions_path = MINIMOL_ROOT / data_name / split / "test_predictions.jsonl"
+        metrics_path = root / data_name / split / "metrics.json"
+        predictions_path = root / data_name / split / f"{evaluation_subset}_predictions.jsonl"
         if not metrics_path.exists() or not predictions_path.exists():
             continue
         payload = json.loads(metrics_path.read_text(encoding="utf-8"))
-        metrics = payload["test_metrics_fixed_0.5"]
+        metrics = payload.get("evaluation_metrics_fixed_0.5")
+        if metrics is None:
+            metrics = payload["test_metrics_fixed_0.5"]
         predictions = _read_jsonl(predictions_path)
         confusion = _confusion(predictions)
         positive = _positive_metrics(confusion)
         rows.append(
             {
                 "benchmark_split": split,
+                "evaluation_subset": evaluation_subset,
                 "task": task,
                 "method": "minimol_train_all",
                 "method_family": "minimol",
                 "source": "train_jsonl",
                 "reasoning_mode": "supervised_baseline",
                 "neighbor_identity_policy": "",
+                "model_label": model_label,
                 "n_test": len(predictions),
                 "n_successful": len(predictions),
                 "n_failed": 0,
+                "failure_policy": "",
                 "accuracy": metrics["accuracy"],
                 "macro_f1": metrics["macro_f1"],
                 "auroc": metrics["auroc"],
@@ -123,21 +225,37 @@ def _minimol_rows(split: str) -> list[dict[str, Any]]:
     return rows
 
 
-def _structure_knn_rows(split: str) -> list[dict[str, Any]]:
+def _structure_knn_rows(
+    split: str,
+    *,
+    root: Path | None = None,
+    evaluation_subset: str = "test",
+    model_label: str = "GLM-5.2",
+) -> list[dict[str, Any]]:
     return _knn_rows(
         split,
-        root=STRUCTURE_KNN_ROOT,
+        root=STRUCTURE_KNN_ROOT if root is None else root,
         expected_method="morgan_knn_k3",
         method_family="structure_knn",
+        evaluation_subset=evaluation_subset,
+        model_label=model_label,
     )
 
 
-def _minimol_embedding_knn_rows(split: str) -> list[dict[str, Any]]:
+def _minimol_embedding_knn_rows(
+    split: str,
+    *,
+    root: Path | None = None,
+    evaluation_subset: str = "test",
+    model_label: str = "GLM-5.2",
+) -> list[dict[str, Any]]:
     return _knn_rows(
         split,
-        root=MINIMOL_EMBEDDING_KNN_ROOT,
+        root=MINIMOL_EMBEDDING_KNN_ROOT if root is None else root,
         expected_method="minimol_embedding_cosine_knn_k3",
         method_family="minimol_embedding_knn",
+        evaluation_subset=evaluation_subset,
+        model_label=model_label,
     )
 
 
@@ -147,6 +265,8 @@ def _knn_rows(
     root: Path,
     expected_method: str,
     method_family: str,
+    evaluation_subset: str = "test",
+    model_label: str = "GLM-5.2",
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for task, data_name in TASK_DATA_NAMES.items():
@@ -163,15 +283,22 @@ def _knn_rows(
         rows.append(
             {
                 "benchmark_split": split,
+                "evaluation_subset": evaluation_subset,
                 "task": task,
                 "method": expected_method,
                 "method_family": method_family,
                 "source": "train_jsonl",
                 "reasoning_mode": "supervised_knn_baseline",
                 "neighbor_identity_policy": "",
-                "n_test": metrics["n_test"],
+                "model_label": model_label,
+                "n_test": (
+                    metrics["n_evaluation"]
+                    if metrics.get("n_evaluation") is not None
+                    else metrics["n_test"]
+                ),
                 "n_successful": metrics.get("n_evaluated", metrics["n_test"]),
                 "n_failed": 0,
+                "failure_policy": "",
                 "accuracy": metrics["accuracy"],
                 "macro_f1": metrics["macro_f1"],
                 "auroc": metrics["auroc"],
@@ -183,6 +310,36 @@ def _knn_rows(
             }
         )
     return rows
+
+
+def _failure_inclusive_confusion(rows: list[dict[str, Any]]) -> dict[str, int]:
+    normalized: list[dict[str, int]] = []
+    for row in rows:
+        label = int(row.get("label", row.get("Y")))
+        if row.get("status") != "ok":
+            prediction = 1 - label
+        else:
+            prediction = int(row["pred_label"])
+        normalized.append({"Y": label, "prediction": prediction})
+    return _confusion(normalized)
+
+
+def _metrics_from_confusion(confusion: dict[str, int]) -> dict[str, float]:
+    total = sum(confusion.values())
+    positive = _positive_metrics(confusion)
+    negative_precision = _safe_div(confusion["tn"], confusion["tn"] + confusion["fn"])
+    negative_recall = _safe_div(confusion["tn"], confusion["tn"] + confusion["fp"])
+    negative_f1 = _safe_div(
+        2 * negative_precision * negative_recall,
+        negative_precision + negative_recall,
+    )
+    return {
+        "accuracy": _safe_div(confusion["tn"] + confusion["tp"], total),
+        "macro_f1": (negative_f1 + positive["f1"]) / 2,
+        "positive_precision": positive["precision"],
+        "positive_recall": positive["recall"],
+        "positive_f1": positive["f1"],
+    }
 
 
 def _confusion(rows: list[dict[str, Any]]) -> dict[str, int]:
@@ -225,13 +382,15 @@ def _write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def _report(rows: list[dict[str, Any]]) -> str:
+    evaluation_subset = rows[0].get("evaluation_subset", "test") if rows else "test"
+    benchmark_splits = "/".join(dict.fromkeys(row["benchmark_split"] for row in rows))
     lines = [
-        "# Starling random/scaffold benchmark 结果",
+        f"# Starling {benchmark_splits} {evaluation_subset} benchmark 结果",
         "",
-        "Pipeline 指标使用 deployment-visible 主制度：none 采用 operational；所有 retrieval conditions "
-        "采用 parent-disjoint。MiniMol 使用全部 train、固定 epoch 和 threshold=0.5；Morgan KNN "
+        f"Evaluation subset: {evaluation_subset}. Pipeline 指标采用所选 lineage 的正式结果；所有 "
+        "retrieval conditions 采用 parent-disjoint。MiniMol 使用全部 train、固定 epoch 和 threshold=0.5；Morgan KNN "
         "与 MiniMol embedding cosine KNN 都只检索同 split 的 train labels，固定 k=3 并使用"
-        "未加权多数票。",
+        "未加权多数票。任何带 count_as_incorrect failure policy 的 pipeline failure 均按错误预测计入。",
         "",
         "| split | task | method | n | failed | accuracy | macro-F1 | AUROC | positive P/R/F1 |",
         "|---|---|---|---:|---:|---:|---:|---:|---|",
@@ -252,6 +411,30 @@ def _report(rows: list[dict[str, Any]]) -> str:
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--splits", nargs="*", choices=BENCHMARK_SPLITS, default=[])
+    parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="test")
+    parser.add_argument("--pipeline-root")
+    parser.add_argument(
+        "--visibility-mode",
+        choices=("identity_blind", "deployment_visible"),
+        default="identity_blind",
+        help="Visibility lineage stored below --pipeline-root.",
+    )
+    parser.add_argument("--model-label", default="GLM-5.2")
+    parser.add_argument(
+        "--minimol-root",
+        default="",
+        help="Explicit lineage-matched MiniMol root; omitted for pipeline-only v4 summaries.",
+    )
+    parser.add_argument(
+        "--structure-knn-root",
+        default="",
+        help="Explicit lineage-matched Morgan KNN root; omitted for pipeline-only v4 summaries.",
+    )
+    parser.add_argument(
+        "--minimol-embedding-knn-root",
+        default="",
+        help="Explicit lineage-matched MiniMol KNN root; omitted for pipeline-only v4 summaries.",
+    )
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
     return parser.parse_args(argv)
 

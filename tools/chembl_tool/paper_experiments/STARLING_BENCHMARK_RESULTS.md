@@ -1,12 +1,12 @@
 # Starling random/scaffold benchmark：当前决策、结果与入口
 
-更新时间：2026-08-02。
+更新时间：2026-08-04。
 
 本文件是 2026-07-24 至 2026-07-27 Starling benchmark 迁移和实验的集中总账。它只记录当前
 Starling-held-out `random` / `scaffold` lineage；旧 TDC `test` / `valid` 的历史结果仍见
 `RESULTS.md`，不得混表或改称 Starling。
 
-机器可读主结果和 canonical bar chart：
+上一版 strict-conflict lineage 的机器可读结果和 canonical bar chart：
 
 ```text
 outputs/paper/starling_benchmark_results/summary.json
@@ -14,6 +14,191 @@ outputs/paper/starling_benchmark_results/metrics.tsv
 outputs/paper/starling_benchmark_results/report.md
 outputs/paper/starling_benchmark_results/figures/starling_benchmark_overview.svg
 outputs/paper/starling_benchmark_results/figures/starling_benchmark_overview_highres.png
+```
+
+当前 70% record-agreement v4 的 GPT-OSS-20B identity-blind scaffold-valid 与 train-label baseline
+对比单独保存在：
+
+```text
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b/summary.json
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b/metrics.tsv
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b/report.md
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b/figures/starling_benchmark_overview.svg
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b/figures/starling_benchmark_overview_highres.png
+```
+
+这一轮只评估 scaffold `valid`，不使用 test。MiniMol head 使用 scaffold train 全量训练、5-member
+ensemble、25 epochs 和固定 0.5 threshold；两种 KNN 都只使用 scaffold train labels、`k=3` 和未加权多数票。
+结果如下（macro-F1）：
+
+| task | best GPT-OSS-20B condition | best GPT-OSS | MiniMol head | Morgan KNN | MiniMol KNN |
+|---|---|---:|---:|---:|---:|
+| BBB_Martins | Starling Full / Mechanism | 0.6934 | 0.7108 | **0.7127** | 0.7007 |
+| Skin_Reaction | Starling Full / Mechanism | 0.5585 | 0.5900 | 0.6064 | **0.6166** |
+| Bioavailability_Ma | ChEMBL Full / Flat | 0.6443 | **0.6577** | 0.6199 | 0.5757 |
+
+GPT-OSS 共 22 个 condition、6,887 个 sample-condition；其中
+`Bioavailability_Ma / chembl_full_flat / idx00076` 因输入超过 131,072 context limit 失败，未补跑。
+汇总按预先明确的 `count_as_incorrect_opposite_label` policy 将该样本计错：该 condition 的
+failure-inclusive confusion matrix 为 TN=40、FP=21、FN=47、TP=101，macro-F1 从只统计成功样本的
+0.6476 调整为 0.6443。其余 6,886 个 sample-condition 成功。
+
+同一 frozen scaffold-valid contract 的 GPT-OSS-120B 结果独立保存在：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_gpt_oss_120b/
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_120b/summary.json
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_120b/metrics.tsv
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_120b/report.md
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_120b/figures/starling_benchmark_overview.svg
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_120b/figures/starling_benchmark_overview_highres.png
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison.svg
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison_highres.png
+```
+
+120B 运行只更换 served model；仍使用 scaffold `valid`、`identity_blind + parent_disjoint`、同一 held-out
+retrieval index、同一 prompt/tool contract，并复用上表同一批 train-label baselines。launcher 使用 4 个
+TP=2 vLLM backends，经 HAProxy 统一暴露，执行形状为 4 个 condition workers x 每 condition 64 requests，
+全局 effective concurrency 为 256。最佳 macro-F1 与 20B 对照如下：
+
+| task | best GPT-OSS-120B condition | 120B | best 20B | delta | strongest baseline |
+|---|---|---:|---:|---:|---:|
+| BBB_Martins | Starling Direct | **0.7138** | 0.6934 | +0.0203 | Morgan KNN 0.7127 |
+| Skin_Reaction | Starling Full / Mechanism | 0.5700 | 0.5585 | +0.0115 | MiniMol KNN 0.6166 |
+| Bioavailability_Ma | ChEMBL Full / Flat | **0.6498** | 0.6443 | +0.0055 | MiniMol head 0.6577 |
+
+120B 同样完成 22 个 condition、6,887 个 sample-condition。初次运行的 Bioavailability flat branches
+包含 49 个 request timeout（`chembl_full_flat` 27 个、`starling_full_flat` 22 个）和一个确定性的 context
+failure：`chembl_full_flat/idx00076` 输入 140,665 tokens，超过 131,072 上限。49 个 timeout 使用 600 秒
+timeout、最多 50 个实际并发请求全部成功补齐；旧失败目录和日志保存在同一 task root 下的
+`retry_archive_20260802_timeout300/`。最终只有 idx00076 按
+`count_as_incorrect_opposite_label` policy 计错，6,886 个 sample-condition 成功；重汇总后
+`chembl_full_flat` 与 `starling_full_flat` 的正式 macro-F1 分别为 0.6498 和 0.6346。
+
+### GLM-5.2 NVFP4 identity-blind scaffold-valid（2026-08-03 完成）
+
+GLM 在同一 frozen scaffold `valid`、同一 held-out-filtered index 和
+`identity_blind + parent_disjoint` contract 上完成 22 个 condition、6,887 个 sample-condition，严格完整性
+检查为 `6887/6887`，没有使用 failure-inclusive 计错。机器可读结果位于：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_glm_5_2_nvfp4/
+outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4/metrics.tsv
+outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4/summary.json
+outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4/report.md
+```
+
+最佳 agent macro-F1 为：
+
+| task | best GLM condition | GLM | best GPT-OSS-120B blind | delta |
+|---|---|---:|---:|---:|
+| BBB_Martins | Starling Full / Flat | **0.7337** | 0.7138 | +0.0199 |
+| Skin_Reaction | Starling Direct | **0.6046** | 0.5700 | +0.0346 |
+| Bioavailability_Ma | Starling Full / Mechanism | 0.6467 | **0.6498** | -0.0031 |
+
+逐 trace 审计覆盖 22 条件/6,887 样本：query-SMILES trace leak 为 0，prompt structure/identifier leak 为 0。
+最初报告的 3 个 name leak 均来自 Starling source name `PER` 与英文介词 `per` 的词边界碰撞；`PER` 已加入
+generic-name audit allowlist 后重新审计为 0。全量 28,298 个 retained neighbor slots 均标记为
+`structural_analog`，parent-policy conflict 和低于 0.30 threshold 的补位均为 0；对应 held-out index metadata
+记录 `zero_parent_overlap=true` 和 residual held-out parent 为 0。
+
+注意 canonical matrix manifest 会被最后一次 selection/repair launcher 原子更新，因此该 root 当前 manifest
+显示最后的 `1x1` finalization，而不是整轮历史峰值并发。完整启动/修复形状保存在同 root 的
+`run_*` / `repair_*` logs；不要仅凭最后一个 manifest 反推整轮吞吐。
+
+### GPT-OSS deployment-visible + parent-disjoint 补充矩阵（2026-08-03）
+
+两个 GPT-OSS 模型随后在同一 frozen scaffold `valid` 和同一 held-out-filtered retrieval index 上补齐
+`deployment_visible + parent_disjoint`。这里的 visible 同时表示 query/neighbor identity 对 LLM 可见，以及
+comparison tools 由模型通过 function call 执行；它不是只改变 SMILES 脱敏的单因素消融。结果分别保存在：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_gpt_oss_20b_visible_parent_disjoint/
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_visible_parent_disjoint/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_gpt_oss_120b_visible_parent_disjoint/
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_120b_visible_parent_disjoint/
+```
+
+每个模型均完成 22 个 condition、6,887 个 sample-condition。两边唯一最终失败都是
+`Bioavailability_Ma / chembl_full_flat / idx00076`：visible prompt 为 151,630 tokens，超过两个 served
+model 的 131,072 context limit。该样本无法在不改变冻结 evidence/prompt contract 的情况下修复，故按
+`count_as_incorrect_opposite_label` 计错；每个模型其余 6,886 个 sample-condition 成功。两套矩阵的 19 个
+retrieval conditions 全量审计均为 parent-policy conflict=0、below-similarity-threshold=0，manifest 均为
+`fresh_parent_disjoint=true`、`operational_staging_used=false`。
+
+20B 首轮有 177 个失败 run（失败 group 合计为 177 个 Harmony tool-header parser error、1 个 request
+timeout 和上述 1 个 context error；少数 run 同时包含多个失败 group）。先以 32/16/8 的递减全局并发补跑，
+最后对单个长尾使用并发 1；所有可重试失败均成功。各轮原始失败 run、日志和 metrics 保存在该 model root
+下的 `retry_archive_20260803_*`。120B 首轮只有上述确定性 context failure。20B 服务最终使用 node001 上
+8 个单-GPU backend 和 HAProxy；120B 使用 node002 上常驻的 4 个 TP=2 backend 和 HAProxy。
+
+visible 主矩阵的最佳 macro-F1 为：
+
+| task | best 20B visible condition | 20B visible | best 120B visible condition | 120B visible |
+|---|---|---:|---|---:|
+| BBB_Martins | Starling Direct | 0.6751 | Starling Full / Flat | **0.6926** |
+| Skin_Reaction | Starling Full / Mechanism | 0.5525 | Starling Full / Flat | **0.5913** |
+| Bioavailability_Ma | Starling Full / Flat | 0.6545 | ChEMBL Full / Mechanism | **0.6703** |
+
+这些数值与 identity-blind 主矩阵共享数据、retrieval identity policy、prompt schema 和模型权重，但 visible
+合同还改变了结构可见性与 tool execution，因此图中的 blind/visible 差异应解释为完整部署合同差异，不能只
+归因于分子 identity visibility。
+
+GLM 的同合同 `deployment_visible + parent_disjoint` scaffold-valid 矩阵已于 2026-08-04 完成，输出到：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_glm_5_2_nvfp4_visible_parent_disjoint/
+outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4_visible_parent_disjoint/metrics.tsv
+outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4_visible_parent_disjoint/summary.json
+outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4_visible_parent_disjoint/report.md
+```
+
+该运行最初使用静态 condition lanes；在 `6765/6887` 完整样本处安全停止旧 launcher，并迁移到唯一的
+`global_prompt_ready_pool.v1`。首次恢复扫描直接还原 6765 个完整样本，把跨 task/condition 的 144 个缺失
+group stage 放进同一 128-slot pool；46 分钟后完整样本增至 6879，余下 8 个极端长请求随后以相同模型、prompt、
+reasoning 和 validation 合同、仅提高单请求 timeout 完成。迁移审查还发现 staged final 必须保持旧 pipeline 的
+`group_id` 排序；受影响的 38 个 Bioavailability mechanism final/trace 已先按 SHA-256 归档，再只重建 final。
+归档及审计位于 `scheduler_migration_audit/final_prompt_order_pre_fix_20260804/`。
+
+最终 gate 为 22 个 batch、6887 predictions、6887 run directories、`sum(n_failed_runs)=0`，逐 run 的
+task-specific prediction、single、expected group、final 和 trace 完整性错误均为 0；38 个重建 final 的实际 prompt
+顺序和归档 hash 也全部通过。旧 static/condition-lane scheduler、`--condition-workers`、batch
+`--group-workers` 和 scheduler 选择开关已从正式与 generic paper runner 删除；batch CLI、Starling matrix 和
+MiniMol orchestrator 统一复用 global ready pool，不再保留可绕过全局预算的 endpoint fan-out 路径。
+
+GLM visible 汇总已加入同一 canonical blind+visible 总图。它不是 visible-only 小图：图中同时保留
+GPT-OSS-20B、GPT-OSS-120B 和 GLM-5.2 NVFP4 的 blind/visible 六套完整 series，覆盖三个 task 的全部
+22 个 agent conditions，并保留共享 train-label baselines 和 matched opt-in experiments。各 task 的最佳
+GLM visible macro-F1 为：BBB `starling_full_flat` 0.7096、Skin `starling_direct` 0.6208、Bioavailability
+`starling_full_mechanism` 0.6832；相对 GLM blind 的同 task 最佳值分别为 -0.0242、+0.0162、+0.0365。
+
+blind/visible 全条件总图入口为：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.plot_starling_model_comparison \
+  --reference-metrics outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b/metrics.tsv \
+  --candidate-metrics outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_120b/metrics.tsv \
+  --comparison-metrics outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4/metrics.tsv \
+  --comparison-metrics outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_visible_parent_disjoint/metrics.tsv \
+  --comparison-metrics outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_120b_visible_parent_disjoint/metrics.tsv \
+  --comparison-metrics outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4_visible_parent_disjoint/metrics.tsv \
+  --experiment-metrics outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/three_way_metrics.tsv \
+  --experiment-metrics outputs/paper/coverage_mmp_ledger_gpt_oss_120b_scaffold_valid/analysis/figure_metrics.tsv \
+  --output outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison.svg \
+  --png-output outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison_highres.png
+```
+
+这是 Starling model、visibility、baseline 和 matched ablation 的唯一正式总图。完整 model/visibility
+summary 通过重复 `--comparison-metrics` 追加；matched experiment 通过重复 `--experiment-metrics` 追加，
+不再生成单实验 overview/bar chart。experiment TSV 中的 anchor 必须与 candidate summary 的既有 condition
+在 subset、样本数和 macro-F1 上一致，绘图时只用于合同校验、不重复显示。
+
+本轮 baseline 输出根：
+
+```text
+outputs/baselines/minimol_starling_valid/<Task>/scaffold/
+outputs/baselines/structure_knn_starling_valid/<Task>/scaffold/
+outputs/baselines/minimol_embedding_knn_starling_valid/<Task>/scaffold/
 ```
 
 ## 1. 冻结的数据与 label 决策
@@ -137,17 +322,22 @@ retrieval conditions:
 single branch transport timeout，不是 structured-output validation 失败。按预定 contingency 将正式
 launcher 稍降为 `parallelism=384, group_workers=1`，只重跑该样本后达到 500/500、0 failed。
 但 384 并发的 BBB ChEMBL full-flat 又产生 193/500 失败，其中 190 个为 group request timeout；
-矩阵因此可恢复暂停，当前默认降为 `parallelism=128, group_workers=1`，后续仅重跑失败/未完成样本。
-random-valid 完整 22-condition matrix 通过 tmux session `starling_v4_valid_random` 运行；完整
-valid gate 通过前不启动 test。
+矩阵随后以较低并发恢复。当前 random-valid 已生成 22 个 condition metrics 和 6,886 个 final artifacts，
+严格完整性为 `6885/6887`；剩余两个失败分别位于 Bioavailability `chembl_full_flat` 和
+`chembl_full_mechanism`。机器可读 failure-inclusive pipeline summary 位于
+`outputs/paper/starling_benchmark_results_random_valid_glm_5_2_nvfp4/`，但该 split 仍未通过 zero-failure
+valid gate，也没有匹配的 v4 random-valid train-label baselines，因此不进入 scaffold-valid model comparison
+或正式图。当前默认保持单一 `parallelism=128` global prompt pool；完整 valid gate 通过前不启动 test。
 
 ## 3. Historical strict-conflict performance
 
 以下数值全部来自上一版 strict-conflict train/test split，不是当前 70%-agreement、8:1:1 v4 的结果。
-它们仅用于历史复现；当前 v4 agent valid matrix 正在重跑，baseline 和正式 test 尚未重跑。
+它们仅用于历史复现；当前 v4 已完成 scaffold-valid 的 GLM、GPT-OSS-20B/120B blind agent matrix、两套
+GPT-OSS visible matrix 和 matched MiniMol/Morgan/MiniMol-KNN baselines，结果见本文开头。正式 test 尚未
+启动；random-valid GLM 保留两个失败，是独立 lineage，不与这里的 scaffold-valid 模型对照混表。
 V4 主合同已在 `AGENTS.md` / `EXPERIMENT_PLAN.md` 冻结为
 `identity_blind + parent_disjoint` fresh-run、operational staging disabled、endpoint 上限 512/当前
-launcher 128；除上述 BBB valid query-only 完整性检查外，尚没有 v4 performance 结果。
+GLM launcher 128；GPT-OSS scaffold-valid 使用独立 model-specific roots 和 4×64 condition lanes。
 
 下表均为完整 test 的 macro-F1。`Starling direct` 对 Bioavailability 指 full direct-F condition；
 另有 numeric-only direct-F：random `0.6652`、scaffold `0.6392`。所有表内 formal pipeline、
@@ -390,6 +580,103 @@ selector 的 marginal Morgan-bit coverage、query atom/region mapping 或 neighb
 因此这轮实验验证的是“coverage-selected analog set + 既有 whole-molecule transferability reasoning”，
 不能解释为已经完整检验 fragment-wise compositional reasoning。
 
+### 7.1 Coverage-aware reasoning context pilot（2026-08-03 完成）
+
+为直接检验上述输入缺口，新增了与 selector 正交的 `neighbor_context_profile`。`standard` 保持原 prompt；
+`coverage_aware` 在不暴露结构/身份的前提下，向每个 mechanism group 增加 query Morgan feature coverage、
+由这些 feature 映射得到的 query atom-environment coverage、每个 neighbor 的 marginal/redundant contribution、
+累计 coverage 和 marginal connected-region sizes。Prompt 明确要求模型只在 analog 可迁移时组合互补 evidence，
+并明确 coverage 不是 fragment causality 或 label vote。
+
+当前 pilot 固定为 Starling scaffold-valid、GPT-OSS-120B、`identity_blind + parent_disjoint`、Starling
+`full_mechanism`、`top_k=3`、`min_similarity=0.30` 和 `query_feature_coverage` selector；两边复用同一批冻结的
+120B single-molecule analyses，唯一变化是 `standard` vs `coverage_aware` context。控制组和候选组分别写入：
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_gpt_oss_120b_coverage_standard/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_gpt_oss_120b_coverage_aware/
+```
+
+完整 valid run 两边均为 `954/954` 成功、`n_failed_runs=0`。两边 `954/954` raw retrieval SHA-256
+逐 query 相同；threshold violation、非 structural-analog neighbor、query-parent conflict、held-out parent overlap
+和 identity-blind prompt leak 均为 `0`。Standard trace 中没有 coverage message；coverage-aware 的
+`3,002/3,002` 个有 neighbor 的 group branch 恰好各收到一条 coverage context，其中 `2,998/3,002`
+在输出中显式讨论 coverage、complementarity 或 redundancy。由此可确认新输入确实改变了 reasoning pattern，
+而不是再次出现“selector 换了 neighbor，但模型不知道为什么”的旧条件。
+
+| task | Standard accuracy | Aware accuracy | Δ accuracy | Standard macro-F1 | Aware macro-F1 | Δ macro-F1 | flips | McNemar p | macro-F1 Δ 95% CI |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| BBB | 0.7040 | 0.7200 | +0.0160 | 0.6796 | 0.6939 | +0.0143 | 54 | 0.3409 | [-0.0140, +0.0428] |
+| Bioavailability | 0.6220 | 0.6220 | +0.0000 | 0.6129 | 0.6151 | +0.0022 | 28 | 1.0000 | [-0.0445, +0.0499] |
+| Skin Reaction | 0.6000 | 0.5796 | -0.0204 | 0.5633 | 0.5348 | -0.0285 | 35 | 0.4996 | [-0.0809, +0.0220] |
+
+结论是 mixed / no-go for promotion：BBB 有小幅正向 point estimate，Bioavailability 基本不变，Skin 反而下降；
+三项 McNemar 均不显著，三个 macro-F1 bootstrap interval 都跨零。因此 coverage-aware context 解决了“LLM
+没有使用 coverage 信息”的机制问题，但没有带来跨 task 稳定性能提升，不能替代 standard context，也不据此
+进入 Starling test。它保留为 opt-in 插件，后续若继续，应先在 valid 冻结更有针对性的 region representation 或
+task-specific evidence transfer gate，再做独立确认。
+
+与同一 GPT-OSS-120B scaffold-valid 的原始 `Morgan selector + standard context` 主线相比，总图新增的
+coverage experiment rows 显示：
+BBB macro-F1 为 `0.6583 → 0.6796 → 0.6939`，Bioavailability 为
+`0.5791 → 0.6129 → 0.6151`，Skin 为 `0.5700 → 0.5633 → 0.5348`（依次为 Morgan-standard、
+coverage-standard、coverage-aware）。Morgan-standard vs coverage-aware 的 BBB 增幅为 `+0.0356`，McNemar
+`p=0.0265`，macro-F1 bootstrap 95% CI `[+0.0017, +0.0698]`；但 Bioavailability interval 跨零，Skin point
+estimate 为负。因此新 prompt 在 BBB 上使 coverage 路线显著超过 Morgan，但不能把这个 task-specific signal
+解释成通用方法胜出；核心结论仍是跨 task 不稳定。
+
+代价方面，三 task 合计 group+final total tokens 从 `35,248,740` 增至 `37,667,006`（`+6.86%`）；
+同机并发运行下累计 wall latency proxy 增加 `+2.95%`。因此当前 mixed 性能还伴随确定的上下文和生成成本。
+
+新增分析产物：
+
+```text
+outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/metrics.tsv
+outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/comparison.json
+outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/report.md
+outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/contract_audit.json
+outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/contract_audit.md
+outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/three_way_metrics.tsv
+outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/morgan_vs_coverage_standard/
+outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/morgan_vs_coverage_aware/
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison.svg
+outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison_highres.png
+```
+
+### 7.2 Visible MMP-ledger context ablation（2026-08-03 完成）
+
+为让 visible group reasoning 明确看到每个 retrieved neighbor 对应的结构重合信息，新增 opt-in
+`coverage_mmp_ledger` profile。该 profile 保持 `query_feature_coverage` selector、raw retrieval、neighbor set、
+single-molecule analysis 和 final schema 不变；对每个 selected analog 复用常驻
+`mmp_structure_compare` 的 MCS/MMP 文本，并用 Morgan marginal feature 统计组织 rank-by-rank 的互补、冗余
+和未覆盖区域。Morgan feature coverage 不解释为 atom coverage；没有 matched-pair transformation 时具体
+fragment correspondence 必须标为 unresolved。
+
+当前 matched valid 实验固定为 Starling scaffold、GPT-OSS-120B、`deployment_visible + parent_disjoint`、
+Starling `full_mechanism`、`top_k=3`、`min_similarity=0.30` 和 `query_feature_coverage` selector。Standard 与
+MMP-ledger 两边分别完成 BBB `500/500`、Bioavailability `209/209`、Skin `245/245`，均为
+`n_failed_runs=0`；两边复用相同 frozen single analyses，smoke 中 raw retrieval 逐字节一致。
+
+| task | Standard macro-F1 | MMP ledger macro-F1 | Δ macro-F1 | flips | McNemar p | macro-F1 Δ 95% CI |
+|---|---:|---:|---:|---:|---:|---:|
+| BBB | 0.6843 | 0.6829 | -0.0014 | 66 | 1.0000 | [-0.0346, +0.0311] |
+| Bioavailability | 0.6216 | 0.6511 | +0.0295 | 36 | 0.4050 | [-0.0238, +0.0848] |
+| Skin Reaction | 0.5642 | 0.5610 | -0.0032 | 33 | 1.0000 | [-0.0575, +0.0517] |
+
+结果仍为 mixed / no-go for promotion：BBB 和 Skin 基本持平，Bioavailability 有正向 point estimate，但三项
+paired-bootstrap interval 均跨零，McNemar 也不显著。因此当前证据不支持将 MMP-ledger 升级为默认 prompt；
+它继续作为 visible-only 可插拔 ablation 保留。该结果只在 canonical
+`starling_model_comparison.{svg,png}` 总图中追加两行 visible experiment，不生成独立 performance figure。
+
+配对统计与总图输入：
+
+```text
+outputs/paper/coverage_mmp_ledger_gpt_oss_120b_scaffold_valid/analysis/metrics.tsv
+outputs/paper/coverage_mmp_ledger_gpt_oss_120b_scaffold_valid/analysis/comparison.json
+outputs/paper/coverage_mmp_ledger_gpt_oss_120b_scaffold_valid/analysis/report.md
+outputs/paper/coverage_mmp_ledger_gpt_oss_120b_scaffold_valid/analysis/figure_metrics.tsv
+```
+
 入口与产物：
 
 ```text
@@ -546,13 +833,23 @@ formal figure:
   python -m tools.chembl_tool.paper_experiments.plot_starling_benchmark_overview
 
 MiniMol:
-  python -m baselines.minimol.run_bioavailability_ma --train-all
+  python -m baselines.minimol.run_bioavailability_ma \
+    --data-dir data/processed_starling/<Task>/<random|scaffold> \
+    --output-dir <model-and-split-specific-output> \
+    --train-all --evaluation-split valid
 
 Morgan KNN:
-  python -m baselines.structure_knn.run --k 3
+  python -m baselines.structure_knn.run \
+    --data-dir data/processed_starling/<Task>/<random|scaffold> \
+    --output-dir <model-and-split-specific-output> \
+    --k 3 --evaluation-split valid
 
 MiniMol embedding KNN:
-  python -m baselines.minimol.run_embedding_knn --k 3
+  python -m baselines.minimol.run_embedding_knn \
+    --data-dir data/processed_starling/<Task>/<random|scaffold> \
+    --embedding-cache-dir <MiniMol-output>/embeddings \
+    --output-dir <model-and-split-specific-output> \
+    --k 3 --evaluation-split valid
 
 MiniMol embedding agent retrieval:
   python -m tools.chembl_tool.paper_experiments.run_minimol_retrieval_agent_experiment
@@ -561,6 +858,31 @@ MiniMol embedding agent retrieval:
 generic final-only group filtering:
   tools/chembl_tool/common/task_workflows/reasoning_batch.py
 ```
+
+### 2026-08-02 至 2026-08-04 入口与 artifact contract 更新
+
+- `starling_benchmark_matrix.py` 提供显式 `--output-root`、`--evaluation-subset`、`--timeout-s`、
+  `--neighbor-selector`、`--neighbor-context-profile` 和 `--single-analysis-root`。旧 condition lane/phase
+  scheduler 已移除；single/group/final branch 统一进入全局 ready queue，frozen single 按 sample 解锁。
+- `molecular_evidence_agent.py` 和四个 task runner 透传 selector/context/timeout；fresh
+  `deployment_visible + parent_disjoint` 允许写入独立 ablation root，不再要求 operational reuse plan。
+- `coverage_reasoning.py` 提供 `standard`、blind-safe `coverage_aware` 和 visible-only
+  `coverage_mmp_ledger` 三个 profile；group reuse 现在要求 source/target profile 一致。
+- `summarize_starling_benchmark.py` 支持 model-specific pipeline root、valid/test subset、visibility 和
+  failure-inclusive policy。显式 v4/valid summary 不再隐式加载 historical test baselines；baseline roots 必须
+  明确传入且与同一 lineage/subset 匹配。`summarize_results.py` 仍只用于旧 TDC visibility matrix，不能对
+  `runs_identity_blind_parent_disjoint/` 生成 v4 审计；此前生成的空
+  `analysis_identity_blind_parent_disjoint/report.md` 不是 canonical 结果。
+- 三个 baseline CLI 新增 `--evaluation-split valid|test`。MiniMol 的 valid 评估只允许与 `--train-all`
+  配对，并可通过重复 `--reuse-embedding-cache-dir` 按 exact SMILES 复用 molecule-only embeddings；manifest
+  不复用 label 字段。KNN/MiniMol metrics 同时保存 `evaluation_split` 和 `n_evaluation`，旧 `n_test` 仅为兼容。
+- `plot_starling_model_comparison.py` 是 model、visibility、baseline 和 matched method rows 的唯一总图入口；
+  comparison summary 必须 task/split/subset/n/baseline 对齐，experiment TSV 必须提供不会重复绘制的 anchor。
+- Resident tool service 新增 `/tools/batch`、bounded workers、process-resident MolGpKa、native-thread cap、
+  SQLite/WAL + LRU/single-flight cache；部署与滚动切换规范见 `tools/service/README.md`。
+- `watch_glm_tunnel_and_matrix.py` 监控 `/v1/models`、SSH tunnel 和唯一 resumable matrix。完成计数与 batch
+  gate 对齐：必须有可归一化的 task prediction、single/final status=ok、准确的 expected group 数和 0 failed
+  groups；它不保存或重放 SSH 密码，Duo 仍需用户批准。
 
 ### GLM endpoint 默认值与 2026-08-01 benchmark
 
@@ -599,12 +921,14 @@ ceiling 诊断；它不是当前 reasoning-enabled 默认，也不能换算真�
 
 ## 11. 当前未完成项
 
-- repair identity-blind 的 14 个 failed sample-condition runs，并生成独立 blind analysis/audit；
+- GLM random-valid blind 仍有 Bioavailability 两个 ChEMBL full 条件各 1 个失败，尚未通过 zero-failure gate；
+- v4 random-valid 的 matched train-label baselines 尚未生成；
+- v4 formal test 尚未启动，valid setting 冻结后需按同合同 fresh-run；
 - test matched-prefetch 尚未扩展到全部当前 Starling conditions；
 - ECFP RF/XGBoost 和 matched-neighbor evidence retrieval-only vote 未完成；
 - 用于确认表示选择稳健性的独立第二种 pretrained encoder baseline 未完成；
 - source-quality 双人 annotation 未完成；
-- 当前 GLM condition 每项主要只有一次 run，关键 comparisons 仍需 repeats/第二模型验证；
+- GLM/GPT-OSS 当前每项主要只有一次 run，关键 comparisons 仍需独立 repeats；
 - Skin Tier 1+2 是 test-triggered post-hoc diagnosis，不得升级成预注册 primary condition。
 
 ## 12. Git 发布里程碑

@@ -78,6 +78,8 @@ def materialize_reused_run(source_run: Path, target_run: Path, provenance: dict[
 def load_reusable_group_outputs(
     source_run_dir: str,
     target_retrieval: dict[str, Any],
+    *,
+    target_neighbor_context_profile: str = "standard",
 ) -> list[dict[str, Any]]:
     """Reuse only independent group branches whose LLM-visible retrieval input is unchanged."""
     if not source_run_dir:
@@ -87,6 +89,15 @@ def load_reusable_group_outputs(
     outputs_path = source_dir / "group_reasoning_outputs.jsonl"
     if not baseline_path.exists() or not outputs_path.exists():
         raise FileNotFoundError(f"Missing reusable group artifacts in {source_dir}")
+    source_manifest_path = source_dir / "manifest.json"
+    source_manifest = (
+        json.loads(source_manifest_path.read_text(encoding="utf-8"))
+        if source_manifest_path.exists()
+        else {}
+    )
+    source_profile = str(source_manifest.get("neighbor_context_profile") or "standard")
+    if source_profile != target_neighbor_context_profile:
+        return []
     baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
     changed = set(changed_group_ids(baseline, target_retrieval))
     target_group_ids = {

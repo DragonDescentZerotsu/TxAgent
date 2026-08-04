@@ -24,6 +24,10 @@ class ToolRequest(BaseModel):
     options: ToolRequestOptions = Field(default_factory=ToolRequestOptions)
 
 
+class ToolBatchRequest(BaseModel):
+    requests: list[ToolRequest] = Field(min_length=1, max_length=512)
+
+
 class ToolErrorPayload(BaseModel):
     code: str
     message: str
@@ -35,6 +39,7 @@ class ToolResponseMetadata(BaseModel):
     finished_at: datetime
     latency_ms: int
     model_or_index_version: str | None = None
+    cache_hit: bool = False
 
 
 class ToolResponse(BaseModel):
@@ -56,4 +61,3 @@ class ToolInfo(BaseModel):
     initialization_error: str | None = None
     input_schema: dict[str, Any] = Field(default_factory=dict)
     output_schema: dict[str, Any] = Field(default_factory=dict)
-
