@@ -65,9 +65,26 @@ class TransferPolicyProfile:
     # ineligible.  Anchor-encoded categorical buckets can otherwise clear the
     # record-count gate while carrying almost no spread.  1 disables the guard.
     minimum_distinct_levels: int = 1
+    # Optional scale-aware overrides.  This avoids treating a complete binary
+    # scale as deficient merely because an ordinal scale requires three levels.
+    minimum_distinct_levels_by_scale: Mapping[str, int] | None = None
     # Only sources whose measurement is itself the benchmark gold outcome are
     # removed for held-out parents during calibration.
     heldout_sources: frozenset[str] = frozenset()
+
+    def __post_init__(self) -> None:
+        values = self.minimum_distinct_levels_by_scale or {}
+        if self.minimum_distinct_levels < 1 or any(
+            int(value) < 1 for value in values.values()
+        ):
+            raise ValueError("minimum distinct levels must be positive")
+
+    def required_distinct_levels(self, scale_id: str | None) -> int:
+        return int(
+            (self.minimum_distinct_levels_by_scale or {}).get(
+                str(scale_id or ""), self.minimum_distinct_levels
+            )
+        )
 
     def candidate_fields(self, source_id: str) -> tuple[str, ...]:
         try:

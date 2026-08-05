@@ -20,10 +20,15 @@ from tools.chembl_tool.common.starling.normalization.measurements import (
 
 ENDPOINT_NORMALIZATION_VERSION = "bbb_martins_endpoint_normalization.v1"
 DIRECT_ENDPOINT_MAPPING_VERSION = "bbb_martins_direct_endpoint.globally_reconciled.v1"
-DEFAULT_APPROVED_DIRECT_ENDPOINT_MAPPING = (
+DIRECT_ENDPOINT_MAPPING_V2_VERSION = "bbb_martins_direct_endpoint.errata.v2"
+SUPPORTED_DIRECT_ENDPOINT_MAPPING_VERSIONS = frozenset(
+    {DIRECT_ENDPOINT_MAPPING_VERSION, DIRECT_ENDPOINT_MAPPING_V2_VERSION}
+)
+APPROVED_DIRECT_ENDPOINT_V1_MAPPING = (
     Path(__file__).resolve().parent
     / "data_processing/direct_endpoint_normalization_v1/approved/endpoint_mapping.json"
 )
+DEFAULT_APPROVED_DIRECT_ENDPOINT_MAPPING = APPROVED_DIRECT_ENDPOINT_V1_MAPPING
 DIRECT_SOURCE_PATH = (
     Path(__file__).resolve().parents[4]
     / "data/starling_data/bbb_martins/Direct_BBB/records.parquet"
@@ -202,10 +207,21 @@ def canonical_passive_endpoint(value: Any) -> tuple[str, str]:
         if b_to_a:
             return "transport_rate_b_to_a", "passive_transport_rate_b_to_a"
         return "transport_rate", "passive_transport_rate"
-    if compact in {"logp", "logp0", "logp0pampabbb", "logpopampabbb", "logd74", "logk", "kp", "kp"} or any(marker in compact for marker in ("kiam", "logkmemb")) or any(
-        marker in key for marker in ("partition coefficient", "log p", "logd", "log po")
+    if compact in {
+        "logp",
+        "logp0",
+        "logp0pampabbb",
+        "logpopampabbb",
+        "logd74",
+        "logk",
+    } or "logkmemb" in compact or any(
+        marker in key for marker in ("log p", "logd", "log po")
     ):
-        return "membrane_partitioning", "passive_membrane_partitioning"
+        return "log_partition_coefficient", "passive_log_partition_coefficient"
+    if compact == "kp" or "partition coefficient" in key:
+        return "partition_coefficient", "passive_partition_coefficient"
+    if "kiam" in compact:
+        return "membrane_partitioning", "passive_literal_review_required"
     if "clearance" in key or key == "cl":
         return "clearance", "passive_clearance"
     if "concentration" in key:
@@ -326,9 +342,11 @@ class EndpointNormalizer:
         self.direct_mapping: dict[str, str] = {}
         self.approval: dict[str, Any] | None = None
         self.mapping_sha256: str | None = None
+        self.mapping_version: str | None = None
         if self.path is not None and self.path.exists():
             payload = json.loads(self.path.read_text(encoding="utf-8"))
-            if payload.get("mapping_version") != DIRECT_ENDPOINT_MAPPING_VERSION:
+            mapping_version = str(payload.get("mapping_version") or "")
+            if mapping_version not in SUPPORTED_DIRECT_ENDPOINT_MAPPING_VERSIONS:
                 raise ValueError("Direct endpoint mapping version mismatch")
             approval = payload.get("approval")
             if not isinstance(approval, Mapping) or approval.get("human_approved") is not True:
@@ -365,6 +383,14 @@ class EndpointNormalizer:
                 raise ValueError("Direct endpoint mapping contains a non-canonical label")
             self.approval = dict(approval)
             self.mapping_sha256 = _file_sha256(self.path)
+            self.mapping_version = mapping_version
+            if mapping_version == DIRECT_ENDPOINT_MAPPING_V2_VERSION:
+                provenance = payload.get("provenance")
+                if not isinstance(provenance, Mapping):
+                    raise ValueError("Direct endpoint v2 lacks base-map provenance")
+                expected_base_sha = _file_sha256(APPROVED_DIRECT_ENDPOINT_V1_MAPPING)
+                if provenance.get("base_mapping_sha256") != expected_base_sha:
+                    raise ValueError("Direct endpoint v2 base-map provenance mismatch")
 
     @property
     def direct_ready(self) -> bool:
@@ -404,7 +430,7 @@ class EndpointNormalizer:
             "endpoint_source_field": ENDPOINT_SOURCE_FIELD,
             "direct_mapping_path": str(self.path) if self.path else None,
             "direct_mapping_loaded": self.direct_ready,
-            "direct_mapping_version": DIRECT_ENDPOINT_MAPPING_VERSION if self.direct_ready else None,
+            "direct_mapping_version": self.mapping_version,
             "direct_mapping_entries": len(self.direct_mapping),
             "direct_mapping_sha256": self.mapping_sha256,
             "direct_source_sha256": EXPECTED_DIRECT_SOURCE_SHA256,
@@ -440,7 +466,9 @@ def context_fields(record: Mapping[str, Any]) -> dict[str, Any]:
 
 __all__ = [
     "DEFAULT_APPROVED_DIRECT_ENDPOINT_MAPPING",
+    "APPROVED_DIRECT_ENDPOINT_V1_MAPPING",
     "DIRECT_ENDPOINT_MAPPING_VERSION",
+    "DIRECT_ENDPOINT_MAPPING_V2_VERSION",
     "ENDPOINT_NORMALIZATION_VERSION",
     "ENDPOINT_SOURCE_FIELD",
     "EndpointNormalizer",

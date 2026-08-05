@@ -12,14 +12,25 @@ import numpy as np
 import torch
 
 
-DEFAULT_MINIMOL_SOURCE = Path("/data1/tianang/Projects/minimol")
+DEFAULT_MINIMOL_SOURCE = Path("third_party/minimol")
 
 
 def ensure_minimol_import(minimol_source: Path = DEFAULT_MINIMOL_SOURCE) -> None:
     if importlib.util.find_spec("minimol") is not None:
         return
-    if minimol_source.exists():
+    try:
+        source_exists = minimol_source.exists()
+    except OSError as error:
+        raise FileNotFoundError(
+            f"MiniMol source is not readable: {minimol_source}"
+        ) from error
+    if source_exists:
         sys.path.insert(0, str(minimol_source))
+    if importlib.util.find_spec("minimol") is None:
+        raise FileNotFoundError(
+            "MiniMol is not installed and no importable source tree was found at "
+            f"{minimol_source}. Pass --minimol-source with a local MiniMol v1 checkout."
+        )
 
 
 def patch_graphium_float32_featurization() -> None:

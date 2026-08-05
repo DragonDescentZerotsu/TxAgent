@@ -26,33 +26,16 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     DIRECT_REPORT_TYPES,
     MANIFEST_PATH,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
+    DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS as AMBIGUOUS_QUALITATIVE_PATTERNS,
+    DIRECT_NEGATIVE_QUALITATIVE_PATTERNS as NEGATIVE_QUALITATIVE_PATTERNS,
+    DIRECT_POSITIVE_QUALITATIVE_PATTERNS as POSITIVE_QUALITATIVE_PATTERNS,
+    classify_direct_qualitative_text,
+)
 
 
 TDC_BIOAVAILABILITY_THRESHOLD_PERCENT = 20.0
 
-POSITIVE_QUALITATIVE_PATTERNS = (
-    r"\bhigh\b",
-    r"\bgood\b",
-    r"\bexcellent\b",
-    r"\bcomplete(?:ly)?\b",
-    r"\bnear(?:ly)? complete\b",
-    r"\balmost complete\b",
-)
-NEGATIVE_QUALITATIVE_PATTERNS = (
-    r"\bvery low\b",
-    r"\blow\b",
-    r"\bpoor\b",
-    r"\bnegligible\b",
-    r"\bminimal\b",
-)
-AMBIGUOUS_QUALITATIVE_PATTERNS = (
-    r"\bmoderate\b",
-    r"\bvariable\b",
-    r"\bunpredictable\b",
-    r"\bintermediate\b",
-    r"\borally bioavailable\b",
-    r"\borally available\b",
-)
 NON_HUMAN_PATTERN = re.compile(
     r"\b(?:rat|rats|mouse|mice|dog|dogs|canine|beagle|pig|pigs|swine|monkey|monkeys|"
     r"macaque|primate|rabbit|rabbits|guinea pig|hamster|sheep|goat|horse|horses|"
@@ -126,13 +109,12 @@ def label_bioavailability_value(value: Any) -> tuple[int | None, str]:
         if not re.search(r"\d", text):
             return None, "qualitative_value_not_threshold_anchored"
     if not re.search(r"\d", text):
-        positive = any(re.search(pattern, lowered) for pattern in POSITIVE_QUALITATIVE_PATTERNS)
-        negative = any(re.search(pattern, lowered) for pattern in NEGATIVE_QUALITATIVE_PATTERNS)
-        if positive and not negative:
-            return 1, "explicit_qualitative_high"
-        if negative and not positive:
-            return 0, "explicit_qualitative_low"
-        return None, "unmapped_or_ambiguous_qualitative_value"
+        category, reason = classify_direct_qualitative_text(text)
+        if category == "high":
+            return 1, reason
+        if category == "low":
+            return 0, reason
+        return None, reason
 
     interval = parse_numeric_interval(text, fraction_to_percent=True)
     if interval is None:

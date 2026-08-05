@@ -3,6 +3,10 @@
 from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
 
 
+DIRECT_ORAL_BIOAVAILABILITY_GROUP = "Observed.direct_oral_bioavailability"
+NONDIRECT_ORAL_BIOAVAILABILITY_GROUP = "Observed.nondirect_oral_bioavailability"
+
+
 CHEMBL = SourceExperimentConfig(
     source_name="chembl",
     direct_groups=(
@@ -73,10 +77,13 @@ STARLING = SourceExperimentConfig(
     source_name="starling",
     direct_groups=(
         EvidenceGroupSpec(
-            "Observed.direct_oral_bioavailability",
+            DIRECT_ORAL_BIOAVAILABILITY_GROUP,
             "Observed",
             "direct_oral_bioavailability",
-            source_groups=("Observed.direct_oral_bioavailability",),
+            source_groups=(
+                DIRECT_ORAL_BIOAVAILABILITY_GROUP,
+                NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
+            ),
         ),
     ),
     mechanism_groups=tuple(
@@ -84,7 +91,14 @@ STARLING = SourceExperimentConfig(
             group_id,
             group_id.split(".", 1)[0],
             group_id.split(".", 1)[1],
-            source_groups=(group_id,),
+            source_groups=(
+                (
+                    DIRECT_ORAL_BIOAVAILABILITY_GROUP,
+                    NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
+                )
+                if group_id == DIRECT_ORAL_BIOAVAILABILITY_GROUP
+                else (group_id,)
+            ),
         )
         for group_id in (
             "Observed.direct_oral_bioavailability",
@@ -93,6 +107,29 @@ STARLING = SourceExperimentConfig(
             "Fg.gut_wall_efflux_intestinal_metabolism",
             "Fh.hepatic_clearance_metabolic_stability",
         )
+    ),
+)
+
+STARLING_EXCLUDING_NONDIRECT = SourceExperimentConfig(
+    source_name="starling",
+    direct_groups=(
+        EvidenceGroupSpec(
+            DIRECT_ORAL_BIOAVAILABILITY_GROUP,
+            "Observed",
+            "direct_oral_bioavailability",
+            source_groups=(DIRECT_ORAL_BIOAVAILABILITY_GROUP,),
+        ),
+    ),
+    mechanism_groups=tuple(
+        EvidenceGroupSpec(
+            group.group_id,
+            group.tier,
+            group.endpoint_group,
+            source_groups=(DIRECT_ORAL_BIOAVAILABILITY_GROUP,)
+            if group.group_id == DIRECT_ORAL_BIOAVAILABILITY_GROUP
+            else group.source_groups,
+        )
+        for group in STARLING.mechanism_groups
     ),
 )
 
@@ -137,5 +174,21 @@ SOURCES = {
 STARLING_RETRIEVAL_SOURCES = frozenset({"starling", "starling_in_distribution"})
 
 
-def get_source_config(source: str) -> SourceExperimentConfig:
-    return SOURCES[source]
+def get_source_config(
+    source: str,
+    *,
+    exclude_nondirect_bioavailability_records: bool = False,
+) -> SourceExperimentConfig:
+    if not exclude_nondirect_bioavailability_records:
+        return SOURCES[source]
+    if not source.startswith("starling"):
+        raise ValueError(
+            "--exclude-nondirect-bioavailability-records is only valid for a "
+            "Starling retrieval source"
+        )
+    base = STARLING_EXCLUDING_NONDIRECT
+    return SourceExperimentConfig(
+        source_name=SOURCES[source].source_name,
+        direct_groups=base.direct_groups,
+        mechanism_groups=base.mechanism_groups,
+    )

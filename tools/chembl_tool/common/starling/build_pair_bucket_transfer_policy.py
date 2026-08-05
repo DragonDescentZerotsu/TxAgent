@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
@@ -105,8 +106,14 @@ def build_pair_bucket_transfer_policy(
             for column in fields
         }
     )
+    record_schema = pq.read_schema(records_path).names
+    record_id_field = (
+        "canonical_record_id"
+        if "canonical_record_id" in record_schema
+        else "normalized_record_id"
+    )
     record_columns = [
-        "normalized_record_id",
+        record_id_field,
         "finite_scalar_value",
         *candidate_columns,
     ]
@@ -115,10 +122,10 @@ def build_pair_bucket_transfer_policy(
     record_columns = list(dict.fromkeys(record_columns))
     records = pd.read_parquet(records_path, columns=record_columns)
     buckets = pd.read_parquet(bucket_path)
-    if not records["normalized_record_id"].is_unique:
-        raise ValueError("finalized normalized_record_id values must be unique")
-    if not buckets["normalized_record_id"].is_unique:
-        raise ValueError("pair-bucket normalized_record_id values must be unique")
+    if not records[record_id_field].is_unique:
+        raise ValueError(f"finalized {record_id_field} values must be unique")
+    if not buckets[record_id_field].is_unique:
+        raise ValueError(f"pair-bucket {record_id_field} values must be unique")
     if len(records) != len(buckets):
         raise ValueError(
             f"record/pair-bucket coverage mismatch: {len(records)} != {len(buckets)}"
@@ -126,7 +133,7 @@ def build_pair_bucket_transfer_policy(
 
     joined = buckets.merge(
         records,
-        on="normalized_record_id",
+        on=record_id_field,
         how="left",
         validate="one_to_one",
         indicator=True,
@@ -176,16 +183,26 @@ def build_pair_bucket_transfer_policy(
     ):
         key = str(pair_bucket_key)
         source_id = _one(group["source_id"], key, "source_id")
-        endpoint_field = (spec.endpoint_field_by_source or {}).get(
-            source_id, "canonical_endpoint"
+        canonical_endpoint_field = (
+            "canonical_endpoint_name"
+            if "canonical_endpoint_name" in group.columns
+            else "canonical_endpoint"
         )
-        if endpoint_field == "canonical_endpoint":
+        canonical_unit_field = (
+            "canonical_unit_text"
+            if "canonical_unit_text" in group.columns
+            else "canonical_unit"
+        )
+        endpoint_field = (spec.endpoint_field_by_source or {}).get(
+            source_id, canonical_endpoint_field
+        )
+        if endpoint_field == canonical_endpoint_field:
             canonical_endpoint = _one(
-                group["canonical_endpoint"], key, "canonical_endpoint"
+                group[canonical_endpoint_field], key, canonical_endpoint_field
             )
         else:
             canonical_endpoint = _bucket_endpoint(key, source_id=source_id)
-        canonical_unit = _one(group["canonical_unit"], key, "canonical_unit")
+        canonical_unit = _one(group[canonical_unit_field], key, canonical_unit_field)
         record_count = len(group)
         support_met = record_count >= minimum_samples
         if support_met:
@@ -219,12 +236,34 @@ def build_pair_bucket_transfer_policy(
         )
         variance_flagged = bool(variance_gate["variance_gate_flagged"])
         distinct_levels = int(finite_values.dropna().nunique())
-        enough_levels = distinct_levels >= profile.minimum_distinct_levels
+        scale_column = (
+            "canonical_measurement_scale_id"
+            if "canonical_measurement_scale_id" in group.columns
+            else "categorical_encoder_id"
+        )
+        scale_values = (
+            sorted(
+                {
+                    str(value)
+                    for value in group[scale_column].dropna().tolist()
+                    if str(value)
+                }
+            )
+            if scale_column in group.columns
+            else []
+        )
+        if len(scale_values) > 1:
+            raise ValueError(f"pair bucket {key!r} spans measurement scales")
+        measurement_scale_id = scale_values[0] if scale_values else None
+        required_distinct_levels = profile.required_distinct_levels(
+            measurement_scale_id
+        )
+        enough_levels = distinct_levels >= required_distinct_levels
         distance_policy = None
         if support_met and not variance_flagged and positive_finite_sd and enough_levels:
             distance_policy = build_distance_policy(
                 finite_values.tolist(),
-                group["normalized_record_id"].astype(str).tolist(),
+                group[record_id_field].astype(str).tolist(),
                 pair_bucket_key=key,
                 profile=profile,
             )
@@ -256,8 +295,10 @@ def build_pair_bucket_transfer_policy(
             "eligibility_reason": reason,
             "distance_policy": distance_policy,
         }
-        if profile.minimum_distinct_levels > 1:
+        if required_distinct_levels > 1:
             entry["distinct_measurement_levels"] = distinct_levels
+            entry["minimum_distinct_measurement_levels"] = required_distinct_levels
+            entry["measurement_scale_id"] = measurement_scale_id
         entries[key] = entry
 
     reason_counts = Counter(entry["eligibility_reason"] for entry in entries.values())
@@ -296,6 +337,13 @@ def build_pair_bucket_transfer_policy(
         variance_gate_contract["minimum_distinct_measurement_levels"] = (
             profile.minimum_distinct_levels
         )
+    if profile.minimum_distinct_levels_by_scale:
+        variance_gate_contract["minimum_distinct_measurement_levels_by_scale"] = {
+            key: int(value)
+            for key, value in sorted(
+                profile.minimum_distinct_levels_by_scale.items()
+            )
+        }
     distance_contract: dict[str, Any] = {
         "standard_deviation_ddof": STANDARD_DEVIATION_DDOF,
         "transfer_max_standard_deviations": TRANSFER_MAX_STANDARD_DEVIATIONS,
@@ -408,9 +456,14 @@ def _validate_global_context_contract(
                 f"{source_id} pair-bucket fields differ from the frozen contract"
             )
     actual_endpoint_fields = pair_metadata.get("bucket_endpoint_field_by_source")
+    default_endpoint_field = (
+        "canonical_endpoint_name"
+        if str(spec.pair_bucket_version).endswith(".v7")
+        else "canonical_endpoint"
+    )
     expected_endpoint_fields = {
         source: (spec.endpoint_field_by_source or {}).get(
-            source, "canonical_endpoint"
+            source, default_endpoint_field
         )
         for source in spec.source_pair_fields
     }

@@ -10,6 +10,8 @@
 
 ## Rules
 
+Simplify code whenever possible.
+
 All communication should be truthful but also concise and easy to understand; don’t use weird jargon but stick to language that NLPers and MLers use; assume I don’t have background context on what you’re building; start with a high level description of the changes and then go in more detail.
 
 When you communicate new implementations with me, whether we’re planning or brainstorming, always discuss the changes we’re making on a file system/architectural/structural level; what files we’re adding and how it connects to other files etc. and what is the scope of the change.

@@ -1,4 +1,4 @@
-"""Build the layered v6 Skin_Reaction normalized-Starling evidence library.
+"""Build the layered v7 Skin_Reaction canonical-Starling evidence library.
 
 The staged builder is shared (``common/starling/build_normalized_evidence_library``);
 this entry point only binds the Skin_Reaction policy.
@@ -29,13 +29,21 @@ from tools.chembl_tool.common.starling.build_normalized_evidence_library import 
     parse_args,
     run_with_args,
 )
+
+NORMALIZED_RECORDS_FILENAME = "02_canonicalized/records.parquet"
+AUXILIARY_MAPPING_MANIFEST_FILENAME = (
+    "02_canonicalized/auxiliary_mapping_manifest.json"
+)
+ENDPOINT_REGISTRY_FILENAME = "02_canonicalized/endpoint_registry.json"
+SOURCE_COLUMN_CONTRACT_FILENAME = "02_canonicalized/source_contract.json"
+VALIDITY_POLICY_FILENAME = "02_canonicalized/record_validity_policy.json"
 from tools.chembl_tool.tasks.skin_reaction.build_starling_downstream_artifacts import (
     AUDIT_STAGE,
+    DISTANCE_CALIBRATION_STAGE,
     HELDOUT_STAGE,
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
     PAIR_BUCKET_STAGE,
-    TRANSFER_POLICY_STAGE,
     build_downstream_artifacts,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_policy import (
@@ -47,10 +55,10 @@ from tools.chembl_tool.tasks.skin_reaction.starling_policy import (
 
 ARTIFACT_STAGES = (
     "01_cleaned",
-    "02_normalized",
+    "02_canonicalized",
     "03_records",
     PAIR_BUCKET_STAGE,
-    TRANSFER_POLICY_STAGE,
+    DISTANCE_CALIBRATION_STAGE,
     HELDOUT_STAGE,
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
@@ -102,6 +110,8 @@ def main(argv: list[str] | None = None) -> int:
             "from_stage": args.from_stage,
             "through_stage": args.through_stage,
         },
+        validation_level=args.validation_level,
+        cache_mode=args.cache_mode,
     )
     return 0
 

@@ -183,11 +183,9 @@ def test_only_direct_bbb_is_removed_for_each_benchmark_split(tmp_path):
         map(tuple, exclusions[["benchmark_split", "normalized_record_id"]].values)
     ) == {("random", "direct-ethanol"), ("scaffold", "direct-ethylamine")}
     assert manifest["filter_source_id"] == DIRECT
-    # BBB, unlike Skin and Bioavailability, calibrates its transfer policy on
-    # held-out-filtered records.  See the end-to-end test for the rationale.
-    assert manifest["policy_statistics_scope"] == (
-        "heldout_gold_filtered_transfer_calibration"
-    )
+    # All three tasks calibrate distance geometry on the complete unfiltered record
+    # set.  See the end-to-end test for the rationale.
+    assert manifest["policy_statistics_scope"] == "complete_unfiltered_records"
     for split in ("random", "scaffold"):
         validations = manifest["splits"][split]["validations"]
         # `train_heldout_parent_overlap` is a count living among booleans, so a
@@ -363,22 +361,17 @@ def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path
     assert audit["validations"]["pair_buckets_precede_split_filter"]
     assert audit["validations"]["filtered_evidence_only"]
     assert audit["validations"]["filtered_neighbor_indices_only"]
-    # Deliberate per-task divergence, pinned here so it is not "harmonised"
-    # away: BBB declares `direct_bbb` as a `heldout_sources` entry on its
-    # transfer policy, so the policy drops held-out gold records before
-    # calibrating and publishes a `heldout_exclusion` audit.  Skin and
-    # Bioavailability declare no heldout sources and deliberately calibrate on
-    # `complete_unfiltered_records` instead.  Both are correct for their task;
-    # changing either has to be a deliberate decision, not a tidy-up.
-    assert audit["validations"]["transfer_policy_has_declared_calibration_filter"] is True
-    assert audit["policy_statistics_scope"] == (
-        "heldout_gold_filtered_transfer_calibration"
-    )
+    # Uniform across all three tasks, pinned here so it is not silently reintroduced:
+    # no task filters held-out gold out of its distance calibration.  Distance geometry
+    # describes the assay landscape rather than any particular molecule set, so dropping
+    # the gold molecules would bias the statistics without removing a leak -- stage 06
+    # already excludes those records from evidence and the neighbor indices, which is
+    # where they could actually reach a prediction.  BBB previously diverged here;
+    # reverting that was a deliberate decision, and changing it back must be one too.
+    assert audit["validations"]["calibration_statistics_scope_matches_artifact"]
+    assert audit["policy_statistics_scope"] == "complete_unfiltered_records"
     assert audit["filter_source_id"] == DIRECT
-    exclusion = audit["transfer_policy_heldout_exclusion"]
-    assert exclusion["sources"] == [DIRECT]
-    assert exclusion["identity_column"] == "canonical_smiles"
-    assert exclusion["heldout_key_count"] > 0
+    assert audit["transfer_policy_heldout_exclusion"] is None
     policy = json.loads(
         gzip.decompress(
             (
@@ -386,7 +379,7 @@ def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path
             ).read_bytes()
         ).decode("utf-8")
     )
-    assert policy["heldout_exclusion"] == exclusion
+    assert "heldout_exclusion" not in policy
 
     # Success-path bookkeeping that no other test reaches.
     hashes = payload["downstream_artifact_hashes"]

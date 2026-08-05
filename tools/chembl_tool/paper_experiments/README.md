@@ -67,13 +67,13 @@ python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library 
 python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
   --scope full \
   --evidence-content full \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v2 \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v3 \
   --workers 128
 
 python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
   --scope direct \
   --evidence-content numeric_only \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_direct_numeric_v2 \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_direct_numeric_v3 \
   --workers 128
 ```
 

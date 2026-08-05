@@ -8,6 +8,7 @@ from typing import Any
 from tools.chembl_tool.common.starling import split_downstream as _shared
 from tools.chembl_tool.common.starling.split_downstream import (
     AUDIT_STAGE,
+    DISTANCE_CALIBRATION_STAGE,
     DOWNSTREAM_STAGES,
     FILTERED_RECORDS_FILENAME,
     HELDOUT_STAGE,
@@ -31,7 +32,7 @@ from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
 from tools.chembl_tool.tasks.skin_reaction.starling_policy import POLICY
 
 
-PIPELINE_LAYOUT_VERSION = "skin_reaction.normalized_v6_layout.v2"
+PIPELINE_LAYOUT_VERSION = "skin_reaction.normalized_v7_layout.v1"
 HELDOUT_OVERLAP_VERSION = "skin_reaction.remove_heldout_overlap.v1"
 BENCHMARK_SPLITS = ("random", "scaffold")
 DEFAULT_SPLIT_ROOT = "data/processed_starling/Skin_Reaction"
@@ -86,6 +87,7 @@ __all__ = [
     "BENCHMARK_SPLITS",
     "DEFAULT_SPLIT_ROOT",
     "DOWNSTREAM_STAGES",
+    "DISTANCE_CALIBRATION_STAGE",
     "EXCLUSIONS_FILENAME",
     "FILTERED_RECORDS_FILENAME",
     "HELDOUT_STAGE",

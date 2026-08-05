@@ -1,20 +1,23 @@
-"""Build the single Skin_Reaction pair-bucket assay-transfer policy.
+"""Build Skin v7 distance calibration or the frozen v6 transfer policy.
 
-The builder is shared (``common/starling/build_pair_bucket_transfer_policy``);
-this entry point binds the Skin_Reaction soft target, distinct-level guard, and
-endpoint-slot substitution. Held-out removal is a later split-specific stage;
-this policy is estimated from the complete Stage-03 population.
+The historical function name remains a compatibility entry point. V7 dispatches
+to the label-free calibration builder; v6 dispatches to its frozen policy.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.starling.build_pair_bucket_transfer_policy import (
     POLICY_FILENAME,
     TransferPolicyBuildSpec,
+)
+from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration import (
+    build_pair_bucket_distance_calibration as _build_distance_calibration,
 )
 from tools.chembl_tool.common.starling.build_pair_bucket_transfer_policy import (
     build_pair_bucket_transfer_policy as _build_pair_bucket_transfer_policy,
@@ -41,12 +44,15 @@ from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
     SKIN_REACTION_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
+from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
 
 
 DEFAULT_PAIR_BUCKET_DIR = DEFAULT_NORMALIZED_DIR / "04_pair_buckets"
-DEFAULT_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "05_assay_transfer_policy"
+DEFAULT_LEGACY_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "05_assay_transfer_policy"
+DEFAULT_V7_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "05_distance_calibration"
+DEFAULT_OUTPUT_DIR = DEFAULT_LEGACY_OUTPUT_DIR
 DEFAULT_AUXILIARY_MANIFEST = (
-    DEFAULT_NORMALIZED_DIR / "02_normalized/auxiliary_mapping_manifest.json"
+    DEFAULT_NORMALIZED_DIR / "02_canonicalized/auxiliary_mapping_manifest.json"
 )
 
 BUILD_SPEC = TransferPolicyBuildSpec(
@@ -73,9 +79,41 @@ def build_pair_bucket_transfer_policy(
     auxiliary_manifest_path: str | Path,
     out_dir: str | Path,
     minimum_samples: int = MIN_ASSAY_TRANSFER_SAMPLES,
+    workers: int = 1,
 ) -> dict[str, Any]:
+    metadata = json.loads(Path(pair_bucket_metadata_path).read_text(encoding="utf-8"))
+    spec = BUILD_SPEC
+    if metadata.get("contract_version") == RECORD_CONTRACT.version:
+        profile = replace(
+            TRANSFER_POLICY_PROFILE,
+            source_candidate_fields={
+                source: item.variance_candidates
+                for source, item in RECORD_CONTRACT.pair_buckets.items()
+            },
+        )
+        spec = replace(
+            BUILD_SPEC,
+            profile=profile,
+            pair_bucket_version=RECORD_CONTRACT.version,
+            source_pair_fields={
+                source: item.additional_dimensions
+                for source, item in RECORD_CONTRACT.pair_buckets.items()
+            },
+            endpoint_field_by_source=None,
+        )
+        return _build_distance_calibration(
+            spec=spec,
+            record_contract=RECORD_CONTRACT,
+            records_path=records_path,
+            pair_bucket_records_path=pair_bucket_records_path,
+            pair_bucket_metadata_path=pair_bucket_metadata_path,
+            auxiliary_manifest_path=auxiliary_manifest_path,
+            out_dir=out_dir,
+            minimum_samples=minimum_samples,
+            workers=workers,
+        )
     return _build_pair_bucket_transfer_policy(
-        spec=BUILD_SPEC,
+        spec=spec,
         records_path=records_path,
         pair_bucket_records_path=pair_bucket_records_path,
         pair_bucket_metadata_path=pair_bucket_metadata_path,
@@ -100,20 +138,43 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=str(DEFAULT_PAIR_BUCKET_DIR / PAIR_BUCKET_METADATA_FILENAME),
     )
     parser.add_argument("--auxiliary-manifest", default=str(DEFAULT_AUXILIARY_MANIFEST))
-    parser.add_argument("--out-dir", default=str(DEFAULT_OUTPUT_DIR))
+    parser.add_argument(
+        "--out-dir",
+        default=None,
+        help=(
+            "Output directory. By default, v7 metadata publishes beside the input as "
+            "05_distance_calibration and frozen v6 metadata uses 05_assay_transfer_policy."
+        ),
+    )
+    parser.add_argument("--workers", type=int, default=1)
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    args.out_dir = str(
+        resolve_output_dir(args.pair_bucket_metadata, explicit=args.out_dir)
+    )
     payload = build_pair_bucket_transfer_policy(
         records_path=args.records,
         pair_bucket_records_path=args.pair_bucket_records,
         pair_bucket_metadata_path=args.pair_bucket_metadata,
         auxiliary_manifest_path=args.auxiliary_manifest,
         out_dir=args.out_dir,
+        workers=args.workers,
     )
     summary = payload["summary"]
+    if "calibration_valid_buckets" in summary:
+        print(
+            "[build_starling_pair_bucket_distance_calibration] "
+            f"buckets={summary['pair_buckets']:,} "
+            f"supported={summary['minimum_support_buckets']:,} "
+            f"residual_flagged={summary['residual_heterogeneity_flagged_buckets']:,} "
+            f"calibrated={summary['calibration_valid_buckets']:,} "
+            f"out={args.out_dir}",
+            flush=True,
+        )
+        return 0
     print(
         "[build_starling_pair_bucket_transfer_policy] "
         f"buckets={summary['pair_buckets']:,} "
@@ -124,6 +185,23 @@ def main(argv: list[str] | None = None) -> int:
         flush=True,
     )
     return 0
+
+
+def resolve_output_dir(
+    pair_bucket_metadata_path: str | Path,
+    *,
+    explicit: str | Path | None,
+) -> Path:
+    if explicit:
+        return Path(explicit)
+    metadata_path = Path(pair_bucket_metadata_path)
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    stage = (
+        "05_distance_calibration"
+        if metadata.get("contract_version") == RECORD_CONTRACT.version
+        else "05_assay_transfer_policy"
+    )
+    return metadata_path.parent.parent / stage
 
 
 if __name__ == "__main__":

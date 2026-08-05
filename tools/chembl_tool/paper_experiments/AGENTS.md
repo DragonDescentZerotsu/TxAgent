@@ -187,7 +187,7 @@ registry row、原始 SMILES、实际 embedded SMILES 和原因；不得静默�
 不允许 fallback，仍必须与 formal MiniMol cache 逐条通过 cosine parity。
 
 ```bash
-env CUDA_VISIBLE_DEVICES=0 /data1/tianang/anaconda3/envs/intern/bin/python \
+env CUDA_VISIBLE_DEVICES=0 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm python \
   -m tools.chembl_tool.paper_experiments.build_minimol_retrieval_features \
   --splits random scaffold
 ```
@@ -195,7 +195,7 @@ env CUDA_VISIBLE_DEVICES=0 /data1/tianang/anaconda3/envs/intern/bin/python \
 产物与 Morgan index、Morgan agent runs 隔离：
 
 ```text
-outputs/paper/minimol_retrieval_features/
+outputs/paper/minimol_retrieval_features_v7_record_agreement70_split811_v1/
 outputs/paper/molecular_evidence_agent_starling_random_minimol_retrieval/
 outputs/paper/molecular_evidence_agent_starling_scaffold_minimol_retrieval/
 outputs/paper/minimol_retrieval_agent_results/

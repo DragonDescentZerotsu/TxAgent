@@ -67,6 +67,7 @@ def normalize_source_rows(
     family_resolver: FamilyResolver,
     record_enricher: RecordEnricher | None = None,
     source_sha256: str = "",
+    task: str | None = None,
 ) -> NormalizationResult:
     """Run all record-level stages for one source without semantic row loss."""
     cleaned = clean_source_rows(
@@ -81,6 +82,7 @@ def normalize_source_rows(
         endpoint_standardizer=endpoint_standardizer,
         family_resolver=family_resolver,
         record_enricher=record_enricher,
+        task=task,
     )
     identity_errors = validate_cleaned_normalized_identity(cleaned, normalized)
     if identity_errors:

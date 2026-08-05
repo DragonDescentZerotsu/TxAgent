@@ -21,6 +21,14 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
     StageDocuments,
     StarlingTaskPolicy,
 )
+from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
+    clean_source_values,
+)
+from tools.chembl_tool.common.starling.normalization.contracts import MeasurementPair
+from tools.chembl_tool.common.starling.normalization.measurements import (
+    parse_point_measurement,
+)
+from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
 from tools.chembl_tool.tasks.skin_reaction.starling_categorical_response import (
     CATEGORICAL_RESPONSE_VERSION,
     encoding_policy_manifest,
@@ -40,6 +48,13 @@ from tools.chembl_tool.tasks.skin_reaction.starling_compact_artifacts import (
 from tools.chembl_tool.tasks.skin_reaction.starling_normalization_policy import (
     ENDPOINT_POLICY_VERSION,
     endpoint_specific_standardization_of_unit,
+)
+from tools.chembl_tool.tasks.skin_reaction.starling_measurement_semantics import (
+    DEFAULT_REGISTRY_PATH,
+    MEASUREMENT_SEMANTICS_VERSION,
+    apply_measurement_semantics,
+    default_policy as measurement_semantics_policy,
+    measurement_semantics_manifest,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_normalization_sources import (
     EXPECTED_SOURCE_ROWS,
@@ -69,8 +84,15 @@ TASK_ID = "skin_reaction"
 DATASET_NAME = "starling-labs/Skin_Reaction"
 DEFAULT_STARLING_DATA_DIR = "data/starling_data/skin_reaction"
 DEFAULT_OUT_DIR = (
-    "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v6"
+    "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7"
 )
+
+
+def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
+    del args
+    return clean_source_values(records, task_id=TASK_ID)
+
+
 DEFAULT_BENCHMARK_SPLIT_ROOT = "data/processed_starling/Skin_Reaction"
 
 
@@ -136,11 +158,63 @@ def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
         if args.allow_missing_auxiliary_mapping
         else AuxiliaryMetadataAttacher(mapping_path)
     )
+    semantic_results: dict[str, dict[str, Any]] = {}
+
+    def resolve_measurement_semantics(
+        record: dict[str, Any],
+        canonical_endpoint: str,
+        pair: MeasurementPair,
+    ) -> MeasurementPair:
+        # The invariant checker calls the same hook on the completed row.  At
+        # that point the frozen rule ID/status is the authoritative semantic
+        # decision; return the persisted atomic pair rather than attempting a
+        # second contextual classification against an already-refined endpoint.
+        if record.get("measurement_semantics_status"):
+            return MeasurementPair(
+                record.get("canonical_measurement"),
+                record.get("canonical_unit"),
+                str(record.get("measurement_unit_status") or pair.status),
+                str(record.get("unit_notation_status") or pair.unit_notation_status),
+                record.get("unit_notation_factor"),
+            )
+        parsed = parse_point_measurement(pair.canonical_measurement)
+        auxiliary = attacher.attach(record)
+        semantic_endpoint = str(
+            record.get("pre_refinement_canonical_endpoint")
+            or canonical_endpoint
+            or ""
+        )
+        semantic = apply_measurement_semantics(
+            {
+                **record,
+                **auxiliary,
+                "canonical_endpoint": semantic_endpoint,
+                "canonical_measurement": pair.canonical_measurement,
+                "canonical_unit": pair.canonical_unit,
+                "measurement_unit_status": pair.status,
+                "unit_notation_status": pair.unit_notation_status,
+                "unit_notation_factor": pair.unit_notation_factor,
+                "finite_scalar_value": parsed.value,
+                "variation_value": parsed.variation,
+            }
+        )
+        semantic_results[str(record.get("cleaned_record_id") or "")] = semantic
+        return MeasurementPair(
+            semantic.get("canonical_measurement"),
+            semantic.get("canonical_unit"),
+            str(semantic.get("measurement_unit_status") or pair.status),
+            pair.unit_notation_status,
+            pair.unit_notation_factor,
+        )
+
     return NormalizationHooks(
         endpoint_normalizer=spacing_and_spelling_decision,
         endpoint_standardizer=endpoint_specific_standardization_of_unit,
         family_resolver=family_assignment,
-        record_enricher=lambda record: _enrich_record(record, attacher),
+        source_measurement_resolver=resolve_measurement_semantics,
+        record_enricher=lambda record: _enrich_record(
+            record, attacher, semantic_results
+        ),
         run_state=attacher,
     )
 
@@ -167,10 +241,13 @@ def stage_documents(
     del args
     attacher = hooks.run_state
     coverage = attacher.coverage_audit(normalized)
+    semantics_audit = measurement_semantics_policy().audit(normalized)
     return StageDocuments(
         validity_policy={
             **validity_policy_manifest(),
             "categorical_response": encoding_policy_manifest(),
+            "measurement_semantics": measurement_semantics_manifest(),
+            "measurement_semantics_audit": semantics_audit,
         },
         auxiliary_mapping_manifest={**attacher.manifest(), "coverage": coverage},
         source_column_contract=source_column_contract_manifest(
@@ -189,6 +266,11 @@ def stage_documents(
             "contextual_unit_policy_version": unit_policy_manifest["policy_version"],
             "source_column_contract_complete": True,
             "llm_source_projection_fail_closed": True,
+            "measurement_semantics_coverage": bool(
+                semantics_audit["validations"][
+                    "all_numeric_records_have_explicit_status"
+                ]
+            ),
         },
     )
 
@@ -200,6 +282,7 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "endpoint_policy_version": ENDPOINT_POLICY_VERSION,
         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
         "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
+        "measurement_semantics_version": MEASUREMENT_SEMANTICS_VERSION,
     }
     if complete:
         versions["source_column_contract_version"] = SOURCE_COLUMN_CONTRACT_VERSION
@@ -224,15 +307,26 @@ def census_extras(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _enrich_record(record: dict[str, Any], attacher: Any) -> dict[str, Any]:
+def _enrich_record(
+    record: dict[str, Any],
+    attacher: Any,
+    semantic_results: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
     source_projection = llm_source_projection(record)
     auxiliary = attacher.attach(record)
+    semantic = semantic_results.get(str(record.get("cleaned_record_id") or ""))
+    if semantic is None:
+        raise ValueError("measurement semantics were not resolved atomically")
     # Categorical sources report an outcome, not a measurement, so they carry no
     # scalar and never reach a pair bucket.  The encoder places the informative
     # subset on a named latent scale; it only ever fills a record that has no
     # scalar of its own, so a real measurement is never overwritten.
-    encoded = CATEGORICAL_RESPONSE_POLICY.apply({**record, **auxiliary})
-    validity = enrich_skin_reaction_validity({**record, **auxiliary, **encoded})
+    encoded = CATEGORICAL_RESPONSE_POLICY.apply(
+        {**record, **auxiliary, **semantic}
+    )
+    validity = enrich_skin_reaction_validity(
+        {**record, **auxiliary, **semantic, **encoded}
+    )
     return {
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
         **encoded,
@@ -251,6 +345,7 @@ def _enrich_record(record: dict[str, Any], attacher: Any) -> dict[str, Any]:
             sort_keys=True,
         ),
         **auxiliary,
+        **semantic,
         **validity,
     }
 
@@ -262,6 +357,8 @@ POLICY = StarlingTaskPolicy(
     default_out_dir=DEFAULT_OUT_DIR,
     compact=COMPACT_PROFILE,
     expected_source_rows=EXPECTED_SOURCE_ROWS,
+    record_contract=RECORD_CONTRACT,
+    source_value_cleaner=_clean_source_values,
     source_profiles=source_profiles,
     endpoint_inventory=endpoint_inventory,
     family_resolver=family_assignment,
@@ -273,6 +370,7 @@ POLICY = StarlingTaskPolicy(
     validate_arguments=validate_arguments,
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
+    scientific_assets=(DEFAULT_REGISTRY_PATH,),
 )
 
 

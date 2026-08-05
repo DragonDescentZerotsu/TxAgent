@@ -11,7 +11,8 @@ untouched.
 
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Mapping
+from typing import Any, Iterable
 
 from tools.chembl_tool.common.starling.normalization.cleaning import (
     clean_text,
@@ -132,9 +133,13 @@ def spacing_and_spelling_endpoint(source_id: str, endpoint_name: str) -> str:
     ).spacing_and_spelling_endpoint
 
 
-def family_assignment(source_id: str, endpoint_name: str) -> FamilyAssignment | None:
+def family_assignment(
+    source_id: str,
+    endpoint_name: str,
+    record: Mapping[str, Any] | None = None,
+) -> FamilyAssignment | None:
     """Map source records to the four stable retrieval families without changing endpoints."""
-    del endpoint_name
+    del endpoint_name, record
     if source_id == "direct_skin_reaction":
         return FamilyAssignment(
             "Direct.skin_reaction",

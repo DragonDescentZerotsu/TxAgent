@@ -7,6 +7,12 @@ from tools.chembl_tool.common.starling.stage_artifact_store import (
     verify_local,
     verify_tracked,
 )
+from tools.chembl_tool.tasks.bbb_martins.starling_artifact_store import PROFILE
+
+
+def test_historical_v6_store_keeps_its_frozen_stage_inventory():
+    assert "02_normalized" in PROFILE.stages
+    assert "02_canonicalized" not in PROFILE.stages
 
 
 def test_stage_store_packages_verifies_and_restores(tmp_path):

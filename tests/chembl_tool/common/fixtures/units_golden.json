@@ -41,7 +41,6 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "wt",
       "vol"
     ]
   },
@@ -52,8 +51,7 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "applied",
-      "dose"
+      "applied"
     ]
   },
   "% dose": {
@@ -62,9 +60,7 @@
     "dimension": [],
     "scale": 1.0,
     "transform": "",
-    "unknown_tokens": [
-      "dose"
-    ]
+    "unknown_tokens": []
   },
   "% increase": {
     "canonical": "%·increase",
@@ -72,9 +68,7 @@
     "dimension": [],
     "scale": 1.0,
     "transform": "",
-    "unknown_tokens": [
-      "increase"
-    ]
+    "unknown_tokens": []
   },
   "% inhibition": {
     "canonical": "%·inhibition",
@@ -93,9 +87,7 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "of",
-      "administered",
-      "dose"
+      "administered"
     ]
   },
   "% of applied dose": {
@@ -105,9 +97,7 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "of",
-      "applied",
-      "dose"
+      "applied"
     ]
   },
   "% of applied radioactivity": {
@@ -117,7 +107,6 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "of",
       "applied",
       "radioactivity"
     ]
@@ -128,10 +117,7 @@
     "dimension": [],
     "scale": 1.0,
     "transform": "",
-    "unknown_tokens": [
-      "of",
-      "control"
-    ]
+    "unknown_tokens": []
   },
   "% of dose": {
     "canonical": "%·dose·of",
@@ -139,10 +125,7 @@
     "dimension": [],
     "scale": 1.0,
     "transform": "",
-    "unknown_tokens": [
-      "of",
-      "dose"
-    ]
+    "unknown_tokens": []
   },
   "% of negative control": {
     "canonical": "%·control·negative·of",
@@ -151,9 +134,7 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "of",
-      "negative",
-      "control"
+      "negative"
     ]
   },
   "% of total radioactivity": {
@@ -163,8 +144,6 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "of",
-      "total",
       "radioactivity"
     ]
   },
@@ -215,7 +194,6 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "wt",
       "vol"
     ]
   },
@@ -306,7 +284,7 @@
     ]
   },
   "1 × 10^-6 cm/s": {
-    "canonical": "1·cm/s",
+    "canonical": "cm/s",
     "cleaned": "1 × 10^-6 cm/s",
     "dimension": [
       [
@@ -320,12 +298,10 @@
     ],
     "scale": 1e-08,
     "transform": "",
-    "unknown_tokens": [
-      "1"
-    ]
+    "unknown_tokens": []
   },
   "1 × 10−6 cm/s": {
-    "canonical": "1·cm/s",
+    "canonical": "cm/s",
     "cleaned": "1 × 10-6 cm/s",
     "dimension": [
       [
@@ -339,12 +315,10 @@
     ],
     "scale": 1e-08,
     "transform": "",
-    "unknown_tokens": [
-      "1"
-    ]
+    "unknown_tokens": []
   },
   "1/h": {
-    "canonical": "1/h",
+    "canonical": "/h",
     "cleaned": "1/h",
     "dimension": [
       [
@@ -354,12 +328,10 @@
     ],
     "scale": 0.0002777777777777778,
     "transform": "",
-    "unknown_tokens": [
-      "1"
-    ]
+    "unknown_tokens": []
   },
   "10 × 10^-6 cm/sec": {
-    "canonical": "10·cm/s",
+    "canonical": "cm/s",
     "cleaned": "10 × 10^-6 cm/s",
     "dimension": [
       [
@@ -371,11 +343,9 @@
         -1
       ]
     ],
-    "scale": 1e-08,
+    "scale": 1e-07,
     "transform": "",
-    "unknown_tokens": [
-      "10"
-    ]
+    "unknown_tokens": []
   },
   "10-6 cm s-1": {
     "canonical": "cm/s",
@@ -429,19 +399,21 @@
     "unknown_tokens": []
   },
   "10-6cm.s-1": {
-    "canonical": "10-6cm/s",
-    "cleaned": "10-6cm·s^-1",
+    "canonical": "cm/s",
+    "cleaned": "10-6 cm·s^-1",
     "dimension": [
+      [
+        "length",
+        1
+      ],
       [
         "time",
         -1
       ]
     ],
-    "scale": 1.0,
+    "scale": 1e-08,
     "transform": "",
-    "unknown_tokens": [
-      "10-6cm"
-    ]
+    "unknown_tokens": []
   },
   "10^-3 cm/h": {
     "canonical": "cm/h",
@@ -835,7 +807,7 @@
     "unknown_tokens": []
   },
   "10×10^{-6} cm/sec": {
-    "canonical": "10·cm/s",
+    "canonical": "cm/s",
     "cleaned": "10×10^-6 cm/s",
     "dimension": [
       [
@@ -847,11 +819,9 @@
         -1
       ]
     ],
-    "scale": 1e-08,
+    "scale": 1e-07,
     "transform": "",
-    "unknown_tokens": [
-      "10"
-    ]
+    "unknown_tokens": []
   },
   "10–6 cm s–1": {
     "canonical": "cm/s",
@@ -1114,12 +1084,15 @@
   "Da": {
     "canonical": "Da",
     "cleaned": "Da",
-    "dimension": [],
-    "scale": 1.0,
+    "dimension": [
+      [
+        "mass",
+        1
+      ]
+    ],
+    "scale": 1.6605390666e-27,
     "transform": "",
-    "unknown_tokens": [
-      "Da"
-    ]
+    "unknown_tokens": []
   },
   "FI": {
     "canonical": "FI",
@@ -1323,9 +1296,9 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "SI",
       "stimulation",
-      "index"
+      "index",
+      "SI"
     ]
   },
   "absorbance": {
@@ -1382,7 +1355,7 @@
     ]
   },
   "cells per 100 LCs": {
-    "canonical": "cells/LCs",
+    "canonical": "cells/100·LCs",
     "cleaned": "cells/100 LCs",
     "dimension": [
       [
@@ -1393,6 +1366,7 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
+      "100",
       "LCs"
     ]
   },
@@ -1980,9 +1954,7 @@
     "dimension": [],
     "scale": 1.0,
     "transform": "",
-    "unknown_tokens": [
-      "change"
-    ]
+    "unknown_tokens": []
   },
   "fold increase": {
     "canonical": "fold·increase",
@@ -1990,9 +1962,7 @@
     "dimension": [],
     "scale": 1.0,
     "transform": "",
-    "unknown_tokens": [
-      "increase"
-    ]
+    "unknown_tokens": []
   },
   "fold induction": {
     "canonical": "fold·induction",
@@ -2048,7 +2018,7 @@
         -1
       ]
     ],
-    "scale": 1000.0,
+    "scale": 10.0,
     "transform": "",
     "unknown_tokens": []
   },
@@ -2560,11 +2530,9 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "index",
-      "increase",
       "over",
       "vehicle",
-      "control"
+      "index"
     ]
   },
   "l/h/kg": {
@@ -2621,14 +2589,13 @@
     "unknown_tokens": []
   },
   "log(1/EC3)": {
-    "canonical": "log(1/EC^3)",
-    "cleaned": "log(1/EC^3)",
+    "canonical": "log(/EC3)",
+    "cleaned": "log(1/EC3)",
     "dimension": [],
     "scale": 1.0,
     "transform": "log",
     "unknown_tokens": [
-      "1",
-      "EC"
+      "EC3"
     ]
   },
   "log(M⁻¹ min⁻¹)": {
@@ -5419,7 +5386,6 @@
     "transform": "",
     "unknown_tokens": [
       "number",
-      "of",
       "genes"
     ]
   },
@@ -5431,7 +5397,6 @@
     "transform": "",
     "unknown_tokens": [
       "number",
-      "of",
       "positive",
       "tests"
     ]
@@ -5444,7 +5409,6 @@
     "transform": "",
     "unknown_tokens": [
       "out",
-      "of",
       "10"
     ]
   },
@@ -5456,7 +5420,6 @@
     "transform": "",
     "unknown_tokens": [
       "out",
-      "of",
       "20"
     ]
   },
@@ -5468,7 +5431,6 @@
     "transform": "",
     "unknown_tokens": [
       "out",
-      "of",
       "5"
     ]
   },
@@ -5500,19 +5462,16 @@
       "patients",
       "positive",
       "out",
-      "of",
       "16"
     ]
   },
   "percent": {
-    "canonical": "percent",
-    "cleaned": "percent",
+    "canonical": "%",
+    "cleaned": "%",
     "dimension": [],
     "scale": 1.0,
     "transform": "",
-    "unknown_tokens": [
-      "percent"
-    ]
+    "unknown_tokens": []
   },
   "pg/mL": {
     "canonical": "pg/mL",
@@ -5771,7 +5730,7 @@
     ]
   },
   "pmol·min⁻¹·mg protein⁻¹": {
-    "canonical": "mg·pmol/min·protein",
+    "canonical": "pmol/mg·min·protein",
     "cleaned": "pmol·min^-1·mg protein^-1",
     "dimension": [
       [
@@ -5780,14 +5739,14 @@
       ],
       [
         "mass",
-        1
+        -1
       ],
       [
         "time",
         -1
       ]
     ],
-    "scale": 1.6666666666666667e-17,
+    "scale": 1.6666666666666667e-11,
     "transform": "",
     "unknown_tokens": []
   },
@@ -5801,7 +5760,6 @@
       "positive",
       "animals",
       "out",
-      "of",
       "15"
     ]
   },
@@ -5863,8 +5821,8 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "probability",
-      "0-1"
+      "0-1",
+      "probability"
     ]
   },
   "proportion": {
@@ -5902,10 +5860,10 @@
     "scale": 1.0,
     "transform": "",
     "unknown_tokens": [
-      "relative",
-      "rate",
       "vs",
-      "1a"
+      "1a",
+      "relative",
+      "rate"
     ]
   },
   "residues": {
@@ -5975,14 +5933,12 @@
     ]
   },
   "times": {
-    "canonical": "times",
-    "cleaned": "times",
+    "canonical": "fold",
+    "cleaned": "fold",
     "dimension": [],
     "scale": 1.0,
     "transform": "",
-    "unknown_tokens": [
-      "times"
-    ]
+    "unknown_tokens": []
   },
   "unitless": {
     "canonical": "dimensionless",
@@ -6044,8 +6000,8 @@
     "unknown_tokens": []
   },
   "x 1e-6 cm/s": {
-    "canonical": "cm·x/1e^6·s",
-    "cleaned": "x 1e^-6 cm/s",
+    "canonical": "cm/s",
+    "cleaned": "1e-6 cm/s",
     "dimension": [
       [
         "length",
@@ -6056,12 +6012,9 @@
         -1
       ]
     ],
-    "scale": 0.01,
+    "scale": 1e-08,
     "transform": "",
-    "unknown_tokens": [
-      "x",
-      "1e"
-    ]
+    "unknown_tokens": []
   },
   "x10-6 cm/s": {
     "canonical": "cm/s",
@@ -6471,7 +6424,7 @@
     "unknown_tokens": []
   },
   "µL/min/million cells": {
-    "canonical": "µL/cells·million·min",
+    "canonical": "µL/cells·min",
     "cleaned": "µL/min/million cells",
     "dimension": [
       [
@@ -6487,11 +6440,9 @@
         1
       ]
     ],
-    "scale": 1.6666666666666667e-08,
+    "scale": 1.6666666666666667e-14,
     "transform": "",
-    "unknown_tokens": [
-      "million"
-    ]
+    "unknown_tokens": []
   },
   "µL/min/nmol": {
     "canonical": "µL/min·nmol",
@@ -6605,8 +6556,8 @@
     ]
   },
   "µL/min/pmol CYP2B6": {
-    "canonical": "µL/CYP·min·pmol",
-    "cleaned": "µL/min/pmol CYP^2B6",
+    "canonical": "µL/CYP2B6·min·pmol",
+    "cleaned": "µL/min/pmol CYP2B6",
     "dimension": [
       [
         "amount",
@@ -6624,12 +6575,12 @@
     "scale": 16666.666666666668,
     "transform": "",
     "unknown_tokens": [
-      "CYP"
+      "CYP2B6"
     ]
   },
   "µL/min/pmol CYP2D6": {
-    "canonical": "µL/CYP·min·pmol",
-    "cleaned": "µL/min/pmol CYP^2d6",
+    "canonical": "µL/CYP2D6·min·pmol",
+    "cleaned": "µL/min/pmol CYP2D6",
     "dimension": [
       [
         "amount",
@@ -6647,7 +6598,7 @@
     "scale": 16666.666666666668,
     "transform": "",
     "unknown_tokens": [
-      "CYP"
+      "CYP2D6"
     ]
   },
   "µL/min/pmol P450": {
@@ -6737,12 +6688,12 @@
     "unknown_tokens": []
   },
   "µL·min⁻¹·mg protein⁻¹": {
-    "canonical": "mg·µL/min·protein",
+    "canonical": "µL/mg·min·protein",
     "cleaned": "µL·min^-1·mg protein^-1",
     "dimension": [
       [
         "mass",
-        1
+        -1
       ],
       [
         "time",
@@ -6753,7 +6704,7 @@
         1
       ]
     ],
-    "scale": 1.6666666666666667e-11,
+    "scale": 1.6666666666666667e-05,
     "transform": "",
     "unknown_tokens": []
   },
@@ -6878,7 +6829,8 @@
     "scale": 1e-06,
     "transform": "",
     "unknown_tokens": [
-      "GSH+GSSG"
+      "GSH+GSSG",
+      "skin"
     ]
   },
   "µg GSH/g skin": {
@@ -6888,7 +6840,8 @@
     "scale": 1e-06,
     "transform": "",
     "unknown_tokens": [
-      "GSH"
+      "GSH",
+      "skin"
     ]
   },
   "µg GSSG/g skin": {
@@ -6898,7 +6851,8 @@
     "scale": 1e-06,
     "transform": "",
     "unknown_tokens": [
-      "GSSG"
+      "GSSG",
+      "skin"
     ]
   },
   "µg Ni/cm²": {
@@ -7414,19 +7368,23 @@
     "unknown_tokens": []
   },
   "µg/cm²h": {
-    "canonical": "µg/cm",
-    "cleaned": "µg/cm^2h",
+    "canonical": "µg/cm^2·h",
+    "cleaned": "µg/cm^2·h",
     "dimension": [
       [
         "length",
-        -1
+        -2
       ],
       [
         "mass",
         1
+      ],
+      [
+        "time",
+        -1
       ]
     ],
-    "scale": 9.999999999999999e-05,
+    "scale": 2.777777777777778e-06,
     "transform": "",
     "unknown_tokens": []
   },
@@ -7483,7 +7441,7 @@
     "scale": 1e-06,
     "transform": "",
     "unknown_tokens": [
-      "of"
+      "skin"
     ]
   },
   "µg/g skin": {
@@ -7492,7 +7450,9 @@
     "dimension": [],
     "scale": 1e-06,
     "transform": "",
-    "unknown_tokens": []
+    "unknown_tokens": [
+      "skin"
+    ]
   },
   "µg/h": {
     "canonical": "µg/h",
@@ -8194,7 +8154,7 @@
     "unknown_tokens": []
   },
   "µl/min/million cells": {
-    "canonical": "µL/cells·million·min",
+    "canonical": "µL/cells·min",
     "cleaned": "µL/min/million cells",
     "dimension": [
       [
@@ -8210,11 +8170,9 @@
         1
       ]
     ],
-    "scale": 1.6666666666666667e-08,
+    "scale": 1.6666666666666667e-14,
     "transform": "",
-    "unknown_tokens": [
-      "million"
-    ]
+    "unknown_tokens": []
   },
   "µl/min/pmol": {
     "canonical": "µL/min·pmol",
@@ -8457,7 +8415,9 @@
     ],
     "scale": 1e-06,
     "transform": "",
-    "unknown_tokens": []
+    "unknown_tokens": [
+      "skin"
+    ]
   },
   "µmol/l": {
     "canonical": "µmol/L",
@@ -8828,7 +8788,7 @@
   },
   "×10-5cm/sec": {
     "canonical": "cm/s",
-    "cleaned": "×10-5cm/s",
+    "cleaned": "×10-5 cm/s",
     "dimension": [
       [
         "length",

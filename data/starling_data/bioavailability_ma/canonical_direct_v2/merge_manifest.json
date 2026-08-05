@@ -26,7 +26,20 @@
   "stats": {
     "n_hf_snapshot_rows": 163815,
     "n_hf_direct_source_rows": 111848,
+    "n_hf_nondirect_rows": 51570,
+    "hf_nondirect_measurement_unit_status_counts": {
+      "explicit_atomic_scalar_unit": 13162,
+      "no_explicit_unit": 29726,
+      "non_atomic_or_qualitative": 8682
+    },
     "n_hf_direct_rejected_invalid_structure": 397,
+    "hf_snapshot_reconciliation": {
+      "input_rows": 163815,
+      "direct_rows_with_valid_structure": 111848,
+      "direct_rows_rejected_structure": 397,
+      "nondirect_rows_retained": 51570,
+      "reconciles": true
+    },
     "n_local_input_rows": 119192,
     "n_local_absolute_rows_removed_from_residual": 3920,
     "n_local_absolute_rows_with_valid_structure": 3712,
@@ -58,18 +71,20 @@
   },
   "paths": {
     "hf_snapshot": "data/starling_data/bioavailability_ma/canonical_direct_v2/hf_oral_bioavailability_snapshot.parquet",
+    "hf_nondirect_records": "data/starling_data/bioavailability_ma/canonical_direct_v2/hf_nondirect_records.parquet",
     "direct_source_rows": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_source_rows.parquet",
     "direct_claims": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
     "direct_rejected_rows": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_rejected_rows.parquet",
     "dedup_audit": "data/starling_data/bioavailability_ma/canonical_direct_v2/cross_source_dedup_audit.parquet",
     "local_partition_audit": "data/starling_data/bioavailability_ma/canonical_direct_v2/local_partition_audit.parquet",
     "residual_records": "data/starling_data/bioavailability_ma/oral_exposure_residual_v2/exposure_records.parquet",
-    "hf_snapshot_sha256": "70c1c1c298c904e70eb1efc154dcad61e6691b5079777cd2d70681192046c83e",
-    "direct_source_rows_sha256": "2a531d43ba5c79657b284b5f3a57e4f483dc034719b77cde735bef801dce9ba2",
-    "direct_claims_sha256": "045261cbda785092143eeadd636f78399f7b02f951b23480b16fb8dde22661c5",
-    "direct_rejected_rows_sha256": "58782e8dce9a5d40868d462a29fb7d13327c342f69f95eef9d251ce483240b94",
-    "dedup_audit_sha256": "ee74f6d91d63b2a1edb1995ea1a740efb82703bbc87889d1b73ef144af6ce7ce",
-    "local_partition_audit_sha256": "cb4d35625b3edf3426f27376f88b7c9316f59d138ae8f8dbb32c1c28cbc94885",
-    "residual_records_sha256": "81c45f9dc035ed2b066b19a569eb80ef1f806d7a0f421956ea92b2dadb779bda"
+    "hf_snapshot_sha256": "8a5a73c2f3b46106d7cf29a590b50b6cbe18393ada4486ae2e8425ed198791b2",
+    "hf_nondirect_records_sha256": "4808153fd6e8b38ab5ef6cc322a24c12966f6e4f6eed8a4a76efc83781e10ce9",
+    "direct_source_rows_sha256": "43422caea9a7ef2916aafc30ec6bb5ef99de24c526ed32c2a053fd9dce5a6b03",
+    "direct_claims_sha256": "d6c2dc9e5e91a6e1e9c159fcda20c2ebda73595f26b27533b500c209f1631140",
+    "direct_rejected_rows_sha256": "803ac80b0dca3d7bf73432457672882a4a6d7558de99e71a3badbdb77cbd215f",
+    "dedup_audit_sha256": "2041f8dc3b15e8b44ae0bdac255432857cae1d9228409b74078de74ecfd6c9aa",
+    "local_partition_audit_sha256": "6de1528cb62edaf78ae9cf036f3db3cf10f37caa8d9e335b1397c0ff0669e647",
+    "residual_records_sha256": "a6e3a745bb03eae814a0bf1f45268f96354836f046f958747302c373a9d39590"
   }
 }

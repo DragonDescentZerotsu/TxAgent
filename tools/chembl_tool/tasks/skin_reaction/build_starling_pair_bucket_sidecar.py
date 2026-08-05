@@ -15,18 +15,19 @@ import json
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.common.starling.normalization.audit import (
-    read_parquet_records,
-    write_parquet,
-)
+from tools.chembl_tool.common.starling.normalization.audit import write_parquet
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
-from tools.chembl_tool.common.starling.pair_buckets import materialize_pair_buckets
+from tools.chembl_tool.common.starling.pair_buckets import (
+    materialize_pair_buckets,
+    read_pair_bucket_input,
+)
 from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
     ENDPOINT_FIELD_BY_SOURCE,
     SKIN_REACTION_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_policy import DEFAULT_OUT_DIR
+from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
 
 
 DEFAULT_NORMALIZED_DIR = Path(DEFAULT_OUT_DIR)
@@ -43,12 +44,22 @@ def build_sidecar(
     records_path = Path(records_path)
     target = Path(out_dir)
     target.mkdir(parents=True, exist_ok=True)
-    records = read_parquet_records(records_path)
+    records, v7, pair_fields = read_pair_bucket_input(
+        records_path,
+        v7_source_fields={
+            source: spec.additional_dimensions
+            for source, spec in RECORD_CONTRACT.pair_buckets.items()
+        },
+        legacy_source_fields=SOURCE_PAIR_FIELDS,
+        legacy_endpoint_field_by_source=ENDPOINT_FIELD_BY_SOURCE,
+    )
     sidecar_rows, metadata = materialize_pair_buckets(
         records,
-        source_required_fields=SOURCE_PAIR_FIELDS,
-        contract_version=SKIN_REACTION_PAIR_BUCKET_VERSION,
-        endpoint_field_by_source=ENDPOINT_FIELD_BY_SOURCE,
+        source_required_fields=pair_fields,
+        contract_version=(
+            RECORD_CONTRACT.version if v7 else SKIN_REACTION_PAIR_BUCKET_VERSION
+        ),
+        endpoint_field_by_source=None if v7 else ENDPOINT_FIELD_BY_SOURCE,
     )
     if not all(metadata["validations"].values()):
         raise ValueError(

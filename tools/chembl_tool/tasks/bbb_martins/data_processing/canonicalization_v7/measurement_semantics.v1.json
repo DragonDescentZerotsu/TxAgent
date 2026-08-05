@@ -1,0 +1,276 @@
+{
+  "schema_version": "bbb_martins_measurement_semantics.schema.v1",
+  "policy_version": "bbb_martins_measurement_semantics.v1",
+  "rules": [
+    {
+      "rule_id": "bbb.direct.raw_bbb_ambiguous.v1",
+      "priority": 1000,
+      "source_ids": ["direct_bbb"],
+      "raw_endpoint_exact": ["bbb"],
+      "status": "evidence_only",
+      "quantity_kind": "ambiguous_bbb_metric",
+      "numeric_domain": "unreviewed"
+    },
+    {
+      "rule_id": "bbb.log_permeability.negative.v1",
+      "priority": 900,
+      "endpoint_exact": [
+        "negative_log_effective_permeability"
+      ],
+      "status": "approved",
+      "quantity_kind": "negative_log_permeability",
+      "numeric_domain": "finite_signed",
+      "compatible_units": ["-log10(cm/s)"],
+      "default_unit": "-log10(cm/s)"
+    },
+    {
+      "rule_id": "bbb.log_permeability.v1",
+      "priority": 890,
+      "endpoint_exact": [
+        "log_apparent_permeability",
+        "log_effective_permeability",
+        "log_passive_permeability",
+        "log_ps"
+      ],
+      "status": "approved",
+      "quantity_kind": "log_permeability",
+      "numeric_domain": "finite_signed",
+      "compatible_units": ["log10(cm/s)"],
+      "default_unit": "log10(cm/s)"
+    },
+    {
+      "rule_id": "bbb.log_dimensionless.v1",
+      "priority": 880,
+      "endpoint_exact": [
+        "logbb",
+        "log_bb",
+        "log_kp",
+        "log_partition_coefficient",
+        "negative_log_partition_coefficient"
+      ],
+      "status": "approved",
+      "quantity_kind": "log_dimensionless",
+      "numeric_domain": "finite_signed",
+      "compatible_units": [
+        "dimensionless",
+        "log10(dimensionless)",
+        "-log10(dimensionless)"
+      ],
+      "default_unit": "dimensionless"
+    },
+    {
+      "rule_id": "bbb.linear_permeability.v1",
+      "priority": 800,
+      "endpoint_exact": [
+        "apparent_permeability",
+        "blood_brain_barrier_permeability",
+        "effective_permeability",
+        "effective_permeability_a_to_b",
+        "intrinsic_permeability",
+        "papp",
+        "papp_a_to_b",
+        "papp_b_to_a",
+        "passive_permeability",
+        "permeability",
+        "permeability_coefficient"
+      ],
+      "status": "approved",
+      "quantity_kind": "linear_permeability",
+      "numeric_domain": "nonnegative",
+      "compatible_unit_kinds": ["permeability"]
+    },
+    {
+      "rule_id": "bbb.absolute_percentage.v1",
+      "priority": 790,
+      "endpoint_exact": [
+        "percent_dose_permeated",
+        "percent_inhibition",
+        "percent_penetration",
+        "percent_transport",
+        "percent_transport_a_to_b"
+      ],
+      "status": "approved",
+      "quantity_kind": "absolute_percentage",
+      "numeric_domain": "bounded_0_100",
+      "compatible_units": ["%"],
+      "default_unit": "%"
+    },
+    {
+      "rule_id": "bbb.signed_percentage_change.v1",
+      "priority": 780,
+      "endpoint_regex": [
+        ".*(?:percent|percentage).*(?:change|difference|increase|decrease|reduction|delta|net).*",
+        ".*(?:change|difference|increase|decrease|reduction|delta|net).*(?:percent|percentage).*"
+      ],
+      "status": "approved",
+      "quantity_kind": "signed_percentage_change",
+      "numeric_domain": "finite_signed",
+      "compatible_units": ["%"]
+    },
+    {
+      "rule_id": "bbb.percentage_index.v1",
+      "priority": 770,
+      "endpoint_exact": [
+        "brain_uptake_index",
+        "bui",
+        "drug_targeting_efficiency",
+        "dte",
+        "relative_brain_exposure_index"
+      ],
+      "status": "approved",
+      "quantity_kind": "percentage_index",
+      "numeric_domain": "nonnegative",
+      "compatible_units": ["%"]
+    },
+    {
+      "rule_id": "bbb.ratio.v1",
+      "priority": 700,
+      "endpoint_exact": [
+        "brain_to_blood_ratio",
+        "brain_to_plasma_auc_ratio",
+        "brain_to_plasma_ratio",
+        "brain_to_serum_ratio",
+        "csf_to_plasma_auc_ratio",
+        "csf_to_plasma_ratio",
+        "csf_to_serum_ratio",
+        "efflux_ratio",
+        "kp",
+        "kp_brain",
+        "kp_uu",
+        "kp_uu_brain",
+        "relative_permeability_ratio"
+      ],
+      "status": "approved",
+      "quantity_kind": "ratio",
+      "numeric_domain": "nonnegative",
+      "compatible_units": ["ratio", "dimensionless", "%"],
+      "default_unit": "ratio"
+    },
+    {
+      "rule_id": "bbb.ratio_suffix.v1",
+      "priority": 695,
+      "endpoint_regex": [".*_ratio"],
+      "status": "approved",
+      "quantity_kind": "ratio",
+      "numeric_domain": "nonnegative",
+      "compatible_units": ["ratio", "dimensionless", "%"],
+      "default_unit": "ratio"
+    },
+    {
+      "rule_id": "bbb.fold.v1",
+      "priority": 690,
+      "endpoint_exact": [
+        "brain_exposure_fold_change",
+        "concentration_fold_change",
+        "fold_change",
+        "permeability_fold_change"
+      ],
+      "status": "approved",
+      "quantity_kind": "fold_change",
+      "numeric_domain": "nonnegative",
+      "compatible_units": ["fold"],
+      "default_unit": "fold"
+    },
+    {
+      "rule_id": "bbb.probability.v1",
+      "priority": 680,
+      "endpoint_exact": ["probability"],
+      "status": "approved",
+      "quantity_kind": "fraction",
+      "numeric_domain": "bounded_0_1",
+      "compatible_units": ["fraction"],
+      "default_unit": "fraction"
+    },
+    {
+      "rule_id": "bbb.concentration.v1",
+      "priority": 600,
+      "endpoint_regex": [
+        ".*(?:^|_)(?:brain|csf|plasma|serum)?_?concentration$",
+        ".*(?:^|_)(?:cmax|brain_cmax|brain_level)$"
+      ],
+      "status": "approved",
+      "quantity_kind": "concentration",
+      "numeric_domain": "nonnegative",
+      "compatible_unit_kinds": ["concentration"]
+    },
+    {
+      "rule_id": "bbb.auc.v1",
+      "priority": 590,
+      "endpoint_exact": ["brain_auc", "brain_exposure_auc"],
+      "status": "approved",
+      "quantity_kind": "auc",
+      "numeric_domain": "nonnegative",
+      "compatible_unit_kinds": ["auc"]
+    },
+    {
+      "rule_id": "bbb.influx_clearance_rate.v1",
+      "priority": 580,
+      "endpoint_exact": [
+        "influx_rate_constant",
+        "k1",
+        "permeability_surface_area_product"
+      ],
+      "status": "approved",
+      "quantity_kind": "influx_clearance_rate",
+      "numeric_domain": "nonnegative",
+      "compatible_unit_kinds": ["influx_clearance_rate"]
+    },
+    {
+      "rule_id": "bbb.signed_difference.v1",
+      "priority": 500,
+      "endpoint_regex": [
+        ".*(?:^|_)(?:change|difference|delta|net)(?:_|$).*",
+        ".*(?:increase|decrease|reduction)(?:_|$).*"
+      ],
+      "status": "approved",
+      "quantity_kind": "signed_difference",
+      "numeric_domain": "finite_signed",
+      "compatible_unit_kinds": ["recognized"]
+    },
+    {
+      "rule_id": "bbb.partition_coefficient.v1",
+      "priority": 490,
+      "endpoint_exact": [
+        "intrinsic_partition_coefficient",
+        "partition_coefficient"
+      ],
+      "status": "approved",
+      "quantity_kind": "ratio",
+      "numeric_domain": "nonnegative",
+      "compatible_units": ["ratio", "dimensionless"],
+      "default_unit": "dimensionless"
+    }
+  ],
+  "unit_aliases": [
+    {
+      "rule_id": "bbb.unit.percent_injected_dose_per_g.v1",
+      "source_ids": ["direct_bbb"],
+      "raw_units": ["%ID/g", "% ID/g", "% dose/g", "%dose/g"],
+      "canonical_unit": "%ID/g"
+    },
+    {
+      "rule_id": "bbb.unit.inverse_minute.v1",
+      "source_ids": ["direct_bbb", "passive_permeability"],
+      "raw_units": ["1/min", "min-1", "min^-1"],
+      "canonical_unit": "min^-1"
+    },
+    {
+      "rule_id": "bbb.unit.brain_volume_per_mass.v1",
+      "source_ids": ["direct_bbb"],
+      "raw_units": ["mL/g brain", "ml/g brain"],
+      "canonical_unit": "mL/g brain"
+    },
+    {
+      "rule_id": "bbb.unit.wet_weight_mass_ratio.v1",
+      "source_ids": ["direct_bbb"],
+      "raw_units": ["ug/g wet wt", "µg/g wet wt", "ug/g wet weight", "µg/g wet weight"],
+      "canonical_unit": "µg/g wet weight"
+    },
+    {
+      "rule_id": "bbb.unit.brain_amount_per_mass.v1",
+      "source_ids": ["direct_bbb"],
+      "raw_units": ["nmol/g brain"],
+      "canonical_unit": "nmol/g brain"
+    }
+  ]
+}

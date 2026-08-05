@@ -1,4 +1,4 @@
-"""BBB Martins binding for the shared split-aware normalized-v6 stages."""
+"""BBB Martins binding for the shared split-aware normalized-v7 stages."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from tools.chembl_tool.common.starling import split_downstream as _shared
 from tools.chembl_tool.common.starling.split_downstream import (
     AUDIT_STAGE,
     DEFAULT_LEGACY_DOWNSTREAM_STAGES,
+    DISTANCE_CALIBRATION_STAGE,
     DOWNSTREAM_STAGES,
     FILTERED_RECORDS_FILENAME,
     HELDOUT_STAGE,
@@ -27,12 +28,12 @@ from tools.chembl_tool.tasks.bbb_martins.build_starling_pair_bucket_transfer_pol
     build_pair_bucket_transfer_policy,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_pair_buckets import (
-    BBB_MARTINS_PAIR_BUCKET_VERSION,
+    BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_policy import POLICY
 
 
-PIPELINE_LAYOUT_VERSION = "bbb_martins.normalized_v6_layout.v1"
+PIPELINE_LAYOUT_VERSION = "bbb_martins.normalized_v7_layout.v1"
 HELDOUT_OVERLAP_VERSION = "bbb_martins.remove_heldout_overlap.v1"
 BENCHMARK_SPLITS = ("random", "scaffold")
 DEFAULT_SPLIT_ROOT = "data/processed_starling/BBB_Martins"
@@ -46,14 +47,13 @@ def _spec() -> SplitDownstreamSpec:
         policy=POLICY,
         pipeline_layout_version=PIPELINE_LAYOUT_VERSION,
         heldout_overlap_version=HELDOUT_OVERLAP_VERSION,
-        pair_bucket_version=BBB_MARTINS_PAIR_BUCKET_VERSION,
+        pair_bucket_version=BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
         filter_source_id="direct_bbb",
         exclusions_filename=EXCLUSIONS_FILENAME,
         build_sidecar=build_sidecar,
         build_transfer_policy=build_pair_bucket_transfer_policy,
         benchmark_splits=BENCHMARK_SPLITS,
         legacy_downstream_stages=LEGACY_DOWNSTREAM_STAGES,
-        policy_statistics_scope="heldout_gold_filtered_transfer_calibration",
     )
 
 
@@ -81,6 +81,7 @@ __all__ = [
     "AUDIT_STAGE",
     "BENCHMARK_SPLITS",
     "DEFAULT_SPLIT_ROOT",
+    "DISTANCE_CALIBRATION_STAGE",
     "DOWNSTREAM_STAGES",
     "EXCLUSIONS_FILENAME",
     "FILTERED_RECORDS_FILENAME",

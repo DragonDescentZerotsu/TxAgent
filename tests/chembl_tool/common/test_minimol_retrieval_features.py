@@ -1,7 +1,9 @@
 import torch
+from types import SimpleNamespace
 
 from tools.chembl_tool.paper_experiments.build_minimol_retrieval_features import (
     _embed_with_audited_fallback,
+    _load_unique_indices,
     _minimol_fallback_smiles,
 )
 
@@ -41,3 +43,26 @@ def test_embedding_fallback_preserves_original_row_order_and_audit():
             "reason": "largest_parseable_fragment",
         }
     ]
+
+
+def test_unique_index_loader_accepts_compact_directory_indices(monkeypatch, tmp_path):
+    index_dir = tmp_path / "08_neighbor_index"
+    index_dir.mkdir()
+    loaded = {"molecules": [], "group_to_molecule_indices": {}}
+    calls = []
+
+    def fake_load_index(path):
+        calls.append(path)
+        return loaded
+
+    monkeypatch.setattr(
+        "tools.chembl_tool.paper_experiments.build_minimol_retrieval_features.load_index",
+        fake_load_index,
+    )
+    experiments = [
+        SimpleNamespace(index=str(index_dir)),
+        SimpleNamespace(index=str(index_dir)),
+    ]
+
+    assert _load_unique_indices(experiments) == {str(index_dir): loaded}
+    assert calls == [index_dir]

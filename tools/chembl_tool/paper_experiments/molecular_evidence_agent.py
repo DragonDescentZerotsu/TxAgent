@@ -350,6 +350,13 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
     limit = int(getattr(args, "limit", 0) or 0)
     if limit:
         command.extend(["--limit", str(limit)])
+    if (
+        bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
+        and experiment.task == "bioavailability_ma"
+        and experiment.source.startswith("starling")
+        and experiment.mode in {"direct", "full_flat", "full_mechanism"}
+    ):
+        command.append("--exclude-nondirect-bioavailability-records")
     if visibility_mode == IDENTITY_BLIND:
         command.append("--identity-blind")
     elif visibility_mode == DEPLOYMENT_VISIBLE_PREFETCHED:
@@ -588,11 +595,24 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--parallelism", type=int, default=8)
     parser.add_argument("--max-stage-requeues", type=int, default=0)
     parser.add_argument("--timeout-s", type=int, default=300)
+    parser.add_argument(
+        "--exclude-nondirect-bioavailability-records",
+        action="store_true",
+        help=(
+            "Bioavailability Starling only: exclude retained relative/apparent "
+            "records before retrieval ranking."
+        ),
+    )
     args = parser.parse_args(argv)
     if args.parallelism < 1:
         parser.error("--parallelism must be positive")
     if args.max_stage_requeues < 0:
         parser.error("--max-stage-requeues must be non-negative")
+    if args.exclude_nondirect_bioavailability_records and not args.paper_root:
+        parser.error(
+            "--exclude-nondirect-bioavailability-records requires an explicit "
+            "--paper-root to prevent --skip-existing reuse"
+        )
     return args
 
 

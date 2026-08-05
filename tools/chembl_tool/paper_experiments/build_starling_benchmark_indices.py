@@ -1,13 +1,18 @@
-"""Build random/scaffold Starling indices with all valid/test parents excluded."""
+"""Build leakage-safe paper indices directly from canonical Starling v7 rows."""
 
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.common.starling import build_heldout_starling_index
+from tools.chembl_tool.common.starling.v7_benchmark_view import (
+    DIRECT_NUMERIC_VIEW,
+    FULL_VIEW,
+    build_v7_benchmark_view,
+)
 
 
 DEFAULT_OUTPUT_ROOT = Path("outputs/paper")
@@ -16,70 +21,44 @@ BENCHMARK_LINEAGE = "record_agreement70_split811_v1"
 
 INDEX_SPECS: tuple[dict[str, str], ...] = (
     {
-        "name": "bbb_starling_direct",
+        "name": "bbb_starling_v7",
         "task": "BBB_Martins",
-        "source_evidence": (
-            "outputs/paper/molecular_evidence_agent/evidence/bbb_starling/all/"
-            "starling_bbb_evidence.jsonl"
+        "task_id": "bbb_martins",
+        "normalized_root": (
+            "outputs/chembl_tool/tasks/bbb_martins/evidence_library/"
+            "starling_normalized_v7"
         ),
-        "evidence_filename": "starling_bbb_evidence.jsonl",
-        "index_filename": "starling_bbb_neighbor_index.pkl",
-        "meta_filename": "starling_bbb_neighbor_index.meta.json",
+        "view": FULL_VIEW,
     },
     {
-        "name": "bbb_starling_full",
-        "task": "BBB_Martins",
-        "source_evidence": (
-            "outputs/paper/molecular_evidence_agent/evidence/bbb_starling_full/"
-            "starling_bbb_evidence.jsonl"
-        ),
-        "evidence_filename": "starling_bbb_evidence.jsonl",
-        "index_filename": "starling_bbb_neighbor_index.pkl",
-        "meta_filename": "starling_bbb_neighbor_index.meta.json",
-    },
-    {
-        "name": "bioavailability_starling_direct_numeric",
+        "name": "bioavailability_starling_v7_direct_numeric",
         "task": "Bioavailability_Ma",
-        "source_evidence": (
-            "outputs/paper/molecular_evidence_agent/evidence/"
-            "bioavailability_starling_direct_numeric_v2/starling_factor_evidence.jsonl"
-        ),
-        "evidence_filename": "starling_factor_evidence.jsonl",
-        "index_filename": "starling_factor_neighbor_index.pkl",
-        "meta_filename": "starling_factor_neighbor_index.meta.json",
-    },
-    {
-        "name": "bioavailability_starling_full",
-        "task": "Bioavailability_Ma",
-        "source_evidence": (
-            "outputs/paper/molecular_evidence_agent/evidence/"
-            "bioavailability_starling_full_v2/starling_factor_evidence.jsonl"
-        ),
-        "evidence_filename": "starling_factor_evidence.jsonl",
-        "index_filename": "starling_factor_neighbor_index.pkl",
-        "meta_filename": "starling_factor_neighbor_index.meta.json",
-    },
-    {
-        "name": "bioavailability_starling_v5",
-        "task": "Bioavailability_Ma",
-        "source_evidence": (
+        "task_id": "bioavailability_ma",
+        "normalized_root": (
             "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-            "starling_normalized_v5/molecule_family_evidence.jsonl"
+            "starling_normalized_v7"
         ),
-        "evidence_filename": "starling_factor_evidence.jsonl",
-        "index_filename": "starling_factor_neighbor_index.pkl",
-        "meta_filename": "starling_factor_neighbor_index.meta.json",
+        "view": DIRECT_NUMERIC_VIEW,
     },
     {
-        "name": "skin_reaction_starling_full",
-        "task": "Skin_Reaction",
-        "source_evidence": (
-            "outputs/paper/molecular_evidence_agent/evidence/"
-            "skin_reaction_starling_full/starling_skin_reaction_evidence.jsonl"
+        "name": "bioavailability_starling_v7",
+        "task": "Bioavailability_Ma",
+        "task_id": "bioavailability_ma",
+        "normalized_root": (
+            "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
+            "starling_normalized_v7"
         ),
-        "evidence_filename": "starling_skin_reaction_evidence.jsonl",
-        "index_filename": "starling_skin_reaction_neighbor_index.pkl",
-        "meta_filename": "starling_skin_reaction_neighbor_index.meta.json",
+        "view": FULL_VIEW,
+    },
+    {
+        "name": "skin_reaction_starling_v7",
+        "task": "Skin_Reaction",
+        "task_id": "skin_reaction",
+        "normalized_root": (
+            "outputs/chembl_tool/tasks/skin_reaction/evidence_library/"
+            "starling_normalized_v7"
+        ),
+        "view": FULL_VIEW,
     },
 )
 
@@ -121,14 +100,16 @@ def main(argv: list[str] | None = None) -> int:
             )
             out_dir = paper_root / "evidence" / spec["name"]
             print(f"[starling_benchmark_index] split={split} index={spec['name']}", flush=True)
-            meta = build_heldout_starling_index(
-                source_evidence_jsonl=spec["source_evidence"],
+            policy_module = importlib.import_module(
+                f"tools.chembl_tool.tasks.{spec['task_id']}.starling_policy"
+            )
+            meta = build_v7_benchmark_view(
+                policy=policy_module.POLICY,
+                normalized_root=spec["normalized_root"],
                 heldout_labels_jsonl=heldout_path,
                 out_dir=out_dir,
-                index_version=f"{spec['name']}.heldout_valid_test_{split}.v2",
-                evidence_filename=spec["evidence_filename"],
-                index_filename=spec["index_filename"],
-                meta_filename=spec["meta_filename"],
+                benchmark_split=split,
+                view=spec["view"],
                 workers=args.workers,
                 progress_every=args.progress_every,
             )
@@ -162,7 +143,12 @@ def _collect_existing_index_meta(
         paper_root = paper_root_for_benchmark_split(split, output_root=output_root)
         split_results: dict[str, Any] = {}
         for spec in specs:
-            meta_path = paper_root / "evidence" / spec["name"] / spec["meta_filename"]
+            meta_path = (
+                paper_root
+                / "evidence"
+                / spec["name"]
+                / spec.get("meta_filename", "manifest.json")
+            )
             if not meta_path.exists():
                 missing.append(str(meta_path))
                 continue

@@ -5,6 +5,13 @@ Starling unit forms (top ~150 per source), reviewed once via the audit
 (`units_audit.py`). This test fails if any change alters a verified mapping -- guarding
 against silent drift or regressions in `clean_unit` / `canonicalize_unit`.
 
+These entries are produced by `canonicalize_unit(raw)` with no task, so `unknown_tokens`
+here reflects the **shared** qualifier vocabulary only. A token scoped to one task in
+`common/qualifier_vocabulary_policy.json` (`skin`, `applied`, `brain`, ...) stays flagged in
+this fixture by design -- that is the scoping working, not under-normalization. Assertions
+about task-scoped vocabulary belong in `test_units.py` or the regression corpus, which call
+with an explicit task.
+
 To regenerate after an intentional change (and re-review):
     conda run --no-capture-output -n txagent-glm \
         python tests/chembl_tool/common/units_audit.py --write-golden

@@ -19,13 +19,14 @@ EXPECTED_SOURCE_ROWS = {
     "fa": 85_061,
     "fg": 27_713,
     "fh": 67_943,
-    "direct_hf": 163_815,
+    "hf_bioavailability": 163_815,
 }
+EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS = 163_815
 
-DEFAULT_DIRECT_HF_PARQUET = Path(
+DEFAULT_HF_BIOAVAILABILITY_PARQUET = Path(
     "data/starling_data/bioavailability_ma/Direct_HF/records.parquet"
 )
-DIRECT_HF_SOURCE_COLUMNS = (
+HF_BIOAVAILABILITY_SOURCE_COLUMNS = (
     "source_index",
     "pmid",
     "molecule_name",
@@ -112,15 +113,15 @@ def source_profiles(data_dir: Path) -> list[NormalizedSourceProfile]:
     ]
 
 
-def direct_hf_profile(records_path: Path) -> NormalizedSourceProfile:
+def hf_bioavailability_profile(records_path: Path) -> NormalizedSourceProfile:
     return NormalizedSourceProfile(
-        source_id="direct_hf",
+        source_id="hf_bioavailability",
         source_name=ORAL_BIOAVAILABILITY_DATASET,
         source_revision=ORAL_BIOAVAILABILITY_REVISION,
         source_path=str(records_path),
         endpoint_constant="oral_bioavailability",
         measurement_field="oral_bioavailability_value",
-        unit_constant="%",
+        embedded_unit=True,
         structure_mode="direct",
         record_id_field="source_index",
         confidence_field="confidence",
@@ -134,39 +135,55 @@ def direct_hf_profile(records_path: Path) -> NormalizedSourceProfile:
             "comparator",
             "extra_details",
         ),
+        literal_text_fields=("bioavailability_report_type",),
     )
 
 
-def load_direct_hf_rows(
+def load_hf_bioavailability_rows(
     records_parquet: Path,
     *,
     max_rows: int = 0,
 ) -> list[dict[str, Any]]:
     """Load the complete pinned HF source without historical filter partitions."""
     frame = pd.read_parquet(records_parquet)
-    if tuple(frame.columns) != DIRECT_HF_SOURCE_COLUMNS:
+    if tuple(frame.columns) != HF_BIOAVAILABILITY_SOURCE_COLUMNS:
         raise ValueError(
-            "Direct HF source-column contract mismatch: "
-            f"expected={DIRECT_HF_SOURCE_COLUMNS!r}, found={tuple(frame.columns)!r}"
+            "HF bioavailability source-column contract mismatch: "
+            f"expected={HF_BIOAVAILABILITY_SOURCE_COLUMNS!r}, "
+            f"found={tuple(frame.columns)!r}"
         )
     if frame["source_index"].isna().any() or not frame["source_index"].is_unique:
-        raise ValueError("Direct HF source_index must be complete and unique")
+        raise ValueError("HF bioavailability source_index must be complete and unique")
     frame = frame.sort_values("source_index", kind="stable")
     if not max_rows:
-        expected = list(range(EXPECTED_SOURCE_ROWS["direct_hf"]))
+        expected = list(range(EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS))
         if frame["source_index"].astype(int).tolist() != expected:
-            raise ValueError("Direct HF source_index coverage must be exactly 0..163814")
+            raise ValueError(
+                "HF bioavailability source_index coverage must be exactly 0..163814"
+            )
     elif max_rows:
         frame = frame.head(max_rows)
     frame = frame.astype(object).where(pd.notna(frame), None)
     return frame.to_dict(orient="records")
 
 
+# Historical factor-library callers use this name for the same complete file.
+load_direct_hf_rows = load_hf_bioavailability_rows
+DEFAULT_DIRECT_HF_PARQUET = DEFAULT_HF_BIOAVAILABILITY_PARQUET
+DIRECT_HF_SOURCE_COLUMNS = HF_BIOAVAILABILITY_SOURCE_COLUMNS
+EXPECTED_RAW_DIRECT_HF_ROWS = EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS
+
+
 __all__ = [
     "DEFAULT_DIRECT_HF_PARQUET",
+    "DEFAULT_HF_BIOAVAILABILITY_PARQUET",
     "DIRECT_HF_SOURCE_COLUMNS",
+    "HF_BIOAVAILABILITY_SOURCE_COLUMNS",
+    "EXPECTED_RAW_DIRECT_HF_ROWS",
+    "EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS",
     "EXPECTED_SOURCE_ROWS",
-    "direct_hf_profile",
+    "hf_bioavailability_profile",
     "load_direct_hf_rows",
+    "load_hf_bioavailability_rows",
     "source_profiles",
 ]

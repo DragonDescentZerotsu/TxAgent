@@ -1,4 +1,5 @@
 import argparse
+from dataclasses import replace
 import json
 
 import pytest
@@ -21,6 +22,7 @@ from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     _matrix_manifest_path,
     _paper_root_for_evaluation_subset,
     _validate_concurrency,
+    _validate_inputs,
     _validate_retrieval_ablation_args,
     _write_json_atomic,
     experiments_for_starling_benchmark,
@@ -71,7 +73,23 @@ def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_ind
     starling = next(item for item in experiments if item.name == "bbb_martins__starling_direct")
     assert chembl.index == EXPERIMENTS[1].index
     assert "molecular_evidence_agent_starling_random_record_agreement70_split811_v1/evidence" in starling.index
-    assert starling.index.endswith("bbb_starling_direct/starling_bbb_neighbor_index.pkl")
+    assert starling.index.endswith("bbb_starling_v7/08_neighbor_index")
+    v7_starling = [item for item in experiments if item.source == "starling"]
+    assert all("starling_v7" in item.index for item in v7_starling)
+    assert all("_v3" not in item.index and not item.index.endswith(".pkl") for item in v7_starling)
+
+
+def test_query_only_none_does_not_require_its_placeholder_index(tmp_path):
+    input_jsonl = tmp_path / "test.jsonl"
+    input_jsonl.write_text('{"drug":"CCO","Y":1}\n', encoding="utf-8")
+    none = next(item for item in EXPERIMENTS if item.mode == "none")
+    experiment = replace(
+        none,
+        input_jsonl=str(input_jsonl),
+        index=str(tmp_path / "absent-placeholder.pkl"),
+    )
+
+    _validate_inputs([experiment])
 
 
 def test_starling_benchmark_matrix_can_select_valid_without_changing_indices():
@@ -125,7 +143,7 @@ def test_starling_minimol_matrix_uses_descriptors_and_isolated_output_root():
 
     assert none.index == EXPERIMENTS[0].index
     assert direct.index.endswith(
-        "minimol_retrieval_features_record_agreement70_split811_v1/scaffold/descriptors/"
+        "minimol_retrieval_features_v7_record_agreement70_split811_v1/scaffold/descriptors/"
         "bbb_martins__chembl_direct.json"
     )
     assert paper_root_for_minimol_retrieval("scaffold").name == (
@@ -479,6 +497,29 @@ def test_matrix_command_freezes_glm_and_identity_conditions():
     assert direct_command[direct_command.index("--single-analysis-source-batch") + 1].endswith(
         "bbb_martins__none"
     )
+
+
+def test_matrix_forwards_nondirect_filter_only_to_bioavailability_starling():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GLM_API_KEY",
+        parallelism=2,
+        visibility_mode="identity_blind",
+        exclude_nondirect_bioavailability_records=True,
+    )
+    bio = next(
+        experiment
+        for experiment in EXPERIMENTS
+        if experiment.name == "bioavailability_ma__starling_full_mechanism"
+    )
+    bbb = next(
+        experiment
+        for experiment in EXPERIMENTS
+        if experiment.name == "bbb_martins__starling_full_mechanism"
+    )
+
+    assert "--exclude-nondirect-bioavailability-records" in _command(bio, args)
+    assert "--exclude-nondirect-bioavailability-records" not in _command(bbb, args)
 
 
 def test_valid_split_changes_only_dataset_and_isolates_output_root():

@@ -13,17 +13,27 @@ from tools.chembl_tool.common.starling.stage_artifact_store import (
     verify_local,
     verify_tracked,
 )
-from tools.chembl_tool.tasks.bbb_martins.build_normalized_starling_evidence_library import (
-    ARTIFACT_STAGES,
+# This store targets the historical v6 layout.  Keep its inventory local and
+# frozen so the v7 builder's stage names cannot change restore semantics.
+ARTIFACT_STAGES = (
+    "01_cleaned",
+    "02_normalized",
+    "03_records",
+    "04_pair_buckets",
+    "05_assay_transfer_policy",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits",
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_policy import DEFAULT_OUT_DIR
-
-
 PROFILE = StageArtifactStoreProfile(
     store_version="bbb_martins.normalized_v6_store.v1",
     task_id="bbb_martins",
     stages=ARTIFACT_STAGES,
-    local_root=Path(DEFAULT_OUT_DIR),
+    local_root=Path(
+        "outputs/chembl_tool/tasks/bbb_martins/evidence_library/"
+        "starling_normalized_v6"
+    ),
     tracked_root=Path("artifacts/chembl_tool/tasks/bbb_martins/starling_normalized_v6"),
 )
 

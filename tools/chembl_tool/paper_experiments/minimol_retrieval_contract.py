@@ -9,7 +9,7 @@ MINIMOL_RETRIEVAL_FEATURE = "minimol"
 MORGAN_RETRIEVAL_FEATURE = "morgan"
 RETRIEVAL_FEATURES = (MORGAN_RETRIEVAL_FEATURE, MINIMOL_RETRIEVAL_FEATURE)
 DEFAULT_FEATURE_ROOT = Path(
-    "outputs/paper/minimol_retrieval_features_record_agreement70_split811_v1"
+    "outputs/paper/minimol_retrieval_features_v7_record_agreement70_split811_v1"
 )
 
 

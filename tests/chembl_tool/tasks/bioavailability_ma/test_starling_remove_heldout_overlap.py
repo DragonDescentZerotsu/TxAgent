@@ -58,7 +58,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling im
     family_assignment,
 )
 
-DIRECT = "direct_hf"
+DIRECT = "hf_bioavailability"
 
 
 def _label_row(smiles: str) -> dict:
@@ -79,12 +79,28 @@ def _write_labels(path, rows) -> None:
     )
 
 
-def _record(record_id: str, source_id: str, smiles: str, *, value: float = 40.0) -> dict:
+def _record(
+    record_id: str,
+    source_id: str,
+    smiles: str,
+    *,
+    value: float = 40.0,
+    evidence_scope: str = "direct",
+) -> dict:
     """One normalized record carrying every column the real builders read."""
     row: dict = {column: None for column in SOURCE_COLUMNS[source_id]}
     row.update({column: None for column in SOURCE_CANDIDATE_FIELDS[source_id]})
     row.update({column: None for column in SOURCE_PAIR_FIELDS[source_id]})
     endpoint = "oral_bioavailability" if source_id == DIRECT else "absorption"
+    report_type = (
+        "absolute" if evidence_scope == "direct" else "relative_comparison"
+    ) if source_id == DIRECT else None
+    family_record = {
+        "bioavailability_report_type": report_type,
+        "canonical_bioavailability_evidence_scope": (
+            evidence_scope if source_id == DIRECT else None
+        ),
+    }
     row.update(
         {
             "normalized_record_id": record_id,
@@ -93,7 +109,9 @@ def _record(record_id: str, source_id: str, smiles: str, *, value: float = 40.0)
             "canonical_smiles": smiles,
             # Derived rather than restated so a family rename cannot leave this
             # file asserting against a group id the pipeline no longer emits.
-            "group_id": family_assignment(source_id, endpoint).group_id,
+            "group_id": family_assignment(
+                source_id, endpoint, family_record
+            ).group_id,
             "endpoint_name": endpoint,
             "canonical_endpoint": endpoint,
             "canonical_unit": "%",
@@ -104,6 +122,11 @@ def _record(record_id: str, source_id: str, smiles: str, *, value: float = 40.0)
             "support_text": f"evidence for {record_id}",
             "global_context": "oral administration",
             "global_species_context": "human",
+            "bioavailability_report_type": report_type,
+            "canonical_bioavailability_report_type": report_type,
+            "canonical_bioavailability_evidence_scope": (
+                evidence_scope if source_id == DIRECT else None
+            ),
         }
     )
     return row
@@ -128,6 +151,13 @@ def _fixture(tmp_path, records: list[dict] | None = None):
         records = [
             _record("direct-ethanol", DIRECT, "CCO", value=40.0),
             _record("direct-ethylamine", DIRECT, "CCN", value=55.0),
+            _record(
+                "nondirect-ethanol",
+                DIRECT,
+                "CCO",
+                value=140.0,
+                evidence_scope="nondirect",
+            ),
             _record("fa-ethanol", "fa", "CCO", value=70.0),
             _record("fg-ethanol", "fg", "CCO", value=80.0),
             _record("fh-ethanol", "fh", "CCO", value=90.0),
@@ -168,9 +198,21 @@ def test_remove_heldout_overlap_materializes_split_views_and_keeps_assays(tmp_pa
 
     random = pd.read_parquet(target / "random" / FILTERED_RECORDS_FILENAME)
     scaffold = pd.read_parquet(target / "scaffold" / FILTERED_RECORDS_FILENAME)
-    mechanistic = {"fa-ethanol", "fg-ethanol", "fh-ethanol", "exposure-ethanol"}
-    assert set(random["normalized_record_id"]) == {"direct-ethylamine", *mechanistic}
-    assert set(scaffold["normalized_record_id"]) == {"direct-ethanol", *mechanistic}
+    retained_nonlabel = {
+        "nondirect-ethanol",
+        "fa-ethanol",
+        "fg-ethanol",
+        "fh-ethanol",
+        "exposure-ethanol",
+    }
+    assert set(random["normalized_record_id"]) == {
+        "direct-ethylamine",
+        *retained_nonlabel,
+    }
+    assert set(scaffold["normalized_record_id"]) == {
+        "direct-ethanol",
+        *retained_nonlabel,
+    }
     assert list(random.columns) == list(pd.DataFrame(records).columns)
     exclusions = pd.read_parquet(target / EXCLUSIONS_FILENAME)
     assert set(map(tuple, exclusions[["benchmark_split", "normalized_record_id"]].values)) == {
@@ -178,6 +220,10 @@ def test_remove_heldout_overlap_materializes_split_views_and_keeps_assays(tmp_pa
         ("scaffold", "direct-ethylamine"),
     }
     assert manifest["filter_source_id"] == DIRECT
+    assert manifest["filter_scope"] == {
+        "field": "canonical_bioavailability_evidence_scope",
+        "value": "direct",
+    }
     assert manifest["policy_statistics_scope"] == "complete_unfiltered_records"
     for split in ("random", "scaffold"):
         validations = manifest["splits"][split]["validations"]
@@ -185,6 +231,7 @@ def test_remove_heldout_overlap_materializes_split_views_and_keeps_assays(tmp_pa
         # blanket `all(...)` would read its healthy 0 as a failure.
         assert validations["train_heldout_parent_overlap"] == 0
         assert validations["only_filter_source_removed"]
+        assert validations["only_filter_scope_removed"]
         assert validations[f"only_{DIRECT}_removed"]
         assert validations["excluded_ids_absent"]
         assert validations["schema_matches_stage_03"]
@@ -294,6 +341,8 @@ def test_filtered_evidence_and_indices_reference_only_retained_records(tmp_path)
     )
     assert "direct-ethanol" not in set(random_bridge["normalized_record_id"])
     assert "direct-ethylamine" not in set(scaffold_bridge["normalized_record_id"])
+    assert "nondirect-ethanol" in set(random_bridge["normalized_record_id"])
+    assert "nondirect-ethanol" in set(scaffold_bridge["normalized_record_id"])
     assert "fa-ethanol" in set(random_bridge["normalized_record_id"])
     assert "fa-ethanol" in set(scaffold_bridge["normalized_record_id"])
 
@@ -304,6 +353,24 @@ def test_filtered_evidence_and_indices_reference_only_retained_records(tmp_path)
 
 
 # --- end-to-end success ----------------------------------------------------
+
+
+def test_complete_unfiltered_calibration_is_a_passing_audit_scope():
+    assert downstream._shared._calibration_scope_matches(
+        "complete_unfiltered_records",
+        heldout_exclusion=None,
+    )
+    assert not downstream._shared._calibration_scope_matches(
+        "complete_unfiltered_records",
+        heldout_exclusion={"unexpected": True},
+    )
+
+
+def test_failed_required_audit_validation_blocks_publication():
+    with pytest.raises(ValueError, match="held-out audit validations failed"):
+        downstream._shared._require_true_audit_validations(
+            {"validations": {"expected_invariant": False}}
+        )
 
 
 def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path):
@@ -328,7 +395,11 @@ def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path
 
     # The held-out molecule's own label record must be gone from each split's
     # evidence, while the same molecule's mechanistic evidence survives.
-    direct_group = family_assignment(DIRECT, "oral_bioavailability").group_id
+    direct_group = family_assignment(
+        DIRECT,
+        "oral_bioavailability",
+        {"canonical_bioavailability_evidence_scope": "direct"},
+    ).group_id
     heldout_by_split = {
         "random": ("direct-ethanol", "CCO"),
         "scaffold": ("direct-ethylamine", "CCN"),
@@ -364,7 +435,7 @@ def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path
     # held-out source and calibrates on
     # `heldout_gold_filtered_transfer_calibration`.  Both are correct for their
     # task; changing either has to be a deliberate decision, not a tidy-up.
-    assert audit["validations"]["transfer_policy_has_declared_calibration_filter"] is False
+    assert audit["validations"]["calibration_statistics_scope_matches_artifact"]
     assert audit["transfer_policy_heldout_exclusion"] is None
     assert audit["policy_statistics_scope"] == "complete_unfiltered_records"
     assert audit["filter_source_id"] == DIRECT
@@ -565,7 +636,11 @@ def _stub_candidate_build_until_index(monkeypatch) -> None:
         Path(out_dir).mkdir(parents=True)
         return {
             "splits": {
-                split: {"excluded_direct_hf_records": 1, "filtered_records": 3}
+                split: {
+                    "excluded_hf_bioavailability_records": 1,
+                    "excluded_filter_scope_records": 1,
+                    "filtered_records": 3,
+                }
                 for split in downstream.BENCHMARK_SPLITS
             }
         }

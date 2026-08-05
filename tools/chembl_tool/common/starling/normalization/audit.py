@@ -20,26 +20,30 @@ from .measurements import (
     parse_point_measurement,
 )
 
+PARQUET_COMPRESSION_LEVEL = 3
+
 
 def write_parquet(path: str | Path, rows: Sequence[Mapping[str, Any]]) -> None:
     import pandas as pd
 
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    frame = pd.DataFrame([dict(row) for row in rows])
+    frame = pd.DataFrame.from_records(rows)
     frame.to_parquet(
         target,
         index=False,
         engine="pyarrow",
         compression="zstd",
-        compression_level=9,
+        compression_level=PARQUET_COMPRESSION_LEVEL,
     )
 
 
-def read_parquet_records(path: str | Path) -> list[dict[str, Any]]:
+def read_parquet_records(
+    path: str | Path, *, columns: Sequence[str] | None = None
+) -> list[dict[str, Any]]:
     import pandas as pd
 
-    frame = pd.read_parquet(path)
+    frame = pd.read_parquet(path, columns=list(columns) if columns is not None else None)
     return [
         {
             key: (
@@ -124,12 +128,17 @@ def validate_measurement_pairs(
         [Mapping[str, Any], MeasurementPair], MeasurementPair
     ]
     | None = None,
+    task: str | None = None,
 ) -> list[str]:
-    """Recompute each authoritative pair and report any atomicity drift."""
+    """Recompute each authoritative pair and report any atomicity drift.
+
+    ``task`` must match the one the records were built under: the recompute has to use the
+    same qualifier vocabulary, or every record carrying a task-scoped token reads as drift.
+    """
     errors: list[str] = []
     for record in records:
         baseline = normalize_measurement_and_unit(
-            record.get("measurement_text"), record.get("unit_text")
+            record.get("measurement_text"), record.get("unit_text"), task=task
         )
         if record.get("categorical_encoder_id"):
             # A categorically encoded record's canonical pair comes from a
@@ -139,7 +148,7 @@ def validate_measurement_pairs(
             # path could not have scored: had the source yielded a value in a
             # recognized unit, that measurement would be authoritative.
             source_value = parse_point_measurement(baseline.canonical_measurement)
-            source_unit = canonicalize_unit(baseline.canonical_unit)
+            source_unit = canonicalize_unit(baseline.canonical_unit, task=task)
             if source_value.value is not None and (
                 bool(source_unit.cleaned) and not source_unit.unknown_tokens
             ):

@@ -71,6 +71,8 @@ class CompactArtifactProfile:
     evidence_source_label: str
     source_columns: Mapping[str, tuple[str, ...]]
     llm_source_projection: Callable[[Mapping[str, Any]], dict[str, Any]]
+    record_contract_version: str = ""
+    source_contract_version: str = ""
 
 
 def compact_persisted_records(
@@ -100,7 +102,9 @@ def build_relational_evidence_catalog(
     records: Sequence[Mapping[str, Any]],
     *,
     max_record_examples: int = 6,
-    family_resolver: Callable[[str, str], Any] | None = None,
+    family_resolver: (
+        Callable[[str, str, Mapping[str, Any] | None], Any] | None
+    ) = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Build molecule-family summaries plus references to finalized records.
 
@@ -121,6 +125,11 @@ def build_relational_evidence_catalog(
     families: list[dict[str, Any]] = []
     bridge: list[dict[str, Any]] = []
     for (smiles, group_id), group_records in sorted(grouped.items()):
+        record_id_field = (
+            "canonical_record_id"
+            if "canonical_record_id" in group_records[0]
+            else "normalized_record_id"
+        )
         evidence_id = stable_id("molecule_family_evidence", smiles, group_id)
         molecule_id = starling_molecule_id(smiles)
         ranked = sorted(group_records, key=_representative_sort_key)
@@ -183,13 +192,13 @@ def build_relational_evidence_catalog(
             }
         )
         for order, record in enumerate(ranked):
-            record_id = str(record.get("normalized_record_id") or "")
+            record_id = str(record.get(record_id_field) or "")
             if not record_id:
-                raise ValueError("evidence catalog record lacks normalized_record_id")
+                raise ValueError(f"evidence catalog record lacks {record_id_field}")
             bridge.append(
                 {
                     "evidence_id": evidence_id,
-                    "normalized_record_id": record_id,
+                    record_id_field: record_id,
                     "record_order": order,
                     "representative_rank": representative_rank.get(record_id),
                 }
@@ -207,7 +216,9 @@ _FAMILY_FIELDS = (
 
 def _family_fields(
     record: Mapping[str, Any],
-    family_resolver: Callable[[str, str], Any] | None,
+    family_resolver: (
+        Callable[[str, str, Mapping[str, Any] | None], Any] | None
+    ),
 ) -> dict[str, str]:
     """Read the family labels off a record, re-deriving any the artifact dropped."""
     resolved = {
@@ -216,7 +227,9 @@ def _family_fields(
     if all(resolved.values()) or family_resolver is None:
         return resolved
     assignment = family_resolver(
-        str(record.get("source_id") or ""), str(record.get("endpoint_name") or "")
+        str(record.get("source_id") or ""),
+        str(record.get("endpoint_name") or ""),
+        record,
     )
     if assignment is None:
         return resolved
@@ -233,6 +246,7 @@ def write_compact_neighbor_index(
     output_dir: str | Path,
     workers: int = 1,
     progress_every: int = 0,
+    standardized_by_molecule: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Write a portable index without embedding any evidence records."""
     target = Path(output_dir)
@@ -252,6 +266,7 @@ def write_compact_neighbor_index(
         index_version=profile.index_version,
         workers=workers,
         progress_every=progress_every,
+        standardized_by_molecule=standardized_by_molecule,
     )
     evidence_ids = {
         (str(family["molecule_id"]), str(family["group_id"])): str(
@@ -290,10 +305,13 @@ def write_compact_neighbor_index(
                 }
             )
 
-    bit_matrix = np.zeros((len(index["fingerprints"]), 2048), dtype=np.uint8)
-    for row_index, fingerprint in enumerate(index["fingerprints"]):
-        DataStructs.ConvertToNumpyArray(fingerprint, bit_matrix[row_index])
-    packed = np.packbits(bit_matrix, axis=1, bitorder="little")
+    fingerprint_bytes = b"".join(
+        DataStructs.BitVectToBinaryText(fingerprint)
+        for fingerprint in index["fingerprints"]
+    )
+    packed = np.frombuffer(fingerprint_bytes, dtype=np.uint8).reshape(
+        len(index["fingerprints"]), 256
+    )
 
     molecules_path = target / "molecules.parquet"
     membership_path = target / "group_membership.parquet"
@@ -328,6 +346,10 @@ def write_compact_neighbor_index(
             "evidence_not_embedded": True,
         },
     }
+    if profile.record_contract_version:
+        manifest["record_contract_version"] = profile.record_contract_version
+    if profile.source_contract_version:
+        manifest["source_contract_version"] = profile.source_contract_version
     (target / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -416,8 +438,13 @@ def load_compact_neighbor_index(
             group_id,
         )
 
+    bridge_record_id_field = (
+        "canonical_record_id"
+        if bridge_rows and "canonical_record_id" in bridge_rows[0]
+        else "normalized_record_id"
+    )
     representative_ids = {
-        str(row["normalized_record_id"]) for row in bridge_rows
+        str(row[bridge_record_id_field]) for row in bridge_rows
     }
     records_by_id = _load_representative_records(
         final_records, representative_ids, profile.source_columns
@@ -440,7 +467,7 @@ def load_compact_neighbor_index(
         )
         representative_records: list[tuple[int, dict[str, Any]]] = []
         for link in links:
-            record_id = str(link["normalized_record_id"])
+            record_id = str(link[bridge_record_id_field])
             record = records_by_id.get(record_id)
             if record is None:
                 raise ValueError(
@@ -475,6 +502,86 @@ def load_compact_neighbor_index(
             for group, indices in sorted(group_to_molecule_indices.items())
         },
         "evidence_by_molecule_group": dict(evidence_by_molecule_group),
+    }
+
+
+def validate_compact_neighbor_index(
+    index_dir: str | Path,
+    *,
+    profile: CompactArtifactProfile,
+    evidence_dir: str | Path,
+) -> dict[str, int]:
+    """Validate a built index without hydrating prompt evidence or RDKit bits."""
+    import pyarrow.parquet as pq
+
+    root = Path(index_dir)
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    if manifest.get("index_version") != profile.index_version:
+        raise ValueError("compact index version differs from its profile")
+    if manifest.get("artifact_version") != profile.artifact_version:
+        raise ValueError("compact artifact version differs from its profile")
+    for filename, metadata in (manifest.get("files") or {}).items():
+        path = root / str(filename)
+        if not path.is_file() or file_sha256(path) != str(metadata.get("sha256") or ""):
+            raise ValueError(f"compact index file hash mismatch: {filename}")
+
+    molecule_table = pq.read_table(
+        root / "molecules.parquet",
+        columns=["molecule_index", "molecule_id"],
+    )
+    membership_table = pq.read_table(
+        root / "group_membership.parquet",
+        columns=["group_id", "molecule_index", "molecule_id", "evidence_id"],
+    )
+    family_table = pq.read_table(
+        Path(evidence_dir) / "molecule_families.parquet",
+        columns=["evidence_id", "molecule_id", "group_id"],
+    )
+    molecule_rows = molecule_table.to_pylist()
+    membership_rows = membership_table.to_pylist()
+    family_rows = family_table.to_pylist()
+    molecule_ids = [str(row["molecule_id"]) for row in molecule_rows]
+    molecule_indices = [int(row["molecule_index"]) for row in molecule_rows]
+    if molecule_indices != list(range(len(molecule_rows))):
+        raise ValueError("compact molecule indices are not contiguous")
+    if len(molecule_ids) != len(set(molecule_ids)):
+        raise ValueError("compact index repeats a molecule ID")
+    family_by_evidence = {
+        str(row["evidence_id"]): (str(row["molecule_id"]), str(row["group_id"]))
+        for row in family_rows
+    }
+    if len(family_by_evidence) != len(family_rows):
+        raise ValueError("compact evidence catalog repeats an evidence ID")
+    for row in membership_rows:
+        index = int(row["molecule_index"])
+        if index < 0 or index >= len(molecule_rows):
+            raise ValueError("compact membership has an invalid molecule index")
+        molecule_id = str(row["molecule_id"])
+        group_id = str(row["group_id"])
+        if molecule_ids[index] != molecule_id:
+            raise ValueError("compact membership molecule index/ID mismatch")
+        if family_by_evidence.get(str(row["evidence_id"])) != (
+            molecule_id,
+            group_id,
+        ):
+            raise ValueError("compact membership has an invalid evidence reference")
+    with np.load(root / "fingerprints.npz", allow_pickle=False) as payload:
+        packed = payload["packed_fingerprints"]
+        size = int(payload["fingerprint_size"][0])
+        bitorder = str(payload["bitorder"][0])
+    if packed.shape != (len(molecule_rows), 256) or size != 2048 or bitorder != "little":
+        raise ValueError("compact fingerprint matrix shape/metadata mismatch")
+    groups = sorted({str(row["group_id"]) for row in membership_rows})
+    if groups != sorted(str(value) for value in manifest.get("groups", [])):
+        raise ValueError("compact index group inventory mismatch")
+    if len(molecule_rows) != int(manifest.get("molecules", -1)):
+        raise ValueError("compact index molecule count mismatch")
+    if len(membership_rows) != int(manifest.get("memberships", -1)):
+        raise ValueError("compact index membership count mismatch")
+    return {
+        "molecules": len(molecule_rows),
+        "memberships": len(membership_rows),
+        "families": len(family_rows),
     }
 
 
@@ -570,10 +677,15 @@ def _load_representative_records(
 
     parquet = pq.ParquetFile(records_path)
     available = set(parquet.schema_arrow.names)
+    record_id_field = (
+        "canonical_record_id"
+        if "canonical_record_id" in available
+        else "normalized_record_id"
+    )
     columns = [
         column
         for column in (
-            "normalized_record_id",
+            record_id_field,
             "source_id",
             *sorted({field for fields in source_columns.values() for field in fields}),
         )
@@ -582,10 +694,10 @@ def _load_representative_records(
     wanted = pa.array(sorted(record_ids), type=pa.string())
     output: dict[str, dict[str, Any]] = {}
     for batch in parquet.iter_batches(columns=columns, batch_size=32_768):
-        ids = batch.column(batch.schema.get_field_index("normalized_record_id"))
+        ids = batch.column(batch.schema.get_field_index(record_id_field))
         selected = batch.filter(pc.is_in(ids, value_set=wanted))
         for row in selected.to_pylist():
-            record_id = str(row.get("normalized_record_id") or "")
+            record_id = str(row.get(record_id_field) or "")
             output[record_id] = row
     missing = sorted(record_ids - set(output))
     if missing:
@@ -623,7 +735,12 @@ def _list_value(value: Any) -> list[Any]:
 
 def _representative_sort_key(record: Mapping[str, Any]) -> tuple[Any, ...]:
     return (
-        str(record.get("canonical_endpoint") or record.get("endpoint_name") or ""),
+        str(
+            record.get("canonical_endpoint")
+            or record.get("canonical_endpoint_name")
+            or record.get("endpoint_name")
+            or ""
+        ),
         -(float(record["confidence"]) if record.get("confidence") is not None else 0.0),
         str(record.get("source_id") or ""),
         int(record.get("source_row_number") or 0),
@@ -635,8 +752,18 @@ def _representative_ids(
 ) -> list[str]:
     selected: list[Mapping[str, Any]] = []
     endpoints: set[str] = set()
+    record_id_field = (
+        "canonical_record_id"
+        if ranked and "canonical_record_id" in ranked[0]
+        else "normalized_record_id"
+    )
     for record in ranked:
-        endpoint = str(record.get("canonical_endpoint") or record.get("endpoint_name") or "")
+        endpoint = str(
+            record.get("canonical_endpoint")
+            or record.get("canonical_endpoint_name")
+            or record.get("endpoint_name")
+            or ""
+        )
         if endpoint not in endpoints:
             selected.append(record)
             endpoints.add(endpoint)
@@ -647,7 +774,7 @@ def _representative_ids(
             break
         if record not in selected:
             selected.append(record)
-    return [str(record.get("normalized_record_id") or "") for record in selected]
+    return [str(record.get(record_id_field) or "") for record in selected]
 
 
 __all__ = [
@@ -657,5 +784,6 @@ __all__ = [
     "build_relational_evidence_catalog",
     "compact_persisted_records",
     "load_compact_neighbor_index",
+    "validate_compact_neighbor_index",
     "write_compact_neighbor_index",
 ]

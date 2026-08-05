@@ -111,18 +111,14 @@ def experiments_for_starling_benchmark(
 
 def _starling_index_path(experiment: Experiment, paper_root: Path) -> Path:
     if experiment.task == "bbb_martins":
-        name = "bbb_starling_direct" if experiment.name.endswith("__starling_direct") else "bbb_starling_full"
-        filename = "starling_bbb_neighbor_index.pkl"
+        name = "bbb_starling_v7"
     elif experiment.task == "skin_reaction":
-        name = "skin_reaction_starling_full"
-        filename = "starling_skin_reaction_neighbor_index.pkl"
+        name = "skin_reaction_starling_v7"
     elif experiment.name.endswith("__starling_direct_numeric"):
-        name = "bioavailability_starling_direct_numeric"
-        filename = "starling_factor_neighbor_index.pkl"
+        name = "bioavailability_starling_v7_direct_numeric"
     else:
-        name = "bioavailability_starling_full"
-        filename = "starling_factor_neighbor_index.pkl"
-    return paper_root / "evidence" / name / filename
+        name = "bioavailability_starling_v7"
+    return paper_root / "evidence" / name / "08_neighbor_index"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -215,6 +211,17 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "exclude_nondirect_bioavailability_records": (
+            bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
+        ),
+        "nondirect_bioavailability_evidence_policy": {
+            "default_policy": "include",
+            "runtime_exclusion": bool(
+                getattr(args, "exclude_nondirect_bioavailability_records", False)
+            ),
+            "filter_stage": "before_neighbor_ranking_and_top_k",
+            "scope": "bioavailability_ma Starling retrieval conditions only",
+        },
         "paper_root": str(paper_root),
         "canonical_paper_root": str(canonical_paper_root),
         "single_analysis_root": str(getattr(args, "single_analysis_root", "")),
@@ -327,6 +334,14 @@ def _validate_retrieval_ablation_args(args: argparse.Namespace) -> None:
         raise SystemExit(
             "Non-standard neighbor selection/context requires an explicit --output-root."
         )
+    if (
+        bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
+        and not args.output_root
+    ):
+        raise SystemExit(
+            "--exclude-nondirect-bioavailability-records requires an explicit "
+            "--output-root to prevent --skip-existing reuse."
+        )
     if args.retrieval_feature != MORGAN_RETRIEVAL_FEATURE and nonstandard:
         raise SystemExit(
             "Coverage selection/context currently requires --retrieval-feature morgan."
@@ -344,7 +359,12 @@ def _validate_retrieval_ablation_args(args: argparse.Namespace) -> None:
 def _validate_inputs(experiments: list[Experiment]) -> None:
     missing: set[str] = set()
     for experiment in experiments:
-        for value in (experiment.input_jsonl, experiment.index):
+        required = [experiment.input_jsonl]
+        # Query-only ``none`` never loads or consults a retrieval index.  Its
+        # inherited placeholder path must not block manifest validation.
+        if experiment.mode != "none":
+            required.append(experiment.index)
+        for value in required:
             if not Path(value).exists():
                 missing.add(value)
     if missing:
@@ -485,6 +505,14 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--neighbor-context-profile",
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
+    )
+    parser.add_argument(
+        "--exclude-nondirect-bioavailability-records",
+        action="store_true",
+        help=(
+            "Bioavailability Starling only: exclude retained relative/apparent "
+            "HF records before neighbor ranking and top-k selection."
+        ),
     )
     parser.add_argument(
         "--single-analysis-root",

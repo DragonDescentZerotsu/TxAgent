@@ -70,7 +70,7 @@ def test_concentration_is_not_mistaken_for_a_ratio_and_log_pe_stays_permeability
     for value in ("-logPe", "-logPₑ", "-log Pe (cm s⁻¹)"):
         assert canonical_passive_endpoint(value)[0] == "negative_log_effective_permeability"
     assert canonical_passive_endpoint("-logP")[0] == "negative_log_partition_coefficient"
-    assert canonical_passive_endpoint("logP0PAMPA-BBB")[0] == "membrane_partitioning"
+    assert canonical_passive_endpoint("logP0PAMPA-BBB")[0] == "log_partition_coefficient"
     assert canonical_passive_endpoint("Permeability Log[10-6 cm/s]")[0] == "log_passive_permeability"
     assert canonical_passive_endpoint(
         "fold increase in Cu concentration relative to vehicle control"
@@ -236,3 +236,26 @@ def test_unreviewed_direct_concentration_does_not_infer_ratio():
     baseline = normalize_measurement_and_unit("0.2", None)
     resolved = source_measurement_resolver(record, "brain_concentration", baseline)
     assert resolved.canonical_unit is None
+
+
+def test_explicit_per_100_basis_is_scaled_without_touching_numerator_times_100():
+    """A per-100 basis divides, wherever the 100 sits relative to the inverted unit.
+
+    This used to be a BBB-local rewrite (`_fold_explicit_denominator_100_basis`). It is now
+    a shared-parser rule, because a basis count means the same thing in every task -- bio and
+    skin were silently reporting these 100x high while BBB was correct.
+    """
+    for unit in ("mL/100 g/min", "mL/100g/min", "mL·100 g^-1·min^-1"):
+        resolved = _resolve("25 ± 5", unit, "influx_rate_constant")
+        assert resolved.canonical_measurement == "0.25 ± 0.05"
+        assert resolved.canonical_unit == "mL/g·min"
+
+    # A trailing multiplier with no basis to attach to is genuinely ambiguous -- a per-100
+    # basis or a reported-value multiplier -- so it must fail closed rather than be guessed.
+    # What matters is that the value is never rescaled, whichever gate rejects it.
+    untouched = _resolve("25", "mL/g/min ×100", "influx_rate_constant")
+    assert untouched.canonical_measurement == "25"
+    assert untouched.status in {
+        "cleaned_only_unrecognized_unit",
+        "incompatible_endpoint_unit",
+    }

@@ -61,7 +61,7 @@ def bounded_build(tmp_path_factory):
 def test_pending_mapping_build_publishes_only_complete_record_stages(bounded_build):
     for relative in (
         "01_cleaned/records.parquet",
-        "02_normalized/records.parquet",
+        "02_canonicalized/records.parquet",
         "03_records/records.parquet",
         "manifest.json",
     ):
@@ -71,7 +71,7 @@ def test_pending_mapping_build_publishes_only_complete_record_stages(bounded_bui
 
 def test_one_normalized_record_per_cleaned_record(bounded_build):
     cleaned = pd.read_parquet(bounded_build / "01_cleaned/records.parquet")
-    normalized = pd.read_parquet(bounded_build / "02_normalized/records.parquet")
+    normalized = pd.read_parquet(bounded_build / "02_canonicalized/records.parquet")
     assert len(cleaned) == len(normalized) == 1600
     assert set(cleaned["cleaned_record_id"]) == set(normalized["cleaned_record_id"])
 
@@ -91,10 +91,19 @@ def test_categorical_sources_get_a_scalar_only_through_a_declared_encoder(
     with_scalar = qualitative[qualitative["finite_scalar_value"].notna()]
     assert len(with_scalar) > 0, "the encoders unlocked nothing"
     assert (
-        with_scalar["categorical_encoder_id"].fillna("").astype(str) != ""
+        with_scalar["canonical_measurement_scale_id"].fillna("").astype(str) != ""
     ).all()
-    assert with_scalar["is_absolute_and_continuous"].all()
-    assert with_scalar["canonical_unit"].isin(ENCODED_UNITS).all()
+    assert set(with_scalar["measurement_kind"]) <= {
+        "continuous",
+        "binary",
+        "ordinal",
+    }
+    categorical = with_scalar[
+        with_scalar["measurement_kind"].isin({"binary", "ordinal"})
+    ]
+    assert categorical["canonical_category_id"].notna().all()
+    assert categorical["canonical_category_rank"].notna().all()
+    assert with_scalar["canonical_unit_text"].isin(ENCODED_UNITS).all()
     # Records the encoders decline stay evidence, not silently dropped.
     assert qualitative["retrieval_eligible"].any()
 
@@ -103,7 +112,7 @@ def test_uninformative_outcomes_are_never_encoded(bounded_build):
     """"not classified" is absence of information, not evidence of no effect."""
     records = pd.read_parquet(bounded_build / "03_records/records.parquet")
     encoded = records[
-        records["categorical_encoder_id"].fillna("").astype(str) != ""
+        records["canonical_measurement_scale_id"].fillna("").astype(str) != ""
     ]
     labels = encoded["result_label"].fillna("").astype(str).str.casefold()
     assert not labels.isin(UNINFORMATIVE_LABELS).any()
@@ -113,7 +122,7 @@ def test_every_encoded_value_is_finite(bounded_build):
     """An unshrunk rate of 0 or 1 would have an infinite logit."""
     records = pd.read_parquet(bounded_build / "03_records/records.parquet")
     encoded = records[
-        records["categorical_encoder_id"].fillna("").astype(str) != ""
+        records["canonical_measurement_scale_id"].fillna("").astype(str) != ""
     ]
     values = encoded["finite_scalar_value"].dropna()
     assert len(values) > 0
@@ -128,19 +137,13 @@ def test_no_bucket_mixes_units_encoders_or_sources(bounded_build, tmp_path):
         out_dir=tmp_path / "06_pair_buckets",
     )
     buckets = pd.read_parquet(tmp_path / "06_pair_buckets/pair_bucket_records.parquet")
-    records = pd.read_parquet(
-        bounded_build / "03_records/records.parquet",
-        columns=["normalized_record_id", "categorical_encoder_id"],
-    )
-    joined = buckets[buckets["pair_bucket_key"].notna()].merge(
-        records, on="normalized_record_id"
-    )
+    joined = buckets[buckets["pair_bucket_key"].notna()]
     grouped = joined.groupby("pair_bucket_key")
-    assert grouped["canonical_unit"].nunique().max() == 1
+    assert grouped["canonical_unit_text"].nunique().max() == 1
     assert grouped["source_id"].nunique().max() == 1
     # count_logit, single_subject_logit and percent_positive_logit share the
     # logit_response unit, so the encoder id is what keeps them apart.
-    assert grouped["categorical_encoder_id"].nunique().max() == 1
+    assert grouped["canonical_measurement_scale_id"].nunique().max() == 1
 
 
 def test_scalar_sources_produce_scalars_with_canonical_units(bounded_build):
@@ -148,7 +151,7 @@ def test_scalar_sources_produce_scalars_with_canonical_units(bounded_build):
     scalar = records[records["source_id"].isin(SCALAR_SOURCES)]
     with_value = scalar[scalar["finite_scalar_value"].notna()]
     assert len(with_value) > 0
-    assert with_value["canonical_unit"].notna().all()
+    assert with_value["canonical_unit_text"].notna().all()
 
 
 def test_manifest_records_task_scoped_versions(bounded_build):
@@ -161,7 +164,7 @@ def test_manifest_records_task_scoped_versions(bounded_build):
 
 def test_incomplete_auxiliary_mapping_fails_its_coverage_validation(bounded_build):
     stage = json.loads(
-        (bounded_build / "02_normalized/manifest.json").read_text(encoding="utf-8")
+        (bounded_build / "02_canonicalized/manifest.json").read_text(encoding="utf-8")
     )
     assert stage["validations"]["globally_reconciled_auxiliary_coverage"] is False
 
@@ -178,7 +181,7 @@ def test_every_source_can_now_reach_a_bucket(bounded_build, tmp_path):
     assert set(bucketed["source_id"]) == QUALITATIVE_SOURCES | SCALAR_SOURCES
 
 
-def test_sensitization_uses_reconciled_endpoint_without_rewriting_record(
+def test_sensitization_uses_reconciled_canonical_endpoint(
     bounded_build, tmp_path
 ):
     records_path = _records_with_test_auxiliary_context(bounded_build, tmp_path)
@@ -198,41 +201,50 @@ def test_sensitization_uses_reconciled_endpoint_without_rewriting_record(
         )
     )
     assert metadata["bucket_endpoint_field_by_source"]["sensitization_aop"] == (
-        "global_endpoint_context"
+        "canonical_endpoint_name"
     )
-    records = pd.read_parquet(records_path).set_index("normalized_record_id")
-    endpoint_by_id = records["global_endpoint_context"].astype(str)
+    records = pd.read_parquet(records_path).set_index("canonical_record_id")
+    endpoint_by_id = records["canonical_endpoint_name"].astype(str)
     assert all(
-        json.loads(row.pair_bucket_key)[1] == endpoint_by_id[row.normalized_record_id]
+        json.loads(row.pair_bucket_key)[1] == endpoint_by_id[row.canonical_record_id]
         for row in eligible.itertuples()
     )
-    assert any(
-        row.canonical_endpoint != endpoint_by_id[row.normalized_record_id]
+    assert all(
+        row.canonical_endpoint_name == endpoint_by_id[row.canonical_record_id]
         for row in eligible.itertuples()
     )
 
 
 def _records_with_test_auxiliary_context(bounded_build, tmp_path):
     records = pd.read_parquet(bounded_build / "03_records/records.parquet")
-    records["global_context"] = records["source_id"].map(
+    records["canonical_assay_or_test"] = records["source_id"].map(
         {
             "direct_skin_reaction": "patch test",
-            "sensitization_aop": "in vitro sensitization assay",
-            "phototoxicity_irritation_local_damage": "3t3 nru phototoxicity",
-            "skin_exposure": "ex vivo skin permeation",
         }
     )
-    records["global_species_context"] = records["source_id"].map(
+    records["canonical_species_or_population"] = records["source_id"].map(
         {
             "direct_skin_reaction": "human",
-            "sensitization_aop": "human cell",
-            "phototoxicity_irritation_local_damage": "mouse fibroblast",
-            "skin_exposure": "human",
         }
     )
+    records["canonical_assay_type"] = records["source_id"].map(
+        {"sensitization_aop": "in vitro sensitization assay"}
+    )
+    records["canonical_species_context"] = records["source_id"].map(
+        {"sensitization_aop": "human cell", "skin_exposure": "human"}
+    )
+    records["canonical_assay_method"] = records["source_id"].map(
+        {"phototoxicity_irritation_local_damage": "3t3 nru phototoxicity"}
+    )
+    records["canonical_evidence_system"] = records["source_id"].map(
+        {"phototoxicity_irritation_local_damage": "mouse fibroblast"}
+    )
+    records["canonical_study_design"] = records["source_id"].map(
+        {"skin_exposure": "ex vivo skin permeation"}
+    )
     sensitization = records["source_id"] == "sensitization_aop"
-    records.loc[sensitization, "global_endpoint_context"] = (
-        records.loc[sensitization, "endpoint_or_target"]
+    records.loc[sensitization, "canonical_endpoint_name"] = (
+        records.loc[sensitization, "endpoint_name"]
         .fillna("sensitization endpoint")
         .astype(str)
         .str.casefold()

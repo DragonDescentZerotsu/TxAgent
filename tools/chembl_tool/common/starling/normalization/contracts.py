@@ -6,13 +6,13 @@ from dataclasses import dataclass
 from typing import Any
 
 
-CLEANING_STAGE_VERSION = "starling_record_cleaning.v6"
-NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v14"
+CLEANING_STAGE_VERSION = "starling_record_cleaning.v8"
+NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v15"
 ORGANIZATION_STAGE_VERSION = "starling_record_organization.v9"
 
 NORMALIZED_RECORD_VERSION = "starling_normalized_record.v6"
 NORMALIZED_ARTIFACT_VERSION = "starling_normalized_evidence.v6"
-SCALAR_PARSER_VERSION = "lossless_scalar_parser.v4"
+SCALAR_PARSER_VERSION = "lossless_scalar_parser.v5"
 
 STAGE_REQUIRED_COLUMNS = {
     "clean": {
@@ -67,6 +67,10 @@ class NormalizedSourceProfile:
     support_text_field: str = "support_text"
     name_fields: tuple[str, ...] = ("molecule_name", "global_identifier")
     context_fields: tuple[str, ...] = ()
+    # Some source taxonomies use a generic null token as a real category.
+    # Declared fields receive typography/whitespace normalization without the
+    # generic textual-null vocabulary.
+    literal_text_fields: tuple[str, ...] = ()
     source_path: str = ""
     source_revision: str = ""
 

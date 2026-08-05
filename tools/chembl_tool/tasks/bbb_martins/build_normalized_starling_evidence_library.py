@@ -1,4 +1,4 @@
-"""Build the split-aware normalized-Starling v6 BBB Martins library.
+"""Build the split-aware canonical Starling v7 BBB Martins library.
 
 Stages 01-03 use the shared normalization engine. Stages 04-09 are produced by
 the shared split-aware downstream engine, with BBB-specific policies supplied
@@ -16,11 +16,11 @@ from tools.chembl_tool.common.starling.build_normalized_evidence_library import 
 )
 from tools.chembl_tool.tasks.bbb_martins.build_starling_downstream_artifacts import (
     AUDIT_STAGE,
+    DISTANCE_CALIBRATION_STAGE,
     HELDOUT_STAGE,
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
     PAIR_BUCKET_STAGE,
-    TRANSFER_POLICY_STAGE,
     build_downstream_artifacts,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
@@ -31,10 +31,10 @@ from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
 
 ARTIFACT_STAGES = (
     "01_cleaned",
-    "02_normalized",
+    "02_canonicalized",
     "03_records",
     PAIR_BUCKET_STAGE,
-    TRANSFER_POLICY_STAGE,
+    DISTANCE_CALIBRATION_STAGE,
     HELDOUT_STAGE,
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
@@ -80,10 +80,11 @@ def main(argv: list[str] | None = None) -> int:
             "from_stage": args.from_stage,
             "through_stage": args.through_stage,
         },
+        validation_level=args.validation_level,
+        cache_mode=args.cache_mode,
     )
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

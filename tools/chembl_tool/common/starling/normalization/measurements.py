@@ -70,10 +70,10 @@ _APPROX_PREFIX = (
     r"(?P<prefix>≈|~|about\s+|approx(?:imately)?\.?\s+|ca\.?\s+|estimated\s+)?"
 )
 _SCIENTIFIC_FACTOR_TEXT = (
-    r"(?:×|x)\s*10(?:\s*\^\s*[+-]?\d+|\s*[+-]\d+)"
+    r"(?:×|x)\s*10(?:\s*\^\s*\(?\s*[+-]?\d+\s*\)?|\s*[+-]\d+)"
 )
 _SCIENTIFIC_FACTOR = re.compile(
-    r"^(?:×|x)\s*10(?:\s*\^\s*(?P<caret>[+-]?\d+)|"
+    r"^(?:×|x)\s*10(?:\s*\^\s*\(?\s*(?P<caret>[+-]?\d+)\s*\)?|"
     r"\s*(?P<signed>[+-]\d+))$",
     re.IGNORECASE,
 )
@@ -123,7 +123,9 @@ EndpointStandardizer = Callable[[str, MeasurementPair], MeasurementPair]
 SourceMeasurementResolver = Callable[
     [Mapping[str, Any], str, MeasurementPair], MeasurementPair
 ]
-FamilyResolver = Callable[[str, str], FamilyAssignment | None]
+FamilyResolver = Callable[
+    [str, str, Mapping[str, Any] | None], FamilyAssignment | None
+]
 RecordEnricher = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 
 _ENDPOINT_SEPARATORS = re.compile(r"[\s_\-\u2010-\u2015\u2212]+")
@@ -224,8 +226,6 @@ def _parse_atomic_scientific_measurement(
     if each:
         value_factor = _scientific_factor(each.group("value_factor"))
         variation_factor = _scientific_factor(each.group("variation_factor"))
-        if value_factor != variation_factor:
-            return None, "ambiguous_scientific_notation", None
         return (
             ParsedPoint(
                 finite_float(each.group("value")) * value_factor,
@@ -234,7 +234,7 @@ def _parse_atomic_scientific_measurement(
                 "mean_with_variation",
             ),
             "unambiguous_scientific_notation",
-            value_factor,
+            value_factor if value_factor == variation_factor else None,
         )
     point = _SCIENTIFIC_POINT.fullmatch(value)
     if point:
@@ -258,17 +258,44 @@ def separate_measurement_unit(measurement_text: str, unit: Any) -> str:
     cleaned = clean_measurement_text(measurement_text) or ""
     unit_text = clean_measurement_text(unit)
     normalized_unit = clean_unit(unit)
-    if normalized_unit == "%":
+    if normalized_unit and normalized_unit.startswith("%"):
+        # Never concatenate two numeric tokens around a percent sign.  This
+        # catches dropped separators (``35%50%``) and encoded spaces
+        # (``50.6%0020``) when Stage-01 cleaning was bypassed.
+        if re.search(r"%\d", cleaned):
+            return cleaned
         if re.search(r"(?:±|\+/-)", cleaned):
-            return re.sub(r"\s*%", "", cleaned)
-        return re.sub(
-            rf"^(\s*(?:≈|~|about\s+|approx(?:imately)?\.?\s+|ca\.?\s+|estimated\s+)?"
-            rf"(?:{_NUMBER}))\s*%",
-            r"\1",
-            cleaned,
-            count=1,
-            flags=re.IGNORECASE,
-        )
+            candidate = re.sub(
+                rf"(?P<number>{_NUMBER})\s*%(?=\s*(?:±|\+/-))",
+                r"\g<number>",
+                cleaned,
+                count=1,
+            )
+            candidate = re.sub(
+                rf"(?P<variation>(?:±|\+/-)\s*(?:{_NUMBER}))\s*%",
+                r"\g<variation>",
+                candidate,
+                count=1,
+            )
+        else:
+            candidate = re.sub(
+                rf"^(\s*(?:≈|~|about\s+|approx(?:imately)?\.?\s+|ca\.?\s+|estimated\s+)?"
+                rf"(?:{_NUMBER}))\s*%",
+                r"\1",
+                cleaned,
+                count=1,
+                flags=re.IGNORECASE,
+            )
+        # For a compound percent unit this removes only the ``%`` and leaves the rest of
+        # the unit stranded in the measurement (``5% per hour`` -> ``5 per hour``), which
+        # no longer parses. Yield to the whole-suffix strip only when that actually
+        # recovers a scalar, so non-scalar percent text keeps its existing rendering.
+        if parse_point_measurement(candidate).value is None and unit_text:
+            if cleaned.casefold().endswith(unit_text.casefold()):
+                fallback = cleaned[: -len(unit_text)].rstrip()
+                if parse_point_measurement(fallback).value is not None:
+                    return fallback
+        return candidate
     if unit_text and cleaned.casefold().endswith(unit_text.casefold()):
         return cleaned[: -len(unit_text)].rstrip()
     return cleaned
@@ -294,11 +321,18 @@ def render_point_measurement(source_text: str, value: float, variation: float | 
     return rendered.strip()
 
 
-def normalize_measurement_and_unit(measurement: Any, unit: Any) -> MeasurementPair:
-    """Clean and fold a scalar/unit pair without ever guessing unit notation."""
+def normalize_measurement_and_unit(
+    measurement: Any, unit: Any, *, task: str | None = None
+) -> MeasurementPair:
+    """Clean and fold a scalar/unit pair without ever guessing unit notation.
+
+    ``task`` selects the qualifier vocabulary: which unresolved tokens count as
+    dimensionless, and so whether the unit is recognized at all. Omitting it applies the
+    shared vocabulary only, which is the conservative reading.
+    """
     measurement_text = clean_measurement_text(measurement)
     cleaned_unit = clean_unit(unit)
-    unit_result = canonicalize_unit(unit)
+    unit_result = canonicalize_unit(unit, task=task)
     notation_status = unit_result.notation_status
     notation_factor = unit_result.notation_factor
     if measurement_text is None:
@@ -346,7 +380,7 @@ def normalize_measurement_and_unit(measurement: Any, unit: Any) -> MeasurementPa
             notation_status,
             notation_factor,
         )
-    value, canonical_unit = canonicalize_measurement(parsed.value, unit)
+    value, canonical_unit = canonicalize_measurement(parsed.value, unit, task=task)
     if value is None or canonical_unit is None:
         return MeasurementPair(
             measurement_text,
@@ -357,7 +391,9 @@ def normalize_measurement_and_unit(measurement: Any, unit: Any) -> MeasurementPa
         )
     variation = None
     if parsed.variation is not None:
-        variation, variation_unit = canonicalize_measurement(parsed.variation, unit)
+        variation, variation_unit = canonicalize_measurement(
+            parsed.variation, unit, task=task
+        )
         if variation is None or variation_unit != canonical_unit:
             return MeasurementPair(
                 display_measurement,
@@ -382,6 +418,7 @@ def standardize_measurement_pair(
     *,
     measurement_class: str | None = None,
     targets: Sequence[str] | None = None,
+    task: str | None = None,
 ) -> MeasurementPair:
     if pair.canonical_measurement is None or pair.canonical_unit is None:
         return pair
@@ -395,6 +432,7 @@ def standardize_measurement_pair(
         pair.canonical_unit,
         measurement_class=measurement_class,
         targets=targets,
+        task=task,
     )
     if value is None or unit is None:
         return pair
@@ -405,6 +443,7 @@ def standardize_measurement_pair(
             pair.canonical_unit,
             measurement_class=measurement_class,
             targets=targets,
+            task=task,
         )
         if variation is None or variation_unit != unit:
             return pair
@@ -417,8 +456,8 @@ def standardize_measurement_pair(
     )
 
 
-def _recognized_unit(value: Any) -> bool:
-    result = canonicalize_unit(value)
+def _recognized_unit(value: Any, task: str | None = None) -> bool:
+    result = canonicalize_unit(value, task=task)
     return bool(result.cleaned) and not result.unknown_tokens
 
 
@@ -430,8 +469,12 @@ def normalize_cleaned_records(
     source_measurement_resolver: SourceMeasurementResolver | None = None,
     family_resolver: FamilyResolver,
     record_enricher: RecordEnricher | None = None,
+    task: str | None = None,
 ) -> list[dict[str, Any]]:
-    """Normalize each cleaned source record exactly once."""
+    """Normalize each cleaned source record exactly once.
+
+    ``task`` selects the qualifier vocabulary applied to every unit in the batch.
+    """
     records: list[dict[str, Any]] = []
     for cleaned in cleaned_records:
         source_id = str(cleaned.get("source_id") or "")
@@ -448,7 +491,7 @@ def normalize_cleaned_records(
         spacing_and_spelling_endpoint = decision.spacing_and_spelling_endpoint
         canonical_endpoint = canonicalize_endpoint(spacing_and_spelling_endpoint)
         baseline = normalize_measurement_and_unit(
-            cleaned.get("measurement_text"), cleaned.get("unit_text")
+            cleaned.get("measurement_text"), cleaned.get("unit_text"), task=task
         )
         pair = (
             endpoint_standardizer(canonical_endpoint, baseline)
@@ -458,7 +501,7 @@ def normalize_cleaned_records(
         if source_measurement_resolver is not None:
             pair = source_measurement_resolver(cleaned, canonical_endpoint, pair)
         parsed = parse_point_measurement(pair.canonical_measurement)
-        recognized_unit = _recognized_unit(pair.canonical_unit)
+        recognized_unit = _recognized_unit(pair.canonical_unit, task)
         finite_scalar = (
             parsed.value
             if parsed.value is not None
@@ -467,9 +510,8 @@ def normalize_cleaned_records(
             else None
         )
         absolute_continuous = finite_scalar is not None
-        family = family_resolver(source_id, endpoint_name)
-        unit_result = canonicalize_unit(pair.canonical_unit)
-        payload = json.loads(str(cleaned.get("source_payload_json") or "{}"))
+        family = family_resolver(source_id, endpoint_name, cleaned)
+        unit_result = canonicalize_unit(pair.canonical_unit, task=task)
         record = dict(cleaned)
         record.update(
             {
@@ -503,9 +545,10 @@ def normalize_cleaned_records(
                 "endpoint_group": family.endpoint_group if family else None,
                 "evidence_role": family.evidence_role if family else None,
                 "target_pref_name": family.target_pref_name if family else None,
-                "source_payload_json": json.dumps(
-                    payload, ensure_ascii=False, sort_keys=True, default=str
-                ),
+                # Cleaning/inflation already emits deterministic JSON.  The
+                # normalizer never changes the raw source payload, so parsing
+                # and serializing it again only burns CPU and memory.
+                "source_payload_json": cleaned.get("source_payload_json") or "{}",
             }
         )
         if record_enricher is not None:

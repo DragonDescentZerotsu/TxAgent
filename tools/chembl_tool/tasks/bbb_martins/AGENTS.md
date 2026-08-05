@@ -695,21 +695,27 @@ The complete layout is:
 
 ```text
 01_cleaned/
-02_normalized/
+02_canonicalized/
 03_records/                 complete unfiltered normalized source records
 04_pair_buckets/            complete source-aware bucket membership
-05_assay_transfer_policy/   calibration excludes the union of benchmark heldout parents
+05_distance_calibration/    complete-data, label-free distance geometry
 06_remove_heldout_overlap/  independent random/scaffold record views
 07_molecule_evidence/       split-specific relational evidence
 08_neighbor_index/          split-specific compact indices
 09_audits/
 ```
 
-Only `direct_bbb` rows are removed for benchmark heldout parents. Passive,
-efflux, and influx mechanism records remain available even when their molecule
-identity appears in the benchmark. Pair-bucket membership remains a complete
-source audit; transfer-policy calibration explicitly records its direct-source
-heldout exclusion.
+Stages 04 and 05 use the complete unfiltered Stage-03 records. This means held-out
+`direct_bbb` measurements contribute only to aggregate bucket validation, sample SD,
+and empirical percentile geometry; Stage 05 does not use benchmark labels or expose
+individual records to prediction. This is the sole permitted held-out-data exception,
+and it follows the shared all-task contract in `tools/chembl_tool/tasks/AGENTS.md`.
+
+Stage 06 is the mandatory leakage boundary. It removes `direct_bbb` rows for benchmark
+held-out parents before molecule evidence and neighbor indices are built. Passive,
+efflux, and influx mechanism records remain available even when their molecule identity
+appears in the benchmark. Pair-bucket membership remains a complete source audit, and
+distance calibration must not declare a held-out source or held-out key loader.
 
 The four LLM-visible group IDs remain exactly:
 

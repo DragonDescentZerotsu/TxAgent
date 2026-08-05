@@ -50,11 +50,13 @@ from typing import Any
 import pandas as pd
 
 from tools.chembl_tool.common.starling.categorical_response import (
+    CanonicalCategory,
     LOGIT_RESPONSE_UNIT,
     ORDINAL_SEVERITY_UNIT,
     SIGNED_DIRECTION_UNIT,
     CategoricalEncoding,
     CategoricalResponsePolicy,
+    ControlledMeasurementSpec,
     count_logit,
     logit,
     render_measurement,
@@ -278,21 +280,81 @@ def encode_signed_direction(record: Mapping[str, Any]) -> CategoricalEncoding | 
     )
 
 
+CONTROLLED_MEASUREMENTS = (
+    ControlledMeasurementSpec(
+        scale_id="count_logit",
+        source_id=DIRECT_SOURCE,
+        input_fields=("positive_count", "total_tested", "measurement_text"),
+        encoder=encode_counts,
+        kind="continuous",
+        parser_id="skin.count_logit.v1",
+        definition="Jeffreys-shrunk logit of k/n for n >= 2",
+    ),
+    ControlledMeasurementSpec(
+        scale_id="single_subject_logit",
+        source_id=DIRECT_SOURCE,
+        input_fields=("positive_count", "total_tested", "measurement_text"),
+        encoder=encode_single_subject,
+        kind="binary",
+        parser_id="skin.single_subject_logit.v1",
+        definition="Jeffreys-shrunk response class for n == 1",
+        categories=(
+            CanonicalCategory("no_response", 0, count_logit(0, 1)),
+            CanonicalCategory("response", 1, count_logit(1, 1)),
+        ),
+    ),
+    ControlledMeasurementSpec(
+        scale_id="percent_positive_logit",
+        source_id=DIRECT_SOURCE,
+        input_fields=("measurement_text",),
+        encoder=encode_percent_positive,
+        kind="continuous",
+        parser_id="skin.percent_positive_logit.v1",
+        definition="logit of an explicitly reported percentage",
+    ),
+    ControlledMeasurementSpec(
+        scale_id="ordinal_severity_grade",
+        source_id=DIRECT_SOURCE,
+        input_fields=("measurement_text", "global_severity_grade"),
+        encoder=encode_severity_grade,
+        kind="ordinal",
+        parser_id="skin.ordinal_severity_grade.v1",
+        definition="Draize-style negative and + through ++++ ladder",
+        categories=tuple(
+            CanonicalCategory(f"grade_{grade}", grade, float(grade))
+            for grade in range(5)
+        ),
+    ),
+    ControlledMeasurementSpec(
+        scale_id="signed_direction",
+        source_id=PHOTOTOXICITY_SOURCE,
+        input_fields=("result_label",),
+        encoder=encode_signed_direction,
+        kind="ordinal",
+        parser_id="skin.signed_direction.v1",
+        definition="protective < negative/no-effect < positive hazard direction",
+        categories=(
+            CanonicalCategory("protective", 0, -1.0),
+            CanonicalCategory("negative", 1, 0.0),
+            CanonicalCategory("positive", 2, 1.0),
+        ),
+    ),
+)
+
+MEASUREMENT_SCALES = {
+    item.scale_id: item for item in CONTROLLED_MEASUREMENTS
+}
+
 POLICY = CategoricalResponsePolicy(
     version=CATEGORICAL_RESPONSE_VERSION,
-    encoders=(
-        encode_counts,
-        encode_severity_grade,
-        encode_percent_positive,
-        encode_single_subject,
-        encode_signed_direction,
-    ),
+    controlled_measurements=CONTROLLED_MEASUREMENTS,
 )
 
 
 def encoding_policy_manifest() -> dict[str, Any]:
     """Self-describing metadata for the stage-02 artifact."""
     return {
+        **POLICY.manifest(),
         "version": CATEGORICAL_RESPONSE_VERSION,
         "encoders": [
             {
@@ -345,6 +407,8 @@ def encoding_policy_manifest() -> dict[str, Any]:
 
 __all__ = [
     "CATEGORICAL_RESPONSE_VERSION",
+    "CONTROLLED_MEASUREMENTS",
+    "MEASUREMENT_SCALES",
     "NOMINAL_PERCENT_SAMPLE_SIZE",
     "ORDINAL_SEVERITY_UNIT",
     "POLICY",

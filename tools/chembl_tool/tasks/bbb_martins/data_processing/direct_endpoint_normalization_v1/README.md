@@ -1,7 +1,7 @@
 # BBB Direct endpoint normalization v1
 
-This directory contains an unpublished, human-gated proposal for normalizing
-`direct_bbb.quant_metric`. It does not contain an approved runtime mapping.
+This directory contains the reviewed proposal and approved runtime mapping for
+normalizing `direct_bbb.quant_metric`.
 
 Current local-generation inventory:
 
@@ -10,7 +10,7 @@ Current local-generation inventory:
 - at most 500 values per request (observed maximum: 499)
 - 8,012 provisional endpoint labels before subagent reconciliation
 
-Current unpublished proposal:
+Reviewed proposal:
 
 - 8,012 raw-level primary decisions; 150 proposed changes, 145 accepted after
   independent checking and adjudication
@@ -21,6 +21,10 @@ Current unpublished proposal:
 - 38 conservative near-duplicate audit candidates retained for the human checkpoint
 - proposal SHA-256:
   `dccace52917d2c01740988f4ed5bb0b50d75b11d90ffa1d00c306f43510e7b77`
+
+Joseph approved this proposal on `2026-08-04T14:17:53Z`. The approved runtime
+copy is `approved/endpoint_mapping.json`; the proposal remains unchanged so the
+human-approval boundary is explicit in the provenance.
 
 The local GPT step and the global reconciliation are deliberately separate.
 The local step preserves every cluster response and its request provenance.

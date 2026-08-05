@@ -15,8 +15,15 @@ from tools.chembl_tool.common.starling.normalized_evidence import (
     validate_measurement_pairs,
 )
 from tools.chembl_tool.common.starling.normalization.cleaning import (
+    clean_source_rows,
     clean_measurement_text,
     clean_text,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+    hf_bioavailability_profile,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling import (
+    family_assignment as bioavailability_family_assignment,
 )
 
 
@@ -30,7 +37,8 @@ def _orthography(source_id: str, endpoint_name: str):
     )
 
 
-def _family(source_id: str, endpoint_name: str):
+def _family(source_id: str, endpoint_name: str, record=None):
+    del record
     return FamilyAssignment(
         "Observed.test",
         "Observed",
@@ -107,12 +115,32 @@ def test_clean_and_normalize_stages_use_one_authoritative_source_pair():
     assert validate_measurement_pairs(result.normalized_records) == []
 
 
+def test_declared_literal_taxonomy_preserves_unspecified_without_global_change(tmp_path):
+    raw = {
+        "source_index": 0,
+        "smiles": "CCO",
+        "oral_bioavailability_value": "0.42",
+        "bioavailability_report_type": " unspecified ",
+        "support_text": "unspecified",
+    }
+    profile = hf_bioavailability_profile(tmp_path / "unused.parquet")
+
+    cleaned = clean_source_rows([raw], profile, smiles_mapping=None)[0]
+
+    assert cleaned["bioavailability_report_type"] == "unspecified"
+    assert cleaned["support_text"] is None
+    assignment = bioavailability_family_assignment(
+        "hf_bioavailability", "oral_bioavailability", cleaned
+    )
+    assert assignment.group_id == "Observed.direct_oral_bioavailability"
+    assert assignment.evidence_role == "direct_outcome"
+
+
 @pytest.mark.parametrize(
     "measurement",
     [
         "2.5×106",
         "2.5×10⁇",
-        "3.8×10^-5 ± 0.1×10^-6",
         "2.5×10^-6",
     ],
 )
@@ -120,7 +148,16 @@ def test_ambiguous_measurement_side_notation_is_not_promoted(measurement):
     unit = "×10^-6 cm/s" if measurement == "2.5×10^-6" else "cm/s"
     pair = normalize_measurement_and_unit(measurement, unit)
     assert pair.status == "ambiguous_scientific_notation"
-    assert pair.unit_notation_status == "ambiguous_scientific_notation"
+
+
+def test_independently_explicit_mean_and_variation_factors_are_atomic():
+    pair = normalize_measurement_and_unit(
+        "3.8×10^-5 ± 0.1×10^-6", "cm/s"
+    )
+    assert pair.status == "folded_pair"
+    assert pair.canonical_measurement == "0.000038 ± 0.0000001"
+    assert pair.canonical_unit == "cm/s"
+    assert pair.unit_notation_status == "unambiguous_scientific_notation"
 
 
 @pytest.mark.parametrize(
@@ -159,6 +196,16 @@ def test_measurement_context_and_qualitative_text_remain_lossless():
     assert pair.canonical_measurement == "5 ± 1 of dose"
     assert pair.canonical_unit == "%"
     assert pair.status == "cleaned_pair_with_context"
+
+    # ``applied`` is skin_reaction vocabulary, so the unit only resolves for that task.
+    pair = normalize_measurement_and_unit(
+        "5.7 ± 0.6%", "% of applied dose", task="skin_reaction"
+    )
+    assert pair.canonical_measurement == "5.7 ± 0.6"
+    assert pair.canonical_unit == "%·applied·dose·of"
+
+    pair = normalize_measurement_and_unit("5.7 ± 0.6%", "% of applied dose")
+    assert pair.status == "cleaned_only_unrecognized_unit"
 
     pair = normalize_measurement_and_unit("high", "wibbles/mL")
     assert pair.canonical_measurement == "high"

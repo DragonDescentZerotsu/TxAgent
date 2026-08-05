@@ -44,6 +44,7 @@ class StarlingSourceProfile:
     record_id_field: str = "extraction_id"
     target_pref_name: str = ""
     evidence_role: str = "unspecified"
+    allow_numeric_proxy_summary: bool = False
     standard_type_prefix: str = ""
     include_endpoint_values: tuple[str, ...] = ()
     exclude_endpoint_values: tuple[str, ...] = ()
@@ -239,7 +240,10 @@ def _summarize_profile_molecule(
         if value is not None
     ] if profile.value_field else []
     direct_summary_allowed = (
-        profile.evidence_role == "direct_outcome"
+        (
+            profile.evidence_role == "direct_outcome"
+            or profile.allow_numeric_proxy_summary
+        )
         and len(endpoint_counts) == 1
         and len([unit for unit in unit_counts if unit and unit != "unspecified"]) <= 1
         and bool(numeric_values)

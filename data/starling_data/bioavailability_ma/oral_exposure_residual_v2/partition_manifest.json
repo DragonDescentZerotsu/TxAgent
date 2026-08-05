@@ -3,7 +3,7 @@
   "source_path": "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
   "source_sha256": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010",
   "residual_records_path": "data/starling_data/bioavailability_ma/oral_exposure_residual_v2/exposure_records.parquet",
-  "residual_records_sha256": "81c45f9dc035ed2b066b19a569eb80ef1f806d7a0f421956ea92b2dadb779bda",
+  "residual_records_sha256": "a6e3a745bb03eae814a0bf1f45268f96354836f046f958747302c373a9d39590",
   "partition_reconciliation": {
     "input_rows": 119192,
     "absolute_rows_removed_from_residual": 3920,

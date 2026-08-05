@@ -128,7 +128,7 @@ def test_direct_and_oral_exposure_are_explicitly_not_applicable(tmp_path):
     path = tmp_path / "mapping.json"
     _write_mapping(path)
     attacher = AuxiliaryMetadataAttacher(path)
-    for source_id in ("direct_hf", "oral_exposure"):
+    for source_id in ("hf_bioavailability", "oral_exposure"):
         attached = attacher.attach({"source_id": source_id})
         assert attached["auxiliary_mapping_status"] == "not_applicable"
         assert attached["global_context"] is None
@@ -155,7 +155,7 @@ def test_manifest_and_coverage_are_deterministic(tmp_path):
     assert left.manifest() == right.manifest()
     records = [
         {"source_id": "fa", "auxiliary_mapping_status": "mapped"},
-        {"source_id": "direct_hf", "auxiliary_mapping_status": "not_applicable"},
+        {"source_id": "hf_bioavailability", "auxiliary_mapping_status": "not_applicable"},
     ]
     audit = left.coverage_audit(records)
     assert audit["validations"]["all_applicable_records_mapped"] is True

@@ -13,12 +13,37 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+from tools.chembl_tool.common.starling.normalization.measurements import (
+    normalize_measurement_and_unit,
+    parse_point_measurement,
+)
 from tools.chembl_tool.common.starling.normalization.task_policy import (
     ExtraSourceBatch,
     NormalizationHooks,
     SmilesMappingSpec,
     StageDocuments,
     StarlingTaskPolicy,
+)
+from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
+    clean_source_values,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
+    CATEGORICAL_RESPONSE_VERSION,
+    FG_TARGET_ALIAS_VERSION,
+    MEASUREMENT_SCALES,
+    POLICY as CATEGORICAL_RESPONSE_POLICY,
+    canonical_fg_target_id,
+    encoding_policy_manifest,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+    DIRECT_REPORT_TYPES,
+    NONDIRECT_MEASUREMENT_EXTRACTION_VERSION,
+    nondirect_measurement_fields,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
+    RECORD_CONTRACT,
+    SOURCE_ENDPOINT_PRODUCER_IDS,
+    SOURCE_PAIR_PRODUCER_IDS,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_auxiliary_metadata import (
     AUXILIARY_ATTACHMENT_VERSION,
@@ -42,15 +67,20 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_policy im
     endpoint_specific_standardization_of_unit,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
-    DEFAULT_DIRECT_HF_PARQUET,
+    DEFAULT_HF_BIOAVAILABILITY_PARQUET,
+    EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS,
     EXPECTED_SOURCE_ROWS,
-    direct_hf_profile,
-    load_direct_hf_rows,
+    hf_bioavailability_profile,
+    load_hf_bioavailability_rows,
     source_profiles,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
+    DIRECT_EVIDENCE_SCOPE,
+    EVIDENCE_SCOPE_VERSION,
     NORMALIZATION_DOMAIN_RULES_VERSION,
+    NONDIRECT_EVIDENCE_SCOPE,
     REPORT_TYPE_NORMALIZATION_VERSION,
+    bioavailability_evidence_scope,
     enrich_bioavailability_validity,
     validity_policy_manifest,
 )
@@ -77,26 +107,67 @@ EXPECTED_SMILES_MAPPING_SHA256 = (
 )
 DEFAULT_OUT_DIR = (
     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-    "starling_normalized_v6"
+    "starling_normalized_v7"
 )
 DEFAULT_V65_ELIGIBLE_RECORDS = (
     "/data1/joseph/starling_assay_transfer/datasets/eligible/"
     "assay_transfer_soft_evidence_v6_5/records.parquet"
 )
 DEFAULT_BENCHMARK_SPLIT_ROOT = "data/processed_starling/Bioavailability_Ma"
+HF_SOURCE_CLASSIFICATION_VERSION = "bioavailability_hf_evidence_scope.v1"
+HF_DIRECT_FRACTION_PERCENT_VERSION = "hf_direct_fraction_percent.v2"
+DEFAULT_SOURCE_VALUE_REPAIRS = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl"
+)
+
+
+def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
+    require_all = (
+        _include_hf_bioavailability(args)
+        and not _max_hf_rows(args)
+        and not int(getattr(args, "max_rows_per_source", 0) or 0)
+    )
+    return clean_source_values(
+        records,
+        task_id=TASK_ID,
+        reviewed_repairs_path=DEFAULT_SOURCE_VALUE_REPAIRS,
+        require_all_reviewed_repairs=require_all,
+    )
 
 
 def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--smiles-mapping", default=DEFAULT_SMILES_MAPPING)
     parser.add_argument("--auxiliary-mapping", default=str(DEFAULT_MAPPING_PATH))
     parser.add_argument("--allow-unpinned-smiles-mapping", action="store_true")
-    parser.add_argument("--direct-source-parquet", default=str(DEFAULT_DIRECT_HF_PARQUET))
     parser.add_argument(
-        "--include-direct-hf",
+        "--hf-source-parquet",
+        "--direct-source-parquet",
+        dest="hf_source_parquet",
+        default=str(DEFAULT_HF_BIOAVAILABILITY_PARQUET),
+    )
+    parser.add_argument(
+        "--include-hf-bioavailability",
         action=argparse.BooleanOptionalAction,
         default=True,
     )
-    parser.add_argument("--max-direct-rows", type=int, default=0)
+    parser.add_argument(
+        "--include-direct-hf",
+        dest="include_hf_bioavailability",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--no-include-direct-hf",
+        dest="include_hf_bioavailability",
+        action="store_false",
+        default=argparse.SUPPRESS,
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--max-hf-rows", "--max-direct-rows", dest="max_hf_rows", type=int, default=0
+    )
     parser.add_argument(
         "--v65-reconciliation",
         action=argparse.BooleanOptionalAction,
@@ -120,8 +191,34 @@ def validate_arguments(
         parser.error(
             "v6.5 reconciliation is outside the source-aware pair-bucket sidecar contract"
         )
-    if args.max_direct_rows and args.strict_endpoint_inventory:
+    if _max_hf_rows(args) and args.strict_endpoint_inventory:
         parser.error("bounded source runs require --no-strict-endpoint-inventory")
+
+
+def _include_hf_bioavailability(args: argparse.Namespace) -> bool:
+    return bool(
+        getattr(
+            args,
+            "include_hf_bioavailability",
+            getattr(args, "include_direct_hf", True),
+        )
+    )
+
+
+def _max_hf_rows(args: argparse.Namespace) -> int:
+    return int(
+        getattr(args, "max_hf_rows", getattr(args, "max_direct_rows", 0)) or 0
+    )
+
+
+def _hf_source_parquet(args: argparse.Namespace) -> Path:
+    return Path(
+        getattr(
+            args,
+            "hf_source_parquet",
+            getattr(args, "direct_source_parquet", DEFAULT_HF_BIOAVAILABILITY_PARQUET),
+        )
+    )
 
 
 def smiles_mapping(args: argparse.Namespace) -> SmilesMappingSpec:
@@ -154,32 +251,120 @@ def endpoint_inventory(
     }
 
 
-def load_extra_source(args: argparse.Namespace) -> ExtraSourceBatch | None:
-    """Load the pinned complete Direct-HF snapshot."""
-    if not args.include_direct_hf:
+def load_extra_source(
+    args: argparse.Namespace,
+) -> ExtraSourceBatch | None:
+    """Load the complete HF snapshot as one physical evidence source."""
+    if not _include_hf_bioavailability(args):
         return None
-    records_path = Path(args.direct_source_parquet)
-    direct_hash = file_sha256(records_path)
-    rows = load_direct_hf_rows(records_path, max_rows=args.max_direct_rows)
-    expected = EXPECTED_SOURCE_ROWS["direct_hf"]
-    if not args.max_direct_rows and len(rows) != expected:
+    records_path = _hf_source_parquet(args)
+    source_hash = file_sha256(records_path)
+    rows = load_hf_bioavailability_rows(
+        records_path, max_rows=_max_hf_rows(args)
+    )
+    scope_counts = {DIRECT_EVIDENCE_SCOPE: 0, NONDIRECT_EVIDENCE_SCOPE: 0}
+    for row in rows:
+        scope_counts[
+            bioavailability_evidence_scope(
+                row.get("bioavailability_report_type")
+            )
+        ] += 1
+    if not _max_hf_rows(args) and len(rows) != EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS:
         raise ValueError(
-            f"direct HF row-count drift: expected {expected:,}, found {len(rows):,}"
+            "raw HF evidence source drift: "
+            f"rows={len(rows):,}/{EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS:,}"
         )
+    if not _max_hf_rows(args) and scope_counts != {
+        DIRECT_EVIDENCE_SCOPE: 112_245,
+        NONDIRECT_EVIDENCE_SCOPE: 51_570,
+    }:
+        raise ValueError(f"raw HF evidence-scope drift: {scope_counts}")
+    classification = {
+        "version": HF_SOURCE_CLASSIFICATION_VERSION,
+        "raw_source_rows": len(rows),
+        "scope_counts": dict(sorted(scope_counts.items())),
+        "reconciles": sum(scope_counts.values()) == len(rows),
+        "direct_report_types": sorted(DIRECT_REPORT_TYPES),
+    }
     return ExtraSourceBatch(
-        source_id="direct_hf",
-        profile=direct_hf_profile(records_path),
+        source_id="hf_bioavailability",
+        profile=hf_bioavailability_profile(records_path),
         rows=rows,
         source_path=records_path,
-        source_sha256=direct_hash,
+        source_sha256=source_hash,
         endpoint_names=["oral_bioavailability"] if rows else [],
+        inventory_key="hf_bioavailability",
         inventory_entry={
             "records_parquet": str(records_path),
-            "records_sha256": direct_hash,
-            "source_rows": expected,
+            "records_sha256": source_hash,
+            "source_rows": len(rows),
             "historical_partition_dependency": False,
+            "row_classification": classification,
         },
     )
+
+
+def _resolve_source_measurement_pair(
+    record: dict[str, Any],
+    canonical_endpoint: str,
+    baseline_pair: Any,
+):
+    source_id = str(record.get("source_id") or "")
+    if source_id == "hf_bioavailability":
+        measurement_text = str(record.get("measurement_text") or "").strip()
+        scope = bioavailability_evidence_scope(
+            record.get("bioavailability_report_type")
+        )
+        if scope == NONDIRECT_EVIDENCE_SCOPE:
+            extracted = nondirect_measurement_fields(measurement_text)
+            pair = normalize_measurement_and_unit(
+                extracted["measurement_text"],
+                extracted["value_units"],
+                task=TASK_ID,
+            )
+            return endpoint_specific_standardization_of_unit(
+                canonical_endpoint, pair
+            )
+        direct_pair = normalize_measurement_and_unit(
+            measurement_text,
+            "%",
+            task=TASK_ID,
+        )
+        if measurement_text and "%" not in measurement_text:
+            fraction_pair = normalize_measurement_and_unit(
+                measurement_text,
+                "fraction",
+                task=TASK_ID,
+            )
+            parsed = parse_point_measurement(fraction_pair.canonical_measurement)
+            if (
+                parsed.value is not None
+                and parsed.kind not in {"point_with_interval", "mean_with_context"}
+                and 0.0 <= parsed.value <= 1.5
+            ):
+                return endpoint_specific_standardization_of_unit(
+                    canonical_endpoint,
+                    fraction_pair,
+                )
+        return endpoint_specific_standardization_of_unit(
+            canonical_endpoint, direct_pair
+        )
+    return resolve_fg_measurement_pair(record, canonical_endpoint, baseline_pair)
+
+
+def _is_hf_direct_scope_unitless_fraction_scalar(record: dict[str, Any]) -> bool:
+    if (
+        str(record.get("source_id") or "") != "hf_bioavailability"
+        or bioavailability_evidence_scope(
+            record.get("bioavailability_report_type")
+        )
+        != DIRECT_EVIDENCE_SCOPE
+        or record.get("finite_scalar_value") is None
+        or "%" in str(record.get("measurement_text") or "")
+    ):
+        return False
+    source_point = parse_point_measurement(record.get("measurement_text"))
+    return source_point.value is not None and 0.0 <= source_point.value <= 1.5
 
 
 def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
@@ -187,7 +372,7 @@ def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
     return NormalizationHooks(
         endpoint_normalizer=spacing_and_spelling_decision,
         endpoint_standardizer=endpoint_specific_standardization_of_unit,
-        source_measurement_resolver=resolve_fg_measurement_pair,
+        source_measurement_resolver=_resolve_source_measurement_pair,
         family_resolver=family_assignment,
         contextual_standardizer=contextual_standardization_of_unit,
         record_enricher=lambda record: _enrich_record(record, attacher),
@@ -218,7 +403,10 @@ def stage_documents(
     del args
     attacher: AuxiliaryMetadataAttacher = hooks.run_state
     return StageDocuments(
-        validity_policy=validity_policy_manifest(),
+        validity_policy={
+            **validity_policy_manifest(),
+            "categorical_response": encoding_policy_manifest(),
+        },
         auxiliary_mapping_manifest={
             **attacher.manifest(),
             "coverage": attacher.coverage_audit(normalized),
@@ -235,6 +423,13 @@ def stage_documents(
             "globally_reconciled_auxiliary_coverage": True,
             "contextual_unit_policy_loaded": True,
             "contextual_unit_policy_version": unit_policy_manifest["policy_version"],
+            "categorical_response_loaded": True,
+            "categorical_encoders_declared": all(
+                str(row.get("categorical_encoder_id") or "")
+                in MEASUREMENT_SCALES
+                for row in normalized
+                if row.get("categorical_encoder_id")
+            ),
             "heuristic_auxiliary_fields_absent": all(
                 not any(
                     field in row
@@ -260,6 +455,14 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "endpoint_policy_version": ENDPOINT_POLICY_VERSION,
         "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
+        "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
+        "fg_target_alias_version": FG_TARGET_ALIAS_VERSION,
+        "hf_source_classification_version": HF_SOURCE_CLASSIFICATION_VERSION,
+        "bioavailability_evidence_scope_version": EVIDENCE_SCOPE_VERSION,
+        "nondirect_measurement_extraction_version": (
+            NONDIRECT_MEASUREMENT_EXTRACTION_VERSION
+        ),
+        "hf_direct_fraction_percent_version": HF_DIRECT_FRACTION_PERCENT_VERSION,
         "v65_reconciliation": {"status": "not_performed", "matching_performed": False},
     }
     if complete:
@@ -269,12 +472,29 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
 
 
 def census_extras(records: list[dict[str, Any]]) -> dict[str, Any]:
+    encoded: dict[str, int] = {}
+    finite_by_source = {source: 0 for source in EXPECTED_SOURCE_ROWS}
+    for record in records:
+        if record.get("finite_scalar_value") is None:
+            continue
+        source_id = str(record.get("source_id") or "")
+        finite_by_source[source_id] = finite_by_source.get(source_id, 0) + 1
+        encoder_id = str(record.get("categorical_encoder_id") or "")
+        if encoder_id:
+            encoded[encoder_id] = encoded.get(encoder_id, 0) + 1
     return {
         "n_fg_finite_scalars": sum(
             record.get("source_id") == "fg"
             and record.get("finite_scalar_value") is not None
+            and not record.get("categorical_encoder_id")
             for record in records
-        )
+        ),
+        "n_finite_scalars_by_source": dict(sorted(finite_by_source.items())),
+        "n_categorically_encoded_by_encoder": dict(sorted(encoded.items())),
+        "n_hf_direct_unitless_fraction_scalars": sum(
+            _is_hf_direct_scope_unitless_fraction_scalar(record)
+            for record in records
+        ),
     }
 
 
@@ -283,14 +503,65 @@ def _enrich_record(
     auxiliary_attacher: AuxiliaryMetadataAttacher,
 ) -> dict[str, Any]:
     provenance = fg_scalar_rule_provenance(record)
+    nondirect_extraction: dict[str, Any] = {}
+    if (
+        str(record.get("source_id") or "") == "hf_bioavailability"
+        and bioavailability_evidence_scope(
+            record.get("bioavailability_report_type")
+        )
+        == NONDIRECT_EVIDENCE_SCOPE
+    ):
+        extracted = nondirect_measurement_fields(record.get("measurement_text"))
+        nondirect_extraction = {
+            "nondirect_measurement_extraction_version": (
+                NONDIRECT_MEASUREMENT_EXTRACTION_VERSION
+            ),
+            "nondirect_measurement_unit_extraction_status": extracted[
+                "measurement_unit_extraction_status"
+            ],
+        }
     enriched = {**record, **provenance}
     source_projection = llm_source_projection(enriched)
     auxiliary = auxiliary_attacher.attach(enriched)
     with_auxiliary = {**enriched, **auxiliary}
     contextual_fields = contextual_canonical_record_fields(with_auxiliary)
-    validity = enrich_bioavailability_validity({**with_auxiliary, **contextual_fields})
+    canonical = {**with_auxiliary, **contextual_fields}
+    # Preserve a parseable source number even when its unit is unresolved.  A
+    # categorical anchor may fill only a genuinely nonnumeric outcome.
+    parsed_source = parse_point_measurement(canonical.get("canonical_measurement"))
+    encoded = (
+        {}
+        if parsed_source.value is not None
+        else CATEGORICAL_RESPONSE_POLICY.apply(canonical)
+    )
+    if encoded:
+        encoder_id = str(encoded["categorical_encoder_id"])
+        if encoder_id == "direct_oral_bioavailability_binary.v1":
+            semantic_endpoint = "oral_bioavailability_outcome"
+        elif encoder_id == "fg_substrate_status_binary.v1":
+            target_id = canonical_fg_target_id(canonical.get("transporter_or_enzyme"))
+            if target_id is None:
+                raise ValueError("encoded Fg substrate status lacks a canonical target")
+            semantic_endpoint = f"fg_substrate_outcome:{target_id}"
+        else:
+            raise ValueError(f"unknown Bioavailability categorical encoder: {encoder_id}")
+        encoded = {**encoded, "canonical_endpoint": semantic_endpoint}
+    source_id = str(record.get("source_id") or "")
+    producer_id = str(encoded.get("categorical_encoder_id") or "")
+    producer_fields = {
+        "canonical_endpoint_producer_id": (
+            producer_id or SOURCE_ENDPOINT_PRODUCER_IDS[source_id]
+        ),
+        "canonical_pair_producer_id": (
+            producer_id or SOURCE_PAIR_PRODUCER_IDS[source_id]
+        ),
+    }
+    validity = enrich_bioavailability_validity(
+        {**canonical, **encoded, **producer_fields}
+    )
     return {
         **provenance,
+        **nondirect_extraction,
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
         "llm_source_contract_json": json.dumps(
             {
@@ -308,6 +579,8 @@ def _enrich_record(
         ),
         **auxiliary,
         **contextual_fields,
+        **encoded,
+        **producer_fields,
         **validity,
     }
 
@@ -319,6 +592,8 @@ POLICY = StarlingTaskPolicy(
     default_out_dir=DEFAULT_OUT_DIR,
     compact=COMPACT_PROFILE,
     expected_source_rows=EXPECTED_SOURCE_ROWS,
+    record_contract=RECORD_CONTRACT,
+    source_value_cleaner=_clean_source_values,
     source_profiles=source_profiles,
     endpoint_inventory=endpoint_inventory,
     family_resolver=family_assignment,
@@ -331,6 +606,11 @@ POLICY = StarlingTaskPolicy(
     load_extra_source=load_extra_source,
     census_extras=census_extras,
     smiles_mapping=smiles_mapping,
+    scientific_assets=(DEFAULT_SOURCE_VALUE_REPAIRS,),
+    family_resolver_input_fields=(
+        "canonical_bioavailability_evidence_scope",
+        "bioavailability_report_type",
+    ),
 )
 
 

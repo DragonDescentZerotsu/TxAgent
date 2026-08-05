@@ -1,0 +1,313 @@
+{
+  "schema_version": "qualifier_vocabulary.schema.v1",
+  "policy_version": "qualifier_vocabulary.v1",
+  "vocabularies": [
+    {
+      "scope": "shared",
+      "task": null,
+      "tokens": [
+        "Eq",
+        "blood",
+        "body",
+        "change",
+        "control",
+        "dose",
+        "eq",
+        "equiv",
+        "equivalent",
+        "equivalents",
+        "increase",
+        "initial",
+        "of",
+        "organ",
+        "plasma",
+        "protein",
+        "serum",
+        "tissue",
+        "total",
+        "weight",
+        "wet",
+        "wt"
+      ],
+      "review": {
+        "decision": "approved_shared",
+        "rationale": "Occurs in the real unit strings of every task, so scoping to one task would silently drop it elsewhere.",
+        "records_by_token": {
+          "change": {
+            "bioavailability_ma": 8,
+            "bbb_martins": 1,
+            "skin_reaction": 94
+          },
+          "control": {
+            "bioavailability_ma": 122,
+            "bbb_martins": 57,
+            "skin_reaction": 223
+          },
+          "dose": {
+            "bioavailability_ma": 249,
+            "bbb_martins": 918,
+            "skin_reaction": 14516
+          },
+          "of": {
+            "bioavailability_ma": 632,
+            "bbb_martins": 1327,
+            "skin_reaction": 14202
+          },
+          "protein": {
+            "bioavailability_ma": 7468,
+            "bbb_martins": 393,
+            "skin_reaction": 249
+          },
+          "tissue": {
+            "bioavailability_ma": 135,
+            "bbb_martins": 2191,
+            "skin_reaction": 843
+          },
+          "weight": {
+            "bioavailability_ma": 79,
+            "bbb_martins": 421,
+            "skin_reaction": 384
+          },
+          "wet": {
+            "bioavailability_ma": 22,
+            "bbb_martins": 746,
+            "skin_reaction": 214
+          },
+          "wt": {
+            "bioavailability_ma": 74,
+            "bbb_martins": 186,
+            "skin_reaction": 87
+          },
+          "initial": {
+            "bioavailability_ma": 3,
+            "bbb_martins": 5,
+            "skin_reaction": 407
+          },
+          "blood": {
+            "bioavailability_ma": 68,
+            "bbb_martins": 73,
+            "skin_reaction": 33
+          },
+          "organ": {
+            "bioavailability_ma": 3,
+            "bbb_martins": 128,
+            "skin_reaction": 9
+          },
+          "plasma": {
+            "bioavailability_ma": 1,
+            "bbb_martins": 199,
+            "skin_reaction": 19
+          },
+          "body": {
+            "bioavailability_ma": 109,
+            "bbb_martins": 23,
+            "skin_reaction": 154
+          },
+          "total": {
+            "bioavailability_ma": 45,
+            "bbb_martins": 78,
+            "skin_reaction": 541
+          },
+          "Eq": {
+            "bioavailability_ma": 37,
+            "bbb_martins": 10,
+            "skin_reaction": 253
+          },
+          "eq": {
+            "bioavailability_ma": 86,
+            "bbb_martins": 55,
+            "skin_reaction": 256
+          },
+          "equiv": {
+            "bioavailability_ma": 24,
+            "bbb_martins": 52,
+            "skin_reaction": 163
+          },
+          "equivalent": {
+            "bioavailability_ma": 4,
+            "bbb_martins": 12,
+            "skin_reaction": 36
+          },
+          "equivalents": {
+            "bioavailability_ma": 14,
+            "bbb_martins": 34,
+            "skin_reaction": 123
+          },
+          "increase": {
+            "bioavailability_ma": 51,
+            "bbb_martins": 10,
+            "skin_reaction": 145
+          },
+          "serum": {
+            "bioavailability_ma": 8,
+            "bbb_martins": 149,
+            "skin_reaction": 17
+          }
+        },
+        "assignment_rule": "shared iff the token appears in the cleaned unit strings of all three tasks"
+      }
+    },
+    {
+      "scope": "task",
+      "task": "bioavailability_ma",
+      "tokens": [
+        "CYP",
+        "CYP1A1",
+        "CYP1A2",
+        "CYP2A13",
+        "CYP2A6",
+        "CYP2B6",
+        "CYP2C19",
+        "CYP2C8",
+        "CYP2C9",
+        "CYP2D6",
+        "CYP2E1",
+        "CYP3A",
+        "CYP3A2",
+        "CYP3A4",
+        "CYP3A5",
+        "CYP450",
+        "CYPa",
+        "CYPs",
+        "Cyp",
+        "P-450",
+        "P450",
+        "absorbed",
+        "bile",
+        "decrease",
+        "gut",
+        "intestine",
+        "liver",
+        "reduction"
+      ],
+      "review": {
+        "decision": "approved_task_scoped",
+        "rationale": "Dose-basis and compartment modifiers on units that are otherwise fully parsed; the dimension is already correct and only the unresolved token blocked folding. 'absorbed' occurs in bioavailability and skin but not BBB, so it cannot be shared. Enzyme designators, organ/compartment names, radiolabel equivalents and change-direction words. In every case the dimension already parses correctly and only the unresolved name blocked folding; keeping the name in the canonical key is what holds CYP2D6 and CYP3A4 -- or liver and kidney -- in separate pair buckets. The CYP/P450 list is a literal enumeration of the forms observed in the data (CYPa/CYPs/Cyp are OCR variants): a new isoform will fail closed until it is added here, which is the accepted trade for not guessing from a pattern.",
+        "records_by_token": {
+          "absorbed": 4,
+          "CYP": 681,
+          "CYP1A1": 1,
+          "CYP1A2": 4,
+          "CYP2A13": 13,
+          "CYP2A6": 5,
+          "CYP2B6": 51,
+          "CYP2C19": 31,
+          "CYP2C8": 21,
+          "CYP2C9": 15,
+          "CYP2D6": 82,
+          "CYP2E1": 19,
+          "CYP3A": 9,
+          "CYP3A2": 3,
+          "CYP3A4": 59,
+          "CYP3A5": 6,
+          "CYP450": 27,
+          "CYPa": 12,
+          "CYPs": 2,
+          "Cyp": 1,
+          "P-450": 105,
+          "P450": 1458,
+          "bile": 1,
+          "decrease": 21,
+          "gut": 7,
+          "intestine": 16,
+          "liver": 730,
+          "reduction": 24
+        }
+      }
+    },
+    {
+      "scope": "task",
+      "task": "bbb_martins",
+      "tokens": [
+        "ID",
+        "administered",
+        "applied",
+        "brain",
+        "from",
+        "injected",
+        "radioactivity",
+        "recovered",
+        "the",
+        "untreated",
+        "vehicle"
+      ],
+      "review": {
+        "decision": "approved_task_scoped",
+        "rationale": "Brain-distribution and injected-dose vocabulary. Shared with skin_reaction but absent from bioavailability_ma, so it must not be global.",
+        "records_by_token": {
+          "applied": 2,
+          "brain": 1501,
+          "from": 1,
+          "injected": 438,
+          "recovered": 8,
+          "untreated": 2,
+          "vehicle": 2,
+          "administered": 74,
+          "the": 286,
+          "radioactivity": 57,
+          "ID": 724
+        }
+      }
+    },
+    {
+      "scope": "task",
+      "task": "skin_reaction",
+      "tokens": [
+        "CYP3A4",
+        "ID",
+        "P450",
+        "absorbed",
+        "administered",
+        "applied",
+        "bile",
+        "brain",
+        "decrease",
+        "from",
+        "injected",
+        "liver",
+        "material",
+        "mock",
+        "muscle",
+        "radioactivity",
+        "recovered",
+        "reduction",
+        "responders",
+        "skin",
+        "the",
+        "untreated",
+        "urine",
+        "vehicle"
+      ],
+      "review": {
+        "decision": "approved_task_scoped",
+        "rationale": "Topical-application and sensitization vocabulary. 'material', 'mock', 'responders' and 'skin' occur in no other task's records. Enzyme designators, organ/compartment names, radiolabel equivalents and change-direction words. In every case the dimension already parses correctly and only the unresolved name blocked folding; keeping the name in the canonical key is what holds CYP2D6 and CYP3A4 -- or liver and kidney -- in separate pair buckets. The CYP/P450 list is a literal enumeration of the forms observed in the data (CYPa/CYPs/Cyp are OCR variants): a new isoform will fail closed until it is added here, which is the accepted trade for not guessing from a pattern.",
+        "records_by_token": {
+          "applied": 9527,
+          "brain": 7,
+          "from": 3,
+          "injected": 1,
+          "material": 7,
+          "mock": 1,
+          "recovered": 240,
+          "responders": 6,
+          "skin": 1134,
+          "untreated": 16,
+          "vehicle": 42,
+          "administered": 545,
+          "absorbed": 307,
+          "the": 25,
+          "radioactivity": 337,
+          "ID": 2,
+          "CYP3A4": 1,
+          "P450": 2,
+          "bile": 8,
+          "decrease": 2,
+          "liver": 1,
+          "muscle": 1,
+          "reduction": 9,
+          "urine": 9
+        }
+      }
+    }
+  ]
+}

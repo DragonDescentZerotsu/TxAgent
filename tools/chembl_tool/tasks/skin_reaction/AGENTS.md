@@ -304,6 +304,11 @@ Stages 01-03 are built by the shared normalized-record driver. The split-aware s
 transactionally by `common/starling/split_downstream.py`, with thin task bindings in
 `build_starling_downstream_artifacts.py`:
 
+The current v7 tree uses `02_canonicalized` and `05_distance_calibration`. Stage 04 is the sole bucket
+membership authority. Stage 05 uses rank geometry for the declared binary/ordinal scales, requires both
+binary levels or at least three ordinal levels with three records per observed level, and emits no transfer
+cutoff, Boolean label, or soft probability. The layout below documents frozen v6 lineage.
+
 ```text
 starling_normalized_v6/
   01_cleaned/{records.parquet, manifest.json, source_inventory.json, endpoint_inventory.json}
@@ -351,9 +356,9 @@ parser.
 
 ### Categorical response encoding
 
-`starling_categorical_response.py` places the informative subset of the categorical records on a named
-latent scale, after which nothing downstream changes: bucket membership, the within-bucket SD
-standardisation, the empirical percentile curve and the transfer label all work unmodified.
+`starling_categorical_response.py` places the informative subset of categorical records into a frozen
+source-and-input registry. Stage 02 persists the declared measurement kind and canonical category identity;
+Stage 04 assigns bucket membership; Stage 05 uses category rank only for distance geometry.
 
 Five encoders on three scales. Each is confined to one source, and precedence is strict — the first that
 matches wins, so a record backed by real counts is never downgraded to an anchor:
@@ -481,7 +486,7 @@ random/scaffold record views; Stages 07 and 08 are built only from those filtere
 publisher validates the complete candidate tree and atomically replaces Stages 04-09, restoring the
 previous tree if publication fails.
 
-### Assay-transfer policy and the heldout filter
+### Historical v6 assay-transfer policy and heldout filter
 
 Stage 05 follows the same contract Bioavailability_Ma uses: the pair bucket is the only comparison
 stratum, eligible buckets need at least 25 records, the raw candidate columns feed an ω² heterogeneity

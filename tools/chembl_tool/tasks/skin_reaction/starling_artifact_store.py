@@ -12,11 +12,11 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.tasks.skin_reaction.starling_policy import DEFAULT_OUT_DIR
-
-
 STORE_VERSION = "skin_reaction.normalized_v6_store.v2"
-DEFAULT_LOCAL_ROOT = Path(DEFAULT_OUT_DIR)
+DEFAULT_LOCAL_ROOT = Path(
+    "outputs/chembl_tool/tasks/skin_reaction/evidence_library/"
+    "starling_normalized_v6"
+)
 DEFAULT_TRACKED_ROOT = Path(
     "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v6"
 )

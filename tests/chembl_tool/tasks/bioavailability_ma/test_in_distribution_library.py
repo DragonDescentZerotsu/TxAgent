@@ -8,8 +8,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_starling_in_dist
     build_in_distribution_evidence_rows,  # noqa: F401  (imported for symmetry)
     concept_from_endpoint_key,
     evidence_row_from_record,
+    group_for_record,
     in_distribution_catalog_record,
     molecule_id_for,
+    template_context_from_record,
 )
 
 
@@ -75,6 +77,37 @@ def test_rows_out_of_scope_or_no_smiles_are_dropped():
     assert evidence_row_from_record(_record(smiles="")) is None
 
 
+def test_hf_report_type_controls_direct_nondirect_group() -> None:
+    relative = _record(
+        canonical_endpoint_key="q1.oral_bioavailability.f.ratio",
+        assay_concept="oral_bioavailability",
+        source_id="starling",
+        context_report_or_statistic_type="relative_comparison",
+    )
+    absolute = {
+        **relative,
+        "context_report_or_statistic_type": "absolute",
+    }
+    q1_statistic = {
+        **relative,
+        "source_id": "q1",
+        "context_report_or_statistic_type": "arithmetic_mean",
+    }
+
+    assert group_for_record(relative, "oral_bioavailability")[0] == (
+        "Observed.nondirect_oral_bioavailability"
+    )
+    assert group_for_record(absolute, "oral_bioavailability")[0] == (
+        "Observed.direct_oral_bioavailability"
+    )
+    assert group_for_record(q1_statistic, "oral_bioavailability")[0] == (
+        "Observed.direct_oral_bioavailability"
+    )
+    assert evidence_row_from_record(relative)["group_id"] == (
+        "Observed.nondirect_oral_bioavailability"
+    )
+
+
 def test_molecule_id_is_stable_per_smiles():
     a = molecule_id_for("c1ccccc1")
     b = molecule_id_for("c1ccccc1")
@@ -100,6 +133,22 @@ def test_catalog_record_renders_in_distribution_v6_5():
     assert "known value: 1.5 dimensionless" in prompt
     assert "substrate status: substrate" in prompt
     assert "index." not in prompt  # never the synthetic reconstructed key
+
+
+def test_catalog_retains_distinct_source_native_context_fields():
+    context = template_context_from_record(
+        _record(
+            study_context="single oral dose",
+            oral_exposure_mode="oral solution",
+            assay_system="Caco-2 cells with a pH gradient",
+        )
+    )
+
+    assert context["study_context"] == "single oral dose"
+    assert context["oral_exposure_mode"] == "oral solution"
+    assert context["assay_system"] == "Caco-2 cells with a pH gradient"
+    # Retained only for checkpoints trained on the historical collapsed prompt.
+    assert context["study_or_assay_system"] == "single oral dose"
 
 
 def test_categorical_or_nonscalar_record_is_unscoreable():

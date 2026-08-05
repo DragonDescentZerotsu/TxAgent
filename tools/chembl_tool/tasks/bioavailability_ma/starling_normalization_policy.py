@@ -54,6 +54,10 @@ _CLEARANCE_ENDPOINTS = {
     "oral_clearance",
 }
 
+# Qualifier vocabulary for every unit parsed by this task.
+_TASK_VOCAB = "bioavailability_ma"
+
+
 
 def endpoint_measurement_classes(canonical_endpoint: str) -> tuple[str, ...]:
     """Return reviewed compatible target representations for one endpoint."""
@@ -142,7 +146,7 @@ def endpoint_specific_standardization_of_unit(
 
     for measurement_class in classes:
         standardized = standardize_measurement_pair(
-            pair, measurement_class=measurement_class
+            pair, measurement_class=measurement_class, task=_TASK_VOCAB
         )
         if standardized.status == "endpoint_standardized":
             return standardized

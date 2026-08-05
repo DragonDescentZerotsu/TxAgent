@@ -49,7 +49,10 @@ def _materialize(records):
 
 def test_bioavailability_source_field_mapping_uses_only_persisted_canonical_fields():
     assert SOURCE_PAIR_FIELDS == {
-        "direct_hf": ("canonical_bioavailability_report_type",),
+        "hf_bioavailability": (
+            "canonical_bioavailability_report_type",
+            "canonical_bioavailability_evidence_scope",
+        ),
         "oral_exposure": (),
         "fa": ("global_context", "global_species_context"),
         "fg": ("global_context", "global_species_context"),

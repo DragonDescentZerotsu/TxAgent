@@ -73,7 +73,7 @@ def test_manifest_classifies_every_artifact_column_for_every_source():
     assert normalized_column_contract("fg", columns)["global_context"] is False
     assert normalized_column_contract("fh", columns)["global_species_context"] is False
     assert normalized_column_contract("fa", columns)["canonical_unit_rule_id"] is False
-    assert normalized_column_contract("direct_hf", columns)["endpoint_name"] is False
+    assert normalized_column_contract("hf_bioavailability", columns)["endpoint_name"] is False
 
 
 def test_minimal_evidence_preserves_explicit_source_provenance_only_inside_contract():

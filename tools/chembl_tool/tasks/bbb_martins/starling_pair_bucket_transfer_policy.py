@@ -19,7 +19,6 @@ from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
 
 PAIR_BUCKET_TRANSFER_POLICY_VERSION = "bbb_martins_pair_bucket_transfer_policy.v1"
 MINIMUM_DISTINCT_MEASUREMENT_LEVELS = 2
-HELDOUT_SOURCES = frozenset({"direct_bbb"})
 
 SOURCE_CANDIDATE_FIELDS: dict[str, tuple[str, ...]] = {
     "direct_bbb": ("bbb_transport_label", "qualifying_conditions"),
@@ -40,7 +39,6 @@ TRANSFER_POLICY_PROFILE = TransferPolicyProfile(
     version=PAIR_BUCKET_TRANSFER_POLICY_VERSION,
     source_candidate_fields=SOURCE_CANDIDATE_FIELDS,
     minimum_distinct_levels=MINIMUM_DISTINCT_MEASUREMENT_LEVELS,
-    heldout_sources=HELDOUT_SOURCES,
 )
 
 
@@ -73,7 +71,6 @@ def validate_pair_bucket_transfer_policy(payload: Mapping[str, Any]) -> None:
 
 
 __all__ = [
-    "HELDOUT_SOURCES",
     "MINIMUM_DISTINCT_MEASUREMENT_LEVELS",
     "PAIR_BUCKET_TRANSFER_POLICY_VERSION",
     "SOURCE_CANDIDATE_FIELDS",
@@ -83,4 +80,3 @@ __all__ = [
     "select_variance_candidate",
     "validate_pair_bucket_transfer_policy",
 ]
-

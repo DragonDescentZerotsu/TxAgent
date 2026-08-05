@@ -23,13 +23,26 @@ def deduplicate_within_source(
     kept_by_key: dict[str, dict[str, Any]] = {}
     duplicate_ids: dict[str, list[str]] = defaultdict(list)
     duplicate_rows: list[dict[str, Any]] = []
-    for source in sorted(
-        (dict(record) for record in records),
-        key=lambda item: (
-            str(item.get("source_id") or ""),
-            int(item.get("source_row_number") or 0),
-        ),
-    ):
+    order_key = lambda item: (  # noqa: E731 - reused for the monotonic fast path
+        str(item.get("source_id") or ""),
+        int(item.get("source_row_number") or 0),
+    )
+    already_ordered = all(
+        order_key(records[index - 1]) <= order_key(records[index])
+        for index in range(1, len(records))
+    )
+    ordered: Sequence[Mapping[str, Any]] = (
+        records if already_ordered else sorted(records, key=order_key)
+    )
+    for source_view in ordered:
+        source = source_view
+        context_identity = source.get("deduplication_context_id")
+        if not context_identity:
+            context_identity = stable_id(
+                "source_context",
+                source.get("source_id"),
+                str(source.get("evidence_context_json") or "{}"),
+            )
         key = stable_id(
             "duplicate",
             source.get("source_id"),
@@ -39,13 +52,13 @@ def deduplicate_within_source(
             source.get("endpoint_name"),
             source.get("canonical_measurement"),
             source.get("canonical_unit"),
-            source.get("evidence_context_json"),
+            context_identity,
             source.get("support_text"),
         )
         existing = kept_by_key.get(key)
         source_record_id = str(source.get("source_record_id") or "")
         if existing is None:
-            kept_by_key[key] = source
+            kept_by_key[key] = dict(source)
             duplicate_ids[key].append(source_record_id)
             continue
         duplicate_ids[key].append(source_record_id)

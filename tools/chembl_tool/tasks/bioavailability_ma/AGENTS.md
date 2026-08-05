@@ -1,17 +1,18 @@
 # Bioavailability_Ma paper-path notes
 
-本目录只保留可进入论文主方法的简洁 pipeline：通用 evidence contract、molecule-level retrieval、
-single/group/final LLM reasoning 和 task ontology。历史 Fa/Fg/Fh full expert policy、deterministic
-force/block/rescue、fallback calibration、postprocess 和 test-error-driven evolution 已从 `main` 删除。
+This directory retains only the streamlined pipeline used by the main paper method: the shared evidence
+contract, molecule-level retrieval, single/group/final LLM reasoning, and task ontology. The historical
+Fa/Fg/Fh full expert policy, deterministic force/block/rescue logic, fallback calibration, postprocessing,
+and test-error-driven evolution have been removed from `main`.
 
-旧实现的完整快照保存在：
+A complete snapshot of the old implementation is preserved at:
 
 ```text
 branch: archive/bioavailability-full-expert-policy-20260710
 commit: 14803c2
 ```
 
-不要从该 archive 向 paper path 恢复 class-changing policy。
+Do not restore class-changing policy from this archive into the paper path.
 
 ## Task contract
 
@@ -25,26 +26,27 @@ label:
   Y=0 -> low, oral bioavailability F < 20%
 ```
 
-新的 Starling-held-out benchmark 由 `starling_benchmark.py` 构建：只接受可确认 human context 的
-direct oral F；百分数与明确 fraction 统一到 percent，跨 20% 的 range、relative comparison、
-非 human、population 不明或 `qualifying_conditions` 非空的记录都不进入 gold label。
-parent-level 0/1 冲突按 accepted source record 计算 70% agreement；同 PMID 多条 record 分别计票，
-精确 tie 或 agreement 低于 70% 才拒绝。
-这里的 benchmark label conversion 与下文禁止的 inference-time Starling label policy 是两回事；
-它不能进入 LLM prompt 或改变有效 prediction。
+The new Starling-held-out benchmark is built by `starling_benchmark.py`. It accepts only direct oral F records
+with a confirmed human context. Percentages and explicit fractions are normalized to percent. Ranges crossing
+20%, relative comparisons, non-human records, records with an unknown population, and records with nonempty
+`qualifying_conditions` do not contribute gold labels. Parent-level 0/1 conflicts use 70% agreement across
+accepted source records. Multiple records from the same PMID vote separately; only an exact tie or agreement
+below 70% is rejected. This benchmark-label conversion is separate from the inference-time Starling label
+policy prohibited below. It must not enter the LLM prompt or modify a valid prediction.
 
-当前 canonical-direct v2 build 位于：
+The current canonical-direct v2 build is located at:
 
 ```text
 data/processed_starling/Bioavailability_Ma/random/
 data/processed_starling/Bioavailability_Ma/scaffold/
 ```
 
-共有 2,092 个 binary parents；两种构造方法的 valid/test target 均为 209。公共构建/审计协议见
-`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。正式运行前必须按各 split 的
-valid+test union `heldout_molecule_labels.jsonl` 分别重建 train-only retrieval index。
+It contains 2,092 binary parents; both construction methods target 209 validation and 209 test parents. See
+`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md` for the shared build and audit protocol.
+Before a formal run, rebuild a separate train-only retrieval index for each split using the valid+test union
+in `heldout_molecule_labels.jsonl`.
 
-Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，不是 LLM function tool。
+Exact-query evidence is disabled by default. Neighbor retrieval is evidence prefetch, not an LLM function tool.
 
 ## Paper pipeline
 
@@ -59,35 +61,35 @@ source rows
   -> structured-output validation only
 ```
 
-允许的工程防护：
+Allowed engineering safeguards:
 
-- canonical SMILES 和 molecule-level aggregation；
-- exact-query exclusion；
-- source/provenance 保留；
-- single branch 的 `molecule_properties`；
-- group branch 的 `mmp_structure_compare` / `properties_compare`；
-- JSON schema validation 和有 trace 的 bounded retry（当前默认最多 4 次总尝试）；
-- trace、batch resume 和 metrics。
+- canonical SMILES and molecule-level aggregation;
+- exact-query exclusion;
+- source and provenance retention;
+- `molecule_properties` in the single branch;
+- `mmp_structure_compare` and `properties_compare` in group branches;
+- JSON schema validation and traced bounded retries, currently at most four total attempts;
+- traces, batch resume, and metrics.
 
-禁止添加：
+Do not add:
 
-- `force_high` / `force_low`；
-- final prediction override；
-- 针对某个 test molecule 或 failure pattern 的 blocker/rescue；
-- Starling-specific label policy；
-- valid/test-selected postprocess；
-- 将内部 `evidence_direction` / `evidence_strength` 直接发送给 LLM。
+- `force_high` / `force_low`;
+- final prediction override;
+- blockers or rescues targeting a particular test molecule or failure pattern;
+- Starling-specific label policy;
+- valid/test-selected postprocess;
+- direct exposure of internal `evidence_direction` or `evidence_strength` fields to the LLM.
 
 ## Minimal evidence contract
 
-所有 ChEMBL、Starling 和未来 source row 在 LLM prompt 中统一使用：
+All ChEMBL, Starling, and future source rows use the following representation in LLM prompts:
 
 ```text
 tools/chembl_tool/common/evidence_contract.py
 contract_version: minimal_evidence.v1
 ```
 
-Contract 包含：
+The contract contains:
 
 ```text
 source
@@ -101,21 +103,22 @@ provenance
 representative examples
 ```
 
-其中 `transferability=not_assessed` 是 retrieval-time 默认值；query-specific transferability 必须由
-group LLM 根据结构比较和 evidence context 判断。Contract 不包含 threshold vote 或 label recommendation。
+`transferability=not_assessed` is the retrieval-time default. The group LLM must assess query-specific
+transferability from the structural comparison and evidence context. The contract contains no threshold vote
+or label recommendation.
 
 ## Data sources
 
-Paper-facing source/group mapping 的唯一配置入口：
+The only configuration entry point for paper-facing source/group mappings is:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py
 ```
 
-它声明 ChEMBL/Starling 的 direct groups 和 5 个 mechanism families；不得在 runner 或 source adapter 中
-复制该 mapping。
+It declares the ChEMBL and Starling direct groups and five mechanism families. Do not duplicate this mapping
+in a runner or source adapter.
 
-ChEMBL evidence library：
+ChEMBL evidence library:
 
 ```text
 outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/
@@ -123,7 +126,7 @@ outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/
   bioavailability_neighbor_index.pkl
 ```
 
-Starling task data：
+Starling task data:
 
 ```text
 data/starling_data/bioavailability_ma/
@@ -143,69 +146,130 @@ data/starling_data/bioavailability_ma/
   Fh/extractions.parquet
 ```
 
-统一 canonical source 构建入口：
+Unified canonical-source build entry point:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
 ```
 
-原始 HF snapshot 与 local parquet 不原地修改。Local `bioavailability` 行只有出现明确 absolute wording 或
-oral/IV anchor 才转入 canonical direct；relative 与没有 absolute anchor 的 ambiguous rows 留在 residual。
-跨 HF/local 的同 parent+PMID 近等值 claim 做一对一去重并保留双来源 provenance。Gold builder 与 agent
-direct evidence 必须读取同一个 `direct_claims.parquet` SHA-256。
+The original HF snapshot and local Parquet are not modified in place. A local `bioavailability` row enters
+canonical direct only when it contains explicit absolute wording or an oral/IV anchor. Relative and ambiguous
+rows without an absolute anchor remain residual evidence. Near-equal claims sharing the same parent and PMID
+across HF and local data are deduplicated one-to-one while retaining provenance from both sources. The gold
+builder and agent direct evidence must read the same `direct_claims.parquet` SHA-256.
 
-Starling factor builder：
+Starling factor builder:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py
 ```
 
-Starling gold benchmark adapter：
+Starling gold benchmark adapter:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
 ```
 
-前者构建 inference-time evidence/index；后者只实现 direct human oral F 的 binary label adapter。
-二者不能互相替代。
+The former builds inference-time evidence and indexes; the latter implements only the binary-label adapter
+for direct human oral F. They are not interchangeable.
 
-Starling factor builder 使用 shared profile ingestion：
+The Starling factor builder uses shared profile ingestion:
 
 ```text
 tools/chembl_tool/common/starling/evidence_library.py
 ```
 
-Task wrapper 只声明 column mapping 和 group/role：
+The task wrapper declares only column mappings and group/role assignments:
 
 | Source | Group | Evidence role |
 |---|---|---|
-| canonical direct v2 claims | `Observed.direct_oral_bioavailability` | `direct_outcome` |
+| `hf_bioavailability` rows with `direct` evidence scope | `Observed.direct_oral_bioavailability` | `direct_outcome` |
+| `hf_bioavailability` rows with `nondirect` evidence scope | `Observed.nondirect_oral_bioavailability` | `surrogate_proxy` |
 | residual Oral_AUC-Cmax/relative/ambiguous rows | `Observed.oral_auc_cmax_exposure` | `surrogate_proxy` |
 | Fa parquet | `Fa.absorption_solubility_permeability` | `mechanistic_factor` |
 | Fg parquet | `Fg.gut_wall_efflux_intestinal_metabolism` | `mechanistic_factor` |
 | Fh parquet | `Fh.hepatic_clearance_metabolic_stability` | `mechanistic_factor` |
 
-Fa/Fg/Fh 是 task ontology，不是 deterministic classifier。Final prediction 仍由 LLM 根据 group outputs
-综合得出。
+Fa/Fg/Fh form the task ontology, not a deterministic classifier. The LLM still produces the final prediction
+by synthesizing the group outputs.
 
 ## Source ingestion rules
 
-- Parquet column 差异通过 `StarlingSourceProfile` 配置解决，不为每个 parquet 写独立 parser。
-- 缺少 SMILES 或 RDKit 无法解析的 row 不进入结构 retrieval，并计入 source stats。
-- SMILES 在聚合前 canonicalize；同一 canonical molecule 跨 profile 使用相同 source molecule id。
-- 多条 source row 聚合成一个 molecule/group evidence row；代表性 examples 保留 endpoint、value、unit、
-  context 和 support text 的绑定。
-- PMID/DOI 可保留在 raw internal row 中，但不能进入 LLM-visible minimal evidence。
-- Direct numeric outcome 只有在 endpoint 单一、unit 一致时才生成 aggregate measurement；proxy/mechanism
-  evidence 保留 examples，不把异构数值混成一个 synthetic value。
+- Resolve Parquet column differences through `StarlingSourceProfile`; do not write a separate parser for each Parquet file.
+- Rows with missing SMILES or structures that RDKit cannot parse do not enter structural retrieval and are counted in source statistics.
+- Canonicalize SMILES before aggregation; the same canonical molecule uses the same source molecule ID across profiles.
+- Aggregate multiple source rows into one molecule/group evidence row; representative examples preserve the binding among endpoint, value, unit, context, and support text.
+- PMID and DOI may remain in raw internal rows but must not enter LLM-visible minimal evidence.
+- Generate an aggregate measurement for a direct numeric outcome only when the endpoint is uniform and units are consistent. Proxy and mechanism evidence retain examples instead of combining heterogeneous values into a synthetic value.
 
-## Layered normalized-record library
+## Canonical v7 record library
+
+The v7 build reads the complete immutable 163,815-row `Direct_HF/records.parquet`
+once as the single physical source `hf_bioavailability`. Stage 02 persists
+`canonical_bioavailability_evidence_scope=direct|nondirect` on each HF row,
+derived from `bioavailability_report_type`; source identity, file hash, and
+`source_index` do not change with that role. The derived `canonical_direct_v2`
+Parquets remain benchmark and audit lineage and are not v7 retrieval inputs.
+Both evidence groups are indexed by default;
+`--exclude-nondirect-bioavailability-records` filters the nondirect group at
+retrieval time before neighbor ranking and top-k selection.
+
+The paper-facing factor builder follows the same row-level HF scope. It never
+feeds a nondirect row through the direct percent parser: explicit `%`, `fold`,
+or `ratio` measurements are retained with their real unit, while unitless
+relative/apparent values remain qualitative evidence. The repaired paper
+artifacts use the versioned `bioavailability_starling_*_v3` directories.
 
 The side-by-side layered Starling builder is:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py
 ```
+
+The task schema is declared once in `starling_schema.py`. Stage 01 performs only source-visible cleaning.
+The raw endpoint, value, unit, and structure roles become `endpoint_name`, `measurement_text`, `unit_text`,
+and `smiles`; every other field keeps its actual source name. Dataset constants used by the HF source are working
+inputs, not source-visible claims.
+
+Stage 02 writes `02_canonicalized/`. Final integration fields use `canonical_*` names. Measurement and unit
+are one atomic reviewed decision, and mapped structures use `canonical_smiles` without replacing the raw
+source `smiles`. Fa/Fg/Fh assay and species dimensions list the real fields that supplied them. In particular,
+Fg may derive both `canonical_assay_context` and `canonical_species_context` from `assay_system`; it must not
+invent a cleaned species alias.
+
+Pair-bucket identity is declared in the same schema and contains only canonical fields. A cleaned field used
+by ordinary canonicalization cannot also be a variance candidate. An input used only by a conditional
+categorical encoder may remain a variance candidate for continuous rows; it is excluded from the selected
+categorical scale's residual audit. Untouched fields such as conditions, formulation, dose, transporter, or
+site may be variance candidates but do not create hidden child buckets. The ordinary
+build root is `starling_normalized_v7`; the frozen v6 tree and paper artifacts remain
+read-only lineage.
+
+```text
+starling_normalized_v7/
+  01_cleaned/
+  02_canonicalized/
+  03_records/
+  04_pair_buckets/
+  05_distance_calibration/
+  06_remove_heldout_overlap/
+  07_molecule_evidence/
+  08_neighbor_index/
+  09_audits/
+```
+
+Stage 04 alone defines membership. Stage 05 validates buckets with `n >= 25`, audits untouched source
+fields for residual heterogeneity, and stores SD plus empirical percentile knots. Bioavailability uses
+continuous geometry plus two controlled binary scales: explicit direct oral-F `low/high`, and Fg
+`not_substrate/substrate`. Numeric measurements always take precedence. Fg categorical endpoints include a
+reviewed transporter/enzyme target ID so different targets never share a categorical bucket; numeric Fg
+grouping is unchanged. The separate nondirect HF partition never uses the direct categorical encoder.
+Ambiguous direct wording, uninformative Fg statuses, and Fg rows without a target remain non-scalar
+evidence. The categorical anchors are distance geometry, not benchmark labels or final
+prediction overrides. The v7 calibration contains no transfer cutoff, Boolean label, or soft probability.
+The `05_assay_transfer_policy` tree below is historical v6 lineage.
+
+### Historical v6 implementation details
 
 The policy-decoupled v6 builder persists every boundary before molecule aggregation and attaches the
 globally reconciled assay-transfer context sidecar:
@@ -254,7 +318,7 @@ preserved. Report context, assay context, and units never rewrite endpoint ident
 measurement, unit, SMILES, and source context are authoritative for presentation. Compact v6 does not persist
 the former duplicate `source_payload_json` serialization.
 
-LLM visibility is governed separately by `source_column_contract.v1`, persisted as
+LLM visibility is governed separately by `source_column_contract.v2`, persisted as
 `starling_normalized_v6/02_normalized/source_contract.json`. Every column in every source schema and every column
 in the normalized artifact has the Boolean metadata `source_or_simply_cleaned`. All genuine source fields,
 including source provenance such as PMID and extraction ID, are eligible; derived canonical, normalization,
@@ -410,10 +474,12 @@ per v8 key. Downstream consumers join only by `pair_bucket_key`; there is no
 record-level endpoint-policy assignment.
 
 Stages 04 and 05 intentionally use the complete unfiltered Stage-03 records. Therefore
-held-out Direct-HF measurements contribute to global bucket support, SD, variance-gate,
+held-out direct-scope HF measurements contribute to global bucket support, SD, variance-gate,
 and percentile statistics. Stage 06 then materializes separate random/scaffold record
-views by parent identity, removing matches only from `direct_hf`. Fa, Fg, Fh, and oral
-exposure are retained even for held-out molecules. Only these filtered views feed Stage
+views by parent identity, removing matches only where
+`source_id=hf_bioavailability` and
+`canonical_bioavailability_evidence_scope=direct`. Nondirect HF rows, Fa, Fg,
+Fh, and oral exposure are retained even for held-out molecules. Only these filtered views feed Stage
 07 molecule evidence and Stage 08 neighbor indices; no unfiltered evidence/index branch
 is published.
 
@@ -442,21 +508,39 @@ Build with the local project environment:
 ```
 
 Use `--from-stage` and `--through-stage` with `clean|normalize|organize|index` to inspect or restart a hashed
-stage. The legacy factor/direct consumers now reconstruct their views from the same complete Direct-HF
+stage. The legacy factor/direct consumers now reconstruct their views from the same complete HF
 Parquet; v1-v5 outputs remain frozen historical artifacts. Experiments must select either
 `starling_normalized_v6/08_neighbor_index/random/` or `.../scaffold/`; `load_index()` detects the
 split manifest and joins the corresponding filtered Stage-06 records once at startup. There is no
 unfiltered normalized-v6 neighbor index. Normalized-v5 is not rewritten by the v6 builder.
 
-## Commands
+## Formal v7 paper retrieval
 
-Build a new complete-Parquet Starling factor index:
+The JSONL/pickle factor indices named `bioavailability_starling_*_v3` are frozen
+historical lineage. They aggregate nondirect HF claims and must not be rebuilt or
+used by a new formal Starling run. The formal builder derives both paper views
+directly from canonical v7 Stage-03 records:
+
+- `bioavailability_starling_v7`: all v7 retrieval-eligible groups, including the
+  nondirect proxy group by default;
+- `bioavailability_starling_v7_direct_numeric`: only finite scalar records in
+  `Observed.direct_oral_bioavailability`.
+
+For each random/scaffold lineage, the builder removes every valid/test parent
+from every evidence group before writing a self-contained compact directory index.
+The runtime nondirect exclusion flag filters the full v7 view before ranking.
+
+Build the canonical v7 tree and its formal paper views:
 
 ```bash
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v4 \
-  --workers 32
+  python -m tools.chembl_tool.tasks.bioavailability_ma.build_normalized_starling_evidence_library \
+  --workers 128
+
+/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+  python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
+  --indices bioavailability_starling_v7 bioavailability_starling_v7_direct_numeric \
+  --splits random scaffold --workers 64
 ```
 
 Run the shared reasoning pipeline with that index:
@@ -464,7 +548,7 @@ Run the shared reasoning pipeline with that index:
 ```bash
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
   python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
-  --index outputs/paper/molecular_evidence_agent/evidence/bioavailability_starling_full_v4/starling_factor_neighbor_index.pkl \
+  --index outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/evidence/bioavailability_starling_v7/08_neighbor_index \
   --api-key-env GLM_API_KEY \
   --base-url https://litellm.parcc.upenn.edu/v1 \
   --model zai-org/GLM-5.2-FP8 \
@@ -473,19 +557,21 @@ Run the shared reasoning pipeline with that index:
   --batch-id bioavailability_ma_paper_starling_<date>
 ```
 
-正式 paper run 只使用上述 `outputs/paper/` index。`outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/`
-下的 task-level builder 默认目录只用于临时开发，不得把历史 index 复制或软链接到正式实验路径；运行前应检查
-meta 中 `index_version`、`canonical_contract_version`、canonical/residual SHA-256、`scope`、
-`evidence_content` 和五个稳定 group ID。
+Formal paper runs use the `outputs/paper/` v7-derived view above. Do not copy or
+symlink a historical index into that path. Before running, check its root and
+Stage-08 manifests for the source v7 SHA-256, held-out-label SHA-256,
+`zero_parent_overlap=true`, record contract, view name, and group inventory.
 
-2026-07-23 strict-hop availability census 见
-`outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`。C 之外的
-experimental pKa、LogD/LogP、PPB/Fu 可组成 H1 candidate union（59,049 parents；parent-disjoint >=1 coverage
-98.44%），但没有合格 H2。pKa/LogD/LogP 与 query `molecule_properties` tool 语义重叠；PPB/Fu 只支持
-hepatic clearance 而非 direct absolute F。它们只能作为独立 distance/relevance 设计候选，不得修改现有
-paper matrix。
+The 2026-07-23 strict-hop availability census is under
+`outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`.
+Experimental pKa, LogD/LogP, and PPB/Fu evidence outside C can form an H1 candidate union of 59,049 parents
+with 98.44% parent-disjoint coverage of at least one neighbor, but there is no eligible H2. pKa and LogD/LogP
+overlap semantically with the query `molecule_properties` tool; PPB/Fu supports only hepatic clearance rather
+than direct absolute F. These may be considered only in a separate distance/relevance design and must not
+modify the existing paper matrix.
 
-API key 只能通过环境变量或未提交的本地 env file 提供，不能写入代码、manifest、命令示例或 git。
+Provide API keys only through environment variables or an uncommitted local environment file. Never write a
+key into code, manifests, command examples, or Git.
 
 ## Tests
 
@@ -495,21 +581,22 @@ API key 只能通过环境变量或未提交的本地 env file 提供，不能�
   tests/chembl_tool/tasks/bioavailability_ma -q
 ```
 
-至少覆盖：
+At minimum, cover:
 
-- legacy ChEMBL row -> `minimal_evidence.v1`；
-- profile-driven parquet column mapping；
-- missing/invalid SMILES stats；
-- molecule-level aggregation和 exact-query exclusion；
-- direct/proxy role split；
-- JSON required-field/value/tool validation retry；
-- API key 不进入 tracked files。
+- legacy ChEMBL row to `minimal_evidence.v1` conversion;
+- profile-driven Parquet column mapping;
+- missing/invalid SMILES statistics;
+- molecule-level aggregation and exact-query exclusion;
+- direct/proxy role separation;
+- retries for JSON required-field, value, and tool validation;
+- confirmation that API keys do not enter tracked files.
 
 ## Evaluation boundary
 
-历史 Bioavailability test set 已在旧 expert-policy 迭代中被反复检查，不能作为论文的 untouched final
-test。Paper result 应使用新 holdout、重新冻结的 split 或外部 evaluation。Archive branch 的历史 metrics
-不能作为当前 simplified paper pipeline 的结果。
+The historical Bioavailability test set was inspected repeatedly while iterating on the old expert policy, so
+it cannot serve as an untouched final paper test. Paper results must use a new holdout, a refrozen split, or an
+external evaluation. Historical metrics from the archive branch are not results for the current simplified
+paper pipeline.
 
 ## Cached assay-transfer reranking
 
@@ -704,7 +791,10 @@ sbatch tools/chembl_tool/tasks/bioavailability_ma/reranking/slurm/precompute_in_
 The profiles define only non-secret runtime locations: project root, Python, Starling checkout, Hugging Face
 cache/offline behavior, devices, workers, and batch size. Override any `TXAGENT_*` value in the environment for
 a one-off machine layout. API credentials remain outside profiles. The evidence/index/catalog/cache paths stay
-repository-relative, so copying or synchronizing the corresponding `outputs/.../starling_in_distribution/`
+repository-relative. New library builds publish under
+`outputs/.../starling_in_distribution_v3/`; the unversioned
+`starling_in_distribution/` tree remains frozen historical lineage. Copying or
+synchronizing the corresponding versioned tree
 tree preserves the condition manifest and cache provenance across machines; otherwise rebuild the artifacts
 from the same eligible-record checksum.
 

@@ -13,6 +13,15 @@ from typing import Any, Iterable
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
+from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+    HF_NONDIRECT_RECORDS_PATH,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
+    DIRECT_EVIDENCE_SCOPE,
+    bioavailability_evidence_scope,
+)
+from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+
 ASSAY_TRANSFER_MODEL = "jiosephlee/assay-transfer-tool"
 ASSAY_TRANSFER_MODEL_REVISION = "9515603b1a5c4586e41c221dcdbc5e7487c0c3f5"
 SCORING_CONTRACT_VERSION = "assay_transfer_chat_first_divergent_token_logits.v1"
@@ -53,6 +62,7 @@ TEMPLATE_BY_CONCEPT = {
 }
 CONCEPT_BY_GROUP = {
     "Observed.direct_oral_bioavailability": "oral_bioavailability",
+    "Observed.nondirect_oral_bioavailability": "oral_bioavailability",
     "Observed.oral_auc_cmax_exposure": "oral_exposure",
     "Fa.absorption_solubility_permeability": "Fa",
     "Fg.gut_wall_efflux_intestinal_metabolism": "Fg",
@@ -550,6 +560,41 @@ def winning_record_payload_from_id(
     return payload
 
 
+def _retains_direct_bioavailability_record(
+    record: Mapping[str, Any],
+    *,
+    nondirect_hf_source_indices: frozenset[int],
+) -> bool:
+    source_fields = record.get("source_fields") or {}
+    scope = str(
+        record.get("canonical_bioavailability_evidence_scope")
+        or (
+            source_fields.get("canonical_bioavailability_evidence_scope")
+            if isinstance(source_fields, Mapping)
+            else ""
+        )
+        or ""
+    ).strip().casefold()
+    if scope:
+        return scope == DIRECT_EVIDENCE_SCOPE
+    if isinstance(source_fields, Mapping) and "bioavailability_report_type" in source_fields:
+        return (
+            bioavailability_evidence_scope(
+                source_fields.get("bioavailability_report_type")
+            )
+            == DIRECT_EVIDENCE_SCOPE
+        )
+    if str(record.get("source_id") or "") == "starling-labs/Oral_Bioavailability":
+        provenance = record.get("source_provenance") or {}
+        try:
+            source_index = int(provenance.get("source_index"))
+        except (TypeError, ValueError):
+            return False
+        return source_index not in nondirect_hf_source_indices
+    # The retained/excluded partition applies only to the frozen HF source.
+    return True
+
+
 class AssayTransferCachedReranker:
     name = "assay_transfer"
 
@@ -564,6 +609,8 @@ class AssayTransferCachedReranker:
         allow_missing: bool = False,
         candidate_manifest_path: str | Path | None = None,
         template_profile: str = DEFAULT_TEMPLATE_PROFILE,
+        exclude_nondirect_bioavailability_records: bool = False,
+        nondirect_source_path: str | Path = HF_NONDIRECT_RECORDS_PATH,
     ):
         self.model = model
         self.model_revision = require_immutable_revision(model_revision)
@@ -591,6 +638,34 @@ class AssayTransferCachedReranker:
         self.cache = AssayTransferScoreCache(cache_path, mode=cache_mode)
         self.renderer = AssayTransferPromptRenderer(profile=template_profile)
         self.allow_missing = allow_missing
+        self.exclude_nondirect_bioavailability_records = bool(
+            exclude_nondirect_bioavailability_records
+        )
+        self.nondirect_source_path = Path(nondirect_source_path)
+        self.nondirect_source_sha256 = ""
+        self.nondirect_hf_source_indices: frozenset[int] = frozenset()
+        needs_legacy_source_indices = any(
+            str(record.get("source_id") or "")
+            == "starling-labs/Oral_Bioavailability"
+            and "bioavailability_report_type"
+            not in (record.get("source_fields") or {})
+            for record in self.catalog.records
+        )
+        if (
+            self.exclude_nondirect_bioavailability_records
+            and needs_legacy_source_indices
+        ):
+            import pyarrow.parquet as pq
+
+            table = pq.read_table(
+                self.nondirect_source_path, columns=["source_index"]
+            )
+            self.nondirect_hf_source_indices = frozenset(
+                int(value) for value in table.column("source_index").to_pylist()
+            )
+            self.nondirect_source_sha256 = file_sha256(
+                self.nondirect_source_path
+            )
         self.missing_tasks: dict[str, PromptTask] = {}
         self.seen_tasks: dict[str, PromptTask] = {}
         self.prompt_task_reference_count = 0
@@ -611,6 +686,10 @@ class AssayTransferCachedReranker:
             "candidate_manifest_sha256": (
                 self.candidate_manifest.sha256 if self.candidate_manifest is not None else ""
             ),
+            "exclude_nondirect_bioavailability_records": (
+                self.exclude_nondirect_bioavailability_records
+            ),
+            "nondirect_filter_source_sha256": self.nondirect_source_sha256,
         }
 
     def tasks_for_candidates(
@@ -636,6 +715,20 @@ class AssayTransferCachedReranker:
                     raise ValueError(
                         f"Candidate manifest record/molecule mismatch for {molecule_id}: {wrong_smiles}"
                     )
+            if (
+                self.exclude_nondirect_bioavailability_records
+                and group_id == "Observed.direct_oral_bioavailability"
+            ):
+                records = [
+                    record
+                    for record in records
+                    if _retains_direct_bioavailability_record(
+                        record,
+                        nondirect_hf_source_indices=(
+                            self.nondirect_hf_source_indices
+                        ),
+                    )
+                ]
             tasks_by_molecule[molecule_id] = [
                 build_prompt_task(
                     renderer=self.renderer,
@@ -848,6 +941,9 @@ _TEMPLATE_CONTEXT_FIELDS = (
     "species_or_population",
     "report_or_statistic_type",
     "dose",
+    "study_context",
+    "oral_exposure_mode",
+    "assay_system",
     "study_or_assay_system",
     "measured_process",
     "biological_context",

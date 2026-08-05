@@ -22,6 +22,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     DIRECT_REJECTED_ROWS_PATH,
     DIRECT_REPORT_TYPES,
     DIRECT_SOURCE_ROWS_PATH,
+    HF_NONDIRECT_RECORDS_PATH,
     HF_SNAPSHOT_PATH,
     HF_SOURCE_DATASET,
     HF_SOURCE_REVISION,
@@ -35,6 +36,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     classify_local_record,
     local_classification_signals,
     local_value_percent,
+    nondirect_measurement_fields,
 )
 
 
@@ -70,6 +72,7 @@ def main(argv: list[str] | None = None) -> int:
     residual_dir.mkdir(parents=True, exist_ok=True)
     paths = {
         "hf_snapshot": canonical_dir / HF_SNAPSHOT_PATH.name,
+        "hf_nondirect_records": canonical_dir / HF_NONDIRECT_RECORDS_PATH.name,
         "direct_source_rows": canonical_dir / DIRECT_SOURCE_ROWS_PATH.name,
         "direct_claims": canonical_dir / DIRECT_CLAIMS_PATH.name,
         "direct_rejected_rows": canonical_dir / DIRECT_REJECTED_ROWS_PATH.name,
@@ -78,6 +81,9 @@ def main(argv: list[str] | None = None) -> int:
         "residual_records": residual_dir / RESIDUAL_RECORDS_PATH.name,
     }
     hf_frame.to_parquet(paths["hf_snapshot"], index=False)
+    outputs["hf_nondirect_records"].to_parquet(
+        paths["hf_nondirect_records"], index=False
+    )
     outputs["direct_source_rows"].to_parquet(paths["direct_source_rows"], index=False)
     outputs["direct_claims"].to_parquet(paths["direct_claims"], index=False)
     outputs["direct_rejected_rows"].to_parquet(paths["direct_rejected_rows"], index=False)
@@ -149,6 +155,7 @@ def build_canonical_frames(
     import pandas as pd
 
     hf_rows, hf_rejections = _normalize_hf_rows(hf_frame, hf_dataset, hf_revision)
+    hf_nondirect_frame = _hf_nondirect_records(hf_frame)
     local_rows: list[dict[str, Any]] = []
     local_identity_cache: dict[str, tuple[str, str] | None] = {}
     local_source = Path(local_source_path)
@@ -225,7 +232,25 @@ def build_canonical_frames(
     stats = {
         "n_hf_snapshot_rows": len(hf_frame),
         "n_hf_direct_source_rows": len(hf_rows),
+        "n_hf_nondirect_rows": len(hf_nondirect_frame),
+        "hf_nondirect_measurement_unit_status_counts": dict(
+            sorted(
+                Counter(
+                    hf_nondirect_frame["measurement_unit_extraction_status"]
+                ).items()
+            )
+        ),
         "n_hf_direct_rejected_invalid_structure": hf_rejections,
+        "hf_snapshot_reconciliation": {
+            "input_rows": len(hf_frame),
+            "direct_rows_with_valid_structure": len(hf_rows),
+            "direct_rows_rejected_structure": hf_rejections,
+            "nondirect_rows_retained": len(hf_nondirect_frame),
+            "reconciles": (
+                len(hf_rows) + hf_rejections + len(hf_nondirect_frame)
+                == len(hf_frame)
+            ),
+        },
         "n_local_input_rows": n_local,
         "n_local_absolute_rows_removed_from_residual": n_direct_partition,
         "n_local_absolute_rows_with_valid_structure": n_direct_local,
@@ -248,6 +273,7 @@ def build_canonical_frames(
         },
     }
     return {
+        "hf_nondirect_records": hf_nondirect_frame,
         "direct_source_rows": direct_frame,
         "direct_claims": claims_frame,
         "direct_rejected_rows": direct_rejected_frame,
@@ -256,6 +282,30 @@ def build_canonical_frames(
         "residual_records": residual_frame,
         "stats": stats,
     }
+
+
+def _hf_nondirect_records(frame: Any) -> Any:
+    """Retain every non-direct HF row as a separate inference evidence source."""
+    report_types = (
+        frame["bioavailability_report_type"]
+        .fillna("")
+        .astype(str)
+        .str.strip()
+        .str.lower()
+    )
+    nondirect = frame.loc[~report_types.isin(DIRECT_REPORT_TYPES)].copy()
+    nondirect["endpoint_name"] = "oral_bioavailability"
+    extracted = nondirect["oral_bioavailability_value"].map(
+        nondirect_measurement_fields
+    )
+    for field in (
+        "measurement_text",
+        "numeric_value",
+        "value_units",
+        "measurement_unit_extraction_status",
+    ):
+        nondirect[field] = [item[field] for item in extracted]
+    return nondirect
 
 
 def _normalize_hf_rows(frame: Any, dataset: str, revision: str) -> tuple[list[dict[str, Any]], int]:

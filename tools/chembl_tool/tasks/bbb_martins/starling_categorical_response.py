@@ -8,8 +8,10 @@ from typing import Any
 
 from tools.chembl_tool.common.starling.categorical_response import (
     BINARY_OUTCOME_UNIT,
+    CanonicalCategory,
     CategoricalEncoding,
     CategoricalResponsePolicy,
+    ControlledMeasurementSpec,
     render_measurement,
 )
 
@@ -124,19 +126,67 @@ def encode_efflux_inhibition(record: Mapping[str, Any]) -> CategoricalEncoding |
     )
 
 
+_BINARY_DOMAIN = (
+    CanonicalCategory("negative", 0, -1.0),
+    CanonicalCategory("positive", 1, 1.0),
+)
+
+CONTROLLED_MEASUREMENTS = (
+    ControlledMeasurementSpec(
+        scale_id="bbb_permeability_binary.v1",
+        source_id="direct_bbb",
+        input_fields=("bbb_permeability_label",),
+        encoder=encode_direct_permeability,
+        kind="binary",
+        parser_id="bbb.permeability_binary.v1",
+        definition="reviewed BBB permeability outcome aliases",
+        categories=_BINARY_DOMAIN,
+    ),
+    ControlledMeasurementSpec(
+        scale_id="passive_bbb_interpretation_binary.v1",
+        source_id="passive_permeability",
+        input_fields=("passive_bbb_interpretation",),
+        encoder=encode_passive_interpretation,
+        kind="binary",
+        parser_id="bbb.passive_interpretation_binary.v1",
+        definition="reviewed passive-permeability interpretation aliases",
+        categories=_BINARY_DOMAIN,
+    ),
+    ControlledMeasurementSpec(
+        scale_id="efflux_substrate_binary.v1",
+        source_id="efflux_transport",
+        input_fields=("interaction_conclusion",),
+        encoder=encode_efflux_substrate,
+        kind="binary",
+        parser_id="bbb.efflux_substrate_binary.v1",
+        definition="substrate versus non-substrate",
+        categories=_BINARY_DOMAIN,
+    ),
+    ControlledMeasurementSpec(
+        scale_id="efflux_inhibitor_binary.v1",
+        source_id="efflux_transport",
+        input_fields=("interaction_conclusion",),
+        encoder=encode_efflux_inhibition,
+        kind="binary",
+        parser_id="bbb.efflux_inhibitor_binary.v1",
+        definition="inhibitor versus non-inhibitor",
+        categories=_BINARY_DOMAIN,
+    ),
+)
+
+MEASUREMENT_SCALES = {
+    item.scale_id: item for item in CONTROLLED_MEASUREMENTS
+}
+
 POLICY = CategoricalResponsePolicy(
     version=CATEGORICAL_RESPONSE_VERSION,
-    encoders=(
-        encode_direct_permeability,
-        encode_passive_interpretation,
-        encode_efflux_substrate,
-        encode_efflux_inhibition,
-    ),
+    controlled_measurements=CONTROLLED_MEASUREMENTS,
 )
 
 
 def encoding_policy_manifest() -> dict[str, Any]:
     return {
+        **POLICY.manifest(),
         "version": CATEGORICAL_RESPONSE_VERSION,
         "unit": BINARY_OUTCOME_UNIT,
         "anchors": {"negative": -1.0, "positive": 1.0},
@@ -166,8 +216,10 @@ def encoding_policy_manifest() -> dict[str, Any]:
 
 __all__ = [
     "CATEGORICAL_RESPONSE_VERSION",
+    "CONTROLLED_MEASUREMENTS",
     "DIRECT_NEGATIVE",
     "DIRECT_POSITIVE",
     "POLICY",
+    "MEASUREMENT_SCALES",
     "encoding_policy_manifest",
 ]

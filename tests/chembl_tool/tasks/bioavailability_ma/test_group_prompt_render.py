@@ -112,7 +112,7 @@ def test_starling_v5_evidence_row_renders_non_blank_endpoint_value_unit():
         endpoint_normalizer=lambda source_id, endpoint_name: EndpointOrthography(
             endpoint_name, endpoint_name, "unchanged", "no_reviewed_correction", "test.v1"
         ),
-        family_resolver=lambda source_id, endpoint_name: FamilyAssignment(
+        family_resolver=lambda source_id, endpoint_name, record=None: FamilyAssignment(
             "Fg.gut_wall_efflux_intestinal_metabolism", "Fg",
             "gut_wall_efflux_intestinal_metabolism", "mechanistic_factor", "test endpoint",
         ),
@@ -365,7 +365,7 @@ INDIST_WINNING = {
     "context": {"study_or_assay_system": "Caco-2 bidirectional transport"},
     "support_text": "efflux ratio 1.5 indicates limited active efflux",
     "source_contract": {
-        "contract_version": "source_column_contract.v1",
+        "contract_version": "source_column_contract.v2",
         "source_id": "fg",
         "source_or_simply_cleaned": {"measured_value": True, "pmid": True},
     },

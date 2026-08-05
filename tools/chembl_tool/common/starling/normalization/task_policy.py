@@ -18,13 +18,21 @@ import argparse
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from tools.chembl_tool.common.starling.compact_artifacts import CompactArtifactProfile
 from tools.chembl_tool.common.starling.normalization.contracts import (
     MeasurementPair,
     NormalizedSourceProfile,
 )
+
+if TYPE_CHECKING:
+    from tools.chembl_tool.common.starling.canonicalization_v7 import (
+        StarlingRecordContract,
+    )
+    from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
+        SourceValueCleaningResult,
+    )
 
 
 @dataclass(frozen=True)
@@ -40,7 +48,7 @@ class NormalizationHooks:
 
     endpoint_normalizer: Callable[[str, str], Any]
     endpoint_standardizer: Callable[[str, MeasurementPair], MeasurementPair]
-    family_resolver: Callable[[str, str], Any]
+    family_resolver: Callable[[str, str, Mapping[str, Any] | None], Any]
     record_enricher: Callable[[dict[str, Any]], dict[str, Any]]
     source_measurement_resolver: Callable[..., Any] | None = None
     contextual_standardizer: Callable[..., Any] | None = None
@@ -92,10 +100,10 @@ class StarlingTaskPolicy:
     source_profiles: Callable[[Path], Sequence[NormalizedSourceProfile]]
     endpoint_inventory: Callable[..., dict[str, Any]]
 
-    # (source_id, endpoint_name) -> FamilyAssignment | None.  Used by the
+    # (source_id, endpoint_name, record) -> FamilyAssignment | None.  Used by the
     # normalization hooks and, independently, by the evidence catalog to
     # re-derive family labels that compaction stripped from persisted records.
-    family_resolver: Callable[[str, str], Any]
+    family_resolver: Callable[[str, str, Mapping[str, Any] | None], Any]
 
     # Normalization.
     build_hooks: Callable[[argparse.Namespace], NormalizationHooks]
@@ -110,13 +118,70 @@ class StarlingTaskPolicy:
     manifest_versions: Callable[..., dict[str, Any]]
 
     # Optional extensions.
+    # v7 persists strict source-visible and canonical projections while the
+    # established scientific parsers continue to use private in-memory v6
+    # aliases.  ``None`` preserves frozen v6 behavior byte for byte.
+    record_contract: "StarlingRecordContract | None" = None
+    # Optional Stage-01 source-visible value cleaning.  The hook runs after
+    # common ingestion and before the v7 source projection, and returns the
+    # field-level audit published beside the cleaned records.
+    source_value_cleaner: (
+        Callable[
+            [list[dict[str, Any]], argparse.Namespace],
+            "SourceValueCleaningResult",
+        ]
+        | None
+    ) = None
     add_cli_arguments: Callable[[argparse.ArgumentParser], None] | None = None
     validate_arguments: Callable[[argparse.ArgumentParser, argparse.Namespace], None] | None = None
-    load_extra_source: Callable[[argparse.Namespace], ExtraSourceBatch | None] | None = None
+    load_extra_source: (
+        Callable[
+            [argparse.Namespace],
+            ExtraSourceBatch | Sequence[ExtraSourceBatch] | None,
+        ]
+        | None
+    ) = None
     # Raises if a source file no longer matches the digest the task pinned.
     verify_source_digest: Callable[[str, Path], None] | None = None
     census_extras: Callable[[list[dict[str, Any]]], dict[str, Any]] | None = None
     smiles_mapping: Callable[[argparse.Namespace], "SmilesMappingSpec | None"] | None = None
+    # Frozen, task-owned scientific registries that affect normalization but
+    # are not necessarily exposed as CLI arguments.  The shared build cache
+    # fingerprints these alongside implementation code.
+    scientific_assets: tuple[Path, ...] = ()
+    # Additional compact columns required when the task's family resolver
+    # re-derives labels after a persisted-stage reload.
+    family_resolver_input_fields: tuple[str, ...] = ()
+
+    def compact_profile_for_contract(
+        self, record_contract_version: str = ""
+    ) -> CompactArtifactProfile:
+        """Return the exact projection profile declared by an index manifest."""
+        if not record_contract_version:
+            return self.compact
+        contract = self.record_contract
+        if contract is None or record_contract_version != contract.version:
+            raise ValueError(
+                f"unsupported record contract for {self.task_id!r}: "
+                f"{record_contract_version!r}"
+            )
+        from tools.chembl_tool.common.starling.canonicalization_v7 import (
+            SOURCE_CONTRACT_VERSION,
+        )
+
+        return CompactArtifactProfile(
+            task_id=self.compact.task_id,
+            artifact_version=f"{self.compact.artifact_version}.v7",
+            index_version=f"{self.compact.index_version}.v7",
+            evidence_source_label=self.compact.evidence_source_label,
+            source_columns={
+                source_id: profile.source_visible_fields
+                for source_id, profile in contract.sources.items()
+            },
+            llm_source_projection=contract.source_projection,
+            record_contract_version=contract.version,
+            source_contract_version=SOURCE_CONTRACT_VERSION,
+        )
 
 
 @dataclass(frozen=True)

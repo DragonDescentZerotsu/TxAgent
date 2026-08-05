@@ -8,16 +8,25 @@ import unicodedata
 from collections.abc import Mapping
 from typing import Any
 
+from tools.chembl_tool.common.starling.categorical_response import (
+    encoded_unit_validity_status,
+)
 from tools.chembl_tool.common.starling.normalization.measurements import (
     SOURCE_SPECIFIC_ATOMIC_SCALAR_STATUS,
     parse_point_measurement,
 )
 from tools.chembl_tool.common.units import canonicalize_unit
+from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+    DIRECT_REPORT_TYPES,
+)
 
 
 REPORT_TYPE_NORMALIZATION_VERSION = "bioavailability_report_type_normalization.v1"
-NORMALIZATION_DOMAIN_RULES_VERSION = "bioavailability_normalization_domains.v3"
+EVIDENCE_SCOPE_VERSION = "bioavailability_evidence_scope.v1"
+NORMALIZATION_DOMAIN_RULES_VERSION = "bioavailability_normalization_domains.v4"
 UNKNOWN_TOKEN = "__unknown__"
+DIRECT_EVIDENCE_SCOPE = "direct"
+NONDIRECT_EVIDENCE_SCOPE = "nondirect"
 
 _NULL_LIKE = {"", "nan", "none", "null", "na", "n/a", "-", "unspecified", "unknown"}
 _SEPARATORS = re.compile(r"[\s_\-\u2010-\u2015\u2212]+")
@@ -49,6 +58,10 @@ _PERCENT_ENDPOINTS = {
 }
 _DURATION_ENDPOINTS = {"metabolic_half_life", "tmax"}
 
+# Qualifier vocabulary for every unit parsed by this task.
+_TASK_VOCAB = "bioavailability_ma"
+
+
 
 def _is_null_like(value: Any) -> bool:
     if value is None:
@@ -67,19 +80,42 @@ def canonical_text(value: Any) -> str:
 
 
 def normalize_bioavailability_report_type(value: Any) -> str:
+    if str(value or "").strip().casefold() == "unspecified":
+        return "unspecified"
     token = canonical_text(value)
     return _REPORT_TYPE_ALIASES.get(token, token)
+
+
+def bioavailability_evidence_scope(value: Any) -> str:
+    """Classify one HF report without changing its physical source identity."""
+    report_type = normalize_bioavailability_report_type(value)
+    return (
+        DIRECT_EVIDENCE_SCOPE
+        if report_type in DIRECT_REPORT_TYPES
+        else NONDIRECT_EVIDENCE_SCOPE
+    )
 
 
 def enrich_bioavailability_validity(record: Mapping[str, Any]) -> dict[str, Any]:
     report_type = normalize_bioavailability_report_type(
         record.get("bioavailability_report_type")
     )
-    enriched = {**dict(record), "canonical_bioavailability_report_type": report_type}
+    evidence_scope = (
+        bioavailability_evidence_scope(report_type)
+        if str(record.get("source_id") or "") == "hf_bioavailability"
+        else None
+    )
+    enriched = {
+        **dict(record),
+        "canonical_bioavailability_report_type": report_type,
+        "canonical_bioavailability_evidence_scope": evidence_scope,
+    }
     return {
         "canonical_bioavailability_report_type": report_type,
+        "canonical_bioavailability_evidence_scope": evidence_scope,
         "normalization_validity_status": normalization_validity_status(enriched),
         "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
+        "bioavailability_evidence_scope_version": EVIDENCE_SCOPE_VERSION,
     }
 
 
@@ -92,9 +128,9 @@ def _domain_kind(record: Mapping[str, Any]) -> str:
     )
     if not endpoint or not unit:
         return "unsupported"
-    if canonicalize_unit(unit).transform:
+    if canonicalize_unit(unit, task=_TASK_VOCAB).transform:
         return "transformed_scalar"
-    if source_id == "direct_hf" or endpoint in {
+    if source_id == "hf_bioavailability" or endpoint in {
         "absolute_bioavailability",
         "bioavailability",
         "corrected_bioavailability",
@@ -132,6 +168,9 @@ def _domain_kind(record: Mapping[str, Any]) -> str:
 
 def normalization_validity_status(record: Mapping[str, Any]) -> str:
     """Return factual record validity without assigning a transfer policy."""
+    encoded = encoded_unit_validity_status(record)
+    if encoded is not None:
+        return encoded
     if (
         str(record.get("structure_status") or "") != "resolved"
         or not str(record.get("canonical_smiles") or "")
@@ -146,7 +185,7 @@ def normalization_validity_status(record: Mapping[str, Any]) -> str:
     if not str(record.get("canonical_unit") or ""):
         return "missing_canonical_unit"
     parsed = parse_point_measurement(record.get("canonical_measurement"))
-    unit_result = canonicalize_unit(record.get("canonical_unit"))
+    unit_result = canonicalize_unit(record.get("canonical_unit"), task=_TASK_VOCAB)
     if parsed.value is not None and unit_result.unknown_tokens:
         return "incompatible_canonical_unit"
     value = record.get("finite_scalar_value")
@@ -195,6 +234,9 @@ def validity_policy_manifest() -> dict[str, Any]:
             "positive_ratio": {"minimum_exclusive": 0.0},
             "positive_time": {"minimum_exclusive": 0.0},
             "transformed_scalar": {"finite": True},
+            "controlled_categorical": {
+                "validation": "declared_encoder_and_finite_in-domain_anchor"
+            },
         },
     }
 

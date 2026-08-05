@@ -1,4 +1,4 @@
-"""Encode categorical evidence as a continuous measurement.
+"""Controlled source-scoped encoders for non-scalar reported outcomes.
 
 A record reaches a pair bucket only when its ``normalization_validity_status``
 is ``valid`` and both ``canonical_endpoint`` and ``canonical_unit`` are
@@ -6,10 +6,11 @@ non-empty (``common/starling/pair_buckets.py``).  Categorical outcomes have no
 measurement, so they are excluded — for Skin_Reaction that is the single reason
 296,567 structurally resolved records never enter a bucket.
 
-This module gives such records a continuous value on an explicitly named latent
-scale, after which nothing downstream changes: bucket membership, the
-within-bucket SD standardisation, the empirical percentile curve and the
-transfer label all work unmodified.
+The task registry freezes the source, real input fields, parser, measurement
+kind, and semantic definition. Binary and ordinal scales additionally freeze
+canonical category IDs, ranks, and encoded values. Stage 02 attaches those
+identities, Stage 04 owns bucket membership, and v7 Stage 05 calibrates distance
+geometry without emitting a transfer label.
 
 Two scales are defined, and they are deliberately different ``canonical_unit``
 values so that the bucket key can never pool them:
@@ -36,7 +37,7 @@ from __future__ import annotations
 import math
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 
 CATEGORICAL_RESPONSE_CONTRACT_VERSION = "starling_categorical_response.v1"
@@ -95,24 +96,151 @@ class CategoricalEncoding:
 
 
 @dataclass(frozen=True)
+class CanonicalCategory:
+    """One reviewed member of a binary or ordinal measurement domain."""
+
+    category_id: str
+    rank: int
+    encoded_value: float
+
+
+@dataclass(frozen=True)
+class ControlledMeasurementSpec:
+    """Frozen source/field scope and geometry for one controlled encoder."""
+
+    scale_id: str
+    source_id: str
+    input_fields: tuple[str, ...]
+    encoder: Callable[[Mapping[str, Any]], CategoricalEncoding | None]
+    kind: Literal["continuous", "binary", "ordinal"]
+    parser_id: str
+    definition: str
+    categories: tuple[CanonicalCategory, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.scale_id or not self.source_id or not self.parser_id:
+            raise ValueError("controlled measurement IDs must be nonempty")
+        if not self.input_fields or len(set(self.input_fields)) != len(self.input_fields):
+            raise ValueError(f"invalid controlled inputs for {self.scale_id!r}")
+        if self.kind == "continuous":
+            if self.categories:
+                raise ValueError("continuous controlled measurements have no category domain")
+            return
+        expected = 2 if self.kind == "binary" else 3
+        if len(self.categories) < expected:
+            raise ValueError(
+                f"{self.kind} scale {self.scale_id!r} requires at least {expected} categories"
+            )
+        ids = [item.category_id for item in self.categories]
+        ranks = [item.rank for item in self.categories]
+        values = [float(item.encoded_value) for item in self.categories]
+        if len(set(ids)) != len(ids) or len(set(ranks)) != len(ranks):
+            raise ValueError(f"duplicate category ID or rank for {self.scale_id!r}")
+        if sorted(ranks) != list(range(len(ranks))):
+            raise ValueError(f"category ranks must be contiguous for {self.scale_id!r}")
+        if any(not math.isfinite(value) for value in values) or len(set(values)) != len(values):
+            raise ValueError(f"invalid encoded category values for {self.scale_id!r}")
+
+    def category_for_value(self, value: Any) -> CanonicalCategory | None:
+        if self.kind == "continuous":
+            return None
+        try:
+            numeric = float(value)
+        except (TypeError, ValueError):
+            return None
+        for category in self.categories:
+            if math.isclose(
+                numeric,
+                float(category.encoded_value),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            ):
+                return category
+        return None
+
+    def manifest(self) -> dict[str, Any]:
+        return {
+            "scale_id": self.scale_id,
+            "source_id": self.source_id,
+            "input_fields": list(self.input_fields),
+            "parser_id": self.parser_id,
+            "kind": self.kind,
+            "definition": self.definition,
+            "categories": [
+                {
+                    "category_id": item.category_id,
+                    "rank": item.rank,
+                    "encoded_value": item.encoded_value,
+                }
+                for item in self.categories
+            ],
+        }
+
+
+@dataclass(frozen=True)
 class CategoricalResponsePolicy:
     """A task's ordered encoders and the version they are frozen under."""
 
     version: str
     # Ordered by precedence: the first encoder that returns a value wins, so a
     # record backed by real counts is never downgraded to an anchor.
-    encoders: Sequence[Callable[[Mapping[str, Any]], CategoricalEncoding | None]]
+    encoders: Sequence[Callable[[Mapping[str, Any]], CategoricalEncoding | None]] = ()
+    controlled_measurements: Sequence[ControlledMeasurementSpec] = ()
+
+    def __post_init__(self) -> None:
+        if bool(self.encoders) == bool(self.controlled_measurements):
+            raise ValueError(
+                "categorical response policy requires exactly one encoder declaration style"
+            )
+        scale_ids = [item.scale_id for item in self.controlled_measurements]
+        if len(scale_ids) != len(set(scale_ids)):
+            raise ValueError("controlled measurement scale IDs must be unique")
+
+    @property
+    def measurement_scales(self) -> dict[str, ControlledMeasurementSpec]:
+        return {item.scale_id: item for item in self.controlled_measurements}
 
     def encode(self, record: Mapping[str, Any]) -> CategoricalEncoding | None:
-        for encoder in self.encoders:
+        declared = (
+            ((None, encoder) for encoder in self.encoders)
+            if self.encoders
+            else (
+                (spec, spec.encoder)
+                for spec in self.controlled_measurements
+                if str(record.get("source_id") or "") == spec.source_id
+            )
+        )
+        for spec, encoder in declared:
             encoding = encoder(record)
             if encoding is not None:
                 if not math.isfinite(encoding.value):
                     raise ValueError(
                         f"encoder {encoding.encoder_id!r} produced a non-finite value"
                     )
+                if spec is not None:
+                    if encoding.encoder_id != spec.scale_id:
+                        raise ValueError(
+                            f"encoder returned {encoding.encoder_id!r}; expected {spec.scale_id!r}"
+                        )
+                    if spec.kind != "continuous" and spec.category_for_value(
+                        encoding.value
+                    ) is None:
+                        raise ValueError(
+                            f"encoder {spec.scale_id!r} produced an out-of-domain value"
+                        )
                 return encoding
         return None
+
+    def manifest(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "contract_version": CATEGORICAL_RESPONSE_CONTRACT_VERSION,
+            "controlled_measurements": [
+                item.manifest() for item in self.controlled_measurements
+            ],
+            "first_matching_encoder_wins": True,
+            "real_scalar_precedence": True,
+        }
 
     def apply(self, record: dict[str, Any]) -> dict[str, Any]:
         """Return the fields to merge, or an empty mapping to leave untouched.
@@ -238,8 +366,10 @@ __all__ = [
     "ORDINAL_SEVERITY_UNIT",
     "SIGNED_DIRECTION_UNIT",
     "encoded_unit_validity_status",
+    "CanonicalCategory",
     "CategoricalEncoding",
     "CategoricalResponsePolicy",
+    "ControlledMeasurementSpec",
     "count_logit",
     "logit",
     "render_measurement",

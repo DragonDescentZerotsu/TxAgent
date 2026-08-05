@@ -108,6 +108,8 @@ def main(argv: list[str] | None = None) -> int:
 def build_starling_evidence_rows(
     source_parquet: Path,
     *,
+    source_rows: list[dict[str, Any]] | None = None,
+    allowed_report_types: set[str] | frozenset[str] = ALLOWED_REPORT_TYPES,
     include_qualitative: bool = True,
     max_source_rows: int = 0,
     min_value_percent: float = 0.0,
@@ -116,10 +118,14 @@ def build_starling_evidence_rows(
 ) -> tuple[list[dict[str, Any]], dict[str, int]]:
     numeric_by_smiles: dict[str, list[dict[str, Any]]] = defaultdict(list)
     qualitative_by_smiles: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    raw_rows = load_direct_hf_rows(source_parquet, max_rows=max_source_rows)
+    raw_rows = (
+        list(source_rows)
+        if source_rows is not None
+        else load_direct_hf_rows(source_parquet, max_rows=max_source_rows)
+    )
     cleaned, dropped = clean_oral_bioavailability_rows(
         raw_rows,
-        allowed_report_types=ALLOWED_REPORT_TYPES,
+        allowed_report_types=allowed_report_types,
         min_value_percent=min_value_percent,
         max_value_percent=max_value_percent,
     )

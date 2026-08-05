@@ -26,6 +26,7 @@ CONFIG = BatchConfig(
     rerank_preflight=preflight_cache_coverage,
     supports_assay_transfer_scores=True,
     supports_retrieval_strategy=True,
+    supports_nondirect_bioavailability_filter=True,
     group_prompt_formats=("legacy", "morganfingerprint", "assay_transfer_tool"),
     default_group_prompt_format="legacy",
     group_output_schemas=("legacy", "assay-transfer"),

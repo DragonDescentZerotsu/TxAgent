@@ -159,9 +159,9 @@
     "canonical_source": {
       "contract_version": "bioavailability_canonical_direct.v2",
       "path": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
-      "sha256": "045261cbda785092143eeadd636f78399f7b02f951b23480b16fb8dde22661c5",
+      "sha256": "d6c2dc9e5e91a6e1e9c159fcda20c2ebda73595f26b27533b500c209f1631140",
       "manifest_path": "data/starling_data/bioavailability_ma/canonical_direct_v2/merge_manifest.json",
-      "manifest_sha256": "b986a214491f3b04c6f3ae6fc71cbd4eacad08d390b9b62de53f953966b0a257",
+      "manifest_sha256": "48a1e299bf8d7eb5fb74fb8bff1c42d38ac5735a615b4c710ea6d707b443da6c",
       "upstream_hf": {
         "dataset": "starling-labs/Oral_Bioavailability",
         "requested_revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",

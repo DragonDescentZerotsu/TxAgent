@@ -356,6 +356,9 @@ def test_matched_preflight_source_requires_identical_retrieval_configuration():
         "indices": indices,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
+        "exclude_nondirect_bioavailability_records": (
+            args.exclude_nondirect_bioavailability_records
+        ),
         "retrieval_reranker": "assay_transfer",
             "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
             "assay_transfer_min_score": args.assay_transfer_min_score,

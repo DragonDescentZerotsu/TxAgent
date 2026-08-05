@@ -3,6 +3,8 @@ import json
 import pytest
 
 from tools.chembl_tool.common.units import (
+    load_qualifier_vocabulary,
+    qualifier_vocabulary_manifest,
     canonical_unit,
     canonicalize_measurement,
     canonicalize_unit,
@@ -337,6 +339,86 @@ def test_unknown_tokens_are_flagged_not_silently_dropped():
     assert not result.is_dimensionless
 
 
+def test_explicit_decimal_scientific_unit_variants_fold_safely():
+    expected = canonicalize_unit("×10^-6 cm/s")
+    for value in (
+        "1e-6 cm/s",
+        "1 × 10^-6 cm/s",
+        "10^-6cm/s",
+        "10^(-6) cm/s",
+    ):
+        actual = canonicalize_unit(value)
+        assert actual.canonical == "cm/s"
+        assert actual.scale == pytest.approx(expected.scale)
+        assert actual.unknown_tokens == ()
+        assert actual.notation_status == "unambiguous_scientific_notation"
+
+    leading_times_e = canonicalize_unit("x 1e-6 cm/s")
+    assert leading_times_e.canonical == "cm/s"
+    assert leading_times_e.scale == pytest.approx(1e-8)
+    ten_e_minus_six = canonicalize_unit("10E-6 cm/s")
+    assert ten_e_minus_six.canonical == "cm/s"
+    assert ten_e_minus_six.scale == pytest.approx(expected.scale * 10)
+
+
+@pytest.mark.parametrize(
+    ("source_unit", "expected_value"),
+    [
+        ("1e-6 cm/s", 3e-6),
+        ("2E-6 cm/s", 6e-6),
+        ("x 1e-6 cm/s", 3e-6),
+        ("×10^-6 cm/s", 3e-6),
+        ("cm/s ×10^-6", 3e-6),
+    ],
+)
+def test_measurement_class_conversion_preserves_scientific_unit_factor(
+    source_unit, expected_value
+):
+    value, unit = canonicalize_measurement(
+        3,
+        source_unit,
+        measurement_class="permeability",
+    )
+    assert value == pytest.approx(expected_value)
+    assert unit == "cm/s"
+
+
+def test_compact_inverse_second_permeability_is_exactly_normalized():
+    assert canonicalize_unit("cms-1").canonical == "cm/s"
+    assert canonicalize_unit("cmsec^-1").canonical == "cm/s"
+
+
+def test_conventional_unit_words_and_abbreviation_punctuation_are_cleaned():
+    assert canonicalize_unit("µg./mL.").canonical == "µg/mL"
+    assert canonicalize_unit("µg/milliliter").canonical == "µg/mL"
+    assert canonicalize_unit("µg/gm").canonical == "µg/g"
+
+
+def test_compact_areic_time_units_preserve_every_factor():
+    expected = canonicalize_unit("µg/cm^2/h")
+    for value in (
+        "µg/cm²h",
+        "µg/cm2.h",
+        "µg.cm^-2.h^-1",
+        "µg·cm^-2·h^-1",
+    ):
+        actual = canonicalize_unit(value)
+        assert actual.canonical == expected.canonical
+        assert actual.dimension == expected.dimension
+        assert actual.unknown_tokens == ()
+
+    diffusivity = canonicalize_unit("cm^2/s")
+    compact = canonicalize_unit("cm2s^-1")
+    assert compact.canonical == diffusivity.canonical
+    assert compact.dimension == diffusivity.dimension
+
+
+def test_malformed_exponent_suffix_fails_closed():
+    result = canonicalize_unit("cm^2oops")
+    assert result.unknown_tokens
+    assert result.canonical != "cm"
+
+
 # --------------------------------------------------------------------------- #
 # Endpoint compatibility
 # --------------------------------------------------------------------------- #
@@ -396,8 +478,21 @@ def test_contextual_policy_distinguishes_missing_null_and_wrong_context():
 
 
 def test_contextual_policy_requires_task_and_assay_together():
+    # An assay without a task can never match a rule, so it is still an error.
     with pytest.raises(ValueError, match="task and assay together"):
-        canonicalize_unit("ng/mL", task="bioavailability_ma")
+        canonicalize_unit("ng/mL", assay={"source_id": "fa"})
+
+
+def test_task_alone_selects_the_qualifier_vocabulary_without_an_assay():
+    """``task`` alone is meaningful: it picks the vocabulary, not a contextual rule."""
+    result = canonicalize_unit("µg/g of skin", task="skin_reaction")
+    assert result.unknown_tokens == ()
+    assert result.contextual_policy_status == "not_requested"
+    # The same string keeps ``skin`` unresolved for a task that never uses the token.
+    assert canonicalize_unit("µg/g of skin", task="bioavailability_ma").unknown_tokens == (
+        "skin",
+    )
+    assert canonicalize_unit("µg/g of skin").unknown_tokens == ("skin",)
 
 
 def test_contextual_policy_loader_rejects_overlapping_dynamic_rules(tmp_path):
@@ -444,3 +539,74 @@ def test_contextual_policy_loader_rejects_dimension_mismatch(tmp_path):
     path.write_text(json.dumps(policy), encoding="utf-8")
     with pytest.raises(ValueError, match="dimension mismatch"):
         load_contextual_unit_policy(path)
+
+
+def _vocabulary(**overrides):
+    payload = {
+        "schema_version": "qualifier_vocabulary.schema.v1",
+        "policy_version": "test.v1",
+        "vocabularies": [
+            {"scope": "shared", "task": None, "tokens": ["protein"], "review": {}},
+            {
+                "scope": "task",
+                "task": "skin_reaction",
+                "tokens": ["skin"],
+                "review": {},
+            },
+        ],
+    }
+    payload.update(overrides)
+    return payload
+
+
+def _write(tmp_path, payload):
+    path = tmp_path / "qualifiers.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    return path
+
+
+def test_qualifier_vocabulary_rejects_a_token_that_is_a_real_unit(tmp_path):
+    """Declaring a unit dimensionless would silently erase its dimension everywhere."""
+    payload = _vocabulary()
+    payload["vocabularies"][0]["tokens"] = ["mg"]
+    with pytest.raises(ValueError, match="resolves as a unit"):
+        load_qualifier_vocabulary(_write(tmp_path, payload))
+
+
+def test_qualifier_vocabulary_rejects_a_task_redeclaring_a_shared_token(tmp_path):
+    payload = _vocabulary()
+    payload["vocabularies"][1]["tokens"] = ["protein"]
+    with pytest.raises(ValueError, match="redeclares shared qualifier tokens"):
+        load_qualifier_vocabulary(_write(tmp_path, payload))
+
+
+def test_qualifier_vocabulary_rejects_unsorted_or_duplicated_tokens(tmp_path):
+    payload = _vocabulary()
+    payload["vocabularies"][1]["tokens"] = ["skin", "applied"]
+    with pytest.raises(ValueError, match="must be sorted"):
+        load_qualifier_vocabulary(_write(tmp_path, payload))
+    payload["vocabularies"][1]["tokens"] = ["skin", "skin"]
+    with pytest.raises(ValueError, match="duplicate qualifier tokens"):
+        load_qualifier_vocabulary(_write(tmp_path, payload))
+
+
+def test_qualifier_vocabulary_requires_a_shared_entry(tmp_path):
+    payload = _vocabulary()
+    payload["vocabularies"] = [payload["vocabularies"][1]]
+    with pytest.raises(ValueError, match="requires a shared entry"):
+        load_qualifier_vocabulary(_write(tmp_path, payload))
+
+
+def test_qualifier_vocabulary_manifest_records_provenance():
+    manifest = qualifier_vocabulary_manifest()
+    assert manifest["schema_version"] == "qualifier_vocabulary.schema.v1"
+    assert len(manifest["sha256"]) == 64
+    assert manifest["scoping"] == "shared_plus_declared_task_fail_closed"
+    # Skin-only vocabulary must not reach the other tasks, and a token shared by two tasks
+    # but absent from the third must stay scoped rather than drifting into `shared`.
+    assert "skin" in manifest["tasks"]["skin_reaction"]
+    assert "skin" not in manifest["shared_tokens"]
+    assert "skin" not in manifest["tasks"]["bioavailability_ma"]
+    assert "administered" not in manifest["tasks"]["bioavailability_ma"]
+    assert "absorbed" not in manifest["tasks"]["bbb_martins"]
+    assert "absorbed" not in manifest["shared_tokens"]

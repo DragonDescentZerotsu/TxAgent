@@ -206,6 +206,10 @@ _AMBIGUOUS_PROTEIN_NORMALIZATION = re.compile(
     re.IGNORECASE,
 )
 
+# Qualifier vocabulary for every unit parsed by this task.
+_TASK_VOCAB = "bioavailability_ma"
+
+
 
 @dataclass(frozen=True)
 class FgScalarDecision:
@@ -478,7 +482,7 @@ def _try_physical(text: str, canonical_endpoint: str) -> FgScalarDecision | None
     if re.search(r"\s+\([A-Za-z ]+\)\s*$", raw_unit):
         return FgScalarDecision(False, "context_suffix_inside_physical_unit")
     measurement = _render(value, variation, approximate)
-    pair = normalize_measurement_and_unit(measurement, raw_unit)
+    pair = normalize_measurement_and_unit(measurement, raw_unit, task=_TASK_VOCAB)
     pair = endpoint_specific_standardization_of_unit(canonical_endpoint, pair)
     parsed = parse_point_measurement(pair.canonical_measurement)
     if (

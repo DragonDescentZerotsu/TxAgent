@@ -12,6 +12,9 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
     StageDocuments,
     StarlingTaskPolicy,
 )
+from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
+    clean_source_values,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_auxiliary_metadata import (
     AUXILIARY_ATTACHMENT_VERSION,
     DEFAULT_MAPPING_PATH,
@@ -53,12 +56,21 @@ from tools.chembl_tool.tasks.bbb_martins.starling_record_canonicalization import
     enrich_bbb_validity,
     validity_policy_manifest,
 )
+from tools.chembl_tool.tasks.bbb_martins.starling_measurement_semantics import (
+    DEFAULT_SEMANTICS_PATH,
+    load_measurement_semantics_policy,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_source_column_contracts import (
     SOURCE_COLUMN_CONTRACT_VERSION,
     SOURCE_COLUMN_POLICY_VERSION,
     llm_source_projection,
     source_column_contract_manifest,
     source_fields_from_record,
+)
+from tools.chembl_tool.tasks.bbb_martins.starling_schema import (
+    RECORD_CONTRACT,
+    SOURCE_ENDPOINT_PRODUCER_IDS,
+    SOURCE_PAIR_PRODUCER_IDS,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_spacing_and_spelling import (
     SPACING_AND_SPELLING_VERSION,
@@ -72,8 +84,15 @@ TASK_ID = "bbb_martins"
 DATASET_NAME = "starling-labs/BBB plus BBB mechanism-family acquisitions"
 DEFAULT_STARLING_DATA_DIR = "data/starling_data/bbb_martins"
 DEFAULT_OUT_DIR = (
-    "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v6"
+    "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7"
 )
+
+
+def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
+    del args
+    return clean_source_values(records, task_id=TASK_ID)
+
+
 DEFAULT_BENCHMARK_SPLIT_ROOT = "data/processed_starling/BBB_Martins"
 
 
@@ -125,14 +144,14 @@ def endpoint_inventory(source_id: str, endpoints: list[str], *, strict: bool) ->
             **inventory,
             "inventory_semantics": "raw_source_inventory_before_run_specific_endpoint_mapping",
             "decision_semantics": "default_policy_preview_not_runtime_registry",
-            "runtime_decision_registry": "02_normalized/endpoint_registry.json",
+            "runtime_decision_registry": "02_canonicalized/endpoint_registry.json",
         }
     unique = sorted(set(endpoints))
     return {
         "source_id": source_id,
         "inventory_semantics": "raw_source_inventory_before_run_specific_endpoint_mapping",
         "decision_semantics": "default_policy_preview_not_runtime_registry",
-        "runtime_decision_registry": "02_normalized/endpoint_registry.json",
+        "runtime_decision_registry": "02_canonicalized/endpoint_registry.json",
         "count": len(unique),
         "n_reviewed_corrections": 0,
         "coverage": 1.0,
@@ -184,6 +203,7 @@ def stage_documents(
     attacher = hooks.run_state["auxiliary"]
     endpoint_normalizer = hooks.run_state["endpoint"]
     coverage = attacher.coverage_audit(normalized)
+    semantics_policy = load_measurement_semantics_policy()
     return StageDocuments(
         validity_policy={
             **validity_policy_manifest(),
@@ -209,6 +229,13 @@ def stage_documents(
             "contextual_unit_policy_version": unit_policy_manifest["policy_version"],
             "source_column_contract_complete": True,
             "llm_source_projection_fail_closed": True,
+            "measurement_semantics_policy_loaded": True,
+            "measurement_semantics_policy_version": semantics_policy.policy_version,
+            "all_valid_scalars_have_approved_semantics": all(
+                row.get("canonical_semantics_status") == "approved"
+                for row in normalized
+                if row.get("normalization_validity_status") == "valid"
+            ),
         },
         endpoint_registry=_endpoint_registry(normalized),
     )
@@ -244,6 +271,7 @@ def _endpoint_registry(records: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
+    semantics = load_measurement_semantics_policy()
     versions: dict[str, Any] = {
         "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
         "spacing_and_spelling_version": SPACING_AND_SPELLING_VERSION,
@@ -252,6 +280,8 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
         "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
         "endpoint_normalization_version": ENDPOINT_NORMALIZATION_VERSION,
+        "measurement_semantics_policy_version": semantics.policy_version,
+        "measurement_semantics_policy_sha256": semantics.sha256,
     }
     if complete:
         versions["source_column_contract_version"] = SOURCE_COLUMN_CONTRACT_VERSION
@@ -296,6 +326,16 @@ def _enrich_record(record: dict[str, Any], attacher: Any) -> dict[str, Any]:
             "efflux_inhibitor_binary.v1": "efflux_inhibition_outcome",
         }[encoder_id]
         encoded = {**encoded, "canonical_endpoint": semantic_endpoint}
+    source_id = str(record.get("source_id") or "")
+    producer_id = str(encoded.get("categorical_encoder_id") or "")
+    producer_fields = {
+        "canonical_endpoint_producer_id": (
+            producer_id or SOURCE_ENDPOINT_PRODUCER_IDS[source_id]
+        ),
+        "canonical_pair_producer_id": (
+            producer_id or SOURCE_PAIR_PRODUCER_IDS[source_id]
+        ),
+    }
     endpoint_fields = endpoint_context_fields({**record, **encoded})
     if encoded:
         endpoint_fields.update(
@@ -313,7 +353,14 @@ def _enrich_record(record: dict[str, Any], attacher: Any) -> dict[str, Any]:
         )
     unit_fields = unit_provenance_fields(record, encoded=encoded)
     validity = enrich_bbb_validity(
-        {**record, **auxiliary, **encoded, **endpoint_fields, **unit_fields}
+        {
+            **record,
+            **auxiliary,
+            **encoded,
+            **endpoint_fields,
+            **unit_fields,
+            **producer_fields,
+        }
     )
     return {
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
@@ -330,6 +377,7 @@ def _enrich_record(record: dict[str, Any], attacher: Any) -> dict[str, Any]:
         **auxiliary,
         **endpoint_fields,
         **unit_fields,
+        **producer_fields,
         **validity,
     }
 
@@ -341,6 +389,8 @@ POLICY = StarlingTaskPolicy(
     default_out_dir=DEFAULT_OUT_DIR,
     compact=COMPACT_PROFILE,
     expected_source_rows=EXPECTED_SOURCE_ROWS,
+    record_contract=RECORD_CONTRACT,
+    source_value_cleaner=_clean_source_values,
     source_profiles=source_profiles,
     endpoint_inventory=endpoint_inventory,
     family_resolver=family_assignment,
@@ -352,6 +402,7 @@ POLICY = StarlingTaskPolicy(
     validate_arguments=validate_arguments,
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
+    scientific_assets=(DEFAULT_SEMANTICS_PATH,),
 )
 
 

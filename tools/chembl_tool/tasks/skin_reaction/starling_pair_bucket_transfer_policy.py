@@ -99,6 +99,7 @@ TRANSFER_POLICY_PROFILE = TransferPolicyProfile(
     version=PAIR_BUCKET_TRANSFER_POLICY_VERSION,
     source_candidate_fields=SOURCE_CANDIDATE_FIELDS,
     minimum_distinct_levels=MINIMUM_DISTINCT_MEASUREMENT_LEVELS,
+    minimum_distinct_levels_by_scale={"single_subject_logit": 2},
 )
 
 

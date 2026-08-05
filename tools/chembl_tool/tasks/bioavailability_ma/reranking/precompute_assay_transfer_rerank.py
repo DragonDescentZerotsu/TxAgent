@@ -165,6 +165,9 @@ def main(argv: list[str] | None = None) -> int:
         force_rescore=args.force_rescore,
         template_profile=args.assay_transfer_template_profile,
         retrieval_source=args.retrieval_source,
+        exclude_nondirect_bioavailability_records=(
+            args.exclude_nondirect_bioavailability_records
+        ),
     )
     print(
         f"[assay_transfer_precompute] queries={len(indices)} prompts_to_score={len(tasks)} "
@@ -272,11 +275,17 @@ def collect_prompt_tasks(
     force_rescore: bool,
     template_profile: str = DEFAULT_TEMPLATE_PROFILE,
     retrieval_source: str = "starling",
+    exclude_nondirect_bioavailability_records: bool = False,
 ) -> tuple[AssayTransferCachedReranker, list[PromptTask]]:
     if experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
         raise ValueError("Assay-transfer reranking requires direct, full_flat, or full_mechanism mode")
     index = load_index(Path(index_path))
-    config = get_source_config(retrieval_source)
+    config = get_source_config(
+        retrieval_source,
+        exclude_nondirect_bioavailability_records=(
+            exclude_nondirect_bioavailability_records
+        ),
+    )
     reranker = AssayTransferCachedReranker(
         catalog_path=catalog_path,
         cache_path=cache_path,
@@ -286,6 +295,9 @@ def collect_prompt_tasks(
         allow_missing=True,
         candidate_manifest_path=candidate_manifest_path,
         template_profile=template_profile,
+        exclude_nondirect_bioavailability_records=(
+            exclude_nondirect_bioavailability_records
+        ),
     )
     for ordinal, index_value in enumerate(indices, start=1):
         query_smiles = str(records[index_value].get(smiles_field) or "")
@@ -337,13 +349,19 @@ def preflight_cache_coverage(
     assay_transfer_min_score: float | None = None,
     assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
     assay_transfer_diversity_score_slack: float = 0.0,
+    exclude_nondirect_bioavailability_records: bool = False,
 ) -> dict[str, Any]:
     from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
         prepare_assay_transfer_selected_neighbors,
     )
 
     index = load_index(Path(index_path))
-    config = get_source_config(retrieval_source)
+    config = get_source_config(
+        retrieval_source,
+        exclude_nondirect_bioavailability_records=(
+            exclude_nondirect_bioavailability_records
+        ),
+    )
     reranker = AssayTransferCachedReranker(
         catalog_path=catalog_path,
         cache_path=cache_path,
@@ -352,6 +370,9 @@ def preflight_cache_coverage(
         model_revision=model_revision,
         candidate_manifest_path=candidate_manifest_path,
         template_profile=template_profile,
+        exclude_nondirect_bioavailability_records=(
+            exclude_nondirect_bioavailability_records
+        ),
     )
     n_unscoreable_selected_dropped = 0
     n_below_min_score_dropped = 0
@@ -417,6 +438,9 @@ def preflight_cache_coverage(
             "cache_version_validation": version_validation,
             "provenance": reranker.provenance(),
             "assay_transfer_min_score": assay_transfer_min_score,
+            "exclude_nondirect_bioavailability_records": (
+                exclude_nondirect_bioavailability_records
+            ),
         }
         result.update(
             {
@@ -804,6 +828,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--retrieval-source",
         choices=["starling", "starling_in_distribution"],
         default="starling",
+    )
+    parser.add_argument(
+        "--exclude-nondirect-bioavailability-records",
+        action="store_true",
+        help="Exclude retained relative/apparent HF records before candidate ranking.",
     )
     parser.add_argument("--experiment-mode", choices=["direct", "full_flat", "full_mechanism"], default="full_mechanism")
     parser.add_argument("--neighbor-identity-policy", choices=["operational", "parent_disjoint"], default="operational")

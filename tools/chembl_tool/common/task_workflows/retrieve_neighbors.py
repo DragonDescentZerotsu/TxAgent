@@ -64,7 +64,10 @@ def load_index(path: Path) -> dict[str, Any]:
             policy = importlib.import_module(
                 f"tools.chembl_tool.tasks.{task_id}.starling_policy"
             )
-            return load_compact_neighbor_index(path, profile=policy.POLICY.compact)
+            profile = policy.POLICY.compact_profile_for_contract(
+                str(manifest.get("record_contract_version") or "")
+            )
+            return load_compact_neighbor_index(path, profile=profile)
         raise ValueError(f"unsupported directory index format: {path}")
     return load_retrieval_index(path)
 

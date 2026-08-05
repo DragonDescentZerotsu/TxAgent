@@ -51,13 +51,13 @@ from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
 
 
 PAIR_BUCKET_TRANSFER_POLICY_VERSION = (
-    "bioavailability_ma_pair_bucket_transfer_policy.v1"
+    "bioavailability_ma_pair_bucket_transfer_policy.v2"
 )
 
 # Only factual source columns are candidates.  They are used for a numerical
 # heterogeneity check, not as pair-bucket identity fields or LLM prompt inputs.
 SOURCE_CANDIDATE_FIELDS: dict[str, tuple[str, ...]] = {
-    "direct_hf": (
+    "hf_bioavailability": (
         "species_or_population",
         "dose",
         "oral_exposure_mode",

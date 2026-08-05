@@ -1,0 +1,26 @@
+{
+  "artifact_version": "bbb_martins_direct_endpoint_errata_proposal.v2",
+  "artifacts": {
+    "candidates": {
+      "path": "tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v2/proposal/errata_candidates.parquet",
+      "sha256": "3fcf5040ba3bd4c72fc14c4767ad920f55b6e58dc3b6b16b63fc2ad46b420ae7"
+    },
+    "proposal": {
+      "path": "tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v2/proposal/proposed_endpoint_mapping.json",
+      "sha256": "ed4076d286a0dfcfd37634c6e17be6cbb9045189e27e42faad63eb344f1aee8b"
+    }
+  },
+  "counts": {
+    "affected_records": 84300,
+    "base_mapping_entries": 22743,
+    "candidate_endpoints": 13391,
+    "proposed_mapping_changes": 1
+  },
+  "publication_status": "awaiting_human_approval",
+  "validations": {
+    "full_source_key_coverage_preserved": true,
+    "no_llm_unit_or_endpoint_inference": true,
+    "proposal_is_not_human_approved": true,
+    "v1_mapping_unchanged": true
+  }
+}

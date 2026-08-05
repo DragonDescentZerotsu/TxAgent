@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.starling.normalization.cleaning import (
+    clean_measurement_text,
     clean_scalar,
     file_sha256,
 )
@@ -71,6 +72,8 @@ class AuxiliaryMetadataAttacher:
         null_like: Sequence[str],
         output_fields: Sequence[str] | Mapping[str, Sequence[str]] = OUTPUT_FIELDS,
         attachment_version: str = AUXILIARY_ATTACHMENT_VERSION,
+        source_column_aliases: Mapping[str, Mapping[str, str]] | None = None,
+        non_null_outputs_when_input_present: Mapping[str, Sequence[str]] | None = None,
     ):
         """``output_fields`` is either one field set for every source, or a
         per-source mapping when sources reconcile different things -- one may
@@ -80,6 +83,22 @@ class AuxiliaryMetadataAttacher:
         self.applicable_sources = tuple(applicable_sources)
         self._null_like = frozenset(null_like)
         self.attachment_version = attachment_version
+        self._source_column_aliases = {
+            source: dict(aliases)
+            for source, aliases in (source_column_aliases or {}).items()
+        }
+        unknown_alias_sources = set(self._source_column_aliases) - set(
+            self.applicable_sources
+        )
+        if unknown_alias_sources:
+            raise ValueError(
+                "auxiliary aliases declared for inapplicable sources "
+                f"{sorted(unknown_alias_sources)}"
+            )
+        self._non_null_outputs_when_input_present = {
+            source: frozenset(fields)
+            for source, fields in (non_null_outputs_when_input_present or {}).items()
+        }
         self._per_source_output_fields = isinstance(output_fields, Mapping)
         self._output_fields_by_source = _resolve_output_fields(
             output_fields, self.applicable_sources
@@ -148,7 +167,11 @@ class AuxiliaryMetadataAttacher:
                         raise ValueError(
                             f"non-string auxiliary value for {source_id}/{output_field}"
                         )
-                    key = self._tuple_key(tuple(decoded))
+                    key = self._tuple_key(
+                        source_id,
+                        tuple(columns),
+                        tuple(decoded),
+                    )
                     if key in cleaned_mapping and cleaned_mapping[key] != value:
                         raise ValueError(
                             f"conflicting cleaned tuple mapping for {source_id}/"
@@ -172,7 +195,18 @@ class AuxiliaryMetadataAttacher:
             "mapping_sha256": self.sha256,
             "tuple_key_cleaning": {
                 "whitespace_and_null_cleaning": "clean_scalar",
+                "measurement_role_cleaning": "clean_measurement_text",
                 "null_like_values": sorted(self._null_like),
+            },
+            "source_column_aliases": {
+                source: dict(sorted(aliases.items()))
+                for source, aliases in sorted(self._source_column_aliases.items())
+            },
+            "non_null_outputs_when_input_present": {
+                source: sorted(fields)
+                for source, fields in sorted(
+                    self._non_null_outputs_when_input_present.items()
+                )
             },
             "output_fields": list(self._all_output_fields),
             "applicable_sources": list(self.applicable_sources),
@@ -199,10 +233,21 @@ class AuxiliaryMetadataAttacher:
                 for source, fields in sorted(self._output_fields_by_source.items())
             }
 
-    def _tuple_key(self, values: tuple[Any, ...]) -> tuple[Any, ...]:
+    def _tuple_key(
+        self,
+        source_id: str,
+        columns: tuple[str, ...],
+        values: tuple[Any, ...],
+    ) -> tuple[Any, ...]:
         cleaned: list[Any] = []
-        for value in values:
-            item = clean_scalar(value)
+        aliases = self._source_column_aliases.get(source_id, {})
+        for column, value in zip(columns, values, strict=True):
+            target = aliases.get(column, column)
+            item = (
+                clean_measurement_text(value)
+                if target in {"measurement_text", "unit_text"}
+                else clean_scalar(value)
+            )
             # The frozen mapping builder collapses source null sentinels before
             # it serializes tuple keys. Apply the identical null-equivalence
             # contract at attachment time; otherwise a cleaned source literal
@@ -211,6 +256,12 @@ class AuxiliaryMetadataAttacher:
                 item = None
             cleaned.append(item)
         return tuple(cleaned)
+
+    def _record_value(
+        self, record: Mapping[str, Any], source_id: str, column: str
+    ) -> Any:
+        alias = self._source_column_aliases.get(source_id, {}).get(column, column)
+        return record.get(alias)
 
     def attach(self, record: Mapping[str, Any]) -> dict[str, Any]:
         source_id = str(record.get("source_id") or "")
@@ -226,7 +277,12 @@ class AuxiliaryMetadataAttacher:
         for output_field in self._output_fields_by_source[source_id]:
             lookup = self._lookups[(source_id, output_field)]
             key = self._tuple_key(
-                tuple(record.get(column) for column in lookup.source_columns)
+                source_id,
+                lookup.source_columns,
+                tuple(
+                    self._record_value(record, source_id, column)
+                    for column in lookup.source_columns
+                ),
             )
             if key not in lookup.values:
                 raise ValueError(
@@ -234,6 +290,16 @@ class AuxiliaryMetadataAttacher:
                     f"tuple {key!r}"
                 )
             output[output_field] = lookup.values[key]
+            if (
+                output_field
+                in self._non_null_outputs_when_input_present.get(source_id, ())
+                and any(value is not None for value in key)
+                and output[output_field] is None
+            ):
+                raise ValueError(
+                    f"globally reconciled mapping returned null for required "
+                    f"{source_id}/{output_field} tuple {key!r}"
+                )
         output.update(
             {
                 "auxiliary_mapping_status": "mapped",
@@ -247,6 +313,7 @@ class AuxiliaryMetadataAttacher:
 
     def coverage_audit(self, records: list[Mapping[str, Any]]) -> dict[str, Any]:
         source_counts: dict[str, Counter[str]] = defaultdict(Counter)
+        output_counts: dict[str, Counter[str]] = defaultdict(Counter)
         for record in records:
             source_id = str(record.get("source_id") or "")
             status = str(record.get("auxiliary_mapping_status") or "missing")
@@ -259,11 +326,19 @@ class AuxiliaryMetadataAttacher:
                 raise ValueError(
                     f"inapplicable source record has unexpected auxiliary status: {source_id}"
                 )
+            for output_field in self._output_fields_by_source.get(source_id, ()):
+                output_counts[f"{source_id}/{output_field}"][
+                    "non_null" if record.get(output_field) is not None else "null"
+                ] += 1
         return {
             "records": len(records),
             "source_status_counts": {
                 source: dict(sorted(counts.items()))
                 for source, counts in sorted(source_counts.items())
+            },
+            "output_value_counts": {
+                field: dict(sorted(counts.items()))
+                for field, counts in sorted(output_counts.items())
             },
             "validations": {
                 "all_applicable_records_mapped": True,

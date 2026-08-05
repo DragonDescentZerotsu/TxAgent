@@ -21,20 +21,20 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_sidec
 )
 
 
-SOURCE_ORDER = ("oral_exposure", "fa", "fg", "fh", "direct_hf")
+SOURCE_ORDER = ("oral_exposure", "fa", "fg", "fh", "hf_bioavailability")
 SOURCE_LABELS = {
     "oral_exposure": "Oral exposure",
     "fa": "Fa",
     "fg": "FG",
     "fh": "FH",
-    "direct_hf": "Direct HF",
+    "hf_bioavailability": "HF bioavailability",
 }
 SOURCE_COLORS = {
     "oral_exposure": "#3B6FB6",
     "fa": "#2A9D8F",
     "fg": "#E07A5F",
     "fh": "#7A5195",
-    "direct_hf": "#D4A72C",
+    "hf_bioavailability": "#D4A72C",
 }
 
 DEFAULT_ROOT = Path(DEFAULT_OUT_DIR)

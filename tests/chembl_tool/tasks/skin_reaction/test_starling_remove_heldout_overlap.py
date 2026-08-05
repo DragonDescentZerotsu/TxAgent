@@ -366,7 +366,7 @@ def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path
     # pipeline stage applied after the policy, so the policy's own calibration
     # deliberately sees the complete unfiltered records.  Pinned so a change to
     # that decision has to be deliberate.
-    assert audit["validations"]["transfer_policy_has_declared_calibration_filter"] is False
+    assert audit["validations"]["calibration_statistics_scope_matches_artifact"]
     assert audit["policy_statistics_scope"] == "complete_unfiltered_records"
     assert audit["filter_source_id"] == DIRECT
 

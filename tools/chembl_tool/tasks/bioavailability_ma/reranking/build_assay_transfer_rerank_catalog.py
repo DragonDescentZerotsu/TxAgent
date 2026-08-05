@@ -286,6 +286,7 @@ def _prebuilt_manifest_row(
 def _records_from_index_candidate(group_id: str, candidate: dict[str, Any]) -> list[dict[str, Any]]:
     concept = {
         "Observed.direct_oral_bioavailability": "oral_bioavailability",
+        "Observed.nondirect_oral_bioavailability": "oral_bioavailability",
         "Observed.oral_auc_cmax_exposure": "oral_exposure",
         "Fa.absorption_solubility_permeability": "Fa",
         "Fg.gut_wall_efflux_intestinal_metabolism": "Fg",
@@ -317,6 +318,7 @@ def _index_example_record(
                 "species_or_population": example.get("species_or_population"),
                 "report_or_statistic_type": example.get("bioavailability_report_type"),
                 "dose": example.get("dose"),
+                "oral_exposure_mode": example.get("oral_exposure_mode"),
                 "study_or_assay_system": example.get("oral_exposure_mode"),
                 "qualifying_conditions": example.get("qualifying_conditions"),
                 "comparator": example.get("comparator"),
@@ -334,6 +336,7 @@ def _index_example_record(
                 or raw_context.get("species_or_population"),
                 "report_or_statistic_type": raw_context.get("statistic_type"),
                 "dose": raw_context.get("oral_dose"),
+                "study_context": raw_context.get("study_context"),
                 "study_or_assay_system": raw_context.get("study_context"),
                 "qualifying_conditions": raw_context.get("qualifying_conditions"),
                 "comparator": raw_context.get("comparator_exposure"),
@@ -348,6 +351,8 @@ def _index_example_record(
             "species_or_population": raw_context.get("species") or raw_context.get("species_or_population"),
             "report_or_statistic_type": raw_context.get("statistic_type"),
             "dose": raw_context.get("oral_dose"),
+            "study_context": raw_context.get("study_context"),
+            "assay_system": raw_context.get("assay_system"),
             "study_or_assay_system": raw_context.get("study_context") or raw_context.get("assay_system"),
             "measured_process": example.get("endpoint_type"),
             "biological_context": raw_context.get("biological_context"),
@@ -571,7 +576,7 @@ def _cleaned_catalog_record(
         unit_basis=unit_basis,
     )
     source_contract_id = {
-        "oral_bioavailability": "direct_hf",
+        "oral_bioavailability": "hf_bioavailability",
         "oral_exposure": "oral_exposure",
         "Fa": "fa",
         "Fg": "fg",
@@ -648,6 +653,7 @@ def _template_context(concept: str, cleaned: dict[str, Any], raw: dict[str, Any]
             species_or_population=raw.get("species_or_population"),
             report_or_statistic_type=raw.get("bioavailability_report_type"),
             dose=raw.get("dose"),
+            oral_exposure_mode=raw.get("oral_exposure_mode"),
             study_or_assay_system=raw.get("oral_exposure_mode"),
             qualifying_conditions=raw.get("qualifying_conditions"),
             comparator=raw.get("comparator"),
@@ -659,12 +665,14 @@ def _template_context(concept: str, cleaned: dict[str, Any], raw: dict[str, Any]
             measured_process=raw.get("exposure_measure"),
             report_or_statistic_type=raw.get("statistic_type"),
             dose=raw.get("oral_dose"),
+            study_context=raw.get("study_context"),
             study_or_assay_system=raw.get("study_context"),
             comparator=raw.get("comparator_exposure"),
             qualifying_conditions=raw.get("qualifying_conditions"),
         )
     if concept == "Fa":
         return _context(
+            assay_system=raw.get("assay_system"),
             study_or_assay_system=raw.get("assay_system"),
             biological_context=raw.get("biological_context"),
             medium=raw.get("condition_medium"),
@@ -677,11 +685,13 @@ def _template_context(concept: str, cleaned: dict[str, Any], raw: dict[str, Any]
             measured_process=raw.get("gut_wall_process"),
             transporter_or_enzyme=raw.get("transporter_or_enzyme"),
             substrate_status=raw.get("substrate_status"),
+            assay_system=raw.get("assay_system"),
             study_or_assay_system=raw.get("assay_system"),
             intestinal_site=raw.get("intestinal_site"),
             qualifying_conditions=raw.get("qualifying_conditions"),
         )
     return _context(
+        assay_system=raw.get("assay_system"),
         study_or_assay_system=raw.get("assay_system"),
         species_or_population=raw.get("species"),
         molecular_form=raw.get("molecular_form"),

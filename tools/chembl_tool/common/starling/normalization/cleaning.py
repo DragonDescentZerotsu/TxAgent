@@ -19,6 +19,13 @@ from .contracts import CLEANING_STAGE_VERSION, NormalizedSourceProfile
 _NULL_TEXT = {"", "nan", "none", "null", "na", "n/a", "-", "unspecified"}
 _SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻", "0123456789+-")
 _SUPERSCRIPT_RE = re.compile(r"[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+")
+_WHITESPACE_RE = re.compile(r"\s+")
+_PLAIN_FLOAT_RE = re.compile(
+    r"^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+))(?:[eE][+-]?\d+)?$"
+)
+_THOUSANDS_FLOAT_RE = re.compile(
+    r"^[+-]?\d{1,3}(?:,\d{3})+(?:\.\d*)?(?:[eE][+-]?\d+)?$"
+)
 
 
 def clean_text(value: Any) -> str | None:
@@ -29,8 +36,20 @@ def clean_text(value: Any) -> str | None:
         return None
     text = unicodedata.normalize("NFKC", str(value))
     text = text.replace("μ", "µ")
-    text = re.sub(r"\s+", " ", text).strip()
+    text = _WHITESPACE_RE.sub(" ", text).strip()
     return None if text.casefold() in _NULL_TEXT else text or None
+
+
+def clean_literal_text(value: Any) -> str | None:
+    """Normalize a declared taxonomy value without inventing textual nulls."""
+    if value is None:
+        return None
+    if isinstance(value, float) and math.isnan(value):
+        return None
+    text = unicodedata.normalize("NFKC", str(value))
+    text = text.replace("μ", "µ")
+    text = _WHITESPACE_RE.sub(" ", text).strip()
+    return text or None
 
 
 def clean_measurement_text(value: Any) -> str | None:
@@ -84,13 +103,29 @@ def resolve_structure(
     if profile.structure_mode == "mapped":
         identifier = clean_text(row.get("global_identifier"))
         raw_smiles = clean_text(smiles_mapping.get(identifier)) if identifier and smiles_mapping else None
-        if not raw_smiles:
-            return None, "unresolved_mapped_structure"
     else:
         raw_smiles = clean_text(row.get(profile.smiles_field))
-        if not raw_smiles:
-            return None, "missing_structure"
-    canonical = standardize_smiles(raw_smiles)[0]
+    return resolve_structure_value(
+        raw_smiles,
+        structure_mode=profile.structure_mode,
+    )
+
+
+def resolve_structure_value(
+    raw_smiles: Any,
+    *,
+    structure_mode: str,
+) -> tuple[str | None, str]:
+    """Resolve one already-selected structure with fresh/resume-identical status."""
+    cleaned = clean_text(raw_smiles)
+    if not cleaned:
+        return (
+            None,
+            "unresolved_mapped_structure"
+            if structure_mode == "mapped"
+            else "missing_structure",
+        )
+    canonical = standardize_smiles(cleaned)[0]
     return (canonical, "resolved") if canonical else (None, "invalid_structure")
 
 
@@ -100,13 +135,22 @@ def clean_source_rows(
     *,
     smiles_mapping: Mapping[str, str] | None,
     source_sha256: str = "",
+    source_row_offset: int = 0,
 ) -> list[dict[str, Any]]:
     """Return exactly one cleaned record for every supplied source row."""
     cleaned_records: list[dict[str, Any]] = []
     structure_cache: dict[tuple[str, str], tuple[str | None, str]] = {}
-    for source_row_number, raw_mapping in enumerate(rows, start=1):
+    for source_row_number, raw_mapping in enumerate(rows, start=source_row_offset + 1):
         raw_source = {str(key): value for key, value in dict(raw_mapping).items()}
-        raw = {key: clean_scalar(value) for key, value in raw_source.items()}
+        literal_fields = set(profile.literal_text_fields)
+        raw = {
+            key: (
+                clean_literal_text(value)
+                if key in literal_fields
+                else clean_scalar(value)
+            )
+            for key, value in raw_source.items()
+        }
         endpoint_name = normalize_endpoint_name(
             profile.endpoint_constant or raw.get(profile.endpoint_field)
         )
@@ -143,11 +187,13 @@ def clean_source_rows(
         measurement_text = clean_measurement_text(
             raw_source.get(profile.measurement_field)
         )
-        context = {
-            field: clean_scalar(raw.get(field))
-            for field in profile.context_fields
-            if clean_scalar(raw.get(field)) is not None
-        }
+        context: dict[str, Any] = {}
+        for field in profile.context_fields:
+            # ``raw`` is already field-aware cleaned.  Reapplying the generic
+            # cleaner here would erase literal taxonomy categories.
+            value = raw.get(field)
+            if value is not None:
+                context[field] = value
         molecule_name = next(
             (
                 text
@@ -202,16 +248,30 @@ def clean_source_rows(
 
 
 def finite_float(value: Any) -> float | None:
-    try:
-        if value is None or isinstance(value, bool):
+    if value is None or isinstance(value, bool):
+        return None
+    text = str(value).strip()
+    if "," in text:
+        if not _THOUSANDS_FLOAT_RE.fullmatch(text):
             return None
-        number = float(str(value).replace(",", ""))
+        leading_group = text.lstrip("+-").split(",", 1)[0]
+        # ``0,285`` cannot mean 285 with a thousands separator.  Stage 01
+        # converts it to ``0.285`` when the complete measurement is numeric;
+        # callers that bypass Stage 01 must fail closed instead.
+        if int(leading_group) == 0:
+            return None
+        text = text.replace(",", "")
+    if not _PLAIN_FLOAT_RE.fullmatch(text):
+        return None
+    try:
+        number = float(text)
     except (TypeError, ValueError):
         return None
     return number if math.isfinite(number) else None
 
 
 __all__ = [
+    "clean_literal_text",
     "clean_scalar",
     "clean_source_rows",
     "clean_text",
@@ -220,5 +280,6 @@ __all__ = [
     "finite_float",
     "normalize_endpoint_name",
     "resolve_structure",
+    "resolve_structure_value",
     "stable_id",
 ]

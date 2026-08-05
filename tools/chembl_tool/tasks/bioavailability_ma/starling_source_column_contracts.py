@@ -14,7 +14,13 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 
-SOURCE_COLUMN_CONTRACT_VERSION = "source_column_contract.v1"
+SOURCE_COLUMN_CONTRACT_VERSION = "source_column_contract.v2"
+
+_HF_BIOAVAILABILITY_COLUMNS = (
+    "bioavailability_report_type", "comparator", "dose", "extra_details",
+    "molecule_name", "oral_bioavailability_value", "oral_exposure_mode", "pmid",
+    "qualifying_conditions", "smiles", "species_or_population", "support_text",
+)
 
 SOURCE_COLUMNS: dict[str, tuple[str, ...]] = {
     "oral_exposure": (
@@ -41,11 +47,7 @@ SOURCE_COLUMNS: dict[str, tuple[str, ...]] = {
         "molecular_form", "reported_value", "reported_units", "enzyme_or_pathway",
         "qualifying_conditions", "extra_details", "smiles",
     ),
-    "direct_hf": (
-        "bioavailability_report_type", "comparator", "dose", "extra_details",
-        "molecule_name", "oral_bioavailability_value", "oral_exposure_mode", "pmid",
-        "qualifying_conditions", "smiles", "species_or_population", "support_text",
-    ),
+    "hf_bioavailability": _HF_BIOAVAILABILITY_COLUMNS,
 }
 
 # Top-level normalized columns that are still direct or simply-cleaned aliases.
@@ -73,7 +75,7 @@ _SOURCE_ALIASES: dict[str, set[str]] = {
         "confidence", "support_text", "assay_system", "species", "molecular_form",
         "enzyme_or_pathway", "qualifying_conditions", "extra_details",
     },
-    "direct_hf": {
+    "hf_bioavailability": {
         "measurement_text", "source_smiles", "molecule_name", "support_text",
         "bioavailability_report_type", "species_or_population", "dose",
         "oral_exposure_mode", "qualifying_conditions", "comparator", "extra_details",

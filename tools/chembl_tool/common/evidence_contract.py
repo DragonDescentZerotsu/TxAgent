@@ -256,7 +256,10 @@ def _validated_source_projection(value: Mapping[str, Any]) -> dict[str, Any]:
         return {}
     if not isinstance(contract, Mapping) or not isinstance(fields, Mapping):
         raise ValueError("source projection requires both source_contract and source_fields")
-    if contract.get("contract_version") != "source_column_contract.v1":
+    if contract.get("contract_version") not in {
+        "source_column_contract.v1",
+        "source_column_contract.v2",
+    }:
         raise ValueError("unsupported source-column contract version")
     allowed = contract.get("source_or_simply_cleaned")
     if not isinstance(allowed, Mapping) or any(item is not True for item in allowed.values()):

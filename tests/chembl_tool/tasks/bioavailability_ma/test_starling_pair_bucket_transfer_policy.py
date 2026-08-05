@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import gzip
 import json
 import math
 from pathlib import Path
@@ -20,6 +21,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_auxiliary_metadata impo
 from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_bucket_transfer_policy import (
     MIN_ASSAY_TRANSFER_SAMPLES,
     SOURCE_CANDIDATE_FIELDS,
+    PAIR_BUCKET_TRANSFER_POLICY_VERSION,
     automatic_variance_gate,
     evaluate_pair_bucket_transfer,
     load_pair_bucket_transfer_policy,
@@ -73,7 +75,7 @@ def test_combined_policy_uses_25_records_gate_and_one_sd_boundary(tmp_path):
             buckets.append(
                 {
                     "normalized_record_id": record_id,
-                    "source_id": "direct_hf",
+                    "source_id": "hf_bioavailability",
                     "canonical_endpoint": "absolute_bioavailability",
                     "canonical_unit": "%",
                     "pair_bucket_key": key,
@@ -186,6 +188,12 @@ def test_frozen_full_policy_counts_when_local_artifact_is_available():
     )
     if not path.exists():
         pytest.skip("restored full normalized-v6 policy artifact is unavailable")
+    with gzip.open(path, "rt", encoding="utf-8") as handle:
+        stored = json.load(handle)
+    if stored.get("policy_version") != PAIR_BUCKET_TRANSFER_POLICY_VERSION:
+        pytest.skip(
+            "local normalized-v6 policy predates the unified HF source schema"
+        )
     payload = load_pair_bucket_transfer_policy(path)
     assert payload["summary"] == {
         "assay_transfer_eligible_buckets": 289,

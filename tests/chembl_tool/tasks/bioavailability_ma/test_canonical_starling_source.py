@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from tools.chembl_tool.tasks.bioavailability_ma.build_canonical_starling_source import (
     build_canonical_frames,
@@ -11,6 +12,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     LOCAL_PARTITION_NON_BIOAVAILABILITY,
     LOCAL_PARTITION_RELATIVE,
     classify_local_record,
+    nondirect_measurement_fields,
 )
 
 
@@ -25,6 +27,28 @@ def test_local_partition_requires_an_absolute_anchor():
         )[0]
         == LOCAL_PARTITION_DIRECT
     )
+
+
+@pytest.mark.parametrize(
+    ("value", "measurement", "unit", "numeric", "status"),
+    [
+        ("95%", "95", "%", 95.0, "explicit_atomic_scalar_unit"),
+        ("2.5-fold higher", "2.5", "fold", 2.5, "explicit_atomic_scalar_unit"),
+        ("ratio of 1.4", "1.4", "ratio", 1.4, "explicit_atomic_scalar_unit"),
+        ("94% versus 71%", "94% versus 71%", "", None, "non_atomic_or_qualitative"),
+        ("similar", "similar", "", None, "no_explicit_unit"),
+    ],
+)
+def test_nondirect_measurement_extraction_is_explicit_and_conservative(
+    value, measurement, unit, numeric, status
+):
+    fields = nondirect_measurement_fields(value)
+    assert fields == {
+        "measurement_text": measurement,
+        "numeric_value": numeric,
+        "value_units": unit,
+        "measurement_unit_extraction_status": status,
+    }
     assert (
         classify_local_record(
             {
@@ -144,6 +168,8 @@ def test_build_canonical_frames_partitions_and_cross_source_deduplicates():
     assert result["stats"]["n_local_absolute_rows_with_valid_structure"] == 1
     assert result["stats"]["n_local_residual_rows"] == 2
     assert result["stats"]["n_cross_source_matches"] == 1
+    assert result["stats"]["n_hf_nondirect_rows"] == 1
+    assert result["stats"]["hf_snapshot_reconciliation"]["reconciles"] is True
     assert result["stats"]["n_direct_source_rows_before_dedup"] == 2
     assert result["stats"]["n_canonical_direct_claims"] == 1
     assert result["stats"]["local_partition_reconciliation"]["reconciles"] is True
@@ -151,6 +177,10 @@ def test_build_canonical_frames_partitions_and_cross_source_deduplicates():
     claim = result["direct_claims"].iloc[0]
     assert list(claim["source_origins"]) == ["hf", "local"]
     assert claim["n_source_records"] == 2
+    nondirect = result["hf_nondirect_records"].iloc[0]
+    assert nondirect["source_index"] == 1
+    assert nondirect["endpoint_name"] == "oral_bioavailability"
+    assert nondirect["value_units"] == "%"
 
 
 def test_cross_source_dedup_does_not_collapse_threshold_crossing_interval():

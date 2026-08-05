@@ -4,7 +4,11 @@ import pandas as pd
 import pytest
 
 from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
-from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLING
+from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
+    NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
+    STARLING,
+    STARLING_EXCLUDING_NONDIRECT,
+)
 from tools.chembl_tool.tasks.bioavailability_ma import build_starling_evidence_library as direct_builder
 from tools.chembl_tool.tasks.bioavailability_ma import build_starling_factor_evidence_library as factor_builder
 from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library import (
@@ -173,7 +177,7 @@ def test_evidence_builder_clis_reject_removed_pinned_hf_modes():
         "bioavailability_ma_starling_neighbor_index.v3"
     )
     assert factor_builder.INDEX_VERSION == (
-        "bioavailability_ma_starling_factor_neighbor_index.v4"
+        "bioavailability_ma_starling_factor_neighbor_index.v5"
     )
     with pytest.raises(SystemExit):
         direct_builder._parse_args(["--source-mode", "pinned-hf"])
@@ -208,12 +212,33 @@ def test_factor_builder_include_direct_hf_reads_complete_parquet(monkeypatch, tm
     def fake_direct(source_parquet, **kwargs):
         calls.append((source_parquet, kwargs["include_qualitative"]))
         return [], {
-            "n_source_rows": 163815,
+            "n_source_rows": 112245,
             "n_source_rows_kept": 80808,
-            "n_dropped_rows_scanned": 83007,
+            "n_dropped_rows_scanned": 31437,
         }
 
+    monkeypatch.setattr(factor_builder, "load_direct_hf_rows", lambda *args, **kwargs: [{"raw": 1}])
+    monkeypatch.setattr(
+        factor_builder,
+        "partition_hf_rows",
+        lambda *args, **kwargs: (
+            [{"direct": 1}],
+            [{"nondirect": 1}],
+            {
+                "complete_raw_rows": 163815,
+                "direct_partition_rows": 112245,
+                "nondirect_partition_rows": 51570,
+                "partition_reconciles": True,
+                "direct_report_types": ["absolute"],
+            },
+        ),
+    )
     monkeypatch.setattr(factor_builder, "build_direct_f_rows", fake_direct)
+    monkeypatch.setattr(
+        factor_builder,
+        "build_nondirect_hf_evidence_rows",
+        lambda *args, **kwargs: ([], {"n_source_rows": 51570}),
+    )
     monkeypatch.setattr(factor_builder, "build_starling_parquet_evidence_rows", lambda *args, **kwargs: ([], {}))
     monkeypatch.setattr(factor_builder, "build_neighbor_index", lambda *args, **kwargs: {
         "molecules": [], "group_to_molecule_indices": {}
@@ -228,14 +253,18 @@ def test_factor_builder_include_direct_hf_reads_complete_parquet(monkeypatch, tm
     meta = json.loads((tmp_path / "index" / factor_builder.META_FILENAME).read_text(encoding="utf-8"))
     assert meta["include_direct_hf"] is True
     assert meta["index_version"] == (
-        "bioavailability_ma_starling_factor_neighbor_index.v4.full.full"
+        "bioavailability_ma_starling_factor_neighbor_index.v5.full.full"
     )
     assert meta["direct_hf_provenance"]["source_mode"] == "complete_parquet"
     assert meta["direct_source_stats"]["n_source_rows_kept"] == 80808
     assert meta["prepared_hf_row_counts"] == {
-        "raw_rows": 163815,
-        "clean_numeric_rows": 80808,
-        "dropped_rows": 83007,
+        "complete_raw_rows": 163815,
+        "direct_partition_rows": 112245,
+        "nondirect_partition_rows": 51570,
+        "partition_reconciles": True,
+        "direct_report_types": ["absolute"],
+        "direct_clean_numeric_rows": 80808,
+        "direct_dropped_rows": 31437,
     }
     assert len(meta["underlying_sources"]) == 5
 
@@ -247,6 +276,113 @@ def test_prepared_hf_count_preflight_rejects_mismatched_artifacts():
             expected_raw_rows=163815,
             expected_clean_numeric_rows=82496,
         )
+
+
+def test_hf_partition_and_nondirect_extraction_do_not_assume_percent() -> None:
+    rows = [
+        _raw_hf_record(1, "CCCO", "45%", "absolute"),
+        _raw_hf_record(2, "CCCCO", "1.8-fold", "relative_comparison"),
+        _raw_hf_record(3, "CCCCCO", "0.7", "relative_comparison"),
+        _raw_hf_record(4, "CCCCCCO", "55%", "apparent"),
+    ]
+    direct, nondirect, stats = factor_builder.partition_hf_rows(
+        rows, validate_complete=False
+    )
+    assert [row["source_index"] for row in direct] == [1]
+    assert [row["source_index"] for row in nondirect] == [2, 3, 4]
+    assert stats["partition_reconciles"] is True
+
+    evidence, evidence_stats = factor_builder.build_nondirect_hf_evidence_rows(
+        nondirect,
+        include_qualitative=True,
+        max_record_examples=6,
+    )
+    numeric_rows = [row for row in evidence if row["source_numeric_record_count"]]
+    assert len(numeric_rows) == 2
+    assert all(row["standard_relation"] == "" for row in numeric_rows)
+    assert all(row["standard_value"] == "" for row in numeric_rows)
+    assert all(row["standard_units"] == "" for row in numeric_rows)
+    assert {
+        row["source_record_examples"][0]["reported_units"] for row in numeric_rows
+    } == {"%", "fold"}
+    assert {
+        row["source_record_examples"][0]["reported_value"] for row in numeric_rows
+    } == {"1.8-fold", "55%"}
+    assert any(
+        row["source_qualitative_examples"]
+        and row["source_qualitative_examples"][0]["reported_value"] == "0.7"
+        for row in evidence
+    )
+    assert evidence_stats["measurement_unit_extraction_status"]["no_explicit_unit"] == 1
+    assert {row["group_id"] for row in evidence} == {
+        NONDIRECT_ORAL_BIOAVAILABILITY_GROUP
+    }
+
+
+def test_nondirect_claims_keep_direction_and_never_publish_a_proxy_median() -> None:
+    rows = [
+        _raw_hf_record(1, "CCCO", "higher by 20%", "relative_comparison"),
+        _raw_hf_record(2, "CCCO", "lower by 80%", "relative_comparison"),
+    ]
+
+    evidence, _ = factor_builder.build_nondirect_hf_evidence_rows(
+        rows,
+        include_qualitative=True,
+        max_record_examples=6,
+    )
+
+    assert evidence
+    assert all(row["standard_relation"] == "" for row in evidence)
+    assert all(row["standard_value"] == "" for row in evidence)
+    serialized = json.dumps(evidence, ensure_ascii=False)
+    assert "higher by 20%" in serialized
+    assert "lower by 80%" in serialized
+
+
+def test_direct_numeric_count_gate_validates_zero_and_allows_explicit_opt_out() -> None:
+    with pytest.raises(ValueError, match="clean numeric rows"):
+        factor_builder._validate_prepared_direct_hf_counts(
+            {"n_source_rows": 0, "n_source_rows_kept": 1},
+            expected_raw_rows=0,
+            expected_clean_numeric_rows=0,
+        )
+    factor_builder._validate_prepared_direct_hf_counts(
+        {"n_source_rows": 1, "n_source_rows_kept": 1},
+        expected_raw_rows=None,
+        expected_clean_numeric_rows=None,
+    )
+
+
+def test_nondirect_group_is_removed_before_morgan_top_k() -> None:
+    direct = _minimal_index_row(
+        "STARLING_DIRECT", "CCCCO", "Observed.direct_oral_bioavailability"
+    )
+    nondirect = _minimal_index_row(
+        "STARLING_NONDIRECT", "CCCO", NONDIRECT_ORAL_BIOAVAILABILITY_GROUP
+    )
+    index = build_neighbor_index([direct, nondirect])
+
+    included = retrieve_experiment_view(
+        "CCO",
+        index,
+        mode="direct",
+        config=STARLING,
+        top_k_per_group=1,
+        min_similarity=0.0,
+    )
+    excluded = retrieve_experiment_view(
+        "CCO",
+        index,
+        mode="direct",
+        config=STARLING_EXCLUDING_NONDIRECT,
+        top_k_per_group=1,
+        min_similarity=0.0,
+    )
+    assert included["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "STARLING_NONDIRECT"
+    assert excluded["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "STARLING_DIRECT"
+    assert excluded["groups"][0]["source_group_ids"] == [
+        "Observed.direct_oral_bioavailability"
+    ]
 
 
 def test_direct_family_combines_sources_without_duplicate_neighbor_slots(tmp_path):
@@ -283,6 +419,29 @@ def _record(index: int, smiles: str, value: float, species: str, report_type: st
             "bioavailability_report_type": report_type,
             "species_or_population": species,
         },
+    }
+
+
+def _raw_hf_record(index: int, smiles: str, value: str, report_type: str) -> dict:
+    return {
+        "source_index": index,
+        "molecule_name": f"molecule_{index}",
+        "smiles": smiles,
+        "oral_bioavailability_value": value,
+        "bioavailability_report_type": report_type,
+        "support_text": f"Reported value {value}.",
+    }
+
+
+def _minimal_index_row(molecule_id: str, smiles: str, group_id: str) -> dict:
+    return {
+        "molecule_chembl_id": molecule_id,
+        "canonical_smiles": smiles,
+        "group_id": group_id,
+        "standard_type": "oral bioavailability",
+        "standard_value": 1.0,
+        "standard_units": "%",
+        "evidence_source": "test",
     }
 
 

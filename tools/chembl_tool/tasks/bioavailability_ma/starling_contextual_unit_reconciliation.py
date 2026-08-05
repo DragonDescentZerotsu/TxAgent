@@ -26,6 +26,10 @@ ASSAY_CONTEXT_FIELDS = (
 )
 CONTEXTUAL_STANDARDIZATION_STATUS = "contextual_unit_standardized"
 
+# Qualifier vocabulary for every unit parsed by this task.
+_TASK_VOCAB = "bioavailability_ma"
+
+
 
 def bioavailability_assay_context(record: Mapping[str, Any]) -> dict[str, Any]:
     """Return the complete dynamic assay mapping passed to the shared parser."""
@@ -95,7 +99,7 @@ def contextual_canonical_record_fields(record: Mapping[str, Any]) -> dict[str, A
     )
     pair = contextual_standardization_of_unit(record, source_pair)
     parsed = parse_point_measurement(pair.canonical_measurement)
-    canonical_unit_result = canonicalize_unit(pair.canonical_unit)
+    canonical_unit_result = canonicalize_unit(pair.canonical_unit, task=_TASK_VOCAB)
     finite_scalar = (
         parsed.value
         if parsed.value is not None

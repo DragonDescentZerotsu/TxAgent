@@ -18,12 +18,12 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts
 
 
 def _record(record_id: str, value: str) -> dict:
-    row = {column: None for column in SOURCE_COLUMNS["direct_hf"]}
+    row = {column: None for column in SOURCE_COLUMNS["hf_bioavailability"]}
     row.update(
         {
             "normalized_record_id": record_id,
-            "source_id": "direct_hf",
-            "source_name": "Direct HF",
+            "source_id": "hf_bioavailability",
+            "source_name": "HF bioavailability",
             "source_row_number": int(record_id[-1]),
             "source_record_id": f"source-{record_id}",
             "canonical_smiles": "CCO",
@@ -33,6 +33,8 @@ def _record(record_id: str, value: str) -> dict:
             "evidence_role": "direct_outcome",
             "target_pref_name": "oral bioavailability",
             "endpoint_name": "oral_bioavailability",
+            "bioavailability_report_type": "absolute",
+            "canonical_bioavailability_evidence_scope": "direct",
             "canonical_endpoint": "oral_bioavailability",
             "finite_scalar_value": float(value),
             "confidence": 0.9,

@@ -38,6 +38,10 @@ APPLICABLE_SOURCES = (
     "skin_exposure",
 )
 AUXILIARY_ATTACHMENT_VERSION = "starling_auxiliary_attachment.skin_reaction.v2"
+SOURCE_COLUMN_ALIASES = {
+    "direct_skin_reaction": {"effect_metric": "measurement_text"},
+    "sensitization_aop": {"endpoint_or_target": "endpoint_name"},
+}
 OUTPUT_FIELDS_BY_SOURCE = {
     "direct_skin_reaction": (
         "global_context",
@@ -76,6 +80,10 @@ class AuxiliaryMetadataAttacher(_AuxiliaryMetadataAttacher):
             null_like=NULL_LIKE,
             output_fields=OUTPUT_FIELDS_BY_SOURCE,
             attachment_version=AUXILIARY_ATTACHMENT_VERSION,
+            source_column_aliases=SOURCE_COLUMN_ALIASES,
+            non_null_outputs_when_input_present={
+                "sensitization_aop": ("global_endpoint_context",),
+            },
         )
 
 
@@ -136,5 +144,6 @@ __all__ = [
     "DEFAULT_MAPPING_PATH",
     "OUTPUT_FIELDS",
     "OUTPUT_FIELDS_BY_SOURCE",
+    "SOURCE_COLUMN_ALIASES",
     "PendingAuxiliaryAttacher",
 ]

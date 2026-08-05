@@ -21,10 +21,14 @@ RAW_LOCAL_SOURCE_PATH = Path(
 )
 
 CANONICAL_VERSION = "bioavailability_canonical_direct.v2"
+NONDIRECT_MEASUREMENT_EXTRACTION_VERSION = (
+    "bioavailability_nondirect_measurement_extraction.v1"
+)
 CANONICAL_SOURCE_DIR = Path(
     "data/starling_data/bioavailability_ma/canonical_direct_v2"
 )
 HF_SNAPSHOT_PATH = CANONICAL_SOURCE_DIR / "hf_oral_bioavailability_snapshot.parquet"
+HF_NONDIRECT_RECORDS_PATH = CANONICAL_SOURCE_DIR / "hf_nondirect_records.parquet"
 DIRECT_SOURCE_ROWS_PATH = CANONICAL_SOURCE_DIR / "direct_source_rows.parquet"
 DIRECT_CLAIMS_PATH = CANONICAL_SOURCE_DIR / "direct_claims.parquet"
 DIRECT_REJECTED_ROWS_PATH = CANONICAL_SOURCE_DIR / "direct_rejected_rows.parquet"
@@ -68,6 +72,22 @@ _RELATIVE_PATTERN = re.compile(
     flags=re.IGNORECASE,
 )
 _RELATIVE_UNITS = {"fold", "times", "ratio", "% increase", "% lower"}
+_NONDIRECT_PERCENT_UNIT = re.compile(r"%|\bper\s*cent\b|\bpercent(?:age)?\b", re.IGNORECASE)
+_NONDIRECT_FOLD_UNIT = re.compile(
+    r"\b(?:fold|times?)\b|(?<=\d)\s*[x×](?=\s|$)", re.IGNORECASE
+)
+_NONDIRECT_RATIO_UNIT = re.compile(r"\bratio\b", re.IGNORECASE)
+_NONDIRECT_DIRECTION_WORDS = re.compile(
+    r"\b(?:about|approximately|approximate|reported|relative|apparent|oral|"
+    r"bioavailability|was|is|of|by|to|than|compared|versus|vs|"
+    r"increase(?:d|s)?|improve(?:d|s)?|enhance(?:d|s)?|higher|greater|"
+    r"decrease(?:d|s)?|reduce(?:d|s)?|lower|less)\b",
+    re.IGNORECASE,
+)
+_NONDIRECT_POINT = re.compile(
+    r"^[<>≤≥~≈]?\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)"
+    r"(?:\s*(?:±|\+/-)\s*(?:\d+(?:\.\d*)?|\.\d+))?$"
+)
 
 
 def classify_local_record(row: Mapping[str, Any]) -> tuple[str, str]:
@@ -127,6 +147,53 @@ def local_classification_signals(row: Mapping[str, Any]) -> dict[str, bool]:
     return {
         "absolute_signal": bool(_EXPLICIT_ABSOLUTE_PATTERN.search(combined) or _IV_PATTERN.search(combined)),
         "relative_signal": bool(_RELATIVE_PATTERN.search(combined) or units in _RELATIVE_UNITS),
+    }
+
+
+def nondirect_measurement_fields(value: Any) -> dict[str, Any]:
+    """Extract only explicit scalar/unit pairs from a non-direct HF value."""
+    raw = _text(value)
+    if not raw:
+        return {
+            "measurement_text": "",
+            "numeric_value": None,
+            "value_units": "",
+            "measurement_unit_extraction_status": "missing_value",
+        }
+    unit = ""
+    unit_pattern: re.Pattern[str] | None = None
+    if _NONDIRECT_PERCENT_UNIT.search(raw):
+        unit, unit_pattern = "%", _NONDIRECT_PERCENT_UNIT
+    elif _NONDIRECT_FOLD_UNIT.search(raw):
+        unit, unit_pattern = "fold", _NONDIRECT_FOLD_UNIT
+    elif _NONDIRECT_RATIO_UNIT.search(raw):
+        unit, unit_pattern = "ratio", _NONDIRECT_RATIO_UNIT
+    if unit_pattern is None:
+        return {
+            "measurement_text": raw,
+            "numeric_value": None,
+            "value_units": "",
+            "measurement_unit_extraction_status": "no_explicit_unit",
+        }
+    measurement = unit_pattern.sub("", raw)
+    measurement = re.sub(r"\s+", " ", measurement.replace(",", "")).strip(" -:()")
+    atomic_measurement = _NONDIRECT_DIRECTION_WORDS.sub("", measurement)
+    atomic_measurement = re.sub(r"\s+", " ", atomic_measurement).strip(" -:()")
+    if not _NONDIRECT_POINT.fullmatch(atomic_measurement):
+        return {
+            "measurement_text": raw,
+            "numeric_value": None,
+            "value_units": "",
+            "measurement_unit_extraction_status": "non_atomic_or_qualitative",
+        }
+    numeric_match = re.search(
+        r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)", atomic_measurement
+    )
+    return {
+        "measurement_text": atomic_measurement,
+        "numeric_value": float(numeric_match.group(0)) if numeric_match else None,
+        "value_units": unit,
+        "measurement_unit_extraction_status": "explicit_atomic_scalar_unit",
     }
 
 

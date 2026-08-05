@@ -38,10 +38,14 @@ from pathlib import Path
 from typing import Any
 
 
-UNIT_NORMALIZER_VERSION = "unit_normalizer.v4"
+UNIT_NORMALIZER_VERSION = "unit_normalizer.v6"
 CONTEXTUAL_UNIT_POLICY_SCHEMA_VERSION = "contextual_canonical_unit_policy.schema.v1"
 DEFAULT_CONTEXTUAL_UNIT_POLICY_PATH = Path(__file__).with_name(
     "contextual_unit_policy.json"
+)
+QUALIFIER_VOCABULARY_SCHEMA_VERSION = "qualifier_vocabulary.schema.v1"
+DEFAULT_QUALIFIER_VOCABULARY_PATH = Path(__file__).with_name(
+    "qualifier_vocabulary_policy.json"
 )
 
 _NULL_VALUES = {"", "nan", "none", "null", "na", "n/a", "-", "unspecified"}
@@ -62,14 +66,19 @@ _TOKEN_CASE = {
     "min": "min", "mins": "min", "minute": "min", "minutes": "min",
     "s": "s", "sec": "s", "secs": "s", "second": "s", "seconds": "s",
     "d": "d", "day": "d", "days": "d",
+    "wk": "wk", "week": "wk", "weeks": "wk",
     # volume (litre): capital L, lowercase prefix
     "l": "L", "ml": "mL", "µl": "µL", "ul": "µL", "dl": "dL", "cl": "cL",
     "nl": "nL", "pl": "pL", "kl": "kL",
     "liter": "L", "litre": "L", "liters": "L", "litres": "L",
+    "milliliter": "mL", "millilitre": "mL",
+    "milliliters": "mL", "millilitres": "mL",
     # amount-of-substance concentration (molar): capital M
     "M": "M", "mM": "mM", "µM": "µM", "uM": "µM", "nM": "nM", "pM": "pM",
     # mass
-    "g": "g", "mg": "mg", "µg": "µg", "ug": "µg", "mcg": "µg", "ng": "ng", "pg": "pg", "kg": "kg",
+    "g": "g", "gm": "g", "gram": "g", "grams": "g",
+    "mg": "mg", "µg": "µg", "ug": "µg", "mcg": "µg", "ng": "ng", "pg": "pg", "kg": "kg",
+    "da": "Da", "Da": "Da", "kda": "kDa", "kDa": "kDa", "dalton": "Da", "daltons": "Da",
     # length
     "m": "m", "cm": "cm", "mm": "mm", "nm": "nm", "µm": "µm", "um": "µm", "pm": "pm",
     # amount
@@ -77,8 +86,11 @@ _TOKEN_CASE = {
     "nmol": "nmol", "pmol": "pmol",
     "mole": "mol", "moles": "mol", "µmoles": "µmol", "umoles": "µmol",
     "nmoles": "nmol", "pmoles": "pmol", "mmoles": "mmol",
+    "mmole": "mmol", "µmole": "µmol", "umole": "µmol",
+    "nmole": "nmol", "pmole": "pmol",
     # dimensionless / qualifiers
-    "%": "%", "fraction": "fraction", "fold": "fold", "ratio": "ratio", "protein": "protein", "cells": "cells",
+    "%": "%", "%ID": "%ID", "percent": "%", "pct": "%",
+    "times": "fold", "fold": "fold", "folds": "fold", "fraction": "fraction", "fold": "fold", "ratio": "ratio", "protein": "protein", "cells": "cells",
     "ppm": "ppm", "ppb": "ppb", "dimensionless": "dimensionless", "unitless": "dimensionless",
 }
 # Runs of letters / micro-sign / percent that a token-casing pass rewrites.
@@ -97,10 +109,93 @@ def _as_nonempty_text(value: Any) -> str | None:
 
 def _case_token(match: re.Match[str]) -> str:
     token = match.group(0)
+    # A letter run touching a digit is part of an alphanumeric designator
+    # (``CYP2D6``), not a unit token: real unit exponents were already split
+    # onto ``^`` before this pass, so ``cm^2`` never reaches here as ``cm2``.
+    # Casing such a run corrupts the name (``CYP2D6`` -> ``CYP2d6``).
+    text = match.string
+    before = text[match.start() - 1] if match.start() else ""
+    after = text[match.end()] if match.end() < len(text) else ""
+    if before.isdigit() or after.isdigit():
+        return token
     if token in _TOKEN_CASE:
         return _TOKEN_CASE[token]
     lowered = token.lower()
     return _TOKEN_CASE.get(lowered, token)
+
+
+def _is_known_unit_token(token: str) -> bool:
+    """True when ``token`` names a token the structural parser can resolve.
+
+    Consults every declared qualifier, not just the calling task's: ``mg protein^-1`` and
+    ``g brain^-1`` are real bases whose ``-1`` is an exponent no matter who is parsing.
+    Deciding that is tokenization, so the union keeps ``clean_unit`` context-free; whether
+    the token resolves stays task-scoped later. Tokens outside the vocabulary are left
+    alone, which is what protects hyphenated designators (``P-450``, ``CYP-1``) from being
+    read as exponents.
+    """
+    cased = _TOKEN_CASE.get(token, _TOKEN_CASE.get(token.lower(), token))
+    if cased in _BASE_UNITS or cased in load_qualifier_vocabulary().all_tokens:
+        return True
+    return len(cased) > 1 and cased[0] in _SI_PREFIX and cased[1:] in _BASE_UNITS
+
+
+def _bare_exponent(match: re.Match[str]) -> str:
+    """Promote a trailing digit to an exponent only after a real unit token.
+
+    ``cm2`` and ``mL-1`` are unit exponents, but the same shape occurs inside
+    enzyme and protein designators (``CYP2B6``, ``CYP3A4``) where the digit is
+    part of the name. Rewriting those produced ``CYP^2·B6`` -- a fake squared
+    dimension on an unresolvable token. Gating on a resolvable base keeps the
+    unit forms and leaves designators intact for the fail-closed path.
+    """
+    base, exponent = match.group("base"), match.group("exponent")
+    if not _is_known_unit_token(base):
+        return match.group(0)
+    # The base may be a prefix of a longer designator that is itself declared: once ``CYP``
+    # is vocabulary, ``CYP2D6`` would otherwise split into ``CYP^2·D6``. Whenever the run
+    # continues past the digits, prefer the longest declared token.
+    run = re.match(r"[A-Za-zµ%]+[\w-]*", match.string[match.start():])
+    if run and run.group(0) != f"{base}{exponent}" and _is_known_unit_token(run.group(0)):
+        return match.group(0)
+    return f"{base}^{exponent}"
+
+
+# Numeric words are basis multipliers, not units: ``million cells`` is the same basis as
+# ``10^6 cells``. They must fold into scale -- treating them as dimensionless qualifiers
+# would leave the value wrong by the factor while making the unit look resolved.
+_NUMBER_WORDS = {
+    "hundred": 100.0,
+    "thousand": 1_000.0,
+    "million": 1_000_000.0,
+    "billion": 1_000_000_000.0,
+}
+
+_PER_RE = re.compile(r"(?i)\bper\b")
+
+
+def _apply_per_division(text: str) -> str:
+    """Rewrite the word ``per`` to ``/``, grouping composite divisors.
+
+    ``per`` is a binary operator: everything up to the next ``per`` is a single
+    divisor. When that divisor is itself a ratio (``ng/mL per mg/kg``, the usual
+    dose-normalized exposure shape), the grouping is load-bearing -- a bare ``/``
+    would flatten it to ``ng/mL/mg/kg`` and put ``kg`` in the denominator, which
+    inverts its dimension. Parenthesising the divisor hands it to the recursive
+    reading :func:`_evaluate` already documents. Divisors with no internal ``/``
+    (``µL/min per mg protein``) render as a plain ``/`` so the conventional flat
+    chain is untouched.
+    """
+    head, *divisors = _PER_RE.split(text)
+    if not divisors:
+        return text
+    rendered = head.strip()
+    for divisor in divisors:
+        divisor = divisor.strip()
+        if not divisor:
+            continue
+        rendered += f"/({divisor})" if "/" in divisor else f"/{divisor}"
+    return rendered
 
 
 @lru_cache(maxsize=100_000)
@@ -122,16 +217,71 @@ def clean_unit(value: Any) -> str | None:
     text = unicodedata.normalize("NFKC", text)
     text = text.translate(_DASHES)
     text = text.replace("μ", "µ")  # Greek small mu (U+03BC) -> micro sign (U+00B5)
-    text = re.sub(r"(?i)\bper\b", "/", text)  # "ng per mL" -> "ng/mL"
+    # ``per cent`` is one word split by a space, not a division: join it before the ``per``
+    # operator runs, or the rewrite yields ``/cent``.
+    text = re.sub(r"(?i)\bper\s+cent\b", "percent", text)
+    # ``sq.cm`` / ``sq cm`` is cm^2 and ``cu.cm`` is cm^3. Left alone these parse one power
+    # short (``µg/sq.cm`` reads as length:-1), so the dimension is wrong rather than merely
+    # unresolved -- it only fails closed today because ``sq`` itself is unknown.
+    text = re.sub(r"(?i)\bsq\.?\s*(cm|mm|m|µm|nm|in|ft)\.?", r"\1^2", text)
+    text = re.sub(r"(?i)\bcu\.?\s*(cm|mm|m|µm|nm)\.?", r"\1^3", text)
+    text = _apply_per_division(text)  # "ng per mL" -> "ng/mL"
+    # A leading multiplication marker before ordinary E notation is redundant
+    # but common in extracted table cells (``x 1e-6 cm/s``).
+    text = re.sub(
+        r"(?i)^(?:x|×)\s+(?=(?:\d+(?:\.\d*)?|\.\d+)\s*e[+-]?\d+)",
+        "",
+        text,
+    )
     text = re.sub(r"(?i)\bx(?=\s*10)", "×", text)  # ascii "x10^-6" -> "×10^-6"
     text = re.sub(r"\^\{(-?\d+)\}", r"^\1", text)  # LaTeX braces "10^{-6}" -> "10^-6"
+    text = re.sub(r"\^\(\s*([+-]?\d+)\s*\)", r"^\1", text)
     text = re.sub(r"(?<=[A-Za-zµ])\.(?=[A-Za-zµ])", "·", text)  # "ng.h" -> "ng·h"
+    text = re.sub(r"(?<=[0-9)])\.(?=[A-Za-zµ%])", "·", text)
+    # Publishers sometimes retain abbreviation punctuation around division
+    # (``µg./mL.``). A period immediately before ``/`` or at the end carries
+    # no dimensional meaning; internal periods remain multiplication marks.
+    text = re.sub(r"(?<=[A-Za-zµ])\.(?=/|$)", "", text)
     # Bare unit exponents ("mL-1", "s-1", "cm2") -> caret form; the negative-lookahead
     # and letter-lookbehind keep ``10-6`` / ``x10-6`` scale factors untouched.
-    text = re.sub(r"(?<=[A-Za-zµ%])(-\d+|[23])(?![\d^])", r"^\1", text)
+    text = re.sub(
+        r"(?<![0-9][eE])(?P<base>[A-Za-zµ%]+)(?P<exponent>-\d+|[23])(?![\d^])",
+        _bare_exponent,
+        text,
+    )
+    # Compact products commonly omit the multiplication mark after an
+    # exponent (``cm2h``, ``cm^-2h^-1``).  The exponent boundary is explicit,
+    # so inserting the operator preserves rather than infers the unit.
+    text = re.sub(r"(\^-?\d+)(?=[A-Za-zµ%])", r"\1·", text)
+    # A basis count written flush against its unit (``100g^-1``, ``mL/100g/min``) is two
+    # factors, not one token. Split only when what follows is a real unit token: that keeps
+    # ``1e-6 cm/s`` intact (one number) and leaves designators such as ``1a`` alone, the
+    # same way ``_bare_exponent`` protects ``CYP2B6``.
+    text = re.sub(
+        r"(?<![A-Za-zµ%^\d.])(\d+)([A-Za-zµ]+)",
+        lambda m: f"{m.group(1)} {m.group(2)}"
+        if _is_known_unit_token(m.group(2))
+        else m.group(0),
+        text,
+    )
     text = re.sub(r"\s*([/·*])\s*", r"\1", text)
     text = re.sub(r"\s+", " ", text).strip()
     text = _TOKEN_RE.sub(_case_token, text)
+    # Exact compact inverse-time/permeability spellings.  Restrict this to
+    # whole tokens so ordinary words containing ``cms`` are never rewritten.
+    text = re.sub(r"(?i)(?<![A-Za-zµ])cms\^?-?1(?![A-Za-zµ\d])", "cm·s^-1", text)
+    text = re.sub(
+        r"(?i)(?<![A-Za-zµ])cm(?:sec|second)\^?-?1(?![A-Za-zµ\d])",
+        "cm·s^-1",
+        text,
+    )
+    # A signed exponent immediately followed by a unit is still explicit
+    # scientific notation (``10-6cm/s``); add only the missing boundary.
+    text = re.sub(
+        r"(?i)(10(?:\^[+-]?\d+|[+-]\d+))(?=[A-Za-zµ%])",
+        r"\1 ",
+        text,
+    )
     return text or None
 
 
@@ -152,8 +302,12 @@ _BASE_UNITS: dict[str, tuple[float, dict[str, int]]] = {
     "min": (60.0, {"time": 1}),
     "h": (3600.0, {"time": 1}),
     "d": (86400.0, {"time": 1}),
+    "Da": (1.66053906660e-27, {"mass": 1}),   # unified atomic mass unit
+    "kDa": (1.66053906660e-24, {"mass": 1}),
+    "wk": (604800.0, {"time": 1}),  # 7 d
     "M": (1.0, {"amount": 1, "volume": -1}),  # molar == mol/L
     "%": (1.0, {}),
+    "%ID": (1.0, {}),
     "fraction": (1.0, {}),
     "fold": (1.0, {}),
     "ratio": (1.0, {}),
@@ -163,14 +317,23 @@ _BASE_UNITS: dict[str, tuple[float, dict[str, int]]] = {
     "cells": (1.0, {"count": 1}),
 }
 # Qualifier tokens carry no dimension but are preserved in the canonical string. (``cells`` is
-# NOT here -- it is a genuine count basis, e.g. ``µL/min/10^6 cells``.)
-_QUALIFIERS = {"protein", "tissue", "skin"}
+# NOT here -- it is a genuine count basis, e.g. ``µL/min/10^6 cells``.) The vocabulary itself is
+# task-scoped and lives in ``qualifier_vocabulary_policy.json``: one task's vocabulary must never
+# silently change another task's parsing. The structural parser stays context-free and reports
+# every unresolved token in ``unknown_tokens``; :func:`canonicalize_unit` then clears the tokens
+# the requested task declares. See :func:`load_qualifier_vocabulary`.
 _SI_PREFIX = {"p": 1e-12, "n": 1e-9, "µ": 1e-6, "u": 1e-6, "m": 1e-3, "c": 1e-2, "d": 1e-1, "k": 1e3}
 
 _SCALE_RE = re.compile(r"^(?:×|x)?10(?:\^([-+]?\d+)|([-+]\d+))$")
 # An explicit ``×10^N`` / ``x10^N`` factor anywhere in the string (multiplicative, any position).
 _NOTATION_FACTOR_RE = re.compile(r"(?:×|x)\s*10(?:\^([-+]?\d+)|([-+]\d+))")
 _ANY_NOTATION_RE = re.compile(r"(?:×|x)?\s*10(?:\^([-+]?\d+)|([-+]\d+))")
+_LEADING_DECIMAL_SCIENTIFIC_RE = re.compile(
+    r"^\s*(?P<coefficient>(?:\d+(?:\.\d*)?|\.\d+))\s*"
+    r"(?:[eE]\s*(?P<e_exponent>[+-]?\d+)|"
+    r"(?:×|x)\s*10(?:\^(?P<caret>[+-]?\d+)|(?P<signed>[+-]\d+)))"
+    r"(?=\s|[A-Za-zµ%])",
+)
 # OCR-compressed forms such as ``×106 cm/s`` have lost the sign/caret boundary:
 # interpreting them as 10^6 is mechanically possible but scientifically unsafe.
 _AMBIGUOUS_COMPRESSED_NOTATION_RE = re.compile(
@@ -190,6 +353,45 @@ _BARE_LOG_RE = re.compile(r"^(-?)(log10|log2|log|ln)([A-Za-z]\w*)$", re.I)
 _PLOG_RE = re.compile(r"^p(?:(?:ic|ec|gi|cc|tc|lc)\d+|ka|ki|kd|kb|a2|d2)$", re.I)
 # A single factor that is a parenthesised sub-expression, optionally raised to a power.
 _PAREN_RE = re.compile(r"^\((.*)\)(?:\^(-?\d+))?$")
+
+
+def _extract_unambiguous_notation(
+    cleaned: str,
+    notation_status: str,
+) -> tuple[float, str]:
+    """Return the explicit magnitude factor and notation-free unit body.
+
+    Both ordinary unit parsing and endpoint-class conversion must use the same
+    extraction.  Otherwise a leading decimal form such as ``2e-6 cm/s`` can be
+    recognized while building the unit, then lose its coefficient when the
+    class-aware magnitude is recomputed.
+    """
+    if notation_status == "ambiguous_scientific_notation":
+        return 1.0, cleaned
+
+    notation = 1.0
+    decimal_scientific = _LEADING_DECIMAL_SCIENTIFIC_RE.match(cleaned)
+    if decimal_scientific:
+        exponent = (
+            decimal_scientific.group("e_exponent")
+            or decimal_scientific.group("caret")
+            or decimal_scientific.group("signed")
+        )
+        notation *= float(decimal_scientific.group("coefficient")) * 10.0 ** int(
+            exponent
+        )
+        body = cleaned[decimal_scientific.end() :]
+    else:
+        body = cleaned
+
+    def pull(match: re.Match[str]) -> str:
+        nonlocal notation
+        exponent = match.group(1) or match.group(2)
+        notation *= 10.0 ** int(exponent)
+        return " "
+
+    body = _NOTATION_FACTOR_RE.sub(pull, body)
+    return notation, body
 
 
 def _format_canonical(token_exponents: dict[str, int]) -> str:
@@ -227,7 +429,9 @@ def _split_top_level(expr: str, separators: str) -> list[str]:
     return parts
 
 
-def _evaluate(expr: str) -> tuple[float, dict[str, int]]:
+def _evaluate(
+    expr: str, *, fold_numeric_basis: bool = True
+) -> tuple[float, dict[str, int]]:
     """Evaluate a (possibly parenthesised) unit expression to (scale, token exponents).
 
     Conservative precedence: the first ``/``-segment is the numerator and every later segment
@@ -243,14 +447,12 @@ def _evaluate(expr: str) -> tuple[float, dict[str, int]]:
     exponents: dict[str, int] = {}
     for segment_index, segment in enumerate(_split_top_level(expr, "/")):
         sign = 1 if segment_index == 0 else -1
+        # Plain tokens are collected before accumulating so a trailing basis exponent
+        # can reach the unit it qualifies (see _bind_compound_basis).
+        plain: list[list[Any]] = []
         for factor in _split_top_level(segment, "·*× \t"):
             factor = factor.strip()
             if not factor:
-                continue
-            # Preserve the v1 interpretation of denominator qualifiers such as
-            # ``g/100 mL`` and ``cells/100 LCs``. This is not scientific
-            # exponent notation and is intentionally outside the v2 change.
-            if factor == "100":
                 continue
             scale_match = _SCALE_RE.match(factor)
             if scale_match:
@@ -259,7 +461,9 @@ def _evaluate(expr: str) -> tuple[float, dict[str, int]]:
                 continue
             paren_match = _PAREN_RE.match(factor)
             if paren_match:
-                inner_scale, inner_exponents = _evaluate(paren_match.group(1))
+                inner_scale, inner_exponents = _evaluate(
+                    paren_match.group(1), fold_numeric_basis=fold_numeric_basis
+                )
                 power = int(paren_match.group(2)) if paren_match.group(2) else 1
                 multiplier = power * sign
                 if inner_scale != 1.0:
@@ -267,21 +471,105 @@ def _evaluate(expr: str) -> tuple[float, dict[str, int]]:
                 for token, exponent in inner_exponents.items():
                     exponents[token] = exponents.get(token, 0) + exponent * multiplier
                 continue
-            base, _, exp_text = factor.partition("^")
-            token = base or factor
-            exponent = int(exp_text) if exp_text and re.fullmatch(r"-?\d+", exp_text) else 1
+            base, separator, exp_text = factor.partition("^")
+            if separator and not re.fullmatch(r"-?\d+", exp_text):
+                # Fail closed.  Previously ``cm^2h`` was treated as ``cm`` by
+                # silently discarding the malformed exponent suffix.
+                token = factor
+                exponent = 1
+            else:
+                token = base or factor
+                exponent = int(exp_text) if separator else 1
+            plain.append([token, exponent, bool(separator)])
+        if fold_numeric_basis:
+            scale *= _fold_numeric_basis(plain, sign)
+        _bind_compound_basis(plain)
+        for token, exponent, _ in plain:
             exponents[token] = exponents.get(token, 0) + exponent * sign
     return scale, exponents
+
+
+def _fold_numeric_basis(factors: list[list[Any]], sign: int) -> float:
+    """Fold bare-integer basis multipliers into scale; return the multiplier.
+
+    A bare integer is a basis count, not a unit: ``mL/100 g`` is per *hundred* grams,
+    ``mg/24 h`` per *24* hours. It inherits the orientation of the unit it qualifies -- the
+    next dimensioned token to its right -- which is what separates ``mL/100 g`` from
+    ``mL·100 g^-1·min^-1``: the ``100`` sits in the numerator there, but the basis it counts
+    is inverted, so both divide. Only the *sign* is inherited, never the magnitude, so the
+    ``10`` in ``µg/10 cm^2`` divides once rather than squaring.
+
+    An integer with no unit to its right is left in place as an unresolved token. A trailing
+    ``mL/g/min ×100`` could equally be a per-100 basis or a reported-value multiplier, and
+    guessing either way silently rescales real measurements -- so it fails closed instead.
+    Consumed integers are removed from ``factors``; ``10^N`` never reaches here.
+    """
+    multiplier = 1.0
+    consumed: list[int] = []
+    for index, (token, _, explicit) in enumerate(factors):
+        if explicit:
+            continue
+        word_value = _NUMBER_WORDS.get(token.casefold())
+        if word_value is None and not token.isdigit():
+            continue
+        if token.strip("0") == "":
+            # A zero basis is meaningless and cannot be inverted; leave it unresolved so
+            # the unit fails closed rather than raising or folding to infinity.
+            continue
+        if token == "1":
+            # Multiplicative identity: ``1/min`` is min^-1 and ``mg·h/L/1 mg/kg`` is
+            # per one mg/kg. It carries no magnitude wherever it sits, so it needs no
+            # basis to attach to and can always be dropped.
+            consumed.append(index)
+            continue
+        for following in range(index + 1, len(factors)):
+            next_token, next_exponent, _ = factors[following]
+            dimension = _resolve_token(next_token)[1]
+            if not dimension:
+                continue  # unresolved or dimensionless: keep looking right
+            orientation = sign * (-1 if next_exponent < 0 else 1)
+            multiplier *= (word_value if word_value is not None else float(token)) ** orientation
+            consumed.append(index)
+            break
+    for index in reversed(consumed):
+        del factors[index]
+    return multiplier
+
+
+def _bind_compound_basis(factors: list[list[Any]]) -> None:
+    """Attach a trailing negative exponent to the basis unit it qualifies, in place.
+
+    ``µL·min^-1·mg protein^-1`` and ``µL/min/mg protein`` are the same quantity, but the
+    first parsed as ``µL·mg/(min·protein)`` -- mass positive -- because the ``^-1`` bound to
+    ``protein`` alone. Scientifically the exponent applies to the whole ``mg protein``
+    basis, so the unit it qualifies inherits it.
+
+    Fires only for an explicit *negative* exponent on a token that does not resolve as a
+    unit, and only onto the nearest preceding dimensioned unit that carries no exponent of
+    its own. Dimensionless bases (``%``, ``fold``) are skipped: ``% dose^-1`` has no basis
+    to invert, so rewriting it would churn the canonical key for no dimensional gain.
+    Callers pass one ``/``-segment at a time, so this can never cross a division boundary.
+    """
+    for index, (token, exponent, explicit) in enumerate(factors):
+        if not explicit or exponent >= 0 or _resolve_token(token)[1] is not None:
+            continue
+        for previous in range(index - 1, -1, -1):
+            candidate, _, candidate_explicit = factors[previous]
+            if not _resolve_token(candidate)[1]:
+                continue  # unresolved or dimensionless: keep walking left
+            if not candidate_explicit:
+                factors[previous][1] = exponent
+            break
 
 
 def _resolve_token(token: str) -> tuple[float, dict[str, int] | None]:
     """Return ``(scale, dimension)`` for a single unit token.
 
     ``dimension`` is ``None`` when the token cannot be resolved (an unknown unit).
-    ``{}`` denotes a resolved but dimensionless token.
+    ``{}`` denotes a resolved but dimensionless token. Task-declared qualifiers are
+    deliberately *not* resolved here -- this function is context-free, so they surface as
+    unknown tokens and :func:`canonicalize_unit` clears them for the requested task.
     """
-    if token in _QUALIFIERS:
-        return 1.0, {}
     if token in _BASE_UNITS:  # check full token first (``min``, ``mol``, bare ``m``/``d``)
         base_scale, dimension = _BASE_UNITS[token]
         return base_scale, dict(dimension)
@@ -338,6 +626,43 @@ class ContextualCanonicalUnitPolicy:
     rules: tuple[ContextualCanonicalUnitRule, ...]
     path: str
     sha256: str
+
+
+@dataclass(frozen=True)
+class QualifierVocabularyPolicy:
+    """Which unresolved tokens each task declares dimensionless.
+
+    ``shared`` applies to every call; ``by_task`` adds the requested task's own tokens.
+    A task that declares nothing therefore still gets the shared vocabulary, and an
+    unknown task id resolves to the shared vocabulary alone rather than raising.
+    """
+
+    schema_version: str
+    policy_version: str
+    shared: tuple[str, ...]
+    by_task: tuple[tuple[str, tuple[str, ...]], ...]
+    path: str
+    sha256: str
+
+    def tokens_for(self, task: str | None) -> frozenset[str]:
+        tokens = set(self.shared)
+        if task is not None:
+            tokens.update(dict(self.by_task).get(task, ()))
+        return frozenset(tokens)
+
+    @property
+    def all_tokens(self) -> frozenset[str]:
+        """Every declared token, across all tasks.
+
+        Used only for *tokenization* -- deciding that the ``-1`` in ``g brain-1`` is an
+        exponent rather than part of a name. That question has one answer regardless of who
+        is asking, so consulting the union keeps ``clean_unit`` context-free. Whether a
+        token then *resolves* stays task-scoped in :func:`_apply_qualifier_vocabulary`.
+        """
+        tokens = set(self.shared)
+        for _, task_tokens in self.by_task:
+            tokens.update(task_tokens)
+        return frozenset(tokens)
 
 
 @lru_cache(maxsize=100_000)
@@ -400,20 +725,14 @@ def _canonicalize_unit_basic(value: Any) -> CanonicalUnit:
     # Pull out ``×10^N`` / ``x10^N`` factors anywhere in the string -- these always multiply the
     # magnitude regardless of position (``cm/s ×10^-6`` == ``×10^-6 cm/s``). A bare ``/10^N``
     # divisor is left in place so the structural parser divides by it.
-    notation = 1.0
-
-    def _pull_notation(match: re.Match[str]) -> str:
-        nonlocal notation
-        exponent = match.group(1) or match.group(2)
-        notation *= 10.0 ** int(exponent)
-        return " "
-
-    body = (
-        cleaned
-        if notation_status == "ambiguous_scientific_notation"
-        else _NOTATION_FACTOR_RE.sub(_pull_notation, cleaned)
+    notation, body = _extract_unambiguous_notation(cleaned, notation_status)
+    # Under OCR-compressed notation (``×106 cm/s``) the digits may be a lost
+    # ``10^6`` rather than a basis count. Folding them would resolve the unit and
+    # silently undo the quarantine, so leave them as unresolved tokens.
+    scale, token_exponents = _evaluate(
+        body,
+        fold_numeric_basis=notation_status != "ambiguous_scientific_notation",
     )
-    scale, token_exponents = _evaluate(body)
     scale *= notation
     token_exponents = {token: net for token, net in token_exponents.items() if net != 0}
 
@@ -563,21 +882,155 @@ def contextual_unit_policy_manifest() -> dict[str, Any]:
     }
 
 
+@lru_cache(maxsize=8)
+def load_qualifier_vocabulary(
+    path: str | Path = DEFAULT_QUALIFIER_VOCABULARY_PATH,
+) -> QualifierVocabularyPolicy:
+    """Load and fully validate the frozen task-scoped qualifier vocabulary."""
+    policy_path = Path(path)
+    raw_bytes = policy_path.read_bytes()
+    payload = json.loads(raw_bytes.decode("utf-8"))
+    if not isinstance(payload, dict) or set(payload) != {
+        "schema_version",
+        "policy_version",
+        "vocabularies",
+    }:
+        raise ValueError("invalid qualifier vocabulary root")
+    if payload["schema_version"] != QUALIFIER_VOCABULARY_SCHEMA_VERSION:
+        raise ValueError(
+            f"unsupported qualifier vocabulary schema: {payload['schema_version']!r}"
+        )
+    policy_version = payload["policy_version"]
+    if not isinstance(policy_version, str) or not policy_version:
+        raise ValueError("qualifier vocabulary policy_version must be nonempty")
+    raw_entries = payload["vocabularies"]
+    if not isinstance(raw_entries, list) or not raw_entries:
+        raise ValueError("qualifier vocabulary vocabularies must be a nonempty list")
+
+    shared: tuple[str, ...] | None = None
+    by_task: dict[str, tuple[str, ...]] = {}
+    for raw_entry in raw_entries:
+        if not isinstance(raw_entry, dict) or set(raw_entry) != {
+            "scope",
+            "task",
+            "tokens",
+            "review",
+        }:
+            raise ValueError("invalid qualifier vocabulary entry shape")
+        scope = raw_entry["scope"]
+        task = raw_entry["task"]
+        tokens = raw_entry["tokens"]
+        if scope not in {"shared", "task"}:
+            raise ValueError(f"invalid qualifier vocabulary scope: {scope!r}")
+        if scope == "shared":
+            if task is not None:
+                raise ValueError("shared qualifier vocabulary must not declare a task")
+            if shared is not None:
+                raise ValueError("duplicate shared qualifier vocabulary entry")
+        else:
+            if not isinstance(task, str) or not task:
+                raise ValueError("task qualifier vocabulary requires a task id")
+            if task in by_task:
+                raise ValueError(f"duplicate qualifier vocabulary for task {task!r}")
+        if not isinstance(tokens, list) or any(
+            not isinstance(token, str) or not token for token in tokens
+        ):
+            raise ValueError(f"invalid qualifier tokens for scope {scope!r}")
+        if len(set(tokens)) != len(tokens):
+            raise ValueError(f"duplicate qualifier tokens for scope {scope!r}")
+        if tokens != sorted(tokens):
+            raise ValueError(f"qualifier tokens must be sorted for scope {scope!r}")
+        for token in tokens:
+            # A qualifier is dimensionless by declaration. Letting a real unit be declared
+            # one would silently erase its dimension everywhere it appears.
+            if _resolve_token(token)[1] is not None:
+                raise ValueError(f"qualifier token resolves as a unit: {token!r}")
+        if not isinstance(raw_entry["review"], dict):
+            raise ValueError(f"invalid qualifier review metadata for scope {scope!r}")
+        if scope == "shared":
+            shared = tuple(tokens)
+        else:
+            by_task[task] = tuple(tokens)
+
+    if shared is None:
+        raise ValueError("qualifier vocabulary requires a shared entry")
+    for task, tokens in by_task.items():
+        overlap = sorted(set(tokens) & set(shared))
+        if overlap:
+            raise ValueError(
+                f"task {task!r} redeclares shared qualifier tokens: {overlap}"
+            )
+    return QualifierVocabularyPolicy(
+        schema_version=payload["schema_version"],
+        policy_version=policy_version,
+        shared=shared,
+        by_task=tuple(sorted(by_task.items())),
+        path=str(policy_path),
+        sha256=hashlib.sha256(raw_bytes).hexdigest(),
+    )
+
+
+def qualifier_vocabulary_manifest() -> dict[str, Any]:
+    policy = load_qualifier_vocabulary()
+    return {
+        "schema_version": policy.schema_version,
+        "policy_version": policy.policy_version,
+        "path": policy.path,
+        "sha256": policy.sha256,
+        "shared_tokens": list(policy.shared),
+        "tasks": {task: list(tokens) for task, tokens in policy.by_task},
+        "scoping": "shared_plus_declared_task_fail_closed",
+    }
+
+
+def _apply_qualifier_vocabulary(
+    basic: CanonicalUnit, task: str | None
+) -> CanonicalUnit:
+    """Clear the tokens ``task`` declares dimensionless from ``unknown_tokens``.
+
+    A qualifier and an unknown token differ in exactly this one field: ``_resolve_token``
+    returns ``(1.0, {})`` for a resolved dimensionless token, which contributes nothing to
+    ``scale`` or ``dimension``, and ``canonical`` is built from the token exponents without
+    consulting it at all. So the vocabulary can be applied after the cached parse instead of
+    inside it, which keeps ``_canonicalize_unit_basic`` context-free and its cache keyed on
+    the unit string alone.
+    """
+    if not basic.unknown_tokens:
+        return basic
+    declared = load_qualifier_vocabulary().tokens_for(task)
+    remaining = tuple(
+        token for token in basic.unknown_tokens if token not in declared
+    )
+    if remaining == basic.unknown_tokens:
+        return basic
+    return replace(
+        basic,
+        unknown_tokens=remaining,
+        is_dimensionless=not basic.dimension and not remaining,
+    )
+
+
 def canonicalize_unit(
     value: Any,
     *,
     task: str | None = None,
     assay: Mapping[str, JSONScalar] | None = None,
 ) -> CanonicalUnit:
-    """Parse a unit and apply the matching task/assay canonical-unit rule.
+    """Parse a unit, then apply the task's qualifier vocabulary and assay unit rule.
 
-    Calls without task context retain the physical, source-prefix canonicalization.
-    Calls with a task must provide the complete dynamic assay mapping. Every field
-    declared by a policy rule must be present and exactly equal; missing differs
-    from explicit ``None``. Extra assay fields are ignored.
+    Two independent layers of task context, in order:
+
+    1. Qualifier vocabulary -- always applied. The shared tokens plus whatever ``task``
+       declares are cleared from ``unknown_tokens``. Passing no task yields the shared
+       vocabulary only, so a task-scoped token stays unresolved rather than leaking.
+    2. Contextual unit rules -- require ``task`` *and* ``assay`` together. Every field
+       declared by a rule must be present and exactly equal; missing differs from
+       explicit ``None``. Extra assay fields are ignored.
     """
-    basic = _canonicalize_unit_basic(value)
-    if task is None and assay is None:
+    basic = _apply_qualifier_vocabulary(_canonicalize_unit_basic(value), task)
+    if assay is None:
+        if task is not None and not (isinstance(task, str) and task):
+            raise ValueError("contextual canonicalization requires a nonempty task")
         return basic
     if not isinstance(task, str) or not task or not isinstance(assay, Mapping):
         raise ValueError("contextual canonicalization requires task and assay together")
@@ -650,6 +1103,17 @@ def scientific_notation_metadata(raw: Any, cleaned: str | None = None) -> tuple[
     normalized = cleaned if cleaned is not None else clean_unit(raw)
     if not normalized:
         return "none", None
+    decimal_scientific = _LEADING_DECIMAL_SCIENTIFIC_RE.match(normalized)
+    if decimal_scientific:
+        exponent = (
+            decimal_scientific.group("e_exponent")
+            or decimal_scientific.group("caret")
+            or decimal_scientific.group("signed")
+        )
+        return (
+            "unambiguous_scientific_notation",
+            float(decimal_scientific.group("coefficient")) * 10.0 ** int(exponent),
+        )
     matches = list(_ANY_NOTATION_RE.finditer(normalized))
     if not matches:
         return "none", None
@@ -712,13 +1176,16 @@ _MEASUREMENT_CLASSES: dict[str, str] = {
     "weight_normalized_clearance": "mL/min/kg",     # in-vivo CL per kg body weight
     "intrinsic_clearance": "µL/min/mg protein",     # CLint per mg microsomal protein
     "flux": "µg/cm^2/h",
+    "diffusivity": "cm^2/s",
     "areic_dose": "µg/cm^2",
     "duration": "h",
     "rate_constant": "h^-1",
 }
 
 
-def _resolve_target(result: CanonicalUnit, targets: Iterable[str] | None) -> str:
+def _resolve_target(
+    result: CanonicalUnit, targets: Iterable[str] | None, task: str | None = None
+) -> str:
     """Return an explicit per-call target unit for ``result``, or ``""`` for no standardization.
 
     ``targets`` is an iterable of unit strings; each supplies the target for its own dimension
@@ -727,7 +1194,7 @@ def _resolve_target(result: CanonicalUnit, targets: Iterable[str] | None) -> str
     """
     if targets:
         for unit in targets:
-            override = canonicalize_unit(unit)
+            override = canonicalize_unit(unit, task=task)
             if override.dimension == result.dimension and not override.unknown_tokens:
                 return override.cleaned
     return ""
@@ -739,7 +1206,9 @@ def _class_target(measurement_class: str) -> str:
     return _MEASUREMENT_CLASSES[measurement_class]
 
 
-def _class_compatible(result: CanonicalUnit, target_unit: str) -> bool:
+def _class_compatible(
+    result: CanonicalUnit, target_unit: str, task: str | None = None
+) -> bool:
     """Whether ``result``'s unit could plausibly belong to the class whose unit is ``target_unit``.
 
     Compatible iff the unit resolves cleanly (no unknown tokens, not a transform) and carries the
@@ -749,7 +1218,7 @@ def _class_compatible(result: CanonicalUnit, target_unit: str) -> bool:
     """
     if result.unknown_tokens or result.transform:
         return False
-    target = canonicalize_unit(target_unit)
+    target = canonicalize_unit(target_unit, task=task)
     if {name for name, _ in result.dimension} != {name for name, _ in target.dimension}:
         return False
     # Endpoint classes may reinterpret ambiguous slash/product placement, but an
@@ -771,22 +1240,23 @@ def _class_compatible(result: CanonicalUnit, target_unit: str) -> bool:
     return True
 
 
-def _magnitude_under(source_cleaned: str, target_unit: str) -> float:
+def _magnitude_under(
+    source_cleaned: str, target_unit: str, task: str | None = None
+) -> float:
     """Scale of ``source_cleaned``'s magnitude when its tokens take the target's numer/denom signs.
 
     Lets a caller reinterpret an ambiguous form under a known class: e.g. ``ng/mL·h`` parses
     conservatively as a rate, but under target ``ng·h/mL`` (AUC) its ``h`` moves to the
     numerator so the value scales correctly.
     """
-    notation = 1.0
-
-    def pull(match: re.Match[str]) -> str:
-        nonlocal notation
-        exponent = match.group(1) or match.group(2)
-        notation *= 10.0 ** int(exponent)
-        return " "
-
-    struct_scale, src_exponents = _evaluate(_NOTATION_FACTOR_RE.sub(pull, source_cleaned))
+    notation_status, _ = scientific_notation_metadata(source_cleaned)
+    notation, source_body = _extract_unambiguous_notation(
+        source_cleaned, notation_status
+    )
+    struct_scale, src_exponents = _evaluate(
+        source_body,
+        fold_numeric_basis=notation_status != "ambiguous_scientific_notation",
+    )
     _, target_exponents = _evaluate(
         _NOTATION_FACTOR_RE.sub(lambda m: " ", canonicalize_unit(target_unit).cleaned)
     )
@@ -824,10 +1294,10 @@ def canonicalized_unit(
     if measurement_class is not None:
         target = _class_target(measurement_class)
         # Guard: flag a unit that does not fit the declared class instead of coercing it.
-        return target if _class_compatible(result, target) else None
+        return target if _class_compatible(result, target, task) else None
     if result.transform:
         return result.canonical
-    target = _resolve_target(result, targets)
+    target = _resolve_target(result, targets, task)
     return target or result.canonical
 
 
@@ -860,16 +1330,16 @@ def canonicalized_value(
     if measurement_class is not None:
         target = _class_target(measurement_class)
         # Guard: return None (flag) when the unit is not compatible with the declared class.
-        if not _class_compatible(result, target):
+        if not _class_compatible(result, target, task):
             return None
-        target_scale = canonicalize_unit(target).scale
+        target_scale = canonicalize_unit(target, task=task).scale
         if target_scale == 0:
             return number
-        return number * (_magnitude_under(result.cleaned, target) / target_scale)
+        return number * (_magnitude_under(result.cleaned, target, task) / target_scale)
     if result.transform:
         return number
-    target = _resolve_target(result, targets) or result.canonical
-    target_scale = canonicalize_unit(target).scale
+    target = _resolve_target(result, targets, task) or result.canonical
+    target_scale = canonicalize_unit(target, task=task).scale
     if target_scale == 0:
         return number
     return number * (result.scale / target_scale)
@@ -920,16 +1390,20 @@ def _normalize_signature(dimension: tuple[tuple[str, int], ...]) -> tuple[tuple[
     return tuple(sorted(dimension))
 
 
-def units_compatible(value: Any, expected: str) -> bool | None:
+def units_compatible(
+    value: Any, expected: str, *, task: str | None = None
+) -> bool | None:
     """Return whether ``value`` is dimensionally compatible with an endpoint kind.
 
     ``expected`` is a key of :data:`_QUANTITY_DIMENSIONS`.  Returns ``None`` when
     the unit contains unresolved tokens (compatibility cannot be decided) so
-    callers can flag rather than silently mis-merge.
+    callers can flag rather than silently mis-merge.  Pass the same ``task`` the
+    records were normalized under, or a unit resting on that task's vocabulary
+    (``µL/min/g brain``) reads as undecidable here while resolving everywhere else.
     """
     if expected not in _QUANTITY_DIMENSIONS:
         raise KeyError(f"unknown endpoint quantity-kind: {expected!r}")
-    canonical = canonicalize_unit(value)
+    canonical = canonicalize_unit(value, task=task)
     if canonical.unknown_tokens:
         return None
     if canonical.cleaned == "":

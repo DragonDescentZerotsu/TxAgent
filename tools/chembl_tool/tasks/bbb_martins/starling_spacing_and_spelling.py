@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Mapping
+from typing import Any, Iterable
 
 from tools.chembl_tool.common.starling.normalization.cleaning import endpoint_inventory_hash
 from tools.chembl_tool.common.starling.normalization.contracts import FamilyAssignment
@@ -43,8 +44,12 @@ def spacing_and_spelling_decision(
     return _DEFAULT_ENDPOINT_NORMALIZER.decision(source_id, endpoint_name)
 
 
-def family_assignment(source_id: str, endpoint_name: str) -> FamilyAssignment | None:
-    del endpoint_name
+def family_assignment(
+    source_id: str,
+    endpoint_name: str,
+    record: Mapping[str, Any] | None = None,
+) -> FamilyAssignment | None:
+    del endpoint_name, record
     assignments = {
         "direct_bbb": FamilyAssignment(
             "Tier 1.starling_direct_bbb_evidence",

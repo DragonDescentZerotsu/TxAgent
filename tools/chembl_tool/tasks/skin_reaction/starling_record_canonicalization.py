@@ -39,6 +39,10 @@ _FOLD_UNITS = {"fold", "ratio", "dimensionless", "dimensionless_ratio", "si", "x
 _RELATIVE_PREFIXES = ("relative_",)
 _RELATIVE_MARKERS = ("_of_control", "_vs_control", "_over_control")
 
+# Qualifier vocabulary for every unit parsed by this task.
+_TASK_VOCAB = "skin_reaction"
+
+
 
 def _is_null_like(value: Any) -> bool:
     if value is None:
@@ -75,7 +79,7 @@ def _domain_kind(record: Mapping[str, Any]) -> str:
     unit = str(record.get("canonical_unit") or "")
     if not endpoint or not unit:
         return "unsupported"
-    unit_result = canonicalize_unit(unit)
+    unit_result = canonicalize_unit(unit, task=_TASK_VOCAB)
     if unit_result.transform:
         return "transformed_scalar"
     relative = endpoint.startswith(_RELATIVE_PREFIXES) or any(
@@ -114,7 +118,7 @@ def normalization_validity_status(record: Mapping[str, Any]) -> str:
     if not str(record.get("canonical_unit") or ""):
         return "missing_canonical_unit"
     parsed = parse_point_measurement(record.get("canonical_measurement"))
-    unit_result = canonicalize_unit(record.get("canonical_unit"))
+    unit_result = canonicalize_unit(record.get("canonical_unit"), task=_TASK_VOCAB)
     if parsed.value is not None and unit_result.unknown_tokens:
         return "incompatible_canonical_unit"
     value = record.get("finite_scalar_value")
@@ -126,6 +130,28 @@ def normalization_validity_status(record: Mapping[str, Any]) -> str:
         return "non_scalar_measurement"
     if not math.isfinite(scalar):
         return "non_scalar_measurement"
+    reviewed_domain = str(record.get("measurement_numeric_domain") or "")
+    if reviewed_domain:
+        if reviewed_domain == "finite_signed":
+            pass
+        elif reviewed_domain in {"nonnegative", "nonnegative_unbounded"}:
+            if scalar < 0.0:
+                return "outside_reviewed_numeric_domain"
+        elif reviewed_domain == "positive":
+            if scalar <= 0.0:
+                return "outside_reviewed_numeric_domain"
+        elif reviewed_domain == "bounded_0_1":
+            if not 0.0 <= scalar <= 1.0:
+                return "outside_reviewed_numeric_domain"
+        elif reviewed_domain == "bounded_0_100":
+            if not 0.0 <= scalar <= 100.0:
+                return "outside_reviewed_numeric_domain"
+        else:
+            return "unsupported_reviewed_numeric_domain"
+        variation = record.get("variation_value")
+        if variation is not None and float(variation) < 0:
+            return "negative_variation"
+        return "valid"
     domain_kind = _domain_kind(record)
     if domain_kind in {"bounded_percentage", "positive_percentage"} and not (
         0.0 <= scalar <= 100.0

@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/runtime_profile.sh"
 
-OUT_DIR="outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_in_distribution"
+OUT_DIR="outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_in_distribution_v3"
 ELIGIBLE_RECORDS="${TXAGENT_STARLING_ROOT}/datasets/eligible/assay_transfer_soft_evidence_v6_5/records.parquet"
 SUPPORT_BASE="${TXAGENT_STARLING_ROOT}/datasets/base/canonical_endpoints_v3"
 
@@ -19,4 +19,3 @@ exec "${TXAGENT_PYTHON}" \
   --out-dir "${OUT_DIR}" \
   --workers "${TXAGENT_LIBRARY_WORKERS}" \
   --progress-every 10000
-

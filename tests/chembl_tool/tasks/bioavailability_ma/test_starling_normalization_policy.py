@@ -1,4 +1,6 @@
+import gzip
 import json
+from types import SimpleNamespace
 
 import pandas as pd
 import pytest
@@ -11,6 +13,7 @@ from tools.chembl_tool.common.starling.normalized_evidence import (
 from tools.chembl_tool.common.starling.normalization.measurements import (
     parse_point_measurement,
 )
+from tools.chembl_tool.common.task_workflows.retrieve_neighbors import load_index
 from tools.chembl_tool.common.starling import (
     build_normalized_evidence_library as staged_builder,
 )
@@ -18,8 +21,11 @@ from tools.chembl_tool.tasks.bioavailability_ma import (
     build_normalized_starling_evidence_library as normalized_builder,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
-    DIRECT_HF_SOURCE_COLUMNS,
-    load_direct_hf_rows,
+    HF_BIOAVAILABILITY_SOURCE_COLUMNS,
+    load_hf_bioavailability_rows,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
+    load_extra_source,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_policy import (
     endpoint_specific_standardization_of_unit,
@@ -289,7 +295,7 @@ def test_scientifically_related_endpoints_remain_distinct():
 
 def test_report_type_and_unit_do_not_rewrite_endpoint_identity():
     profile = NormalizedSourceProfile(
-        source_id="direct_hf",
+        source_id="hf_bioavailability",
         source_name="test",
         endpoint_constant="oral_bioavailability",
         measurement_field="value",
@@ -358,9 +364,18 @@ def test_permeability_unit_does_not_rewrite_broad_fa_endpoint():
 
 
 def test_family_mapping_remains_separate_and_stable():
-    assert family_assignment("direct_hf", "oral_bioavailability").group_id == (
+    assert family_assignment(
+        "hf_bioavailability",
+        "oral_bioavailability",
+        {"bioavailability_report_type": "absolute"},
+    ).group_id == (
         "Observed.direct_oral_bioavailability"
     )
+    assert family_assignment(
+        "hf_bioavailability",
+        "oral_bioavailability",
+        {"bioavailability_report_type": "relative_comparison"},
+    ).group_id == "Observed.nondirect_oral_bioavailability"
     assert family_assignment("oral_exposure", "AUC").group_id == (
         "Observed.oral_auc_cmax_exposure"
     )
@@ -370,7 +385,9 @@ def test_family_mapping_remains_separate_and_stable():
 
 
 def test_frozen_inventory_audits_orthography_without_semantic_registry():
-    inventory = validate_endpoint_inventory("direct_hf", ["oral_bioavailability"])
+    inventory = validate_endpoint_inventory(
+        "hf_bioavailability", ["oral_bioavailability"]
+    )
     assert inventory["coverage"] == 1.0
     assert inventory["n_reviewed_corrections"] == 0
     assert (
@@ -378,12 +395,14 @@ def test_frozen_inventory_audits_orthography_without_semantic_registry():
         == SPACING_AND_SPELLING_VERSION
     )
     with pytest.raises(ValueError, match="endpoint inventory drift"):
-        validate_endpoint_inventory("direct_hf", ["oral_bioavailability", "new_endpoint"])
+        validate_endpoint_inventory(
+            "hf_bioavailability", ["oral_bioavailability", "new_endpoint"]
+        )
 
 
-def test_direct_hf_loader_reads_one_complete_unpartitioned_source(tmp_path):
-    source = tmp_path / "direct_hf.parquet"
-    columns = DIRECT_HF_SOURCE_COLUMNS
+def test_hf_loader_reads_one_complete_unpartitioned_source(tmp_path):
+    source = tmp_path / "hf_bioavailability.parquet"
+    columns = HF_BIOAVAILABILITY_SOURCE_COLUMNS
     pd.DataFrame(
         [
             {**{column: None for column in columns}, "source_index": 0, "smiles": "CCO", "oral_bioavailability_value": "57%"},
@@ -391,9 +410,51 @@ def test_direct_hf_loader_reads_one_complete_unpartitioned_source(tmp_path):
         ],
         columns=columns,
     ).to_parquet(source, index=False)
-    rows = load_direct_hf_rows(source, max_rows=2)
+    rows = load_hf_bioavailability_rows(source, max_rows=2)
     assert [row["source_index"] for row in rows] == [0, 1]
     assert "_prepared_drop_reason" not in rows[1]
+
+
+def test_original_hf_source_is_one_batch_with_row_scopes(tmp_path):
+    source = tmp_path / "hf_bioavailability.parquet"
+    report_types = ("absolute", "unspecified", "relative_comparison", "apparent", None)
+    pd.DataFrame(
+        [
+            {
+                **{column: None for column in HF_BIOAVAILABILITY_SOURCE_COLUMNS},
+                "source_index": index,
+                "smiles": "CCO",
+                "oral_bioavailability_value": "2 fold" if index >= 2 else "57%",
+                "bioavailability_report_type": report_type,
+            }
+            for index, report_type in enumerate(report_types)
+        ],
+        columns=HF_BIOAVAILABILITY_SOURCE_COLUMNS,
+    ).to_parquet(source, index=False)
+    batch = load_extra_source(
+        SimpleNamespace(
+            include_hf_bioavailability=True,
+            hf_source_parquet=str(source),
+            max_hf_rows=len(report_types),
+        )
+    )
+    assert batch is not None
+    assert batch.source_id == "hf_bioavailability"
+    assert [row["source_index"] for row in batch.rows] == [0, 1, 2, 3, 4]
+    assert batch.source_path == source
+    classification = batch.inventory_entry["row_classification"]
+    assert classification == {
+        "version": "bioavailability_hf_evidence_scope.v1",
+        "raw_source_rows": 5,
+        "scope_counts": {"direct": 2, "nondirect": 3},
+        "reconciles": True,
+        "direct_report_types": [
+            "absolute",
+            "extent_f",
+            "systemic_availability",
+            "unspecified",
+        ],
+    }
 
 
 def test_versioned_builder_schema_manifest_and_restart(tmp_path):
@@ -418,6 +479,8 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
             "extraction_id": "q3",
             "gut_wall_process": "intestinal_metabolism",
             "measured_value": "substrate",
+            "substrate_status": "substrate",
+            "transporter_or_enzyme": "P-gp/ABCB1",
         },
         "Fh": {
             "global_identifier": "SMILES:4",
@@ -430,7 +493,8 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     for directory, row in source_rows.items():
         path = data_dir / directory
         path.mkdir(parents=True)
-        pd.DataFrame([row]).to_parquet(path / "extractions.parquet", index=False)
+        filename = "extractions.parquet"
+        pd.DataFrame([row]).to_parquet(path / filename, index=False)
 
     mapping = tmp_path / "mapping.parquet"
     pd.DataFrame(
@@ -439,20 +503,25 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
             for index, smiles in enumerate(("CCO", "CCN", "CCC", "CCCl"), start=1)
         ]
     ).to_parquet(mapping, index=False)
-    direct = tmp_path / "direct_hf.parquet"
+    direct = tmp_path / "direct_claims.parquet"
     pd.DataFrame(
         [
             {
-                **{
-                    column: None
-                    for column in DIRECT_HF_SOURCE_COLUMNS
-                },
+                **{column: None for column in HF_BIOAVAILABILITY_SOURCE_COLUMNS},
                 "source_index": 0,
                 "smiles": "CCBr",
                 "oral_bioavailability_value": "40%",
-            }
+                "bioavailability_report_type": "absolute",
+            },
+            {
+                **{column: None for column in HF_BIOAVAILABILITY_SOURCE_COLUMNS},
+                "source_index": 1,
+                "smiles": "CCI",
+                "oral_bioavailability_value": "2 fold",
+                "bioavailability_report_type": "relative_comparison",
+            },
         ],
-        columns=DIRECT_HF_SOURCE_COLUMNS,
+        columns=HF_BIOAVAILABILITY_SOURCE_COLUMNS,
     ).to_parquet(direct, index=False)
     out_dir = tmp_path / "out"
     common_args = [
@@ -461,15 +530,15 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "--smiles-mapping",
         str(mapping),
         "--allow-unpinned-smiles-mapping",
-        "--direct-source-parquet",
+        "--hf-source-parquet",
         str(direct),
         "--out-dir",
         str(out_dir),
         "--no-strict-endpoint-inventory",
         "--max-rows-per-source",
         "1",
-        "--max-direct-rows",
-        "1",
+        "--max-hf-rows",
+        "2",
         "--progress-every",
         "0",
     ]
@@ -481,21 +550,20 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     )
     endpoint_columns = [
         "endpoint_name",
-        "spacing_and_spelling_endpoint",
-        "canonical_endpoint",
+        "canonical_endpoint_name",
     ]
     assert all(column in records for column in endpoint_columns)
-    assert "spacing_and_spelling_status" in records
+    assert "spacing_and_spelling_status" not in records
     assert "spacing_and_spelling_reason" not in records
     assert "spacing_and_spelling_version" not in records
     assert all(
         column in records
         for column in (
-            "source_smiles",
-            "normalization_validity_status",
+            "smiles",
+            "canonicalization_status",
             "canonical_bioavailability_report_type",
-            "global_context",
-            "global_species_context",
+            "canonical_assay_context",
+            "canonical_species_context",
             "auxiliary_mapping_status",
         )
     )
@@ -504,7 +572,31 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "canonical_assay_system",
         "canonical_species",
     } & set(records)
-    assert len(records) == len(normalized) == 5
+    assert len(records) == len(normalized) == 6
+    hf_records = records[records["source_id"] == "hf_bioavailability"]
+    assert set(
+        zip(
+            hf_records["canonical_bioavailability_evidence_scope"],
+            hf_records["group_id"],
+        )
+    ) == {
+        ("direct", "Observed.direct_oral_bioavailability"),
+        ("nondirect", "Observed.nondirect_oral_bioavailability"),
+    }
+    nondirect = records[
+        (records["source_id"] == "hf_bioavailability")
+        & (records["canonical_bioavailability_evidence_scope"] == "nondirect")
+    ].iloc[0]
+    assert nondirect["canonical_measurement_text"] == "2"
+    assert nondirect["canonical_unit_text"] == "fold"
+    encoded_fg = records[records["source_id"] == "fg"].iloc[0]
+    assert encoded_fg["canonical_endpoint_name"] == "fg_substrate_outcome:ABCB1"
+    assert encoded_fg["canonical_measurement_scale_id"] == (
+        "fg_substrate_status_binary.v1"
+    )
+    assert encoded_fg["measurement_kind"] == "binary"
+    assert encoded_fg["canonical_category_id"] == "substrate"
+    assert encoded_fg["canonical_category_rank"] == 1
     removed = {
         "metric_name",
         "comparison_geometry",
@@ -525,20 +617,38 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     manifest = json.loads(
         (out_dir / normalized_builder.MANIFEST_FILENAME).read_text(encoding="utf-8")
     )
+    clean_manifest = json.loads(
+        (out_dir / "01_cleaned/manifest.json").read_text(encoding="utf-8")
+    )
+    source_inventory = json.loads(
+        (out_dir / "01_cleaned/source_inventory.json").read_text(encoding="utf-8")
+    )
+    assert (
+        out_dir / "01_cleaned/source_value_cleaning_audit.parquet"
+    ).is_file()
+    assert "source_value_cleaning_audit" in clean_manifest["sidecars"]
+    assert source_inventory["source_value_cleaning"]["n_input_records"] == 6
+    assert source_inventory["source_value_cleaning"]["n_output_records"] == 6
     assert manifest["v65_reconciliation"] == {
         "matching_performed": False,
         "status": "not_performed",
     }
-    assert manifest["artifact_version"].endswith(".v6")
-    assert manifest["normalization_domain_rules_version"].endswith(".v3")
-    assert manifest["scalar_parser_version"].endswith(".v4")
+    assert manifest["artifact_version"].endswith(".v7")
+    assert manifest["normalization_domain_rules_version"].endswith(".v4")
+    assert manifest["categorical_response_version"] == (
+        "bioavailability_ma_categorical_response.v2"
+    )
+    assert manifest["fg_target_alias_version"] == (
+        "bioavailability_fg_target_aliases.v1"
+    )
+    assert manifest["scalar_parser_version"].endswith(".v5")
     assert (
         manifest["fg_scalar_rule_version"]
         == "bioavailability_fg_single_outcome_scalar_rules.v2"
     )
-    assert manifest["source_column_contract_version"] == "source_column_contract.v1"
-    assert manifest["index_version"] == "bioavailability_ma.compact_neighbor_index.v1"
-    assert manifest["compact_artifact_version"] == "bioavailability_ma.compact_v6.v1"
+    assert manifest["source_column_contract_version"] == "source_column_contract.v2"
+    assert manifest["index_version"].endswith(".v7")
+    assert manifest["compact_artifact_version"].endswith(".v7")
     assert manifest["auxiliary_attachment_version"] == "starling_auxiliary_attachment.v1"
     assert manifest["contextual_unit_policy"]["policy_version"] == (
         "contextual_canonical_unit_policy.v1"
@@ -554,15 +664,19 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     assert auxiliary_manifest["mapping_version"] == (
         "starling_auxiliary.globally_reconciled.v1"
     )
-    assert auxiliary_manifest["coverage"]["records"] == 5
+    assert auxiliary_manifest["coverage"]["records"] == 6
     source_contract = json.loads(
         (out_dir / normalized_builder.SOURCE_COLUMN_CONTRACT_FILENAME).read_text(
             encoding="utf-8"
         )
     )
-    assert source_contract["contract_version"] == "source_column_contract.v1"
+    assert source_contract["contract_version"] == "source_column_contract.v2"
     assert set(source_contract["sources"]) == {
-        "oral_exposure", "fa", "fg", "fh", "direct_hf"
+        "oral_exposure",
+        "fa",
+        "fg",
+        "fh",
+        "hf_bioavailability",
     }
     artifact_columns = set(normalized.columns)
     for source in source_contract["sources"].values():
@@ -575,7 +689,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         out_dir / normalized_builder.RECORDS_FILENAME,
         out_dir / "04_pair_buckets/pair_bucket_records.parquet",
         out_dir / "04_pair_buckets/pair_bucket_metadata.json",
-        out_dir / "05_assay_transfer_policy/pair_bucket_transfer_policy.json.gz",
+        out_dir / "05_distance_calibration/pair_bucket_distance_calibration.json.gz",
         out_dir / "06_remove_heldout_overlap/random/records.parquet",
         out_dir / "06_remove_heldout_overlap/scaffold/records.parquet",
         out_dir / normalized_builder.EVIDENCE_FAMILIES_TEMPLATE.format(
@@ -598,6 +712,68 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         out_dir / normalized_builder.AUXILIARY_MAPPING_MANIFEST_FILENAME,
     ]
     preserved_bytes = {path: path.read_bytes() for path in preserved_paths}
+    with gzip.open(
+        out_dir
+        / "05_distance_calibration/pair_bucket_distance_calibration.json.gz",
+        "rt",
+        encoding="utf-8",
+    ) as handle:
+        calibration = json.load(handle)
+    assert calibration["semantics"]["pair_bucket_membership_authority"] == (
+        "04_pair_buckets"
+    )
+    forbidden_calibration_fields = {
+        "assay_transfer_eligible",
+        "assay_transfer_label",
+        "soft_transfer_probability",
+        "transfer_max_standard_deviations",
+    }
+    calibration_text = json.dumps(calibration, sort_keys=True)
+    assert all(
+        f'"{field}"' not in calibration_text
+        for field in forbidden_calibration_fields
+    )
+
+    runtime_index = load_index(out_dir / "08_neighbor_index/random")
+    examples = [
+        example
+        for groups in runtime_index["evidence_by_molecule_group"].values()
+        for evidence_rows in groups.values()
+        for evidence in evidence_rows
+        for example in evidence["source_record_examples"]
+    ]
+    assert examples
+    assert any(
+        any(value not in (None, "") for value in example["source_fields"].values())
+        for example in examples
+    )
+    fg_examples = [
+        example
+        for example in examples
+        if example["source_fields"].get("substrate_status") == "substrate"
+    ]
+    assert fg_examples
+    assert fg_examples[0]["source_fields"]["transporter_or_enzyme"] == (
+        "P-gp/ABCB1"
+    )
+    assert not {
+        "categorical_encoder_id",
+        "canonical_category_id",
+        "canonical_category_rank",
+        "finite_scalar_value",
+    } & set(fg_examples[0]["source_fields"])
+
+    changed_mapping = tmp_path / "changed-mapping.parquet"
+    changed = pd.read_parquet(mapping)
+    changed.loc[0, "smiles"] = "CCF"
+    changed.to_parquet(changed_mapping, index=False)
+    drift_args = list(common_args)
+    drift_args[drift_args.index("--smiles-mapping") + 1] = str(changed_mapping)
+    drift_args.extend(
+        ["--from-stage", "normalize", "--through-stage", "normalize"]
+    )
+    with pytest.raises(ValueError, match="changed since Stage 01"):
+        normalized_builder.main(drift_args)
     failed_args = list(common_args)
     failed_args[failed_args.index("--smiles-mapping") + 1] = str(
         tmp_path / "missing-mapping.parquet"
@@ -616,8 +792,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
 
     assert normalized_builder.main(
         [
-            "--out-dir",
-            str(out_dir),
+            *common_args,
             "--from-stage",
             "normalize",
             "--through-stage",
@@ -629,6 +804,13 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     restarted = json.loads(
         (out_dir / normalized_builder.MANIFEST_FILENAME).read_text(encoding="utf-8")
     )
+    resumed_records = pd.read_parquet(out_dir / normalized_builder.RECORDS_FILENAME)
+    pd.testing.assert_frame_equal(
+        records.astype(object).where(records.notna(), None),
+        resumed_records.astype(object).where(resumed_records.notna(), None),
+        check_like=True,
+        check_dtype=False,
+    )
     assert restarted["completed_stages"] == ["clean", "normalize", "organize"]
     assert restarted["rebuild_request"] == {
         "from_stage": "normalize",
@@ -636,7 +818,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     }
     assert {
         "04_pair_buckets",
-        "05_assay_transfer_policy",
+        "05_distance_calibration",
         "06_remove_heldout_overlap",
         "07_molecule_evidence",
         "08_neighbor_index",
@@ -721,7 +903,7 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
         [
             {
                 "cleaned_record_id": "clean-1",
-                "normalized_record_id": "normalized-1",
+                "canonical_record_id": "normalized-1",
             }
         ]
     ).to_parquet(normalized_path, index=False)
@@ -733,7 +915,7 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
         row_counts={"normalized_records": 1},
         validations={"test": True},
     )
-    (out_dir / normalized_builder.STAGE_ARTIFACTS["normalize"][1]).write_text(
+    (out_dir / "02_canonicalized/manifest.json").write_text(
         json.dumps(manifest), encoding="utf-8"
     )
     pd.DataFrame([{"cleaned_record_id": "clean-2"}]).to_parquet(
@@ -741,7 +923,9 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
     )
 
     with pytest.raises(ValueError, match="upstream input hash mismatch"):
-        staged_builder._load_verified_stage(out_dir, "normalize")
+        staged_builder._load_verified_stage(
+            out_dir, "normalize", normalized_builder.POLICY
+        )
 
 
 def test_builder_rejects_reconciliation_until_comparison_contract_exists():

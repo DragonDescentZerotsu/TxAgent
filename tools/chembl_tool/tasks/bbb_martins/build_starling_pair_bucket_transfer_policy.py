@@ -1,8 +1,10 @@
-"""Build the leakage-filtered BBB Martins pair-bucket transfer policy."""
+"""Build BBB v7 distance calibration or the frozen v6 transfer policy."""
 
 from __future__ import annotations
 
 import argparse
+import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -11,7 +13,9 @@ from tools.chembl_tool.common.starling.build_pair_bucket_transfer_policy import 
     TransferPolicyBuildSpec,
     build_pair_bucket_transfer_policy as _build,
 )
-from tools.chembl_tool.common.starling.heldout_index import load_heldout_identity_keys
+from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration import (
+    build_pair_bucket_distance_calibration as _build_distance_calibration,
+)
 from tools.chembl_tool.tasks.bbb_martins.build_starling_pair_bucket_sidecar import (
     DEFAULT_NORMALIZED_DIR,
     PAIR_BUCKET_METADATA_FILENAME,
@@ -26,21 +30,10 @@ from tools.chembl_tool.tasks.bbb_martins.starling_pair_bucket_transfer_policy im
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_pair_buckets import (
     BBB_MARTINS_PAIR_BUCKET_VERSION,
+    BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
-
-
-HELDOUT_LABEL_PATHS = (
-    Path("data/processed_starling/BBB_Martins/random/heldout_molecule_labels.jsonl"),
-    Path("data/processed_starling/BBB_Martins/scaffold/heldout_molecule_labels.jsonl"),
-)
-
-
-def load_union_heldout_identity_keys() -> set[str]:
-    keys: set[str] = set()
-    for path in HELDOUT_LABEL_PATHS:
-        keys |= load_heldout_identity_keys(path)
-    return keys
+from tools.chembl_tool.tasks.bbb_martins.starling_schema import RECORD_CONTRACT
 
 
 BUILD_SPEC = TransferPolicyBuildSpec(
@@ -50,8 +43,6 @@ BUILD_SPEC = TransferPolicyBuildSpec(
     auxiliary_mapping_version=MAPPING_VERSION,
     auxiliary_attachment_version=AUXILIARY_ATTACHMENT_VERSION,
     include_soft_transfer_contract=True,
-    heldout_key_loader=load_union_heldout_identity_keys,
-    heldout_identity_column="canonical_smiles",
 )
 
 
@@ -62,9 +53,39 @@ def build_pair_bucket_transfer_policy(
     pair_bucket_metadata_path: str | Path,
     auxiliary_manifest_path: str | Path,
     out_dir: str | Path,
+    workers: int = 1,
 ) -> dict[str, Any]:
+    metadata = json.loads(Path(pair_bucket_metadata_path).read_text(encoding="utf-8"))
+    spec = BUILD_SPEC
+    if metadata.get("contract_version") == BBB_MARTINS_V7_PAIR_BUCKET_VERSION:
+        profile = replace(
+            TRANSFER_POLICY_PROFILE,
+            source_candidate_fields={
+                source: item.variance_candidates
+                for source, item in RECORD_CONTRACT.pair_buckets.items()
+            },
+        )
+        spec = replace(
+            BUILD_SPEC,
+            profile=profile,
+            pair_bucket_version=BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
+            source_pair_fields={
+                source: item.additional_dimensions
+                for source, item in RECORD_CONTRACT.pair_buckets.items()
+            },
+        )
+        return _build_distance_calibration(
+            spec=spec,
+            record_contract=RECORD_CONTRACT,
+            records_path=records_path,
+            pair_bucket_records_path=pair_bucket_records_path,
+            pair_bucket_metadata_path=pair_bucket_metadata_path,
+            auxiliary_manifest_path=auxiliary_manifest_path,
+            out_dir=out_dir,
+            workers=workers,
+        )
     return _build(
-        spec=BUILD_SPEC,
+        spec=spec,
         records_path=records_path,
         pair_bucket_records_path=pair_bucket_records_path,
         pair_bucket_metadata_path=pair_bucket_metadata_path,
@@ -88,11 +109,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--auxiliary-manifest",
-        default=str(DEFAULT_NORMALIZED_DIR / "02_normalized/auxiliary_mapping_manifest.json"),
+        default=str(DEFAULT_NORMALIZED_DIR / "02_canonicalized/auxiliary_mapping_manifest.json"),
     )
     parser.add_argument(
-        "--out-dir", default=str(DEFAULT_NORMALIZED_DIR / "05_assay_transfer_policy")
+        "--out-dir", default=str(DEFAULT_NORMALIZED_DIR / "05_distance_calibration")
     )
+    parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args(argv)
     payload = build_pair_bucket_transfer_policy(
         records_path=args.records,
@@ -100,6 +122,7 @@ def main(argv: list[str] | None = None) -> int:
         pair_bucket_metadata_path=args.pair_bucket_metadata,
         auxiliary_manifest_path=args.auxiliary_manifest,
         out_dir=args.out_dir,
+        workers=args.workers,
     )
     print(payload["summary"], flush=True)
     return 0
@@ -113,6 +136,4 @@ __all__ = [
     "HELDOUT_LABEL_PATHS",
     "POLICY_FILENAME",
     "build_pair_bucket_transfer_policy",
-    "load_union_heldout_identity_keys",
 ]
-

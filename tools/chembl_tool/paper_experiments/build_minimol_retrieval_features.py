@@ -6,7 +6,6 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-import pickle
 from typing import Any, Iterable
 
 import numpy as np
@@ -29,6 +28,7 @@ from tools.chembl_tool.common.starling.heldout_index import (
     load_heldout_identity_keys,
 )
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
+from tools.chembl_tool.common.task_workflows.retrieve_neighbors import load_index
 from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import BENCHMARK_SPLITS
 from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
     DEFAULT_FEATURE_ROOT,
@@ -52,6 +52,13 @@ def main(argv: list[str] | None = None) -> int:
         for experiment in experiments_for_starling_benchmark(split)
         if experiment.mode != "none"
     ]
+    if args.sources:
+        selected_sources = set(args.sources)
+        experiments = [
+            experiment
+            for experiment in experiments
+            if experiment.source in selected_sources
+        ]
     model_provenance = checkpoint_provenance(args.minimol_source)
     base_indices = _load_unique_indices(experiments)
     query_sets = _load_query_sets(experiments)
@@ -136,6 +143,7 @@ def main(argv: list[str] | None = None) -> int:
         "normalization": "L2",
         "similarity": "cosine",
         "splits": splits,
+        "evidence_sources": sorted({experiment.source for experiment in experiments}),
         "n_unique_smiles": len(all_smiles),
         "n_base_indices": len(base_indices),
         "n_query_sets": len(query_sets),
@@ -157,8 +165,7 @@ def _load_unique_indices(experiments: Iterable[Any]) -> dict[str, dict[str, Any]
         path = str(Path(experiment.index))
         if path in indices:
             continue
-        with Path(path).open("rb") as handle:
-            indices[path] = pickle.load(handle)
+        indices[path] = load_index(Path(path))
     return indices
 
 
@@ -596,6 +603,13 @@ def _sha256_file(path: Path) -> str:
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--splits", nargs="*", choices=BENCHMARK_SPLITS, default=[])
+    parser.add_argument(
+        "--sources",
+        nargs="*",
+        choices=("chembl", "starling"),
+        default=[],
+        help="Optionally build only the named evidence-source descriptors.",
+    )
     parser.add_argument("--output-root", type=Path, default=DEFAULT_FEATURE_ROOT)
     parser.add_argument("--minimol-source", type=Path, default=DEFAULT_MINIMOL_SOURCE)
     parser.add_argument("--embedding-batch-size", type=int, default=256)

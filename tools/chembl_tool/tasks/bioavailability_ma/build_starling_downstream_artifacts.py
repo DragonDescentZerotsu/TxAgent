@@ -9,6 +9,7 @@ from typing import Any
 from tools.chembl_tool.common.starling import split_downstream as _shared
 from tools.chembl_tool.common.starling.split_downstream import (
     AUDIT_STAGE,
+    DISTANCE_CALIBRATION_STAGE,
     DOWNSTREAM_STAGES,
     FILTERED_RECORDS_FILENAME,
     HELDOUT_STAGE,
@@ -32,11 +33,11 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
 from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import POLICY
 
 
-PIPELINE_LAYOUT_VERSION = "bioavailability_ma.normalized_v6_layout.v2"
-HELDOUT_OVERLAP_VERSION = "bioavailability_ma.remove_heldout_overlap.v1"
+PIPELINE_LAYOUT_VERSION = "bioavailability_ma.normalized_v7_layout.v2"
+HELDOUT_OVERLAP_VERSION = "bioavailability_ma.remove_heldout_overlap.v2"
 BENCHMARK_SPLITS = ("random", "scaffold")
 DEFAULT_SPLIT_ROOT = "data/processed_starling/Bioavailability_Ma"
-EXCLUSIONS_FILENAME = "excluded_direct_hf_records.parquet"
+EXCLUSIONS_FILENAME = "excluded_direct_bioavailability_records.parquet"
 LEGACY_DOWNSTREAM_STAGES = _shared.LEGACY_DOWNSTREAM_STAGES
 
 
@@ -47,7 +48,9 @@ def _spec() -> SplitDownstreamSpec:
         pipeline_layout_version=PIPELINE_LAYOUT_VERSION,
         heldout_overlap_version=HELDOUT_OVERLAP_VERSION,
         pair_bucket_version=BIOAVAILABILITY_PAIR_BUCKET_VERSION,
-        filter_source_id="direct_hf",
+        filter_source_id="hf_bioavailability",
+        filter_scope_field="canonical_bioavailability_evidence_scope",
+        filter_scope_value="direct",
         benchmark_splits=BENCHMARK_SPLITS,
         build_sidecar=build_sidecar,
         build_transfer_policy=build_pair_bucket_transfer_policy,
@@ -81,6 +84,7 @@ __all__ = [
     "BENCHMARK_SPLITS",
     "DEFAULT_SPLIT_ROOT",
     "DOWNSTREAM_STAGES",
+    "DISTANCE_CALIBRATION_STAGE",
     "EXCLUSIONS_FILENAME",
     "FILTERED_RECORDS_FILENAME",
     "HELDOUT_STAGE",

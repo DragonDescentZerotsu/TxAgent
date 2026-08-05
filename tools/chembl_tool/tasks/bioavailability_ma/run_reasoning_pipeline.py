@@ -74,6 +74,8 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_
     validate_scored_neighbors_configuration,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
+    DIRECT_ORAL_BIOAVAILABILITY_GROUP,
+    NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
     STARLING_RETRIEVAL_SOURCES,
     get_source_config,
 )
@@ -98,6 +100,7 @@ DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bioavailability_ma/reasoning/singl
 DEFAULT_MODEL = "deepseek-v4-pro"
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
+NONDIRECT_EVIDENCE_POLICY_VERSION = "bioavailability_nondirect_evidence_policy.v2"
 
 
 GROUP_REASONING_TOOLS = [
@@ -182,8 +185,29 @@ SINGLE_MOLECULE_TOOLS = [
 SINGLE_MOLECULE_TOOL_CHOICE = {"type": "function", "function": {"name": "molecule_properties"}}
 
 
+def _nondirect_evidence_policy(exclude: bool) -> dict[str, Any]:
+    return {
+        "contract_version": NONDIRECT_EVIDENCE_POLICY_VERSION,
+        "exclude_nondirect_bioavailability_records": bool(exclude),
+        "default_policy": "include",
+        "record_scope_field": "canonical_bioavailability_evidence_scope",
+        "record_scope_excluded_value": "nondirect",
+        "retained_source_group": NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
+        "reasoning_branch": DIRECT_ORAL_BIOAVAILABILITY_GROUP,
+        "filter_stage": "before_neighbor_ranking_and_top_k",
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    if args.exclude_nondirect_bioavailability_records and (
+        not args.retrieval_source.startswith("starling")
+        or args.experiment_mode not in {"direct", "full_flat", "full_mechanism"}
+    ):
+        raise SystemExit(
+            "--exclude-nondirect-bioavailability-records requires a Starling "
+            "direct, full_flat, or full_mechanism retrieval run"
+        )
     # --retrieval-strategy is the source of truth; it locks the compatible group-prompt-format.
     if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
         if args.group_prompt_format != "assay_transfer_tool":
@@ -311,6 +335,9 @@ def main(argv: list[str] | None = None) -> int:
             model_revision=args.assay_transfer_model_revision,
             candidate_manifest_path=args.rerank_candidate_manifest,
             template_profile=args.assay_transfer_template_profile,
+            exclude_nondirect_bioavailability_records=(
+                args.exclude_nondirect_bioavailability_records
+            ),
         )
     expected_reranker = reranker.provenance() if reranker is not None else {"name": "none"}
     retrieval = load_retrieval_replay(
@@ -330,6 +357,24 @@ def main(argv: list[str] | None = None) -> int:
             else None
         ),
     )
+    requested_nondirect_policy = _nondirect_evidence_policy(
+        args.exclude_nondirect_bioavailability_records
+    )
+    if retrieval is not None:
+        observed_nondirect_policy = (retrieval.get("experiment") or {}).get(
+            "nondirect_bioavailability_evidence_policy"
+        )
+        observed_exclusion = bool(
+            (observed_nondirect_policy or {}).get(
+                "exclude_nondirect_bioavailability_records", False
+            )
+        )
+        if observed_exclusion != args.exclude_nondirect_bioavailability_records:
+            raise SystemExit(
+                "Retrieval replay non-direct bioavailability policy mismatch: "
+                f"requested exclusion={args.exclude_nondirect_bioavailability_records}, "
+                f"observed exclusion={observed_exclusion}"
+            )
     if retrieval is not None and args.assay_transfer_min_score is not None:
         replay_policy = (retrieval.get("experiment") or {}).get(
             "assay_transfer_selection_policy"
@@ -350,7 +395,16 @@ def main(argv: list[str] | None = None) -> int:
             query_smiles,
             index,
             mode=args.experiment_mode,
-            config=get_source_config(args.retrieval_source) if args.experiment_mode not in {"none", "native"} else None,
+            config=(
+                get_source_config(
+                    args.retrieval_source,
+                    exclude_nondirect_bioavailability_records=(
+                        args.exclude_nondirect_bioavailability_records
+                    ),
+                )
+                if args.experiment_mode not in {"none", "native"}
+                else None
+            ),
             top_k_per_group=args.top_k_per_group,
             min_similarity=args.min_similarity,
             native_groups=args.groups,
@@ -364,6 +418,9 @@ def main(argv: list[str] | None = None) -> int:
         )
     else:
         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
+    retrieval.setdefault("experiment", {})[
+        "nondirect_bioavailability_evidence_policy"
+    ] = requested_nondirect_policy
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
     if reranker is not None:
@@ -494,6 +551,7 @@ def main(argv: list[str] | None = None) -> int:
         "smiles_field": args.smiles_field,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
+        "nondirect_bioavailability_evidence_policy": requested_nondirect_policy,
         "retrieval_strategy": args.retrieval_strategy,
         "retrieval_reranker": (retrieval.get("experiment") or {}).get("retrieval_reranker", {"name": "none"}),
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
@@ -1173,6 +1231,14 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--index", default=DEFAULT_INDEX)
     parser.add_argument("--experiment-mode", choices=sorted(EXPERIMENT_MODES), default="native")
     parser.add_argument("--retrieval-source", default="chembl")
+    parser.add_argument(
+        "--exclude-nondirect-bioavailability-records",
+        action="store_true",
+        help=(
+            "Exclude retained relative/apparent HF bioavailability evidence before "
+            "neighbor ranking and top-k selection. Canonical direct evidence remains."
+        ),
+    )
     parser.add_argument(
         "--neighbor-identity-policy",
         choices=["operational", "parent_disjoint"],

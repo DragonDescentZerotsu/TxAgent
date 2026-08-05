@@ -3,6 +3,14 @@
 Status: implemented; validation cache generation uses the runbook below.
 Scope: Bioavailability_Ma assay-transfer reranking + how records are presented to the LLM.
 
+The v3 index keeps the frozen v6.5 eligible-record universe unchanged, but it
+assigns any HF `relative_comparison` or `apparent` survivor to
+`Observed.nondirect_oral_bioavailability`. The group is materialized even when
+the frozen eligible snapshot has zero such survivors, so runtime exclusion is
+explicit and future compatible. Separately curated q1 records retain their
+existing oral-bioavailability group because their context field is a statistic
+type rather than the HF report-type policy.
+
 ## Problem
 
 The assay-transfer reranker currently **reconstructs** its scoring records from TxAgent's
@@ -180,7 +188,7 @@ Legacy / Morgan / existing reranker paths are untouched; this is additive behind
 PY=/data1/joseph/miniconda3/envs/txagent-glm/bin/python
 # 1) Build the in-distribution index + catalog (no GPU)
 $PY -m tools.chembl_tool.tasks.bioavailability_ma.reranking.build_starling_in_distribution_library \
-  --out-dir outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_in_distribution
+  --out-dir outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_in_distribution_v3
 
 # 2) Morgan-retrieval arm end-to-end (no GPU): rich in-distribution records, no scores
 $PY -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline \

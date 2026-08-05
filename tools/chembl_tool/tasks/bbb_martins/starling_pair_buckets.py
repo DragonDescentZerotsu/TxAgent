@@ -1,6 +1,7 @@
 """Source-aware comparison fields for BBB Martins pair buckets."""
 
 BBB_MARTINS_PAIR_BUCKET_VERSION = "bbb_martins_pair_buckets.v2"
+BBB_MARTINS_V7_PAIR_BUCKET_VERSION = "bbb_martins_pair_buckets.v7"
 
 SOURCE_PAIR_FIELDS = {
     "direct_bbb": (
@@ -24,4 +25,8 @@ SOURCE_PAIR_FIELDS = {
     "influx_transport": ("canonical_transport_mechanism",),
 }
 
-__all__ = ["BBB_MARTINS_PAIR_BUCKET_VERSION", "SOURCE_PAIR_FIELDS"]
+__all__ = [
+    "BBB_MARTINS_PAIR_BUCKET_VERSION",
+    "BBB_MARTINS_V7_PAIR_BUCKET_VERSION",
+    "SOURCE_PAIR_FIELDS",
+]

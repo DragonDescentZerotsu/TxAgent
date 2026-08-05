@@ -46,6 +46,14 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts
     SOURCE_COLUMNS,
     llm_source_projection_from_mapping,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
+    DIRECT_ORAL_BIOAVAILABILITY_GROUP,
+    NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
+    DIRECT_EVIDENCE_SCOPE,
+    bioavailability_evidence_scope,
+)
 
 # Authoritative per-record training source: assay_concept + pre-mapped context_<field>
 # columns + normalized scalar/unit/endpoint -> exact v6_5 training-prompt fidelity.
@@ -62,19 +70,19 @@ DEFAULT_SUPPORT_TEXT_BASE = str(
     Path(DEFAULT_STARLING_ROOT) / "datasets/base/canonical_endpoints_v3"
 )
 DEFAULT_OUT_DIR = (
-    "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_in_distribution"
+    "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_in_distribution_v3"
 )
 EVIDENCE_FILENAME = "starling_in_distribution_evidence.jsonl"
 INDEX_FILENAME = "starling_in_distribution_neighbor_index.pkl"
 CATALOG_FILENAME = "starling_in_distribution_catalog.jsonl"
 META_FILENAME = "starling_in_distribution_neighbor_index.meta.json"
-INDEX_VERSION = "bioavailability_ma_starling_in_distribution_neighbor_index.v2"
+INDEX_VERSION = "bioavailability_ma_starling_in_distribution_neighbor_index.v3"
 
 # canonical_endpoint_key prefix -> (group_id, tier, endpoint_group). q1 splits on the
 # second component (oral_bioavailability vs oral_exposure); q2/q3/q4 map to Fa/Fg/Fh.
 GROUP_BY_CONCEPT: dict[str, tuple[str, str, str]] = {
     "oral_bioavailability": (
-        "Observed.direct_oral_bioavailability", "Observed", "direct_oral_bioavailability",
+        DIRECT_ORAL_BIOAVAILABILITY_GROUP, "Observed", "direct_oral_bioavailability",
     ),
     "oral_exposure": (
         "Observed.oral_auc_cmax_exposure", "Observed", "oral_auc_cmax_exposure",
@@ -115,6 +123,38 @@ def _record_smiles(record: dict[str, Any]) -> str:
     return str(record.get("canonical_smiles") or record.get("smiles") or "").strip()
 
 
+def group_for_record(record: dict[str, Any], concept: str) -> tuple[str, str, str]:
+    """Resolve the retrieval group without expanding the frozen training universe."""
+    group = GROUP_BY_CONCEPT[concept]
+    if concept != "oral_bioavailability":
+        return group
+    source_id = str(record.get("source_id") or "").strip().lower()
+    if source_id not in {
+        "starling",
+        "hf_bioavailability",
+        "direct_hf",  # historical normalized-v6 input
+        "hf_nondirect_bioavailability",  # historical normalized-v6 input
+    }:
+        # q1 is a separately curated oral-bioavailability training source; its
+        # context field is a statistic type, not the HF direct/nondirect label.
+        return group
+    scope = str(
+        record.get("canonical_bioavailability_evidence_scope") or ""
+    ).strip().casefold()
+    if not scope:
+        scope = bioavailability_evidence_scope(
+            record.get("bioavailability_report_type")
+            or record.get("context_report_or_statistic_type")
+        )
+    if scope == DIRECT_EVIDENCE_SCOPE:
+        return group
+    return (
+        NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
+        "Observed",
+        "nondirect_oral_bioavailability",
+    )
+
+
 def load_support_text_by_child_id(base_dir: Path) -> dict[str, str]:
     """Map child_id -> full support_text narrative from the canonical base (all sources).
 
@@ -145,7 +185,7 @@ def load_source_rows_by_child_id(base_dir: Path) -> dict[str, tuple[str, dict[st
         "intestinal_absorption": "fa",
         "gut_wall": "fg",
         "hepatic": "fh",
-        "starling_oba": "direct_hf",
+        "starling_oba": "hf_bioavailability",
     }
     mapping: dict[str, tuple[str, dict[str, Any]]] = {}
     for directory, source_id in source_by_directory.items():
@@ -180,7 +220,7 @@ def _source_projection_for_record(
         source_id, source_row = joined
         return llm_source_projection_from_mapping(source_id, source_row)
     source_id = {
-        "oral_bioavailability": "direct_hf",
+        "oral_bioavailability": "hf_bioavailability",
         "oral_exposure": "oral_exposure",
         "Fa": "fa",
         "Fg": "fg",
@@ -226,14 +266,18 @@ def _first(record: dict[str, Any], *names: str) -> Any:
 
 # The 16 v6_5 template context fields (order per the template).
 _TEMPLATE_CONTEXT_FIELDS = (
-    "species_or_population", "report_or_statistic_type", "dose", "study_or_assay_system",
+    "species_or_population", "report_or_statistic_type", "dose", "study_context",
+    "oral_exposure_mode", "assay_system", "study_or_assay_system",
     "measured_process", "biological_context", "medium", "formulation_or_solid_form",
     "transporter_or_enzyme", "substrate_status", "intestinal_site", "molecular_form",
     "enzyme_or_pathway", "qualifying_conditions", "comparator", "extra_details",
 )
 
 
-def template_context_from_record(record: dict[str, Any]) -> dict[str, str]:
+def template_context_from_record(
+    record: dict[str, Any],
+    source_row: dict[str, Any] | None = None,
+) -> dict[str, str]:
     """Return the 16 v6_5 template context fields for a normalized record.
 
     Prefers the authoritative pre-mapped `context_<field>` columns (present in the
@@ -241,11 +285,25 @@ def template_context_from_record(record: dict[str, Any]) -> dict[str, str]:
     `compose_v3._context` mapping over raw columns when those aren't present.
     """
     if any(f"context_{field}" in record for field in _TEMPLATE_CONTEXT_FIELDS):
-        return _context(**{field: record.get(f"context_{field}") for field in _TEMPLATE_CONTEXT_FIELDS})
+        values = {
+            field: record.get(f"context_{field}")
+            for field in _TEMPLATE_CONTEXT_FIELDS
+        }
+        # The frozen eligible schema retained only the historical collapsed
+        # field.  Recover distinct native fields from the authoritative source
+        # join instead of treating that collapsed field as proof that all
+        # context columns were persisted.
+        for field in ("study_context", "oral_exposure_mode", "assay_system"):
+            if values.get(field) in (None, "") and source_row is not None:
+                values[field] = source_row.get(field)
+        return _context(**values)
     mapped = {
         "species_or_population": _first(record, "species_or_population", "species", "species_exact"),
         "report_or_statistic_type": _first(record, "bioavailability_report_type", "statistic_type"),
         "dose": _first(record, "dose", "oral_dose"),
+        "study_context": record.get("study_context"),
+        "oral_exposure_mode": record.get("oral_exposure_mode"),
+        "assay_system": record.get("assay_system"),
         "study_or_assay_system": _first(record, "study_context", "oral_exposure_mode", "assay_system"),
         "measured_process": _first(record, "exposure_measure", "endpoint_category", "gut_wall_process", "metric_type"),
         "biological_context": record.get("biological_context"),
@@ -303,6 +361,9 @@ def in_distribution_catalog_record(
     source_projection = _source_projection_for_record(
         record, concept, support_by_id, source_by_id
     )
+    joined_source_row = None
+    if source_by_id is not None:
+        joined_source_row = source_by_id[catalog_record_id][1]
     return {
         "record_type": "assay_record",
         "record_id": catalog_record_id,
@@ -333,7 +394,7 @@ def in_distribution_catalog_record(
         "support_text": _resolve_support_text(record, support_by_id),
         "extra_details": str(record.get("extra_details") or record.get("context_extra_details") or ""),
         "template_id": _Path(TEMPLATE_BY_CONCEPT[concept]).stem,
-        "template_context": template_context_from_record(record),
+        "template_context": template_context_from_record(record, joined_source_row),
         "source_provenance": {
             "child_id": catalog_record_id,
             "record_id": str(record.get("record_id") or ""),
@@ -384,7 +445,7 @@ def evidence_row_from_record(
     smiles = _record_smiles(record)
     if not smiles:
         return None
-    group_id, tier, endpoint_group = GROUP_BY_CONCEPT[concept]
+    group_id, tier, endpoint_group = group_for_record(record, concept)
     support_text = _resolve_support_text(record, support_by_id)
     starling_record = {field: record.get(field) for field in STARLING_RECORD_FIELDS}
     starling_record["assay_concept"] = concept
@@ -518,6 +579,11 @@ def main(argv: list[str] | None = None) -> int:
         index_version=INDEX_VERSION,
         workers=args.workers,
         progress_every=args.progress_every,
+    )
+    # Keep the capability explicit even when the frozen v6.5 eligible universe
+    # happens to contain no HF relative/apparent survivors.
+    index["group_to_molecule_indices"].setdefault(
+        NONDIRECT_ORAL_BIOAVAILABILITY_GROUP, []
     )
     index["source"] = {
         "type": "starling_in_distribution_index",

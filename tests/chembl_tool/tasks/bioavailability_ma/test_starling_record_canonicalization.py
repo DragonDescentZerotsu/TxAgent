@@ -39,6 +39,20 @@ def test_only_direct_report_type_is_canonicalized():
     assert "canonical_species" not in result
 
 
+def test_hf_evidence_scope_is_row_level_and_does_not_relabel_other_sources():
+    direct = enrich_bioavailability_validity(
+        _record(source="hf_bioavailability", report="unspecified")
+    )
+    nondirect = enrich_bioavailability_validity(
+        _record(source="hf_bioavailability", report="relative_comparison")
+    )
+    other = enrich_bioavailability_validity(_record(source="fa", report=None))
+    assert direct["canonical_bioavailability_report_type"] == "unspecified"
+    assert direct["canonical_bioavailability_evidence_scope"] == "direct"
+    assert nondirect["canonical_bioavailability_evidence_scope"] == "nondirect"
+    assert other["canonical_bioavailability_evidence_scope"] is None
+
+
 @pytest.mark.parametrize(
     ("report", "value", "expected_status"),
     [
@@ -52,7 +66,7 @@ def test_only_direct_report_type_is_canonicalized():
 def test_direct_percentage_policy_is_report_type_aware(report, value, expected_status):
     result = enrich_bioavailability_validity(
         _record(
-            source="direct_hf",
+            source="hf_bioavailability",
             endpoint="oral_bioavailability",
             measurement=str(value),
             unit="%",
@@ -61,6 +75,9 @@ def test_direct_percentage_policy_is_report_type_aware(report, value, expected_s
         )
     )
     assert result["normalization_validity_status"] == expected_status
+    assert result["canonical_bioavailability_evidence_scope"] == (
+        "direct" if report in {"absolute", "unspecified"} else "nondirect"
+    )
 
 
 def test_duration_validity_uses_existing_canonical_hours():
@@ -81,6 +98,29 @@ def test_invalid_metric_rows_are_retained_with_a_status_not_a_comparison_value()
     )
     assert result["normalization_validity_status"] == "nonpositive_positive_scalar"
     assert "comparison_value" not in result
+
+
+def test_declared_categorical_anchor_uses_encoded_validity_contract():
+    record = _record(
+        source="fg",
+        endpoint="fg_substrate_outcome:ABCB1",
+        measurement="1",
+        unit="binary_outcome_class",
+        value=1.0,
+    )
+    record["categorical_encoder_id"] = "fg_substrate_status_binary.v1"
+    assert normalization_validity_status(record) == "valid"
+
+
+def test_encoded_unit_without_encoder_fails_closed():
+    record = _record(
+        source="fg",
+        endpoint="fg_substrate_outcome:ABCB1",
+        measurement="1",
+        unit="binary_outcome_class",
+        value=1.0,
+    )
+    assert normalization_validity_status(record) == "encoded_unit_without_encoder"
 
 
 @pytest.mark.parametrize("unit", ["log(cm/s)", "log cm/s", "log10(cm/s)"])

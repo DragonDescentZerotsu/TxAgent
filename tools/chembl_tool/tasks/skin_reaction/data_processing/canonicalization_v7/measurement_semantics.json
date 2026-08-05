@@ -1,0 +1,2227 @@
+{
+  "schema_version": "skin_reaction_measurement_semantics.schema.v1",
+  "policy_version": "skin_reaction_measurement_semantics.v1",
+  "frozen_auxiliary_mapping": {
+    "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2",
+    "sha256": "34db0efcd64769699e4b86f7cdcb16e9dc12e466e5f04eb2352eca43440ebd45"
+  },
+  "source_sha256": {
+    "sensitization_aop": "3eca3f70d1243795bc37f06e31795566295ce8ea3bf03e810efd3807152cf2c8",
+    "skin_exposure": "14f9ba586b6744e7412867110080ad9bf7b51b2ae39be0d12572f9ce66fd7713"
+  },
+  "review_basis": {
+    "method": "programmatic full-record inventory and structural rules with representative source-record review",
+    "network_or_api_calls": false,
+    "human_approval_claimed": false,
+    "counts_mean": "deterministic matches on pinned sources, not manual adjudication of every row"
+  },
+  "rules": [
+    {
+      "rule_id": "skin.exposure.flux.compact_areic_time_ug.v1",
+      "priority": 1000,
+      "matched_record_count": 926,
+      "review_basis": "full-source unit inventory plus representative support-text inspection",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "flux"
+        ],
+        "existing_canonical_unit_exact": [
+          "µg/cm"
+        ],
+        "raw_unit_regex": "^(?:µg|ug)/(?:\\()?cm(?:\\^?2|²)(?:[.·∙•-]?)(?:h|hr|hour|min|day|s)(?:\\^-?1)?(?:\\))?(?:\\s*[×x]\\s*10(?:\\^?-?\\d+))?$"
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_kind": "flux",
+        "canonical_basis": "µg/cm^2/h",
+        "quantity_kind": "areic_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "parse corrected area-and-time denominator, then convert value and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.compact_areic_time_mg.v1",
+      "priority": 999,
+      "matched_record_count": 238,
+      "review_basis": "full-source unit inventory plus representative support-text inspection",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "flux"
+        ],
+        "existing_canonical_unit_exact": [
+          "mg/cm"
+        ],
+        "raw_unit_regex": "^mg/(?:\\()?cm(?:\\^?2|²)(?:[.·∙•-]?)(?:h|hr|hour|min|day|s)(?:\\^-?1)?(?:\\))?(?:\\s*[×x]\\s*10(?:\\^?-?\\d+))?$"
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_kind": "flux",
+        "canonical_basis": "µg/cm^2/h",
+        "quantity_kind": "areic_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "parse corrected area-and-time denominator, then convert value and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.dotted_inverse_areic_time.v1",
+      "priority": 998,
+      "matched_record_count": 236,
+      "review_basis": "full-source unit inventory plus representative support-text inspection",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "flux"
+        ],
+        "existing_canonical_unit_exact": [
+          "cm·µg"
+        ],
+        "raw_unit_regex": "^(?:µg|ug)[.·]cm(?:\\^-?2|-2)[.·](?:h|hr|hour|min)(?:\\^-?1|-1)$"
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_kind": "flux",
+        "canonical_basis": "µg/cm^2/h",
+        "quantity_kind": "areic_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "interpret explicit inverse area and inverse time, then convert value and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.water_mass_areic_rate.v1",
+      "priority": 997,
+      "matched_record_count": 10,
+      "review_basis": "all ten matching records inspected as one source-table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "flux"
+        ],
+        "raw_unit_exact": [
+          "mg H2O h^-1 cm^-2"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_text": "mg/cm^2/h",
+        "canonical_basis": "water mass per area per time",
+        "quantity_kind": "areic_water_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "identity",
+        "provenance_note": "retain H2O analyte qualifier outside the unit key"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.total_mass_rate.v1",
+      "priority": 850,
+      "matched_record_count": 433,
+      "review_basis": "full-source endpoint-unit census and representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "flux"
+        ],
+        "existing_canonical_unit_exact": [
+          "µg/h"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_text": "µg/h",
+        "canonical_basis": "total mass per time without an area denominator",
+        "quantity_kind": "total_mass_rate",
+        "numeric_domain": "nonnegative",
+        "value_transform": "identity after ordinary prefix and time conversion"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.volumetric_areic_rate.v1",
+      "priority": 849,
+      "matched_record_count": 258,
+      "review_basis": "full-source endpoint-unit census and representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "flux"
+        ],
+        "existing_canonical_unit_exact": [
+          "µL/cm^2·h",
+          "µL/cm^2/h",
+          "µL/cm^2·min"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_text": "µL/cm^2/h",
+        "canonical_basis": "volume per area per time",
+        "quantity_kind": "volumetric_areic_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert minute-based values and variation to hours"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.dose_fraction_rate.v1",
+      "priority": 848,
+      "matched_record_count": 574,
+      "review_basis": "full-source endpoint-unit census and representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "flux"
+        ],
+        "existing_canonical_unit_exact": [
+          "%/h",
+          "% dose/h",
+          "% dose h^-1",
+          "%D/min",
+          "%/min"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_text": "% of applied dose/h",
+        "canonical_basis": "percent of applied dose per hour",
+        "quantity_kind": "dose_fraction_rate",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert minute-based values and variation to hours"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.missing_time_basis.v1",
+      "priority": 700,
+      "matched_record_count": 154,
+      "review_basis": "full-source census; 147 records call the value flux but do not license a time denominator and seven remain semantically unresolved",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "flux"
+        ],
+        "existing_canonical_unit_exact": [
+          "µg/cm^2",
+          "mg/cm^2",
+          "ng/cm^2"
+        ],
+        "raw_unit_not_exact": [
+          "mg H2O h^-1 cm^-2"
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "canonical_endpoint_name": "flux",
+        "quantity_kind": "areic_amount_with_missing_flux_time_basis",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "missing_flux_time_basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.diffusion_coefficient.v1",
+      "priority": 990,
+      "matched_record_count": 207,
+      "review_basis": "full-source semantic text census plus representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "cm^2/h",
+          "cm^2/s",
+          "cm^2/min",
+          "m^2/s"
+        ],
+        "text_regex_any": [
+          "diffusion coefficient",
+          "diffusion constant",
+          "diffusiv",
+          "\\bDapp\\b",
+          "\\bDws\\b",
+          "\\bDed\\b",
+          "self-diffusion"
+        ],
+        "support_text_regex_none": [
+          "permeability coefficient",
+          "permeability constant",
+          "\\bKp\\b",
+          "\\bPc\\b"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "diffusion_coefficient",
+        "canonical_unit_kind": "diffusivity",
+        "canonical_basis": "cm^2/s",
+        "quantity_kind": "diffusion_coefficient",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert compatible area-per-time values and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.area_time_unresolved.v1",
+      "priority": 600,
+      "matched_record_count": 304,
+      "review_basis": "full-source remainder after the explicit diffusion selector",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "cm^2/h",
+          "cm^2/s",
+          "cm^2/min",
+          "m^2/s"
+        ],
+        "exclude_rule_ids": [
+          "skin.exposure.permeability.diffusion_coefficient.v1"
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_permeability_area_time",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_area_time_conflict"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.d_over_l2.v1",
+      "priority": 989,
+      "matched_record_count": 10,
+      "review_basis": "all matching D/L2 records inspected as two source families",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "/h",
+          "/min",
+          "/s"
+        ],
+        "text_regex_any": [
+          "D/L2",
+          "D/L²"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "diffusion_parameter_d_over_l2",
+        "canonical_unit_text": "/s",
+        "canonical_basis": "inverse time",
+        "quantity_kind": "diffusion_rate_parameter",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert inverse-hour or inverse-minute values and variation to inverse seconds"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.log_kp.v1",
+      "priority": 988,
+      "matched_record_count": 5,
+      "review_basis": "all matching log-Kp records inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "/h",
+          "/min",
+          "/s"
+        ],
+        "text_regex_any": [
+          "log\\s*Kp",
+          "log permeability"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "log_permeability_coefficient",
+        "canonical_unit_text": "log10(h^-1)",
+        "canonical_basis": "base-10 logarithm of an inverse-hour coefficient",
+        "quantity_kind": "log_rate_coefficient",
+        "numeric_domain": "finite_signed",
+        "value_transform": "identity; restore the log transform to the unit semantics"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.dermatokinetic_rate_constant.v1",
+      "priority": 987,
+      "matched_record_count": 73,
+      "review_basis": "full-source semantic text census plus representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "/h",
+          "/min",
+          "/s"
+        ],
+        "text_regex_any": [
+          "rate constant",
+          "dermatokinetic"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "dermatokinetic_permeation_rate_constant",
+        "canonical_unit_text": "/h",
+        "canonical_basis": "inverse time",
+        "quantity_kind": "permeation_rate_constant",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert inverse-minute or inverse-second values and variation to inverse hours"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.inverse_time_unresolved.v1",
+      "priority": 590,
+      "matched_record_count": 25,
+      "review_basis": "full-source remainder after D/L2, log-Kp, and explicit rate-constant selectors",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "/h",
+          "/min",
+          "/s"
+        ],
+        "exclude_rule_ids": [
+          "skin.exposure.permeability.d_over_l2.v1",
+          "skin.exposure.permeability.log_kp.v1",
+          "skin.exposure.permeability.dermatokinetic_rate_constant.v1"
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_kp_rate",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "ambiguous_kp_rate_semantics"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.volume_areic_time.v1",
+      "priority": 986,
+      "matched_record_count": 62,
+      "review_basis": "full-source dimensional census and representative coefficient records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "µL/cm^2·h",
+          "mL/cm^2·h"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "permeability_coefficient",
+        "canonical_unit_text": "cm/h",
+        "canonical_basis": "length per time",
+        "quantity_kind": "linear_permeability",
+        "numeric_domain": "nonnegative",
+        "value_transform": "µL/cm^2/h multiplied by 0.001; mL/cm^2/h multiplied by 1; apply same factor to variation"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.water_vapor_rate.v1",
+      "priority": 985,
+      "matched_record_count": 25,
+      "review_basis": "all matching records inspected as one source-table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "g/h·m^2"
+        ],
+        "text_regex_any": [
+          "skin permeability",
+          "\\bPSC\\b",
+          "\\bPdry\\b"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "water_vapor_permeability_rate",
+        "canonical_unit_text": "g/m^2/h",
+        "canonical_basis": "water mass per area per time",
+        "quantity_kind": "water_vapor_permeability_rate",
+        "numeric_domain": "nonnegative",
+        "value_transform": "identity after factor reordering"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.explicit_flux.v1",
+      "priority": 984,
+      "matched_record_count": 5,
+      "review_basis": "all five matching explicit J/Jmax/flux records inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "µg/cm^2·h",
+          "mg/cm^2·h"
+        ],
+        "text_regex_any": [
+          "\\bJmax\\b",
+          "\\bJss\\b",
+          "\\bflux\\b"
+        ],
+        "text_regex_none": [
+          "permeability",
+          "co-efficient",
+          "coefficient",
+          "\\bKp\\b"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_kind": "flux",
+        "canonical_basis": "µg/cm^2/h",
+        "quantity_kind": "areic_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert value and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.mass_flux_unresolved.v1",
+      "priority": 580,
+      "matched_record_count": 69,
+      "review_basis": "full-source remainder after the explicit-flux selector",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "µg/cm^2·h",
+          "mg/cm^2·h"
+        ],
+        "exclude_rule_ids": [
+          "skin.exposure.permeability.explicit_flux.v1"
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_coefficient_mass_flux",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_mass_flux_conflict"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.areic_amount_unresolved.v1",
+      "priority": 570,
+      "matched_record_count": 23,
+      "review_basis": "all three source-paper families inspected; source labels conflict with missing time dimensions",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "mg/cm^2",
+          "µg/cm^2"
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_coefficient_areic_amount",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_missing_time_basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.compact_diffusivity_singleton.v1",
+      "priority": 983,
+      "matched_record_count": 1,
+      "review_basis": "single exact source row inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "source_row_numbers": [
+          121212
+        ],
+        "raw_unit_exact": [
+          "cm^2s^-1"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "diffusion_coefficient",
+        "canonical_unit_text": "cm^2/s",
+        "canonical_basis": "area per time",
+        "quantity_kind": "diffusion_coefficient",
+        "numeric_domain": "nonnegative",
+        "value_transform": "parse compact adjacent area and inverse-time factors"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.inverse_area_time_unresolved.v1",
+      "priority": 560,
+      "matched_record_count": 26,
+      "review_basis": "full-source compact-unit census excluding the explicit diffusivity singleton",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "cm"
+        ],
+        "raw_unit_regex": "^cm(?:\\^-?2|-2)[.·]?(?:h|hr)(?:\\^-?1|-1)$"
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_coefficient_inverse_area_time",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_inverse_area_time_conflict"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.length_missing_time.v1",
+      "priority": 550,
+      "matched_record_count": 9,
+      "review_basis": "all nine matching rows inspected as one table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "permeability_coefficient"
+        ],
+        "existing_canonical_unit_exact": [
+          "cm"
+        ],
+        "raw_unit_exact": [
+          "cm×10^-3"
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "linear_permeability_with_missing_time_basis",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_missing_time_basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.dermal_lethal_time.v1",
+      "priority": 980,
+      "matched_record_count": 29,
+      "review_basis": "all matching records inspected as one PMID/table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "pmid_exact": [
+          "5140424"
+        ],
+        "text_regex_any": [
+          "\\bLt50\\b",
+          "median lethal time"
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "canonical_endpoint_name": "dermal_exposure_lethal_time",
+        "canonical_unit_text": "min",
+        "quantity_kind": "toxicodynamic_time_to_event",
+        "numeric_domain": "nonnegative",
+        "exclusion_reason": "toxicodynamic_proxy_not_penetration_measurement"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.lag_time_difference.v1",
+      "priority": 979,
+      "matched_record_count": 8,
+      "review_basis": "all eight matching lag-time-difference rows inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "existing_canonical_unit_exact": [
+          "min",
+          "h"
+        ],
+        "text_regex_any": [
+          "lag[- ]?time",
+          "\\btlag\\b"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "lag_time_difference",
+        "canonical_unit_text": "h",
+        "canonical_basis": "signed duration difference",
+        "quantity_kind": "duration_difference",
+        "numeric_domain": "finite_signed",
+        "value_transform": "convert minutes to hours while preserving sign and variation"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.time_to_peak_difference.v1",
+      "priority": 978,
+      "matched_record_count": 10,
+      "review_basis": "all ten peak-time or acceleration rows inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "existing_canonical_unit_exact": [
+          "min",
+          "h"
+        ],
+        "text_regex_any": [
+          "peak",
+          "accelerat"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "penetration_time_to_peak_difference",
+        "canonical_unit_text": "h",
+        "canonical_basis": "signed duration difference",
+        "quantity_kind": "duration_difference",
+        "numeric_domain": "finite_signed",
+        "value_transform": "convert minutes to hours while preserving sign and variation"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.other_time_unresolved.v1",
+      "priority": 540,
+      "matched_record_count": 2,
+      "review_basis": "both unmatched time rows inspected individually",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "source_row_numbers": [
+          125426,
+          136649
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "heterogeneous_secondary_timing",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "heterogeneous_secondary_timing"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.flux_difference.v1",
+      "priority": 977,
+      "matched_record_count": 59,
+      "review_basis": "all flux-compatible rows checked by semantic cue; representative positive and negative records inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "existing_canonical_unit_exact": [
+          "nmol/cm^2·h",
+          "µg/h",
+          "µg/cm^2·h",
+          "µmol/cm^2·h",
+          "g/h·m^2",
+          "µg/(cm^2·h)",
+          "µg/cm^2·min"
+        ],
+        "text_regex_any": [
+          "difference",
+          "increase",
+          "decrease",
+          "enhancement",
+          "elevation",
+          "relative",
+          "compared",
+          "versus",
+          "\\bvs\\.?\\b",
+          "net benefit",
+          "larger",
+          "smaller"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux_difference",
+        "canonical_unit_kind": "flux_or_rate_difference",
+        "canonical_basis": "preserve each compatible physical unit family",
+        "quantity_kind": "signed_flux_difference",
+        "numeric_domain": "finite_signed",
+        "value_transform": "ordinary compatible-unit conversion only; preserve sign and variation"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.partition_length.v1",
+      "priority": 976,
+      "matched_record_count": 9,
+      "review_basis": "all nine records inspected as one fitted-model family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "existing_canonical_unit_exact": [
+          "cm"
+        ],
+        "text_regex_any": [
+          "partition parameter K'"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "partition_length_parameter",
+        "canonical_unit_text": "cm",
+        "canonical_basis": "fitted partition-length parameter",
+        "quantity_kind": "partition_length_parameter",
+        "numeric_domain": "nonnegative",
+        "value_transform": "identity after explicit scientific-notation folding"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.penetration_depth.v1",
+      "priority": 975,
+      "matched_record_count": 5,
+      "review_basis": "five exact depth records inspected individually",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "source_row_numbers": [
+          45160,
+          45161,
+          113494,
+          290886,
+          293398
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "penetration_depth",
+        "canonical_unit_text": "µm",
+        "canonical_basis": "length",
+        "quantity_kind": "penetration_depth",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert compatible length units to micrometres"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.depth_unit_ambiguous.v1",
+      "priority": 530,
+      "matched_record_count": 1,
+      "review_basis": "single exact row inspected; source text says 160 µM while describing depth",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "source_row_numbers": [
+          175041
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_depth_measurement",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "molar_vs_micrometre_ambiguity"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.permeability_difference.v1",
+      "priority": 974,
+      "matched_record_count": 5,
+      "review_basis": "all five records inspected as one permeability-difference table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "relative_penetration"
+        ],
+        "existing_canonical_unit_exact": [
+          "cm/s"
+        ],
+        "text_regex_any": [
+          "difference",
+          "comparison",
+          "compared",
+          "versus"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "permeability_coefficient_difference",
+        "canonical_unit_text": "cm/s",
+        "canonical_basis": "signed linear-permeability difference",
+        "quantity_kind": "permeability_difference",
+        "numeric_domain": "finite_signed",
+        "value_transform": "identity"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.lag_time.relative_percent.v1",
+      "priority": 973,
+      "matched_record_count": 3,
+      "review_basis": "all three records inspected as one relative-lag-time table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": [
+          "lag_time"
+        ],
+        "existing_canonical_unit_exact": [
+          "%"
+        ],
+        "text_regex_any": [
+          "%λ",
+          "percent of lag-time",
+          "relative to.*control"
+        ]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "relative_lag_time",
+        "canonical_unit_text": "% of control",
+        "canonical_basis": "lag time relative to control",
+        "quantity_kind": "relative_lag_time",
+        "numeric_domain": "nonnegative_unbounded",
+        "value_transform": "identity"
+      }
+    },
+    {
+      "rule_id": "sensitization.ec3.classification.evidence_only.v1",
+      "priority": 1000,
+      "match": {
+        "frozen_endpoint_exact": "ec3 classification"
+      },
+      "action": {
+        "refined_endpoint_name": "ec3_classification",
+        "quantity_kind": "categorical",
+        "semantic_unit_basis": "controlled_category",
+        "scalar_policy": "evidence_only_not_numeric_ec3"
+      },
+      "matched_record_count": 85
+    },
+    {
+      "rule_id": "sensitization.ec3.percent_threshold.v1",
+      "priority": 990,
+      "match": {
+        "frozen_endpoint_in": [
+          "ec3",
+          "log(1/ec3)",
+          "lymph node cell proliferation ec3",
+          "ec3 elicitation",
+          "stimulation index and ec3"
+        ],
+        "any_of": [
+          {
+            "unit_text_regex": "%"
+          },
+          {
+            "unit_text_exact": "g/100 ml"
+          }
+        ],
+        "not": {
+          "unit_text_regex": "(?i)(pec3|log)"
+        }
+      },
+      "action": {
+        "refined_endpoint_name": "llna_ec3",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "formulation_fraction",
+        "canonical_unit_policy": "preserve_explicit_percent_basis",
+        "domain": {
+          "minimum_exclusive": 0,
+          "maximum": 100
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 1915
+    },
+    {
+      "rule_id": "sensitization.ec3.areic_threshold.v1",
+      "priority": 989,
+      "match": {
+        "frozen_endpoint_in": [
+          "ec3",
+          "log(1/ec3)",
+          "lymph node cell proliferation ec3",
+          "ec3 elicitation",
+          "stimulation index and ec3"
+        ],
+        "unit_text_regex": "(?i)(cm²|cm2|cm\\^2|cmb)"
+      },
+      "action": {
+        "refined_endpoint_name": "llna_ec3",
+        "quantity_kind": "threshold_areic_dose",
+        "semantic_unit_basis": "preserve_areic_mass_or_amount_dimension",
+        "canonical_unit_policy": "metric_prefix_and_typography_only",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 169
+    },
+    {
+      "rule_id": "sensitization.ec3.concentration_threshold.v1",
+      "priority": 988,
+      "match": {
+        "frozen_endpoint_in": [
+          "ec3",
+          "log(1/ec3)",
+          "lymph node cell proliferation ec3",
+          "ec3 elicitation",
+          "stimulation index and ec3"
+        ],
+        "unit_text_in": [
+          "M",
+          "mM",
+          "µM",
+          "μM",
+          "mol/L",
+          "mmol L⁻¹",
+          "µg/mL",
+          "μg/mL",
+          "ppm"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name": "llna_ec3",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "preserve_molar_mass_or_ppm_dimension",
+        "canonical_unit_policy": "exact_within_dimension_only",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 152
+    },
+    {
+      "rule_id": "sensitization.ec3.transformed_potency.v1",
+      "priority": 987,
+      "match": {
+        "frozen_endpoint_in": [
+          "ec3",
+          "log(1/ec3)",
+          "lymph node cell proliferation ec3",
+          "ec3 elicitation",
+          "stimulation index and ec3"
+        ],
+        "unit_text_regex": "(?i)(pec3|log)"
+      },
+      "action": {
+        "refined_endpoint_name": "llna_pec3",
+        "quantity_kind": "transformed_threshold_potency",
+        "semantic_unit_basis": "declared_log_potency",
+        "canonical_unit_policy": "preserve_declared_log_definition",
+        "domain": {
+          "finite": true
+        },
+        "scalar_policy": "eligible_only_if_log_base_and_reference_are_explicit"
+      },
+      "matched_record_count": 129
+    },
+    {
+      "rule_id": "sensitization.ec3.unresolved.evidence_only.v1",
+      "priority": 980,
+      "match": {
+        "frozen_endpoint_in": [
+          "ec3",
+          "log(1/ec3)",
+          "lymph node cell proliferation ec3",
+          "ec3 elicitation",
+          "stimulation index and ec3"
+        ],
+        "unit_text_is_null": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "unresolved",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 180
+    },
+    {
+      "rule_id": "sensitization.clinical.incidence_percent_strong.v1",
+      "priority": 900,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "%",
+        "any_of": [
+          {
+            "endpoint_name_regex": "(?i)(percentage|proportion|incidence|prevalence|frequency|rate|%)"
+          },
+          {
+            "endpoint_name_regex": "(?i)(positive (patch test |skin )?reaction|patch test positivity|sensitized animals|subjects sensitized|animals sensitized)"
+          },
+          {
+            "evidence_text_regex": "(?i)(\\b\\d+\\s+(out of|of)\\s+\\d+\\b|\\b\\d+\\s*/\\s*\\d+\\b|((patients|subjects|animals|volunteers|workers).*(positive|reacted|sensiti[sz]ed))|((positive|reacted|sensiti[sz]ed).*(patients|subjects|animals|volunteers|workers)))"
+          }
+        ]
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_sensitization_incidence",
+        "quantity_kind": "responder_incidence",
+        "semantic_unit_basis": "responder_percent",
+        "canonical_unit_policy": "percent",
+        "domain": {
+          "minimum": 0,
+          "maximum": 100
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 952
+    },
+    {
+      "rule_id": "sensitization.clinical.incidence_fraction.v1",
+      "priority": 899,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "fraction"
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_sensitization_incidence",
+        "quantity_kind": "responder_incidence",
+        "semantic_unit_basis": "responder_fraction",
+        "canonical_unit_policy": "fraction",
+        "domain": {
+          "minimum": 0,
+          "maximum": 1
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 13
+    },
+    {
+      "rule_id": "sensitization.clinical.reaction_diameter.v1",
+      "priority": 898,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "mm",
+        "endpoint_name_regex": "(?i)(diameter|induration|papule)"
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_reaction_diameter",
+        "quantity_kind": "reaction_size",
+        "semantic_unit_basis": "length",
+        "canonical_unit_policy": "mm",
+        "domain": {
+          "minimum": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 24
+    },
+    {
+      "rule_id": "sensitization.clinical.reaction_duration.v1",
+      "priority": 897,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "days",
+        "endpoint_name_regex": "(?i)(reaction time|allergy time|recovery time|CAT)"
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_reaction_duration",
+        "quantity_kind": "duration",
+        "semantic_unit_basis": "duration",
+        "canonical_unit_policy": "convert_to_seconds",
+        "domain": {
+          "minimum": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 19
+    },
+    {
+      "rule_id": "sensitization.clinical.elicitation_concentration.v1",
+      "priority": 896,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "ppm"
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_elicitation_concentration",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "ppm",
+        "canonical_unit_policy": "ppm",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 10
+    },
+    {
+      "rule_id": "sensitization.clinical.percent_ambiguous.evidence_only.v1",
+      "priority": 890,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "%"
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_sensitization",
+        "quantity_kind": "ambiguous_percent",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only_pending_manual_review"
+      },
+      "matched_record_count": 322,
+      "known_failure_mode": "Patch dilution or challenge concentration extracted as the clinical response value."
+    },
+    {
+      "rule_id": "sensitization.clinical.catch_all.evidence_only.v1",
+      "priority": 880,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization"
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_sensitization",
+        "quantity_kind": "unresolved_or_qualitative",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 7803
+    },
+    {
+      "rule_id": "sensitization.depletion.remaining_percent.v1",
+      "priority": 800,
+      "match": {
+        "frozen_endpoint_in": [
+          "cysteine depletion",
+          "lysine depletion",
+          "gsh depletion"
+        ],
+        "unit_text_in": [
+          "%",
+          "% depletion",
+          "% peptide depletion"
+        ],
+        "endpoint_name_regex": "(?i)(remaining|level)"
+      },
+      "action": {
+        "refined_endpoint_name_template": "{residue}_remaining",
+        "quantity_kind": "remaining_fraction",
+        "semantic_unit_basis": "remaining_percent",
+        "canonical_unit_policy": "percent_no_inversion",
+        "domain": {
+          "minimum": 0,
+          "maximum": 100
+        },
+        "scalar_policy": "evidence_only_until_endpoint_template_is_reviewed"
+      },
+      "matched_record_count": 15
+    },
+    {
+      "rule_id": "sensitization.depletion.remaining_control_percent.v1",
+      "priority": 799,
+      "match": {
+        "frozen_endpoint_in": [
+          "cysteine depletion",
+          "lysine depletion",
+          "gsh depletion"
+        ],
+        "unit_text_in": [
+          "% of control",
+          "% of mock control"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_template": "{residue}_remaining_relative_to_control",
+        "quantity_kind": "remaining_fraction",
+        "semantic_unit_basis": "remaining_percent",
+        "canonical_unit_policy": "percent_no_inversion",
+        "domain": {
+          "minimum": 0,
+          "maximum": 100
+        },
+        "scalar_policy": "evidence_only_until_endpoint_template_is_reviewed"
+      },
+      "matched_record_count": 7
+    },
+    {
+      "rule_id": "sensitization.depletion.percent.v1",
+      "priority": 798,
+      "match": {
+        "frozen_endpoint_in": [
+          "cysteine depletion",
+          "lysine depletion",
+          "gsh depletion"
+        ],
+        "unit_text_in": [
+          "%",
+          "% depletion",
+          "% peptide depletion"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "depletion_magnitude",
+        "semantic_unit_basis": "depleted_percent",
+        "canonical_unit_policy": "percent",
+        "domain": {
+          "minimum": 0,
+          "maximum": 100
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 1213
+    },
+    {
+      "rule_id": "sensitization.depletion.threshold_concentration.v1",
+      "priority": 797,
+      "match": {
+        "frozen_endpoint_in": [
+          "cysteine depletion",
+          "lysine depletion",
+          "gsh depletion"
+        ],
+        "unit_text_in": [
+          "M",
+          "mM",
+          "µM",
+          "μM"
+        ],
+        "evidence_text_regex": "(?i)(RC\\s*50|EC\\s*(15|20|25|50)|IC\\s*50|GSH\\s*60|50% reaction concentration)"
+      },
+      "action": {
+        "refined_endpoint_name_policy": "use_explicit_threshold_token_with_residue",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "molar_concentration",
+        "canonical_unit_policy": "convert_to_M",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 220
+    },
+    {
+      "rule_id": "sensitization.gsh.pec50.v1",
+      "priority": 796,
+      "match": {
+        "frozen_endpoint_exact": "gsh depletion",
+        "endpoint_name_exact": "cysteine thiol depletion (GSH)",
+        "unit_text_exact": "log M",
+        "evidence_text_regex": "(?i)pEC50"
+      },
+      "action": {
+        "refined_endpoint_name": "gsh_depletion_pec50",
+        "quantity_kind": "transformed_threshold_potency",
+        "semantic_unit_basis": "declared_log_potency",
+        "canonical_unit_policy": "preserve_declared_log_definition",
+        "domain": {
+          "finite": true
+        },
+        "scalar_policy": "eligible_only_if_log_definition_is_explicit"
+      },
+      "matched_record_count": 22
+    },
+    {
+      "rule_id": "sensitization.gsh.residual_level.v1",
+      "priority": 795,
+      "match": {
+        "frozen_endpoint_exact": "gsh depletion",
+        "endpoint_name_exact": "GSH depletion",
+        "unit_text_exact": "µmol/L",
+        "evidence_text_regex": "(?i)GSH level"
+      },
+      "action": {
+        "refined_endpoint_name": "gsh_concentration",
+        "quantity_kind": "residual_concentration",
+        "semantic_unit_basis": "molar_concentration",
+        "canonical_unit_policy": "convert_to_M",
+        "domain": {
+          "minimum": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 1
+    },
+    {
+      "rule_id": "sensitization.gsh.half_life.v1",
+      "priority": 794,
+      "match": {
+        "frozen_endpoint_exact": "gsh depletion",
+        "unit_text_in": [
+          "min",
+          "hours"
+        ],
+        "endpoint_name_regex": "(?i)half-life|t1/2"
+      },
+      "action": {
+        "refined_endpoint_name": "gsh_depletion_half_life",
+        "quantity_kind": "duration",
+        "semantic_unit_basis": "duration",
+        "canonical_unit_policy": "convert_to_seconds",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 28
+    },
+    {
+      "rule_id": "sensitization.depletion.second_order_rate.v1",
+      "priority": 793,
+      "match": {
+        "frozen_endpoint_in": [
+          "cysteine depletion",
+          "lysine depletion",
+          "gsh depletion"
+        ],
+        "unit_text_in": [
+          "log(s⁻¹ M⁻¹)",
+          "log (s^-1 M^-1)",
+          "M⁻¹ min⁻¹",
+          "10³× k [s⁻¹M⁻¹]",
+          "L mol^-1 min^-1",
+          "min⁻¹mM⁻¹"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "use_residue_reactivity_rate_constant",
+        "quantity_kind": "second_order_rate_constant",
+        "semantic_unit_basis": "second_order_rate",
+        "canonical_unit_policy": "linear_rates_to_M^-1_s^-1_log_rates_remain_explicit_log10",
+        "transforms": {
+          "10³× k [s⁻¹M⁻¹]": {
+            "multiply_value_by": 0.001,
+            "canonical_unit": "M^-1 s^-1"
+          },
+          "M⁻¹ min⁻¹": {
+            "multiply_value_by": 0.016666666666666666,
+            "canonical_unit": "M^-1 s^-1"
+          },
+          "L mol^-1 min^-1": {
+            "multiply_value_by": 0.016666666666666666,
+            "canonical_unit": "M^-1 s^-1"
+          },
+          "min⁻¹mM⁻¹": {
+            "multiply_value_by": 16.666666666666668,
+            "canonical_unit": "M^-1 s^-1"
+          }
+        },
+        "domain": {
+          "linear_minimum_exclusive": 0,
+          "log_finite": true
+        },
+        "scalar_policy": "eligible_after_exact_unit_transform"
+      },
+      "matched_record_count": 72
+    },
+    {
+      "rule_id": "sensitization.gsh.pseudo_first_order_rate.v1",
+      "priority": 792,
+      "match": {
+        "frozen_endpoint_exact": "gsh depletion",
+        "unit_text_exact": "×10^-2 min^-1"
+      },
+      "action": {
+        "refined_endpoint_name": "gsh_depletion_pseudo_first_order_rate",
+        "quantity_kind": "pseudo_first_order_rate_constant",
+        "semantic_unit_basis": "pseudo_first_order_rate",
+        "canonical_unit_policy": "convert_to_s^-1",
+        "transform": {
+          "multiply_value_by": 0.00016666666666666666,
+          "canonical_unit": "s^-1"
+        },
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_exact_unit_transform"
+      },
+      "matched_record_count": 24
+    },
+    {
+      "rule_id": "sensitization.depletion.blank.evidence_only.v1",
+      "priority": 790,
+      "match": {
+        "frozen_endpoint_in": [
+          "cysteine depletion",
+          "lysine depletion",
+          "gsh depletion"
+        ],
+        "unit_text_is_null": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "qualitative_or_unresolved",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 609
+    },
+    {
+      "rule_id": "sensitization.depletion.unsupported_unit.evidence_only.v1",
+      "priority": 789,
+      "match": {
+        "frozen_endpoint_in": [
+          "cysteine depletion",
+          "lysine depletion",
+          "gsh depletion"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "unresolved_amount_or_level",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only_pending_quantity_typing"
+      },
+      "matched_record_count": 11,
+      "observed_units": [
+        "µmol",
+        "nmol/10^6 cells",
+        "µmol/g tissue",
+        "cysteine residues per subunit",
+        "µmole/g",
+        "mg/dl",
+        "mol thiol per mol HSA"
+      ]
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.magnitude.v1",
+      "priority": 700,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "unit_text_in": [
+          "fold",
+          "SI",
+          "dimensionless",
+          "ratio",
+          "index (fold increase over vehicle control)",
+          "PSI (unitless)",
+          "mitogenic index (fold)",
+          "fold (SI)",
+          "mitogenic index",
+          "fold SI",
+          "stimulation index"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "preserve_marker_specific_stimulation_index",
+        "quantity_kind": "ratio_to_control",
+        "semantic_unit_basis": "ratio_to_control",
+        "canonical_unit_policy": "fold",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 991
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.threshold_concentration.v1",
+      "priority": 699,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "unit_text_in": [
+          "%",
+          "% w/v",
+          "% (v/v)",
+          "µM",
+          "ppm"
+        ],
+        "evidence_text_regex": "(?i)(EC\\s*3|SI-2|cut-?off concentration|concentration.*stimulation index|SI\\s*(of|=|≥|>)\\s*(1\\.4|2|3))"
+      },
+      "action": {
+        "refined_endpoint_name_policy": "llna_ec3_or_marker_specific_si_cutoff_concentration",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "preserve_concentration_dimension",
+        "canonical_unit_policy": "exact_within_dimension_only",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 47
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.responder_incidence.v1",
+      "priority": 698,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "unit_text_in": [
+          "out of 5 clones",
+          "patients positive out of 16"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "marker_specific_responder_incidence",
+        "quantity_kind": "responder_incidence",
+        "semantic_unit_basis": "explicit_numerator_denominator",
+        "canonical_unit_policy": "derive_fraction_from_declared_denominator",
+        "domain": {
+          "numerator_minimum": 0,
+          "numerator_maximum": "$declared_denominator"
+        },
+        "scalar_policy": "eligible_after_exact_numerator_denominator_parse"
+      },
+      "matched_record_count": 12
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.blank.evidence_only.v1",
+      "priority": 690,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "unit_text_is_null": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "qualitative_or_unresolved",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 600
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.compound.evidence_only.v1",
+      "priority": 689,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "endpoint_name_exact": "IL-18 SI-2",
+        "unit_text_exact": "mg/ml"
+      },
+      "action": {
+        "refined_endpoint_name": "il18_si2_effective_concentration",
+        "quantity_kind": "compound_measurement",
+        "semantic_unit_basis": "mass_concentration",
+        "scalar_policy": "evidence_only_multiple_values_in_support"
+      },
+      "matched_record_count": 1
+    },
+    {
+      "rule_id": "sensitization.cd_marker.effective_concentration.v1",
+      "priority": 600,
+      "match": {
+        "frozen_endpoint_in": [
+          "cd86",
+          "cd54"
+        ],
+        "measurement_text_is_nonempty": true,
+        "any_of": [
+          {
+            "unit_text_in": [
+              "µg/mL",
+              "µg/ml",
+              "μg/mL",
+              "μg/ml",
+              "µM",
+              "μM",
+              "mM",
+              "µmol/L",
+              "µmol/l"
+            ]
+          },
+          {
+            "all_of": [
+              {
+                "unit_text_exact": "%"
+              },
+              {
+                "endpoint_name_exact": "CD86 expression"
+              },
+              {
+                "measurement_text_exact": "0.024"
+              },
+              {
+                "evidence_text_regex": "(?i)EC150 values"
+              }
+            ]
+          }
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "cd86_ec150_or_cd54_ec200_when_explicit_else_marker_effective_concentration",
+        "quantity_kind": "effective_concentration",
+        "semantic_unit_basis": "preserve_concentration_dimension",
+        "canonical_unit_policy": "exact_within_dimension_only",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 91
+    },
+    {
+      "rule_id": "sensitization.cd_marker.expression_response.v1",
+      "priority": 599,
+      "match": {
+        "frozen_endpoint_in": [
+          "cd86",
+          "cd54"
+        ],
+        "measurement_text_is_nonempty": true,
+        "unit_text_in": [
+          "%",
+          "fold",
+          "RFI",
+          "FI",
+          "rMFI",
+          "MFI",
+          "cMFI",
+          "% positive cells",
+          "log2 fold change",
+          "fold suppression",
+          "stimulation index",
+          "% RFI",
+          "% of negative control",
+          "% of control",
+          "% of untreated control",
+          "RFI (%)",
+          "fold change",
+          "SI",
+          ">% increase relative to vehicle control"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "marker_expression_with_response_subbasis",
+        "quantity_kind": "expression_response",
+        "semantic_unit_basis_policy": "separate_rfi_percent_fold_to_control_instrument_fluorescence_and_positive_cell_fraction",
+        "canonical_unit_policy": "never_pool_absolute_MFI_or_FI_with_RFI_or_fold",
+        "domain": {
+          "nonnegative_percent_or_instrument": true,
+          "positive_fold": true
+        },
+        "scalar_policy": "eligible_only_within_same_response_subbasis_and_assay_context"
+      },
+      "matched_record_count": 338
+    },
+    {
+      "rule_id": "sensitization.cd_marker.cell_density.v1",
+      "priority": 598,
+      "match": {
+        "frozen_endpoint_in": [
+          "cd86",
+          "cd54"
+        ],
+        "unit_text_exact": "cells/0.0625 mm²"
+      },
+      "action": {
+        "refined_endpoint_name_policy": "marker_positive_cell_density",
+        "quantity_kind": "cell_density",
+        "semantic_unit_basis": "cells_per_area",
+        "canonical_unit_policy": "cells/mm²",
+        "domain": {
+          "minimum": 0
+        },
+        "scalar_policy": "eligible_after_exact_area_conversion"
+      },
+      "matched_record_count": 2
+    },
+    {
+      "rule_id": "sensitization.cd_marker.typed_unit_blank_value.evidence_only.v1",
+      "priority": 590,
+      "match": {
+        "frozen_endpoint_in": [
+          "cd86",
+          "cd54"
+        ],
+        "measurement_text_is_null": true,
+        "unit_text_is_nonempty": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "missing_measurement",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 27
+    },
+    {
+      "rule_id": "sensitization.cd_marker.blank.evidence_only.v1",
+      "priority": 589,
+      "match": {
+        "frozen_endpoint_in": [
+          "cd86",
+          "cd54"
+        ],
+        "unit_text_is_null": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "qualitative_or_unresolved",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 1625
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.compound_areic_mass.v1",
+      "priority": 500,
+      "match": {
+        "frozen_endpoint_regex": "(?i)(noel|nesil)",
+        "unit_text_in": [
+          "µg/cm²",
+          "μg/cm²",
+          "µg/cm2",
+          "μg/cm2",
+          "µg/cm^2",
+          "μg/cm^2",
+          "µg/cmb"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_induction_elicitation_phase",
+        "quantity_kind": "threshold_areic_dose",
+        "semantic_unit_basis": "areic_mass",
+        "canonical_unit_policy": "convert_to_µg/cm²",
+        "exact_unit_repairs": {
+          "µg/cmb": "µg/cm²"
+        },
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 334
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.element_areic_mass.v1",
+      "priority": 499,
+      "match": {
+        "frozen_endpoint_regex": "(?i)(noel|nesil)",
+        "unit_text_exact": "µg Ni/cm²"
+      },
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_phase",
+        "quantity_kind": "threshold_areic_element_mass",
+        "semantic_unit_basis": "areic_element_mass_nickel",
+        "canonical_unit_policy": "preserve_µg_Ni/cm²",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 4
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.areic_amount.v1",
+      "priority": 498,
+      "match": {
+        "frozen_endpoint_regex": "(?i)(noel|nesil)",
+        "unit_text_in": [
+          "µmol/cm²",
+          "nmol/cm²",
+          "mol/m²"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_phase",
+        "quantity_kind": "threshold_areic_amount",
+        "semantic_unit_basis": "areic_amount",
+        "canonical_unit_policy": "convert_to_mol/m²",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 14
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.areic_mass_rate.v1",
+      "priority": 497,
+      "match": {
+        "frozen_endpoint_regex": "(?i)(noel|nesil)",
+        "unit_text_in": [
+          "µg/cm²/day",
+          "μg/cm2/day"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_phase",
+        "quantity_kind": "threshold_areic_dose_rate",
+        "semantic_unit_basis": "areic_mass_rate",
+        "canonical_unit_policy": "convert_to_µg/cm²/day",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 1
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.other_threshold_basis.v1",
+      "priority": 496,
+      "match": {
+        "frozen_endpoint_regex": "(?i)(noel|nesil)",
+        "unit_text_in": [
+          "%",
+          "ppm",
+          "mg",
+          "mg/kg",
+          "mM"
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_phase",
+        "quantity_kind": "threshold_concentration_or_dose",
+        "semantic_unit_basis": "preserve_percent_ppm_mass_mass_per_mass_or_molar_dimension",
+        "canonical_unit_policy": "exact_within_dimension_only",
+        "domain": {
+          "minimum_exclusive": 0
+        },
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 14
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.blank.evidence_only.v1",
+      "priority": 490,
+      "match": {
+        "frozen_endpoint_regex": "(?i)(noel|nesil)",
+        "unit_text_is_null": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "bound_or_not_determined_without_atomic_value",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only_preserve_source_bound_or_ND"
+      },
+      "matched_record_count": 6
+    },
+    {
+      "rule_id": "sensitization.default.evidence_only.v1",
+      "priority": 0,
+      "match": {
+        "source_id_exact": "sensitization_aop"
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "unreviewed",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only_unresolved"
+      },
+      "matched_record_count": null
+    },
+    {
+      "rule_id": "skin.exposure.percent.applied_dose_explicit.v1",
+      "priority": 500,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_regex": "^(dermal_absorption|skin_absorption|skin_retention|cumulative_permeated_amount|relative_penetration)$",
+        "unit_text_regex": "%.*(applied|administered).*dose"
+      },
+      "action": {
+        "status": "approved",
+        "canonical_unit_text": "% applied dose",
+        "quantity_kind": "dose_fraction",
+        "semantic_unit_basis": "percent_of_applied_dose",
+        "numeric_domain": "bounded_0_100"
+      },
+      "review_basis": "reviewed semantic-unit wording plus pinned full-inventory audit"
+    },
+    {
+      "rule_id": "skin.exposure.percent.recovered_material_explicit.v1",
+      "priority": 499,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_regex": "^(dermal_absorption|skin_absorption|skin_retention|cumulative_permeated_amount|relative_penetration)$",
+        "unit_text_regex": "%.*recover"
+      },
+      "action": {
+        "status": "approved",
+        "canonical_unit_text": "% recovered material",
+        "quantity_kind": "recovered_fraction",
+        "semantic_unit_basis": "percent_of_recovered_material",
+        "numeric_domain": "bounded_0_100"
+      },
+      "review_basis": "reviewed semantic-unit wording plus pinned full-inventory audit"
+    },
+    {
+      "rule_id": "skin.exposure.percent.control_explicit.v1",
+      "priority": 498,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_regex": "^(dermal_absorption|skin_absorption|skin_retention|relative_penetration)$",
+        "unit_text_regex": "%.*(control|vehicle|untreated|mock)"
+      },
+      "action": {
+        "status": "approved",
+        "canonical_unit_text": "% control",
+        "quantity_kind": "control_relative_response",
+        "semantic_unit_basis": "percent_of_control",
+        "numeric_domain": "nonnegative_unbounded"
+      },
+      "review_basis": "reviewed semantic-unit wording plus pinned full-inventory audit"
+    },
+    {
+      "rule_id": "skin.exposure.percent.applied_dose_context.v1",
+      "priority": 497,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_regex": "^(dermal_absorption|skin_absorption|skin_retention|cumulative_permeated_amount)$",
+        "unit_text_exact": "%",
+        "text_regex_any": [
+          "(%|percent).*(applied|administered).*dose",
+          "(fraction|recovery).*(applied|administered).*dose"
+        ]
+      },
+      "action": {
+        "status": "approved",
+        "canonical_unit_text": "% applied dose",
+        "quantity_kind": "dose_fraction",
+        "semantic_unit_basis": "percent_of_applied_dose",
+        "numeric_domain": "bounded_0_100"
+      },
+      "review_basis": "full-record contextual rule plus representative inspection"
+    },
+    {
+      "rule_id": "skin.exposure.percent.recovered_context.v1",
+      "priority": 496,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_regex": "^(dermal_absorption|skin_absorption|skin_retention)$",
+        "unit_text_exact": "%",
+        "text_regex_any": [
+          "(%|percent|fraction).*(recover|total recovery)"
+        ]
+      },
+      "action": {
+        "status": "approved",
+        "canonical_unit_text": "% recovered material",
+        "quantity_kind": "recovered_fraction",
+        "semantic_unit_basis": "percent_of_recovered_material",
+        "numeric_domain": "bounded_0_100"
+      },
+      "review_basis": "full-record contextual rule plus representative inspection"
+    },
+    {
+      "rule_id": "skin.exposure.percent.control_context.v1",
+      "priority": 495,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_regex": "^(dermal_absorption|skin_absorption|skin_retention|relative_penetration)$",
+        "unit_text_exact": "%",
+        "text_regex_any": [
+          "(control|vehicle|untreated|mock|relative|compared|versus|vs\\.)"
+        ]
+      },
+      "action": {
+        "status": "approved",
+        "canonical_unit_text": "% control",
+        "quantity_kind": "control_relative_response",
+        "semantic_unit_basis": "percent_of_control",
+        "numeric_domain": "nonnegative_unbounded"
+      },
+      "review_basis": "full-record contextual rule plus representative inspection"
+    },
+    {
+      "rule_id": "skin.exposure.flux.reviewed_dimension.v1",
+      "priority": 120,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_in": [
+          "flux",
+          "permeation_flux",
+          "maximum_flux",
+          "transdermal_flux"
+        ],
+        "canonical_unit_dimensions": [
+          [
+            [
+              "length",
+              -2
+            ],
+            [
+              "mass",
+              1
+            ],
+            [
+              "time",
+              -1
+            ]
+          ],
+          [
+            [
+              "amount",
+              1
+            ],
+            [
+              "length",
+              -2
+            ],
+            [
+              "time",
+              -1
+            ]
+          ],
+          [
+            [
+              "length",
+              -2
+            ],
+            [
+              "time",
+              -1
+            ],
+            [
+              "volume",
+              1
+            ]
+          ]
+        ],
+        "require_finite_point": true
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "flux",
+        "semantic_unit_basis": "physical_unit_preserved",
+        "numeric_domain": "nonnegative"
+      },
+      "review_basis": "reviewed endpoint plus compatible physical dimension"
+    },
+    {
+      "rule_id": "skin.exposure.permeability.reviewed_dimension.v1",
+      "priority": 119,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_in": [
+          "permeability_coefficient"
+        ],
+        "canonical_unit_dimensions": [
+          [
+            [
+              "length",
+              1
+            ],
+            [
+              "time",
+              -1
+            ]
+          ]
+        ],
+        "require_finite_point": true
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "linear_permeability",
+        "semantic_unit_basis": "length_per_time",
+        "numeric_domain": "nonnegative"
+      },
+      "review_basis": "reviewed endpoint plus compatible physical dimension"
+    },
+    {
+      "rule_id": "skin.exposure.permeability.reviewed_transform.v1",
+      "priority": 118,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_in": [
+          "permeability_coefficient"
+        ],
+        "canonical_unit_transforms": [
+          "log",
+          "log10",
+          "ln",
+          "-log10"
+        ],
+        "require_finite_point": true
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "transformed_permeability",
+        "semantic_unit_basis": "declared_transform_preserved",
+        "numeric_domain": "finite_signed"
+      },
+      "review_basis": "reviewed endpoint plus explicit transformed unit"
+    },
+    {
+      "rule_id": "skin.exposure.duration.reviewed_dimension.v1",
+      "priority": 117,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_in": [
+          "lag_time"
+        ],
+        "canonical_unit_dimensions": [
+          [
+            [
+              "time",
+              1
+            ]
+          ]
+        ],
+        "require_finite_point": true
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "duration",
+        "semantic_unit_basis": "time",
+        "numeric_domain": "nonnegative"
+      },
+      "review_basis": "reviewed endpoint plus compatible physical dimension"
+    },
+    {
+      "rule_id": "skin.exposure.areic_amount.reviewed_dimension.v1",
+      "priority": 116,
+      "match": {
+        "source_id_exact": "skin_exposure",
+        "raw_endpoint_in": [
+          "cumulative_permeated_amount",
+          "dermally_applied_dose",
+          "skin_retention",
+          "tape_strip_result"
+        ],
+        "canonical_unit_dimensions": [
+          [
+            [
+              "length",
+              -2
+            ],
+            [
+              "mass",
+              1
+            ]
+          ],
+          [
+            [
+              "amount",
+              1
+            ],
+            [
+              "length",
+              -2
+            ]
+          ]
+        ],
+        "require_finite_point": true
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "areic_amount",
+        "semantic_unit_basis": "mass_or_amount_basis_preserved",
+        "numeric_domain": "nonnegative"
+      },
+      "review_basis": "reviewed endpoint plus compatible physical dimension"
+    },
+    {
+      "rule_id": "skin.exposure.default.evidence_only.v1",
+      "priority": -1000,
+      "match": {
+        "source_id_exact": "skin_exposure"
+      },
+      "action": {
+        "status": "evidence_only",
+        "exclusion_reason": "unreviewed_measurement_semantics"
+      },
+      "review_basis": "fail-closed default"
+    }
+  ]
+}

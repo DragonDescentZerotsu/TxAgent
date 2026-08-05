@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 
-BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v8"
+BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v10"
 
 SOURCE_PAIR_FIELDS = {
-    "direct_hf": ("canonical_bioavailability_report_type",),
+    "hf_bioavailability": (
+        "canonical_bioavailability_report_type",
+        "canonical_bioavailability_evidence_scope",
+    ),
     "oral_exposure": (),
     "fa": ("global_context", "global_species_context"),
     "fg": ("global_context", "global_species_context"),

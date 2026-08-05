@@ -6,7 +6,8 @@ It preserves case and must not merge scientifically related endpoint concepts.
 
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Mapping
+from typing import Any, Iterable
 
 from tools.chembl_tool.common.starling.normalization.cleaning import (
     clean_text,
@@ -14,6 +15,10 @@ from tools.chembl_tool.common.starling.normalization.cleaning import (
 )
 from tools.chembl_tool.common.starling.normalization.contracts import FamilyAssignment
 from tools.chembl_tool.common.starling.normalization.measurements import EndpointOrthography
+from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
+    DIRECT_EVIDENCE_SCOPE,
+    bioavailability_evidence_scope,
+)
 
 
 SPACING_AND_SPELLING_VERSION = "bioavailability_spacing_and_spelling.v1"
@@ -35,7 +40,7 @@ EXPECTED_ENDPOINT_INVENTORIES = {
         "count": 19,
         "sha256": "40917d39b6a569927834157be69c4c91f5806784c9cc699b5f310efa9e31793d",
     },
-    "direct_hf": {
+    "hf_bioavailability": {
         "count": 1,
         "sha256": "95f78038b5cde8c7484c93f22f15a0c21d6ae2ba7451fdd2754df3be0d184c1a",
     },
@@ -103,16 +108,34 @@ def spacing_and_spelling_endpoint(source_id: str, endpoint_name: str) -> str:
     ).spacing_and_spelling_endpoint
 
 
-def family_assignment(source_id: str, endpoint_name: str) -> FamilyAssignment | None:
+def family_assignment(
+    source_id: str,
+    endpoint_name: str,
+    record: Mapping[str, Any] | None = None,
+) -> FamilyAssignment | None:
     """Map source records to the five stable retrieval families without changing endpoints."""
     endpoint = (clean_text(endpoint_name) or "").casefold()
-    if source_id == "direct_hf":
+    if source_id == "hf_bioavailability":
+        record = record or {}
+        scope = str(
+            record.get("canonical_bioavailability_evidence_scope") or ""
+        ) or bioavailability_evidence_scope(
+            record.get("bioavailability_report_type")
+        )
+        if scope == DIRECT_EVIDENCE_SCOPE:
+            return FamilyAssignment(
+                "Observed.direct_oral_bioavailability",
+                "Observed",
+                "direct_oral_bioavailability",
+                "direct_outcome",
+                "oral bioavailability",
+            )
         return FamilyAssignment(
-            "Observed.direct_oral_bioavailability",
+            "Observed.nondirect_oral_bioavailability",
             "Observed",
-            "direct_oral_bioavailability",
-            "direct_outcome",
-            "oral bioavailability",
+            "nondirect_oral_bioavailability",
+            "surrogate_proxy",
+            "relative or apparent oral bioavailability",
         )
     if source_id == "oral_exposure":
         if endpoint in {"bioavailability", "absolute_bioavailability"}:
