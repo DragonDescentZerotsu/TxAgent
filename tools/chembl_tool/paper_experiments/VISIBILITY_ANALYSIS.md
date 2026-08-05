@@ -10,6 +10,32 @@
 > `record_agreement70_split811_v1` 新主矩阵已改为 identity-blind + parent-disjoint；deployment-visible、
 > matched-prefetch 和 operational 仅作显式补充，不再是新主矩阵前置依赖。
 
+### 2026-08-03 v4 scaffold-valid 补充结果
+
+GPT-OSS-20B 和 GPT-OSS-120B 已各完成同一 scaffold-valid 的 22-condition blind 与 visible
+parent-disjoint 矩阵。每套 visible/blind GPT matrix 都只有 Bioavailability
+`chembl_full_flat/idx00076` 一个确定性 context-limit failure，并按同一 failure-inclusive policy 计错。
+这不是纯 visibility ablation：visible 同时恢复 query/neighbor structure/source identity，并把固定 harness
+prefetch 改为模型自主 function call。因此下表只描述“完整 visible contract - blind contract”的 7 个
+同 task condition macro-F1 差值分布，不作单因素因果解释：
+
+| model | task | mean delta | min delta（condition） | max delta（condition） |
+|---|---|---:|---|---|
+| GPT-OSS-20B | BBB | -0.0224 | -0.0450（Starling mechanism） | +0.0030（ChEMBL direct） |
+| GPT-OSS-20B | Bioavailability | -0.0243 | -0.0448（Starling direct full） | +0.0145（Starling flat） |
+| GPT-OSS-20B | Skin | -0.0191 | -0.0412（Starling direct） | +0.0043（ChEMBL flat） |
+| GPT-OSS-120B | BBB | -0.0122 | -0.0618（ChEMBL flat） | +0.0292（Starling mechanism） |
+| GPT-OSS-120B | Bioavailability | +0.0226 | -0.0324（none） | +0.0801（ChEMBL mechanism） |
+| GPT-OSS-120B | Skin | +0.0402 | -0.0186（Starling mechanism） | +0.0818（ChEMBL mechanism） |
+| GLM-5.2 NVFP4 | BBB | -0.0207 | -0.0478（Starling direct） | -0.0086（ChEMBL direct） |
+| GLM-5.2 NVFP4 | Bioavailability | +0.0180 | -0.0131（Starling direct full） | +0.0525（none） |
+| GLM-5.2 NVFP4 | Skin | +0.0147 | -0.0229（Starling flat） | +0.0290（ChEMBL direct） |
+
+20B 的 visible contract 在三任务平均均下降；120B 和 GLM 在 Bioavailability/Skin 平均上升、BBB 平均下降，
+进一步说明 effect 依赖 model/task/condition。完整逐 condition 数值、最佳条件和 artifact roots 见
+`STARLING_BENCHMARK_RESULTS.md`。这些 blind/visible 差值同时包含 identity 可见性和 tool-execution 合同变化，
+不能解释为单一 visibility 因果效应。
+
 ## 三套制度及当前结果口径
 
 ```text

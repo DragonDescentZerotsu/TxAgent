@@ -1765,7 +1765,6 @@ python -m tools.chembl_tool.tasks.clintox.rescore_outputs \
   --input-jsonl data/processed/ClinTox/test.jsonl \
   --indices 0 1 36 43 73 \
   --parallelism 1 \
-  --group-workers 4 \
   --top-k-per-group 3 \
   --min-similarity 0.3 \
   --max-tool-rounds 8 \

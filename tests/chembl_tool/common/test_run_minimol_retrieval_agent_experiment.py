@@ -15,13 +15,12 @@ def test_matrix_orchestration_covers_all_feature_conditions(monkeypatch, tmp_pat
     args = Namespace(
         python_executable="python",
         parallelism=8,
-        group_workers=4,
         output_dir=tmp_path,
     )
 
     runner._run_matrix("operational", args)
 
-    assert len(captured) == 6
+    assert len(captured) == 2
     selected = [
         value
         for _, command in captured

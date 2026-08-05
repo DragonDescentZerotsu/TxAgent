@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 import json
+import os
+from pathlib import Path
+import tempfile
 from typing import Any
 
 
@@ -23,3 +27,41 @@ def parse_json_content(content: str) -> Any:
                     "parse_error": str(nested_error),
                 }
         return {"unparsed_text": text, "parse_error": str(first_error)}
+
+
+@contextmanager
+def atomic_output_path(path: Path):
+    """Yield a same-directory temporary path and publish it only on success."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as handle:
+            temporary = Path(handle.name)
+        yield temporary
+        os.replace(temporary, path)
+        temporary = None
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def write_json_atomic(path: Path, payload: Any) -> None:
+    """Serialize one JSON value without exposing a partial destination file."""
+    with atomic_output_path(path) as temporary:
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, default=str) + "\n",
+            encoding="utf-8",
+        )
+
+
+def write_jsonl_atomic(path: Path, rows: list[dict[str, Any]]) -> None:
+    """Serialize JSONL without exposing a partially rewritten branch file."""
+    with atomic_output_path(path) as temporary:
+        with temporary.open("w", encoding="utf-8") as handle:
+            for row in rows:
+                handle.write(json.dumps(row, ensure_ascii=False, default=str) + "\n")

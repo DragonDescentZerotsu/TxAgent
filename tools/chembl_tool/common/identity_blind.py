@@ -14,6 +14,12 @@ from pathlib import Path
 import re
 from typing import Any
 
+from tools.chembl_tool.common.coverage_reasoning import (
+    COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT,
+    STANDARD_NEIGHBOR_CONTEXT,
+    attach_mmp_coverage_ledger,
+    attach_neighbor_context,
+)
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.openai_reasoning_client import ToolServiceClient
 
@@ -24,6 +30,7 @@ _GENERIC_IDENTITY_NAMES = {
     "molecule",
     "net",
     "not specified",
+    "per",
     "test article",
     "test compound",
     "unknown",
@@ -40,10 +47,44 @@ def prepare_harness_prefetched_retrieval(
     output = deepcopy(retrieval)
     query = output.get("query") or {}
     query_smiles = str(query.get("canonical_smiles") or query.get("input_smiles") or "")
-    property_result = tool_service.invoke(
-        "molecule_properties",
-        {"query_smiles": query_smiles, "logd_ph": 7.4},
+    calls: list[tuple[str, dict[str, Any]]] = [
+        ("molecule_properties", {"query_smiles": query_smiles, "logd_ph": 7.4})
+    ]
+    neighbor_smiles: list[str] = []
+    for group in output.get("groups") or []:
+        for neighbor in group.get("neighbors") or []:
+            reference_smiles = str(neighbor.get("canonical_smiles") or "")
+            neighbor_smiles.append(reference_smiles)
+            calls.extend(
+                [
+                    (
+                        "mmp_structure_compare",
+                        {
+                            "query_smiles": query_smiles,
+                            "reference_smiles": reference_smiles,
+                            "max_mmp_alternatives": 5,
+                            "mcs_timeout_s": 5,
+                        },
+                    ),
+                    (
+                        "properties_compare",
+                        {
+                            "query_smiles": query_smiles,
+                            "reference_smiles": reference_smiles,
+                            "logd_ph": 7.4,
+                        },
+                    ),
+                ]
+            )
+    invoke_many = getattr(tool_service, "invoke_many", None)
+    results = (
+        invoke_many(calls)
+        if callable(invoke_many)
+        else [tool_service.invoke(tool_name, arguments) for tool_name, arguments in calls]
     )
+    if len(results) != len(calls):
+        raise ValueError(f"Prefetched tool result count mismatch: {len(results)} != {len(calls)}")
+    property_result = results[0]
     prefetched_properties = _compact_result(property_result, query_smiles)
     if identity_blind:
         query.clear()
@@ -57,32 +98,18 @@ def prepare_harness_prefetched_retrieval(
         query["tools_prefetched"] = True
         query["prefetched_molecule_properties"] = prefetched_properties
 
+    result_index = 1
+    neighbor_smiles_index = 0
     for group_index, group in enumerate(output.get("groups") or [], start=1):
         group["tools_prefetched"] = True
         if identity_blind:
             group["identity_blind"] = True
         for neighbor_index, neighbor in enumerate(group.get("neighbors") or [], start=1):
-            reference_smiles = str(neighbor.get("canonical_smiles") or "")
+            reference_smiles = neighbor_smiles[neighbor_smiles_index]
+            neighbor_smiles_index += 1
             alias = f"neighbor_{group_index}_{neighbor_index}"
-            comparisons = [
-                tool_service.invoke(
-                    "mmp_structure_compare",
-                    {
-                        "query_smiles": query_smiles,
-                        "reference_smiles": reference_smiles,
-                        "max_mmp_alternatives": 5,
-                        "mcs_timeout_s": 5,
-                    },
-                ),
-                tool_service.invoke(
-                    "properties_compare",
-                    {
-                        "query_smiles": query_smiles,
-                        "reference_smiles": reference_smiles,
-                        "logd_ph": 7.4,
-                    },
-                ),
-            ]
+            comparisons = results[result_index : result_index + 2]
+            result_index += 2
             neighbor["prefetched_comparisons"] = [
                 _compact_result(result, query_smiles, reference_smiles) for result in comparisons
             ]
@@ -119,15 +146,37 @@ def prepare_reasoning_retrieval(
     identity_blind: bool,
     harness_prefetch_tools: bool,
     prefetched_tool_replay_run_dir: str = "",
+    neighbor_context_profile: str = STANDARD_NEIGHBOR_CONTEXT,
 ) -> dict[str, Any]:
     """Apply the requested paper tool-execution contract to retrieval."""
+    if neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT and identity_blind:
+        raise ValueError(
+            "coverage_mmp_ledger is visible-only and cannot be used with identity_blind"
+        )
+    reasoning_input = attach_neighbor_context(
+        retrieval,
+        profile=neighbor_context_profile,
+    )
+    if neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT:
+        reasoning_input = attach_mmp_coverage_ledger(reasoning_input, tool_service)
     if identity_blind:
-        return prepare_harness_prefetched_retrieval(retrieval, tool_service, identity_blind=True)
+        return prepare_harness_prefetched_retrieval(
+            reasoning_input,
+            tool_service,
+            identity_blind=True,
+        )
     if prefetched_tool_replay_run_dir:
-        return prepare_replayed_prefetched_retrieval(retrieval, prefetched_tool_replay_run_dir)
+        return prepare_replayed_prefetched_retrieval(
+            reasoning_input,
+            prefetched_tool_replay_run_dir,
+        )
     if harness_prefetch_tools:
-        return prepare_harness_prefetched_retrieval(retrieval, tool_service, identity_blind=False)
-    return retrieval
+        return prepare_harness_prefetched_retrieval(
+            reasoning_input,
+            tool_service,
+            identity_blind=False,
+        )
+    return reasoning_input
 
 
 def prepare_replayed_prefetched_retrieval(

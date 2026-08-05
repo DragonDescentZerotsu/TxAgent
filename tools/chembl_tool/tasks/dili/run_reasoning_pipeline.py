@@ -129,24 +129,23 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
-    if not api_key:
+    if not api_key and not args.prepare_only:
         raise SystemExit(f"Missing API key env var: {args.api_key_env}")
 
-    client = OpenAICompatibleClient(
-        api_key=api_key,
-        base_url=args.base_url,
-        model=args.model,
-        timeout_s=args.timeout_s,
-        max_tokens=args.max_tokens,
-        temperature=args.temperature,
-        tool_service_url=args.tool_service_url,
-        enable_group_tools=not args.disable_group_tools,
-        max_tool_rounds=args.max_tool_rounds,
-        reasoning_effort=args.reasoning_effort,
-        enable_thinking=args.enable_thinking,
-    )
-
     if args.resume_final_from_run_dir:
+        client = OpenAICompatibleClient(
+            api_key=api_key,
+            base_url=args.base_url,
+            model=args.model,
+            timeout_s=args.timeout_s,
+            max_tokens=args.max_tokens,
+            temperature=args.temperature,
+            tool_service_url=args.tool_service_url,
+            enable_group_tools=not args.disable_group_tools,
+            max_tool_rounds=args.max_tool_rounds,
+            reasoning_effort=args.reasoning_effort,
+            enable_thinking=args.enable_thinking,
+        )
         return _resume_final_from_run_dir(Path(args.resume_final_from_run_dir), client)
 
     run_id = args.run_id or time.strftime("dili_reasoning_%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
@@ -183,6 +182,23 @@ def main(argv: list[str] | None = None) -> int:
     if args.max_groups:
         groups = groups[: args.max_groups]
     _log(f"group reasoning calls={len(groups)}")
+    if args.prepare_only:
+        _log("prepare-only complete; reasoning stages deferred to the global pool")
+        return 0
+
+    client = OpenAICompatibleClient(
+        api_key=api_key,
+        base_url=args.base_url,
+        model=args.model,
+        timeout_s=args.timeout_s,
+        max_tokens=args.max_tokens,
+        temperature=args.temperature,
+        tool_service_url=args.tool_service_url,
+        enable_group_tools=not args.disable_group_tools,
+        max_tool_rounds=args.max_tool_rounds,
+        reasoning_effort=args.reasoning_effort,
+        enable_thinking=args.enable_thinking,
+    )
 
     single_output, group_outputs = _run_parallel_reasoning(
         client,
@@ -767,6 +783,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--out-root", default=DEFAULT_OUT_ROOT)
     parser.add_argument("--run-id", default="")
     parser.add_argument("--resume-final-from-run-dir", default="")
+    parser.add_argument(
+        "--prepare-only",
+        action="store_true",
+        help="Write retrieval.json and stop before any LLM request.",
+    )
     parser.add_argument("--env-file", default=".env")
     parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY")
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)

@@ -21,6 +21,9 @@ class BaseTool(ABC):
         self.initialized = True
         self.initialization_error = None
 
+    def close(self) -> None:
+        pass
+
     @abstractmethod
     def invoke(self, payload: dict[str, Any], *, return_debug: bool = False) -> dict[str, Any]:
         raise NotImplementedError
@@ -35,4 +38,3 @@ class BaseTool(ABC):
             "input_schema": self.input_schema,
             "output_schema": self.output_schema,
         }
-

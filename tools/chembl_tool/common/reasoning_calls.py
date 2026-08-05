@@ -6,11 +6,17 @@ import json
 from pathlib import Path
 from typing import Any
 
+from tools.chembl_tool.common.coverage_reasoning import (
+    augment_group_messages_with_neighbor_context,
+)
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
 from tools.chembl_tool.common.reasoning_validation import call_with_json_validation
 
 
-MAX_GROUP_PROMPT_BYTES = 750_000
+# Leave headroom for the frozen 20,480-token completion budget within GLM's
+# 131,072-token context window.  The prior 750 KB gate allowed a 439 KB JSON
+# payload to reach 110,593 input tokens and exceed the window by one token.
+MAX_GROUP_PROMPT_BYTES = 400_000
 MAX_OVERSIZE_NEIGHBOR_EVIDENCE_ROWS = 100
 
 
@@ -110,14 +116,16 @@ def call_group_branch(
     forbidden_field_names: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     """Use live comparison tools, or harness-prefetched blind comparisons."""
+    messages = augment_group_messages_with_neighbor_context(messages, group)
     if group.get("tools_prefetched") or group.get("identity_blind"):
         call = client.chat_json
     else:
-        call = lambda retry_messages: client.chat_json_with_optional_tools(
-            retry_messages,
-            tools=tools,
-            allowed_tool_names={"properties_compare", "mmp_structure_compare"},
-        )
+        def call(retry_messages: list[dict[str, Any]]) -> dict[str, Any]:
+            return client.chat_json_with_optional_tools(
+                retry_messages,
+                tools=tools,
+                allowed_tool_names={"properties_compare", "mmp_structure_compare"},
+            )
     return call_with_json_validation(
         call,
         messages,

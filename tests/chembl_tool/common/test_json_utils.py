@@ -1,4 +1,13 @@
-from tools.chembl_tool.common.json_utils import parse_json_content
+import json
+
+import pytest
+
+from tools.chembl_tool.common.json_utils import (
+    atomic_output_path,
+    parse_json_content,
+    write_json_atomic,
+    write_jsonl_atomic,
+)
 
 
 def test_parse_json_content_never_raises_for_malformed_embedded_object():
@@ -10,3 +19,30 @@ def test_parse_json_content_never_raises_for_malformed_embedded_object():
 
 def test_parse_json_content_extracts_valid_embedded_object():
     assert parse_json_content('prefix {"ok": true} suffix') == {"ok": True}
+
+
+def test_atomic_json_writers_publish_complete_files(tmp_path):
+    json_path = tmp_path / "nested" / "payload.json"
+    jsonl_path = tmp_path / "rows.jsonl"
+
+    write_json_atomic(json_path, {"label": "可审计", "value": 2})
+    write_jsonl_atomic(jsonl_path, [{"row": 1}, {"row": 2}])
+
+    assert json.loads(json_path.read_text(encoding="utf-8"))["label"] == "可审计"
+    assert [json.loads(line) for line in jsonl_path.read_text().splitlines()] == [
+        {"row": 1},
+        {"row": 2},
+    ]
+
+
+def test_atomic_output_does_not_replace_destination_after_failure(tmp_path):
+    output = tmp_path / "state.json"
+    output.write_text('{"state": "old"}\n', encoding="utf-8")
+
+    with pytest.raises(RuntimeError):
+        with atomic_output_path(output) as temporary:
+            temporary.write_text('{"state": "partial"}\n', encoding="utf-8")
+            raise RuntimeError("serialization failed")
+
+    assert json.loads(output.read_text(encoding="utf-8")) == {"state": "old"}
+    assert not list(tmp_path.glob(".state.json.*.tmp"))

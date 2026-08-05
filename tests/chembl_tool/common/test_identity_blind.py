@@ -13,6 +13,7 @@ from tools.chembl_tool.common.identity_blind import (
 class FakeToolService:
     def __init__(self):
         self.calls = []
+        self.batch_calls = 0
 
     def invoke(self, tool_name, arguments):
         self.calls.append((tool_name, arguments))
@@ -22,6 +23,10 @@ class FakeToolService:
             "content": f"{tool_name}: " + " | ".join(str(value) for value in arguments.values()),
             "warnings": [f"warning for {str(arguments.get('query_smiles', '')).lower()}"],
         }
+
+    def invoke_many(self, calls):
+        self.batch_calls += 1
+        return [self.invoke(tool_name, arguments) for tool_name, arguments in calls]
 
 
 def test_identity_blind_prefetch_removes_query_and_neighbor_structures():
@@ -100,6 +105,7 @@ def test_visible_prefetch_preserves_identity_but_matches_blind_tool_calls():
     )
 
     assert blind_service.calls == visible_service.calls
+    assert blind_service.batch_calls == visible_service.batch_calls == 1
     assert [name for name, _ in visible_service.calls] == [
         "molecule_properties",
         "mmp_structure_compare",
@@ -239,7 +245,7 @@ def test_identity_blind_leak_finder_reports_categories():
     }
 
 
-def test_identity_blind_leak_finder_uses_identifier_boundaries_and_ignores_generic_net():
+def test_identity_blind_leak_finder_uses_identifier_boundaries_and_ignores_generic_names():
     retrieval = {
         "query": {},
         "groups": [
@@ -254,7 +260,7 @@ def test_identity_blind_leak_finder_uses_identifier_boundaries_and_ignores_gener
                                 "canonical_smiles": "CCN",
                                 "group_id": "Direct.outcome",
                                 "standard_type": "outcome",
-                                "source_molecule_names": ["NET"],
+                                "source_molecule_names": ["NET", "PER"],
                             }
                         ],
                     }
@@ -263,7 +269,10 @@ def test_identity_blind_leak_finder_uses_identifier_boundaries_and_ignores_gener
         ],
     }
 
-    leaks = find_identity_blind_leaks(retrieval, "assay CHEMBL876624; net oral effect")
+    leaks = find_identity_blind_leaks(
+        retrieval,
+        "assay CHEMBL876624; net effect per oral dose",
+    )
 
     assert leaks == {"structures": [], "identifiers": [], "names": []}
 

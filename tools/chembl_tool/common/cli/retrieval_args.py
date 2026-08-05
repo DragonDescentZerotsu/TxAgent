@@ -41,9 +41,15 @@ def add_retrieval_strategy_args(parser: argparse.ArgumentParser) -> None:
     )
     group.add_argument(
         "--morgan-neighbor-selector",
+        "--neighbor-selector",
+        dest="morgan_neighbor_selector",
         choices=NEIGHBOR_SELECTORS,
         default=SIMILARITY_SELECTOR,
-        help="morgan_fingerprint strategy only: neighbor selection policy.",
+        help=(
+            "morgan_fingerprint strategy only: neighbor selection policy. "
+            "--neighbor-selector is the canonical scheduler spelling; the "
+            "longer name remains a backward-compatible alias."
+        ),
     )
     group.add_argument(
         "--assay-transfer-initial-morgan-filter",

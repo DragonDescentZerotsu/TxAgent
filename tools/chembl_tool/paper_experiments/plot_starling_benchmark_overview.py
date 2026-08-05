@@ -133,18 +133,27 @@ def read_metrics(path: Path) -> dict[tuple[str, str, str], dict[str, str]]:
         (row["benchmark_split"], row["task"], row["method"]): row
         for row in rows
     }
+    available_splits = tuple(
+        split for split, _ in SPLITS if any(row["benchmark_split"] == split for row in rows)
+    )
+    if not available_splits:
+        raise ValueError("No supported Starling benchmark splits found")
     expected = {
         (split, task.key, method.key)
-        for split, _ in SPLITS
+        for split in available_splits
         for task in TASKS
         for method in task.methods
     }
     missing = sorted(expected - results.keys())
     if missing:
         raise ValueError(f"Missing Starling benchmark results: {missing}")
-    failed = [
-        key for key in expected if int(results[key].get("n_failed") or 0) != 0
-    ]
+    failed = []
+    for key in expected:
+        row = results[key]
+        if int(row.get("n_failed") or 0) == 0:
+            continue
+        if not row.get("failure_policy", "").startswith("count_as_incorrect"):
+            failed.append(key)
     if failed:
         raise ValueError(f"Cannot plot benchmark rows with failures: {sorted(failed)}")
     return results
@@ -226,17 +235,31 @@ def render_panel(
 
 def render(metrics_path: Path, output: Path) -> None:
     results = read_metrics(metrics_path)
+    available_splits = tuple(
+        (split, label)
+        for split, label in SPLITS
+        if any(key[0] == split for key in results)
+    )
+    first_row = next(iter(results.values()))
+    evaluation_subset = first_row.get("evaluation_subset") or "test"
+    model_label = first_row.get("model_label") or "GLM-5.2"
+    split_title = " and ".join(label.replace(" split", "") for _, label in available_splits)
+    has_counted_failure = any(
+        int(row.get("n_failed") or 0) > 0
+        and row.get("failure_policy", "").startswith("count_as_incorrect")
+        for row in results.values()
+    )
     generated = date.today().isoformat()
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
         f'viewBox="0 0 {WIDTH} {HEIGHT}" role="img" aria-labelledby="chart-title chart-desc">',
         '<title id="chart-title">Starling benchmark performance by task and split</title>',
-        '<desc id="chart-desc">Horizontal bar charts compare no retrieval, ChEMBL retrieval, Starling retrieval, MiniMol train-all, Morgan KNN, and MiniMol embedding KNN macro-F1 for three tasks on random and scaffold splits.</desc>',
+        f'<desc id="chart-desc">Horizontal bar charts compare no retrieval, ChEMBL retrieval, Starling retrieval, MiniMol train-all, Morgan KNN, and MiniMol embedding KNN macro-F1 for three tasks on {split_title} {evaluation_subset}.</desc>',
         f'<metadata>Source: {metrics_path}; generated {generated}.</metadata>',
         rect(0, 0, WIDTH, HEIGHT, fill=BG, rx=0),
         svg_text(70, 58, "Starling Benchmark Performance", size=36, weight=750),
-        svg_text(70, 94, "Random and scaffold held-out tests · Macro-F1", size=20, fill=MUTED),
-        svg_text(1830, 58, "GLM-5.2 + train-label baselines", size=18, weight=700, fill=PURPLE, anchor="end"),
+        svg_text(70, 94, f"{split_title} {evaluation_subset} · Macro-F1", size=20, fill=MUTED),
+        svg_text(1830, 58, f"{model_label} + train-label baselines", size=18, weight=700, fill=PURPLE, anchor="end"),
         svg_text(70, 132, "Retrieval: parent-disjoint · MiniMol head: train-all · KNN: train labels only, k=3 (Morgan/Tanimoto or MiniMol/cosine)", size=14, fill=MUTED),
     ]
 
@@ -263,10 +286,11 @@ def render(metrics_path: Path, output: Path) -> None:
 
     panel_y = (205, 725, 1245)
     for task, y in zip(TASKS, panel_y, strict=True):
-        for column, (split, split_label) in enumerate(SPLITS):
+        for column, (split, split_label) in enumerate(available_splits):
+            x = 520 if len(available_splits) == 1 else 70 + column * 900
             render_panel(
                 parts,
-                x=70 + column * 900,
+                x=x,
                 y=y,
                 task=task,
                 split=split,
@@ -276,8 +300,10 @@ def render(metrics_path: Path, output: Path) -> None:
 
     parts.extend(
         [
-            svg_text(70, 1782, "Pipeline bars use the formal parent-disjoint result for every retrieval condition; no-retrieval is operational because neighbor eligibility is not applicable.", size=13, fill=MUTED),
-            svg_text(70, 1812, "Source: frozen Starling benchmark results · Accuracy and positive-class metrics remain available in metrics.tsv.", size=13, fill=MUTED),
+            svg_text(70, 1782, "Pipeline bars use the formal parent-disjoint result for every retrieval condition; no-retrieval has no applicable neighbor identity policy.", size=13, fill=MUTED),
+            svg_text(70, 1812, "Source: frozen Starling benchmark results"
+                     + (" · Failed pipeline samples are counted as incorrect." if has_counted_failure else "")
+                     + " · Accuracy and positive-class metrics remain available in metrics.tsv.", size=13, fill=MUTED),
             svg_text(1830, 1812, f"Generated {generated}", size=13, fill=MUTED, anchor="end"),
             "</svg>",
         ]

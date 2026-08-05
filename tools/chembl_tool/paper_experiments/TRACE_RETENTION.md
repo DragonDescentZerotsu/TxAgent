@@ -17,6 +17,33 @@ outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_spli
 `outputs/paper/molecular_evidence_agent/` roots 是旧 TDC/strict-conflict lineage 的 historical allowlist，
 继续保留但不得与 v4 混表或作为新默认。
 
+2026-08-02 至 2026-08-04 的 scaffold-valid model/visibility roots 也属于可审计 v4 产物，但角色不同：
+
+```text
+blind model comparison:
+  ..._valid_glm_5_2_nvfp4/runs_identity_blind_parent_disjoint/
+  ..._valid_gpt_oss_20b/runs_identity_blind_parent_disjoint/
+  ..._valid_gpt_oss_120b/runs_identity_blind_parent_disjoint/
+
+completed deployment ablations:
+  ..._valid_gpt_oss_20b_visible_parent_disjoint/runs_deployment_visible_parent_disjoint/
+  ..._valid_gpt_oss_120b_visible_parent_disjoint/runs_deployment_visible_parent_disjoint/
+
+matched context ablations:
+  ..._valid_gpt_oss_120b_coverage_{standard,aware}/runs_identity_blind_parent_disjoint/
+  ..._valid_gpt_oss_120b_visible_parent_disjoint_coverage_{standard,mmp_ledger}/
+    runs_deployment_visible_parent_disjoint/
+```
+
+这里的 `...` 均展开为
+`outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1`。完整路径、结果角色和
+canonical metrics 以 `STARLING_BENCHMARK_RESULTS.md` 为准。GLM visible root 已达到 strict completeness
+gate `6887/6887` 并加入完成 allowlist；后续 partial run 仍不得
+注册到 viewer 或 canonical metrics。
+
+`retry_archive_*`、`failed_auth_attempt_*` 和 `*_aborted_*` 只允许在本轮 release audit 结束前临时保留；最终
+发布时应只保留 failure taxonomy、计数和必要小型案例，不把整批失败 trace 误注册到 viewer 或正式 metrics。
+
 历史论文 trace 保留在：
 
 ```text

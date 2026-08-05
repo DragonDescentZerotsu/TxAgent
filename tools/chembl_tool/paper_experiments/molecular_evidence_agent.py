@@ -7,11 +7,24 @@ from dataclasses import dataclass, replace
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
 from typing import Any
+
+from tools.chembl_tool.common.task_workflows.global_prompt_pool import (
+    BatchCommand,
+    SCHEDULER_VERSION,
+    run_global_prompt_pool,
+)
 from urllib.parse import urlparse
 
+from tools.chembl_tool.common.coverage_reasoning import (
+    NEIGHBOR_CONTEXT_PROFILES,
+    STANDARD_NEIGHBOR_CONTEXT,
+)
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    SIMILARITY_SELECTOR,
+)
 
 PAPER_ROOT = Path("outputs/paper/molecular_evidence_agent")
 GLM_BASE_URL = "http://127.0.0.1:50000/v1"
@@ -228,11 +241,20 @@ def main(argv: list[str] | None = None) -> int:
         "identity_blind": args.visibility_mode == IDENTITY_BLIND,
         "visibility_contract": _visibility_contract(args.visibility_mode),
         "neighbor_identity_policy": args.neighbor_identity_policy,
+        "neighbor_selector": args.neighbor_selector,
+        "neighbor_context_profile": args.neighbor_context_profile,
         "data_split": args.split,
         "paper_root": str(_paper_root_from_args(args)),
         "temperature": 0.0,
         "max_tokens": 20480,
+        "timeout_s": args.timeout_s,
         "transport_max_retries": 2,
+        "scheduler": {
+            "name": "global_prompt_pool",
+            "version": SCHEDULER_VERSION,
+            "global_max_workers": args.parallelism,
+            "max_stage_requeues": args.max_stage_requeues,
+        },
         "experiments": [experiment.__dict__ for experiment in all_experiments],
         "selected_experiments": [experiment.name for experiment in selected],
     }
@@ -251,13 +273,14 @@ def main(argv: list[str] | None = None) -> int:
         )
     matrix_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
-    failed = []
-    for experiment in selected:
-        command = _command(experiment, args)
-        print(f"[paper_matrix] starting {experiment.name}", flush=True)
-        completed = subprocess.run(command, check=False)
-        if completed.returncode:
-            failed.append({"experiment": experiment.name, "returncode": completed.returncode})
+    failed = run_global_prompt_pool(
+        [
+            BatchCommand(experiment.name, _command(experiment, args))
+            for experiment in selected
+        ],
+        max_workers=args.parallelism,
+        max_stage_requeues=args.max_stage_requeues,
+    )
     if failed:
         print(json.dumps({"failed": failed}, indent=2), file=sys.stderr)
         return 1
@@ -297,6 +320,10 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
         experiment.source,
         "--neighbor-identity-policy",
         neighbor_identity_policy,
+        "--neighbor-selector",
+        str(getattr(args, "neighbor_selector", SIMILARITY_SELECTOR)),
+        "--neighbor-context-profile",
+        str(getattr(args, "neighbor_context_profile", STANDARD_NEIGHBOR_CONTEXT)),
         "--api-key-env",
         args.api_key_env,
         "--base-url",
@@ -311,13 +338,11 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
         "--max-tokens",
         "20480",
         "--timeout-s",
-        "300",
+        str(getattr(args, "timeout_s", 300)),
         "--max-tool-rounds",
         "3",
         "--parallelism",
         str(args.parallelism),
-        "--group-workers",
-        str(args.group_workers),
         "--no-stream-logs",
         "--no-combine-traces",
         "--skip-existing",
@@ -486,9 +511,9 @@ def _prepare_policy_selection(
     if args.neighbor_identity_policy != PARENT_DISJOINT:
         return selected
     if bool(getattr(args, "fresh_parent_disjoint", False)):
-        if args.visibility_mode != IDENTITY_BLIND:
+        if args.visibility_mode not in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}:
             raise SystemExit(
-                "Fresh parent_disjoint is frozen for --visibility-mode identity_blind"
+                "Fresh parent_disjoint requires identity_blind or deployment_visible"
             )
         return selected
     if args.visibility_mode != DEPLOYMENT_VISIBLE:
@@ -549,10 +574,26 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         choices=NEIGHBOR_IDENTITY_POLICIES,
         default=PARENT_DISJOINT,
     )
+    parser.add_argument(
+        "--neighbor-selector",
+        choices=NEIGHBOR_SELECTORS,
+        default=SIMILARITY_SELECTOR,
+    )
+    parser.add_argument(
+        "--neighbor-context-profile",
+        choices=NEIGHBOR_CONTEXT_PROFILES,
+        default=STANDARD_NEIGHBOR_CONTEXT,
+    )
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--parallelism", type=int, default=8)
-    parser.add_argument("--group-workers", type=int, default=8)
-    return parser.parse_args(argv)
+    parser.add_argument("--max-stage-requeues", type=int, default=0)
+    parser.add_argument("--timeout-s", type=int, default=300)
+    args = parser.parse_args(argv)
+    if args.parallelism < 1:
+        parser.error("--parallelism must be positive")
+    if args.max_stage_requeues < 0:
+        parser.error("--max-stage-requeues must be non-negative")
+    return args
 
 
 def ensure_endpoint_api_key(api_key_env: str, base_url: str) -> None:

@@ -48,3 +48,14 @@ def test_group_prompt_bound_evenly_samples_oversize_neighbor_with_audit_metadata
     assert neighbor["evidence_rows_truncated"] is True
     assert result["prompt_transport"]["oversize_guard_applied"] is True
     assert result["prompt_transport"]["sampling"] == "deterministic_even_spacing"
+
+
+def test_group_prompt_bound_guards_payload_below_previous_750kb_gate():
+    rows = [{"row": index, "text": "x" * 1_000} for index in range(450)]
+    payload = {"neighbors": [{"evidence_rows": rows}]}
+
+    result = bound_group_prompt_payload(payload)
+
+    assert len(result["neighbors"][0]["evidence_rows"]) == 100
+    assert result["prompt_transport"]["original_bytes"] > 400_000
+    assert result["prompt_transport"]["max_bytes"] == 400_000

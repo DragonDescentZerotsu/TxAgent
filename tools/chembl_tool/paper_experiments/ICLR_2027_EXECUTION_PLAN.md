@@ -19,11 +19,14 @@
 `http://127.0.0.1:50000/v1` 上的 `nvidia/GLM-5.2-NVFP4`，保持历史 GLM reasoning 设置；全局 endpoint
 并发预算上限为 512；首次压力运行出现 1/500 transport timeout 后，单 launcher 默认形状
 先调整为 384；由于 BBB full-flat 仍出现大量长 group-request timeout，当前默认进一步调整为
-`parallelism=128, group_workers=1`，禁止外层 fan-out 乘法超额。
+单一 `parallelism=128` global prompt pool，禁止外层 fan-out 乘法超额。
 
 这一决策覆盖下文基于 2026-07 historical operational/deployment-visible 矩阵的“主表”措辞，但不删除历史
 结果或 relation taxonomy。新 v4 先跑 valid 并通过完整性、identity leak、parent conflict 和 held-out overlap
-gate，冻结后再跑 test。代码未完成 blind+parent-disjoint fresh-run/独立 root/全局并发迁移前不得启动 LLM。
+gate，冻结后再跑 test。blind+parent-disjoint fresh-run、独立 root 和全局并发实现 gate 已完成；
+scaffold-valid 的 GLM、GPT-OSS-20B/120B blind 矩阵、GPT 两套 visible 矩阵与 matched baselines 已完成，
+GLM visible 也已达到 6887/6887 严格成功并进入同一总图。正式 test 仍须等 valid 合同和 failure contingency
+冻结后才可启动。
 
 当前 test 已完成 73 个 GLM 条件：26 个 identity-blind、21 个 matched-prefetch 和 26 个
 deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个。它们用于确定研究问题、估算成本和
@@ -78,15 +81,15 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | 实验 | 核心内容 | 对应贡献 | 优先级 | 当前状态 |
 |---|---|---|---|---|
 | E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；2026-07-23 valid 扩展矩阵为 3 x 26 条件和 22 个 parent-disjoint 条件，均 0 失败，prefetch 2,713 / 2,713 matched |
-| E1 | None vs direct retrieval | C1、C3 | P0 | 第一轮完成；最终矩阵待重跑 |
-| E2 | ChEMBL vs Starling | C2 | P0 | Bio、BBB、Skin 的 agentic source comparison 已有；Bio prepared-HF validation/index rerun complete；BBB direct partial；BBB/Skin 新增 full 控制和 ClinTox Starling 仍缺 |
+| E1 | None vs direct retrieval | C1、C3 | P0 | v4 scaffold-valid 的 GLM、GPT-OSS-20B/120B blind 矩阵完成；GLM random-valid 余 2 个失败，正式 test 未启动 |
+| E2 | ChEMBL vs Starling | C2 | P0 | BBB、Bio、Skin 的 v4 scaffold-valid 三模型 source comparison 已完成；ClinTox 因无同定义 Starling direct source 不进入当前 v4 |
 | E3 | Source-quality 人工 annotation | C2、C6 | P0 | 未开始 |
-| E4 | Flat vs mechanism | C3 | P0 | BBB/Skin 新增 Starling agentic flat/mechanism 及 identity-blind/valid matched 控制已完成；ClinTox Starling 未完成 |
-| E5 | Deployment-visible agentic 主矩阵与工具行为分析 | C4、C5 | P0 | 当前 26 条件完整、0 failure；仍缺 ClinTox 3 个 Starling 条件及最终数据冻结重跑 |
-| E6 | Identity-blind/matched 与细粒度 visibility attribution | C4、C5 | P1 精选条件 | Test identity-blind 26 条件、matched 21 条件；valid 两者均 26 条件且 parity audit 完整；细粒度 policy 未实现 |
+| E4 | Flat vs mechanism | C3 | P0 | BBB/Bio/Skin v4 scaffold-valid 三模型 blind 配对已完成；coverage context pilots 为 mixed/no-go，正式 test 待跑 |
+| E5 | Deployment-visible agentic 补充矩阵与工具行为分析 | C4、C5 | P0 | GPT-OSS-20B/120B 和 GLM scaffold-valid visible 各完成 22 条件；均为显式 ablation 而非主矩阵 |
+| E6 | Blind/visible 合同差异与细粒度 visibility attribution | C4、C5 | P1 精选条件 | GPT-OSS 两模型已有完整 blind/visible valid 对照，但同时改变 identity 与 tool execution；细粒度单因素 policy 未实现 |
 | E7 | Numeric vs non-numeric | C2 补充 | P1 | Bio 第一轮完成 |
-| E8 | KNN、vote、ECFP learned、MiniMol、pretrained baselines | C1、C3 | P0 | Starling MiniMol train-all、full-test Morgan KNN 和 MiniMol embedding cosine KNN 已完成；其余 baseline 待补 |
-| E9 | 第二模型 confirmation | C1、C5 | P0 | 模型未冻结 |
+| E8 | KNN、vote、ECFP learned、MiniMol、pretrained baselines | C1、C3 | P0 | 历史 strict-conflict full-test baselines 与 v4 scaffold-valid 的 MiniMol/Morgan/MiniMol-KNN 已完成；其余 baseline 待补 |
+| E9 | 跨模型 confirmation | C1、C5 | P0 | 同一 v4 scaffold-valid blind contract 的 GLM、GPT-OSS-20B/120B 已完成；GPT 两模型 visible 已完成，独立模型家族与重复运行待补 |
 | E10 | 关键条件重复运行 | C5、C6 | P0 | 未开始 |
 | E11 | Coverage–performance 关联分析 | C3、C6 | P0 | 第一轮 test/valid 各 17 个 agentic retrieval 条件已完成；TSV/JSON/report/canonical SVG 和 class-conditional coverage 已生成，最终矩阵冻结后需重跑 |
 | E12 | ChEMBL mechanistic-distance / evidence-quantity expansion | C7、C6 | P0 | C-family tree 协议已重冻；通用旧 graph/index/retrieval prototype 已实现，但 BBB v2 因 MMP-3 shortcut 只保留历史审计，四任务 tree mapping 与 batch/LLM runner 均待完成 |
@@ -95,18 +98,19 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 
 | 项目 | 当前状态 | 缺口或风险 | 截止 gate |
 |---|---|---|---|
-| 通用 runner、Evidence Contract、validation、trace、batch | 已实现；test 当前完成 73 个 GLM 条件，valid 完成 78 个 | 新实验不得复制 task pipeline | 持续 gate |
+| 通用 runner、Evidence Contract、validation、trace、batch | 已实现；v4 新增 model-specific roots、global prompt pool、selector/context profiles、strict watchdog 和 persistent tool cache | 新实验不得复制 task pipeline；v4 不得使用旧 TDC summarizer | 持续 gate |
 | ChEMBL 四任务 evidence | 已有 direct/flat/mechanism | 需要冻结最终 source manifest | 数据冻结前 |
 | ChEMBL distance expansion | C-family tree ontology 已冻结；通用旧 config/validator、assay-manifest、superset index 和 cumulative retrieval prototype 已实现 | 需先升级 tree-node schema/retrieval；BBB v2 需重建，另外三任务 graph/mapping 与独立 batch/replay、汇总、绘图 runner 均缺失 | 数据冻结前 |
-| Bioavailability Starling | direct numeric/full、flat、mechanism 已有 | 检查最终 parquet 版本和 provenance | 2026-08-02 |
-| BBB Starling | direct + passive permeability + efflux + influx parquet、full index、flat/mechanism operational、identity-blind、valid matched 和 parent-disjoint 已完成 | Test matched-prefetch 与 source-quality 尚未补齐 | 2026-08-02 |
-| Skin Starling | direct + sensitization + phototoxicity/irritation/local damage + skin exposure parquet、full index、direct/flat/mechanism operational、identity-blind、valid matched 和 parent-disjoint 已完成 | Test matched-prefetch 与 source-quality 尚未补齐 | 2026-08-02 |
-| ClinTox Starling | 当前没有论文矩阵数据 | 缺 7 个 mechanism families；ontology 风险高 | 2026-08-02 |
+| Bioavailability Starling | canonical direct v2、direct numeric/full、flat、mechanism 与 v4 held-out index 已冻结 | source-quality 人工核验和正式 test 尚缺 | 数据冻结 gate 已过 |
+| BBB Starling | direct + passive permeability + efflux + influx、v4 held-out index 和 scaffold-valid blind/visible 已完成 | 正式 test 与 source-quality 尚缺 | 数据冻结 gate 已过 |
+| Skin Starling | direct + sensitization + phototoxicity/irritation/local damage + skin exposure、v4 held-out index 和 scaffold-valid blind/visible 已完成 | 正式 test 与 source-quality 尚缺 | 数据冻结 gate 已过 |
+| ClinTox Starling | 无与 toxicity-caused clinical-trial failure 同定义的 direct source，当前明确不构造 v4 split | 若未来新增 source 必须另做 ontology/source freeze，不能补几个 family 后混入当前 lineage | future lineage |
 | Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；现有 22 条 retrieval conditions 在 test/valid 均完成且为 0 conflict | 最终数据冻结后若 index 改变需重建与复跑 | 2026-08-02 |
-| Agentic deployment matrix | 26 条件完成，全部 `n_failed_runs=0`；新增结果已进入统一 summary 与主 overview 图 | 缺 ClinTox 3 个 Starling 条件；final annotation/source freeze 后按需重跑 | 2026-08-23 |
+| V4 blind main matrix | GLM、GPT-OSS-20B/120B scaffold-valid 各 22 条件完成；GLM 0 failure，两个 GPT 各 1 个 context-limit failure 按预定 policy 计错 | random-valid/正式 test、repeats 和 release audit 待完成 | 2026-08-23 |
+| Visible deployment ablation | GPT-OSS-20B/120B 与 GLM scaffold-valid 同合同各 22 条件均已完成 | 完整合同同时改变 identity 与 tool execution，不能当纯 visibility effect | 已完成；因果拆分仍待 E6 |
 | Source quality gold | 未建立 | 需要双人 annotation 和原始文献/assay 核验 | 2026-08-30 |
-| Learned baselines | 当前 Starling random/scaffold 的 MiniMol train-all、full-test Morgan KNN 和 MiniMol embedding cosine KNN 已完成 | 缺 ECFP RF/XGBoost、matched-neighbor retrieval-only vote 和独立的第二种 pretrained encoder baseline | 2026-08-16 |
-| Cross-model evidence | 只有 GLM-5.2 | 缺第二个可复现模型 | 2026-08-23 |
+| Learned baselines | 历史 strict-conflict random/scaffold full-test baselines 已完成；当前 v4 已完成 scaffold-valid MiniMol train-all、Morgan KNN 和 MiniMol embedding cosine KNN | 缺 v4 random/test、ECFP RF/XGBoost、matched-neighbor retrieval-only vote 和独立的第二种 pretrained encoder baseline | 2026-08-16 |
+| Cross-model evidence | v4 scaffold-valid 已完成 GLM、GPT-OSS-20B 与 GPT-OSS-120B blind 同合同对照 | 缺独立模型家族、关键条件重复和正式 test | 2026-08-23 |
 | Run-to-run variance | 当前每个条件一次 | 关键比较需至少 3 次独立生成 | 2026-08-30 |
 | Visibility failure audit | 第一轮已完成 | 需要第二 annotator 和 targeted causal ablation | 2026-08-30 |
 | 论文主文与图表 | 未开始正式写作 | 不能等所有实验结束后才写 | 第一版 2026-09-06 |
@@ -291,50 +295,37 @@ policy。H1/H2 聚合 node 内的多个 target/measurement families 共享这 3 
 
 ## 最终主结果与实验矩阵
 
-论文主结果全部使用 query structure visible、query name hidden、neighbor structure/source identity visible
-的 `deployment_visible` agentic workflow。主文预计包含：
+论文主结果使用 `identity_blind + parent_disjoint` fresh-run：LLM 不看 query/neighbor identity，由 harness
+预取冻结的分子性质和 pairwise comparison tool text。Deployment-visible 只作为补充 deployment contract，
+不能决定主矩阵 setting，也不能把 blind/visible 差值解释成纯 identity visibility。主文预计包含：
 
 ```text
-主表 1：Agentic operational retrieval
-  四任务的 none、ChEMBL direct/flat/mechanism、Starling direct/flat/mechanism；
-  Bioavailability 另含 Starling numeric direct。
+主表 1：Blind parent-disjoint evidence retrieval
+  BBB、Bioavailability、Skin 的 none、ChEMBL direct/flat/mechanism、
+  Starling direct/flat/mechanism；Bioavailability 另含 Starling numeric direct。
 
-主表或主图 2：Parent-disjoint analog ablation
-  在同一 agentic workflow 中比较 operational 与 parent-disjoint；
-  direct 是最低必做范围，flat/mechanism/source claim 涉及的条件也必须使用 parent-disjoint 候选池。
+主表或主图 2：跨模型与部署合同补充
+  GLM、GPT-OSS-20B、GPT-OSS-120B 在同一 blind contract 下比较；
+  visible parent-disjoint、coverage context 和 MMP ledger 只作为 valid/appendix ablation。
 
 主表 3：Baselines 与成本
   MiniMol/modern encoder、ECFP model、retrieval-only vote、KNN，以及 agent tokens/tool calls。
 ```
 
-Identity-blind 与 matched-prefetch 不进入主结果表。既有 21 对 parity-controlled 结果保留在 appendix 或
-artifact 中，用于说明 visibility/tool-execution control，而不是决定 deployment 主结论。
-
-Starling 补齐后，agentic operational 主矩阵有 29 个 GLM 条件：
-
-| Task | None | ChEMBL direct | ChEMBL flat | ChEMBL mech | Starling direct | Starling flat | Starling mech | Starling numeric |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
-| Skin_Reaction | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
-| ClinTox | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
-| Bioavailability_Ma | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-
-总计：
+当前 v4 每个 split/model 的主矩阵是 22 个 condition：
 
 ```text
-29 deployment-visible agentic operational conditions
-25 deployment-visible agentic parent-disjoint retrieval conditions
-1 visibility-independent scalar KNN
-4 none conditions are shared because retrieval policy does not apply
+3 none conditions（identity policy not applicable）
+19 identity-blind parent-disjoint retrieval conditions
+6,887 sample-conditions on scaffold valid
 ```
 
-当前已有 26 个 agentic operational 条件，缺 ClinTox 的 3 个 Starling 条件；其中现有 22 个 retrieval
-条件的 parent-disjoint 已全部完成。若新增 entity-relation annotation 会进入 prompt，则最终冻结后需重跑
-25 个 operational retrieval 条件；parent-disjoint 还需运行对应的 25 个
-retrieval 条件。4 个 `none` 条件只有在 prompt、model 和 endpoint-returned model identifier 完全不变时
-才能复用。既有 identity-blind/matched 42 条件不计入最终 agentic 主矩阵预算。
+ClinTox 不在这 22 条件中，因为当前没有与其 gold 定义匹配的 Starling direct source。若未来找到合格 source，
+必须建立新 frozen lineage，不能把新条件追加到当前 6,887 分母。当前 scaffold-valid 已完成 GLM、
+GPT-OSS-20B/120B blind 三套矩阵；两个 GPT 和 GLM visible 补充矩阵也已完成。正式 test
+只能在 valid setting 冻结并通过完整性/泄漏/parent/held-out gates 后启动。
 
-E12 是与上述 29 条件 source/grouping matrix 正交的 ChEMBL-only 扩展实验，不计入 29 条件。其完整累计
+E12 是与上述 22 条件 source/grouping matrix 正交的 ChEMBL-only 扩展实验，不计入 22 条件。其完整累计
 曲线先在 `deployment_visible_prefetched` matched-prefetch setting 中运行，用于控制工具证据和 single prior；
 deployment-visible agentic confirmation 只复用/运行 `none`、`D`、`D+C` 和每个 task 最大科学可辩护层级
 这些 flat 关键点。Mechanism supplementary 必跑 `D+C+H1`，并在至少一个 C-family H2 available 时再跑
@@ -388,16 +379,15 @@ chembl_full_flat vs starling_full_flat
 chembl_full_mechanism vs starling_full_mechanism
 ```
 
-所有 primary source comparison 使用同一个 agentic protocol。Operational 结果回答真实数据源效用；
-parent-disjoint 结果检查 source 差异是否主要来自 same-parent coverage。若二者结论不同，必须同时报告，
-不能只选择更支持某一 source 的 policy。
+所有 primary source comparison 使用同一个 blind parent-disjoint protocol。Deployment-visible/operational
+只回答补充部署敏感性问题；若与 blind 结论不同，必须并列报告，不能只选择更支持某一 source 的 policy。
 
 必须并列报告 source coverage、每个 molecule 的 evidence count、condition completeness、provenance
 availability、retrieved-neighbor overlap 和 token cost。不能把 coverage 差异静默解释成 row quality。
 
-资源：补齐 ClinTox Starling；agentic operational 当前缺 3 个 ClinTox Starling 条件，现有 22 个 retrieval
-条件的 parent-disjoint 已完成，新增 ClinTox 条件需在同轮补齐。Starling 生成成本单独
-记账，不与 GLM reasoning tokens 合并。
+资源：当前 v4 只覆盖 BBB、Bioavailability、Skin；ClinTox 无同定义 direct source，明确不进入本 lineage。
+三任务 scaffold-valid blind source comparisons 已在三模型完成，正式 test 尚缺。Starling 生成成本单独记账，
+不与 LLM reasoning tokens 合并。
 
 完成标准：将“source quality”和“downstream performance”分开下结论；只有跨任务方向稳定时才声称
 Starling generally better，否则报告在哪些 evidence families 上更好。
@@ -435,8 +425,8 @@ attribution/endpoint error 后先修数据再运行主矩阵，不能只在论�
 和 final synthesis 结构不同。主分析：paired Macro-F1；辅助分析：group coverage、group disagreement、
 evidence duplication、token cost、failed branch 和 final evidence utilization。
 
-资源：agentic 主矩阵中的 flat/mechanism 条件；GLM API。Operational 与 parent-disjoint 都必须保证 flat
-和 mechanism 使用相同 evidence row 集合。当前结果已证明 gain 可能很小，因此不允许在
+资源：blind 主矩阵中的 flat/mechanism 条件；GLM/GPT endpoints。主矩阵和任何 visible ablation 都必须保证
+flat 和 mechanism 使用相同 evidence row 集合。当前结果已证明 gain 可能很小，因此不允许在
 test 上继续改 mechanism prompt。
 
 2026-07-27 对 Skin Starling parent-disjoint random/scaffold 完成一次 test-driven post-hoc failure
@@ -448,23 +438,21 @@ coverage 和命令记录在 `tools/chembl_tool/tasks/skin_reaction/AGENTS.md`。
 完成标准：若 gain 不稳定，改写为“mechanism decomposition 的收益依赖 family coverage/quality”，并
 检验 gain 与 coverage、duplicate burden、group disagreement 的关系。
 
-### E5：Deployment-visible agentic 主矩阵
+### E5：Deployment-visible agentic 补充矩阵
 
 **支撑贡献：C4、C5。回答 RQ5。优先级：P0。**
 
-对最终 29 个条件运行 deployment-visible agentic workflow，报告 Macro-F1、accuracy、per-class F1、
-confusion matrix、paired flips、token cost、tool-call/retry、身份声明、source-ID 使用和 evidence utilization。
-Same-parent relation 必须进入 trace/audit；parent-disjoint 使用相同 agent protocol 和冻结 prompt。
+在与 blind 主矩阵相同的 scaffold-valid、held-out index 和 parent-disjoint retrieval 上运行显式
+deployment-visible workflow，报告 Macro-F1、accuracy、per-class F1、paired flips、token/tool/retry、
+identity/source-ID 使用和 evidence utilization。该合同同时恢复结构/身份并让模型自主 function-call，
+所以 blind/visible 差异是完整部署合同差异，不是单一 visibility effect。
 
-资源：当前 26 个 agentic operational 条件已完成，缺 3 个 ClinTox Starling 条件；现有 22 个 retrieval
-条件的 parent-disjoint 已完成。数据和 relation contract 冻结后按需要重跑 25 个 operational retrieval
-条件，并运行对应 parent-disjoint 条件。Test 现有 identity-blind 26 个条件、matched-prefetch 21 个
-条件（4,456 个样本 parity audit）；valid 两套均为 26 个条件、2,713 个 matched samples。
-这些结果保留为 appendix control，不自动扩成新的完整 29 对 test 矩阵。
+资源：GPT-OSS-20B/120B 各 22 条件已经完成；两者各有一个确定性的 Bioavailability context-limit failure，
+按预先声明 policy 计错。GLM 同合同 22 条件也已达到 6887/6887 严格成功，并进入 blind+visible 总图。旧 TDC 26 条件 agentic、
+21 条件 matched-prefetch 和 operational parent-disjoint 结果保留为 historical appendix，不扩成 v4 主表。
 
-完成标准：主表只比较同一 agentic regime 内的 retrieval/source/grouping policy；不得把 agentic 与
-identity-blind 的差异解释为纯 structure visibility。ClinTox 等不平衡任务必须同时检查 accuracy、
-Macro-F1 和 flip direction。
+完成标准：visible 结果只能与同 model、同 split/subset、同 retrieval policy 的 blind 结果并列；不得用它
+选择 test prompt 或覆盖 blind 主结果。完整性、parent/threshold/held-out 和 visible contract audit 必须通过。
 
 ### E6：Visibility attribution 小规模因果消融
 
@@ -516,37 +504,29 @@ one modern pretrained molecular encoder selected without test tuning
 所有 supervised baseline 只用 train 训练、valid 选配置、test 一次评估。Retrieval-only baseline 使用与
 agent 对应 policy 下的相同 neighbors，防止比较不同候选池。Operational 与 parent-disjoint baseline 分开报告。
 
-资源：1 至 4 张 GPU 足够完成 learned baseline；CPU 可跑 KNN/RF/XGBoost。当前三任务、两种 Starling
-split 的 MiniMol train-all、full-test Morgan KNN 和复用冻结 MiniMol embedding 的 cosine KNN 已完成；
-Bioavailability scalar KNN 仍作为 numeric direct-F 专项对照。尚缺 ECFP RF/XGBoost、使用 agent
+资源：1 至 4 张 GPU 足够完成 learned baseline；CPU 可跑 KNN/RF/XGBoost。上一版 strict-conflict 的
+三任务、两种 Starling split 已完成 MiniMol train-all、full-test Morgan KNN 和复用冻结 MiniMol embedding
+的 cosine KNN；当前 v4 已完成对应的 scaffold-valid 三种 baseline。Bioavailability scalar KNN 仍作为
+numeric direct-F 专项对照。尚缺 v4 random/test、ECFP RF/XGBoost、使用 agent
 相同 neighbors 的 retrieval-only vote，以及用于确认表示选择稳健性的独立第二种 pretrained encoder。
 当前数值与入口见 `STARLING_BENCHMARK_RESULTS.md`。
 
 完成标准：报告 Macro-F1、accuracy、AUROC（有 score 时）、训练/推理成本。Agent claim 必须说明它
 在哪些任务优于 learned model，以及 retrieval/trace 提供了什么额外能力。
 
-### E9：第二模型 confirmation matrix
+### E9：跨模型 confirmation matrix
 
 **支撑贡献：C1、C5。回答 RQ6。优先级：P0。**
 
-不重跑第二个完整 agentic 矩阵。冻结 8 个 deployment-visible agentic 条件：
+当前已在完整 scaffold-valid 22-condition blind contract 上运行 GLM-5.2 NVFP4、GPT-OSS-20B 和
+GPT-OSS-120B，并在 GPT 两个规模上完成 visible contract。后续不再按结果挑 8 个条件替代这一事实；正式
+test 是否运行完整三模型矩阵，必须在 valid 后按算力和预注册 claim 冻结。
 
-```text
-BBB and Bioavailability:
-  none, starling_direct, starling_mechanism
-  6 conditions
+资源：现有三模型 blind/visible valid 结果和统一 `plot_starling_model_comparison.py` 总图已就绪；仍缺与
+GPT-OSS 不同的独立模型家族、关键条件 repeats，以及 GLM visible 的 paired flips/合同分析。
 
-Skin and ClinTox:
-  starling_mechanism
-  2 conditions
-```
-
-如 Starling 某任务最终不可用，必须在数据冻结前用对应 ChEMBL 条件替换，不能按结果替换。
-
-资源：第二个长上下文模型 endpoint 或本地多 GPU；当前模型未选择。预计成本取决于模型，必须单独记录。
-
-完成标准：比较 effect direction 和 paired flips，而不是要求绝对分数相同。若主要结论只在 GLM 成立，
-论文明确标为 model-specific。
+完成标准：比较同 condition 的 effect direction、paired flips 和模型排序，而不是只比较各模型 best-of-7。
+若 retrieval/source/mechanism 结论只在某一模型成立，论文明确标为 model-specific。
 
 ### E10：关键条件重复运行
 
@@ -566,7 +546,7 @@ Bio Starling source、Bio mechanism、Skin failure、ClinTox failure。每个 co
 
 **支撑贡献：C3、C6。回答 RQ7。优先级：P0。**
 
-在 deployment-visible agentic 主制度中，对每个 retrieval condition 计算：
+在 identity-blind parent-disjoint 主制度中，对每个 retrieval condition 计算：
 
 ```text
 overall coverage = 有至少一个 retrieved neighbor 的 query 比例
@@ -645,11 +625,12 @@ coverage/evidence volume/tokens 可审计；必需 H1 point 与任何 available 
 
 ### 计算与 API
 
-当前三套 exploratory regime 共使用约 427M tokens。最终只扩展 deployment-visible agentic 主矩阵，并
-增加 parent-disjoint 消融；初步按相同 prompt 规模规划：
+当前三套 historical exploratory regime 共使用约 427M tokens。V4 只扩展 blind parent-disjoint 主矩阵；
+deployment-visible 只做冻结补充条件。初步按相同 prompt 规模规划：
 
 ```text
-final agentic operational + parent-disjoint matrix: approximately 250M-450M tokens
+final blind parent-disjoint matrix: approximately 150M-300M tokens
+selected deployment-visible ablations: budget separately after valid
 key-condition repeats: approximately 100M-200M tokens
 second-model confirmation: model-dependent, budget separately
 Starling extraction: separate literature-processing budget
@@ -707,7 +688,6 @@ python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
   --visibility-mode identity_blind \
   --neighbor-identity-policy parent_disjoint \
   --parallelism 128 \
-  --group-workers 1 \
   --experiments <experiment_id> [<experiment_id> ...]
 
 # 生成统一统计和报告
@@ -772,9 +752,9 @@ ICLR 2027 官方 deadline 尚未发布。本时间表按往年 9 月中下旬 ab
 
 ## 投稿前硬性清单
 
-- [ ] 29 个 agentic operational 条件和预注册 parent-disjoint 条件完成，或对任何缺失条件给出数据不可得的预注册说明。
-- [ ] 所有主表 run 使用冻结的 operational/parent-disjoint contract 和 source manifest。
-- [ ] 主表 `n_failed_runs=0`，agentic visibility contract 通过；parent-disjoint conflict 为 0。
+- [ ] 三任务 22-condition blind parent-disjoint 正式 test 完成；ClinTox 不可得边界有冻结说明。
+- [ ] 所有主表 run 使用冻结的 identity-blind/parent-disjoint contract、held-out index 和 source manifest。
+- [ ] 主表 `n_failed_runs=0`，identity-blind contract 通过；parent-disjoint conflict、threshold violation 和 held-out overlap 均为 0。
 - [ ] Source-quality annotation 完成双人一致率和分歧仲裁。
 - [ ] KNN、retrieval vote、ECFP learned、MiniMol、pretrained encoder baseline 完成。
 - [ ] 第二模型 confirmation 和 6 个关键 comparison repeats 完成。

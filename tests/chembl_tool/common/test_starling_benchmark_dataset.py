@@ -367,7 +367,6 @@ def test_heldout_filter_removes_parent_equivalent_evidence(tmp_path):
     assert stats["n_excluded_unresolved_evidence_rows"] == 1
     assert stats["zero_parent_overlap"] is True
 
-
 def test_heldout_identity_loader_recomputes_and_validates_stored_key(tmp_path):
     heldout_path = tmp_path / "test_molecule_labels.jsonl"
     heldout_path.write_text(

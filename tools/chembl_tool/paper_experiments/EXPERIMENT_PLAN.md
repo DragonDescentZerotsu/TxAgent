@@ -10,12 +10,13 @@ retrieval 消融、第二模型、重复运行、source-quality annotation、bas
 对 `record_agreement70_split811_v1` 及后续新数据集，本计划的运行默认更新为
 `identity_blind + parent_disjoint` fresh-run；operational 不再预跑，也不作为 parent-disjoint 的 staging。
 默认直连 `http://127.0.0.1:50000/v1` 的 `nvidia/GLM-5.2-NVFP4`，保持历史空
-`reasoning_effort`，endpoint 全局并发预算先试 512。旧 deployment-visible/operational 章节只描述历史
-lineage 或未来显式 ablation，不能覆盖本节。
+`reasoning_effort`。Endpoint 全局硬上限为 512；reasoning-enabled 长 prompt 已证明 384/512 不稳定，当前
+默认 launcher 为全局 prompt pool 的 `parallelism=128`。旧 deployment-visible/operational 章节只描述历史
+lineage 或显式 ablation，不能覆盖本节。
 
-第一轮先在 valid 运行完整条件和 audit，冻结设置后再运行 test。文档冻结不等于代码已就绪：runner 必须先
-支持 blind+parent-disjoint fresh-run、独立 root、无需 reuse plan 的完整 `none`+retrieval 矩阵，以及不被
-外层 launcher 乘法放大的 512 全局并发预算。
+第一轮先在 valid 运行完整条件和 audit，冻结设置后再运行 test。Runner 已支持 blind+parent-disjoint
+fresh-run、独立 root、无需 reuse plan 的完整 `none`+retrieval 矩阵，以及跨 task/condition 的单一 ready
+queue；多个 launcher 仍不得各自占用 512。
 
 ## 研究问题
 
@@ -162,10 +163,14 @@ ChEMBL source manifest，出现 Starling 或其它 source row 时该 condition �
 
 新 v4 当前包含 BBB、Skin 和 Bioavailability 的 22 个 identity-blind 条件/构造方法 split，其中 3 个
 `none` 的 identity policy 不适用，19 个 retrieval 条件使用 parent-disjoint。Random/scaffold 分别先跑 valid
-再跑 test；当前尚未启动 v4 LLM。旧 26-condition deployment-visible/identity-blind/matched-prefetch 和
-parent-disjoint 结果均属于历史 lineage。ClinTox 当前没有 Starling gold split，不计入这轮 v4 矩阵。
+再跑 test。当前 scaffold-valid 已完成 GLM、GPT-OSS-20B、GPT-OSS-120B 的 22-condition blind matrix，
+以及 matched MiniMol head、Morgan KNN 和 MiniMol embedding KNN；GLM 0 failure，两个 GPT 各有一个确定性
+context-limit failure并按预先声明 policy 计错。GPT 两套 visible matrix、coverage-aware 和 MMP-ledger valid
+ablation 也已完成；GLM visible 也已达到 6887/6887 严格成功并进入总图。正式 test 尚未启动，random/GLM 的详细状态以
+`STARLING_BENCHMARK_RESULTS.md` 为准。旧 26-condition TDC visibility/operational 结果属于历史 lineage。
+ClinTox 当前没有 Starling gold split，不计入这轮 v4 矩阵。
 
-RQ8 的 ChEMBL-only cumulative distance curve 是与这套 29-condition source/grouping matrix 正交的新增
+RQ8 的 ChEMBL-only cumulative distance curve 是与这套 22-condition v4 source/grouping matrix 正交的新增
 实验，不计入上述条件数；完整 curve 先作为 matched-prefetch 受控实验运行，再做少量 agentic confirmation。
 
 ## 固定模型和检索设置
@@ -180,7 +185,7 @@ primary visibility mode: identity_blind with harness-prefetched redacted tool ev
 primary retrieval policy: parent-disjoint exclusion with top-k backfill
 operational staging: disabled by default; explicit historical/deployment ablation only
 endpoint concurrency budget: 512 total
-default launcher shape: --parallelism 128 --group-workers 1; one condition launcher at a time
+default launcher shape: one global prompt pool with --parallelism 128; one launcher at a time
 Morgan radius/bits: 2 / 2048
 top k per group: 3
 minimum similarity: 0.30
@@ -221,7 +226,9 @@ The endpoint-returned model identifier is recorded from every response rather th
 
 现有 MiniMol 结果可作为 learned baseline 背景，但不属于 retrieval ablation，也不能用来选择 agent setting。历史 DeepSeek 和 Bioavailability expert-policy run 仅作为 provenance 参考；它们与冻结的 GLM 矩阵不可直接比较，不进入论文主表。
 
-当前 Starling random/scaffold 已完成 MiniMol `--train-all` head、full-test Morgan KNN `k=3` 和
-复用冻结 MiniMol embedding 的 cosine KNN `k=3`。三者进入 Starling benchmark performance overview，
-但都不是 agent retrieval condition；训练/选择口径、结果与入口见
-`STARLING_BENCHMARK_RESULTS.md`。本节其余 29-condition 计数仍只描述旧 TDC-lineage agentic matrix。
+上一版 strict-conflict Starling random/scaffold 已完成 MiniMol `--train-all` head、full-test Morgan KNN
+`k=3` 和复用冻结 MiniMol embedding 的 cosine KNN `k=3`；当前 v4 已完成三者的 scaffold-valid 对照。
+它们进入各自 lineage 的 Starling benchmark performance overview，但都不是 agent retrieval condition；
+训练/选择口径、结果与入口见
+`STARLING_BENCHMARK_RESULTS.md`。下文若仍出现 29-condition 计数，只描述旧 TDC-lineage historical
+agentic proposal，不覆盖本节的 22-condition v4 contract。

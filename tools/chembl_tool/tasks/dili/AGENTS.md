@@ -95,7 +95,10 @@ run_reasoning_pipeline.py
 
 run_reasoning_batch.py
   批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、report、logs、
-  runs 和 combined trace；支持 --skip-existing 断点续跑。
+  runs 和 combined trace；支持 --skip-existing 断点续跑。当前已接入公共 global prompt stage pool，但旧
+  DILI pipeline 尚未迁移到共享 experiment retrieval/identity/context contract，因此 batch 只允许默认
+  `native + operational + similarity + standard`；公共 parser 会拒绝 parent-disjoint、coverage 或 branch-reuse
+  参数，避免 manifest 声明超出实际 retrieval 能力。
 ```
 
 不要在 wrapper 中新增业务规则；DILI assay 保留/剔除逻辑应只放在 `rules.py` 和 `scoring.py`，
@@ -421,7 +424,6 @@ command shape:
     --input-jsonl /data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/DILI.jsonl \
     --indices 0 3 4 6 7 9 \
     --parallelism 2 \
-    --group-workers 3 \
     --batch-id dili_smoke_full_v7_idx0_3_6_20260630 \
     --max-tokens 8192 \
     --timeout-s 300 \

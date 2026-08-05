@@ -76,6 +76,45 @@ def test_runner_uses_cosine_similarity_and_three_neighbor_vote(tmp_path):
     assert predictions[1]["neighbors"][0]["train_index"] == 3
 
 
+def test_runner_can_evaluate_valid_split(tmp_path):
+    data_dir = tmp_path / "data"
+    cache_dir = tmp_path / "embeddings"
+    output_dir = tmp_path / "output"
+    train = [
+        {"drug": "train-a", "Y": 1},
+        {"drug": "train-b", "Y": 1},
+        {"drug": "train-c", "Y": 0},
+    ]
+    valid = [{"drug": "valid-a", "Y": 1}]
+    _write_jsonl(data_dir / "train.jsonl", train)
+    _write_jsonl(data_dir / "valid.jsonl", valid)
+    _write_cache(
+        cache_dir / "train.pt",
+        train,
+        [[1.0, 0.0], [0.9, 0.1], [0.0, 1.0]],
+    )
+    _write_cache(cache_dir / "valid.pt", valid, [[1.0, 0.0]])
+
+    assert main(
+        [
+            "--data-dir",
+            str(data_dir),
+            "--embedding-cache-dir",
+            str(cache_dir),
+            "--output-dir",
+            str(output_dir),
+            "--evaluation-split",
+            "valid",
+        ]
+    ) == 0
+
+    metrics = json.loads((output_dir / "metrics.json").read_text())
+    assert metrics["evaluation_split"] == "valid"
+    assert metrics["n_evaluation"] == 1
+    assert (output_dir / "valid_predictions.jsonl").exists()
+    assert not (output_dir / "test_predictions.jsonl").exists()
+
+
 def test_runner_rejects_cache_that_does_not_match_split(tmp_path):
     data_dir = tmp_path / "data"
     cache_dir = tmp_path / "embeddings"

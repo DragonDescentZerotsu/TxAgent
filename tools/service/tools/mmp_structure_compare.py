@@ -8,6 +8,7 @@ from rdkit.Chem import rdFMCS
 from rdkit.Chem.rdFingerprintGenerator import GetMorganGenerator
 
 from tools.service.config import ServiceSettings
+from tools.service.cache import ToolResultCache
 from tools.service.errors import InvalidInputError
 from tools.service.tools.base import BaseTool
 
@@ -64,10 +65,17 @@ class MmpStructureCompareTool(BaseTool):
         self._fragment_filter: Any | None = None
         self._fragment_algorithm: Any | None = None
         self._mmpdb_error: str | None = None
+        self._fragmentation_cache: ToolResultCache | None = None
 
     def initialize(self, settings: ServiceSettings) -> None:
         self.initialized = True
         self.initialization_error = None
+        fragment_cache_path = None
+        if settings.cache_path is not None:
+            fragment_cache_path = settings.cache_path.with_name(
+                f"{settings.cache_path.stem}-mmp-fragments.sqlite3"
+            )
+        self._fragmentation_cache = ToolResultCache(fragment_cache_path, memory_entries=128)
         try:
             from mmpdblib import config, fragment_algorithm
 
@@ -85,6 +93,11 @@ class MmpStructureCompareTool(BaseTool):
             self._fragment_algorithm = None
             self._mmpdb_error = f"{type(exc).__name__}: {exc}"
             self.initialization_error = self._mmpdb_error
+
+    def close(self) -> None:
+        if self._fragmentation_cache is not None:
+            self._fragmentation_cache.close()
+            self._fragmentation_cache = None
 
     def invoke(self, payload: dict[str, Any], *, return_debug: bool = False) -> dict[str, Any]:
         query_input = str(payload.get("query_smiles") or "").strip()
@@ -143,6 +156,21 @@ class MmpStructureCompareTool(BaseTool):
         }
 
     def _fragmentations(self, mol: Chem.Mol, *, limit: int = 10000) -> list[dict[str, Any]]:
+        if self._fragmentation_cache is None:
+            return self._fragmentations_uncached(mol, limit=limit)
+        cache_key = f"mmp-fragments-v1:{_canonical_smiles(mol)}:{limit}"
+        result, _ = self._fragmentation_cache.get_or_compute(
+            cache_key,
+            lambda: {"records": self._fragmentations_uncached(mol, limit=limit)},
+        )
+        return result["records"]
+
+    def _fragmentations_uncached(
+        self,
+        mol: Chem.Mol,
+        *,
+        limit: int,
+    ) -> list[dict[str, Any]]:
         if self._fragment_filter is None or self._fragment_algorithm is None:
             return []
         errmsg, normalized_mol = self._fragment_filter.normalize(mol)

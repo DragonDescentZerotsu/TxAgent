@@ -25,6 +25,7 @@ CONFIG = BatchConfig(
     canonical_negative="no_dili_risk",
     positive_predictions=frozenset({"dili_risk", "positive", "dili_positive", "hepatotoxic", "hepatotoxicity", "1"}),
     negative_predictions=frozenset({"no_dili_risk", "negative", "dili_negative", "non_hepatotoxic", "non-hepatotoxic", "0"}),
+    supports_shared_retrieval_contract=False,
 )
 
 

@@ -13,6 +13,10 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.coverage_reasoning import (
+    NEIGHBOR_CONTEXT_PROFILES,
+    STANDARD_NEIGHBOR_CONTEXT,
+)
 from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retrieve_experiment_view
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.identity_blind import (
@@ -20,6 +24,10 @@ from tools.chembl_tool.common.identity_blind import (
     prepare_prefetched_final_retrieval,
     prepare_reasoning_retrieval,
     sanitize_identity_blind_branch_outputs,
+)
+from tools.chembl_tool.common.neighbor_selection import (
+    NEIGHBOR_SELECTORS,
+    SIMILARITY_SELECTOR,
 )
 from tools.chembl_tool.common.json_utils import parse_json_content
 from tools.chembl_tool.common.neighbor_selection import (
@@ -144,7 +152,7 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
-    if not api_key:
+    if not api_key and not args.prepare_only:
         raise SystemExit(f"Missing API key env var: {args.api_key_env}")
 
     if args.resume_final_from_run_dir:
@@ -217,6 +225,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.max_groups:
         groups = groups[: args.max_groups]
     _log(f"group reasoning calls={len(groups)}")
+    if args.prepare_only:
+        _log("prepare-only complete; reasoning stages deferred to the global pool")
+        return 0
 
     client = OpenAICompatibleClient(
         api_key=api_key,
@@ -237,12 +248,17 @@ def main(argv: list[str] | None = None) -> int:
         identity_blind=args.identity_blind,
         harness_prefetch_tools=args.harness_prefetch_tools,
         prefetched_tool_replay_run_dir=args.prefetched_tool_replay_run_dir,
+        neighbor_context_profile=args.neighbor_context_profile,
     )
     reasoning_groups = [group for group in reasoning_retrieval["groups"] if group.get("neighbors")]
     if args.max_groups:
         reasoning_groups = reasoning_groups[: args.max_groups]
     frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
-    frozen_groups = load_reusable_group_outputs(args.group_analysis_source_run_dir, retrieval)
+    frozen_groups = load_reusable_group_outputs(
+        args.group_analysis_source_run_dir,
+        retrieval,
+        target_neighbor_context_profile=args.neighbor_context_profile,
+    )
 
     single_output, group_outputs = _run_parallel_reasoning(
         client,
@@ -291,6 +307,8 @@ def main(argv: list[str] | None = None) -> int:
         "retrieval_source": args.retrieval_source,
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "morgan_neighbor_selector": args.morgan_neighbor_selector,
+        "neighbor_selector": args.morgan_neighbor_selector,
+        "neighbor_context_profile": args.neighbor_context_profile,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
@@ -910,6 +928,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--out-root", default=DEFAULT_OUT_ROOT)
     parser.add_argument("--run-id", default="")
     parser.add_argument("--resume-final-from-run-dir", default="")
+    parser.add_argument(
+        "--prepare-only",
+        action="store_true",
+        help="Write retrieval.json and stop before any LLM request.",
+    )
     parser.add_argument("--env-file", default=".env")
     parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY")
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
@@ -937,6 +960,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--morgan-neighbor-selector",
         choices=NEIGHBOR_SELECTORS,
         default=SIMILARITY_SELECTOR,
+    )
+    parser.add_argument(
+        "--neighbor-context-profile",
+        choices=NEIGHBOR_CONTEXT_PROFILES,
+        default=STANDARD_NEIGHBOR_CONTEXT,
     )
     return parser.parse_args(argv)
 
