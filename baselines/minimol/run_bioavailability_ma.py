@@ -144,6 +144,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Train for all configured epochs on train.jsonl, without requiring or selecting on valid.jsonl.",
     )
+    parser.add_argument(
+        "--embeddings-only",
+        action="store_true",
+        help="Materialize validated embedding caches and exit without fitting a task head.",
+    )
     parser.add_argument("--force-embed", action="store_true", help="Ignore cached MiniMol embeddings.")
     return parser.parse_args()
 
@@ -289,10 +294,17 @@ def make_model(args: argparse.Namespace, device: torch.device) -> tuple[nn.Modul
     loss_fn = nn.BCELoss()
 
     def lr_fn(epoch: int) -> float:
-        if args.warmup > 0 and epoch < args.warmup:
-            return epoch / args.warmup
+        schedule_epoch = epoch + 1
+        if args.warmup > 0 and schedule_epoch <= args.warmup:
+            return schedule_epoch / args.warmup
         denom = max(1, args.epochs - args.warmup)
-        return (1 + math.cos(math.pi * (epoch - args.warmup) / denom)) / 2
+        decay_epoch = (
+            schedule_epoch - args.warmup
+            if args.warmup > 0
+            else epoch
+        )
+        decay_epoch = min(denom, max(0, decay_epoch))
+        return (1 + math.cos(math.pi * decay_epoch / denom)) / 2
 
     scheduler = LambdaLR(optimizer, lr_lambda=lr_fn)
     return model, optimizer, scheduler, loss_fn
@@ -304,11 +316,9 @@ def train_one_epoch(
     optimizer: optim.Optimizer,
     scheduler: LambdaLR,
     loss_fn: nn.Module,
-    epoch: int,
     device: torch.device,
 ) -> None:
     model.train()
-    scheduler.step(epoch)
     for inputs, targets in loader:
         inputs = inputs.to(device)
         targets = targets.to(device)
@@ -317,6 +327,7 @@ def train_one_epoch(
         loss = loss_fn(torch.sigmoid(logits), targets)
         loss.backward()
         optimizer.step()
+    scheduler.step()
 
 
 def evaluate_loss(model: nn.Module, loader: DataLoader, loss_fn: nn.Module, device: torch.device) -> float:
@@ -395,6 +406,29 @@ def main() -> None:
     if valid is not None:
         embedding_splits["valid"] = valid
     split_embeddings = featurize_splits(embedding_splits, args)
+    if args.embeddings_only:
+        (args.output_dir / "embeddings_only_manifest.json").write_text(
+            json.dumps(
+                {
+                    "type": "minimol_embeddings_only.v1",
+                    "data_dir": str(args.data_dir),
+                    "embedding_cache_dir": str(args.embedding_cache_dir),
+                    "evaluation_split": args.evaluation_split,
+                    "splits": {
+                        name: {
+                            "n_rows": len(embedding_splits[name].smiles),
+                            "embedding_shape": list(tensor.shape),
+                        }
+                        for name, tensor in split_embeddings.items()
+                    },
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        print("[minimol] embeddings-only cache materialization complete")
+        return
     train_embeddings = split_embeddings["train"]
     valid_embeddings = split_embeddings.get("valid") if valid is not None else None
     test_embeddings = split_embeddings[args.evaluation_split]
@@ -430,7 +464,7 @@ def main() -> None:
         best_model = None
 
         for epoch in range(args.epochs):
-            train_one_epoch(model, train_loader, optimizer, scheduler, loss_fn, epoch, device)
+            train_one_epoch(model, train_loader, optimizer, scheduler, loss_fn, device)
             if valid_loader is None:
                 print(
                     f"[minimol] member={member_idx + 1}/{args.ensemble_size} "

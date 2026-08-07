@@ -11,7 +11,7 @@ Starling 原始论文没有发布一个统一的二值化脚本。论文将每�
 transporter mechanism 等上下文产生不同结果。论文 Appendix H 展示的是 molecule 内 positive
 fraction，而不是把所有 contextual records 无条件压成一个 gold label。
 
-当前 v4 在保留 source-row ambiguity gate 的前提下，采用用户冻结的 70% record-weighted majority：
+所有当前 lineage 在保留 source-row ambiguity gate 的前提下，采用用户冻结的 70% record-weighted majority：
 
 1. source row 先按 task-specific TDC 语义独立转成 `0/1/ambiguous`；
 2. SMILES 用 `rdkit_fragment_parent.v1` 归一化，盐型不成为独立 benchmark molecule；
@@ -25,15 +25,35 @@ fraction，而不是把所有 contextual records 无条件压成一个 gold labe
 6. 相对比较、单位不兼容、非目标 endpoint、inconclusive 和无法确认 population 的记录不进入 gold label；
 7. Starling 明确标为 `qualifying_conditions` 的 dose、formulation、disease state、co-treatment 等
    条件性 record 不进入当前 molecule-only gold；
-8. valid 与 test target 分别为 `min(500, floor(0.1 * n_binary_molecules))`，train 使用剩余 parents；
-9. 同一批 accepted parents 同时生成两个版本：
+8. 第一版 `record_agreement70_split811_v1` 的 valid 与 test target 分别为
+   `min(500, floor(0.1 * n_binary_molecules))`，train 使用剩余 parents；
+9. 第一版从同一批 accepted parents 同时生成两个版本：
    - `random`：固定 seed 的 label-stratified stable-hash random split；
    - `scaffold`：以 canonical Bemis–Murcko scaffold 为不可拆分 group，按固定 seed 排序后
      先选完整 test scaffold groups，再从剩余 groups 选择 valid，以保证 train/valid/test scaffold 两两不重叠；
-10. scaffold group 无法精确凑到 valid/test target 时只能从下方逼近，并在 summary 中记录 shortfall，
+10. 第一版 scaffold group 无法精确凑到 valid/test target 时只能从下方逼近，并在 summary 中记录 shortfall，
     不允许拆散同一 scaffold 来凑整数。
 
 这套规则优先保证 label precision 和可审计性，而不是最大化保留率。
+
+## 当前 record-supported v2 split policy
+
+当前 paper-facing lineage 是 scaffold-only `record_supported_v2`。它复用第一版冻结的全部 binary parent
+labels，只重新分配 scaffold groups；因此 label 变化和 split 变化不会混在一起。分配使用 lexicographic
+MILP，并严格按以下优先级冻结前一层最优值后再优化下一层：
+
+1. train/valid/test scaffold 和 parent identity 两两零重叠；
+2. valid/test 必须精确达到目标大小：BBB 各 500，Bioavailability/Skin 各为总 parent 的 10%；
+3. 最小化 valid+test 中的 singleton parents；
+4. 最小化 valid/test singleton 数量差；
+5. 最小化两个 held-out split 相对全数据正类比例的总偏差；
+6. 仅在上述数据质量目标全部固定后，最大化第一版 valid molecule 复用；
+7. 最后用固定 seed 的 scaffold hash rank 消除 solver tie，使构建可重放。
+
+冻结结果为 BBB `18,425/500/500`、Bioavailability `1,674/209/209`、Skin
+`1,966/245/245`。BBB 与 Bioavailability 的 valid/test 全部是 multi-record parents；Skin 每个 held-out
+split 是 240 multi-record + 5 singleton，这 10 个 singleton 是精确 split 大小和 scaffold-disjoint 硬约束下
+的全局最小值。三个 task 的 identity/scaffold overlap 都是 0。
 
 ## Held-out 隔离要求
 
@@ -192,6 +212,7 @@ permeability/exposure 的记录不映射为 sensitization gold。
 ```text
 tools/chembl_tool/common/starling/benchmark_dataset.py
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
+tools/chembl_tool/common/starling/build_record_supported_benchmark.py
 ```
 
 Task-specific adapters：
@@ -252,6 +273,29 @@ data/processed_starling/<Task>/
 PMIDs、raw value examples、identity metadata 和冲突信息放在 audit artifacts，不能整包进入 LLM prompt。
 根目录 `molecule_labels.jsonl` 带有 `split_assignments.random/scaffold`；每个 split-specific audit
 文件用于后续按对应 parent identity 构建 train-only retrieval library。
+
+当前 v2 构建命令与输出：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.common.starling.build_record_supported_benchmark
+```
+
+```text
+data/processed_starling_record_supported_v2/<Task>/scaffold/
+  train.jsonl
+  valid.jsonl
+  test.jsonl
+  train_molecule_labels.jsonl
+  valid_molecule_labels.jsonl
+  test_molecule_labels.jsonl
+  heldout_molecule_labels.jsonl
+  summary.json
+```
+
+v2 不复制根级 source-row rejection/conflict artifacts；这些 immutable label provenance 仍由
+`data/processed_starling/<Task>/` 提供。v2 目录只保存发生变化的 split 与 split-specific audit，避免重复
+存放同一批 source records。
 
 ## 版本与来源
 

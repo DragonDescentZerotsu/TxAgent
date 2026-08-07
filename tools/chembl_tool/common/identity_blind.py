@@ -328,8 +328,18 @@ def _compact_result(result: dict[str, Any], *hidden_values: str) -> dict[str, An
 def _hide_structures(value: Any, hidden_values: tuple[str, ...]) -> Any:
     if isinstance(value, str):
         for hidden in hidden_values:
-            if hidden:
-                value = re.sub(re.escape(hidden), "[hidden_structure]", value, flags=re.IGNORECASE)
+            # A one-character atom-only SMILES (for example ``N``) cannot be
+            # distinguished from ordinary prose or serialized control text.
+            # Replacing it would corrupt every matching letter in the tool
+            # summary.  The query identity is removed structurally below; only
+            # multi-character structure strings are safe to redact in text.
+            if _is_auditable_structure_term(hidden):
+                value = re.sub(
+                    _structure_pattern(hidden),
+                    "[hidden_structure]",
+                    value,
+                    flags=re.IGNORECASE,
+                )
         return value
     if isinstance(value, list):
         return [_hide_structures(item, hidden_values) for item in value]
@@ -435,7 +445,8 @@ def find_identity_blind_leaks(
     leaked_structures = sorted(
         term
         for term in structures
-        if term and re.search(_structure_pattern(term), serialized, flags=re.IGNORECASE)
+        if _is_auditable_structure_term(term)
+        and re.search(_structure_pattern(term), serialized, flags=re.IGNORECASE)
     )
     leaked_identifiers = sorted(
         term
@@ -519,3 +530,18 @@ def _structure_pattern(term: str) -> str:
     """Avoid treating short SMILES as substrings of ordinary words."""
     escaped = re.escape(term)
     return rf"(?<![A-Za-z0-9]){escaped}(?![A-Za-z0-9])"
+
+
+def _is_auditable_structure_term(term: str) -> bool:
+    """Whether a structure token is distinct enough for text leak matching.
+
+    A canonical SMILES containing only one atom is also a normal chemical
+    token in assay prose (for example ``Cl`` in ``36Cl influx``).  Treating it
+    as an identity leak either corrupts evidence text or produces a false
+    preflight failure.  Multi-atom structures such as ``C[Se]`` remain fully
+    auditable.
+    """
+    normalized = str(term).strip()
+    if len(normalized) < 2:
+        return False
+    return re.fullmatch(r"(?:[A-Z][a-z]?|\[[^\[\]]+\])", normalized) is None

@@ -26,6 +26,12 @@ def test_skin_starling_profiles_cover_direct_and_three_mechanisms():
         "Mechanism.skin_exposure",
     ]
     assert all(profile.smiles_field == "SMILES" for profile in profiles)
+    assert [profile.evidence_role for profile in profiles] == [
+        "direct_outcome",
+        "mechanistic_factor",
+        "mechanistic_factor",
+        "context_modifier",
+    ]
 
 
 def test_starling_molecule_id_is_cross_profile_and_stable():

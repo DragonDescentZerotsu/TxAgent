@@ -474,7 +474,7 @@ def _register_stage_state(
         getattr(state.prepared.args, "single_analysis_source_batch", "") or ""
     )
     if source_batch:
-        source_key = (Path(source_batch).name, state.item.index)
+        source_key = (str(Path(source_batch).resolve()), state.item.index)
         single_dependency_waiters.setdefault(source_key, set()).add(state.key)
 
 

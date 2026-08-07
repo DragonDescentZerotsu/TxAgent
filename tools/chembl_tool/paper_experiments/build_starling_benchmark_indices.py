@@ -73,22 +73,33 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
 )
 
 
-def paper_root_for_benchmark_split(split: str, *, output_root: str | Path = DEFAULT_OUTPUT_ROOT) -> Path:
+def paper_root_for_benchmark_split(
+    split: str,
+    *,
+    output_root: str | Path = DEFAULT_OUTPUT_ROOT,
+    lineage: str = BENCHMARK_LINEAGE,
+) -> Path:
     if split not in BENCHMARK_SPLITS:
         raise ValueError(f"Unknown Starling benchmark split: {split}")
-    return Path(output_root) / f"molecular_evidence_agent_starling_{split}_{BENCHMARK_LINEAGE}"
+    return Path(output_root) / f"molecular_evidence_agent_starling_{split}_{lineage}"
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     splits = args.splits or list(BENCHMARK_SPLITS)
     specs = _select_specs(args.indices)
-    summary_path = Path(args.output_root) / "starling_benchmark_index_summary.json"
+    summary_name = (
+        "starling_benchmark_index_summary.json"
+        if args.benchmark_lineage == BENCHMARK_LINEAGE
+        else f"starling_benchmark_index_summary_{args.benchmark_lineage}.json"
+    )
+    summary_path = Path(args.output_root) / summary_name
     if args.summarize_existing:
         results = _collect_existing_index_meta(
             splits=splits,
             specs=specs,
             output_root=args.output_root,
+            lineage=args.benchmark_lineage,
         )
         summary_path.parent.mkdir(parents=True, exist_ok=True)
         summary_path.write_text(
@@ -99,11 +110,15 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     results = _load_existing_summary(summary_path)
     for split in splits:
-        paper_root = paper_root_for_benchmark_split(split, output_root=args.output_root)
+        paper_root = paper_root_for_benchmark_split(
+            split,
+            output_root=args.output_root,
+            lineage=args.benchmark_lineage,
+        )
         split_results = dict(results.get(split, {}))
         for spec in specs:
             heldout_path = (
-                Path("data/processed_starling")
+                Path(args.benchmark_data_root)
                 / spec["task"]
                 / split
                 / "heldout_molecule_labels.jsonl"
@@ -114,7 +129,10 @@ def main(argv: list[str] | None = None) -> int:
                 source_evidence_jsonl=spec["source_evidence"],
                 heldout_labels_jsonl=heldout_path,
                 out_dir=out_dir,
-                index_version=f"{spec['name']}.heldout_valid_test_{split}.v2",
+                index_version=(
+                    f"{spec['name']}.heldout_valid_test_{split}."
+                    f"{args.benchmark_lineage}.v1"
+                ),
                 evidence_filename=spec["evidence_filename"],
                 index_filename=spec["index_filename"],
                 meta_filename=spec["meta_filename"],
@@ -144,11 +162,16 @@ def _collect_existing_index_meta(
     splits: list[str],
     specs: list[dict[str, str]],
     output_root: str | Path,
+    lineage: str = BENCHMARK_LINEAGE,
 ) -> dict[str, Any]:
     results: dict[str, Any] = {}
     missing: list[str] = []
     for split in splits:
-        paper_root = paper_root_for_benchmark_split(split, output_root=output_root)
+        paper_root = paper_root_for_benchmark_split(
+            split,
+            output_root=output_root,
+            lineage=lineage,
+        )
         split_results: dict[str, Any] = {}
         for spec in specs:
             meta_path = paper_root / "evidence" / spec["name"] / spec["meta_filename"]
@@ -179,6 +202,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--splits", nargs="*", choices=BENCHMARK_SPLITS, default=[])
     parser.add_argument("--indices", nargs="*", default=[])
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
+    parser.add_argument(
+        "--benchmark-data-root",
+        default="data/processed_starling",
+        help="Root containing <Task>/<split>/heldout_molecule_labels.jsonl.",
+    )
+    parser.add_argument("--benchmark-lineage", default=BENCHMARK_LINEAGE)
     parser.add_argument("--workers", type=int, default=32)
     parser.add_argument("--progress-every", type=int, default=10000)
     parser.add_argument(

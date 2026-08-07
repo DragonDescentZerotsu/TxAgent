@@ -39,10 +39,42 @@ TRACE_RETENTION.md
 `analysis/report.md`，然后根据生成产物把已测结果同步到 `RESULTS.md`，最后更新
 `VISIBILITY_ANALYSIS.md` 等解释文档。当前生成器不会自动改写 `RESULTS.md`；不得只在聊天中保留结论。
 
-## 新数据集默认运行合同（2026-08-01 冻结）
+## record-supported v2 当前合同（2026-08-07 冻结）
 
-本节覆盖下文所有针对旧 TDC/strict-conflict lineage 的默认描述。对
-`record_agreement70_split811_v1` 及其后的新实验，正式默认是：
+当前 paper-facing scaffold benchmark 是 `record_supported_v2`：BBB valid/test 各 500；
+Bioavailability 各 209；Skin 各 245。builder 在 scaffold 不跨 split 的硬约束下，按顺序最小化
+held-out singleton、valid/test singleton imbalance、label imbalance，再最大化第一版 valid overlap。
+BBB 和 Bioavailability 的 valid/test 全是 multi-record parents；Skin 每个 held-out split 为
+240 multi-record + 5 singleton，这是精确 245/245 下的全局最小 singleton 解。三个 task 的 parent identity
+和 scaffold pairwise overlap 都是 0。
+
+```text
+builder:
+  tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+data:
+  data/processed_starling_record_supported_v2/<Task>/scaffold/
+held-out indices:
+  outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/
+strict first-version reuse:
+  tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
+paired direct-agent statistics:
+  tools/chembl_tool/paper_experiments/analyze_starling_direct_significance.py
+```
+
+`build_starling_benchmark_indices.py` 和 `starling_benchmark_matrix.py` 对非默认 lineage 必须显式传
+`--benchmark-data-root`、`--benchmark-lineage` 和 `--canonical-paper-root`；model/visibility 仍用独立
+`--output-root`。历史 artifact 只允许按 molecule key 复用；target retrieval 必须重新物化，single 需要
+完全一致的 model/reasoning/visibility 合同，group 还需相同 LLM-visible group input，final 只在完整
+`retrieval_prompt_hash` 相同且全部 expected groups 已复用时复制。复用审计写入 target root 的
+`reuse_audit/`，不得按 query index 直接搬运。
+
+第一版 `record_agreement70_split811_v1` 正式结果保留为 historical comparison。曾生成的 exploratory
+`record_supported_v1` 数据、indices、agent runs 和 baselines 已删除；不得在文档或汇总中恢复引用。
+
+## 第一版新数据集默认运行合同（2026-08-01 冻结）
+
+本节记录第一版相对旧 TDC/strict-conflict lineage 的默认描述。对
+`record_agreement70_split811_v1`，正式默认是：
 
 ```text
 base_url: http://127.0.0.1:50000/v1
@@ -378,15 +410,34 @@ overlap=0。正式 test 的默认完成 gate 仍是 `n_failed=0`。若遇到经�
 冻结的 MiniMol head、正式全 test Morgan KNN 和 MiniMol embedding cosine KNN。
 
 2026-07-27 的 random/scaffold 各 22-condition blind artifact 属于上一版 strict-conflict split，曾分别残留
-9/5 个 failed sample-condition；它只保留作 historical repair lineage，不能冒充当前 v4。当前
-`record_agreement70_split811_v1` 重新从 valid 开始 fresh-run，逐条件状态记录在
-`STARLING_BENCHMARK_RESULTS.md`，完整 valid gate 通过前不得启动或解释 test。
+9/5 个 failed sample-condition；它只保留作 historical repair lineage，不能冒充当前 benchmark。第一版
+`record_agreement70_split811_v1` 的 valid 结果已冻结为 historical comparison；当前
+`record_supported_v2` 的逐条件状态记录在 `STARLING_BENCHMARK_RESULTS.md` 第 0 节，完整 valid gate
+通过前不得启动或解释 test。
 
 ## 代码与命令入口
 
 ```text
 molecular_evidence_agent.py
   冻结实验矩阵与统一运行入口；负责 visibility mode、neighbor identity policy、结果 root 和跨条件复用参数。
+
+router_oof/
+  train-only KNN-vs-direct-agent router 的独立模块。v1–v3.1 可部署版本按 task 分别训练，不共享参数；使用
+  scaffold-or-parent
+  5-fold OOF、fold-specific parent-filtered index、gpt-oss-120b identity-blind parent-disjoint direct agent、
+  固定 pre-decision features 和 nested OOF Logistic/HistGBDT 评估。v2 删除 fold-dependent reference-size
+  与确定性重复 features，使用双风险 score 和 paired-bootstrap promotion gate；v1 `router/` 与 v2
+  `router_v2/` 必须保留独立 lineage。v3 `post_selector_v3/` 只在 disagreement rows 学 agent-win probability，
+  用 nested OOF 比较 output/query/KNN、完整 evidence、evidence+structured-trace 三档 profile，并按两个输出
+  方向分别冻结 threshold；train gate 失败时部署严格回退 KNN。不得把 train fold 塞进正式
+  `starling_benchmark_matrix.py` 的 valid/test 枚举。v3.1 `post_selector_v31/` 为两个方向分别选择并校准
+  fold ensemble，以最低 route count、Wilson precision lower bound 和 accuracy-first paired-bootstrap gate 控制
+  风险；valid 只报告独立 evidence gate，不允许回调 frozen policy。后续 matched-size curve 固定 direction
+  specs；唯一不可部署的 shared-transfer termination diagnosis 固定 task-balanced Logistic、完整 generic profile
+  和 task-specific calibration，并执行 cross-task identity/scaffold exclusion。它仍以 agent-win 为监督，不是
+  counterfactual evidence utility。当前 transfer continuation gate 已失败，禁止继续 valid-informed router
+  family/profile sweep，也不启动 router formal test。协议与 gate 见
+  `ROUTER_OOF_IMPLEMENTATION_PLAN.md`。
 
 summarize_results.py
   仅汇总旧 TDC identity-blind、matched-prefetch 和 agentic operational 条件，生成 coverage、token、

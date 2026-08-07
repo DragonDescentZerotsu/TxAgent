@@ -1,10 +1,92 @@
-# Starling random/scaffold benchmark：当前决策、结果与入口
+# Starling benchmark：当前决策、结果与入口
 
-更新时间：2026-08-04。
+更新时间：2026-08-07。
 
-本文件是 2026-07-24 至 2026-07-27 Starling benchmark 迁移和实验的集中总账。它只记录当前
-Starling-held-out `random` / `scaffold` lineage；旧 TDC `test` / `valid` 的历史结果仍见
-`RESULTS.md`，不得混表或改称 Starling。
+本文件是 Starling benchmark 迁移和实验的集中总账。当前 paper-facing lineage 是 scaffold-only
+`record_supported_v2`；第一版 `record_agreement70_split811_v1` random/scaffold 结果作为 historical
+comparison 保留。旧 TDC `test` / `valid` 的历史结果仍见 `RESULTS.md`，不得跨 lineage 混表。
+
+## 0. 当前 record-supported v2 scaffold benchmark
+
+v2 继续使用第一版相同的 70% record-weighted parent label，只改变 scaffold split 分配：优先保证
+scaffold-disjoint，并按 lexicographic MILP 依次最小化 held-out singleton、valid/test singleton imbalance、
+label imbalance，最后才最大化第一版 valid molecule 复用。BBB valid/test 上限各 500；Bioavailability
+和 Skin 各取总 parent 的 10%。
+
+| task | train / valid / test | valid multi/single | test multi/single | valid/test Y=0,Y=1 | first-version valid reuse |
+|---|---:|---:|---:|---:|---:|
+| BBB_Martins | 18,425 / 500 / 500 | 500 / 0 | 500 / 0 | 139,361 / 139,361 | 81 |
+| Bioavailability_Ma | 1,674 / 209 / 209 | 209 / 0 | 209 / 0 | 58,151 / 58,151 | 110 |
+| Skin_Reaction | 1,966 / 245 / 245 | 240 / 5 | 240 / 5 | 73,172 / 73,172 | 72 |
+
+所有 identity/scaffold pairwise overlap 都是 0。Skin 的 10 个 held-out singleton 是精确 245/245 下的
+全局最小值，并均衡分配为 valid/test 各 5 个。当前入口与 canonical roots：
+
+```text
+tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+data/processed_starling_record_supported_v2/
+tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/
+tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
+tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+tools/chembl_tool/paper_experiments/analyze_starling_direct_significance.py
+```
+
+五个 v2 Starling held-out indices 均通过 `zero_parent_overlap=true` 和
+`n_residual_heldout_parent_identities=0`。正式 valid matrix 使用完整 22-condition scaffold matrix、
+`parent_disjoint` retrieval，分别运行 GPT-OSS-120B 与 GLM-5.2 的 identity-blind 和 deployment-visible。
+历史复用按 molecule key 和严格 stage contract 审计；不会按旧 query index 搬运。
+
+GPT-OSS-120B 的 blind/visible 两套矩阵均已完成 22 conditions、6,887/6,887 sample-conditions，失败为 0。
+最佳 macro-F1 与三种 train-label baseline 如下：
+
+| task | best 120B blind | blind | best 120B visible | visible | MiniMol head | Morgan KNN | MiniMol KNN |
+|---|---|---:|---|---:|---:|---:|---:|
+| BBB_Martins | Starling Full / Flat | 0.6753 | Starling Direct | 0.6900 | **0.7226** | 0.5857 | 0.6907 |
+| Bioavailability_Ma | Starling Direct / Full | 0.6031 | Starling Full / Flat | **0.6787** | 0.6755 | 0.5856 | 0.6149 |
+| Skin_Reaction | Starling Full / Mechanism | 0.6010 | Starling Full / Mechanism | **0.6151** | 0.5749 | 0.5201 | 0.5749 |
+
+结果 roots：
+
+```text
+outputs/paper/starling_benchmark_results_scaffold_record_supported_v2_valid_gpt_oss_120b_blind/
+outputs/paper/starling_benchmark_results_scaffold_record_supported_v2_valid_gpt_oss_120b_visible/
+outputs/baselines/minimol_starling_record_supported_v2/
+outputs/baselines/structure_knn_starling_record_supported_v2/
+outputs/baselines/minimol_embedding_knn_starling_record_supported_v2/
+```
+
+新旧 dataset 的 GPT-OSS-120B 全设置与三种 baseline 由唯一总图入口生成，图中明确标注 v2 的
+multi-record-heavy held-out 特征：
+
+```text
+outputs/paper/starling_benchmark_results_scaffold_record_supported_v2_valid/figures/
+  gpt_oss_120b_dataset_version_comparison.svg
+  gpt_oss_120b_dataset_version_comparison.png
+```
+
+Morgan KNN 的 v2 下降不是 train size 变小造成。严格 leak-free 的 old/new train x valid 交叉分解显示：
+BBB 总下降 `-0.1270` 中 valid cohort 替换贡献 `-0.1291`；Skin 总下降 `-0.0862` 中 valid cohort 替换贡献
+`-0.0505`，同时移除/加入 train rows 共贡献 `-0.0357`；Bioavailability 总下降 `-0.0343` 主要来自新增
+train composition（`-0.0218`）。新 valid 的 unique scaffold 数从 BBB/Skin/Bio 的 `277/133/151`
+增至 `377/187/175`，Morgan 的负类 recall 分别从 `0.520/0.392/0.361` 降至
+`0.324/0.274/0.276`。因此最稳妥的结论是：v2 把 held-out 重心移到 multi-record、更多样且更难迁移的
+scaffold，暴露了 Morgan local-neighborhood 的 domain-shift 弱点；不是 label disagreement，也不是 leakage。
+可复核诊断位于：
+
+```text
+outputs/paper/starling_benchmark_results_scaffold_record_supported_v2_valid/diagnostics/morgan_dataset_shift/
+```
+
+GLM blind 首轮在 endpoint/tunnel 中断前完成 5,876/6,887 sample-conditions，仍有 1,011 个失败；其中
+BBB 仅余 3 个，Skin 余 314 个，Bioavailability 余 694 个。该 root 尚未通过 zero-failure gate，visible
+矩阵尚未启动，因此所有 partial GLM macro-F1 都不得进入正式表或显著性分析。恢复 endpoint 后必须使用
+同一 root 的 `--skip-existing` 修复，再启动独立 visible root。
+
+曾生成的 exploratory `record_supported_v1` 因 held-out 分布不符合最终设计，数据、indices、agent runs、
+baselines 和显著性 artifact 已于 2026-08-07 删除；这里只保留这条 lineage tombstone，不再引用旧路径。
+
+## 第一版 record-agreement benchmark（historical comparison）
 
 上一版 strict-conflict lineage 的机器可读结果和 canonical bar chart：
 
@@ -184,6 +266,8 @@ python -m tools.chembl_tool.paper_experiments.plot_starling_model_comparison \
   --comparison-metrics outputs/paper/starling_benchmark_results_scaffold_valid_glm_5_2_nvfp4_visible_parent_disjoint/metrics.tsv \
   --experiment-metrics outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/three_way_metrics.tsv \
   --experiment-metrics outputs/paper/coverage_mmp_ledger_gpt_oss_120b_scaffold_valid/analysis/figure_metrics.tsv \
+  --paired-ci-metrics outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/analysis/best_agent_paired_baseline_bootstrap_ci.tsv \
+  --paired-significance-display pvalue \
   --output outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison.svg \
   --png-output outputs/paper/starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison_highres.png
 ```
@@ -192,6 +276,11 @@ python -m tools.chembl_tool.paper_experiments.plot_starling_model_comparison \
 summary 通过重复 `--comparison-metrics` 追加；matched experiment 通过重复 `--experiment-metrics` 追加，
 不再生成单实验 overview/bar chart。experiment TSV 中的 anchor 必须与 candidate summary 的既有 condition
 在 subset、样本数和 macro-F1 上一致，绘图时只用于合同校验、不重复显示。
+总图现在通过 `--paired-significance-display pvalue` 在每个 task panel 内只显示 best agent
+相对 MiniMol train-all 和 Morgan KNN 的单侧 paired-permutation p-value，检验方向为
+`H1: best agent > baseline`，图内不再显示 95% CI。六个检验均未达 `p < 0.05`；且因为
+单侧方向和 best agent 均是看到同一 scaffold-valid 结果后确定，该 p-value 展示明确标为
+exploratory，不写成预注册 confirmatory 检验。
 
 本轮 baseline 输出根：
 
@@ -201,7 +290,7 @@ outputs/baselines/structure_knn_starling_valid/<Task>/scaffold/
 outputs/baselines/minimol_embedding_knn_starling_valid/<Task>/scaffold/
 ```
 
-## 1. 冻结的数据与 label 决策
+## 1. 第一版冻结的数据与 label 决策
 
 公共协议和唯一数据构建入口：
 
@@ -255,13 +344,15 @@ ClinTox:
 ```
 
 此前所有 17,893/1,828/1,900-parent strict-conflict benchmark 的 baseline、agent 和图表，以及更早的
-Bioavailability 1,862-parent mixed-source 结果，均为 historical lineage，不得与当前 v4 混表。
-当前 v4 agent root 为：
+Bioavailability 1,862-parent mixed-source 结果，均为 historical lineage，不得与当前 lineage 混表。
+第一版 record-agreement agent roots 为：
 
 ```text
 outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/
 outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/
 ```
+
+当前 record-supported v2 的 canonical index root 和 model-specific valid roots 见第 0 节。
 
 数据与诊断入口：
 
@@ -331,8 +422,8 @@ valid gate，也没有匹配的 v4 random-valid train-label baselines，因此�
 
 ## 3. Historical strict-conflict performance
 
-以下数值全部来自上一版 strict-conflict train/test split，不是当前 70%-agreement、8:1:1 v4 的结果。
-它们仅用于历史复现；当前 v4 已完成 scaffold-valid 的 GLM、GPT-OSS-20B/120B blind agent matrix、两套
+以下数值全部来自上一版 strict-conflict train/test split，不是当前 70%-agreement scaffold benchmark 的结果。
+它们仅用于历史复现；第一版 record-agreement 已完成 scaffold-valid 的 GLM、GPT-OSS-20B/120B blind agent matrix、两套
 GPT-OSS visible matrix 和 matched MiniMol/Morgan/MiniMol-KNN baselines，结果见本文开头。正式 test 尚未
 启动；random-valid GLM 保留两个失败，是独立 lineage，不与这里的 scaffold-valid 模型对照混表。
 V4 主合同已在 `AGENTS.md` / `EXPERIMENT_PLAN.md` 冻结为
@@ -919,8 +1010,137 @@ reasoning_effort=""（省略 API 参数，保持历史 GLM reasoning contract）
 这组最高约 `122.9k token/s` 同样使用 `reasoning_effort=none`，只保留为关闭 reasoning 的 endpoint
 ceiling 诊断；它不是当前 reasoning-enabled 默认，也不能换算真实 agent pipeline 完成时间。
 
+### Task-local KNN–agent router v2（2026-08-05，scaffold valid）
+
+`router_oof/` 使用各 task 的完整 scaffold train set 构造 5-fold OOF 训练数据，并保持 Morgan `k=3`、
+GPT-OSS-120B `identity_blind + parent_disjoint` direct agent 的冻结合同。v2 删除了随 fold reference-pool 大小
+漂移的特征以及 k=3 下的确定性冗余特征，分别估计 `P(agent_only_correct)` 与 `P(knn_only_correct)`；只有
+train-only nested paired-bootstrap promotion gate 通过时才允许从 KNN 切换到 agent，否则部署为严格 KNN
+fallback。v1 artifact 保留，v2 写入独立 `router_v2/` lineage。
+
+BBB OOF agent 的最后一个缺失样本也已补齐，三个 task 均通过 zero-failure/paired-completeness gate：
+BBB `18,425/18,425`、Bioavailability `1,674/1,674`、Skin Reaction `1,966/1,966`。冻结 v2 后一次性得到的
+valid 结果为：
+
+| task | valid n | promotion gate | KNN acc / macro-F1 | direct agent acc / macro-F1 | deployed router acc / macro-F1 | router - KNN | switch / rescue / harm |
+|---|---:|---|---:|---:|---:|---:|---:|
+| BBB | 500 | PASS | 0.7740 / 0.7127 | 0.7300 / 0.7138 | **0.7900 / 0.7330** | +0.0160 / +0.0203 | 42 / 25 / 17 |
+| Bioavailability | 209 | PASS | 0.7177 / 0.6199 | 0.6507 / 0.6434 | **0.7177 / 0.6339** | +0.0000 / +0.0139 | 24 / 12 / 12 |
+| Skin Reaction | 245 | FAIL, KNN fallback | **0.6857 / 0.6064** | 0.5633 / 0.5487 | **0.6857 / 0.6064** | +0.0000 / +0.0000 | 0 / 0 / 0 |
+
+BBB 的 point estimate 同时超过 KNN 与 direct agent；但其 10,000-repeat label-stratified paired bootstrap
+accuracy delta 95% CI 为 `[-0.0100, 0.0420]`，macro-F1 delta CI 为 `[-0.0096, 0.0506]`，均跨 0，现阶段
+只能解释为 promising signal。Bioavailability 在 accuracy 不变时 macro-F1 增加 1.39 pp，但 CI 也跨 0。
+Skin 的 ungated candidate 在 valid 上实际为 0.6531 / 0.5768（12 rescues、20 harms）；promotion gate 将其
+挡住，因此 deployed policy 没有重复 v1 的退化。这说明 v2 已解决“坏 router 必须安全退回 KNN”的工程问题，
+尚未证明三 task 都能显著优于 KNN。
+
+Canonical receipt：
+`outputs/paper/router_oof/gpt_oss_120b/scaffold/valid_evaluation_result_v2.json`。每 task 的 model、feature、
+prediction、report 和输入 SHA-256 位于同一 root 下的 `<task>/router_v2/`。这些 valid 结果不得用于回写
+feature、threshold 或 promotion policy；formal test 尚未运行。
+
+### Output-aware post-selector v3（2026-08-05，scaffold valid development）
+
+v3 不覆盖 v2，而是在 KNN 与 GPT-OSS-120B direct agent 已产生不同 label 后，只对 disagreement rows 学习
+`agent_only_correct` 对 `knn_only_correct`。它保留原始 query、KNN 和 evidence feature，并比较三档输入：
+18-feature output/query/KNN、49-feature evidence、70-feature evidence+structured-trace；每档同时比较 Logistic
+与小型 HistGBDT。`KNN=0, agent=1` 与 `KNN=1, agent=0` 使用独立 train-only thresholds。Nested OOF promotion
+gate 未通过时部署严格回退 KNN，不能在看到 valid 后解锁。
+
+| task | train gate / frozen profile | KNN acc / macro-F1 | candidate acc / macro-F1 | deployed acc / macro-F1 | candidate switch / rescue / harm | oracle acc |
+|---|---|---:|---:|---:|---:|---:|
+| BBB | PASS / HistGBDT + evidence | 0.7740 / 0.7127 | **0.7760 / 0.7382** | **0.7760 / 0.7382** | 71 / 36 / 35 | 0.9120 |
+| Bioavailability | FAIL / HistGBDT + evidence+trace | 0.7177 / 0.6199 | 0.7177 / **0.6499** | 0.7177 / 0.6199 | 28 / 14 / 14 | 0.9091 |
+| Skin Reaction | FAIL / HistGBDT + evidence | **0.6857** / 0.6064 | 0.6694 / 0.6123 | **0.6857** / 0.6064 | 42 / 19 / 23 | 0.8122 |
+
+结果支持“原始 evidence features 有用但还不够”的判断：三个 task 的 full-train deployment choice 都包含
+evidence，Bioavailability 还选择了 structured trace；BBB nested outer folds 也全部选择 evidence 或
+evidence+trace profile。不过 BBB valid 的 71 次切换只有净 1 次 rescue，accuracy 仅比 KNN 高 0.2 pp；其
+macro-F1 delta 为 +2.55 pp，但 10,000-repeat paired-bootstrap 95% CI `[-0.0114, 0.0653]` 跨 0。
+Bioavailability candidate 的 14 rescues/14 harms 保持 accuracy、改善类别平衡，但 train accuracy uncertainty
+未通过预注册 guardrail；Skin candidate harms 多于 rescues且 accuracy 下降。因此 v3 仍未接近 oracle，瓶颈
+不是 feature 是否全部保留，而是现有 trace/evidence summary 对“这一次 disagreement 谁正确”的辨别力仍弱。
+
+Canonical receipt：
+`outputs/paper/router_oof/gpt_oss_120b/scaffold/post_selector_valid_result_v3.json`。每 task 的 model、nested OOF
+prediction、metrics、manifest、valid feature 和 report 位于 `<task>/post_selector_v3/`。这是经过既有 valid
+观察后设计的 development experiment，只能用于方法迭代；formal test 尚未运行，也没有用 valid 调整 v3
+模型、profile 或 thresholds。
+
+### Direction-calibrated post-selector v3.1（2026-08-05，scaffold valid development）
+
+v3.1 是在观察 v3 valid 后冻结的独立 development lineage，不覆盖 v3，也不新增 LLM 请求。两个 disagreement
+direction 分别选择 Logistic/HistGBDT、feature profile 与 threshold；每个模型使用 fold-heldout sigmoid
+calibration 的五组件 ensemble。一个 direction 只有在 train 上至少 route 20 rows 且 agent-win precision 的
+one-sided 95% Wilson lower bound `> 0.5` 时才允许启用；overall train promotion 还要求 paired-bootstrap accuracy
+delta 的 95% CI lower bound `> 0`。Valid 不拟合、不校准、不调 threshold。
+
+| task | train gate | KNN acc / macro-F1 | v3.1 acc / macro-F1 | delta | switch / rescue / harm | valid accuracy delta 95% CI | held-out evidence gate |
+|---|---|---:|---:|---:|---:|---:|---|
+| BBB | PASS | 0.7740 / 0.7127 | **0.8060 / 0.7473** | **+0.0320 / +0.0346** | 26 / 21 / 5 | **[+0.0140, +0.0520]** | **PASS** |
+| Bioavailability | PASS | 0.7177 / 0.6199 | 0.7225 / 0.6020 | +0.0048 / -0.0180 | 9 / 5 / 4 | [-0.0239, +0.0335] | FAIL |
+| Skin Reaction | PASS | 0.6857 / 0.6064 | 0.6980 / 0.5962 | +0.0122 / -0.0102 | 13 / 8 / 5 | [-0.0163, +0.0408] | FAIL |
+
+BBB 是目前唯一同时满足 train promotion、held-out accuracy evidence gate，并在 valid 上同时提高 accuracy 与
+macro-F1 的 task。其两个方向都发生了少量选择性切换：`KNN=0, agent=1` 为 14/18 正确，`KNN=1, agent=0`
+为 7/8 正确。Bioavailability 与 Skin 的 point-estimate accuracy 小幅上升，但 CI 跨 0 且 macro-F1 分别下降
+1.80 pp 和 1.02 pp，因此不能称为稳定改善，也不能因为 valid 结果去调整 frozen policy。Skin 的复杂 selector
+在 train 上也没有超过简单的 `route KNN=0/agent=1 only` baseline，提示该 task 当前主要利用输出方向 prior，
+而不是学到可迁移的 trace/evidence 条件边界。
+
+Canonical receipt：
+`outputs/paper/router_oof/gpt_oss_120b/scaffold/post_selector_valid_result_v31.json`。每 task 的 calibrated ensemble、
+manifest、nested predictions、valid features/predictions/metrics 位于 `<task>/post_selector_v31/`。这是 valid-informed
+development experiment；formal test 未运行，不能把 BBB 结果当成最终 test claim。
+
+### Router termination diagnostics（2026-08-05，train-only）
+
+为区分 data-limited 与 signal-limited，后续诊断不再读取 valid/test，也不重新搜索 v3.1 family/profile。首先将
+BBB outer-train disagreement supervision 按 direction/fold/target 分层下采样，固定 full-train direction specs，
+主比较改为 learned selector 相对不读 feature 的 direction-only OR rule：
+
+| full-equivalent disagreement budget | seeds | realized outer-train n | accuracy delta vs OR | macro-F1 delta vs OR | positive-seed fraction (acc / F1) |
+|---:|---:|---:|---:|---:|---:|
+| 800 | 5 | 640.0 | -0.10 pp | +0.50 pp | 0.00 / 1.00 |
+| 1,600 | 5 | 1,282.4 | +0.05 pp | +0.91 pp | 0.80 / 1.00 |
+| 3,200 | 5 | 2,559.2 | +0.49 pp | +2.33 pp | 1.00 / 1.00 |
+| 7,130 | 1 deterministic | 5,704.0 | **+0.74 pp** | **+3.37 pp** | 1.00 / 1.00 |
+
+Full-size train OOF 的 learned-vs-OR paired 95% CI 为 accuracy `[+0.45,+1.02] pp`、macro-F1
+`[+2.90,+3.82] pp`。因此 BBB 确实存在随训练量上升的 task-local routing signal；在约 800 disagreements 时，
+复杂 selector 还不能提高 accuracy。这解释了 Oral/Skin 为什么更难，但不能覆盖既有 scaffold-valid 结论：BBB
+valid 上 learned selector 相对 OR 的 accuracy 增量仍为 0，macro-F1 `+0.95 pp` 且 CI 跨 0，说明跨 scaffold
+transfer/calibration 仍是独立瓶颈。
+
+条件触发的共享表示实验固定为两个 direction 的 task-balanced Logistic、完整 68-feature generic profile、
+task one-hot，以及 task-specific sigmoid calibration/threshold/Wilson gate。每个 target outer/inner heldout fold
+还从其它 task training rows 排除了相同 molecule identity 和 fold-group/scaffold：
+
+| task | shared acc / macro-F1 | shared - direction-only OR | shared - frozen task-local | shared-vs-local macro-F1 95% CI |
+|---|---:|---:|---:|---:|
+| BBB | 0.7607 / 0.6510 | +0.04 / +0.53 pp | **-0.69 / -2.84 pp** | [-3.29,-2.41] pp |
+| Bioavailability | 0.7437 / 0.6239 | -0.30 / -0.18 pp | -0.42 / **-1.01 pp** | [-1.81,-0.32] pp |
+| Skin Reaction | 0.6846 / 0.5758 | -0.05 / +0.38 pp | +0.05 / +0.22 pp | [-0.39,+0.89] pp |
+
+共享表示没有让任一小 task 相对 task-local 得到可信提升，且显著伤害 Bioavailability macro-F1；transfer
+continuation gate 因此为 **FAIL / `stop_router_main_method`**。结论是：更多 task-local data 能帮助 BBB，但现有
+query/KNN/evidence/trace representation 的可迁移性不足。这里的 shared model 监督仍是最终 agent-win label，
+不是 counterfactual evidence utility。Router 保留为 reliability baseline 和 negative diagnosis，不再继续做
+valid-informed family/profile sweep，也不消耗 formal test。下一条方法线应改变监督信号本身，例如
+counterfactual evidence add/drop utility，而不是继续调 post-selector。
+
+Canonical receipts：
+`outputs/paper/router_oof/gpt_oss_120b/scaffold/post_selector_v31_learning_curve_result.json` 与
+`outputs/paper/router_oof/gpt_oss_120b/scaffold/post_selector_v31_transfer_result.json`；task-local job metrics、
+compressed predictions、cross-task fold exclusions 和 thresholds 保存在相应 task artifact directory。
+
 ## 11. 当前未完成项
 
+- `record_supported_v2` GLM blind 首轮为 5,876/6,887，尚有 1,011 个 endpoint/tunnel 失败待
+  `--skip-existing` 修复；GLM visible 尚未启动，二者均未进入正式结果表；
+- `record_supported_v2` 的 paired direct-agent significance 尚未在完整 GLM 矩阵上生成；任何 partial
+  GLM p-value 都无效；
 - GLM random-valid blind 仍有 Bioavailability 两个 ChEMBL full 条件各 1 个失败，尚未通过 zero-failure gate；
 - v4 random-valid 的 matched train-label baselines 尚未生成；
 - v4 formal test 尚未启动，valid setting 冻结后需按同合同 fresh-run；
@@ -929,6 +1149,9 @@ ceiling 诊断；它不是当前 reasoning-enabled 默认，也不能换算真�
 - 用于确认表示选择稳健性的独立第二种 pretrained encoder baseline 未完成；
 - source-quality 双人 annotation 未完成；
 - GLM/GPT-OSS 当前每项主要只有一次 run，关键 comparisons 仍需独立 repeats；
+- task-local router v2、output-aware post-selector v3 和 direction-calibrated v3.1 已完成 scaffold-valid
+  development；matched-size curve 证明 BBB signal 随 data 增强，但 shared transfer gate 失败，router 主方法线
+  已停止，formal test 按 gate 决定不启动（不是待补运行）；
 - Skin Tier 1+2 是 test-triggered post-hoc diagnosis，不得升级成预注册 primary condition。
 
 ## 12. Git 发布里程碑

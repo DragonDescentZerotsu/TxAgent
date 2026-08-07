@@ -232,7 +232,7 @@ def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starlin
             ),
             scope_fields=("study_design", "skin_source", "formulation_vehicle", "qualifying_conditions"),
             target_pref_name="dermal exposure and skin penetration",
-            evidence_role="exposure_context",
+            evidence_role="context_modifier",
             standard_type_prefix="skin exposure",
             include_endpoint_values=(
                 "permeability_coefficient",

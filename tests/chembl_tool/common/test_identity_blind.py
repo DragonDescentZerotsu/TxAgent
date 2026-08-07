@@ -289,3 +289,54 @@ def test_identity_blind_leak_finder_does_not_match_short_smiles_inside_words():
         "names": [],
     }
     assert find_identity_blind_leaks(retrieval, 'structure "CCO"') ["structures"] == ["CCO"]
+
+
+def test_identity_blind_single_atom_smiles_does_not_corrupt_tool_text():
+    class DescriptiveToolService(FakeToolService):
+        def invoke(self, tool_name, arguments):
+            self.calls.append((tool_name, arguments))
+            return {
+                "tool_name": tool_name,
+                "status": "ok",
+                "content": "Neutral fraction: 1\nNumber of nitrogen atoms: 1",
+                "warnings": [],
+            }
+
+    retrieval = {
+        "query": {
+            "input_smiles": "N",
+            "canonical_smiles": "N",
+            "standard_inchi_key": "QGZKDVFQNNGYKY-UHFFFAOYSA-N",
+        },
+        "groups": [],
+    }
+
+    output = prepare_identity_blind_retrieval(retrieval, DescriptiveToolService())
+    content = output["query"]["prefetched_molecule_properties"]["content"]
+
+    assert output["query"]["identity_hidden"] is True
+    assert content == "Neutral fraction: 1\nNumber of nitrogen atoms: 1"
+    assert find_identity_blind_leaks(retrieval, output)["structures"] == []
+
+
+def test_identity_blind_two_character_single_atom_smiles_does_not_flag_assay_text():
+    retrieval = {
+        "query": {"input_smiles": "C[Se]", "canonical_smiles": "C[Se]"},
+        "groups": [
+            {
+                "neighbors": [
+                    {
+                        "canonical_smiles": "Cl",
+                        "evidence_rows": [],
+                    }
+                ]
+            }
+        ],
+    }
+
+    assert find_identity_blind_leaks(
+        retrieval, "The rate of 36Cl influx was measured."
+    ) == {"structures": [], "identifiers": [], "names": []}
+    assert find_identity_blind_leaks(
+        retrieval, 'query structure "C[Se]"'
+    )["structures"] == ["C[Se]"]

@@ -87,6 +87,26 @@ def test_starling_benchmark_matrix_can_select_valid_without_changing_indices():
     ]
 
 
+def test_starling_benchmark_matrix_accepts_isolated_data_and_index_lineage(tmp_path):
+    data_root = tmp_path / "processed_starling_record_supported_v2"
+    index_root = tmp_path / "molecular_evidence_agent_starling_scaffold_record_supported_v2"
+
+    experiments = experiments_for_starling_benchmark(
+        "scaffold",
+        evaluation_subset="valid",
+        data_root=data_root,
+        canonical_paper_root=index_root,
+    )
+
+    assert all(
+        item.input_jsonl.startswith(str(data_root)) for item in experiments
+    )
+    starling = next(
+        item for item in experiments if item.name == "bbb_martins__starling_direct"
+    )
+    assert starling.index.startswith(str(index_root / "evidence"))
+
+
 def test_partial_starling_index_rebuild_can_preserve_existing_summary(tmp_path):
     summary = tmp_path / "summary.json"
     summary.write_text(json.dumps({"random": {"bbb": {"ok": True}}}), encoding="utf-8")

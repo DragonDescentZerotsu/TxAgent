@@ -61,7 +61,9 @@ class StageState:
 
     @property
     def key(self) -> tuple[str, int]:
-        return (self.prepared.batch_id, self.item.index)
+        # batch_id is only unique inside one batch root. Matrix schedulers may
+        # legitimately run the same condition over multiple isolated folds.
+        return (str(self.prepared.batch_dir.resolve()), self.item.index)
 
 
 @dataclass(frozen=True)
