@@ -186,6 +186,54 @@ def test_assay_transfer_shows_score_and_one_record_per_ranked_entry():
     assert content.count("endpoint: Fg.efflux") == 1
 
 
+def test_assay_transfer_groups_multiple_endpoint_records_under_one_molecule():
+    first = {
+        "canonical_endpoint_key": "Fg.efflux",
+        "value_display": "12.4%",
+        "unit_basis": "percent",
+        "support_text": "efflux evidence",
+    }
+    second = {
+        "canonical_endpoint_key": "Fg.substrate_status",
+        "value_display": "substrate",
+        "support_text": "substrate evidence",
+    }
+    neighbor = _neighbor(
+        "M1", "c1ccccc1", 0.45, [EXAMPLE], transfer=0.876, winning=first
+    )
+    neighbor["transfer_selected_records"] = [
+        {
+            "record_rank": 1,
+            "transfer_selection_score": 0.876,
+            "transfer_winning_record_id": "hidden-one",
+            "canonical_endpoint_key": "fg_efflux",
+            "transfer_winning_record": first,
+        },
+        {
+            "record_rank": 2,
+            "transfer_selection_score": 0.754,
+            "transfer_winning_record_id": "hidden-two",
+            "canonical_endpoint_key": "fg_substrate_status",
+            "transfer_winning_record": second,
+        },
+    ]
+
+    _, user = build_group_messages(
+        QUERY, _group([neighbor]), prompt_format="assay_transfer_tool"
+    )
+    content = user["content"]
+
+    assert "SELECTED MOLECULES (1)" in content
+    assert "[Molecule 1]" in content
+    assert "[Assay record 1.1]" in content
+    assert "[Assay record 1.2]" in content
+    assert "transfer likelihood (0-1): 0.88" in content
+    assert "transfer likelihood (0-1): 0.75" in content
+    assert "endpoint: Fg.efflux" in content
+    assert "endpoint: Fg.substrate_status" in content
+    assert "hidden-one" not in content and "hidden-two" not in content
+
+
 def test_assay_transfer_output_schema_is_evidence_centric_and_identity_free():
     _, user = build_group_messages(
         QUERY,

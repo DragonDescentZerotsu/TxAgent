@@ -1,7 +1,7 @@
 """Source-aware comparison fields for BBB Martins pair buckets."""
 
 BBB_MARTINS_PAIR_BUCKET_VERSION = "bbb_martins_pair_buckets.v2"
-BBB_MARTINS_V7_PAIR_BUCKET_VERSION = "bbb_martins_pair_buckets.v7"
+BBB_MARTINS_V7_PAIR_BUCKET_VERSION = "bbb_martins_pair_buckets.v8"
 
 SOURCE_PAIR_FIELDS = {
     "direct_bbb": (

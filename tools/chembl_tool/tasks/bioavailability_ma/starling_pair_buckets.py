@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 
-BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v10"
+BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v11"
 
 SOURCE_PAIR_FIELDS = {
     "hf_bioavailability": (

@@ -31,6 +31,7 @@ from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     GLM_MODEL,
     GLM_REASONING_EFFORT,
     ensure_endpoint_api_key,
+    resolve_endpoint_base_url,
 )
 from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     experiments_for_starling_benchmark,
@@ -48,6 +49,7 @@ def main(argv: list[str] | None = None) -> int:
             "MiniMol retrieval feature store is missing; run "
             "build_minimol_retrieval_features first."
         )
+    args.base_url = resolve_endpoint_base_url(args.base_url)
     ensure_endpoint_api_key(args.api_key_env, args.base_url)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -93,7 +95,7 @@ def main(argv: list[str] | None = None) -> int:
 
 def _run_matrix(policy: str, args: argparse.Namespace) -> None:
     api_key_env = getattr(args, "api_key_env", GLM_API_KEY_ENV)
-    base_url = getattr(args, "base_url", GLM_BASE_URL)
+    base_url = getattr(args, "base_url", None) or GLM_BASE_URL
     model = getattr(args, "model", GLM_MODEL)
     reasoning_effort = getattr(args, "reasoning_effort", GLM_REASONING_EFFORT)
     commands: list[tuple[str, list[str]]] = []
@@ -278,7 +280,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--api-key-env", default=GLM_API_KEY_ENV)
-    parser.add_argument("--base-url", default=GLM_BASE_URL)
+    parser.add_argument(
+        "--base-url",
+        default=None,
+        help="OpenAI-compatible endpoint; defaults to LITELLM_BASE_URL from keys.py.",
+    )
     parser.add_argument("--model", default=GLM_MODEL)
     parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
     parser.add_argument("--parallelism", type=int, default=8)

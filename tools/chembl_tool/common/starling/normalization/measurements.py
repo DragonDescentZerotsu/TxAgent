@@ -104,6 +104,35 @@ _AMBIGUOUS_SCIENTIFIC_MARKER = re.compile(
     r"(?:×|x)\s*10(?:[4-9]\b|\d{2,}|[?⁇])", re.IGNORECASE
 )
 
+# A leading numeric token is not an atomic scalar when the remainder says how
+# it changed relative to another condition.  The comparator and polarity are
+# part of the measurement semantics; dropping them would make, for example,
+# ``62 ± 3% decrease`` indistinguishable from an absolute value of 62%.
+#
+# Direction explicitly encoded in a source unit (for example ``% increase``)
+# is removed from the measurement by ``separate_measurement_unit`` and remains
+# eligible as its own unit.  This guard therefore targets only semantic text
+# that is still stranded in the canonical measurement after pair resolution.
+_DIRECTIONAL_CONTEXT_PATTERNS = {
+    "increase": re.compile(
+        r"\b(?:increas(?:e|ed|es|ing)|higher|greater|"
+        r"elevat(?:e|ed|es|ing|ion)|enhanc(?:e|ed|es|ing|ement)|"
+        r"rose|rise|rises|rising)\b",
+        re.IGNORECASE,
+    ),
+    "decrease": re.compile(
+        r"\b(?:decreas(?:e|ed|es|ing)|reduc(?:e|ed|es|ing|tion)|"
+        r"lower|less|diminish(?:ed|es|ing|ment)?|"
+        r"declin(?:e|ed|es|ing)|fell|fall|falls|falling|"
+        r"drop|drops|dropped|dropping)\b",
+        re.IGNORECASE,
+    ),
+    "comparison": re.compile(
+        r"\b(?:compared(?:\s+(?:to|with))?|relative\s+to|versus|vs\.?|than)\b",
+        re.IGNORECASE,
+    ),
+}
+
 @dataclass(frozen=True)
 class EndpointOrthography:
     """One explicit, reviewable spacing/spelling decision."""
@@ -461,6 +490,52 @@ def _recognized_unit(value: Any, task: str | None = None) -> bool:
     return bool(result.cleaned) and not result.unknown_tokens
 
 
+def _directional_context_kinds(value: Any) -> set[str]:
+    text = clean_text(value)
+    if not text:
+        return set()
+    return {
+        kind
+        for kind, pattern in _DIRECTIONAL_CONTEXT_PATTERNS.items()
+        if pattern.search(text)
+    }
+
+
+def has_non_atomic_directional_context(value: Any, unit: Any = None) -> bool:
+    """Return whether comparison semantics remain unrepresented by the unit."""
+    measurement_kinds = _directional_context_kinds(value)
+    unit_kinds = _directional_context_kinds(unit)
+    return bool(measurement_kinds - unit_kinds)
+
+
+def _enforce_non_atomic_directional_context(record: dict[str, Any]) -> None:
+    """Apply the fail-closed scalar gate after every task-specific enrichment.
+
+    Record enrichers may legitimately replace a pair or attach a controlled
+    categorical value.  They must not, however, reparse a contextual display
+    and restore the numeric prefix that the shared gate already withheld.
+    Applying the invariant to the final pair makes the common boundary
+    authoritative without coupling it to any task's validity implementation.
+    """
+    parsed = parse_point_measurement(record.get("canonical_measurement"))
+    if parsed.value is None or not has_non_atomic_directional_context(
+        record.get("canonical_measurement"), record.get("canonical_unit")
+    ):
+        return
+    record.update(
+        {
+            "measurement_parse_kind": parsed.kind,
+            "measurement_unit_status": "non_atomic_directional_context",
+            "finite_scalar_value": None,
+            "is_absolute_and_continuous": False,
+            "absolute_and_continuous_value": None,
+            "variation_value": parsed.variation,
+        }
+    )
+    if record.get("normalization_validity_status") == "valid":
+        record["normalization_validity_status"] = "non_scalar_measurement"
+
+
 def normalize_cleaned_records(
     cleaned_records: Sequence[Mapping[str, Any]],
     *,
@@ -502,11 +577,23 @@ def normalize_cleaned_records(
             pair = source_measurement_resolver(cleaned, canonical_endpoint, pair)
         parsed = parse_point_measurement(pair.canonical_measurement)
         recognized_unit = _recognized_unit(pair.canonical_unit, task)
+        non_atomic_directional_context = (
+            parsed.value is not None
+            and has_non_atomic_directional_context(
+                pair.canonical_measurement, pair.canonical_unit
+            )
+        )
+        measurement_unit_status = (
+            "non_atomic_directional_context"
+            if non_atomic_directional_context
+            else pair.status
+        )
         finite_scalar = (
             parsed.value
             if parsed.value is not None
             and recognized_unit
             and pair.status != "ambiguous_scientific_notation"
+            and not non_atomic_directional_context
             else None
         )
         absolute_continuous = finite_scalar is not None
@@ -528,7 +615,7 @@ def normalize_cleaned_records(
                 "canonical_measurement": pair.canonical_measurement,
                 "canonical_unit": pair.canonical_unit,
                 "measurement_parse_kind": parsed.kind,
-                "measurement_unit_status": pair.status,
+                "measurement_unit_status": measurement_unit_status,
                 "unit_notation_status": pair.unit_notation_status,
                 "unit_notation_factor": pair.unit_notation_factor,
                 "unit_dimension_json": json.dumps(
@@ -553,6 +640,7 @@ def normalize_cleaned_records(
         )
         if record_enricher is not None:
             record.update(dict(record_enricher(record)))
+        _enforce_non_atomic_directional_context(record)
         records.append(record)
     return records
 

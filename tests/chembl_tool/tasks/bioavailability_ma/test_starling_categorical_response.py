@@ -65,6 +65,10 @@ def test_direct_negative_wording_uses_the_low_category(value):
         "higher than reference",
         "low to high",
         "high (40%)",
+        "not high",
+        "not good",
+        "not complete",
+        "did not appear to have low",
         "not reported",
         "",
     ],
@@ -85,7 +89,7 @@ def test_nondirect_hf_wording_never_uses_the_direct_encoder():
     )
 
 
-def test_direct_qualitative_classifier_keeps_benchmark_reason_vocabulary():
+def test_direct_qualitative_classifier_keeps_evidence_reason_vocabulary():
     assert classify_direct_qualitative_text("high") == (
         "high",
         "explicit_qualitative_high",
@@ -97,6 +101,10 @@ def test_direct_qualitative_classifier_keeps_benchmark_reason_vocabulary():
     assert classify_direct_qualitative_text("moderate") == (
         None,
         "qualitative_value_not_threshold_anchored",
+    )
+    assert classify_direct_qualitative_text("not high") == (
+        None,
+        "unmapped_or_ambiguous_qualitative_value",
     )
 
 

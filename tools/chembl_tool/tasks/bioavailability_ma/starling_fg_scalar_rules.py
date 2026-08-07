@@ -26,7 +26,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_policy im
 )
 
 
-FG_SCALAR_RULE_VERSION = "bioavailability_fg_single_outcome_scalar_rules.v2"
+FG_SCALAR_RULE_VERSION = "bioavailability_fg_single_outcome_scalar_rules.v3"
 
 _NUMBER = (
     r"[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d*)?(?:[eE][-+]?\d+)?"
@@ -87,19 +87,13 @@ _RATIO_LABELS = (
 )
 _RATIO = re.compile(
     rf"^\s*(?P<label>{_RATIO_LABELS})\s*(?:=|:|of\s+|is\s+|was\s+)?\s*"
-    rf"{_POINT}{_VARIATION}\s*(?P<tail>\([^)]*\))?\s*$",
+    rf"{_POINT}{_VARIATION}\s*$",
     re.IGNORECASE,
 )
 _FOLD = re.compile(
     rf"(?P<prefix>{_APPROX})(?P<value>{_NUMBER})"
     rf"(?:\s*(?:±|\+/-)\s*(?P<variation>{_NUMBER}))?"
     rf"\s*[- ]?\s*fold\b",
-    re.IGNORECASE,
-)
-_PAREN_FOLD = re.compile(
-    rf"(?P<prefix>{_APPROX})(?P<value>{_NUMBER})"
-    rf"(?:\s*(?:±|\+/-)\s*(?P<variation>{_NUMBER}))?"
-    rf"\s*\(\s*fold\b[^)]*\)",
     re.IGNORECASE,
 )
 _WORD_FOLD = re.compile(
@@ -160,29 +154,11 @@ _PERCENT = re.compile(
     rf"(?:\s*(?:±|\+/-)\s*(?P<variation>{_NUMBER})\s*%)?",
     re.IGNORECASE,
 )
-_PERCENT_OUTCOME = re.compile(
-    r"\b(?:inhibition|increase|increased|decrease|decreased|reduction|"
-    r"reduce|reduced|uptake|absorption|"
-    r"extraction|elimination|availability|bioavailability|metaboli[sz]ed|"
-    r"transport(?:ed)?|permeation|secretion|recovery|remaining|"
-    r"of (?:control|dose)|first[- ]pass)\b",
-    re.IGNORECASE,
-)
 _RELATIVE_CHANGE = re.compile(
     r"\b(?:increase|increased|decrease|decreased|reduction|"
-    r"reduce|reduced|change|higher|lower)\b",
+    r"reduce|reduced|change|higher|lower|relative|compared|versus|vs\.?)\b",
     re.IGNORECASE,
 )
-_PERCENT_CONDITION_SUFFIX = re.compile(
-    r"^\s*(?:ethanol|supplementation|solution|medium|media|formulation|"
-    r"w/v|v/v|m/v)\b",
-    re.IGNORECASE,
-)
-_PERCENT_CONDITION_PREFIX = re.compile(
-    r"\b(?:at|with|containing|in the presence of)\s*$",
-    re.IGNORECASE,
-)
-
 _PHYSICAL_LABEL = re.compile(
     r"^(?P<label>"
     r"papp(?:\s*(?:a|ap|b|bl)\s*(?:-|→|to)\s*(?:a|ap|b|bl))?|"
@@ -254,7 +230,12 @@ def _float(value: str | None) -> float | None:
     return parsed if math.isfinite(parsed) else None
 
 
-def _point_from_match(match: re.Match[str]) -> tuple[float, float | None, bool] | None:
+def _point_from_match(
+    match: re.Match[str], *, allow_signed: bool = True
+) -> tuple[float, float | None, bool] | None:
+    source_value = match.groupdict().get("value") or ""
+    if not allow_signed and source_value.lstrip().startswith(("+", "-")):
+        return None
     value = _float(match.groupdict().get("value"))
     variation = _float(match.groupdict().get("variation"))
     approximate = bool((match.groupdict().get("prefix") or "").strip())
@@ -278,11 +259,6 @@ def _semantic_fg_label(label: str) -> str:
     ):
         return "fa_times_fg_fraction"
     return "fg_fraction"
-
-
-def _outside_numbers(text: str, span: tuple[int, int]) -> list[str]:
-    remainder = f"{text[: span[0]]} {text[span[1] :]}"
-    return _STANDALONE_NUMBER.findall(remainder)
 
 
 def _metric_count(text: str) -> int:
@@ -356,12 +332,9 @@ def _try_ratio(text: str) -> FgScalarDecision | None:
     match = _RATIO.fullmatch(text)
     if not match:
         return None
-    tail = match.group("tail") or ""
-    if _STANDALONE_NUMBER.search(tail):
-        return FgScalarDecision(False, "numeric_context_inside_ratio_tail")
-    point = _point_from_match(match)
+    point = _point_from_match(match, allow_signed=False)
     if point is None:
-        return FgScalarDecision(False, "invalid_ratio_value")
+        return FgScalarDecision(False, "signed_or_invalid_ratio_value")
     value, variation, approximate = point
     label = re.sub(r"\s+", "_", match.group("label").casefold())
     semantic = (
@@ -380,24 +353,17 @@ def _try_ratio(text: str) -> FgScalarDecision | None:
 
 
 def _try_fold(text: str) -> FgScalarDecision | None:
-    matches = (
-        list(_FOLD.finditer(text))
-        or list(_PAREN_FOLD.finditer(text))
-        or list(_WORD_FOLD.finditer(text))
-    )
-    if len(matches) != 1:
+    match = _FOLD.fullmatch(text) or _WORD_FOLD.fullmatch(text)
+    if match is None:
         return None
-    match = matches[0]
-    if _outside_numbers(text, match.span()):
-        return FgScalarDecision(False, "additional_numeric_context_in_fold_measurement")
     if match.groupdict().get("word"):
         value = _WORD_VALUES[match.group("word").casefold()]
         variation = None
         approximate = bool((match.groupdict().get("prefix") or "").strip())
     else:
-        point = _point_from_match(match)
+        point = _point_from_match(match, allow_signed=False)
         if point is None:
-            return FgScalarDecision(False, "invalid_fold_value")
+            return FgScalarDecision(False, "signed_or_invalid_fold_value")
         value, variation, approximate = point
     return _accepted(
         value=value,
@@ -414,19 +380,16 @@ def _try_fg_fraction(text: str) -> FgScalarDecision | None:
         return None
     if _RELATIVE_CHANGE.search(text):
         return None
-    percent_matches = list(_FG_PERCENT_AFTER_LABEL.finditer(text))
-    fraction_matches = list(_FG_FRACTION_AFTER_LABEL.finditer(text))
-    matches = percent_matches or fraction_matches
-    if len(matches) != 1:
+    percent_match = _FG_PERCENT_AFTER_LABEL.fullmatch(text)
+    fraction_match = _FG_FRACTION_AFTER_LABEL.fullmatch(text)
+    match = percent_match or fraction_match
+    if match is None:
         return None
-    match = matches[0]
-    if _outside_numbers(text, match.span()):
-        return FgScalarDecision(False, "additional_numeric_context_in_fg_measurement")
-    point = _point_from_match(match)
+    point = _point_from_match(match, allow_signed=False)
     if point is None:
-        return FgScalarDecision(False, "invalid_fg_fraction_value")
+        return FgScalarDecision(False, "signed_or_invalid_fg_fraction_value")
     value, variation, approximate = point
-    unit = "%" if percent_matches else "fraction"
+    unit = "%" if percent_match else "fraction"
     return _accepted(
         value=value,
         variation=variation,
@@ -438,21 +401,12 @@ def _try_fg_fraction(text: str) -> FgScalarDecision | None:
 
 
 def _try_percentage(text: str) -> FgScalarDecision | None:
-    if not _PERCENT_OUTCOME.search(text):
+    match = _PERCENT.fullmatch(text)
+    if match is None:
         return None
-    matches = list(_PERCENT.finditer(text))
-    if len(matches) != 1:
-        return None
-    match = matches[0]
-    if _PERCENT_CONDITION_PREFIX.search(text[: match.start()]) or (
-        _PERCENT_CONDITION_SUFFIX.search(text[match.end() :])
-    ):
-        return FgScalarDecision(False, "percentage_is_assay_condition")
-    if _outside_numbers(text, match.span()):
-        return FgScalarDecision(False, "additional_numeric_context_in_percentage")
-    point = _point_from_match(match)
+    point = _point_from_match(match, allow_signed=False)
     if point is None:
-        return FgScalarDecision(False, "invalid_percentage_value")
+        return FgScalarDecision(False, "signed_or_invalid_percentage_value")
     value, variation, approximate = point
     return _accepted(
         value=value,
@@ -540,6 +494,12 @@ def propose_fg_scalar(
         or _COORDINATED_OUTCOMES.search(text)
     ):
         return FgScalarDecision(False, "compound_or_multi_outcome")
+    if _RELATIVE_CHANGE.search(text) and (
+        _STANDALONE_NUMBER.search(text)
+        or _FOLD.search(text)
+        or _WORD_FOLD.search(text)
+    ):
+        return FgScalarDecision(False, "directional_or_comparative_measurement")
     if _QUALITATIVE_NEGATION.search(text) and _STANDALONE_NUMBER.search(text):
         return FgScalarDecision(False, "qualitative_outcome_with_numeric_condition")
 
@@ -547,6 +507,8 @@ def propose_fg_scalar(
         decision = resolver(text)
         if decision is not None:
             return decision
+    if "%" in text:
+        return FgScalarDecision(False, "non_atomic_percentage_measurement")
     physical = _try_physical(text, canonical_endpoint)
     if physical is not None:
         return physical

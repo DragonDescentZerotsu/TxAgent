@@ -19,7 +19,7 @@ distinct-level gates.
 from __future__ import annotations
 
 
-SKIN_REACTION_PAIR_BUCKET_VERSION = "skin_reaction_pair_buckets.v3"
+SKIN_REACTION_PAIR_BUCKET_VERSION = "skin_reaction_pair_buckets.v4"
 
 SOURCE_PAIR_FIELDS = {
     "direct_skin_reaction": (

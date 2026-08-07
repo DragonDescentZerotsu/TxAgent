@@ -22,7 +22,12 @@ from typing import Any, Callable
 from tools.chembl_tool.common.assay_transfer_selection import (
     ASSAY_TRANSFER_DIVERSITY_MODES,
     ASSAY_TRANSFER_DIVERSITY_NONE,
+    ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+    ASSAY_TRANSFER_RECORDS_PER_MOLECULE_MAX,
+    ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    ASSAY_TRANSFER_SELECTION_UNITS,
     validate_assay_transfer_diversity,
+    validate_assay_transfer_records_per_molecule,
 )
 from tools.chembl_tool.common.cli.retrieval_args import add_retrieval_strategy_args
 from tools.chembl_tool.common.coverage_reasoning import (
@@ -63,6 +68,29 @@ class BatchConfig:
     default_group_output_schema: str = ""
     supports_shared_retrieval_contract: bool = True
     supports_nondirect_bioavailability_filter: bool = False
+    assay_transfer_profile_default: str = "legacy_bio"
+    rerank_catalog_default: str = (
+        "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
+        "assay_transfer_rerank/flat_v2/catalog.jsonl"
+    )
+    rerank_cache_default: str = (
+        "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
+        "assay_transfer_rerank/flat_v2/scores.sqlite3"
+    )
+    rerank_candidate_manifest_default: str = ""
+    rerank_version_manifest_default: str = ""
+    assay_transfer_model_default: str = "jiosephlee/assay-transfer-tool"
+    assay_transfer_model_revision_default: str = (
+        "9515603b1a5c4586e41c221dcdbc5e7487c0c3f5"
+    )
+    assay_transfer_template_profile_default: str = "legacy_v3"
+    v11_rerank_catalog_default: str = ""
+    v11_rerank_cache_default: str = ""
+    v11_rerank_candidate_manifest_default: str = ""
+    v11_rerank_version_manifest_default: str = ""
+    v11_assay_transfer_model_default: str = ""
+    v11_assay_transfer_model_revision_default: str = ""
+    v11_index_default: str = ""
 
 
 @dataclass(frozen=True)
@@ -182,9 +210,14 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
                 expected_score_count=args.rerank_expected_score_count,
                 cache_version_path=args.rerank_cache_version_manifest,
                 retrieval_source=args.retrieval_source,
+                assay_transfer_profile=args.assay_transfer_profile,
                 assay_transfer_min_score=args.assay_transfer_min_score,
                 assay_transfer_diversity_mode=args.assay_transfer_diversity_mode,
                 assay_transfer_diversity_score_slack=args.assay_transfer_diversity_score_slack,
+                assay_transfer_selection_unit=args.assay_transfer_selection_unit,
+                assay_transfer_records_per_molecule=(
+                    args.assay_transfer_records_per_molecule
+                ),
             )
             if config.supports_nondirect_bioavailability_filter:
                 rerank_preflight_kwargs[
@@ -216,10 +249,15 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         ),
         "retrieval_strategy": args.retrieval_strategy,
         "retrieval_reranker": "assay_transfer" if is_assay_transfer else "none",
+        "assay_transfer_profile": args.assay_transfer_profile,
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
         "assay_transfer_min_score": args.assay_transfer_min_score,
         "assay_transfer_diversity_mode": args.assay_transfer_diversity_mode,
         "assay_transfer_diversity_score_slack": args.assay_transfer_diversity_score_slack,
+        "assay_transfer_selection_unit": args.assay_transfer_selection_unit,
+        "assay_transfer_records_per_molecule": (
+            args.assay_transfer_records_per_molecule
+        ),
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
         "group_output_schema": args.group_output_schema,
@@ -416,6 +454,10 @@ def _validate_reused_rerank_preflight(
         "assay_transfer_min_score": args.assay_transfer_min_score,
         "assay_transfer_diversity_mode": args.assay_transfer_diversity_mode,
         "assay_transfer_diversity_score_slack": args.assay_transfer_diversity_score_slack,
+        "assay_transfer_selection_unit": args.assay_transfer_selection_unit,
+        "assay_transfer_records_per_molecule": (
+            args.assay_transfer_records_per_molecule
+        ),
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
         "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
@@ -431,6 +473,11 @@ def _validate_reused_rerank_preflight(
     mismatches = [
         key for key, expected_value in expected.items() if manifest.get(key) != expected_value
     ]
+    if (
+        "assay_transfer_profile" in manifest
+        or args.assay_transfer_profile == "v11_with_categorical"
+    ) and manifest.get("assay_transfer_profile") != args.assay_transfer_profile:
+        mismatches.append("assay_transfer_profile")
     provenance = preflight.get("provenance") or {}
     if provenance.get("model") != args.assay_transfer_model:
         mismatches.append("assay_transfer_model")
@@ -645,6 +692,20 @@ def _single_run_command(
                 str(args.assay_transfer_diversity_score_slack),
             ]
         )
+    if args.assay_transfer_selection_unit != ASSAY_TRANSFER_SELECTION_SCORED_RECORD:
+        command.extend(
+            ["--assay-transfer-selection-unit", args.assay_transfer_selection_unit]
+        )
+    if (
+        args.assay_transfer_records_per_molecule
+        != ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT
+    ):
+        command.extend(
+            [
+                "--assay-transfer-records-per-molecule",
+                str(args.assay_transfer_records_per_molecule),
+            ]
+        )
     if args.group_prompt_format:
         command.extend(["--group-prompt-format", args.group_prompt_format])
     if args.group_output_schema:
@@ -691,6 +752,8 @@ def _single_run_command(
             [
                 "--assay-transfer-initial-morgan-filter",
                 str(args.assay_transfer_initial_morgan_filter),
+                "--assay-transfer-profile",
+                args.assay_transfer_profile,
                 "--rerank-catalog",
                 args.rerank_catalog,
                 "--rerank-cache",
@@ -1227,29 +1290,45 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
             assay_transfer_diversity_score_slack=0.0,
         )
     parser.add_argument(
-        "--rerank-catalog",
-        default=(
-            "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-            "assay_transfer_rerank/flat_v2/catalog.jsonl"
+        "--assay-transfer-profile",
+        choices=["legacy_bio", "v11_with_categorical"],
+        default=config.assay_transfer_profile_default,
+    )
+    parser.add_argument(
+        "--assay-transfer-selection-unit",
+        choices=ASSAY_TRANSFER_SELECTION_UNITS,
+        default=ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    )
+    parser.add_argument(
+        "--assay-transfer-records-per-molecule",
+        type=int,
+        default=ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+        help=(
+            "Maximum endpoint-distinct assay records shown inside each selected "
+            f"unique molecule (1-{ASSAY_TRANSFER_RECORDS_PER_MOLECULE_MAX}). "
+            "Values above 1 require unique_molecule selection."
         ),
+    )
+    parser.add_argument(
+        "--rerank-catalog",
+        default=config.rerank_catalog_default,
     )
     parser.add_argument(
         "--rerank-cache",
-        default=(
-            "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-            "assay_transfer_rerank/flat_v2/scores.sqlite3"
-        ),
+        default=config.rerank_cache_default,
     )
     parser.add_argument(
         "--rerank-candidate-manifest",
-        default="",
+        default=config.rerank_candidate_manifest_default,
         help="Exact flat_v2 condition manifest; required with a flat assay-transfer catalog.",
     )
     parser.add_argument("--rerank-cache-mode", choices=["read_only", "read_write"], default="read_only")
-    parser.add_argument("--assay-transfer-model", default="jiosephlee/assay-transfer-tool")
+    parser.add_argument(
+        "--assay-transfer-model", default=config.assay_transfer_model_default
+    )
     parser.add_argument(
         "--assay-transfer-model-revision",
-        default="9515603b1a5c4586e41c221dcdbc5e7487c0c3f5",
+        default=config.assay_transfer_model_revision_default,
     )
     parser.add_argument(
         "--assay-transfer-template-profile",
@@ -1257,8 +1336,9 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
             "legacy_v3",
             "v6_5_query_context_copy",
             "v6_5_query_context_copy_no_extra_details",
+            "v11_query_context_copy",
         ],
-        default="legacy_v3",
+        default=config.assay_transfer_template_profile_default,
     )
     parser.add_argument(
         "--group-prompt-format",
@@ -1290,7 +1370,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     parser.add_argument(
         "--rerank-cache-version-manifest",
-        default="",
+        default=config.rerank_version_manifest_default,
         help="Optional VERSION.json whose model, template, catalog, manifest, and count must match preflight.",
     )
     parser.add_argument(
@@ -1314,6 +1394,33 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument("--harness-prefetch-tools", action="store_true")
     args = parser.parse_args(argv)
+    if args.assay_transfer_profile == "v11_with_categorical":
+        if args.assay_transfer_initial_morgan_filter == 100:
+            args.assay_transfer_initial_morgan_filter = 50
+        if args.min_similarity == 0.3:
+            args.min_similarity = 0.0
+        if args.rerank_catalog == config.rerank_catalog_default:
+            args.rerank_catalog = config.v11_rerank_catalog_default
+        if args.rerank_cache == config.rerank_cache_default:
+            args.rerank_cache = config.v11_rerank_cache_default
+        if args.rerank_candidate_manifest == config.rerank_candidate_manifest_default:
+            args.rerank_candidate_manifest = config.v11_rerank_candidate_manifest_default
+        if args.rerank_cache_version_manifest == config.rerank_version_manifest_default:
+            args.rerank_cache_version_manifest = config.v11_rerank_version_manifest_default
+        if args.assay_transfer_model == config.assay_transfer_model_default:
+            args.assay_transfer_model = config.v11_assay_transfer_model_default
+        if args.assay_transfer_model_revision == config.assay_transfer_model_revision_default:
+            args.assay_transfer_model_revision = (
+                config.v11_assay_transfer_model_revision_default
+            )
+        if args.assay_transfer_template_profile == config.assay_transfer_template_profile_default:
+            args.assay_transfer_template_profile = "v11_query_context_copy"
+        if (
+            args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+            and args.index == config.default_index
+            and config.v11_index_default
+        ):
+            args.index = config.v11_index_default
     # Keep the branch's retrieval-strategy attribute and main's scheduler/runtime
     # attribute synchronized. Both CLI spellings are aliases in retrieval_args.py.
     args.neighbor_selector = args.morgan_neighbor_selector
@@ -1369,6 +1476,30 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
 
 def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespace) -> None:
     is_assay_transfer = args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+    if args.assay_transfer_profile == "v11_with_categorical":
+        required = {
+            "rerank catalog": args.rerank_catalog,
+            "rerank cache": args.rerank_cache,
+            "candidate manifest": args.rerank_candidate_manifest,
+            "model": args.assay_transfer_model,
+            "model revision": args.assay_transfer_model_revision,
+        }
+        missing = [name for name, value in required.items() if not str(value or "").strip()]
+        if missing:
+            raise SystemExit(
+                "V11 assay-transfer defaults are not configured for this task: "
+                + ", ".join(missing)
+            )
+        if args.assay_transfer_template_profile != "v11_query_context_copy":
+            raise SystemExit(
+                "--assay-transfer-profile v11_with_categorical requires "
+                "--assay-transfer-template-profile v11_query_context_copy"
+            )
+    elif args.assay_transfer_template_profile == "v11_query_context_copy":
+        raise SystemExit(
+            "--assay-transfer-template-profile v11_query_context_copy requires "
+            "--assay-transfer-profile v11_with_categorical"
+        )
     # --retrieval-strategy is the source of truth; it locks the compatible group-prompt-format.
     if is_assay_transfer:
         if args.group_prompt_format != "assay_transfer_tool":
@@ -1402,8 +1533,21 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
             mode=args.assay_transfer_diversity_mode,
             score_slack=args.assay_transfer_diversity_score_slack,
         )
+        validate_assay_transfer_records_per_molecule(
+            args.assay_transfer_records_per_molecule,
+            selection_unit=args.assay_transfer_selection_unit,
+        )
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
+    if (
+        args.assay_transfer_records_per_molecule
+        > ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT
+        and not is_assay_transfer
+    ):
+        raise SystemExit(
+            "--assay-transfer-records-per-molecule greater than 1 requires "
+            "--retrieval-strategy assay_transfer_tool"
+        )
     if args.group_prompt_format and not config.group_prompt_formats:
         raise SystemExit(f"Pipeline {config.pipeline_module} does not support --group-prompt-format")
     if args.group_output_schema and not config.group_output_schemas:

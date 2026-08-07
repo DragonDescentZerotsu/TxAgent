@@ -32,6 +32,10 @@ from tools.chembl_tool.tasks.bbb_martins.starling_normalization_policy import (
 from tools.chembl_tool.tasks.bbb_martins.starling_source_column_contracts import (
     SOURCE_COLUMNS,
 )
+from tools.chembl_tool.tasks.bbb_martins.starling_reference_semantics import (
+    MAPPING_VERSION as REFERENCE_SEMANTICS_VERSION,
+    REFERENCE_SEMANTICS_CONFIG,
+)
 
 
 TASK_ID = "bbb_martins"
@@ -137,6 +141,43 @@ def _base_dimensions(
                 legacy_value_field="categorical_encoder_id",
             )
         )
+    reference_inputs = tuple(
+        dict.fromkeys(
+            (
+                "endpoint_name",
+                "measurement_text",
+                "unit_text",
+                "support_text",
+                *REFERENCE_SEMANTICS_CONFIG.source_specs[source_id].extra_fields,
+            )
+        )
+    )
+    dimensions.extend(
+        (
+            CanonicalDimensionSpec(
+                "canonical_reference_scope",
+                "measurement_reference_scope",
+                reference_inputs,
+                "frozen_mapping",
+                REFERENCE_SEMANTICS_VERSION,
+                missing_policy="explicit_unknown",
+                atomic_group="canonical_reference_semantics_pair",
+                classification_evidence=True,
+                legacy_value_field="canonical_reference_scope",
+            ),
+            CanonicalDimensionSpec(
+                "canonical_reference_basis",
+                "measurement_reference_basis",
+                reference_inputs,
+                "frozen_mapping",
+                REFERENCE_SEMANTICS_VERSION,
+                missing_policy="explicit_unknown",
+                atomic_group="canonical_reference_semantics_pair",
+                classification_evidence=True,
+                legacy_value_field="canonical_reference_basis",
+            ),
+        )
+    )
     return tuple(dimensions)
 
 
@@ -296,8 +337,12 @@ PAIR_BUCKETS = {
             "canonical_measurement_scale_id",
             "canonical_assay_context",
             "canonical_species_context",
+            "canonical_reference_scope",
+            "canonical_reference_basis",
         ),
         ("bbb_transport_label", "qualifying_conditions"),
+        REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        True,
     ),
     "passive_permeability": PairBucketSpec(
         "passive_permeability",
@@ -308,8 +353,12 @@ PAIR_BUCKETS = {
             "canonical_assay_type",
             "canonical_assay_context",
             "canonical_species_context",
+            "canonical_reference_scope",
+            "canonical_reference_basis",
         ),
         ("metric_uncertainty", "qualifying_conditions", "needs_more_context"),
+        REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        True,
     ),
     "efflux_transport": PairBucketSpec(
         "efflux_transport",
@@ -321,13 +370,25 @@ PAIR_BUCKETS = {
             "canonical_evidence_type",
             "canonical_assay_context",
             "canonical_species_context",
+            "canonical_reference_scope",
+            "canonical_reference_basis",
         ),
         ("perturbation", "qualifying_conditions", "needs_more_context"),
+        REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        True,
     ),
     "influx_transport": PairBucketSpec(
         "influx_transport",
-        ("canonical_endpoint_name", "canonical_unit_text", "canonical_transport_mechanism"),
+        (
+            "canonical_endpoint_name",
+            "canonical_unit_text",
+            "canonical_transport_mechanism",
+            "canonical_reference_scope",
+            "canonical_reference_basis",
+        ),
         (),
+        REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        True,
     ),
 }
 

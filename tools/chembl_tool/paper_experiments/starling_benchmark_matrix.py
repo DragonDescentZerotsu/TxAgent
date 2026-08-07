@@ -35,6 +35,7 @@ from .build_starling_benchmark_indices import (
 )
 from .molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
+    DEFAULT_TOOL_SERVICE_URL,
     EXPERIMENTS,
     GLM_API_KEY_ENV,
     GLM_BASE_URL,
@@ -52,6 +53,7 @@ from .molecular_evidence_agent import (
     _visibility_contract,
     ensure_endpoint_api_key,
     experiment_run_root,
+    resolve_endpoint_base_url,
 )
 from .minimol_retrieval_contract import (
     MINIMOL_RETRIEVAL_FEATURE,
@@ -72,8 +74,10 @@ TASK_DATA_NAMES = {
 }
 DEFAULT_BENCHMARK_DATA_ROOT = Path("data/processed_starling")
 EVALUATION_SUBSETS = ("valid", "test")
-DEFAULT_ENDPOINT_CONCURRENCY_BUDGET = 512
+DEFAULT_ENDPOINT_CONCURRENCY_BUDGET = 500
 DEFAULT_LAUNCHER_PARALLELISM = 128
+CANONICAL_TOP_K_PER_GROUP = 3
+CANONICAL_MIN_SIMILARITY = 0.3
 
 
 def experiments_for_starling_benchmark(
@@ -156,6 +160,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.list:
         print("\n".join(experiment.name for experiment in selected))
         return 0
+    args.base_url = resolve_endpoint_base_url(args.base_url)
 
     canonical_paper_root = (
         paper_root_for_minimol_retrieval(args.benchmark_split)
@@ -211,6 +216,9 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "top_k_per_group": args.top_k_per_group,
+        "min_similarity": args.min_similarity,
+        "tool_service_url": args.tool_service_url,
         "exclude_nondirect_bioavailability_records": (
             bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
         ),
@@ -232,6 +240,7 @@ def main(argv: list[str] | None = None) -> int:
         "endpoint_concurrency_budget": DEFAULT_ENDPOINT_CONCURRENCY_BUDGET,
         "parallelism": args.parallelism,
         "global_pool_parallelism": args.parallelism,
+        "retrieval_preparation_workers": args.retrieval_preparation_workers,
         "scheduler": {
             "name": GLOBAL_PROMPT_POOL_SCHEDULER,
             "version": GLOBAL_PROMPT_POOL_VERSION,
@@ -290,6 +299,7 @@ def _run_selected_experiments(
         commands,
         max_workers=args.parallelism,
         max_stage_requeues=getattr(args, "max_stage_requeues", 0),
+        preparation_workers=args.retrieval_preparation_workers,
     )
 
 
@@ -326,13 +336,17 @@ def _validate_concurrency(args: argparse.Namespace) -> None:
 
 def _validate_retrieval_ablation_args(args: argparse.Namespace) -> None:
     """Keep experimental selectors/prompts out of canonical result roots."""
-    nonstandard = (
+    nonstandard_selector_or_context = (
         args.neighbor_selector != SIMILARITY_SELECTOR
         or args.neighbor_context_profile != STANDARD_NEIGHBOR_CONTEXT
     )
-    if nonstandard and not args.output_root:
+    nonstandard_retrieval_shape = (
+        args.top_k_per_group != CANONICAL_TOP_K_PER_GROUP
+        or args.min_similarity != CANONICAL_MIN_SIMILARITY
+    )
+    if (nonstandard_selector_or_context or nonstandard_retrieval_shape) and not args.output_root:
         raise SystemExit(
-            "Non-standard neighbor selection/context requires an explicit --output-root."
+            "Non-standard retrieval settings require an explicit --output-root."
         )
     if (
         bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
@@ -342,7 +356,10 @@ def _validate_retrieval_ablation_args(args: argparse.Namespace) -> None:
             "--exclude-nondirect-bioavailability-records requires an explicit "
             "--output-root to prevent --skip-existing reuse."
         )
-    if args.retrieval_feature != MORGAN_RETRIEVAL_FEATURE and nonstandard:
+    if (
+        args.retrieval_feature != MORGAN_RETRIEVAL_FEATURE
+        and nonstandard_selector_or_context
+    ):
         raise SystemExit(
             "Coverage selection/context currently requires --retrieval-feature morgan."
         )
@@ -479,7 +496,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Validate inputs and write the matrix manifest without launching conditions.",
     )
     parser.add_argument("--api-key-env", default=GLM_API_KEY_ENV)
-    parser.add_argument("--base-url", default=GLM_BASE_URL)
+    parser.add_argument(
+        "--base-url",
+        default=None,
+        help="OpenAI-compatible endpoint; defaults to LITELLM_BASE_URL from keys.py.",
+    )
     parser.add_argument("--model", default=GLM_MODEL)
     parser.add_argument(
         "--output-root",
@@ -507,6 +528,17 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
     parser.add_argument(
+        "--top-k-per-group",
+        type=int,
+        default=CANONICAL_TOP_K_PER_GROUP,
+    )
+    parser.add_argument(
+        "--min-similarity",
+        type=float,
+        default=CANONICAL_MIN_SIMILARITY,
+    )
+    parser.add_argument("--tool-service-url", default=DEFAULT_TOOL_SERVICE_URL)
+    parser.add_argument(
         "--exclude-nondirect-bioavailability-records",
         action="store_true",
         help=(
@@ -525,6 +557,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         type=int,
         default=DEFAULT_LAUNCHER_PARALLELISM,
     )
+    parser.add_argument("--retrieval-preparation-workers", type=int, default=8)
     parser.add_argument(
         "--timeout-s",
         type=int,
@@ -543,7 +576,14 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=0,
         help="Run at most this many test rows per selected condition; 0 runs the full test.",
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.retrieval_preparation_workers < 1:
+        parser.error("--retrieval-preparation-workers must be positive")
+    if args.top_k_per_group < 1:
+        parser.error("--top-k-per-group must be positive")
+    if not 0.0 <= args.min_similarity <= 1.0:
+        parser.error("--min-similarity must be between 0 and 1 inclusive")
+    return args
 
 
 if __name__ == "__main__":

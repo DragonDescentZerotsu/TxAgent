@@ -123,6 +123,9 @@ def _stage_paths(policy: StarlingTaskPolicy | None) -> dict[str, str]:
         "endpoint_registry": f"{canonical_dir}/endpoint_registry.json",
         "validity_policy": f"{canonical_dir}/record_validity_policy.json",
         "auxiliary_manifest": f"{canonical_dir}/auxiliary_mapping_manifest.json",
+        "reference_semantics_manifest": (
+            f"{canonical_dir}/reference_semantics_manifest.json"
+        ),
         "source_contract": f"{canonical_dir}/source_contract.json",
         "normalize_manifest": f"{canonical_dir}/manifest.json",
     }
@@ -161,6 +164,11 @@ def _stage_output_filenames(
             paths["auxiliary_manifest"],
             paths["source_contract"],
             paths["endpoint_registry"],
+        )
+        + (
+            (paths["reference_semantics_manifest"],)
+            if policy is not None and policy.reference_semantics_enabled
+            else ()
         ),
     }
 
@@ -478,6 +486,15 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                     for source_id, inventory in endpoint_inventories.items()
                 },
             )
+            if policy.reference_semantics_enabled:
+                if documents.reference_semantics_manifest is None:
+                    raise ValueError(
+                        "reference semantics are enabled but Stage 02 supplied no manifest"
+                    )
+                _write_json(
+                    stage_dir / stage_paths["reference_semantics_manifest"],
+                    documents.reference_semantics_manifest,
+                )
             _write_staged_stage_manifest(
                 stage_dir,
                 out_dir,
@@ -710,6 +727,10 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             "index_fingerprints": INDEX_FINGERPRINTS_FILENAME,
             "index_membership": INDEX_MEMBERSHIP_FILENAME,
         }
+        if policy.reference_semantics_enabled:
+            artifact_filenames["reference_semantics_manifest"] = stage_paths[
+                "reference_semantics_manifest"
+            ]
         if policy.source_value_cleaner is not None:
             artifact_filenames["source_value_cleaning_audit"] = (
                 SOURCE_VALUE_CLEANING_AUDIT_FILENAME

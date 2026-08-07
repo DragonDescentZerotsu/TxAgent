@@ -1,0 +1,15 @@
+{
+  "attempted_rows": 14010,
+  "batch_size": 25,
+  "budget_epoch": "openai_key_20260806_01",
+  "budget_max_tokens": 9000000,
+  "budget_spent_tokens": 6732965,
+  "candidate_rows": 57564,
+  "completed": false,
+  "generation_version": "reference_semantics_generation.v1",
+  "model": "gpt-5.4-mini",
+  "prompt_version": "bbb_reference_semantics_prompt.v1",
+  "reasoning_effort": "low",
+  "task_id": "bbb_martins",
+  "terminal_rows": 13375
+}

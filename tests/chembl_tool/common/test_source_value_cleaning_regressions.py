@@ -114,18 +114,19 @@ def test_parser_fails_closed_when_stage_01_is_bypassed(measurement: str) -> None
 
 
 @pytest.mark.parametrize(
-    ("measurement", "expected"),
+    ("measurement", "expected", "expected_unit"),
     [
-        ("0", "0"),
-        ("0.61", "61"),
-        ("1.5", "150"),
-        ("1.51", "1.51"),
-        ("50.6%", "50.6"),
-        ("0.61 ± 0.05", "61 ± 5"),
+        ("0", "0", None),
+        ("0.61", "0.61", None),
+        ("1.5", "1.5", None),
+        ("1.51", "1.51", None),
+        ("50.6%", "50.6", "%"),
+        ("0.61 ± 0.05", "0.61 ± 0.05", None),
+        ("0.61 fraction", "61", "%"),
     ],
 )
-def test_hf_direct_fraction_rule_is_evidence_scope_scoped(
-    measurement: str, expected: str
+def test_hf_direct_scalar_requires_explicit_unit(
+    measurement: str, expected: str, expected_unit: str | None
 ) -> None:
     baseline = normalize_measurement_and_unit(
         measurement, "%", task="bioavailability_ma"
@@ -140,7 +141,7 @@ def test_hf_direct_fraction_rule_is_evidence_scope_scoped(
         baseline,
     )
     assert resolved.canonical_measurement == expected
-    assert resolved.canonical_unit == "%"
+    assert resolved.canonical_unit == expected_unit
 
     other_source = _resolve_source_measurement_pair(
         {"source_id": "fa", "measurement_text": measurement},

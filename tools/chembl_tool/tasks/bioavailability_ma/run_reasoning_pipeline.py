@@ -13,11 +13,29 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.assay_reranking.v11 import (
+    TEMPLATE_PROFILE as V11_TEMPLATE_PROFILE,
+    V11CachedAssayReranker,
+    default_cache_paths as v11_default_cache_paths,
+    model_profile as v11_model_profile,
+)
+from tools.chembl_tool.common.assay_transfer_prompt_policy import (
+    SCORED_NEIGHBORS_POLICY_NAME,
+    prepare_assay_transfer_selected_neighbors,
+    public_assay_transfer_score,
+    scored_neighbors_prompt_enabled,
+    validate_scored_neighbors_configuration,
+)
 from tools.chembl_tool.common.assay_transfer_selection import (
     ASSAY_TRANSFER_DIVERSITY_MODES,
     ASSAY_TRANSFER_DIVERSITY_NONE,
+    ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+    ASSAY_TRANSFER_RECORDS_PER_MOLECULE_MAX,
+    ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    ASSAY_TRANSFER_SELECTION_UNITS,
     assay_transfer_selection_policy,
     validate_assay_transfer_diversity,
+    validate_assay_transfer_records_per_molecule,
 )
 from tools.chembl_tool.common.cli.retrieval_args import add_retrieval_strategy_args
 from tools.chembl_tool.common.experiment_retrieval import (
@@ -66,13 +84,6 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank 
     DEFAULT_CATALOG as DEFAULT_RERANK_CATALOG,
     AssayTransferCachedReranker,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
-    SCORED_NEIGHBORS_POLICY_NAME,
-    prepare_assay_transfer_selected_neighbors,
-    public_assay_transfer_score,
-    scored_neighbors_prompt_enabled,
-    validate_scored_neighbors_configuration,
-)
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
     DIRECT_ORAL_BIOAVAILABILITY_GROUP,
     NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
@@ -96,11 +107,17 @@ GROUP_PROMPT_FORMATS = ("legacy", *TEXT_GROUP_PROMPT_FORMATS)
 
 DEFAULT_INPUT = "data/processed/Bioavailability_Ma/test.jsonl"
 DEFAULT_INDEX = "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/bioavailability_neighbor_index.pkl"
+V11_DEFAULT_INDEX = (
+    "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
+    "starling_normalized_v7/08_neighbor_index/scaffold"
+)
 DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bioavailability_ma/reasoning/single_runs"
 DEFAULT_MODEL = "deepseek-v4-pro"
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
 NONDIRECT_EVIDENCE_POLICY_VERSION = "bioavailability_nondirect_evidence_policy.v2"
+V11_DEFAULT_PATHS = v11_default_cache_paths("bioavailability_ma")
+V11_MODEL_PROFILE = v11_model_profile("bioavailability_ma")
 
 
 GROUP_REASONING_TOOLS = [
@@ -200,6 +217,16 @@ def _nondirect_evidence_policy(exclude: bool) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    if args.assay_transfer_profile == "v11_with_categorical":
+        if args.assay_transfer_template_profile != V11_TEMPLATE_PROFILE:
+            raise SystemExit(
+                "v11_with_categorical requires --assay-transfer-template-profile "
+                f"{V11_TEMPLATE_PROFILE}"
+            )
+    elif args.assay_transfer_template_profile == V11_TEMPLATE_PROFILE:
+        raise SystemExit(
+            f"{V11_TEMPLATE_PROFILE} requires --assay-transfer-profile v11_with_categorical"
+        )
     if args.exclude_nondirect_bioavailability_records and (
         not args.retrieval_source.startswith("starling")
         or args.experiment_mode not in {"direct", "full_flat", "full_mechanism"}
@@ -241,8 +268,20 @@ def main(argv: list[str] | None = None) -> int:
             mode=args.assay_transfer_diversity_mode,
             score_slack=args.assay_transfer_diversity_score_slack,
         )
+        validate_assay_transfer_records_per_molecule(
+            args.assay_transfer_records_per_molecule,
+            selection_unit=args.assay_transfer_selection_unit,
+        )
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
+    if (
+        args.assay_transfer_records_per_molecule > 1
+        and args.retrieval_strategy != ASSAY_TRANSFER_TOOL_STRATEGY
+    ):
+        raise SystemExit(
+            "--assay-transfer-records-per-molecule greater than 1 requires "
+            "--retrieval-strategy assay_transfer_tool"
+        )
     reranker_provenance_name = (
         "assay_transfer" if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY else "none"
     )
@@ -327,18 +366,29 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit("assay_transfer reranking requires direct, full_flat, or full_mechanism mode")
         if args.rerank_cache_mode != "read_only":
             raise SystemExit("reasoning runs require --rerank-cache-mode read_only; populate scores with precompute")
-        reranker = AssayTransferCachedReranker(
-            catalog_path=args.rerank_catalog,
-            cache_path=args.rerank_cache,
-            cache_mode="read_only",
-            model=args.assay_transfer_model,
-            model_revision=args.assay_transfer_model_revision,
-            candidate_manifest_path=args.rerank_candidate_manifest,
-            template_profile=args.assay_transfer_template_profile,
-            exclude_nondirect_bioavailability_records=(
-                args.exclude_nondirect_bioavailability_records
-            ),
-        )
+        if args.assay_transfer_profile == "v11_with_categorical":
+            reranker = V11CachedAssayReranker(
+                task_id="bioavailability_ma",
+                catalog_path=args.rerank_catalog,
+                cache_path=args.rerank_cache,
+                cache_mode="read_only",
+                model=args.assay_transfer_model,
+                model_revision=args.assay_transfer_model_revision,
+                candidate_manifest_path=args.rerank_candidate_manifest,
+            )
+        else:
+            reranker = AssayTransferCachedReranker(
+                catalog_path=args.rerank_catalog,
+                cache_path=args.rerank_cache,
+                cache_mode="read_only",
+                model=args.assay_transfer_model,
+                model_revision=args.assay_transfer_model_revision,
+                candidate_manifest_path=args.rerank_candidate_manifest,
+                template_profile=args.assay_transfer_template_profile,
+                exclude_nondirect_bioavailability_records=(
+                    args.exclude_nondirect_bioavailability_records
+                ),
+            )
     expected_reranker = reranker.provenance() if reranker is not None else {"name": "none"}
     retrieval = load_retrieval_replay(
         args.retrieval_replay_run_dir,
@@ -351,6 +401,8 @@ def main(argv: list[str] | None = None) -> int:
                 "diversity": assay_transfer_selection_policy(
                     mode=args.assay_transfer_diversity_mode,
                     score_slack=args.assay_transfer_diversity_score_slack,
+                    selection_unit=args.assay_transfer_selection_unit,
+                    records_per_molecule=args.assay_transfer_records_per_molecule,
                 ),
             }
             if reranker is not None
@@ -415,6 +467,10 @@ def main(argv: list[str] | None = None) -> int:
             assay_transfer_min_score=args.assay_transfer_min_score,
             assay_transfer_diversity_mode=args.assay_transfer_diversity_mode,
             assay_transfer_diversity_score_slack=args.assay_transfer_diversity_score_slack,
+            assay_transfer_selection_unit=args.assay_transfer_selection_unit,
+            assay_transfer_records_per_molecule=(
+                args.assay_transfer_records_per_molecule
+            ),
         )
     else:
         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
@@ -553,6 +609,7 @@ def main(argv: list[str] | None = None) -> int:
         "retrieval_source": args.retrieval_source,
         "nondirect_bioavailability_evidence_policy": requested_nondirect_policy,
         "retrieval_strategy": args.retrieval_strategy,
+        "assay_transfer_profile": args.assay_transfer_profile,
         "retrieval_reranker": (retrieval.get("experiment") or {}).get("retrieval_reranker", {"name": "none"}),
         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
@@ -565,6 +622,10 @@ def main(argv: list[str] | None = None) -> int:
         "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
         "assay_transfer_diversity_mode": args.assay_transfer_diversity_mode,
         "assay_transfer_diversity_score_slack": args.assay_transfer_diversity_score_slack,
+        "assay_transfer_selection_unit": args.assay_transfer_selection_unit,
+        "assay_transfer_records_per_molecule": (
+            args.assay_transfer_records_per_molecule
+        ),
         "assay_transfer_selection_policy": (retrieval.get("experiment") or {}).get(
             "assay_transfer_selection_policy", {}
         ),
@@ -925,7 +986,7 @@ def _group_prompt_payload(
             "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
             *(
                 [
-                    "assay_transfer_score is a 0-1 cached model estimate that the best compatible source measurement transfers from that neighbor to the query. It is not an oral-bioavailability probability, assay value, calibrated label vote, or deterministic override; combine it with structure, assay context, and evidence quality."
+                    "assay_transfer_score is a 0-1 cached model estimate that the exact selected source assay record transfers to the query under the copied assay context. It is uncalibrated, may be extrapolative for qualitative records, and is not an oral-bioavailability probability, assay value, label vote, or deterministic override."
                 ]
                 if include_assay_transfer_score
                 else []
@@ -1317,6 +1378,26 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             "selection slot; zero preserves score ranking exactly."
         ),
     )
+    parser.add_argument(
+        "--assay-transfer-profile",
+        choices=["legacy_bio", "v11_with_categorical"],
+        default="legacy_bio",
+    )
+    parser.add_argument(
+        "--assay-transfer-selection-unit",
+        choices=ASSAY_TRANSFER_SELECTION_UNITS,
+        default=ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    )
+    parser.add_argument(
+        "--assay-transfer-records-per-molecule",
+        type=int,
+        choices=range(
+            ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+            ASSAY_TRANSFER_RECORDS_PER_MOLECULE_MAX + 1,
+        ),
+        default=ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+        metavar="N",
+    )
     parser.add_argument("--rerank-catalog", default=DEFAULT_RERANK_CATALOG)
     parser.add_argument("--rerank-cache", default=DEFAULT_RERANK_CACHE)
     parser.add_argument(
@@ -1329,7 +1410,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--assay-transfer-model-revision", default=ASSAY_TRANSFER_MODEL_REVISION)
     parser.add_argument(
         "--assay-transfer-template-profile",
-        choices=TEMPLATE_PROFILES,
+        choices=(*TEMPLATE_PROFILES, V11_TEMPLATE_PROFILE),
         default=DEFAULT_TEMPLATE_PROFILE,
     )
     parser.add_argument(
@@ -1391,7 +1472,30 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             "neighbor evidence_source; invariant across retriever)."
         ),
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.assay_transfer_profile == "v11_with_categorical":
+        if (
+            args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+            and args.index == DEFAULT_INDEX
+        ):
+            args.index = V11_DEFAULT_INDEX
+        if args.assay_transfer_initial_morgan_filter == 100:
+            args.assay_transfer_initial_morgan_filter = 50
+        if args.min_similarity == 0.3:
+            args.min_similarity = 0.0
+        if args.rerank_catalog == DEFAULT_RERANK_CATALOG:
+            args.rerank_catalog = V11_DEFAULT_PATHS["catalog"]
+        if args.rerank_cache == DEFAULT_RERANK_CACHE:
+            args.rerank_cache = V11_DEFAULT_PATHS["cache"]
+        if not args.rerank_candidate_manifest:
+            args.rerank_candidate_manifest = V11_DEFAULT_PATHS["candidate_manifest"]
+        if args.assay_transfer_model == ASSAY_TRANSFER_MODEL:
+            args.assay_transfer_model = V11_MODEL_PROFILE["model"]
+        if args.assay_transfer_model_revision == ASSAY_TRANSFER_MODEL_REVISION:
+            args.assay_transfer_model_revision = V11_MODEL_PROFILE["revision"]
+        if args.assay_transfer_template_profile == DEFAULT_TEMPLATE_PROFILE:
+            args.assay_transfer_template_profile = V11_TEMPLATE_PROFILE
+    return args
 
 
 def _log(message: str) -> None:

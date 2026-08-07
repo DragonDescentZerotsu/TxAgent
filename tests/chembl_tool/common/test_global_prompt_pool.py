@@ -151,12 +151,19 @@ def test_matrix_global_pool_uses_one_full_budget_without_condition_barriers(monk
         lambda experiment, args: ["python", "-m", f"batch.{experiment.name}"],
     )
 
-    def fake_pool(commands, *, max_workers, max_stage_requeues):
+    def fake_pool(
+        commands,
+        *,
+        max_workers,
+        max_stage_requeues,
+        preparation_workers,
+    ):
         calls.append(
             {
                 "names": [item.experiment_name for item in commands],
                 "max_workers": max_workers,
                 "max_stage_requeues": max_stage_requeues,
+                "preparation_workers": preparation_workers,
             }
         )
         return []
@@ -165,6 +172,7 @@ def test_matrix_global_pool_uses_one_full_budget_without_condition_barriers(monk
     args = SimpleNamespace(
         parallelism=128,
         max_stage_requeues=2,
+        retrieval_preparation_workers=32,
     )
 
     assert matrix._run_selected_experiments(selected, args) == []
@@ -178,6 +186,7 @@ def test_matrix_global_pool_uses_one_full_budget_without_condition_barriers(monk
             ],
             "max_workers": 128,
             "max_stage_requeues": 2,
+            "preparation_workers": 32,
         }
     ]
 

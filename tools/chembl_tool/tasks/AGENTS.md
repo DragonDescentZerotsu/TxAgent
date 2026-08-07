@@ -95,6 +95,17 @@ canonical outputs. For example, `assay_system` may independently support `canoni
 `canonical_species_context`; both outputs must record `assay_system` as their input. Missing canonical
 values do not fall back to a differently named source field.
 
+Scalar reference semantics are also a Stage-02 canonical dimension. Each task freezes its own bounded
+`gpt-5.4-mini` request shape while the shared offline classifier assigns each record at most once; invalid
+responses and failed requests become `unknown` without retry. Its frozen row mapping is joined as
+`canonical_reference_scope` and, where required, `canonical_reference_basis`. Context fields used only as
+classification evidence may remain residual-heterogeneity candidates because the classifier does not
+normalize or consume their values. Stage 02 publishes `reference_semantics_manifest.json` with mapping
+hash and coverage; task prompts and mappings are cache-fingerprinted.
+The validator may normalize exact provenance formatting, but it must never relabel GPT scope or basis.
+Contradictory semantic assignments fail closed to `unknown`; revisit the prompt or taxonomy only when one
+failure class exceeds 10% of classified rows.
+
 Every field used in pair-bucket identity must be canonicalized, whether by a deterministic rule, a
 reviewed frozen mapping, or a controlled encoder. A cleaned field touched by ordinary canonicalization must
 not also be a variance candidate. The narrow exception is an input used exclusively by a conditional
@@ -112,6 +123,9 @@ sidecar persists `measurement_kind`, `canonical_measurement_scale_id`, `canonica
 `canonical_category_rank`. Current supported kinds are `continuous`, `binary`, and `ordinal`; nominal
 unordered outcomes remain evidence-only. A source with a controlled scale must include
 `canonical_measurement_scale_id` in its bucket identity, so incompatible scales cannot mix.
+Task schemas also declare eligible reference scopes. Unknown and comparator-relative measurements remain
+valid evidence records but are excluded from assay-transfer buckets; accepted reference scope, and basis
+for tasks that use it, are part of the bucket key so different denominators cannot mix.
 
 Stage 05 validates and calibrates the bucket observed in Stage 04; it never creates child buckets or changes
 membership. Every bucket needs at least 25 records. Binary buckets must observe both declared levels;
@@ -213,6 +227,14 @@ unrecognized, which already makes the record non-scalar and therefore ineligible
 buckets and assay transfer. That is the intended outcome, not a gap to close: dropping a
 handful of unparseable records costs far less than a bespoke rule that encodes one dataset's
 mess, or an approximation that yields a confidently wrong number. Prefer failing closed.
+
+The same precision rule applies to contextual numeric text. A leading mean or point is not
+an atomic scalar when directional or comparative wording remains in the measurement after
+measurement/unit separation (for example, ``62 ± 3% decrease`` or ``2-fold higher than``).
+Keep the source-facing display text, set ``finite_scalar_value`` to null, and exclude the row
+from pair bucketing. A direction remains scalar-eligible only when the source supplies it as
+an explicit controlled unit, such as ``% increase``; in that case the direction is retained
+in ``canonical_unit_text`` and therefore in the pair-bucket identity.
 
 Any change to the shared normalizer must be measured per task against real records before
 a library is rebuilt on it. A change motivated by one task is not evidence about another.

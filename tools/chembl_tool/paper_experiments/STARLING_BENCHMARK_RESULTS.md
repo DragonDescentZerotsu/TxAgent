@@ -1,6 +1,6 @@
 # Starling random/scaffold benchmark：当前决策、结果与入口
 
-更新时间：2026-08-04。
+更新时间：2026-08-06。
 
 本文件是 2026-07-24 至 2026-07-27 Starling benchmark 迁移和实验的集中总账。它只记录当前
 Starling-held-out `random` / `scaffold` lineage；旧 TDC `test` / `valid` 的历史结果仍见
@@ -105,6 +105,36 @@ generic-name audit allowlist 后重新审计为 0。全量 28,298 个 retained n
 注意 canonical matrix manifest 会被最后一次 selection/repair launcher 原子更新，因此该 root 当前 manifest
 显示最后的 `1x1` finalization，而不是整轮历史峰值并发。完整启动/修复形状保存在同 root 的
 `run_*` / `repair_*` logs；不要仅凭最后一个 manifest 反推整轮吞吐。
+
+### Morgan depth and V11 assay-transfer ablations (2026-08-06)
+
+Three matched GLM scaffold-validation ablations were completed under the frozen
+`identity_blind + parent_disjoint` contract. The Morgan runs used no similarity floor and selected unique
+molecules directly by Tanimoto similarity. The V11 run reranked an initial Morgan pool of 50, selected three
+unique molecules per mechanism family, and exposed up to five endpoint-distinct assay records per molecule.
+All V11 transfer logits were extracted in FP32. Every row below has zero failed samples.
+
+| task | query only | Morgan k=3 | Morgan k=7 | V11 k=3, unique molecule, r=5 |
+|---|---:|---:|---:|---:|
+| BBB_Martins | 0.6224 | 0.7219 | **0.7292** | 0.6689 |
+| Bioavailability_Ma | 0.4344 | 0.6232 | **0.6487** | 0.5869 |
+| Skin_Reaction | 0.5417 | **0.5921** | 0.5857 | 0.5788 |
+
+These are validation results, not test-set model-selection results. Increasing Morgan retrieval from k=3 to
+k=7 helped BBB and Bioavailability but slightly reduced Skin macro-F1. The current V11 configuration did not
+improve on Morgan k=3 for any task, so it is an ablation rather than a replacement for the Morgan condition.
+
+The Morgan evidence-library payload exposed 2.315/3.723/3.530 records per selected molecule at k=3 for
+BBB/Bioavailability/Skin, and 2.269/3.750/3.497 at k=7. The V11 endpoint-distinct bundles exposed
+2.393/3.155/3.798 records per selected molecule respectively; all three tasks reached, but never exceeded, the
+five-record cap. Artifact roots:
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid/morgan_similarity_k3_no_floor/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid/morgan_similarity_k7_no_floor/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid/morgan_similarity_k3_k7_no_floor_analysis/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid/assay_transfer_v11_k3_unique_molecules_scored_assay_schema_r5/
+```
 
 ### GPT-OSS deployment-visible + parent-disjoint 补充矩阵（2026-08-03）
 
@@ -884,18 +914,21 @@ generic final-only group filtering:
   gate 对齐：必须有可归一化的 task prediction、single/final status=ok、准确的 expected group 数和 0 failed
   groups；它不保存或重放 SSH 密码，Duo 仍需用户批准。
 
-### GLM endpoint 默认值与 2026-08-01 benchmark
+### Current GLM endpoint and the 2026-08-01 benchmark lineage
 
-上述 paper/Starling GLM 入口现在默认使用：
+As of 2026-08-05, the paper/Starling launchers default to:
 
 ```text
-http://127.0.0.1:50000/v1
+keys.py:LITELLM_BASE_URL
 nvidia/GLM-5.2-NVFP4
-reasoning_effort=""（省略 API 参数，保持历史 GLM reasoning contract）
+LITELLM_API_KEY injected from keys.py
+reasoning_effort="" (API parameter omitted; historical provider-default GLM reasoning preserved)
 ```
 
-本机端口由 `ssh -fNT parcc-glm` 转发到 `dgx008:50000`。旧 LiteLLM 请求名
-`zai-org/GLM-5.2-FP8` 实际也解析到 `hosted_vllm/nvidia/GLM-5.2-NVFP4`，因此这里不是两种模型精度的比较。
+The completed 2026-08-01 direct-endpoint results below retain their historical lineage. That route used
+`ssh -fNT parcc-glm` to forward local port 50000 to `dgx008:50000`. The historical LiteLLM request alias
+`zai-org/GLM-5.2-FP8` also resolved to `hosted_vllm/nvidia/GLM-5.2-NVFP4`, so endpoint changes are not an
+FP8-versus-NVFP4 model comparison.
 
 同一约 3.3k input-token structured-output 请求的 64 并发 smoke：
 

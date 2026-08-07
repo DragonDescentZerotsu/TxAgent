@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,9 @@ from tools.chembl_tool.common.starling.normalization.source_value_cleaning impor
 from tools.chembl_tool.common.starling.normalization.contracts import MeasurementPair
 from tools.chembl_tool.common.starling.normalization.measurements import (
     parse_point_measurement,
+)
+from tools.chembl_tool.common.starling.reference_semantics import (
+    ReferenceSemanticsAttacher,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
 from tools.chembl_tool.tasks.skin_reaction.starling_categorical_response import (
@@ -65,6 +69,10 @@ from tools.chembl_tool.tasks.skin_reaction.starling_record_canonicalization impo
     NORMALIZATION_DOMAIN_RULES_VERSION,
     enrich_skin_reaction_validity,
     validity_policy_manifest,
+)
+from tools.chembl_tool.tasks.skin_reaction.starling_reference_semantics import (
+    DEFAULT_MAPPING_PATH as DEFAULT_REFERENCE_SEMANTICS_MAPPING,
+    REFERENCE_SEMANTICS_CONFIG,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_source_column_contracts import (
     SOURCE_COLUMN_CONTRACT_VERSION,
@@ -115,6 +123,15 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
             "label mappings used by the post-record filtering stage."
         ),
     )
+    parser.add_argument(
+        "--reference-semantics-mapping",
+        default=str(DEFAULT_REFERENCE_SEMANTICS_MAPPING),
+    )
+    parser.add_argument(
+        "--allow-missing-reference-semantics",
+        action="store_true",
+        help="Allow an explicitly incomplete pre-generation smoke build.",
+    )
 
 
 def validate_arguments(
@@ -126,6 +143,16 @@ def validate_arguments(
             "Build it with tasks.skin_reaction.data_processing, or pass "
             "--allow-missing-auxiliary-mapping for an explicitly incomplete "
             "stage 01-05 build."
+        )
+    reference_mapping = Path(args.reference_semantics_mapping)
+    if (
+        args.through_stage != "clean"
+        and not reference_mapping.exists()
+        and not args.allow_missing_reference_semantics
+    ):
+        parser.error(
+            f"reference-semantics mapping not found: {reference_mapping}; build it "
+            "with common.starling.build_reference_semantics_mapping"
         )
 
 
@@ -159,6 +186,13 @@ def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
         else AuxiliaryMetadataAttacher(mapping_path)
     )
     semantic_results: dict[str, dict[str, Any]] = {}
+    reference_attacher = ReferenceSemanticsAttacher(
+        replace(
+            REFERENCE_SEMANTICS_CONFIG,
+            mapping_path=Path(args.reference_semantics_mapping),
+        ),
+        allow_missing=args.allow_missing_reference_semantics,
+    )
 
     def resolve_measurement_semantics(
         record: dict[str, Any],
@@ -213,9 +247,9 @@ def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
         family_resolver=family_assignment,
         source_measurement_resolver=resolve_measurement_semantics,
         record_enricher=lambda record: _enrich_record(
-            record, attacher, semantic_results
+            record, attacher, semantic_results, reference_attacher
         ),
-        run_state=attacher,
+        run_state={"auxiliary": attacher, "reference": reference_attacher},
     )
 
 
@@ -239,8 +273,10 @@ def stage_documents(
     unit_policy_manifest: dict[str, Any],
 ) -> StageDocuments:
     del args
-    attacher = hooks.run_state
+    attacher = hooks.run_state["auxiliary"]
+    reference_attacher = hooks.run_state["reference"]
     coverage = attacher.coverage_audit(normalized)
+    reference_coverage = reference_attacher.coverage_audit(normalized)
     semantics_audit = measurement_semantics_policy().audit(normalized)
     return StageDocuments(
         validity_policy={
@@ -271,6 +307,13 @@ def stage_documents(
                     "all_numeric_records_have_explicit_status"
                 ]
             ),
+            "reference_semantics_mapping_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_mapped"]
+            ),
+        },
+        reference_semantics_manifest={
+            **reference_attacher.manifest(),
+            "coverage": reference_coverage,
         },
     )
 
@@ -311,6 +354,7 @@ def _enrich_record(
     record: dict[str, Any],
     attacher: Any,
     semantic_results: dict[str, dict[str, Any]],
+    reference_attacher: ReferenceSemanticsAttacher,
 ) -> dict[str, Any]:
     source_projection = llm_source_projection(record)
     auxiliary = attacher.attach(record)
@@ -326,6 +370,9 @@ def _enrich_record(
     )
     validity = enrich_skin_reaction_validity(
         {**record, **auxiliary, **semantic, **encoded}
+    )
+    reference = reference_attacher.attach(
+        {**record, **auxiliary, **semantic, **encoded, **validity}
     )
     return {
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
@@ -347,6 +394,7 @@ def _enrich_record(
         **auxiliary,
         **semantic,
         **validity,
+        **reference,
     }
 
 
@@ -370,7 +418,11 @@ POLICY = StarlingTaskPolicy(
     validate_arguments=validate_arguments,
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
-    scientific_assets=(DEFAULT_REGISTRY_PATH,),
+    scientific_assets=(
+        DEFAULT_REGISTRY_PATH,
+        REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
+    ),
+    reference_semantics_enabled=True,
 )
 
 

@@ -767,6 +767,28 @@ as dimensionless scalar anchors with encoder-specific semantic endpoints before
 pair bucketing. Source-aware pair keys then use canonical endpoint, canonical
 unit, categorical encoder, and the relevant canonical context fields.
 
+BBB additionally freezes `canonical_reference_scope` and `canonical_reference_basis` per scalar row.
+Stage 04 accepts absolute values, endpoint-defined ratios with an explicit endpoint denominator,
+standardized assay-control ratios, and declared categorical scales. Comparator-relative and unknown rows
+remain evidence-only. Both scope and basis are pair-key dimensions, preventing plasma/brain, A-to-B/B-to-A,
+or assay-control denominators from being pooled accidentally. BBB v2 first resolves only three frozen,
+definition-level cases without an API call: approved physical scalars, explicit tissue/fluid denominator
+ratios, and ineligible fold changes. It sends every remaining row at most once using 50 rows per
+`gpt-5.4-mini` request; each visible row contains only a batch-local ID, raw measurement value, and support
+text, and the response contains only scope and basis. Existing v1 submissions are never retried. A prior
+GPT assignment that contradicts a v2 safe gate is preserved as provenance but published as `unknown`.
+The shared durable ledger enforces nine million combined input/output tokens per key epoch.
+
+The frozen 2026-08-06 v2 generation covers all 57,564 candidate rows. Definition-level gates resolved
+29,097 previously unattempted rows without an API call, while 14,432 remaining rows were submitted once
+in 289 requests. The new requests used 1,200,609 input and 460,163 output tokens; 14,172 rows passed strict
+response validation and 260 (1.80%) failed closed as `unknown`, with no retry. Across the complete mapping,
+399 prior assignments contradicted a safe gate and were also retained only as provenance while publishing
+`unknown`. The key epoch finished at 8,617,163 of 9,000,000 accounted tokens. The frozen mapping is
+`data_processing/reference_semantics_v2/reference_semantics.parquet` with SHA-256
+`431a8a962c8595f2098474a82fb17fe8ee40964d42ec161d5825be80a3f95bef`. Generation does not rebuild
+Stages 02-09; those stages must consume this mapping in one later rebuild.
+
 Build and retrieve:
 
 ```bash

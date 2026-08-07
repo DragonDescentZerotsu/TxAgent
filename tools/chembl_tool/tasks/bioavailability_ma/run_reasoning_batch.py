@@ -2,10 +2,28 @@
 
 from __future__ import annotations
 
+from functools import partial
+
 from tools.chembl_tool.common.task_workflows.reasoning_batch import BatchConfig, main as run_batch
-from tools.chembl_tool.tasks.bioavailability_ma.reranking.precompute_assay_transfer_rerank import (
-    preflight_cache_coverage,
+from tools.chembl_tool.common.assay_reranking.v11 import (
+    default_cache_paths,
+    model_profile,
+    preflight_cache_coverage as preflight_v11_cache_coverage,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.reranking.precompute_assay_transfer_rerank import (
+    preflight_cache_coverage as preflight_legacy_cache_coverage,
+)
+
+
+LEGACY_PREFLIGHT = preflight_legacy_cache_coverage
+V11_PREFLIGHT = partial(preflight_v11_cache_coverage, task_id="bioavailability_ma")
+
+
+def rerank_preflight(**kwargs):
+    profile = kwargs.pop("assay_transfer_profile", "legacy_bio")
+    return (V11_PREFLIGHT if profile == "v11_with_categorical" else LEGACY_PREFLIGHT)(
+        **kwargs
+    )
 
 
 CONFIG = BatchConfig(
@@ -23,7 +41,7 @@ CONFIG = BatchConfig(
     canonical_negative="low",
     positive_predictions=frozenset({"high", "pass", "positive", "bioavailability_positive", "1"}),
     negative_predictions=frozenset({"low", "fail", "negative", "bioavailability_negative", "0"}),
-    rerank_preflight=preflight_cache_coverage,
+    rerank_preflight=rerank_preflight,
     supports_assay_transfer_scores=True,
     supports_retrieval_strategy=True,
     supports_nondirect_bioavailability_filter=True,
@@ -31,6 +49,18 @@ CONFIG = BatchConfig(
     default_group_prompt_format="legacy",
     group_output_schemas=("legacy", "assay-transfer"),
     default_group_output_schema="legacy",
+    v11_rerank_catalog_default=default_cache_paths("bioavailability_ma")["catalog"],
+    v11_rerank_cache_default=default_cache_paths("bioavailability_ma")["cache"],
+    v11_rerank_candidate_manifest_default=default_cache_paths("bioavailability_ma")[
+        "candidate_manifest"
+    ],
+    v11_rerank_version_manifest_default=default_cache_paths("bioavailability_ma")["version"],
+    v11_assay_transfer_model_default=model_profile("bioavailability_ma")["model"],
+    v11_assay_transfer_model_revision_default=model_profile("bioavailability_ma")["revision"],
+    v11_index_default=(
+        "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
+        "starling_normalized_v7/08_neighbor_index/scaffold"
+    ),
 )
 
 

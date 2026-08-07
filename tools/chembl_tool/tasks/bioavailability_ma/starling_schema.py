@@ -28,11 +28,15 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts
 from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
     EVIDENCE_SCOPE_VERSION,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.starling_reference_semantics import (
+    MAPPING_VERSION as REFERENCE_SEMANTICS_VERSION,
+    REFERENCE_SEMANTICS_CONFIG,
+)
 
 
 TASK_ID = "bioavailability_ma"
 ENDPOINT_VERSION = "bioavailability_endpoint_name.v7"
-MEASUREMENT_UNIT_VERSION = "bioavailability_measurement_unit.v7"
+MEASUREMENT_UNIT_VERSION = "bioavailability_measurement_unit.v8"
 SMILES_MAPPING_VERSION = (
     "final_smiles_mapping_v2."
     "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
@@ -132,6 +136,29 @@ def _base_dimensions(
                 legacy_value_field="categorical_encoder_id",
             )
         )
+    reference_inputs = tuple(
+        dict.fromkeys(
+            (
+                "endpoint_name",
+                "measurement_text",
+                "unit_text",
+                "support_text",
+                *REFERENCE_SEMANTICS_CONFIG.source_specs[source_id].extra_fields,
+            )
+        )
+    )
+    dimensions.append(
+        CanonicalDimensionSpec(
+            "canonical_reference_scope",
+            "measurement_reference_scope",
+            reference_inputs,
+            "frozen_mapping",
+            REFERENCE_SEMANTICS_VERSION,
+            missing_policy="explicit_unknown",
+            classification_evidence=True,
+            legacy_value_field="canonical_reference_scope",
+        )
+    )
     return tuple(dimensions)
 
 
@@ -273,72 +300,89 @@ SOURCES = {
 
 PAIR_BUCKETS = {
     "hf_bioavailability": PairBucketSpec(
-        "hf_bioavailability",
-        (
+        source_id="hf_bioavailability",
+        canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_measurement_scale_id",
             "canonical_bioavailability_report_type",
             "canonical_bioavailability_evidence_scope",
+            "canonical_reference_scope",
         ),
-        (
+        variance_candidates=(
             "species_or_population",
             "dose",
             "oral_exposure_mode",
             "comparator",
             "qualifying_conditions",
         ),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
     ),
     "oral_exposure": PairBucketSpec(
-        "oral_exposure",
-        ("canonical_endpoint_name", "canonical_unit_text"),
-        (
+        source_id="oral_exposure",
+        canonical_dimensions=(
+            "canonical_endpoint_name",
+            "canonical_unit_text",
+            "canonical_reference_scope",
+        ),
+        variance_candidates=(
             "statistic_type",
             "oral_dose",
             "study_context",
             "comparator_exposure",
             "qualifying_conditions",
         ),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
     ),
     "fa": PairBucketSpec(
-        "fa",
-        (
+        source_id="fa",
+        canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_assay_context",
             "canonical_species_context",
+            "canonical_reference_scope",
         ),
-        (
+        variance_candidates=(
             "condition_medium",
             "formulation_or_solid_form",
             "qualifying_conditions",
         ),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
     ),
     "fg": PairBucketSpec(
-        "fg",
-        (
+        source_id="fg",
+        canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_measurement_scale_id",
             "canonical_assay_context",
             "canonical_species_context",
+            "canonical_reference_scope",
         ),
-        (
+        variance_candidates=(
             "transporter_or_enzyme",
             "substrate_status",
             "intestinal_site",
             "qualifying_conditions",
         ),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
     ),
     "fh": PairBucketSpec(
-        "fh",
-        (
+        source_id="fh",
+        canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_assay_context",
             "canonical_species_context",
+            "canonical_reference_scope",
         ),
-        ("molecular_form", "enzyme_or_pathway", "qualifying_conditions"),
+        variance_candidates=(
+            "molecular_form",
+            "enzyme_or_pathway",
+            "qualifying_conditions",
+        ),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
     ),
 }
 

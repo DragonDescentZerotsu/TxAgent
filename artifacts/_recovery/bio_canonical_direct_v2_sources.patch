@@ -1,0 +1,3238 @@
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_assay_transfer_prompt_policy.py b/tests/chembl_tool/tasks/bioavailability_ma/test_assay_transfer_prompt_policy.py
+index 1130232..88b5e78 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_assay_transfer_prompt_policy.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_assay_transfer_prompt_policy.py
+@@ -356,6 +356,9 @@ def test_matched_preflight_source_requires_identical_retrieval_configuration():
+         "indices": indices,
+         "experiment_mode": args.experiment_mode,
+         "retrieval_source": args.retrieval_source,
++        "exclude_nondirect_bioavailability_records": (
++            args.exclude_nondirect_bioavailability_records
++        ),
+         "retrieval_reranker": "assay_transfer",
+             "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+             "assay_transfer_min_score": args.assay_transfer_min_score,
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_assay_transfer_rerank.py b/tests/chembl_tool/tasks/bioavailability_ma/test_assay_transfer_rerank.py
+index 0662b7b..5564f9b 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_assay_transfer_rerank.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_assay_transfer_rerank.py
+@@ -278,6 +278,64 @@ def test_best_record_aggregation_and_deterministic_molecule_tie_breaking(tmp_pat
+     assert winning["canonical_smiles"] == "CCN"
+ 
+ 
++def test_nondirect_policy_filters_assay_transfer_catalog_records(tmp_path):
++    catalog = tmp_path / "catalog.jsonl"
++    cache_path = tmp_path / "scores.sqlite3"
++    records = []
++    for record_id, report_type in (
++        ("direct", "unspecified"),
++        ("nondirect", "relative_comparison"),
++    ):
++        record = _record(
++            record_id,
++            smiles="CCN",
++            concept="oral_bioavailability",
++        )
++        record["template_id"] = "oral_bioavailability_intern_mcqa_v3"
++        record["source_fields"] = {
++            "bioavailability_report_type": report_type
++        }
++        records.append(record)
++    _write_catalog(catalog, records)
++    candidate = [_candidate("A", "CCN", 0.9)]
++
++    included = AssayTransferCachedReranker(
++        catalog_path=catalog,
++        cache_path=cache_path,
++        cache_mode="read_write",
++        allow_missing=True,
++    )
++    included_tasks = included.tasks_for_candidates(
++        query_smiles="CCO",
++        group_id="Observed.direct_oral_bioavailability",
++        candidates=candidate,
++    )
++    included.cache.close()
++
++    excluded = AssayTransferCachedReranker(
++        catalog_path=catalog,
++        cache_path=cache_path,
++        cache_mode="read_only",
++        allow_missing=True,
++        exclude_nondirect_bioavailability_records=True,
++    )
++    excluded_tasks = excluded.tasks_for_candidates(
++        query_smiles="CCO",
++        group_id="Observed.direct_oral_bioavailability",
++        candidates=candidate,
++    )
++    assert excluded.provenance()[
++        "exclude_nondirect_bioavailability_records"
++    ] is True
++    excluded.cache.close()
++
++    assert [task.record_id for task in included_tasks["A"]] == [
++        "direct",
++        "nondirect",
++    ]
++    assert [task.record_id for task in excluded_tasks["A"]] == ["direct"]
++
++
+ def test_rerank_records_selects_top_records_across_molecules(tmp_path):
+     catalog = tmp_path / "catalog.jsonl"
+     cache_path = tmp_path / "scores.sqlite3"
+@@ -389,6 +447,7 @@ def test_direct_bioavailability_generic_starling_schema_is_normalized():
+     assert record["unit_basis"] == "percent"
+     assert record["assay_concept"] == "oral_bioavailability"
+     assert record["template_context"]["species_or_population"] == "rat"
++    assert record["template_context"]["study_context"] == "single oral dose"
+ 
+ 
+ def test_flat_catalog_uses_exact_manifest_record_join(tmp_path):
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_canonical_starling_source.py b/tests/chembl_tool/tasks/bioavailability_ma/test_canonical_starling_source.py
+index b76597c..96b2615 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_canonical_starling_source.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_canonical_starling_source.py
+@@ -1,6 +1,7 @@
+ from pathlib import Path
+ 
+ import pandas as pd
++import pytest
+ 
+ from tools.chembl_tool.tasks.bioavailability_ma.build_canonical_starling_source import (
+     build_canonical_frames,
+@@ -11,6 +12,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+     LOCAL_PARTITION_NON_BIOAVAILABILITY,
+     LOCAL_PARTITION_RELATIVE,
+     classify_local_record,
++    nondirect_measurement_fields,
+ )
+ 
+ 
+@@ -25,6 +27,28 @@ def test_local_partition_requires_an_absolute_anchor():
+         )[0]
+         == LOCAL_PARTITION_DIRECT
+     )
++
++
++@pytest.mark.parametrize(
++    ("value", "measurement", "unit", "numeric", "status"),
++    [
++        ("95%", "95", "%", 95.0, "explicit_atomic_scalar_unit"),
++        ("2.5-fold higher", "2.5", "fold", 2.5, "explicit_atomic_scalar_unit"),
++        ("ratio of 1.4", "1.4", "ratio", 1.4, "explicit_atomic_scalar_unit"),
++        ("94% versus 71%", "94% versus 71%", "", None, "non_atomic_or_qualitative"),
++        ("similar", "similar", "", None, "no_explicit_unit"),
++    ],
++)
++def test_nondirect_measurement_extraction_is_explicit_and_conservative(
++    value, measurement, unit, numeric, status
++):
++    fields = nondirect_measurement_fields(value)
++    assert fields == {
++        "measurement_text": measurement,
++        "numeric_value": numeric,
++        "value_units": unit,
++        "measurement_unit_extraction_status": status,
++    }
+     assert (
+         classify_local_record(
+             {
+@@ -144,6 +168,8 @@ def test_build_canonical_frames_partitions_and_cross_source_deduplicates():
+     assert result["stats"]["n_local_absolute_rows_with_valid_structure"] == 1
+     assert result["stats"]["n_local_residual_rows"] == 2
+     assert result["stats"]["n_cross_source_matches"] == 1
++    assert result["stats"]["n_hf_nondirect_rows"] == 1
++    assert result["stats"]["hf_snapshot_reconciliation"]["reconciles"] is True
+     assert result["stats"]["n_direct_source_rows_before_dedup"] == 2
+     assert result["stats"]["n_canonical_direct_claims"] == 1
+     assert result["stats"]["local_partition_reconciliation"]["reconciles"] is True
+@@ -151,6 +177,10 @@ def test_build_canonical_frames_partitions_and_cross_source_deduplicates():
+     claim = result["direct_claims"].iloc[0]
+     assert list(claim["source_origins"]) == ["hf", "local"]
+     assert claim["n_source_records"] == 2
++    nondirect = result["hf_nondirect_records"].iloc[0]
++    assert nondirect["source_index"] == 1
++    assert nondirect["endpoint_name"] == "oral_bioavailability"
++    assert nondirect["value_units"] == "%"
+ 
+ 
+ def test_cross_source_dedup_does_not_collapse_threshold_crossing_interval():
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_direct_hf_complete_source.py b/tests/chembl_tool/tasks/bioavailability_ma/test_direct_hf_complete_source.py
+index 5ed1e57..daa2250 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_direct_hf_complete_source.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_direct_hf_complete_source.py
+@@ -4,23 +4,37 @@ from pathlib import Path
+ 
+ import pyarrow.parquet as pq
+ 
++from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
++    RESIDUAL_MANIFEST_PATH,
++    RESIDUAL_RECORDS_PATH,
++)
+ from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+-    DEFAULT_DIRECT_HF_PARQUET,
+-    DIRECT_HF_SOURCE_COLUMNS,
++    DEFAULT_DIRECT_CLAIMS_PARQUET,
++    DIRECT_CLAIM_SOURCE_COLUMNS,
+     EXPECTED_SOURCE_ROWS,
+ )
+ 
+ 
+-def test_complete_direct_hf_source_is_small_complete_and_unpartitioned():
+-    path = Path(DEFAULT_DIRECT_HF_PARQUET)
+-    manifest = json.loads((path.parent / "source_manifest.json").read_text())
++def test_canonical_direct_source_matches_the_benchmark_claim_artifact():
++    path = Path(DEFAULT_DIRECT_CLAIMS_PARQUET)
++    manifest = json.loads((path.parent / "merge_manifest.json").read_text())
+     metadata = pq.read_metadata(path)
++    columns = tuple(pq.ParquetFile(path).schema_arrow.names)
+     digest = hashlib.sha256(path.read_bytes()).hexdigest()
+ 
+     assert path.stat().st_size < 100_000_000
+     assert metadata.num_rows == EXPECTED_SOURCE_ROWS["direct_hf"]
+-    assert tuple(metadata.schema.names) == DIRECT_HF_SOURCE_COLUMNS
+-    assert digest == manifest["records_parquet"]["sha256"]
+-    assert manifest["semantics"]["historical_kept_dropped_partition"] is False
+-    assert manifest["semantics"]["historical_preparation_reason_included"] is False
+-    assert not any("drop" in column or "preparation" in column for column in metadata.schema.names)
++    assert columns == DIRECT_CLAIM_SOURCE_COLUMNS
++    assert digest == manifest["paths"]["direct_claims_sha256"]
++    assert manifest["contract_version"] == "bioavailability_canonical_direct.v2"
++    assert manifest["stats"]["n_canonical_direct_claims"] == metadata.num_rows
++
++
++def test_residual_oral_exposure_source_excludes_canonical_direct_rows():
++    manifest = json.loads(RESIDUAL_MANIFEST_PATH.read_text())
++    metadata = pq.read_metadata(RESIDUAL_RECORDS_PATH)
++    digest = hashlib.sha256(RESIDUAL_RECORDS_PATH.read_bytes()).hexdigest()
++
++    assert metadata.num_rows == EXPECTED_SOURCE_ROWS["oral_exposure"]
++    assert digest == manifest["residual_records_sha256"]
++    assert manifest["absolute_direct_rows_in_residual"] == 0
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_in_distribution_library.py b/tests/chembl_tool/tasks/bioavailability_ma/test_in_distribution_library.py
+index 7a34634..5f678d6 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_in_distribution_library.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_in_distribution_library.py
+@@ -10,6 +10,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_starling_in_dist
+     evidence_row_from_record,
+     in_distribution_catalog_record,
+     molecule_id_for,
++    template_context_from_record,
+ )
+ 
+ 
+@@ -102,6 +103,22 @@ def test_catalog_record_renders_in_distribution_v6_5():
+     assert "index." not in prompt  # never the synthetic reconstructed key
+ 
+ 
++def test_catalog_retains_distinct_source_native_context_fields():
++    context = template_context_from_record(
++        _record(
++            study_context="single oral dose",
++            oral_exposure_mode="oral solution",
++            assay_system="Caco-2 cells with a pH gradient",
++        )
++    )
++
++    assert context["study_context"] == "single oral dose"
++    assert context["oral_exposure_mode"] == "oral solution"
++    assert context["assay_system"] == "Caco-2 cells with a pH gradient"
++    # Retained only for checkpoints trained on the historical collapsed prompt.
++    assert context["study_or_assay_system"] == "single oral dose"
++
++
+ def test_categorical_or_nonscalar_record_is_unscoreable():
+     # substrate-status style record with no finite scalar -> no catalog record
+     assert in_distribution_catalog_record(_record(scalar_value=None)) is None
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_evidence_library.py b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_evidence_library.py
+index ca59e65..bfc2301 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_evidence_library.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_evidence_library.py
+@@ -1,16 +1,23 @@
+ import json
++from pathlib import Path
+ 
+ import pandas as pd
+ import pytest
+ 
+ from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
+-from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLING
++from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
++    STARLING,
++    get_source_config,
++)
+ from tools.chembl_tool.tasks.bioavailability_ma import build_starling_evidence_library as direct_builder
+ from tools.chembl_tool.tasks.bioavailability_ma import build_starling_factor_evidence_library as factor_builder
+ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library import (
+     GROUP_ID,
+     build_starling_evidence_rows,
+ )
++from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
++    CANONICAL_VERSION,
++)
+ from tools.chembl_tool.tasks.bioavailability_ma.build_evidence_library import build_neighbor_index
+ from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import retrieve_neighbors
+ from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import _clean_evidence_row
+@@ -158,14 +165,14 @@ def test_starling_index_retrieval_excludes_exact_query(tmp_path):
+     )
+     rows, _ = build_starling_evidence_rows(source, max_source_rows=100)
+     index = build_neighbor_index(rows)
+-    index["source"] = {"dataset": "starling-labs/Oral_Bioavailability"}
++    index["source"] = {"dataset": CANONICAL_VERSION}
+ 
+     result = retrieve_neighbors("CCO", index, top_k_per_group=3, min_similarity=0.0)
+ 
+     neighbors = result["groups"][0]["neighbors"]
+     assert len(neighbors) == 1
+     assert neighbors[0]["canonical_smiles"] == "CCCO"
+-    assert result["evidence_source"]["dataset"] == "starling-labs/Oral_Bioavailability"
++    assert result["evidence_source"]["dataset"] == CANONICAL_VERSION
+ 
+ 
+ def test_evidence_builder_clis_reject_removed_pinned_hf_modes():
+@@ -181,6 +188,25 @@ def test_evidence_builder_clis_reject_removed_pinned_hf_modes():
+         factor_builder._parse_args(["--direct-source-mode", "pinned-hf"])
+ 
+ 
++def test_factor_profiles_keep_nondirect_hf_separate_from_residual_exposure():
++    profiles = factor_builder.bioavailability_profiles(
++        Path("data/starling_data/bioavailability_ma")
++    )
++
++    assert len(profiles) == 5
++    assert not any(
++        profile.group_id == "Observed.direct_oral_bioavailability"
++        for profile in profiles
++    )
++    assert profiles[0].group_id == "Observed.nondirect_oral_bioavailability"
++    assert profiles[0].evidence_role == "surrogate_proxy"
++    assert profiles[0].path.endswith("canonical_direct_v2/hf_nondirect_records.parquet")
++    assert profiles[1].path.endswith(
++        "oral_exposure_residual_v2/exposure_records.parquet"
++    )
++    assert profiles[1].exclude_endpoint_values == ()
++
++
+ def test_complete_parquet_qualitative_handling_keeps_not_allowed_report_type(tmp_path):
+     source = tmp_path / "records.parquet"
+     _write_source_parquet(source, [{
+@@ -208,21 +234,40 @@ def test_factor_builder_include_direct_hf_reads_complete_parquet(monkeypatch, tm
+     def fake_direct(source_parquet, **kwargs):
+         calls.append((source_parquet, kwargs["include_qualitative"]))
+         return [], {
+-            "n_source_rows": 163815,
+-            "n_source_rows_kept": 80808,
+-            "n_dropped_rows_scanned": 83007,
++            "n_source_rows": 113080,
++            "n_source_rows_kept": 85767,
++            "n_dropped_rows_scanned": 27313,
+         }
+ 
+     monkeypatch.setattr(factor_builder, "build_direct_f_rows", fake_direct)
+-    monkeypatch.setattr(factor_builder, "build_starling_parquet_evidence_rows", lambda *args, **kwargs: ([], {}))
++    starling_data_dir = tmp_path / "starling_data"
++    nondirect = starling_data_dir / "canonical_direct_v2" / "hf_nondirect_records.parquet"
++    nondirect.parent.mkdir(parents=True)
++    nondirect.write_bytes(b"nondirect-fixture")
++    monkeypatch.setattr(
++        factor_builder,
++        "build_starling_parquet_evidence_rows",
++        lambda *args, **kwargs: (
++            [],
++            {
++                "sources": {
++                    factor_builder.NONDIRECT_SOURCE_ID: {
++                        "n_input_rows": factor_builder.EXPECTED_HF_NONDIRECT_RAW_ROWS,
++                        "n_loaded_rows": factor_builder.EXPECTED_HF_NONDIRECT_RAW_ROWS,
++                    }
++                }
++            },
++        ),
++    )
+     monkeypatch.setattr(factor_builder, "build_neighbor_index", lambda *args, **kwargs: {
+         "molecules": [], "group_to_molecule_indices": {}
+     })
+ 
+     assert factor_builder.main([
+         "--out-dir", str(tmp_path / "index"),
++        "--starling-data-dir", str(starling_data_dir),
+         "--direct-source-parquet", str(records),
+-        "--expected-direct-clean-numeric-rows", "80808",
++        "--expected-direct-clean-numeric-rows", "85767",
+     ]) == 0
+     assert calls == [(records, True)]
+     meta = json.loads((tmp_path / "index" / factor_builder.META_FILENAME).read_text(encoding="utf-8"))
+@@ -230,22 +275,23 @@ def test_factor_builder_include_direct_hf_reads_complete_parquet(monkeypatch, tm
+     assert meta["index_version"] == (
+         "bioavailability_ma_starling_factor_neighbor_index.v4.full.full"
+     )
+-    assert meta["direct_hf_provenance"]["source_mode"] == "complete_parquet"
+-    assert meta["direct_source_stats"]["n_source_rows_kept"] == 80808
++    assert meta["direct_hf_provenance"]["source_mode"] == "canonical_direct_claims"
++    assert meta["direct_source_stats"]["n_source_rows_kept"] == 85767
+     assert meta["prepared_hf_row_counts"] == {
+-        "raw_rows": 163815,
+-        "clean_numeric_rows": 80808,
+-        "dropped_rows": 83007,
++        "raw_rows": 113080,
++        "clean_numeric_rows": 85767,
++        "dropped_rows": 27313,
+     }
+-    assert len(meta["underlying_sources"]) == 5
++    assert len(meta["underlying_sources"]) == 6
++    assert meta["hf_nondirect_provenance"]["raw_rows"] == 51570
+ 
+ 
+-def test_prepared_hf_count_preflight_rejects_mismatched_artifacts():
+-    with pytest.raises(ValueError, match="Prepared HF artifact preflight failed"):
++def test_canonical_direct_count_preflight_rejects_mismatched_artifacts():
++    with pytest.raises(ValueError, match="Canonical direct artifact preflight failed"):
+         factor_builder._validate_prepared_direct_hf_counts(
+-            {"n_source_rows": 163814, "n_source_rows_kept": 80808, "n_dropped_rows_scanned": 83006},
+-            expected_raw_rows=163815,
+-            expected_clean_numeric_rows=82496,
++            {"n_source_rows": 113079, "n_source_rows_kept": 85767, "n_dropped_rows_scanned": 27312},
++            expected_raw_rows=113080,
++            expected_clean_numeric_rows=85766,
+         )
+ 
+ 
+@@ -254,7 +300,7 @@ def test_direct_family_combines_sources_without_duplicate_neighbor_slots(tmp_pat
+     _write_source_parquet(source, [_record(1, "CCCO", 40.0, "Human", "absolute")])
+     direct_rows, _ = build_starling_evidence_rows(source, max_source_rows=100)
+     auc_row = dict(direct_rows[0])
+-    auc_row["evidence_source"] = "starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure"
++    auc_row["evidence_source"] = "bioavailability_canonical_direct.v2/oral_exposure_residual_v2"
+     auc_row["activity_comment"] = "Oral AUC-Cmax direct bioavailability evidence"
+     index = build_neighbor_index([*direct_rows, auc_row])
+     index["source"] = {"dataset": "combined Starling direct sources"}
+@@ -264,10 +310,59 @@ def test_direct_family_combines_sources_without_duplicate_neighbor_slots(tmp_pat
+     assert len(neighbors) == 1
+     assert neighbors[0]["n_evidence_rows"] == 2
+     assert {row["evidence_source"] for row in neighbors[0]["evidence_rows"]} == {
+-        "starling-labs/Oral_Bioavailability", "starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure"
++        CANONICAL_VERSION,
++        "bioavailability_canonical_direct.v2/oral_exposure_residual_v2",
+     }
+ 
+ 
++def test_nondirect_filter_changes_candidates_before_direct_top_k(tmp_path):
++    source = tmp_path / "records.parquet"
++    _write_source_parquet(
++        source,
++        [
++            _record(1, "c1ccccc1", 40.0, "Human", "absolute"),
++            _record(2, "CCN", 95.0, "Human", "relative_comparison"),
++        ],
++    )
++    direct_rows, _ = build_starling_evidence_rows(source, max_source_rows=100)
++    nondirect_row = next(
++        row for row in direct_rows if row["canonical_smiles"] == "CCN"
++    )
++    nondirect_row["group_id"] = "Observed.nondirect_oral_bioavailability"
++    nondirect_row["endpoint_group"] = "nondirect_oral_bioavailability"
++    nondirect_row["evidence_role"] = "surrogate_proxy"
++    index = build_neighbor_index(direct_rows)
++
++    included = retrieve_experiment_view(
++        "CCO",
++        index,
++        mode="direct",
++        config=get_source_config("starling"),
++        top_k_per_group=1,
++        min_similarity=0.0,
++    )
++    excluded = retrieve_experiment_view(
++        "CCO",
++        index,
++        mode="direct",
++        config=get_source_config(
++            "starling", exclude_nondirect_bioavailability_records=True
++        ),
++        top_k_per_group=1,
++        min_similarity=0.0,
++    )
++
++    assert included["groups"][0]["source_group_ids"] == [
++        "Observed.direct_oral_bioavailability",
++        "Observed.nondirect_oral_bioavailability",
++    ]
++    assert included["groups"][0]["neighbors"][0]["canonical_smiles"] == "CCN"
++    assert excluded["groups"][0]["source_group_ids"] == [
++        "Observed.direct_oral_bioavailability"
++    ]
++    assert excluded["groups"][0]["neighbors"][0]["canonical_smiles"] == "c1ccccc1"
++
++
+ def _record(index: int, smiles: str, value: float, species: str, report_type: str) -> dict:
+     return {
+         "source_index": index,
+@@ -300,10 +395,12 @@ def _write_source_parquet(path, rows):
+             }
+         )
+         raw["source_index"] = position
++        raw["canonical_claim_id"] = f"claim-{position}"
+         if "oral_bioavailability_value_percent" in item:
+-            raw["oral_bioavailability_value"] = str(
+-                item["oral_bioavailability_value_percent"]
+-            )
++            value = item["oral_bioavailability_value_percent"]
++            raw["oral_bioavailability_value"] = str(value)
++            raw["value_percent"] = value
++            raw["value_parse_method"] = "reported_point"
+         source_rows.append(raw)
+     pd.DataFrame(source_rows, columns=DIRECT_HF_SOURCE_COLUMNS).to_parquet(
+         path, index=False
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_normalization_policy.py b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_normalization_policy.py
+index f3f18b0..85af2f4 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_normalization_policy.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_normalization_policy.py
+@@ -1,3 +1,4 @@
++import gzip
+ import json
+ 
+ import pandas as pd
+@@ -11,6 +12,7 @@ from tools.chembl_tool.common.starling.normalized_evidence import (
+ from tools.chembl_tool.common.starling.normalization.measurements import (
+     parse_point_measurement,
+ )
++from tools.chembl_tool.common.task_workflows.retrieve_neighbors import load_index
+ from tools.chembl_tool.common.starling import (
+     build_normalized_evidence_library as staged_builder,
+ )
+@@ -381,25 +383,45 @@ def test_frozen_inventory_audits_orthography_without_semantic_registry():
+         validate_endpoint_inventory("direct_hf", ["oral_bioavailability", "new_endpoint"])
+ 
+ 
+-def test_direct_hf_loader_reads_one_complete_unpartitioned_source(tmp_path):
+-    source = tmp_path / "direct_hf.parquet"
++def test_direct_loader_reads_canonical_claim_rows(tmp_path):
++    source = tmp_path / "direct_claims.parquet"
+     columns = DIRECT_HF_SOURCE_COLUMNS
+     pd.DataFrame(
+         [
+-            {**{column: None for column in columns}, "source_index": 0, "smiles": "CCO", "oral_bioavailability_value": "57%"},
+-            {**{column: None for column in columns}, "source_index": 1, "smiles": "CCN", "oral_bioavailability_value": "low"},
++            {
++                **{column: None for column in columns},
++                "source_index": 0,
++                "canonical_claim_id": "claim-0",
++                "smiles": "CCO",
++                "oral_bioavailability_value": "57%",
++            },
++            {
++                **{column: None for column in columns},
++                "source_index": 1,
++                "canonical_claim_id": "claim-1",
++                "smiles": "CCN",
++                "oral_bioavailability_value": "low",
++            },
+         ],
+         columns=columns,
+     ).to_parquet(source, index=False)
+     rows = load_direct_hf_rows(source, max_rows=2)
+-    assert [row["source_index"] for row in rows] == [0, 1]
++    assert [row["canonical_claim_id"] for row in rows] == ["claim-0", "claim-1"]
+     assert "_prepared_drop_reason" not in rows[1]
+ 
+ 
+ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+     data_dir = tmp_path / "sources"
+     source_rows = {
+-        "Oral_AUC-Cmax_Exposure": {
++        "canonical_direct_v2": {
++            "source_index": 0,
++            "endpoint_name": "oral_bioavailability",
++            "oral_bioavailability_value": "95% of reference",
++            "value_units": "%",
++            "bioavailability_report_type": "relative_comparison",
++            "smiles": "CCF",
++        },
++        "oral_exposure_residual_v2": {
+             "global_identifier": "SMILES:1",
+             "extraction_id": "q1",
+             "exposure_measure": "AUC",
+@@ -418,6 +440,8 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+             "extraction_id": "q3",
+             "gut_wall_process": "intestinal_metabolism",
+             "measured_value": "substrate",
++            "substrate_status": "substrate",
++            "transporter_or_enzyme": "P-gp/ABCB1",
+         },
+         "Fh": {
+             "global_identifier": "SMILES:4",
+@@ -430,7 +454,14 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+     for directory, row in source_rows.items():
+         path = data_dir / directory
+         path.mkdir(parents=True)
+-        pd.DataFrame([row]).to_parquet(path / "extractions.parquet", index=False)
++        filename = (
++            "hf_nondirect_records.parquet"
++            if directory == "canonical_direct_v2"
++            else "exposure_records.parquet"
++            if directory == "oral_exposure_residual_v2"
++            else "extractions.parquet"
++        )
++        pd.DataFrame([row]).to_parquet(path / filename, index=False)
+ 
+     mapping = tmp_path / "mapping.parquet"
+     pd.DataFrame(
+@@ -439,7 +470,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+             for index, smiles in enumerate(("CCO", "CCN", "CCC", "CCCl"), start=1)
+         ]
+     ).to_parquet(mapping, index=False)
+-    direct = tmp_path / "direct_hf.parquet"
++    direct = tmp_path / "direct_claims.parquet"
+     pd.DataFrame(
+         [
+             {
+@@ -448,8 +479,11 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+                     for column in DIRECT_HF_SOURCE_COLUMNS
+                 },
+                 "source_index": 0,
++                "canonical_claim_id": "claim-0",
+                 "smiles": "CCBr",
+                 "oral_bioavailability_value": "40%",
++                "value_percent": 40.0,
++                "value_parse_method": "reported_point",
+             }
+         ],
+         columns=DIRECT_HF_SOURCE_COLUMNS,
+@@ -481,21 +515,20 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+     )
+     endpoint_columns = [
+         "endpoint_name",
+-        "spacing_and_spelling_endpoint",
+-        "canonical_endpoint",
++        "canonical_endpoint_name",
+     ]
+     assert all(column in records for column in endpoint_columns)
+-    assert "spacing_and_spelling_status" in records
++    assert "spacing_and_spelling_status" not in records
+     assert "spacing_and_spelling_reason" not in records
+     assert "spacing_and_spelling_version" not in records
+     assert all(
+         column in records
+         for column in (
+-            "source_smiles",
+-            "normalization_validity_status",
++            "smiles",
++            "canonicalization_status",
+             "canonical_bioavailability_report_type",
+-            "global_context",
+-            "global_species_context",
++            "canonical_assay_context",
++            "canonical_species_context",
+             "auxiliary_mapping_status",
+         )
+     )
+@@ -504,7 +537,15 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+         "canonical_assay_system",
+         "canonical_species",
+     } & set(records)
+-    assert len(records) == len(normalized) == 5
++    assert len(records) == len(normalized) == 6
++    encoded_fg = records[records["source_id"] == "fg"].iloc[0]
++    assert encoded_fg["canonical_endpoint_name"] == "fg_substrate_outcome:ABCB1"
++    assert encoded_fg["canonical_measurement_scale_id"] == (
++        "fg_substrate_status_binary.v1"
++    )
++    assert encoded_fg["measurement_kind"] == "binary"
++    assert encoded_fg["canonical_category_id"] == "substrate"
++    assert encoded_fg["canonical_category_rank"] == 1
+     removed = {
+         "metric_name",
+         "comparison_geometry",
+@@ -529,16 +570,22 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+         "matching_performed": False,
+         "status": "not_performed",
+     }
+-    assert manifest["artifact_version"].endswith(".v6")
+-    assert manifest["normalization_domain_rules_version"].endswith(".v3")
++    assert manifest["artifact_version"].endswith(".v7")
++    assert manifest["normalization_domain_rules_version"].endswith(".v4")
++    assert manifest["categorical_response_version"] == (
++        "bioavailability_ma_categorical_response.v1"
++    )
++    assert manifest["fg_target_alias_version"] == (
++        "bioavailability_fg_target_aliases.v1"
++    )
+     assert manifest["scalar_parser_version"].endswith(".v4")
+     assert (
+         manifest["fg_scalar_rule_version"]
+         == "bioavailability_fg_single_outcome_scalar_rules.v2"
+     )
+     assert manifest["source_column_contract_version"] == "source_column_contract.v1"
+-    assert manifest["index_version"] == "bioavailability_ma.compact_neighbor_index.v1"
+-    assert manifest["compact_artifact_version"] == "bioavailability_ma.compact_v6.v1"
++    assert manifest["index_version"].endswith(".v7")
++    assert manifest["compact_artifact_version"].endswith(".v7")
+     assert manifest["auxiliary_attachment_version"] == "starling_auxiliary_attachment.v1"
+     assert manifest["contextual_unit_policy"]["policy_version"] == (
+         "contextual_canonical_unit_policy.v1"
+@@ -554,7 +601,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+     assert auxiliary_manifest["mapping_version"] == (
+         "starling_auxiliary.globally_reconciled.v1"
+     )
+-    assert auxiliary_manifest["coverage"]["records"] == 5
++    assert auxiliary_manifest["coverage"]["records"] == 6
+     source_contract = json.loads(
+         (out_dir / normalized_builder.SOURCE_COLUMN_CONTRACT_FILENAME).read_text(
+             encoding="utf-8"
+@@ -562,7 +609,12 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+     )
+     assert source_contract["contract_version"] == "source_column_contract.v1"
+     assert set(source_contract["sources"]) == {
+-        "oral_exposure", "fa", "fg", "fh", "direct_hf"
++        "oral_exposure",
++        "fa",
++        "fg",
++        "fh",
++        "hf_nondirect_bioavailability",
++        "direct_hf",
+     }
+     artifact_columns = set(normalized.columns)
+     for source in source_contract["sources"].values():
+@@ -575,7 +627,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+         out_dir / normalized_builder.RECORDS_FILENAME,
+         out_dir / "04_pair_buckets/pair_bucket_records.parquet",
+         out_dir / "04_pair_buckets/pair_bucket_metadata.json",
+-        out_dir / "05_assay_transfer_policy/pair_bucket_transfer_policy.json.gz",
++        out_dir / "05_distance_calibration/pair_bucket_distance_calibration.json.gz",
+         out_dir / "06_remove_heldout_overlap/random/records.parquet",
+         out_dir / "06_remove_heldout_overlap/scaffold/records.parquet",
+         out_dir / normalized_builder.EVIDENCE_FAMILIES_TEMPLATE.format(
+@@ -598,6 +650,68 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+         out_dir / normalized_builder.AUXILIARY_MAPPING_MANIFEST_FILENAME,
+     ]
+     preserved_bytes = {path: path.read_bytes() for path in preserved_paths}
++    with gzip.open(
++        out_dir
++        / "05_distance_calibration/pair_bucket_distance_calibration.json.gz",
++        "rt",
++        encoding="utf-8",
++    ) as handle:
++        calibration = json.load(handle)
++    assert calibration["semantics"]["pair_bucket_membership_authority"] == (
++        "04_pair_buckets"
++    )
++    forbidden_calibration_fields = {
++        "assay_transfer_eligible",
++        "assay_transfer_label",
++        "soft_transfer_probability",
++        "transfer_max_standard_deviations",
++    }
++    calibration_text = json.dumps(calibration, sort_keys=True)
++    assert all(
++        f'"{field}"' not in calibration_text
++        for field in forbidden_calibration_fields
++    )
++
++    runtime_index = load_index(out_dir / "08_neighbor_index/random")
++    examples = [
++        example
++        for groups in runtime_index["evidence_by_molecule_group"].values()
++        for evidence_rows in groups.values()
++        for evidence in evidence_rows
++        for example in evidence["source_record_examples"]
++    ]
++    assert examples
++    assert any(
++        any(value not in (None, "") for value in example["source_fields"].values())
++        for example in examples
++    )
++    fg_examples = [
++        example
++        for example in examples
++        if example["source_fields"].get("substrate_status") == "substrate"
++    ]
++    assert fg_examples
++    assert fg_examples[0]["source_fields"]["transporter_or_enzyme"] == (
++        "P-gp/ABCB1"
++    )
++    assert not {
++        "categorical_encoder_id",
++        "canonical_category_id",
++        "canonical_category_rank",
++        "finite_scalar_value",
++    } & set(fg_examples[0]["source_fields"])
++
++    changed_mapping = tmp_path / "changed-mapping.parquet"
++    changed = pd.read_parquet(mapping)
++    changed.loc[0, "smiles"] = "CCF"
++    changed.to_parquet(changed_mapping, index=False)
++    drift_args = list(common_args)
++    drift_args[drift_args.index("--smiles-mapping") + 1] = str(changed_mapping)
++    drift_args.extend(
++        ["--from-stage", "normalize", "--through-stage", "normalize"]
++    )
++    with pytest.raises(ValueError, match="changed since Stage 01"):
++        normalized_builder.main(drift_args)
+     failed_args = list(common_args)
+     failed_args[failed_args.index("--smiles-mapping") + 1] = str(
+         tmp_path / "missing-mapping.parquet"
+@@ -616,8 +730,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+ 
+     assert normalized_builder.main(
+         [
+-            "--out-dir",
+-            str(out_dir),
++            *common_args,
+             "--from-stage",
+             "normalize",
+             "--through-stage",
+@@ -629,6 +742,13 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+     restarted = json.loads(
+         (out_dir / normalized_builder.MANIFEST_FILENAME).read_text(encoding="utf-8")
+     )
++    resumed_records = pd.read_parquet(out_dir / normalized_builder.RECORDS_FILENAME)
++    pd.testing.assert_frame_equal(
++        records.astype(object).where(records.notna(), None),
++        resumed_records.astype(object).where(resumed_records.notna(), None),
++        check_like=True,
++        check_dtype=False,
++    )
+     assert restarted["completed_stages"] == ["clean", "normalize", "organize"]
+     assert restarted["rebuild_request"] == {
+         "from_stage": "normalize",
+@@ -636,7 +756,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+     }
+     assert {
+         "04_pair_buckets",
+-        "05_assay_transfer_policy",
++        "05_distance_calibration",
+         "06_remove_heldout_overlap",
+         "07_molecule_evidence",
+         "08_neighbor_index",
+@@ -721,7 +841,7 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
+         [
+             {
+                 "cleaned_record_id": "clean-1",
+-                "normalized_record_id": "normalized-1",
++                "canonical_record_id": "normalized-1",
+             }
+         ]
+     ).to_parquet(normalized_path, index=False)
+@@ -733,7 +853,7 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
+         row_counts={"normalized_records": 1},
+         validations={"test": True},
+     )
+-    (out_dir / normalized_builder.STAGE_ARTIFACTS["normalize"][1]).write_text(
++    (out_dir / "02_canonicalized/manifest.json").write_text(
+         json.dumps(manifest), encoding="utf-8"
+     )
+     pd.DataFrame([{"cleaned_record_id": "clean-2"}]).to_parquet(
+@@ -741,7 +861,9 @@ def test_stage_resume_rejects_stale_upstream_input(tmp_path):
+     )
+ 
+     with pytest.raises(ValueError, match="upstream input hash mismatch"):
+-        staged_builder._load_verified_stage(out_dir, "normalize")
++        staged_builder._load_verified_stage(
++            out_dir, "normalize", normalized_builder.POLICY
++        )
+ 
+ 
+ def test_builder_rejects_reconciliation_until_comparison_contract_exists():
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_pair_buckets.py b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_pair_buckets.py
+index eb1e771..27e07f2 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_pair_buckets.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_pair_buckets.py
+@@ -15,6 +15,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
+     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
+     SOURCE_PAIR_FIELDS,
+ )
++from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
+ 
+ 
+ def _record(
+@@ -50,6 +51,7 @@ def _materialize(records):
+ def test_bioavailability_source_field_mapping_uses_only_persisted_canonical_fields():
+     assert SOURCE_PAIR_FIELDS == {
+         "direct_hf": ("canonical_bioavailability_report_type",),
++        "hf_nondirect_bioavailability": ("canonical_bioavailability_report_type",),
+         "oral_exposure": (),
+         "fa": ("global_context", "global_species_context"),
+         "fg": ("global_context", "global_species_context"),
+@@ -165,6 +167,69 @@ def test_materializer_rejects_unmapped_sources():
+         )
+ 
+ 
++def test_v7_fg_target_boundary_applies_only_to_categorical_endpoint():
++    common = {
++        "source_id": "fg",
++        "canonical_unit_text": "binary_outcome_class",
++        "canonicalization_status": "valid",
++        "canonical_smiles": "CCO",
++        "canonical_assay_context": "caco_2",
++        "canonical_species_context": "__unknown__",
++        "canonical_measurement_scale_id": "fg_substrate_status_binary.v1",
++        "measurement_kind": "binary",
++        "canonical_category_id": "substrate",
++        "canonical_category_rank": 1,
++    }
++    categorical, _ = materialize_pair_buckets(
++        [
++            {
++                **common,
++                "canonical_record_id": "cat-abcb1",
++                "canonical_endpoint_name": "fg_substrate_outcome:ABCB1",
++            },
++            {
++                **common,
++                "canonical_record_id": "cat-abcg2",
++                "canonical_endpoint_name": "fg_substrate_outcome:ABCG2",
++            },
++        ],
++        source_required_fields={
++            source: spec.additional_dimensions
++            for source, spec in RECORD_CONTRACT.pair_buckets.items()
++        },
++    )
++    assert categorical[0]["pair_bucket_key"] != categorical[1]["pair_bucket_key"]
++
++    scalar = {
++        **common,
++        "canonical_unit_text": "%",
++        "canonical_endpoint_name": "intestinal_metabolism",
++        "canonical_measurement_scale_id": None,
++        "measurement_kind": "continuous",
++        "canonical_category_id": None,
++        "canonical_category_rank": None,
++    }
++    continuous, _ = materialize_pair_buckets(
++        [
++            {
++                **scalar,
++                "canonical_record_id": "scalar-abcb1",
++                "transporter_or_enzyme": "ABCB1",
++            },
++            {
++                **scalar,
++                "canonical_record_id": "scalar-abcg2",
++                "transporter_or_enzyme": "ABCG2",
++            },
++        ],
++        source_required_fields={
++            source: spec.additional_dimensions
++            for source, spec in RECORD_CONTRACT.pair_buckets.items()
++        },
++    )
++    assert continuous[0]["pair_bucket_key"] == continuous[1]["pair_bucket_key"]
++
++
+ def test_standalone_builder_writes_exactly_two_files_without_rewriting_v5(tmp_path):
+     records_path = tmp_path / "records.parquet"
+     pd.DataFrame(
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_record_canonicalization.py b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_record_canonicalization.py
+index d08978d..8df4f8c 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_record_canonicalization.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_record_canonicalization.py
+@@ -83,6 +83,29 @@ def test_invalid_metric_rows_are_retained_with_a_status_not_a_comparison_value()
+     assert "comparison_value" not in result
+ 
+ 
++def test_declared_categorical_anchor_uses_encoded_validity_contract():
++    record = _record(
++        source="fg",
++        endpoint="fg_substrate_outcome:ABCB1",
++        measurement="1",
++        unit="binary_outcome_class",
++        value=1.0,
++    )
++    record["categorical_encoder_id"] = "fg_substrate_status_binary.v1"
++    assert normalization_validity_status(record) == "valid"
++
++
++def test_encoded_unit_without_encoder_fails_closed():
++    record = _record(
++        source="fg",
++        endpoint="fg_substrate_outcome:ABCB1",
++        measurement="1",
++        unit="binary_outcome_class",
++        value=1.0,
++    )
++    assert normalization_validity_status(record) == "encoded_unit_without_encoder"
++
++
+ @pytest.mark.parametrize("unit", ["log(cm/s)", "log cm/s", "log10(cm/s)"])
+ def test_negative_transformed_permeability_is_factually_valid(unit):
+     result = enrich_bioavailability_validity(
+diff --git a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_remove_heldout_overlap.py b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_remove_heldout_overlap.py
+index 264030f..a2b546d 100644
+--- a/tests/chembl_tool/tasks/bioavailability_ma/test_starling_remove_heldout_overlap.py
++++ b/tests/chembl_tool/tasks/bioavailability_ma/test_starling_remove_heldout_overlap.py
+@@ -306,6 +306,24 @@ def test_filtered_evidence_and_indices_reference_only_retained_records(tmp_path)
+ # --- end-to-end success ----------------------------------------------------
+ 
+ 
++def test_complete_unfiltered_calibration_is_a_passing_audit_scope():
++    assert downstream._shared._calibration_scope_matches(
++        "complete_unfiltered_records",
++        heldout_exclusion=None,
++    )
++    assert not downstream._shared._calibration_scope_matches(
++        "complete_unfiltered_records",
++        heldout_exclusion={"unexpected": True},
++    )
++
++
++def test_failed_required_audit_validation_blocks_publication():
++    with pytest.raises(ValueError, match="held-out audit validations failed"):
++        downstream._shared._require_true_audit_validations(
++            {"validations": {"expected_invariant": False}}
++        )
++
++
+ def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path):
+     """The success path, and the invariant that actually matters.
+ 
+@@ -364,7 +382,7 @@ def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path
+     # held-out source and calibrates on
+     # `heldout_gold_filtered_transfer_calibration`.  Both are correct for their
+     # task; changing either has to be a deliberate decision, not a tidy-up.
+-    assert audit["validations"]["transfer_policy_has_declared_calibration_filter"] is False
++    assert audit["validations"]["calibration_statistics_scope_matches_artifact"]
+     assert audit["transfer_policy_heldout_exclusion"] is None
+     assert audit["policy_statistics_scope"] == "complete_unfiltered_records"
+     assert audit["filter_source_id"] == DIRECT
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/AGENTS.md b/tools/chembl_tool/tasks/bioavailability_ma/AGENTS.md
+index 3a917a3..6107cc7 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/AGENTS.md
++++ b/tools/chembl_tool/tasks/bioavailability_ma/AGENTS.md
+@@ -1,17 +1,18 @@
+ # Bioavailability_Ma paper-path notes
+ 
+-本目录只保留可进入论文主方法的简洁 pipeline：通用 evidence contract、molecule-level retrieval、
+-single/group/final LLM reasoning 和 task ontology。历史 Fa/Fg/Fh full expert policy、deterministic
+-force/block/rescue、fallback calibration、postprocess 和 test-error-driven evolution 已从 `main` 删除。
++This directory retains only the streamlined pipeline used by the main paper method: the shared evidence
++contract, molecule-level retrieval, single/group/final LLM reasoning, and task ontology. The historical
++Fa/Fg/Fh full expert policy, deterministic force/block/rescue logic, fallback calibration, postprocessing,
++and test-error-driven evolution have been removed from `main`.
+ 
+-旧实现的完整快照保存在：
++A complete snapshot of the old implementation is preserved at:
+ 
+ ```text
+ branch: archive/bioavailability-full-expert-policy-20260710
+ commit: 14803c2
+ ```
+ 
+-不要从该 archive 向 paper path 恢复 class-changing policy。
++Do not restore class-changing policy from this archive into the paper path.
+ 
+ ## Task contract
+ 
+@@ -25,26 +26,27 @@ label:
+   Y=0 -> low, oral bioavailability F < 20%
+ ```
+ 
+-新的 Starling-held-out benchmark 由 `starling_benchmark.py` 构建：只接受可确认 human context 的
+-direct oral F；百分数与明确 fraction 统一到 percent，跨 20% 的 range、relative comparison、
+-非 human、population 不明或 `qualifying_conditions` 非空的记录都不进入 gold label。
+-parent-level 0/1 冲突按 accepted source record 计算 70% agreement；同 PMID 多条 record 分别计票，
+-精确 tie 或 agreement 低于 70% 才拒绝。
+-这里的 benchmark label conversion 与下文禁止的 inference-time Starling label policy 是两回事；
+-它不能进入 LLM prompt 或改变有效 prediction。
++The new Starling-held-out benchmark is built by `starling_benchmark.py`. It accepts only direct oral F records
++with a confirmed human context. Percentages and explicit fractions are normalized to percent. Ranges crossing
++20%, relative comparisons, non-human records, records with an unknown population, and records with nonempty
++`qualifying_conditions` do not contribute gold labels. Parent-level 0/1 conflicts use 70% agreement across
++accepted source records. Multiple records from the same PMID vote separately; only an exact tie or agreement
++below 70% is rejected. This benchmark-label conversion is separate from the inference-time Starling label
++policy prohibited below. It must not enter the LLM prompt or modify a valid prediction.
+ 
+-当前 canonical-direct v2 build 位于：
++The current canonical-direct v2 build is located at:
+ 
+ ```text
+ data/processed_starling/Bioavailability_Ma/random/
+ data/processed_starling/Bioavailability_Ma/scaffold/
+ ```
+ 
+-共有 2,092 个 binary parents；两种构造方法的 valid/test target 均为 209。公共构建/审计协议见
+-`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。正式运行前必须按各 split 的
+-valid+test union `heldout_molecule_labels.jsonl` 分别重建 train-only retrieval index。
++It contains 2,092 binary parents; both construction methods target 209 validation and 209 test parents. See
++`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md` for the shared build and audit protocol.
++Before a formal run, rebuild a separate train-only retrieval index for each split using the valid+test union
++in `heldout_molecule_labels.jsonl`.
+ 
+-Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，不是 LLM function tool。
++Exact-query evidence is disabled by default. Neighbor retrieval is evidence prefetch, not an LLM function tool.
+ 
+ ## Paper pipeline
+ 
+@@ -59,35 +61,35 @@ source rows
+   -> structured-output validation only
+ ```
+ 
+-允许的工程防护：
++Allowed engineering safeguards:
+ 
+-- canonical SMILES 和 molecule-level aggregation；
+-- exact-query exclusion；
+-- source/provenance 保留；
+-- single branch 的 `molecule_properties`；
+-- group branch 的 `mmp_structure_compare` / `properties_compare`；
+-- JSON schema validation 和有 trace 的 bounded retry（当前默认最多 4 次总尝试）；
+-- trace、batch resume 和 metrics。
++- canonical SMILES and molecule-level aggregation;
++- exact-query exclusion;
++- source and provenance retention;
++- `molecule_properties` in the single branch;
++- `mmp_structure_compare` and `properties_compare` in group branches;
++- JSON schema validation and traced bounded retries, currently at most four total attempts;
++- traces, batch resume, and metrics.
+ 
+-禁止添加：
++Do not add:
+ 
+-- `force_high` / `force_low`；
+-- final prediction override；
+-- 针对某个 test molecule 或 failure pattern 的 blocker/rescue；
+-- Starling-specific label policy；
+-- valid/test-selected postprocess；
+-- 将内部 `evidence_direction` / `evidence_strength` 直接发送给 LLM。
++- `force_high` / `force_low`;
++- final prediction override;
++- blockers or rescues targeting a particular test molecule or failure pattern;
++- Starling-specific label policy;
++- valid/test-selected postprocess;
++- direct exposure of internal `evidence_direction` or `evidence_strength` fields to the LLM.
+ 
+ ## Minimal evidence contract
+ 
+-所有 ChEMBL、Starling 和未来 source row 在 LLM prompt 中统一使用：
++All ChEMBL, Starling, and future source rows use the following representation in LLM prompts:
+ 
+ ```text
+ tools/chembl_tool/common/evidence_contract.py
+ contract_version: minimal_evidence.v1
+ ```
+ 
+-Contract 包含：
++The contract contains:
+ 
+ ```text
+ source
+@@ -101,21 +103,22 @@ provenance
+ representative examples
+ ```
+ 
+-其中 `transferability=not_assessed` 是 retrieval-time 默认值；query-specific transferability 必须由
+-group LLM 根据结构比较和 evidence context 判断。Contract 不包含 threshold vote 或 label recommendation。
++`transferability=not_assessed` is the retrieval-time default. The group LLM must assess query-specific
++transferability from the structural comparison and evidence context. The contract contains no threshold vote
++or label recommendation.
+ 
+ ## Data sources
+ 
+-Paper-facing source/group mapping 的唯一配置入口：
++The only configuration entry point for paper-facing source/group mappings is:
+ 
+ ```text
+ tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py
+ ```
+ 
+-它声明 ChEMBL/Starling 的 direct groups 和 5 个 mechanism families；不得在 runner 或 source adapter 中
+-复制该 mapping。
++It declares the ChEMBL and Starling direct groups and five mechanism families. Do not duplicate this mapping
++in a runner or source adapter.
+ 
+-ChEMBL evidence library：
++ChEMBL evidence library:
+ 
+ ```text
+ outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/
+@@ -123,7 +126,7 @@ outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/
+   bioavailability_neighbor_index.pkl
+ ```
+ 
+-Starling task data：
++Starling task data:
+ 
+ ```text
+ data/starling_data/bioavailability_ma/
+@@ -143,63 +146,63 @@ data/starling_data/bioavailability_ma/
+   Fh/extractions.parquet
+ ```
+ 
+-统一 canonical source 构建入口：
++Unified canonical-source build entry point:
+ 
+ ```text
+ tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
+ ```
+ 
+-原始 HF snapshot 与 local parquet 不原地修改。Local `bioavailability` 行只有出现明确 absolute wording 或
+-oral/IV anchor 才转入 canonical direct；relative 与没有 absolute anchor 的 ambiguous rows 留在 residual。
+-跨 HF/local 的同 parent+PMID 近等值 claim 做一对一去重并保留双来源 provenance。Gold builder 与 agent
+-direct evidence 必须读取同一个 `direct_claims.parquet` SHA-256。
++The original HF snapshot and local Parquet are not modified in place. A local `bioavailability` row enters
++canonical direct only when it contains explicit absolute wording or an oral/IV anchor. Relative and ambiguous
++rows without an absolute anchor remain residual evidence. Near-equal claims sharing the same parent and PMID
++across HF and local data are deduplicated one-to-one while retaining provenance from both sources. The gold
++builder and agent direct evidence must read the same `direct_claims.parquet` SHA-256.
+ 
+-Starling factor builder：
++Starling factor builder:
+ 
+ ```text
+ tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py
+ ```
+ 
+-Starling gold benchmark adapter：
++Starling gold benchmark adapter:
+ 
+ ```text
+ tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
+ ```
+ 
+-前者构建 inference-time evidence/index；后者只实现 direct human oral F 的 binary label adapter。
+-二者不能互相替代。
++The former builds inference-time evidence and indexes; the latter implements only the binary-label adapter
++for direct human oral F. They are not interchangeable.
+ 
+-Starling factor builder 使用 shared profile ingestion：
++The Starling factor builder uses shared profile ingestion:
+ 
+ ```text
+ tools/chembl_tool/common/starling/evidence_library.py
+ ```
+ 
+-Task wrapper 只声明 column mapping 和 group/role：
++The task wrapper declares only column mappings and group/role assignments:
+ 
+ | Source | Group | Evidence role |
+ |---|---|---|
+ | canonical direct v2 claims | `Observed.direct_oral_bioavailability` | `direct_outcome` |
++| retained nondirect HF partition | `Observed.nondirect_oral_bioavailability` | `surrogate_proxy` |
+ | residual Oral_AUC-Cmax/relative/ambiguous rows | `Observed.oral_auc_cmax_exposure` | `surrogate_proxy` |
+ | Fa parquet | `Fa.absorption_solubility_permeability` | `mechanistic_factor` |
+ | Fg parquet | `Fg.gut_wall_efflux_intestinal_metabolism` | `mechanistic_factor` |
+ | Fh parquet | `Fh.hepatic_clearance_metabolic_stability` | `mechanistic_factor` |
+ 
+-Fa/Fg/Fh 是 task ontology，不是 deterministic classifier。Final prediction 仍由 LLM 根据 group outputs
+-综合得出。
++Fa/Fg/Fh form the task ontology, not a deterministic classifier. The LLM still produces the final prediction
++by synthesizing the group outputs.
+ 
+ ## Source ingestion rules
+ 
+-- Parquet column 差异通过 `StarlingSourceProfile` 配置解决，不为每个 parquet 写独立 parser。
+-- 缺少 SMILES 或 RDKit 无法解析的 row 不进入结构 retrieval，并计入 source stats。
+-- SMILES 在聚合前 canonicalize；同一 canonical molecule 跨 profile 使用相同 source molecule id。
+-- 多条 source row 聚合成一个 molecule/group evidence row；代表性 examples 保留 endpoint、value、unit、
+-  context 和 support text 的绑定。
+-- PMID/DOI 可保留在 raw internal row 中，但不能进入 LLM-visible minimal evidence。
+-- Direct numeric outcome 只有在 endpoint 单一、unit 一致时才生成 aggregate measurement；proxy/mechanism
+-  evidence 保留 examples，不把异构数值混成一个 synthetic value。
++- Resolve Parquet column differences through `StarlingSourceProfile`; do not write a separate parser for each Parquet file.
++- Rows with missing SMILES or structures that RDKit cannot parse do not enter structural retrieval and are counted in source statistics.
++- Canonicalize SMILES before aggregation; the same canonical molecule uses the same source molecule ID across profiles.
++- Aggregate multiple source rows into one molecule/group evidence row; representative examples preserve the binding among endpoint, value, unit, context, and support text.
++- PMID and DOI may remain in raw internal rows but must not enter LLM-visible minimal evidence.
++- Generate an aggregate measurement for a direct numeric outcome only when the endpoint is uniform and units are consistent. Proxy and mechanism evidence retain examples instead of combining heterogeneous values into a synthetic value.
+ 
+-## Layered normalized-record library
++## Canonical v7 record library
+ 
+ The side-by-side layered Starling builder is:
+ 
+@@ -207,6 +210,51 @@ The side-by-side layered Starling builder is:
+ tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py
+ ```
+ 
++The task schema is declared once in `starling_schema.py`. Stage 01 performs only source-visible cleaning.
++The raw endpoint, value, unit, and structure roles become `endpoint_name`, `measurement_text`, `unit_text`,
++and `smiles`; every other field keeps its actual source name. Dataset constants used by Direct-HF are working
++inputs, not source-visible claims.
++
++Stage 02 writes `02_canonicalized/`. Final integration fields use `canonical_*` names. Measurement and unit
++are one atomic reviewed decision, and mapped structures use `canonical_smiles` without replacing the raw
++source `smiles`. Fa/Fg/Fh assay and species dimensions list the real fields that supplied them. In particular,
++Fg may derive both `canonical_assay_context` and `canonical_species_context` from `assay_system`; it must not
++invent a cleaned species alias.
++
++Pair-bucket identity is declared in the same schema and contains only canonical fields. A cleaned field used
++by ordinary canonicalization cannot also be a variance candidate. An input used only by a conditional
++categorical encoder may remain a variance candidate for continuous rows; it is excluded from the selected
++categorical scale's residual audit. Untouched fields such as conditions, formulation, dose, transporter, or
++site may be variance candidates but do not create hidden child buckets. The ordinary
++build root is `starling_normalized_v7`; the frozen v6 tree and paper artifacts remain
++read-only lineage.
++
++```text
++starling_normalized_v7/
++  01_cleaned/
++  02_canonicalized/
++  03_records/
++  04_pair_buckets/
++  05_distance_calibration/
++  06_remove_heldout_overlap/
++  07_molecule_evidence/
++  08_neighbor_index/
++  09_audits/
++```
++
++Stage 04 alone defines membership. Stage 05 validates buckets with `n >= 25`, audits untouched source
++fields for residual heterogeneity, and stores SD plus empirical percentile knots. Bioavailability uses
++continuous geometry plus two controlled binary scales: explicit direct oral-F `low/high`, and Fg
++`not_substrate/substrate`. Numeric measurements always take precedence. Fg categorical endpoints include a
++reviewed transporter/enzyme target ID so different targets never share a categorical bucket; numeric Fg
++grouping is unchanged. The separate nondirect HF partition never uses the direct categorical encoder.
++Ambiguous direct wording, uninformative Fg statuses, and Fg rows without a target remain non-scalar
++evidence. The categorical anchors are distance geometry, not benchmark labels or final
++prediction overrides. The v7 calibration contains no transfer cutoff, Boolean label, or soft probability.
++The `05_assay_transfer_policy` tree below is historical v6 lineage.
++
++### Historical v6 implementation details
++
+ The policy-decoupled v6 builder persists every boundary before molecule aggregation and attaches the
+ globally reconciled assay-transfer context sidecar:
+ 
+@@ -473,19 +521,22 @@ Run the shared reasoning pipeline with that index:
+   --batch-id bioavailability_ma_paper_starling_<date>
+ ```
+ 
+-正式 paper run 只使用上述 `outputs/paper/` index。`outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/`
+-下的 task-level builder 默认目录只用于临时开发，不得把历史 index 复制或软链接到正式实验路径；运行前应检查
+-meta 中 `index_version`、`canonical_contract_version`、canonical/residual SHA-256、`scope`、
+-`evidence_content` 和五个稳定 group ID。
++Formal paper runs use only the `outputs/paper/` index above. The task-level builder's default directory under
++`outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/` is for temporary development only. Do not copy
++or symlink a historical index into the formal experiment path. Before running, check the metadata for
++`index_version`, `canonical_contract_version`, canonical/residual SHA-256 values, `scope`, `evidence_content`,
++and the five stable group IDs.
+ 
+-2026-07-23 strict-hop availability census 见
+-`outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`。C 之外的
+-experimental pKa、LogD/LogP、PPB/Fu 可组成 H1 candidate union（59,049 parents；parent-disjoint >=1 coverage
+-98.44%），但没有合格 H2。pKa/LogD/LogP 与 query `molecule_properties` tool 语义重叠；PPB/Fu 只支持
+-hepatic clearance 而非 direct absolute F。它们只能作为独立 distance/relevance 设计候选，不得修改现有
+-paper matrix。
++The 2026-07-23 strict-hop availability census is under
++`outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`.
++Experimental pKa, LogD/LogP, and PPB/Fu evidence outside C can form an H1 candidate union of 59,049 parents
++with 98.44% parent-disjoint coverage of at least one neighbor, but there is no eligible H2. pKa and LogD/LogP
++overlap semantically with the query `molecule_properties` tool; PPB/Fu supports only hepatic clearance rather
++than direct absolute F. These may be considered only in a separate distance/relevance design and must not
++modify the existing paper matrix.
+ 
+-API key 只能通过环境变量或未提交的本地 env file 提供，不能写入代码、manifest、命令示例或 git。
++Provide API keys only through environment variables or an uncommitted local environment file. Never write a
++key into code, manifests, command examples, or Git.
+ 
+ ## Tests
+ 
+@@ -495,21 +546,22 @@ API key 只能通过环境变量或未提交的本地 env file 提供，不能
+   tests/chembl_tool/tasks/bioavailability_ma -q
+ ```
+ 
+-至少覆盖：
++At minimum, cover:
+ 
+-- legacy ChEMBL row -> `minimal_evidence.v1`；
+-- profile-driven parquet column mapping；
+-- missing/invalid SMILES stats；
+-- molecule-level aggregation和 exact-query exclusion；
+-- direct/proxy role split；
+-- JSON required-field/value/tool validation retry；
+-- API key 不进入 tracked files。
++- legacy ChEMBL row to `minimal_evidence.v1` conversion;
++- profile-driven Parquet column mapping;
++- missing/invalid SMILES statistics;
++- molecule-level aggregation and exact-query exclusion;
++- direct/proxy role separation;
++- retries for JSON required-field, value, and tool validation;
++- confirmation that API keys do not enter tracked files.
+ 
+ ## Evaluation boundary
+ 
+-历史 Bioavailability test set 已在旧 expert-policy 迭代中被反复检查，不能作为论文的 untouched final
+-test。Paper result 应使用新 holdout、重新冻结的 split 或外部 evaluation。Archive branch 的历史 metrics
+-不能作为当前 simplified paper pipeline 的结果。
++The historical Bioavailability test set was inspected repeatedly while iterating on the old expert policy, so
++it cannot serve as an untouched final paper test. Paper results must use a new holdout, a refrozen split, or an
++external evaluation. Historical metrics from the archive branch are not results for the current simplified
++paper pipeline.
+ 
+ ## Cached assay-transfer reranking
+ 
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py b/tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
+index 8d5c6f3..78f23af 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
+@@ -22,6 +22,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+     DIRECT_REJECTED_ROWS_PATH,
+     DIRECT_REPORT_TYPES,
+     DIRECT_SOURCE_ROWS_PATH,
++    HF_NONDIRECT_RECORDS_PATH,
+     HF_SNAPSHOT_PATH,
+     HF_SOURCE_DATASET,
+     HF_SOURCE_REVISION,
+@@ -35,6 +36,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+     classify_local_record,
+     local_classification_signals,
+     local_value_percent,
++    nondirect_measurement_fields,
+ )
+ 
+ 
+@@ -70,6 +72,7 @@ def main(argv: list[str] | None = None) -> int:
+     residual_dir.mkdir(parents=True, exist_ok=True)
+     paths = {
+         "hf_snapshot": canonical_dir / HF_SNAPSHOT_PATH.name,
++        "hf_nondirect_records": canonical_dir / HF_NONDIRECT_RECORDS_PATH.name,
+         "direct_source_rows": canonical_dir / DIRECT_SOURCE_ROWS_PATH.name,
+         "direct_claims": canonical_dir / DIRECT_CLAIMS_PATH.name,
+         "direct_rejected_rows": canonical_dir / DIRECT_REJECTED_ROWS_PATH.name,
+@@ -78,6 +81,9 @@ def main(argv: list[str] | None = None) -> int:
+         "residual_records": residual_dir / RESIDUAL_RECORDS_PATH.name,
+     }
+     hf_frame.to_parquet(paths["hf_snapshot"], index=False)
++    outputs["hf_nondirect_records"].to_parquet(
++        paths["hf_nondirect_records"], index=False
++    )
+     outputs["direct_source_rows"].to_parquet(paths["direct_source_rows"], index=False)
+     outputs["direct_claims"].to_parquet(paths["direct_claims"], index=False)
+     outputs["direct_rejected_rows"].to_parquet(paths["direct_rejected_rows"], index=False)
+@@ -149,6 +155,7 @@ def build_canonical_frames(
+     import pandas as pd
+ 
+     hf_rows, hf_rejections = _normalize_hf_rows(hf_frame, hf_dataset, hf_revision)
++    hf_nondirect_frame = _hf_nondirect_records(hf_frame)
+     local_rows: list[dict[str, Any]] = []
+     local_identity_cache: dict[str, tuple[str, str] | None] = {}
+     local_source = Path(local_source_path)
+@@ -225,7 +232,25 @@ def build_canonical_frames(
+     stats = {
+         "n_hf_snapshot_rows": len(hf_frame),
+         "n_hf_direct_source_rows": len(hf_rows),
++        "n_hf_nondirect_rows": len(hf_nondirect_frame),
++        "hf_nondirect_measurement_unit_status_counts": dict(
++            sorted(
++                Counter(
++                    hf_nondirect_frame["measurement_unit_extraction_status"]
++                ).items()
++            )
++        ),
+         "n_hf_direct_rejected_invalid_structure": hf_rejections,
++        "hf_snapshot_reconciliation": {
++            "input_rows": len(hf_frame),
++            "direct_rows_with_valid_structure": len(hf_rows),
++            "direct_rows_rejected_structure": hf_rejections,
++            "nondirect_rows_retained": len(hf_nondirect_frame),
++            "reconciles": (
++                len(hf_rows) + hf_rejections + len(hf_nondirect_frame)
++                == len(hf_frame)
++            ),
++        },
+         "n_local_input_rows": n_local,
+         "n_local_absolute_rows_removed_from_residual": n_direct_partition,
+         "n_local_absolute_rows_with_valid_structure": n_direct_local,
+@@ -248,6 +273,7 @@ def build_canonical_frames(
+         },
+     }
+     return {
++        "hf_nondirect_records": hf_nondirect_frame,
+         "direct_source_rows": direct_frame,
+         "direct_claims": claims_frame,
+         "direct_rejected_rows": direct_rejected_frame,
+@@ -258,6 +284,30 @@ def build_canonical_frames(
+     }
+ 
+ 
++def _hf_nondirect_records(frame: Any) -> Any:
++    """Retain every non-direct HF row as a separate inference evidence source."""
++    report_types = (
++        frame["bioavailability_report_type"]
++        .fillna("")
++        .astype(str)
++        .str.strip()
++        .str.lower()
++    )
++    nondirect = frame.loc[~report_types.isin(DIRECT_REPORT_TYPES)].copy()
++    nondirect["endpoint_name"] = "oral_bioavailability"
++    extracted = nondirect["oral_bioavailability_value"].map(
++        nondirect_measurement_fields
++    )
++    for field in (
++        "measurement_text",
++        "numeric_value",
++        "value_units",
++        "measurement_unit_extraction_status",
++    ):
++        nondirect[field] = [item[field] for item in extracted]
++    return nondirect
++
++
+ def _normalize_hf_rows(frame: Any, dataset: str, revision: str) -> tuple[list[dict[str, Any]], int]:
+     rows: list[dict[str, Any]] = []
+     invalid = 0
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py b/tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py
+index 9593164..5a0d8bc 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py
+@@ -1,4 +1,4 @@
+-"""Build the policy-decoupled layered v6 Bioavailability evidence library.
++"""Build the policy-decoupled canonical v7 Bioavailability evidence library.
+ 
+ The staged builder is shared (``common/starling/build_normalized_evidence_library``);
+ this entry point only binds the Bioavailability_Ma policy so the historical
+@@ -40,13 +40,23 @@ from tools.chembl_tool.common.starling.build_normalized_evidence_library import
+     parse_args,
+     run_with_args,
+ )
++
++# Public paths for this v7 task wrapper. The shared module keeps its historical
++# v6 constants for callers that explicitly rebuild frozen lineage.
++NORMALIZED_RECORDS_FILENAME = "02_canonicalized/records.parquet"
++AUXILIARY_MAPPING_MANIFEST_FILENAME = (
++    "02_canonicalized/auxiliary_mapping_manifest.json"
++)
++ENDPOINT_REGISTRY_FILENAME = "02_canonicalized/endpoint_registry.json"
++SOURCE_COLUMN_CONTRACT_FILENAME = "02_canonicalized/source_contract.json"
++VALIDITY_POLICY_FILENAME = "02_canonicalized/record_validity_policy.json"
+ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_downstream_artifacts import (
+     AUDIT_STAGE,
++    DISTANCE_CALIBRATION_STAGE,
+     HELDOUT_STAGE,
+     MOLECULE_EVIDENCE_STAGE,
+     NEIGHBOR_INDEX_STAGE,
+     PAIR_BUCKET_STAGE,
+-    TRANSFER_POLICY_STAGE,
+     build_downstream_artifacts,
+ )
+ from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
+@@ -60,10 +70,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
+ 
+ ARTIFACT_STAGES = (
+     "01_cleaned",
+-    "02_normalized",
++    "02_canonicalized",
+     "03_records",
+     PAIR_BUCKET_STAGE,
+-    TRANSFER_POLICY_STAGE,
++    DISTANCE_CALIBRATION_STAGE,
+     HELDOUT_STAGE,
+     MOLECULE_EVIDENCE_STAGE,
+     NEIGHBOR_INDEX_STAGE,
+@@ -113,6 +123,8 @@ def _build_downstream(args) -> int:
+             "from_stage": args.from_stage,
+             "through_stage": args.through_stage,
+         },
++        validation_level=args.validation_level,
++        cache_mode=args.cache_mode,
+     )
+     return 0
+ 
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py
+index 4f9171f..2b15207 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py
+@@ -9,6 +9,7 @@ from typing import Any
+ from tools.chembl_tool.common.starling import split_downstream as _shared
+ from tools.chembl_tool.common.starling.split_downstream import (
+     AUDIT_STAGE,
++    DISTANCE_CALIBRATION_STAGE,
+     DOWNSTREAM_STAGES,
+     FILTERED_RECORDS_FILENAME,
+     HELDOUT_STAGE,
+@@ -32,7 +33,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
+ from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import POLICY
+ 
+ 
+-PIPELINE_LAYOUT_VERSION = "bioavailability_ma.normalized_v6_layout.v2"
++PIPELINE_LAYOUT_VERSION = "bioavailability_ma.normalized_v7_layout.v1"
+ HELDOUT_OVERLAP_VERSION = "bioavailability_ma.remove_heldout_overlap.v1"
+ BENCHMARK_SPLITS = ("random", "scaffold")
+ DEFAULT_SPLIT_ROOT = "data/processed_starling/Bioavailability_Ma"
+@@ -81,6 +82,7 @@ __all__ = [
+     "BENCHMARK_SPLITS",
+     "DEFAULT_SPLIT_ROOT",
+     "DOWNSTREAM_STAGES",
++    "DISTANCE_CALIBRATION_STAGE",
+     "EXCLUSIONS_FILENAME",
+     "FILTERED_RECORDS_FILENAME",
+     "HELDOUT_STAGE",
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_evidence_library.py b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_evidence_library.py
+index 38e4e34..17faf1b 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_evidence_library.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_evidence_library.py
+@@ -5,6 +5,7 @@ from __future__ import annotations
+ import argparse
+ import hashlib
+ import json
++import math
+ import pickle
+ import statistics
+ import time
+@@ -21,8 +22,14 @@ from tools.chembl_tool.common.task_workflows.evidence_library import (
+     fingerprint_metadata,
+ )
+ from tools.chembl_tool.common.starling.oral_bioavailability import (
+-    ALLOWED_REPORT_TYPES,
+-    clean_oral_bioavailability_rows,
++    CleanOralBioavailabilityRow,
++    build_condition_text,
++    canonicalize_smiles,
++)
++from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
++from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
++    CANONICAL_VERSION,
++    DIRECT_REPORT_TYPES,
+ )
+ from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+     DEFAULT_DIRECT_HF_PARQUET,
+@@ -37,7 +44,7 @@ INDEX_FILENAME = "starling_oral_bioavailability_neighbor_index.pkl"
+ META_FILENAME = "starling_oral_bioavailability_neighbor_index.meta.json"
+ GROUP_ID = "Observed.direct_oral_bioavailability"
+ INDEX_VERSION = "bioavailability_ma_starling_neighbor_index.v3"
+-SOURCE_DATASET = "starling-labs/Oral_Bioavailability"
++SOURCE_DATASET = CANONICAL_VERSION
+ 
+ 
+ def main(argv: list[str] | None = None) -> int:
+@@ -70,6 +77,7 @@ def main(argv: list[str] | None = None) -> int:
+         "type": "starling_oral_bioavailability",
+         "dataset": SOURCE_DATASET,
+         "source_parquet": str(source_path),
++        "source_sha256": file_sha256(source_path),
+         "group_id": GROUP_ID,
+         "exact_query_exclusion": True,
+     }
+@@ -85,6 +93,7 @@ def main(argv: list[str] | None = None) -> int:
+         "index_version": INDEX_VERSION,
+         "source_dataset": SOURCE_DATASET,
+         "source_parquet": str(source_path),
++        "source_sha256": file_sha256(source_path),
+         "group_id": GROUP_ID,
+         "min_value_percent": args.min_value_percent,
+         "max_value_percent": args.max_value_percent,
+@@ -117,9 +126,8 @@ def build_starling_evidence_rows(
+     numeric_by_smiles: dict[str, list[dict[str, Any]]] = defaultdict(list)
+     qualitative_by_smiles: dict[str, list[dict[str, Any]]] = defaultdict(list)
+     raw_rows = load_direct_hf_rows(source_parquet, max_rows=max_source_rows)
+-    cleaned, dropped = clean_oral_bioavailability_rows(
++    cleaned, dropped = _clean_canonical_direct_claims(
+         raw_rows,
+-        allowed_report_types=ALLOWED_REPORT_TYPES,
+         min_value_percent=min_value_percent,
+         max_value_percent=max_value_percent,
+     )
+@@ -173,6 +181,68 @@ def build_starling_evidence_rows(
+     }
+ 
+ 
++def _clean_canonical_direct_claims(
++    rows: list[dict[str, Any]],
++    *,
++    min_value_percent: float,
++    max_value_percent: float,
++) -> tuple[list[CleanOralBioavailabilityRow], list[dict[str, Any]]]:
++    """Use canonical-v2 parsing decisions instead of reinterpreting claim text."""
++    cleaned: list[CleanOralBioavailabilityRow] = []
++    dropped: list[dict[str, Any]] = []
++    for source_index, raw in enumerate(rows):
++        report_type = str(raw.get("bioavailability_report_type") or "").strip()
++        if report_type not in DIRECT_REPORT_TYPES:
++            dropped.append(
++                {"source_index": source_index, "drop_reason": "report_type_not_allowed", "raw_row": raw}
++            )
++            continue
++        canonical_smiles = canonicalize_smiles(str(raw.get("smiles") or "").strip())
++        if not canonical_smiles:
++            dropped.append(
++                {"source_index": source_index, "drop_reason": "invalid_smiles", "raw_row": raw}
++            )
++            continue
++        value = _finite_float(raw.get("value_percent"))
++        if value is None:
++            dropped.append(
++                {
++                    "source_index": source_index,
++                    "drop_reason": "unparseable_or_non_numeric_value",
++                    "raw_row": raw,
++                }
++            )
++            continue
++        if value < min_value_percent or value > max_value_percent:
++            dropped.append(
++                {"source_index": source_index, "drop_reason": "value_out_of_range", "raw_row": raw}
++            )
++            continue
++        parse_method = str(raw.get("value_parse_method") or "canonical_value_percent")
++        parse_modifier = parse_method if parse_method in {"lower_bound", "upper_bound"} else ""
++        cleaned.append(
++            CleanOralBioavailabilityRow(
++                source_index=source_index,
++                molecule_name=str(raw.get("molecule_name") or "").strip(),
++                canonical_smiles=canonical_smiles,
++                value_percent=value,
++                condition_text=build_condition_text(raw),
++                parse_method=parse_method,
++                parse_modifier=parse_modifier,
++                raw_row=raw,
++            )
++        )
++    return cleaned, dropped
++
++
++def _finite_float(value: Any) -> float | None:
++    try:
++        parsed = float(value)
++    except (TypeError, ValueError):
++        return None
++    return parsed if math.isfinite(parsed) else None
++
++
+ def _summarize_molecule(
+     smiles: str,
+     numeric_rows: list[dict[str, Any]],
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py
+index f254b51..c88350b 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py
+@@ -16,14 +16,17 @@ from tools.chembl_tool.common.starling import (
+     build_starling_parquet_evidence_rows,
+     write_jsonl,
+ )
++from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+ from tools.chembl_tool.common.task_workflows.evidence_library import build_neighbor_index, fingerprint_metadata
+ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library import (
+     DEFAULT_SOURCE_PARQUET as DEFAULT_DIRECT_SOURCE_PARQUET,
+     build_starling_evidence_rows as build_direct_f_rows,
+ )
+-from tools.chembl_tool.common.starling.oral_bioavailability import (
+-    ORAL_BIOAVAILABILITY_DATASET,
+-    ORAL_BIOAVAILABILITY_REVISION,
++from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
++    CANONICAL_VERSION,
++    HF_NONDIRECT_RECORDS_PATH,
++    HF_SOURCE_DATASET,
++    HF_SOURCE_REVISION,
+ )
+ 
+ 
+@@ -33,8 +36,10 @@ EVIDENCE_FILENAME = "starling_factor_evidence.jsonl"
+ INDEX_FILENAME = "starling_factor_neighbor_index.pkl"
+ META_FILENAME = "starling_factor_neighbor_index.meta.json"
+ INDEX_VERSION = "bioavailability_ma_starling_factor_neighbor_index.v4"
+-EXPECTED_DIRECT_HF_RAW_ROWS = 163_815
+-EXPECTED_DIRECT_HF_CLEAN_NUMERIC_ROWS = 80_808
++EXPECTED_DIRECT_HF_RAW_ROWS = 113_080
++EXPECTED_DIRECT_HF_CLEAN_NUMERIC_ROWS = 85_767
++EXPECTED_HF_NONDIRECT_RAW_ROWS = 51_570
++NONDIRECT_SOURCE_ID = "observed_nondirect_oral_bioavailability"
+ 
+ 
+ def main(argv: list[str] | None = None) -> int:
+@@ -60,12 +65,22 @@ def main(argv: list[str] | None = None) -> int:
+ 
+     profiles = bioavailability_profiles(Path(args.starling_data_dir), max_rows=args.max_rows_per_source)
+     if args.scope == "direct":
+-        profiles = profiles[:1]
++        profiles = [profile for profile in profiles if profile.source_id == NONDIRECT_SOURCE_ID]
+     factor_rows, factor_stats = build_starling_parquet_evidence_rows(
+         profiles,
+         max_record_examples=args.max_record_examples,
+         min_confidence=args.min_confidence,
+     )
++    nondirect_stats = factor_stats.get("sources", {}).get(NONDIRECT_SOURCE_ID, {})
++    if (
++        not args.max_rows_per_source
++        and int(nondirect_stats.get("n_input_rows") or 0) != EXPECTED_HF_NONDIRECT_RAW_ROWS
++    ):
++        raise ValueError(
++            "Retained non-direct HF row-count drift: "
++            f"expected {EXPECTED_HF_NONDIRECT_RAW_ROWS:,}, "
++            f"found {int(nondirect_stats.get('n_input_rows') or 0):,}"
++        )
+     evidence_rows = [*direct_rows, *factor_rows]
+     if args.evidence_content == "numeric_only":
+         evidence_rows = [numeric for row in evidence_rows if (numeric := numeric_only_evidence_row(row)) is not None]
+@@ -94,19 +109,37 @@ def main(argv: list[str] | None = None) -> int:
+         "starling_data_dir": args.starling_data_dir,
+         "include_direct_hf": args.include_direct_hf,
+         "direct_hf_provenance": {
+-            "source_mode": "complete_parquet",
+-            "dataset": ORAL_BIOAVAILABILITY_DATASET,
+-            "revision": ORAL_BIOAVAILABILITY_REVISION,
++            "source_mode": "canonical_direct_claims",
++            "contract_version": CANONICAL_VERSION,
+             "records_parquet": args.direct_source_parquet,
++            "records_sha256": file_sha256(args.direct_source_parquet),
+         } if args.include_direct_hf else None,
++        "hf_nondirect_provenance": {
++            "source_mode": "retained_nondirect_hf_snapshot_partition",
++            "contract_version": CANONICAL_VERSION,
++            "records_parquet": str(
++                Path(args.starling_data_dir)
++                / "canonical_direct_v2"
++                / HF_NONDIRECT_RECORDS_PATH.name
++            ),
++            "records_sha256": file_sha256(
++                Path(args.starling_data_dir)
++                / "canonical_direct_v2"
++                / HF_NONDIRECT_RECORDS_PATH.name
++            ),
++            "raw_rows": int(nondirect_stats.get("n_input_rows") or 0),
++            "loaded_rows": int(nondirect_stats.get("n_loaded_rows") or 0),
++            "evidence_role": "surrogate_proxy",
++        },
+         "prepared_hf_row_counts": {
+             "raw_rows": int(direct_stats.get("n_source_rows") or 0),
+             "clean_numeric_rows": int(direct_stats.get("n_source_rows_kept") or 0),
+             "dropped_rows": int(direct_stats.get("n_dropped_rows_scanned") or 0),
+         } if args.include_direct_hf else None,
+         "underlying_sources": [
+-            *([ORAL_BIOAVAILABILITY_DATASET] if args.include_direct_hf else []),
+-            "starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure",
++            *([CANONICAL_VERSION] if args.include_direct_hf else []),
++            f"{HF_SOURCE_DATASET}@{HF_SOURCE_REVISION}/non_direct_partition",
++            "bioavailability_canonical_direct.v2/oral_exposure_residual_v2",
+             "starling-labs/bioavailability_ma/Fa",
+             "starling-labs/bioavailability_ma/Fg",
+             "starling-labs/bioavailability_ma/Fh",
+@@ -142,33 +175,64 @@ def _validate_prepared_direct_hf_counts(
+             f"clean numeric rows: expected {expected_clean_numeric_rows:,}, found {clean_rows:,}"
+         )
+     if mismatches:
+-        raise ValueError("Prepared HF artifact preflight failed (" + "; ".join(mismatches) + ")")
++        raise ValueError(
++            "Canonical direct artifact preflight failed ("
++            + "; ".join(mismatches)
++            + ")"
++        )
+ 
+ 
+ def bioavailability_profiles(data_dir: Path, *, max_rows: int = 0) -> list[StarlingSourceProfile]:
+     """Task configuration only: parquet columns, evidence groups, and roles."""
+     return [
+         StarlingSourceProfile(
+-            source_id="observed_direct_bioavailability",
+-            path=str(data_dir / "Oral_AUC-Cmax_Exposure" / "extractions.parquet"),
+-            group_id="Observed.direct_oral_bioavailability",
++            source_id=NONDIRECT_SOURCE_ID,
++            path=str(
++                data_dir
++                / "canonical_direct_v2"
++                / HF_NONDIRECT_RECORDS_PATH.name
++            ),
++            group_id="Observed.nondirect_oral_bioavailability",
+             assay_tier="Observed",
+-            endpoint_group="direct_oral_bioavailability",
+-            evidence_source="starling-labs/bioavailability_ma/Oral_AUC-Cmax-Exposure",
+-            endpoint_field="exposure_measure",
+-            value_field="parameter_value",
+-            unit_field="parameter_units",
+-            context_fields=("statistic_type", "oral_dose", "study_context", "comparator_exposure"),
+-            scope_fields=("study_context",),
+-            target_pref_name="oral bioavailability",
+-            evidence_role="direct_outcome",
+-            standard_type_prefix="oral bioavailability",
+-            include_endpoint_values=("bioavailability",),
++            endpoint_group="nondirect_oral_bioavailability",
++            evidence_source=f"{HF_SOURCE_DATASET}@{HF_SOURCE_REVISION}",
++            endpoint_field="endpoint_name",
++            value_field="numeric_value",
++            unit_field="value_units",
++            context_fields=(
++                "bioavailability_report_type",
++                "oral_bioavailability_value",
++                "measurement_unit_extraction_status",
++                "species_or_population",
++                "dose",
++                "oral_exposure_mode",
++                "qualifying_conditions",
++                "comparator",
++                "extra_details",
++            ),
++            scope_fields=(
++                "species_or_population",
++                "oral_exposure_mode",
++                "comparator",
++            ),
++            record_id_field="source_index",
++            target_pref_name="relative or apparent oral bioavailability",
++            evidence_role="surrogate_proxy",
++            allow_numeric_proxy_summary=True,
++            standard_type_prefix="non-direct oral bioavailability",
++            extra_example_fields=(
++                "oral_bioavailability_value",
++                "measurement_unit_extraction_status",
++            ),
+             max_rows=max_rows,
+         ),
+         StarlingSourceProfile(
+             source_id="observed_oral_auc_cmax_exposure",
+-            path=str(data_dir / "Oral_AUC-Cmax_Exposure" / "extractions.parquet"),
++            path=str(
++                data_dir
++                / "oral_exposure_residual_v2"
++                / "exposure_records.parquet"
++            ),
+             group_id="Observed.oral_auc_cmax_exposure",
+             assay_tier="Observed",
+             endpoint_group="oral_auc_cmax_exposure",
+@@ -181,7 +245,6 @@ def bioavailability_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starl
+             target_pref_name="oral systemic exposure",
+             evidence_role="surrogate_proxy",
+             standard_type_prefix="oral exposure",
+-            exclude_endpoint_values=("bioavailability",),
+             max_rows=max_rows,
+         ),
+         StarlingSourceProfile(
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py
+index 5310875..bd9ddd2 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py
+@@ -12,22 +12,21 @@ import json
+ from pathlib import Path
+ from typing import Any
+ 
+-from tools.chembl_tool.common.starling.normalization.audit import (
+-    read_parquet_records,
+-    write_parquet,
+-)
++from tools.chembl_tool.common.starling.normalization.audit import write_parquet
+ from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+-from tools.chembl_tool.common.starling.pair_buckets import materialize_pair_buckets
++from tools.chembl_tool.common.starling.pair_buckets import (
++    materialize_pair_buckets,
++    read_pair_bucket_input,
++)
+ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
+     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
+     SOURCE_PAIR_FIELDS,
+ )
++from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
++from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import DEFAULT_OUT_DIR as DEFAULT_LIBRARY_ROOT
+ 
+ 
+-DEFAULT_NORMALIZED_DIR = (
+-    Path("outputs/chembl_tool/tasks/bioavailability_ma/evidence_library")
+-    / "starling_normalized_v6"
+-)
++DEFAULT_NORMALIZED_DIR = Path(DEFAULT_LIBRARY_ROOT)
+ DEFAULT_OUT_DIR = DEFAULT_NORMALIZED_DIR / "04_pair_buckets"
+ PAIR_BUCKET_RECORDS_FILENAME = "pair_bucket_records.parquet"
+ PAIR_BUCKET_METADATA_FILENAME = "pair_bucket_metadata.json"
+@@ -46,11 +45,20 @@ def build_sidecar(
+     records_path = Path(records_path)
+     target = Path(out_dir)
+     target.mkdir(parents=True, exist_ok=True)
+-    records = read_parquet_records(records_path)
++    records, v7, pair_fields = read_pair_bucket_input(
++        records_path,
++        v7_source_fields={
++            source: spec.additional_dimensions
++            for source, spec in RECORD_CONTRACT.pair_buckets.items()
++        },
++        legacy_source_fields=SOURCE_PAIR_FIELDS,
++    )
+     sidecar_rows, metadata = materialize_pair_buckets(
+         records,
+-        source_required_fields=SOURCE_PAIR_FIELDS,
+-        contract_version=BIOAVAILABILITY_PAIR_BUCKET_VERSION,
++        source_required_fields=pair_fields,
++        contract_version=(
++            RECORD_CONTRACT.version if v7 else BIOAVAILABILITY_PAIR_BUCKET_VERSION
++        ),
+     )
+     if not all(metadata["validations"].values()):
+         raise ValueError(
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py
+index 488c36b..295708f 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py
+@@ -1,13 +1,13 @@
+-"""Build the single Bioavailability pair-bucket assay-transfer policy.
++"""Build Bioavailability v7 calibration or the frozen v6 transfer policy.
+ 
+-The builder is shared (``common/starling/build_pair_bucket_transfer_policy``);
+-this entry point binds the Bioavailability_Ma contract so the historical
+-command line and call signature keep working unchanged.
++The historical command and function name remain compatibility entry points.
+ """
+ 
+ from __future__ import annotations
+ 
+ import argparse
++import json
++from dataclasses import replace
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -15,6 +15,9 @@ from tools.chembl_tool.common.starling.build_pair_bucket_transfer_policy import
+     POLICY_FILENAME,
+     TransferPolicyBuildSpec,
+ )
++from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration import (
++    build_pair_bucket_distance_calibration as _build_distance_calibration,
++)
+ from tools.chembl_tool.common.starling.build_pair_bucket_transfer_policy import (
+     build_pair_bucket_transfer_policy as _build_pair_bucket_transfer_policy,
+ )
+@@ -39,12 +42,13 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
+     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
+     SOURCE_PAIR_FIELDS,
+ )
++from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
+ 
+ 
+ DEFAULT_PAIR_BUCKET_DIR = DEFAULT_NORMALIZED_DIR / "04_pair_buckets"
+ DEFAULT_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "05_assay_transfer_policy"
+ DEFAULT_AUXILIARY_MANIFEST = (
+-    DEFAULT_NORMALIZED_DIR / "02_normalized/auxiliary_mapping_manifest.json"
++    DEFAULT_NORMALIZED_DIR / "02_canonicalized/auxiliary_mapping_manifest.json"
+ )
+ 
+ BUILD_SPEC = TransferPolicyBuildSpec(
+@@ -64,9 +68,40 @@ def build_pair_bucket_transfer_policy(
+     auxiliary_manifest_path: str | Path,
+     out_dir: str | Path,
+     minimum_samples: int = MIN_ASSAY_TRANSFER_SAMPLES,
++    workers: int = 1,
+ ) -> dict[str, Any]:
++    metadata = json.loads(Path(pair_bucket_metadata_path).read_text(encoding="utf-8"))
++    spec = BUILD_SPEC
++    if metadata.get("contract_version") == RECORD_CONTRACT.version:
++        profile = replace(
++            TRANSFER_POLICY_PROFILE,
++            source_candidate_fields={
++                source: item.variance_candidates
++                for source, item in RECORD_CONTRACT.pair_buckets.items()
++            },
++        )
++        spec = replace(
++            BUILD_SPEC,
++            profile=profile,
++            pair_bucket_version=RECORD_CONTRACT.version,
++            source_pair_fields={
++                source: item.additional_dimensions
++                for source, item in RECORD_CONTRACT.pair_buckets.items()
++            },
++        )
++        return _build_distance_calibration(
++            spec=spec,
++            record_contract=RECORD_CONTRACT,
++            records_path=records_path,
++            pair_bucket_records_path=pair_bucket_records_path,
++            pair_bucket_metadata_path=pair_bucket_metadata_path,
++            auxiliary_manifest_path=auxiliary_manifest_path,
++            out_dir=out_dir,
++            minimum_samples=minimum_samples,
++            workers=workers,
++        )
+     return _build_pair_bucket_transfer_policy(
+-        spec=BUILD_SPEC,
++        spec=spec,
+         records_path=records_path,
+         pair_bucket_records_path=pair_bucket_records_path,
+         pair_bucket_metadata_path=pair_bucket_metadata_path,
+@@ -92,6 +127,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+     )
+     parser.add_argument("--auxiliary-manifest", default=str(DEFAULT_AUXILIARY_MANIFEST))
+     parser.add_argument("--out-dir", default=str(DEFAULT_OUTPUT_DIR))
++    parser.add_argument("--workers", type=int, default=1)
+     return parser.parse_args(argv)
+ 
+ 
+@@ -103,8 +139,20 @@ def main(argv: list[str] | None = None) -> int:
+         pair_bucket_metadata_path=args.pair_bucket_metadata,
+         auxiliary_manifest_path=args.auxiliary_manifest,
+         out_dir=args.out_dir,
++        workers=args.workers,
+     )
+     summary = payload["summary"]
++    if "calibration_valid_buckets" in summary:
++        print(
++            "[build_starling_pair_bucket_distance_calibration] "
++            f"buckets={summary['pair_buckets']:,} "
++            f"supported={summary['minimum_support_buckets']:,} "
++            f"residual_flagged={summary['residual_heterogeneity_flagged_buckets']:,} "
++            f"calibrated={summary['calibration_valid_buckets']:,} "
++            f"out={args.out_dir}",
++            flush=True,
++        )
++        return 0
+     print(
+         "[build_starling_pair_bucket_transfer_policy] "
+         f"buckets={summary['pair_buckets']:,} "
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/canonical_source.py b/tools/chembl_tool/tasks/bioavailability_ma/canonical_source.py
+index 4c8030c..ffe6265 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/canonical_source.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/canonical_source.py
+@@ -25,6 +25,7 @@ CANONICAL_SOURCE_DIR = Path(
+     "data/starling_data/bioavailability_ma/canonical_direct_v2"
+ )
+ HF_SNAPSHOT_PATH = CANONICAL_SOURCE_DIR / "hf_oral_bioavailability_snapshot.parquet"
++HF_NONDIRECT_RECORDS_PATH = CANONICAL_SOURCE_DIR / "hf_nondirect_records.parquet"
+ DIRECT_SOURCE_ROWS_PATH = CANONICAL_SOURCE_DIR / "direct_source_rows.parquet"
+ DIRECT_CLAIMS_PATH = CANONICAL_SOURCE_DIR / "direct_claims.parquet"
+ DIRECT_REJECTED_ROWS_PATH = CANONICAL_SOURCE_DIR / "direct_rejected_rows.parquet"
+@@ -68,6 +69,22 @@ _RELATIVE_PATTERN = re.compile(
+     flags=re.IGNORECASE,
+ )
+ _RELATIVE_UNITS = {"fold", "times", "ratio", "% increase", "% lower"}
++_NONDIRECT_PERCENT_UNIT = re.compile(r"%|\bper\s*cent\b|\bpercent(?:age)?\b", re.IGNORECASE)
++_NONDIRECT_FOLD_UNIT = re.compile(
++    r"\b(?:fold|times?)\b|(?<=\d)\s*[x×](?=\s|$)", re.IGNORECASE
++)
++_NONDIRECT_RATIO_UNIT = re.compile(r"\bratio\b", re.IGNORECASE)
++_NONDIRECT_DIRECTION_WORDS = re.compile(
++    r"\b(?:about|approximately|approximate|reported|relative|apparent|oral|"
++    r"bioavailability|was|is|of|by|to|than|compared|versus|vs|"
++    r"increase(?:d|s)?|improve(?:d|s)?|enhance(?:d|s)?|higher|greater|"
++    r"decrease(?:d|s)?|reduce(?:d|s)?|lower|less)\b",
++    re.IGNORECASE,
++)
++_NONDIRECT_POINT = re.compile(
++    r"^[<>≤≥~≈]?\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)"
++    r"(?:\s*(?:±|\+/-)\s*(?:\d+(?:\.\d*)?|\.\d+))?$"
++)
+ 
+ 
+ def classify_local_record(row: Mapping[str, Any]) -> tuple[str, str]:
+@@ -130,6 +147,53 @@ def local_classification_signals(row: Mapping[str, Any]) -> dict[str, bool]:
+     }
+ 
+ 
++def nondirect_measurement_fields(value: Any) -> dict[str, Any]:
++    """Extract only explicit scalar/unit pairs from a non-direct HF value."""
++    raw = _text(value)
++    if not raw:
++        return {
++            "measurement_text": "",
++            "numeric_value": None,
++            "value_units": "",
++            "measurement_unit_extraction_status": "missing_value",
++        }
++    unit = ""
++    unit_pattern: re.Pattern[str] | None = None
++    if _NONDIRECT_PERCENT_UNIT.search(raw):
++        unit, unit_pattern = "%", _NONDIRECT_PERCENT_UNIT
++    elif _NONDIRECT_FOLD_UNIT.search(raw):
++        unit, unit_pattern = "fold", _NONDIRECT_FOLD_UNIT
++    elif _NONDIRECT_RATIO_UNIT.search(raw):
++        unit, unit_pattern = "ratio", _NONDIRECT_RATIO_UNIT
++    if unit_pattern is None:
++        return {
++            "measurement_text": raw,
++            "numeric_value": None,
++            "value_units": "",
++            "measurement_unit_extraction_status": "no_explicit_unit",
++        }
++    measurement = unit_pattern.sub("", raw)
++    measurement = re.sub(r"\s+", " ", measurement.replace(",", "")).strip(" -:()")
++    atomic_measurement = _NONDIRECT_DIRECTION_WORDS.sub("", measurement)
++    atomic_measurement = re.sub(r"\s+", " ", atomic_measurement).strip(" -:()")
++    if not _NONDIRECT_POINT.fullmatch(atomic_measurement):
++        return {
++            "measurement_text": raw,
++            "numeric_value": None,
++            "value_units": "",
++            "measurement_unit_extraction_status": "non_atomic_or_qualitative",
++        }
++    numeric_match = re.search(
++        r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)", atomic_measurement
++    )
++    return {
++        "measurement_text": atomic_measurement,
++        "numeric_value": float(numeric_match.group(0)) if numeric_match else None,
++        "value_units": unit,
++        "measurement_unit_extraction_status": "explicit_atomic_scalar_unit",
++    }
++
++
+ def _text(value: Any) -> str:
+     if value is None:
+         return ""
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py b/tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py
+index 834de92..f39a52d 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py
+@@ -3,6 +3,10 @@
+ from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
+ 
+ 
++DIRECT_ORAL_BIOAVAILABILITY_GROUP = "Observed.direct_oral_bioavailability"
++NONDIRECT_ORAL_BIOAVAILABILITY_GROUP = "Observed.nondirect_oral_bioavailability"
++
++
+ CHEMBL = SourceExperimentConfig(
+     source_name="chembl",
+     direct_groups=(
+@@ -73,10 +77,13 @@ STARLING = SourceExperimentConfig(
+     source_name="starling",
+     direct_groups=(
+         EvidenceGroupSpec(
+-            "Observed.direct_oral_bioavailability",
++            DIRECT_ORAL_BIOAVAILABILITY_GROUP,
+             "Observed",
+             "direct_oral_bioavailability",
+-            source_groups=("Observed.direct_oral_bioavailability",),
++            source_groups=(
++                DIRECT_ORAL_BIOAVAILABILITY_GROUP,
++                NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
++            ),
+         ),
+     ),
+     mechanism_groups=tuple(
+@@ -84,7 +91,14 @@ STARLING = SourceExperimentConfig(
+             group_id,
+             group_id.split(".", 1)[0],
+             group_id.split(".", 1)[1],
+-            source_groups=(group_id,),
++            source_groups=(
++                (
++                    DIRECT_ORAL_BIOAVAILABILITY_GROUP,
++                    NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
++                )
++                if group_id == DIRECT_ORAL_BIOAVAILABILITY_GROUP
++                else (group_id,)
++            ),
+         )
+         for group_id in (
+             "Observed.direct_oral_bioavailability",
+@@ -96,6 +110,29 @@ STARLING = SourceExperimentConfig(
+     ),
+ )
+ 
++STARLING_EXCLUDING_NONDIRECT = SourceExperimentConfig(
++    source_name="starling",
++    direct_groups=(
++        EvidenceGroupSpec(
++            DIRECT_ORAL_BIOAVAILABILITY_GROUP,
++            "Observed",
++            "direct_oral_bioavailability",
++            source_groups=(DIRECT_ORAL_BIOAVAILABILITY_GROUP,),
++        ),
++    ),
++    mechanism_groups=tuple(
++        EvidenceGroupSpec(
++            group.group_id,
++            group.tier,
++            group.endpoint_group,
++            source_groups=(DIRECT_ORAL_BIOAVAILABILITY_GROUP,)
++            if group.group_id == DIRECT_ORAL_BIOAVAILABILITY_GROUP
++            else group.source_groups,
++        )
++        for group in STARLING.mechanism_groups
++    ),
++)
++
+ # In-distribution retrieval over the starling normalized (hf_cleaned) molecules. The
+ # neighbor index already keys on the five paper group_ids, so the group mapping is
+ # identical to STARLING; only the source name (and the index/catalog paths) differ.
+@@ -137,5 +174,21 @@ SOURCES = {
+ STARLING_RETRIEVAL_SOURCES = frozenset({"starling", "starling_in_distribution"})
+ 
+ 
+-def get_source_config(source: str) -> SourceExperimentConfig:
+-    return SOURCES[source]
++def get_source_config(
++    source: str,
++    *,
++    exclude_nondirect_bioavailability_records: bool = False,
++) -> SourceExperimentConfig:
++    if not exclude_nondirect_bioavailability_records:
++        return SOURCES[source]
++    if not source.startswith("starling"):
++        raise ValueError(
++            "--exclude-nondirect-bioavailability-records is only valid for a "
++            "Starling retrieval source"
++        )
++    base = STARLING_EXCLUDING_NONDIRECT
++    return SourceExperimentConfig(
++        source_name=SOURCES[source].source_name,
++        direct_groups=base.direct_groups,
++        mechanism_groups=base.mechanism_groups,
++    )
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/reranking/assay_transfer_rerank.py b/tools/chembl_tool/tasks/bioavailability_ma/reranking/assay_transfer_rerank.py
+index 9178021..4b376d4 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/reranking/assay_transfer_rerank.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/reranking/assay_transfer_rerank.py
+@@ -13,6 +13,12 @@ from typing import Any, Iterable
+ 
+ from jinja2 import Environment, FileSystemLoader, StrictUndefined
+ 
++from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
++    DIRECT_REPORT_TYPES,
++    HF_NONDIRECT_RECORDS_PATH,
++)
++from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
++
+ ASSAY_TRANSFER_MODEL = "jiosephlee/assay-transfer-tool"
+ ASSAY_TRANSFER_MODEL_REVISION = "9515603b1a5c4586e41c221dcdbc5e7487c0c3f5"
+ SCORING_CONTRACT_VERSION = "assay_transfer_chat_first_divergent_token_logits.v1"
+@@ -53,6 +59,7 @@ TEMPLATE_BY_CONCEPT = {
+ }
+ CONCEPT_BY_GROUP = {
+     "Observed.direct_oral_bioavailability": "oral_bioavailability",
++    "Observed.nondirect_oral_bioavailability": "oral_bioavailability",
+     "Observed.oral_auc_cmax_exposure": "oral_exposure",
+     "Fa.absorption_solubility_permeability": "Fa",
+     "Fg.gut_wall_efflux_intestinal_metabolism": "Fg",
+@@ -550,6 +557,28 @@ def winning_record_payload_from_id(
+     return payload
+ 
+ 
++def _retains_direct_bioavailability_record(
++    record: Mapping[str, Any],
++    *,
++    nondirect_hf_source_indices: frozenset[int],
++) -> bool:
++    source_fields = record.get("source_fields") or {}
++    if isinstance(source_fields, Mapping) and "bioavailability_report_type" in source_fields:
++        report_type = str(
++            source_fields.get("bioavailability_report_type") or ""
++        ).strip().casefold()
++        return report_type in DIRECT_REPORT_TYPES
++    if str(record.get("source_id") or "") == "starling-labs/Oral_Bioavailability":
++        provenance = record.get("source_provenance") or {}
++        try:
++            source_index = int(provenance.get("source_index"))
++        except (TypeError, ValueError):
++            return False
++        return source_index not in nondirect_hf_source_indices
++    # The retained/excluded partition applies only to the frozen HF source.
++    return True
++
++
+ class AssayTransferCachedReranker:
+     name = "assay_transfer"
+ 
+@@ -564,6 +593,8 @@ class AssayTransferCachedReranker:
+         allow_missing: bool = False,
+         candidate_manifest_path: str | Path | None = None,
+         template_profile: str = DEFAULT_TEMPLATE_PROFILE,
++        exclude_nondirect_bioavailability_records: bool = False,
++        nondirect_source_path: str | Path = HF_NONDIRECT_RECORDS_PATH,
+     ):
+         self.model = model
+         self.model_revision = require_immutable_revision(model_revision)
+@@ -591,6 +622,34 @@ class AssayTransferCachedReranker:
+         self.cache = AssayTransferScoreCache(cache_path, mode=cache_mode)
+         self.renderer = AssayTransferPromptRenderer(profile=template_profile)
+         self.allow_missing = allow_missing
++        self.exclude_nondirect_bioavailability_records = bool(
++            exclude_nondirect_bioavailability_records
++        )
++        self.nondirect_source_path = Path(nondirect_source_path)
++        self.nondirect_source_sha256 = ""
++        self.nondirect_hf_source_indices: frozenset[int] = frozenset()
++        needs_legacy_source_indices = any(
++            str(record.get("source_id") or "")
++            == "starling-labs/Oral_Bioavailability"
++            and "bioavailability_report_type"
++            not in (record.get("source_fields") or {})
++            for record in self.catalog.records
++        )
++        if (
++            self.exclude_nondirect_bioavailability_records
++            and needs_legacy_source_indices
++        ):
++            import pyarrow.parquet as pq
++
++            table = pq.read_table(
++                self.nondirect_source_path, columns=["source_index"]
++            )
++            self.nondirect_hf_source_indices = frozenset(
++                int(value) for value in table.column("source_index").to_pylist()
++            )
++            self.nondirect_source_sha256 = file_sha256(
++                self.nondirect_source_path
++            )
+         self.missing_tasks: dict[str, PromptTask] = {}
+         self.seen_tasks: dict[str, PromptTask] = {}
+         self.prompt_task_reference_count = 0
+@@ -611,6 +670,10 @@ class AssayTransferCachedReranker:
+             "candidate_manifest_sha256": (
+                 self.candidate_manifest.sha256 if self.candidate_manifest is not None else ""
+             ),
++            "exclude_nondirect_bioavailability_records": (
++                self.exclude_nondirect_bioavailability_records
++            ),
++            "nondirect_filter_source_sha256": self.nondirect_source_sha256,
+         }
+ 
+     def tasks_for_candidates(
+@@ -636,6 +699,20 @@ class AssayTransferCachedReranker:
+                     raise ValueError(
+                         f"Candidate manifest record/molecule mismatch for {molecule_id}: {wrong_smiles}"
+                     )
++            if (
++                self.exclude_nondirect_bioavailability_records
++                and group_id == "Observed.direct_oral_bioavailability"
++            ):
++                records = [
++                    record
++                    for record in records
++                    if _retains_direct_bioavailability_record(
++                        record,
++                        nondirect_hf_source_indices=(
++                            self.nondirect_hf_source_indices
++                        ),
++                    )
++                ]
+             tasks_by_molecule[molecule_id] = [
+                 build_prompt_task(
+                     renderer=self.renderer,
+@@ -848,6 +925,9 @@ _TEMPLATE_CONTEXT_FIELDS = (
+     "species_or_population",
+     "report_or_statistic_type",
+     "dose",
++    "study_context",
++    "oral_exposure_mode",
++    "assay_system",
+     "study_or_assay_system",
+     "measured_process",
+     "biological_context",
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/reranking/build_assay_transfer_rerank_catalog.py b/tools/chembl_tool/tasks/bioavailability_ma/reranking/build_assay_transfer_rerank_catalog.py
+index f0ec0de..0e21a53 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/reranking/build_assay_transfer_rerank_catalog.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/reranking/build_assay_transfer_rerank_catalog.py
+@@ -286,6 +286,7 @@ def _prebuilt_manifest_row(
+ def _records_from_index_candidate(group_id: str, candidate: dict[str, Any]) -> list[dict[str, Any]]:
+     concept = {
+         "Observed.direct_oral_bioavailability": "oral_bioavailability",
++        "Observed.nondirect_oral_bioavailability": "oral_bioavailability",
+         "Observed.oral_auc_cmax_exposure": "oral_exposure",
+         "Fa.absorption_solubility_permeability": "Fa",
+         "Fg.gut_wall_efflux_intestinal_metabolism": "Fg",
+@@ -317,6 +318,7 @@ def _index_example_record(
+                 "species_or_population": example.get("species_or_population"),
+                 "report_or_statistic_type": example.get("bioavailability_report_type"),
+                 "dose": example.get("dose"),
++                "oral_exposure_mode": example.get("oral_exposure_mode"),
+                 "study_or_assay_system": example.get("oral_exposure_mode"),
+                 "qualifying_conditions": example.get("qualifying_conditions"),
+                 "comparator": example.get("comparator"),
+@@ -334,6 +336,7 @@ def _index_example_record(
+                 or raw_context.get("species_or_population"),
+                 "report_or_statistic_type": raw_context.get("statistic_type"),
+                 "dose": raw_context.get("oral_dose"),
++                "study_context": raw_context.get("study_context"),
+                 "study_or_assay_system": raw_context.get("study_context"),
+                 "qualifying_conditions": raw_context.get("qualifying_conditions"),
+                 "comparator": raw_context.get("comparator_exposure"),
+@@ -348,6 +351,8 @@ def _index_example_record(
+             "species_or_population": raw_context.get("species") or raw_context.get("species_or_population"),
+             "report_or_statistic_type": raw_context.get("statistic_type"),
+             "dose": raw_context.get("oral_dose"),
++            "study_context": raw_context.get("study_context"),
++            "assay_system": raw_context.get("assay_system"),
+             "study_or_assay_system": raw_context.get("study_context") or raw_context.get("assay_system"),
+             "measured_process": example.get("endpoint_type"),
+             "biological_context": raw_context.get("biological_context"),
+@@ -648,6 +653,7 @@ def _template_context(concept: str, cleaned: dict[str, Any], raw: dict[str, Any]
+             species_or_population=raw.get("species_or_population"),
+             report_or_statistic_type=raw.get("bioavailability_report_type"),
+             dose=raw.get("dose"),
++            oral_exposure_mode=raw.get("oral_exposure_mode"),
+             study_or_assay_system=raw.get("oral_exposure_mode"),
+             qualifying_conditions=raw.get("qualifying_conditions"),
+             comparator=raw.get("comparator"),
+@@ -659,12 +665,14 @@ def _template_context(concept: str, cleaned: dict[str, Any], raw: dict[str, Any]
+             measured_process=raw.get("exposure_measure"),
+             report_or_statistic_type=raw.get("statistic_type"),
+             dose=raw.get("oral_dose"),
++            study_context=raw.get("study_context"),
+             study_or_assay_system=raw.get("study_context"),
+             comparator=raw.get("comparator_exposure"),
+             qualifying_conditions=raw.get("qualifying_conditions"),
+         )
+     if concept == "Fa":
+         return _context(
++            assay_system=raw.get("assay_system"),
+             study_or_assay_system=raw.get("assay_system"),
+             biological_context=raw.get("biological_context"),
+             medium=raw.get("condition_medium"),
+@@ -677,11 +685,13 @@ def _template_context(concept: str, cleaned: dict[str, Any], raw: dict[str, Any]
+             measured_process=raw.get("gut_wall_process"),
+             transporter_or_enzyme=raw.get("transporter_or_enzyme"),
+             substrate_status=raw.get("substrate_status"),
++            assay_system=raw.get("assay_system"),
+             study_or_assay_system=raw.get("assay_system"),
+             intestinal_site=raw.get("intestinal_site"),
+             qualifying_conditions=raw.get("qualifying_conditions"),
+         )
+     return _context(
++        assay_system=raw.get("assay_system"),
+         study_or_assay_system=raw.get("assay_system"),
+         species_or_population=raw.get("species"),
+         molecular_form=raw.get("molecular_form"),
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/reranking/build_starling_in_distribution_library.py b/tools/chembl_tool/tasks/bioavailability_ma/reranking/build_starling_in_distribution_library.py
+index a0bc23b..1325110 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/reranking/build_starling_in_distribution_library.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/reranking/build_starling_in_distribution_library.py
+@@ -226,14 +226,18 @@ def _first(record: dict[str, Any], *names: str) -> Any:
+ 
+ # The 16 v6_5 template context fields (order per the template).
+ _TEMPLATE_CONTEXT_FIELDS = (
+-    "species_or_population", "report_or_statistic_type", "dose", "study_or_assay_system",
++    "species_or_population", "report_or_statistic_type", "dose", "study_context",
++    "oral_exposure_mode", "assay_system", "study_or_assay_system",
+     "measured_process", "biological_context", "medium", "formulation_or_solid_form",
+     "transporter_or_enzyme", "substrate_status", "intestinal_site", "molecular_form",
+     "enzyme_or_pathway", "qualifying_conditions", "comparator", "extra_details",
+ )
+ 
+ 
+-def template_context_from_record(record: dict[str, Any]) -> dict[str, str]:
++def template_context_from_record(
++    record: dict[str, Any],
++    source_row: dict[str, Any] | None = None,
++) -> dict[str, str]:
+     """Return the 16 v6_5 template context fields for a normalized record.
+ 
+     Prefers the authoritative pre-mapped `context_<field>` columns (present in the
+@@ -241,11 +245,25 @@ def template_context_from_record(record: dict[str, Any]) -> dict[str, str]:
+     `compose_v3._context` mapping over raw columns when those aren't present.
+     """
+     if any(f"context_{field}" in record for field in _TEMPLATE_CONTEXT_FIELDS):
+-        return _context(**{field: record.get(f"context_{field}") for field in _TEMPLATE_CONTEXT_FIELDS})
++        values = {
++            field: record.get(f"context_{field}")
++            for field in _TEMPLATE_CONTEXT_FIELDS
++        }
++        # The frozen eligible schema retained only the historical collapsed
++        # field.  Recover distinct native fields from the authoritative source
++        # join instead of treating that collapsed field as proof that all
++        # context columns were persisted.
++        for field in ("study_context", "oral_exposure_mode", "assay_system"):
++            if values.get(field) in (None, "") and source_row is not None:
++                values[field] = source_row.get(field)
++        return _context(**values)
+     mapped = {
+         "species_or_population": _first(record, "species_or_population", "species", "species_exact"),
+         "report_or_statistic_type": _first(record, "bioavailability_report_type", "statistic_type"),
+         "dose": _first(record, "dose", "oral_dose"),
++        "study_context": record.get("study_context"),
++        "oral_exposure_mode": record.get("oral_exposure_mode"),
++        "assay_system": record.get("assay_system"),
+         "study_or_assay_system": _first(record, "study_context", "oral_exposure_mode", "assay_system"),
+         "measured_process": _first(record, "exposure_measure", "endpoint_category", "gut_wall_process", "metric_type"),
+         "biological_context": record.get("biological_context"),
+@@ -303,6 +321,9 @@ def in_distribution_catalog_record(
+     source_projection = _source_projection_for_record(
+         record, concept, support_by_id, source_by_id
+     )
++    joined_source_row = None
++    if source_by_id is not None:
++        joined_source_row = source_by_id[catalog_record_id][1]
+     return {
+         "record_type": "assay_record",
+         "record_id": catalog_record_id,
+@@ -333,7 +354,7 @@ def in_distribution_catalog_record(
+         "support_text": _resolve_support_text(record, support_by_id),
+         "extra_details": str(record.get("extra_details") or record.get("context_extra_details") or ""),
+         "template_id": _Path(TEMPLATE_BY_CONCEPT[concept]).stem,
+-        "template_context": template_context_from_record(record),
++        "template_context": template_context_from_record(record, joined_source_row),
+         "source_provenance": {
+             "child_id": catalog_record_id,
+             "record_id": str(record.get("record_id") or ""),
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/reranking/precompute_assay_transfer_rerank.py b/tools/chembl_tool/tasks/bioavailability_ma/reranking/precompute_assay_transfer_rerank.py
+index 57ab3c3..23dd348 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/reranking/precompute_assay_transfer_rerank.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/reranking/precompute_assay_transfer_rerank.py
+@@ -165,6 +165,9 @@ def main(argv: list[str] | None = None) -> int:
+         force_rescore=args.force_rescore,
+         template_profile=args.assay_transfer_template_profile,
+         retrieval_source=args.retrieval_source,
++        exclude_nondirect_bioavailability_records=(
++            args.exclude_nondirect_bioavailability_records
++        ),
+     )
+     print(
+         f"[assay_transfer_precompute] queries={len(indices)} prompts_to_score={len(tasks)} "
+@@ -272,11 +275,17 @@ def collect_prompt_tasks(
+     force_rescore: bool,
+     template_profile: str = DEFAULT_TEMPLATE_PROFILE,
+     retrieval_source: str = "starling",
++    exclude_nondirect_bioavailability_records: bool = False,
+ ) -> tuple[AssayTransferCachedReranker, list[PromptTask]]:
+     if experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
+         raise ValueError("Assay-transfer reranking requires direct, full_flat, or full_mechanism mode")
+     index = load_index(Path(index_path))
+-    config = get_source_config(retrieval_source)
++    config = get_source_config(
++        retrieval_source,
++        exclude_nondirect_bioavailability_records=(
++            exclude_nondirect_bioavailability_records
++        ),
++    )
+     reranker = AssayTransferCachedReranker(
+         catalog_path=catalog_path,
+         cache_path=cache_path,
+@@ -286,6 +295,9 @@ def collect_prompt_tasks(
+         allow_missing=True,
+         candidate_manifest_path=candidate_manifest_path,
+         template_profile=template_profile,
++        exclude_nondirect_bioavailability_records=(
++            exclude_nondirect_bioavailability_records
++        ),
+     )
+     for ordinal, index_value in enumerate(indices, start=1):
+         query_smiles = str(records[index_value].get(smiles_field) or "")
+@@ -337,13 +349,19 @@ def preflight_cache_coverage(
+     assay_transfer_min_score: float | None = None,
+     assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
+     assay_transfer_diversity_score_slack: float = 0.0,
++    exclude_nondirect_bioavailability_records: bool = False,
+ ) -> dict[str, Any]:
+     from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
+         prepare_assay_transfer_selected_neighbors,
+     )
+ 
+     index = load_index(Path(index_path))
+-    config = get_source_config(retrieval_source)
++    config = get_source_config(
++        retrieval_source,
++        exclude_nondirect_bioavailability_records=(
++            exclude_nondirect_bioavailability_records
++        ),
++    )
+     reranker = AssayTransferCachedReranker(
+         catalog_path=catalog_path,
+         cache_path=cache_path,
+@@ -352,6 +370,9 @@ def preflight_cache_coverage(
+         model_revision=model_revision,
+         candidate_manifest_path=candidate_manifest_path,
+         template_profile=template_profile,
++        exclude_nondirect_bioavailability_records=(
++            exclude_nondirect_bioavailability_records
++        ),
+     )
+     n_unscoreable_selected_dropped = 0
+     n_below_min_score_dropped = 0
+@@ -417,6 +438,9 @@ def preflight_cache_coverage(
+             "cache_version_validation": version_validation,
+             "provenance": reranker.provenance(),
+             "assay_transfer_min_score": assay_transfer_min_score,
++            "exclude_nondirect_bioavailability_records": (
++                exclude_nondirect_bioavailability_records
++            ),
+         }
+         result.update(
+             {
+@@ -805,6 +829,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+         choices=["starling", "starling_in_distribution"],
+         default="starling",
+     )
++    parser.add_argument(
++        "--exclude-nondirect-bioavailability-records",
++        action="store_true",
++        help="Exclude retained relative/apparent HF records before candidate ranking.",
++    )
+     parser.add_argument("--experiment-mode", choices=["direct", "full_flat", "full_mechanism"], default="full_mechanism")
+     parser.add_argument("--neighbor-identity-policy", choices=["operational", "parent_disjoint"], default="operational")
+     parser.add_argument("--top-k-per-group", type=int, default=3)
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_batch.py b/tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_batch.py
+index a7fa0cd..10b09e7 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_batch.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_batch.py
+@@ -26,6 +26,7 @@ CONFIG = BatchConfig(
+     rerank_preflight=preflight_cache_coverage,
+     supports_assay_transfer_scores=True,
+     supports_retrieval_strategy=True,
++    supports_nondirect_bioavailability_filter=True,
+     group_prompt_formats=("legacy", "morganfingerprint", "assay_transfer_tool"),
+     default_group_prompt_format="legacy",
+     group_output_schemas=("legacy", "assay-transfer"),
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_pipeline.py b/tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_pipeline.py
+index acbee3b..29bae78 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_pipeline.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_pipeline.py
+@@ -74,6 +74,8 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_
+     validate_scored_neighbors_configuration,
+ )
+ from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
++    DIRECT_ORAL_BIOAVAILABILITY_GROUP,
++    NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
+     STARLING_RETRIEVAL_SOURCES,
+     get_source_config,
+ )
+@@ -98,6 +100,7 @@ DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bioavailability_ma/reasoning/singl
+ DEFAULT_MODEL = "deepseek-v4-pro"
+ DEFAULT_BASE_URL = "https://api.deepseek.com"
+ DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
++NONDIRECT_EVIDENCE_POLICY_VERSION = "bioavailability_nondirect_evidence_policy.v1"
+ 
+ 
+ GROUP_REASONING_TOOLS = [
+@@ -182,8 +185,27 @@ SINGLE_MOLECULE_TOOLS = [
+ SINGLE_MOLECULE_TOOL_CHOICE = {"type": "function", "function": {"name": "molecule_properties"}}
+ 
+ 
++def _nondirect_evidence_policy(exclude: bool) -> dict[str, Any]:
++    return {
++        "contract_version": NONDIRECT_EVIDENCE_POLICY_VERSION,
++        "exclude_nondirect_bioavailability_records": bool(exclude),
++        "default_policy": "include",
++        "retained_source_group": NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
++        "reasoning_branch": DIRECT_ORAL_BIOAVAILABILITY_GROUP,
++        "filter_stage": "before_neighbor_ranking_and_top_k",
++    }
++
++
+ def main(argv: list[str] | None = None) -> int:
+     args = _parse_args(argv)
++    if args.exclude_nondirect_bioavailability_records and (
++        not args.retrieval_source.startswith("starling")
++        or args.experiment_mode not in {"direct", "full_flat", "full_mechanism"}
++    ):
++        raise SystemExit(
++            "--exclude-nondirect-bioavailability-records requires a Starling "
++            "direct, full_flat, or full_mechanism retrieval run"
++        )
+     # --retrieval-strategy is the source of truth; it locks the compatible group-prompt-format.
+     if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
+         if args.group_prompt_format != "assay_transfer_tool":
+@@ -311,6 +333,9 @@ def main(argv: list[str] | None = None) -> int:
+             model_revision=args.assay_transfer_model_revision,
+             candidate_manifest_path=args.rerank_candidate_manifest,
+             template_profile=args.assay_transfer_template_profile,
++            exclude_nondirect_bioavailability_records=(
++                args.exclude_nondirect_bioavailability_records
++            ),
+         )
+     expected_reranker = reranker.provenance() if reranker is not None else {"name": "none"}
+     retrieval = load_retrieval_replay(
+@@ -330,6 +355,24 @@ def main(argv: list[str] | None = None) -> int:
+             else None
+         ),
+     )
++    requested_nondirect_policy = _nondirect_evidence_policy(
++        args.exclude_nondirect_bioavailability_records
++    )
++    if retrieval is not None:
++        observed_nondirect_policy = (retrieval.get("experiment") or {}).get(
++            "nondirect_bioavailability_evidence_policy"
++        )
++        observed_exclusion = bool(
++            (observed_nondirect_policy or {}).get(
++                "exclude_nondirect_bioavailability_records", False
++            )
++        )
++        if observed_exclusion != args.exclude_nondirect_bioavailability_records:
++            raise SystemExit(
++                "Retrieval replay non-direct bioavailability policy mismatch: "
++                f"requested exclusion={args.exclude_nondirect_bioavailability_records}, "
++                f"observed exclusion={observed_exclusion}"
++            )
+     if retrieval is not None and args.assay_transfer_min_score is not None:
+         replay_policy = (retrieval.get("experiment") or {}).get(
+             "assay_transfer_selection_policy"
+@@ -350,7 +393,16 @@ def main(argv: list[str] | None = None) -> int:
+             query_smiles,
+             index,
+             mode=args.experiment_mode,
+-            config=get_source_config(args.retrieval_source) if args.experiment_mode not in {"none", "native"} else None,
++            config=(
++                get_source_config(
++                    args.retrieval_source,
++                    exclude_nondirect_bioavailability_records=(
++                        args.exclude_nondirect_bioavailability_records
++                    ),
++                )
++                if args.experiment_mode not in {"none", "native"}
++                else None
++            ),
+             top_k_per_group=args.top_k_per_group,
+             min_similarity=args.min_similarity,
+             native_groups=args.groups,
+@@ -364,6 +416,9 @@ def main(argv: list[str] | None = None) -> int:
+         )
+     else:
+         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
++    retrieval.setdefault("experiment", {})[
++        "nondirect_bioavailability_evidence_policy"
++    ] = requested_nondirect_policy
+     if retrieval.get("status") != "ok":
+         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
+     if reranker is not None:
+@@ -494,6 +549,7 @@ def main(argv: list[str] | None = None) -> int:
+         "smiles_field": args.smiles_field,
+         "experiment_mode": args.experiment_mode,
+         "retrieval_source": args.retrieval_source,
++        "nondirect_bioavailability_evidence_policy": requested_nondirect_policy,
+         "retrieval_strategy": args.retrieval_strategy,
+         "retrieval_reranker": (retrieval.get("experiment") or {}).get("retrieval_reranker", {"name": "none"}),
+         "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+@@ -1173,6 +1229,14 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+     parser.add_argument("--index", default=DEFAULT_INDEX)
+     parser.add_argument("--experiment-mode", choices=sorted(EXPERIMENT_MODES), default="native")
+     parser.add_argument("--retrieval-source", default="chembl")
++    parser.add_argument(
++        "--exclude-nondirect-bioavailability-records",
++        action="store_true",
++        help=(
++            "Exclude retained relative/apparent HF bioavailability evidence before "
++            "neighbor ranking and top-k selection. Canonical direct evidence remains."
++        ),
++    )
+     parser.add_argument(
+         "--neighbor-identity-policy",
+         choices=["operational", "parent_disjoint"],
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
+index a0a1c15..2ae49a2 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
+@@ -26,33 +26,16 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+     DIRECT_REPORT_TYPES,
+     MANIFEST_PATH,
+ )
++from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
++    DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS as AMBIGUOUS_QUALITATIVE_PATTERNS,
++    DIRECT_NEGATIVE_QUALITATIVE_PATTERNS as NEGATIVE_QUALITATIVE_PATTERNS,
++    DIRECT_POSITIVE_QUALITATIVE_PATTERNS as POSITIVE_QUALITATIVE_PATTERNS,
++    classify_direct_qualitative_text,
++)
+ 
+ 
+ TDC_BIOAVAILABILITY_THRESHOLD_PERCENT = 20.0
+ 
+-POSITIVE_QUALITATIVE_PATTERNS = (
+-    r"\bhigh\b",
+-    r"\bgood\b",
+-    r"\bexcellent\b",
+-    r"\bcomplete(?:ly)?\b",
+-    r"\bnear(?:ly)? complete\b",
+-    r"\balmost complete\b",
+-)
+-NEGATIVE_QUALITATIVE_PATTERNS = (
+-    r"\bvery low\b",
+-    r"\blow\b",
+-    r"\bpoor\b",
+-    r"\bnegligible\b",
+-    r"\bminimal\b",
+-)
+-AMBIGUOUS_QUALITATIVE_PATTERNS = (
+-    r"\bmoderate\b",
+-    r"\bvariable\b",
+-    r"\bunpredictable\b",
+-    r"\bintermediate\b",
+-    r"\borally bioavailable\b",
+-    r"\borally available\b",
+-)
+ NON_HUMAN_PATTERN = re.compile(
+     r"\b(?:rat|rats|mouse|mice|dog|dogs|canine|beagle|pig|pigs|swine|monkey|monkeys|"
+     r"macaque|primate|rabbit|rabbits|guinea pig|hamster|sheep|goat|horse|horses|"
+@@ -126,13 +109,12 @@ def label_bioavailability_value(value: Any) -> tuple[int | None, str]:
+         if not re.search(r"\d", text):
+             return None, "qualitative_value_not_threshold_anchored"
+     if not re.search(r"\d", text):
+-        positive = any(re.search(pattern, lowered) for pattern in POSITIVE_QUALITATIVE_PATTERNS)
+-        negative = any(re.search(pattern, lowered) for pattern in NEGATIVE_QUALITATIVE_PATTERNS)
+-        if positive and not negative:
+-            return 1, "explicit_qualitative_high"
+-        if negative and not positive:
+-            return 0, "explicit_qualitative_low"
+-        return None, "unmapped_or_ambiguous_qualitative_value"
++        category, reason = classify_direct_qualitative_text(text)
++        if category == "high":
++            return 1, reason
++        if category == "low":
++            return 0, reason
++        return None, reason
+ 
+     interval = parse_numeric_interval(text, fraction_to_percent=True)
+     if interval is None:
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py
+index 57b5842..1ff065a 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py
+@@ -26,6 +26,10 @@ ASSAY_CONTEXT_FIELDS = (
+ )
+ CONTEXTUAL_STANDARDIZATION_STATUS = "contextual_unit_standardized"
+ 
++# Qualifier vocabulary for every unit parsed by this task.
++_TASK_VOCAB = "bioavailability_ma"
++
++
+ 
+ def bioavailability_assay_context(record: Mapping[str, Any]) -> dict[str, Any]:
+     """Return the complete dynamic assay mapping passed to the shared parser."""
+@@ -95,7 +99,7 @@ def contextual_canonical_record_fields(record: Mapping[str, Any]) -> dict[str, A
+     )
+     pair = contextual_standardization_of_unit(record, source_pair)
+     parsed = parse_point_measurement(pair.canonical_measurement)
+-    canonical_unit_result = canonicalize_unit(pair.canonical_unit)
++    canonical_unit_result = canonicalize_unit(pair.canonical_unit, task=_TASK_VOCAB)
+     finite_scalar = (
+         parsed.value
+         if parsed.value is not None
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_fg_scalar_rules.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_fg_scalar_rules.py
+index 07a9504..be79f37 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_fg_scalar_rules.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_fg_scalar_rules.py
+@@ -206,6 +206,10 @@ _AMBIGUOUS_PROTEIN_NORMALIZATION = re.compile(
+     re.IGNORECASE,
+ )
+ 
++# Qualifier vocabulary for every unit parsed by this task.
++_TASK_VOCAB = "bioavailability_ma"
++
++
+ 
+ @dataclass(frozen=True)
+ class FgScalarDecision:
+@@ -478,7 +482,7 @@ def _try_physical(text: str, canonical_endpoint: str) -> FgScalarDecision | None
+     if re.search(r"\s+\([A-Za-z ]+\)\s*$", raw_unit):
+         return FgScalarDecision(False, "context_suffix_inside_physical_unit")
+     measurement = _render(value, variation, approximate)
+-    pair = normalize_measurement_and_unit(measurement, raw_unit)
++    pair = normalize_measurement_and_unit(measurement, raw_unit, task=_TASK_VOCAB)
+     pair = endpoint_specific_standardization_of_unit(canonical_endpoint, pair)
+     parsed = parse_point_measurement(pair.canonical_measurement)
+     if (
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_policy.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_policy.py
+index 55a1b6f..58ee40f 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_policy.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_policy.py
+@@ -54,6 +54,10 @@ _CLEARANCE_ENDPOINTS = {
+     "oral_clearance",
+ }
+ 
++# Qualifier vocabulary for every unit parsed by this task.
++_TASK_VOCAB = "bioavailability_ma"
++
++
+ 
+ def endpoint_measurement_classes(canonical_endpoint: str) -> tuple[str, ...]:
+     """Return reviewed compatible target representations for one endpoint."""
+@@ -142,7 +146,7 @@ def endpoint_specific_standardization_of_unit(
+ 
+     for measurement_class in classes:
+         standardized = standardize_measurement_pair(
+-            pair, measurement_class=measurement_class
++            pair, measurement_class=measurement_class, task=_TASK_VOCAB
+         )
+         if standardized.status == "endpoint_standardized":
+             return standardized
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_pair_bucket_transfer_policy.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_pair_bucket_transfer_policy.py
+index 8ddcc22..22b2a4a 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_pair_bucket_transfer_policy.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_pair_bucket_transfer_policy.py
+@@ -64,6 +64,13 @@ SOURCE_CANDIDATE_FIELDS: dict[str, tuple[str, ...]] = {
+         "comparator",
+         "qualifying_conditions",
+     ),
++    "hf_nondirect_bioavailability": (
++        "species_or_population",
++        "dose",
++        "oral_exposure_mode",
++        "comparator",
++        "qualifying_conditions",
++    ),
+     "oral_exposure": (
+         "statistic_type",
+         "oral_dose",
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py
+index c381e77..bb6fc4a 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py
+@@ -3,7 +3,7 @@
+ from __future__ import annotations
+ 
+ 
+-BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v8"
++BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v9"
+ 
+ SOURCE_PAIR_FIELDS = {
+     "direct_hf": ("canonical_bioavailability_report_type",),
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py
+index dd2b8b2..8fb172e 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py
+@@ -13,6 +13,9 @@ from pathlib import Path
+ from typing import Any
+ 
+ from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
++from tools.chembl_tool.common.starling.normalization.measurements import (
++    parse_point_measurement,
++)
+ from tools.chembl_tool.common.starling.normalization.task_policy import (
+     ExtraSourceBatch,
+     NormalizationHooks,
+@@ -20,6 +23,19 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
+     StageDocuments,
+     StarlingTaskPolicy,
+ )
++from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
++    CATEGORICAL_RESPONSE_VERSION,
++    FG_TARGET_ALIAS_VERSION,
++    MEASUREMENT_SCALES,
++    POLICY as CATEGORICAL_RESPONSE_POLICY,
++    canonical_fg_target_id,
++    encoding_policy_manifest,
++)
++from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
++    RECORD_CONTRACT,
++    SOURCE_ENDPOINT_PRODUCER_IDS,
++    SOURCE_PAIR_PRODUCER_IDS,
++)
+ from tools.chembl_tool.tasks.bioavailability_ma.starling_auxiliary_metadata import (
+     AUXILIARY_ATTACHMENT_VERSION,
+     DEFAULT_MAPPING_PATH,
+@@ -77,7 +93,7 @@ EXPECTED_SMILES_MAPPING_SHA256 = (
+ )
+ DEFAULT_OUT_DIR = (
+     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
+-    "starling_normalized_v6"
++    "starling_normalized_v7"
+ )
+ DEFAULT_V65_ELIGIBLE_RECORDS = (
+     "/data1/joseph/starling_assay_transfer/datasets/eligible/"
+@@ -155,7 +171,7 @@ def endpoint_inventory(
+ 
+ 
+ def load_extra_source(args: argparse.Namespace) -> ExtraSourceBatch | None:
+-    """Load the pinned complete Direct-HF snapshot."""
++    """Load canonical direct claims shared with the benchmark-label builder."""
+     if not args.include_direct_hf:
+         return None
+     records_path = Path(args.direct_source_parquet)
+@@ -164,7 +180,8 @@ def load_extra_source(args: argparse.Namespace) -> ExtraSourceBatch | None:
+     expected = EXPECTED_SOURCE_ROWS["direct_hf"]
+     if not args.max_direct_rows and len(rows) != expected:
+         raise ValueError(
+-            f"direct HF row-count drift: expected {expected:,}, found {len(rows):,}"
++            "canonical direct row-count drift: "
++            f"expected {expected:,}, found {len(rows):,}"
+         )
+     return ExtraSourceBatch(
+         source_id="direct_hf",
+@@ -218,7 +235,10 @@ def stage_documents(
+     del args
+     attacher: AuxiliaryMetadataAttacher = hooks.run_state
+     return StageDocuments(
+-        validity_policy=validity_policy_manifest(),
++        validity_policy={
++            **validity_policy_manifest(),
++            "categorical_response": encoding_policy_manifest(),
++        },
+         auxiliary_mapping_manifest={
+             **attacher.manifest(),
+             "coverage": attacher.coverage_audit(normalized),
+@@ -235,6 +255,13 @@ def stage_documents(
+             "globally_reconciled_auxiliary_coverage": True,
+             "contextual_unit_policy_loaded": True,
+             "contextual_unit_policy_version": unit_policy_manifest["policy_version"],
++            "categorical_response_loaded": True,
++            "categorical_encoders_declared": all(
++                str(row.get("categorical_encoder_id") or "")
++                in MEASUREMENT_SCALES
++                for row in normalized
++                if row.get("categorical_encoder_id")
++            ),
+             "heuristic_auxiliary_fields_absent": all(
+                 not any(
+                     field in row
+@@ -260,6 +287,8 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
+         "endpoint_policy_version": ENDPOINT_POLICY_VERSION,
+         "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
+         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
++        "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
++        "fg_target_alias_version": FG_TARGET_ALIAS_VERSION,
+         "v65_reconciliation": {"status": "not_performed", "matching_performed": False},
+     }
+     if complete:
+@@ -269,12 +298,25 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
+ 
+ 
+ def census_extras(records: list[dict[str, Any]]) -> dict[str, Any]:
++    encoded: dict[str, int] = {}
++    finite_by_source = {source: 0 for source in EXPECTED_SOURCE_ROWS}
++    for record in records:
++        if record.get("finite_scalar_value") is None:
++            continue
++        source_id = str(record.get("source_id") or "")
++        finite_by_source[source_id] = finite_by_source.get(source_id, 0) + 1
++        encoder_id = str(record.get("categorical_encoder_id") or "")
++        if encoder_id:
++            encoded[encoder_id] = encoded.get(encoder_id, 0) + 1
+     return {
+         "n_fg_finite_scalars": sum(
+             record.get("source_id") == "fg"
+             and record.get("finite_scalar_value") is not None
++            and not record.get("categorical_encoder_id")
+             for record in records
+-        )
++        ),
++        "n_finite_scalars_by_source": dict(sorted(finite_by_source.items())),
++        "n_categorically_encoded_by_encoder": dict(sorted(encoded.items())),
+     }
+ 
+ 
+@@ -288,7 +330,40 @@ def _enrich_record(
+     auxiliary = auxiliary_attacher.attach(enriched)
+     with_auxiliary = {**enriched, **auxiliary}
+     contextual_fields = contextual_canonical_record_fields(with_auxiliary)
+-    validity = enrich_bioavailability_validity({**with_auxiliary, **contextual_fields})
++    canonical = {**with_auxiliary, **contextual_fields}
++    # Preserve a parseable source number even when its unit is unresolved.  A
++    # categorical anchor may fill only a genuinely nonnumeric outcome.
++    parsed_source = parse_point_measurement(canonical.get("canonical_measurement"))
++    encoded = (
++        {}
++        if parsed_source.value is not None
++        else CATEGORICAL_RESPONSE_POLICY.apply(canonical)
++    )
++    if encoded:
++        encoder_id = str(encoded["categorical_encoder_id"])
++        if encoder_id == "direct_oral_bioavailability_binary.v1":
++            semantic_endpoint = "oral_bioavailability_outcome"
++        elif encoder_id == "fg_substrate_status_binary.v1":
++            target_id = canonical_fg_target_id(canonical.get("transporter_or_enzyme"))
++            if target_id is None:
++                raise ValueError("encoded Fg substrate status lacks a canonical target")
++            semantic_endpoint = f"fg_substrate_outcome:{target_id}"
++        else:
++            raise ValueError(f"unknown Bioavailability categorical encoder: {encoder_id}")
++        encoded = {**encoded, "canonical_endpoint": semantic_endpoint}
++    source_id = str(record.get("source_id") or "")
++    producer_id = str(encoded.get("categorical_encoder_id") or "")
++    producer_fields = {
++        "canonical_endpoint_producer_id": (
++            producer_id or SOURCE_ENDPOINT_PRODUCER_IDS[source_id]
++        ),
++        "canonical_pair_producer_id": (
++            producer_id or SOURCE_PAIR_PRODUCER_IDS[source_id]
++        ),
++    }
++    validity = enrich_bioavailability_validity(
++        {**canonical, **encoded, **producer_fields}
++    )
+     return {
+         **provenance,
+         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
+@@ -308,6 +383,8 @@ def _enrich_record(
+         ),
+         **auxiliary,
+         **contextual_fields,
++        **encoded,
++        **producer_fields,
+         **validity,
+     }
+ 
+@@ -319,6 +396,7 @@ POLICY = StarlingTaskPolicy(
+     default_out_dir=DEFAULT_OUT_DIR,
+     compact=COMPACT_PROFILE,
+     expected_source_rows=EXPECTED_SOURCE_ROWS,
++    record_contract=RECORD_CONTRACT,
+     source_profiles=source_profiles,
+     endpoint_inventory=endpoint_inventory,
+     family_resolver=family_assignment,
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_record_canonicalization.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_record_canonicalization.py
+index a3a9276..cceadb2 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_record_canonicalization.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_record_canonicalization.py
+@@ -8,6 +8,9 @@ import unicodedata
+ from collections.abc import Mapping
+ from typing import Any
+ 
++from tools.chembl_tool.common.starling.categorical_response import (
++    encoded_unit_validity_status,
++)
+ from tools.chembl_tool.common.starling.normalization.measurements import (
+     SOURCE_SPECIFIC_ATOMIC_SCALAR_STATUS,
+     parse_point_measurement,
+@@ -16,7 +19,7 @@ from tools.chembl_tool.common.units import canonicalize_unit
+ 
+ 
+ REPORT_TYPE_NORMALIZATION_VERSION = "bioavailability_report_type_normalization.v1"
+-NORMALIZATION_DOMAIN_RULES_VERSION = "bioavailability_normalization_domains.v3"
++NORMALIZATION_DOMAIN_RULES_VERSION = "bioavailability_normalization_domains.v4"
+ UNKNOWN_TOKEN = "__unknown__"
+ 
+ _NULL_LIKE = {"", "nan", "none", "null", "na", "n/a", "-", "unspecified", "unknown"}
+@@ -49,6 +52,10 @@ _PERCENT_ENDPOINTS = {
+ }
+ _DURATION_ENDPOINTS = {"metabolic_half_life", "tmax"}
+ 
++# Qualifier vocabulary for every unit parsed by this task.
++_TASK_VOCAB = "bioavailability_ma"
++
++
+ 
+ def _is_null_like(value: Any) -> bool:
+     if value is None:
+@@ -92,9 +99,9 @@ def _domain_kind(record: Mapping[str, Any]) -> str:
+     )
+     if not endpoint or not unit:
+         return "unsupported"
+-    if canonicalize_unit(unit).transform:
++    if canonicalize_unit(unit, task=_TASK_VOCAB).transform:
+         return "transformed_scalar"
+-    if source_id == "direct_hf" or endpoint in {
++    if source_id in {"direct_hf", "hf_nondirect_bioavailability"} or endpoint in {
+         "absolute_bioavailability",
+         "bioavailability",
+         "corrected_bioavailability",
+@@ -132,6 +139,9 @@ def _domain_kind(record: Mapping[str, Any]) -> str:
+ 
+ def normalization_validity_status(record: Mapping[str, Any]) -> str:
+     """Return factual record validity without assigning a transfer policy."""
++    encoded = encoded_unit_validity_status(record)
++    if encoded is not None:
++        return encoded
+     if (
+         str(record.get("structure_status") or "") != "resolved"
+         or not str(record.get("canonical_smiles") or "")
+@@ -146,7 +156,7 @@ def normalization_validity_status(record: Mapping[str, Any]) -> str:
+     if not str(record.get("canonical_unit") or ""):
+         return "missing_canonical_unit"
+     parsed = parse_point_measurement(record.get("canonical_measurement"))
+-    unit_result = canonicalize_unit(record.get("canonical_unit"))
++    unit_result = canonicalize_unit(record.get("canonical_unit"), task=_TASK_VOCAB)
+     if parsed.value is not None and unit_result.unknown_tokens:
+         return "incompatible_canonical_unit"
+     value = record.get("finite_scalar_value")
+@@ -195,6 +205,9 @@ def validity_policy_manifest() -> dict[str, Any]:
+             "positive_ratio": {"minimum_exclusive": 0.0},
+             "positive_time": {"minimum_exclusive": 0.0},
+             "transformed_scalar": {"finite": True},
++            "controlled_categorical": {
++                "validation": "declared_encoder_and_finite_in-domain_anchor"
++            },
+         },
+     }
+ 
+diff --git a/tools/chembl_tool/tasks/bioavailability_ma/starling_spacing_and_spelling.py b/tools/chembl_tool/tasks/bioavailability_ma/starling_spacing_and_spelling.py
+index 3d0bfa8..5700bb9 100644
+--- a/tools/chembl_tool/tasks/bioavailability_ma/starling_spacing_and_spelling.py
++++ b/tools/chembl_tool/tasks/bioavailability_ma/starling_spacing_and_spelling.py
+@@ -39,6 +39,10 @@ EXPECTED_ENDPOINT_INVENTORIES = {
+         "count": 1,
+         "sha256": "95f78038b5cde8c7484c93f22f15a0c21d6ae2ba7451fdd2754df3be0d184c1a",
+     },
++    "hf_nondirect_bioavailability": {
++        "count": 1,
++        "sha256": "95f78038b5cde8c7484c93f22f15a0c21d6ae2ba7451fdd2754df3be0d184c1a",
++    },
+ }
+ 
+ 
+@@ -114,6 +118,14 @@ def family_assignment(source_id: str, endpoint_name: str) -> FamilyAssignment |
+             "direct_outcome",
+             "oral bioavailability",
+         )
++    if source_id == "hf_nondirect_bioavailability":
++        return FamilyAssignment(
++            "Observed.nondirect_oral_bioavailability",
++            "Observed",
++            "nondirect_oral_bioavailability",
++            "surrogate_proxy",
++            "relative or apparent oral bioavailability",
++        )
+     if source_id == "oral_exposure":
+         if endpoint in {"bioavailability", "absolute_bioavailability"}:
+             return FamilyAssignment(

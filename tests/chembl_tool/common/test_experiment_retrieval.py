@@ -310,6 +310,89 @@ def test_assay_transfer_threshold_is_inclusive_and_applied_before_top_k():
     assert neighbors.selection_metadata["n_below_min_score_dropped"] == 1
 
 
+class _MultiRecordReranker:
+    name = "test_multi_record"
+
+    def rerank_records(self, *, query_smiles, group_id, candidates):
+        by_id = {row["molecule_chembl_id"]: row for row in candidates}
+        records = [
+            ("a", "endpoint_one", 0.90),
+            ("a", "endpoint_one", 0.89),
+            ("a", "endpoint_two", 0.88),
+            ("b", "endpoint_three", 0.80),
+            ("c", "endpoint_four", 0.70),
+        ]
+        return [
+            {
+                **by_id[molecule_id],
+                "transfer_selection_score": score,
+                "transfer_winning_record_id": f"{molecule_id}-{endpoint}-{score}",
+                "transfer_winning_record": {
+                    "record_id": f"{molecule_id}-{endpoint}-{score}",
+                    "canonical_endpoint_key": endpoint,
+                    "source_contract": {},
+                    "source_fields": {"endpoint_name": endpoint},
+                },
+            }
+            for molecule_id, endpoint, score in records
+        ]
+
+    def provenance(self):
+        return {"name": self.name, "version": "test.v1"}
+
+
+def test_unique_molecule_top_k_is_unchanged_by_multi_record_presentation():
+    molecules = [
+        {"molecule_chembl_id": "a", "canonical_smiles": "CCN"},
+        {"molecule_chembl_id": "b", "canonical_smiles": "CCC"},
+        {"molecule_chembl_id": "c", "canonical_smiles": "CCCl"},
+    ]
+    index = {
+        "molecules": molecules,
+        "evidence_by_molecule_group": {
+            row["molecule_chembl_id"]: {
+                "Tier 1.direct": [{"id": row["molecule_chembl_id"]}]
+            }
+            for row in molecules
+        },
+    }
+
+    neighbors = _rank_group_candidates(
+        index,
+        [0, 1, 2],
+        source_groups=("Tier 1.direct",),
+        similarities=[0.9, 0.8, 0.7],
+        query_canonical_smiles="CCO",
+        query_inchi_key="",
+        top_k=2,
+        min_similarity=0.0,
+        query_identity=normalize_molecule_identity("CCO"),
+        neighbor_identity_policy="operational",
+        query_smiles="CCO",
+        group_id="Direct.outcome",
+        reranker=_MultiRecordReranker(),
+        assay_transfer_initial_morgan_filter=3,
+        assay_transfer_selection_unit="unique_molecule",
+        assay_transfer_records_per_molecule=2,
+    )
+
+    assert [row["molecule_chembl_id"] for row in neighbors] == ["a", "b"]
+    assert neighbors[0]["transfer_selection_score"] == 0.90
+    assert [
+        record["canonical_endpoint_key"]
+        for record in neighbors[0]["transfer_selected_records"]
+    ] == ["endpoint_one", "endpoint_two"]
+    assert neighbors[1]["transfer_selected_record_count"] == 1
+    assert neighbors.selection_metadata["selected_record_display"] == {
+        "records_per_molecule": 2,
+        "n_selected_molecules": 2,
+        "n_selected_records_displayed": 3,
+        "n_underfilled_selected_molecules": 1,
+        "n_duplicate_endpoint_records_skipped": 1,
+        "duplicate_endpoint_backfill": False,
+    }
+
+
 def test_reranker_disabled_preserves_structural_selection_order():
     baseline = retrieve_experiment_view(
         "CO",

@@ -13,9 +13,14 @@ from typing import Any, Mapping
 
 from tools.chembl_tool.common.assay_transfer_selection import (
     ASSAY_TRANSFER_DIVERSITY_NONE,
+    ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+    ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE,
     assay_transfer_selection_policy,
+    collapse_assay_transfer_records_by_molecule,
     select_assay_transfer_records,
     validate_assay_transfer_diversity,
+    validate_assay_transfer_records_per_molecule,
 )
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 from tools.chembl_tool.common.neighbor_selection import (
@@ -138,6 +143,8 @@ def retrieve_experiment_view(
     assay_transfer_min_score: float | None = None,
     assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
     assay_transfer_diversity_score_slack: float = 0.0,
+    assay_transfer_selection_unit: str = ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    assay_transfer_records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
 ) -> dict[str, Any]:
     """Build a native, direct, flat, mechanism, or retrieval-free query view.
 
@@ -161,8 +168,18 @@ def retrieve_experiment_view(
         mode=assay_transfer_diversity_mode,
         score_slack=assay_transfer_diversity_score_slack,
     )
+    validate_assay_transfer_records_per_molecule(
+        assay_transfer_records_per_molecule,
+        selection_unit=assay_transfer_selection_unit,
+    )
     if reranker is None and assay_transfer_diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
         raise ValueError("assay-transfer diversity requires a retrieval reranker")
+    if (
+        reranker is None
+        and assay_transfer_records_per_molecule
+        > ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT
+    ):
+        raise ValueError("multiple assay-transfer records per molecule require a retrieval reranker")
     if mode == "none":
         return _query_only_retrieval(query_smiles, mode=mode)
     if index is None:
@@ -203,6 +220,8 @@ def retrieve_experiment_view(
         assay_transfer_min_score=assay_transfer_min_score,
         assay_transfer_diversity_mode=assay_transfer_diversity_mode,
         assay_transfer_diversity_score_slack=assay_transfer_diversity_score_slack,
+        assay_transfer_selection_unit=assay_transfer_selection_unit,
+        assay_transfer_records_per_molecule=assay_transfer_records_per_molecule,
     )
     if mode == "full_flat" and mechanism_view.get("status") == "ok":
         mechanism_view["groups"] = [_flatten_groups(mechanism_view["groups"])]
@@ -230,6 +249,8 @@ def _retrieve_specs(
     assay_transfer_min_score: float | None = None,
     assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
     assay_transfer_diversity_score_slack: float = 0.0,
+    assay_transfer_selection_unit: str = ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    assay_transfer_records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
 ) -> dict[str, Any]:
     canonical_smiles, inchi_key, query_fp = standardize_smiles_and_fp(query_smiles)
     if query_fp is None:
@@ -275,6 +296,8 @@ def _retrieve_specs(
             assay_transfer_min_score=assay_transfer_min_score,
             assay_transfer_diversity_mode=assay_transfer_diversity_mode,
             assay_transfer_diversity_score_slack=assay_transfer_diversity_score_slack,
+            assay_transfer_selection_unit=assay_transfer_selection_unit,
+            assay_transfer_records_per_molecule=assay_transfer_records_per_molecule,
         )
         selection_metadata = (
             dict(neighbors.selection_metadata)
@@ -300,6 +323,12 @@ def _retrieve_specs(
                     selection_metadata.get("n_below_min_score_dropped", 0)
                 ),
                 diversity=dict(selection_metadata.get("diversity") or {}),
+                molecule_collapse=dict(
+                    selection_metadata.get("molecule_collapse") or {}
+                ),
+                selected_record_display=dict(
+                    selection_metadata.get("selected_record_display") or {}
+                ),
             )
         output_groups.append(group_payload)
 
@@ -320,6 +349,8 @@ def _retrieve_specs(
             "diversity": assay_transfer_selection_policy(
                 mode=assay_transfer_diversity_mode,
                 score_slack=assay_transfer_diversity_score_slack,
+                selection_unit=assay_transfer_selection_unit,
+                records_per_molecule=assay_transfer_records_per_molecule,
             ),
         }
     return {
@@ -371,6 +402,8 @@ def _rank_group_candidates(
     assay_transfer_min_score: float | None = None,
     assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
     assay_transfer_diversity_score_slack: float = 0.0,
+    assay_transfer_selection_unit: str = ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    assay_transfer_records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
 ) -> list[dict[str, Any]]:
     """Dispatch to the retrieval strategy implied by ``reranker``.
 
@@ -409,6 +442,8 @@ def _rank_group_candidates(
         assay_transfer_min_score=assay_transfer_min_score,
         diversity_mode=assay_transfer_diversity_mode,
         diversity_score_slack=assay_transfer_diversity_score_slack,
+        selection_unit=assay_transfer_selection_unit,
+        records_per_molecule=assay_transfer_records_per_molecule,
     )
 
 
@@ -506,6 +541,8 @@ def _assay_transfer_neighbors(
     assay_transfer_min_score: float | None,
     diversity_mode: str,
     diversity_score_slack: float,
+    selection_unit: str,
+    records_per_molecule: int,
 ) -> list[dict[str, Any]]:
     # 1. Initial morgan pool: top-N candidates by tanimoto similarity.
     ranked = sorted(
@@ -554,7 +591,8 @@ def _assay_transfer_neighbors(
         group_id=group_id,
         candidates=neighbors,
     )
-    # 4. Min-score filter, then take top-k.
+    # 4. Apply the score floor, optionally group endpoint-distinct records under
+    #    each molecule, then select top-k molecules/records under the chosen unit.
     n_below_min_score_dropped = 0
     if assay_transfer_min_score is not None:
         retained_records = [
@@ -564,6 +602,15 @@ def _assay_transfer_neighbors(
         ]
         n_below_min_score_dropped = len(record_neighbors) - len(retained_records)
         record_neighbors = retained_records
+    collapse_audit: dict[str, Any] = {
+        "selection_unit": ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+        "n_valid_records_before_collapse": len(record_neighbors),
+    }
+    if selection_unit == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE:
+        record_neighbors, collapse_audit = collapse_assay_transfer_records_by_molecule(
+            record_neighbors,
+            records_per_molecule=records_per_molecule,
+        )
     if diversity_mode == ASSAY_TRANSFER_DIVERSITY_NONE or diversity_score_slack == 0.0:
         # Preserve the historical score-only path exactly, including unit-test
         # callers that deliberately supply a minimal index without fingerprints.
@@ -572,6 +619,8 @@ def _assay_transfer_neighbors(
             **assay_transfer_selection_policy(
                 mode=diversity_mode,
                 score_slack=diversity_score_slack,
+                selection_unit=selection_unit,
+                records_per_molecule=records_per_molecule,
             ),
             "n_selected": len(selected_records),
         }
@@ -589,13 +638,35 @@ def _assay_transfer_neighbors(
             score_slack=diversity_score_slack,
             query_fingerprint=query_fingerprint,
             fingerprints_by_molecule=fingerprints_by_molecule,
+            selection_unit=selection_unit,
+            records_per_molecule=records_per_molecule,
         )
+    selected_record_display = {
+        "records_per_molecule": records_per_molecule,
+        "n_selected_molecules": len(selected_records),
+        "n_selected_records_displayed": sum(
+            int(record.get("transfer_selected_record_count") or 1)
+            for record in selected_records
+        ),
+        "n_underfilled_selected_molecules": sum(
+            bool(record.get("transfer_records_underfilled"))
+            for record in selected_records
+        ),
+        "n_duplicate_endpoint_records_skipped": sum(
+            int(record.get("transfer_duplicate_endpoint_records_skipped") or 0)
+            for record in selected_records
+        ),
+        "duplicate_endpoint_backfill": False,
+    }
     ranked_neighbors = _RankedNeighbors(
         selected_records,
         selection_metadata={
             "assay_transfer_min_score": assay_transfer_min_score,
             "n_below_min_score_dropped": n_below_min_score_dropped,
             "diversity": diversity_audit,
+            "selection_unit": selection_unit,
+            "molecule_collapse": collapse_audit,
+            "selected_record_display": selected_record_display,
         },
     )
     for rank, neighbor in enumerate(ranked_neighbors, start=1):
@@ -611,6 +682,8 @@ def _rerank_group_metadata(
     min_score: float | None,
     n_below_min_score_dropped: int,
     diversity: dict[str, Any] | None = None,
+    molecule_collapse: dict[str, Any] | None = None,
+    selected_record_display: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if reranker is None:
         return {}
@@ -622,6 +695,8 @@ def _rerank_group_metadata(
         "assay_transfer_min_score": min_score,
         "n_below_min_score_dropped": n_below_min_score_dropped,
         "diversity": diversity or {},
+        "molecule_collapse": molecule_collapse or {},
+        "selected_record_display": selected_record_display or {},
         "selection_metadata_is_llm_hidden": True,
     }
 

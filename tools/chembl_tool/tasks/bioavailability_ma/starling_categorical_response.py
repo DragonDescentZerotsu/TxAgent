@@ -26,31 +26,38 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
 )
 
 
-CATEGORICAL_RESPONSE_VERSION = "bioavailability_ma_categorical_response.v2"
+CATEGORICAL_RESPONSE_VERSION = "bioavailability_ma_categorical_response.v3"
 FG_TARGET_ALIAS_VERSION = "bioavailability_fg_target_aliases.v1"
 
-DIRECT_POSITIVE_QUALITATIVE_PATTERNS = (
-    r"\bhigh\b",
-    r"\bgood\b",
-    r"\bexcellent\b",
-    r"\bcomplete(?:ly)?\b",
-    r"\bnear(?:ly)? complete\b",
-    r"\balmost complete\b",
-)
-DIRECT_NEGATIVE_QUALITATIVE_PATTERNS = (
-    r"\bvery low\b",
-    r"\blow\b",
-    r"\bpoor\b",
-    r"\bnegligible\b",
-    r"\bminimal\b",
-)
-DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS = (
+_DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS = (
     r"\bmoderate\b",
     r"\bvariable\b",
     r"\bunpredictable\b",
     r"\bintermediate\b",
     r"\borally bioavailable\b",
     r"\borally available\b",
+)
+_DIRECT_OUTCOME_NOUN = (
+    r"(?:bioavailability|oral bioavailability|systemic bioavailability|"
+    r"availability|oral availability|systemic availability)"
+)
+_DIRECT_POSITIVE_STRENGTH = r"(?:high|very high|good|very good|excellent)"
+_DIRECT_NEGATIVE_STRENGTH = (
+    r"(?:low|very low|extremely low|poor|very poor|extremely poor|"
+    r"negligible|minimal)"
+)
+_DIRECT_POSITIVE_COMPLETION = (
+    r"(?:complete|near complete|near-complete|nearly complete|almost complete|"
+    r"virtually complete|essentially complete)"
+)
+_DIRECT_POSITIVE_FULL = re.compile(
+    rf"^(?:{_DIRECT_POSITIVE_STRENGTH}(?: {_DIRECT_OUTCOME_NOUN})?|"
+    rf"{_DIRECT_POSITIVE_COMPLETION}(?: {_DIRECT_OUTCOME_NOUN})?|"
+    r"(?:completely|nearly completely|almost completely) bioavailable|"
+    r"completely available)$"
+)
+_DIRECT_NEGATIVE_FULL = re.compile(
+    rf"^{_DIRECT_NEGATIVE_STRENGTH}(?: {_DIRECT_OUTCOME_NOUN})?$"
 )
 _RELATIVE_DIRECT_PATTERN = re.compile(
     r"\b(?:fold|times|relative)\b|"
@@ -178,31 +185,30 @@ def canonical_fg_target_id(value: Any) -> str | None:
 
 
 def classify_direct_qualitative_text(value: Any) -> tuple[str | None, str]:
-    """Classify only explicit nonnumeric direct-F wording, otherwise abstain."""
-    text = str(value or "").strip()
+    """Classify only a complete controlled direct-F phrase.
+
+    This evidence-normalization policy intentionally does not interpret
+    sentences.  Extra context, negation, comparison, or modality makes the
+    source value non-scalar while leaving its original text available as
+    evidence.
+    """
+    text = unicodedata.normalize("NFKC", str(value or "")).casefold()
+    text = re.sub(r"[\u2010-\u2015\u2212]", "-", text)
+    text = re.sub(r"\s+", " ", text).strip(" .;:")
     if not text:
         return None, "missing_bioavailability_value"
-    lowered = text.casefold()
-    if _RELATIVE_DIRECT_PATTERN.search(lowered):
+    if _RELATIVE_DIRECT_PATTERN.search(text):
         return None, "relative_not_absolute_bioavailability"
     if re.search(r"\d", text):
         return None, "numeric_or_compound_not_categorical"
     if any(
-        re.search(pattern, lowered)
-        for pattern in DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS
+        re.search(pattern, text)
+        for pattern in _DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS
     ):
         return None, "qualitative_value_not_threshold_anchored"
-    positive = any(
-        re.search(pattern, lowered)
-        for pattern in DIRECT_POSITIVE_QUALITATIVE_PATTERNS
-    )
-    negative = any(
-        re.search(pattern, lowered)
-        for pattern in DIRECT_NEGATIVE_QUALITATIVE_PATTERNS
-    )
-    if positive and not negative:
+    if _DIRECT_POSITIVE_FULL.fullmatch(text):
         return "high", "explicit_qualitative_high"
-    if negative and not positive:
+    if _DIRECT_NEGATIVE_FULL.fullmatch(text):
         return "low", "explicit_qualitative_low"
     return None, "unmapped_or_ambiguous_qualitative_value"
 
@@ -347,9 +353,6 @@ def encoding_policy_manifest() -> dict[str, Any]:
 __all__: Sequence[str] = (
     "CATEGORICAL_RESPONSE_VERSION",
     "CONTROLLED_MEASUREMENTS",
-    "DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS",
-    "DIRECT_NEGATIVE_QUALITATIVE_PATTERNS",
-    "DIRECT_POSITIVE_QUALITATIVE_PATTERNS",
     "FG_TARGET_ALIAS_VERSION",
     "MEASUREMENT_SCALES",
     "POLICY",

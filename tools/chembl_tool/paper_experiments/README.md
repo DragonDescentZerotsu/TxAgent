@@ -19,7 +19,8 @@
 
 所有 LLM 实验共享以下条件：
 
-- 默认通过 SSH tunnel 直连 `http://127.0.0.1:50000/v1`，模型为 `nvidia/GLM-5.2-NVFP4`
+- PARCC LiteLLM is the default: top-level launchers load `LITELLM_BASE_URL` and `LITELLM_API_KEY` from the
+  ignored root `keys.py`, and request `nvidia/GLM-5.2-NVFP4`
 - 保持历史 `--disable-thinking --reasoning-effort ""`，GLM reasoning 仍保存到 trace
 - temperature 0，最大输出 20,480 tokens
 - 主矩阵固定 `identity_blind + parent_disjoint`；直接排除相同 RDKit molecular parent，并只用原
@@ -260,15 +261,18 @@ python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split v
 `outputs/paper/molecular_evidence_agent_valid/analysis/report.md`，parent-disjoint 配对审计位于
 `outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/result_report.md`。
 
-当前 paper/Starling runner 默认使用本机 tunnel `http://127.0.0.1:50000/v1`、
-`nvidia/GLM-5.2-NVFP4` 和历史一致的 `--disable-thinking --reasoning-effort ""`。空值使 client 不发送
-`reasoning_effort` 参数，但 GLM 返回的 reasoning 仍会保存在 trace。运行前用 `ssh -fNT parcc-glm` 建立 tunnel；
-loopback vLLM 无鉴权时，runner 会在进程内为 `GLM_LOCAL_API_KEY` 注入非敏感占位值。
-旧 LiteLLM 只作为显式 fallback，使用 `--api-key-env GLM_API_KEY --base-url
-https://litellm.parcc.upenn.edu/v1 --model zai-org/GLM-5.2-FP8 --reasoning-effort ""`。
-不得将任何真实 API key 的值写入命令记录、manifest 或 trace。
+The paper/Starling launchers now default to the PARCC LiteLLM URL and credential stored as
+`LITELLM_BASE_URL` and `LITELLM_API_KEY` in the ignored root `keys.py`. They request
+`nvidia/GLM-5.2-NVFP4` and preserve the historical `--disable-thinking --reasoning-effort ""` request contract.
+Those flags omit optional request controls; they do not disable provider-default GLM reasoning, which remains in
+the trace. Launchers inject the key into their child environment and persist only the environment-variable name.
 
-长矩阵可使用 `watch_glm_tunnel_and_matrix.py` 同时监控 `/v1/models`、SSH tunnel 和唯一 matrix launcher：
+The direct loopback route remains available with explicit `--base-url http://127.0.0.1:50000/v1` and
+`--api-key-env GLM_LOCAL_API_KEY`. Establish `ssh -fNT parcc-glm` before selecting it; unauthenticated loopback
+vLLM receives only the existing non-sensitive placeholder.
+
+For the explicit loopback route, `watch_glm_tunnel_and_matrix.py` can monitor `/v1/models`, the SSH tunnel, and
+the single matrix launcher. It remains tunnel-only and must not wrap the default remote LiteLLM run:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.watch_glm_tunnel_and_matrix \

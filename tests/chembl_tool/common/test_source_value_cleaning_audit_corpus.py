@@ -44,14 +44,14 @@ def _state(record: dict) -> dict:
 
 def test_audit_corpus_is_complete_and_cleaning_stage_scoped() -> None:
     assert MANIFEST["kind"] == "manifest"
-    assert MANIFEST["corpus_version"] == "source_value_cleaning_audit_corpus.v3"
+    assert MANIFEST["corpus_version"] == "source_value_cleaning_audit_corpus.v4"
     assert MANIFEST["support_text_policy"] == "immutable_after_ingestion"
     assert MANIFEST["sampling_seed"] == 20260805
-    assert len(CASES) == 5_000
+    assert len(CASES) == 5_073
     assert Counter(case["task"] for case in CASES) == {
         "bbb_martins": 2_000,
         "bioavailability_ma": 2_000,
-        "skin_reaction": 1_000,
+        "skin_reaction": 1_073,
     }
     assert len({case["case_id"] for case in CASES}) == len(CASES)
     assert not any(
@@ -69,6 +69,7 @@ def test_audit_corpus_is_complete_and_cleaning_stage_scoped() -> None:
             "changed_census",
             "seeded_random_control",
             "seeded_random_round2",
+            "changed_census_current_v7",
         }
         assert set(case["acceptable_cleaned_states"][0]) == STATE_FIELDS
         assert all(

@@ -28,6 +28,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.reasoning_validation import validated_branch_content
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
+    public_assay_transfer_records,
     public_assay_transfer_score,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
@@ -449,18 +450,34 @@ def _build_assay_transfer_context(
     header_pairs = included_fields("assay_transfer_tool.neighbor", dataset)
     neighbors_ctx = []
     for neighbor in group.get("neighbors") or []:
-        selected_record = neighbor.get("transfer_winning_record")
+        selected_records = public_assay_transfer_records(neighbor)
+        multiple_records = len(selected_records) > 1
+        selected_record = selected_records[0]["record"]
         neighbors_ctx.append(
             {
                 "rank": neighbor.get("rank"),
                 "header": _render_fields(
-                    _neighbor_header_source(neighbor, with_transfer_score=True), header_pairs
+                    _neighbor_header_source(
+                        neighbor, with_transfer_score=not multiple_records
+                    ),
+                    header_pairs,
                 ),
                 "selected_record": (
                     _assay_transfer_evidence_record(selected_record, dataset, group, style)
                     if selected_record
                     else []
                 ),
+                "selected_records": [
+                    {
+                        "rank": record["record_rank"],
+                        "assay_transfer_score": record["assay_transfer_score"],
+                        "record": _assay_transfer_evidence_record(
+                            record["record"], dataset, group, style
+                        ),
+                    }
+                    for record in selected_records
+                    if record["record"]
+                ],
             }
         )
     return {
@@ -472,6 +489,9 @@ def _build_assay_transfer_context(
         "group": _group_meta(group),
         "query_smiles": _query_smiles(query),
         "neighbors": neighbors_ctx,
+        "multi_record": any(
+            len(neighbor["selected_records"]) > 1 for neighbor in neighbors_ctx
+        ),
         "output_schema": json.dumps(
             group_output_schema(output_schema_profile),
             indent=2,

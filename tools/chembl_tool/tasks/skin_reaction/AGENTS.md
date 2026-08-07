@@ -309,6 +309,12 @@ membership authority. Stage 05 uses rank geometry for the declared binary/ordina
 binary levels or at least three ordinal levels with three records per observed level, and emits no transfer
 cutoff, Boolean label, or soft probability. The layout below documents frozen v6 lineage.
 
+Skin v7 also freezes `canonical_reference_scope` and `canonical_reference_basis`. Stage 04 accepts
+absolute values, endpoint-defined ratios with explicit denominators, standardized controls, and declared
+categorical scales; comparator-relative or unknown scalar claims remain retrieval evidence only. Both
+fields are in each source's pair identity so applied-dose, vehicle-control, baseline, or other denominators
+cannot mix. The mapping comes from the shared 25-row, single-submission `gpt-5.4-mini` workflow.
+
 ```text
 starling_normalized_v6/
   01_cleaned/{records.parquet, manifest.json, source_inventory.json, endpoint_inventory.json}

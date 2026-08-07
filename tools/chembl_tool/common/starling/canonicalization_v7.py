@@ -150,6 +150,11 @@ class CanonicalDimensionSpec:
     # attached under a historical field name.  This is migration provenance,
     # not a second semantic output.
     legacy_value_field: str | None = None
+    # Classification-only dimensions may inspect contextual source fields
+    # that remain legitimate residual-heterogeneity dimensions.  The
+    # classifier labels the measurement's semantics; it does not consume or
+    # normalize those source fields into the canonical value.
+    classification_evidence: bool = False
 
     def __post_init__(self) -> None:
         if not self.output_field.startswith("canonical_"):
@@ -233,6 +238,7 @@ class CanonicalDimensionSpec:
             "producer_id_field": self.producer_id_field,
             "producers": [producer.manifest() for producer in self.producers],
             "legacy_value_field": self.legacy_value_field,
+            "classification_evidence": self.classification_evidence,
         }
 
 
@@ -385,6 +391,8 @@ class PairBucketSpec:
     source_id: str
     canonical_dimensions: tuple[str, ...]
     variance_candidates: tuple[str, ...] = ()
+    eligible_reference_scopes: tuple[str, ...] = ()
+    reference_basis_required: bool = False
 
     @property
     def additional_dimensions(self) -> tuple[str, ...]:
@@ -425,6 +433,8 @@ class PairBucketSpec:
         always_canonical_inputs: set[str] = set()
         conditional_encoder_inputs: set[str] = set()
         for dimension in profile.canonical_dimensions:
+            if dimension.classification_evidence:
+                continue
             target = (
                 conditional_encoder_inputs
                 if dimension.method == "controlled_encoder"
@@ -451,6 +461,20 @@ class PairBucketSpec:
                 f"{self.source_id!r} variance candidates were already used for "
                 f"canonicalization: {sorted(reused_candidates)}"
             )
+        if self.eligible_reference_scopes:
+            if "canonical_reference_scope" not in self.canonical_dimensions:
+                raise ValueError(
+                    f"{self.source_id!r} has a reference-scope eligibility policy "
+                    "but omits canonical_reference_scope from pair identity"
+                )
+            if (
+                self.reference_basis_required
+                and "canonical_reference_basis" not in self.canonical_dimensions
+            ):
+                raise ValueError(
+                    f"{self.source_id!r} requires a reference basis but omits "
+                    "canonical_reference_basis from pair identity"
+                )
 
 
 @dataclass(frozen=True)
@@ -525,6 +549,10 @@ class StarlingRecordContract:
                 source_id: {
                     "canonical_dimensions": list(spec.canonical_dimensions),
                     "variance_candidates": list(spec.variance_candidates),
+                    "eligible_reference_scopes": list(
+                        spec.eligible_reference_scopes
+                    ),
+                    "reference_basis_required": spec.reference_basis_required,
                 }
                 for source_id, spec in sorted(self.pair_buckets.items())
             },

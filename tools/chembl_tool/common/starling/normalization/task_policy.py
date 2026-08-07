@@ -83,6 +83,7 @@ class StageDocuments:
     source_column_contract: dict[str, Any]
     validations: dict[str, Any] = field(default_factory=dict)
     endpoint_registry: dict[str, Any] | None = None
+    reference_semantics_manifest: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -149,6 +150,9 @@ class StarlingTaskPolicy:
     # are not necessarily exposed as CLI arguments.  The shared build cache
     # fingerprints these alongside implementation code.
     scientific_assets: tuple[Path, ...] = ()
+    # When enabled, Stage 02 publishes the frozen row-level reference
+    # classification mapping and coverage as a first-class side artifact.
+    reference_semantics_enabled: bool = False
     # Additional compact columns required when the task's family resolver
     # re-derives labels after a persisted-stage reload.
     family_resolver_input_fields: tuple[str, ...] = ()

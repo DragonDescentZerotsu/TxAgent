@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -55,6 +56,13 @@ from tools.chembl_tool.tasks.bbb_martins.starling_record_canonicalization import
     NORMALIZATION_DOMAIN_RULES_VERSION,
     enrich_bbb_validity,
     validity_policy_manifest,
+)
+from tools.chembl_tool.common.starling.reference_semantics import (
+    ReferenceSemanticsAttacher,
+)
+from tools.chembl_tool.tasks.bbb_martins.starling_reference_semantics import (
+    DEFAULT_MAPPING_PATH as DEFAULT_REFERENCE_SEMANTICS_MAPPING,
+    REFERENCE_SEMANTICS_CONFIG,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_measurement_semantics import (
     DEFAULT_SEMANTICS_PATH,
@@ -115,6 +123,15 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Allow an explicitly incomplete pre-approval smoke build.",
     )
+    parser.add_argument(
+        "--reference-semantics-mapping",
+        default=str(DEFAULT_REFERENCE_SEMANTICS_MAPPING),
+    )
+    parser.add_argument(
+        "--allow-missing-reference-semantics",
+        action="store_true",
+        help="Allow an explicitly incomplete pre-generation smoke build.",
+    )
 
 
 def validate_arguments(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
@@ -134,6 +151,16 @@ def validate_arguments(parser: argparse.ArgumentParser, args: argparse.Namespace
             f"human-approved Direct endpoint mapping not found: {direct_mapping}; "
             "build and review the proposal with "
             "bbb_martins.data_processing.build_direct_endpoint_mapping"
+        )
+    reference_mapping = Path(args.reference_semantics_mapping)
+    if (
+        needs_normalization
+        and not reference_mapping.exists()
+        and not args.allow_missing_reference_semantics
+    ):
+        parser.error(
+            f"reference-semantics mapping not found: {reference_mapping}; build it "
+            "with common.starling.build_reference_semantics_mapping"
         )
 
 
@@ -171,13 +198,26 @@ def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
         else PendingAuxiliaryAttacher(mapping_path)
     )
     endpoint_normalizer = EndpointNormalizer(args.direct_endpoint_mapping)
+    reference_attacher = ReferenceSemanticsAttacher(
+        replace(
+            REFERENCE_SEMANTICS_CONFIG,
+            mapping_path=Path(args.reference_semantics_mapping),
+        ),
+        allow_missing=args.allow_missing_reference_semantics,
+    )
     return NormalizationHooks(
         endpoint_normalizer=endpoint_normalizer.decision,
         endpoint_standardizer=endpoint_specific_standardization_of_unit,
         source_measurement_resolver=source_measurement_resolver,
         family_resolver=family_assignment,
-        record_enricher=lambda record: _enrich_record(record, attacher),
-        run_state={"auxiliary": attacher, "endpoint": endpoint_normalizer},
+        record_enricher=lambda record: _enrich_record(
+            record, attacher, reference_attacher
+        ),
+        run_state={
+            "auxiliary": attacher,
+            "endpoint": endpoint_normalizer,
+            "reference": reference_attacher,
+        },
     )
 
 
@@ -202,7 +242,9 @@ def stage_documents(
     del args
     attacher = hooks.run_state["auxiliary"]
     endpoint_normalizer = hooks.run_state["endpoint"]
+    reference_attacher = hooks.run_state["reference"]
     coverage = attacher.coverage_audit(normalized)
+    reference_coverage = reference_attacher.coverage_audit(normalized)
     semantics_policy = load_measurement_semantics_policy()
     return StageDocuments(
         validity_policy={
@@ -236,8 +278,15 @@ def stage_documents(
                 for row in normalized
                 if row.get("normalization_validity_status") == "valid"
             ),
+            "reference_semantics_mapping_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_mapped"]
+            ),
         },
         endpoint_registry=_endpoint_registry(normalized),
+        reference_semantics_manifest={
+            **reference_attacher.manifest(),
+            "coverage": reference_coverage,
+        },
     )
 
 
@@ -306,7 +355,9 @@ def census_extras(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _enrich_record(record: dict[str, Any], attacher: Any) -> dict[str, Any]:
+def _enrich_record(
+    record: dict[str, Any], attacher: Any, reference_attacher: Any
+) -> dict[str, Any]:
     source_projection = llm_source_projection(record)
     auxiliary = attacher.attach(record)
     # A parseable numeric value with an unresolved unit remains numeric evidence
@@ -362,6 +413,17 @@ def _enrich_record(record: dict[str, Any], attacher: Any) -> dict[str, Any]:
             **producer_fields,
         }
     )
+    reference = reference_attacher.attach(
+        {
+            **record,
+            **auxiliary,
+            **encoded,
+            **endpoint_fields,
+            **unit_fields,
+            **producer_fields,
+            **validity,
+        }
+    )
     return {
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
         "source_column_policy_version": SOURCE_COLUMN_POLICY_VERSION,
@@ -379,6 +441,7 @@ def _enrich_record(record: dict[str, Any], attacher: Any) -> dict[str, Any]:
         **unit_fields,
         **producer_fields,
         **validity,
+        **reference,
     }
 
 
@@ -402,7 +465,11 @@ POLICY = StarlingTaskPolicy(
     validate_arguments=validate_arguments,
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
-    scientific_assets=(DEFAULT_SEMANTICS_PATH,),
+    scientific_assets=(
+        DEFAULT_SEMANTICS_PATH,
+        REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
+    ),
+    reference_semantics_enabled=True,
 )
 
 

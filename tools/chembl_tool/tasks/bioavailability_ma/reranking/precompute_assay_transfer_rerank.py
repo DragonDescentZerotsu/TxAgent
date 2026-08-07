@@ -14,7 +14,11 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_view
-from tools.chembl_tool.common.assay_transfer_selection import ASSAY_TRANSFER_DIVERSITY_NONE
+from tools.chembl_tool.common.assay_transfer_selection import (
+    ASSAY_TRANSFER_DIVERSITY_NONE,
+    ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+    ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
     ASSAY_TRANSFER_MODEL,
     ASSAY_TRANSFER_MODEL_REVISION,
@@ -349,6 +353,8 @@ def preflight_cache_coverage(
     assay_transfer_min_score: float | None = None,
     assay_transfer_diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
     assay_transfer_diversity_score_slack: float = 0.0,
+    assay_transfer_selection_unit: str = ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    assay_transfer_records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
     exclude_nondirect_bioavailability_records: bool = False,
 ) -> dict[str, Any]:
     from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
@@ -393,6 +399,10 @@ def preflight_cache_coverage(
                 assay_transfer_min_score=assay_transfer_min_score,
                 assay_transfer_diversity_mode=assay_transfer_diversity_mode,
                 assay_transfer_diversity_score_slack=assay_transfer_diversity_score_slack,
+                assay_transfer_selection_unit=assay_transfer_selection_unit,
+                assay_transfer_records_per_molecule=(
+                    assay_transfer_records_per_molecule
+                ),
             )
             prepare_assay_transfer_selected_neighbors(
                 retrieval, expose_scores=require_selected_scores

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,9 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
 from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
     clean_source_values,
 )
+from tools.chembl_tool.common.starling.reference_semantics import (
+    ReferenceSemanticsAttacher,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
     CATEGORICAL_RESPONSE_VERSION,
     FG_TARGET_ALIAS_VERSION,
@@ -36,8 +40,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response im
     encoding_policy_manifest,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+    DIRECT_MEASUREMENT_EXTRACTION_VERSION,
     DIRECT_REPORT_TYPES,
     NONDIRECT_MEASUREMENT_EXTRACTION_VERSION,
+    direct_measurement_fields,
     nondirect_measurement_fields,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
@@ -84,6 +90,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
     enrich_bioavailability_validity,
     validity_policy_manifest,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.starling_reference_semantics import (
+    DEFAULT_MAPPING_PATH as DEFAULT_REFERENCE_SEMANTICS_MAPPING,
+    REFERENCE_SEMANTICS_CONFIG,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts import (
     SOURCE_COLUMN_CONTRACT_VERSION,
     llm_source_projection,
@@ -115,7 +125,7 @@ DEFAULT_V65_ELIGIBLE_RECORDS = (
 )
 DEFAULT_BENCHMARK_SPLIT_ROOT = "data/processed_starling/Bioavailability_Ma"
 HF_SOURCE_CLASSIFICATION_VERSION = "bioavailability_hf_evidence_scope.v1"
-HF_DIRECT_FRACTION_PERCENT_VERSION = "hf_direct_fraction_percent.v2"
+HF_DIRECT_EXPLICIT_UNIT_VERSION = "hf_direct_explicit_unit.v3"
 DEFAULT_SOURCE_VALUE_REPAIRS = (
     Path(__file__).resolve().parent
     / "data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl"
@@ -182,6 +192,15 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
             "label mappings used by the post-record filtering stage."
         ),
     )
+    parser.add_argument(
+        "--reference-semantics-mapping",
+        default=str(DEFAULT_REFERENCE_SEMANTICS_MAPPING),
+    )
+    parser.add_argument(
+        "--allow-missing-reference-semantics",
+        action="store_true",
+        help="Allow an explicitly incomplete pre-generation smoke build.",
+    )
 
 
 def validate_arguments(
@@ -193,6 +212,16 @@ def validate_arguments(
         )
     if _max_hf_rows(args) and args.strict_endpoint_inventory:
         parser.error("bounded source runs require --no-strict-endpoint-inventory")
+    reference_mapping = Path(args.reference_semantics_mapping)
+    if (
+        args.through_stage != "clean"
+        and not reference_mapping.exists()
+        and not args.allow_missing_reference_semantics
+    ):
+        parser.error(
+            f"reference-semantics mapping not found: {reference_mapping}; build it "
+            "with common.starling.build_reference_semantics_mapping"
+        )
 
 
 def _include_hf_bioavailability(args: argparse.Namespace) -> bool:
@@ -325,59 +354,53 @@ def _resolve_source_measurement_pair(
             return endpoint_specific_standardization_of_unit(
                 canonical_endpoint, pair
             )
-        direct_pair = normalize_measurement_and_unit(
-            measurement_text,
-            "%",
+        extracted = direct_measurement_fields(measurement_text)
+        pair = normalize_measurement_and_unit(
+            extracted["measurement_text"],
+            extracted["value_units"],
             task=TASK_ID,
         )
-        if measurement_text and "%" not in measurement_text:
-            fraction_pair = normalize_measurement_and_unit(
-                measurement_text,
-                "fraction",
-                task=TASK_ID,
-            )
-            parsed = parse_point_measurement(fraction_pair.canonical_measurement)
-            if (
-                parsed.value is not None
-                and parsed.kind not in {"point_with_interval", "mean_with_context"}
-                and 0.0 <= parsed.value <= 1.5
-            ):
-                return endpoint_specific_standardization_of_unit(
-                    canonical_endpoint,
-                    fraction_pair,
-                )
         return endpoint_specific_standardization_of_unit(
-            canonical_endpoint, direct_pair
+            canonical_endpoint, pair
         )
     return resolve_fg_measurement_pair(record, canonical_endpoint, baseline_pair)
 
 
-def _is_hf_direct_scope_unitless_fraction_scalar(record: dict[str, Any]) -> bool:
+def _is_hf_direct_scope_unitless_numeric_abstention(record: dict[str, Any]) -> bool:
     if (
         str(record.get("source_id") or "") != "hf_bioavailability"
         or bioavailability_evidence_scope(
             record.get("bioavailability_report_type")
         )
         != DIRECT_EVIDENCE_SCOPE
-        or record.get("finite_scalar_value") is None
-        or "%" in str(record.get("measurement_text") or "")
+        or record.get("direct_measurement_unit_extraction_status")
+        != "no_explicit_unit"
     ):
         return False
     source_point = parse_point_measurement(record.get("measurement_text"))
-    return source_point.value is not None and 0.0 <= source_point.value <= 1.5
+    return source_point.value is not None
 
 
 def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
     attacher = AuxiliaryMetadataAttacher(args.auxiliary_mapping)
+    reference_attacher = ReferenceSemanticsAttacher(
+        replace(
+            REFERENCE_SEMANTICS_CONFIG,
+            mapping_path=Path(args.reference_semantics_mapping),
+        ),
+        allow_missing=args.allow_missing_reference_semantics,
+    )
     return NormalizationHooks(
         endpoint_normalizer=spacing_and_spelling_decision,
         endpoint_standardizer=endpoint_specific_standardization_of_unit,
         source_measurement_resolver=_resolve_source_measurement_pair,
         family_resolver=family_assignment,
         contextual_standardizer=contextual_standardization_of_unit,
-        record_enricher=lambda record: _enrich_record(record, attacher),
+        record_enricher=lambda record: _enrich_record(
+            record, attacher, reference_attacher
+        ),
         # stage_documents needs the same instance to write its coverage audit.
-        run_state=attacher,
+        run_state={"auxiliary": attacher, "reference": reference_attacher},
     )
 
 
@@ -401,7 +424,9 @@ def stage_documents(
     unit_policy_manifest: dict[str, Any],
 ) -> StageDocuments:
     del args
-    attacher: AuxiliaryMetadataAttacher = hooks.run_state
+    attacher: AuxiliaryMetadataAttacher = hooks.run_state["auxiliary"]
+    reference_attacher: ReferenceSemanticsAttacher = hooks.run_state["reference"]
+    reference_coverage = reference_attacher.coverage_audit(normalized)
     return StageDocuments(
         validity_policy={
             **validity_policy_manifest(),
@@ -443,6 +468,13 @@ def stage_documents(
             ),
             "source_column_contract_complete": True,
             "llm_source_projection_fail_closed": True,
+            "reference_semantics_mapping_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_mapped"]
+            ),
+        },
+        reference_semantics_manifest={
+            **reference_attacher.manifest(),
+            "coverage": reference_coverage,
         },
     )
 
@@ -462,7 +494,10 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "nondirect_measurement_extraction_version": (
             NONDIRECT_MEASUREMENT_EXTRACTION_VERSION
         ),
-        "hf_direct_fraction_percent_version": HF_DIRECT_FRACTION_PERCENT_VERSION,
+        "direct_measurement_extraction_version": (
+            DIRECT_MEASUREMENT_EXTRACTION_VERSION
+        ),
+        "hf_direct_explicit_unit_version": HF_DIRECT_EXPLICIT_UNIT_VERSION,
         "v65_reconciliation": {"status": "not_performed", "matching_performed": False},
     }
     if complete:
@@ -491,8 +526,8 @@ def census_extras(records: list[dict[str, Any]]) -> dict[str, Any]:
         ),
         "n_finite_scalars_by_source": dict(sorted(finite_by_source.items())),
         "n_categorically_encoded_by_encoder": dict(sorted(encoded.items())),
-        "n_hf_direct_unitless_fraction_scalars": sum(
-            _is_hf_direct_scope_unitless_fraction_scalar(record)
+        "n_hf_direct_unitless_numeric_abstentions": sum(
+            _is_hf_direct_scope_unitless_numeric_abstention(record)
             for record in records
         ),
     }
@@ -501,26 +536,35 @@ def census_extras(records: list[dict[str, Any]]) -> dict[str, Any]:
 def _enrich_record(
     record: dict[str, Any],
     auxiliary_attacher: AuxiliaryMetadataAttacher,
+    reference_attacher: ReferenceSemanticsAttacher,
 ) -> dict[str, Any]:
     provenance = fg_scalar_rule_provenance(record)
-    nondirect_extraction: dict[str, Any] = {}
-    if (
-        str(record.get("source_id") or "") == "hf_bioavailability"
-        and bioavailability_evidence_scope(
+    measurement_extraction: dict[str, Any] = {}
+    if str(record.get("source_id") or "") == "hf_bioavailability":
+        scope = bioavailability_evidence_scope(
             record.get("bioavailability_report_type")
         )
-        == NONDIRECT_EVIDENCE_SCOPE
-    ):
-        extracted = nondirect_measurement_fields(record.get("measurement_text"))
-        nondirect_extraction = {
-            "nondirect_measurement_extraction_version": (
-                NONDIRECT_MEASUREMENT_EXTRACTION_VERSION
-            ),
-            "nondirect_measurement_unit_extraction_status": extracted[
-                "measurement_unit_extraction_status"
-            ],
-        }
-    enriched = {**record, **provenance}
+        if scope == NONDIRECT_EVIDENCE_SCOPE:
+            extracted = nondirect_measurement_fields(record.get("measurement_text"))
+            measurement_extraction = {
+                "nondirect_measurement_extraction_version": (
+                    NONDIRECT_MEASUREMENT_EXTRACTION_VERSION
+                ),
+                "nondirect_measurement_unit_extraction_status": extracted[
+                    "measurement_unit_extraction_status"
+                ],
+            }
+        else:
+            extracted = direct_measurement_fields(record.get("measurement_text"))
+            measurement_extraction = {
+                "direct_measurement_extraction_version": (
+                    DIRECT_MEASUREMENT_EXTRACTION_VERSION
+                ),
+                "direct_measurement_unit_extraction_status": extracted[
+                    "measurement_unit_extraction_status"
+                ],
+            }
+    enriched = {**record, **provenance, **measurement_extraction}
     source_projection = llm_source_projection(enriched)
     auxiliary = auxiliary_attacher.attach(enriched)
     with_auxiliary = {**enriched, **auxiliary}
@@ -559,9 +603,12 @@ def _enrich_record(
     validity = enrich_bioavailability_validity(
         {**canonical, **encoded, **producer_fields}
     )
+    reference = reference_attacher.attach(
+        {**canonical, **encoded, **producer_fields, **validity}
+    )
     return {
         **provenance,
-        **nondirect_extraction,
+        **measurement_extraction,
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
         "llm_source_contract_json": json.dumps(
             {
@@ -582,6 +629,7 @@ def _enrich_record(
         **encoded,
         **producer_fields,
         **validity,
+        **reference,
     }
 
 
@@ -606,7 +654,11 @@ POLICY = StarlingTaskPolicy(
     load_extra_source=load_extra_source,
     census_extras=census_extras,
     smiles_mapping=smiles_mapping,
-    scientific_assets=(DEFAULT_SOURCE_VALUE_REPAIRS,),
+    scientific_assets=(
+        DEFAULT_SOURCE_VALUE_REPAIRS,
+        REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
+    ),
+    reference_semantics_enabled=True,
     family_resolver_input_fields=(
         "canonical_bioavailability_evidence_scope",
         "bioavailability_report_type",

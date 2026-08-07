@@ -36,7 +36,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling im
         ("ER = 2.8", 2.8, None, "directional_efflux_ratio"),
         ("efflux ratio 2.8 ± 0.3", 2.8, 0.3, "directional_efflux_ratio"),
         ("uptake ratio 8", 8.0, None, "uptake_ratio"),
-        ("AUC ratio 1.25 ± 0.32 (NS)", 1.25, 0.32, "auc_ratio"),
+        ("AUC ratio 1.25 ± 0.32", 1.25, 0.32, "auc_ratio"),
     ],
 )
 def test_explicit_atomic_ratios_are_proposed(
@@ -56,12 +56,11 @@ def test_explicit_atomic_ratios_are_proposed(
 @pytest.mark.parametrize(
     ("text", "value", "approximate"),
     [
-        ("absorption increased 1.5-fold", 1.5, False),
-        ("14-fold increase in AUC (oral) with GF120918", 14.0, False),
-        ("approximately sixfold increase", 6.0, True),
-        ("four-fold higher permeability", 4.0, False),
-        ("≈6-fold higher systemic exposure", 6.0, True),
-        ("Relative absorption = 3.7 (fold vs free suspension)", 3.7, False),
+        ("1.5-fold", 1.5, False),
+        ("14-fold", 14.0, False),
+        ("approximately sixfold", 6.0, True),
+        ("four-fold", 4.0, False),
+        ("≈6-fold", 6.0, True),
     ],
 )
 def test_explicit_atomic_fold_changes(
@@ -69,9 +68,6 @@ def test_explicit_atomic_fold_changes(
 ):
     decision = propose_fg_scalar(text)
 
-    if value is None:
-        assert decision.accepted is False
-        return
     assert decision.accepted is True
     assert decision.rule_id == "explicit_fold_label"
     assert decision.canonical_unit == "fold"
@@ -83,7 +79,7 @@ def test_explicit_atomic_fold_changes(
     ("text", "unit", "value", "semantic_label"),
     [
         ("Fg = 0.14", "fraction", 0.14, "fg_fraction"),
-        ("in vivo FG 0.51", "fraction", 0.51, "fg_fraction"),
+        ("FG 0.51", "fraction", 0.51, "fg_fraction"),
         ("F_G = 70.9% ± 8.1%", "%", 70.9, "fg_fraction"),
         ("Fa·Fg = 0.11 ± 0.03", "fraction", 0.11, "fa_times_fg_fraction"),
         ("F_a × F_g = 0.26", "fraction", 0.26, "fa_times_fg_fraction"),
@@ -109,20 +105,18 @@ def test_relative_fg_percentage_is_not_mislabeled_as_absolute_fg():
         canonical_endpoint="gut_wall_extraction_or_first_pass",
     )
 
-    assert decision.accepted is True
-    assert decision.rule_id == "explicit_single_percentage"
-    assert decision.semantic_label == "percentage_outcome"
-    assert decision.canonical_unit == "%"
-    assert decision.finite_scalar_value == pytest.approx(57.0)
+    assert decision.accepted is False
+    assert decision.reason == "directional_or_comparative_measurement"
+    assert decision.finite_scalar_value is None
 
 
 @pytest.mark.parametrize(
     ("text", "value", "variation"),
     [
-        ("46% inhibition of serosal-to-mucosal transport", 46.0, None),
-        ("149.99 ± 0.27 % of control uptake", 149.99, 0.27),
-        ("29.1% first-pass elimination", 29.1, None),
-        ("≈50% first-pass gut-wall extraction", 50.0, None),
+        ("46%", 46.0, None),
+        ("149.99 ± 0.27 %", 149.99, 0.27),
+        ("29.1%", 29.1, None),
+        ("≈50%", 50.0, None),
     ],
 )
 def test_single_percentage_outcomes(text, value, variation):
@@ -137,6 +131,25 @@ def test_single_percentage_outcomes(text, value, variation):
     assert decision.canonical_unit == "%"
     assert decision.finite_scalar_value == pytest.approx(value)
     assert decision.variation_value == variation
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "AUC ratio 1.25 ± 0.32 (NS)",
+        "absorption increased 1.5-fold",
+        "14-fold increase in AUC (oral) with GF120918",
+        "four-fold higher permeability",
+        "Relative absorption = 3.7 (fold vs free suspension)",
+        "in vivo FG 0.51",
+        "46% inhibition of serosal-to-mucosal transport",
+        "slight increase in absorptive transport at Labrasol 0.1% (v/v)",
+    ],
+)
+def test_contextual_scalar_fragments_are_not_extracted(text):
+    decision = propose_fg_scalar(text)
+    assert decision.accepted is False
+    assert decision.finite_scalar_value is None
 
 
 @pytest.mark.parametrize(
@@ -435,9 +448,9 @@ def test_fg_scalar_rules_integrate_with_normalization_and_pair_validation():
     assert ratio["source_scalar_rule_id"] == "explicit_ratio_label"
     assert ratio["normalization_validity_status"] == "valid"
 
-    assert zero["finite_scalar_value"] == pytest.approx(0.0)
-    assert zero["canonical_unit"] == "%"
-    assert zero["normalization_validity_status"] == "valid"
+    assert zero["finite_scalar_value"] is None
+    assert zero["canonical_unit"] is None
+    assert zero["normalization_validity_status"] == "missing_canonical_unit"
 
     assert compound["finite_scalar_value"] is None
     assert compound["source_scalar_rule_reason"] == "compound_or_multi_outcome"

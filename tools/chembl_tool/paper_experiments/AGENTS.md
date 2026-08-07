@@ -45,9 +45,10 @@ TRACE_RETENTION.md
 `record_agreement70_split811_v1` 及其后的新实验，正式默认是：
 
 ```text
-base_url: http://127.0.0.1:50000/v1
+base_url: keys.py:LITELLM_BASE_URL
 model: nvidia/GLM-5.2-NVFP4
-reasoning_effort: ""（省略参数，保留历史 GLM reasoning 行为）
+api_key_env: LITELLM_API_KEY (injected from keys.py by the top-level launcher)
+reasoning_effort: "" (omit the parameter; preserve historical provider-default GLM reasoning)
 visibility_mode: identity_blind
 neighbor_identity_policy: parent_disjoint
 operational_staging_used: false
@@ -502,8 +503,9 @@ deployment_visible_prefetched:
 主实验和补充控制共享以下基础条件：
 
 ```text
-default endpoint: http://127.0.0.1:50000/v1 (requires `ssh -fNT parcc-glm`)
+default endpoint: keys.py:LITELLM_BASE_URL (PARCC LiteLLM)
 model: nvidia/GLM-5.2-NVFP4
+default API key env: LITELLM_API_KEY (injected from the ignored root keys.py)
 reasoning_effort: "" (omit the parameter; preserve the historical GLM reasoning contract)
 temperature: 0
 max_tokens: 20480
@@ -604,10 +606,13 @@ BBB 详细记录见 `tools/chembl_tool/tasks/bbb_martins/DISTANCE_SELF_RELEVANCE
 
 每个任务必须先运行 `none` 条件。所有包含检索的条件都必须使用 `--single-analysis-source-batch`，以复用该条件中冻结的 single-molecule 分支。不得为每个消融条件独立重新生成先验。
 
-不得将 API key 的值写入代码、保存到文件中的命令、manifest、报告或 trace。直连 loopback vLLM 默认使用
-`GLM_LOCAL_API_KEY` 的非敏感占位值；旧 LiteLLM fallback 使用 `GLM_API_KEY` 或另一个明确指定的环境变量。
-旧 `zai-org/GLM-5.2-FP8` 是请求别名，实际 response model 为 `hosted_vllm/nvidia/GLM-5.2-NVFP4`；
-不得把 endpoint 对比误写成 FP8 与 NVFP4 模型精度对比。
+Never write an API-key value to code, persisted commands, manifests, reports, or traces. The default top-level
+paper launchers load `LITELLM_BASE_URL` and `LITELLM_API_KEY` from the ignored root `keys.py`, inject only the key
+into the child environment, and pass `--api-key-env LITELLM_API_KEY`. Task runners remain environment-only.
+Explicit loopback vLLM runs retain the non-sensitive `GLM_LOCAL_API_KEY` placeholder behavior. The historical
+`zai-org/GLM-5.2-FP8` LiteLLM request alias resolved to `hosted_vllm/nvidia/GLM-5.2-NVFP4`; endpoint comparisons
+must not be presented as FP8-versus-NVFP4 model comparisons. `watch_glm_tunnel_and_matrix.py` remains specific
+to the explicit loopback SSH-tunnel route and is not the default LiteLLM launcher.
 
 OpenAI SDK 的传输层 retry 上限明确固定为 2，与 baseline run 一致。结构化 JSON 验证在记录的调用路径中最多允许 4 次总尝试。最后两次尝试只重新序列化相同的 JSON evidence，以避开 provider 的确定性退化；不得删除证据或改变 inference setting。single、group 或 final 分支不完整的 run 会被 batch 完整性约束排除，并通过 batch `--skip-existing` 显式重跑。
 

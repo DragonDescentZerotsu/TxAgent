@@ -59,6 +59,9 @@ def test_numeric_interval_thresholds(text, threshold, expected):
         ("very poor", 0),
         ("good", 1),
         ("almost complete", 1),
+        # Frozen gold lineage: evidence normalization intentionally does not
+        # share this historical substring policy.
+        ("not high", 1),
         ("moderate", None),
         ("orally bioavailable", None),
         ("3-fold higher", None),

@@ -296,50 +296,51 @@ group prompt 必须通过 `tools/chembl_tool/common/evidence_contract.py` 将 Ch
 evidence/context text、可选 role/scope、quality/uncertainty 和 provenance，不包含 label vote、threshold
 policy 或 deterministic override。
 
-## OpenAI-compatible / GLM-5.2 适配记录
+## OpenAI-compatible / GLM-5.2 runtime
 
-2026-08-01 起，paper/Starling GLM runner 默认通过本机 SSH tunnel 直连 dgx008 vLLM：
+As of 2026-08-05, the paper/Starling GLM launchers use the PARCC LiteLLM endpoint by default:
 
 ```text
-base_url: http://127.0.0.1:50000/v1
+base_url: keys.py:LITELLM_BASE_URL
 model: nvidia/GLM-5.2-NVFP4
-api key env: GLM_LOCAL_API_KEY (loopback vLLM 无鉴权时 runner 自动注入非敏感占位值)
-reasoning_effort: "" (omit the API parameter; matches the historical LiteLLM runs)
+api key: keys.py:LITELLM_API_KEY, injected into child processes as LITELLM_API_KEY
+reasoning_effort: "" (omit the API parameter; preserve historical provider-default GLM reasoning)
 ```
 
-先建立 tunnel：
+The ignored root `keys.py` is the local source for both settings. Top-level launchers load it and inject the key
+into their child environment without printing or persisting the value. Task runners continue to consume only the
+environment variable and do not import `keys.py` themselves.
+
+The direct dgx008 vLLM route remains an explicit fallback. Establish the tunnel first:
 
 ```bash
 ssh -fNT parcc-glm
+python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
+  --base-url http://127.0.0.1:50000/v1 \
+  --api-key-env GLM_LOCAL_API_KEY \
+  --model nvidia/GLM-5.2-NVFP4 \
+  --benchmark-split <random|scaffold> \
+  --reasoning-effort ""
 ```
 
-旧 Penn LiteLLM 仍可显式作为 fallback：
-
-```bash
---api-key-env GLM_API_KEY \
---base-url https://litellm.parcc.upenn.edu/v1 \
---model zai-org/GLM-5.2-FP8 \
---reasoning-effort ""
-```
-
-`zai-org/GLM-5.2-FP8` 是旧 LiteLLM 请求别名；旧 response 和既有 trace 实际均报告
-`hosted_vllm/nvidia/GLM-5.2-NVFP4`。不要把旧/新路径描述成 FP8 与 NVFP4 两种模型的比较。
-正式 runner 继续沿用历史 `--disable-thinking --reasoning-effort ""`。这里的 `--disable-thinking` 只是不发送
-DeepSeek-style `thinking` 参数，空 `reasoning_effort` 使 client 完全省略该 API 参数；它不会关闭 GLM 自己的
-reasoning，provider 返回的 `reasoning_content` 或 `reasoning` 仍写入 trace。曾测得的 64/128/256/512
-并发高吞吐数字使用了 `reasoning_effort=none`，属于关闭 reasoning 的 endpoint ceiling 诊断，未被采纳为
-正式默认，也不能用于估算当前 reasoning-enabled agent pipeline 的加速比例。
+The historical LiteLLM request alias `zai-org/GLM-5.2-FP8` resolved to
+`hosted_vllm/nvidia/GLM-5.2-NVFP4`. Endpoint changes must not be described as an FP8-versus-NVFP4 model
+comparison. Formal runners retain `--disable-thinking --reasoning-effort ""`: the first omits the optional
+DeepSeek-style `thinking` body and the empty effort omits that API parameter. Neither disables GLM's
+provider-default reasoning; returned `reasoning_content` or `reasoning` remains in the trace. Historical
+`reasoning_effort=none` throughput probes were endpoint-ceiling diagnostics, not the formal default.
 
 OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `reasoning`；共享 client 两者都接受。
 
-### 2026-08-01 起的新数据集正式运行默认
+### Current defaults for new paper datasets
 
 当前 `record_agreement70_split811_v1` 及其后的新 paper/Starling 实验统一冻结为：
 
 ```text
-endpoint: http://127.0.0.1:50000/v1
+endpoint: keys.py:LITELLM_BASE_URL
 model: nvidia/GLM-5.2-NVFP4
-reasoning: --disable-thinking --reasoning-effort ""（与历史 GLM 设置一致，仍保存 reasoning）
+api key env: LITELLM_API_KEY (injected from the ignored keys.py by top-level launchers)
+reasoning: --disable-thinking --reasoning-effort "" (provider-default GLM reasoning is still retained)
 visibility_mode: identity_blind
 neighbor_identity_policy: parent_disjoint
 run_operational_first: false

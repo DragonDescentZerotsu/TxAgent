@@ -52,6 +52,26 @@ def _prompt_neighbor_contract(neighbor: dict[str, Any], *, score_visible: bool) 
     }
     if score_visible:
         payload["assay_transfer_score"] = round(float(neighbor["transfer_selection_score"]), 2)
+        selected_records = neighbor.get("transfer_selected_records") or [
+            {
+                "transfer_selection_score": neighbor["transfer_selection_score"],
+                "transfer_winning_record": neighbor.get("transfer_winning_record") or {},
+            }
+        ]
+        payload["assay_transfer_records"] = [
+            {
+                "assay_transfer_score": round(
+                    float(record["transfer_selection_score"]), 2
+                ),
+                "source_contract": (
+                    record.get("transfer_winning_record") or {}
+                ).get("source_contract"),
+                "source_fields": (
+                    record.get("transfer_winning_record") or {}
+                ).get("source_fields"),
+            }
+            for record in selected_records
+        ]
     return payload
 
 

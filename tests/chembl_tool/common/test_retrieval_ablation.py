@@ -54,6 +54,25 @@ def test_changed_group_ids_is_branch_granular():
     assert changed_group_ids(_retrieval(), _retrieval("CHEMBL2")) == ["Direct.outcome"]
 
 
+def test_hash_detects_changes_to_visible_assay_record_bundle():
+    baseline = _retrieval()
+    baseline["experiment"]["llm_neighbor_score_policy"] = {
+        "name": "assay_transfer_scored_neighbors.v1"
+    }
+    neighbor = baseline["groups"][0]["neighbors"][0]
+    neighbor["transfer_selection_score"] = 0.91
+    neighbor["transfer_winning_record"] = {
+        "source_contract": {"contract_version": "source_column_contract.v1"},
+        "source_fields": {"endpoint_name": "endpoint one"},
+    }
+    changed = json.loads(json.dumps(baseline))
+    changed["groups"][0]["neighbors"][0]["transfer_winning_record"][
+        "source_fields"
+    ]["endpoint_name"] = "endpoint two"
+
+    assert retrieval_prompt_hash(baseline) != retrieval_prompt_hash(changed)
+
+
 def test_materialized_reuse_keeps_source_immutable_and_records_provenance(tmp_path):
     source = tmp_path / "source"
     source.mkdir()

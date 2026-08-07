@@ -21,6 +21,8 @@ but is never rewritten to match it.
 
 The shared deterministic cleaner handles unambiguous decimal commas and the
 literal `%0020` encoded-space artifact. It does not guess missing semantic
-separators; those require a reviewed entry. Direct-HF unitless fractions remain
-source-visible as written and are converted to percent only in Stage 02 for
-internal comparison and assay-transfer values.
+separators; those require a reviewed entry. Direct-HF unitless numbers remain
+source-visible as written but are not assigned a unit in Stage 02 and therefore
+cannot enter pair buckets or assay-transfer calibration. Only a percent or
+literal fraction unit present in the value itself can make a direct HF number
+scalar; support text and numeric magnitude never rescue a missing unit.

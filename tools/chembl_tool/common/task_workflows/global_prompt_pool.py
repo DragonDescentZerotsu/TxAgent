@@ -80,6 +80,7 @@ def run_global_prompt_pool(
     *,
     max_workers: int,
     max_stage_requeues: int = 0,
+    preparation_workers: int = 8,
 ) -> list[dict[str, Any]]:
     """Parse matrix batch commands, then use the canonical prepared-batch pool."""
     prepared_by_name = {
@@ -94,6 +95,7 @@ def run_global_prompt_pool(
         prepared_by_name,
         max_workers=max_workers,
         max_stage_requeues=max_stage_requeues,
+        preparation_workers=preparation_workers,
     )
 
 
@@ -102,20 +104,24 @@ def run_prepared_prompt_pool(
     *,
     max_workers: int,
     max_stage_requeues: int = 0,
+    preparation_workers: int = 8,
 ) -> list[dict[str, Any]]:
     """Run prepared task/condition batches through one global ready queue."""
     if max_workers < 1:
         raise ValueError("max_workers must be positive")
     if max_stage_requeues < 0:
         raise ValueError("max_stage_requeues must be non-negative")
+    if preparation_workers < 1:
+        raise ValueError("preparation_workers must be positive")
+    effective_preparation_workers = min(max_workers, preparation_workers)
 
     for prepared in prepared_by_name.values():
         _mark_scheduler_manifest(
             prepared,
             max_workers=max_workers,
             max_stage_requeues=max_stage_requeues,
+            preparation_workers=effective_preparation_workers,
         )
-    preparation_workers = min(max_workers, 8)
     runtime, pending, initial_stage_jobs = _initialize_pool_runtime(prepared_by_name)
     pending = _round_robin_jobs(pending)
     _log(
@@ -516,13 +522,14 @@ def _mark_scheduler_manifest(
     *,
     max_workers: int,
     max_stage_requeues: int,
+    preparation_workers: int,
 ) -> None:
     prepared.batch_dir.mkdir(parents=True, exist_ok=True)
     prepared.manifest["scheduler"] = {
         "version": SCHEDULER_VERSION,
         "global_max_workers": max_workers,
         "max_stage_requeues": max_stage_requeues,
-        "retrieval_preparation_workers": min(max_workers, 8),
+        "retrieval_preparation_workers": preparation_workers,
         "resource_partition": "shared_across_tasks_and_conditions",
         "artifact_contract": "legacy_batch_and_per_run_paths_unchanged",
     }

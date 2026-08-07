@@ -101,7 +101,7 @@ def test_enabled_prompt_exposes_only_rounded_public_score_and_semantics():
 
     assert retrieval["experiment"]["llm_neighbor_score_policy"]["name"] == SCORED_NEIGHBORS_POLICY_NAME
     assert payload["neighbors"][0]["assay_transfer_score"] == 0.9
-    assert "best compatible source measurement" in serialized
+    assert "exact selected source assay record" in serialized
     assert "transfer_selection_score" not in serialized
     assert "transfer_winning_record_id" not in serialized
     assert "structural_rank" not in serialized
@@ -138,7 +138,7 @@ def test_hidden_policy_filters_identically_without_exposing_scores():
     assert hidden_group["transfer_neighbor_selection"]["selection_metadata_is_llm_hidden"] is True
     payload = _group_prompt_payload(hidden["query"], hidden_group)
     assert "assay_transfer_score" not in str(payload)
-    assert "best compatible source measurement" not in str(payload)
+    assert "exact selected source assay record" not in str(payload)
 
 
 def test_policy_rejects_missing_score_without_fabricating_a_value():
@@ -364,6 +364,10 @@ def test_matched_preflight_source_requires_identical_retrieval_configuration():
             "assay_transfer_min_score": args.assay_transfer_min_score,
             "assay_transfer_diversity_mode": args.assay_transfer_diversity_mode,
             "assay_transfer_diversity_score_slack": args.assay_transfer_diversity_score_slack,
+            "assay_transfer_selection_unit": args.assay_transfer_selection_unit,
+            "assay_transfer_records_per_molecule": (
+                args.assay_transfer_records_per_molecule
+            ),
             "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
         "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,

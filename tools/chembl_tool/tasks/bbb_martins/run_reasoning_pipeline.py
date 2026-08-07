@@ -12,12 +12,39 @@ import uuid
 from pathlib import Path
 from typing import Any
 
+from tools.chembl_tool.common.assay_reranking.v11 import (
+    TEMPLATE_PROFILE as V11_TEMPLATE_PROFILE,
+    V11CachedAssayReranker,
+    default_cache_paths,
+    model_profile,
+)
+from tools.chembl_tool.common.assay_transfer_prompt_policy import (
+    prepare_assay_transfer_selected_neighbors,
+    public_assay_transfer_records,
+    validate_scored_neighbors_configuration,
+)
+from tools.chembl_tool.common.assay_transfer_selection import (
+    ASSAY_TRANSFER_DIVERSITY_MODES,
+    ASSAY_TRANSFER_DIVERSITY_NONE,
+    ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+    ASSAY_TRANSFER_RECORDS_PER_MOLECULE_MAX,
+    ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    ASSAY_TRANSFER_SELECTION_UNITS,
+    assay_transfer_selection_policy,
+    validate_assay_transfer_diversity,
+    validate_assay_transfer_records_per_molecule,
+)
+from tools.chembl_tool.common.cli.retrieval_args import add_retrieval_strategy_args
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.coverage_reasoning import (
     NEIGHBOR_CONTEXT_PROFILES,
     STANDARD_NEIGHBOR_CONTEXT,
 )
-from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retrieve_experiment_view
+from tools.chembl_tool.common.experiment_retrieval import (
+    ASSAY_TRANSFER_TOOL_STRATEGY,
+    EXPERIMENT_MODES,
+    retrieve_experiment_view,
+)
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.identity_blind import (
     prepare_identity_blind_final_retrieval,
@@ -27,7 +54,6 @@ from tools.chembl_tool.common.identity_blind import (
 )
 from tools.chembl_tool.common.json_utils import parse_json_content
 from tools.chembl_tool.common.neighbor_selection import (
-    NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,
 )
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
@@ -55,11 +81,17 @@ from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index, r
 
 DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
 DEFAULT_INDEX = "outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl"
+V11_DEFAULT_INDEX = (
+    "outputs/chembl_tool/tasks/bbb_martins/evidence_library/"
+    "starling_normalized_v7/08_neighbor_index/scaffold"
+)
 DEFAULT_TIER1_REPLACEMENT_GROUPS = ["Tier 1.starling_direct_bbb_evidence"]
 DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs"
 DEFAULT_MODEL = "deepseek-v4-pro"
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
+V11_DEFAULT_PATHS = default_cache_paths("bbb_martins")
+V11_MODEL_PROFILE = model_profile("bbb_martins")
 
 
 GROUP_REASONING_TOOLS = [
@@ -148,6 +180,57 @@ SINGLE_MOLECULE_TOOL_CHOICE = {
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
+        if args.group_prompt_format != "assay_transfer_tool":
+            raise SystemExit(
+                "--retrieval-strategy assay_transfer_tool requires "
+                "--group-prompt-format assay_transfer_tool"
+            )
+        if args.morgan_neighbor_selector != SIMILARITY_SELECTOR:
+            raise SystemExit(
+                "--morgan-neighbor-selector applies only to morgan_fingerprint retrieval"
+            )
+        if args.retrieval_source != "starling":
+            raise SystemExit("BBB assay-transfer reranking requires --retrieval-source starling")
+        if args.experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
+            raise SystemExit("BBB assay-transfer reranking requires a paper-facing experiment mode")
+        if args.rerank_cache_mode != "read_only":
+            raise SystemExit("Reasoning runs require --rerank-cache-mode read_only")
+    elif args.group_prompt_format == "assay_transfer_tool":
+        raise SystemExit(
+            "--group-prompt-format assay_transfer_tool requires assay_transfer_tool retrieval"
+        )
+    if args.assay_transfer_min_score is not None and not 0.0 <= args.assay_transfer_min_score <= 1.0:
+        raise SystemExit("--assay-transfer-min-score must be between 0 and 1")
+    try:
+        validate_assay_transfer_diversity(
+            mode=args.assay_transfer_diversity_mode,
+            score_slack=args.assay_transfer_diversity_score_slack,
+        )
+        validate_assay_transfer_records_per_molecule(
+            args.assay_transfer_records_per_molecule,
+            selection_unit=args.assay_transfer_selection_unit,
+        )
+        validate_scored_neighbors_configuration(
+            enabled=args.enable_assay_transfer_scores,
+            experiment_mode=args.experiment_mode,
+            retrieval_source=args.retrieval_source,
+            retrieval_reranker=(
+                "assay_transfer"
+                if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+                else "none"
+            ),
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    if (
+        args.assay_transfer_records_per_molecule > 1
+        and args.retrieval_strategy != ASSAY_TRANSFER_TOOL_STRATEGY
+    ):
+        raise SystemExit(
+            "--assay-transfer-records-per-molecule greater than 1 requires "
+            "--retrieval-strategy assay_transfer_tool"
+        )
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
     if not api_key and not args.prepare_only:
@@ -178,10 +261,37 @@ def main(argv: list[str] | None = None) -> int:
     if not query_smiles:
         raise SystemExit(f"Input record has no `{args.smiles_field}` value.")
 
+    reranker = None
+    if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
+        reranker = V11CachedAssayReranker(
+            task_id="bbb_martins",
+            catalog_path=args.rerank_catalog,
+            candidate_manifest_path=args.rerank_candidate_manifest,
+            cache_path=args.rerank_cache,
+            cache_mode="read_only",
+            model=args.assay_transfer_model,
+            model_revision=args.assay_transfer_model_revision,
+        )
     retrieval = load_retrieval_replay(
         args.retrieval_replay_run_dir,
         query_smiles,
         expected_neighbor_selector=args.morgan_neighbor_selector,
+        expected_reranker_provenance=(
+            reranker.provenance() if reranker is not None else {"name": "none"}
+        ),
+        expected_assay_transfer_selection_policy=(
+            {
+                "min_score": args.assay_transfer_min_score,
+                "diversity": assay_transfer_selection_policy(
+                    mode=args.assay_transfer_diversity_mode,
+                    score_slack=args.assay_transfer_diversity_score_slack,
+                    selection_unit=args.assay_transfer_selection_unit,
+                    records_per_molecule=args.assay_transfer_records_per_molecule,
+                ),
+            }
+            if reranker is not None
+            else None
+        ),
     )
     index = None
     if retrieval is None and args.experiment_mode != "none":
@@ -189,6 +299,26 @@ def main(argv: list[str] | None = None) -> int:
         index = load_index(Path(args.index))
     if retrieval is not None:
         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
+    elif reranker is not None:
+        _log(f"building retrieval view mode={args.experiment_mode} source={args.retrieval_source}")
+        retrieval = retrieve_experiment_view(
+            query_smiles,
+            index,
+            mode=args.experiment_mode,
+            config=get_source_config(args.retrieval_source),
+            top_k_per_group=args.top_k_per_group,
+            min_similarity=args.min_similarity,
+            native_groups=args.groups,
+            neighbor_identity_policy=args.neighbor_identity_policy,
+            neighbor_selector=args.morgan_neighbor_selector,
+            reranker=reranker,
+            assay_transfer_initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
+            assay_transfer_min_score=args.assay_transfer_min_score,
+            assay_transfer_diversity_mode=args.assay_transfer_diversity_mode,
+            assay_transfer_diversity_score_slack=args.assay_transfer_diversity_score_slack,
+            assay_transfer_selection_unit=args.assay_transfer_selection_unit,
+            assay_transfer_records_per_molecule=args.assay_transfer_records_per_molecule,
+        )
     elif args.experiment_mode == "native":
         base_groups = _base_retrieval_groups(
             index,
@@ -223,6 +353,14 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
     if retrieval is None:
         raise RuntimeError("Retrieval was not built or replayed.")
+    if reranker is not None:
+        reranker.cache.close()
+        try:
+            prepare_assay_transfer_selected_neighbors(
+                retrieval, expose_scores=args.enable_assay_transfer_scores
+            )
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
     if args.enable_chembl_exact_context and index is not None:
         _log("enriching retrieval with exact ChEMBL context")
         retrieval = enrich_retrieval_with_chembl_context(
@@ -337,6 +475,17 @@ def main(argv: list[str] | None = None) -> int:
         "smiles_field": args.smiles_field,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
+        "retrieval_strategy": args.retrieval_strategy,
+        "assay_transfer_profile": args.assay_transfer_profile,
+        "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
+        "assay_transfer_selection_unit": args.assay_transfer_selection_unit,
+        "assay_transfer_records_per_molecule": args.assay_transfer_records_per_molecule,
+        "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
+        "rerank_catalog": args.rerank_catalog if reranker is not None else "",
+        "rerank_cache": args.rerank_cache if reranker is not None else "",
+        "rerank_candidate_manifest": (
+            args.rerank_candidate_manifest if reranker is not None else ""
+        ),
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "morgan_neighbor_selector": args.morgan_neighbor_selector,
         "neighbor_selector": args.morgan_neighbor_selector,
@@ -734,7 +883,72 @@ def _run_final_reasoning(
     return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
 
 
+def _selected_assay_record(
+    neighbor: dict[str, Any],
+    group: dict[str, Any],
+    selected: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    selected = selected or neighbor.get("transfer_winning_record") or {}
+    if not selected:
+        return {}
+    return evidence_for_llm(
+        {
+            "evidence_source": "Starling normalized BBB",
+            "molecule_chembl_id": neighbor.get("molecule_chembl_id"),
+            "canonical_smiles": neighbor.get("canonical_smiles"),
+            "group_id": group.get("group_id"),
+            "tier": group.get("tier"),
+            "endpoint_group": group.get("endpoint_group"),
+            "standard_type": "selected source assay record",
+            "evidence_text": (
+                "Source-contracted Stage 07 retrieval record selected by the "
+                "assay-transfer reranker."
+            ),
+            "source_record_examples": [
+                {
+                    "source_contract": selected.get("source_contract"),
+                    "source_fields": selected.get("source_fields"),
+                }
+            ],
+        }
+    )
+
+
+def _assay_transfer_record_cards(
+    neighbor: dict[str, Any], group: dict[str, Any]
+) -> dict[str, Any]:
+    records = public_assay_transfer_records(neighbor)
+    if len(records) == 1:
+        return {
+            "assay_transfer_score": records[0]["assay_transfer_score"],
+            "assay_transfer_record": _selected_assay_record(
+                neighbor, group, records[0]["record"]
+            ),
+        }
+    return {
+        "assay_transfer_records": [
+            {
+                "record_rank": record["record_rank"],
+                "assay_transfer_score": record["assay_transfer_score"],
+                "assay_transfer_record": _selected_assay_record(
+                    neighbor, group, record["record"]
+                ),
+            }
+            for record in records
+        ]
+    }
+
+
 def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+    include_assay_transfer_score = bool(
+        (group.get("transfer_neighbor_selection") or {}).get(
+            "selection_score_is_llm_visible"
+        )
+    )
+    multiple_assay_records = include_assay_transfer_score and any(
+        len(neighbor.get("transfer_selected_records") or []) > 1
+        for neighbor in group.get("neighbors") or []
+    )
     return bound_group_prompt_payload({
         "task": "Group-level BBB analog transferability analysis.",
         "query": query,
@@ -750,6 +964,11 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
                 "canonical_smiles": neighbor["canonical_smiles"],
                 "similarity": neighbor["similarity"],
                 "similarity_bucket": neighbor["similarity_bucket"],
+                **(
+                    _assay_transfer_record_cards(neighbor, group)
+                    if include_assay_transfer_score
+                    else {}
+                ),
                 "prefetched_comparisons": neighbor.get("prefetched_comparisons") or [],
                 "evidence_rows": [_clean_evidence_row(row) for row in neighbor["evidence_rows"]],
                 "shared_assay_context": _clean_shared_assay_context(neighbor.get("shared_assay_context") or {}),
@@ -759,6 +978,21 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
         "instructions": [
             "Use only this group's evidence.",
             "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
+            *(
+                [
+                    (
+                        "Each assay_transfer_records item is an endpoint-distinct Stage 07 source "
+                        "record for the same selected molecule, ordered by its assay_transfer_score. "
+                        "Each score is a 0-1 cached model estimate that the exact record transfers "
+                        "to the query under the copied assay context. Scores are uncalibrated and "
+                        "are not BBB probabilities, label votes, or deterministic overrides."
+                        if multiple_assay_records
+                        else "assay_transfer_score is a 0-1 cached model estimate that the exact selected Stage 07 source record transfers to the query under the copied assay context. It is uncalibrated and is not a BBB probability, label vote, or deterministic override."
+                    )
+                ]
+                if include_assay_transfer_score
+                else []
+            ),
             "Assess structural transferability from neighbors to the query.",
             "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
             "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
@@ -1096,11 +1330,56 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
+    parser.add_argument("--enable-assay-transfer-scores", action="store_true")
     parser.add_argument("--min-similarity", type=float, default=0.3)
+    add_retrieval_strategy_args(parser)
     parser.add_argument(
-        "--morgan-neighbor-selector",
-        choices=NEIGHBOR_SELECTORS,
-        default=SIMILARITY_SELECTOR,
+        "--assay-transfer-profile",
+        choices=["v11_with_categorical"],
+        default="v11_with_categorical",
+    )
+    parser.add_argument("--assay-transfer-min-score", type=float, default=None)
+    parser.add_argument(
+        "--assay-transfer-diversity-mode",
+        choices=ASSAY_TRANSFER_DIVERSITY_MODES,
+        default=ASSAY_TRANSFER_DIVERSITY_NONE,
+    )
+    parser.add_argument("--assay-transfer-diversity-score-slack", type=float, default=0.0)
+    parser.add_argument(
+        "--assay-transfer-selection-unit",
+        choices=ASSAY_TRANSFER_SELECTION_UNITS,
+        default=ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    )
+    parser.add_argument(
+        "--assay-transfer-records-per-molecule",
+        type=int,
+        choices=range(
+            ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+            ASSAY_TRANSFER_RECORDS_PER_MOLECULE_MAX + 1,
+        ),
+        default=ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+        metavar="N",
+    )
+    parser.add_argument("--rerank-catalog", default=V11_DEFAULT_PATHS["catalog"])
+    parser.add_argument("--rerank-cache", default=V11_DEFAULT_PATHS["cache"])
+    parser.add_argument(
+        "--rerank-candidate-manifest",
+        default=V11_DEFAULT_PATHS["candidate_manifest"],
+    )
+    parser.add_argument("--rerank-cache-mode", choices=["read_only"], default="read_only")
+    parser.add_argument("--assay-transfer-model", default=V11_MODEL_PROFILE["model"])
+    parser.add_argument(
+        "--assay-transfer-model-revision", default=V11_MODEL_PROFILE["revision"]
+    )
+    parser.add_argument(
+        "--assay-transfer-template-profile",
+        choices=[V11_TEMPLATE_PROFILE],
+        default=V11_TEMPLATE_PROFILE,
+    )
+    parser.add_argument(
+        "--group-prompt-format",
+        choices=["legacy", "assay_transfer_tool"],
+        default="legacy",
     )
     parser.add_argument(
         "--neighbor-context-profile",
@@ -1109,6 +1388,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     )
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     args = parser.parse_args(argv)
+    if (
+        args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+        and args.index == DEFAULT_INDEX
+    ):
+        args.index = V11_DEFAULT_INDEX
+    if args.assay_transfer_initial_morgan_filter == 100:
+        args.assay_transfer_initial_morgan_filter = 50
     args.groups = _normalize_group_args(args.groups)
     args.tier1_replacement_groups = _normalize_group_args(args.tier1_replacement_groups)
     return args

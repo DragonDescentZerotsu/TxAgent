@@ -93,13 +93,17 @@ def test_all_pair_identity_fields_are_canonical() -> None:
             canonical_inputs = {
                 field
                 for dimension in contract.source(source_id).canonical_dimensions
-                if dimension.method != "controlled_encoder"
+                if (
+                    dimension.method != "controlled_encoder"
+                    and not dimension.classification_evidence
+                )
                 for field in dimension.input_fields
             }
             canonical_inputs.update(
                 field
-                for dimension in contract.source(source_id).canonical_dimensions
-                for producer in dimension.producer_variants
+            for dimension in contract.source(source_id).canonical_dimensions
+            if not dimension.classification_evidence
+            for producer in dimension.producer_variants
                 if producer.method != "controlled_encoder"
                 for field in producer.input_fields
             )

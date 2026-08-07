@@ -4,8 +4,89 @@ import pytest
 from tools.chembl_tool.common.assay_transfer_selection import (
     ASSAY_TRANSFER_DIVERSITY_ASSAY,
     ASSAY_TRANSFER_DIVERSITY_STRUCTURAL,
+    ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    collapse_assay_transfer_records_by_molecule,
     select_assay_transfer_records,
+    validate_assay_transfer_records_per_molecule,
 )
+
+
+def test_unique_molecule_collapse_keeps_each_molecules_best_record():
+    records = [
+        _record("a", 0.99, "one", 1),
+        _record("a", 0.98, "two", 1),
+        _record("a", 0.97, "three", 1),
+        _record("b", 0.80, "four", 2),
+        _record("c", 0.70, "five", 3),
+    ]
+    selected, audit = collapse_assay_transfer_records_by_molecule(records)
+
+    assert [row["molecule_chembl_id"] for row in selected] == ["a", "b", "c"]
+    assert [row["transfer_winning_record_id"] for row in selected] == [
+        "a-one", "b-four", "c-five"
+    ]
+    assert [row["transfer_scored_record_count"] for row in selected] == [3, 1, 1]
+    assert audit["n_valid_records_before_collapse"] == 5
+    assert audit["n_unique_molecules_after_collapse"] == 3
+
+
+def test_unique_molecule_collapse_keeps_score_ordered_endpoint_distinct_records():
+    records = [
+        _record("a", 0.99, "endpoint_one"),
+        _record("a", 0.98, "endpoint_one"),
+        _record("a", 0.97, "endpoint_two"),
+        _record("a", 0.96, "endpoint_three"),
+        _record("b", 0.80, "endpoint_four"),
+    ]
+
+    selected, audit = collapse_assay_transfer_records_by_molecule(
+        records, records_per_molecule=3
+    )
+
+    assert [row["molecule_chembl_id"] for row in selected] == ["a", "b"]
+    assert [
+        row["canonical_endpoint_key"]
+        for row in selected[0]["transfer_selected_records"]
+    ] == ["endpoint_one", "endpoint_two", "endpoint_three"]
+    assert [
+        row["transfer_selection_score"]
+        for row in selected[0]["transfer_selected_records"]
+    ] == [0.99, 0.97, 0.96]
+    assert selected[0]["transfer_winning_record_id"] == "a-endpoint_one"
+    assert selected[0]["transfer_duplicate_endpoint_records_skipped"] == 1
+    assert selected[1]["transfer_selected_record_count"] == 1
+    assert selected[1]["transfer_records_underfilled"] is True
+    assert audit["n_duplicate_endpoint_records_skipped"] == 1
+    assert audit["n_underfilled_molecules"] == 1
+
+
+def test_records_per_molecule_never_backfills_duplicate_endpoints():
+    selected, _ = collapse_assay_transfer_records_by_molecule(
+        [
+            _record("a", 0.99, "same"),
+            _record("a", 0.98, "same"),
+            _record("a", 0.97, "same"),
+        ],
+        records_per_molecule=3,
+    )
+
+    assert len(selected[0]["transfer_selected_records"]) == 1
+    assert selected[0]["transfer_records_underfilled"] is True
+
+
+@pytest.mark.parametrize("value", [0, 11])
+def test_records_per_molecule_rejects_values_outside_one_to_ten(value):
+    with pytest.raises(ValueError, match="between 1 and 10"):
+        validate_assay_transfer_records_per_molecule(
+            value, selection_unit="unique_molecule"
+        )
+
+
+def test_multiple_records_require_unique_molecule_selection():
+    with pytest.raises(ValueError, match="requires selection unit unique_molecule"):
+        validate_assay_transfer_records_per_molecule(
+            2, selection_unit=ASSAY_TRANSFER_SELECTION_SCORED_RECORD
+        )
 
 
 def _fingerprint(*bits: int):

@@ -81,6 +81,7 @@ def test_missing_auxiliary_mapping_must_be_opted_into():
             "--auxiliary-mapping",
             "/nonexistent/mapping.json",
             "--allow-missing-auxiliary-mapping",
+            "--allow-missing-reference-semantics",
         ],
     )
     assert args.allow_missing_auxiliary_mapping is True

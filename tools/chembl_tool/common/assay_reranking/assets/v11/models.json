@@ -1,0 +1,23 @@
+{
+  "profile": "v11_with_categorical",
+  "tasks": {
+    "bioavailability_ma": {
+      "dataset_name": "Bioavailability_Ma",
+      "model": "jiosephlee/assay-transfer-tool-soft-v11-bioavailability-ma-with-categorical",
+      "revision": "881af1d75d28bb9116c16e2b5e3c5811880f6387",
+      "training_measurement_kinds": ["continuous", "binary"]
+    },
+    "skin_reaction": {
+      "dataset_name": "Skin_Reaction",
+      "model": "jiosephlee/assay-transfer-tool-soft-v11-skin-reaction-with-categorical",
+      "revision": "825024317986c10573bbccb3d5c8abfda26801de",
+      "training_measurement_kinds": ["continuous", "binary", "ordinal"]
+    },
+    "bbb_martins": {
+      "dataset_name": "BBB_Martins",
+      "model": "jiosephlee/assay-transfer-tool-soft-v11-multitask-with-categorical",
+      "revision": "3220147ce9e56240670bb120e582f35cb66ec434",
+      "training_measurement_kinds": ["continuous", "binary", "ordinal"]
+    }
+  }
+}

@@ -11,6 +11,10 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.starling.normalization.audit import read_parquet_records
+from tools.chembl_tool.common.starling.reference_semantics import (
+    ReferenceEligibilitySpec,
+    reference_exclusion_reason,
+)
 
 PAIR_BUCKET_CONTRACT_VERSION = "source_aware_pair_bucket.v4"
 UNKNOWN_TOKEN = "__unknown__"
@@ -64,6 +68,9 @@ def materialize_pair_buckets(
     contract_version: str = PAIR_BUCKET_CONTRACT_VERSION,
     unknown_token: str = UNKNOWN_TOKEN,
     endpoint_field_by_source: Mapping[str, str] | None = None,
+    reference_eligibility_by_source: Mapping[
+        str, ReferenceEligibilitySpec
+    ] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Map persisted canonical fields to one source-aware key per eligible row.
 
@@ -125,6 +132,13 @@ def materialize_pair_buckets(
             endpoint_field=endpoint_field,
             validity_field=validity_field,
         )
+        if exclusion is None and reference_eligibility_by_source is not None:
+            reference_spec = reference_eligibility_by_source.get(source_id)
+            if reference_spec is None:
+                raise ValueError(
+                    f"no reference eligibility policy for source_id={source_id!r}"
+                )
+            exclusion = reference_exclusion_reason(record, reference_spec)
         bucket_values = [
             source_id,
             endpoint,
@@ -199,6 +213,15 @@ def materialize_pair_buckets(
                 source, canonical_endpoint_field
             )
             for source in sorted(source_required_fields)
+        },
+        "reference_eligibility_by_source": {
+            source: {
+                "eligible_scopes": list(spec.eligible_scopes),
+                "basis_required": spec.basis_required,
+            }
+            for source, spec in sorted(
+                (reference_eligibility_by_source or {}).items()
+            )
         },
         "stats": {
             "input_records": len(records),

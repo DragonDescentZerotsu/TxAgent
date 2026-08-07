@@ -21,9 +21,20 @@ from pathlib import Path
 import pytest
 
 from tools.chembl_tool.common.starling.normalization.measurements import (
+    normalize_cleaned_records,
     normalize_measurement_and_unit,
 )
 from tools.chembl_tool.common.units import canonicalize_unit
+from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+    direct_measurement_fields,
+    nondirect_measurement_fields,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
+    classify_direct_qualitative_text,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_fg_scalar_rules import (
+    propose_fg_scalar,
+)
 
 CORPUS_PATH = (
     Path(__file__).resolve().parent / "fixtures" / "normalization_regressions.jsonl"
@@ -51,6 +62,9 @@ EXPECTED_BUG_CLASSES = {
     "fold_spelling",
     "dalton_mass_unit",
     "ambiguous_source_range",
+    "evidence_qualitative_substring",
+    "source_measurement_policy_overreach",
+    "unencoded_directional_context",
 }
 
 
@@ -60,6 +74,54 @@ def _load_corpus() -> list[dict]:
 
 
 CORPUS = _load_corpus()
+
+
+def _actual_for_case(case: dict) -> dict:
+    record, task, stage = case["record"], case["task"], case["stage"]
+    if stage == "normalized_scalar_gate":
+        normalized = normalize_cleaned_records(
+            [record],
+            endpoint_normalizer=lambda _source_id, endpoint: endpoint,
+            family_resolver=lambda _source_id, _endpoint, _record: None,
+            task=task,
+        )[0]
+        return {
+            "canonical_measurement": normalized["canonical_measurement"],
+            "canonical_unit": normalized["canonical_unit"],
+            "measurement_parse_kind": normalized["measurement_parse_kind"],
+            "measurement_unit_status": normalized["measurement_unit_status"],
+            "finite_scalar_value": normalized["finite_scalar_value"],
+            "is_absolute_and_continuous": normalized[
+                "is_absolute_and_continuous"
+            ],
+        }
+    if stage == "bioavailability_direct_source_measurement":
+        return direct_measurement_fields(record["measurement_text"])
+    if stage == "bioavailability_nondirect_source_measurement":
+        return nondirect_measurement_fields(record["measurement_text"])
+    if stage == "bioavailability_fg_source_measurement":
+        return propose_fg_scalar(
+            record["measurement_text"],
+            canonical_endpoint=record["endpoint_name"],
+        ).to_dict()
+    if stage == "bioavailability_evidence_qualitative":
+        category, reason = classify_direct_qualitative_text(
+            record["measurement_text"]
+        )
+        return {"category": category, "reason": reason}
+
+    pair = normalize_measurement_and_unit(
+        record["measurement_text"], record["unit_text"], task=task
+    )
+    unit = canonicalize_unit(pair.canonical_unit, task=task)
+    return {
+        "canonical_measurement": pair.canonical_measurement,
+        "canonical_unit": pair.canonical_unit,
+        "status": pair.status,
+        "unit_canonical": unit.canonical,
+        "unit_dimension": [list(item) for item in unit.dimension],
+        "unit_unknown_tokens": list(unit.unknown_tokens),
+    }
 
 
 def test_corpus_is_present_and_well_formed():
@@ -92,19 +154,8 @@ def test_every_bug_class_is_represented():
 
 @pytest.mark.parametrize("case", CORPUS, ids=[c["case_id"] for c in CORPUS])
 def test_hand_validated_case(case):
-    record, expected, task = case["record"], case["expected"], case["task"]
-    pair = normalize_measurement_and_unit(
-        record["measurement_text"], record["unit_text"], task=task
-    )
-    unit = canonicalize_unit(pair.canonical_unit, task=task)
-    actual = {
-        "canonical_measurement": pair.canonical_measurement,
-        "canonical_unit": pair.canonical_unit,
-        "status": pair.status,
-        "unit_canonical": unit.canonical,
-        "unit_dimension": [list(item) for item in unit.dimension],
-        "unit_unknown_tokens": list(unit.unknown_tokens),
-    }
+    expected = case["expected"]
+    actual = _actual_for_case(case)
     # Report every mismatch at once: a parser change usually moves several fields, and
     # seeing only the first makes the blast radius look smaller than it is.
     mismatches = {
@@ -117,4 +168,34 @@ def test_hand_validated_case(case):
             f"{field} expected {want!r} got {got!r}"
             for field, (want, got) in mismatches.items()
         ) + f"\nhand-validation: {case['validation']['note']}"
+    )
+
+
+def test_directional_scalar_gate_cannot_be_undone_by_task_enrichment():
+    """The common boundary stays authoritative over later task-local reparsing."""
+    case = next(
+        case
+        for case in CORPUS
+        if case["case_id"] == "scalar_gate.unencoded_directional_fa.v1"
+    )
+    normalized = normalize_cleaned_records(
+        [case["record"]],
+        endpoint_normalizer=lambda _source_id, endpoint: endpoint,
+        family_resolver=lambda _source_id, _endpoint, _record: None,
+        record_enricher=lambda _record: {
+            "finite_scalar_value": 62.0,
+            "is_absolute_and_continuous": True,
+            "absolute_and_continuous_value": 62.0,
+            "normalization_validity_status": "valid",
+        },
+        task=case["task"],
+    )[0]
+    assert normalized["finite_scalar_value"] is None
+    assert normalized["is_absolute_and_continuous"] is False
+    assert normalized["absolute_and_continuous_value"] is None
+    assert normalized["measurement_unit_status"] == (
+        "non_atomic_directional_context"
+    )
+    assert normalized["normalization_validity_status"] == (
+        "non_scalar_measurement"
     )

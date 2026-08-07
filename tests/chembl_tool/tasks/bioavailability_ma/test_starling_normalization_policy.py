@@ -636,15 +636,15 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     assert manifest["artifact_version"].endswith(".v7")
     assert manifest["normalization_domain_rules_version"].endswith(".v4")
     assert manifest["categorical_response_version"] == (
-        "bioavailability_ma_categorical_response.v2"
+        "bioavailability_ma_categorical_response.v3"
     )
     assert manifest["fg_target_alias_version"] == (
         "bioavailability_fg_target_aliases.v1"
     )
-    assert manifest["scalar_parser_version"].endswith(".v5")
+    assert manifest["scalar_parser_version"].endswith(".v6")
     assert (
         manifest["fg_scalar_rule_version"]
-        == "bioavailability_fg_single_outcome_scalar_rules.v2"
+        == "bioavailability_fg_single_outcome_scalar_rules.v3"
     )
     assert manifest["source_column_contract_version"] == "source_column_contract.v2"
     assert manifest["index_version"].endswith(".v7")

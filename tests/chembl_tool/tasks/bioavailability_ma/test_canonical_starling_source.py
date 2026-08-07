@@ -12,6 +12,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     LOCAL_PARTITION_NON_BIOAVAILABILITY,
     LOCAL_PARTITION_RELATIVE,
     classify_local_record,
+    direct_measurement_fields,
     nondirect_measurement_fields,
 )
 
@@ -27,15 +28,27 @@ def test_local_partition_requires_an_absolute_anchor():
         )[0]
         == LOCAL_PARTITION_DIRECT
     )
+    assert (
+        classify_local_record(
+            {
+                "exposure_measure": "bioavailability",
+                "support_text": "Oral bioavailability was reported as 45%.",
+            }
+        )[0]
+        == LOCAL_PARTITION_AMBIGUOUS
+    )
 
 
 @pytest.mark.parametrize(
     ("value", "measurement", "unit", "numeric", "status"),
     [
         ("95%", "95", "%", 95.0, "explicit_atomic_scalar_unit"),
-        ("2.5-fold higher", "2.5", "fold", 2.5, "explicit_atomic_scalar_unit"),
+        ("2.5-fold", "2.5", "fold", 2.5, "explicit_atomic_scalar_unit"),
         ("ratio of 1.4", "1.4", "ratio", 1.4, "explicit_atomic_scalar_unit"),
-        ("94% versus 71%", "94% versus 71%", "", None, "non_atomic_or_qualitative"),
+        ("2.5-fold higher", "2.5-fold higher", "", None, "directional_or_comparative"),
+        ("94% versus 71%", "94% versus 71%", "", None, "directional_or_comparative"),
+        ("-50.9%", "-50.9%", "", None, "signed_value_not_atomic"),
+        ("6,47-fold higher", "6,47-fold higher", "", None, "directional_or_comparative"),
         ("similar", "similar", "", None, "no_explicit_unit"),
     ],
 )
@@ -58,15 +71,27 @@ def test_nondirect_measurement_extraction_is_explicit_and_conservative(
         )[0]
         == LOCAL_PARTITION_RELATIVE
     )
-    assert (
-        classify_local_record(
-            {
-                "exposure_measure": "bioavailability",
-                "support_text": "Oral bioavailability was reported as 45%.",
-            }
-        )[0]
-        == LOCAL_PARTITION_AMBIGUOUS
-    )
+
+
+@pytest.mark.parametrize(
+    ("value", "measurement", "unit", "numeric", "status"),
+    [
+        ("50.6%", "50.6", "%", 50.6, "explicit_atomic_scalar_unit"),
+        ("0.61 fraction", "0.61", "fraction", 0.61, "explicit_atomic_scalar_unit"),
+        ("0.61", "0.61", "", None, "no_explicit_unit"),
+        ("0.0246", "0.0246", "", None, "no_explicit_unit"),
+        ("not high", "not high", "", None, "no_explicit_unit"),
+    ],
+)
+def test_direct_measurement_extraction_requires_explicit_unit(
+    value, measurement, unit, numeric, status
+):
+    assert direct_measurement_fields(value) == {
+        "measurement_text": measurement,
+        "numeric_value": numeric,
+        "value_units": unit,
+        "measurement_unit_extraction_status": status,
+    }
 
 
 def test_build_canonical_frames_partitions_and_cross_source_deduplicates():

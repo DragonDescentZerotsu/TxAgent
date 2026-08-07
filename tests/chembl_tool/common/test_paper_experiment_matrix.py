@@ -1,9 +1,12 @@
 import argparse
 from dataclasses import replace
 import json
+import os
+from types import SimpleNamespace
 
 import pytest
 
+from tools.chembl_tool.paper_experiments import molecular_evidence_agent as agent_runner
 from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
     DEPLOYMENT_VISIBLE_PREFETCHED,
@@ -236,16 +239,20 @@ def test_starling_matrix_accepts_manifest_only_mode():
     )
 
     assert args.manifest_only is True
-    assert args.base_url == "http://127.0.0.1:50000/v1"
+    assert args.base_url is None
     assert args.model == "nvidia/GLM-5.2-NVFP4"
     assert args.reasoning_effort == ""
-    assert args.api_key_env == "GLM_LOCAL_API_KEY"
+    assert args.api_key_env == "LITELLM_API_KEY"
     assert args.evaluation_subset == "valid"
     assert args.visibility_mode == IDENTITY_BLIND
     assert args.neighbor_identity_policy == PARENT_DISJOINT
     assert args.parallelism == 128
+    assert args.retrieval_preparation_workers == 8
     assert args.neighbor_selector == "similarity"
     assert args.neighbor_context_profile == "standard"
+    assert args.top_k_per_group == 3
+    assert args.min_similarity == 0.3
+    assert args.tool_service_url == "http://127.0.0.1:8766"
 
 
 def test_starling_matrix_isolates_nonstandard_retrieval_profiles():
@@ -283,6 +290,40 @@ def test_starling_matrix_isolates_nonstandard_retrieval_profiles():
         ]
     )
     _validate_retrieval_ablation_args(isolated)
+
+    no_floor_without_root = parse_starling_args(
+        ["--benchmark-split", "scaffold", "--min-similarity", "0.0"]
+    )
+    with pytest.raises(SystemExit, match="explicit --output-root"):
+        _validate_retrieval_ablation_args(no_floor_without_root)
+
+    no_floor_k7 = parse_starling_args(
+        [
+            "--benchmark-split",
+            "scaffold",
+            "--top-k-per-group",
+            "7",
+            "--min-similarity",
+            "0.0",
+            "--output-root",
+            "outputs/test-morgan-k7-no-floor",
+        ]
+    )
+    _validate_retrieval_ablation_args(no_floor_k7)
+    experiment = next(
+        item
+        for item in experiments_for_starling_benchmark(
+            "scaffold", evaluation_subset="valid"
+        )
+        if item.name == "bbb_martins__starling_full_mechanism"
+    )
+    no_floor_k7.paper_root = no_floor_k7.output_root
+    no_floor_k7.split = "valid"
+    no_floor_k7.fresh_parent_disjoint = True
+    command = _command(experiment, no_floor_k7)
+    assert command[command.index("--top-k-per-group") + 1] == "7"
+    assert command[command.index("--min-similarity") + 1] == "0.0"
+    assert command[command.index("--tool-service-url") + 1] == "http://127.0.0.1:8766"
 
     blind_mmp_ledger = parse_starling_args(
         [
@@ -327,7 +368,7 @@ def test_starling_matrix_enforces_single_endpoint_concurrency_budget():
     _validate_concurrency(accepted)
 
     rejected = parse_starling_args(
-        ["--benchmark-split", "random", "--parallelism", "513"]
+        ["--benchmark-split", "random", "--parallelism", "501"]
     )
     try:
         _validate_concurrency(rejected)
@@ -412,12 +453,76 @@ def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():
 
     assert args.visibility_mode == DEPLOYMENT_VISIBLE
     assert args.neighbor_identity_policy == PARENT_DISJOINT
-    assert args.base_url == "http://127.0.0.1:50000/v1"
+    assert args.base_url is None
     assert args.model == "nvidia/GLM-5.2-NVFP4"
     assert args.reasoning_effort == ""
+    assert args.api_key_env == "LITELLM_API_KEY"
     selected = _prepare_policy_selection(list(EXPERIMENTS), args)
     assert selected
     assert all(experiment.mode != "none" for experiment in selected)
+
+
+def test_litellm_endpoint_and_key_resolve_from_local_keys(monkeypatch):
+    settings = SimpleNamespace(
+        LITELLM_BASE_URL="https://litellm.example.test/v1/",
+        LITELLM_API_KEY="test-only-secret",
+    )
+    monkeypatch.setattr(agent_runner, "_load_local_keys", lambda: settings)
+    monkeypatch.delenv("LITELLM_API_KEY", raising=False)
+
+    base_url = agent_runner.resolve_endpoint_base_url(None)
+    agent_runner.ensure_endpoint_api_key("LITELLM_API_KEY", base_url)
+
+    assert base_url == "https://litellm.example.test/v1"
+    assert os.environ["LITELLM_API_KEY"] == "test-only-secret"
+
+
+def test_explicit_endpoint_and_exported_key_take_precedence(monkeypatch):
+    monkeypatch.setattr(
+        agent_runner,
+        "_load_local_keys",
+        lambda: pytest.fail("keys.py should not be loaded for explicit settings"),
+    )
+    monkeypatch.setenv("CUSTOM_API_KEY", "already-exported")
+
+    base_url = agent_runner.resolve_endpoint_base_url("https://custom.example.test/v1/")
+    agent_runner.ensure_endpoint_api_key("CUSTOM_API_KEY", base_url)
+
+    assert base_url == "https://custom.example.test/v1"
+    assert os.environ["CUSTOM_API_KEY"] == "already-exported"
+
+
+def test_missing_local_litellm_settings_fail_without_secret_values(monkeypatch):
+    monkeypatch.setattr(agent_runner, "_load_local_keys", lambda: SimpleNamespace())
+    monkeypatch.delenv("LITELLM_API_KEY", raising=False)
+
+    with pytest.raises(SystemExit, match="LITELLM_BASE_URL"):
+        agent_runner.resolve_endpoint_base_url(None)
+    with pytest.raises(SystemExit, match="LITELLM_API_KEY"):
+        agent_runner.ensure_endpoint_api_key(
+            "LITELLM_API_KEY",
+            "https://litellm.example.test/v1",
+        )
+
+
+def test_missing_local_keys_module_has_actionable_error(monkeypatch):
+    def missing_keys(_name):
+        raise ModuleNotFoundError("No module named 'keys'", name="keys")
+
+    monkeypatch.setattr(agent_runner.importlib, "import_module", missing_keys)
+
+    with pytest.raises(SystemExit, match="Missing ignored keys.py"):
+        agent_runner.resolve_endpoint_base_url(None)
+
+
+def test_loopback_endpoint_retains_non_secret_placeholder(monkeypatch):
+    monkeypatch.delenv("GLM_LOCAL_API_KEY", raising=False)
+    agent_runner.ensure_endpoint_api_key(
+        "GLM_LOCAL_API_KEY",
+        "http://127.0.0.1:50000/v1",
+    )
+
+    assert os.environ["GLM_LOCAL_API_KEY"] == "local"
 
 
 def test_explicit_parent_disjoint_none_is_rejected():
@@ -540,7 +645,7 @@ def test_valid_split_changes_only_dataset_and_isolates_output_root():
     assert str(paper_root_for_split("valid")) in command[command.index("--batch-root") + 1]
     assert EXPERIMENTS[1].index == valid_experiment.index
     assert command[command.index("--model") + 1] == "nvidia/GLM-5.2-NVFP4"
-    assert command[command.index("--base-url") + 1] == "http://127.0.0.1:50000/v1"
+    assert command[command.index("--base-url") + 1] == "https://litellm.parcc.upenn.edu/v1"
     assert command[command.index("--reasoning-effort") + 1] == ""
     assert command[command.index("--temperature") + 1] == "0"
     assert command[command.index("--max-tokens") + 1] == "20480"

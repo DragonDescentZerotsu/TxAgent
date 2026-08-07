@@ -269,7 +269,9 @@ def build_downstream_artifacts(
         for split, value in indices.items():
             indices[split] = _project_paths(value, candidate, root)
             _write_json(paths["index"] / split / MANIFEST_FILENAME, indices[split])
-        audit = _heldout_audit(spec, filtered, evidence, indices, transfer)
+        audit = _heldout_audit(
+            spec, pair_metadata, filtered, evidence, indices, transfer
+        )
         _write_json(paths["audits"] / "heldout_overlap.json", audit)
         manifest.update(
             _manifest_update(
@@ -784,11 +786,26 @@ def _preflight_inputs(
 
 def _heldout_audit(
     spec: SplitDownstreamSpec,
+    pair_metadata: Mapping[str, Any],
     filtered: Mapping[str, Any],
     evidence: Mapping[str, Mapping[str, Any]],
     indices: Mapping[str, Mapping[str, Any]],
     transfer: Mapping[str, Any],
 ) -> dict[str, Any]:
+    pair_bucket_version = str(pair_metadata.get("contract_version") or "")
+    if not pair_bucket_version:
+        raise ValueError("Stage-04 pair-bucket metadata lacks contract_version")
+    calibration_pair_bucket_version = str(
+        transfer.get("pair_bucket_version") or ""
+    )
+    if (
+        calibration_pair_bucket_version
+        and calibration_pair_bucket_version != pair_bucket_version
+    ):
+        raise ValueError(
+            "Stage-04/Stage-05 pair-bucket contract mismatch: "
+            f"{pair_bucket_version!r} != {calibration_pair_bucket_version!r}"
+        )
     calibration_kind = (
         "distance_calibration"
         if transfer.get("calibration_version")
@@ -812,7 +829,7 @@ def _heldout_audit(
         "excluded_filter_source_records_present_in_filtered_views": False,
         "other_sources_are_filtered": False,
         "out_of_scope_records_are_filtered": False,
-        "pair_bucket_version": spec.pair_bucket_version,
+        "pair_bucket_version": pair_bucket_version,
         "transfer_policy_heldout_exclusion": transfer.get("heldout_exclusion"),
         "splits": {
             split: {

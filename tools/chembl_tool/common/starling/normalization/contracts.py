@@ -7,12 +7,12 @@ from typing import Any
 
 
 CLEANING_STAGE_VERSION = "starling_record_cleaning.v8"
-NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v15"
+NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v16"
 ORGANIZATION_STAGE_VERSION = "starling_record_organization.v9"
 
 NORMALIZED_RECORD_VERSION = "starling_normalized_record.v6"
 NORMALIZED_ARTIFACT_VERSION = "starling_normalized_evidence.v6"
-SCALAR_PARSER_VERSION = "lossless_scalar_parser.v5"
+SCALAR_PARSER_VERSION = "lossless_scalar_parser.v6"
 
 STAGE_REQUIRED_COLUMNS = {
     "clean": {

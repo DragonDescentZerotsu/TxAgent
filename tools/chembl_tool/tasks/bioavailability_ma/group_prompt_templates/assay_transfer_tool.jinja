@@ -9,6 +9,26 @@
 ## QUERY MOLECULE
 - SMILES: {{ query_smiles }}
 
+{% if multi_record %}
+## SELECTED MOLECULES ({{ neighbors|length }})
+{% for neighbor in neighbors %}
+
+[Molecule {{ neighbor.rank }}]
+{% for label, value in neighbor.header %}
+- {{ label }}: {{ value }}
+{% endfor %}
+{% for selected in neighbor.selected_records %}
+
+[Assay record {{ neighbor.rank }}.{{ selected.rank }}]
+- transfer likelihood (0-1): {{ selected.assay_transfer_score }}
+{% if selected.record %}
+- {% for label, value in selected.record %}{{ label }}: {{ value }}{% if not loop.last %} | {% endif %}{% endfor %}
+{% else %}
+- evidence record: none
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% else %}
 ## SELECTED ASSAY RECORDS ({{ neighbors|length }})
 {% for neighbor in neighbors %}
 
@@ -22,6 +42,7 @@
 - evidence record: none
 {% endif %}
 {% endfor %}
+{% endif %}
 
 Return a single JSON object with exactly this schema:
 {{ output_schema }}

@@ -26,6 +26,10 @@ from tools.chembl_tool.tasks.skin_reaction.starling_measurement_semantics import
 from tools.chembl_tool.tasks.skin_reaction.starling_source_column_contracts import (
     SOURCE_COLUMNS,
 )
+from tools.chembl_tool.tasks.skin_reaction.starling_reference_semantics import (
+    MAPPING_VERSION as REFERENCE_SEMANTICS_VERSION,
+    REFERENCE_SEMANTICS_CONFIG,
+)
 
 
 TASK_ID = "skin_reaction"
@@ -37,6 +41,7 @@ MEASUREMENT_ATOMIC_GROUP = "canonical_measurement_unit_pair"
 
 def _base_dimensions(
     *,
+    source_id: str,
     endpoint_method: str = "deterministic_rule",
     endpoint_legacy: str = "canonical_endpoint",
     endpoint_inputs: tuple[str, ...] = ("endpoint_name",),
@@ -105,6 +110,43 @@ def _base_dimensions(
                 legacy_value_field="categorical_encoder_id",
             )
         )
+    reference_inputs = tuple(
+        dict.fromkeys(
+            (
+                "endpoint_name",
+                "measurement_text",
+                "unit_text",
+                "support_text",
+                *REFERENCE_SEMANTICS_CONFIG.source_specs[source_id].extra_fields,
+            )
+        )
+    )
+    output.extend(
+        (
+            CanonicalDimensionSpec(
+                "canonical_reference_scope",
+                "measurement_reference_scope",
+                reference_inputs,
+                "frozen_mapping",
+                REFERENCE_SEMANTICS_VERSION,
+                missing_policy="explicit_unknown",
+                atomic_group="canonical_reference_semantics_pair",
+                classification_evidence=True,
+                legacy_value_field="canonical_reference_scope",
+            ),
+            CanonicalDimensionSpec(
+                "canonical_reference_basis",
+                "measurement_reference_basis",
+                reference_inputs,
+                "frozen_mapping",
+                REFERENCE_SEMANTICS_VERSION,
+                missing_policy="explicit_unknown",
+                atomic_group="canonical_reference_semantics_pair",
+                classification_evidence=True,
+                legacy_value_field="canonical_reference_basis",
+            ),
+        )
+    )
     return tuple(output)
 
 
@@ -134,6 +176,7 @@ SOURCES = {
         smiles_field="SMILES",
         canonical_dimensions=(
             *_base_dimensions(
+                source_id="direct_skin_reaction",
                 categorical_inputs=(
                     "positive_count",
                     "total_tested",
@@ -170,6 +213,7 @@ SOURCES = {
         smiles_field="SMILES",
         canonical_dimensions=(
             *_base_dimensions(
+                source_id="sensitization_aop",
                 endpoint_legacy="canonical_endpoint",
                 endpoint_inputs=("endpoint_name", "measurement_text", "unit_text"),
                 endpoint_version=MEASUREMENT_SEMANTICS_VERSION,
@@ -203,7 +247,10 @@ SOURCES = {
         measurement_field="observed_effect",
         smiles_field="SMILES",
         canonical_dimensions=(
-            *_base_dimensions(categorical_inputs=("result_label",)),
+            *_base_dimensions(
+                source_id="phototoxicity_irritation_local_damage",
+                categorical_inputs=("result_label",),
+            ),
             _mapped(
                 "canonical_assay_method",
                 "assay_method",
@@ -227,6 +274,7 @@ SOURCES = {
         smiles_field="SMILES",
         canonical_dimensions=(
             *_base_dimensions(
+                source_id="skin_exposure",
                 endpoint_inputs=("endpoint_name", "measurement_text", "unit_text"),
                 endpoint_version=MEASUREMENT_SEMANTICS_VERSION,
             ),
@@ -249,57 +297,73 @@ SOURCES = {
 
 PAIR_BUCKETS = {
     "direct_skin_reaction": PairBucketSpec(
-        "direct_skin_reaction",
-        (
+        source_id="direct_skin_reaction",
+        canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_assay_or_test",
             "canonical_species_or_population",
             "canonical_measurement_scale_id",
+            "canonical_reference_scope",
+            "canonical_reference_basis",
         ),
-        (
+        variance_candidates=(
             "dose_or_concentration",
             "extra_details",
         ),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        reference_basis_required=True,
     ),
     "sensitization_aop": PairBucketSpec(
-        "sensitization_aop",
-        (
+        source_id="sensitization_aop",
+        canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_aop_event",
             "canonical_assay_type",
             "canonical_species_context",
+            "canonical_reference_scope",
+            "canonical_reference_basis",
         ),
-        ("experimental_conditions", "qualifying_conditions"),
+        variance_candidates=("experimental_conditions", "qualifying_conditions"),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        reference_basis_required=True,
     ),
     "phototoxicity_irritation_local_damage": PairBucketSpec(
-        "phototoxicity_irritation_local_damage",
-        (
+        source_id="phototoxicity_irritation_local_damage",
+        canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_assay_method",
             "canonical_evidence_system",
             "canonical_measurement_scale_id",
+            "canonical_reference_scope",
+            "canonical_reference_basis",
         ),
-        (
+        variance_candidates=(
             "light_conditions",
             "qualifying_conditions",
         ),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        reference_basis_required=True,
     ),
     "skin_exposure": PairBucketSpec(
-        "skin_exposure",
-        (
+        source_id="skin_exposure",
+        canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_study_design",
             "canonical_species_context",
+            "canonical_reference_scope",
+            "canonical_reference_basis",
         ),
-        (
+        variance_candidates=(
             "formulation_vehicle",
             "exposure_time",
             "qualifying_conditions",
         ),
+        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        reference_basis_required=True,
     ),
 }
 

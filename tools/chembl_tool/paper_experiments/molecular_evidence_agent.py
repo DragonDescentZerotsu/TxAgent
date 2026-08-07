@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass, replace
+import importlib
 import json
 import os
 from pathlib import Path
@@ -27,10 +28,13 @@ from tools.chembl_tool.common.neighbor_selection import (
 )
 
 PAPER_ROOT = Path("outputs/paper/molecular_evidence_agent")
-GLM_BASE_URL = "http://127.0.0.1:50000/v1"
+GLM_BASE_URL = "https://litellm.parcc.upenn.edu/v1"
 GLM_MODEL = "nvidia/GLM-5.2-NVFP4"
-GLM_API_KEY_ENV = "GLM_LOCAL_API_KEY"
+GLM_API_KEY_ENV = "LITELLM_API_KEY"
 GLM_REASONING_EFFORT = ""
+DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8766"
+LITELLM_BASE_URL_KEY = "LITELLM_BASE_URL"
+LOCAL_KEYS_MODULE = "keys"
 IDENTITY_BLIND = "identity_blind"
 DEPLOYMENT_VISIBLE = "deployment_visible"
 DEPLOYMENT_VISIBLE_PREFETCHED = "deployment_visible_prefetched"
@@ -229,6 +233,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.list:
         print("\n".join(experiment.name for experiment in selected))
         return 0
+    args.base_url = resolve_endpoint_base_url(args.base_url)
     ensure_endpoint_api_key(args.api_key_env, args.base_url)
     _require_parent_disjoint_reuse_plans(selected, args)
 
@@ -243,6 +248,9 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "top_k_per_group": args.top_k_per_group,
+        "min_similarity": args.min_similarity,
+        "tool_service_url": args.tool_service_url,
         "data_split": args.split,
         "paper_root": str(_paper_root_from_args(args)),
         "temperature": 0.0,
@@ -254,6 +262,7 @@ def main(argv: list[str] | None = None) -> int:
             "version": SCHEDULER_VERSION,
             "global_max_workers": args.parallelism,
             "max_stage_requeues": args.max_stage_requeues,
+            "retrieval_preparation_workers": args.retrieval_preparation_workers,
         },
         "experiments": [experiment.__dict__ for experiment in all_experiments],
         "selected_experiments": [experiment.name for experiment in selected],
@@ -280,6 +289,7 @@ def main(argv: list[str] | None = None) -> int:
         ],
         max_workers=args.parallelism,
         max_stage_requeues=args.max_stage_requeues,
+        preparation_workers=args.retrieval_preparation_workers,
     )
     if failed:
         print(json.dumps({"failed": failed}, indent=2), file=sys.stderr)
@@ -291,7 +301,7 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
     visibility_mode = getattr(args, "visibility_mode", IDENTITY_BLIND)
     neighbor_identity_policy = getattr(args, "neighbor_identity_policy", OPERATIONAL)
     split = getattr(args, "split", "test")
-    base_url = getattr(args, "base_url", GLM_BASE_URL)
+    base_url = getattr(args, "base_url", None) or GLM_BASE_URL
     model = getattr(args, "model", GLM_MODEL)
     reasoning_effort = getattr(args, "reasoning_effort", GLM_REASONING_EFFORT)
     fresh_parent_disjoint = bool(getattr(args, "fresh_parent_disjoint", False))
@@ -324,10 +334,16 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
         str(getattr(args, "neighbor_selector", SIMILARITY_SELECTOR)),
         "--neighbor-context-profile",
         str(getattr(args, "neighbor_context_profile", STANDARD_NEIGHBOR_CONTEXT)),
+        "--top-k-per-group",
+        str(getattr(args, "top_k_per_group", 3)),
+        "--min-similarity",
+        str(getattr(args, "min_similarity", 0.3)),
         "--api-key-env",
         args.api_key_env,
         "--base-url",
         base_url,
+        "--tool-service-url",
+        str(getattr(args, "tool_service_url", DEFAULT_TOOL_SERVICE_URL)),
         "--model",
         model,
         "--disable-thinking",
@@ -566,7 +582,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--experiments", nargs="*", default=[])
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--api-key-env", default=GLM_API_KEY_ENV)
-    parser.add_argument("--base-url", default=GLM_BASE_URL)
+    parser.add_argument(
+        "--base-url",
+        default=None,
+        help="OpenAI-compatible endpoint; defaults to LITELLM_BASE_URL from keys.py.",
+    )
     parser.add_argument("--model", default=GLM_MODEL)
     parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
     parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=DEPLOYMENT_VISIBLE)
@@ -591,8 +611,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
+    parser.add_argument("--top-k-per-group", type=int, default=3)
+    parser.add_argument("--min-similarity", type=float, default=0.3)
+    parser.add_argument("--tool-service-url", default=DEFAULT_TOOL_SERVICE_URL)
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--parallelism", type=int, default=8)
+    parser.add_argument("--retrieval-preparation-workers", type=int, default=8)
     parser.add_argument("--max-stage-requeues", type=int, default=0)
     parser.add_argument("--timeout-s", type=int, default=300)
     parser.add_argument(
@@ -606,6 +630,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     args = parser.parse_args(argv)
     if args.parallelism < 1:
         parser.error("--parallelism must be positive")
+    if args.retrieval_preparation_workers < 1:
+        parser.error("--retrieval-preparation-workers must be positive")
+    if args.top_k_per_group < 1:
+        parser.error("--top-k-per-group must be positive")
+    if not 0.0 <= args.min_similarity <= 1.0:
+        parser.error("--min-similarity must be between 0 and 1 inclusive")
     if args.max_stage_requeues < 0:
         parser.error("--max-stage-requeues must be non-negative")
     if args.exclude_nondirect_bioavailability_records and not args.paper_root:
@@ -616,15 +646,55 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     return args
 
 
+def _load_local_keys() -> Any:
+    """Load the ignored project-local credential module without exposing values."""
+    try:
+        return importlib.import_module(LOCAL_KEYS_MODULE)
+    except ModuleNotFoundError as exc:
+        if exc.name != LOCAL_KEYS_MODULE:
+            raise
+        raise SystemExit(
+            "Missing ignored keys.py; define LITELLM_BASE_URL and "
+            "LITELLM_API_KEY in the project root."
+        ) from exc
+
+
+def resolve_endpoint_base_url(base_url: str | None) -> str:
+    """Resolve an explicit endpoint or the project-local LiteLLM endpoint."""
+    if base_url and base_url.strip():
+        resolved = base_url.strip().rstrip("/")
+    else:
+        settings = _load_local_keys()
+        configured = getattr(settings, LITELLM_BASE_URL_KEY, "")
+        if not isinstance(configured, str) or not configured.strip():
+            raise SystemExit(
+                f"Missing required {LOCAL_KEYS_MODULE}.py setting: {LITELLM_BASE_URL_KEY}"
+            )
+        resolved = configured.strip().rstrip("/")
+    parsed = urlparse(resolved)
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        raise SystemExit(
+            f"Invalid OpenAI-compatible base URL from --base-url or {LOCAL_KEYS_MODULE}.py"
+        )
+    return resolved
+
+
 def ensure_endpoint_api_key(api_key_env: str, base_url: str) -> None:
-    """Allow unauthenticated loopback vLLM without leaking a remote API key."""
+    """Inject a local credential or allow unauthenticated loopback vLLM."""
     if os.environ.get(api_key_env):
         return
     hostname = (urlparse(base_url).hostname or "").lower()
     if hostname in {"127.0.0.1", "localhost", "::1"}:
         os.environ[api_key_env] = "local"
         return
-    raise SystemExit(f"Missing required API key environment variable: {api_key_env}")
+    settings = _load_local_keys()
+    api_key = getattr(settings, api_key_env, "")
+    if not isinstance(api_key, str) or not api_key:
+        raise SystemExit(
+            f"Missing required API key environment variable or {LOCAL_KEYS_MODULE}.py "
+            f"setting: {api_key_env}"
+        )
+    os.environ[api_key_env] = api_key
 
 
 if __name__ == "__main__":

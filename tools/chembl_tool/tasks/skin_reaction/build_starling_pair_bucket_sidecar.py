@@ -21,6 +21,9 @@ from tools.chembl_tool.common.starling.pair_buckets import (
     materialize_pair_buckets,
     read_pair_bucket_input,
 )
+from tools.chembl_tool.common.starling.reference_semantics import (
+    ReferenceEligibilitySpec,
+)
 from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
     ENDPOINT_FIELD_BY_SOURCE,
     SKIN_REACTION_PAIR_BUCKET_VERSION,
@@ -57,9 +60,20 @@ def build_sidecar(
         records,
         source_required_fields=pair_fields,
         contract_version=(
-            RECORD_CONTRACT.version if v7 else SKIN_REACTION_PAIR_BUCKET_VERSION
+            SKIN_REACTION_PAIR_BUCKET_VERSION
         ),
         endpoint_field_by_source=None if v7 else ENDPOINT_FIELD_BY_SOURCE,
+        reference_eligibility_by_source=(
+            {
+                source: ReferenceEligibilitySpec(
+                    spec.eligible_reference_scopes,
+                    spec.reference_basis_required,
+                )
+                for source, spec in RECORD_CONTRACT.pair_buckets.items()
+            }
+            if v7
+            else None
+        ),
     )
     if not all(metadata["validations"].values()):
         raise ValueError(

@@ -7,12 +7,13 @@ retrieval 消融、第二模型、重复运行、source-quality annotation、bas
 
 ## 2026-08-01 v4 协议覆盖
 
-对 `record_agreement70_split811_v1` 及后续新数据集，本计划的运行默认更新为
-`identity_blind + parent_disjoint` fresh-run；operational 不再预跑，也不作为 parent-disjoint 的 staging。
-默认直连 `http://127.0.0.1:50000/v1` 的 `nvidia/GLM-5.2-NVFP4`，保持历史空
-`reasoning_effort`。Endpoint 全局硬上限为 512；reasoning-enabled 长 prompt 已证明 384/512 不稳定，当前
-默认 launcher 为全局 prompt pool 的 `parallelism=128`。旧 deployment-visible/operational 章节只描述历史
-lineage 或显式 ablation，不能覆盖本节。
+For `record_agreement70_split811_v1` and later datasets, the default remains an
+`identity_blind + parent_disjoint` fresh run; operational staging is neither run first nor required. The launcher
+loads the PARCC LiteLLM URL and credential from the ignored root `keys.py`, requests
+`nvidia/GLM-5.2-NVFP4`, and retains the historical empty `reasoning_effort`. The endpoint-wide hard limit remains
+512. Because reasoning-enabled long prompts were unstable at 384/512, one global prompt pool with
+`parallelism=128` remains the default. Later deployment-visible/operational sections describe only historical
+lineage or explicit ablations and do not override this section.
 
 第一轮先在 valid 运行完整条件和 audit，冻结设置后再运行 test。Runner 已支持 blind+parent-disjoint
 fresh-run、独立 root、无需 reuse plan 的完整 `none`+retrieval 矩阵，以及跨 task/condition 的单一 ready
@@ -176,8 +177,9 @@ RQ8 的 ChEMBL-only cumulative distance curve 是与这套 22-condition v4 sourc
 ## 固定模型和检索设置
 
 ```text
-base URL: http://127.0.0.1:50000/v1
+base URL: keys.py:LITELLM_BASE_URL
 requested model: nvidia/GLM-5.2-NVFP4
+API key env: LITELLM_API_KEY (injected from keys.py by top-level launchers)
 reasoning effort: "" (API parameter omitted; historical GLM reasoning behavior preserved)
 temperature: 0
 maximum output tokens: 20480

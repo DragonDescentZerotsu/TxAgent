@@ -29,6 +29,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_downstream_artifa
     LEGACY_DOWNSTREAM_STAGES,
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
+    PAIR_BUCKET_STAGE,
     TRANSFER_POLICY_STAGE,
     build_downstream_artifacts,
     build_filtered_molecule_evidence,
@@ -423,6 +424,12 @@ def test_complete_build_publishes_a_tree_with_no_heldout_label_evidence(tmp_path
     audit = json.loads(
         (tmp_path / AUDIT_STAGE / "heldout_overlap.json").read_text(encoding="utf-8")
     )
+    pair_metadata = json.loads(
+        (tmp_path / PAIR_BUCKET_STAGE / "pair_bucket_metadata.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert audit["pair_bucket_version"] == pair_metadata["contract_version"]
     assert audit["validations"]["pair_buckets_precede_split_filter"]
     assert audit["validations"]["filtered_evidence_only"]
     assert audit["validations"]["filtered_neighbor_indices_only"]

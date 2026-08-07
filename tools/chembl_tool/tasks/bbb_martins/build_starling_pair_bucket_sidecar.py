@@ -13,6 +13,9 @@ from tools.chembl_tool.common.starling.pair_buckets import (
     materialize_pair_buckets,
     read_pair_bucket_input,
 )
+from tools.chembl_tool.common.starling.reference_semantics import (
+    ReferenceEligibilitySpec,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_pair_buckets import (
     BBB_MARTINS_PAIR_BUCKET_VERSION,
     BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
@@ -47,6 +50,17 @@ def build_sidecar(*, records_path: str | Path, out_dir: str | Path) -> dict[str,
             BBB_MARTINS_V7_PAIR_BUCKET_VERSION
             if v7
             else BBB_MARTINS_PAIR_BUCKET_VERSION
+        ),
+        reference_eligibility_by_source=(
+            {
+                source: ReferenceEligibilitySpec(
+                    spec.eligible_reference_scopes,
+                    spec.reference_basis_required,
+                )
+                for source, spec in RECORD_CONTRACT.pair_buckets.items()
+            }
+            if v7
+            else None
         ),
     )
     if not all(metadata["validations"].values()):

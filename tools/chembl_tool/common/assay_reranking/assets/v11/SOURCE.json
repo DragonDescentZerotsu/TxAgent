@@ -1,0 +1,22 @@
+{
+  "source_template_root": "/data1/joseph/starling_assay_transfer/templates/assay_transfer_v11_intern",
+  "source_projection": "/data1/joseph/starling_assay_transfer/configs/assay_transfer/v11/prompt_projection.json",
+  "files": {
+    "_macros.jinja": "4c48f2509b9b0b3df71910de572b7a30747141e651e1eeccf82196eec34fdd54",
+    "bbb_martins/direct_bbb.jinja": "70c068c0399ee29f517fb2441151f12d08da801d656d47f5c5e186f871371530",
+    "bbb_martins/efflux_transport.jinja": "ac2a2df6f7bc661feeb6b2c46e795205b7fb3653ae22af7d27a28501c40e9e4b",
+    "bbb_martins/influx_transport.jinja": "1cb1c137156d48420e7abf7a4f10c79726eed8c212c936101e9bbda443743cb3",
+    "bbb_martins/passive_permeability.jinja": "1f0220f0a782970ea17ff8db77785d6fe14f6298a022502aa82b247a2a0151a9",
+    "bioavailability_ma/direct_hf.jinja": "b2f6a389990b84e4d3d5cca4cbb5779c279b668d32dac37b8920d605a0de8949",
+    "bioavailability_ma/fa.jinja": "2ad4d59d4663e7107388f12780205102a332efc9eb661386a56967ecc07ccd77",
+    "bioavailability_ma/fg.jinja": "58c3b083bc4b6cd90e9f629dcf6d24d447d27d96f91c4b6e94573b45cd7dcf0e",
+    "bioavailability_ma/fh.jinja": "63a174cb59807e578de4e892a6c134dcdfbca08715f5252364a6558c775d8dc7",
+    "bioavailability_ma/hf_bioavailability.jinja": "b2f6a389990b84e4d3d5cca4cbb5779c279b668d32dac37b8920d605a0de8949",
+    "bioavailability_ma/oral_exposure.jinja": "e955004c1337371e1e78dc216b7f8f0dc4782c1f282903b735ec620de3cc8bef",
+    "prompt_projection.json": "339f3bf95ae71e14fd5b288a0bdec8d66c5fadfd8d2aa13b76b9f9c13b48fd99",
+    "skin_reaction/direct_skin_reaction.jinja": "041fc82cba63654c5bc69906adcc3aa6834ce7e202ab2cf1c8768e1e395652dd",
+    "skin_reaction/phototoxicity_irritation_local_damage.jinja": "5144c77646b47e07e73503840c76e5ec8e2eff83336cc57edca15da95c0633e5",
+    "skin_reaction/sensitization_aop.jinja": "23020d97d86598e710bf2c250ebcb488ae4ff2e5f6695126aec18c7f7901068f",
+    "skin_reaction/skin_exposure.jinja": "2bfcd9ff0c58100e3ee4ffa5565fc791383248f9da1838831cdab06b0e61d17e"
+  }
+}

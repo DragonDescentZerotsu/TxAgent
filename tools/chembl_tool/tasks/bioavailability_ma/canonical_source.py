@@ -22,7 +22,10 @@ RAW_LOCAL_SOURCE_PATH = Path(
 
 CANONICAL_VERSION = "bioavailability_canonical_direct.v2"
 NONDIRECT_MEASUREMENT_EXTRACTION_VERSION = (
-    "bioavailability_nondirect_measurement_extraction.v1"
+    "bioavailability_nondirect_measurement_extraction.v2"
+)
+DIRECT_MEASUREMENT_EXTRACTION_VERSION = (
+    "bioavailability_direct_measurement_extraction.v1"
 )
 CANONICAL_SOURCE_DIR = Path(
     "data/starling_data/bioavailability_ma/canonical_direct_v2"
@@ -77,16 +80,47 @@ _NONDIRECT_FOLD_UNIT = re.compile(
     r"\b(?:fold|times?)\b|(?<=\d)\s*[x×](?=\s|$)", re.IGNORECASE
 )
 _NONDIRECT_RATIO_UNIT = re.compile(r"\bratio\b", re.IGNORECASE)
-_NONDIRECT_DIRECTION_WORDS = re.compile(
-    r"\b(?:about|approximately|approximate|reported|relative|apparent|oral|"
-    r"bioavailability|was|is|of|by|to|than|compared|versus|vs|"
-    r"increase(?:d|s)?|improve(?:d|s)?|enhance(?:d|s)?|higher|greater|"
-    r"decrease(?:d|s)?|reduce(?:d|s)?|lower|less)\b",
+_DIRECTION_OR_COMPARISON = re.compile(
+    r"\b(?:relative|compared|versus|vs\.?|by|than|"
+    r"increase(?:d|s|ing)?|improve(?:d|s|ing)?|enhance(?:d|s|ing)?|"
+    r"higher|greater|decrease(?:d|s|ing)?|reduc(?:e|ed|es|ing|tion)|"
+    r"lower|less)\b",
     re.IGNORECASE,
 )
-_NONDIRECT_POINT = re.compile(
-    r"^[<>≤≥~≈]?\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)"
-    r"(?:\s*(?:±|\+/-)\s*(?:\d+(?:\.\d*)?|\.\d+))?$"
+_SIGNED_POINT = re.compile(r"(?:^|[\s:(])[-+]\s*(?=\d)")
+_ATOMIC_NUMBER = (
+    r"(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d*)?(?:[eE][-+]?\d+)?"
+    r"|\.\d+(?:[eE][-+]?\d+)?"
+)
+_ATOMIC_APPROX = r"(?P<prefix>≈|~|about\s+|approximately\s+|approximate\s+)?"
+_ATOMIC_POINT = (
+    rf"{_ATOMIC_APPROX}(?P<value>{_ATOMIC_NUMBER})"
+    rf"(?:\s*(?:±|\+/-)\s*(?P<variation>{_ATOMIC_NUMBER}))?"
+)
+_ATOMIC_PERCENT = re.compile(
+    rf"^\s*{_ATOMIC_POINT}\s*(?:%|per\s*cent|percent(?:age)?)\s*$",
+    re.IGNORECASE,
+)
+_ATOMIC_PERCENT_REPEATED = re.compile(
+    rf"^\s*{_ATOMIC_APPROX}(?P<value>{_ATOMIC_NUMBER})\s*"
+    rf"(?:%|per\s*cent|percent(?:age)?)\s*(?:±|\+/-)\s*"
+    rf"(?P<variation>{_ATOMIC_NUMBER})\s*"
+    rf"(?:%|per\s*cent|percent(?:age)?)\s*$",
+    re.IGNORECASE,
+)
+_ATOMIC_FOLD = re.compile(
+    rf"^\s*{_ATOMIC_POINT}\s*(?:-?\s*fold|times?|[x×])\s*$",
+    re.IGNORECASE,
+)
+_ATOMIC_RATIO_SUFFIX = re.compile(
+    rf"^\s*{_ATOMIC_POINT}\s*ratio\s*$", re.IGNORECASE
+)
+_ATOMIC_RATIO_PREFIX = re.compile(
+    rf"^\s*ratio\s*(?:of|=|:)?\s*{_ATOMIC_POINT}\s*$", re.IGNORECASE
+)
+_ATOMIC_FRACTION = re.compile(
+    rf"^\s*{_ATOMIC_POINT}\s*(?:unitless\s+)?fraction\s*$",
+    re.IGNORECASE,
 )
 
 
@@ -151,7 +185,7 @@ def local_classification_signals(row: Mapping[str, Any]) -> dict[str, bool]:
 
 
 def nondirect_measurement_fields(value: Any) -> dict[str, Any]:
-    """Extract only explicit scalar/unit pairs from a non-direct HF value."""
+    """Extract one complete, unsigned scalar/unit pair from nondirect HF text."""
     raw = _text(value)
     if not raw:
         return {
@@ -160,40 +194,84 @@ def nondirect_measurement_fields(value: Any) -> dict[str, Any]:
             "value_units": "",
             "measurement_unit_extraction_status": "missing_value",
         }
-    unit = ""
-    unit_pattern: re.Pattern[str] | None = None
-    if _NONDIRECT_PERCENT_UNIT.search(raw):
-        unit, unit_pattern = "%", _NONDIRECT_PERCENT_UNIT
-    elif _NONDIRECT_FOLD_UNIT.search(raw):
-        unit, unit_pattern = "fold", _NONDIRECT_FOLD_UNIT
-    elif _NONDIRECT_RATIO_UNIT.search(raw):
-        unit, unit_pattern = "ratio", _NONDIRECT_RATIO_UNIT
-    if unit_pattern is None:
+    if _SIGNED_POINT.search(raw):
+        return _unresolved_measurement(raw, "signed_value_not_atomic")
+    if _DIRECTION_OR_COMPARISON.search(raw):
+        return _unresolved_measurement(raw, "directional_or_comparative")
+    unit_present = bool(
+        _NONDIRECT_PERCENT_UNIT.search(raw)
+        or _NONDIRECT_FOLD_UNIT.search(raw)
+        or _NONDIRECT_RATIO_UNIT.search(raw)
+    )
+    if not unit_present:
         return {
             "measurement_text": raw,
             "numeric_value": None,
             "value_units": "",
             "measurement_unit_extraction_status": "no_explicit_unit",
         }
-    measurement = unit_pattern.sub("", raw)
-    measurement = re.sub(r"\s+", " ", measurement.replace(",", "")).strip(" -:()")
-    atomic_measurement = _NONDIRECT_DIRECTION_WORDS.sub("", measurement)
-    atomic_measurement = re.sub(r"\s+", " ", atomic_measurement).strip(" -:()")
-    if not _NONDIRECT_POINT.fullmatch(atomic_measurement):
-        return {
-            "measurement_text": raw,
-            "numeric_value": None,
-            "value_units": "",
-            "measurement_unit_extraction_status": "non_atomic_or_qualitative",
-        }
-    numeric_match = re.search(
-        r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)", atomic_measurement
+    for unit, pattern in (
+        ("%", _ATOMIC_PERCENT_REPEATED),
+        ("%", _ATOMIC_PERCENT),
+        ("fold", _ATOMIC_FOLD),
+        ("ratio", _ATOMIC_RATIO_SUFFIX),
+        ("ratio", _ATOMIC_RATIO_PREFIX),
+    ):
+        match = pattern.fullmatch(raw)
+        if match is not None:
+            return _resolved_measurement(match, unit)
+    return _unresolved_measurement(raw, "non_atomic_or_qualitative")
+
+
+def direct_measurement_fields(value: Any) -> dict[str, Any]:
+    """Require an explicit percent or fraction unit inside a direct HF value."""
+    raw = _text(value)
+    if not raw:
+        return _unresolved_measurement(raw, "missing_value")
+    if _SIGNED_POINT.search(raw):
+        return _unresolved_measurement(raw, "signed_value_not_atomic")
+    if _DIRECTION_OR_COMPARISON.search(raw):
+        return _unresolved_measurement(raw, "directional_or_comparative")
+    for unit, pattern in (
+        ("%", _ATOMIC_PERCENT_REPEATED),
+        ("%", _ATOMIC_PERCENT),
+        ("fraction", _ATOMIC_FRACTION),
+    ):
+        match = pattern.fullmatch(raw)
+        if match is not None:
+            return _resolved_measurement(match, unit)
+    has_explicit_unit = bool(
+        _NONDIRECT_PERCENT_UNIT.search(raw) or re.search(r"\bfraction\b", raw, re.I)
     )
+    return _unresolved_measurement(
+        raw,
+        "non_atomic_or_qualitative" if has_explicit_unit else "no_explicit_unit",
+    )
+
+
+def _resolved_measurement(match: re.Match[str], unit: str) -> dict[str, Any]:
+    prefix = (match.groupdict().get("prefix") or "").strip()
+    value = match.group("value")
+    variation = match.groupdict().get("variation")
+    measurement = f"{prefix}{value}" if prefix in {"≈", "~"} else (
+        f"≈{value}" if prefix else value
+    )
+    if variation is not None:
+        measurement += f" ± {variation}"
     return {
-        "measurement_text": atomic_measurement,
-        "numeric_value": float(numeric_match.group(0)) if numeric_match else None,
+        "measurement_text": measurement,
+        "numeric_value": float(value.replace(",", "")),
         "value_units": unit,
         "measurement_unit_extraction_status": "explicit_atomic_scalar_unit",
+    }
+
+
+def _unresolved_measurement(raw: str, status: str) -> dict[str, Any]:
+    return {
+        "measurement_text": raw,
+        "numeric_value": None,
+        "value_units": "",
+        "measurement_unit_extraction_status": status,
     }
 
 

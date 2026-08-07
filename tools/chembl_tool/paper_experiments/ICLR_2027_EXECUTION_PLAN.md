@@ -13,13 +13,13 @@
 
 ### 2026-08-01 v4 主矩阵决策
 
-`record_agreement70_split811_v1` 及后续新数据集的正式默认改为
-`identity_blind + parent_disjoint` fresh-run。Operational、deployment-visible 和 matched-prefetch 不再是
-主矩阵前置依赖，只作为历史结果或显式 ablation。默认 endpoint 为本机 tunnel
-`http://127.0.0.1:50000/v1` 上的 `nvidia/GLM-5.2-NVFP4`，保持历史 GLM reasoning 设置；全局 endpoint
-并发预算上限为 512；首次压力运行出现 1/500 transport timeout 后，单 launcher 默认形状
-先调整为 384；由于 BBB full-flat 仍出现大量长 group-request timeout，当前默认进一步调整为
-单一 `parallelism=128` global prompt pool，禁止外层 fan-out 乘法超额。
+For `record_agreement70_split811_v1` and later datasets, the formal default is an
+`identity_blind + parent_disjoint` fresh run. Operational, deployment-visible, and matched-prefetch paths are
+historical results or explicit ablations rather than main-matrix prerequisites. The launcher loads the PARCC
+LiteLLM endpoint and credential from the ignored root `keys.py`, requests `nvidia/GLM-5.2-NVFP4`, and preserves
+the historical GLM reasoning settings. The direct loopback tunnel remains an explicit fallback. The global
+endpoint budget remains 512, but one `parallelism=128` global prompt pool is the default because earlier 384/512
+reasoning-enabled runs produced long group-request timeouts. Outer launcher fan-out must not multiply that limit.
 
 这一决策覆盖下文基于 2026-07 historical operational/deployment-visible 矩阵的“主表”措辞，但不删除历史
 结果或 relation taxonomy。新 v4 先跑 valid 并通过完整性、identity leak、parent conflict 和 held-out overlap
@@ -81,10 +81,10 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | 实验 | 核心内容 | 对应贡献 | 优先级 | 当前状态 |
 |---|---|---|---|---|
 | E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；2026-07-23 valid 扩展矩阵为 3 x 26 条件和 22 个 parent-disjoint 条件，均 0 失败，prefetch 2,713 / 2,713 matched |
-| E1 | None vs direct retrieval | C1、C3 | P0 | v4 scaffold-valid 的 GLM、GPT-OSS-20B/120B blind 矩阵完成；GLM random-valid 余 2 个失败，正式 test 未启动 |
+| E1 | None vs direct retrieval | C1、C3 | P0 | v4 scaffold-valid 的 GLM、GPT-OSS-20B/120B blind 矩阵完成；2026-08-06 completed matched GLM Morgan k=3/k=7 no-floor validation ablations with zero failures; GLM random-valid 余 2 个失败，正式 test 未启动 |
 | E2 | ChEMBL vs Starling | C2 | P0 | BBB、Bio、Skin 的 v4 scaffold-valid 三模型 source comparison 已完成；ClinTox 因无同定义 Starling direct source 不进入当前 v4 |
 | E3 | Source-quality 人工 annotation | C2、C6 | P0 | 未开始 |
-| E4 | Flat vs mechanism | C3 | P0 | BBB/Bio/Skin v4 scaffold-valid 三模型 blind 配对已完成；coverage context pilots 为 mixed/no-go，正式 test 待跑 |
+| E4 | Flat vs mechanism | C3 | P0 | BBB/Bio/Skin v4 scaffold-valid 三模型 blind 配对已完成；2026-08-06 completed the all-task V11 k=3 unique-molecule/r=5 validation ablation with zero failures; coverage context pilots 为 mixed/no-go，正式 test 待跑 |
 | E5 | Deployment-visible agentic 补充矩阵与工具行为分析 | C4、C5 | P0 | GPT-OSS-20B/120B 和 GLM scaffold-valid visible 各完成 22 条件；均为显式 ablation 而非主矩阵 |
 | E6 | Blind/visible 合同差异与细粒度 visibility attribution | C4、C5 | P1 精选条件 | GPT-OSS 两模型已有完整 blind/visible valid 对照，但同时改变 identity 与 tool execution；细粒度单因素 policy 未实现 |
 | E7 | Numeric vs non-numeric | C2 补充 | P1 | Bio 第一轮完成 |

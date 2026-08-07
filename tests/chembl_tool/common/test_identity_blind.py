@@ -46,6 +46,20 @@ def test_identity_blind_prefetch_removes_query_and_neighbor_structures():
                         "canonical_smiles": "CCN",
                         "similarity": 0.7,
                         "similarity_bucket": "moderate_analog",
+                        "transfer_selected_records": [
+                            {
+                                "record_rank": 1,
+                                "transfer_selection_score": 0.9,
+                                "transfer_winning_record_id": "record-identity",
+                                "transfer_winning_record": {
+                                    "canonical_smiles": "CCN",
+                                    "source_fields": {
+                                        "compound_name": "ExampleDrug",
+                                        "endpoint_name": "outcome",
+                                    },
+                                },
+                            }
+                        ],
                         "evidence_rows": [
                             {
                                 "molecule_chembl_id": "CHEMBL1",

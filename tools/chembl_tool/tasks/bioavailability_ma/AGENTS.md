@@ -216,9 +216,19 @@ retrieval time before neighbor ranking and top-k selection.
 
 The paper-facing factor builder follows the same row-level HF scope. It never
 feeds a nondirect row through the direct percent parser: explicit `%`, `fold`,
-or `ratio` measurements are retained with their real unit, while unitless
-relative/apparent values remain qualitative evidence. The repaired paper
+or `ratio` measurements are retained only when the complete source value is one
+unsigned atomic expression with that explicit unit. Directional, comparative,
+signed, contextual, and unitless relative/apparent values remain qualitative
+evidence. Direct HF numeric values likewise require an explicit percent or
+literal fraction unit inside the value; magnitude and support text never supply
+a missing unit. The repaired paper
 artifacts use the versioned `bioavailability_starling_*_v3` directories.
+
+Gold-label qualitative parsing and evidence-normalization qualitative parsing
+are intentionally separate. `starling_benchmark.py` owns the frozen historical
+substring policy required to reproduce the published benchmark. The v7
+categorical encoder accepts only complete controlled phrases and must not import
+or reuse the gold helper; abstained wording remains evidence-only.
 
 The side-by-side layered Starling builder is:
 
@@ -236,6 +246,13 @@ are one atomic reviewed decision, and mapped structures use `canonical_smiles` w
 source `smiles`. Fa/Fg/Fh assay and species dimensions list the real fields that supplied them. In particular,
 Fg may derive both `canonical_assay_context` and `canonical_species_context` from `assay_system`; it must not
 invent a cleaned species alias.
+
+Oral Bioavailability adds `canonical_reference_scope` from a frozen row-level classifier. HF rows use the
+authoritative report-type field deterministically; the classifier handles scalar Fa/Fg/Fh/oral-exposure
+rows that lack such an explicit source field. Only `absolute` scalars and declared categorical scales are
+Stage-04 eligible. Relative increases, ratios to comparator drugs/formulations/treatments, and unresolved
+references remain retrieval evidence but cannot enter assay-transfer calibration. Reference scope is part
+of every source's pair identity.
 
 Pair-bucket identity is declared in the same schema and contains only canonical fields. A cleaned field used
 by ordinary canonicalization cannot also be a variance candidate. An input used only by a conditional

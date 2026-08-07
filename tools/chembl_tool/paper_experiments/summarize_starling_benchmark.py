@@ -385,12 +385,14 @@ def _report(rows: list[dict[str, Any]]) -> str:
     evaluation_subset = rows[0].get("evaluation_subset", "test") if rows else "test"
     benchmark_splits = "/".join(dict.fromkeys(row["benchmark_split"] for row in rows))
     lines = [
-        f"# Starling {benchmark_splits} {evaluation_subset} benchmark 结果",
+        f"# Starling {benchmark_splits} {evaluation_subset} benchmark results",
         "",
-        f"Evaluation subset: {evaluation_subset}. Pipeline 指标采用所选 lineage 的正式结果；所有 "
-        "retrieval conditions 采用 parent-disjoint。MiniMol 使用全部 train、固定 epoch 和 threshold=0.5；Morgan KNN "
-        "与 MiniMol embedding cosine KNN 都只检索同 split 的 train labels，固定 k=3 并使用"
-        "未加权多数票。任何带 count_as_incorrect failure policy 的 pipeline failure 均按错误预测计入。",
+        f"Evaluation subset: {evaluation_subset}. Pipeline metrics use the formal results from "
+        "the selected lineage, and all retrieval conditions are parent-disjoint. MiniMol uses "
+        "all training data, a fixed epoch, and threshold=0.5. Morgan KNN and MiniMol embedding "
+        "cosine KNN retrieve only training labels from the same split, use fixed k=3, and apply "
+        "an unweighted majority vote. Pipeline failures under count_as_incorrect are counted as "
+        "incorrect predictions.",
         "",
         "| split | task | method | n | failed | accuracy | macro-F1 | AUROC | positive P/R/F1 |",
         "|---|---|---|---:|---:|---:|---:|---:|---|",
