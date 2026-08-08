@@ -1,0 +1,3311 @@
+{
+  "artifact_version": "starling_canonical_evidence.v7",
+  "auxiliary_attachment_version": "starling_auxiliary_attachment.v1",
+  "bioavailability_evidence_scope_version": "bioavailability_evidence_scope.v1",
+  "categorical_response_version": "bioavailability_ma_categorical_response.v3",
+  "compact_artifact_version": "bioavailability_ma.compact_v6.v1.v7",
+  "completed_artifact_stages": [
+    "01_cleaned",
+    "02_canonicalized",
+    "03_records",
+    "04_pair_buckets",
+    "05_distance_calibration",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits"
+  ],
+  "completed_stages": [
+    "clean",
+    "normalize",
+    "organize"
+  ],
+  "contextual_unit_policy": {
+    "matching": "exact_all_declared_fields_fail_closed",
+    "path": "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json",
+    "policy_version": "contextual_canonical_unit_policy.v1",
+    "rule_ids": [
+      "bioavailability_ma.fa.caco2_flux.pg_ng.v1",
+      "bioavailability_ma.fh.cyp_rate.pmol_nmol.v1"
+    ],
+    "schema_version": "contextual_canonical_unit_policy.schema.v1",
+    "sha256": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef"
+  },
+  "direct_measurement_extraction_version": "bioavailability_direct_measurement_extraction.v1",
+  "downstream_artifact_hashes": {
+    "distance_calibration": "d4e0e64bdb31364c7eb1edcaec159ddf8239f88d5f903bb75f3c548c3c211700",
+    "heldout_exclusions": "2974b219c78bb6e51772f06c5b494f92a303cca1800a9b68c7fb3af594d8a74a",
+    "heldout_overlap_manifest": "1e9dee11850024743374ee4c6abc8bbebe5cd0778f4962a243138cbb8332558e",
+    "pair_bucket_metadata": "34f0faa2ed1ec752e61f4301f5204b67f054bd0c06415c642ebc69424de5dc5e",
+    "pair_bucket_records": "6284d61f1988b56f73db8ac02098bae0094b504418a6fa620a6620ee2efd35c6",
+    "random_filtered_records": "13e9f5ab04b3be1bba4aaca7b2d275fe360d23b3ca125dece78e0bfda2fd85fa",
+    "random_molecule_families": "b15949362bde03fdc7938f0c6f9e63051fb4c0ce63045ca2b3f88efde5c5129c",
+    "random_molecule_family_records": "65e4fb8c425e233123beb4a89a34a45c99c9e937614eb2675ee0c9cc68712e8c",
+    "random_neighbor_index_manifest": "1579cab2eee4ab0fca15dad5ecd4529924b99e90491ea93c0568f7eaaea91d9e",
+    "scaffold_filtered_records": "05fa6806b564b07787b2d93a20bb23b3d8bdc04541580cf4c0692be67cbc9ac9",
+    "scaffold_molecule_families": "6bd5cae4927fe9df168f08f1feb3e67e6640eb9d5b8c181974722a654957feea",
+    "scaffold_molecule_family_records": "26e6c2f0e36f3472713790f1de4a85f7bbc91fed1b2cba95b15a580b8857714e",
+    "scaffold_neighbor_index_manifest": "d6daf2fa3f9cb8c05a20f0110ed92604f98edb7e31d4b4105f90160ce577015b"
+  },
+  "downstream_build_cache": {
+    "completed_stage": "09_audits",
+    "content_key": "b7d5e7cec3cbdb6df9dd92d3845a45fc98038f1e54e68e9c18f60efe4b283ead",
+    "implementation": {
+      "files": {
+        "tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
+        "tools/chembl_tool/common/evidence_contract.py": "61368968e4914965a83664c7dd449661de421fe30a15219ad62d46e072ff10ff",
+        "tools/chembl_tool/common/molecule_identity.py": "4bb1a30db5387e55b34f04229d4ba787aacb2f03e2dfd0431d6ab1c67ff9e063",
+        "tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+        "tools/chembl_tool/common/starling/__init__.py": "68b5e9c1f5d382407f784fbece3fe6e055c7129fa1fb3aa71266efa5168a8a67",
+        "tools/chembl_tool/common/starling/auxiliary_metadata.py": "8d541c3cec6d88917104bf34bed927d0f3b09cf34127179d80d8f9a2a59bf343",
+        "tools/chembl_tool/common/starling/benchmark_dataset.py": "3e35bf02dcd9bfd9c18f464a40eab2f225f0c9caf3979ec09bd1f4eb1e2965a4",
+        "tools/chembl_tool/common/starling/build_benchmark_datasets.py": "ee6e54011b8ffdf56e875ef218f63a88a7305e7774105e12bb3cb45ee15e07c4",
+        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "0fe0ad913f1054fd172a7b9a2cf83002b529a1b64234518a089393eb5d6367fa",
+        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "e5070ce794543c4b3f69bd512459f10d4a67099ce63971ac1a24ade8a390038f",
+        "tools/chembl_tool/common/starling/build_pair_bucket_transfer_policy.py": "5bcd027201aa4bf55020d2651db7999fa1e8f4aa267d099636d90ff78020522a",
+        "tools/chembl_tool/common/starling/build_runtime.py": "12096532ba7dc7f6eedd4ea1e34ca2435816b0e436e66c6394aca6782f159a9b",
+        "tools/chembl_tool/common/starling/canonicalization_v7.py": "08a57eefd0fd68ac6440b30aa9f099f71f26c5aea41ccd29197b42bb7292c5dd",
+        "tools/chembl_tool/common/starling/categorical_response.py": "cb0e26fc76fa5eac334989d3b1e746917000893dbf2cb620c9c5a4fa51e48547",
+        "tools/chembl_tool/common/starling/clustered_auxiliary_mapping.py": "978fd30b6e127bf428f6aaf9c2d138cd03a19e9364dd6137b9555016ac25610b",
+        "tools/chembl_tool/common/starling/compact_artifacts.py": "7588f9651a57231e300e68caadc423cf69bcfe35d9ad720030a29e54a07d5f44",
+        "tools/chembl_tool/common/starling/evidence_library.py": "0cf14431925e7c9557ec36e53aa260ab549956de687210cba9c16665b9eb2568",
+        "tools/chembl_tool/common/starling/heldout_index.py": "b36d53092f05f9a32f4d3e51a8725ab696bd26dd5ffb343b27f21353f168444c",
+        "tools/chembl_tool/common/starling/normalization/__init__.py": "b7aaef68d3e276bbb31d2c93fbe96e997d2579094f5826c9c87ec9bb04bacba2",
+        "tools/chembl_tool/common/starling/normalization/audit.py": "93f567dbcb19865fb519ae601de336980b4d0a1c2dba57a2dccef73d307aa3b9",
+        "tools/chembl_tool/common/starling/normalization/cleaning.py": "462c6d8f67ad1b4e7859e4e192aeee9013606fc4860d061ca1e8df78555c6ce6",
+        "tools/chembl_tool/common/starling/normalization/contracts.py": "9a8a36a3b4ebe311b186d8c24a50726a200e24374da250e2348982eaa503b1ec",
+        "tools/chembl_tool/common/starling/normalization/measurements.py": "a4a2f783012914883f1467b1e012e230c648e8d5bd14151ec0cda9057583838d",
+        "tools/chembl_tool/common/starling/normalization/organization.py": "2354ae5f39446dc5fb8daa074a00553d7945b8613f6ede21b4f616f782aede1d",
+        "tools/chembl_tool/common/starling/normalization/source_value_cleaning.py": "e24ed4dc3d28d4c016580e2eaae0f6dbc26b88be5db23dd97c13e09797096849",
+        "tools/chembl_tool/common/starling/normalization/task_policy.py": "79e98cf23e35d534a8b74a84b58048d1922f7e5bc954f3e02f8d52e05ef885bd",
+        "tools/chembl_tool/common/starling/normalized_evidence.py": "c94439d0afbfd260dda7d42b35e80bdd31b9a552ed8fdd3e00e775076437e870",
+        "tools/chembl_tool/common/starling/oral_bioavailability.py": "cb9ffd7d828e0ab4083f6d98da132c227da20816371823a25396ae311a4f88fe",
+        "tools/chembl_tool/common/starling/pair_bucket_transfer_policy.py": "2797fc74b90197003946e382d825f4f2b9f5e6a2fd5d76673a5c5d4159396580",
+        "tools/chembl_tool/common/starling/pair_buckets.py": "c194068f930675ed18d10d94efe188618d69d0e109efa9e05c0c54ae4a9301a8",
+        "tools/chembl_tool/common/starling/policy_distance.py": "17f2170b2c65718d84258f60af7a6882ca785d000a5992984babe4db8a5fc6e9",
+        "tools/chembl_tool/common/starling/split_downstream.py": "e2dda862d2788e2c19794750483416c1b1644350abb38326ec81cb8753beece9",
+        "tools/chembl_tool/common/starling/stage_artifact_store.py": "e74992cb936e89f2907b83a47a65c31831f1333b3ecd9abef341d134cc78d7da",
+        "tools/chembl_tool/common/starling/v7_benchmark_view.py": "a766f15d444714d31510d9f89cdd16104715003d5aa62cb282ab72ba85f08a96",
+        "tools/chembl_tool/common/task_workflows/evidence_library.py": "03d96fa341ecef662155dfcdd42354e25084698b2176006a403320202ad34fe2",
+        "tools/chembl_tool/common/units.py": "a6f03bc9409bef9d334aa042293944ea35ad5adbaa2fdf273610eb788b3cca5c",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py": "05eb6e320c9ca22cabd9280363b972ff8b193d2b405fb6698c86c0798e6c55dc",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py": "1e6263456f07a47dd894bf3141538171d54d61fce5b1291e1ea07fa2fa740284",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_evidence_library.py": "c9b8e933c0f78a348ca02d139ee6d732f5170f3454ee184eb3b7cd6ddfbe6fc4",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py": "41f019a9f63c8b63d2e30b302a9bb13ee30be64dc2141074a87d811612e466ca",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py": "e11e5a8bc869728bfb20c31a2ddfde244994605c007731c4523b81ed98b3d290",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py": "9e6845b65994b6691b54512757634ba666b4aa2d77dcc816cf16f65cfb2fb617",
+        "tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_artifact_store.py": "cfdf74f08799959229db0f1f7d3f423e689e0f02f84f8ed97be14ab4161e419a",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_auxiliary_metadata.py": "22715a1767d6cf18ae737bebebd4eba3dda6554ea1debc74100dd8f7a4559d5e",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py": "bc596e35ad13c728f6532d7a9cc9025fa33661f6960c6501fb3825e26b10f528",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_canonicalization.py": "9b1262a6f3580f6f87ac94c52dc62421f46c720516c01e2ae91dddb8353067a5",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_categorical_response.py": "f7194bc21c6b0505763a37aacbe4e2ca2ac57e3f48c267153d6708a938005a72",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_compact_artifacts.py": "fe701eb39a017d791517b45056793fd195b125370de82b8bf59171b1cf2fda5c",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py": "7eb3763989d0ccdd8050d949fe537a28ffa69c94e1ee10f826fc9cbf6b0f2289",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_fg_scalar_rules.py": "f8e7947aff8ec20a0a2f363884d457e5ffad9bbae7393fc61fd6e8ce1cc680ca",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_policy.py": "437fea586796d2fc550867c63b7833bd4740894bfc56ea1211854dcfa5b86bd1",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_reconciliation.py": "5e2af9c3a41fb623460fc7e22f1c80dcd7b55d38ab7e0d8b0dea9c849e539c76",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_sources.py": "da9a5b32c8cf1f27e2ab0b391d4d189940585dc28754dc0d642e5107a0adc3a1",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_bucket_transfer_policy.py": "cbee919a3bf8e3b83800f80ecdde1e7cb73dde878a7f4fe21de8f9d8b3cdc0d6",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py": "e39ab88297f31667cdb7e34b98afc4efe3d7930e5a9893a87b8d77b382ed7e0e",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py": "c36275644b02c2e19c0d3552ce0e4a5cf226474a00acf555f445a956b1323da8",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_record_canonicalization.py": "bcd15395fb6b6777a75b169a2f2a8a2b706d29381d8342f5ab03a3f04787fd19",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_schema.py": "a2ca6bc4bd951fde3dd77f32d217551d9bcc4ebc9fb01a3ceb417279a8e85291",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_source_column_contracts.py": "28ad54026f34a4ffab4814fda3a459065482f808ed96aae9c43d4534c1940d01",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_spacing_and_spelling.py": "a70fb792f4758d27309b35ebdcf9dc57316181c9ca4d7186dfb54977a9b572fd",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_v7_artifact_store.py": "7cfcedc2eecfc8272aba222d382a3de5410e98262a02c90fd22d1d813bc1d4e7"
+      },
+      "sha256": "b13053a7c6fe093c449e95925aeffcfaec3a569cb5b7641891cbe37a48ac2118",
+      "version": "starling_build_runtime.v2"
+    },
+    "implementation_sha256": "b13053a7c6fe093c449e95925aeffcfaec3a569cb5b7641891cbe37a48ac2118",
+    "inputs": {
+      "data/processed_starling/Bioavailability_Ma/random/heldout_molecule_labels.jsonl": "aa48123401e46e742d699a07002a9f8ac21d736a60e7ba2c51e44a2cef39fc80",
+      "data/processed_starling/Bioavailability_Ma/random/train_molecule_labels.jsonl": "0078dbbd561f2c5d80e736fe8b109eb2ae87fbcc41781ceff8a2401efec37a1a",
+      "data/processed_starling/Bioavailability_Ma/scaffold/heldout_molecule_labels.jsonl": "de8684d3b7db9b78a0c262e009d44cd7d2013fc3963339339e3fa0c65d3d0860",
+      "data/processed_starling/Bioavailability_Ma/scaffold/train_molecule_labels.jsonl": "13b7456a99d74c3ff17a8e0cec375789f65477f7e349e90811d8f231e18a338f",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "dc3b280d321c01499b121f184fe33f4f5d4dc906708769416780845f05cac2b3",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/records.parquet": "74b277ae2c058cd7a6668aab25b5a1369d0c4b95e1c08871d83f839692c5306e"
+    },
+    "outputs": {
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_metadata.json": "34f0faa2ed1ec752e61f4301f5204b67f054bd0c06415c642ebc69424de5dc5e",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_records.parquet": "6284d61f1988b56f73db8ac02098bae0094b504418a6fa620a6620ee2efd35c6",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/05_distance_calibration/pair_bucket_distance_calibration.json.gz": "d4e0e64bdb31364c7eb1edcaec159ddf8239f88d5f903bb75f3c548c3c211700",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/excluded_direct_bioavailability_records.parquet": "2974b219c78bb6e51772f06c5b494f92a303cca1800a9b68c7fb3af594d8a74a",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/manifest.json": "1e9dee11850024743374ee4c6abc8bbebe5cd0778f4962a243138cbb8332558e",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/random/records.parquet": "13e9f5ab04b3be1bba4aaca7b2d275fe360d23b3ca125dece78e0bfda2fd85fa",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/scaffold/records.parquet": "05fa6806b564b07787b2d93a20bb23b3d8bdc04541580cf4c0692be67cbc9ac9",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/manifest.json": "5f094806d56e7d2b6aa2dda48283a4339afc60592d0180910286fd7a57b0993d",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_families.parquet": "b15949362bde03fdc7938f0c6f9e63051fb4c0ce63045ca2b3f88efde5c5129c",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_family_records.parquet": "65e4fb8c425e233123beb4a89a34a45c99c9e937614eb2675ee0c9cc68712e8c",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/manifest.json": "3d8d6477f3ba79f46f822d22e7a4a3e6a0b5e16580ed9467573403913c9731a2",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_families.parquet": "6bd5cae4927fe9df168f08f1feb3e67e6640eb9d5b8c181974722a654957feea",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_family_records.parquet": "26e6c2f0e36f3472713790f1de4a85f7bbc91fed1b2cba95b15a580b8857714e",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/fingerprints.npz": "64418fc7650a26ec3bdcf6e1cdd2528c14858f9d978e127e9a32963cb8948fcb",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/group_membership.parquet": "379e06406663b0591cbdf275929fe188c06d5c5a0b1aa262b9e5cc491c1e72b9",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/manifest.json": "1579cab2eee4ab0fca15dad5ecd4529924b99e90491ea93c0568f7eaaea91d9e",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/molecules.parquet": "857153626fee68c65076e93b47562515fb5402e1d5cdf07ca0bf3036a84c4d15",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/fingerprints.npz": "f5579c37e72fc1fad54302ab4f7f4ac423fe3c650fe297e33ce565a291492000",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/group_membership.parquet": "30e3b58fd0f540e1ccdd33e407e1e6f416973066d26be9c2a469c1ec460b7cd5",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/manifest.json": "d6daf2fa3f9cb8c05a20f0110ed92604f98edb7e31d4b4105f90160ce577015b",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/molecules.parquet": "00d5bb43e39082f5fbc5b0d49398a1d7a5fd23ca6f9c73e6348c448556a52722",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/09_audits/heldout_overlap.json": "a3f39993bb25aa47ae85738222ea74f315496ec94d728ecf0a0e5aa268437b67"
+    },
+    "semantic_arguments": {
+      "benchmark_split_root": "data/processed_starling/Bioavailability_Ma",
+      "max_record_examples": 6
+    },
+    "task_id": "bioavailability_ma",
+    "version": "starling_build_runtime.v2"
+  },
+  "downstream_scope": {
+    "distance_calibration_stage": "05_distance_calibration",
+    "filter_scope": {
+      "field": "canonical_bioavailability_evidence_scope",
+      "value": "direct"
+    },
+    "filter_source_id": "hf_bioavailability",
+    "filtered_splits": [
+      "random",
+      "scaffold"
+    ],
+    "unfiltered_molecule_evidence_retained": false,
+    "unfiltered_neighbor_index_retained": false,
+    "unfiltered_pair_bucket_stage": "04_pair_buckets",
+    "unfiltered_record_stage": "03_records"
+  },
+  "downstream_stats": {
+    "calibration_valid_buckets": 359,
+    "pair_buckets": 8092,
+    "splits": {
+      "random": {
+        "excluded_filter_source_records": 6232,
+        "filtered_records": 457323,
+        "index_molecules": 27065,
+        "molecule_families": 42092
+      },
+      "scaffold": {
+        "excluded_filter_source_records": 6080,
+        "filtered_records": 457475,
+        "index_molecules": 27061,
+        "molecule_families": 42108
+      }
+    }
+  },
+  "elapsed_downstream_s": 71.669,
+  "elapsed_s": 420.43,
+  "endpoint_inventory": {
+    "fa": {
+      "count": 33,
+      "coverage": 1.0,
+      "endpoints": [
+        {
+          "endpoint_name": "absorption",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "absorption",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "accumulated_mass",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "accumulated_mass",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "caco2_mdck_p permeability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "caco2_mdck_pampa_perability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_pampa_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "caco2_mdck_pampa_permeability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "caco2_mdck_pampa_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "caco2_mdck_pampa_permeibility",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_pampa_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "caco2_mdck_pampа_permeability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_pampa_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "caco2_mdck_pemiability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "caco2_mdck_permeability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "caco2_mdck_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "caco2_mdck_permiability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "caco2_mdck_perva_permeability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "caco2_mdck_poraineability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "caco2_mdck_ppera_permeability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "caco2_mdck_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "disappearance_rate",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "disappearance_rate",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "dissolution",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "dissolution",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "dissolution_efficiency",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "dissolution_efficiency",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "fraction_absorbed",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "fraction_absorbed",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "fraction_dissolved",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "fraction_dissolved",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "gastric_absorption",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "gastric_absorption",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "gi_stability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "gi_stability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "human_intestinal_absorption",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "human_intestinal_absorption",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intest inal_absorption",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "intestinal_absorption",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "intest inal_effective_permeability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "intestinal_effective_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "intestina l_absorption",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "intestinal_absorption",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "intestinal_absorption",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_absorption",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_effective_permeability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_effective_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_permeability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinaleffective_permeability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "intestinal_effective_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "intestina­l_effective_permeability",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "intestinal_effective_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "intrinsic_dissolution_rate",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intrinsic_dissolution_rate",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "permeability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "solubidity",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "solubility",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "solubility",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "solubility",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        }
+      ],
+      "n_reviewed_corrections": 15,
+      "sha256": "43d72d3407ede660852220ff1e986c9815773e0a1333957c5b54c248036edbd4",
+      "source_id": "fa"
+    },
+    "fg": {
+      "count": 17,
+      "coverage": 1.0,
+      "endpoints": [
+        {
+          "endpoint_name": "bidirectional_permeability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "bidirectional_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "efflux_or_secretary_transport",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "efflux_or_secretory_transport",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "efflux_or_secretory_transport",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "efflux_or_secretory_transport",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "gut_wall_extraction_or_first_pass",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "gut_wall_extraction_or_first_pass",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_absorption",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_absorption",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_elimination",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_elimination",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_excretion",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_excretion",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_extraction_or_first_pass",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_extraction_or_first_pass",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_first_pass",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_first_pass",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_metabolism",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_metabolism",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_permeability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_permeability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intestinal_transport",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intestinal_transport",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "oral_exposure_change_due_to_gut_wall",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "oral_exposure_change_due_to_gut_wall",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "other_intestinal_transport",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "other_intestinal_transport",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "transcellular_transport",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "transcellular_transport",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "uptake_or absorptive_transport",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "uptake_or_absorptive_transport",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "uptake_or_absorptive_transport",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "uptake_or_absorptive_transport",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        }
+      ],
+      "n_reviewed_corrections": 2,
+      "sha256": "24c9afdc81db8b4c261163a1b9cb04b5a12b4c510377ac08608c69c5588087b2",
+      "source_id": "fg"
+    },
+    "fh": {
+      "count": 19,
+      "coverage": 1.0,
+      "endpoints": [
+        {
+          "endpoint_name": "biliary_clearance",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "biliary_clearance",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "cyp_metabolism",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "cyp_metabolism",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "elimination_rate",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "elimination_rate",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "extraction_ratio",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "extraction_ratio",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "fmo_metabolism",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "fmo_metabolism",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "hepatic_clearance",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "hepatic_clearance",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "hepatic_extraction",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "hepatic_extraction",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "hepatic_first_pass_m etabolism",
+          "reason": "explicit_reviewed_spacing_or_spelling_error",
+          "spacing_and_spelling_endpoint": "hepatic_first_pass_metabolism",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "reviewed_correction"
+        },
+        {
+          "endpoint_name": "hepatic_first_pass_metabolism",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "hepatic_first_pass_metabolism",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "hepatocyte_stability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "hepatocyte_stability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "intrinsic_clearance",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "intrinsic_clearance",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "metabolic_clearance",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "metabolic_clearance",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "metabolic_half_life",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "metabolic_half_life",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "microsomal_stability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "microsomal_stability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "oral_clearance",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "oral_clearance",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "parent_drug_metabolic_stability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "parent_drug_metabolic_stability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "s9_stability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "s9_stability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "substrate_depletion",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "substrate_depletion",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "ugt_metabolism",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "ugt_metabolism",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        }
+      ],
+      "n_reviewed_corrections": 1,
+      "sha256": "40917d39b6a569927834157be69c4c91f5806784c9cc699b5f310efa9e31793d",
+      "source_id": "fh"
+    },
+    "hf_bioavailability": {
+      "count": 1,
+      "coverage": 1.0,
+      "endpoints": [
+        {
+          "endpoint_name": "oral_bioavailability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "oral_bioavailability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        }
+      ],
+      "n_reviewed_corrections": 0,
+      "sha256": "95f78038b5cde8c7484c93f22f15a0c21d6ae2ba7451fdd2754df3be0d184c1a",
+      "source_id": "hf_bioavailability"
+    },
+    "oral_exposure": {
+      "count": 149,
+      "coverage": 1.0,
+      "endpoints": [
+        {
+          "endpoint_name": "AUC",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0'",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0'",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0-t",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0-t",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_1",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_1",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_1.5hr",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_1.5hr",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_10_h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_10_h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_11d",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_11d",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_11h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_11h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_12",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_12",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_120",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_120",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_120h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_120h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_12_h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_12_h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_12h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_12h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_14",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_14",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_144h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_144h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_16",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_16",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_168",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_168",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_168h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_168h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_1h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_1h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_2",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_2",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_24",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_24",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_24_h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_24_h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_24h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_24h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_24hr",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_24hr",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_2h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_2h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_2hr",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_2hr",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_3",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_3",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_36h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_36h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_3hr",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_3hr",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_4",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_4",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_48",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_48",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_48_hr",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_48_hr",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_48h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_48h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_4h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_4h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_5",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_5",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_6",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_6",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_600",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_600",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_6h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_6h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_7",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_7",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_72",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_72",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_72h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_72h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_7_ss",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_7_ss",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_8",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_8",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_84",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_84",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_8h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_8h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_96",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_96",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_LOQ",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_LOQ",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_T",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_T",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_Tmax(R)",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_Tmax(R)",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_Tmax†",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_Tmax†",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_TmedA",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_TmedA",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_inf",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_inf",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_last",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_last",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_lcq",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_lcq",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_lqc",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_lqc",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_t",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_t",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_t_last",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_t_last",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_tau",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_tau",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_tlast",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_tlast",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_tmax",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_tmax",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_tz",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_tz",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_τ",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_τ",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0_∞",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0_∞",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC0t",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC0t",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC12",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC12",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC12_24",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC12_24",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC12_h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC12_h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC12h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC12h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC1_2",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC1_2",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC24",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC24",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC24_h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC24_h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC24h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC24h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC2_11h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC2_11h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC2_4",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC2_4",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC48h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC48h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC4_8",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC4_8",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC6_12",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC6_12",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC72",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC72",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCINF",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCINF",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCINF/Dose",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCINF/Dose",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCTAU",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCTAU",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC_0_inf",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC_0_inf",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC_all",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC_all",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC_inf",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC_inf",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC_last",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC_last",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC_ss",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC_ss",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC_t",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC_t",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC_tau",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC_tau",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC_tau_ss",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC_tau_ss",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCall",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCall",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCb",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCb",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCexp",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCexp",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCinf",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCinf",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUClast",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUClast",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCobs",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCobs",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCoral",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCoral",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCss",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCss",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCt",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCt",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCtau",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCtau",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUCτ",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUCτ",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUC∞",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUC∞",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "AUMC",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "AUMC",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Aauc0_t",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Aauc0_t",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C0",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C0",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C0h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C0h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C12",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C12",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C12 h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C12 h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C24",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C24",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C24 h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C24 h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C24h",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C24h",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C26",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C26",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C28",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C28",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C30",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C30",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C32",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C32",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "CAVG",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "CAVG",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "CMAX",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "CMAX",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C_avg",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C_avg",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "C_tau",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "C_tau",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cav",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cav",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cavg",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cavg",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Clast",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Clast",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Clast or C12",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Clast or C12",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cmax",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cmax",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cmax/Dose",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cmax/Dose",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cmax_ss",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cmax_ss",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cmin",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cmin",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cmin_ss",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cmin_ss",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Css",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Css",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Ctau",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Ctau",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Ctrough",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Ctrough",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cτ",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cτ",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Cτ,ss",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Cτ,ss",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "Tmax",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "Tmax",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "absolute_bioavailability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "absolute_bioavailability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "auclast",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "auclast",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "average_concentration",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "average_concentration",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "bioavailability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "bioavailability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "cmax",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "cmax",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "concentration_time_profile",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "concentration_time_profile",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "corrected_bioavailability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "corrected_bioavailability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "dose_normalized_exposure",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "dose_normalized_exposure",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "food_effect",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "food_effect",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "oral_iv_comparison",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "oral_iv_comparison",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "other_oral_exposure",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "other_oral_exposure",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "partial_AUC",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "partial_AUC",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "relative_CMAX",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "relative_CMAX",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "relative_bioavailability",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "relative_bioavailability",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        },
+        {
+          "endpoint_name": "tmax",
+          "reason": "no_semantic_change",
+          "spacing_and_spelling_endpoint": "tmax",
+          "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+          "status": "unchanged"
+        }
+      ],
+      "n_reviewed_corrections": 0,
+      "sha256": "a55791a100173ee82a96679ac75a3d3381452d7df8d981b23cbd3ff7e4453c1b",
+      "source_id": "oral_exposure"
+    }
+  },
+  "endpoint_policy_version": "bioavailability_endpoint_unit_policy.v3",
+  "fg_scalar_rule_version": "bioavailability_fg_single_outcome_scalar_rules.v3",
+  "fg_target_alias_version": "bioavailability_fg_target_aliases.v1",
+  "hf_direct_explicit_unit_version": "hf_direct_explicit_unit.v3",
+  "hf_source_classification_version": "bioavailability_hf_evidence_scope.v1",
+  "index_version": "bioavailability_ma.compact_neighbor_index.v1.v7",
+  "invalidated_artifacts": [
+    "03_records/duplicates.parquet",
+    "03_records/exclusions.parquet",
+    "03_records/manifest.json",
+    "03_records/records.parquet",
+    "03_records/scalar_distribution.parquet",
+    "04_pair_buckets",
+    "05_distance_calibration",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits"
+  ],
+  "nondirect_measurement_extraction_version": "bioavailability_nondirect_measurement_extraction.v2",
+  "normalization_domain_rules_version": "bioavailability_normalization_domains.v4",
+  "pipeline_layout_version": "bioavailability_ma.normalized_v7_layout.v2",
+  "qualifier_vocabulary": {
+    "path": "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json",
+    "policy_version": "qualifier_vocabulary.v1",
+    "schema_version": "qualifier_vocabulary.schema.v1",
+    "scoping": "shared_plus_declared_task_fail_closed",
+    "sha256": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+    "shared_tokens": [
+      "Eq",
+      "blood",
+      "body",
+      "change",
+      "control",
+      "dose",
+      "eq",
+      "equiv",
+      "equivalent",
+      "equivalents",
+      "increase",
+      "initial",
+      "of",
+      "organ",
+      "plasma",
+      "protein",
+      "serum",
+      "tissue",
+      "total",
+      "weight",
+      "wet",
+      "wt"
+    ],
+    "tasks": {
+      "bbb_martins": [
+        "ID",
+        "administered",
+        "applied",
+        "brain",
+        "from",
+        "injected",
+        "radioactivity",
+        "recovered",
+        "the",
+        "untreated",
+        "vehicle"
+      ],
+      "bioavailability_ma": [
+        "CYP",
+        "CYP1A1",
+        "CYP1A2",
+        "CYP2A13",
+        "CYP2A6",
+        "CYP2B6",
+        "CYP2C19",
+        "CYP2C8",
+        "CYP2C9",
+        "CYP2D6",
+        "CYP2E1",
+        "CYP3A",
+        "CYP3A2",
+        "CYP3A4",
+        "CYP3A5",
+        "CYP450",
+        "CYPa",
+        "CYPs",
+        "Cyp",
+        "P-450",
+        "P450",
+        "absorbed",
+        "bile",
+        "decrease",
+        "gut",
+        "intestine",
+        "liver",
+        "reduction"
+      ],
+      "skin_reaction": [
+        "CYP3A4",
+        "ID",
+        "P450",
+        "absorbed",
+        "administered",
+        "applied",
+        "bile",
+        "brain",
+        "decrease",
+        "from",
+        "injected",
+        "liver",
+        "material",
+        "mock",
+        "muscle",
+        "radioactivity",
+        "recovered",
+        "reduction",
+        "responders",
+        "skin",
+        "the",
+        "untreated",
+        "urine",
+        "vehicle"
+      ]
+    }
+  },
+  "rebuild_request": {
+    "from_stage": "normalize",
+    "through_stage": "index"
+  },
+  "record_build_cache": {
+    "completed_stage": "organize",
+    "content_key": "2488c2470f2489d0700fba266f60739cb28c258a2e4964ce68337284badf6a99",
+    "implementation": {
+      "files": {
+        "tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
+        "tools/chembl_tool/common/evidence_contract.py": "61368968e4914965a83664c7dd449661de421fe30a15219ad62d46e072ff10ff",
+        "tools/chembl_tool/common/molecule_identity.py": "4bb1a30db5387e55b34f04229d4ba787aacb2f03e2dfd0431d6ab1c67ff9e063",
+        "tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+        "tools/chembl_tool/common/starling/__init__.py": "68b5e9c1f5d382407f784fbece3fe6e055c7129fa1fb3aa71266efa5168a8a67",
+        "tools/chembl_tool/common/starling/auxiliary_metadata.py": "8d541c3cec6d88917104bf34bed927d0f3b09cf34127179d80d8f9a2a59bf343",
+        "tools/chembl_tool/common/starling/benchmark_dataset.py": "3e35bf02dcd9bfd9c18f464a40eab2f225f0c9caf3979ec09bd1f4eb1e2965a4",
+        "tools/chembl_tool/common/starling/build_benchmark_datasets.py": "ee6e54011b8ffdf56e875ef218f63a88a7305e7774105e12bb3cb45ee15e07c4",
+        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "0fe0ad913f1054fd172a7b9a2cf83002b529a1b64234518a089393eb5d6367fa",
+        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "e5070ce794543c4b3f69bd512459f10d4a67099ce63971ac1a24ade8a390038f",
+        "tools/chembl_tool/common/starling/build_pair_bucket_transfer_policy.py": "5bcd027201aa4bf55020d2651db7999fa1e8f4aa267d099636d90ff78020522a",
+        "tools/chembl_tool/common/starling/build_runtime.py": "12096532ba7dc7f6eedd4ea1e34ca2435816b0e436e66c6394aca6782f159a9b",
+        "tools/chembl_tool/common/starling/canonicalization_v7.py": "08a57eefd0fd68ac6440b30aa9f099f71f26c5aea41ccd29197b42bb7292c5dd",
+        "tools/chembl_tool/common/starling/categorical_response.py": "cb0e26fc76fa5eac334989d3b1e746917000893dbf2cb620c9c5a4fa51e48547",
+        "tools/chembl_tool/common/starling/clustered_auxiliary_mapping.py": "978fd30b6e127bf428f6aaf9c2d138cd03a19e9364dd6137b9555016ac25610b",
+        "tools/chembl_tool/common/starling/compact_artifacts.py": "7588f9651a57231e300e68caadc423cf69bcfe35d9ad720030a29e54a07d5f44",
+        "tools/chembl_tool/common/starling/evidence_library.py": "0cf14431925e7c9557ec36e53aa260ab549956de687210cba9c16665b9eb2568",
+        "tools/chembl_tool/common/starling/heldout_index.py": "b36d53092f05f9a32f4d3e51a8725ab696bd26dd5ffb343b27f21353f168444c",
+        "tools/chembl_tool/common/starling/normalization/__init__.py": "b7aaef68d3e276bbb31d2c93fbe96e997d2579094f5826c9c87ec9bb04bacba2",
+        "tools/chembl_tool/common/starling/normalization/audit.py": "93f567dbcb19865fb519ae601de336980b4d0a1c2dba57a2dccef73d307aa3b9",
+        "tools/chembl_tool/common/starling/normalization/cleaning.py": "462c6d8f67ad1b4e7859e4e192aeee9013606fc4860d061ca1e8df78555c6ce6",
+        "tools/chembl_tool/common/starling/normalization/contracts.py": "9a8a36a3b4ebe311b186d8c24a50726a200e24374da250e2348982eaa503b1ec",
+        "tools/chembl_tool/common/starling/normalization/measurements.py": "a4a2f783012914883f1467b1e012e230c648e8d5bd14151ec0cda9057583838d",
+        "tools/chembl_tool/common/starling/normalization/organization.py": "2354ae5f39446dc5fb8daa074a00553d7945b8613f6ede21b4f616f782aede1d",
+        "tools/chembl_tool/common/starling/normalization/source_value_cleaning.py": "e24ed4dc3d28d4c016580e2eaae0f6dbc26b88be5db23dd97c13e09797096849",
+        "tools/chembl_tool/common/starling/normalization/task_policy.py": "79e98cf23e35d534a8b74a84b58048d1922f7e5bc954f3e02f8d52e05ef885bd",
+        "tools/chembl_tool/common/starling/normalized_evidence.py": "c94439d0afbfd260dda7d42b35e80bdd31b9a552ed8fdd3e00e775076437e870",
+        "tools/chembl_tool/common/starling/oral_bioavailability.py": "cb9ffd7d828e0ab4083f6d98da132c227da20816371823a25396ae311a4f88fe",
+        "tools/chembl_tool/common/starling/pair_bucket_transfer_policy.py": "2797fc74b90197003946e382d825f4f2b9f5e6a2fd5d76673a5c5d4159396580",
+        "tools/chembl_tool/common/starling/pair_buckets.py": "c194068f930675ed18d10d94efe188618d69d0e109efa9e05c0c54ae4a9301a8",
+        "tools/chembl_tool/common/starling/policy_distance.py": "17f2170b2c65718d84258f60af7a6882ca785d000a5992984babe4db8a5fc6e9",
+        "tools/chembl_tool/common/starling/split_downstream.py": "e2dda862d2788e2c19794750483416c1b1644350abb38326ec81cb8753beece9",
+        "tools/chembl_tool/common/starling/stage_artifact_store.py": "e74992cb936e89f2907b83a47a65c31831f1333b3ecd9abef341d134cc78d7da",
+        "tools/chembl_tool/common/starling/v7_benchmark_view.py": "a766f15d444714d31510d9f89cdd16104715003d5aa62cb282ab72ba85f08a96",
+        "tools/chembl_tool/common/task_workflows/evidence_library.py": "03d96fa341ecef662155dfcdd42354e25084698b2176006a403320202ad34fe2",
+        "tools/chembl_tool/common/units.py": "a6f03bc9409bef9d334aa042293944ea35ad5adbaa2fdf273610eb788b3cca5c",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py": "05eb6e320c9ca22cabd9280363b972ff8b193d2b405fb6698c86c0798e6c55dc",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py": "1e6263456f07a47dd894bf3141538171d54d61fce5b1291e1ea07fa2fa740284",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_evidence_library.py": "c9b8e933c0f78a348ca02d139ee6d732f5170f3454ee184eb3b7cd6ddfbe6fc4",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py": "41f019a9f63c8b63d2e30b302a9bb13ee30be64dc2141074a87d811612e466ca",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py": "e11e5a8bc869728bfb20c31a2ddfde244994605c007731c4523b81ed98b3d290",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py": "9e6845b65994b6691b54512757634ba666b4aa2d77dcc816cf16f65cfb2fb617",
+        "tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_artifact_store.py": "cfdf74f08799959229db0f1f7d3f423e689e0f02f84f8ed97be14ab4161e419a",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_auxiliary_metadata.py": "22715a1767d6cf18ae737bebebd4eba3dda6554ea1debc74100dd8f7a4559d5e",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py": "bc596e35ad13c728f6532d7a9cc9025fa33661f6960c6501fb3825e26b10f528",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_canonicalization.py": "9b1262a6f3580f6f87ac94c52dc62421f46c720516c01e2ae91dddb8353067a5",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_categorical_response.py": "f7194bc21c6b0505763a37aacbe4e2ca2ac57e3f48c267153d6708a938005a72",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_compact_artifacts.py": "fe701eb39a017d791517b45056793fd195b125370de82b8bf59171b1cf2fda5c",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py": "7eb3763989d0ccdd8050d949fe537a28ffa69c94e1ee10f826fc9cbf6b0f2289",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_fg_scalar_rules.py": "f8e7947aff8ec20a0a2f363884d457e5ffad9bbae7393fc61fd6e8ce1cc680ca",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_policy.py": "437fea586796d2fc550867c63b7833bd4740894bfc56ea1211854dcfa5b86bd1",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_reconciliation.py": "5e2af9c3a41fb623460fc7e22f1c80dcd7b55d38ab7e0d8b0dea9c849e539c76",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_sources.py": "da9a5b32c8cf1f27e2ab0b391d4d189940585dc28754dc0d642e5107a0adc3a1",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_bucket_transfer_policy.py": "cbee919a3bf8e3b83800f80ecdde1e7cb73dde878a7f4fe21de8f9d8b3cdc0d6",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py": "e39ab88297f31667cdb7e34b98afc4efe3d7930e5a9893a87b8d77b382ed7e0e",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py": "c36275644b02c2e19c0d3552ce0e4a5cf226474a00acf555f445a956b1323da8",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_record_canonicalization.py": "bcd15395fb6b6777a75b169a2f2a8a2b706d29381d8342f5ab03a3f04787fd19",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_schema.py": "a2ca6bc4bd951fde3dd77f32d217551d9bcc4ebc9fb01a3ceb417279a8e85291",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_source_column_contracts.py": "28ad54026f34a4ffab4814fda3a459065482f808ed96aae9c43d4534c1940d01",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_spacing_and_spelling.py": "a70fb792f4758d27309b35ebdcf9dc57316181c9ca4d7186dfb54977a9b572fd",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_v7_artifact_store.py": "7cfcedc2eecfc8272aba222d382a3de5410e98262a02c90fd22d1d813bc1d4e7"
+      },
+      "sha256": "b13053a7c6fe093c449e95925aeffcfaec3a569cb5b7641891cbe37a48ac2118",
+      "version": "starling_build_runtime.v2"
+    },
+    "implementation_sha256": "b13053a7c6fe093c449e95925aeffcfaec3a569cb5b7641891cbe37a48ac2118",
+    "inputs": {
+      "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
+      "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
+      "data/starling_data/_shared/final_smiles_mapping_v2.parquet": "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b",
+      "data/starling_data/bioavailability_ma/Direct_HF/records.parquet": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
+      "data/starling_data/bioavailability_ma/Fa/extractions.parquet": "38d92bb9cd252e772319072ebc6816864bebf247e4376bd86aae1cb104339f84",
+      "data/starling_data/bioavailability_ma/Fg/extractions.parquet": "352a599f8f81299f52113b897ab1115822451dca4c7f76904645668820e921b0",
+      "data/starling_data/bioavailability_ma/Fh/extractions.parquet": "c97626a4cadc0736b01adf3184d1dd0be42ebcbf7ca71997b27465f138efd540",
+      "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "510b2a5e496718a94fec13456c8a80b677bb7a2f86a7bc1c882a82b399e883f5",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "da05bf7aaafaf8231652f49724b5c34164cae20a20bf1aaad2231fd2b44382f7"
+    },
+    "outputs": {
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/endpoint_inventory.json": "107d7c8874dfbd0d607de26814ed5ec86379e6b0498811e9d8eea36fa42dcc36",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/manifest.json": "dcb14863d4ab5e85e01e84beb8f0329430e91d7367f7d77e606e53279272a6fa",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "510b2a5e496718a94fec13456c8a80b677bb7a2f86a7bc1c882a82b399e883f5",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/source_inventory.json": "904a584475b08c533afd650a52f449e3230a07a1c97c43d607e04ad7531f7414",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/source_value_cleaning_audit.parquet": "4d3b10909b82711bd134b2025d12c086d247b165155963f9a45219c67245021a",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "dc3b280d321c01499b121f184fe33f4f5d4dc906708769416780845f05cac2b3",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/endpoint_registry.json": "cec7b06833d381072211992c041f1d2fffd9cbc1b04e9aaa2ede1bfff3a6b6b3",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "f42808705f6e325b52fc0e065c5df02165403a5ecc491e5f4b15a1a3a589949d",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "d304c8efa397117442fb5e96dbf8cf83c7185363c6e43125220d5198388da094",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "da05bf7aaafaf8231652f49724b5c34164cae20a20bf1aaad2231fd2b44382f7",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "866eba5bed02638ef374b5612e4c51361c26dbd145e61cba8b6028a692008890",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "e7b23ae5164b4953f88143ddffa484b47d1e67e814bae6148c74d182b1739521",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/exclusions.parquet": "98c3d6480ae9d2a7244cb69307ec60e10fc75a5819b58c10557e882dc8e84958",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/manifest.json": "fded6eb75252b561332151e684e43bc61195ec95fe78894d06c52303876773d3",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/records.parquet": "74b277ae2c058cd7a6668aab25b5a1369d0c4b95e1c08871d83f839692c5306e",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/scalar_distribution.parquet": "c918c07a2a9df5d29a549ba11d0d8a56c3b001415a9dc4aa82d2e982e983cfc4"
+    },
+    "semantic_arguments": {
+      "allow_unpinned_smiles_mapping": false,
+      "auxiliary_mapping": {
+        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+        "sha256": "a0929ef4cf48717b0968f78a9a726b6a198cda3233334593b5dba67c59f17304"
+      },
+      "benchmark_split_root": "data/processed_starling/Bioavailability_Ma",
+      "hf_source_parquet": {
+        "path": "data/starling_data/bioavailability_ma/Direct_HF/records.parquet",
+        "sha256": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d"
+      },
+      "include_hf_bioavailability": true,
+      "max_hf_rows": 0,
+      "max_record_examples": 6,
+      "max_rows_per_source": 0,
+      "smiles_mapping": {
+        "path": "data/starling_data/_shared/final_smiles_mapping_v2.parquet",
+        "sha256": "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
+      },
+      "starling_data_dir": "data/starling_data/bioavailability_ma",
+      "strict_endpoint_inventory": true,
+      "v65_eligible_records": {
+        "path": "/data1/joseph/starling_assay_transfer/datasets/eligible/assay_transfer_soft_evidence_v6_5/records.parquet",
+        "sha256": "ae58b7d29a6b6c53afd73b214e5f226910619497360e394e6afd2bb54531565f"
+      },
+      "v65_reconciliation": false
+    },
+    "task_id": "bioavailability_ma",
+    "version": "starling_build_runtime.v2"
+  },
+  "record_contract": {
+    "measurement_scales": {
+      "direct_oral_bioavailability_binary.v1": {
+        "categories": [
+          {
+            "category_id": "low",
+            "encoded_value": -1.0,
+            "rank": 0
+          },
+          {
+            "category_id": "high",
+            "encoded_value": 1.0,
+            "rank": 1
+          }
+        ],
+        "definition": "explicit low versus high direct oral-bioavailability wording",
+        "input_fields": [
+          "measurement_text",
+          "bioavailability_report_type"
+        ],
+        "kind": "binary",
+        "parser_id": "bioavailability.direct_qualitative_binary.v1",
+        "scale_id": "direct_oral_bioavailability_binary.v1",
+        "source_id": "hf_bioavailability"
+      },
+      "fg_substrate_status_binary.v1": {
+        "categories": [
+          {
+            "category_id": "not_substrate",
+            "encoded_value": -1.0,
+            "rank": 0
+          },
+          {
+            "category_id": "substrate",
+            "encoded_value": 1.0,
+            "rank": 1
+          }
+        ],
+        "definition": "target-scoped not-substrate versus substrate outcome",
+        "input_fields": [
+          "substrate_status",
+          "transporter_or_enzyme"
+        ],
+        "kind": "binary",
+        "parser_id": "bioavailability.fg_substrate_status_binary.v1",
+        "scale_id": "fg_substrate_status_binary.v1",
+        "source_id": "fg"
+      }
+    },
+    "pair_buckets": {
+      "fa": {
+        "canonical_dimensions": [
+          "canonical_endpoint_name",
+          "canonical_unit_text",
+          "canonical_assay_context",
+          "canonical_species_context"
+        ],
+        "variance_candidates": [
+          "condition_medium",
+          "formulation_or_solid_form",
+          "qualifying_conditions"
+        ]
+      },
+      "fg": {
+        "canonical_dimensions": [
+          "canonical_endpoint_name",
+          "canonical_unit_text",
+          "canonical_measurement_scale_id",
+          "canonical_assay_context",
+          "canonical_species_context"
+        ],
+        "variance_candidates": [
+          "transporter_or_enzyme",
+          "substrate_status",
+          "intestinal_site",
+          "qualifying_conditions"
+        ]
+      },
+      "fh": {
+        "canonical_dimensions": [
+          "canonical_endpoint_name",
+          "canonical_unit_text",
+          "canonical_assay_context",
+          "canonical_species_context"
+        ],
+        "variance_candidates": [
+          "molecular_form",
+          "enzyme_or_pathway",
+          "qualifying_conditions"
+        ]
+      },
+      "hf_bioavailability": {
+        "canonical_dimensions": [
+          "canonical_endpoint_name",
+          "canonical_unit_text",
+          "canonical_measurement_scale_id",
+          "canonical_bioavailability_report_type",
+          "canonical_bioavailability_evidence_scope"
+        ],
+        "variance_candidates": [
+          "species_or_population",
+          "dose",
+          "oral_exposure_mode",
+          "comparator",
+          "qualifying_conditions"
+        ]
+      },
+      "oral_exposure": {
+        "canonical_dimensions": [
+          "canonical_endpoint_name",
+          "canonical_unit_text"
+        ],
+        "variance_candidates": [
+          "statistic_type",
+          "oral_dose",
+          "study_context",
+          "comparator_exposure",
+          "qualifying_conditions"
+        ]
+      }
+    },
+    "record_contract_version": "starling_record_contract.v7",
+    "semantics": {
+      "canonical_fallback_in_source_projection": false,
+      "canonical_values_per_dimension": 1,
+      "canonicalization": "reviewed same-field normalization or semantic extraction",
+      "cleaning": "meaning-preserving source-visible cleanup"
+    },
+    "source_contract_version": "source_column_contract.v1",
+    "sources": {
+      "fa": {
+        "canonical_dimensions": [
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name"
+            ],
+            "legacy_value_field": "canonical_endpoint",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_endpoint_name",
+            "producer_id": "bioavailability.fa.source_endpoint.v1",
+            "producer_id_field": "canonical_endpoint_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fa.source_endpoint.v1",
+                "version": "bioavailability_endpoint_name.v7"
+              }
+            ],
+            "semantic_dimension": "endpoint_name",
+            "version": "bioavailability_endpoint_name.v7"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_measurement",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_measurement_text",
+            "producer_id": "bioavailability.fa.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fa.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              }
+            ],
+            "semantic_dimension": "measurement",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_unit",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_unit_text",
+            "producer_id": "bioavailability.fa.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fa.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              }
+            ],
+            "semantic_dimension": "unit",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "global_identifier"
+            ],
+            "legacy_value_field": "canonical_smiles",
+            "method": "frozen_mapping",
+            "missing_policy": "null",
+            "output_field": "canonical_smiles",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "molecular_structure",
+            "version": "final_smiles_mapping_v2.98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "assay_system"
+            ],
+            "legacy_value_field": "global_context",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_assay_context",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "assay_context",
+            "version": "starling_auxiliary.globally_reconciled.v1"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "biological_context",
+              "assay_system"
+            ],
+            "legacy_value_field": "global_species_context",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_species_context",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "species_context",
+            "version": "starling_auxiliary.globally_reconciled.v1"
+          }
+        ],
+        "cleaned_source_fields": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "assay_system",
+          "condition_medium",
+          "biological_context",
+          "formulation_or_solid_form",
+          "qualifying_conditions",
+          "extra_details",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "raw_source_columns": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "endpoint_category",
+          "assay_system",
+          "reported_value",
+          "reported_units",
+          "condition_medium",
+          "biological_context",
+          "formulation_or_solid_form",
+          "qualifying_conditions",
+          "extra_details",
+          "smiles"
+        ],
+        "raw_to_cleaned_role_fields": {
+          "endpoint_category": "endpoint_name",
+          "reported_units": "unit_text",
+          "reported_value": "measurement_text",
+          "smiles": "smiles"
+        },
+        "source_id": "fa",
+        "source_visible_fields": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "assay_system",
+          "condition_medium",
+          "biological_context",
+          "formulation_or_solid_form",
+          "qualifying_conditions",
+          "extra_details",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "structure_identity_field": "global_identifier",
+        "structure_mode": "mapped"
+      },
+      "fg": {
+        "canonical_dimensions": [
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name"
+            ],
+            "legacy_value_field": "canonical_endpoint",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_endpoint_name",
+            "producer_id": "bioavailability.fg.source_endpoint.v1",
+            "producer_id_field": "canonical_endpoint_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fg.source_endpoint.v1",
+                "version": "bioavailability_endpoint_name.v7"
+              },
+              {
+                "input_fields": [
+                  "substrate_status",
+                  "transporter_or_enzyme"
+                ],
+                "method": "controlled_encoder",
+                "producer_id": "fg_substrate_status_binary.v1",
+                "version": "bioavailability_ma_categorical_response.v3"
+              }
+            ],
+            "semantic_dimension": "endpoint_name",
+            "version": "bioavailability_endpoint_name.v7"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_measurement",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_measurement_text",
+            "producer_id": "bioavailability.fg.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fg.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              },
+              {
+                "input_fields": [
+                  "substrate_status",
+                  "transporter_or_enzyme"
+                ],
+                "method": "controlled_encoder",
+                "producer_id": "fg_substrate_status_binary.v1",
+                "version": "bioavailability_ma_categorical_response.v3"
+              }
+            ],
+            "semantic_dimension": "measurement",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_unit",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_unit_text",
+            "producer_id": "bioavailability.fg.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fg.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              },
+              {
+                "input_fields": [
+                  "substrate_status",
+                  "transporter_or_enzyme"
+                ],
+                "method": "controlled_encoder",
+                "producer_id": "fg_substrate_status_binary.v1",
+                "version": "bioavailability_ma_categorical_response.v3"
+              }
+            ],
+            "semantic_dimension": "unit",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "global_identifier"
+            ],
+            "legacy_value_field": "canonical_smiles",
+            "method": "frozen_mapping",
+            "missing_policy": "null",
+            "output_field": "canonical_smiles",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "molecular_structure",
+            "version": "final_smiles_mapping_v2.98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "substrate_status",
+              "transporter_or_enzyme"
+            ],
+            "legacy_value_field": "categorical_encoder_id",
+            "method": "controlled_encoder",
+            "missing_policy": "null",
+            "output_field": "canonical_measurement_scale_id",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_scale",
+            "version": "bioavailability_ma_categorical_response.v3"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "assay_system"
+            ],
+            "legacy_value_field": "global_context",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_assay_context",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "assay_context",
+            "version": "starling_auxiliary.globally_reconciled.v1"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "assay_system"
+            ],
+            "legacy_value_field": "global_species_context",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_species_context",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "species_context",
+            "version": "starling_auxiliary.globally_reconciled.v1"
+          }
+        ],
+        "cleaned_source_fields": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "molecule_name",
+          "transporter_or_enzyme",
+          "substrate_status",
+          "assay_system",
+          "intestinal_site",
+          "qualifying_conditions",
+          "extra_details",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "raw_source_columns": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "molecule_name",
+          "gut_wall_process",
+          "transporter_or_enzyme",
+          "substrate_status",
+          "assay_system",
+          "intestinal_site",
+          "measured_value",
+          "qualifying_conditions",
+          "extra_details",
+          "smiles"
+        ],
+        "raw_to_cleaned_role_fields": {
+          "gut_wall_process": "endpoint_name",
+          "measured_value": "measurement_text",
+          "smiles": "smiles"
+        },
+        "source_id": "fg",
+        "source_visible_fields": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "molecule_name",
+          "transporter_or_enzyme",
+          "substrate_status",
+          "assay_system",
+          "intestinal_site",
+          "qualifying_conditions",
+          "extra_details",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "structure_identity_field": "global_identifier",
+        "structure_mode": "mapped"
+      },
+      "fh": {
+        "canonical_dimensions": [
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name"
+            ],
+            "legacy_value_field": "canonical_endpoint",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_endpoint_name",
+            "producer_id": "bioavailability.fh.source_endpoint.v1",
+            "producer_id_field": "canonical_endpoint_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fh.source_endpoint.v1",
+                "version": "bioavailability_endpoint_name.v7"
+              }
+            ],
+            "semantic_dimension": "endpoint_name",
+            "version": "bioavailability_endpoint_name.v7"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_measurement",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_measurement_text",
+            "producer_id": "bioavailability.fh.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fh.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              }
+            ],
+            "semantic_dimension": "measurement",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_unit",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_unit_text",
+            "producer_id": "bioavailability.fh.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.fh.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              }
+            ],
+            "semantic_dimension": "unit",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "global_identifier"
+            ],
+            "legacy_value_field": "canonical_smiles",
+            "method": "frozen_mapping",
+            "missing_policy": "null",
+            "output_field": "canonical_smiles",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "molecular_structure",
+            "version": "final_smiles_mapping_v2.98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "assay_system"
+            ],
+            "legacy_value_field": "global_context",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_assay_context",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "assay_context",
+            "version": "starling_auxiliary.globally_reconciled.v1"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "species",
+              "assay_system"
+            ],
+            "legacy_value_field": "global_species_context",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_species_context",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "species_context",
+            "version": "starling_auxiliary.globally_reconciled.v1"
+          }
+        ],
+        "cleaned_source_fields": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "assay_system",
+          "species",
+          "molecular_form",
+          "enzyme_or_pathway",
+          "qualifying_conditions",
+          "extra_details",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "raw_source_columns": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "metric_type",
+          "assay_system",
+          "species",
+          "molecular_form",
+          "reported_value",
+          "reported_units",
+          "enzyme_or_pathway",
+          "qualifying_conditions",
+          "extra_details",
+          "smiles"
+        ],
+        "raw_to_cleaned_role_fields": {
+          "metric_type": "endpoint_name",
+          "reported_units": "unit_text",
+          "reported_value": "measurement_text",
+          "smiles": "smiles"
+        },
+        "source_id": "fh",
+        "source_visible_fields": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "assay_system",
+          "species",
+          "molecular_form",
+          "enzyme_or_pathway",
+          "qualifying_conditions",
+          "extra_details",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "structure_identity_field": "global_identifier",
+        "structure_mode": "mapped"
+      },
+      "hf_bioavailability": {
+        "canonical_dimensions": [
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name"
+            ],
+            "legacy_value_field": "canonical_endpoint",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_endpoint_name",
+            "producer_id": "bioavailability.hf_bioavailability.source_endpoint.v1",
+            "producer_id_field": "canonical_endpoint_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.hf_bioavailability.source_endpoint.v1",
+                "version": "bioavailability_endpoint_name.v7"
+              },
+              {
+                "input_fields": [
+                  "measurement_text",
+                  "bioavailability_report_type"
+                ],
+                "method": "controlled_encoder",
+                "producer_id": "direct_oral_bioavailability_binary.v1",
+                "version": "bioavailability_ma_categorical_response.v3"
+              }
+            ],
+            "semantic_dimension": "endpoint_name",
+            "version": "bioavailability_endpoint_name.v7"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_measurement",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_measurement_text",
+            "producer_id": "bioavailability.hf_bioavailability.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.hf_bioavailability.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              },
+              {
+                "input_fields": [
+                  "measurement_text",
+                  "bioavailability_report_type"
+                ],
+                "method": "controlled_encoder",
+                "producer_id": "direct_oral_bioavailability_binary.v1",
+                "version": "bioavailability_ma_categorical_response.v3"
+              }
+            ],
+            "semantic_dimension": "measurement",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_unit",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_unit_text",
+            "producer_id": "bioavailability.hf_bioavailability.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.hf_bioavailability.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              },
+              {
+                "input_fields": [
+                  "measurement_text",
+                  "bioavailability_report_type"
+                ],
+                "method": "controlled_encoder",
+                "producer_id": "direct_oral_bioavailability_binary.v1",
+                "version": "bioavailability_ma_categorical_response.v3"
+              }
+            ],
+            "semantic_dimension": "unit",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "smiles"
+            ],
+            "legacy_value_field": "canonical_smiles",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_smiles",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "molecular_structure",
+            "version": "rdkit_standardized_source_smiles.v1"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "measurement_text",
+              "bioavailability_report_type"
+            ],
+            "legacy_value_field": "categorical_encoder_id",
+            "method": "controlled_encoder",
+            "missing_policy": "null",
+            "output_field": "canonical_measurement_scale_id",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_scale",
+            "version": "bioavailability_ma_categorical_response.v3"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "bioavailability_report_type"
+            ],
+            "legacy_value_field": "canonical_bioavailability_report_type",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_bioavailability_report_type",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "bioavailability_report_type",
+            "version": "bioavailability_report_type_normalization.v1"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "bioavailability_report_type"
+            ],
+            "legacy_value_field": "canonical_bioavailability_evidence_scope",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_bioavailability_evidence_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "bioavailability_evidence_scope",
+            "version": "bioavailability_evidence_scope.v1"
+          }
+        ],
+        "cleaned_source_fields": [
+          "bioavailability_report_type",
+          "comparator",
+          "dose",
+          "extra_details",
+          "molecule_name",
+          "oral_exposure_mode",
+          "pmid",
+          "qualifying_conditions",
+          "species_or_population",
+          "support_text",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "raw_source_columns": [
+          "bioavailability_report_type",
+          "comparator",
+          "dose",
+          "extra_details",
+          "molecule_name",
+          "oral_bioavailability_value",
+          "oral_exposure_mode",
+          "pmid",
+          "qualifying_conditions",
+          "smiles",
+          "species_or_population",
+          "support_text"
+        ],
+        "raw_to_cleaned_role_fields": {
+          "oral_bioavailability_value": "measurement_text",
+          "smiles": "smiles"
+        },
+        "source_id": "hf_bioavailability",
+        "source_visible_fields": [
+          "bioavailability_report_type",
+          "comparator",
+          "dose",
+          "extra_details",
+          "molecule_name",
+          "oral_exposure_mode",
+          "pmid",
+          "qualifying_conditions",
+          "species_or_population",
+          "support_text",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "structure_identity_field": null,
+        "structure_mode": "direct"
+      },
+      "oral_exposure": {
+        "canonical_dimensions": [
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name"
+            ],
+            "legacy_value_field": "canonical_endpoint",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_endpoint_name",
+            "producer_id": "bioavailability.oral_exposure.source_endpoint.v1",
+            "producer_id_field": "canonical_endpoint_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.oral_exposure.source_endpoint.v1",
+                "version": "bioavailability_endpoint_name.v7"
+              }
+            ],
+            "semantic_dimension": "endpoint_name",
+            "version": "bioavailability_endpoint_name.v7"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_measurement",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_measurement_text",
+            "producer_id": "bioavailability.oral_exposure.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.oral_exposure.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              }
+            ],
+            "semantic_dimension": "measurement",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": "canonical_measurement_unit_pair",
+            "depends_on": [
+              "canonical_endpoint_name"
+            ],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text"
+            ],
+            "legacy_value_field": "canonical_unit",
+            "method": "deterministic_rule",
+            "missing_policy": "null",
+            "output_field": "canonical_unit_text",
+            "producer_id": "bioavailability.oral_exposure.source_scalar_pair.v1",
+            "producer_id_field": "canonical_pair_producer_id",
+            "producers": [
+              {
+                "input_fields": [
+                  "endpoint_name",
+                  "measurement_text",
+                  "unit_text"
+                ],
+                "method": "deterministic_rule",
+                "producer_id": "bioavailability.oral_exposure.source_scalar_pair.v1",
+                "version": "bioavailability_measurement_unit.v8"
+              }
+            ],
+            "semantic_dimension": "unit",
+            "version": "bioavailability_measurement_unit.v8"
+          },
+          {
+            "atomic_group": null,
+            "depends_on": [],
+            "input_fields": [
+              "global_identifier"
+            ],
+            "legacy_value_field": "canonical_smiles",
+            "method": "frozen_mapping",
+            "missing_policy": "null",
+            "output_field": "canonical_smiles",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "molecular_structure",
+            "version": "final_smiles_mapping_v2.98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
+          }
+        ],
+        "cleaned_source_fields": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "statistic_type",
+          "oral_dose",
+          "study_context",
+          "comparator_exposure",
+          "qualifying_conditions",
+          "extra_details",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "raw_source_columns": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "exposure_measure",
+          "parameter_value",
+          "parameter_units",
+          "statistic_type",
+          "oral_dose",
+          "study_context",
+          "comparator_exposure",
+          "qualifying_conditions",
+          "extra_details",
+          "smiles"
+        ],
+        "raw_to_cleaned_role_fields": {
+          "exposure_measure": "endpoint_name",
+          "parameter_units": "unit_text",
+          "parameter_value": "measurement_text",
+          "smiles": "smiles"
+        },
+        "source_id": "oral_exposure",
+        "source_visible_fields": [
+          "pmid",
+          "extraction_id",
+          "global_identifier",
+          "confidence",
+          "paragraph_idx",
+          "support_text",
+          "statistic_type",
+          "oral_dose",
+          "study_context",
+          "comparator_exposure",
+          "qualifying_conditions",
+          "extra_details",
+          "endpoint_name",
+          "measurement_text",
+          "unit_text",
+          "smiles"
+        ],
+        "structure_identity_field": "global_identifier",
+        "structure_mode": "mapped"
+      }
+    },
+    "task_id": "bioavailability_ma"
+  },
+  "record_version": "starling_canonical_record.v7",
+  "report_type_normalization_version": "bioavailability_report_type_normalization.v1",
+  "scalar_parser_version": "lossless_scalar_parser.v6",
+  "source_column_contract_version": "source_column_contract.v2",
+  "source_inventory": {
+    "dataset": "starling-labs/Bioavailability_Ma",
+    "hf_bioavailability": {
+      "historical_partition_dependency": false,
+      "records_parquet": "data/starling_data/bioavailability_ma/Direct_HF/records.parquet",
+      "records_sha256": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
+      "row_classification": {
+        "direct_report_types": [
+          "absolute",
+          "extent_f",
+          "systemic_availability",
+          "unspecified"
+        ],
+        "raw_source_rows": 163815,
+        "reconciles": true,
+        "scope_counts": {
+          "direct": 112245,
+          "nondirect": 51570
+        },
+        "version": "bioavailability_hf_evidence_scope.v1"
+      },
+      "source_rows": 163815
+    },
+    "smiles_mapping": {
+      "expected_sha256": "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b",
+      "n_loaded_identifiers": 13833,
+      "path": "data/starling_data/_shared/final_smiles_mapping_v2.parquet",
+      "sha256": "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
+    },
+    "source_hashes": {
+      "fa": "38d92bb9cd252e772319072ebc6816864bebf247e4376bd86aae1cb104339f84",
+      "fg": "352a599f8f81299f52113b897ab1115822451dca4c7f76904645668820e921b0",
+      "fh": "c97626a4cadc0736b01adf3184d1dd0be42ebcbf7ca71997b27465f138efd540",
+      "hf_bioavailability": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
+      "oral_exposure": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010"
+    },
+    "source_row_counts": {
+      "fa": 85061,
+      "fg": 27713,
+      "fh": 67943,
+      "hf_bioavailability": 163815,
+      "oral_exposure": 119192
+    },
+    "source_value_cleaning": {
+      "field_counts": {
+        "measurement_text": 48
+      },
+      "n_changed_records": 48,
+      "n_field_changes": 48,
+      "n_input_records": 463724,
+      "n_output_records": 463724,
+      "reviewed_repairs": {
+        "all_required_repairs_applied": true,
+        "n_applied": 1,
+        "n_declared": 1,
+        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl",
+        "sha256": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
+        "unapplied_repair_ids": []
+      },
+      "rule_counts": {
+        "atomic_decimal_comma.v1": 46,
+        "percent_0020_space.v1": 1,
+        "reviewed:hf_bioavailability_amiodarone_missing_range_separator.v2": 1
+      },
+      "support_text_policy": {
+        "mode": "immutable_after_ingestion",
+        "version": "support_text_immutable_after_ingestion.v1"
+      },
+      "task_id": "bioavailability_ma",
+      "version": "starling_source_value_cleaning.v2"
+    }
+  },
+  "spacing_and_spelling_version": "bioavailability_spacing_and_spelling.v1",
+  "v65_reconciliation": {
+    "matching_performed": false,
+    "status": "not_performed"
+  },
+  "v65_reconciliation_version": null
+}
