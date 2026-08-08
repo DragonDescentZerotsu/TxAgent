@@ -1,0 +1,386 @@
+{
+  "archive_format": "deterministic tar + zstd",
+  "local_layout": [
+    "01_cleaned",
+    "02_canonicalized",
+    "03_records",
+    "04_pair_buckets",
+    "05_distance_calibration",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits"
+  ],
+  "part_size_limit": 90000000,
+  "root_file": {
+    "path": "build_manifest.json",
+    "restored_path": "manifest.json",
+    "sha256": "2c2aec2151862b9800b75808ececefa2ec1dbec495b84706abba7784681f9348",
+    "size": 2527000
+  },
+  "stages": {
+    "01_cleaned": {
+      "archive_sha256": "171511ee20cf3e38443ff736a5feb67d5ea369697c1d63e46c9345ace941d9d4",
+      "archive_size": 147251750,
+      "files": [
+        {
+          "path": "endpoint_inventory.json",
+          "sha256": "ef962a9c2fb24f7d6dd5ba5d6ba03fab37f8721405be471a9bd41b3887bc9b67",
+          "size": 2355349
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "269ff7becd73ff872fd954aa10947d10db3a3f7f5c7f9f6ed4876a5cdfcbb63e",
+          "size": 1680
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "3747038e3f6c6be11efd1af85c1e7863254ee3824ce1e2f81342b5f1ff8f70cf",
+          "size": 147979252
+        },
+        {
+          "path": "source_inventory.json",
+          "sha256": "d0ad9c520f0fc9d57c9e607f570bf428bab30af13ca7482c59ecc03fb95b9ad3",
+          "size": 1336
+        },
+        {
+          "path": "source_value_cleaning_audit.parquet",
+          "sha256": "3322b8180d8fa4a37a657516f1450cd9844d1dd73a27493a725ffbc886df1a43",
+          "size": 12425
+        }
+      ],
+      "parts": [
+        {
+          "path": "01_cleaned/stage.tar.zst.part-0001",
+          "sha256": "21fcc796060f3c21b1211f75b9b0d4ad7a995496f5c04c8d1fb450b5b408c8b0",
+          "size": 90000000
+        },
+        {
+          "path": "01_cleaned/stage.tar.zst.part-0002",
+          "sha256": "36bc516f8ba5c0b73e588a6707862c51e1de878a4258f4b246a9a2c7ada8c355",
+          "size": 57251750
+        }
+      ],
+      "uncompressed_tar_size": 150364160
+    },
+    "02_canonicalized": {
+      "archive_sha256": "9f04db6513af4540b89f71c25dddd6ce50ed2c5eba5412009a4710373751fb07",
+      "archive_size": 184643700,
+      "files": [
+        {
+          "path": "auxiliary_mapping_manifest.json",
+          "sha256": "d5751b6fe650baa526d81fe45ad36fa58f0dbcaf2d319e1a7a7e37e66c3c13b8",
+          "size": 6155
+        },
+        {
+          "path": "endpoint_registry.json",
+          "sha256": "6efc73ccc31d922fb69b565d9b4842465b5ce65fe9023a566623ee3471002c2d",
+          "size": 2249069
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "89e703dc0dc6d7db104309fd9eeba9f3ba754caefd79c3dbcefb48dee78c8ebe",
+          "size": 1743
+        },
+        {
+          "path": "record_validity_policy.json",
+          "sha256": "98321be36af27668ba7d481c722d04cb9eb4b87a3a9b4747a4ec8db3c59b42a1",
+          "size": 18340
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "a082ea46661fa342be43c77852c663f0e757ea5f3ee22c037bd433181163b623",
+          "size": 186263570
+        },
+        {
+          "path": "source_contract.json",
+          "sha256": "aa9909d2626da605a7364c99dd7f3ee78c5822001bd1782b4335624ed2e84766",
+          "size": 34852
+        }
+      ],
+      "parts": [
+        {
+          "path": "02_canonicalized/stage.tar.zst.part-0001",
+          "sha256": "c531f36f10190ee8d79286dee2b1faa34e39e1269e53043bdfbccc2472a1006f",
+          "size": 90000000
+        },
+        {
+          "path": "02_canonicalized/stage.tar.zst.part-0002",
+          "sha256": "ab40cf56d6d32c837fc16c75dd3d4422e6083869f6d9899e3d56cc4665d12c75",
+          "size": 90000000
+        },
+        {
+          "path": "02_canonicalized/stage.tar.zst.part-0003",
+          "sha256": "55ca9dc50549fd5a928e4dc1949c48758d5eeccd7be11ebf2b05e218d2648e07",
+          "size": 4643700
+        }
+      ],
+      "uncompressed_tar_size": 188579840
+    },
+    "03_records": {
+      "archive_sha256": "eb460fb0e7842dd156f3dea6293d36f6b5a10e82205df3d63b628059ab18080e",
+      "archive_size": 231700828,
+      "files": [
+        {
+          "path": "duplicates.parquet",
+          "sha256": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386",
+          "size": 51996
+        },
+        {
+          "path": "exclusions.parquet",
+          "sha256": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e",
+          "size": 18895455
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "b68e44518cd936e2fa50888c524e6f92b46e4d555d37125c879637ff01b088b4",
+          "size": 934
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "14741bd1bb8bf6fe1a81bcc4343603d4d4430fc4a8fb1f4c3c9e132f91b75191",
+          "size": 214711220
+        },
+        {
+          "path": "scalar_distribution.parquet",
+          "sha256": "800e112b3a264c76850076b9db6e51a0fcafe925981a6c0bf2639e0b8d394f8a",
+          "size": 47760
+        }
+      ],
+      "parts": [
+        {
+          "path": "03_records/stage.tar.zst.part-0001",
+          "sha256": "0289cf995176537ebb4ca55db91ecdd541672580115bbf4ce889cb46397e08a7",
+          "size": 90000000
+        },
+        {
+          "path": "03_records/stage.tar.zst.part-0002",
+          "sha256": "8816b50f3800f0bfd3ea82d2a90135bdefc5be9b9899c6d45a8586c8b6a52e34",
+          "size": 90000000
+        },
+        {
+          "path": "03_records/stage.tar.zst.part-0003",
+          "sha256": "d6c34c3152c5dde0637ff72347a02b39ea61805e001b980b7126e88b6c83cb47",
+          "size": 51700828
+        }
+      ],
+      "uncompressed_tar_size": 233717760
+    },
+    "04_pair_buckets": {
+      "archive_sha256": "a0788264935409a6e52b645f1bf8744f1967f20978c86b29383e58562f5f92b7",
+      "archive_size": 33589860,
+      "files": [
+        {
+          "path": "pair_bucket_metadata.json",
+          "sha256": "b659ecb61b298f025d63d0de2b29940d03ddb1e97df7b27f1b51517e45bd77f7",
+          "size": 3393
+        },
+        {
+          "path": "pair_bucket_records.parquet",
+          "sha256": "e3dd61d51b6c060c03f05be6739cfb13562808e6d764b66edd12125734ebf38f",
+          "size": 33662745
+        }
+      ],
+      "parts": [
+        {
+          "path": "04_pair_buckets/stage.tar.zst.part-0001",
+          "sha256": "a0788264935409a6e52b645f1bf8744f1967f20978c86b29383e58562f5f92b7",
+          "size": 33589860
+        }
+      ],
+      "uncompressed_tar_size": 33669120
+    },
+    "05_distance_calibration": {
+      "archive_sha256": "ca5faf1352624aab65d1af12660bca122fac43968c5565703a6d8966d2775e43",
+      "archive_size": 878483,
+      "files": [
+        {
+          "path": "pair_bucket_distance_calibration.json.gz",
+          "sha256": "aa5d3f750bb3af59ec9d9c0ed772810aed0ccc28ec8aee8bbbe7157d37fb624a",
+          "size": 895645
+        }
+      ],
+      "parts": [
+        {
+          "path": "05_distance_calibration/stage.tar.zst.part-0001",
+          "sha256": "ca5faf1352624aab65d1af12660bca122fac43968c5565703a6d8966d2775e43",
+          "size": 878483
+        }
+      ],
+      "uncompressed_tar_size": 901120
+    },
+    "06_remove_heldout_overlap": {
+      "archive_sha256": "fde27370d7a4238dd9c82cda45666e13d064ce06cd3628455ff460290968877b",
+      "archive_size": 423802061,
+      "files": [
+        {
+          "path": "excluded_direct_skin_reaction_records.parquet",
+          "sha256": "88f5e71dd3b44c92bfcd285cffdee41f3601937e2880228533b06662381cb73d",
+          "size": 394668
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "50817bec108d2b524f7e1ad55be62b7ac9df2a59827f34ff6688ff2cf16d361d",
+          "size": 4042
+        },
+        {
+          "path": "random/records.parquet",
+          "sha256": "c79c95ac67d805d43390135c81103e63ccd498e458aab32d334b0f6827b59b12",
+          "size": 213375605
+        },
+        {
+          "path": "scaffold/records.parquet",
+          "sha256": "987dd46809dc40058f61f967427430666ec181bfabdd116ecea616d502dfa650",
+          "size": 213582438
+        }
+      ],
+      "parts": [
+        {
+          "path": "06_remove_heldout_overlap/stage.tar.zst.part-0001",
+          "sha256": "1440b3e9e5c6655d7466171545ad439f354e514b789bf67972177a076b0a9d8a",
+          "size": 90000000
+        },
+        {
+          "path": "06_remove_heldout_overlap/stage.tar.zst.part-0002",
+          "sha256": "4eb627a96ebec5406d5bfbece60bb71b6a521dabc919200fc3253727e3e4d468",
+          "size": 90000000
+        },
+        {
+          "path": "06_remove_heldout_overlap/stage.tar.zst.part-0003",
+          "sha256": "a3cc5320bf4a752a9dc05305a04d4b5ed714fc5c29c2be59e92e82997201e6b3",
+          "size": 90000000
+        },
+        {
+          "path": "06_remove_heldout_overlap/stage.tar.zst.part-0004",
+          "sha256": "48158492c26e1998e276d5f137bc928076683b57464554b29efced8ad1e999d9",
+          "size": 90000000
+        },
+        {
+          "path": "06_remove_heldout_overlap/stage.tar.zst.part-0005",
+          "sha256": "8505759b12fcc1386f2b3a29c34ba3b7378b42958d57fc1e564640ee7b84e3df",
+          "size": 63802061
+        }
+      ],
+      "uncompressed_tar_size": 427366400
+    },
+    "07_molecule_evidence": {
+      "archive_sha256": "82b4cc480f95cb66e5480e7a58efa52928fe8277244656949670c0e26e268eae",
+      "archive_size": 43174058,
+      "files": [
+        {
+          "path": "random/manifest.json",
+          "sha256": "8df0a16555b375b2c4b77522386e8f609b0a683e94236417eb098becc082aa2f",
+          "size": 757
+        },
+        {
+          "path": "random/molecule_families.parquet",
+          "sha256": "eeea5922ca33f22f32bd0558e02a208edf92ac71a2cb5d8aa7a4a99f78e24227",
+          "size": 1750050
+        },
+        {
+          "path": "random/molecule_family_records.parquet",
+          "sha256": "77200e168879d2cfaff925d31ee5569acc89e69876b7e6c853af4eefb858e1a7",
+          "size": 20589516
+        },
+        {
+          "path": "scaffold/manifest.json",
+          "sha256": "d5ef203cc9a30d320c902e711bd2fe683d0b4212b904c51a2413dde6a6bd3b2e",
+          "size": 761
+        },
+        {
+          "path": "scaffold/molecule_families.parquet",
+          "sha256": "2d1deed60c9795862ec8ec7d60a57610d91010e0d2ea0eac17e2f768cc30109d",
+          "size": 1751949
+        },
+        {
+          "path": "scaffold/molecule_family_records.parquet",
+          "sha256": "bf75034d9efbfa499f295fb183b3488dff3005783542fabc81ec185e6ad66d20",
+          "size": 20612844
+        }
+      ],
+      "parts": [
+        {
+          "path": "07_molecule_evidence/stage.tar.zst.part-0001",
+          "sha256": "82b4cc480f95cb66e5480e7a58efa52928fe8277244656949670c0e26e268eae",
+          "size": 43174058
+        }
+      ],
+      "uncompressed_tar_size": 44718080
+    },
+    "08_neighbor_index": {
+      "archive_sha256": "80b3080c2bbdf95d40c7fa48b60cde360256e6e3d5deac18387bd6c5323566c6",
+      "archive_size": 6923531,
+      "files": [
+        {
+          "path": "random/fingerprints.npz",
+          "sha256": "58226ec57bbbcb5f6d370797af10c98d8c31c014f4a69a65a87f26df237831d6",
+          "size": 851930
+        },
+        {
+          "path": "random/group_membership.parquet",
+          "sha256": "582ef67e32b322745342806558586fceef2e799177758799736c3b7ef3540e90",
+          "size": 1269879
+        },
+        {
+          "path": "random/manifest.json",
+          "sha256": "680fd890216c2b9b3601485ab1b830512a857005855537dea7c24a7997713a2e",
+          "size": 1716
+        },
+        {
+          "path": "random/molecules.parquet",
+          "sha256": "739d3eff3a7252ca5a384a77103cbc56368daeb958d89a9c250334c1a5c1a403",
+          "size": 1727428
+        },
+        {
+          "path": "scaffold/fingerprints.npz",
+          "sha256": "bcd908b37ee8c0926cf0bbc82b5d1121636f8475da106cd6f4ca35335256e80b",
+          "size": 850849
+        },
+        {
+          "path": "scaffold/group_membership.parquet",
+          "sha256": "ac6e1c23efae85495c98cc8f8f8d8faccbb141d77fccf9bc7cb39fa74e94c073",
+          "size": 1273744
+        },
+        {
+          "path": "scaffold/manifest.json",
+          "sha256": "bc1b272a7bc1a971cf11575c6956ca1f31294d42dd442ea4814595924aba89d3",
+          "size": 1722
+        },
+        {
+          "path": "scaffold/molecules.parquet",
+          "sha256": "35d9c633847d57c4894a6509f0beed1ec744982ec142d6e5dc98422ff4d114b8",
+          "size": 1726058
+        }
+      ],
+      "parts": [
+        {
+          "path": "08_neighbor_index/stage.tar.zst.part-0001",
+          "sha256": "80b3080c2bbdf95d40c7fa48b60cde360256e6e3d5deac18387bd6c5323566c6",
+          "size": 6923531
+        }
+      ],
+      "uncompressed_tar_size": 7720960
+    },
+    "09_audits": {
+      "archive_sha256": "b63a59e7c8a4ff25970cd2ee5affc6dcbbc700f6dc07fb82978093c5d970bb5e",
+      "archive_size": 514,
+      "files": [
+        {
+          "path": "heldout_overlap.json",
+          "sha256": "12a8b2b06a5ae4f2b870d3b0b128676a1e1cf5172d0cfb6724610a16b9509b71",
+          "size": 1099
+        }
+      ],
+      "parts": [
+        {
+          "path": "09_audits/stage.tar.zst.part-0001",
+          "sha256": "b63a59e7c8a4ff25970cd2ee5affc6dcbbc700f6dc07fb82978093c5d970bb5e",
+          "size": 514
+        }
+      ],
+      "uncompressed_tar_size": 10240
+    }
+  },
+  "store_version": "skin_reaction.normalized_v7_store.v1",
+  "task_id": "skin_reaction"
+}
