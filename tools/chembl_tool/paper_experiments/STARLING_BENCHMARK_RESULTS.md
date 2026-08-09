@@ -83,6 +83,43 @@ BBB 仅余 3 个，Skin 余 314 个，Bioavailability 余 694 个。该 root 尚
 矩阵尚未启动，因此所有 partial GLM macro-F1 都不得进入正式表或显著性分析。恢复 endpoint 后必须使用
 同一 root 的 `--skip-existing` 修复，再启动独立 visible root。
 
+### Final evidence surface / aggregation bottleneck 诊断
+
+为检验不同 retrieval 的有效信息是否在 group-to-final 二级总结中丢失，2026-08-07 对 GPT-OSS-120B
+identity-blind `starling_full_flat` scaffold-valid 做了 matched final-only ablation。每个目标 run 的
+retrieval、single 和 group artifacts 逐文件复制 frozen source，只有 final prompt surface 和 fresh final call
+改变：历史 `summary_only` control、`summary_plus_cards` 和 `cards_only`。Card v1 最多保留 12 个 analog、
+每 analog 最多 3 条去身份 evidence rows，并包含已有 prefetched molecular comparison 文本。
+
+六个候选 batch 共 `1,908/1,908` 成功，失败为 0；全量 audit 对 1,908 个 target run 检查 source/target
+artifact SHA-256、trace card SHA-256、surface provenance 和 identity leak，结果为 0 failure。
+
+| task | summary-only | summary + cards | delta (95% paired CI) | cards-only | delta (95% paired CI) |
+|---|---:|---:|---|---:|---|
+| BBB | 0.6753 | 0.6737 | -0.0016 [-0.0244,+0.0217] | 0.6467 | -0.0285 [-0.0666,+0.0104] |
+| Bioavailability | 0.5707 | 0.5718 | +0.0011 [-0.0376,+0.0392] | 0.5780 | +0.0073 [-0.0435,+0.0593] |
+| Skin Reaction | 0.5577 | 0.5445 | -0.0132 [-0.0524,+0.0261] | 0.5595 | +0.0018 [-0.0486,+0.0522] |
+
+六个 bootstrap interval 均跨 0，exact McNemar 的 Holm-adjusted p 均为 1。Cards 将 final mean prompt
+tokens 增加到 summary-only 的 `3.32x–4.72x`，仍没有稳定增益。因此现有结果不支持“raw evidence 已经正确
+retrieved、只是 final 看不到”作为主要解释；card surface 不进入默认 pipeline 或 formal test。
+
+同一轮 metadata census 说明 molecule information 不是整体缺失：endpoint/context/scope 覆盖接近 100%；
+但 measurement available 仅为 BBB `51.5%`、Bioavailability `90.2%`、Skin `28.8%`，可评估 measurement
+consistency 的比例仅 `21.7%/52.7%/20.7%`，可评估 multi-record/PMID agreement 的比例为
+`44.4%/58.8%/66.2%`。这些数字只表示 metadata 是否足以开展进一步审计，不证明 evidence utility，
+也不触发 compatibility selector。下一步先修正 Skin task scope，再从现有 traces 区分 upstream reasoning
+failure 与 final aggregation failure；不继续增加 raw context 或做 group add/drop 搜索。
+
+```text
+tools/chembl_tool/common/final_evidence_surface.py
+tools/chembl_tool/common/evidence_compatibility.py
+tools/chembl_tool/paper_experiments/run_final_evidence_surface_experiment.py
+tools/chembl_tool/paper_experiments/audit_final_evidence_surface_contract.py
+tools/chembl_tool/paper_experiments/summarize_final_evidence_surface_experiment.py
+outputs/paper/final_evidence_surface_record_supported_v2_valid_gpt_oss_120b/
+```
+
 曾生成的 exploratory `record_supported_v1` 因 held-out 分布不符合最终设计，数据、indices、agent runs、
 baselines 和显著性 artifact 已于 2026-08-07 删除；这里只保留这条 lineage tombstone，不再引用旧路径。
 

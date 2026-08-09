@@ -75,6 +75,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | RQ6 | 观察到的增益和下降是否跨模型、跨重复稳定？ | 第二模型 confirmation matrix；GLM 关键条件重复运行 |
 | RQ7 | Retrieval coverage 与 macro-F1 增幅有什么关系？ | Blind parent-disjoint retrieval 条件的 overall/positive-class/negative-class coverage 与相对同任务 `none` 的 paired macro-F1 差值 |
 | RQ8 | 超出当前 curated mechanism envelope 多远后，增加更多 assay evidence 不再帮助 LLM？ | ChEMBL-only 的 `none`、`D`、`D+C`、`D+C+H1`、`D+C+H1+H2` 累计扩展曲线 |
+| RQ9 | Retrieval 差异是否在 group-to-final 汇总中被压缩？ | 固定 retrieval/single/group artifact 的 `summary_only`、`summary_plus_cards`、`cards_only` final-only 配对消融 |
 
 ## 实验与贡献索引
 
@@ -93,6 +94,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | E10 | 关键条件重复运行 | C5、C6 | P0 | 未开始 |
 | E11 | Coverage–performance 关联分析 | C3、C6 | P0 | 第一轮 test/valid 各 17 个 agentic retrieval 条件已完成；TSV/JSON/report/canonical SVG 和 class-conditional coverage 已生成，最终矩阵冻结后需重跑 |
 | E12 | ChEMBL mechanistic-distance / evidence-quantity expansion | C7、C6 | P0 | C-family tree 协议已重冻；通用旧 graph/index/retrieval prototype 已实现，但 BBB v2 因 MMP-3 shortcut 只保留历史审计，四任务 tree mapping 与 batch/LLM runner 均待完成 |
+| E13 | Final evidence surface / aggregation bottleneck | C3、C6 | P0 诊断 | record-supported v2 scaffold-valid 已完成 1,908/1,908、contract audit 0 failure；六个 paired CI 均跨 0，card surface 不升级默认 |
 
 ## 当前资产与缺口
 
@@ -620,6 +622,58 @@ agentic confirmation；mechanism 必含 H1 point，并在至少一个 family H2 
 coverage/evidence volume/tokens 可审计；必需 H1 point 与任何 available H2 point 均完成且通过 branch-reuse
 与 flat/mechanism evidence-parity audit；所有 paired comparison 使用共同 sample set；不存在用 Starling
 缺少 distant coverage 来人为放大 ChEMBL quantity 的跨 source comparison。
+
+### E13：Final evidence surface / aggregation bottleneck
+
+**支撑贡献：C3、C6。回答 RQ9。优先级：P0 诊断。**
+
+该实验固定 record-supported v2 scaffold-valid 的 identity-blind parent-disjoint
+`starling_full_flat` retrieval、single 和 group artifacts，只重新运行 final：
+
+```text
+summary_only       = 当前冻结 control，final 只看 single/group summaries
+summary_plus_cards = 同一 summaries + 确定性 compact evidence cards
+cards_only         = 同一 raw evidence cards，不向 final 提供 group LLM summary
+```
+
+`summary_only` 必须保持历史 prompt 的严格 no-op。Card 只从已经 identity-redacted、tool-prefetched 的
+reasoning retrieval 构建；固定最多 12 个 cards、每 card 最多 3 条 deterministic-even-spacing evidence rows，
+保存 card contract version、SHA-256、原始/保留行数和字节数。它不得重新检索、改变 neighbor、暴露身份、
+加入 label vote/threshold 或把 card 与对应 group summary 当作独立 evidence。
+
+第一阶段只使用 scaffold-valid 诊断，不能根据结果修改 test prompt。三个 task 以共同样本做 paired
+macro-F1 bootstrap、exact McNemar/Holm、prediction flips 和 rescue/harm。若 cards 不能稳定改善，停止把
+aggregation bottleneck 当成主因；若有稳定改善，冻结 surface 后才能考虑一次 test confirmation。
+
+Metadata census 只审计 endpoint、context、example-level measurement、multi-record/PMID support、scope 和
+uncertainty 是否存在；它不产生 relevance score，也不自动进入 compatibility selector。内部 sidecar 不进入
+`minimal_evidence.v1` 或 LLM prompt。完整协议、命令和输出结构见
+`FINAL_EVIDENCE_SURFACE_EXPERIMENT.md`。
+
+2026-08-07 实测完成六个 batch、`1,908/1,908` final、`n_failed_runs=0`，全量 artifact/card/identity
+contract audit 为 0 failure。Summary+cards 相对 summary-only 的 macro-F1 delta 为 BBB `-0.0016`
+（95% CI `[-0.0244,+0.0217]`）、Bioavailability `+0.0011`（`[-0.0376,+0.0392]`）、Skin `-0.0132`
+（`[-0.0524,+0.0261]`）；cards-only 分别为 `-0.0285`、`+0.0073`、`+0.0018`，三个 interval 也均跨 0。
+Final prompt token 均值增加到 control 的 `3.32x–4.72x`，仍无稳定增益。因此 E13 的结论是 no-go：
+aggregation compression 不是当前主瓶颈，card surface 保留为可复现实验插件，不进入默认路径或 formal test。
+
+### 近期小计划：Skin task alignment 与 final bottleneck audit
+
+目标是先判断错误主要来自 task scope、上游 group reasoning，还是 final synthesis；这不是 group ablation，
+也不搜索 router/selector。
+
+1. **Skin scope 修复（待讨论后实现）**：保留历史 `legacy_skin_reaction_v1` 结果；新增版本化
+   `sensitization_aligned_v2` prompt profile。Gold label 不变；phototoxicity、irritation/corrosion、generic local
+   damage 和 exposure 只作为 out-of-scope/context，不得单独支持 `risk` 或 `no_risk`。Manifest 必须记录 profile。
+2. **现有 trace audit（不新增模型调用）**：在修复后的 baseline 定义上，把错误分成
+   `final_recoverable`（group outputs 已支持 gold、final 仍选反或引用越界证据）和 `upstream_failure`
+   （相关 group 已遗漏、误读或错误 transfer）。保存机器可读逐样本分类和汇总，不查看 formal test。
+3. **唯一 continuation gate**：只有 final-recoverable 是明确主导来源时，才允许一个 final-only ICL 候选：
+   每个 query 总共 3 个 compact train examples，而不是每个 group 3 个；只用 train、排除同 parent/scaffold，
+   不做 k、长度、retriever 或 hidden-CoT sweep。否则停止 demonstrations，直接处理 task/group reasoning。
+
+明确不做：per-group train reasoning 注入、full-mechanism train trace bank、group drop/add ablation，以及把最终
+label 正确的 trace 直接称为“正确 reasoning”。
 
 ## 资源预算
 

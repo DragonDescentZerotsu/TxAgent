@@ -16,6 +16,8 @@
 - [KNN-Agent Router OOF 计划](ROUTER_OOF_IMPLEMENTATION_PLAN.md)：按 task 独立训练的 train-only OOF
   数据隔离、特征、nested evaluation、运行 gate 和当前执行状态。
 - [Trace 保留策略](TRACE_RETENTION.md)：最终 trace 的唯一目录、清理边界和一致性约束。
+- [Final evidence surface 诊断](FINAL_EVIDENCE_SURFACE_EXPERIMENT.md)：固定 retrieval/single/group 的
+  summary/card final-only 消融、metadata census、输出 lineage 和已冻结的 no-go 结论。
 
 ## 当前 record-supported v2
 

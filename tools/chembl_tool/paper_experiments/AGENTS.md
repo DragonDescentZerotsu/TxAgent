@@ -31,6 +31,10 @@ DISTANCE_EXPANSION_DESIGN.md
   E12 的 D-root/C-family/H1/H2 tree 定义、flat 主曲线、tree-node mechanism supplementary、
   顺序 branch reuse、独立代码路径、资源控制、artifact contract 和回归 gate。
 
+FINAL_EVIDENCE_SURFACE_EXPERIMENT.md
+  E13 固定 retrieval/single/group 的 final-only surface 诊断、复现命令、metadata census 和 no-go 结论。
+  Card surface 仅为可复现实验插件，不进入默认 prompt 或 formal test。
+
 TRACE_RETENTION.md
   最终论文 trace 的唯一目录、保留单位、清理边界和 viewer 约束。
 ```

@@ -1,13 +1,26 @@
+import hashlib
 import json
 
 import pytest
 
 from tools.chembl_tool.common.json_utils import (
     atomic_output_path,
+    canonical_json_bytes,
     parse_json_content,
+    sha256_file,
     write_json_atomic,
     write_jsonl_atomic,
 )
+
+
+def test_canonical_json_and_streaming_hash_are_deterministic(tmp_path):
+    first = canonical_json_bytes({"b": 2, "a": "可审计"})
+    second = canonical_json_bytes({"a": "可审计", "b": 2})
+    assert first == second
+
+    path = tmp_path / "payload.json"
+    path.write_bytes(first)
+    assert sha256_file(path) == hashlib.sha256(first).hexdigest()
 
 
 def test_parse_json_content_never_raises_for_malformed_embedded_object():

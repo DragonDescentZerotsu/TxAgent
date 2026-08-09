@@ -3,11 +3,31 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+import hashlib
 import json
 import os
 from pathlib import Path
 import tempfile
 from typing import Any
+
+
+def canonical_json_bytes(value: Any) -> bytes:
+    """Serialize JSON deterministically for hashes and byte-size audits."""
+    return json.dumps(
+        value,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+
+
+def sha256_file(path: Path) -> str:
+    """Return a streaming SHA-256 digest without loading the file at once."""
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def parse_json_content(content: str) -> Any:

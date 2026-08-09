@@ -25,20 +25,22 @@ reader 将四类数据构建成一个 molecule-level index，供 Starling direct
 和 reasoning workflow：给定 query molecule，从 ChEMBL 中检索与皮肤不良反应判断相关的相似分子实验读数，
 再由 reasoning LLM 判断这些 analog evidence 是否能 transfer 到 query molecule。
 
-当前 Starling gold benchmark：
+当前 paper-facing Starling gold benchmark：
 
 ```text
-data/processed_starling/Skin_Reaction/random/{train.jsonl,valid.jsonl,test.jsonl}
-data/processed_starling/Skin_Reaction/scaffold/{train.jsonl,valid.jsonl,test.jsonl}
+data/processed_starling_record_supported_v2/Skin_Reaction/scaffold/{train.jsonl,valid.jsonl,test.jsonl}
 
 fields:
   drug: query SMILES
   Y: Skin_Reaction label
 ```
 
-当前 frozen build 有 2,456 个 binary parents，两种构造方法的 valid/test target 均为 245。冲突 parent
-按 accepted source records 计算 70% agreement，同 PMID 多条 record 分别计票，精确 tie 拒绝。正式运行前
-必须按各自 valid+test union 的 `heldout_molecule_labels.jsonl` 重建 train-only retrieval index。构建命令和审计协议见
+当前 frozen build 有 2,456 个 binary parents，train/valid/test 为 1,966/245/245。旧
+`data/processed_starling/Skin_Reaction/{random,scaffold}` 属于 `record_agreement70_split811_v1` historical
+comparison。冲突 parent 按 accepted source records 计算 70% agreement，同 PMID 多条 record 分别计票，
+精确 tie 拒绝。当前 v2 正式运行前必须按 scaffold valid+test union 的 `heldout_molecule_labels.jsonl`
+重建 train-only retrieval index；historical v1 的两个 split 仍各自使用对应 union，不能跨 lineage 复用。
+构建命令和审计协议见
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
 
 当前二分类约定：
@@ -52,6 +54,11 @@ Y=0 -> non-sensitizer / negative
 reaction。新的 Starling-held-out benchmark 因此只接受 sensitization 或 allergic contact
 dermatitis/contact allergy scope 的明确 positive/negative record；irritation、generic local damage、
 skin exposure 和 inconclusive 不转成 gold label。
+
+当前 `run_reasoning_pipeline.py` 的历史 final prompt/schema 仍允许 phototoxicity 和
+irritation/corrosion 成为 `risk` 的主 evidence type；这与上述 sensitization-only gold scope 不完全一致，
+属于已确认的 `legacy_skin_reaction_v1` prompt bug。历史结果必须保留原口径，不能原地改写。计划中的
+`sensitization_aligned_v2` 会版本化修复该语义并写入 manifest，但必须先完成方案讨论，本轮尚未实现。
 
 ### Paper-facing tier 的距离语义
 
@@ -350,9 +357,10 @@ permeation-enhancer assays where the tested molecule promotes another compound's
 原始 task 定义已经按 source chain 确认为 binary LLNA skin sensitisation。Irritation、phototoxicity、
 local damage 和 skin exposure 仍只能作为 mechanistic/context evidence，不能被等同于 gold label。
 
-## Skin_Reaction evidence 原则
+## Skin_Reaction source evidence 原则（legacy v1 ontology）
 
-Skin reaction 不是一个单一 assay endpoint。ChEMBL 里有价值的 evidence 大致分成三条轴：
+以下分层解释 source library 收集了哪些皮肤相关证据，不定义当前 sensitization gold。ChEMBL 里有价值的
+source evidence 大致分成三条轴：
 
 ```text
 hazard axis:
@@ -556,7 +564,7 @@ weak:
 
 ### Tier 3: phototoxicity, irritation, corrosion, and local skin damage
 
-These assays can support skin-reaction risk, but they answer different questions from allergic sensitisation.
+These assays describe other skin hazards, but they must not support or oppose the current sensitization label by themselves.
 
 Endpoint groups:
 
@@ -980,7 +988,7 @@ context_dependent
 Derived fields such as `endpoint_group_reason`, `evidence_direction`, and `evidence_strength` are for debug and audit. They
 should not be sent directly to the reasoning LLM as if they were raw evidence.
 
-## LLM payload rules
+## LLM payload rules 与已知 legacy mismatch
 
 The LLM payload should include:
 
@@ -1014,7 +1022,8 @@ evidence_reason
 assay_reason
 ```
 
-The group-level prompt must make these distinctions explicit:
+当前 legacy group/final prompt 保留下面的宽 skin-reaction distinctions 以复现历史结果；其中第 3/4 类不得在
+计划中的 `sensitization_aligned_v2` 里直接支持 binary label：
 
 ```text
 1. Direct human/LLNA/validated skin reaction evidence can support or oppose final label.

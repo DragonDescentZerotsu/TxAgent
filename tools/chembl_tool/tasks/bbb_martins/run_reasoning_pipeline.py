@@ -19,9 +19,15 @@ from tools.chembl_tool.common.coverage_reasoning import (
 )
 from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retrieve_experiment_view
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.final_evidence_surface import (
+    SUMMARY_ONLY,
+    add_final_evidence_surface_argument,
+    build_final_evidence_fields,
+    compact_group_reasoning_outputs,
+    final_evidence_instructions,
+    prepare_resumed_final_inputs,
+)
 from tools.chembl_tool.common.identity_blind import (
-    prepare_identity_blind_final_retrieval,
-    prepare_prefetched_final_retrieval,
     prepare_reasoning_retrieval,
     sanitize_identity_blind_branch_outputs,
 )
@@ -309,7 +315,13 @@ def main(argv: list[str] | None = None) -> int:
     _write_jsonl(group_path, group_outputs)
     _log(f"wrote {group_path}")
 
-    final_output = _run_final_reasoning(client, reasoning_retrieval, single_output, group_outputs)
+    final_output = _run_final_reasoning(
+        client,
+        reasoning_retrieval,
+        single_output,
+        group_outputs,
+        final_evidence_surface=args.final_evidence_surface,
+    )
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     _log(f"wrote {final_path}")
@@ -336,6 +348,7 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "final_evidence_surface": args.final_evidence_surface,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
@@ -658,7 +671,14 @@ def _run_final_reasoning(
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
+    *,
+    final_evidence_surface: str = SUMMARY_ONLY,
 ) -> dict[str, Any]:
+    evidence_fields, surface_audit = build_final_evidence_fields(
+        retrieval,
+        compact_group_reasoning_outputs(group_outputs),
+        surface=final_evidence_surface,
+    )
     messages = [
         {
             "role": "system",
@@ -678,14 +698,7 @@ def _run_final_reasoning(
                         "status": single_output.get("status"),
                         "content": validated_branch_content(single_output),
                     },
-                    "group_reasoning_outputs": [
-                        {
-                            "group_id": item.get("group_id"),
-                            "status": item.get("status"),
-                            "content": validated_branch_content(item),
-                        }
-                        for item in group_outputs
-                    ],
+                    **evidence_fields,
                     "instructions": [
                         "Return compact complete JSON.",
                         "Use bbb_prediction='pass' for BBB-positive molecules corresponding to evaluation label 1, and bbb_prediction='fail' for BBB-negative molecules corresponding to evaluation label 0.",
@@ -700,7 +713,7 @@ def _run_final_reasoning(
                         "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
                         "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
                         "You must choose exactly one bbb_prediction: pass or fail. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",
-                    ],
+                    ] + final_evidence_instructions(final_evidence_surface),
                     "required_json_schema": {
                         "bbb_prediction": "pass | fail",
                         "confidence": "high | moderate | low",
@@ -726,7 +739,10 @@ def _run_final_reasoning(
         allowed_values={"bbb_prediction": {"pass", "fail"}},
         branch_name="final",
     )
-    return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
+    output = {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
+    if surface_audit is not None:
+        output["final_evidence_surface"] = surface_audit
+    return output
 
 
 def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
@@ -969,12 +985,20 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     ]
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
-    if manifest.get("identity_blind"):
-        group_outputs = sanitize_identity_blind_branch_outputs(group_outputs, retrieval)
-        retrieval = prepare_identity_blind_final_retrieval(retrieval, single_output)
-    elif manifest.get("harness_prefetch_tools"):
-        retrieval = prepare_prefetched_final_retrieval(retrieval, single_output, identity_blind=False)
-    final_output = _run_final_reasoning(client, retrieval, single_output, group_outputs)
+    retrieval, group_outputs, final_surface = prepare_resumed_final_inputs(
+        retrieval,
+        single_output,
+        group_outputs,
+        manifest,
+        tool_service=client.tool_service,
+    )
+    final_output = _run_final_reasoning(
+        client,
+        retrieval,
+        single_output,
+        group_outputs,
+        final_evidence_surface=final_surface,
+    )
     final_path = run_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     trace_path = run_dir / "trace_messages.jsonl"
@@ -1102,6 +1126,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
+    add_final_evidence_surface_argument(parser)
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     args = parser.parse_args(argv)
     args.groups = _normalize_group_args(args.groups)

@@ -16,6 +16,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from tools.chembl_tool.common.final_evidence_surface import (
+    SUMMARY_ONLY,
+    add_final_evidence_surface_argument,
+)
 from tools.chembl_tool.common.coverage_reasoning import (
     NEIGHBOR_CONTEXT_PROFILES,
     STANDARD_NEIGHBOR_CONTEXT,
@@ -112,6 +116,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "final_evidence_surface": getattr(args, "final_evidence_surface", SUMMARY_ONLY),
         "identity_blind": args.identity_blind,
         "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
         "visibility_mode": (
@@ -269,6 +274,11 @@ def _prepare_final_only_run_dir(args: argparse.Namespace, query_index: int, run_
     manifest["run_id"] = run_id
     manifest["final_only_source_run_dir"] = str(source_run_dir)
     manifest["final_only_source_batch"] = str(source_batch_dir)
+    manifest["final_evidence_surface"] = getattr(
+        args,
+        "final_evidence_surface",
+        SUMMARY_ONLY,
+    )
     if args.final_only_groups:
         filter_audit = _filter_final_only_run_artifacts(run_dir, args.final_only_groups)
         manifest["final_only_group_filter"] = filter_audit
@@ -416,6 +426,9 @@ def _single_run_command(
                 args.neighbor_context_profile,
             ]
         )
+        final_surface = getattr(args, "final_evidence_surface", SUMMARY_ONLY)
+        if final_surface != SUMMARY_ONLY:
+            command.extend(["--final-evidence-surface", final_surface])
     if not args.enable_thinking:
         command.append("--disable-thinking")
     else:
@@ -911,6 +924,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
+    add_final_evidence_surface_argument(parser)
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     parser.add_argument(
         "--tier1-replacement-index",
@@ -946,6 +960,8 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
             unsupported.append("--neighbor-selector")
         if args.neighbor_context_profile != STANDARD_NEIGHBOR_CONTEXT:
             unsupported.append("--neighbor-context-profile")
+        if getattr(args, "final_evidence_surface", SUMMARY_ONLY) != SUMMARY_ONLY:
+            unsupported.append("--final-evidence-surface")
         if args.identity_blind:
             unsupported.append("--identity-blind")
         if args.harness_prefetch_tools:

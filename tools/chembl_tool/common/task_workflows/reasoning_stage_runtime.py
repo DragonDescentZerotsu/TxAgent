@@ -15,6 +15,7 @@ from tools.chembl_tool.common.identity_blind import (
     prepare_reasoning_retrieval,
     sanitize_identity_blind_branch_outputs,
 )
+from tools.chembl_tool.common.final_evidence_surface import SUMMARY_ONLY
 from tools.chembl_tool.common.openai_reasoning_client import (
     OpenAICompatibleClient,
     ToolServiceClient,
@@ -273,6 +274,7 @@ def _initialize_run_manifest(
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "final_evidence_surface": getattr(args, "final_evidence_surface", SUMMARY_ONLY),
         "retrieval_replay_source_run_dir": _configured_source_run_dir(
             args.retrieval_replay_source_batch,
             item.index,
@@ -487,11 +489,23 @@ def _execute_final(state: StageState) -> dict[str, Any]:
     )
     group_outputs = _canonical_group_outputs(state)
     client = _make_client(state)
+    final_surface = getattr(
+        state.prepared.args,
+        "final_evidence_surface",
+        SUMMARY_ONLY,
+    )
+    final_kwargs = (
+        {"final_evidence_surface": final_surface}
+        if state.prepared.config.supports_shared_retrieval_contract
+        and final_surface != SUMMARY_ONLY
+        else {}
+    )
     final_output = module._run_final_reasoning(
         client,
         context["reasoning_retrieval"],
         single_output,
         group_outputs,
+        **final_kwargs,
     )
     final_path = state.run_dir / "final_reasoning_output.json"
     trace_path = state.run_dir / "trace_messages.jsonl"
