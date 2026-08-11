@@ -595,7 +595,7 @@ def _run_final_reasoning(
     return output
 
 
-def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def build_group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     return bound_group_prompt_payload({
         "task": "Group-level Skin_Reaction analog transferability analysis.",
         "query": query,
@@ -660,6 +660,11 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "caveats": ["string"],
         },
     })
+
+
+# Historical internal callers keep working while external materializers use
+# the explicit public adapter above.
+_group_prompt_payload = build_group_prompt_payload
 
 
 def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:

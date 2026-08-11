@@ -158,6 +158,36 @@ def test_parent_disjoint_excludes_salt_and_backfills_only_eligible_analogs():
     assert disjoint["coverage"]["top_k_per_group"] == 3
 
 
+def test_scaffold_disjoint_excludes_same_scaffold_and_backfills():
+    rows = [
+        _row("same_scaffold", "CCc1ccccc1", "Tier 1.direct", 1),
+        _row("different_scaffold", "c1ccncc1", "Tier 1.direct", 2),
+    ]
+    index = build_neighbor_index(rows, index_version="test.scaffold.v1")
+
+    operational = retrieve_experiment_view(
+        "Cc1ccccc1",
+        index,
+        mode="direct",
+        config=CONFIG,
+        top_k_per_group=1,
+        min_similarity=0.0,
+        neighbor_identity_policy="operational",
+    )
+    disjoint = retrieve_experiment_view(
+        "Cc1ccccc1",
+        index,
+        mode="direct",
+        config=CONFIG,
+        top_k_per_group=1,
+        min_similarity=0.0,
+        neighbor_identity_policy="scaffold_disjoint",
+    )
+
+    assert operational["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "same_scaffold"
+    assert disjoint["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "different_scaffold"
+
+
 def test_query_feature_coverage_selector_keeps_retrieval_payload_contract():
     similarity = retrieve_experiment_view(
         "CO",
