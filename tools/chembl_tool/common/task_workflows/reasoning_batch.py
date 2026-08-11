@@ -40,6 +40,7 @@ from tools.chembl_tool.common.final_decision_prior import (
     add_final_decision_profile_argument,
 )
 from tools.chembl_tool.common.coverage_reasoning import (
+    COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT,
     NEIGHBOR_CONTEXT_PROFILES,
     STANDARD_NEIGHBOR_CONTEXT,
 )
@@ -82,6 +83,8 @@ class BatchConfig:
     default_group_output_schema: str = ""
     supports_shared_retrieval_contract: bool = True
     supports_nondirect_bioavailability_filter: bool = False
+    supports_analogous_reasoning_only: bool = False
+    final_prompt_provenance: Callable[..., dict[str, Any]] | None = None
     assay_transfer_profile_default: str = "legacy_bio"
     rerank_catalog_default: str = (
         "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
@@ -152,6 +155,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
 
 def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatch:
     """Materialize stable batch metadata without choosing a scheduling policy."""
+    _validate_analogous_reasoning_only(config, args)
     requested_top_k_per_group = args.top_k_per_group
     is_assay_transfer = args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
     _validate_assay_transfer_scores(config, args)
@@ -327,7 +331,31 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         ),
         "task_prompt_profile": getattr(args, "task_prompt_profile", ""),
         "identity_blind": args.identity_blind,
-        "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
+        "analogous_reasoning_only": args.analogous_reasoning_only,
+        "single_branch_execution": (
+            "omitted" if args.analogous_reasoning_only else "executed_or_reused"
+        ),
+        "single_branch_omission_reason": (
+            "analogous_reasoning_only" if args.analogous_reasoning_only else ""
+        ),
+        "query_tool_execution": (
+            "omitted" if args.analogous_reasoning_only else "enabled"
+        ),
+        "group_query_tool_instruction_policy": (
+            "omitted.v1" if args.analogous_reasoning_only else "standard.v1"
+        ),
+        "final_prompt_provenance": (
+            config.final_prompt_provenance(
+                analogous_reasoning_only=args.analogous_reasoning_only
+            )
+            if config.final_prompt_provenance is not None
+            else {}
+        ),
+        "harness_prefetch_tools": (
+            False
+            if args.analogous_reasoning_only
+            else args.identity_blind or args.harness_prefetch_tools
+        ),
         "visibility_mode": (
             "identity_blind"
             if args.identity_blind
@@ -794,6 +822,8 @@ def _single_run_command(
             command.extend(args.tier1_replacement_groups)
     if args.disable_group_tools:
         command.append("--disable-group-tools")
+    if args.analogous_reasoning_only:
+        command.append("--analogous-reasoning-only")
     if args.identity_blind and config.supports_shared_retrieval_contract:
         command.append("--identity-blind")
     elif args.harness_prefetch_tools and config.supports_shared_retrieval_contract:
@@ -969,6 +999,7 @@ def _collect_result(
         "correct": correct,
         "final_status": (final_output.get("status") if isinstance(final_output, dict) else None),
         "single_status": (single_output.get("status") if isinstance(single_output, dict) else None),
+        "analogous_reasoning_only": bool(manifest.get("analogous_reasoning_only")),
         "n_group_outputs": len(group_outputs),
         "n_failed_group_outputs": sum(row.get("status") != "ok" for row in group_outputs),
         "n_groups_with_neighbors": manifest.get("n_groups_with_neighbors"),
@@ -985,7 +1016,10 @@ def _collect_result(
 def _result_is_complete(result: dict[str, Any]) -> bool:
     if result.get("final_status") != "ok" or result.get("pred_label") is None:
         return False
-    if result.get("single_status") != "ok":
+    acceptable_single_status = (
+        "omitted" if result.get("analogous_reasoning_only") else "ok"
+    )
+    if result.get("single_status") != acceptable_single_status:
         return False
     expected_groups = result.get("n_groups_with_neighbors")
     if expected_groups is not None and int(result.get("n_group_outputs") or 0) != int(expected_groups):
@@ -1231,6 +1265,19 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         default="operational",
     )
     parser.add_argument("--identity-blind", action="store_true")
+    if config.supports_analogous_reasoning_only:
+        parser.add_argument(
+            "--analogous-reasoning-only",
+            "--analogous_reasoning_only",
+            dest="analogous_reasoning_only",
+            action="store_true",
+            help=(
+                "Bioavailability full_mechanism only: omit the single-molecule "
+                "branch and every model-facing query tool."
+            ),
+        )
+    else:
+        parser.set_defaults(analogous_reasoning_only=False)
     parser.add_argument(
         "--single-analysis-source-batch",
         default="",
@@ -1546,6 +1593,47 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
                 + ", ".join(unsupported)
             )
     return args
+
+
+def _validate_analogous_reasoning_only(
+    config: BatchConfig,
+    args: argparse.Namespace,
+) -> None:
+    if not args.analogous_reasoning_only:
+        return
+    if not config.supports_analogous_reasoning_only:
+        raise SystemExit(
+            f"Pipeline {config.pipeline_module} does not support --analogous-reasoning-only"
+        )
+    if args.experiment_mode != "full_mechanism":
+        raise SystemExit(
+            "--analogous-reasoning-only requires --experiment-mode full_mechanism"
+        )
+    incompatible = {
+        "--single-analysis-source-batch": args.single_analysis_source_batch,
+        "--group-analysis-source-batch": args.group_analysis_source_batch,
+        "--prefetched-tool-replay-source-batch": args.prefetched_tool_replay_source_batch,
+        "--final-only-source-batch": args.final_only_source_batch,
+    }
+    used = [name for name, value in incompatible.items() if value]
+    if used:
+        raise SystemExit(
+            "--analogous-reasoning-only requires fresh reasoning and cannot use: "
+            + ", ".join(used)
+        )
+    if args.neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT:
+        raise SystemExit(
+            "--analogous-reasoning-only cannot use --neighbor-context-profile "
+            "coverage_mmp_ledger because it invokes query comparison tools"
+        )
+    if getattr(args, "final_evidence_surface", SUMMARY_ONLY) != SUMMARY_ONLY:
+        raise SystemExit(
+            "--analogous-reasoning-only requires --final-evidence-surface summary_only"
+        )
+    if getattr(args, "final_decision_profile", STANDARD_FINAL_DECISION) != STANDARD_FINAL_DECISION:
+        raise SystemExit(
+            "--analogous-reasoning-only requires --final-decision-profile standard"
+        )
 
 
 def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespace) -> None:

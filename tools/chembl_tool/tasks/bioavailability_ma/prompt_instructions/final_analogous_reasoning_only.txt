@@ -1,0 +1,9 @@
+# Final synthesis using only mechanism-branch analog analyses.
+# One instruction per line. {high_f_cutoff} is filled from the task cutoff.
+Use only the supplied mechanism-branch analog analyses.
+Do not introduce an intrinsic physicochemical prior, query-only property analysis, molecule recognition, or outside evidence.
+Use bioavailability_prediction='high' for oral bioavailability F >= {high_f_cutoff}% (Bioavailability_Ma label 1), and 'low' for F < {high_f_cutoff}% (label 0).
+Downweight mechanism branches marked low confidence, low transferability, or not useful for bioavailability reasoning.
+Resolve conflicts using the quality, relevance, assay context, and transfer assessment already stated in the mechanism branches.
+You must choose exactly one bioavailability_prediction: high or low. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.
+Return compact, complete JSON.

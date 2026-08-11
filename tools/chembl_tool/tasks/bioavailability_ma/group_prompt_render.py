@@ -544,6 +544,14 @@ def build_group_messages(
         *list(options.get("additional_instructions") or []),
         *context["instructions"],
     ]
+    if options.get("omit_query_tools"):
+        context["instructions"] = [
+            line
+            for line in context["instructions"]
+            if "mmp_structure_compare" not in line
+            and "properties_compare" not in line
+            and "molecule_properties" not in line
+        ]
     user_content = _env().get_template(template).render(**context)
     return [
         {
@@ -576,10 +584,53 @@ FINAL_OUTPUT_SCHEMA: dict[str, Any] = {
     "final_summary": "string",
 }
 
+ANALOGOUS_REASONING_ONLY_FINAL_OUTPUT_SCHEMA: dict[str, Any] = {
+    key: value
+    for key, value in FINAL_OUTPUT_SCHEMA.items()
+    if key != "single_molecule_assessment"
+}
+
 FINAL_SYSTEM_MESSAGE = (
     "You are a senior oral bioavailability reasoning model. Integrate group-level analog "
     "evidence into one final oral bioavailability assessment. Return only valid JSON."
 )
+
+ANALOGOUS_REASONING_ONLY_FINAL_SYSTEM_MESSAGE = (
+    "You are a senior oral bioavailability analog-evidence synthesis model. "
+    "Use only the supplied mechanism-branch analog analyses to produce one final "
+    "oral bioavailability assessment. Return only valid JSON."
+)
+
+
+def final_prompt_provenance(*, analogous_reasoning_only: bool) -> dict[str, Any]:
+    """Fingerprint the selected final prompt instructions, template, and schema."""
+    profile = "analogous_reasoning_only" if analogous_reasoning_only else "standard"
+    stem = "final_analogous_reasoning_only" if analogous_reasoning_only else "final"
+    instruction_path = INSTRUCTIONS_DIR / f"{stem}.txt"
+    template_path = TEMPLATE_DIR / f"{stem}.jinja"
+    schema = (
+        ANALOGOUS_REASONING_ONLY_FINAL_OUTPUT_SCHEMA
+        if analogous_reasoning_only
+        else FINAL_OUTPUT_SCHEMA
+    )
+    contract = {
+        "profile": profile,
+        "contract_version": f"bioavailability_final_prompt.{profile}.v1",
+        "instructions_sha256": hashlib.sha256(instruction_path.read_bytes()).hexdigest(),
+        "template_sha256": hashlib.sha256(template_path.read_bytes()).hexdigest(),
+        "schema_sha256": hashlib.sha256(
+            json.dumps(
+                schema,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest(),
+    }
+    contract["contract_sha256"] = hashlib.sha256(
+        json.dumps(contract, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    return contract
 
 
 def _content_to_text(obj: Any, indent: int = 0) -> str:
@@ -622,17 +673,18 @@ def build_final_messages(
     group_outputs: list[dict[str, Any]],
     *,
     high_f_cutoff: float,
+    analogous_reasoning_only: bool = False,
 ) -> list[dict[str, str]]:
     """Compile the final-synthesis [system, user] messages as clean text (no LLM needed)."""
+    instruction_name = (
+        "final_analogous_reasoning_only" if analogous_reasoning_only else "final"
+    )
     instructions = [
         line.replace("{high_f_cutoff}", f"{high_f_cutoff:g}")
-        for line in load_instructions("final")
+        for line in load_instructions(instruction_name)
     ]
     context = {
         "instructions": instructions,
-        "query_smiles": _query_smiles(retrieval.get("query") or {}),
-        "coverage_text": _content_to_text(retrieval.get("coverage") or {}),
-        "single_text": _branch_text(single_output),
         "groups": [
             {
                 "group_id": item.get("group_id"),
@@ -641,10 +693,27 @@ def build_final_messages(
             }
             for item in group_outputs
         ],
-        "output_schema": json.dumps(FINAL_OUTPUT_SCHEMA, indent=2, ensure_ascii=False),
+        "output_schema": json.dumps(
+            (
+                ANALOGOUS_REASONING_ONLY_FINAL_OUTPUT_SCHEMA
+                if analogous_reasoning_only
+                else FINAL_OUTPUT_SCHEMA
+            ),
+            indent=2,
+            ensure_ascii=False,
+        ),
     }
-    user_content = _env().get_template("final.jinja").render(**context)
+    if analogous_reasoning_only:
+        template_name = "final_analogous_reasoning_only.jinja"
+        system_message = ANALOGOUS_REASONING_ONLY_FINAL_SYSTEM_MESSAGE
+    else:
+        context["query_smiles"] = _query_smiles(retrieval.get("query") or {})
+        context["coverage_text"] = _content_to_text(retrieval.get("coverage") or {})
+        context["single_text"] = _branch_text(single_output)
+        template_name = "final.jinja"
+        system_message = FINAL_SYSTEM_MESSAGE
+    user_content = _env().get_template(template_name).render(**context)
     return [
-        {"role": "system", "content": FINAL_SYSTEM_MESSAGE},
+        {"role": "system", "content": system_message},
         {"role": "user", "content": user_content},
     ]

@@ -42,77 +42,89 @@ def prepare_harness_prefetched_retrieval(
     tool_service: ToolServiceClient,
     *,
     identity_blind: bool,
+    include_query_tools: bool = True,
 ) -> dict[str, Any]:
     """Prefetch the same fixed tools, optionally hiding molecule identities."""
     output = deepcopy(retrieval)
     query = output.get("query") or {}
     query_smiles = str(query.get("canonical_smiles") or query.get("input_smiles") or "")
-    calls: list[tuple[str, dict[str, Any]]] = [
-        ("molecule_properties", {"query_smiles": query_smiles, "logd_ph": 7.4})
-    ]
+    calls: list[tuple[str, dict[str, Any]]] = []
+    if include_query_tools:
+        calls.append(
+            ("molecule_properties", {"query_smiles": query_smiles, "logd_ph": 7.4})
+        )
     neighbor_smiles: list[str] = []
     for group in output.get("groups") or []:
         for neighbor in group.get("neighbors") or []:
             reference_smiles = str(neighbor.get("canonical_smiles") or "")
             neighbor_smiles.append(reference_smiles)
-            calls.extend(
-                [
-                    (
-                        "mmp_structure_compare",
-                        {
-                            "query_smiles": query_smiles,
-                            "reference_smiles": reference_smiles,
-                            "max_mmp_alternatives": 5,
-                            "mcs_timeout_s": 5,
-                        },
-                    ),
-                    (
-                        "properties_compare",
-                        {
-                            "query_smiles": query_smiles,
-                            "reference_smiles": reference_smiles,
-                            "logd_ph": 7.4,
-                        },
-                    ),
-                ]
-            )
+            if include_query_tools:
+                calls.extend(
+                    [
+                        (
+                            "mmp_structure_compare",
+                            {
+                                "query_smiles": query_smiles,
+                                "reference_smiles": reference_smiles,
+                                "max_mmp_alternatives": 5,
+                                "mcs_timeout_s": 5,
+                            },
+                        ),
+                        (
+                            "properties_compare",
+                            {
+                                "query_smiles": query_smiles,
+                                "reference_smiles": reference_smiles,
+                                "logd_ph": 7.4,
+                            },
+                        ),
+                    ]
+                )
     invoke_many = getattr(tool_service, "invoke_many", None)
     results = (
-        invoke_many(calls)
+        []
+        if not calls
+        else invoke_many(calls)
         if callable(invoke_many)
         else [tool_service.invoke(tool_name, arguments) for tool_name, arguments in calls]
     )
     if len(results) != len(calls):
         raise ValueError(f"Prefetched tool result count mismatch: {len(results)} != {len(calls)}")
-    property_result = results[0]
-    prefetched_properties = _compact_result(property_result, query_smiles)
+    prefetched_properties = (
+        _compact_result(results[0], query_smiles) if include_query_tools else {}
+    )
     if identity_blind:
         query.clear()
         query.update({
             "molecule_id": "query",
             "identity_hidden": True,
-            "tools_prefetched": True,
-            "prefetched_molecule_properties": prefetched_properties,
         })
+        if include_query_tools:
+            query["tools_prefetched"] = True
+            query["prefetched_molecule_properties"] = prefetched_properties
     else:
-        query["tools_prefetched"] = True
-        query["prefetched_molecule_properties"] = prefetched_properties
+        if include_query_tools:
+            query["tools_prefetched"] = True
+            query["prefetched_molecule_properties"] = prefetched_properties
 
-    result_index = 1
+    result_index = 1 if include_query_tools else 0
     neighbor_smiles_index = 0
     for group_index, group in enumerate(output.get("groups") or [], start=1):
-        group["tools_prefetched"] = True
+        if include_query_tools:
+            group["tools_prefetched"] = True
         if identity_blind:
             group["identity_blind"] = True
         for neighbor_index, neighbor in enumerate(group.get("neighbors") or [], start=1):
             reference_smiles = neighbor_smiles[neighbor_smiles_index]
             neighbor_smiles_index += 1
             alias = f"neighbor_{group_index}_{neighbor_index}"
-            comparisons = results[result_index : result_index + 2]
-            result_index += 2
-            neighbor["prefetched_comparisons"] = [
-                _compact_result(result, query_smiles, reference_smiles) for result in comparisons
-            ]
+            if include_query_tools:
+                comparisons = results[result_index : result_index + 2]
+                result_index += 2
+                neighbor["prefetched_comparisons"] = [
+                    _compact_result(result, query_smiles, reference_smiles)
+                    for result in comparisons
+                ]
             if identity_blind:
                 neighbor["molecule_chembl_id"] = alias
                 neighbor["canonical_smiles"] = "[hidden]"
@@ -123,7 +135,9 @@ def prepare_harness_prefetched_retrieval(
                     for row in neighbor.get("evidence_rows") or []
                 ]
     experiment = output.setdefault("experiment", {})
-    experiment["tool_execution_mode"] = "harness_prefetch"
+    experiment["tool_execution_mode"] = (
+        "harness_prefetch" if include_query_tools else "omitted"
+    )
     if identity_blind:
         output = _replace_identity_terms(output, _retrieval_sensitive_terms(retrieval))
         output.setdefault("experiment", {})["identity_blind"] = True
@@ -147,8 +161,16 @@ def prepare_reasoning_retrieval(
     harness_prefetch_tools: bool,
     prefetched_tool_replay_run_dir: str = "",
     neighbor_context_profile: str = STANDARD_NEIGHBOR_CONTEXT,
+    include_query_tools: bool = True,
 ) -> dict[str, Any]:
     """Apply the requested paper tool-execution contract to retrieval."""
+    if not include_query_tools and prefetched_tool_replay_run_dir:
+        raise ValueError("Query-tool omission cannot use prefetched tool replay")
+    if not include_query_tools and neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT:
+        raise ValueError(
+            "coverage_mmp_ledger requires query comparison tools and is incompatible "
+            "with query-tool omission"
+        )
     if neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT and identity_blind:
         raise ValueError(
             "coverage_mmp_ledger is visible-only and cannot be used with identity_blind"
@@ -164,7 +186,11 @@ def prepare_reasoning_retrieval(
             reasoning_input,
             tool_service,
             identity_blind=True,
+            include_query_tools=include_query_tools,
         )
+    if not include_query_tools:
+        reasoning_input.setdefault("experiment", {})["tool_execution_mode"] = "omitted"
+        return reasoning_input
     if prefetched_tool_replay_run_dir:
         return prepare_replayed_prefetched_retrieval(
             reasoning_input,

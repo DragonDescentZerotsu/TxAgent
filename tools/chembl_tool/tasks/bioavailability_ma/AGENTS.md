@@ -647,6 +647,26 @@ modify the existing paper matrix.
 Provide API keys only through environment variables or an uncommitted local environment file. Never write a
 key into code, manifests, command examples, or Git.
 
+## Analogous-reasoning-only ablation
+
+Bioavailability supports `--analogous-reasoning-only` only with
+`--experiment-mode full_mechanism`. The mode keeps retrieval unchanged but omits the
+single-molecule branch, all query property/comparison tool execution, and query-tool
+instructions. The final prompt receives only the completed mechanism-branch analog
+analyses. It supports Morgan retrieval, legacy assay-transfer reranking, and the v11
+assay-transfer profile.
+
+The shared batch and stage runtime persist an explicit `status: omitted` single-stage
+artifact so resume/completeness checks distinguish intentional omission from failure.
+Raw `retrieval.json` replay and same-mode `--skip-existing` resume are allowed; frozen
+single/group reasoning, prefetched tool replay, and final-only reuse are rejected.
+The prompt template and instruction file are:
+
+```text
+group_prompt_templates/final_analogous_reasoning_only.jinja
+prompt_instructions/final_analogous_reasoning_only.txt
+```
+
 ## Tests
 
 ```bash

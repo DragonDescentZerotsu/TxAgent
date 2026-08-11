@@ -56,6 +56,24 @@ def test_result_completion_accepts_a_retrieval_free_run():
     )
 
 
+def test_result_completion_accepts_only_explicit_analog_single_omission():
+    complete = {
+        "final_status": "ok",
+        "pred_label": 1,
+        "single_status": "omitted",
+        "analogous_reasoning_only": True,
+        "n_groups_with_neighbors": 1,
+        "n_group_outputs": 1,
+        "n_failed_group_outputs": 0,
+    }
+
+    assert _result_is_complete(complete)
+    assert not _result_is_complete({**complete, "single_status": "ok"})
+    assert not _result_is_complete(
+        {**complete, "analogous_reasoning_only": False}
+    )
+
+
 def test_result_completion_requires_the_exact_expected_group_ids():
     complete = {
         "final_status": "ok",

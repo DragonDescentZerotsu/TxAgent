@@ -116,6 +116,51 @@ def test_stage_dag_exposes_single_and_groups_before_final(tmp_path):
     assert ready_stage_jobs(state) == []
 
 
+def test_analog_stage_dag_omits_single_and_unlocks_final_after_groups(tmp_path):
+    prepared = _prepared(tmp_path)
+    prepared.args.analogous_reasoning_only = True
+    run_dir = prepared.batch_run_root / "condition_idx00000"
+    run_dir.mkdir(parents=True)
+    (run_dir / "retrieval.json").write_text(
+        json.dumps(
+            {
+                "status": "ok",
+                "groups": [
+                    {"group_id": "Mechanism.a", "neighbors": [{"rank": 1}]}
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    (run_dir / "manifest.json").write_text(
+        json.dumps(
+            {
+                "n_groups_with_neighbors": 1,
+                "analogous_reasoning_only": True,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (run_dir / "single_molecule_reasoning_output.json").write_text(
+        json.dumps({"status": "omitted", "reason": "analogous_reasoning_only"}),
+        encoding="utf-8",
+    )
+
+    state = load_stage_state(prepared, prepared.items[0])
+    assert state is not None
+    assert [(job.stage, job.group_id) for job in ready_stage_jobs(state)] == [
+        (GROUP_STAGE, "Mechanism.a")
+    ]
+
+    (run_dir / "group_reasoning_outputs.jsonl").write_text(
+        json.dumps({"group_id": "Mechanism.a", "status": "ok"}) + "\n",
+        encoding="utf-8",
+    )
+    assert [(job.stage, job.group_id) for job in ready_stage_jobs(state)] == [
+        (FINAL_STAGE, "")
+    ]
+
+
 def test_group_checkpoint_merge_replaces_only_matching_branch(tmp_path):
     path = tmp_path / "group_reasoning_outputs.jsonl"
     path.write_text(

@@ -126,6 +126,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
     SUPPORTED_FORMATS as TEXT_GROUP_PROMPT_FORMATS,
     build_final_messages,
     build_group_messages,
+    final_prompt_provenance,
     group_output_schema_provenance,
     group_output_validation,
     group_system_message,
@@ -269,6 +270,7 @@ def _nondirect_evidence_policy(exclude: bool) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    _validate_analogous_reasoning_only(args)
     if args.assay_transfer_profile == "v11_with_categorical":
         if args.assay_transfer_template_profile != V11_TEMPLATE_PROFILE:
             raise SystemExit(
@@ -395,12 +397,16 @@ def main(argv: list[str] | None = None) -> int:
             max_tokens=args.max_tokens,
             temperature=args.temperature,
             tool_service_url=args.tool_service_url,
-            enable_group_tools=not args.disable_group_tools,
+            enable_group_tools=not args.disable_group_tools and not args.analogous_reasoning_only,
             max_tool_rounds=args.max_tool_rounds,
             reasoning_effort=args.reasoning_effort,
             enable_thinking=args.enable_thinking,
         )
-        return _resume_final_from_run_dir(Path(args.resume_final_from_run_dir), client)
+        return _resume_final_from_run_dir(
+            Path(args.resume_final_from_run_dir),
+            client,
+            analogous_reasoning_only=args.analogous_reasoning_only,
+        )
 
     run_id = args.run_id or time.strftime("bioavailability_reasoning_%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
     out_dir = ensure_dir(Path(args.out_root) / run_id)
@@ -568,7 +574,7 @@ def main(argv: list[str] | None = None) -> int:
         max_tokens=args.max_tokens,
         temperature=args.temperature,
         tool_service_url=args.tool_service_url,
-        enable_group_tools=not args.disable_group_tools,
+        enable_group_tools=not args.disable_group_tools and not args.analogous_reasoning_only,
         max_tool_rounds=args.max_tool_rounds,
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
@@ -580,6 +586,7 @@ def main(argv: list[str] | None = None) -> int:
         harness_prefetch_tools=args.harness_prefetch_tools,
         prefetched_tool_replay_run_dir=args.prefetched_tool_replay_run_dir,
         neighbor_context_profile=args.neighbor_context_profile,
+        include_query_tools=not args.analogous_reasoning_only,
     )
     reasoning_groups = [group for group in reasoning_retrieval["groups"] if group.get("neighbors")]
     if args.max_groups:
@@ -596,7 +603,11 @@ def main(argv: list[str] | None = None) -> int:
                 "assay_transfer_tool format requires an assay record on every selected "
                 f"neighbor; missing for {missing[:5]} (re-run precompute/retrieval)."
             )
-    frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
+    frozen_single = (
+        _omitted_single_output()
+        if args.analogous_reasoning_only
+        else load_frozen_single_analysis(args.single_analysis_source_run_dir)
+    )
     frozen_groups = load_reusable_group_outputs(
         args.group_analysis_source_run_dir,
         retrieval,
@@ -612,6 +623,7 @@ def main(argv: list[str] | None = None) -> int:
         "instructions_file": args.group_prompt_instructions_file or None,
         "output_schema_profile": args.group_output_schema,
         "presentation_style": args.presentation_style,
+        "omit_query_tools": args.analogous_reasoning_only,
     }
     single_output, group_outputs = _run_parallel_reasoning(
         client,
@@ -645,6 +657,7 @@ def main(argv: list[str] | None = None) -> int:
         final_evidence_surface=args.final_evidence_surface,
         final_decision_profile=args.final_decision_profile,
         prompt_profile=args.bioavailability_prompt_profile,
+        analogous_reasoning_only=args.analogous_reasoning_only,
     )
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
@@ -706,7 +719,27 @@ def main(argv: list[str] | None = None) -> int:
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
-        "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
+        "analogous_reasoning_only": args.analogous_reasoning_only,
+        "single_branch_execution": (
+            "omitted" if args.analogous_reasoning_only else "executed_or_reused"
+        ),
+        "single_branch_omission_reason": (
+            "analogous_reasoning_only" if args.analogous_reasoning_only else ""
+        ),
+        "query_tool_execution": (
+            "omitted" if args.analogous_reasoning_only else "enabled"
+        ),
+        "group_query_tool_instruction_policy": (
+            "omitted.v1" if args.analogous_reasoning_only else "standard.v1"
+        ),
+        "final_prompt_provenance": final_prompt_provenance(
+            analogous_reasoning_only=args.analogous_reasoning_only
+        ),
+        "harness_prefetch_tools": (
+            False
+            if args.analogous_reasoning_only
+            else args.identity_blind or args.harness_prefetch_tools
+        ),
         "neighbor_index": args.index if args.experiment_mode != "none" else "",
         "retrieval_evidence_source": retrieval.get("evidence_source", {}),
         "model": args.model,
@@ -715,16 +748,20 @@ def main(argv: list[str] | None = None) -> int:
         "reasoning_effort": args.reasoning_effort,
         "temperature": args.temperature,
         "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
-        "group_tools_enabled": not args.disable_group_tools,
+        "group_tools_enabled": not args.disable_group_tools and not args.analogous_reasoning_only,
         "tool_execution_mode": (
-            "harness_prefetch" if args.identity_blind or args.harness_prefetch_tools else "llm_function_call"
+            "omitted"
+            if args.analogous_reasoning_only
+            else "harness_prefetch"
+            if args.identity_blind or args.harness_prefetch_tools
+            else "llm_function_call"
         ),
         "single_analysis_source_run_dir": args.single_analysis_source_run_dir,
         "group_analysis_source_run_dir": args.group_analysis_source_run_dir,
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
-        if not args.disable_group_tools
+        if not args.disable_group_tools and not args.analogous_reasoning_only
         else [],
         "max_tool_rounds": args.max_tool_rounds,
         "top_k_per_group_requested": args.top_k_per_group,
@@ -833,6 +870,14 @@ def _run_parallel_reasoning(
     )
 
 
+def _omitted_single_output() -> dict[str, Any]:
+    return {
+        "analysis_id": "single_molecule",
+        "status": "omitted",
+        "reason": "analogous_reasoning_only",
+    }
+
+
 def single_molecule_messages(
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
@@ -914,6 +959,7 @@ def legacy_group_messages(
     include_assay_transfer_score: bool = False,
     group_tools_enabled: bool = True,
     prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    omit_query_tools: bool = False,
 ) -> list[dict[str, str]]:
     """Compile the legacy JSON group-branch [system, user] messages (no LLM needed)."""
     profile = get_bioavailability_prompt_profile(prompt_profile)
@@ -934,6 +980,7 @@ def legacy_group_messages(
                     group,
                     include_assay_transfer_score=include_assay_transfer_score,
                     prompt_profile=prompt_profile,
+                    include_query_tool_guidance=not omit_query_tools,
                 ),
                 ensure_ascii=False,
             ),
@@ -959,6 +1006,7 @@ def _reason_one_group(
             include_assay_transfer_score=include_assay_transfer_score,
             group_tools_enabled=client.enable_group_tools,
             prompt_profile=prompt_profile,
+            omit_query_tools=bool((prompt_options or {}).get("omit_query_tools")),
         )
     else:
         effective_prompt_options = {
@@ -996,6 +1044,8 @@ def final_messages(
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
+    *,
+    analogous_reasoning_only: bool = False,
 ) -> list[dict[str, str]]:
     """Compile the final-synthesis stage [system, user] messages (no LLM needed)."""
     return build_final_messages(
@@ -1003,6 +1053,7 @@ def final_messages(
         single_output,
         group_outputs,
         high_f_cutoff=BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT,
+        analogous_reasoning_only=analogous_reasoning_only,
     )
 
 
@@ -1015,54 +1066,70 @@ def _run_final_reasoning(
     final_evidence_surface: str = SUMMARY_ONLY,
     final_decision_profile: str = STANDARD_FINAL_DECISION,
     prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    analogous_reasoning_only: bool = False,
 ) -> dict[str, Any]:
     profile = get_bioavailability_prompt_profile(prompt_profile)
-    evidence_fields, surface_audit = build_final_evidence_fields(
-        retrieval,
-        compact_group_reasoning_outputs(group_outputs),
-        surface=final_evidence_surface,
-    )
     decision_prompt = build_final_decision_prompt(
         final_decision_profile,
         TRAIN_RATIO_PRIOR,
     )
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                profile.final_system_role + "Return only valid JSON."
-            ),
-        },
-        {
-            "role": "user",
-            "content": json.dumps(
-                {
-                    "task": profile.final_task,
-                    "query": _llm_query_payload(retrieval["query"]),
-                    "retrieval_coverage": retrieval["coverage"],
-                    "single_molecule_analysis": {
-                        "status": single_output.get("status"),
-                        "content": validated_branch_content(single_output),
+    surface_audit = None
+    if analogous_reasoning_only:
+        if final_evidence_surface != SUMMARY_ONLY:
+            raise ValueError(
+                "Analogous-reasoning-only final synthesis cannot expose retrieval evidence"
+            )
+        if final_decision_profile != STANDARD_FINAL_DECISION:
+            raise ValueError(
+                "Analogous-reasoning-only final synthesis cannot use a decision prior"
+            )
+        messages = final_messages(
+            retrieval,
+            single_output,
+            group_outputs,
+            analogous_reasoning_only=True,
+        )
+    else:
+        evidence_fields, surface_audit = build_final_evidence_fields(
+            retrieval,
+            compact_group_reasoning_outputs(group_outputs),
+            surface=final_evidence_surface,
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": profile.final_system_role + "Return only valid JSON.",
+            },
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {
+                        "task": profile.final_task,
+                        "query": _llm_query_payload(retrieval["query"]),
+                        "retrieval_coverage": retrieval["coverage"],
+                        "single_molecule_analysis": {
+                            "status": single_output.get("status"),
+                            "content": validated_branch_content(single_output),
+                        },
+                        **evidence_fields,
+                        **decision_prompt.fields,
+                        "instructions": [
+                            "Return compact complete JSON.",
+                            f"Use bioavailability_prediction='high' for oral bioavailability F >= {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (Bioavailability_Ma label 1), and bioavailability_prediction='low' for F < {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (label 0).",
+                            *profile.final_instructions,
+                            "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
+                        ]
+                        + list(decision_prompt.instructions)
+                        + final_evidence_instructions(final_evidence_surface),
+                        "required_json_schema": {
+                            **FINAL_SCHEMA,
+                            **decision_prompt.schema,
+                        },
                     },
-                    **evidence_fields,
-                    **decision_prompt.fields,
-                    "instructions": [
-                        "Return compact complete JSON.",
-                        f"Use bioavailability_prediction='high' for oral bioavailability F >= {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (Bioavailability_Ma label 1), and bioavailability_prediction='low' for F < {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (label 0).",
-                        *profile.final_instructions,
-                        "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
-                    ]
-                    + list(decision_prompt.instructions)
-                    + final_evidence_instructions(final_evidence_surface),
-                    "required_json_schema": {
-                        **FINAL_SCHEMA,
-                        **decision_prompt.schema,
-                    },
-                },
-                ensure_ascii=False,
-            ),
-        },
-    ]
+                    ensure_ascii=False,
+                ),
+            },
+        ]
     response = call_with_json_validation(
         client.chat_json,
         messages,
@@ -1102,6 +1169,7 @@ def build_group_prompt_payload(
     *,
     include_assay_transfer_score: bool = False,
     prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    include_query_tool_guidance: bool = True,
 ) -> dict[str, Any]:
     profile = get_bioavailability_prompt_profile(prompt_profile)
     return bound_group_prompt_payload({
@@ -1130,7 +1198,15 @@ def build_group_prompt_payload(
                     if include_assay_transfer_score
                     else {}
                 ),
-                "prefetched_comparisons": neighbor.get("prefetched_comparisons") or [],
+                **(
+                    {
+                        "prefetched_comparisons": (
+                            neighbor.get("prefetched_comparisons") or []
+                        )
+                    }
+                    if include_query_tool_guidance
+                    else {}
+                ),
                 "evidence_rows": [_clean_evidence_row(row) for row in neighbor["evidence_rows"]],
                 "shared_assay_context": _clean_shared_assay_context(neighbor.get("shared_assay_context") or {}),
             }
@@ -1147,16 +1223,32 @@ def build_group_prompt_payload(
                 else []
             ),
             *profile.group_instructions,
-            "Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.",
-            "Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, logP, molecular size, or polarity could affect oral bioavailability transferability.",
-            "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
+            *(
+                [
+                    "Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.",
+                    "Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, logP, molecular size, or polarity could affect oral bioavailability transferability.",
+                    "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
+                ]
+                if include_query_tool_guidance
+                else [
+                    "No query property or query-to-neighbor comparison tools are available; reason only from the supplied analog retrieval and assay evidence."
+                ]
+            ),
             "Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.",
             "Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.",
             "Distinguish direct oral bioavailability, in vivo oral exposure/absorption, in vitro permeability, solubility/dissolution, metabolism/clearance, formulation/food-effect context, and weak inhibition/binding evidence.",
             "Do not convert CYP IC50/inhibition into metabolic instability, and do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
             "For aggregated evidence, examples preserve endpoint, value, condition, and support-text pairings. Do not treat qualitative, relative, or surrogate_proxy evidence as a direct absolute F% measurement.",
-            "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.",
+            *(
+                [
+                    "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself."
+                ]
+                if include_query_tool_guidance
+                else [
+                    "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, leave tool_summary empty, and judge transferability/effect_on_bioavailability_reasoning from the supplied analog evidence."
+                ]
+            ),
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
         "required_json_schema": GROUP_SCHEMA,
@@ -1223,7 +1315,12 @@ def _manifest_prompt_profile(manifest: dict[str, Any]) -> str:
     )
 
 
-def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
+def _resume_final_from_run_dir(
+    run_dir: Path,
+    client: OpenAICompatibleClient,
+    *,
+    analogous_reasoning_only: bool,
+) -> int:
     retrieval = json.loads((run_dir / "retrieval.json").read_text(encoding="utf-8"))
     single_output = json.loads((run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8"))
     group_outputs = [
@@ -1233,6 +1330,11 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     ]
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+    if bool(manifest.get("analogous_reasoning_only")) != analogous_reasoning_only:
+        raise SystemExit(
+            "--resume-final-from-run-dir must use the same analogous-reasoning-only mode "
+            "as the source run"
+        )
     prompt_profile = _manifest_prompt_profile(manifest)
     retrieval, group_outputs, final_surface = prepare_resumed_final_inputs(
         retrieval,
@@ -1251,6 +1353,7 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
             manifest.get("final_decision_profile") or STANDARD_FINAL_DECISION
         ),
         prompt_profile=prompt_profile,
+        analogous_reasoning_only=analogous_reasoning_only,
     )
     final_path = run_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
@@ -1318,6 +1421,16 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default="operational",
     )
     parser.add_argument("--identity-blind", action="store_true")
+    parser.add_argument(
+        "--analogous-reasoning-only",
+        "--analogous_reasoning_only",
+        dest="analogous_reasoning_only",
+        action="store_true",
+        help=(
+            "full_mechanism only: omit the single-molecule branch and all "
+            "model-facing query tools, then synthesize only analog branch analyses."
+        ),
+    )
     parser.add_argument("--harness-prefetch-tools", action="store_true")
     parser.add_argument("--single-analysis-source-run-dir", default="")
     parser.add_argument("--group-analysis-source-run-dir", default="")
@@ -1515,6 +1628,43 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         if args.assay_transfer_template_profile == DEFAULT_TEMPLATE_PROFILE:
             args.assay_transfer_template_profile = V11_TEMPLATE_PROFILE
     return args
+
+
+def _validate_analogous_reasoning_only(args: argparse.Namespace) -> None:
+    if not args.analogous_reasoning_only:
+        return
+    if args.experiment_mode != "full_mechanism":
+        raise SystemExit(
+            "--analogous-reasoning-only requires --experiment-mode full_mechanism"
+        )
+    incompatible = {
+        "--single-analysis-source-run-dir": args.single_analysis_source_run_dir,
+        "--group-analysis-source-run-dir": args.group_analysis_source_run_dir,
+        "--prefetched-tool-replay-run-dir": args.prefetched_tool_replay_run_dir,
+    }
+    used = [name for name, value in incompatible.items() if value]
+    if used:
+        raise SystemExit(
+            "--analogous-reasoning-only requires fresh reasoning and cannot use: "
+            + ", ".join(used)
+        )
+    if args.neighbor_context_profile == "coverage_mmp_ledger":
+        raise SystemExit(
+            "--analogous-reasoning-only cannot use --neighbor-context-profile "
+            "coverage_mmp_ledger because it invokes query comparison tools"
+        )
+    if args.enable_chembl_exact_context:
+        raise SystemExit(
+            "--analogous-reasoning-only cannot use --enable-chembl-exact-context"
+        )
+    if args.final_evidence_surface != SUMMARY_ONLY:
+        raise SystemExit(
+            "--analogous-reasoning-only requires --final-evidence-surface summary_only"
+        )
+    if args.final_decision_profile != STANDARD_FINAL_DECISION:
+        raise SystemExit(
+            "--analogous-reasoning-only requires --final-decision-profile standard"
+        )
 
 
 def _log(message: str) -> None:

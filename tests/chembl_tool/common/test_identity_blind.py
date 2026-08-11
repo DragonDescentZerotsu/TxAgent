@@ -6,6 +6,7 @@ from tools.chembl_tool.common.identity_blind import (
     prepare_identity_blind_final_retrieval,
     prepare_identity_blind_retrieval,
     prepare_replayed_prefetched_retrieval,
+    prepare_reasoning_retrieval,
     sanitize_identity_blind_branch_outputs,
 )
 
@@ -179,6 +180,53 @@ def test_identity_blind_prefetch_redacts_backend_error_details():
     assert "AssertionError" not in serialized
     assert "CCO" not in serialized
     assert "CCN" not in serialized
+
+
+def test_query_tool_omission_never_contacts_tool_service():
+    retrieval = {
+        "query": {"input_smiles": "CCO", "canonical_smiles": "CCO"},
+        "groups": [
+            {
+                "group_id": "Mechanism.absorption",
+                "neighbors": [
+                    {
+                        "rank": 1,
+                        "molecule_chembl_id": "CHEMBL1",
+                        "canonical_smiles": "CCN",
+                        "evidence_rows": [],
+                    }
+                ],
+            }
+        ],
+    }
+
+    class NoToolService:
+        def invoke(self, *args, **kwargs):
+            raise AssertionError((args, kwargs))
+
+        def invoke_many(self, *args, **kwargs):
+            raise AssertionError((args, kwargs))
+
+    visible = prepare_reasoning_retrieval(
+        retrieval,
+        NoToolService(),
+        identity_blind=False,
+        harness_prefetch_tools=True,
+        include_query_tools=False,
+    )
+    blind = prepare_reasoning_retrieval(
+        retrieval,
+        NoToolService(),
+        identity_blind=True,
+        harness_prefetch_tools=True,
+        include_query_tools=False,
+    )
+
+    assert visible["experiment"]["tool_execution_mode"] == "omitted"
+    assert "prefetched_molecule_properties" not in visible["query"]
+    assert "prefetched_comparisons" not in visible["groups"][0]["neighbors"][0]
+    assert blind["experiment"]["tool_execution_mode"] == "omitted"
+    assert blind["query"] == {"molecule_id": "query", "identity_hidden": True}
 
 
 def test_prefetched_tool_replay_keeps_visible_identity(tmp_path):
