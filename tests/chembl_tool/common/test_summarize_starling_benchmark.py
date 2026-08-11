@@ -1,8 +1,49 @@
+import csv
 import json
 from argparse import Namespace
 from types import SimpleNamespace
 
 from tools.chembl_tool.paper_experiments import summarize_starling_benchmark
+
+
+def test_compose_task_metrics_selects_each_task_from_its_declared_summary(tmp_path):
+    specifications = []
+    for index, task in enumerate(summarize_starling_benchmark.TASK_DATA_NAMES):
+        path = tmp_path / f"{task}.tsv"
+        with path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(
+                handle,
+                fieldnames=(
+                    "benchmark_split",
+                    "evaluation_subset",
+                    "task",
+                    "method",
+                    "macro_f1",
+                ),
+                delimiter="\t",
+            )
+            writer.writeheader()
+            writer.writerow(
+                {
+                    "benchmark_split": "scaffold",
+                    "evaluation_subset": "valid",
+                    "task": task,
+                    "method": "none",
+                    "macro_f1": 0.5 + index / 10,
+                }
+            )
+        specifications.append(f"{task}={path}")
+
+    rows = summarize_starling_benchmark._compose_task_metrics(
+        tuple(specifications),
+        splits=("scaffold",),
+        evaluation_subset="valid",
+    )
+
+    assert [row["task"] for row in rows] == list(
+        summarize_starling_benchmark.TASK_DATA_NAMES
+    )
+    assert [float(row["macro_f1"]) for row in rows] == [0.5, 0.6, 0.7]
 
 
 def test_valid_pipeline_summary_does_not_implicitly_mix_historical_baselines():
@@ -21,6 +62,59 @@ def test_valid_pipeline_summary_does_not_implicitly_mix_historical_baselines():
         "structure_knn": None,
         "minimol_embedding_knn": None,
     }
+
+
+def test_condition_metric_override_is_explicit_and_versionable(tmp_path):
+    metrics = tmp_path / "metrics.json"
+    overrides = summarize_starling_benchmark._condition_metric_overrides(
+        (f"bioavailability_ma__none={metrics}",)
+    )
+
+    assert overrides == {"bioavailability_ma__none": metrics}
+
+
+def test_composed_summary_adds_explicit_condition_metrics(monkeypatch, tmp_path):
+    experiment = SimpleNamespace(
+        task="bioavailability_ma",
+        name="bioavailability_ma__chembl_direct",
+        mode="direct",
+        source="chembl",
+    )
+    monkeypatch.setattr(
+        summarize_starling_benchmark,
+        "experiments_for_starling_benchmark",
+        lambda split: [experiment],
+    )
+    metrics = tmp_path / "metrics.json"
+    metrics.write_text(
+        json.dumps(
+            {
+                "n_total": 2,
+                "n_successful": 2,
+                "n_failed_runs": 0,
+                "accuracy": 0.5,
+                "macro_f1": 0.4,
+                "positive_class_precision": 0.5,
+                "positive_class_recall": 0.5,
+                "positive_class_f1": 0.5,
+                "confusion_matrix": {"tn": 1, "fp": 0, "fn": 1, "tp": 0},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    rows = summarize_starling_benchmark._condition_metric_rows(
+        (f"{experiment.name}={metrics}",),
+        splits=("scaffold",),
+        evaluation_subset="valid",
+        model_label="GPT-OSS-120B",
+        visibility_mode="identity_blind",
+    )
+
+    assert len(rows) == 1
+    assert rows[0]["method"] == "chembl_direct"
+    assert rows[0]["macro_f1"] == 0.4
+    assert rows[0]["metrics_path"] == str(metrics)
 
 
 def test_minimol_embedding_knn_rows_are_included(monkeypatch, tmp_path):

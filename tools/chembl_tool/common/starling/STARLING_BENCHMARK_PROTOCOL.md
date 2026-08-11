@@ -1,8 +1,67 @@
 # Starling 二分类 benchmark 构建协议
 
-本协议用于把 Starling direct literature records 转成与当前 TDC task 语义兼容的二分类
+本协议用于把 Starling direct literature records 转成冻结 task contract 下的二分类
 `train.jsonl` / `valid.jsonl` / `test.jsonl`。它与 Starling evidence retrieval index 分离：benchmark builder
 负责 gold-label 构建，`minimal_evidence.v1` 继续只负责 inference-time evidence。
+
+## 当前 BBB experimental meaningful-CNS-access lineage（2026-08-09）
+
+BBB 当前 paper-facing gold 是 `experimental_meaningful_cns_access_v2`，不再把所有 Starling
+`bbb_permeability_label` 无条件混成一个 TDC-compatible endpoint。目标定义为：**系统给药后是否有实验支持的
+meaningful/adequate CNS access，或相反的 restricted/poor access**。Positive 不要求 passive diffusion，也不等于
+任何微量 signal 可检出；低但非零 exposure 可以保留为 negative。
+
+允许进入 gold 的 endpoint family：
+
+```text
+brain_unbound
+brain_systemic_ratio
+brain_tissue
+csf                     # proxy outcome，不等同于脑实质
+pet_or_autoradiography
+experimental_bbb_outcome
+```
+
+必须同时有明确 binary `bbb_permeability_label` 和可审计的实验/测量依据；若 source 只给 quantitative direct
+metric 而没有显式实验语境，则必须同时有非空 value claim、PMID 且无 prediction cue。计算或 in-silico prediction、
+PAMPA/MDCK/其它体外 passive-permeability assay、mechanism-only transporter proxy、非系统 CNS 给药、人工或
+疾病改变屏障、间接疗效推断、`CSF half-life` 等消除 readout，以及明显的同记录方向冲突均拒绝。各种 brain/CSF metrics 不使用一个共享
+numeric threshold；通过 scope gate 后只使用 source 的明确 qualitative label，再按公共 70% record-majority
+聚合 parent。Gold 不按 passive/efflux/influx 或 endpoint family 设置配额，也不为了让某个 agent group 有用而
+重采样或改标签；这些 group 在 held-out-filtered train-only evidence index 上另做 coverage audit。
+
+正式 scaffold split 使用 lexicographic MILP 先最小化 held-out singleton，再最小化 valid/test singleton
+imbalance 和 label imbalance，最后确定性消除 tie。当前 build 为 3,667 parents，Y=0/Y=1 为
+`967/2,700`，train/valid/test 为 `2,935/366/366`；valid/test 分别有 21/22 singleton，且两者 label 均为
+`97/269`，identity/scaffold overlap 为 0。构建、审计和产物：
+
+```text
+tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
+tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+tools/chembl_tool/common/starling/audit_bbb_experimental_meaningful_cns_access.py
+data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/
+```
+
+build fingerprint 为 `0a864e56c583f79768427dbb8c4f3e17f4fca43b2eab7d2e791ba3bb34c3eb91`。
+三名 `gpt-5.6-sol` reviewer 在多轮 replacement audit 中检查了 366 条 unique source records；当前 294 条
+family×label 分层 deterministic sample 全部人工通过。主要排除项包括 prediction/in-vitro、altered barrier、
+间接 pharmacodynamic inference、query/analyte/PMID mismatch、parent/metabolite ambiguity、total-radioactivity
+attribution 和不受当前 small-molecule identity/tool contract 支持的 metal complex。该抽样不能替代未来双人原文
+annotation，因此当前状态是 reproducible high-precision build，不是最终 paper source-quality gold certification。
+旧 `experimental_direct_cns_v1`、BBB `record_agreement70_split811_v1` 和 `record_supported_v2` 保留为 historical lineage。
+
+唯一重建和审计命令：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.common.starling.build_bbb_experimental_meaningful_cns_access
+
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.common.starling.audit_bbb_experimental_meaningful_cns_access
+```
+
+第二条命令会重新生成 deterministic QA sample 并把人工状态设为 `pending`；只有读完 sample 后才可用
+`--mark-existing-review --manual-review-status passed` 标记通过，且 audit 会校验 build fingerprint。
 
 ## Parent record-majority policy
 
@@ -13,7 +72,8 @@ fraction，而不是把所有 contextual records 无条件压成一个 gold labe
 
 所有当前 lineage 在保留 source-row ambiguity gate 的前提下，采用用户冻结的 70% record-weighted majority：
 
-1. source row 先按 task-specific TDC 语义独立转成 `0/1/ambiguous`；
+1. source row 先按 task-specific frozen scope/label adapter 独立转成 `0/1/ambiguous`；BBB 当前使用上述
+   experimental meaningful-CNS-access contract，不能再描述成 TDC-compatible conversion；
 2. SMILES 用 `rdkit_fragment_parent.v1` 归一化，盐型不成为独立 benchmark molecule；
 3. 同一个 parent 内以每条 accepted source record 为一票，计算
    `agreement=max(n0,n1)/(n0+n1)`；同一 PMID 的多条 record 仍分别计票；
@@ -36,9 +96,10 @@ fraction，而不是把所有 contextual records 无条件压成一个 gold labe
 
 这套规则优先保证 label precision 和可审计性，而不是最大化保留率。
 
-## 当前 record-supported v2 split policy
+## Bioavailability/Skin 当前与 BBB historical record-supported v2 split policy
 
-当前 paper-facing lineage 是 scaffold-only `record_supported_v2`。它复用第一版冻结的全部 binary parent
+Bioavailability/Skin 当前 paper-facing lineage 是 scaffold-only `record_supported_v2`；BBB 同 lineage 自
+2026-08-09 起只作 historical comparison。它复用第一版冻结的全部 binary parent
 labels，只重新分配 scaffold groups；因此 label 变化和 split 变化不会混在一起。分配使用 lexicographic
 MILP，并严格按以下优先级冻结前一层最优值后再优化下一层：
 
@@ -65,20 +126,24 @@ full direct source 建立的，其中包含新 valid/test molecules 的 source r
 - 后续 evidence library 必须排除 valid/test parent 的全部盐型、片段和重复记录；
 - 不允许只依赖 query-time exact-SMILES exclusion；identity-equivalent source rows 也必须排除；
 - train-only index 对 valid+test union 完成覆盖率和 zero-overlap audit 之前，不能启动正式 paper rerun。
+- inference-time direct evidence 还必须通过与 gold adapter 相同的 task scope gate；held-out parent exclusion
+  不能修复 endpoint-scope mismatch。Skin current index 因此复用
+  `is_tdc_skin_sensitization_scope()`，历史 broad-skin index 只作 v1 reproduction。
 
 ## 当前 task policy
 
 ### BBB_Martins
 
-TDC 目标为 BBB pass/fail；常用数值表述是 `logBB >= -1` 为 positive。
+当前目标为系统给药后实验支持的 meaningful/adequate CNS access vs restricted/poor access；旧
+TDC-compatible mapping 只作 historical lineage。
 
-- Starling 的明确 `bbb_permeability_label` 映射到 pass/fail；
-- `bbb_transport_label` 只描述机制/上下文，不参与 gold label；
-- 只有明确 `logBB` 数值使用 `-1` threshold；
-- Papp、Kp、Kp,uu、brain concentration、CSF concentration 等异构量不互相换算；
-- `qualifying_conditions` 非空的 context-dependent record 不进入 molecule-only gold；
-- qualitative permeability 与 logBB 信号在同一 record 内冲突时，该 record 为 ambiguous；
-- molecule parent 跨记录出现不同标签时，按统一 70% record-agreement policy 决定接受或拒绝。
+- brain/CSF access outcome 先通过 experimental scope gate，再读取明确 `bbb_permeability_label`；
+- CSF 是 direct CNS proxy，不等同于 brain parenchyma；
+- passive permeability、efflux/influx、transporter binding/inhibition 是 agent mechanism evidence，不产生 gold；
+- low-but-nonzero exposure 可为 negative；mere detectability 不是 positive rule；
+- 不把 Papp、Kp、Kp,uu、brain concentration、CSF concentration 等异构量用一个阈值强行换算；
+- prediction、in-vitro-only、altered-barrier/non-systemic、indirect efficacy inference 和明显方向冲突拒绝；
+- molecule parent 继续按统一 70% record-agreement policy 决定接受或拒绝。
 
 ### Bioavailability_Ma
 
@@ -114,6 +179,8 @@ skin exposure 不等于这个 label。
 - `inconclusive` 不进入 binary benchmark；
 - `positive_count` / `total_tested` 保留为 provenance，不另造 incidence threshold；
 - irritation、urticaria、generic skin reaction 和 photo-irritation 默认不进入该 TDC-compatible label。
+- current Tier-1 direct evidence library 使用同一 scope predicate；scope 外 rows 不得先聚合进 molecule card
+  再要求 LLM 从 summary/examples 中自行忽略。
 
 ### ClinTox
 
@@ -274,7 +341,7 @@ PMIDs、raw value examples、identity metadata 和冲突信息放在 audit artif
 根目录 `molecule_labels.jsonl` 带有 `split_assignments.random/scaffold`；每个 split-specific audit
 文件用于后续按对应 parent identity 构建 train-only retrieval library。
 
-当前 v2 构建命令与输出：
+Bioavailability/Skin current、BBB historical v2 构建命令与输出：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \

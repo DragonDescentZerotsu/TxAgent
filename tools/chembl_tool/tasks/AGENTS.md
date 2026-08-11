@@ -92,10 +92,17 @@ tools/chembl_tool/common/starling/evidence_library.py
   构建 inference-time molecule evidence/index，不产生 benchmark label。
 
 tools/chembl_tool/common/starling/benchmark_dataset.py
-  统一完成 parent identity、binary/ambiguous 决策聚合、冲突排除、random/scaffold split 和审计输出。
+  统一完成 parent identity、binary/ambiguous 决策聚合、70% record-weighted majority、
+  historical random/scaffold split 和审计输出。
 
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
-  当前支持任务的统一构建 CLI。
+  第一版 `record_agreement70_split811_v1` random/scaffold historical build CLI。
+
+tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+  Bioavailability/Skin 当前 `record_supported_v2` scaffold-only quality split builder。
+
+tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+  BBB 当前 `experimental_meaningful_cns_access_v2` build/audit orchestration。
 
 tools/chembl_tool/tasks/<task>/starling_benchmark.py
   只声明该 task 的 source、endpoint/scope/population、单位/threshold 和 free-text 到 label 的保守映射。
@@ -103,20 +110,21 @@ tools/chembl_tool/tasks/<task>/starling_benchmark.py
 
 Task adapter 必须先把每条 source record 映射为 `0`、`1` 或带 reason 的拒绝/ambiguous 决策；不得把
 supporting passage 当作无条件 keyword vote，也不得在 adapter 内复制 parent aggregation 或 split 算法。
-公共层按 `rdkit_fragment_parent.v1` 聚合：同一 accepted parent 同时出现 0 和 1 即为冲突，整个 parent
-从两套 split 排除，不做多数票。
+公共层按 `rdkit_fragment_parent.v1` 聚合 accepted records；多数 label 占比达到 70% 且不是精确 tie
+时接受，否则写入 reject audit。同 PMID 的多条 accepted records 仍分别计票。
 
-每个支持 task 必须从同一 accepted parent pool 同时生成：
+当前 paper-facing roots 为：
 
 ```text
-data/processed_starling/<Task>/random/{train.jsonl,test.jsonl,...}
-data/processed_starling/<Task>/scaffold/{train.jsonl,test.jsonl,...}
+data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/
+data/processed_starling_record_supported_v2/{Bioavailability_Ma,Skin_Reaction}/scaffold/
 ```
 
-test target 为 `min(500, floor(0.2 * n_binary_molecules))`。random 使用固定 seed 的 label-stratified
-stable-hash split；scaffold 以 canonical Bemis–Murcko scaffold 为不可拆分 group。对应
-`test_molecule_labels.jsonl` 是 train-only evidence library 的 exclusion contract；在各自 index 完成
-test-parent zero-overlap audit 前，不得启动正式评估。完整规则、当前 frozen counts 和运行命令见
+当前 builder 先保证 Bemis–Murcko scaffold 不跨 split，再按冻结的 lexicographic quality 目标
+构建 train/valid/test。`heldout_molecule_labels.jsonl` 是 valid+test union 的 train-only retrieval-index
+exclusion contract；在 parent overlap 和 scaffold overlap 审计均为零前，不得启动正式评估。
+`data/processed_starling/<Task>/{random,scaffold}` 只是第一版 historical lineage，不得与当前结果混表。
+完整规则、当前 frozen counts 和运行命令见
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
 
 ## Molecule identity 与 parent-disjoint
@@ -142,14 +150,14 @@ parent_disjoint:
 active-moiety relation 不由 parent key 推断，必须保留为 structural analog 或由独立
 PK scope annotation 表达。
 
-论文消融的选择性重跑以 LLM-visible retrieval contract 的稳定 hash 为准。sample 输入完全相同时复用整个
-run；`full_mechanism` 中只有部分 family 变化时，可复用其它独立 group outputs，再重跑变化 branch 和 final。
-所有复用必须记录 `reused_from`、`reuse_reason` 和输入 hash；最终指标仍在完整 test set 上计算。
+历史 operational/parent-disjoint sensitivity 消融的选择性重跑以 LLM-visible retrieval contract
+的稳定 hash 为准。sample 输入完全相同时可复用整个 run；`full_mechanism` 中只有部分
+family 变化时，可复用其它独立 group outputs，再重跑变化 branch 和 final。所有复用必须记录
+`reused_from`、`reuse_reason` 和输入 hash；最终指标仍在完整 evaluation subset 上计算。
 
-Paper-facing structural-analog retrieval 的主 policy 是 `parent_disjoint`；`operational` 是必跑的第一阶段
-staging/deployment-sensitivity reference，用于发现 same-parent 暴露并支持选择性复用，不是 analog claim 的
-默认最终结果。每个新 retrieval condition 完成 operational 后必须立即补齐 parent-disjoint，不得只留下
-operational bar。
+Paper-facing structural-analog retrieval 的当前主 policy 是 `parent_disjoint`，并且直接从
+held-out-filtered index fresh-run。`operational` 只是显式 opt-in 的 historical/deployment-sensitivity
+reference；不再是新 v4 condition 的 staging 依赖，也不得通过多个 launcher 绕过全局并发预算。
 
 Same-parent 暴露审计必须区分 query-condition、group、neighbor slot 和 query-condition 内去重 record。
 一个 slot 表示某 neighbor 在某 group 中的一次 LLM-visible 出现；同一 record 出现在多个 mechanism groups

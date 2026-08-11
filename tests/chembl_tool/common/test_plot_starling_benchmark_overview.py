@@ -177,6 +177,7 @@ def _write_paired_ci_metrics(
         for baseline_method, baseline_label in (
             ("minimol_train_all", "MiniMol train-all"),
             ("morgan_knn_k3", "Morgan KNN k=3"),
+            ("minimol_embedding_cosine_knn_k3", "MiniMol KNN k=3"),
         ):
             baseline = next(
                 method for method in task.methods if method.key == baseline_method
@@ -289,6 +290,50 @@ def test_model_comparison_renders_paired_agents_and_shared_baselines(tmp_path):
     assert "Shared train-label baseline" in svg
     assert svg.count("MiniMol · Train all") == 3
     assert svg.count("Scaffold split · n =") == 3
+
+
+def test_model_comparison_renders_one_latest_series_with_baselines(tmp_path):
+    latest = tmp_path / "latest.tsv"
+    output = tmp_path / "latest.svg"
+    _write_metrics(
+        latest,
+        splits=(("scaffold", "Scaffold split"),),
+        model_label="Latest GPT-OSS-120B",
+        evaluation_subset="valid",
+    )
+    with latest.open(encoding="utf-8", newline="") as handle:
+        rows = [
+            row
+            for row in csv.DictReader(handle, delimiter="\t")
+            if row["method"]
+            in {
+                "none",
+                "starling_direct",
+                "starling_direct_full",
+                "starling_full_flat",
+                "starling_full_mechanism",
+                "minimol_train_all",
+                "morgan_knn_k3",
+                "minimol_embedding_cosine_knn_k3",
+            }
+        ]
+    with latest.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), delimiter="\t")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    render_model_comparison(
+        latest,
+        tmp_path / "ignored.tsv",
+        output,
+        series_label_overrides=("Latest GPT-OSS-120B",),
+        single_series=True,
+    )
+    svg = output.read_text(encoding="utf-8")
+
+    assert "Latest GPT-OSS-120B" in svg
+    assert "Shared train-label baseline" in svg
+    assert svg.count("MiniMol · Train all") == 3
 
 
 def test_model_comparison_adds_visible_series_as_grouped_bars(tmp_path):
@@ -587,6 +632,7 @@ def test_model_comparison_adds_paired_bootstrap_intervals(tmp_path):
     assert svg.count("10,000 paired resamples") == 3
     assert svg.count("MiniMol train-all") == 3
     assert svg.count("Morgan KNN k=3") == 3
+    assert svg.count("MiniMol KNN k=3") == 3
     assert str(paired) in svg
 
 
@@ -640,6 +686,46 @@ def test_model_comparison_can_show_only_one_sided_pvalues(tmp_path):
 
     assert svg.count("Exploratory one-sided paired permutation p-value") == 3
     assert svg.count("100,000 permutations") == 3
-    assert svg.count("p = 0.123") == 6
+    assert svg.count("p = 0.123") == 9
     assert "Best agent paired Δ · 95% CI" not in svg
     assert "Paired Δ macro-F1" not in svg
+
+
+def test_single_series_partial_matrix_can_show_pvalues(tmp_path):
+    metrics = tmp_path / "current.tsv"
+    paired = tmp_path / "paired.tsv"
+    output = tmp_path / "comparison.svg"
+    _write_metrics(
+        metrics,
+        splits=(("scaffold", "Scaffold split"),),
+        model_label="GPT-OSS-120B",
+        evaluation_subset="valid",
+    )
+    rows = list(csv.DictReader(metrics.open(encoding="utf-8"), delimiter="\t"))
+    keep = {
+        "none",
+        "starling_direct",
+        "starling_full_flat",
+        "starling_full_mechanism",
+        "minimol_train_all",
+        "morgan_knn_k3",
+        "minimol_embedding_cosine_knn_k3",
+    }
+    rows = [row for row in rows if row["method"] in keep]
+    with metrics.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), delimiter="\t")
+        writer.writeheader()
+        writer.writerows(rows)
+    _write_paired_ci_metrics(paired)
+
+    render_model_comparison(
+        metrics,
+        metrics,
+        output,
+        paired_ci_path=paired,
+        paired_significance_display="pvalue",
+        single_series=True,
+    )
+
+    svg = output.read_text(encoding="utf-8")
+    assert svg.count("p = 0.123") == 9

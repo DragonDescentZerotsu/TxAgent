@@ -18,22 +18,40 @@
 - [Trace 保留策略](TRACE_RETENTION.md)：最终 trace 的唯一目录、清理边界和一致性约束。
 - [Final evidence surface 诊断](FINAL_EVIDENCE_SURFACE_EXPERIMENT.md)：固定 retrieval/single/group 的
   summary/card final-only 消融、metadata census、输出 lineage 和已冻结的 no-go 结论。
+- [One-pass LoRA-RL](rl_lora/README.md)：single/group/final 融合、共享 reward/runtime、已停止的 hosted
+  120B 与当前本地 NeMo 20B；[one-pass reasoning 合同](rl_lora/ONE_PASS_REASONING.md) 单独记录
+  RL-specific prompt/data/evaluation lifecycle。
+- Train-ratio final-only 诊断：`run_train_ratio_prior_experiment.py` 负责 source/train contract、恢复运行和
+  versioned output；`train_ratio_prior_analysis.py` 独立完成 paired statistics、trigger audit 和 copied-artifact parity。
 
-## 当前 record-supported v2
+## 当前 Starling gold lineages
 
-当前 paper-facing dataset 是 scaffold-only `record_supported_v2`，输出位于
-`data/processed_starling_record_supported_v2/`。它继续使用第一版的 70% record-majority labels，
-但在 scaffold-disjoint 硬约束下优先把 multi-record parents 放入 valid/test：BBB 为
-18,425/500/500，Bioavailability 为 1,674/209/209，Skin 为 1,966/245/245；Skin 每个 held-out split
-只有 5 个 unavoidable singleton。第一版 `record_agreement70_split811_v1` 结果保留作 historical
+BBB 当前 paper-facing dataset 是 `experimental_meaningful_cns_access_v2`：3,667 parents，scaffold
+train/valid/test 为 2,935/366/366，目标是系统给药后的 meaningful/adequate CNS access，而不是 mixed passive
+permeability。Bioavailability 与 Skin 继续使用 scaffold-only `record_supported_v2`，分别为
+1,674/209/209 和 1,966/245/245；Skin 每个 held-out split 只有 5 个 unavoidable singleton。旧 BBB
+`record_supported_v2`、`experimental_direct_cns_v1` 和第一版 `record_agreement70_split811_v1` 都只作 historical
 comparison；不合理的 exploratory `record_supported_v1` 已删除。
 
 ```text
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 tools/chembl_tool/paper_experiments/analyze_starling_direct_significance.py
+tools/chembl_tool/paper_experiments/audit_bbb_retrieval_coverage.py
+tools/chembl_tool/paper_experiments/audit_skin_reasoning_bottleneck.py
+tools/chembl_tool/paper_experiments/audit_starling_trace_failure_causes.py
+tools/chembl_tool/paper_experiments/run_train_ratio_prior_experiment.py
+tools/chembl_tool/paper_experiments/train_ratio_prior_analysis.py
+```
+
+BBB/Bio train-ratio tie-break valid 诊断可重复运行；已有完整 artifact 时 `--analyze-only` 不产生模型调用：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.run_train_ratio_prior_experiment
+python -m tools.chembl_tool.paper_experiments.run_train_ratio_prior_experiment --analyze-only
 ```
 
 非默认 lineage 的 index/matrix 命令必须显式传 `--benchmark-data-root`、`--benchmark-lineage` 和
@@ -86,8 +104,12 @@ python -m tools.chembl_tool.tasks.bbb_martins.build_starling_full_evidence_libra
   --workers 128
 
 python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full \
+  --direct-scope sensitization_contact_allergy_v2 \
+  --out-dir outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_sensitization_v2 \
   --workers 128
+
+# Historical broad direct cards remain reproducible only by explicit opt-in:
+# --direct-scope broad_skin_reaction_v1
 
 python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
   --scope full \
@@ -124,7 +146,8 @@ tools/chembl_tool/common/starling/build_record_supported_benchmark.py
   record support 和 label balance，再最大化第一版 valid overlap。
 
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
-  读取 heldout union，从 inference evidence 删除全部 valid/test parents，构建 split-specific index。
+  读取 heldout union，从 inference evidence 删除全部 valid/test parents，构建 split-specific index。非默认
+  source lineage 通过 `--source-evidence INDEX_NAME=EVIDENCE_JSONL` 显式覆盖，frozen historical spec 不改写。
 
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
   当前正式 valid/test runner；默认 identity_blind + parent_disjoint、单一 128-slot global prompt pool，
@@ -345,7 +368,8 @@ python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
 transport timeout 时，才用 `--timeout-s 600` 重新启动 matrix 做 targeted repair（matrix 内置
 `--skip-existing`），不能借此改变 prompt、证据或其它 inference setting。
 
-当前正式 root 固定为各 `record_supported_v2` lineage 下的
+当前正式 root 按 task lineage 分开：BBB 使用 `experimental_meaningful_cns_access_v2`，Bioavailability/Skin
+使用 `record_supported_v2`；各自的 agent batch 均位于对应 root 的
 `runs_identity_blind_parent_disjoint/`。先在 valid 做 completeness/contract 检查，冻结设置后再运行 test；
 test 不用于模型、prompt、threshold 或 label-policy 选择。
 
@@ -432,6 +456,71 @@ Performance 可视化统一使用上述横向 grouped-bar chart。每个 split �
 目录只保留 `retrieval_claims_overview.svg` 和 `retrieval_claims_overview_highres.png`；不保留
 preview/QA 导出或另一套 overview 绘图代码。
 
+### Matched train-label direct agent vs Morgan KNN（valid-only 历史诊断）
+
+`matched_train_label_agent/` 是与正式 Starling matrix 隔离的 valid-only 诊断。Materializer 将当前 Morgan
+KNN 的 exact top-3 scaffold-train neighbors、顺序、相似度和 `Y` 原样物化成一个 label-visible direct group；
+agent 不读取其它 Starling records。Launcher 复用各 task 已冻结的 `none` single branch，并在一个 global
+prompt pool 中运行 group/final；summarizer 强制逐 query retrieval parity 后生成 paired JSON/TSV/中文报告。
+当前 scaffold-valid 已完成 820/820、0 failure、0 retrieval mismatch、0 prompt identity leak。BBB/Skin 的
+macro-F1 point estimate 较 KNN 为 `+0.0514/+0.0408`，但区间均跨 0；Bio 为 `-0.0595`，且 accuracy
+下降 `0.1818`。因此 valid gate 为 no-go，formal test 不运行；完整解释以
+`STARLING_BENCHMARK_RESULTS.md` 为准。
+
+目录内当前/历史模块边界见 `matched_train_label_agent/README.md`。下列第一组命令复现 E15 和 Bio
+diagnosis；不会修改当前默认 prompt：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.materialize
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.run --limit 1
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.run
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.summarize
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.compare_full_pool
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.diagnose_bio_unanimous_positive
+```
+
+下列第二组仅复现已终止的 BBB E16，不是 continuation plan：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.bbb_property_compatibility_audit
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.bbb_property_compatible_experiment all
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.bbb_property_compatible_trace_diagnosis
+```
+
+其中 `diagnose_bio_unanimous_positive` 是 deterministic Bio trace audit：只读取既有 valid predictions、single/group/final traces、
+full-pool direct 对照和 frozen gold audit，不调用模型。它将三邻居全为 `Y=1` 的 109 个样本分成误伤、救回、
+正确保留和错误保留四类，并把逐样本 provenance 与汇总写到
+`analysis/bio_unanimous_positive_diagnosis/`。
+
+E16 availability command 不调用 LLM。它验证正式 Morgan
+top-3 parity 后，在同一 BBB train pool 的 top-20 内测量 ionization/property-compatible neighbors 的可用性；
+selector 不读取 label，valid label 只用于冻结选择后的描述性 vote audit。产物写入
+`outputs/paper/bbb_property_compatibility_availability_experimental_meaningful_cns_access_v2_valid/`。当前最保守的
+0.02 similarity-cost budget 将 KNN vote macro-F1 从 0.5896 提高到 0.6335，但 paired CI 仍轻微跨 0。
+
+E16 experiment command 是该 audit 唯一运行过的 frozen 0.02 matched-v3 valid candidate；`all` 依次 materialize、
+run、summarize，并可通过三个 action 单独断点重跑。它已完成 366/366、0 failure，macro-F1 仅从 0.6696
+变为 0.6708（paired delta `+0.0012`，95% CI `[-0.0410,+0.0450]`），promotion gate 失败。产物写入
+`outputs/paper/matched_train_label_direct_agent_bbb_property_compatible_v1_scaffold_valid_gpt_oss_120b/`；不得运行
+formal test 或继续调 selector。详细 trace-control 统计见 `STARLING_BENCHMARK_RESULTS.md`。
+
+E16 diagnosis command 不调用模型；它严格区分 exact ordered input、same-membership reorder 与真实
+membership change，并配对 group core、final state、neighbor vote 和 gold。产物写入上述 candidate root 的
+`analysis/trace_diagnosis/`。
+
+该 audit 之后冻结的唯一 Bio 修复是 task-local prompt profile `f20_evidence_calibrated_v2`。它不改变 retrieval，
+只要求 evidence direction 与 transferability 分开，且 `low` 必须有明确 `F<20%` 证据。GPT-OSS-120B
+scaffold-valid 的 matched/full-direct/full-flat/full-mechanism macro-F1 分别从
+`0.5261/0.5577/0.6117/0.5869` 提高到 `0.6140/0.6375/0.7004/0.6844`；full-flat 和
+full-mechanism 的 paired 95% CI 均高于 0。所有 run 为 209/209、0 failed，evidence-bearing pair 的
+retrieval SHA mismatch 为 0。`none` 降到 `0.4129` 且几乎全预测 high，因此它是 evidence adjudication
+修复，不是无证据 prior。2026-08-10 冻结设置下的首次 Bio scaffold-test 已完成：full-flat/full-mechanism
+macro-F1 为 `0.6663/0.6720`，Morgan KNN、MiniMol embedding KNN、MiniMol trained head 分别为
+`0.6801/0.6484/0.7027`；五项均覆盖同一209条 test，两个 agent batch 为0 failed。agent root 使用 canonical
+`molecular_evidence_agent_starling_scaffold_record_supported_v2`，三个 baseline 分别写入带
+`_record_supported_v2_test` 后缀的独立 root。详细合同、paired CI、p-value 和 frozen paths 仍以
+`STARLING_BENCHMARK_RESULTS.md` 为准；不得根据 test 继续调参。
+
 上述约束只针对旧 TDC `test|valid` lineage。Starling `random|scaffold` 使用独立的汇总、图表和
 output root，不能写入或替代上述 TDC figures：
 
@@ -475,11 +564,80 @@ model/visibility summary 重复添加 `--comparison-metrics <metrics.tsv>`；局
 `base_method` 指定已有 condition，`base_model_label` 指定主 candidate 或通过 `--comparison-metrics` 加载的
 其它 model/visibility series。绘图器先校验 subset、样本数和 macro-F1，
 再隐藏这个重复 anchor，只增加新的实验行。
-`--paired-ci-metrics` 提供每个 task 的 best agent 相对 MiniMol train-all 与 Morgan KNN 的
-paired 统计量；当指定 `--paired-significance-display pvalue` 时，正式总图只显示
+`--paired-ci-metrics` 提供每个 task 的 best agent 相对 train-derived baselines 的 paired 统计量；historical
+artifact 可以保留 MiniMol train-all + Morgan KNN 两项，current figure 必须同时包含 MiniMol train-all、Morgan
+KNN 和 MiniMol embedding cosine KNN 三项。当指定 `--paired-significance-display pvalue` 时，正式总图只显示
 单侧 paired-permutation p-value（`H1: best agent > baseline`），不显示 95% CI。当前方向是在看到
 valid 结果后确定，best agent 也由同一 valid set 选出，因此图中明确标注为 exploratory。
 输入必须与图中的 best agent、baseline、subset 和样本数一致。
+
+当 current release 的不同 task 已迁移到不同 dataset/prompt lineage 时，先用
+`summarize_starling_benchmark.py --task-metrics task=metrics.tsv` 逐 task 选择各自完整、lineage-matched 的
+summary，再用同一绘图器的 `--single-series` 模式绘制一个 latest agent series 和三类 train-label baseline。
+该模式允许 partial current matrix，但仍要求每个 task 有结果、method 名称属于冻结矩阵且所有纳入行通过
+failure gate。额外 condition 的既有 metrics 可用显式
+`--condition-metrics task__condition=metrics.json` 纳入，输出会保留原 artifact path。
+
+当前 BBB experimental-v2、Bio f20-v2、Skin aligned-v2 的合并 summary 已包含同 setting 的 9 个 ChEMBL
+conditions。ChEMBL matrix artifact root 为
+`outputs/paper/molecular_evidence_agent_chembl_scaffold_current_latest_valid_gpt_oss_120b/`；三个 task 合计
+`2460/2460` final 完整。合并 summary 与图位于：
+
+```bash
+python -m tools.chembl_tool.paper_experiments.analyze_starling_best_agent_baselines \
+  --metrics outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/metrics.tsv \
+  --output-prefix outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/analysis/best_agent_paired_all_baselines
+
+python -m tools.chembl_tool.paper_experiments.plot_starling_model_comparison \
+  --reference-metrics outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/metrics.tsv \
+  --single-series \
+  --paired-ci-metrics outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/analysis/best_agent_paired_all_baselines.tsv \
+  --paired-significance-display pvalue \
+  --chart-title 'Current Starling Scaffold-Valid Results' \
+  --chart-subtitle 'Latest task contracts · Macro-F1 with lineage-matched train-label baselines' \
+  --comparison-title 'GPT-OSS-120B latest agent' \
+  --context-line 'BBB: meaningful CNS access v2 (n=366) · Bioavailability: record-supported v2 + f20-calibrated prompt (n=209)' \
+  --context-line 'Skin Reaction: record-supported v2 + sensitization-aligned prompt (n=245)' \
+  --context-line 'Identity-blind · parent-disjoint retrieval · external ChEMBL may include same-scaffold analogs · validation only' \
+  --output outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/figures/starling_model_comparison.svg \
+  --png-output outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/figures/starling_model_comparison_highres.png
+```
+
+Analyzer 从 metrics 自动选择每个 task 的最高 macro-F1 agent，按 molecule+gold 严格对齐三个 baseline，运行
+100,000 次 one-sided paired permutation。JSON/TSV 同时保存 10,000 次 paired-bootstrap CI 和跨全部 9 项
+比较的 Holm p-value；图沿用历史约定显示 raw exploratory p-value，不能解释为 confirmatory inference。
+当前 `parent_disjoint` 不等于 scaffold-disjoint：它只排除 exact、same-connectivity 和 same-parent。外部
+ChEMBL 同-scaffold analog 可以进入检索，因此 ChEMBL 与 train-only scaffold KNN 的数据可见性不完全对称。
+共享 identity policy registry 另提供 opt-in `scaffold_disjoint`：在 `parent_disjoint` 上额外排除标准化 parent
+的相同非空 Bemis–Murcko scaffold，并保持 similarity threshold 内 top-k 回填；空 scaffold 的无环分子不互相
+排除。它适用于任意 task/source，fresh runs 写入 `runs_<visibility>_scaffold_disjoint/`，不得覆盖 canonical
+`parent_disjoint` roots。当前计划只允许把它用于 **ChEMBL direct**；Starling direct 和所有 full-flat/
+full-mechanism condition 保持 `parent_disjoint`。2026-08-10 曾误把该 policy 应用于 18-batch 全矩阵，以下 root
+仅作为 overbroad diagnostic archive，不得作为正式 matched-source comparison：
+
+```text
+outputs/paper/molecular_evidence_agent_scaffold_disjoint_source_matched_current_valid_gpt_oss_120b/
+
+python -m tools.chembl_tool.paper_experiments.summarize_results \
+  --split valid \
+  --paper-root outputs/paper/molecular_evidence_agent_scaffold_disjoint_source_matched_current_valid_gpt_oss_120b \
+  --neighbor-identity-policy scaffold_disjoint \
+  --bootstrap-replicates 10000
+```
+
+三个 task 的精确 benchmark/canonical-index/single-root/model 参数保存在同一 output root 的
+`experiment_matrix_identity_blind_scaffold_disjoint_*.json` manifests；结果、设置纠正以及 Bio identical-input
+full-flat repeat 的波动审计见 `STARLING_BENCHMARK_RESULTS.md`。
+
+```text
+outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/
+  metrics.tsv
+  summary.json
+  report.md
+  analysis/best_agent_paired_all_baselines.{tsv,json,md}
+  figures/starling_model_comparison.svg
+  figures/starling_model_comparison_highres.png
+```
 
 同一模型跨 dataset lineage 的描述性比较仍使用这个入口：通过
 `--method-family molecular_evidence_agent` 排除因训练 split 改变而不可共享的 baselines，按输入顺序重复

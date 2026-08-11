@@ -12,6 +12,7 @@ import pickle
 import re
 import statistics
 import time
+from collections.abc import Callable, Mapping
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
@@ -20,6 +21,9 @@ from tools.chembl_tool.common.task_workflows.evidence_library import (
     fingerprint_metadata,
     standardize_smiles,
 )
+
+
+RecordFilter = Callable[[Mapping[str, Any]], bool]
 
 
 @dataclass(frozen=True)
@@ -49,6 +53,8 @@ class StarlingSourceProfile:
     exclude_endpoint_values: tuple[str, ...] = ()
     context_filter_fields: tuple[str, ...] = ()
     required_context_patterns_by_endpoint: tuple[tuple[str, tuple[str, ...]], ...] = ()
+    record_filter: RecordFilter | None = field(default=None, compare=False, repr=False)
+    record_filter_name: str = ""
     max_rows: int = 0
     extra_example_fields: tuple[str, ...] = field(default_factory=tuple)
 
@@ -131,6 +137,10 @@ def _load_profile_records(
     min_confidence: float,
     canonical_smiles_cache: dict[str, str],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    if profile.record_filter is not None and not profile.record_filter_name:
+        raise ValueError(
+            f"Profile {profile.source_id} must name its record_filter for provenance"
+        )
     try:
         import pandas as pd
     except ImportError as error:  # pragma: no cover
@@ -147,11 +157,15 @@ def _load_profile_records(
     n_low_confidence = 0
     n_filtered_endpoint = 0
     n_filtered_context = 0
+    n_filtered_record = 0
     required_context = {
         endpoint.lower(): patterns for endpoint, patterns in profile.required_context_patterns_by_endpoint
     }
     for row_number, raw in enumerate(frame.to_dict(orient="records"), start=1):
         row = {key: _clean_scalar(value) for key, value in raw.items()}
+        if profile.record_filter is not None and not profile.record_filter(row):
+            n_filtered_record += 1
+            continue
         input_smiles = _text(row.get(profile.smiles_field))
         if not input_smiles:
             n_missing_smiles += 1
@@ -194,6 +208,8 @@ def _load_profile_records(
         "n_low_confidence": n_low_confidence,
         "n_filtered_endpoint": n_filtered_endpoint,
         "n_filtered_context": n_filtered_context,
+        "n_filtered_record": n_filtered_record,
+        "record_filter_name": profile.record_filter_name,
         "n_unique_smiles": len({_text(row.get("_canonical_smiles")) for row in records}),
         "endpoint_field": profile.endpoint_field,
         "endpoint_counts": dict(

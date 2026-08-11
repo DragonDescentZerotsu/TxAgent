@@ -21,6 +21,7 @@ import time
 from urllib.error import URLError
 from urllib.request import urlopen
 
+from tools.chembl_tool.common.retrieval_policy import NEIGHBOR_IDENTITY_POLICIES
 from tools.chembl_tool.common.task_workflows.reasoning_batch import (
     prediction_to_label,
 )
@@ -57,7 +58,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--neighbor-identity-policy",
-        choices=("operational", "parent_disjoint"),
+        choices=NEIGHBOR_IDENTITY_POLICIES,
         required=True,
     )
     parser.add_argument("--base-url", default="http://127.0.0.1:50000/v1")
@@ -119,8 +120,8 @@ def _run_root_name(visibility_mode: str, neighbor_identity_policy: str) -> str:
         name = "runs_deployment_visible_prefetched"
     else:
         name = "runs_deployment_visible"
-    if neighbor_identity_policy == "parent_disjoint":
-        name += "_parent_disjoint"
+    if neighbor_identity_policy != "operational":
+        name += f"_{neighbor_identity_policy}"
     return name
 
 

@@ -55,10 +55,77 @@ reaction。新的 Starling-held-out benchmark 因此只接受 sensitization 或 
 dermatitis/contact allergy scope 的明确 positive/negative record；irritation、generic local damage、
 skin exposure 和 inconclusive 不转成 gold label。
 
-当前 `run_reasoning_pipeline.py` 的历史 final prompt/schema 仍允许 phototoxicity 和
-irritation/corrosion 成为 `risk` 的主 evidence type；这与上述 sensitization-only gold scope 不完全一致，
-属于已确认的 `legacy_skin_reaction_v1` prompt bug。历史结果必须保留原口径，不能原地改写。计划中的
-`sensitization_aligned_v2` 会版本化修复该语义并写入 manifest，但必须先完成方案讨论，本轮尚未实现。
+历史 `run_reasoning_pipeline.py` final prompt/schema 允许 phototoxicity 和 irritation/corrosion 成为
+`risk` 的主 evidence type；这与上述 sensitization-only gold scope 不一致，属于已确认的
+`legacy_skin_reaction_v1` prompt bug。2026-08-08 已在 `prompt_profiles.py` 实现版本化
+`sensitization_aligned_v2`，并将其设为新运行默认：single/group/final 都明确限定为 sensitization/contact
+allergy；phototoxicity、irritation/corrosion、generic local damage 和 exposure 只能作为 out-of-scope/context。
+Manifest 记录 `task_prompt_profile` 和 `label_scope`；复用 single/group/final branch 时必须 profile 一致。
+旧 manifest 缺少 profile 字段时固定解释为 legacy v1，历史结果和 final-evidence-surface replay 继续显式使用
+legacy v1。2026-08-09 已完成 aligned-v2 GPT-OSS-120B scaffold-valid 四条件：none/direct/full-flat/
+full-mechanism macro-F1 为 `0.5225/0.5725/0.5698/0.5423`，均 245/245 成功。scope-contaminated error 从
+legacy 的 23 降为 0，证明合同修复生效；但 full-mechanism 性能没有提升，fresh-run paired delta 也跨 0，
+不得把 scope 修复表述为性能方法。
+
+同日对 frozen GPT-OSS-120B scaffold-valid `starling_full_mechanism` legacy traces 做了无模型调用 audit：
+90 个错误中仅 6 个有干净 gold-aligned Tier 1/2 signal 且 final 仍选错；84 个属于 upstream conflict、wrong
+direction 或 insufficient。23 个错误的 final 主证据类型越过 label scope，但只有 2 个同时是严格
+final-recoverable。机器可读结果和方法限制见：
+
+```text
+tools/chembl_tool/paper_experiments/audit_skin_reasoning_bottleneck.py
+outputs/paper/skin_reaction_task_alignment_audit_record_supported_v2_valid_gpt_oss_120b/
+outputs/paper/skin_reaction_task_alignment_audit_record_supported_v2_valid_gpt_oss_120b_sensitization_aligned_v2/
+```
+
+### Direct evidence scope parity（2026-08-09）
+
+Gold builder 一直只接受 sensitization/contact-allergy records，但历史 Starling Tier-1 evidence profile 曾把
+photoallergy、irritation、urticaria 和其它 broad-skin records 聚合进同一 direct card。这是 source-to-agent
+scope mismatch，不能只靠 prompt 从已聚合 counts 和最多 6 条 examples 中稳定反解。
+
+`build_starling_evidence_library.py` 现默认使用 `sensitization_contact_allergy_v2`，直接复用
+`starling_benchmark.is_tdc_skin_sensitization_scope()`；历史行为通过显式
+`--direct-scope broad_skin_reaction_v1` 保留。公共 `StarlingSourceProfile.record_filter` 负责通用 row-scope
+过滤并在 metadata 中记录 filter name/count。新 full-source direct profile 从 66,597 input rows 中过滤 5,049 条
+scope 外记录，保留 44,752 条可加载 records、3,275 个 direct molecules；旧 v1 artifact 不覆盖。
+
+对全部 245 个 scaffold-valid query 的 deterministic retrieval audit 显示：37 个 top-3 neighbor identity list
+改变，41 个历史 retrieved neighbors 被移出 union，20 个 scoped neighbors 回填；由于 card text/counts 同步
+重建，203 个 LLM-visible direct contexts 改变。clean-index `sensitization_aligned_v2` direct fresh run 为
+245/245 成功，macro-F1 `0.5666`，相对历史 broad-index aligned-v2 direct 的 `0.5725` 为 `-0.0059`
+（paired-bootstrap 95% CI `[-0.0724,+0.0603]`；55 flips，28/27 old/new-only correct）。因此 scope parity 是
+数据合同修复，但不是 observed performance improvement。
+
+clean-index traces 中，low/moderate-transferability negative direction 仍为 6 个 gold-aligned、13 个
+gold-opposed，因此运行了唯一版本化候选 `sensitization_negative_transfer_v3`：analog-only negative 只有在
+high transferability、充分暴露的 validated assay 和 records 一致时才能支持 no-risk。规则确实把 negative
+direction 从 25 降到 3，且剩余 3 个均 gold-aligned；但 macro-F1 降到 `0.5531`，Y=0 recall 从 `0.4658`
+降到 `0.3425`。相对 clean-index v2 delta 为 `-0.0135`（95% CI `[-0.0882,+0.0612]`）。该 profile 只保留为
+failed experimental lineage，不是默认，不扩展 full-flat/full-mechanism/test。
+
+```text
+tools/chembl_tool/paper_experiments/audit_skin_direct_scope_retrieval.py
+outputs/paper/skin_direct_scope_retrieval_audit_record_supported_v2_valid/
+outputs/paper/skin_negative_transfer_v3_audit_record_supported_v2_valid/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_gpt_oss_120b_skin_direct_scope_v2/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_gpt_oss_120b_skin_direct_scope_v2_negative_transfer_v3/
+```
+
+Scoped source/index 与 deterministic audit 的复现入口：
+
+```bash
+python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library \
+  --direct-scope sensitization_contact_allergy_v2 --workers 32
+
+python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
+  --splits scaffold --indices skin_reaction_starling_full \
+  --source-evidence skin_reaction_starling_full=outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_sensitization_v2/starling_skin_reaction_evidence.jsonl \
+  --benchmark-data-root data/processed_starling_record_supported_v2 \
+  --benchmark-lineage record_supported_v2_skin_direct_scope_v2 --workers 32
+
+python -m tools.chembl_tool.paper_experiments.audit_skin_direct_scope_retrieval
+```
 
 ### Paper-facing tier 的距离语义
 
@@ -1023,7 +1090,7 @@ assay_reason
 ```
 
 当前 legacy group/final prompt 保留下面的宽 skin-reaction distinctions 以复现历史结果；其中第 3/4 类不得在
-计划中的 `sensitization_aligned_v2` 里直接支持 binary label：
+current `sensitization_aligned_v2` 里直接支持 binary label：
 
 ```text
 1. Direct human/LLNA/validated skin reaction evidence can support or oppose final label.
@@ -1036,7 +1103,54 @@ assay_reason
 
 ## Reasoning schema expectations
 
-Single-molecule branch should focus on:
+以下是 current `sensitization_aligned_v2` contract；不得用下方 legacy 字段解释新 run。
+
+Single-molecule branch：
+
+```text
+label_scope: skin_sensitization_contact_allergy.v2
+skin_sensitization_prior: risk | no_risk | mixed_or_unclear
+activation_prior: direct_hapten | pre_hapten | pro_hapten | none_apparent | mixed_or_unclear
+reactive_or_haptenation_prior
+skin_exposure_context
+confidence
+reasoning_summary
+```
+
+Group-level branch：
+
+```text
+label_scope: skin_sensitization_contact_allergy.v2
+useful_for_skin_sensitization_reasoning: boolean
+endpoint_scope: direct_sensitization | sensitization_aop | out_of_scope_other_skin_hazard | exposure_context | weak_context
+sensitization_evidence_direction: supports_sensitizer | argues_against_sensitizer | neutral_or_unclear | context_only
+transferability
+confidence
+reasoning_summary
+key_evidence[].effect_on_sensitization_reasoning
+caveats
+```
+
+Final branch：
+
+```text
+label_scope: skin_sensitization_contact_allergy.v2
+skin_reaction_prediction: risk | no_risk
+confidence: low | moderate | high
+main_evidence_type:
+  direct_sensitization_anchor
+  sensitization_aop
+  structural_haptenation_prior
+  weak_or_no_sensitization_evidence
+main_reasons
+conflicting_evidence
+evidence_gaps
+final_summary
+```
+
+下面只记录 `legacy_skin_reaction_v1` reproduction schema。
+
+Legacy single-molecule branch：
 
 ```text
 reactive_or_haptenation_prior
@@ -1047,7 +1161,7 @@ irritation_or_corrosion_structural_prior
 physicochemical_exposure_prior
 ```
 
-Group-level output should include:
+Legacy group-level output：
 
 ```text
 useful_for_skin_reaction_reasoning
@@ -1059,7 +1173,7 @@ key_evidence[].effect_on_skin_reaction_reasoning
 caveats
 ```
 
-Final output should include:
+Legacy final output：
 
 ```text
 skin_reaction_prediction: risk | no_risk

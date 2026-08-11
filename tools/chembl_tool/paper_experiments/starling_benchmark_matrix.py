@@ -140,6 +140,10 @@ def main(argv: list[str] | None = None) -> int:
         args.visibility_mode in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}
         and args.neighbor_identity_policy == PARENT_DISJOINT
     )
+    args.fresh_disjoint = (
+        args.visibility_mode in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}
+        and args.neighbor_identity_policy != "operational"
+    )
     if (
         args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
         and args.visibility_mode not in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}
@@ -205,7 +209,7 @@ def main(argv: list[str] | None = None) -> int:
     _require_parent_disjoint_reuse_plans(selected, args)
     benchmark_provenance = _benchmark_provenance(
         args.benchmark_split,
-        experiments,
+        selected,
         data_root=Path(args.benchmark_data_root),
     )
 
@@ -247,6 +251,7 @@ def main(argv: list[str] | None = None) -> int:
         },
         "effective_concurrency": args.parallelism,
         "fresh_parent_disjoint": args.fresh_parent_disjoint,
+        "fresh_disjoint": args.fresh_disjoint,
         "operational_staging_used": (
             args.neighbor_identity_policy == PARENT_DISJOINT
             and not args.fresh_parent_disjoint
@@ -266,7 +271,7 @@ def main(argv: list[str] | None = None) -> int:
                 ),
                 "benchmark_provenance_ref": experiment.task,
             }
-            for experiment in experiments
+            for experiment in selected
         ],
         "selected_experiments": [experiment.name for experiment in selected],
     }

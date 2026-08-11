@@ -37,3 +37,13 @@ def test_scaffold_allocator_prioritizes_record_support_and_zero_group_overlap():
     assert assignment["E"] == assignment["F"] == "train"
     assert audit["minimum_singletons_in_heldout"] == 0
     assert audit["maximum_prior_valid_reuse"] == 2
+
+
+def test_scaffold_allocator_accepts_a_lineage_specific_seed():
+    rows = [
+        _row(chr(65 + index), index % 2, 2, str(index))
+        for index in range(8)
+    ]
+    first, _ = allocate_scaffold_groups(rows, target_size=2, seed=17)
+    replay, _ = allocate_scaffold_groups(rows, target_size=2, seed=17)
+    assert first == replay

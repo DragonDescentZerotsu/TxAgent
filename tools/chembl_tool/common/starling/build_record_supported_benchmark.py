@@ -65,8 +65,9 @@ def allocate_scaffold_groups(
     rows: list[dict[str, Any]],
     *,
     target_size: int,
+    seed: int = SEED,
 ) -> tuple[dict[str, str], dict[str, Any]]:
-    groups = _scaffold_groups(rows)
+    groups = _scaffold_groups(rows, seed=seed)
     candidates = [group for group in groups if group.size <= target_size]
     if not candidates:
         raise ValueError("No scaffold group can enter the requested held-out split")
@@ -195,14 +196,18 @@ def allocate_scaffold_groups(
     return assignment, audit
 
 
-def _scaffold_groups(rows: list[dict[str, Any]]) -> list[ScaffoldGroup]:
+def _scaffold_groups(
+    rows: list[dict[str, Any]],
+    *,
+    seed: int = SEED,
+) -> list[ScaffoldGroup]:
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
         grouped[str(row.get("bemis_murcko_scaffold") or "")].append(row)
     ordered = sorted(
         grouped.items(),
         key=lambda item: hashlib.sha256(
-            f"{SEED}\0{item[0]}".encode("utf-8")
+            f"{seed}\0{item[0]}".encode("utf-8")
         ).hexdigest(),
     )
     return [
@@ -370,6 +375,9 @@ def build_task(
     *,
     source_root: Path,
     output_root: Path,
+    lineage: str = LINEAGE,
+    protocol_version: str = PROTOCOL_VERSION,
+    seed: int = SEED,
 ) -> dict[str, Any]:
     source_task = source_root / task
     source_labels = _read_jsonl(source_task / "molecule_labels.jsonl")
@@ -382,7 +390,11 @@ def build_task(
         for row in source_labels
     ]
     target = target_eval_size(task, len(rows))
-    assignment, optimization = allocate_scaffold_groups(rows, target_size=target)
+    assignment, optimization = allocate_scaffold_groups(
+        rows,
+        target_size=target,
+        seed=seed,
+    )
     task_root = output_root / task
     split_root = task_root / "scaffold"
 
@@ -393,7 +405,7 @@ def build_task(
         clean.update(
             {
                 "split": split,
-                "split_policy": LINEAGE,
+                "split_policy": lineage,
             }
         )
         split_rows[split].append(clean)
@@ -410,11 +422,17 @@ def build_task(
     write_jsonl_atomic(split_root / "heldout_molecule_labels.jsonl", heldout)
 
     source_summary = json.loads((source_task / "summary.json").read_text(encoding="utf-8"))
-    split_summary = _split_summary(split_rows, target, optimization, split_root)
+    split_summary = _split_summary(
+        split_rows,
+        target,
+        optimization,
+        split_root,
+        lineage=lineage,
+    )
     task_summary = {
         **source_summary,
-        "protocol_version": PROTOCOL_VERSION,
-        "seed": SEED,
+        "protocol_version": protocol_version,
+        "seed": seed,
         "record_support_policy": {
             "record_tier": "multi_record iff source_record_count >= 2",
             "heldout_objective": "maximize multi-record parents at scaffold-group grain",
@@ -443,6 +461,8 @@ def _split_summary(
     target: int,
     optimization: dict[str, Any],
     split_root: Path,
+    *,
+    lineage: str = LINEAGE,
 ) -> dict[str, Any]:
     scaffolds = {
         split: {str(row.get("bemis_murcko_scaffold") or "") for row in rows}
@@ -454,7 +474,7 @@ def _split_summary(
     }
     summary: dict[str, Any] = {
         "method": "quality_lexicographic_milp_scaffold_groups",
-        "lineage": LINEAGE,
+        "lineage": lineage,
         "target_valid_size": target,
         "target_test_size": target,
         "actual_valid_size": len(split_rows["valid"]),

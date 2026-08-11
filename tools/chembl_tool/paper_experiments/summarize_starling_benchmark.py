@@ -27,45 +27,63 @@ TASK_DATA_NAMES = {
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    rows: list[dict[str, Any]] = []
-    for split in args.splits or BENCHMARK_SPLITS:
+    if args.task_metrics:
+        rows = _compose_task_metrics(
+            tuple(args.task_metrics),
+            splits=tuple(args.splits or BENCHMARK_SPLITS),
+            evaluation_subset=args.evaluation_subset,
+        )
         rows.extend(
-            _pipeline_rows(
-                split,
-                pipeline_root=Path(args.pipeline_root) if args.pipeline_root else None,
+            _condition_metric_rows(
+                tuple(args.condition_metrics),
+                splits=tuple(args.splits or BENCHMARK_SPLITS),
                 evaluation_subset=args.evaluation_subset,
                 model_label=args.model_label,
                 visibility_mode=args.visibility_mode,
             )
         )
-        baseline_roots = _baseline_roots(args)
-        if baseline_roots["minimol"] is not None:
+    else:
+        rows = []
+        condition_metrics = _condition_metric_overrides(tuple(args.condition_metrics))
+        for split in args.splits or BENCHMARK_SPLITS:
             rows.extend(
-                _minimol_rows(
+                _pipeline_rows(
                     split,
-                    root=baseline_roots["minimol"],
+                    pipeline_root=Path(args.pipeline_root) if args.pipeline_root else None,
                     evaluation_subset=args.evaluation_subset,
                     model_label=args.model_label,
+                    visibility_mode=args.visibility_mode,
+                    condition_metrics=condition_metrics,
                 )
             )
-        if baseline_roots["structure_knn"] is not None:
-            rows.extend(
-                _structure_knn_rows(
-                    split,
-                    root=baseline_roots["structure_knn"],
-                    evaluation_subset=args.evaluation_subset,
-                    model_label=args.model_label,
+            baseline_roots = _baseline_roots(args)
+            if baseline_roots["minimol"] is not None:
+                rows.extend(
+                    _minimol_rows(
+                        split,
+                        root=baseline_roots["minimol"],
+                        evaluation_subset=args.evaluation_subset,
+                        model_label=args.model_label,
+                    )
                 )
-            )
-        if baseline_roots["minimol_embedding_knn"] is not None:
-            rows.extend(
-                _minimol_embedding_knn_rows(
-                    split,
-                    root=baseline_roots["minimol_embedding_knn"],
-                    evaluation_subset=args.evaluation_subset,
-                    model_label=args.model_label,
+            if baseline_roots["structure_knn"] is not None:
+                rows.extend(
+                    _structure_knn_rows(
+                        split,
+                        root=baseline_roots["structure_knn"],
+                        evaluation_subset=args.evaluation_subset,
+                        model_label=args.model_label,
+                    )
                 )
-            )
+            if baseline_roots["minimol_embedding_knn"] is not None:
+                rows.extend(
+                    _minimol_embedding_knn_rows(
+                        split,
+                        root=baseline_roots["minimol_embedding_knn"],
+                        evaluation_subset=args.evaluation_subset,
+                        model_label=args.model_label,
+                    )
+                )
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     _write_tsv(output_dir / "metrics.tsv", rows)
@@ -76,6 +94,104 @@ def main(argv: list[str] | None = None) -> int:
     (output_dir / "report.md").write_text(_report(rows), encoding="utf-8")
     print(json.dumps({"output_dir": str(output_dir), "n_rows": len(rows)}, indent=2))
     return 0
+
+
+def _compose_task_metrics(
+    specifications: tuple[str, ...],
+    *,
+    splits: tuple[str, ...],
+    evaluation_subset: str,
+) -> list[dict[str, Any]]:
+    """Select each task from its lineage-matched complete metrics summary."""
+    sources: dict[str, Path] = {}
+    for specification in specifications:
+        task, separator, raw_path = specification.partition("=")
+        if not separator or task not in TASK_DATA_NAMES or not raw_path:
+            raise ValueError(
+                "--task-metrics must use task=metrics.tsv with task in "
+                f"{sorted(TASK_DATA_NAMES)}: {specification!r}"
+            )
+        if task in sources:
+            raise ValueError(f"Duplicate --task-metrics task: {task}")
+        sources[task] = Path(raw_path)
+    missing_tasks = sorted(set(TASK_DATA_NAMES) - set(sources))
+    if missing_tasks:
+        raise ValueError(f"--task-metrics is missing tasks: {missing_tasks}")
+
+    selected: list[dict[str, Any]] = []
+    for task in TASK_DATA_NAMES:
+        path = sources[task]
+        with path.open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle, delimiter="\t"))
+        task_rows = [
+            row
+            for row in rows
+            if row.get("task") == task
+            and row.get("benchmark_split") in splits
+            and (row.get("evaluation_subset") or "test") == evaluation_subset
+        ]
+        if not task_rows:
+            raise ValueError(
+                f"No {task}/{evaluation_subset}/{list(splits)} rows in {path}"
+            )
+        keys = [
+            (row["benchmark_split"], row["method"])
+            for row in task_rows
+        ]
+        if len(keys) != len(set(keys)):
+            raise ValueError(f"Duplicate task/method rows in {path}: {task}")
+        selected.extend(task_rows)
+    return selected
+
+
+def _condition_metric_overrides(
+    specifications: tuple[str, ...],
+) -> dict[str, Path]:
+    overrides: dict[str, Path] = {}
+    for specification in specifications:
+        experiment, separator, raw_path = specification.partition("=")
+        if not separator or "__" not in experiment or not raw_path:
+            raise ValueError(
+                "--condition-metrics must use task__condition=metrics.json: "
+                f"{specification!r}"
+            )
+        if experiment in overrides:
+            raise ValueError(f"Duplicate --condition-metrics experiment: {experiment}")
+        overrides[experiment] = Path(raw_path)
+    return overrides
+
+
+def _condition_metric_rows(
+    specifications: tuple[str, ...],
+    *,
+    splits: tuple[str, ...],
+    evaluation_subset: str,
+    model_label: str,
+    visibility_mode: str,
+) -> list[dict[str, Any]]:
+    """Materialize only explicit condition overrides for a composed summary."""
+    overrides = _condition_metric_overrides(specifications)
+    rows: list[dict[str, Any]] = []
+    for split in splits:
+        experiments = {
+            experiment.name: experiment
+            for experiment in experiments_for_starling_benchmark(split)
+        }
+        for name, metrics_path in overrides.items():
+            experiment = experiments.get(name)
+            if experiment is None:
+                raise ValueError(f"Unknown condition for {split}: {name}")
+            rows.append(
+                _pipeline_row(
+                    split,
+                    experiment,
+                    metrics_path,
+                    evaluation_subset=evaluation_subset,
+                    model_label=model_label,
+                    visibility_mode=visibility_mode,
+                )
+            )
+    return rows
 
 
 def _baseline_roots(args: argparse.Namespace) -> dict[str, Path | None]:
@@ -107,6 +223,7 @@ def _pipeline_rows(
     evaluation_subset: str = "test",
     model_label: str = "GLM-5.2",
     visibility_mode: str = "identity_blind",
+    condition_metrics: dict[str, Path] | None = None,
 ) -> list[dict[str, Any]]:
     if pipeline_root is None:
         paper_root = paper_root_for_benchmark_split(split)
@@ -124,56 +241,82 @@ def _pipeline_rows(
         is_query_only = experiment.mode == "none"
         policy = "not_applicable" if is_query_only else "parent_disjoint"
         root = operational_root if is_query_only else parent_root
-        metrics_path = root / experiment.task / experiment.name / "metrics.json"
+        metrics_path = (condition_metrics or {}).get(
+            experiment.name,
+            root / experiment.task / experiment.name / "metrics.json",
+        )
         if not metrics_path.exists():
             continue
-        metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
-        failure_policy = ""
-        if metrics.get("n_failed_runs", 0):
-            predictions_path = metrics_path.parent / "predictions.jsonl"
-            predictions = _read_jsonl(predictions_path)
-            confusion = _failure_inclusive_confusion(predictions)
-            metric_values = _metrics_from_confusion(confusion)
-            failure_policy = "count_as_incorrect_opposite_label"
-        else:
-            confusion = metrics.get("confusion_matrix") or {}
-            metric_values = {
-                "accuracy": metrics.get("accuracy"),
-                "macro_f1": metrics.get("macro_f1"),
-                "positive_precision": metrics.get("positive_class_precision"),
-                "positive_recall": metrics.get("positive_class_recall"),
-                "positive_f1": metrics.get("positive_class_f1"),
-            }
         rows.append(
-            {
-                "benchmark_split": split,
-                "evaluation_subset": evaluation_subset,
-                "task": experiment.task,
-                "method": experiment.name.split("__", 1)[1],
-                "method_family": "molecular_evidence_agent",
-                "source": experiment.source if experiment.mode != "none" else "none",
-                "reasoning_mode": experiment.mode,
-                "neighbor_identity_policy": policy,
-                "visibility_mode": visibility_mode,
-                "model_label": model_label,
-                "n_test": metrics.get("n_total", metrics.get("n_evaluable")),
-                "n_successful": metrics.get("n_successful"),
-                "n_failed": metrics.get("n_failed_runs"),
-                "failure_policy": failure_policy,
-                "accuracy": metric_values["accuracy"],
-                "macro_f1": metric_values["macro_f1"],
-                "auroc": "",
-                "positive_precision": metric_values["positive_precision"],
-                "positive_recall": metric_values["positive_recall"],
-                "positive_f1": metric_values["positive_f1"],
-                "tn": confusion.get("tn"),
-                "fp": confusion.get("fp"),
-                "fn": confusion.get("fn"),
-                "tp": confusion.get("tp"),
-                "metrics_path": str(metrics_path),
-            }
+            _pipeline_row(
+                split,
+                experiment,
+                metrics_path,
+                evaluation_subset=evaluation_subset,
+                model_label=model_label,
+                visibility_mode=visibility_mode,
+                policy=policy,
+            )
         )
     return rows
+
+
+def _pipeline_row(
+    split: str,
+    experiment: Any,
+    metrics_path: Path,
+    *,
+    evaluation_subset: str,
+    model_label: str,
+    visibility_mode: str,
+    policy: str | None = None,
+) -> dict[str, Any]:
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    failure_policy = ""
+    if metrics.get("n_failed_runs", 0):
+        confusion = _failure_inclusive_confusion(
+            _read_jsonl(metrics_path.parent / "predictions.jsonl")
+        )
+        metric_values = _metrics_from_confusion(confusion)
+        failure_policy = "count_as_incorrect_opposite_label"
+    else:
+        confusion = metrics.get("confusion_matrix") or {}
+        metric_values = {
+            "accuracy": metrics.get("accuracy"),
+            "macro_f1": metrics.get("macro_f1"),
+            "positive_precision": metrics.get("positive_class_precision"),
+            "positive_recall": metrics.get("positive_class_recall"),
+            "positive_f1": metrics.get("positive_class_f1"),
+        }
+    return {
+        "benchmark_split": split,
+        "evaluation_subset": evaluation_subset,
+        "task": experiment.task,
+        "method": experiment.name.split("__", 1)[1],
+        "method_family": "molecular_evidence_agent",
+        "source": experiment.source if experiment.mode != "none" else "none",
+        "reasoning_mode": experiment.mode,
+        "neighbor_identity_policy": policy or (
+            "not_applicable" if experiment.mode == "none" else "parent_disjoint"
+        ),
+        "visibility_mode": visibility_mode,
+        "model_label": model_label,
+        "n_test": metrics.get("n_total", metrics.get("n_evaluable")),
+        "n_successful": metrics.get("n_successful"),
+        "n_failed": metrics.get("n_failed_runs"),
+        "failure_policy": failure_policy,
+        "accuracy": metric_values["accuracy"],
+        "macro_f1": metric_values["macro_f1"],
+        "auroc": "",
+        "positive_precision": metric_values["positive_precision"],
+        "positive_recall": metric_values["positive_recall"],
+        "positive_f1": metric_values["positive_f1"],
+        "tn": confusion.get("tn"),
+        "fp": confusion.get("fp"),
+        "fn": confusion.get("fn"),
+        "tp": confusion.get("tp"),
+        "metrics_path": str(metrics_path),
+    }
 
 
 def _minimol_rows(
@@ -414,12 +557,32 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="test")
     parser.add_argument("--pipeline-root")
     parser.add_argument(
+        "--condition-metrics",
+        action="append",
+        default=[],
+        metavar="EXPERIMENT=METRICS_JSON",
+        help=(
+            "Use an existing metrics artifact for one standard matrix condition, "
+            "for example task__none=/path/metrics.json."
+        ),
+    )
+    parser.add_argument(
         "--visibility-mode",
         choices=("identity_blind", "deployment_visible"),
         default="identity_blind",
         help="Visibility lineage stored below --pipeline-root.",
     )
     parser.add_argument("--model-label", default="GLM-5.2")
+    parser.add_argument(
+        "--task-metrics",
+        action="append",
+        default=[],
+        metavar="TASK=METRICS_TSV",
+        help=(
+            "Compose a current cross-lineage summary by selecting each task from a "
+            "lineage-matched complete metrics TSV. Repeat exactly once per task."
+        ),
+    )
     parser.add_argument(
         "--minimol-root",
         default="",

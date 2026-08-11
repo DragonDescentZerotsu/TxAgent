@@ -1,0 +1,67 @@
+{
+  "schema_version": "bbb_experimental_meaningful_cns_access_gold_audit.v2",
+  "gold_contract_version": "bbb_experimental_meaningful_cns_access_gold.v2",
+  "build_fingerprint": "0a864e56c583f79768427dbb8c4f3e17f4fca43b2eab7d2e791ba3bb34c3eb91",
+  "source_dataset": "starling-labs/BBB",
+  "source_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+  "n_source_rows": 304845,
+  "n_accepted_source_rows": 8273,
+  "n_binary_parent_molecules": 3667,
+  "accepted_source_rows_by_family_and_label": {
+    "brain_systemic_ratio": {
+      "Y=0": 422,
+      "Y=1": 944
+    },
+    "brain_tissue": {
+      "Y=0": 1159,
+      "Y=1": 2675
+    },
+    "brain_unbound": {
+      "Y=0": 62,
+      "Y=1": 147
+    },
+    "csf": {
+      "Y=0": 488,
+      "Y=1": 1080
+    },
+    "experimental_bbb_outcome": {
+      "Y=0": 19,
+      "Y=1": 155
+    },
+    "pet_or_autoradiography": {
+      "Y=0": 289,
+      "Y=1": 833
+    }
+  },
+  "split_gate": {
+    "train": 2935,
+    "valid": 366,
+    "test": 366,
+    "identity_overlap": {
+      "train_valid": 0,
+      "train_test": 0,
+      "valid_test": 0
+    },
+    "scaffold_overlap": {
+      "train_valid": 0,
+      "train_test": 0,
+      "valid_test": 0
+    },
+    "valid_record_tiers": {
+      "multi_record": 345,
+      "singleton": 21
+    },
+    "test_record_tiers": {
+      "multi_record": 344,
+      "singleton": 22
+    }
+  },
+  "qa_sample": {
+    "seed": 20260809,
+    "samples_per_family_label": 25,
+    "n_rows": 294,
+    "path": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/audit/source_review_sample.jsonl",
+    "status": "passed",
+    "review_note": "Three independent gpt-5.6-sol reviewers audited 366 unique source records across iterative replacement rounds; the final deterministic sample passed 294/294."
+  }
+}

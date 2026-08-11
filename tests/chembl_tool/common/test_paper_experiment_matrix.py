@@ -9,6 +9,7 @@ from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     EXPERIMENTS,
     IDENTITY_BLIND,
     PARENT_DISJOINT,
+    SCAFFOLD_DISJOINT,
     _command,
     _parse_args,
     _prepare_policy_selection,
@@ -29,6 +30,7 @@ from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
     paper_root_for_minimol_retrieval,
 )
 from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import (
+    _apply_source_evidence_overrides,
     _collect_existing_index_meta,
     _load_existing_summary,
 )
@@ -113,6 +115,23 @@ def test_partial_starling_index_rebuild_can_preserve_existing_summary(tmp_path):
 
     assert _load_existing_summary(summary) == {"random": {"bbb": {"ok": True}}}
     assert _load_existing_summary(tmp_path / "missing.json") == {}
+
+
+def test_starling_index_source_override_is_explicit_and_nonmutating():
+    specs = [{"name": "skin", "source_evidence": "historical.jsonl"}]
+
+    updated = _apply_source_evidence_overrides(specs, ["skin=aligned.jsonl"])
+
+    assert updated[0]["source_evidence"] == "aligned.jsonl"
+    assert specs[0]["source_evidence"] == "historical.jsonl"
+
+
+def test_starling_index_source_override_rejects_unselected_name():
+    with pytest.raises(SystemExit, match="does not match a selected index"):
+        _apply_source_evidence_overrides(
+            [{"name": "skin", "source_evidence": "historical.jsonl"}],
+            ["bbb=other.jsonl"],
+        )
 
 
 def test_index_summary_can_be_rebuilt_after_parallel_partial_builds(tmp_path):
@@ -407,6 +426,39 @@ def test_fresh_deployment_visible_parent_disjoint_keeps_none_and_avoids_reuse(tm
     assert "--group-analysis-source-batch" not in command
     assert "--identity-blind" not in command
     assert command[command.index("--timeout-s") + 1] == "600"
+
+
+def test_scaffold_disjoint_always_runs_fresh_in_an_isolated_root(tmp_path):
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GPT_OSS_LOCAL_API_KEY",
+        parallelism=128,
+        visibility_mode=IDENTITY_BLIND,
+        neighbor_identity_policy=SCAFFOLD_DISJOINT,
+        fresh_parent_disjoint=False,
+        paper_root=str(tmp_path),
+        split="valid",
+        timeout_s=600,
+        limit=0,
+        experiments=[],
+    )
+
+    selected = _prepare_policy_selection(list(EXPERIMENTS), args)
+    command = _command(EXPERIMENTS[1], args)
+
+    assert any(item.mode == "none" for item in selected)
+    assert "runs_identity_blind_scaffold_disjoint" in command[
+        command.index("--batch-root") + 1
+    ]
+    assert "runs_identity_blind_scaffold_disjoint" in command[
+        command.index("--single-analysis-source-batch") + 1
+    ]
+    assert "--group-analysis-source-batch" not in command
+    assert experiment_run_root(
+        IDENTITY_BLIND,
+        SCAFFOLD_DISJOINT,
+        paper_root=tmp_path,
+    ).name == "runs_identity_blind_scaffold_disjoint"
 
 
 def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():

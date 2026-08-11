@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Mapping
 import json
 from pathlib import Path
 
@@ -11,20 +12,43 @@ from tools.chembl_tool.common.starling import (
     build_and_write_starling_index,
     build_starling_parquet_evidence_rows,
 )
+from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
+    is_tdc_skin_sensitization_scope,
+)
 
 
 DEFAULT_STARLING_DATA_DIR = "data/starling_data/skin_reaction"
-DEFAULT_OUT_DIR = "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full"
+HISTORICAL_OUT_DIR = "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full"
+DEFAULT_OUT_DIR = (
+    "outputs/paper/molecular_evidence_agent/evidence/"
+    "skin_reaction_starling_sensitization_v2"
+)
 EVIDENCE_FILENAME = "starling_skin_reaction_evidence.jsonl"
 INDEX_FILENAME = "starling_skin_reaction_neighbor_index.pkl"
 META_FILENAME = "starling_skin_reaction_neighbor_index.meta.json"
-INDEX_VERSION = "skin_reaction_starling_full_neighbor_index.v1"
+DIRECT_SCOPE_BROAD_V1 = "broad_skin_reaction_v1"
+DIRECT_SCOPE_SENSITIZATION_V2 = "sensitization_contact_allergy_v2"
+DEFAULT_DIRECT_SCOPE = DIRECT_SCOPE_SENSITIZATION_V2
+DIRECT_SCOPES = (DIRECT_SCOPE_BROAD_V1, DIRECT_SCOPE_SENSITIZATION_V2)
+OUT_DIRS = {
+    DIRECT_SCOPE_BROAD_V1: HISTORICAL_OUT_DIR,
+    DIRECT_SCOPE_SENSITIZATION_V2: DEFAULT_OUT_DIR,
+}
+INDEX_VERSIONS = {
+    DIRECT_SCOPE_BROAD_V1: "skin_reaction_starling_full_neighbor_index.v1",
+    DIRECT_SCOPE_SENSITIZATION_V2: "skin_reaction_starling_sensitization_neighbor_index.v2",
+}
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    out_dir = _resolve_out_dir(args)
     evidence_rows, source_stats = build_starling_parquet_evidence_rows(
-        skin_reaction_profiles(Path(args.starling_data_dir), max_rows=args.max_rows_per_source),
+        skin_reaction_profiles(
+            Path(args.starling_data_dir),
+            max_rows=args.max_rows_per_source,
+            direct_scope=args.direct_scope,
+        ),
         max_record_examples=args.max_record_examples,
         min_confidence=args.min_confidence,
     )
@@ -38,11 +62,12 @@ def main(argv: list[str] | None = None) -> int:
             "skin_exposure",
         ],
         "exact_query_exclusion": True,
+        "direct_scope": args.direct_scope,
     }
     meta = build_and_write_starling_index(
         evidence_rows,
-        out_dir=args.out_dir,
-        index_version=INDEX_VERSION,
+        out_dir=out_dir,
+        index_version=INDEX_VERSIONS[args.direct_scope],
         source=source,
         source_stats=source_stats,
         evidence_filename=EVIDENCE_FILENAME,
@@ -55,7 +80,15 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[StarlingSourceProfile]:
+def skin_reaction_profiles(
+    data_dir: Path,
+    *,
+    max_rows: int = 0,
+    direct_scope: str = DEFAULT_DIRECT_SCOPE,
+) -> list[StarlingSourceProfile]:
+    if direct_scope not in DIRECT_SCOPES:
+        raise ValueError(f"Unknown Skin direct scope: {direct_scope}")
+    aligned_scope = direct_scope == DIRECT_SCOPE_SENSITIZATION_V2
     return [
         StarlingSourceProfile(
             source_id="skin_direct_reaction",
@@ -63,7 +96,11 @@ def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starlin
             group_id="Direct.skin_reaction",
             assay_tier="Tier 1",
             endpoint_group="direct_skin_reaction",
-            evidence_source="Starling/Skin_Reaction/direct_skin_reaction",
+            evidence_source=(
+                "Starling/Skin_Reaction/direct_skin_sensitization"
+                if aligned_scope
+                else "Starling/Skin_Reaction/direct_skin_reaction"
+            ),
             endpoint_field="outcome_label",
             smiles_field="SMILES",
             context_fields=(
@@ -78,10 +115,24 @@ def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starlin
             ),
             scope_fields=("assay_or_test", "species_or_population", "dose_or_concentration"),
             name_fields=(),
-            target_pref_name="direct skin reaction outcome",
+            target_pref_name=(
+                "direct skin sensitization/contact-allergy outcome"
+                if aligned_scope
+                else "direct skin reaction outcome"
+            ),
             evidence_role="direct_outcome",
-            standard_type_prefix="direct skin reaction",
+            standard_type_prefix=(
+                "direct skin sensitization/contact allergy"
+                if aligned_scope
+                else "direct skin reaction"
+            ),
             include_endpoint_values=("positive", "negative", "inconclusive"),
+            record_filter=(
+                _is_skin_sensitization_record if aligned_scope else None
+            ),
+            record_filter_name=(
+                "is_tdc_skin_sensitization_scope.v1" if aligned_scope else ""
+            ),
             extra_example_fields=("positive_count", "total_tested", "effect_metric", "pmid"),
             max_rows=max_rows,
         ),
@@ -253,10 +304,28 @@ def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starlin
     ]
 
 
+def _is_skin_sensitization_record(record: Mapping[str, object]) -> bool:
+    """Keep direct evidence in exact parity with the benchmark label scope."""
+    return is_tdc_skin_sensitization_scope(record.get("reaction_type"))
+
+
+def _resolve_out_dir(args: argparse.Namespace) -> str:
+    if args.max_rows_per_source and not args.out_dir:
+        raise SystemExit(
+            "--max-rows-per-source requires an explicit non-canonical --out-dir"
+        )
+    return str(args.out_dir or OUT_DIRS[args.direct_scope])
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--starling-data-dir", default=DEFAULT_STARLING_DATA_DIR)
-    parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
+    parser.add_argument(
+        "--out-dir",
+        default="",
+        help="Defaults to a separate versioned directory for the selected direct scope.",
+    )
+    parser.add_argument("--direct-scope", choices=DIRECT_SCOPES, default=DEFAULT_DIRECT_SCOPE)
     parser.add_argument("--min-confidence", type=float, default=0.0)
     parser.add_argument("--max-record-examples", type=int, default=6)
     parser.add_argument("--max-rows-per-source", type=int, default=0)

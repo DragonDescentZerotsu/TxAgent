@@ -30,6 +30,12 @@ from tools.chembl_tool.common.task_workflows.global_prompt_pool import (
 from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     experiments_for_starling_benchmark,
 )
+from tools.chembl_tool.tasks.skin_reaction.prompt_profiles import (
+    LEGACY_SKIN_REACTION_V1,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.prompt_profiles import (
+    LEGACY_BIOAVAILABILITY_V1,
+)
 
 
 DATASET_LINEAGE = "record_supported_v2"
@@ -104,6 +110,10 @@ def main(argv: list[str] | None = None) -> int:
         "card_contract_version": FINAL_EVIDENCE_CARD_CONTRACT_VERSION,
         "surfaces": selected_surfaces,
         "tasks": selected_tasks,
+        "task_prompt_profiles": {
+            "bioavailability_ma": LEGACY_BIOAVAILABILITY_V1,
+            "skin_reaction": LEGACY_SKIN_REACTION_V1,
+        },
         "model": args.model,
         "base_url": args.base_url,
         "reasoning_effort": args.reasoning_effort,
@@ -209,6 +219,12 @@ def _batch_command(
     if args.indices:
         command.append("--indices")
         command.extend(args.indices)
+    if task == "skin_reaction":
+        command.extend(["--skin-prompt-profile", LEGACY_SKIN_REACTION_V1])
+    elif task == "bioavailability_ma":
+        command.extend(
+            ["--bioavailability-prompt-profile", LEGACY_BIOAVAILABILITY_V1]
+        )
     return command
 
 

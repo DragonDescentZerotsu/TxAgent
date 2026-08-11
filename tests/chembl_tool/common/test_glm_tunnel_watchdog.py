@@ -18,6 +18,10 @@ def test_run_root_name_tracks_visibility_and_parent_policy() -> None:
         == "runs_identity_blind_parent_disjoint"
     )
     assert _run_root_name("deployment_visible", "operational") == "runs_deployment_visible"
+    assert (
+        _run_root_name("identity_blind", "scaffold_disjoint")
+        == "runs_identity_blind_scaffold_disjoint"
+    )
 
 
 def test_count_final_results_uses_only_selected_run_root(tmp_path: Path) -> None:

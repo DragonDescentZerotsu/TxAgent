@@ -5,8 +5,8 @@ comparison. Optional complete model/visibility summaries add grouped bars.
 Optional matched experiment TSVs add rows to the same figure; their anchor
 rows are validated against an existing loaded model/visibility condition and
 are not plotted twice.
-An optional paired-bootstrap TSV adds a signed dot-and-whisker interval block
-to each task panel for the selected best agent versus train-label baselines.
+An optional paired-statistics TSV adds a compact interval or permutation-p-value
+block to each task panel for the selected best agent versus train-label baselines.
 """
 
 from __future__ import annotations
@@ -120,6 +120,53 @@ def _filter_method_family(
     if not filtered:
         raise ValueError(f"No rows matched method_family={method_family!r}")
     return filtered
+
+
+def _read_single_series_metrics(
+    path: Path,
+) -> dict[tuple[str, str, str], dict[str, str]]:
+    """Read a current partial matrix without weakening comparison-series gates."""
+    with path.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle, delimiter="\t"))
+    results = {
+        (row["benchmark_split"], row["task"], row["method"]): row
+        for row in rows
+    }
+    if len(results) != len(rows):
+        raise ValueError(f"Duplicate Starling metric rows in {path}")
+    available_splits = {
+        split for split, _ in SPLITS if any(row["benchmark_split"] == split for row in rows)
+    }
+    if not available_splits:
+        raise ValueError("No supported Starling benchmark splits found")
+    known_methods = {
+        task.key: {method.key for method in task.methods}
+        for task in TASKS
+    }
+    unknown = sorted(
+        key
+        for key in results
+        if key[1] not in known_methods or key[2] not in known_methods[key[1]]
+    )
+    if unknown:
+        raise ValueError(f"Unsupported Starling metric rows: {unknown}")
+    missing_tasks = sorted(
+        (split, task.key)
+        for split in available_splits
+        for task in TASKS
+        if not any(key[:2] == (split, task.key) for key in results)
+    )
+    if missing_tasks:
+        raise ValueError(f"Single-series metrics are missing tasks: {missing_tasks}")
+    failed = sorted(
+        key
+        for key, row in results.items()
+        if int(row.get("n_failed") or 0) > 0
+        and not row.get("failure_policy", "").startswith("count_as_incorrect")
+    )
+    if failed:
+        raise ValueError(f"Cannot plot benchmark rows with failures: {failed}")
+    return results
 
 
 def _validate_pair(
@@ -607,6 +654,7 @@ def render(
     comparison_title_override: str | None = None,
     baseline_display: str = "shared",
     baseline_series_groups: tuple[str, ...] = (),
+    single_series: bool = False,
 ) -> None:
     if paired_significance_display not in {"ci", "pvalue"}:
         raise ValueError(
@@ -614,14 +662,25 @@ def render(
         )
     if baseline_display not in {"shared", "series"}:
         raise ValueError("baseline_display must be either 'shared' or 'series'")
-    reference = _filter_method_family(read_metrics(reference_path), method_family)
-    candidate = _filter_method_family(read_metrics(candidate_path), method_family)
+    reference = _filter_method_family(
+        _read_single_series_metrics(reference_path)
+        if single_series
+        else read_metrics(reference_path),
+        method_family,
+    )
+    candidate = (
+        reference
+        if single_series
+        else _filter_method_family(read_metrics(candidate_path), method_family)
+    )
     require_shared_baselines = baseline_display == "shared"
     available_splits = _validate_pair(
         reference,
         candidate,
         require_shared_baselines=require_shared_baselines,
     )
+    if single_series and comparison_paths:
+        raise ValueError("single_series cannot be combined with comparison_paths")
     additional = tuple(
         _filter_method_family(read_metrics(path), method_family)
         for path in comparison_paths
@@ -633,7 +692,7 @@ def render(
             require_shared_baselines=require_shared_baselines,
         ) != available_splits:
             raise ValueError("Additional comparison metrics changed available splits")
-    series = (reference, candidate, *additional)
+    series = (reference,) if single_series else (reference, candidate, *additional)
     series_labels = (
         series_label_overrides
         if series_label_overrides
@@ -653,11 +712,15 @@ def render(
     series_by_label = dict(zip(series_labels, series, strict=True))
     reference_label = series_labels[0]
     candidate_label = (
-        series_labels[1] if series_label_overrides else _agent_model_label(candidate)
+        reference_label
+        if single_series
+        else series_labels[1]
+        if series_label_overrides
+        else _agent_model_label(candidate)
     )
     # Preserve the historical default-anchor behavior even when a synthetic
     # test or legacy summary reuses the same display label for both series.
-    series_by_label[candidate_label] = candidate
+    series_by_label[candidate_label] = reference if single_series else candidate
     experiments = _read_experiment_metrics(
         experiment_paths,
         series_by_label=series_by_label,
@@ -726,7 +789,7 @@ def render(
     height = header_height + len(TASKS) * panel_height + (len(TASKS) - 1) * PANEL_GAP + FOOTER_HEIGHT
     source_paths = (
         reference_path,
-        candidate_path,
+        *((candidate_path,) if not single_series else ()),
         *comparison_paths,
         *experiment_paths,
         *((paired_ci_path,) if paired_ci_path is not None else ()),
@@ -907,6 +970,14 @@ def main() -> None:
     parser.add_argument("--reference-metrics", type=Path, default=DEFAULT_REFERENCE)
     parser.add_argument("--candidate-metrics", type=Path, default=DEFAULT_CANDIDATE)
     parser.add_argument(
+        "--single-series",
+        action="store_true",
+        help=(
+            "Plot one complete metrics series plus its train-label baselines. "
+            "The candidate metrics path is ignored."
+        ),
+    )
+    parser.add_argument(
         "--experiment-metrics",
         type=Path,
         action="append",
@@ -930,8 +1001,8 @@ def main() -> None:
         "--paired-ci-metrics",
         type=Path,
         help=(
-            "Paired statistics TSV for the plotted best agent versus MiniMol "
-            "train-all and Morgan KNN. The displayed statistic is selected with "
+            "Paired statistics TSV for the plotted best agent versus the complete "
+            "baseline set. The displayed statistic is selected with "
             "--paired-significance-display."
         ),
     )
@@ -1006,6 +1077,7 @@ def main() -> None:
         args.comparison_title,
         args.baseline_display,
         tuple(args.baseline_series_group),
+        args.single_series,
     )
     print(args.output)
     if args.png_output is not None:

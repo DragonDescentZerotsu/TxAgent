@@ -48,6 +48,45 @@ valid+test union `heldout_molecule_labels.jsonl` 重建 train-only retrieval ind
 
 Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，不是 LLM function tool。
 
+## Versioned prompt contract
+
+Bio single/group/final prompt 使用独立的 task-local versioned profile：
+
+```text
+tools/chembl_tool/tasks/bioavailability_ma/prompt_profiles.py
+
+legacy_bioavailability_v1
+  冻结 2026-08-09 之前的历史 prompt；仅用于精确复现旧实验。
+
+f20_evidence_calibrated_v2
+  当前默认。所有结论按 absolute oral F=20% 阈值校准；single 不把 QED/Lipinski/单个理化风险直接
+  解释为 F<20%；group 将 observed evidence direction 与 query-specific transferability 分开；final
+  不把 neutral/insufficient/low-transferability 当作 low evidence。
+```
+
+新 run 的 manifest 必须保存 `task_prompt_profile` 和 `label_scope`。缺失该字段的历史 manifest 一律映射到
+`legacy_bioavailability_v1`；single/group/final-only artifact reuse 必须来自同一 prompt profile，禁止跨 profile
+混用。旧设置仍可显式重跑：
+
+```bash
+python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
+  --bioavailability-prompt-profile legacy_bioavailability_v1 \
+  <其它冻结参数>
+```
+
+`f20_evidence_calibrated_v2` 只改变 LLM task contract，不添加 deterministic override、batch quota、train-ratio
+prior、router 或 postprocess。2026-08-09 GPT-OSS-120B scaffold-valid 中，full-flat/full-mechanism macro-F1
+从 `0.6117/0.5869` 提高到 `0.7004/0.6844`，paired 95% CI 均高于 0；所有 condition 均 209/209、0 failed，
+对应 retrieval SHA mismatch=0。`none` macro-F1 降至 `0.4129` 且几乎全预测 high，因此该 profile 的结论是
+“修复 evidence adjudication”，不是一个可独立使用的 high prior。
+
+2026-08-10 在设置冻结后首次且只运行一次 scaffold-test 的 full-flat/full-mechanism 与三个 train-derived
+baseline。两种 agent macro-F1 为 `0.6663/0.6720`；Morgan KNN、MiniMol embedding KNN、MiniMol trained
+head 为 `0.6801/0.6484/0.7027`。五项均覆盖同一209条 test，两个 agent batch 均209/209成功、0 failed，
+所有 agent-minus-baseline paired-bootstrap macro-F1 95% CI 均跨0。该 test 不得回流选择 prompt、retriever
+或阈值；完整统计与 artifact 路径见
+`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
+
 ## Paper pipeline
 
 ```text

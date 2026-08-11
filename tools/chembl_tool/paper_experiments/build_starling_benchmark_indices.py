@@ -87,7 +87,10 @@ def paper_root_for_benchmark_split(
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     splits = args.splits or list(BENCHMARK_SPLITS)
-    specs = _select_specs(args.indices)
+    specs = _apply_source_evidence_overrides(
+        _select_specs(args.indices),
+        args.source_evidence,
+    )
     summary_name = (
         "starling_benchmark_index_summary.json"
         if args.benchmark_lineage == BENCHMARK_LINEAGE
@@ -197,10 +200,44 @@ def _select_specs(names: list[str]) -> list[dict[str, str]]:
     return [dict(by_name[name]) for name in names]
 
 
+def _apply_source_evidence_overrides(
+    specs: list[dict[str, str]],
+    overrides: list[str],
+) -> list[dict[str, str]]:
+    """Return copied specs with explicit NAME=JSONL source overrides."""
+    parsed: dict[str, str] = {}
+    for item in overrides:
+        name, separator, path = item.partition("=")
+        if not separator or not name or not path:
+            raise SystemExit(
+                "--source-evidence entries must use INDEX_NAME=EVIDENCE_JSONL"
+            )
+        if name in parsed:
+            raise SystemExit(f"Duplicate --source-evidence override: {name}")
+        parsed[name] = path
+    selected = {spec["name"] for spec in specs}
+    unknown = sorted(set(parsed) - selected)
+    if unknown:
+        raise SystemExit(
+            "Source override does not match a selected index: " + ", ".join(unknown)
+        )
+    return [
+        {**spec, "source_evidence": parsed.get(spec["name"], spec["source_evidence"])}
+        for spec in specs
+    ]
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--splits", nargs="*", choices=BENCHMARK_SPLITS, default=[])
     parser.add_argument("--indices", nargs="*", default=[])
+    parser.add_argument(
+        "--source-evidence",
+        action="append",
+        default=[],
+        metavar="INDEX_NAME=EVIDENCE_JSONL",
+        help="Override one selected index source without changing the frozen default spec.",
+    )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument(
         "--benchmark-data-root",

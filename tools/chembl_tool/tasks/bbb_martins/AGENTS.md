@@ -13,7 +13,7 @@ direct brain exposure、passive permeability、efflux transport 和 influx trans
 
 目标不是训练 BBB classifier，而是构建可审计的 BBB evidence library：给定 query molecule，先预取相似分子的 BBB / permeability / transporter evidence，再交给 reasoning LLM 判断 analog evidence 是否能 transfer 到 query molecule。
 
-当前评估约定：
+当前评估约定（`experimental_meaningful_cns_access_v2`）：
 
 ```text
 Y=1 -> bbb_prediction=pass
@@ -21,24 +21,49 @@ Y=0 -> bbb_prediction=fail
 final summary 必须在 pass/fail 中二选一；不再允许 uncertain prediction
 ```
 
-新的 Starling-held-out benchmark 由 `starling_benchmark.py` 构建：只把明确
-`bbb_permeability_label` 当作 qualitative gold outcome，transport label 只作 evidence context；
-数值记录只对 `logBB` 使用 TDC-compatible `>= -1` threshold；Papp、Kp、Kp,uu 等异构量不强行换算。
-`qualifying_conditions` 非空的 context-dependent row 不进入 molecule-only gold；parent-level
-冲突按 accepted source records 计算 70% agreement，同 PMID 的多条 record 分别计票，精确 tie 拒绝。
-当前 v2 正式评估前必须按 scaffold 的 `heldout_molecule_labels.jsonl`（valid+test union）重建 train-only
-retrieval index；historical v1 的 random/scaffold index 仍各自使用对应 union，不能跨 lineage 复用。
+当前 Starling-held-out benchmark 由 `experimental_meaningful_cns_access_benchmark.py` 和公共 builder 构建。Gold 是
+系统给药后实验支持的 meaningful/adequate CNS access vs restricted/poor access，不是 passive permeability，
+也不是任意 CNS trace detection：brain tissue、unbound brain、
+brain/systemic ratio、CSF、PET/autoradiography 和明确体内 BBB outcome 可进入；PAMPA/细胞模型、计算预测、
+mechanism-only proxy、非系统给药、altered barrier、间接疗效推断和明显方向冲突拒绝。低但非零 exposure
+可以为 negative，CSF 保留为 proxy family。parent-level 冲突
+继续按 accepted source records 计算 70% agreement，同 PMID 的多条 record 分别计票，精确 tie 拒绝。
 
 当前 paper-facing frozen build 位于：
 
 ```text
-data/processed_starling_record_supported_v2/BBB_Martins/scaffold/
+data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/
 ```
 
-共有 19,425 个 binary parents；train/valid/test 为 18,425/500/500。旧
-`data/processed_starling/BBB_Martins/{random,scaffold}` 属于 `record_agreement70_split811_v1` historical
-comparison。构建命令、source revision、冲突/拒绝 reason 和完整统计统一见
+共有 3,667 个 binary parents；train/valid/test 为 2,935/366/366，valid/test 分别为 345 multi-record + 21
+singleton 和 344 + 22，两者 Y=0/Y=1 均为 97/269，identity/scaffold overlap 均为 0。旧
+`data/processed_starling_experimental_direct_cns_v1/` 与 `data/processed_starling_record_supported_v2/BBB_Martins`
+及 `data/processed_starling/BBB_Martins/{random,scaffold}` 均为 historical comparison。构建命令、source
+revision、冲突/拒绝 reason、endpoint distribution 和分层 sample audit 统一见
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`，不得在本 task 内另写 split 脚本。
+
+BBB reasoning contract 通过 `prompt_profiles.py` 独立版本化。旧 artifact 缺少 profile 字段时必须解释为
+`meaningful_cns_access_v1`；跨 profile 的 single/group branch reuse 必须拒绝。2026-08-09 的两个 valid-only
+候选均保留但未 promotion：`meaningful_cns_adjudication_v2` 只允许 direct negative outcome/measured efflux
+支持 fail，导致 matched valid 322/366 预测 pass、macro-F1 降至 0.5652；v3 增加严格的
+`convergent_intrinsic_barriers` fail basis，matched macro-F1 提高到 0.6696，但 full-Starling direct 为 0.6416，
+未超过 v1 的 0.6452（paired CI 跨 0）。因此当前默认继续是 v1，v2/v3 只用于明确 opt-in 的历史复现；formal
+test 未运行。详细 paired 结果见 `tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
+
+E16 no-LLM valid audit 已证明 matched train pool 的 Morgan top-20 中普遍存在更匹配 query ionization/BBB
+properties 的 candidates：冻结 0.02 rank-3 similarity-cost budget 后，描述性 KNN vote macro-F1 从 0.5896
+提高到 0.6335，但 paired CI 仍轻微跨 0。唯一 selector-only matched-v3 valid candidate 随后仅把 agent
+macro-F1 从 0.6696 改为 0.6708（paired CI `[-0.0410,+0.0450]`），accuracy 不变；58 flips 为 29/29。
+因此 E16 已终止，不得把 availability audit 当作 agent improvement、继续搜索更宽 budget/selector/prompt，
+或运行 formal test。入口为 `paper_experiments/matched_train_label_agent/bbb_property_compatibility_audit.py` 和
+`paper_experiments/matched_train_label_agent/bbb_property_compatible_experiment.py`。
+
+E16 paired trace diagnosis 进一步把 same-membership 拆成 42 个 exact ordered group inputs 和 107 个 reorder。
+Exact controls 中 20 个 group core、23 个 final state 改变；candidate 的 166 个 unanimous-positive analog sets 中
+38 个被 intrinsic barriers 判 fail，造成 25 false negatives。曾讨论的 compact structured analog ledger 会增加
+BBB 专项状态和 compiler 复杂度，现已否决归档，不是下一步。当前 BBB 默认仍为
+`meaningful_cns_access_v1`；不得继续从同一 valid trace 添加 final 条款、selector 或 transport 候选。历史诊断入口为
+`paper_experiments/matched_train_label_agent/bbb_property_compatible_trace_diagnosis.py`。
 
 Legacy native runner 边界：
 
@@ -71,10 +96,17 @@ scoring.py
   BBB assay 保留/剔除和打分统一入口。screen_assays.py 和 rescore_outputs.py 都调用 scored_row()。
 
 run_reasoning_pipeline.py
-  BBB_Martins prompt、single/group/final schema、retrieval/prompt assembly 和 final-only rerun。
+  BBB_Martins retrieval/prompt assembly、reasoning stages 和 final-only rerun。
+
+prompt_profiles.py
+  versioned single/group/final schema、label scope、instructions 和 cross-field validation；旧 profile 不原地修改。
 
 starling_benchmark.py
-  将 `starling-labs/BBB` 的 direct records 转成保守、可审计的 TDC-compatible parent-level binary label。
+  Historical TDC-compatible mixed-permeability adapter；不得用于新 BBB 主结果。
+
+experimental_meaningful_cns_access_benchmark.py
+  当前 experimental meaningful-CNS-access gold adapter；隔离 prediction/in-vitro/altered-context、
+  mechanism-only proxy 和 identity/provenance 不可靠 records。
 
 build_starling_evidence_library.py
   从 `starling-labs/BBB` 构建 Starling BBB molecule-level evidence 和 neighbor index。

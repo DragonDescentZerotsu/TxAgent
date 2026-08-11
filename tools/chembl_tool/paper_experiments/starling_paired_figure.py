@@ -19,9 +19,16 @@ from .plot_starling_benchmark_overview import BASELINE_SOURCES, TASKS
 
 
 PAIRED_CI_BAND = "#F3F0F9"
-PAIRED_CI_EXTRA_HEIGHT = 190
-PAIRED_PVALUE_EXTRA_HEIGHT = 135
+PAIRED_CI_EXTRA_HEIGHT = 230
+PAIRED_PVALUE_EXTRA_HEIGHT = 165
 PAIRED_POINT_FILL = PURPLE
+LEGACY_PAIRED_BASELINES = frozenset({"minimol_train_all", "morgan_knn_k3"})
+ALL_PAIRED_BASELINES = frozenset(
+    {
+        *LEGACY_PAIRED_BASELINES,
+        "minimol_embedding_cosine_knn_k3",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -82,7 +89,7 @@ def read_paired_metrics(
     supported_tasks = {task.key for task in TASKS}
     grouped: dict[tuple[str, str], list[PairedComparison]] = {}
     seen: set[tuple[str, str, str]] = set()
-    expected_baselines = {"minimol_train_all", "morgan_knn_k3"}
+    allowed_baselines = ALL_PAIRED_BASELINES
     task_by_key = {task.key: task for task in TASKS}
 
     for row in rows:
@@ -102,7 +109,7 @@ def read_paired_metrics(
         if unique_key in seen:
             raise ValueError(f"Duplicate paired-CI comparison: {unique_key}")
         seen.add(unique_key)
-        if baseline_method not in expected_baselines:
+        if baseline_method not in allowed_baselines:
             raise ValueError(
                 f"Unsupported paired-CI baseline for {split}/{task_key}: "
                 f"{baseline_method}"
@@ -149,6 +156,7 @@ def read_paired_metrics(
             for results in series_by_label.values()
             for method in task_by_key[task_key].methods
             if method.source not in BASELINE_SOURCES
+            and (split, task_key, method.key) in results
             and results[(split, task_key, method.key)].get("method_family")
             == "molecular_evidence_agent"
         ]
@@ -188,13 +196,30 @@ def read_paired_metrics(
             f"missing={sorted(expected_groups - set(grouped))}, "
             f"extra={sorted(set(grouped) - expected_groups)}"
         )
-    order = {"minimol_train_all": 0, "morgan_knn_k3": 1}
+    order = {
+        "minimol_train_all": 0,
+        "morgan_knn_k3": 1,
+        "minimol_embedding_cosine_knn_k3": 2,
+    }
     output: dict[tuple[str, str], tuple[PairedComparison, ...]] = {}
+    comparison_sets = {
+        frozenset(item.baseline_method for item in comparisons)
+        for comparisons in grouped.values()
+    }
+    if len(comparison_sets) != 1:
+        raise ValueError("Paired-CI baseline sets must match across every task/split")
+    expected_baselines = next(iter(comparison_sets))
+    if expected_baselines not in {LEGACY_PAIRED_BASELINES, ALL_PAIRED_BASELINES}:
+        raise ValueError(
+            "Paired-CI metrics require either the historical MiniMol/Morgan pair "
+            "or all three current baselines; found "
+            f"{sorted(expected_baselines)}"
+        )
     for group, comparisons in grouped.items():
         methods = {item.baseline_method for item in comparisons}
         if methods != expected_baselines:
             raise ValueError(
-                "Paired-CI metrics require MiniMol train-all and Morgan KNN for "
+                "Paired-CI metrics require the same complete baseline set for "
                 f"{group}; found {sorted(methods)}"
             )
         if len({(item.agent_model, item.agent_method) for item in comparisons}) != 1:
@@ -294,13 +319,15 @@ def render_paired_ci_band(
     plot_left = x + label_width
     plot_right = x + width - value_width
     zero_x = (plot_left + plot_right) / 2
-    parts.append(f'<line x1="{zero_x:.1f}" y1="{y + 57:.1f}" x2="{zero_x:.1f}" y2="{y + 130:.1f}" stroke="{INK}" stroke-width="1.2" stroke-dasharray="4 4"/>')
+    axis_bottom = y + 57 + 37 * len(comparisons)
+    parts.append(f'<line x1="{zero_x:.1f}" y1="{y + 57:.1f}" x2="{zero_x:.1f}" y2="{axis_bottom:.1f}" stroke="{INK}" stroke-width="1.2" stroke-dasharray="4 4"/>')
 
     def scale(value: float) -> float:
         clipped = min(scale_limit, max(-scale_limit, value))
         return plot_left + (clipped + scale_limit) / (2 * scale_limit) * (plot_right - plot_left)
 
-    for row_y, item in zip((y + 79, y + 116), comparisons, strict=True):
+    for index, item in enumerate(comparisons):
+        row_y = y + 79 + 37 * index
         low_x, high_x, point_x = scale(item.ci_low), scale(item.ci_high), scale(item.delta)
         parts.append(svg_text(x + 16, row_y + 4, item.baseline_label, size=11, weight=650))
         parts.append(f'<line x1="{low_x:.1f}" y1="{row_y:.1f}" x2="{high_x:.1f}" y2="{row_y:.1f}" stroke="{PURPLE}" stroke-width="3"/>')
@@ -312,8 +339,8 @@ def render_paired_ci_band(
 
     for tick in (-scale_limit, -scale_limit / 2, 0.0, scale_limit / 2, scale_limit):
         tick_x = scale(tick)
-        parts.append(f'<line x1="{tick_x:.1f}" y1="{y + 132:.1f}" x2="{tick_x:.1f}" y2="{y + 136:.1f}" stroke="{MUTED}" stroke-width="1"/>')
-        parts.append(svg_text(tick_x, y + 151, "0" if tick == 0 else f"{tick:+.2f}", size=9, fill=MUTED, anchor="middle"))
+        parts.append(f'<line x1="{tick_x:.1f}" y1="{axis_bottom + 2:.1f}" x2="{tick_x:.1f}" y2="{axis_bottom + 6:.1f}" stroke="{MUTED}" stroke-width="1"/>')
+        parts.append(svg_text(tick_x, axis_bottom + 21, "0" if tick == 0 else f"{tick:+.2f}", size=9, fill=MUTED, anchor="middle"))
 
 
 def render_paired_pvalue_band(
@@ -339,7 +366,8 @@ def render_paired_pvalue_band(
     parts.append(svg_text(x + 16, y + 25, "Exploratory one-sided paired permutation p-value", size=14, weight=750))
     parts.append(svg_text(x + width - 16, y + 25, f"H1: best agent > baseline · {first.permutation_replicates:,} permutations", size=11, weight=650, fill=MUTED, anchor="end"))
     parts.append(svg_text(x + 16, y + 47, f"Best: {_short_model_label(first.agent_model)} · {first.agent_label}", size=11, weight=650, fill=MUTED))
-    for row_y, item in zip((y + 76, y + 101), comparisons, strict=True):
+    for index, item in enumerate(comparisons):
+        row_y = y + 76 + 25 * index
         parts.append(svg_text(x + 16, row_y, item.baseline_label, size=11, weight=650))
         parts.append(svg_text(x + width - 16, row_y, f"p = {item.p_value_one_sided:.3f}", size=12, weight=750, fill=PURPLE, anchor="end"))
 
