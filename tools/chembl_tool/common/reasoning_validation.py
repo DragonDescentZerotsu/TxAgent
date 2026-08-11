@@ -4,10 +4,16 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
 import json
+import re
 from typing import Any
 
 
 JsonCall = Callable[[list[dict[str, Any]]], dict[str, Any]]
+ContentValidator = Callable[[Mapping[str, Any]], list[str]]
+ENUM_TOKEN_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+$")
+SCHEMA_TYPE_TOKENS = frozenset(
+    {"array", "boolean", "integer", "null", "number", "object", "string"}
+)
 
 
 def call_with_json_validation(
@@ -17,6 +23,7 @@ def call_with_json_validation(
     required_fields: Iterable[str] = (),
     allowed_values: Mapping[str, set[str]] | None = None,
     required_tool_names: Iterable[str] = (),
+    content_validator: ContentValidator | None = None,
     branch_name: str = "reasoning",
     max_attempts: int = 4,
 ) -> dict[str, Any]:
@@ -63,6 +70,7 @@ def call_with_json_validation(
             required_fields=required_fields,
             allowed_values=allowed_values,
             required_tool_names=required_tool_names,
+            content_validator=content_validator,
         )
         attempt_errors.append(errors)
         if not errors:
@@ -77,6 +85,40 @@ def call_with_json_validation(
         "valid": not attempt_errors[-1],
     }
     return response
+
+
+def allowed_values_from_required_schema(
+    messages: Iterable[Mapping[str, Any]],
+) -> dict[str, set[str]]:
+    """Extract top-level enum or fixed-literal contracts from a prompt schema."""
+    for message in reversed(list(messages)):
+        content = message.get("content")
+        if message.get("role") != "user" or not isinstance(content, str):
+            continue
+        try:
+            payload = json.loads(content)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(payload, Mapping):
+            continue
+        schema = payload.get("required_json_schema")
+        if not isinstance(schema, Mapping):
+            continue
+        allowed: dict[str, set[str]] = {}
+        for field, description in schema.items():
+            if not isinstance(description, str):
+                continue
+            values = {value.strip() for value in description.split("|")}
+            if any(
+                not value or not ENUM_TOKEN_PATTERN.fullmatch(value)
+                for value in values
+            ):
+                continue
+            if len(values) == 1 and next(iter(values)).lower() in SCHEMA_TYPE_TOKENS:
+                continue
+            allowed[str(field)] = values
+        return allowed
+    return {}
 
 
 def _compact_json_user_messages(
@@ -131,6 +173,7 @@ def response_validation_errors(
     required_fields: Iterable[str] = (),
     allowed_values: Mapping[str, set[str]] | None = None,
     required_tool_names: Iterable[str] = (),
+    content_validator: ContentValidator | None = None,
 ) -> list[str]:
     errors: list[str] = []
     content = response.get("content")
@@ -151,4 +194,8 @@ def response_validation_errors(
     for tool_name in required_tool_names:
         if tool_name not in completed_tools:
             errors.append(f"missing_successful_tool:{tool_name}")
+    if content_validator is not None:
+        for error in content_validator(content):
+            if error not in errors:
+                errors.append(error)
     return errors

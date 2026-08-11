@@ -316,9 +316,32 @@ def sanitize_identity_blind_branch_outputs(
 
 
 def _compact_result(result: dict[str, Any], *hidden_values: str) -> dict[str, Any]:
+    tool_name = str(result.get("tool_name") or "")
+    status = str(result.get("status") or "error")
+    if status != "ok":
+        # Backend exceptions can contain mmpdb fragments, raw structures, or
+        # implementation details that are neither evidence nor safe input for
+        # an identity-blind prompt.  Preserve an auditable failure receipt but
+        # expose no exception payload to the model.
+        return {
+            "tool_name": tool_name,
+            "status": "error",
+            "content": (
+                f"[{tool_name}]\nTool result unavailable. "
+                "Treat this tool comparison as missing evidence."
+            ),
+            "warnings": [],
+            "errors": [
+                {
+                    "code": "TOOL_RESULT_UNAVAILABLE",
+                    "message": "Backend error details redacted by the prompt harness.",
+                    "recoverable": False,
+                }
+            ],
+        }
     return {
-        "tool_name": result.get("tool_name", ""),
-        "status": result.get("status", "error"),
+        "tool_name": tool_name,
+        "status": status,
         "content": _hide_structures(str(result.get("content") or ""), hidden_values),
         "warnings": _hide_structures(result.get("warnings") or [], hidden_values),
         "errors": _hide_structures(result.get("errors") or [], hidden_values),
@@ -441,7 +464,13 @@ def find_identity_blind_leaks(
                     str(neighbor.get("standard_inchi_key") or "").strip(),
                 }
             )
+    # Structure strings and identifiers are never valid schema keys, so audit
+    # the complete structured payload for those.  Drug-name abbreviations can
+    # legitimately collide with a fixed schema key (for example ``FA`` versus
+    # ``Fa.absorption_solubility_permeability``), so audit names only in JSON
+    # values after the identity-bearing values have been redacted.
     serialized = str(payload).lower()
+    serialized_values = "\n".join(_payload_string_values(payload)).lower()
     leaked_structures = sorted(
         term
         for term in structures
@@ -456,13 +485,31 @@ def find_identity_blind_leaks(
     leaked_names = [
         term
         for term in names
-        if _is_identity_term(term) and re.search(_identity_pattern(term), serialized, flags=re.IGNORECASE)
+        if _is_identity_term(term)
+        and re.search(_identity_pattern(term), serialized_values, flags=re.IGNORECASE)
     ]
     return {
         "structures": leaked_structures,
         "identifiers": leaked_identifiers,
         "names": sorted(leaked_names),
     }
+
+
+def _payload_string_values(payload: Any) -> list[str]:
+    """Collect LLM-visible string values without treating schema keys as data."""
+    if isinstance(payload, str):
+        return [payload]
+    if isinstance(payload, dict):
+        values: list[str] = []
+        for value in payload.values():
+            values.extend(_payload_string_values(value))
+        return values
+    if isinstance(payload, (list, tuple)):
+        values = []
+        for value in payload:
+            values.extend(_payload_string_values(value))
+        return values
+    return []
 
 
 def _retrieval_identity_names(retrieval: dict[str, Any]) -> list[str]:

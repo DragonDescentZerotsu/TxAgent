@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 from tools.chembl_tool.common.task_workflows.reasoning_batch import BatchConfig, main as run_batch
+from tools.chembl_tool.tasks.skin_reaction.prompt_profiles import (
+    DEFAULT_SKIN_PROMPT_PROFILE,
+    HISTORICAL_SKIN_PROMPT_PROFILE,
+    SKIN_PROMPT_PROFILES,
+)
 
 
 CONFIG = BatchConfig(
@@ -20,6 +25,10 @@ CONFIG = BatchConfig(
     canonical_negative="no_risk",
     positive_predictions=frozenset({"risk", "positive", "skin_reaction_positive", "sensitizer", "irritant", "phototoxic", "1"}),
     negative_predictions=frozenset({"no_risk", "negative", "skin_reaction_negative", "non_sensitizer", "non_irritant", "0"}),
+    prompt_profile_option="--skin-prompt-profile",
+    prompt_profile_choices=SKIN_PROMPT_PROFILES,
+    default_prompt_profile=DEFAULT_SKIN_PROMPT_PROFILE,
+    historical_prompt_profile=HISTORICAL_SKIN_PROMPT_PROFILE,
 )
 
 

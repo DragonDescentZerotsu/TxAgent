@@ -19,6 +19,9 @@ Snapshot date: 2026-08-11.
   available for read-only reproduction.
 - Task pipelines expose a public `build_group_prompt_payload()` adapter instead
   of requiring the RL materializer to call private task functions.
+- Shared reasoning payload/trace helpers, structured-output validation,
+  versioned task prompt profiles, final-decision profiles, manifest provenance,
+  and branch-reuse gates are isolated behind one documented contract.
 - Hosted 120B is documented as intentionally stopped; local NeMo 20B is the
   active run.
 
@@ -50,28 +53,26 @@ Snapshot date: 2026-08-11.
 
 The repository is not ready for a single catch-all commit. Before the dedicated
 RL publication, `git status --porcelain -uall` showed 53 modified tracked files
-plus 141 untracked files. The isolated publication tracks the 55 RL/test paths,
-the three public task adapters, and the scaffold-disjoint identity dependency
-with its focused tests. After that scope is removed, 49 modified tracked files
-and 86 untracked paths remain in the groups below:
+plus 141 untracked files. After the isolated RL publication and the subsequent
+shared-reasoning/profile contract publication, 33 modified tracked files and 76
+untracked paths remain in the groups below:
 
 | Group | Modified | Untracked | Main concern |
 |---|---:|---:|---|
-| shared common/Starling code | 9 | 5 | identity, reasoning payload/validation, benchmark builders |
+| shared Starling code | 4 | 2 | benchmark builders, evidence filtering, lineage protocol |
 | paper experiments outside RL | 15 | 26 | matrix, summaries, figures, diagnostics, result ledgers |
-| task adapters/pipelines | 13 | 5 | prompt profiles, BBB lineage, Skin evidence scope |
-| tests outside RL | 11 | 13 | mixed coverage for several independent experiment lines |
+| task data/docs | 4 | 2 | BBB lineage docs/builders and Skin direct-evidence scope |
+| tests outside RL | 9 | 9 | mixed coverage for several independent experiment lines |
 | data artifacts | 0 | 37 | two BBB processed lineages and audit outputs |
 | root files | 1 | 0 | repository-wide instructions |
 
 These changes represent several scientific lineages and should not be hidden in
-one “cleanup” commit. After publishing the isolated RL/one-pass scope, the safe
-order for the remaining work is:
+one “cleanup” commit. After publishing the isolated RL and shared-reasoning
+scopes, the safe order for the remaining work is:
 
-1. Shared reasoning payload/validation and task prompt-profile changes.
-2. BBB/Skin Starling dataset/index lineage and processed data artifacts.
-3. Paper matrix, analyses, summaries, figures, and result-ledger updates.
-4. Remaining diagnostics/router/train-ratio experiments and their tests.
+1. BBB/Skin Starling dataset/index lineage and processed data artifacts.
+2. Paper matrix, analyses, summaries, figures, and result-ledger updates.
+3. Remaining diagnostics/router/train-ratio experiments and their tests.
 
 Each group needs its own targeted test list and artifact/protocol review before
 staging. Existing unrelated user changes must be preserved; do not stage the

@@ -16,6 +16,7 @@ from tools.chembl_tool.common.identity_blind import (
     sanitize_identity_blind_branch_outputs,
 )
 from tools.chembl_tool.common.final_evidence_surface import SUMMARY_ONLY
+from tools.chembl_tool.common.final_decision_prior import STANDARD_FINAL_DECISION
 from tools.chembl_tool.common.openai_reasoning_client import (
     OpenAICompatibleClient,
     ToolServiceClient,
@@ -275,6 +276,12 @@ def _initialize_run_manifest(
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
         "final_evidence_surface": getattr(args, "final_evidence_surface", SUMMARY_ONLY),
+        "final_decision_profile": getattr(
+            args,
+            "final_decision_profile",
+            STANDARD_FINAL_DECISION,
+        ),
+        "task_prompt_profile": getattr(args, "task_prompt_profile", ""),
         "retrieval_replay_source_run_dir": _configured_source_run_dir(
             args.retrieval_replay_source_batch,
             item.index,
@@ -423,6 +430,7 @@ def _execute_single(state: StageState) -> dict[str, Any]:
             module._clean_query_chembl_context(
                 context["reasoning_retrieval"].get("query_chembl_context") or {}
             ),
+            **_task_prompt_kwargs(state),
         )
     with _exclusive_run_lock(state.run_dir):
         _write_json_atomic(
@@ -452,6 +460,7 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
         client,
         module._llm_query_payload(context["reasoning_retrieval"]["query"]),
         group,
+        **_task_prompt_kwargs(state),
     )
     canonical_output = raw_output
     if state.prepared.args.identity_blind:
@@ -500,6 +509,14 @@ def _execute_final(state: StageState) -> dict[str, Any]:
         and final_surface != SUMMARY_ONLY
         else {}
     )
+    final_kwargs.update(_task_prompt_kwargs(state))
+    final_decision_profile = getattr(
+        state.prepared.args,
+        "final_decision_profile",
+        STANDARD_FINAL_DECISION,
+    )
+    if final_decision_profile != STANDARD_FINAL_DECISION:
+        final_kwargs["final_decision_profile"] = final_decision_profile
     final_output = module._run_final_reasoning(
         client,
         context["reasoning_retrieval"],
@@ -538,6 +555,12 @@ def _execute_final(state: StageState) -> dict[str, Any]:
                 trace_path.unlink(missing_ok=True)
         _record_stage_event(state, FINAL_STAGE, final_output.get("status", "error"))
     return final_output
+
+
+def _task_prompt_kwargs(state: StageState) -> dict[str, str]:
+    if not state.prepared.config.prompt_profile_option:
+        return {}
+    return {"prompt_profile": str(state.prepared.args.task_prompt_profile)}
 
 
 def _invalidate_dependent_final(run_dir: Path) -> None:

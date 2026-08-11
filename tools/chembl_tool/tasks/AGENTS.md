@@ -70,6 +70,15 @@ tools/chembl_tool/common/retrieval_replay.py
 
 tools/chembl_tool/common/identity_blind.py
   统一实现 identity redaction、harness prefetch 与 visible prefetched-tool replay；task runner 不得自行分叉该逻辑。
+
+tools/chembl_tool/common/PROMPT_PROFILE_CONTRACT.md
+  统一冻结 shared reasoning payload、structured-output validation、task prompt profile、final-decision profile、
+  manifest provenance 和 branch-reuse gate；task-local profile 只维护本 task 的语义、schema 和 cross-field rule。
+
+tools/chembl_tool/tasks/<task>/run_reasoning_pipeline.py
+  对需要复用 task-specific full-flat prompt 的外部 workflow，公开
+  `build_group_prompt_payload()`；不得让 RL/data materializer 调用 task 内部的
+  `_group_prompt_payload()` 私有实现。历史私有别名只用于兼容旧调用。
 ```
 
 任务代码不得复制公共 retrieval、source aggregation、LLM client、validation 或 batch orchestration。

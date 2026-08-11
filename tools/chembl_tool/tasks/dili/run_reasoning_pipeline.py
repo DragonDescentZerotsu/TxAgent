@@ -9,6 +9,7 @@ import os
 import sys
 import time
 import uuid
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +17,13 @@ from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.json_utils import parse_json_content
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
+from tools.chembl_tool.common.reasoning_payload import (
+    clean_exact_match as _clean_exact_match,
+    clean_shared_assay_context as _clean_shared_assay_context,
+    load_env_file as _load_env,
+    read_jsonl_record as _read_jsonl_record,
+    write_trace_jsonl,
+)
 from tools.chembl_tool.common.reasoning_validation import (
     call_with_json_validation,
     structured_response_is_valid,
@@ -38,6 +46,7 @@ DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/dili/reasoning/single_runs"
 DEFAULT_MODEL = "deepseek-v4-pro"
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
+_write_trace_jsonl = partial(write_trace_jsonl, prediction_field="dili_prediction")
 
 
 GROUP_REASONING_TOOLS = [
@@ -582,129 +591,8 @@ def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _clean_exact_match(match: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "molecule_chembl_id",
-        "canonical_smiles",
-        "standard_inchi_key",
-        "mw_freebase",
-        "alogp",
-        "hba",
-        "hbd",
-        "psa",
-        "rtb",
-        "num_ro5_violations",
-        "full_mwt",
-        "aromatic_rings",
-        "heavy_atoms",
-        "qed_weighted",
-        "full_molformula",
-        "np_likeness_score",
-    ]
-    return {field: match.get(field, "") for field in fields}
-
-
-def _clean_shared_assay_context(context: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "same_endpoint_activity": [
-            _clean_shared_activity_card(card) for card in context.get("same_endpoint_activity", [])
-        ],
-        "same_assay_different_endpoint_activity": [
-            _clean_shared_activity_card(card)
-            for card in context.get("same_assay_different_endpoint_activity", [])
-        ],
-        "n_same_endpoint_activity": context.get("n_same_endpoint_activity", 0),
-        "n_same_assay_different_endpoint_activity": context.get("n_same_assay_different_endpoint_activity", 0),
-    }
-
-
-def _clean_shared_activity_card(card: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "assay_chembl_id": card.get("assay_chembl_id", ""),
-        "standard_type_match": card.get("standard_type_match", False),
-        "units_match": card.get("units_match", False),
-        "query_activity": _clean_activity_value(card.get("query_activity") or {}),
-        "neighbor_activity": _clean_activity_value(card.get("neighbor_activity") or {}),
-    }
-
-
-def _clean_activity_value(activity: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "assay_chembl_id",
-        "standard_type",
-        "standard_relation",
-        "standard_value",
-        "standard_units",
-        "pchembl_value",
-        "activity_comment",
-        "data_validity_comment",
-        "standard_text_value",
-        "action_type",
-    ]
-    return {field: activity.get(field, "") for field in fields}
-
-
 def _parse_json_content(content: str) -> Any:
     return parse_json_content(content)
-
-
-def _write_trace_jsonl(
-    path: Path,
-    *,
-    query_record: dict[str, Any],
-    query_index: int,
-    smiles: str,
-    single_output: dict[str, Any],
-    group_outputs: list[dict[str, Any]],
-    final_output: dict[str, Any],
-) -> None:
-    records = [_trace_record("single_molecule", query_index, smiles, query_record, single_output)]
-    for group_output in group_outputs:
-        records.append(
-            _trace_record(
-                str(group_output.get("group_id") or "unknown_group"),
-                query_index,
-                smiles,
-                query_record,
-                group_output,
-            )
-        )
-    records.append(_trace_record("final_summary", query_index, smiles, query_record, final_output))
-    _write_jsonl(path, records)
-
-
-def _trace_record(
-    task: str,
-    query_index: int,
-    smiles: str,
-    query_record: dict[str, Any],
-    output: dict[str, Any],
-) -> dict[str, Any]:
-    llm = output.get("llm") or {}
-    content = llm.get("content")
-    return {
-        "task": task,
-        "index": query_index,
-        "sample_id": query_index,
-        "molecule_key": f"index:{query_index}",
-        "smiles": smiles,
-        "label": query_record.get("Y"),
-        "status": output.get("status"),
-        "prediction": content.get("dili_prediction") if isinstance(content, dict) else None,
-        "response_text": json.dumps(content, ensure_ascii=False, indent=2) if content is not None else output.get("error"),
-        "messages": llm.get("messages") or [],
-        "tool_count": len(llm.get("tool_calls") or []),
-        "usage": llm.get("usage") or {},
-        "raw_output": {key: value for key, value in output.items() if key != "llm"},
-    }
-
-
-def _read_jsonl_record(path: Path, index: int) -> dict[str, Any]:
-    with path.open(encoding="utf-8") as handle:
-        for i, line in enumerate(handle):
-            if i == index:
-                return json.loads(line)
-    raise SystemExit(f"No record at index {index}: {path}")
 
 
 def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
@@ -739,17 +627,6 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     _write_json(manifest_path, manifest)
     _print_summary(final_output, manifest)
     return 0
-
-
-def _load_env(path: Path) -> None:
-    if not path.exists():
-        return
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        os.environ[key.strip()] = value.strip().strip('"').strip("'")
 
 
 def _write_json(path: Path, data: Any) -> None:

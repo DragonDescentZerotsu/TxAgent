@@ -9,6 +9,7 @@ import os
 import sys
 import time
 import uuid
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,14 @@ from tools.chembl_tool.common.final_evidence_surface import (
     final_evidence_instructions,
     prepare_resumed_final_inputs,
 )
+from tools.chembl_tool.common.final_decision_prior import (
+    EVIDENCE_STATES,
+    STANDARD_FINAL_DECISION,
+    TrainRatioPrior,
+    add_final_decision_profile_argument,
+    build_final_decision_prompt,
+    final_decision_validation_errors,
+)
 from tools.chembl_tool.common.identity_blind import (
     prepare_reasoning_retrieval,
     sanitize_identity_blind_branch_outputs,
@@ -36,7 +45,20 @@ from tools.chembl_tool.common.neighbor_selection import (
     NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,
 )
+from tools.chembl_tool.common.retrieval_policy import NEIGHBOR_IDENTITY_POLICIES
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
+from tools.chembl_tool.common.prompt_profile import (
+    prompt_profile_from_manifest,
+    require_matching_prompt_profiles,
+)
+from tools.chembl_tool.common.reasoning_payload import (
+    clean_exact_match as _clean_exact_match,
+    clean_shared_assay_context as _clean_shared_assay_context,
+    llm_query_payload as _llm_query_payload,
+    load_env_file as _load_env,
+    read_jsonl_record as _read_jsonl_record,
+    write_trace_jsonl,
+)
 from tools.chembl_tool.common.reasoning_calls import (
     bound_group_prompt_payload,
     call_group_branch,
@@ -56,6 +78,15 @@ from tools.chembl_tool.tasks.bioavailability_ma.chembl_exact_context import (
 )
 from tools.chembl_tool.tasks.bioavailability_ma.constants import BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import get_source_config
+from tools.chembl_tool.tasks.bioavailability_ma.prompt_profiles import (
+    BIOAVAILABILITY_PROMPT_PROFILES,
+    DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    HISTORICAL_BIOAVAILABILITY_PROMPT_PROFILE,
+    FINAL_SCHEMA,
+    GROUP_SCHEMA,
+    SINGLE_SCHEMA,
+    get_bioavailability_prompt_profile,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import load_index
 
 
@@ -65,6 +96,18 @@ DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bioavailability_ma/reasoning/singl
 DEFAULT_MODEL = "deepseek-v4-pro"
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
+_write_trace_jsonl = partial(
+    write_trace_jsonl,
+    prediction_field="bioavailability_prediction",
+)
+TRAIN_RATIO_PRIOR = TrainRatioPrior(
+    dataset_lineage="record_supported_v2.bioavailability_canonical_direct.v2",
+    split="scaffold/train",
+    positive_count=1213,
+    negative_count=461,
+    positive_label="high",
+    negative_label="low",
+)
 
 
 GROUP_REASONING_TOOLS = [
@@ -151,6 +194,7 @@ SINGLE_MOLECULE_TOOL_CHOICE = {"type": "function", "function": {"name": "molecul
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    _validate_prompt_profile_reuse(args)
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
     if not api_key and not args.prepare_only:
@@ -260,6 +304,7 @@ def main(argv: list[str] | None = None) -> int:
         max_workers=args.max_workers,
         single_output=frozen_single,
         group_outputs=frozen_groups,
+        prompt_profile=args.bioavailability_prompt_profile,
     )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
@@ -280,6 +325,8 @@ def main(argv: list[str] | None = None) -> int:
         single_output,
         group_outputs,
         final_evidence_surface=args.final_evidence_surface,
+        final_decision_profile=args.final_decision_profile,
+        prompt_profile=args.bioavailability_prompt_profile,
     )
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
@@ -308,6 +355,11 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
         "final_evidence_surface": args.final_evidence_surface,
+        "final_decision_profile": args.final_decision_profile,
+        "task_prompt_profile": args.bioavailability_prompt_profile,
+        "label_scope": get_bioavailability_prompt_profile(
+            args.bioavailability_prompt_profile
+        ).label_scope,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
@@ -358,12 +410,19 @@ def _run_parallel_reasoning(
     max_workers: int,
     single_output: dict[str, Any] | None = None,
     group_outputs: list[dict[str, Any]] | None = None,
+    prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs = list(group_outputs or [])
     reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(_reason_one_group, client, _llm_query_payload(retrieval["query"]), group): group["group_id"]
+            executor.submit(
+                _reason_one_group,
+                client,
+                _llm_query_payload(retrieval["query"]),
+                group,
+                prompt_profile=prompt_profile,
+            ): group["group_id"]
             for group in groups
             if str(group.get("group_id") or "") not in reused_group_ids
         }
@@ -374,6 +433,7 @@ def _run_parallel_reasoning(
                     client,
                     _llm_query_payload(retrieval["query"]),
                     _clean_query_chembl_context(retrieval.get("query_chembl_context") or {}),
+                    prompt_profile=prompt_profile,
                 )
             ] = "single_molecule"
         else:
@@ -405,31 +465,23 @@ def _reason_single_molecule(
     client: OpenAICompatibleClient,
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
+    *,
+    prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
 ) -> dict[str, Any]:
+    profile = get_bioavailability_prompt_profile(prompt_profile)
     instructions = [
         "Call molecule_properties for the query molecule before analysis.",
-        "Assess oral bioavailability prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
-        "Return JSON with oral_bioavailability_prior, absorption_prior, solubility_or_dissolution_prior, metabolism_or_clearance_prior, confidence, reasoning_summary, property_drivers, caveats.",
+        *profile.single_instructions,
     ]
     if query.get("prefetched_molecule_properties"):
         instructions[0] = "Use the harness-prefetched molecule_properties result."
         if query.get("identity_hidden"):
             instructions[0] += " Do not identify or name the query."
     payload: dict[str, Any] = {
-        "task": "Single-molecule oral bioavailability plausibility analysis.",
+        "task": profile.single_task,
         "query": query,
         "instructions": instructions,
-        "required_json_schema": {
-            "oral_bioavailability_prior": "high | low | mixed_or_unclear",
-            "absorption_prior": "favorable | unfavorable | mixed_or_unclear",
-            "solubility_or_dissolution_prior": "favorable | unfavorable | mixed_or_unclear",
-            "metabolism_or_clearance_prior": "favorable | unfavorable | mixed_or_unclear",
-            "exact_chembl_evidence_assessment": "string",
-            "confidence": "high | moderate | low",
-            "reasoning_summary": "string",
-            "property_drivers": ["string"],
-            "caveats": ["string"],
-        },
+        "required_json_schema": SINGLE_SCHEMA,
     }
     if chembl_context:
         instructions.append(
@@ -440,8 +492,7 @@ def _reason_single_molecule(
         {
             "role": "system",
             "content": (
-                "You are a medicinal chemistry oral bioavailability single-molecule analyst. "
-                "Only analyze the query molecule itself, without analog evidence. "
+                profile.single_system_role
                 + (
                     "The harness already supplied molecule_properties; do not call tools. "
                     + ("Do not infer query identity. " if query.get("identity_hidden") else "")
@@ -470,13 +521,19 @@ def _reason_single_molecule(
     }
 
 
-def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _reason_one_group(
+    client: OpenAICompatibleClient,
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+) -> dict[str, Any]:
+    profile = get_bioavailability_prompt_profile(prompt_profile)
     messages = [
         {
             "role": "system",
             "content": (
-                "You are a medicinal chemistry oral bioavailability analog evidence analyst. "
-                "Reason about whether analog evidence in one endpoint group is transferable to the query molecule. "
+                profile.group_system_role
                 + (
                     "Use the harness-prefetched comparison results; do not call tools. "
                     + ("Do not infer query identity. " if group.get("identity_blind") else "")
@@ -488,7 +545,10 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
         },
         {
             "role": "user",
-            "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False),
+            "content": json.dumps(
+                _group_prompt_payload(query, group, prompt_profile=prompt_profile),
+                ensure_ascii=False,
+            ),
         },
     ]
     response = call_group_branch(
@@ -514,54 +574,50 @@ def _run_final_reasoning(
     group_outputs: list[dict[str, Any]],
     *,
     final_evidence_surface: str = SUMMARY_ONLY,
+    final_decision_profile: str = STANDARD_FINAL_DECISION,
+    prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
 ) -> dict[str, Any]:
+    profile = get_bioavailability_prompt_profile(prompt_profile)
     evidence_fields, surface_audit = build_final_evidence_fields(
         retrieval,
         compact_group_reasoning_outputs(group_outputs),
         surface=final_evidence_surface,
     )
+    decision_prompt = build_final_decision_prompt(
+        final_decision_profile,
+        TRAIN_RATIO_PRIOR,
+    )
     messages = [
         {
             "role": "system",
             "content": (
-                "You are a senior oral bioavailability reasoning model. Integrate group-level analog evidence into one final oral bioavailability assessment. "
-                "Return only valid JSON."
+                profile.final_system_role + "Return only valid JSON."
             ),
         },
         {
             "role": "user",
             "content": json.dumps(
                 {
-                    "task": "Final oral bioavailability prediction from analog evidence.",
-                        "query": _llm_query_payload(retrieval["query"]),
+                    "task": profile.final_task,
+                    "query": _llm_query_payload(retrieval["query"]),
                     "retrieval_coverage": retrieval["coverage"],
                     "single_molecule_analysis": {
                         "status": single_output.get("status"),
                         "content": validated_branch_content(single_output),
                     },
                     **evidence_fields,
+                    **decision_prompt.fields,
                     "instructions": [
                         "Return compact complete JSON.",
                         f"Use bioavailability_prediction='high' for oral bioavailability F >= {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (Bioavailability_Ma label 1), and bioavailability_prediction='low' for F < {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (label 0).",
-                        "Use the single-molecule analysis as the physicochemical prior.",
-                        "Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.",
-                        "Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
+                        *profile.final_instructions,
                         "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
-                        "You must choose exactly one bioavailability_prediction: high or low. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",
-                    ] + final_evidence_instructions(final_evidence_surface),
+                    ]
+                    + list(decision_prompt.instructions)
+                    + final_evidence_instructions(final_evidence_surface),
                     "required_json_schema": {
-                        "bioavailability_prediction": "high | low",
-                        "confidence": "high | moderate | low",
-                        "main_reasons": ["string"],
-                        "single_molecule_assessment": "string",
-                        "absorption_and_permeability_assessment": "string",
-                        "solubility_and_dissolution_assessment": "string",
-                        "metabolism_first_pass_and_clearance_assessment": "string",
-                        "transporter_efflux_assessment": "string",
-                        "direct_oral_bioavailability_analog_assessment": "string",
-                        "conflicting_evidence": ["string"],
-                        "evidence_gaps": ["string"],
-                        "final_summary": "string",
+                        **FINAL_SCHEMA,
+                        **decision_prompt.schema,
                     },
                 },
                 ensure_ascii=False,
@@ -571,8 +627,28 @@ def _run_final_reasoning(
     response = call_with_json_validation(
         client.chat_json,
         messages,
-        required_fields=("bioavailability_prediction",),
-        allowed_values={"bioavailability_prediction": {"high", "low"}},
+        required_fields=(
+            "bioavailability_prediction",
+            *decision_prompt.required_fields,
+        ),
+        allowed_values={
+            "bioavailability_prediction": {"high", "low"},
+            **(
+                {"evidence_state": set(EVIDENCE_STATES)}
+                if final_decision_profile != STANDARD_FINAL_DECISION
+                else {}
+            ),
+        },
+        content_validator=(
+            lambda content: final_decision_validation_errors(
+                content,
+                profile=final_decision_profile,
+                prior=TRAIN_RATIO_PRIOR,
+                prediction_field="bioavailability_prediction",
+            )
+        )
+        if final_decision_profile != STANDARD_FINAL_DECISION
+        else None,
         branch_name="final",
     )
     output = {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
@@ -581,9 +657,15 @@ def _run_final_reasoning(
     return output
 
 
-def build_group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def build_group_prompt_payload(
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+) -> dict[str, Any]:
+    profile = get_bioavailability_prompt_profile(prompt_profile)
     return bound_group_prompt_payload({
-        "task": "Group-level oral bioavailability analog transferability analysis.",
+        "task": profile.group_task,
         "query": query,
         "group": {
             "group_id": group["group_id"],
@@ -611,9 +693,7 @@ def build_group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> 
         "instructions": [
             "Use only this group's evidence.",
             "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
-            "Assess structural transferability from neighbors to the query.",
-            "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
-            "Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
+            *profile.group_instructions,
             "Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.",
             "Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, logP, molecular size, or polarity could affect oral bioavailability transferability.",
             "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
@@ -626,53 +706,13 @@ def build_group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> 
             "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.",
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
-        "required_json_schema": {
-            "useful_for_bioavailability_reasoning": "boolean",
-            "transferability": "high | moderate | low | not_applicable",
-            "evidence_direction": (
-                "supports_high_bioavailability | argues_against_high_bioavailability | absorption_support | "
-                "permeability_support | solubility_support | solubility_risk | metabolic_stability_support | "
-                "first_pass_or_clearance_risk | transporter_efflux_risk | neutral_or_unclear"
-            ),
-            "confidence": "high | moderate | low",
-            "reasoning_summary": "string",
-            "key_evidence": [
-                {
-                    "molecule_chembl_id": "string",
-                    "similarity": "number or null",
-                    "similarity_bucket": "string",
-                    "assay_signal": "string",
-                    "activity_values": ["string"],
-                    "tool_summary": "string",
-                    "transferability": "high | moderate | low | not_applicable",
-                    "effect_on_bioavailability_reasoning": "string",
-                }
-            ],
-            "caveats": ["string"],
-        },
+        "required_json_schema": GROUP_SCHEMA,
     })
 
 
 # Historical internal callers keep working while external materializers use
 # the explicit public adapter above.
 _group_prompt_payload = build_group_prompt_payload
-
-
-def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
-    if query.get("identity_hidden"):
-        return {
-            "molecule_id": "query",
-            "identity_hidden": True,
-            "prefetched_molecule_properties": query.get("prefetched_molecule_properties") or {},
-        }
-    payload = {
-        "input_smiles": query.get("input_smiles", ""),
-        "canonical_smiles": query.get("canonical_smiles", ""),
-    }
-    if query.get("prefetched_molecule_properties"):
-        payload["tools_prefetched"] = True
-        payload["prefetched_molecule_properties"] = query["prefetched_molecule_properties"]
-    return payload
 
 
 def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
@@ -707,134 +747,27 @@ def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _clean_exact_match(match: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "molecule_chembl_id",
-        "canonical_smiles",
-        "standard_inchi_key",
-        "mw_freebase",
-        "alogp",
-        "hba",
-        "hbd",
-        "psa",
-        "rtb",
-        "num_ro5_violations",
-        "full_mwt",
-        "aromatic_rings",
-        "heavy_atoms",
-        "qed_weighted",
-        "full_molformula",
-        "np_likeness_score",
-    ]
-    return {field: match.get(field, "") for field in fields}
-
-
-def _clean_shared_assay_context(context: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "same_endpoint_activity": [
-            _clean_shared_activity_card(card) for card in context.get("same_endpoint_activity", [])
-        ],
-        "same_assay_different_endpoint_activity": [
-            _clean_shared_activity_card(card)
-            for card in context.get("same_assay_different_endpoint_activity", [])
-        ],
-        "n_same_endpoint_activity": context.get("n_same_endpoint_activity", 0),
-        "n_same_assay_different_endpoint_activity": context.get("n_same_assay_different_endpoint_activity", 0),
-    }
-
-
-def _clean_shared_activity_card(card: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "assay_chembl_id": card.get("assay_chembl_id", ""),
-        "standard_type_match": card.get("standard_type_match", False),
-        "units_match": card.get("units_match", False),
-        "query_activity": _clean_activity_value(card.get("query_activity") or {}),
-        "neighbor_activity": _clean_activity_value(card.get("neighbor_activity") or {}),
-    }
-
-
-def _clean_activity_value(activity: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "assay_chembl_id",
-        "standard_type",
-        "standard_relation",
-        "standard_value",
-        "standard_units",
-        "pchembl_value",
-        "activity_comment",
-        "data_validity_comment",
-        "standard_text_value",
-        "action_type",
-    ]
-    return {field: activity.get(field, "") for field in fields}
-
-
 def _parse_json_content(content: str) -> Any:
     return parse_json_content(content)
 
 
-def _write_trace_jsonl(
-    path: Path,
-    *,
-    query_record: dict[str, Any],
-    query_index: int,
-    smiles: str,
-    single_output: dict[str, Any],
-    group_outputs: list[dict[str, Any]],
-    final_output: dict[str, Any],
-) -> None:
-    records = []
-    records.append(_trace_record("single_molecule", query_index, smiles, query_record, single_output))
-    for group_output in group_outputs:
-        records.append(
-            _trace_record(
-                str(group_output.get("group_id") or "unknown_group"),
-                query_index,
-                smiles,
-                query_record,
-                group_output,
-            )
-        )
-    records.append(_trace_record("final_summary", query_index, smiles, query_record, final_output))
-    _write_jsonl(path, records)
+def _validate_prompt_profile_reuse(args: argparse.Namespace) -> None:
+    """Reject single/group branch reuse across Bio prompt contracts."""
+    require_matching_prompt_profiles(
+        target_profile=str(args.bioavailability_prompt_profile),
+        source_dirs=(
+            args.single_analysis_source_run_dir,
+            args.group_analysis_source_run_dir,
+        ),
+        historical_profile=HISTORICAL_BIOAVAILABILITY_PROMPT_PROFILE,
+    )
 
 
-def _trace_record(
-    task: str,
-    query_index: int,
-    smiles: str,
-    query_record: dict[str, Any],
-    output: dict[str, Any],
-) -> dict[str, Any]:
-    llm = output.get("llm") or {}
-    content = llm.get("content")
-    return {
-        "task": task,
-        "index": query_index,
-        "sample_id": query_index,
-        "molecule_key": f"index:{query_index}",
-        "smiles": smiles,
-        "label": query_record.get("Y"),
-        "status": output.get("status"),
-        "prediction": content.get("bioavailability_prediction") if isinstance(content, dict) else None,
-        "response_text": json.dumps(content, ensure_ascii=False, indent=2) if content is not None else output.get("error"),
-        "messages": llm.get("messages") or [],
-        "tool_count": len(llm.get("tool_calls") or []),
-        "usage": llm.get("usage") or {},
-        "raw_output": {
-            key: value
-            for key, value in output.items()
-            if key != "llm"
-        },
-    }
-
-
-def _read_jsonl_record(path: Path, index: int) -> dict[str, Any]:
-    with path.open(encoding="utf-8") as handle:
-        for i, line in enumerate(handle):
-            if i == index:
-                return json.loads(line)
-    raise SystemExit(f"No record at index {index}: {path}")
+def _manifest_prompt_profile(manifest: dict[str, Any]) -> str:
+    return prompt_profile_from_manifest(
+        manifest,
+        historical_profile=HISTORICAL_BIOAVAILABILITY_PROMPT_PROFILE,
+    )
 
 
 def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
@@ -847,6 +780,7 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     ]
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+    prompt_profile = _manifest_prompt_profile(manifest)
     retrieval, group_outputs, final_surface = prepare_resumed_final_inputs(
         retrieval,
         single_output,
@@ -860,6 +794,10 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
         single_output,
         group_outputs,
         final_evidence_surface=final_surface,
+        final_decision_profile=str(
+            manifest.get("final_decision_profile") or STANDARD_FINAL_DECISION
+        ),
+        prompt_profile=prompt_profile,
     )
     final_path = run_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
@@ -881,25 +819,13 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
         final_output=final_output,
     )
     manifest["final_rerun_at"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+    manifest["task_prompt_profile"] = prompt_profile
+    manifest["label_scope"] = get_bioavailability_prompt_profile(prompt_profile).label_scope
     manifest.setdefault("paths", {})["final_reasoning_output"] = str(final_path)
     manifest.setdefault("paths", {})["trace_messages"] = str(trace_path)
     _write_json(manifest_path, manifest)
     _print_summary(final_output, manifest)
     return 0
-
-
-def _load_env(path: Path) -> None:
-    if not path.exists():
-        return
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        # The explicit --env-file is the run configuration source of truth.
-        os.environ[key] = value
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -927,7 +853,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--retrieval-source", default="chembl")
     parser.add_argument(
         "--neighbor-identity-policy",
-        choices=["operational", "parent_disjoint"],
+        choices=NEIGHBOR_IDENTITY_POLICIES,
         default="operational",
     )
     parser.add_argument("--identity-blind", action="store_true")
@@ -978,6 +904,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
     add_final_evidence_surface_argument(parser)
+    add_final_decision_profile_argument(parser)
+    parser.add_argument(
+        "--bioavailability-prompt-profile",
+        choices=BIOAVAILABILITY_PROMPT_PROFILES,
+        default=DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    )
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     return parser.parse_args(argv)
 

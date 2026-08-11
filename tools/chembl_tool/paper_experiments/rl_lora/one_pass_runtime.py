@@ -110,17 +110,12 @@ def one_pass_validation_errors(
     content: Mapping[str, Any] | None,
     row: Mapping[str, Any],
 ) -> list[str]:
-    errors = response_validation_errors(
+    return response_validation_errors(
         {"content": content},
         required_fields=row["required_fields"],
         allowed_values=one_pass_allowed_values(row),
+        content_validator=lambda value: one_pass_analysis_schema_errors(value, row),
     )
-    if not isinstance(content, Mapping) or not content:
-        return errors
-    for error in one_pass_analysis_schema_errors(content, row):
-        if error not in errors:
-            errors.append(error)
-    return errors
 
 
 def one_pass_predictions(
