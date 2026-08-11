@@ -1,7 +1,12 @@
-from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from tools.chembl_tool.common.molecule_identity import (
+    bemis_murcko_scaffold,
+    normalize_molecule_identity,
+)
 from tools.chembl_tool.common.retrieval_policy import (
     MoleculeRelation,
     classify_molecule_relation,
+    decide_candidate,
+    policy_metadata,
 )
 
 
@@ -42,3 +47,35 @@ def test_invalid_smiles_is_auditable_and_unresolved():
 
     assert invalid.status == "invalid_smiles"
     assert classify_molecule_relation(valid, invalid) is MoleculeRelation.UNRESOLVED
+
+
+def test_scaffold_disjoint_excludes_only_matching_nonempty_parent_scaffolds():
+    query = normalize_molecule_identity("Cc1ccccc1")
+    same_scaffold = {"canonical_smiles": "CCc1ccccc1"}
+    different_scaffold = {"canonical_smiles": "c1ccncc1"}
+
+    assert not decide_candidate(query, same_scaffold, "parent_disjoint").excluded
+    decision = decide_candidate(query, same_scaffold, "scaffold_disjoint")
+    assert decision.excluded
+    assert decision.relation is MoleculeRelation.SAME_SCAFFOLD
+    assert not decide_candidate(query, different_scaffold, "scaffold_disjoint").excluded
+
+
+def test_scaffold_disjoint_does_not_collapse_acyclic_molecules():
+    query = normalize_molecule_identity("CCO")
+    decision = decide_candidate(
+        query,
+        {"canonical_smiles": "CCCO"},
+        "scaffold_disjoint",
+    )
+
+    assert bemis_murcko_scaffold(query.parent_smiles) == ""
+    assert not decision.excluded
+    assert decision.relation is MoleculeRelation.STRUCTURAL_ANALOG
+
+
+def test_scaffold_policy_metadata_is_a_strict_parent_disjoint_superset():
+    parent_relations = set(policy_metadata("parent_disjoint")["excluded_relations"])
+    scaffold_relations = set(policy_metadata("scaffold_disjoint")["excluded_relations"])
+
+    assert scaffold_relations == parent_relations | {"same_scaffold"}

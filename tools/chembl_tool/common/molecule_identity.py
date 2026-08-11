@@ -8,6 +8,7 @@ from typing import Any, Mapping
 
 from rdkit import Chem, rdBase
 from rdkit.Chem import inchi
+from rdkit.Chem.Scaffolds import MurckoScaffold
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
 
@@ -79,6 +80,18 @@ def identity_from_record(record: Mapping[str, Any]) -> MoleculeIdentity:
             normalizer_version=IDENTITY_NORMALIZER_VERSION,
         )
     return normalize_molecule_identity(str(record.get("canonical_smiles") or record.get("smiles") or ""))
+
+
+@lru_cache(maxsize=200_000)
+def bemis_murcko_scaffold(smiles: str) -> str:
+    """Return a canonical Bemis-Murcko scaffold; acyclic molecules map to empty."""
+    molecule = Chem.MolFromSmiles(str(smiles or ""))
+    if molecule is None:
+        raise ValueError(f"cannot calculate scaffold for invalid SMILES: {smiles}")
+    return MurckoScaffold.MurckoScaffoldSmiles(
+        mol=molecule,
+        includeChirality=False,
+    )
 
 
 def _standardize_parent(mol: Chem.Mol) -> Chem.Mol | None:

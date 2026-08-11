@@ -1,0 +1,22 @@
+defaults: /data1/tianang/Projects/TxAgent/tools/chembl_tool/paper_experiments/rl_lora/configs/grpo_gpt_oss_20b_one_pass_bio.yaml
+
+grpo:
+  max_num_epochs: 1
+  max_num_steps: 2
+
+checkpointing:
+  enabled: true
+  checkpoint_dir: /local/tianang/txagent_rl_lora/checkpoints/gpt_oss_20b/one_pass_visible_bio_full_2step
+  save_period: 2
+  keep_top_k: 1
+  ft_save_period: 2
+  ft_keep_latest_k: 1
+  save_optimizer: true
+
+logger:
+  log_dir: /local/tianang/txagent_rl_lora/logs/gpt_oss_20b/one_pass_visible_bio_full_2step
+  wandb_enabled: false
+  tensorboard_enabled: true
+  mlflow_enabled: false
+  swanlab_enabled: false
+  monitor_gpus: true

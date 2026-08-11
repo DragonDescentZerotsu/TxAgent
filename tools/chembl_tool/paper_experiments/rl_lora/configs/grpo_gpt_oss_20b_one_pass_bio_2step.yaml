@@ -1,0 +1,17 @@
+defaults: /data1/tianang/Projects/TxAgent/tools/chembl_tool/paper_experiments/rl_lora/configs/grpo_gpt_oss_20b_one_pass_bio_smoke.yaml
+
+grpo:
+  max_num_steps: 2
+
+checkpointing:
+  checkpoint_dir: /local/tianang/txagent_rl_lora/checkpoints/gpt_oss_20b/one_pass_visible_bio_2step
+  save_period: 2
+  ft_save_period: 2
+
+logger:
+  log_dir: /local/tianang/txagent_rl_lora/logs/gpt_oss_20b/one_pass_visible_bio_2step
+  wandb_enabled: false
+  tensorboard_enabled: true
+  mlflow_enabled: false
+  swanlab_enabled: false
+  monitor_gpus: true
