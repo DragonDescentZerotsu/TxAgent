@@ -8,6 +8,10 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.starling import build_heldout_starling_index
+from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library import (
+    CANONICAL_HELDOUT_INDEX_NAME,
+    DEFAULT_EVIDENCE_PATH as DEFAULT_SKIN_EVIDENCE_PATH,
+)
 
 
 DEFAULT_OUTPUT_ROOT = Path("outputs/paper")
@@ -60,12 +64,9 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
         "meta_filename": "starling_factor_neighbor_index.meta.json",
     },
     {
-        "name": "skin_reaction_starling_full",
+        "name": CANONICAL_HELDOUT_INDEX_NAME,
         "task": "Skin_Reaction",
-        "source_evidence": (
-            "outputs/paper/molecular_evidence_agent/evidence/"
-            "skin_reaction_starling_full/starling_skin_reaction_evidence.jsonl"
-        ),
+        "source_evidence": str(DEFAULT_SKIN_EVIDENCE_PATH),
         "evidence_filename": "starling_skin_reaction_evidence.jsonl",
         "index_filename": "starling_skin_reaction_neighbor_index.pkl",
         "meta_filename": "starling_skin_reaction_neighbor_index.meta.json",

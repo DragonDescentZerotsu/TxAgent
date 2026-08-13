@@ -29,6 +29,9 @@ from tools.chembl_tool.common.retrieval_policy import (
     NEIGHBOR_IDENTITY_POLICIES,
     NeighborIdentityPolicy,
 )
+from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library import (
+    DEFAULT_INDEX_PATH as DEFAULT_SKIN_STARLING_INDEX_PATH,
+)
 
 PAPER_ROOT = Path("outputs/paper/molecular_evidence_agent")
 GLM_BASE_URL = "http://127.0.0.1:50000/v1"
@@ -136,14 +139,8 @@ EXPERIMENTS = [
         "skin_reaction",
         "Skin_Reaction",
         "outputs/chembl_tool/tasks/skin_reaction/evidence_library/skin_reaction_neighbor_index.pkl",
-        include_starling_direct=(
-            "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full/"
-            "starling_skin_reaction_neighbor_index.pkl"
-        ),
-        include_starling_full=(
-            "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full/"
-            "starling_skin_reaction_neighbor_index.pkl"
-        ),
+        include_starling_direct=str(DEFAULT_SKIN_STARLING_INDEX_PATH),
+        include_starling_full=str(DEFAULT_SKIN_STARLING_INDEX_PATH),
     ),
     *_task_experiments(
         "clintox",

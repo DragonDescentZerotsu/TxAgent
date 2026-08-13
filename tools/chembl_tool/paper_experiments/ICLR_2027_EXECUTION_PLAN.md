@@ -103,6 +103,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | E16 | BBB property-compatible analog selector | C1、C3、C6 | 已终止 | 唯一 0.02 matched-v3 valid 候选仅 +0.0012 macro-F1，CI 跨 0；不 promotion、不跑 test |
 | E17 | GPT-OSS-120B train-only LoRA-GRPO final-synthesis calibration | C1、C3、C5、C6 | P0 新实验 | 合同已冻结；node002 8×A100 完成 1-step NeMo RL LoRA 机械闭环，下一 gate 为 nonzero-advantage grpo-10；valid/test 尚未读取 |
 | E18 | GPT-OSS-120B one-pass full-flat LoRA-GRPO | C1、C3、C5、C6 | P0 新实验 | blind/visible-prefetched frozen-base 三任务 valid 已完成；SDK-default rank-32 all-module matched 三步 Tinker smoke 已通过，96 rollout 最大4,911、0 cap hit，曲线/W&B/checkpoint/valid-3 reload 均通过；待用户确认正式 Bio train，test 未读取 |
+| E19 | Skin AOP source/topology-gated final-only integration | C3、C5、C6 | 已终止 | DeepSeek-v4-pro canonical-v3 MiniMol top-3 valid 完成零成本 materialization：78 个 direct=no_risk 中 75 个 AOP 为 non-voting，剩余 3 个均未同时通过 source-context 与 reactive-topology/activation-route gate；因此 0 fresh final、0 flip，macro-F1/accuracy 严格保持 0.641036/0.693878，promotion 失败，不读取 test |
 
 ## 当前资产与缺口
 

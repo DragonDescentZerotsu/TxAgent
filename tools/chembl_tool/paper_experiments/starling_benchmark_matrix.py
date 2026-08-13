@@ -33,6 +33,9 @@ from .build_starling_benchmark_indices import (
     BENCHMARK_SPLITS,
     paper_root_for_benchmark_split,
 )
+from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library import (
+    CANONICAL_HELDOUT_INDEX_NAME,
+)
 from .molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
     EXPERIMENTS,
@@ -121,7 +124,7 @@ def _starling_index_path(experiment: Experiment, paper_root: Path) -> Path:
         name = "bbb_starling_direct" if experiment.name.endswith("__starling_direct") else "bbb_starling_full"
         filename = "starling_bbb_neighbor_index.pkl"
     elif experiment.task == "skin_reaction":
-        name = "skin_reaction_starling_full"
+        name = CANONICAL_HELDOUT_INDEX_NAME
         filename = "starling_skin_reaction_neighbor_index.pkl"
     elif experiment.name.endswith("__starling_direct_numeric"):
         name = "bioavailability_starling_direct_numeric"

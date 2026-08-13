@@ -101,9 +101,12 @@ local oral-exposure extraction 中明确 absolute/oral-IV 的 rows 合并，跨�
 agent direct evidence 必须读取同一份
 `data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet`。旧 1,862-parent mixed-source
 和 1,828-parent strict-conflict 结果均为 historical lineage，不得与当前 2,092-parent build 混表。
-Skin raw acquisition 保持不变；自 2026-08-09 起，current direct evidence index 与 gold 共用
-sensitization/contact-allergy scope filter，irritation、photoallergy、urticaria 等 broad-skin records 不再进入
-Tier-1 direct cards。历史 broad index 作为 `broad_skin_reaction_v1` 保留，不得与 scoped v2 混表。
+Skin raw acquisition 保持不变；current inference source 默认为
+`skin_sensitization_direct_aop.v3` canonical partition：validated sensitization/contact-allergy final outcome 只进入
+direct，MIE/KE2/KE3/KE4 experimental evidence 只进入 AOP，photo hazard、irritation/corrosion、prediction-only
+和 integrated/unresolved rows 全部拒绝。默认构建入口会先验证 canonical manifest 与 direct/AOP parquet 的
+SHA-256，再生成两-family evidence/index；historical `broad_skin_reaction_v1` 和
+`sensitization_contact_allergy_v2` 只能显式选择，不得与 canonical v3 混表。
 
 当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
 MiniMol embedding cosine KNN、MiniMol/cosine agent retrieval、blind 进度、Skin retrieval degradation、

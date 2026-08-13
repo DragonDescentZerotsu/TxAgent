@@ -103,13 +103,14 @@ python -m tools.chembl_tool.tasks.bbb_martins.build_starling_full_evidence_libra
   --out-dir outputs/paper/molecular_evidence_agent/evidence/bbb_starling_full \
   --workers 128
 
+python -m tools.chembl_tool.tasks.skin_reaction.build_canonical_starling_source
+
 python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library \
-  --direct-scope sensitization_contact_allergy_v2 \
-  --out-dir outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_sensitization_v2 \
   --workers 128
 
-# Historical broad direct cards remain reproducible only by explicit opt-in:
-# --direct-scope broad_skin_reaction_v1
+# Historical source profiles remain reproducible only by explicit opt-in:
+# --source-profile sensitization_contact_allergy_v2
+# --source-profile broad_skin_reaction_v1
 
 python -m tools.chembl_tool.tasks.bioavailability_ma.build_starling_factor_evidence_library \
   --scope full \

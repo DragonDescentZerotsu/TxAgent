@@ -30,6 +30,7 @@ from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
     paper_root_for_minimol_retrieval,
 )
 from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import (
+    INDEX_SPECS,
     _apply_source_evidence_overrides,
     _collect_existing_index_meta,
     _load_existing_summary,
@@ -44,6 +45,11 @@ from tools.chembl_tool.tasks.skin_reaction.experiment_config import (
     CHEMBL as SKIN_CHEMBL,
     STARLING as SKIN_STARLING,
 )
+from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library import (
+    CANONICAL_HELDOUT_INDEX_NAME,
+    DEFAULT_EVIDENCE_PATH as DEFAULT_SKIN_EVIDENCE_PATH,
+    DEFAULT_INDEX_PATH as DEFAULT_SKIN_INDEX_PATH,
+)
 
 
 def test_frozen_matrix_has_unique_expected_conditions():
@@ -57,6 +63,25 @@ def test_frozen_matrix_has_unique_expected_conditions():
     assert "skin_reaction__starling_direct" in names
     assert "skin_reaction__starling_full_flat" in names
     assert "skin_reaction__starling_full_mechanism" in names
+
+
+def test_skin_defaults_use_canonical_direct_aop_source():
+    skin_experiments = [item for item in EXPERIMENTS if item.task == "skin_reaction"]
+    starling_experiments = [item for item in skin_experiments if item.source == "starling"]
+    assert starling_experiments
+    assert {item.index for item in starling_experiments} == {str(DEFAULT_SKIN_INDEX_PATH)}
+
+    skin_specs = [item for item in INDEX_SPECS if item["task"] == "Skin_Reaction"]
+    assert skin_specs == [
+        {
+            "name": CANONICAL_HELDOUT_INDEX_NAME,
+            "task": "Skin_Reaction",
+            "source_evidence": str(DEFAULT_SKIN_EVIDENCE_PATH),
+            "evidence_filename": "starling_skin_reaction_evidence.jsonl",
+            "index_filename": "starling_skin_reaction_neighbor_index.pkl",
+            "meta_filename": "starling_skin_reaction_neighbor_index.meta.json",
+        }
+    ]
 
 
 def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_indices():
@@ -74,6 +99,10 @@ def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_ind
     assert chembl.index == EXPERIMENTS[1].index
     assert "molecular_evidence_agent_starling_random_record_agreement70_split811_v1/evidence" in starling.index
     assert starling.index.endswith("bbb_starling_direct/starling_bbb_neighbor_index.pkl")
+    skin = next(
+        item for item in experiments if item.name == "skin_reaction__starling_direct"
+    )
+    assert f"/{CANONICAL_HELDOUT_INDEX_NAME}/" in skin.index
 
 
 def test_starling_benchmark_matrix_can_select_valid_without_changing_indices():
@@ -485,7 +514,7 @@ def test_explicit_parent_disjoint_none_is_rejected():
         raise AssertionError("Expected explicit parent-disjoint none selection to be rejected")
 
 
-def test_new_starling_sources_match_the_four_paper_mechanism_families():
+def test_starling_mechanism_views_match_each_binary_endpoint():
     expected = [
         "direct_brain_exposure",
         "passive_permeability",
@@ -497,10 +526,12 @@ def test_new_starling_sources_match_the_four_paper_mechanism_families():
     expected_skin = [
         "direct_skin_reaction",
         "sensitisation_aop",
-        "phototoxicity_irritation_local_damage",
-        "skin_exposure",
     ]
     assert [group.endpoint_group for group in SKIN_STARLING.mechanism_groups] == expected_skin
+    assert [group.source_groups for group in SKIN_STARLING.mechanism_groups] == [
+        ("Direct.skin_reaction",),
+        ("Mechanism.sensitization_aop",),
+    ]
 
 
 def test_skin_paper_view_excludes_standalone_weak_context_branch():

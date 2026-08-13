@@ -71,6 +71,12 @@ BBB property-compatible selector（E16）、Skin negative-transfer v3 和 train-
 artifact 与 no-go 原因由 `matched_train_label_agent/README.md`、`ICLR_2027_EXECUTION_PLAN.md` 和本文件后续
 历史章节索引；不得覆盖上表，也不得据此启动 formal test。
 
+2026-08-13 的 DeepSeek Skin canonical-v3 AOP source/topology-gated final-only E19 也属于 no-go：245 个
+scaffold-valid 分子中没有一个 direct=`no_risk` 样本同时满足 positive AOP、source-context 与显式
+reactive-topology/activation-route gate，故 0 fresh final、0 flip，macro-F1/accuracy 严格保持
+`0.641036/0.693878`。该结果未通过 promotion gate，Skin formal test 仍未读取；完整 gate audit 见
+`outputs/paper/skin_aop_gated_final_v1_scaffold_valid_deepseek_v4_pro/`。
+
 2026-08-09 的 current Starling scaffold-valid E15 matched train-label 诊断已完成：三 task 共 820/820
 成功，strict retrieval parity 和 prompt identity audit 均为 0 failure；BBB/Bio/Skin 的 agent-minus-Morgan-KNN
 macro-F1 分别为 `+0.0514/-0.0595/+0.0408`，三个 paired 95% CI 均跨 0。该实验 no-go，不运行 formal

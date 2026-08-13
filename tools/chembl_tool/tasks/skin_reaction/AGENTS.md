@@ -4,10 +4,10 @@
 endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、batch/resume、viewer 和输出目录规范仍以仓库根
 `AGENTS.md` 为准。
 
-当前论文路径由 `experiment_config.py` 将 source-local groups 合并为 4 个 mechanism families：direct skin
-reaction、sensitisation AOP、phototoxicity/irritation/local damage 和 skin exposure。Tier 5 只留在 source
-library 做数据审计。下文 `retrieve_neighbors.py` 和历史 v1 batch 按 `Tier.endpoint_group` 运行的说明，是旧
-native task runner 的复现记录；新实验不得据此为每个细粒度 group 启动并行 reasoning。
+当前 paper-facing Starling 路径只保留两个与 binary endpoint 对齐的 mechanism families：direct skin
+sensitization outcome 与 sensitisation AOP key events。Phototoxicity/irritation/local damage 和 skin exposure
+的 immutable raw acquisition 仍保留作历史审计，但不进入 current Starling reasoning view。ChEMBL 历史
+ontology 和 native runner 仍保留旧 Tier 说明用于复现，不得据此为每个细粒度 group 启动并行 reasoning。
 
 2026-07-23 strict-hop availability census 见
 `outputs/chembl_tool/tasks/skin_reaction/distance_expansion/analysis/hop_availability_census/`。GSK3B activity
@@ -84,9 +84,9 @@ Gold builder 一直只接受 sensitization/contact-allergy records，但历史 S
 photoallergy、irritation、urticaria 和其它 broad-skin records 聚合进同一 direct card。这是 source-to-agent
 scope mismatch，不能只靠 prompt 从已聚合 counts 和最多 6 条 examples 中稳定反解。
 
-`build_starling_evidence_library.py` 现默认使用 `sensitization_contact_allergy_v2`，直接复用
+`build_starling_evidence_library.py` 的 historical v2 profile 使用 `sensitization_contact_allergy_v2`，直接复用
 `starling_benchmark.is_tdc_skin_sensitization_scope()`；历史行为通过显式
-`--direct-scope broad_skin_reaction_v1` 保留。公共 `StarlingSourceProfile.record_filter` 负责通用 row-scope
+`--source-profile broad_skin_reaction_v1` 保留。公共 `StarlingSourceProfile.record_filter` 负责通用 row-scope
 过滤并在 metadata 中记录 filter name/count。新 full-source direct profile 从 66,597 input rows 中过滤 5,049 条
 scope 外记录，保留 44,752 条可加载 records、3,275 个 direct molecules；旧 v1 artifact 不覆盖。
 
@@ -116,7 +116,7 @@ Scoped source/index 与 deterministic audit 的复现入口：
 
 ```bash
 python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library \
-  --direct-scope sensitization_contact_allergy_v2 --workers 32
+  --source-profile sensitization_contact_allergy_v2 --workers 32
 
 python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
   --splits scaffold --indices skin_reaction_starling_full \
@@ -126,6 +126,30 @@ python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
 
 python -m tools.chembl_tool.paper_experiments.audit_skin_direct_scope_retrieval
 ```
+
+### Canonical direct/AOP partition（2026-08-13）
+
+Current inference evidence 不再直接读取两个 acquisition parquet 后分别聚合，而是由版本化 canonical builder
+做互斥分区。Raw inputs 保持 immutable；每条 raw row 都写入 partition audit：
+
+```text
+tools/chembl_tool/tasks/skin_reaction/canonical_starling_source.py
+tools/chembl_tool/tasks/skin_reaction/build_canonical_starling_source.py
+data/starling_data/skin_reaction/canonical_sensitization_v3/
+```
+
+合同为：validated LLNA/GPMT/Buehler/human patch/contact-allergy 等 final outcome 只进入 direct；MIE、KE2、
+KE3、KE4 experimental evidence 只进入 AOP；photo hazards、irritation/corrosion、prediction-only/in-silico、
+integrated/无法归类 endpoint 全部拒绝。AOP acquisition 中的 validated adverse-outcome rows 转入 canonical
+direct，而 raw source 和 gold benchmark 均不改写。Canonical full-source 有 54,596 direct records 和 11,434
+AOP records；AOP event 仅为 `MIE/KE2/KE3/KE4`，source-record direct/AOP overlap 为 0。全字段 scope audit 中
+photo、in-silico、integrated 以及 AOP irritation 命中均为 0；direct 中提及 irritation 的记录只在同时有明确
+sensitization/contact-allergy outcome anchor 时保留，irritation 本身不作为 label evidence。
+
+对应 DeepSeek-v4-pro、MiniMol top-3、cosine >=0.3、scaffold-valid fresh run 均为 245/245、0 failure：direct
+macro-F1 `0.6410`，direct+AOP mechanism `0.6123`。Mechanism 相对 direct delta `-0.0287`，paired-bootstrap
+95% CI `[-0.0801,+0.0224]`；因此 canonical partition 是数据合同修复，不 promotion AOP mechanism 为默认
+性能条件。
 
 ### Paper-facing tier 的距离语义
 
@@ -255,8 +279,12 @@ build_evidence_library.py
   从 v1 assay candidates + activity evidence 构建 molecule-level evidence library 和 neighbor index。
 
 build_starling_evidence_library.py
-  从 `data/starling_data/skin_reaction/` 构建 Starling 四-family evidence/index；正式产物写入
-  `outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full/`。
+  默认从 canonical direct/AOP parquet 构建 current 两-family evidence/index；历史 broad/scoped-v2 source
+  仍可通过显式 `--source-profile` 复现。默认构建会先验证 canonical manifest、partition reconciliation、
+  direct/AOP 零 overlap 和两个 parquet 的 SHA-256。Current 产物写入
+  `outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_sensitization_canonical_v3/`。
+  heldout-parent filtered index 的默认目录名为 `skin_reaction_starling_sensitization_canonical_v3`；旧
+  `skin_reaction_starling_full` 只属于 historical source profile。
 
   构建命令：
   `python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library --workers 32 --progress-every 10000`

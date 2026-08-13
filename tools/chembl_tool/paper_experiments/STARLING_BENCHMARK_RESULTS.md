@@ -1561,6 +1561,72 @@ direct，也没有证明稳定改善；Tier 2 analog noise、branch synthesis �
 
 普通 `--groups` 只控制 fresh pipeline，不能用于 resume-final artifact filtering。
 
+### Canonical direct/AOP source repair（2026-08-13，valid-only）
+
+为消除 direct/AOP source overlap 和 scope contamination，新增
+`skin_sensitization_direct_aop.v3` canonical partition。两个 raw Starling acquisition parquet 保持 immutable；
+112,582 条 raw rows 全部进入 row-level partition audit。Current canonical source 为：
+
+| partition | records | unique parent identities | molecule-level evidence rows | allowed endpoint |
+|---|---:|---:|---:|---|
+| direct | 54,596 | 3,806 | 4,225 | final sensitization/contact-allergy outcome |
+| AOP | 11,434 | 1,289 | 1,340 | MIE、KE2、KE3、KE4 only |
+
+AOP acquisition 中 12,083 条有 direct assay anchor 的 records 移入 canonical direct，另有 12 条未标 AOP、但有
+明确 direct assay 与 usable label 的 records 也归入 direct；photo hazard、irritation-only、prediction-only/
+in-silico、integrated/unresolved records 拒绝。全字段扫描的 photo、in-silico、integrated 和 AOP irritation 命中均
+为 0。Direct 中 65 条文字提及 irritation 的记录均同时报告 sensitization/contact-allergy outcome，保留该 direct
+outcome，但 irritation 本身不作 label evidence。Direct/AOP source-record overlap 为 0；同一文段同时独立报告
+LLNA 与 DPRA/h-CLAT 等不同 endpoint 时允许各自保留，并保留 source-record provenance。
+
+用重建后的 heldout-parent-filtered index 和 MiniMol descriptor 跑 DeepSeek-v4-pro scaffold-valid：
+
+| condition | accuracy | macro-F1 | TN / FP / FN / TP |
+|---|---:|---:|---:|
+| canonical direct | **0.6939** | **0.6410** | 38 / 35 / 40 / 132 |
+| canonical direct+AOP mechanism | 0.6694 | 0.6123 | 35 / 38 / 43 / 129 |
+
+两者均 245/245、0 failure，direct 和 mechanism 分别有 245/245 retrieval、245/490 group rows、245/245 final
+与 trace artifacts。Mechanism 相对 direct 有 34 flips（direct-only correct 20、mechanism-only correct 14），
+accuracy delta `-0.0245`，macro-F1 delta `-0.0287`，paired-bootstrap 95% CI `[-0.0801,+0.0224]`，McNemar
+`p=0.3915`。AOP 清理后 direct/AOP top-3 molecule overlap 从历史 145/245 queries 降为 88/245，但 AOP branch
+仍未超过 direct，不能 promotion。正式 artifacts：
+
+```text
+data/starling_data/skin_reaction/canonical_sensitization_v3/manifest.json
+outputs/paper/minimol_retrieval_features_skin_canonical_v3_record_supported_v2_valid_verified/summary.json
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_deepseek_v4_pro_skin_canonical_v3_minimol_top3_audited/
+```
+
+早期无后缀、`_final` 和 `_verified` run roots 是 full-field scope audit 完成前的中间 artifacts，均已 superseded，
+不得作为 canonical v3 最终结果引用。
+
+### Canonical AOP source/topology-gated final-only no-go（2026-08-13，valid-only）
+
+E19 在完全冻结的 canonical direct 与 direct+AOP branch 上做严格 matched final-only integration。非触发样本
+逐样本复用原 direct final；只有 direct=`no_risk`、AOP direction=`supports_sensitizer`、group/card
+transferability 至少 moderate，且同一 evidence card 同时通过以下两项，才允许 fresh final：
+
+1. raw source text 含 validated AOP method 或明确 skin-sensitization/contact-allergy context，并有 positive signal；
+2. query/reference 共享显式 reactive SMARTS family，或共享 source-backed activation route precursor。
+
+245 个 valid 分子中 direct=`risk` 为 167 个；其余 78 个 direct=`no_risk` 中，75 个 AOP 为 useful=false、
+neutral/context-only、low transferability 等 non-voting group。剩余 3 个 supportive group 也全部被门控拒绝：
+idx61 的模型声称共享 methacrylate，但 query 不含该 alpha,beta-unsaturated carbonyl；idx121 虽有共享
+phenol/tyrosinase-quinone route，但来源只是 generic GSH depletion，没有 skin-sensitization context 或 validated
+method；idx192 虽共享 alpha,beta-unsaturated carbonyl，但其对应 positive source 同样缺少上述 source context。
+
+因此 `n_triggered=0`、fresh final=0、prediction flips=0；候选严格等于 direct，macro-F1/accuracy 仍为
+`0.641036/0.693878`，paired delta 与 95% bootstrap CI 均为 `[0,0]`。245 个 query、single 与 direct-group
+artifact parity failure 均为 0。预先冻结的 promotion gate 未通过，不读取或运行 Skin test。审计产物：
+
+```text
+outputs/paper/skin_aop_gated_final_v1_scaffold_valid_deepseek_v4_pro/
+```
+
+由于该候选没有触发任何样本且未通过 promotion，专用一次性 runner/gate 未进入长期维护代码；结论由上述
+冻结 audit artifact 和本节记录保留。
+
 ## 10. 主要运行与汇总入口
 
 ```text
