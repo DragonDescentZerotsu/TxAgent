@@ -74,6 +74,16 @@ tools/chembl_tool/common/qualifier_vocabulary_policy.json
 tools/chembl_tool/common/contextual_unit_policy.json
   Declares reviewed, exact-match assay-context rules that pick a canonical metric prefix within one
   assay stratum. Fail-closed: every field a rule declares must be present and exactly equal.
+
+tools/chembl_tool/common/PROMPT_PROFILE_CONTRACT.md
+  Freezes the shared reasoning payload, structured-output validation, task prompt profile,
+  final-decision profile, manifest provenance, and branch-reuse gate. A task-local profile owns only
+  that task's semantics, schema, and cross-field rules.
+
+tools/chembl_tool/tasks/<task>/run_reasoning_pipeline.py
+  Exposes `build_group_prompt_payload()` to external workflows that reuse a task-specific full-flat
+  prompt. RL/data materializers must not call the private `_group_prompt_payload()` implementation;
+  the historical private alias exists only for compatibility.
 ```
 
 Task code must not duplicate shared retrieval, source aggregation, LLM client, validation, or batch orchestration.
@@ -248,27 +258,42 @@ tools/chembl_tool/common/starling/evidence_library.py
   Builds inference-time molecule evidence/indexes and does not produce benchmark labels.
 
 tools/chembl_tool/common/starling/benchmark_dataset.py
-  Centrally handles parent identity, binary/ambiguous decision aggregation, conflict exclusion,
-  random/scaffold splits, and audit output.
+  Centrally handles parent identity, binary/ambiguous decisions, 70% record-weighted majority,
+  historical random/scaffold splits, and audit output.
 
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
-  Unified build CLI for currently supported tasks.
+  Historical `record_agreement70_split811_v1` random/scaffold build CLI.
+
+tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+  Current scaffold-only `record_supported_v2` quality-split builder for Bioavailability and Skin.
+
+tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+  Current `experimental_meaningful_cns_access_v2` BBB build/audit orchestration.
 
 tools/chembl_tool/tasks/<task>/starling_benchmark.py
   Declares only the task's sources, endpoint/scope/population rules, units/thresholds,
   and conservative free-text-to-label mapping.
 ```
 
-A task adapter must first map every source record to `0`, `1`, or a rejected/ambiguous decision with a reason. It must not treat a supporting passage as an unconditional keyword vote, and it must not duplicate parent aggregation or split algorithms inside the adapter. The shared layer aggregates by `rdkit_fragment_parent.v1`: if the same accepted parent appears with both 0 and 1, the entire parent is a conflict and is excluded from both splits without majority voting.
+A task adapter must first map every source record to `0`, `1`, or a rejected/ambiguous decision with a
+reason. It must not treat a supporting passage as an unconditional keyword vote or duplicate parent
+aggregation or split algorithms. The shared layer aggregates by `rdkit_fragment_parent.v1`; it accepts a
+parent when the majority label reaches 70% and is not an exact tie, otherwise recording it in the reject
+audit. Multiple accepted records from the same PMID still vote separately.
 
-Every supported task must generate both versions from the same accepted parent pool:
+The current paper-facing roots are:
 
 ```text
-data/processed_starling/<Task>/random/{train.jsonl,test.jsonl,...}
-data/processed_starling/<Task>/scaffold/{train.jsonl,test.jsonl,...}
+data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/
+data/processed_starling_record_supported_v2/{Bioavailability_Ma,Skin_Reaction}/scaffold/
 ```
 
-The test target is `min(500, floor(0.2 * n_binary_molecules))`. The random split uses a fixed-seed, label-stratified stable-hash split. The scaffold split treats each canonical Bemis-Murcko scaffold as an indivisible group. The corresponding `test_molecule_labels.jsonl` is the exclusion contract for a train-only evidence library. Formal evaluation must not begin until the respective index passes a zero-overlap audit against test parents. See `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md` for the complete rules, current frozen counts, and run commands.
+The current builder first keeps Bemis-Murcko scaffolds disjoint, then constructs train/valid/test using the
+frozen lexicographic quality objective. `heldout_molecule_labels.jsonl` is the valid+test exclusion contract
+for the train-only retrieval index. Formal evaluation must wait for zero parent and scaffold overlap audits.
+`data/processed_starling/<Task>/{random,scaffold}` is the first historical lineage and must not be mixed with
+current results. See `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md` for the full rules,
+frozen counts, and commands.
 
 ## Molecule identity and parent-disjoint retrieval
 
@@ -287,9 +312,15 @@ parent_disjoint:
 
 `same_parent` is allowed only when the primary parents are identical or one primary parent explicitly appears among the other record's mixture components. Arbitrary component-key intersection must not be used, because two unrelated salts could otherwise be classified as the same parent merely because both contain a counterion such as chloride or sodium. Here, parent is an RDKit structure-standardization concept rather than a pharmacological active moiety. Covalent prodrugs, metabolites, and active-moiety relationships are not inferred from the parent key. They must remain structural analogs or be expressed through an independent PK scope annotation.
 
-Selective reruns for paper ablations are based on stable hashes of the LLM-visible retrieval contract. Reuse the complete run when the sample input is identical. When only some families change in `full_mechanism`, unchanged independent group outputs may be reused before rerunning the changed branches and final synthesis. Every reuse must record `reused_from`, `reuse_reason`, and the input hash. Final metrics are still computed over the complete test set.
+Historical operational/parent-disjoint sensitivity reruns use stable hashes of the LLM-visible retrieval
+contract. A complete run may be reused for an identical sample input; if only some `full_mechanism` families
+change, other independent group outputs may be reused before rerunning changed branches and final synthesis.
+Every reuse records `reused_from`, `reuse_reason`, and the input hash, and metrics still cover the complete
+evaluation subset.
 
-The primary policy for paper-facing structural-analog retrieval is `parent_disjoint`. `operational` is the mandatory first-stage staging/deployment-sensitivity reference used to detect same-parent exposure and support selective reuse; it is not the default final result for an analog claim. After completing the operational condition for any new retrieval condition, complete its parent-disjoint condition immediately. Do not leave only an operational bar.
+The current paper-facing structural-analog policy is `parent_disjoint`, fresh from a held-out-filtered index.
+`operational` is an explicit historical/deployment-sensitivity reference, not a staging dependency for new v4
+conditions. Multiple launchers must not be used to bypass the global concurrency budget.
 
 Same-parent exposure audits must distinguish the query-condition, group, neighbor slot, and record deduplicated within a query-condition. A slot represents one LLM-visible appearance of a neighbor in one group. When the same record appears in multiple mechanism groups, count each appearance separately, while also reporting the query-condition-level unique count and rank-1 slot count. This prevents repeated branch exposure from being described as independent molecules.
 

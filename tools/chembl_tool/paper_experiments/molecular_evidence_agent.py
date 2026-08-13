@@ -26,6 +26,13 @@ from tools.chembl_tool.common.neighbor_selection import (
     NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,
 )
+from tools.chembl_tool.common.retrieval_policy import (
+    NEIGHBOR_IDENTITY_POLICIES,
+    NeighborIdentityPolicy,
+)
+from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library import (
+    DEFAULT_INDEX_PATH as DEFAULT_SKIN_STARLING_INDEX_PATH,
+)
 
 PAPER_ROOT = Path("outputs/paper/molecular_evidence_agent")
 GLM_BASE_URL = "https://litellm.parcc.upenn.edu/v1"
@@ -39,9 +46,9 @@ IDENTITY_BLIND = "identity_blind"
 DEPLOYMENT_VISIBLE = "deployment_visible"
 DEPLOYMENT_VISIBLE_PREFETCHED = "deployment_visible_prefetched"
 VISIBILITY_MODES = (IDENTITY_BLIND, DEPLOYMENT_VISIBLE_PREFETCHED, DEPLOYMENT_VISIBLE)
-OPERATIONAL = "operational"
-PARENT_DISJOINT = "parent_disjoint"
-NEIGHBOR_IDENTITY_POLICIES = (OPERATIONAL, PARENT_DISJOINT)
+OPERATIONAL = NeighborIdentityPolicy.OPERATIONAL.value
+PARENT_DISJOINT = NeighborIdentityPolicy.PARENT_DISJOINT.value
+SCAFFOLD_DISJOINT = NeighborIdentityPolicy.SCAFFOLD_DISJOINT.value
 DATA_SPLITS = ("test", "valid")
 
 
@@ -136,14 +143,8 @@ EXPERIMENTS = [
         "skin_reaction",
         "Skin_Reaction",
         "outputs/chembl_tool/tasks/skin_reaction/evidence_library/skin_reaction_neighbor_index.pkl",
-        include_starling_direct=(
-            "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full/"
-            "starling_skin_reaction_neighbor_index.pkl"
-        ),
-        include_starling_full=(
-            "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full/"
-            "starling_skin_reaction_neighbor_index.pkl"
-        ),
+        include_starling_direct=str(DEFAULT_SKIN_STARLING_INDEX_PATH),
+        include_starling_full=str(DEFAULT_SKIN_STARLING_INDEX_PATH),
     ),
     *_task_experiments(
         "clintox",
@@ -304,7 +305,7 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
     base_url = getattr(args, "base_url", None) or GLM_BASE_URL
     model = getattr(args, "model", GLM_MODEL)
     reasoning_effort = getattr(args, "reasoning_effort", GLM_REASONING_EFFORT)
-    fresh_parent_disjoint = bool(getattr(args, "fresh_parent_disjoint", False))
+    fresh_disjoint = _uses_fresh_disjoint_retrieval(args)
     experiment = experiment_for_split(experiment, split)
     paper_root = _paper_root_from_args(args)
     batch_root = experiment_run_root(
@@ -401,7 +402,7 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
             Path(explicit_single_root)
             if explicit_single_root
             else current_run_root
-            if fresh_parent_disjoint
+            if fresh_disjoint
             else operational_root
         )
         command.extend(
@@ -410,7 +411,7 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
                 str(single_root / experiment.task / f"{experiment.task}__none"),
             ]
         )
-        if neighbor_identity_policy == PARENT_DISJOINT and not fresh_parent_disjoint:
+        if neighbor_identity_policy == PARENT_DISJOINT and not fresh_disjoint:
             command.extend(
                 [
                     "--group-analysis-source-batch",
@@ -436,13 +437,13 @@ def experiment_run_root(
     paper_root: Path = PAPER_ROOT,
 ) -> Path:
     """Return the stable batch root for one paper visibility regime."""
-    if neighbor_identity_policy == PARENT_DISJOINT:
+    if neighbor_identity_policy in {PARENT_DISJOINT, SCAFFOLD_DISJOINT}:
         if visibility_mode == IDENTITY_BLIND:
-            return paper_root / "runs_identity_blind_parent_disjoint"
+            return paper_root / f"runs_identity_blind_{neighbor_identity_policy}"
         if visibility_mode == DEPLOYMENT_VISIBLE:
-            return paper_root / "runs_deployment_visible_parent_disjoint"
+            return paper_root / f"runs_deployment_visible_{neighbor_identity_policy}"
         raise ValueError(
-            "Parent-disjoint runs support identity_blind or deployment_visible visibility."
+            "Disjoint retrieval runs support identity_blind or deployment_visible visibility."
         )
     if neighbor_identity_policy != OPERATIONAL:
         raise ValueError(f"Unknown neighbor identity policy: {neighbor_identity_policy}")
@@ -530,15 +531,17 @@ def _prepare_policy_selection(
     selected: list[Experiment],
     args: argparse.Namespace,
 ) -> list[Experiment]:
-    """Select either the historical reuse ablation or a fresh parent-disjoint matrix."""
-    if args.neighbor_identity_policy != PARENT_DISJOINT:
+    """Select either the historical reuse ablation or a fresh disjoint matrix."""
+    if args.neighbor_identity_policy == OPERATIONAL:
         return selected
-    if bool(getattr(args, "fresh_parent_disjoint", False)):
+    if _uses_fresh_disjoint_retrieval(args):
         if args.visibility_mode not in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}:
             raise SystemExit(
-                "Fresh parent_disjoint requires identity_blind or deployment_visible"
+                "Fresh disjoint retrieval requires identity_blind or deployment_visible"
             )
         return selected
+    if args.neighbor_identity_policy != PARENT_DISJOINT:
+        raise SystemExit(f"Unsupported historical reuse policy: {args.neighbor_identity_policy}")
     if args.visibility_mode != DEPLOYMENT_VISIBLE:
         raise SystemExit("parent_disjoint requires --visibility-mode deployment_visible")
     selected_none = [experiment.name for experiment in selected if experiment.mode == "none"]
@@ -548,6 +551,13 @@ def _prepare_policy_selection(
             f"remove from parent-disjoint selection: {', '.join(selected_none)}"
         )
     return [experiment for experiment in selected if experiment.mode != "none"]
+
+
+def _uses_fresh_disjoint_retrieval(args: argparse.Namespace) -> bool:
+    """Return whether the policy must run retrieval/groups fresh instead of replaying operational data."""
+    return getattr(args, "neighbor_identity_policy", OPERATIONAL) == SCAFFOLD_DISJOINT or bool(
+        getattr(args, "fresh_parent_disjoint", False)
+    )
 
 
 def _require_parent_disjoint_reuse_plans(

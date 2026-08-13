@@ -13,6 +13,7 @@ from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
     EXPERIMENTS,
     IDENTITY_BLIND,
     PARENT_DISJOINT,
+    SCAFFOLD_DISJOINT,
     _command,
     _parse_args,
     _prepare_policy_selection,
@@ -34,6 +35,8 @@ from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
     paper_root_for_minimol_retrieval,
 )
 from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import (
+    INDEX_SPECS,
+    _apply_source_evidence_overrides,
     _collect_existing_index_meta,
     _load_existing_summary,
 )
@@ -46,6 +49,9 @@ from tools.chembl_tool.tasks.bbb_martins.experiment_config import STARLING as BB
 from tools.chembl_tool.tasks.skin_reaction.experiment_config import (
     CHEMBL as SKIN_CHEMBL,
     STARLING as SKIN_STARLING,
+)
+from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library import (
+    DEFAULT_INDEX_PATH as DEFAULT_SKIN_INDEX_PATH,
 )
 
 
@@ -60,6 +66,27 @@ def test_frozen_matrix_has_unique_expected_conditions():
     assert "skin_reaction__starling_direct" in names
     assert "skin_reaction__starling_full_flat" in names
     assert "skin_reaction__starling_full_mechanism" in names
+
+
+def test_skin_defaults_use_canonical_direct_aop_source():
+    skin_experiments = [item for item in EXPERIMENTS if item.task == "skin_reaction"]
+    starling_experiments = [item for item in skin_experiments if item.source == "starling"]
+    assert starling_experiments
+    assert {item.index for item in starling_experiments} == {str(DEFAULT_SKIN_INDEX_PATH)}
+
+    skin_specs = [item for item in INDEX_SPECS if item["task"] == "Skin_Reaction"]
+    assert skin_specs == [
+        {
+            "name": "skin_reaction_starling_v7",
+            "task": "Skin_Reaction",
+            "task_id": "skin_reaction",
+            "normalized_root": (
+                "outputs/chembl_tool/tasks/skin_reaction/evidence_library/"
+                "starling_normalized_v7"
+            ),
+            "view": "full",
+        }
+    ]
 
 
 def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_indices():
@@ -108,12 +135,49 @@ def test_starling_benchmark_matrix_can_select_valid_without_changing_indices():
     ]
 
 
+def test_starling_benchmark_matrix_accepts_isolated_data_and_index_lineage(tmp_path):
+    data_root = tmp_path / "processed_starling_record_supported_v2"
+    index_root = tmp_path / "molecular_evidence_agent_starling_scaffold_record_supported_v2"
+
+    experiments = experiments_for_starling_benchmark(
+        "scaffold",
+        evaluation_subset="valid",
+        data_root=data_root,
+        canonical_paper_root=index_root,
+    )
+
+    assert all(
+        item.input_jsonl.startswith(str(data_root)) for item in experiments
+    )
+    starling = next(
+        item for item in experiments if item.name == "bbb_martins__starling_direct"
+    )
+    assert starling.index.startswith(str(index_root / "evidence"))
+
+
 def test_partial_starling_index_rebuild_can_preserve_existing_summary(tmp_path):
     summary = tmp_path / "summary.json"
     summary.write_text(json.dumps({"random": {"bbb": {"ok": True}}}), encoding="utf-8")
 
     assert _load_existing_summary(summary) == {"random": {"bbb": {"ok": True}}}
     assert _load_existing_summary(tmp_path / "missing.json") == {}
+
+
+def test_starling_index_source_override_is_explicit_and_nonmutating():
+    specs = [{"name": "skin", "source_evidence": "historical.jsonl"}]
+
+    updated = _apply_source_evidence_overrides(specs, ["skin=aligned.jsonl"])
+
+    assert updated[0]["source_evidence"] == "aligned.jsonl"
+    assert specs[0]["source_evidence"] == "historical.jsonl"
+
+
+def test_starling_index_source_override_rejects_unselected_name():
+    with pytest.raises(SystemExit, match="does not match a selected index"):
+        _apply_source_evidence_overrides(
+            [{"name": "skin", "source_evidence": "historical.jsonl"}],
+            ["bbb=other.jsonl"],
+        )
 
 
 def test_index_summary_can_be_rebuilt_after_parallel_partial_builds(tmp_path):
@@ -448,6 +512,39 @@ def test_fresh_deployment_visible_parent_disjoint_keeps_none_and_avoids_reuse(tm
     assert command[command.index("--timeout-s") + 1] == "600"
 
 
+def test_scaffold_disjoint_always_runs_fresh_in_an_isolated_root(tmp_path):
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GPT_OSS_LOCAL_API_KEY",
+        parallelism=128,
+        visibility_mode=IDENTITY_BLIND,
+        neighbor_identity_policy=SCAFFOLD_DISJOINT,
+        fresh_parent_disjoint=False,
+        paper_root=str(tmp_path),
+        split="valid",
+        timeout_s=600,
+        limit=0,
+        experiments=[],
+    )
+
+    selected = _prepare_policy_selection(list(EXPERIMENTS), args)
+    command = _command(EXPERIMENTS[1], args)
+
+    assert any(item.mode == "none" for item in selected)
+    assert "runs_identity_blind_scaffold_disjoint" in command[
+        command.index("--batch-root") + 1
+    ]
+    assert "runs_identity_blind_scaffold_disjoint" in command[
+        command.index("--single-analysis-source-batch") + 1
+    ]
+    assert "--group-analysis-source-batch" not in command
+    assert experiment_run_root(
+        IDENTITY_BLIND,
+        SCAFFOLD_DISJOINT,
+        paper_root=tmp_path,
+    ).name == "runs_identity_blind_scaffold_disjoint"
+
+
 def test_runner_defaults_to_parent_disjoint_primary_and_excludes_none():
     args = _parse_args([])
 
@@ -536,7 +633,7 @@ def test_explicit_parent_disjoint_none_is_rejected():
         raise AssertionError("Expected explicit parent-disjoint none selection to be rejected")
 
 
-def test_new_starling_sources_match_the_four_paper_mechanism_families():
+def test_starling_mechanism_views_match_each_binary_endpoint():
     expected = [
         "direct_brain_exposure",
         "passive_permeability",
@@ -548,10 +645,12 @@ def test_new_starling_sources_match_the_four_paper_mechanism_families():
     expected_skin = [
         "direct_skin_reaction",
         "sensitisation_aop",
-        "phototoxicity_irritation_local_damage",
-        "skin_exposure",
     ]
     assert [group.endpoint_group for group in SKIN_STARLING.mechanism_groups] == expected_skin
+    assert [group.source_groups for group in SKIN_STARLING.mechanism_groups] == [
+        ("Direct.skin_reaction",),
+        ("Mechanism.sensitization_aop",),
+    ]
 
 
 def test_skin_paper_view_excludes_standalone_weak_context_branch():

@@ -67,7 +67,7 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Starling 二分类 benchmark（2026-08-04）
+## 当前 Starling 二分类 benchmark（2026-08-10）
 
 BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
 records 构建；ClinTox 因缺少与 clinical-trial toxicity failure 同定义的 Starling direct source，
@@ -79,29 +79,68 @@ tools/chembl_tool/common/starling/benchmark_dataset.py
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
 
 task adapters:
-  tools/chembl_tool/tasks/bbb_martins/starling_benchmark.py
+  tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
   tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
   tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
 ```
 
-每个 task 使用同一批 accepted binary parents 生成两个独立版本：
+2026-08-09 BBB paper-facing gold 已从旧 TDC-compatible mixed-permeability lineage 迁移到
+`experimental_meaningful_cns_access_v2`。新任务预测系统给药后是否有实验支持的 meaningful/adequate CNS
+access，而不是“任何可检出即 positive”或“只有 passive permeation 才 positive”。brain tissue、unbound brain、
+brain/systemic ratio、CSF、PET/autoradiography 和明确体内 BBB outcome 可进入 gold；PAMPA/细胞模型、计算预测、
+机制-only proxy、非系统 CNS 给药、人为/疾病改变屏障和间接疗效推断均拒绝。CSF 明确标为 proxy，不冒充脑实质。
+
+```text
+adapter:
+  tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
+builder:
+  tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+audit:
+  tools/chembl_tool/common/starling/audit_bbb_experimental_meaningful_cns_access.py
+data:
+  data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/
+```
+
+当前 frozen BBB build 有 3,667 个 binary parents，train/valid/test 为 `2,935/366/366`；valid/test 分别为
+`345 multi-record + 21 singleton` 和 `344 + 22`，两者 Y=0/Y=1 均为 `97/269`，identity/scaffold overlap
+均为 0。8,273 条 accepted source rows 覆盖六种 outcome family；三名 `gpt-5.6-sol` reviewer 在多轮替换中
+人工检查了 366 条 unique source records，最终 294 条 deterministic family×label 分层 sample 全部通过。
+旧 exploratory `experimental_direct_cns_v1` 与 BBB `record_supported_v2` 的 gold、indices、baselines、
+agent traces 和结果全部保留为 historical lineage，不得与新 BBB 结果混表。Bioavailability_Ma 与
+Skin_Reaction 当前仍使用 `record_supported_v2`。
+
+`record_agreement70_split811_v1` 使用同一批 accepted binary parents 生成 random/scaffold
+两个历史版本：
 
 ```text
 data/processed_starling/<Task>/random/{train.jsonl,valid.jsonl,test.jsonl,...}
 data/processed_starling/<Task>/scaffold/{train.jsonl,valid.jsonl,test.jsonl,...}
 ```
 
-parent label 使用 70% record-weighted agreement；同 PMID 的多条 accepted records 仍分别计票，精确 tie
-始终拒绝。valid 与 test 数量分别为 `min(500, floor(0.1 * n_binary_molecules))`，train 使用剩余 parents。
-`random` 是固定 seed 的 label-stratified stable-hash split；`scaffold` 以 canonical Bemis–Murcko scaffold
-为不可拆分 group。两者均要求 train/valid/test parent identity 两两零重叠，scaffold 版本还要求 scaffold
-两两零重叠。当前 frozen build：
+parent label 继续使用 70% record-weighted agreement；同 PMID 的多条 accepted records 仍分别计票，精确
+tie 始终拒绝。Bioavailability/Skin 当前 paper-facing split 和 BBB historical comparison 使用
+scaffold-only `record_supported_v2`：先严格保持
+Bemis–Murcko scaffold 不跨 train/valid/test，再用 lexicographic MILP 依次最小化 held-out singleton、
+valid/test singleton imbalance 和 label imbalance；在这些质量目标固定后才最大化第一版 valid molecule
+复用。BBB valid/test 各最多 500；Bioavailability 和 Skin 目标为总 parent 的 10%/10%，train 使用其余
+parents。frozen v2 build（BBB 行自 2026-08-09 起只作 historical comparison）：
 
-| task | binary parents | valid/test | random valid / test Y=0,Y=1 | scaffold valid / test Y=0,Y=1 |
-|---|---:|---:|---:|---:|
-| BBB_Martins | 19,425 | 500 / 500 | 139,361 / 139,361 | 150,350 / 148,352 |
-| Bioavailability_Ma | 2,092 | 209 / 209 | 58,151 / 58,151 | 61,148 / 65,144 |
-| Skin_Reaction | 2,456 | 245 / 245 | 75,170 / 75,170 | 74,171 / 71,174 |
+| task | binary parents | train / valid / test | valid multi/single | test multi/single | valid/test Y=0,Y=1 |
+|---|---:|---:|---:|---:|---:|
+| BBB_Martins | 19,425 | 18,425 / 500 / 500 | 500 / 0 | 500 / 0 | 139,361 / 139,361 |
+| Bioavailability_Ma | 2,092 | 1,674 / 209 / 209 | 209 / 0 | 209 / 0 | 58,151 / 58,151 |
+| Skin_Reaction | 2,456 | 1,966 / 245 / 245 | 240 / 5 | 240 / 5 | 73,172 / 73,172 |
+
+三项任务的 train/valid/test parent identity 和 scaffold overlap 均为 0。Skin 的 10 个 held-out singleton
+是同时满足精确 245/245 和 scaffold-disjoint 的全局最小值，并均衡为 valid/test 各 5 个。数据入口和根目录：
+
+```text
+tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+data/processed_starling_record_supported_v2/<Task>/scaffold/{train,valid,test}.jsonl
+```
+
+`record_agreement70_split811_v1` 的数据和正式结果保留为第一版 historical comparison；已删除的
+`record_supported_v1` 是曾把过多 multi-record scaffold 留在 held-out 的 exploratory 版本，不得引用。
 
 Bioavailability 自 2026-08-01 使用 `bioavailability_canonical_direct.v2`：固定 revision 的 HF snapshot 与
 local oral-exposure extraction 中明确 absolute/oral-IV 的 rows 合并，跨来源同 parent+PMID 近等值 claim
@@ -109,7 +148,12 @@ local oral-exposure extraction 中明确 absolute/oral-IV 的 rows 合并，跨�
 agent direct evidence 必须读取同一份
 `data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet`。旧 1,862-parent mixed-source
 和 1,828-parent strict-conflict 结果均为 historical lineage，不得与当前 2,092-parent build 混表。
-Skin source 保持不变；其 label/split policy 与其它 task 一起升级。
+Skin raw acquisition 保持不变；current inference source 默认为
+`skin_sensitization_direct_aop.v3` canonical partition：validated sensitization/contact-allergy final outcome 只进入
+direct，MIE/KE2/KE3/KE4 experimental evidence 只进入 AOP，photo hazard、irritation/corrosion、prediction-only
+和 integrated/unresolved rows 全部拒绝。默认构建入口会先验证 canonical manifest 与 direct/AOP parquet 的
+SHA-256，再生成两-family evidence/index；historical `broad_skin_reaction_v1` 和
+`sensitization_contact_allergy_v2` 只能显式选择，不得与 canonical v3 混表。
 
 当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
 MiniMol embedding cosine KNN、MiniMol/cosine agent retrieval、blind 进度、Skin retrieval degradation、
@@ -119,16 +163,27 @@ Tier 1+2 final-only 诊断和代码入口统一记录在：
 tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
 ```
 
+当前 paper-facing valid 默认 prompt profile 分别为 BBB `meaningful_cns_access_v1`、Bioavailability
+`f20_evidence_calibrated_v2` 和 Skin `sensitization_aligned_v2`。BBB v2/v3、BBB property-compatible selector、
+Skin negative-transfer v3、train-ratio prior 和 matched train-label agent 均为可复现但未 promotion 的 valid-only
+历史实验，不得作为默认 pipeline 或据此运行 formal test。当前版本、最佳 valid 条件和 artifact 索引以
+`tools/chembl_tool/paper_experiments/RESULTS.md` 顶部的 canonical snapshot 为准。
+
 当前 Starling benchmark 的主要运行与汇总入口：
 
 ```text
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
+tools/chembl_tool/common/starling/build_record_supported_benchmark.py
 tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
 tools/chembl_tool/paper_experiments/analyze_starling_parent_provenance.py
 tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 tools/chembl_tool/paper_experiments/build_minimol_retrieval_features.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
+tools/chembl_tool/paper_experiments/analyze_starling_direct_significance.py
+tools/chembl_tool/paper_experiments/analyze_starling_best_agent_baselines.py
+tools/chembl_tool/paper_experiments/router_oof/cli.py
 tools/chembl_tool/paper_experiments/summarize_minimol_retrieval_agent.py
 tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
 tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
@@ -139,7 +194,10 @@ tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
 tools/chembl_tool/paper_experiments/analyze_coverage_selector_retrieval_changes.py
 tools/chembl_tool/paper_experiments/plot_coverage_selector_llm_matrix.py
 tools/chembl_tool/paper_experiments/run_minimol_retrieval_agent_experiment.py
+tools/chembl_tool/paper_experiments/run_train_ratio_prior_experiment.py
+tools/chembl_tool/paper_experiments/train_ratio_prior_analysis.py
 baselines/minimol/run_bioavailability_ma.py --train-all
+baselines/minimol/run_train_cv.py
 baselines/minimol/run_embedding_knn.py
 baselines/structure_knn/run.py
 ```
@@ -150,6 +208,32 @@ ablation 的唯一 Starling 总图入口。新增完整 model/visibility summary
 不得为单个新实验新增独立 overview/bar-chart 模块或正式小图。完整 comparison summary 必须与 reference
 使用相同 task/split/subset/sample count 和 baseline；experiment metrics 则必须按 task/split 提供一个与既有
 candidate condition 对齐的 anchor row，绘图器会校验 `n` 和 macro-F1 后隐藏重复 anchor，只绘制新增实验行。
+
+`router_oof/` 是与正式 valid/test matrix 隔离的 train-only KNN-vs-direct-agent 实验。它固定 scaffold-or-parent
+5-fold OOF、fold-specific heldout-parent filtered index、Morgan `k=3`、gpt-oss-120b
+`identity_blind + parent_disjoint` direct agent，并按 BBB/Bioavailability/Skin 分别训练 Logistic/HistGBDT；
+v1–v3.1 可部署 router 不得共享 task 参数，也不得把 train fold 加入 `starling_benchmark_matrix.py` 的 evaluation
+subset。唯一 shared 参数实验是已冻结、不可部署的 train-only transfer termination diagnosis。
+当前 v2 router 不把 fold-dependent absolute reference size 或确定性重复的 k=3 margin/entropy 作为输入；它在
+`knn_compact`、`query_knn`、`query_knn_evidence` 三个通用 profile 内做 nested train-only 选择，并分别校准
+`P(agent-only-correct)` 与 `P(KNN-only-correct)`，用二者之差作为 routing score。只有 nested OOF paired-bootstrap
+promotion gate 同时通过 macro-F1 improvement 和 accuracy guardrail 才部署，否则明确回退 KNN。v1 `router/`
+artifact 保留为 historical diagnosis；v2 写入 `router_v2/` 和 `router_features_v2.*`，不得覆盖或混表。
+v3 是独立 output-aware post-selector：只训练 KNN/agent disagreement rows，target 为 agent-only-correct 对
+KNN-only-correct；保留原始 query/KNN/evidence features，并以 nested OOF 比较 18-feature base、49-feature
+evidence 和 70-feature evidence+structured-trace profiles。两个 disagreement directions 使用独立 threshold，
+promotion gate 失败时严格 KNN fallback。v3 写入 `post_selector_features_v3.jsonl` 与 `post_selector_v3/`，
+不得覆盖 v1/v2；permutation/dropout stability 需要额外 calls，不能从既有 trace 伪造。
+v3.1 复用同一 frozen feature rows，但为两个 disagreement direction 分别选择 family/profile/threshold，并使用
+fold-heldout sigmoid-calibrated ensemble。每个 direction 必须至少 route 20 个 train rows 且 agent-win precision
+的 one-sided 95% Wilson lower bound > 0.5；overall train promotion 以 accuracy paired-bootstrap lower CI > 0
+为主 gate。它写入 `post_selector_v31/` 和 `post_selector_valid_result_v31.json`，不得覆盖 v3。Valid receipt 必须
+分别标明 train-only promotion 与 held-out valid evidence gate；valid 不改变已冻结 policy。
+v3.1 后续只允许两个已冻结的 train-only termination diagnostics：`post_selector_v31_learning_curve/` 固定
+direction specs 做 matched-size curve；`post_selector_v31_transfer/` 固定 task-balanced Logistic shared
+representation，并保留 task-specific calibration/threshold。当前 transfer gate 已失败，router 主方法线停止；
+不得继续根据 valid 搜索新的 shared family/profile，formal test 仍未运行。
+协议、命令与 gate 统一记录在 `tools/chembl_tool/paper_experiments/ROUTER_OOF_IMPLEMENTATION_PLAN.md`。
 
 `watch_glm_tunnel_and_matrix.py` 是长 GLM matrix 的可恢复监控入口：检查 `/v1/models`、SSH tunnel 和唯一
 launcher，断线时停止当前 process group、重连后依靠 `--skip-existing` 恢复。完成计数必须通过 task prediction、
@@ -334,7 +418,8 @@ OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `
 
 ### Current defaults for new paper datasets
 
-当前 `record_agreement70_split811_v1` 及其后的新 paper/Starling 实验统一冻结为：
+Bioavailability/Skin 当前 `record_supported_v2`、BBB 新 `experimental_meaningful_cns_access_v2` 及其后的
+paper/Starling 实验统一冻结为：
 
 ```text
 endpoint: keys.py:LITELLM_BASE_URL
@@ -362,7 +447,10 @@ same-parent diff 或 `reuse_plan.json`。`none` 仍必须运行，但其 identit
 label policy。既有 operational、deployment-visible、matched-prefetch 和 reuse artifacts 都保留为 historical
 lineage，不删除，也不混入新 v4 主结果。
 
-当前代码已经完成以下实现 gate；正式结果仍须等待完整 valid/test artifact gate：
+当前代码已经完成以下实现 gate；GPT-OSS-120B v2 valid 已完成。2026-08-10 已首次完成 Bioavailability
+full-flat/full-mechanism 及对应 Morgan KNN、MiniMol embedding KNN、MiniMol trained head 的 frozen
+scaffold-test。2026-08-13 的 BBB DeepSeek residual-adjudication valid gate 已失败，BBB 方法开发停止且
+formal test 不再列为待办；Skin formal test 与 GLM v2 valid/test 仍须等待独立 promotion/artifact gate：
 
 1. runner 默认改为 `identity_blind + parent_disjoint`，并允许该组合 fresh-run；
 2. parent-disjoint fresh-run 不要求 operational `reuse_plan.json`，且输出到独立
@@ -409,7 +497,10 @@ tools/chembl_tool/common/identity_blind.py
 tools/chembl_tool/common/json_utils.py
 tools/chembl_tool/common/openai_reasoning_client.py
 tools/chembl_tool/common/reasoning_calls.py
+tools/chembl_tool/common/reasoning_payload.py
 tools/chembl_tool/common/reasoning_validation.py
+tools/chembl_tool/common/final_decision_prior.py
+tools/chembl_tool/common/prompt_profile.py
 tools/chembl_tool/common/molecule_identity.py
 tools/chembl_tool/common/retrieval_policy.py
 tools/chembl_tool/common/neighbor_selection.py
@@ -474,6 +565,8 @@ global_prompt_pool.py / reasoning_stage_runtime.py
   只在 single 和精确 expected group set 全部成功后执行。五个现有 batch wrapper 都必须能接受公共
   `--prepare-only` seed 命令；尚未迁移到共享 retrieval contract 的 DILI 只允许 native/operational/standard
   默认组合，公共 parser 会拒绝伪装成 parent-disjoint 或 coverage ablation。
+  Pool 内部 sample key 必须使用绝对 batch directory 加 query index；`batch_id` 只在单个 batch root 内唯一，
+  不能作为跨 fold/跨 root 的全局 key。single dependency 的 source key 必须使用同一绝对目录合同。
 
 evidence_contract.py
   `minimal_evidence.v1` 的唯一 schema/normalizer。旧 ChEMBL-like row 可以在 prompt-time 动态转换，
@@ -487,6 +580,11 @@ reasoning_calls.py / json_utils.py
   共享 single/group branch 调用、冻结 single analysis 复用、group payload transport bound、JSON 提取以及
   JSON/JSONL/trace 同目录原子发布工具。
   Transport bound 只能确定性采样超大 evidence rows，不能改变 evidence source、label policy 或 inference setting。
+
+reasoning_payload.py
+  五个 task pipeline 共用的 LLM query identity surface、exact-match/shared-assay 清洗、单条 JSONL 读取和显式
+  env-file 解析，以及 single/group/final trace 序列化。task 只绑定自身 prediction field，不得复制并逐 task
+  漂移这些 frozen 字段合同。
 
 molecule_identity.py / retrieval_policy.py
   数据源和任务无关的 whole-record、RDKit fragment/molecular-parent 和 mixture-component 标准化及
@@ -536,8 +634,26 @@ openai_reasoning_client.py
   serialization。provider/model/base URL 由运行参数配置；task 文件不复制 client runtime。
 
 reasoning_validation.py
-  为 single/group/final branch 提供通用必需字段、允许值和必需工具结果验证；当前默认最多 4 次总尝试。
+  为 single/group/final branch 提供通用必需字段、允许值和必需工具结果验证；single/group 从发送给模型的
+  `required_json_schema` 自动提取顶层 `a | b | c` 枚举并验证，非法近义值触发同设置 retry。当前默认最多
+  4 次总尝试。
   不能在 response 有效时改写 prediction，也不能通过 retry 删除 evidence 或改变 inference setting。
+
+final_decision_prior.py
+  提供显式 opt-in 的 final-stage decision profile。默认 `standard` 严格 no-op；
+  `train_ratio_tiebreak_v1` 只允许 BBB/Bio final-only valid 诊断在真正 evidence tie 时使用 frozen train majority，
+  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。BBB 还保留
+  `direct_anchored_residual_v1` / `direct_override_recheck_v1` 历史诊断；它们不向 Bio CLI 暴露，valid gate 已失败，
+  不得成为默认或启动 formal test。任何 profile 都不得变成 batch quota。
+
+tasks/bbb_martins/final_decision_profiles.py
+  只拥有 BBB 的 direct-anchor、mechanism-weight 和 override/recheck prompt/schema/cross-field validation；公共
+  `final_decision_prior.py` 不包含 passive/efflux/influx 等 task 语义。该模块仅用于已失败的 E20 历史复现。
+
+prompt_profile.py
+  只负责 task prompt profile 的 manifest provenance、历史缺省映射和 branch-reuse 一致性 gate。具体 task
+  instructions/schema 继续放在各 task 的 `prompt_profiles.py`，不得把 task 语义塞进共享模块，也不得在 runner
+  中复制 profile 解析逻辑。
 
 common/starling/evidence_library.py
   profile-driven parquet ingestion。profile 只声明 SMILES、endpoint、value、unit、context、scope、role
@@ -550,8 +666,18 @@ common/starling/benchmark_dataset.py
   population/scope/unit/free-text 规则只能由 task adapter 提供。
 
 common/starling/build_benchmark_datasets.py
-  三个已支持 task 的统一 CLI；读取冻结 source revision/local parquet，生成
-  `data/processed_starling/<Task>/{random,scaffold}/` 及 task/root 汇总。它不构建 retrieval index。
+  Historical TDC-compatible 三 task CLI；读取冻结 source revision/local parquet，生成
+  `data/processed_starling/<Task>/{random,scaffold}/` 及 task/root 汇总。BBB 新主线不使用该入口。
+
+common/starling/build_record_supported_benchmark.py
+  从冻结 binary parents 构造 scaffold-only quality split；默认 `record_supported_v2`，同时向 BBB 新 builder
+  提供可配置 lineage/seed 的共享分配。lexicographic MILP 先最小化
+  held-out singleton 和 valid/test imbalance，再优化 label balance，最后才最大化第一版 valid 复用。输出只含
+  发生变化的 split/audit，根级 source rejection/conflict provenance 继续读取第一版目录，避免重复数据。
+
+common/starling/build_bbb_experimental_meaningful_cns_access.py / audit_bbb_experimental_meaningful_cns_access.py
+  当前 BBB `experimental_meaningful_cns_access_v2` 的唯一 build/audit 入口；source scope、parent aggregation、quality
+  scaffold split、endpoint-family distribution 和 deterministic manual-review sample 一次生成。
 
 common/starling/heldout_index.py
   从 full-source Starling evidence rows 中按 `rdkit_fragment_parent.v1` 删除 valid+test parents，重建
@@ -676,7 +802,8 @@ single-molecule、mechanism-family/flat/direct 和 final stages，并递归展�
 retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
 test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
 
-新 `record_agreement70_split811_v1` 及后续 paper-facing structural-analog 主结果默认使用
+Bioavailability/Skin `record_supported_v2` 与 BBB `experimental_meaningful_cns_access_v2` 后续 paper-facing
+structural-analog 主结果默认使用
 `identity_blind + parent_disjoint` fresh-run；不再先跑 operational，也不要求 operational diff/reuse plan。
 旧 lineage 的 operational -> parent-disjoint 流程及 same-parent 暴露统计只作为 historical sensitivity
 artifact 保留。若将来需要 operational 对照，必须作为显式 opt-in ablation 使用独立 root，不能成为主矩阵依赖。
@@ -688,7 +815,8 @@ artifact 保留。若将来需要 operational 对照，必须作为显式 opt-in
 query-SMILES leak、visibility-contract、parent identity 和 held-out overlap audit。旧 `identity_blind + operational`
 结果仍是 historical supplemental control，不得冒充当前主结果。
 
-2026-08-04 当前 v4 scaffold-valid 已完成 GLM、GPT-OSS-20B/120B 三套 22-condition blind matrix；GLM 为
+2026-08-04 第一版 `record_agreement70_split811_v1` scaffold-valid 已完成 GLM、GPT-OSS-20B/120B 三套
+22-condition blind matrix；GLM 为
 6887/6887 严格成功，两个 GPT 各有一个不可修复 context-limit sample 并按预定 policy 计错。GPT 两套
 deployment-visible+parent-disjoint 补充矩阵也已完成；GLM visible 同合同矩阵同样达到 6887/6887 严格成功，
 并已加入 canonical blind+visible 总图。
@@ -752,10 +880,11 @@ train.jsonl / valid.jsonl / test.jsonl
   Y: 0/1 label
 ```
 
-下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前 v4 已在
-`data/processed_starling/<Task>/{random,scaffold}/` 生成独立 `train/valid/test.jsonl`，并完成 scaffold-valid
-MiniMol `--train-all` head、Morgan KNN 和 MiniMol embedding KNN。该诊断不读取或调参于 test；正式 test
-前仍须冻结所有设置。v4 结果写入 model/split-specific 隔离 output roots，不能覆盖或与历史指标合并。
+下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前
+`record_supported_v2` 位于 `data/processed_starling_record_supported_v2/<Task>/scaffold/`，并已完成
+scaffold-valid MiniMol `--train-all` head、Morgan KNN 和 MiniMol embedding KNN。该诊断不读取或调参于
+test；正式 test 前仍须冻结所有设置。不同 lineage 的结果写入 model/split-specific 隔离 output roots，
+不能覆盖或混表。
 
 上一版 strict-conflict formal Starling baseline 使用 `--train-all`：
 不读取 `valid.jsonl`，每个

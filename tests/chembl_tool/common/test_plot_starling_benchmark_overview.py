@@ -21,6 +21,7 @@ def _write_metrics(
     count_failure=False,
     model_label="Test model",
     evaluation_subset="test",
+    baseline_delta=0.0,
 ):
     rows = []
     for split, _ in splits or SPLITS:
@@ -29,16 +30,17 @@ def _write_metrics(
                 key = (split, task.key, method.key)
                 if key == omit:
                     continue
+                method_family = (
+                    "molecular_evidence_agent"
+                    if method.source not in {"minimol", "knn", "minimol_knn"}
+                    else method.source
+                )
                 rows.append(
                     {
                         "benchmark_split": split,
                         "task": task.key,
                         "method": method.key,
-                        "method_family": (
-                            "molecular_evidence_agent"
-                            if method.source not in {"minimol", "knn", "minimol_knn"}
-                            else method.source
-                        ),
+                        "method_family": method_family,
                         "model_label": model_label,
                         "evaluation_subset": evaluation_subset,
                         "n_test": 500 if task.key == "bbb_martins" else 380,
@@ -48,7 +50,13 @@ def _write_metrics(
                             if key == failed and count_failure
                             else ""
                         ),
-                        "macro_f1": 0.5 + index / 100,
+                        "macro_f1": 0.5
+                        + index / 100
+                        + (
+                            baseline_delta
+                            if method_family != "molecular_evidence_agent"
+                            else 0.0
+                        ),
                     }
                 )
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -141,6 +149,71 @@ def _write_experiment_metrics(
         writer.writerows(rows)
 
 
+def _write_paired_ci_metrics(
+    path,
+    *,
+    agent_model="GPT-OSS-120B",
+    agent_method_override="",
+    delta_offset=0.0,
+):
+    rows = []
+    for task in TASKS:
+        agent_methods = [
+            method
+            for method in task.methods
+            if method.source not in {"minimol", "knn", "minimol_knn"}
+        ]
+        agent_method = next(
+            (
+                method
+                for method in agent_methods
+                if method.key == agent_method_override
+            ),
+            agent_methods[-1],
+        )
+        agent_index = task.methods.index(agent_method)
+        agent_f1 = 0.5 + agent_index / 100
+        n = 500 if task.key == "bbb_martins" else 380
+        for baseline_method, baseline_label in (
+            ("minimol_train_all", "MiniMol train-all"),
+            ("morgan_knn_k3", "Morgan KNN k=3"),
+            ("minimol_embedding_cosine_knn_k3", "MiniMol KNN k=3"),
+        ):
+            baseline = next(
+                method for method in task.methods if method.key == baseline_method
+            )
+            baseline_f1 = 0.5 + task.methods.index(baseline) / 100
+            delta = agent_f1 - baseline_f1
+            rows.append(
+                {
+                    "benchmark_split": "scaffold",
+                    "evaluation_subset": "valid",
+                    "task": task.key,
+                    "agent_model": agent_model,
+                    "agent_method": agent_method.key,
+                    "baseline": baseline_label,
+                    "baseline_method": baseline_method,
+                    "n": n,
+                    "agent_macro_f1": agent_f1,
+                    "baseline_macro_f1": baseline_f1,
+                    "delta_macro_f1_agent_minus_baseline": delta + delta_offset,
+                    "paired_ci95_low": delta - 0.04,
+                    "paired_ci95_high": delta + 0.04,
+                    "bootstrap_replicates": 10000,
+                    "alternative": "agent_greater_than_baseline",
+                    "p_value_one_sided": 0.123,
+                    "permutation_replicates": 100000,
+                    "permutation_seed": 29,
+                    "analysis_status": "exploratory_test_fixture",
+                }
+            )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), delimiter="\t")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def test_chart_renders_all_tasks_splits_and_baselines(tmp_path):
     metrics = tmp_path / "metrics.tsv"
     output = tmp_path / "overview.svg"
@@ -219,6 +292,50 @@ def test_model_comparison_renders_paired_agents_and_shared_baselines(tmp_path):
     assert svg.count("Scaffold split · n =") == 3
 
 
+def test_model_comparison_renders_one_latest_series_with_baselines(tmp_path):
+    latest = tmp_path / "latest.tsv"
+    output = tmp_path / "latest.svg"
+    _write_metrics(
+        latest,
+        splits=(("scaffold", "Scaffold split"),),
+        model_label="Latest GPT-OSS-120B",
+        evaluation_subset="valid",
+    )
+    with latest.open(encoding="utf-8", newline="") as handle:
+        rows = [
+            row
+            for row in csv.DictReader(handle, delimiter="\t")
+            if row["method"]
+            in {
+                "none",
+                "starling_direct",
+                "starling_direct_full",
+                "starling_full_flat",
+                "starling_full_mechanism",
+                "minimol_train_all",
+                "morgan_knn_k3",
+                "minimol_embedding_cosine_knn_k3",
+            }
+        ]
+    with latest.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), delimiter="\t")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    render_model_comparison(
+        latest,
+        tmp_path / "ignored.tsv",
+        output,
+        series_label_overrides=("Latest GPT-OSS-120B",),
+        single_series=True,
+    )
+    svg = output.read_text(encoding="utf-8")
+
+    assert "Latest GPT-OSS-120B" in svg
+    assert "Shared train-label baseline" in svg
+    assert svg.count("MiniMol · Train all") == 3
+
+
 def test_model_comparison_adds_visible_series_as_grouped_bars(tmp_path):
     reference = tmp_path / "blind_20b.tsv"
     candidate = tmp_path / "blind_120b.tsv"
@@ -251,6 +368,128 @@ def test_model_comparison_adds_visible_series_as_grouped_bars(tmp_path):
     assert "GPT-OSS-20B blind" in svg
     assert "GPT-OSS-120B visible" in svg
     assert svg.count("MiniMol · Train all") == 3
+
+
+def test_model_comparison_supports_dataset_version_agent_only_view(tmp_path):
+    old_blind = tmp_path / "old_blind.tsv"
+    new_blind = tmp_path / "new_blind.tsv"
+    old_visible = tmp_path / "old_visible.tsv"
+    new_visible = tmp_path / "new_visible.tsv"
+    output = tmp_path / "dataset_comparison.svg"
+    splits = (("scaffold", "Scaffold split"),)
+    for path, label in (
+        (old_blind, "GPT-OSS-120B"),
+        (new_blind, "GPT-OSS-120B"),
+        (old_visible, "GPT-OSS-120B visible"),
+        (new_visible, "GPT-OSS-120B visible"),
+    ):
+        _write_metrics(
+            path,
+            splits=splits,
+            model_label=label,
+            evaluation_subset="valid",
+        )
+
+    render_model_comparison(
+        old_blind,
+        new_blind,
+        output,
+        comparison_paths=(old_visible, new_visible),
+        method_family="molecular_evidence_agent",
+        series_label_overrides=(
+            "Original · Blind",
+            "Record-supported v2 · Blind",
+            "Original · Visible",
+            "Record-supported v2 · Visible",
+        ),
+        chart_title="GPT-OSS-120B Across Dataset Versions",
+        chart_subtitle="Scaffold valid · Parent-disjoint retrieval · Macro-F1",
+        context_lines=(
+            "Record-supported v2 prioritizes multi-record held-out molecules.",
+            "Old and new valid sets contain different molecules.",
+        ),
+        comparison_title_override="Original vs record-supported v2",
+    )
+    svg = output.read_text(encoding="utf-8")
+
+    assert "GPT-OSS-120B Across Dataset Versions" in svg
+    assert "Record-supported v2 prioritizes multi-record held-out molecules." in svg
+    assert "Original vs record-supported v2" in svg
+    assert "Record-supported v2 · Visible" in svg
+    assert "MiniMol · Train all" not in svg
+    assert svg.count("Scaffold split · n =") == 3
+
+
+def test_model_comparison_can_plot_lineage_specific_baseline_series(tmp_path):
+    old = tmp_path / "old.tsv"
+    new = tmp_path / "new.tsv"
+    output = tmp_path / "dataset_comparison_with_baselines.svg"
+    splits = (("scaffold", "Scaffold split"),)
+    _write_metrics(old, splits=splits, model_label="Old", evaluation_subset="valid")
+    _write_metrics(
+        new,
+        splits=splits,
+        model_label="New",
+        evaluation_subset="valid",
+        baseline_delta=0.05,
+    )
+
+    with pytest.raises(ValueError, match="Baseline macro_f1 mismatch"):
+        render_model_comparison(old, new, output)
+
+    render_model_comparison(
+        old,
+        new,
+        output,
+        series_label_overrides=("Original v1", "Record-supported v2"),
+        baseline_display="series",
+    )
+    svg = output.read_text(encoding="utf-8")
+
+    assert svg.count("MiniMol · Train all") == 3
+    assert svg.count("Morgan KNN · k=3") == 3
+    assert svg.count("MiniMol KNN · k=3") == 3
+    assert "Shared train-label baseline" not in svg
+
+
+def test_model_comparison_collapses_visibility_duplicate_baselines(tmp_path):
+    paths = [tmp_path / name for name in ("ob.tsv", "nb.tsv", "ov.tsv", "nv.tsv")]
+    splits = (("scaffold", "Scaffold split"),)
+    for path, delta in zip(paths, (0.0, 0.05, 0.0, 0.05), strict=True):
+        _write_metrics(
+            path,
+            splits=splits,
+            evaluation_subset="valid",
+            baseline_delta=delta,
+        )
+    output = tmp_path / "collapsed_baselines.svg"
+    render_model_comparison(
+        paths[0],
+        paths[1],
+        output,
+        comparison_paths=(paths[2], paths[3]),
+        series_label_overrides=("OB", "NB", "OV", "NV"),
+        baseline_display="series",
+        baseline_series_groups=("old", "new", "old", "new"),
+    )
+    assert output.exists()
+
+    _write_metrics(
+        paths[2],
+        splits=splits,
+        evaluation_subset="valid",
+        baseline_delta=0.01,
+    )
+    with pytest.raises(ValueError, match="grouped under the same lineage must match"):
+        render_model_comparison(
+            paths[0],
+            paths[1],
+            output,
+            comparison_paths=(paths[2], paths[3]),
+            series_label_overrides=("OB", "NB", "OV", "NV"),
+            baseline_display="series",
+            baseline_series_groups=("old", "new", "old", "new"),
+        )
 
 
 def test_model_comparison_validates_subset_and_supports_two_splits(tmp_path):
@@ -358,3 +597,135 @@ def test_model_comparison_supports_visible_experiment_anchor(tmp_path):
     assert "Matched opt-in experiments" in svg
     assert svg.count("120B blind · Coverage · standard context") == 3
     assert svg.count("120B visible · Coverage · standard context") == 3
+
+
+def test_model_comparison_adds_paired_bootstrap_intervals(tmp_path):
+    reference = tmp_path / "blind_20b.tsv"
+    candidate = tmp_path / "blind_120b.tsv"
+    paired = tmp_path / "paired_ci.tsv"
+    output = tmp_path / "comparison.svg"
+    splits = (("scaffold", "Scaffold split"),)
+    _write_metrics(
+        reference,
+        splits=splits,
+        model_label="GPT-OSS-20B",
+        evaluation_subset="valid",
+    )
+    _write_metrics(
+        candidate,
+        splits=splits,
+        model_label="GPT-OSS-120B",
+        evaluation_subset="valid",
+    )
+    _write_paired_ci_metrics(paired)
+
+    render_model_comparison(
+        reference,
+        candidate,
+        output,
+        paired_ci_path=paired,
+    )
+    svg = output.read_text(encoding="utf-8")
+
+    assert "Best agent paired Δ · 95% CI" in svg
+    assert svg.count("Paired Δ macro-F1: best agent − baseline (95% CI)") == 3
+    assert svg.count("10,000 paired resamples") == 3
+    assert svg.count("MiniMol train-all") == 3
+    assert svg.count("Morgan KNN k=3") == 3
+    assert svg.count("MiniMol KNN k=3") == 3
+    assert str(paired) in svg
+
+
+def test_model_comparison_rejects_stale_paired_delta(tmp_path):
+    reference = tmp_path / "blind_20b.tsv"
+    candidate = tmp_path / "blind_120b.tsv"
+    paired = tmp_path / "paired_ci.tsv"
+    output = tmp_path / "comparison.svg"
+    splits = (("scaffold", "Scaffold split"),)
+    _write_metrics(reference, splits=splits, evaluation_subset="valid")
+    _write_metrics(
+        candidate,
+        splits=splits,
+        model_label="GPT-OSS-120B",
+        evaluation_subset="valid",
+    )
+    _write_paired_ci_metrics(paired, delta_offset=0.01)
+
+    with pytest.raises(ValueError, match="Paired-CI delta mismatch"):
+        render_model_comparison(
+            reference,
+            candidate,
+            output,
+            paired_ci_path=paired,
+        )
+
+
+def test_model_comparison_can_show_only_one_sided_pvalues(tmp_path):
+    reference = tmp_path / "blind_20b.tsv"
+    candidate = tmp_path / "blind_120b.tsv"
+    paired = tmp_path / "paired_stats.tsv"
+    output = tmp_path / "comparison.svg"
+    splits = (("scaffold", "Scaffold split"),)
+    _write_metrics(reference, splits=splits, evaluation_subset="valid")
+    _write_metrics(
+        candidate,
+        splits=splits,
+        model_label="GPT-OSS-120B",
+        evaluation_subset="valid",
+    )
+    _write_paired_ci_metrics(paired)
+
+    render_model_comparison(
+        reference,
+        candidate,
+        output,
+        paired_ci_path=paired,
+        paired_significance_display="pvalue",
+    )
+    svg = output.read_text(encoding="utf-8")
+
+    assert svg.count("Exploratory one-sided paired permutation p-value") == 3
+    assert svg.count("100,000 permutations") == 3
+    assert svg.count("p = 0.123") == 9
+    assert "Best agent paired Δ · 95% CI" not in svg
+    assert "Paired Δ macro-F1" not in svg
+
+
+def test_single_series_partial_matrix_can_show_pvalues(tmp_path):
+    metrics = tmp_path / "current.tsv"
+    paired = tmp_path / "paired.tsv"
+    output = tmp_path / "comparison.svg"
+    _write_metrics(
+        metrics,
+        splits=(("scaffold", "Scaffold split"),),
+        model_label="GPT-OSS-120B",
+        evaluation_subset="valid",
+    )
+    rows = list(csv.DictReader(metrics.open(encoding="utf-8"), delimiter="\t"))
+    keep = {
+        "none",
+        "starling_direct",
+        "starling_full_flat",
+        "starling_full_mechanism",
+        "minimol_train_all",
+        "morgan_knn_k3",
+        "minimol_embedding_cosine_knn_k3",
+    }
+    rows = [row for row in rows if row["method"] in keep]
+    with metrics.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), delimiter="\t")
+        writer.writeheader()
+        writer.writerows(rows)
+    _write_paired_ci_metrics(paired)
+
+    render_model_comparison(
+        metrics,
+        metrics,
+        output,
+        paired_ci_path=paired,
+        paired_significance_display="pvalue",
+        single_series=True,
+    )
+
+    svg = output.read_text(encoding="utf-8")
+    assert svg.count("p = 0.123") == 9

@@ -1,0 +1,67 @@
+{
+  "schema_version": "bbb_experimental_direct_cns_gold_audit.v1",
+  "gold_contract_version": "bbb_experimental_direct_cns_gold.v1",
+  "build_fingerprint": "a99416012caa5d6e548d66419623c30140888bae67a05101e8ee75e77f094f28",
+  "source_dataset": "starling-labs/BBB",
+  "source_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+  "n_source_rows": 304845,
+  "n_accepted_source_rows": 11406,
+  "n_binary_parent_molecules": 4195,
+  "accepted_source_rows_by_family_and_label": {
+    "brain_systemic_ratio": {
+      "Y=0": 698,
+      "Y=1": 1642
+    },
+    "brain_tissue": {
+      "Y=0": 1337,
+      "Y=1": 2987
+    },
+    "brain_unbound": {
+      "Y=0": 125,
+      "Y=1": 242
+    },
+    "csf": {
+      "Y=0": 1037,
+      "Y=1": 1981
+    },
+    "experimental_bbb_outcome": {
+      "Y=0": 26,
+      "Y=1": 172
+    },
+    "pet_or_autoradiography": {
+      "Y=0": 304,
+      "Y=1": 855
+    }
+  },
+  "split_gate": {
+    "train": 3357,
+    "valid": 419,
+    "test": 419,
+    "identity_overlap": {
+      "train_valid": 0,
+      "train_test": 0,
+      "valid_test": 0
+    },
+    "scaffold_overlap": {
+      "train_valid": 0,
+      "train_test": 0,
+      "valid_test": 0
+    },
+    "valid_record_tiers": {
+      "multi_record": 405,
+      "singleton": 14
+    },
+    "test_record_tiers": {
+      "multi_record": 404,
+      "singleton": 15
+    }
+  },
+  "qa_sample": {
+    "seed": 20260809,
+    "samples_per_family_label": 25,
+    "n_rows": 300,
+    "path": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/audit/source_review_sample.jsonl",
+    "status": "pending",
+    "review_note": "Expanded 300-row multi-agent review pending."
+  }
+}

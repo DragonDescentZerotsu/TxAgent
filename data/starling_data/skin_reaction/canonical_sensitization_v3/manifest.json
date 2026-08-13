@@ -1,0 +1,87 @@
+{
+  "contract_version": "skin_sensitization_direct_aop.v3",
+  "source_inputs": {
+    "direct": {
+      "path": "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet",
+      "sha256": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1"
+    },
+    "aop": {
+      "path": "data/starling_data/skin_reaction/sensitization_aop/extractions.parquet",
+      "sha256": "3eca3f70d1243795bc37f06e31795566295ce8ea3bf03e810efd3807152cf2c8"
+    }
+  },
+  "partition_contract": {
+    "direct": "validated final sensitization/contact-allergy outcomes only",
+    "aop": "experimental MIE, KE2, KE3, or KE4 evidence only",
+    "excluded": [
+      "phototoxicity/photoallergy/photoirritation",
+      "irritation/corrosion",
+      "prediction-only or in-silico evidence",
+      "integrated or unresolved endpoints"
+    ],
+    "mutually_exclusive": true,
+    "raw_inputs_immutable": true,
+    "identity_normalizer": "rdkit_fragment_parent.v1"
+  },
+  "stats": {
+    "n_raw_direct_rows": 66597,
+    "n_raw_aop_rows": 45985,
+    "n_partition_audit_rows": 112582,
+    "n_canonical_direct_before_dedup": 55081,
+    "n_canonical_direct_records": 54596,
+    "n_canonical_aop_before_dedup": 11763,
+    "n_canonical_aop_records": 11434,
+    "n_direct_duplicates_removed": 485,
+    "n_aop_duplicates_removed": 329,
+    "n_invalid_or_missing_smiles": 33299,
+    "decision_counts": {
+      "direct_skin_reaction:aop:mechanistic_assay_in_direct_source": 544,
+      "direct_skin_reaction:direct:scoped_direct_outcome": 42986,
+      "direct_skin_reaction:reject:integrated_prediction_or_defined_approach": 6,
+      "direct_skin_reaction:reject:invalid_or_missing_smiles": 17341,
+      "direct_skin_reaction:reject:out_of_scope_irritation": 31,
+      "direct_skin_reaction:reject:out_of_scope_photo_hazard": 619,
+      "direct_skin_reaction:reject:outside_sensitization_scope": 5049,
+      "direct_skin_reaction:reject:prediction_only": 21,
+      "sensitization_aop:aop:adverse_outcome_reclassified_by_mechanistic_assay": 7,
+      "sensitization_aop:aop:explicit_aop_key_event": 11081,
+      "sensitization_aop:aop:unspecified_record_reclassified_by_assay": 131,
+      "sensitization_aop:direct:aop_adverse_outcome_moved_to_direct": 12083,
+      "sensitization_aop:direct:unspecified_record_reclassified_as_direct": 12,
+      "sensitization_aop:reject:adverse_outcome_without_direct_anchor": 3056,
+      "sensitization_aop:reject:direct_outcome_without_usable_label": 747,
+      "sensitization_aop:reject:integrated_or_unresolved_endpoint": 592,
+      "sensitization_aop:reject:integrated_prediction_or_defined_approach": 62,
+      "sensitization_aop:reject:invalid_or_missing_smiles": 15958,
+      "sensitization_aop:reject:out_of_scope_irritation": 339,
+      "sensitization_aop:reject:out_of_scope_photo_hazard": 690,
+      "sensitization_aop:reject:prediction_only": 1227
+    },
+    "canonical_direct_source_counts": {
+      "direct_skin_reaction": 42753,
+      "sensitization_aop": 11843
+    },
+    "canonical_aop_source_counts": {
+      "direct_skin_reaction": 541,
+      "sensitization_aop": 10893
+    },
+    "canonical_aop_event_counts": {
+      "KE2_keratinocyte_activation": 1971,
+      "KE3_dendritic_cell_activation": 3777,
+      "KE4_T_cell_activation": 1087,
+      "MIE_protein_binding": 4599
+    },
+    "partition_reconciles": true,
+    "direct_aop_source_record_overlap": 0
+  },
+  "paths": {
+    "direct_records": "data/starling_data/skin_reaction/canonical_sensitization_v3/direct_records.parquet",
+    "direct_records_sha256": "3c19125594c7b9f4c2029fbd466121f7c7b784cace3fe6a4566e8a5713d9987b",
+    "aop_records": "data/starling_data/skin_reaction/canonical_sensitization_v3/aop_records.parquet",
+    "aop_records_sha256": "b55dff317e50ae45c9ea5e21fef881fff8a7ea9e556a5714c135a5b802890da0",
+    "partition_audit": "data/starling_data/skin_reaction/canonical_sensitization_v3/partition_audit.parquet",
+    "partition_audit_sha256": "b986688fde5d09966a2c2abae174e6e1331267d902d64658d24881f9af9ae4f4",
+    "dedup_audit": "data/starling_data/skin_reaction/canonical_sensitization_v3/dedup_audit.parquet",
+    "dedup_audit_sha256": "29cddb2dd8852f579ca9708efe8a74b81423f4b52bc4531e58d949f00bc39082"
+  }
+}

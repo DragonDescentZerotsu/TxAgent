@@ -5,6 +5,7 @@ from tools.chembl_tool.paper_experiments.analyze_coverage_performance import (
 )
 from tools.chembl_tool.paper_experiments.summarize_results import (
     _add_holm_adjusted_p,
+    _audit_retrieval_policy,
     _count_identity_leaks,
     _audit_deployment_visibility,
     _llm_prompt_payloads,
@@ -224,3 +225,35 @@ def test_deployment_visibility_audit_checks_query_and_neighbor_contract(tmp_path
     assert audit["deployment_visibility_audited_runs"] == 1
     assert audit["deployment_contract_satisfied_runs"] == 1
     assert audit["deployment_contract_failed_runs"] == 0
+
+
+def test_retrieval_policy_audit_recomputes_scaffold_conflicts(tmp_path):
+    run_dir = tmp_path / "runs" / "run_0"
+    run_dir.mkdir(parents=True)
+    (run_dir / "retrieval.json").write_text(
+        json.dumps(
+            {
+                "query": {"input_smiles": "Cc1ccccc1"},
+                "groups": [
+                    {
+                        "neighbors": [
+                            {"canonical_smiles": "CCc1ccccc1"},
+                            {"canonical_smiles": "c1ccncc1"},
+                        ]
+                    }
+                ],
+            }
+        )
+    )
+
+    audit = _audit_retrieval_policy(
+        tmp_path,
+        [{"run_dir": str(run_dir), "run_id": "run_0"}],
+        "scaffold_disjoint",
+    )
+
+    assert audit == {
+        "retrieval_policy_audited_runs": 1,
+        "retained_neighbors": 2,
+        "retrieval_policy_conflicts": 1,
+    }

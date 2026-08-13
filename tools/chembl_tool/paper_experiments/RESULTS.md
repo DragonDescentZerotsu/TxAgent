@@ -1,11 +1,103 @@
 # 冻结的全量实验结果
 
-运行日期：2026-07-10 至 2026-07-27。
+主体运行日期：2026-07-10 至 2026-07-27；current Starling valid 补充更新至 2026-08-10。
 
 本文件主体记录旧 TDC test/valid matrix。当前 Starling-held-out random/scaffold 的 frozen data 决策、
 formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind 进度、Skin trace audit
 和新增入口统一见
 `STARLING_BENCHMARK_RESULTS.md`；两种 lineage 不得混表。
+
+## 当前唯一 canonical Starling valid 快照（2026-08-10）
+
+下表只比较 scaffold-valid、`identity_blind + parent_disjoint`、GPT-OSS-120B 的当前数据与当前默认 prompt。
+它是“现在应该引用哪个版本”的短索引；完整逐条件结果、paired CI 和历史 lineage 仍在
+`STARLING_BENCHMARK_RESULTS.md`。BBB 与 Skin formal test 尚未运行，其中 BBB 已因 E20 promotion gate
+失败而有意停止、不再作为待办；Bioavailability 已在设置冻结后完成一次
+full-flat/full-mechanism 和三项 train-derived baseline 的 scaffold-test，不能把下表 valid 数字写成 test 结果。
+
+| task | frozen data lineage | 默认 prompt profile | 当前最佳 agent 条件 | macro-F1 | Morgan KNN | MiniMol KNN | MiniMol trained head |
+|---|---|---|---|---:|---:|---:|---:|
+| BBB_Martins | `experimental_meaningful_cns_access_v2` | `meaningful_cns_access_v1` | Starling full-flat | **0.6690** | 0.5896 | 0.6002 | 0.6581 |
+| Bioavailability_Ma | `record_supported_v2` | `f20_evidence_calibrated_v2` | Starling full-flat | **0.7004** | 0.5856 | 0.6149 | 0.6755 |
+| Skin_Reaction | `record_supported_v2` | `sensitization_aligned_v2` | Starling direct | **0.5725** | 0.5201 | 0.5749 | 0.5749 |
+
+Bioavailability 的首次 formal scaffold-test（209条、所有方法逐样本对齐）为：full-flat `0.6663`、
+full-mechanism `0.6720`、Morgan KNN `0.6801`、MiniMol embedding KNN `0.6484`、MiniMol trained head
+`0.7027`。两个 agent batch 均209/209成功、0 failed；所有 agent-minus-baseline paired-bootstrap
+macro-F1 95% CI 均跨0。该 test 只用于一次冻结评估，不回流调参；精确 confusion matrix、paired CI、p-value
+和 artifact 路径见 `STARLING_BENCHMARK_RESULTS.md` 的 Bio formal-test 小节。
+
+同一 setting 下 2026-08-10 新完成的 ChEMBL 条件如下；每个 batch 均 `n_successful=n_total`、
+`n_failed_runs=0`：
+
+| task | ChEMBL direct | ChEMBL full-flat | ChEMBL full-mechanism | 当前 Starling best |
+|---|---:|---:|---:|---:|
+| BBB_Martins | 0.5354 | **0.5756** | **0.5756** | 0.6690 |
+| Bioavailability_Ma | 0.5552 | **0.6098** | 0.5666 | 0.7004 |
+| Skin_Reaction | 0.5123 | 0.5471 | **0.5677** | 0.5725 |
+
+ChEMBL 是外部 evidence corpus。当前 `parent_disjoint` 只排除 exact record、same-connectivity variant 和
+same molecular parent，不排除同 Bemis–Murcko scaffold 的外部 analog；因此这些 ChEMBL 条件是实际外部证据
+RAG setting，不是与 scaffold-split train-only KNN 完全同信息预算的 matched comparison。9 个 batch 合计
+`2460/2460` final 通过 single/final/status/expected-group 四层完整性 gate，retained-neighbor parent-policy
+conflict 和 below-threshold neighbor 均为 0。
+
+机器可读的唯一汇总为：
+
+```text
+outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/metrics.tsv
+outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_gpt_oss_120b/analysis/best_agent_paired_all_baselines.tsv
+```
+
+Canonical figure 现在同时标注每个 task 的 best valid-selected agent 相对 MiniMol train-all、Morgan KNN 和
+MiniMol embedding KNN 的 one-sided paired permutation raw p-value。BBB/Bio 对 Morgan 的 raw p 分别为
+`0.015/0.020`，BBB 对 MiniMol embedding KNN 为 `0.027`；但这 9 项均为 valid-selected exploratory tests，
+Holm 校正后无一低于 0.05；这些仍是 valid exploratory annotation。Bio 的独立 formal-test 结果见上文，
+BBB 与 Skin formal test 尚未运行；BBB 是 gate-failed 后的主动 no-test，Skin 仍需独立 gate。
+
+当前默认代码入口固定为：
+
+```text
+tools/chembl_tool/tasks/bbb_martins/prompt_profiles.py
+tools/chembl_tool/tasks/bioavailability_ma/prompt_profiles.py
+tools/chembl_tool/tasks/skin_reaction/prompt_profiles.py
+tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
+tools/chembl_tool/paper_experiments/analyze_starling_best_agent_baselines.py
+tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
+```
+
+其余本轮尝试全部保留为历史复现，不进入默认 pipeline：matched train-label agent（E15）、BBB prompt v2/v3、
+BBB property-compatible selector（E16）、BBB DeepSeek residual adjudication（E20）、Skin negative-transfer v3
+和 train-ratio prior。它们的代码、固定命令、
+artifact 与 no-go 原因由 `matched_train_label_agent/README.md`、`ICLR_2027_EXECUTION_PLAN.md` 和本文件后续
+历史章节索引；不得覆盖上表，也不得据此启动 formal test。
+
+2026-08-13 的 DeepSeek Skin canonical-v3 AOP source/topology-gated final-only E19 也属于 no-go：245 个
+scaffold-valid 分子中没有一个 direct=`no_risk` 样本同时满足 positive AOP、source-context 与显式
+reactive-topology/activation-route gate，故 0 fresh final、0 flip，macro-F1/accuracy 严格保持
+`0.641036/0.693878`。该结果未通过 promotion gate，Skin formal test 仍未读取；完整 gate audit 见
+`outputs/paper/skin_aop_gated_final_v1_scaffold_valid_deepseek_v4_pro/`。
+
+同日完成的 DeepSeek BBB E20 也属于 no-go。366 条 scaffold-valid 上，Direct、标准 Full-mechanism、
+direct-anchored residual 和 residual+override-recheck 的 macro-F1 分别为
+`0.7000/0.7184/0.7084/0.7109`；标准 Full-mechanism 是 nominal best，但相对 Direct 的 paired 95% CI
+为 `[-0.0121,+0.0496]`。Hybrid 的 delta 为 `+0.0109`，CI `[-0.0186,+0.0412]`，未通过预冻结 gate。
+因此 BBB 不读取 test，也不再从同一 valid 派生 prompt、weighting 或 recheck 候选；完整 receipt 见
+`outputs/paper/bbb_deepseek_residual_adjudication_valid_v1/analysis/`。
+
+2026-08-09 的 current Starling scaffold-valid E15 matched train-label 诊断已完成：三 task 共 820/820
+成功，strict retrieval parity 和 prompt identity audit 均为 0 failure；BBB/Bio/Skin 的 agent-minus-Morgan-KNN
+macro-F1 分别为 `+0.0514/-0.0595/+0.0408`，三个 paired 95% CI 均跨 0。该实验 no-go，不运行 formal
+test；完整 accuracy、class recall、vote-strength 和 rescue/harm 结果只记录在
+`STARLING_BENCHMARK_RESULTS.md`，不与下文 TDC 表混合。
+
+E15 Bio trace 诊断随后冻结了唯一 `f20_evidence_calibrated_v2` prompt 修复。在 retrieval 逐样本完全匹配的
+GPT-OSS-120B scaffold-valid 对照中，full-flat macro-F1 从 `0.6117` 提高到 `0.7004`
+（paired 95% CI `[+0.0163,+0.1606]`），full-mechanism 从 `0.5869` 提高到 `0.6844`
+（`[+0.0230,+0.1694]`）；两项均为 209/209 成功、0 failure。该 valid 结果支持保留 v2 为 Bio 默认，
+但 `none` 退化。随后冻结设置下的 Bio formal scaffold-test 已完成；完整 condition 表、prediction
+distribution、paired statistics 和 artifact 路径仍只在 `STARLING_BENCHMARK_RESULTS.md` 维护。
 
 Test 可见性/执行矩阵共有 73 个 GLM 条件，另有 22 个完整 test-set 的 parent-disjoint retrieval 条件和
 1 个标量 KNN 基线。Valid 诊断矩阵的三套 GLM 制度均已扩展到 26 个条件，共 78 个 GLM 条件，另有

@@ -53,18 +53,6 @@ STARLING = SourceExperimentConfig(
             "sensitisation_aop",
             source_groups=("Mechanism.sensitization_aop",),
         ),
-        EvidenceGroupSpec(
-            "Mechanism.tier_3",
-            "Tier 3",
-            "phototoxicity_irritation_local_damage",
-            source_groups=("Mechanism.phototoxicity_irritation_local_damage",),
-        ),
-        EvidenceGroupSpec(
-            "Mechanism.tier_4",
-            "Tier 4",
-            "skin_exposure",
-            source_groups=("Mechanism.skin_exposure",),
-        ),
     ),
 )
 

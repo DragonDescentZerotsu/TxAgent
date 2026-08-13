@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, Mapping
 
 from tools.chembl_tool.common.coverage_reasoning import (
     augment_group_messages_with_neighbor_context,
 )
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
-from tools.chembl_tool.common.reasoning_validation import call_with_json_validation
+from tools.chembl_tool.common.reasoning_validation import (
+    allowed_values_from_required_schema,
+    call_with_json_validation,
+)
 
 
 # Leave headroom for the frozen 20,480-token completion budget within GLM's
@@ -83,6 +86,7 @@ def call_single_molecule_branch(
             client.chat_json,
             messages,
             required_fields=("confidence", "reasoning_summary"),
+            allowed_values=allowed_values_from_required_schema(messages),
             branch_name="single-molecule",
         )
         response["tool_results"] = [prefetched]
@@ -96,6 +100,7 @@ def call_single_molecule_branch(
         ),
         messages,
         required_fields=("confidence", "reasoning_summary"),
+        allowed_values=allowed_values_from_required_schema(messages),
         required_tool_names=("molecule_properties",),
         branch_name="single-molecule",
     )
@@ -114,6 +119,7 @@ def call_group_branch(
     ),
     allowed_values: dict[str, set[str]] | None = None,
     forbidden_field_names: tuple[str, ...] = (),
+    content_validator: Callable[[Mapping[str, Any]], list[str]] | None = None,
 ) -> dict[str, Any]:
     """Use live comparison tools, or harness-prefetched blind comparisons."""
     messages = augment_group_messages_with_neighbor_context(messages, group)
@@ -130,7 +136,12 @@ def call_group_branch(
         call,
         messages,
         required_fields=required_fields,
-        allowed_values=allowed_values,
+        allowed_values=(
+            allowed_values
+            if allowed_values is not None
+            else allowed_values_from_required_schema(messages)
+        ),
         forbidden_field_names=forbidden_field_names,
+        content_validator=content_validator,
         branch_name="group",
     )

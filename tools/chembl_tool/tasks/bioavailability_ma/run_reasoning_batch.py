@@ -26,6 +26,13 @@ def rerank_preflight(**kwargs):
     )
 
 
+from tools.chembl_tool.tasks.bioavailability_ma.prompt_profiles import (
+    BIOAVAILABILITY_PROMPT_PROFILES,
+    DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    HISTORICAL_BIOAVAILABILITY_PROMPT_PROFILE,
+)
+
+
 CONFIG = BatchConfig(
     description=__doc__ or "",
     default_input="data/processed/Bioavailability_Ma/test.jsonl",
@@ -61,6 +68,11 @@ CONFIG = BatchConfig(
         "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
         "starling_normalized_v7/08_neighbor_index/scaffold"
     ),
+    supports_final_decision_profiles=True,
+    prompt_profile_option="--bioavailability-prompt-profile",
+    prompt_profile_choices=BIOAVAILABILITY_PROMPT_PROFILES,
+    default_prompt_profile=DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    historical_prompt_profile=HISTORICAL_BIOAVAILABILITY_PROMPT_PROFILE,
 )
 
 

@@ -134,6 +134,53 @@ def test_visible_prefetch_preserves_identity_but_matches_blind_tool_calls():
     assert blind["query"]["identity_hidden"] is True
 
 
+def test_identity_blind_prefetch_redacts_backend_error_details():
+    class ErrorToolService(FakeToolService):
+        def invoke(self, tool_name, arguments):
+            self.calls.append((tool_name, arguments))
+            if tool_name == "mmp_structure_compare":
+                return {
+                    "tool_name": tool_name,
+                    "status": "error",
+                    "content": "AssertionError: *CCO.*CCN",
+                    "warnings": ["raw backend warning for CCO"],
+                    "errors": [
+                        {
+                            "code": "TOOL_RUNTIME_ERROR",
+                            "message": "AssertionError: *CCO.*CCN",
+                            "recoverable": False,
+                        }
+                    ],
+                }
+            return super().invoke(tool_name, arguments)
+
+    retrieval = {
+        "query": {"input_smiles": "CCO", "canonical_smiles": "CCO"},
+        "groups": [
+            {
+                "group_id": "Direct.outcome",
+                "neighbors": [
+                    {
+                        "rank": 1,
+                        "molecule_chembl_id": "CHEMBL1",
+                        "canonical_smiles": "CCN",
+                        "evidence_rows": [],
+                    }
+                ],
+            }
+        ],
+    }
+
+    output = prepare_identity_blind_retrieval(retrieval, ErrorToolService())
+    receipt = output["groups"][0]["neighbors"][0]["prefetched_comparisons"][0]
+    serialized = json.dumps(receipt)
+    assert receipt["status"] == "error"
+    assert receipt["errors"][0]["code"] == "TOOL_RESULT_UNAVAILABLE"
+    assert "AssertionError" not in serialized
+    assert "CCO" not in serialized
+    assert "CCN" not in serialized
+
+
 def test_prefetched_tool_replay_keeps_visible_identity(tmp_path):
     retrieval = {
         "query": {"input_smiles": "CCO", "canonical_smiles": "CCO"},
@@ -325,6 +372,36 @@ def test_identity_blind_leak_finder_ignores_four_letter_name_inside_common_word(
     assert find_identity_blind_leaks(retrieval, "SCOP was administered")["names"] == ["SCOP"]
 
 
+def test_identity_blind_leak_finder_ignores_schema_key_alias_collision():
+    retrieval = {
+        "query": {},
+        "groups": [
+            {
+                "neighbors": [
+                    {
+                        "evidence_rows": [
+                            {
+                                "source_molecule_names": ["FA"],
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+    }
+    payload = {
+        "mechanism_family_mapping": {
+            "Fa.absorption_solubility_permeability": [
+                "[neighbor].absorption_solubility_permeability"
+            ]
+        }
+    }
+    assert find_identity_blind_leaks(retrieval, payload)["names"] == []
+
+    payload["evidence_text"] = "The result was reported for FA."
+    assert find_identity_blind_leaks(retrieval, payload)["names"] == ["FA"]
+
+
 def test_identity_blind_leak_finder_does_not_match_short_smiles_inside_words():
     retrieval = {
         "query": {"input_smiles": "CCC(C)(C)O"},
@@ -337,3 +414,54 @@ def test_identity_blind_leak_finder_does_not_match_short_smiles_inside_words():
         "names": [],
     }
     assert find_identity_blind_leaks(retrieval, 'structure "CCO"') ["structures"] == ["CCO"]
+
+
+def test_identity_blind_single_atom_smiles_does_not_corrupt_tool_text():
+    class DescriptiveToolService(FakeToolService):
+        def invoke(self, tool_name, arguments):
+            self.calls.append((tool_name, arguments))
+            return {
+                "tool_name": tool_name,
+                "status": "ok",
+                "content": "Neutral fraction: 1\nNumber of nitrogen atoms: 1",
+                "warnings": [],
+            }
+
+    retrieval = {
+        "query": {
+            "input_smiles": "N",
+            "canonical_smiles": "N",
+            "standard_inchi_key": "QGZKDVFQNNGYKY-UHFFFAOYSA-N",
+        },
+        "groups": [],
+    }
+
+    output = prepare_identity_blind_retrieval(retrieval, DescriptiveToolService())
+    content = output["query"]["prefetched_molecule_properties"]["content"]
+
+    assert output["query"]["identity_hidden"] is True
+    assert content == "Neutral fraction: 1\nNumber of nitrogen atoms: 1"
+    assert find_identity_blind_leaks(retrieval, output)["structures"] == []
+
+
+def test_identity_blind_two_character_single_atom_smiles_does_not_flag_assay_text():
+    retrieval = {
+        "query": {"input_smiles": "C[Se]", "canonical_smiles": "C[Se]"},
+        "groups": [
+            {
+                "neighbors": [
+                    {
+                        "canonical_smiles": "Cl",
+                        "evidence_rows": [],
+                    }
+                ]
+            }
+        ],
+    }
+
+    assert find_identity_blind_leaks(
+        retrieval, "The rate of 36Cl influx was measured."
+    ) == {"structures": [], "identifiers": [], "names": []}
+    assert find_identity_blind_leaks(
+        retrieval, 'query structure "C[Se]"'
+    )["structures"] == ["C[Se]"]

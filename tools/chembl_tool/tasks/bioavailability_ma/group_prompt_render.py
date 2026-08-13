@@ -209,6 +209,7 @@ def group_system_message(
     *,
     group_tools_enabled: bool = True,
     use_assay_transfer_likelihoods: bool = False,
+    system_role: str | None = None,
 ) -> str:
     """System message shared with the legacy branch (kept byte-identical there)."""
     prefetched = group.get("tools_prefetched") or group.get("identity_blind")
@@ -226,8 +227,13 @@ def group_system_message(
     else:
         middle = "You may call the provided molecule comparison tools when structural or property differences matter. "
     return (
-        "You are a medicinal chemistry oral bioavailability analog evidence analyst. "
-        "Reason about whether analog evidence for one aspect of oral bioavailability is transferable to the query molecule. "
+        (
+            system_role
+            or (
+                "You are a medicinal chemistry oral bioavailability analog evidence analyst. "
+                "Reason about whether analog evidence for one aspect of oral bioavailability is transferable to the query molecule. "
+            )
+        )
         + middle
         + "Return only valid JSON."
     )
@@ -534,6 +540,10 @@ def build_group_messages(
         template = "assay_transfer_tool.jinja"
     else:
         raise ValueError(f"Unknown text group-prompt format: {prompt_format!r}")
+    context["instructions"] = [
+        *list(options.get("additional_instructions") or []),
+        *context["instructions"],
+    ]
     user_content = _env().get_template(template).render(**context)
     return [
         {
@@ -542,6 +552,7 @@ def build_group_messages(
                 group,
                 group_tools_enabled=bool(options.get("group_tools_enabled", True)),
                 use_assay_transfer_likelihoods=prompt_format == "assay_transfer_tool",
+                system_role=options.get("system_role"),
             ),
         },
         {"role": "user", "content": user_content},

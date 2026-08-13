@@ -63,22 +63,36 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
 )
 
 
-def paper_root_for_benchmark_split(split: str, *, output_root: str | Path = DEFAULT_OUTPUT_ROOT) -> Path:
+def paper_root_for_benchmark_split(
+    split: str,
+    *,
+    output_root: str | Path = DEFAULT_OUTPUT_ROOT,
+    lineage: str = BENCHMARK_LINEAGE,
+) -> Path:
     if split not in BENCHMARK_SPLITS:
         raise ValueError(f"Unknown Starling benchmark split: {split}")
-    return Path(output_root) / f"molecular_evidence_agent_starling_{split}_{BENCHMARK_LINEAGE}"
+    return Path(output_root) / f"molecular_evidence_agent_starling_{split}_{lineage}"
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     splits = args.splits or list(BENCHMARK_SPLITS)
-    specs = _select_specs(args.indices)
-    summary_path = Path(args.output_root) / "starling_benchmark_index_summary.json"
+    specs = _apply_source_evidence_overrides(
+        _select_specs(args.indices),
+        args.source_evidence,
+    )
+    summary_name = (
+        "starling_benchmark_index_summary.json"
+        if args.benchmark_lineage == BENCHMARK_LINEAGE
+        else f"starling_benchmark_index_summary_{args.benchmark_lineage}.json"
+    )
+    summary_path = Path(args.output_root) / summary_name
     if args.summarize_existing:
         results = _collect_existing_index_meta(
             splits=splits,
             specs=specs,
             output_root=args.output_root,
+            lineage=args.benchmark_lineage,
         )
         summary_path.parent.mkdir(parents=True, exist_ok=True)
         summary_path.write_text(
@@ -89,11 +103,15 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     results = _load_existing_summary(summary_path)
     for split in splits:
-        paper_root = paper_root_for_benchmark_split(split, output_root=args.output_root)
+        paper_root = paper_root_for_benchmark_split(
+            split,
+            output_root=args.output_root,
+            lineage=args.benchmark_lineage,
+        )
         split_results = dict(results.get(split, {}))
         for spec in specs:
             heldout_path = (
-                Path("data/processed_starling")
+                Path(args.benchmark_data_root)
                 / spec["task"]
                 / split
                 / "heldout_molecule_labels.jsonl"
@@ -136,11 +154,16 @@ def _collect_existing_index_meta(
     splits: list[str],
     specs: list[dict[str, str]],
     output_root: str | Path,
+    lineage: str = BENCHMARK_LINEAGE,
 ) -> dict[str, Any]:
     results: dict[str, Any] = {}
     missing: list[str] = []
     for split in splits:
-        paper_root = paper_root_for_benchmark_split(split, output_root=output_root)
+        paper_root = paper_root_for_benchmark_split(
+            split,
+            output_root=output_root,
+            lineage=lineage,
+        )
         split_results: dict[str, Any] = {}
         for spec in specs:
             meta_path = (
@@ -171,11 +194,59 @@ def _select_specs(names: list[str]) -> list[dict[str, str]]:
     return [dict(by_name[name]) for name in names]
 
 
+def _apply_source_evidence_overrides(
+    specs: list[dict[str, str]],
+    overrides: list[str],
+) -> list[dict[str, str]]:
+    """Return copied specs with explicit NAME=JSONL source overrides."""
+    parsed: dict[str, str] = {}
+    for item in overrides:
+        name, separator, path = item.partition("=")
+        if not separator or not name or not path:
+            raise SystemExit(
+                "--source-evidence entries must use INDEX_NAME=EVIDENCE_JSONL"
+            )
+        if name in parsed:
+            raise SystemExit(f"Duplicate --source-evidence override: {name}")
+        parsed[name] = path
+    selected = {spec["name"] for spec in specs}
+    unknown = sorted(set(parsed) - selected)
+    if unknown:
+        raise SystemExit(
+            "Source override does not match a selected index: " + ", ".join(unknown)
+        )
+    updated: list[dict[str, str]] = []
+    for spec in specs:
+        replacement = parsed.get(spec["name"])
+        if replacement is None:
+            updated.append(dict(spec))
+            continue
+        field = "source_evidence" if "source_evidence" in spec else "normalized_root"
+        updated.append({**spec, field: replacement})
+    return updated
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--splits", nargs="*", choices=BENCHMARK_SPLITS, default=[])
     parser.add_argument("--indices", nargs="*", default=[])
+    parser.add_argument(
+        "--source-evidence",
+        action="append",
+        default=[],
+        metavar="INDEX_NAME=SOURCE_PATH",
+        help=(
+            "Override one selected index source without changing the frozen default spec; "
+            "v7 specs expect a normalized-artifact root."
+        ),
+    )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
+    parser.add_argument(
+        "--benchmark-data-root",
+        default="data/processed_starling",
+        help="Root containing <Task>/<split>/heldout_molecule_labels.jsonl.",
+    )
+    parser.add_argument("--benchmark-lineage", default=BENCHMARK_LINEAGE)
     parser.add_argument("--workers", type=int, default=32)
     parser.add_argument("--progress-every", type=int, default=10000)
     parser.add_argument(

@@ -30,6 +30,15 @@ from tools.chembl_tool.common.assay_transfer_selection import (
     validate_assay_transfer_records_per_molecule,
 )
 from tools.chembl_tool.common.cli.retrieval_args import add_retrieval_strategy_args
+from tools.chembl_tool.common.final_evidence_surface import (
+    SUMMARY_ONLY,
+    add_final_evidence_surface_argument,
+)
+from tools.chembl_tool.common.final_decision_prior import (
+    GENERAL_FINAL_DECISION_PROFILES,
+    STANDARD_FINAL_DECISION,
+    add_final_decision_profile_argument,
+)
 from tools.chembl_tool.common.coverage_reasoning import (
     NEIGHBOR_CONTEXT_PROFILES,
     STANDARD_NEIGHBOR_CONTEXT,
@@ -39,6 +48,11 @@ from tools.chembl_tool.common.neighbor_selection import (
     SIMILARITY_SELECTOR,
 )
 from tools.chembl_tool.common.experiment_retrieval import ASSAY_TRANSFER_TOOL_STRATEGY
+from tools.chembl_tool.common.retrieval_policy import NEIGHBOR_IDENTITY_POLICIES
+from tools.chembl_tool.common.prompt_profile import (
+    prompt_profile_from_manifest,
+    require_matching_prompt_profiles,
+)
 
 
 @dataclass(frozen=True)
@@ -91,6 +105,12 @@ class BatchConfig:
     v11_assay_transfer_model_default: str = ""
     v11_assay_transfer_model_revision_default: str = ""
     v11_index_default: str = ""
+    supports_final_decision_profiles: bool = False
+    final_decision_profile_choices: tuple[str, ...] = GENERAL_FINAL_DECISION_PROFILES
+    prompt_profile_option: str = ""
+    prompt_profile_choices: tuple[str, ...] = ()
+    default_prompt_profile: str = ""
+    historical_prompt_profile: str = ""
 
 
 @dataclass(frozen=True)
@@ -151,6 +171,8 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
     indices = _select_indices(args, len(records))
     batch_id = args.batch_id or time.strftime(f"{config.batch_id_prefix}_%Y%m%d_%H%M%S")
     batch_dir = _ensure_dir(Path(args.batch_root) / batch_id)
+    _validate_final_decision_profile_contract(args, batch_dir)
+    _validate_prompt_profile_contract(config, args, batch_dir)
     logs_dir = _ensure_dir(batch_dir / "logs")
     batch_run_root = _ensure_dir(batch_dir / "runs")
 
@@ -297,6 +319,13 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "morgan_neighbor_selector": args.morgan_neighbor_selector,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "final_evidence_surface": getattr(args, "final_evidence_surface", SUMMARY_ONLY),
+        "final_decision_profile": getattr(
+            args,
+            "final_decision_profile",
+            STANDARD_FINAL_DECISION,
+        ),
+        "task_prompt_profile": getattr(args, "task_prompt_profile", ""),
         "identity_blind": args.identity_blind,
         "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
         "visibility_mode": (
@@ -527,6 +556,16 @@ def _prepare_final_only_run_dir(args: argparse.Namespace, query_index: int, run_
     manifest["run_id"] = run_id
     manifest["final_only_source_run_dir"] = str(source_run_dir)
     manifest["final_only_source_batch"] = str(source_batch_dir)
+    manifest["final_evidence_surface"] = getattr(
+        args,
+        "final_evidence_surface",
+        SUMMARY_ONLY,
+    )
+    manifest["final_decision_profile"] = getattr(
+        args,
+        "final_decision_profile",
+        STANDARD_FINAL_DECISION,
+    )
     if args.final_only_groups:
         filter_audit = _filter_final_only_run_artifacts(run_dir, args.final_only_groups)
         manifest["final_only_group_filter"] = filter_audit
@@ -725,6 +764,20 @@ def _single_run_command(
         )
     if config.group_prompt_formats and getattr(args, "presentation_style", "legacy") != "legacy":
         command.extend(["--presentation-style", args.presentation_style])
+    if config.supports_shared_retrieval_contract:
+        final_surface = getattr(args, "final_evidence_surface", SUMMARY_ONLY)
+        if final_surface != SUMMARY_ONLY:
+            command.extend(["--final-evidence-surface", final_surface])
+        final_decision_profile = getattr(args, "final_decision_profile", STANDARD_FINAL_DECISION)
+        if config.supports_final_decision_profiles and final_decision_profile != STANDARD_FINAL_DECISION:
+            command.extend(["--final-decision-profile", final_decision_profile])
+    if config.prompt_profile_option:
+        command.extend(
+            [
+                config.prompt_profile_option,
+                str(args.task_prompt_profile),
+            ]
+        )
     if not args.enable_thinking:
         command.append("--disable-thinking")
     else:
@@ -911,6 +964,8 @@ def _collect_result(
         config.prediction_field: prediction,
         "pred_label": pred_label,
         "confidence": content.get("confidence"),
+        "evidence_state": content.get("evidence_state"),
+        "prior_used": content.get("prior_used"),
         "correct": correct,
         "final_status": (final_output.get("status") if isinstance(final_output, dict) else None),
         "single_status": (single_output.get("status") if isinstance(single_output, dict) else None),
@@ -1172,7 +1227,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         parser.set_defaults(exclude_nondirect_bioavailability_records=False)
     parser.add_argument(
         "--neighbor-identity-policy",
-        choices=["operational", "parent_disjoint"],
+        choices=NEIGHBOR_IDENTITY_POLICIES,
         default="operational",
     )
     parser.add_argument("--identity-blind", action="store_true")
@@ -1378,6 +1433,23 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
+    add_final_evidence_surface_argument(parser)
+    if config.supports_final_decision_profiles:
+        add_final_decision_profile_argument(
+            parser,
+            choices=config.final_decision_profile_choices,
+        )
+    else:
+        parser.set_defaults(final_decision_profile=STANDARD_FINAL_DECISION)
+    if config.prompt_profile_option:
+        parser.add_argument(
+            config.prompt_profile_option,
+            dest="task_prompt_profile",
+            choices=config.prompt_profile_choices,
+            default=config.default_prompt_profile,
+        )
+    else:
+        parser.set_defaults(task_prompt_profile="")
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     parser.add_argument(
         "--tier1-replacement-index",
@@ -1452,6 +1524,8 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
             unsupported.append("--neighbor-selector")
         if args.neighbor_context_profile != STANDARD_NEIGHBOR_CONTEXT:
             unsupported.append("--neighbor-context-profile")
+        if getattr(args, "final_evidence_surface", SUMMARY_ONLY) != SUMMARY_ONLY:
+            unsupported.append("--final-evidence-surface")
         if args.identity_blind:
             unsupported.append("--identity-blind")
         if args.harness_prefetch_tools:
@@ -1580,6 +1654,66 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
     if not is_assay_transfer:
         raise SystemExit(
             "--enable-assay-transfer-scores requires --retrieval-strategy assay_transfer_tool"
+        )
+
+
+def _validate_prompt_profile_contract(
+    config: BatchConfig,
+    args: argparse.Namespace,
+    batch_dir: Path,
+) -> None:
+    """Prevent prompt-profile changes from silently reusing old branches."""
+    if not config.prompt_profile_option:
+        return
+    target = str(args.task_prompt_profile)
+    existing_manifest = batch_dir / "manifest.json"
+    if existing_manifest.exists():
+        existing = prompt_profile_from_manifest(
+            json.loads(existing_manifest.read_text(encoding="utf-8")),
+            historical_profile=config.historical_prompt_profile,
+        )
+        if existing != target:
+            raise ValueError(
+                f"Batch prompt profile mismatch: existing={existing!r} target={target!r} "
+                f"batch={batch_dir}"
+            )
+    require_matching_prompt_profiles(
+        target_profile=target,
+        source_dirs=(
+            args.single_analysis_source_batch,
+            args.group_analysis_source_batch,
+            args.final_only_source_batch,
+        ),
+        historical_profile=config.historical_prompt_profile,
+    )
+
+
+def _validate_final_decision_profile_contract(
+    args: argparse.Namespace,
+    batch_dir: Path,
+) -> None:
+    """Keep the final-only prior opt-in and prevent mixed batch lineages."""
+    target = str(
+        getattr(args, "final_decision_profile", STANDARD_FINAL_DECISION)
+    )
+    if target != STANDARD_FINAL_DECISION and not args.final_only_source_batch:
+        raise ValueError(
+            f"{target} is a final-only experiment and requires "
+            "--final-only-source-batch"
+        )
+    existing_manifest = batch_dir / "manifest.json"
+    if not existing_manifest.exists():
+        return
+    existing = str(
+        json.loads(existing_manifest.read_text(encoding="utf-8")).get(
+            "final_decision_profile"
+        )
+        or STANDARD_FINAL_DECISION
+    )
+    if existing != target:
+        raise ValueError(
+            "Batch final-decision profile mismatch: "
+            f"existing={existing!r} target={target!r} batch={batch_dir}"
         )
 
 

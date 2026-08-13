@@ -1,9 +1,59 @@
 from tools.chembl_tool.common.reasoning_validation import (
+    allowed_values_from_required_schema,
     call_with_json_validation,
     response_validation_errors,
     structured_response_is_valid,
     validated_branch_content,
 )
+
+
+def test_allowed_values_are_extracted_from_prompt_schema_for_enums_and_literals():
+    messages = [
+        {
+            "role": "user",
+            "content": (
+                '{"required_json_schema": {'
+                '"confidence": "high | moderate | low", '
+                '"reasoning_summary": "string", '
+                '"label_scope": "skin_sensitization_contact_allergy.v2", '
+                '"similarity": "number or null", '
+                '"complex_description": "high | moderate confidence"}}'
+            ),
+        }
+    ]
+
+    assert allowed_values_from_required_schema(messages) == {
+        "confidence": {"high", "moderate", "low"},
+        "label_scope": {"skin_sensitization_contact_allergy.v2"},
+    }
+
+
+def test_schema_derived_allowed_values_trigger_retry():
+    messages = [
+        {
+            "role": "user",
+            "content": '{"required_json_schema":{"confidence":"high | moderate | low"}}',
+        }
+    ]
+    responses = iter(
+        [
+            {"content": {"confidence": "medium"}},
+            {"content": {"confidence": "moderate"}},
+        ]
+    )
+
+    result = call_with_json_validation(
+        lambda _: next(responses),
+        messages,
+        required_fields=("confidence",),
+        allowed_values=allowed_values_from_required_schema(messages),
+    )
+
+    assert result["content"]["confidence"] == "moderate"
+    assert result["structured_output_validation"]["attempt_errors"] == [
+        ["invalid_value:confidence"],
+        [],
+    ]
 
 
 def test_validation_retries_missing_field_and_accepts_second_response():
@@ -147,6 +197,32 @@ def test_validation_rejects_forbidden_field_name_at_any_depth():
     )
 
     assert errors == ["forbidden_field:molecule_chembl_id"]
+
+
+def test_content_validator_can_trigger_a_structured_retry():
+    responses = iter(
+        [
+            {"content": {"prediction": "positive", "prior_used": "true"}},
+            {"content": {"prediction": "positive", "prior_used": True}},
+        ]
+    )
+
+    result = call_with_json_validation(
+        lambda _: next(responses),
+        [{"role": "user", "content": "classify"}],
+        required_fields=("prediction", "prior_used"),
+        content_validator=lambda content: (
+            []
+            if isinstance(content.get("prior_used"), bool)
+            else ["invalid_type:prior_used:expected_boolean"]
+        ),
+    )
+
+    assert result["content"]["prior_used"] is True
+    assert result["structured_output_validation"]["attempt_errors"] == [
+        ["invalid_type:prior_used:expected_boolean"],
+        [],
+    ]
 
 
 def test_invalid_branch_content_is_withheld_from_final_synthesis():

@@ -1,0 +1,72 @@
+{
+  "method": "quality_lexicographic_milp_scaffold_groups",
+  "lineage": "record_supported_v2",
+  "target_valid_size": 209,
+  "target_test_size": 209,
+  "actual_valid_size": 209,
+  "actual_test_size": 209,
+  "valid_size_shortfall": 0,
+  "test_size_shortfall": 0,
+  "optimization": {
+    "minimum_singletons_in_heldout": 0,
+    "minimum_singleton_imbalance": 0,
+    "minimum_label_deviation": 0,
+    "desired_positive_count_per_eval_split": 151,
+    "maximum_prior_valid_reuse": 110,
+    "n_scaffold_groups": 1243,
+    "n_candidate_scaffold_groups": 1243
+  },
+  "n_train": 1674,
+  "train_label_counts": {
+    "0": 461,
+    "1": 1213
+  },
+  "train_record_tier_counts": {
+    "multi_record": 868,
+    "singleton": 806
+  },
+  "n_train_scaffolds": 929,
+  "n_valid": 209,
+  "valid_label_counts": {
+    "0": 58,
+    "1": 151
+  },
+  "valid_record_tier_counts": {
+    "multi_record": 209
+  },
+  "n_valid_scaffolds": 175,
+  "n_test": 209,
+  "test_label_counts": {
+    "0": 58,
+    "1": 151
+  },
+  "test_record_tier_counts": {
+    "multi_record": 209
+  },
+  "n_test_scaffolds": 139,
+  "pairwise_scaffold_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "pairwise_identity_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "train_valid_scaffold_overlap": 0,
+  "train_test_scaffold_overlap": 0,
+  "valid_test_scaffold_overlap": 0,
+  "train_valid_identity_overlap": 0,
+  "train_test_identity_overlap": 0,
+  "valid_test_identity_overlap": 0,
+  "paths": {
+    "train": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/train.jsonl",
+    "valid": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/valid.jsonl",
+    "test": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/test.jsonl",
+    "train_molecule_labels": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/train_molecule_labels.jsonl",
+    "valid_molecule_labels": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/valid_molecule_labels.jsonl",
+    "test_molecule_labels": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/test_molecule_labels.jsonl",
+    "heldout_molecule_labels": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/heldout_molecule_labels.jsonl"
+  }
+}

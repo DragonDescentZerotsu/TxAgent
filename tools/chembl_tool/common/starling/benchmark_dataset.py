@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 import hashlib
 import json
 import math
@@ -11,11 +11,9 @@ from pathlib import Path
 import re
 from typing import Any, Iterable, Mapping
 
-from rdkit import Chem
-from rdkit.Chem.Scaffolds import MurckoScaffold
-
 from tools.chembl_tool.common.molecule_identity import (
     IDENTITY_NORMALIZER_VERSION,
+    bemis_murcko_scaffold,
     normalize_molecule_identity,
 )
 
@@ -558,17 +556,6 @@ def _stratified_hash_take(
             f"expected {take_size} selected molecules, found {len(selected)}"
         )
     return train, selected
-
-
-def bemis_murcko_scaffold(smiles: str) -> str:
-    """Return the canonical Bemis-Murcko scaffold; acyclic molecules map to empty."""
-    molecule = Chem.MolFromSmiles(smiles)
-    if molecule is None:
-        raise ValueError(f"cannot calculate scaffold for invalid SMILES: {smiles}")
-    return MurckoScaffold.MurckoScaffoldSmiles(
-        mol=molecule,
-        includeChirality=False,
-    )
 
 
 def scaffold_group_split(

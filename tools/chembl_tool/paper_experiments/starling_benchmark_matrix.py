@@ -85,20 +85,27 @@ def experiments_for_starling_benchmark(
     *,
     evaluation_subset: str = "test",
     retrieval_feature: str = MORGAN_RETRIEVAL_FEATURE,
+    data_root: str | Path = DEFAULT_BENCHMARK_DATA_ROOT,
+    canonical_paper_root: str | Path | None = None,
 ) -> list[Experiment]:
     """Replace only benchmark inputs and held-out-filtered Starling indices."""
     if evaluation_subset not in EVALUATION_SUBSETS:
         raise ValueError(f"Unknown evaluation subset: {evaluation_subset}")
     if retrieval_feature not in RETRIEVAL_FEATURES:
         raise ValueError(f"Unknown retrieval feature: {retrieval_feature}")
-    paper_root = paper_root_for_benchmark_split(split)
+    paper_root = (
+        Path(canonical_paper_root)
+        if canonical_paper_root
+        else paper_root_for_benchmark_split(split)
+    )
+    data_root = Path(data_root)
     experiments: list[Experiment] = []
     for experiment in EXPERIMENTS:
         data_name = TASK_DATA_NAMES.get(experiment.task)
         if data_name is None:
             continue
-        input_jsonl = (
-            f"data/processed_starling/{data_name}/{split}/{evaluation_subset}.jsonl"
+        input_jsonl = str(
+            data_root / data_name / split / f"{evaluation_subset}.jsonl"
         )
         index = experiment.index
         if experiment.source == "starling":
@@ -133,6 +140,10 @@ def main(argv: list[str] | None = None) -> int:
         args.visibility_mode in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}
         and args.neighbor_identity_policy == PARENT_DISJOINT
     )
+    args.fresh_disjoint = (
+        args.visibility_mode in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}
+        and args.neighbor_identity_policy != "operational"
+    )
     if (
         args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
         and args.visibility_mode not in {IDENTITY_BLIND, DEPLOYMENT_VISIBLE}
@@ -141,10 +152,17 @@ def main(argv: list[str] | None = None) -> int:
             "The MiniMol retrieval-feature ablation is frozen for "
             "deployment_visible only."
         )
+    custom_canonical_root = (
+        Path(args.canonical_paper_root)
+        if args.canonical_paper_root
+        else paper_root_for_benchmark_split(args.benchmark_split)
+    )
     experiments = experiments_for_starling_benchmark(
         args.benchmark_split,
         evaluation_subset=args.evaluation_subset,
         retrieval_feature=args.retrieval_feature,
+        data_root=args.benchmark_data_root,
+        canonical_paper_root=custom_canonical_root,
     )
     selected = _select_experiments(args.experiments, experiments=experiments)
     selected = _prepare_policy_selection(selected, args)
@@ -165,7 +183,7 @@ def main(argv: list[str] | None = None) -> int:
     canonical_paper_root = (
         paper_root_for_minimol_retrieval(args.benchmark_split)
         if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
-        else paper_root_for_benchmark_split(args.benchmark_split)
+        else custom_canonical_root
     )
     paper_root = _paper_root_for_evaluation_subset(
         canonical_paper_root,
@@ -192,12 +210,13 @@ def main(argv: list[str] | None = None) -> int:
     _require_parent_disjoint_reuse_plans(selected, args)
     benchmark_provenance = _benchmark_provenance(
         args.benchmark_split,
-        experiments,
+        selected,
+        data_root=Path(args.benchmark_data_root),
     )
 
     manifest: dict[str, Any] = {
         "benchmark_source": "starling",
-        "dataset_lineage": BENCHMARK_LINEAGE,
+        "dataset_lineage": args.benchmark_lineage,
         "benchmark_split": args.benchmark_split,
         "evaluation_subset": args.evaluation_subset,
         "retrieval_feature": args.retrieval_feature,
@@ -248,6 +267,7 @@ def main(argv: list[str] | None = None) -> int:
         },
         "effective_concurrency": args.parallelism,
         "fresh_parent_disjoint": args.fresh_parent_disjoint,
+        "fresh_disjoint": args.fresh_disjoint,
         "operational_staging_used": (
             args.neighbor_identity_policy == PARENT_DISJOINT
             and not args.fresh_parent_disjoint
@@ -267,7 +287,7 @@ def main(argv: list[str] | None = None) -> int:
                 ),
                 "benchmark_provenance_ref": experiment.task,
             }
-            for experiment in experiments
+            for experiment in selected
         ],
         "selected_experiments": [experiment.name for experiment in selected],
     }
@@ -487,6 +507,17 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--retrieval-feature",
         choices=RETRIEVAL_FEATURES,
         default=MORGAN_RETRIEVAL_FEATURE,
+    )
+    parser.add_argument(
+        "--benchmark-data-root",
+        default=str(DEFAULT_BENCHMARK_DATA_ROOT),
+        help="Root containing <Task>/<split> benchmark inputs and provenance.",
+    )
+    parser.add_argument("--benchmark-lineage", default=BENCHMARK_LINEAGE)
+    parser.add_argument(
+        "--canonical-paper-root",
+        default="",
+        help="Explicit held-out evidence-index root for a benchmark lineage.",
     )
     parser.add_argument("--experiments", nargs="*", default=[])
     parser.add_argument("--list", action="store_true")

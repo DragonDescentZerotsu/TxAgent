@@ -5,6 +5,8 @@ comparison. Optional complete model/visibility summaries add grouped bars.
 Optional matched experiment TSVs add rows to the same figure; their anchor
 rows are validated against an existing loaded model/visibility condition and
 are not plotted twice.
+An optional paired-statistics TSV adds a compact interval or permutation-p-value
+block to each task panel for the selected best agent versus train-label baselines.
 """
 
 from __future__ import annotations
@@ -35,6 +37,16 @@ from .plot_starling_benchmark_overview import (
     SPLITS,
     TASKS,
     read_metrics,
+)
+from .starling_paired_figure import (
+    PAIRED_CI_EXTRA_HEIGHT,
+    PAIRED_POINT_FILL,
+    PAIRED_PVALUE_EXTRA_HEIGHT,
+    PairedComparison,
+    paired_ci_scale_limit,
+    read_paired_metrics,
+    render_paired_ci_band,
+    render_paired_pvalue_band,
 )
 
 
@@ -94,9 +106,74 @@ def _agent_model_label(results: dict[tuple[str, str, str], dict[str, str]]) -> s
     return next(iter(results.values())).get("model_label") or "Agent"
 
 
+def _filter_method_family(
+    results: dict[tuple[str, str, str], dict[str, str]],
+    method_family: str | None,
+) -> dict[tuple[str, str, str], dict[str, str]]:
+    if method_family is None:
+        return results
+    filtered = {
+        key: row
+        for key, row in results.items()
+        if row.get("method_family") == method_family
+    }
+    if not filtered:
+        raise ValueError(f"No rows matched method_family={method_family!r}")
+    return filtered
+
+
+def _read_single_series_metrics(
+    path: Path,
+) -> dict[tuple[str, str, str], dict[str, str]]:
+    """Read a current partial matrix without weakening comparison-series gates."""
+    with path.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle, delimiter="\t"))
+    results = {
+        (row["benchmark_split"], row["task"], row["method"]): row
+        for row in rows
+    }
+    if len(results) != len(rows):
+        raise ValueError(f"Duplicate Starling metric rows in {path}")
+    available_splits = {
+        split for split, _ in SPLITS if any(row["benchmark_split"] == split for row in rows)
+    }
+    if not available_splits:
+        raise ValueError("No supported Starling benchmark splits found")
+    known_methods = {
+        task.key: {method.key for method in task.methods}
+        for task in TASKS
+    }
+    unknown = sorted(
+        key
+        for key in results
+        if key[1] not in known_methods or key[2] not in known_methods[key[1]]
+    )
+    if unknown:
+        raise ValueError(f"Unsupported Starling metric rows: {unknown}")
+    missing_tasks = sorted(
+        (split, task.key)
+        for split in available_splits
+        for task in TASKS
+        if not any(key[:2] == (split, task.key) for key in results)
+    )
+    if missing_tasks:
+        raise ValueError(f"Single-series metrics are missing tasks: {missing_tasks}")
+    failed = sorted(
+        key
+        for key, row in results.items()
+        if int(row.get("n_failed") or 0) > 0
+        and not row.get("failure_policy", "").startswith("count_as_incorrect")
+    )
+    if failed:
+        raise ValueError(f"Cannot plot benchmark rows with failures: {failed}")
+    return results
+
+
 def _validate_pair(
     reference: dict[tuple[str, str, str], dict[str, str]],
     candidate: dict[tuple[str, str, str], dict[str, str]],
+    *,
+    require_shared_baselines: bool = True,
 ) -> tuple[tuple[str, str], ...]:
     reference_splits = {key[0] for key in reference}
     candidate_splits = {key[0] for key in candidate}
@@ -131,7 +208,7 @@ def _validate_pair(
             for item in task.methods
             if item.key == method
         )
-        if source not in BASELINE_SOURCES:
+        if source not in BASELINE_SOURCES or not require_shared_baselines:
             continue
         for field in ("macro_f1", "accuracy", "auroc"):
             reference_value = reference_row.get(field, "")
@@ -327,6 +404,7 @@ def _render_panel(
     x: float,
     y: float,
     task,
+    methods,
     split: str,
     split_label: str,
     width: float,
@@ -334,9 +412,14 @@ def _render_panel(
     series: tuple[dict[tuple[str, str, str], dict[str, str]], ...],
     experiments: tuple[ExperimentMetric, ...],
     show_experiment_model_label: bool,
+    paired_comparisons: tuple[PairedComparison, ...] = (),
+    paired_scale_limit: float = 0.0,
+    paired_significance_display: str = "ci",
+    baseline_display: str = "shared",
+    baseline_series_groups: tuple[str, ...] = (),
 ) -> None:
     parts.append(rect(x, y, width, height, fill=CARD, stroke=GRID))
-    first = series[0][(split, task.key, task.methods[0].key)]
+    first = series[0][(split, task.key, methods[0].key)]
     parts.append(svg_text(x + 22, y + 34, task.title, size=22, weight=750))
     parts.append(
         svg_text(
@@ -354,7 +437,14 @@ def _render_panel(
         plot_left, plot_right = x + 285, x + 805
     else:
         plot_left, plot_right = x + 270, x + 760
-    plot_top, plot_bottom = y + 66, y + height - 65
+    paired_extra = 0
+    if paired_comparisons:
+        paired_extra = (
+            PAIRED_PVALUE_EXTRA_HEIGHT
+            if paired_significance_display == "pvalue"
+            else PAIRED_CI_EXTRA_HEIGHT
+        )
+    plot_top, plot_bottom = y + 66, y + height - 65 - paired_extra
     append_vertical_grid(
         parts,
         plot_left=plot_left,
@@ -363,16 +453,16 @@ def _render_panel(
         plot_bottom=plot_bottom,
         ticks=(0.0, 0.2, 0.4, 0.6, 0.8),
         scale_max=SCALE_MAX,
-        label_y=y + height - 33,
+        label_y=y + height - 33 - paired_extra,
     )
 
-    count = len(task.methods) + len(experiments)
+    count = len(methods) + len(experiments)
     available = plot_bottom - plot_top - 30
     max_step = 42.0 if len(series) <= 3 else 10.0 * len(series) + 4.0
     step = min(max_step, available / max(1, count - 1))
     row_start = plot_top + 15 + (available - step * (count - 1)) / 2
     if experiments:
-        experiment_start = row_start + len(task.methods) * step
+        experiment_start = row_start + len(methods) * step
         band_height = max(28.0, (len(experiments) - 1) * step + 30.0)
         parts.append(
             rect(
@@ -384,12 +474,13 @@ def _render_panel(
                 rx=4,
             )
         )
-    for index, method in enumerate(task.methods):
+    for index, method in enumerate(methods):
         row_y = row_start + index * step
         series_rows = [result[(split, task.key, method.key)] for result in series]
         color = SOURCE_COLORS[method.source]
         is_baseline = method.source in BASELINE_SOURCES
-        if is_baseline:
+        is_shared_baseline = is_baseline and baseline_display == "shared"
+        if is_shared_baseline:
             band_height = min(34.0, max(24.0, step - 2.0))
             parts.append(
                 rect(
@@ -410,7 +501,7 @@ def _render_panel(
                 weight=700 if is_baseline else 500,
             )
         )
-        if is_baseline:
+        if is_shared_baseline:
             value = float(series_rows[0]["macro_f1"])
             bar_width = value / SCALE_MAX * (plot_right - plot_left)
             parts.append(rect(plot_left, row_y - 9, bar_width, 18, fill=color, rx=3))
@@ -425,20 +516,39 @@ def _render_panel(
             )
             continue
 
-        bar_gap = 2.0 if len(series) <= 3 else 3.0
-        minimum_bar_height = 4.0 if len(series) <= 3 else 5.0
+        display_rows = list(enumerate(series_rows))
+        if is_baseline and baseline_display == "series":
+            first_index_by_group: dict[str, int] = {}
+            for series_index, group in enumerate(baseline_series_groups):
+                first_index = first_index_by_group.setdefault(group, series_index)
+                if abs(
+                    float(series_rows[first_index]["macro_f1"])
+                    - float(series_rows[series_index]["macro_f1"])
+                ) > 1e-12:
+                    raise ValueError(
+                        "Baseline series grouped under the same lineage must match: "
+                        f"{split}/{task.key}/{method.key}/{group}"
+                    )
+            display_rows = [
+                (series_index, series_rows[series_index])
+                for series_index in first_index_by_group.values()
+            ]
+        bar_gap = 2.0 if len(display_rows) <= 3 else 3.0
+        minimum_bar_height = 4.0 if len(display_rows) <= 3 else 5.0
         bar_height = min(
             8.0,
             max(
                 minimum_bar_height,
-                (step - 8.0) / len(series) - bar_gap,
+                (step - 8.0) / len(display_rows) - bar_gap,
             ),
         )
-        group_height = len(series) * bar_height + (len(series) - 1) * bar_gap
+        group_height = (
+            len(display_rows) * bar_height + (len(display_rows) - 1) * bar_gap
+        )
         first_bar_y = row_y - group_height / 2
-        for series_index, series_row in enumerate(series_rows):
+        for display_index, (series_index, series_row) in enumerate(display_rows):
             value = float(series_row["macro_f1"])
-            bar_y = first_bar_y + series_index * (bar_height + bar_gap)
+            bar_y = first_bar_y + display_index * (bar_height + bar_gap)
             fill = _series_fill(color, series_index, len(series))
             bar_width = value / SCALE_MAX * (plot_right - plot_left)
             parts.append(
@@ -464,7 +574,7 @@ def _render_panel(
             )
 
     for experiment_index, experiment in enumerate(experiments):
-        row_y = row_start + (len(task.methods) + experiment_index) * step
+        row_y = row_start + (len(methods) + experiment_index) * step
         experiment_label = experiment.label
         if show_experiment_model_label:
             experiment_label = (
@@ -500,7 +610,7 @@ def _render_panel(
     parts.append(
         svg_text(
             (plot_left + plot_right) / 2,
-            y + height - 11,
+            y + height - 11 - paired_extra,
             "Macro-F1",
             size=12,
             weight=650,
@@ -508,6 +618,24 @@ def _render_panel(
             anchor="middle",
         )
     )
+    if paired_comparisons:
+        if paired_significance_display == "pvalue":
+            render_paired_pvalue_band(
+                parts,
+                x=x + 12,
+                y=y + height - paired_extra + 10,
+                width=width - 24,
+                comparisons=paired_comparisons,
+            )
+        else:
+            render_paired_ci_band(
+                parts,
+                x=x + 12,
+                y=y + height - paired_extra + 10,
+                width=width - 24,
+                comparisons=paired_comparisons,
+                scale_limit=paired_scale_limit,
+            )
 
 
 def render(
@@ -516,22 +644,83 @@ def render(
     output: Path,
     experiment_paths: tuple[Path, ...] = (),
     comparison_paths: tuple[Path, ...] = (),
+    paired_ci_path: Path | None = None,
+    paired_significance_display: str = "ci",
+    method_family: str | None = None,
+    series_label_overrides: tuple[str, ...] = (),
+    chart_title: str = "Starling Benchmark Model & Experiment Comparison",
+    chart_subtitle: str | None = None,
+    context_lines: tuple[str, ...] = (),
+    comparison_title_override: str | None = None,
+    baseline_display: str = "shared",
+    baseline_series_groups: tuple[str, ...] = (),
+    single_series: bool = False,
 ) -> None:
-    reference = read_metrics(reference_path)
-    candidate = read_metrics(candidate_path)
-    available_splits = _validate_pair(reference, candidate)
-    additional = tuple(read_metrics(path) for path in comparison_paths)
+    if paired_significance_display not in {"ci", "pvalue"}:
+        raise ValueError(
+            "paired_significance_display must be either 'ci' or 'pvalue'"
+        )
+    if baseline_display not in {"shared", "series"}:
+        raise ValueError("baseline_display must be either 'shared' or 'series'")
+    reference = _filter_method_family(
+        _read_single_series_metrics(reference_path)
+        if single_series
+        else read_metrics(reference_path),
+        method_family,
+    )
+    candidate = (
+        reference
+        if single_series
+        else _filter_method_family(read_metrics(candidate_path), method_family)
+    )
+    require_shared_baselines = baseline_display == "shared"
+    available_splits = _validate_pair(
+        reference,
+        candidate,
+        require_shared_baselines=require_shared_baselines,
+    )
+    if single_series and comparison_paths:
+        raise ValueError("single_series cannot be combined with comparison_paths")
+    additional = tuple(
+        _filter_method_family(read_metrics(path), method_family)
+        for path in comparison_paths
+    )
     for result in additional:
-        if _validate_pair(reference, result) != available_splits:
+        if _validate_pair(
+            reference,
+            result,
+            require_shared_baselines=require_shared_baselines,
+        ) != available_splits:
             raise ValueError("Additional comparison metrics changed available splits")
-    series = (reference, candidate, *additional)
-    series_labels = tuple(_agent_model_label(result) for result in series)
+    series = (reference,) if single_series else (reference, candidate, *additional)
+    series_labels = (
+        series_label_overrides
+        if series_label_overrides
+        else tuple(_agent_model_label(result) for result in series)
+    )
+    if len(series_labels) != len(series):
+        raise ValueError(
+            "series_label_overrides must contain one label for each metrics series"
+        )
+    if series_label_overrides and len(set(series_labels)) != len(series_labels):
+        raise ValueError("Comparison series labels must be unique")
+    effective_baseline_groups = baseline_series_groups or series_labels
+    if len(effective_baseline_groups) != len(series):
+        raise ValueError(
+            "baseline_series_groups must contain one group for each metrics series"
+        )
     series_by_label = dict(zip(series_labels, series, strict=True))
     reference_label = series_labels[0]
-    candidate_label = _agent_model_label(candidate)
+    candidate_label = (
+        reference_label
+        if single_series
+        else series_labels[1]
+        if series_label_overrides
+        else _agent_model_label(candidate)
+    )
     # Preserve the historical default-anchor behavior even when a synthetic
     # test or legacy summary reuses the same display label for both series.
-    series_by_label[candidate_label] = candidate
+    series_by_label[candidate_label] = reference if single_series else candidate
     experiments = _read_experiment_metrics(
         experiment_paths,
         series_by_label=series_by_label,
@@ -544,7 +733,29 @@ def render(
     show_experiment_model_label = len(experiment_model_labels) > 1
     first = next(iter(reference.values()))
     evaluation_subset = first.get("evaluation_subset") or "test"
+    paired_comparisons = read_paired_metrics(
+        paired_ci_path,
+        series_by_label=series_by_label,
+        available_splits=available_splits,
+        evaluation_subset=evaluation_subset,
+        experiments=experiments,
+    )
+    paired_scale_limit = paired_ci_scale_limit(paired_comparisons)
     split_title = " and ".join(label.replace(" split", "") for _, label in available_splits)
+    methods_by_task = {
+        task.key: tuple(
+            method
+            for method in task.methods
+            if all(
+                (split, task.key, method.key) in reference
+                for split, _ in available_splits
+            )
+        )
+        for task in TASKS
+    }
+    missing_tasks = [task for task, methods in methods_by_task.items() if not methods]
+    if missing_tasks:
+        raise ValueError(f"No plotted methods remain for tasks: {missing_tasks}")
     has_failure = any(
         int(row.get("n_failed") or 0) > 0
         for result in series
@@ -552,7 +763,8 @@ def render(
     )
     generated = date.today().isoformat()
     max_rows = max(
-        len(task.methods) + len(experiments.get((split, task.key), ()))
+        len(methods_by_task[task.key])
+        + len(experiments.get((split, task.key), ()))
         for split, _ in available_splits
         for task in TASKS
     )
@@ -560,46 +772,68 @@ def render(
     panel_height = max(
         510,
         510
-        + (max_rows - max(len(task.methods) for task in TASKS)) * 38
+        + (max_rows - max(len(methods_by_task[task.key]) for task in TASKS)) * 38
         + dense_series_extra,
     )
-    height = HEADER_HEIGHT + len(TASKS) * panel_height + (len(TASKS) - 1) * PANEL_GAP + FOOTER_HEIGHT
+    if paired_comparisons:
+        panel_height += (
+            PAIRED_PVALUE_EXTRA_HEIGHT
+            if paired_significance_display == "pvalue"
+            else PAIRED_CI_EXTRA_HEIGHT
+        )
+    effective_context_lines = context_lines or (
+        "Same scaffold-valid data and parent-disjoint retrieval · Visibility/tool-execution contract varies by series",
+    )
+    context_extra = max(0, len(effective_context_lines) - 1) * 22
+    header_height = HEADER_HEIGHT + context_extra
+    height = header_height + len(TASKS) * panel_height + (len(TASKS) - 1) * PANEL_GAP + FOOTER_HEIGHT
     source_paths = (
         reference_path,
-        candidate_path,
+        *((candidate_path,) if not single_series else ()),
         *comparison_paths,
         *experiment_paths,
+        *((paired_ci_path,) if paired_ci_path is not None else ()),
     )
-    comparison_title = (
+    comparison_title = comparison_title_override or (
         f"{reference_label} vs {candidate_label}"
         if len(series_labels) == 2
         else f"{len(series_labels)} model/visibility settings"
+    )
+    subtitle = chart_subtitle or f"{split_title} {evaluation_subset} · Macro-F1"
+    baseline_description = (
+        "lineage-specific train-label baseline series"
+        if baseline_display == "series"
+        else "shared train-label baselines"
     )
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}" '
         f'viewBox="0 0 {WIDTH} {height}" role="img" aria-labelledby="chart-title chart-desc">',
         '<title id="chart-title">Starling benchmark model and experiment comparison</title>',
         f'<desc id="chart-desc">Grouped horizontal bars compare {", ".join(series_labels)} '
-        f'macro-F1 for Starling scaffold valid tasks, with shared train-label baselines and matched experiment additions.</desc>',
+        f'macro-F1 for Starling scaffold valid tasks, with {baseline_description} and matched experiment additions'
+        + (
+            ", plus exploratory one-sided paired permutation p-values.</desc>"
+            if paired_comparisons and paired_significance_display == "pvalue"
+            else ", plus paired bootstrap intervals.</desc>"
+            if paired_comparisons
+            else ".</desc>"
+        ),
         f'<metadata>Sources: {"; ".join(str(path) for path in source_paths)}; generated {generated}.</metadata>',
         rect(0, 0, WIDTH, height, fill=BG, rx=0),
-        svg_text(70, 58, "Starling Benchmark Model & Experiment Comparison", size=36, weight=750),
-        svg_text(70, 94, f"{split_title} {evaluation_subset} · Macro-F1", size=20, fill=MUTED),
+        svg_text(70, 58, chart_title, size=36, weight=750),
+        svg_text(70, 94, subtitle, size=20, fill=MUTED),
         svg_text(1830, 58, comparison_title, size=18, weight=700, fill=PURPLE, anchor="end"),
-        svg_text(
-            70,
-            132,
-            "Same scaffold-valid data and parent-disjoint retrieval · Visibility/tool-execution contract varies by series",
-            size=14,
-            fill=MUTED,
-        ),
     ]
+    for index, line in enumerate(effective_context_lines):
+        parts.append(svg_text(70, 132 + index * 22, line, size=14, fill=MUTED))
+    primary_legend_y = 157 + context_extra
+    auxiliary_legend_y = 183 + context_extra
     legend_x = 70.0
     for series_index, label in enumerate(series_labels):
         parts.append(
             rect(
                 legend_x,
-                157,
+                primary_legend_y,
                 30,
                 10,
                 fill=_series_fill(PURPLE, series_index, len(series_labels)),
@@ -607,26 +841,34 @@ def render(
                 rx=2,
             )
         )
-        parts.append(svg_text(legend_x + 42, 168, label, size=13, weight=600))
+        parts.append(
+            svg_text(legend_x + 42, primary_legend_y + 11, label, size=13, weight=600)
+        )
         legend_x += max(225.0, 82.0 + len(label) * 7.2)
     # Keep shared baselines and opt-in experiments on a second legend row.  A
     # sixth model/visibility series fills most of the first row, so appending
     # these entries horizontally would clip the final label at the SVG edge.
     auxiliary_legend_x = 70.0
-    parts.extend(
-        [
-            rect(auxiliary_legend_x, 183, 30, 18, fill="#7A8338", rx=3),
-            svg_text(
-                auxiliary_legend_x + 42,
-                198,
-                "Shared train-label baseline",
-                size=13,
-                weight=600,
-            ),
-        ]
+    has_shared_baseline = baseline_display == "shared" and any(
+        method.source in BASELINE_SOURCES
+        for methods in methods_by_task.values()
+        for method in methods
     )
+    if has_shared_baseline:
+        parts.extend(
+            [
+                rect(auxiliary_legend_x, auxiliary_legend_y, 30, 18, fill="#7A8338", rx=3),
+                svg_text(
+                    auxiliary_legend_x + 42,
+                    auxiliary_legend_y + 15,
+                    "Shared train-label baseline",
+                    size=13,
+                    weight=600,
+                ),
+            ]
+        )
     if experiments:
-        experiment_legend_x = auxiliary_legend_x + 300
+        experiment_legend_x = auxiliary_legend_x + (300 if has_shared_baseline else 0)
         experiment_legend = (
             "Matched opt-in experiments"
             if show_experiment_model_label
@@ -634,19 +876,42 @@ def render(
         )
         parts.extend(
             [
-                rect(experiment_legend_x, 183, 30, 18, fill=EXPERIMENT_FILL, stroke="#315B57", rx=3),
+                rect(experiment_legend_x, auxiliary_legend_y, 30, 18, fill=EXPERIMENT_FILL, stroke="#315B57", rx=3),
                 svg_text(
                     experiment_legend_x + 42,
-                    198,
+                    auxiliary_legend_y + 15,
                     experiment_legend,
                     size=14,
                     weight=600,
                 ),
             ]
         )
+    if paired_comparisons:
+        paired_legend_x = 1030.0
+        paired_legend_label = (
+            "Exploratory one-sided paired p-value"
+            if paired_significance_display == "pvalue"
+            else "Best agent paired Δ · 95% CI"
+        )
+        parts.extend(
+            [
+                f'<line x1="{paired_legend_x:.1f}" y1="{auxiliary_legend_y + 9:.1f}" '
+                f'x2="{paired_legend_x + 30:.1f}" y2="{auxiliary_legend_y + 9:.1f}" '
+                f'stroke="{PURPLE}" stroke-width="3"/>',
+                f'<circle cx="{paired_legend_x + 15:.1f}" cy="{auxiliary_legend_y + 9:.1f}" r="4.5" '
+                f'fill="{PAIRED_POINT_FILL}" stroke="{CARD}" stroke-width="1"/>',
+                svg_text(
+                    paired_legend_x + 42,
+                    auxiliary_legend_y + 15,
+                    paired_legend_label,
+                    size=13,
+                    weight=600,
+                ),
+            ]
+        )
 
     for task_index, task in enumerate(TASKS):
-        y = HEADER_HEIGHT + task_index * (panel_height + PANEL_GAP)
+        y = header_height + task_index * (panel_height + PANEL_GAP)
         panel_width = 980 if len(available_splits) == 1 else 860
         for column, (split, split_label) in enumerate(available_splits):
             x = 460 if len(available_splits) == 1 else 70 + column * 900
@@ -655,6 +920,7 @@ def render(
                 x=x,
                 y=y,
                 task=task,
+                methods=methods_by_task[task.key],
                 split=split,
                 split_label=split_label,
                 width=panel_width,
@@ -662,12 +928,33 @@ def render(
                 series=series,
                 experiments=experiments.get((split, task.key), ()),
                 show_experiment_model_label=show_experiment_model_label,
+                paired_comparisons=paired_comparisons.get((split, task.key), ()),
+                paired_scale_limit=paired_scale_limit,
+                paired_significance_display=paired_significance_display,
+                baseline_display=baseline_display,
+                baseline_series_groups=effective_baseline_groups,
             )
 
     footer_y = height - FOOTER_HEIGHT + 25
     parts.extend(
         [
-            svg_text(70, footer_y, "Bar shade follows the legend · Shared baselines are shown once · Teal rows are matched opt-in experiments.", size=13, fill=MUTED),
+            svg_text(
+                70,
+                footer_y,
+                "Bar shade follows the legend"
+                + (" · Shared baselines are shown once" if has_shared_baseline else "")
+                + (" · Teal rows are matched opt-in experiments" if experiments else "")
+                + "."
+                + (
+                    " · P-values are exploratory one-sided paired permutation tests."
+                    if paired_comparisons and paired_significance_display == "pvalue"
+                    else " · Paired whiskers show best-agent minus baseline 95% CIs."
+                    if paired_comparisons
+                    else ""
+                ),
+                size=13,
+                fill=MUTED,
+            ),
             svg_text(70, footer_y + 28, "Source: frozen Starling benchmark results"
                      + (" · Failed samples are counted as incorrect." if has_failure else ""), size=13, fill=MUTED),
             svg_text(1830, footer_y + 28, f"Generated {generated}", size=13, fill=MUTED, anchor="end"),
@@ -682,6 +969,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference-metrics", type=Path, default=DEFAULT_REFERENCE)
     parser.add_argument("--candidate-metrics", type=Path, default=DEFAULT_CANDIDATE)
+    parser.add_argument(
+        "--single-series",
+        action="store_true",
+        help=(
+            "Plot one complete metrics series plus its train-label baselines. "
+            "The candidate metrics path is ignored."
+        ),
+    )
     parser.add_argument(
         "--experiment-metrics",
         type=Path,
@@ -702,6 +997,67 @@ def main() -> None:
             "bars; task/method keys, subsets, sample counts, and baselines must match."
         ),
     )
+    parser.add_argument(
+        "--paired-ci-metrics",
+        type=Path,
+        help=(
+            "Paired statistics TSV for the plotted best agent versus the complete "
+            "baseline set. The displayed statistic is selected with "
+            "--paired-significance-display."
+        ),
+    )
+    parser.add_argument(
+        "--paired-significance-display",
+        choices=("ci", "pvalue"),
+        default="ci",
+        help=(
+            "Render either paired-bootstrap delta CIs or exploratory one-sided "
+            "paired permutation p-values from --paired-ci-metrics."
+        ),
+    )
+    parser.add_argument(
+        "--method-family",
+        help=(
+            "Plot only one method_family from every summary. This is useful for "
+            "dataset-version comparisons where train-derived baselines differ."
+        ),
+    )
+    parser.add_argument(
+        "--baseline-display",
+        choices=("shared", "series"),
+        default="shared",
+        help=(
+            "Use 'shared' for same-dataset model comparisons and 'series' when "
+            "each dataset lineage has its own train-derived baselines."
+        ),
+    )
+    parser.add_argument(
+        "--baseline-series-group",
+        action="append",
+        default=[],
+        help=(
+            "Dataset-lineage group in metrics-series order. Repeated groups collapse "
+            "visibility-duplicate baseline bars after equality validation."
+        ),
+    )
+    parser.add_argument(
+        "--series-label",
+        action="append",
+        default=[],
+        help=(
+            "Legend label in reference, candidate, then --comparison-metrics order. "
+            "Repeat exactly once per metrics series."
+        ),
+    )
+    parser.add_argument("--chart-title")
+    parser.add_argument("--chart-subtitle")
+    parser.add_argument(
+        "--context-line",
+        action="append",
+        default=[],
+        help="Header context line; repeat to add auditable dataset notes.",
+    )
+    parser.add_argument("--comparison-title")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--png-output", type=Path)
     args = parser.parse_args()
@@ -711,6 +1067,17 @@ def main() -> None:
         args.output,
         tuple(args.experiment_metrics),
         tuple(args.comparison_metrics),
+        args.paired_ci_metrics,
+        args.paired_significance_display,
+        args.method_family,
+        tuple(args.series_label),
+        args.chart_title or "Starling Benchmark Model & Experiment Comparison",
+        args.chart_subtitle,
+        tuple(args.context_line),
+        args.comparison_title,
+        args.baseline_display,
+        tuple(args.baseline_series_group),
+        args.single_series,
     )
     print(args.output)
     if args.png_output is not None:

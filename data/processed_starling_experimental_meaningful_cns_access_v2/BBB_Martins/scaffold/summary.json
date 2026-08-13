@@ -1,0 +1,74 @@
+{
+  "method": "quality_lexicographic_milp_scaffold_groups",
+  "lineage": "experimental_meaningful_cns_access_v2",
+  "target_valid_size": 366,
+  "target_test_size": 366,
+  "actual_valid_size": 366,
+  "actual_test_size": 366,
+  "valid_size_shortfall": 0,
+  "test_size_shortfall": 0,
+  "optimization": {
+    "minimum_singletons_in_heldout": 43,
+    "minimum_singleton_imbalance": 1,
+    "minimum_label_deviation": 0,
+    "desired_positive_count_per_eval_split": 269,
+    "maximum_prior_valid_reuse": 100,
+    "n_scaffold_groups": 2135,
+    "n_candidate_scaffold_groups": 2135
+  },
+  "n_train": 2935,
+  "train_label_counts": {
+    "0": 773,
+    "1": 2162
+  },
+  "train_record_tier_counts": {
+    "multi_record": 492,
+    "singleton": 2443
+  },
+  "n_train_scaffolds": 1544,
+  "n_valid": 366,
+  "valid_label_counts": {
+    "0": 97,
+    "1": 269
+  },
+  "valid_record_tier_counts": {
+    "multi_record": 345,
+    "singleton": 21
+  },
+  "n_valid_scaffolds": 305,
+  "n_test": 366,
+  "test_label_counts": {
+    "0": 97,
+    "1": 269
+  },
+  "test_record_tier_counts": {
+    "multi_record": 344,
+    "singleton": 22
+  },
+  "n_test_scaffolds": 286,
+  "pairwise_scaffold_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "pairwise_identity_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "train_valid_scaffold_overlap": 0,
+  "train_test_scaffold_overlap": 0,
+  "valid_test_scaffold_overlap": 0,
+  "train_valid_identity_overlap": 0,
+  "train_test_identity_overlap": 0,
+  "valid_test_identity_overlap": 0,
+  "paths": {
+    "train": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/train.jsonl",
+    "valid": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/valid.jsonl",
+    "test": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/test.jsonl",
+    "train_molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/train_molecule_labels.jsonl",
+    "valid_molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/valid_molecule_labels.jsonl",
+    "test_molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/test_molecule_labels.jsonl",
+    "heldout_molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/heldout_molecule_labels.jsonl"
+  }
+}

@@ -134,6 +134,34 @@ def test_global_pool_requeues_only_failed_item(monkeypatch, tmp_path):
     assert finalized == [{"query_index": 0, "status": "ok"}]
 
 
+def test_stage_state_key_distinguishes_repeated_condition_ids_across_roots(tmp_path):
+    item = BatchItem(0, {"drug": "CC", "Y": 1})
+    states = []
+    for fold in ("fold_00", "fold_01"):
+        batch_dir = tmp_path / fold / "condition"
+        prepared = PreparedBatch(
+            config=_config(),
+            args=SimpleNamespace(skip_existing=True),
+            batch_id="condition",
+            batch_dir=batch_dir,
+            logs_dir=batch_dir / "logs",
+            batch_run_root=batch_dir / "runs",
+            items=[item],
+            manifest={},
+        )
+        states.append(
+            pool.StageState(
+                prepared=prepared,
+                item=item,
+                run_id="condition_idx00000",
+                run_dir=prepared.batch_run_root / "condition_idx00000",
+                retrieval={},
+                expected_group_ids=(),
+            )
+        )
+    assert states[0].key != states[1].key
+
+
 def test_matrix_global_pool_uses_one_full_budget_without_condition_barriers(monkeypatch):
     experiments = matrix.experiments_for_starling_benchmark("random")
     selected_names = {

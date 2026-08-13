@@ -1,0 +1,171 @@
+{
+  "task": "Bioavailability_Ma",
+  "protocol_version": "starling_record_supported_benchmark.v2",
+  "identity_normalizer_version": "rdkit_fragment_parent.v1",
+  "seed": 20260807,
+  "parent_label_policy": {
+    "method": "record_weighted_majority",
+    "agreement_formula": "max(n_label_0, n_label_1) / (n_label_0 + n_label_1)",
+    "agreement_threshold": 0.7,
+    "vote_unit": "accepted_source_record",
+    "tie_policy": "reject_exact_ties"
+  },
+  "split_size_policy": {
+    "formula": "BBB min(500, floor(0.1*n)); Bioavailability/Skin floor(0.1*n)",
+    "target_valid_size": 209,
+    "target_test_size": 209
+  },
+  "n_source_rows_considered": 113080,
+  "n_source_rows_labeled_before_structure_normalization": 18984,
+  "source_rejection_counts": {
+    "interpretation_altering_qualifying_conditions": 12913,
+    "missing_bioavailability_value": 14,
+    "nonhuman_or_unresolved_population": 77589,
+    "numeric_interval_crosses_20_percent_threshold": 739,
+    "numeric_value_out_of_percent_range": 635,
+    "qualitative_value_not_threshold_anchored": 905,
+    "relative_not_absolute_bioavailability": 52,
+    "unmapped_or_ambiguous_qualitative_value": 1249
+  },
+  "n_parent_groups_with_any_label": 2198,
+  "n_parent_groups_with_label_conflict": 370,
+  "n_parent_groups_recovered_by_majority": 264,
+  "n_rejected_parent_groups": 106,
+  "parent_rejection_counts": {
+    "parent_record_agreement_below_threshold": 67,
+    "parent_record_label_tie": 39
+  },
+  "n_binary_molecules": 2092,
+  "all_label_counts": {
+    "0": 577,
+    "1": 1515
+  },
+  "n_unique_bemis_murcko_scaffolds": 1243,
+  "n_acyclic_molecules": 169,
+  "splits": {
+    "scaffold": {
+      "method": "quality_lexicographic_milp_scaffold_groups",
+      "lineage": "record_supported_v2",
+      "target_valid_size": 209,
+      "target_test_size": 209,
+      "actual_valid_size": 209,
+      "actual_test_size": 209,
+      "valid_size_shortfall": 0,
+      "test_size_shortfall": 0,
+      "optimization": {
+        "minimum_singletons_in_heldout": 0,
+        "minimum_singleton_imbalance": 0,
+        "minimum_label_deviation": 0,
+        "desired_positive_count_per_eval_split": 151,
+        "maximum_prior_valid_reuse": 110,
+        "n_scaffold_groups": 1243,
+        "n_candidate_scaffold_groups": 1243
+      },
+      "n_train": 1674,
+      "train_label_counts": {
+        "0": 461,
+        "1": 1213
+      },
+      "train_record_tier_counts": {
+        "multi_record": 868,
+        "singleton": 806
+      },
+      "n_train_scaffolds": 929,
+      "n_valid": 209,
+      "valid_label_counts": {
+        "0": 58,
+        "1": 151
+      },
+      "valid_record_tier_counts": {
+        "multi_record": 209
+      },
+      "n_valid_scaffolds": 175,
+      "n_test": 209,
+      "test_label_counts": {
+        "0": 58,
+        "1": 151
+      },
+      "test_record_tier_counts": {
+        "multi_record": 209
+      },
+      "n_test_scaffolds": 139,
+      "pairwise_scaffold_overlap": {
+        "train_valid": 0,
+        "train_test": 0,
+        "valid_test": 0
+      },
+      "pairwise_identity_overlap": {
+        "train_valid": 0,
+        "train_test": 0,
+        "valid_test": 0
+      },
+      "train_valid_scaffold_overlap": 0,
+      "train_test_scaffold_overlap": 0,
+      "valid_test_scaffold_overlap": 0,
+      "train_valid_identity_overlap": 0,
+      "train_test_identity_overlap": 0,
+      "valid_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/train.jsonl",
+        "valid": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/valid.jsonl",
+        "test": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/test.jsonl",
+        "train_molecule_labels": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/train_molecule_labels.jsonl",
+        "valid_molecule_labels": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/valid_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/test_molecule_labels.jsonl",
+        "heldout_molecule_labels": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/heldout_molecule_labels.jsonl"
+      }
+    }
+  },
+  "cross_method_eval_identity_overlap": {
+    "valid": 22,
+    "test": 18
+  },
+  "source_metadata": {
+    "canonical_source": {
+      "contract_version": "bioavailability_canonical_direct.v2",
+      "path": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
+      "sha256": "045261cbda785092143eeadd636f78399f7b02f951b23480b16fb8dde22661c5",
+      "manifest_path": "data/starling_data/bioavailability_ma/canonical_direct_v2/merge_manifest.json",
+      "manifest_sha256": "b986a214491f3b04c6f3ae6fc71cbd4eacad08d390b9b62de53f953966b0a257",
+      "upstream_hf": {
+        "dataset": "starling-labs/Oral_Bioavailability",
+        "requested_revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",
+        "resolved_revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",
+        "split": "train",
+        "snapshot_path": "data/starling_data/bioavailability_ma/canonical_direct_v2/hf_oral_bioavailability_snapshot.parquet"
+      },
+      "upstream_local": {
+        "path": "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
+        "sha256": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010"
+      },
+      "deduplication_policy": {
+        "grain": "cross-source one-to-one claim match within parent identity and PMID",
+        "numeric_match": "complete intervals must be on the same 20% threshold side and within tolerance",
+        "text_fallback": "identical normalized support text only when either side lacks a parsed numeric value",
+        "value_tolerance_percent": 1.0,
+        "same-source_rows_are_not_collapsed": true
+      }
+    },
+    "tdc_compatibility": {
+      "population_scope": "human only",
+      "positive_label": "human oral bioavailability F >= 20%",
+      "negative_label": "human oral bioavailability F < 20%",
+      "numeric_units": "percent and unitless fraction normalized to percent",
+      "qualitative_policy": "only explicit high/good/complete or low/poor/negligible descriptors"
+    }
+  },
+  "paths": {
+    "molecule_labels": "data/processed_starling/Bioavailability_Ma/molecule_labels.jsonl",
+    "conflicting_molecules": "data/processed_starling/Bioavailability_Ma/conflicting_molecules.jsonl",
+    "rejected_parent_molecules": "data/processed_starling/Bioavailability_Ma/rejected_parent_molecules.jsonl",
+    "source_rejection_examples": "data/processed_starling/Bioavailability_Ma/source_rejection_examples.jsonl",
+    "record_supported_scaffold_root": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold"
+  },
+  "record_support_policy": {
+    "record_tier": "multi_record iff source_record_count >= 2",
+    "heldout_objective": "maximize multi-record parents at scaffold-group grain",
+    "bbb_eval_cap": 500,
+    "bioavailability_and_skin_ratio": "approximately 8:1:1",
+    "prior_valid_reuse_tiebreak": true
+  }
+}

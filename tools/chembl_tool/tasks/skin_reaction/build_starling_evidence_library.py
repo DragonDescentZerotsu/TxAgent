@@ -1,48 +1,92 @@
-"""Build the paper-facing Skin_Reaction Starling four-family index."""
+"""Build versioned paper-facing Skin_Reaction Starling evidence indices."""
 
 from __future__ import annotations
 
 import argparse
+from collections.abc import Mapping
 import json
 from pathlib import Path
 
+from tools.chembl_tool.common.json_utils import sha256_file
 from tools.chembl_tool.common.starling import (
     StarlingSourceProfile,
     build_and_write_starling_index,
     build_starling_parquet_evidence_rows,
 )
+from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+    CANONICAL_VERSION,
+    MANIFEST_PATH,
+)
+from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
+    is_tdc_skin_sensitization_scope,
+)
 
 
 DEFAULT_STARLING_DATA_DIR = "data/starling_data/skin_reaction"
-DEFAULT_OUT_DIR = "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full"
+HISTORICAL_OUT_DIR = "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full"
+ALIGNED_V2_OUT_DIR = (
+    "outputs/paper/molecular_evidence_agent/evidence/"
+    "skin_reaction_starling_sensitization_v2"
+)
+DEFAULT_OUT_DIR = (
+    "outputs/paper/molecular_evidence_agent/evidence/"
+    "skin_reaction_starling_sensitization_canonical_v3"
+)
 EVIDENCE_FILENAME = "starling_skin_reaction_evidence.jsonl"
 INDEX_FILENAME = "starling_skin_reaction_neighbor_index.pkl"
 META_FILENAME = "starling_skin_reaction_neighbor_index.meta.json"
-INDEX_VERSION = "skin_reaction_starling_full_neighbor_index.v1"
+CANONICAL_HELDOUT_INDEX_NAME = "skin_reaction_starling_sensitization_canonical_v3"
+DEFAULT_EVIDENCE_PATH = Path(DEFAULT_OUT_DIR) / EVIDENCE_FILENAME
+DEFAULT_INDEX_PATH = Path(DEFAULT_OUT_DIR) / INDEX_FILENAME
+
+SOURCE_PROFILE_BROAD_V1 = "broad_skin_reaction_v1"
+SOURCE_PROFILE_SENSITIZATION_V2 = "sensitization_contact_allergy_v2"
+SOURCE_PROFILE_CANONICAL_V3 = "sensitization_direct_aop_canonical_v3"
+DEFAULT_SOURCE_PROFILE = SOURCE_PROFILE_CANONICAL_V3
+SOURCE_PROFILES = (
+    SOURCE_PROFILE_BROAD_V1,
+    SOURCE_PROFILE_SENSITIZATION_V2,
+    SOURCE_PROFILE_CANONICAL_V3,
+)
+OUT_DIRS = {
+    SOURCE_PROFILE_BROAD_V1: HISTORICAL_OUT_DIR,
+    SOURCE_PROFILE_SENSITIZATION_V2: ALIGNED_V2_OUT_DIR,
+    SOURCE_PROFILE_CANONICAL_V3: DEFAULT_OUT_DIR,
+}
+INDEX_VERSIONS = {
+    SOURCE_PROFILE_BROAD_V1: "skin_reaction_starling_full_neighbor_index.v1",
+    SOURCE_PROFILE_SENSITIZATION_V2: "skin_reaction_starling_sensitization_neighbor_index.v2",
+    SOURCE_PROFILE_CANONICAL_V3: "skin_reaction_starling_sensitization_direct_aop_index.v3",
+}
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    out_dir = _resolve_out_dir(args)
+    data_dir = Path(args.starling_data_dir)
+    if args.source_profile == SOURCE_PROFILE_CANONICAL_V3:
+        _validate_canonical_source(data_dir)
+    profiles = skin_reaction_profiles(
+        data_dir,
+        max_rows=args.max_rows_per_source,
+        source_profile=args.source_profile,
+    )
     evidence_rows, source_stats = build_starling_parquet_evidence_rows(
-        skin_reaction_profiles(Path(args.starling_data_dir), max_rows=args.max_rows_per_source),
+        profiles,
         max_record_examples=args.max_record_examples,
         min_confidence=args.min_confidence,
     )
     source = {
         "type": "starling_profile_index",
         "dataset": "Starling Skin_Reaction task-specific literature acquisitions",
-        "families": [
-            "direct_skin_reaction",
-            "sensitization_aop",
-            "phototoxicity_irritation_local_damage",
-            "skin_exposure",
-        ],
+        "families": [profile.endpoint_group for profile in profiles],
         "exact_query_exclusion": True,
+        "source_profile": args.source_profile,
     }
     meta = build_and_write_starling_index(
         evidence_rows,
-        out_dir=args.out_dir,
-        index_version=INDEX_VERSION,
+        out_dir=out_dir,
+        index_version=INDEX_VERSIONS[args.source_profile],
         source=source,
         source_stats=source_stats,
         evidence_filename=EVIDENCE_FILENAME,
@@ -55,7 +99,17 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[StarlingSourceProfile]:
+def skin_reaction_profiles(
+    data_dir: Path,
+    *,
+    max_rows: int = 0,
+    source_profile: str = DEFAULT_SOURCE_PROFILE,
+) -> list[StarlingSourceProfile]:
+    if source_profile not in SOURCE_PROFILES:
+        raise ValueError(f"Unknown Skin source profile: {source_profile}")
+    if source_profile == SOURCE_PROFILE_CANONICAL_V3:
+        return _canonical_v3_profiles(data_dir, max_rows=max_rows)
+    aligned_scope = source_profile == SOURCE_PROFILE_SENSITIZATION_V2
     return [
         StarlingSourceProfile(
             source_id="skin_direct_reaction",
@@ -63,7 +117,11 @@ def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starlin
             group_id="Direct.skin_reaction",
             assay_tier="Tier 1",
             endpoint_group="direct_skin_reaction",
-            evidence_source="Starling/Skin_Reaction/direct_skin_reaction",
+            evidence_source=(
+                "Starling/Skin_Reaction/direct_skin_sensitization"
+                if aligned_scope
+                else "Starling/Skin_Reaction/direct_skin_reaction"
+            ),
             endpoint_field="outcome_label",
             smiles_field="SMILES",
             context_fields=(
@@ -78,10 +136,24 @@ def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starlin
             ),
             scope_fields=("assay_or_test", "species_or_population", "dose_or_concentration"),
             name_fields=(),
-            target_pref_name="direct skin reaction outcome",
+            target_pref_name=(
+                "direct skin sensitization/contact-allergy outcome"
+                if aligned_scope
+                else "direct skin reaction outcome"
+            ),
             evidence_role="direct_outcome",
-            standard_type_prefix="direct skin reaction",
+            standard_type_prefix=(
+                "direct skin sensitization/contact allergy"
+                if aligned_scope
+                else "direct skin reaction"
+            ),
             include_endpoint_values=("positive", "negative", "inconclusive"),
+            record_filter=(
+                _is_skin_sensitization_record if aligned_scope else None
+            ),
+            record_filter_name=(
+                "is_tdc_skin_sensitization_scope.v1" if aligned_scope else ""
+            ),
             extra_example_fields=("positive_count", "total_tested", "effect_metric", "pmid"),
             max_rows=max_rows,
         ),
@@ -232,7 +304,7 @@ def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starlin
             ),
             scope_fields=("study_design", "skin_source", "formulation_vehicle", "qualifying_conditions"),
             target_pref_name="dermal exposure and skin penetration",
-            evidence_role="exposure_context",
+            evidence_role="context_modifier",
             standard_type_prefix="skin exposure",
             include_endpoint_values=(
                 "permeability_coefficient",
@@ -253,10 +325,144 @@ def skin_reaction_profiles(data_dir: Path, *, max_rows: int = 0) -> list[Starlin
     ]
 
 
+def _canonical_v3_profiles(
+    data_dir: Path,
+    *,
+    max_rows: int,
+) -> list[StarlingSourceProfile]:
+    canonical_dir = data_dir / "canonical_sensitization_v3"
+    return [
+        StarlingSourceProfile(
+            source_id="skin_direct_sensitization_canonical_v3",
+            path=str(canonical_dir / "direct_records.parquet"),
+            group_id="Direct.skin_reaction",
+            assay_tier="Tier 1",
+            endpoint_group="direct_skin_reaction",
+            evidence_source="Starling/Skin_Reaction/direct_sensitization_canonical_v3",
+            endpoint_field="outcome_label",
+            smiles_field="SMILES",
+            context_fields=(
+                "reaction_type",
+                "assay_or_test",
+                "species_or_population",
+                "dose_or_concentration",
+                "positive_count",
+                "total_tested",
+                "effect_metric",
+                "extra_details",
+            ),
+            scope_fields=("assay_or_test", "species_or_population", "dose_or_concentration"),
+            name_fields=(),
+            target_pref_name="direct skin sensitization/contact-allergy outcome",
+            evidence_role="direct_outcome",
+            standard_type_prefix="direct skin sensitization/contact allergy",
+            include_endpoint_values=("positive", "negative", "inconclusive"),
+            extra_example_fields=(
+                "positive_count",
+                "total_tested",
+                "effect_metric",
+                "pmid",
+                "source_partition",
+                "source_record_id",
+            ),
+            max_rows=max_rows,
+        ),
+        StarlingSourceProfile(
+            source_id="skin_sensitization_aop_canonical_v3",
+            path=str(canonical_dir / "aop_records.parquet"),
+            group_id="Mechanism.sensitization_aop",
+            assay_tier="Tier 2",
+            endpoint_group="sensitization_aop",
+            evidence_source="Starling/Skin_Reaction/sensitization_aop_canonical_v3",
+            endpoint_field="aop_event",
+            smiles_field="SMILES",
+            value_field="result_value",
+            unit_field="result_unit",
+            context_fields=(
+                "assay_type",
+                "endpoint_or_target",
+                "result_label",
+                "experimental_conditions",
+                "qualifying_conditions",
+                "extra_details",
+            ),
+            scope_fields=("assay_type", "experimental_conditions", "qualifying_conditions"),
+            target_pref_name="skin sensitization AOP key events",
+            evidence_role="mechanistic_factor",
+            standard_type_prefix="skin sensitization AOP key event",
+            include_endpoint_values=(
+                "MIE_protein_binding",
+                "KE2_keratinocyte_activation",
+                "KE3_dendritic_cell_activation",
+                "KE4_T_cell_activation",
+            ),
+            extra_example_fields=(
+                "assay_type",
+                "result_label",
+                "endpoint_or_target",
+                "pmid",
+                "source_partition",
+                "source_record_id",
+            ),
+            max_rows=max_rows,
+        ),
+    ]
+
+
+def _is_skin_sensitization_record(record: Mapping[str, object]) -> bool:
+    """Keep direct evidence in exact parity with the benchmark label scope."""
+    return is_tdc_skin_sensitization_scope(record.get("reaction_type"))
+
+
+def _validate_canonical_source(data_dir: Path) -> None:
+    canonical_dir = data_dir / "canonical_sensitization_v3"
+    manifest_path = canonical_dir / MANIFEST_PATH.name
+    if not manifest_path.is_file():
+        raise FileNotFoundError(
+            f"Missing canonical Skin source manifest: {manifest_path}. "
+            "Run build_canonical_starling_source first."
+        )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("contract_version") != CANONICAL_VERSION:
+        raise ValueError(f"Unexpected canonical Skin contract in {manifest_path}")
+    stats = manifest.get("stats") or {}
+    if not stats.get("partition_reconciles"):
+        raise ValueError("Canonical Skin partition does not reconcile to raw sources")
+    if int(stats.get("direct_aop_source_record_overlap", -1)) != 0:
+        raise ValueError("Canonical Skin direct/AOP partitions overlap")
+
+    manifest_paths = manifest.get("paths") or {}
+    for name in ("direct_records", "aop_records"):
+        path = canonical_dir / f"{name}.parquet"
+        expected = str(manifest_paths.get(f"{name}_sha256") or "")
+        if not path.is_file() or not expected or sha256_file(path) != expected:
+            raise ValueError(f"Canonical Skin artifact failed hash validation: {path}")
+
+
+def _resolve_out_dir(args: argparse.Namespace) -> str:
+    if args.max_rows_per_source and not args.out_dir:
+        raise SystemExit(
+            "--max-rows-per-source requires an explicit non-canonical --out-dir"
+        )
+    return str(args.out_dir or OUT_DIRS[args.source_profile])
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--starling-data-dir", default=DEFAULT_STARLING_DATA_DIR)
-    parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
+    parser.add_argument(
+        "--out-dir",
+        default="",
+        help="Defaults to a versioned directory for the selected source profile.",
+    )
+    parser.add_argument(
+        "--source-profile",
+        "--direct-scope",
+        dest="source_profile",
+        choices=SOURCE_PROFILES,
+        default=DEFAULT_SOURCE_PROFILE,
+        help="Versioned Skin source selection; --direct-scope is a compatibility alias.",
+    )
     parser.add_argument("--min-confidence", type=float, default=0.0)
     parser.add_argument("--max-record-examples", type=int, default=6)
     parser.add_argument("--max-rows-per-source", type=int, default=0)

@@ -9,6 +9,7 @@ import os
 import sys
 import time
 import uuid
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -46,9 +47,20 @@ from tools.chembl_tool.common.experiment_retrieval import (
     retrieve_experiment_view,
 )
 from tools.chembl_tool.common.export import ensure_dir
+from tools.chembl_tool.common.final_evidence_surface import (
+    SUMMARY_ONLY,
+    add_final_evidence_surface_argument,
+    build_final_evidence_fields,
+    compact_group_reasoning_outputs,
+    final_evidence_instructions,
+    prepare_resumed_final_inputs,
+)
+from tools.chembl_tool.common.final_decision_prior import (
+    STANDARD_FINAL_DECISION,
+    TrainRatioPrior,
+    add_final_decision_profile_argument,
+)
 from tools.chembl_tool.common.identity_blind import (
-    prepare_identity_blind_final_retrieval,
-    prepare_prefetched_final_retrieval,
     prepare_reasoning_retrieval,
     sanitize_identity_blind_branch_outputs,
 )
@@ -56,7 +68,20 @@ from tools.chembl_tool.common.json_utils import parse_json_content
 from tools.chembl_tool.common.neighbor_selection import (
     SIMILARITY_SELECTOR,
 )
+from tools.chembl_tool.common.retrieval_policy import NEIGHBOR_IDENTITY_POLICIES
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
+from tools.chembl_tool.common.prompt_profile import (
+    prompt_profile_from_manifest,
+    require_matching_prompt_profiles,
+)
+from tools.chembl_tool.common.reasoning_payload import (
+    clean_exact_match as _clean_exact_match,
+    clean_shared_assay_context as _clean_shared_assay_context,
+    llm_query_payload as _llm_query_payload,
+    load_env_file as _load_env,
+    read_jsonl_record as _read_jsonl_record,
+    write_trace_jsonl,
+)
 from tools.chembl_tool.common.reasoning_calls import (
     bound_group_prompt_payload,
     call_group_branch,
@@ -76,7 +101,21 @@ from tools.chembl_tool.tasks.bbb_martins.chembl_exact_context import (
     enrich_retrieval_with_chembl_context,
 )
 from tools.chembl_tool.tasks.bbb_martins.experiment_config import get_source_config
+from tools.chembl_tool.tasks.bbb_martins.prompt_profiles import (
+    BBB_PROMPT_PROFILES,
+    DEFAULT_BBB_PROMPT_PROFILE,
+    HISTORICAL_BBB_PROMPT_PROFILE,
+    SINGLE_SCHEMA,
+    final_profile_validation_errors,
+    get_bbb_prompt_profile,
+)
 from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index, retrieve_neighbors
+from tools.chembl_tool.tasks.bbb_martins.final_decision_profiles import (
+    BBB_FINAL_DECISION_PROFILES,
+    bbb_final_decision_allowed_values,
+    bbb_final_decision_validation_errors,
+    build_bbb_final_decision_prompt,
+)
 
 
 DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
@@ -92,6 +131,15 @@ DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
 V11_DEFAULT_PATHS = default_cache_paths("bbb_martins")
 V11_MODEL_PROFILE = model_profile("bbb_martins")
+_write_trace_jsonl = partial(write_trace_jsonl, prediction_field="bbb_prediction")
+TRAIN_RATIO_PRIOR = TrainRatioPrior(
+    dataset_lineage="experimental_meaningful_cns_access_v2",
+    split="scaffold/train",
+    positive_count=2162,
+    negative_count=773,
+    positive_label="pass",
+    negative_label="fail",
+)
 
 
 GROUP_REASONING_TOOLS = [
@@ -231,6 +279,7 @@ def main(argv: list[str] | None = None) -> int:
             "--assay-transfer-records-per-molecule greater than 1 requires "
             "--retrieval-strategy assay_transfer_tool"
         )
+    _validate_prompt_profile_reuse(args)
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
     if not api_key and not args.prepare_only:
@@ -437,6 +486,7 @@ def main(argv: list[str] | None = None) -> int:
         max_workers=args.max_workers,
         single_output=frozen_single,
         group_outputs=frozen_groups,
+        prompt_profile=args.bbb_prompt_profile,
     )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
@@ -451,7 +501,15 @@ def main(argv: list[str] | None = None) -> int:
     _write_jsonl(group_path, group_outputs)
     _log(f"wrote {group_path}")
 
-    final_output = _run_final_reasoning(client, reasoning_retrieval, single_output, group_outputs)
+    final_output = _run_final_reasoning(
+        client,
+        reasoning_retrieval,
+        single_output,
+        group_outputs,
+        final_evidence_surface=args.final_evidence_surface,
+        final_decision_profile=args.final_decision_profile,
+        prompt_profile=args.bbb_prompt_profile,
+    )
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     _log(f"wrote {final_path}")
@@ -490,6 +548,10 @@ def main(argv: list[str] | None = None) -> int:
         "morgan_neighbor_selector": args.morgan_neighbor_selector,
         "neighbor_selector": args.morgan_neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "final_evidence_surface": args.final_evidence_surface,
+        "final_decision_profile": args.final_decision_profile,
+        "task_prompt_profile": args.bbb_prompt_profile,
+        "label_scope": get_bbb_prompt_profile(args.bbb_prompt_profile).label_scope,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
@@ -545,12 +607,19 @@ def _run_parallel_reasoning(
     max_workers: int,
     single_output: dict[str, Any] | None = None,
     group_outputs: list[dict[str, Any]] | None = None,
+    prompt_profile: str = DEFAULT_BBB_PROMPT_PROFILE,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs = list(group_outputs or [])
     reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(_reason_one_group, client, _llm_query_payload(retrieval["query"]), group): group["group_id"]
+            executor.submit(
+                _reason_one_group,
+                client,
+                _llm_query_payload(retrieval["query"]),
+                group,
+                prompt_profile=prompt_profile,
+            ): group["group_id"]
             for group in groups
             if str(group.get("group_id") or "") not in reused_group_ids
         }
@@ -561,6 +630,7 @@ def _run_parallel_reasoning(
                     client,
                     _llm_query_payload(retrieval["query"]),
                     _clean_query_chembl_context(retrieval.get("query_chembl_context") or {}),
+                    prompt_profile=prompt_profile,
                 )
             ] = "single_molecule"
         else:
@@ -707,11 +777,13 @@ def _reason_single_molecule(
     client: OpenAICompatibleClient,
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
+    *,
+    prompt_profile: str = DEFAULT_BBB_PROMPT_PROFILE,
 ) -> dict[str, Any]:
+    profile = get_bbb_prompt_profile(prompt_profile)
     instructions = [
         "Call molecule_properties for the query molecule before analysis.",
-        "Assess passive BBB plausibility from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional groups.",
-        "Return JSON with passive_bbb_plausibility, efflux_or_transporter_prior, confidence, reasoning_summary, property_drivers, caveats.",
+        *profile.single_instructions,
     ]
     if query.get("prefetched_molecule_properties"):
         instructions[0] = "Use the harness-prefetched molecule_properties result."
@@ -721,15 +793,7 @@ def _reason_single_molecule(
         "task": "Single-molecule BBB plausibility analysis.",
         "query": query,
         "instructions": instructions,
-        "required_json_schema": {
-            "passive_bbb_plausibility": "high | moderate | low | uncertain",
-            "efflux_or_transporter_prior": "high | moderate | low | uncertain",
-            "exact_chembl_evidence_assessment": "string",
-            "confidence": "high | moderate | low",
-            "reasoning_summary": "string",
-            "property_drivers": ["string"],
-            "caveats": ["string"],
-        },
+        "required_json_schema": SINGLE_SCHEMA,
     }
     if chembl_context:
         instructions.append(
@@ -770,7 +834,14 @@ def _reason_single_molecule(
     }
 
 
-def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _reason_one_group(
+    client: OpenAICompatibleClient,
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    prompt_profile: str = DEFAULT_BBB_PROMPT_PROFILE,
+) -> dict[str, Any]:
+    profile = get_bbb_prompt_profile(prompt_profile)
     messages = [
         {
             "role": "system",
@@ -788,7 +859,10 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
         },
         {
             "role": "user",
-            "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False),
+            "content": json.dumps(
+                _group_prompt_payload(query, group, prompt_profile=prompt_profile),
+                ensure_ascii=False,
+            ),
         },
     ]
     response = call_group_branch(
@@ -796,6 +870,7 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
         messages,
         group=group,
         tools=GROUP_REASONING_TOOLS,
+        required_fields=profile.group_required_fields,
     )
     return {
         "group_id": group["group_id"],
@@ -812,7 +887,21 @@ def _run_final_reasoning(
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
+    *,
+    final_evidence_surface: str = SUMMARY_ONLY,
+    final_decision_profile: str = STANDARD_FINAL_DECISION,
+    prompt_profile: str = DEFAULT_BBB_PROMPT_PROFILE,
 ) -> dict[str, Any]:
+    profile = get_bbb_prompt_profile(prompt_profile)
+    evidence_fields, surface_audit = build_final_evidence_fields(
+        retrieval,
+        compact_group_reasoning_outputs(group_outputs),
+        surface=final_evidence_surface,
+    )
+    decision_prompt = build_bbb_final_decision_prompt(
+        final_decision_profile,
+        TRAIN_RATIO_PRIOR,
+    )
     messages = [
         {
             "role": "system",
@@ -832,41 +921,14 @@ def _run_final_reasoning(
                         "status": single_output.get("status"),
                         "content": validated_branch_content(single_output),
                     },
-                    "group_reasoning_outputs": [
-                        {
-                            "group_id": item.get("group_id"),
-                            "status": item.get("status"),
-                            "content": validated_branch_content(item),
-                        }
-                        for item in group_outputs
-                    ],
-                    "instructions": [
-                        "Return compact complete JSON.",
-                        "Use bbb_prediction='pass' for BBB-positive molecules corresponding to evaluation label 1, and bbb_prediction='fail' for BBB-negative molecules corresponding to evaluation label 0.",
-                        "Interpret BBB-positive as sufficient or detectable BBB/CNS access under the benchmark label ontology; it does not require ideal passive diffusion, high unbound brain exposure, or absence of every efflux signal.",
-                        "Use the single-molecule analysis as the physicochemical prior.",
-                        "Treat passive_bbb_plausibility as a passive-diffusion prior, not as the final label. Ionization, high polarity, high lipophilicity, or efflux liability should reduce confidence or exposure quality, but should not become a hard fail rule when other evidence supports meaningful BBB/CNS access.",
-                        "Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.",
-                        "Direct brain/plasma, unbound brain, CSF, brain uptake/perfusion, credible influx/prodrug context, or close same-scaffold evidence can support a pass prediction even when passive-property heuristics are imperfect; explain the uncertainty through confidence and evidence_gaps.",
-                        "For basic CNS-like amines with otherwise favorable MW, TPSA, HBD/HBA, logD/logP, and scaffold evidence, do not predict fail solely because the amine is mostly protonated at pH 7.4.",
-                        "Do not predict pass merely because BBB-positive labels can include non-ideal mechanisms. If the molecule has severe passive-property liabilities and no direct/close analog/mechanistic evidence for CNS access, fail remains the better-supported class.",
-                        "When evidence is weak or mixed, distinguish 'poor passive permeability' from 'no meaningful BBB access'. Choose fail only when the integrated evidence better supports insufficient BBB/CNS access, not merely because of one isolated drug-likeness heuristic.",
-                        "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
-                        "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
-                        "You must choose exactly one bbb_prediction: pass or fail. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",
-                    ],
+                    **evidence_fields,
+                    **decision_prompt.fields,
+                    "instructions": list(profile.final_instructions)
+                    + list(decision_prompt.instructions)
+                    + final_evidence_instructions(final_evidence_surface),
                     "required_json_schema": {
-                        "bbb_prediction": "pass | fail",
-                        "confidence": "high | moderate | low",
-                        "main_reasons": ["string"],
-                        "single_molecule_assessment": "string",
-                        "passive_permeability_assessment": "string",
-                        "direct_brain_exposure_analog_assessment": "string",
-                        "efflux_risk_assessment": "string",
-                        "influx_support_assessment": "string",
-                        "conflicting_evidence": ["string"],
-                        "evidence_gaps": ["string"],
-                        "final_summary": "string",
+                        **profile.final_schema,
+                        **decision_prompt.schema,
                     },
                 },
                 ensure_ascii=False,
@@ -876,11 +938,30 @@ def _run_final_reasoning(
     response = call_with_json_validation(
         client.chat_json,
         messages,
-        required_fields=("bbb_prediction",),
-        allowed_values={"bbb_prediction": {"pass", "fail"}},
+        required_fields=(*profile.final_required_fields, *decision_prompt.required_fields),
+        allowed_values={
+            **profile.final_allowed_values,
+            **bbb_final_decision_allowed_values(final_decision_profile),
+        },
+        content_validator=lambda content: [
+            *final_profile_validation_errors(content, profile=prompt_profile),
+            *(
+                bbb_final_decision_validation_errors(
+                    content,
+                    profile=final_decision_profile,
+                    prior=TRAIN_RATIO_PRIOR,
+                    prediction_field="bbb_prediction",
+                )
+                if final_decision_profile != STANDARD_FINAL_DECISION
+                else []
+            ),
+        ],
         branch_name="final",
     )
-    return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
+    output = {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
+    if surface_audit is not None:
+        output["final_evidence_surface"] = surface_audit
+    return output
 
 
 def _selected_assay_record(
@@ -939,7 +1020,13 @@ def _assay_transfer_record_cards(
     }
 
 
-def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def build_group_prompt_payload(
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    prompt_profile: str = DEFAULT_BBB_PROMPT_PROFILE,
+) -> dict[str, Any]:
+    profile = get_bbb_prompt_profile(prompt_profile)
     include_assay_transfer_score = bool(
         (group.get("transfer_neighbor_selection") or {}).get(
             "selection_score_is_llm_visible"
@@ -976,8 +1063,7 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             for neighbor in group["neighbors"]
         ],
         "instructions": [
-            "Use only this group's evidence.",
-            "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
+            *profile.group_instructions,
             *(
                 [
                     (
@@ -993,61 +1079,14 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
                 if include_assay_transfer_score
                 else []
             ),
-            "Assess structural transferability from neighbors to the query.",
-            "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
-            "Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
-            "Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.",
-            "Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, or logP could affect BBB transferability.",
-            "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
-            "Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.",
-            "Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.",
-            "Distinguish direct BBB exposure, passive permeability, efflux substrate risk, influx support, and weak inhibition/binding evidence.",
-            "Do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.",
-            "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
-            "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bbb_reasoning yourself.",
-            "Return JSON with useful_for_bbb_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
-        "required_json_schema": {
-            "useful_for_bbb_reasoning": "boolean",
-            "transferability": "high | moderate | low | not_applicable",
-            "evidence_direction": (
-                "supports_bbb_crossing | argues_against_bbb_crossing | efflux_risk | "
-                "influx_support | neutral_or_unclear"
-            ),
-            "confidence": "high | moderate | low",
-            "reasoning_summary": "string",
-            "key_evidence": [
-                {
-                    "molecule_chembl_id": "string",
-                    "similarity": "number or null",
-                    "similarity_bucket": "string",
-                    "assay_signal": "string",
-                    "activity_values": ["string"],
-                    "tool_summary": "string",
-                    "transferability": "high | moderate | low | not_applicable",
-                    "effect_on_bbb_reasoning": "string",
-                }
-            ],
-            "caveats": ["string"],
-        },
+        "required_json_schema": profile.group_schema,
     })
 
 
-def _llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
-    if query.get("identity_hidden"):
-        return {
-            "molecule_id": "query",
-            "identity_hidden": True,
-            "prefetched_molecule_properties": query.get("prefetched_molecule_properties") or {},
-        }
-    payload = {
-        "input_smiles": query.get("input_smiles", ""),
-        "canonical_smiles": query.get("canonical_smiles", ""),
-    }
-    if query.get("prefetched_molecule_properties"):
-        payload["tools_prefetched"] = True
-        payload["prefetched_molecule_properties"] = query["prefetched_molecule_properties"]
-    return payload
+# Historical internal callers keep working while external materializers use
+# the explicit public adapter above.
+_group_prompt_payload = build_group_prompt_payload
 
 
 def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
@@ -1068,134 +1107,27 @@ def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _clean_exact_match(match: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "molecule_chembl_id",
-        "canonical_smiles",
-        "standard_inchi_key",
-        "mw_freebase",
-        "alogp",
-        "hba",
-        "hbd",
-        "psa",
-        "rtb",
-        "num_ro5_violations",
-        "full_mwt",
-        "aromatic_rings",
-        "heavy_atoms",
-        "qed_weighted",
-        "full_molformula",
-        "np_likeness_score",
-    ]
-    return {field: match.get(field, "") for field in fields}
-
-
-def _clean_shared_assay_context(context: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "same_endpoint_activity": [
-            _clean_shared_activity_card(card) for card in context.get("same_endpoint_activity", [])
-        ],
-        "same_assay_different_endpoint_activity": [
-            _clean_shared_activity_card(card)
-            for card in context.get("same_assay_different_endpoint_activity", [])
-        ],
-        "n_same_endpoint_activity": context.get("n_same_endpoint_activity", 0),
-        "n_same_assay_different_endpoint_activity": context.get("n_same_assay_different_endpoint_activity", 0),
-    }
-
-
-def _clean_shared_activity_card(card: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "assay_chembl_id": card.get("assay_chembl_id", ""),
-        "standard_type_match": card.get("standard_type_match", False),
-        "units_match": card.get("units_match", False),
-        "query_activity": _clean_activity_value(card.get("query_activity") or {}),
-        "neighbor_activity": _clean_activity_value(card.get("neighbor_activity") or {}),
-    }
-
-
-def _clean_activity_value(activity: dict[str, Any]) -> dict[str, Any]:
-    fields = [
-        "assay_chembl_id",
-        "standard_type",
-        "standard_relation",
-        "standard_value",
-        "standard_units",
-        "pchembl_value",
-        "activity_comment",
-        "data_validity_comment",
-        "standard_text_value",
-        "action_type",
-    ]
-    return {field: activity.get(field, "") for field in fields}
-
-
 def _parse_json_content(content: str) -> Any:
     return parse_json_content(content)
 
 
-def _write_trace_jsonl(
-    path: Path,
-    *,
-    query_record: dict[str, Any],
-    query_index: int,
-    smiles: str,
-    single_output: dict[str, Any],
-    group_outputs: list[dict[str, Any]],
-    final_output: dict[str, Any],
-) -> None:
-    records = []
-    records.append(_trace_record("single_molecule", query_index, smiles, query_record, single_output))
-    for group_output in group_outputs:
-        records.append(
-            _trace_record(
-                str(group_output.get("group_id") or "unknown_group"),
-                query_index,
-                smiles,
-                query_record,
-                group_output,
-            )
-        )
-    records.append(_trace_record("final_summary", query_index, smiles, query_record, final_output))
-    _write_jsonl(path, records)
+def _validate_prompt_profile_reuse(args: argparse.Namespace) -> None:
+    """Reject branch reuse across BBB prompt contracts."""
+    require_matching_prompt_profiles(
+        target_profile=str(args.bbb_prompt_profile),
+        source_dirs=(
+            args.single_analysis_source_run_dir,
+            args.group_analysis_source_run_dir,
+        ),
+        historical_profile=HISTORICAL_BBB_PROMPT_PROFILE,
+    )
 
 
-def _trace_record(
-    task: str,
-    query_index: int,
-    smiles: str,
-    query_record: dict[str, Any],
-    output: dict[str, Any],
-) -> dict[str, Any]:
-    llm = output.get("llm") or {}
-    content = llm.get("content")
-    return {
-        "task": task,
-        "index": query_index,
-        "sample_id": query_index,
-        "molecule_key": f"index:{query_index}",
-        "smiles": smiles,
-        "label": query_record.get("Y"),
-        "status": output.get("status"),
-        "prediction": content.get("bbb_prediction") if isinstance(content, dict) else None,
-        "response_text": json.dumps(content, ensure_ascii=False, indent=2) if content is not None else output.get("error"),
-        "messages": llm.get("messages") or [],
-        "tool_count": len(llm.get("tool_calls") or []),
-        "usage": llm.get("usage") or {},
-        "raw_output": {
-            key: value
-            for key, value in output.items()
-            if key != "llm"
-        },
-    }
-
-
-def _read_jsonl_record(path: Path, index: int) -> dict[str, Any]:
-    with path.open(encoding="utf-8") as handle:
-        for i, line in enumerate(handle):
-            if i == index:
-                return json.loads(line)
-    raise SystemExit(f"No record at index {index}: {path}")
+def _manifest_prompt_profile(manifest: dict[str, Any]) -> str:
+    return prompt_profile_from_manifest(
+        manifest,
+        historical_profile=HISTORICAL_BBB_PROMPT_PROFILE,
+    )
 
 
 def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
@@ -1208,12 +1140,25 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     ]
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
-    if manifest.get("identity_blind"):
-        group_outputs = sanitize_identity_blind_branch_outputs(group_outputs, retrieval)
-        retrieval = prepare_identity_blind_final_retrieval(retrieval, single_output)
-    elif manifest.get("harness_prefetch_tools"):
-        retrieval = prepare_prefetched_final_retrieval(retrieval, single_output, identity_blind=False)
-    final_output = _run_final_reasoning(client, retrieval, single_output, group_outputs)
+    prompt_profile = _manifest_prompt_profile(manifest)
+    retrieval, group_outputs, final_surface = prepare_resumed_final_inputs(
+        retrieval,
+        single_output,
+        group_outputs,
+        manifest,
+        tool_service=client.tool_service,
+    )
+    final_output = _run_final_reasoning(
+        client,
+        retrieval,
+        single_output,
+        group_outputs,
+        final_evidence_surface=final_surface,
+        final_decision_profile=str(
+            manifest.get("final_decision_profile") or STANDARD_FINAL_DECISION
+        ),
+        prompt_profile=prompt_profile,
+    )
     final_path = run_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     trace_path = run_dir / "trace_messages.jsonl"
@@ -1234,25 +1179,13 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
         final_output=final_output,
     )
     manifest["final_rerun_at"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+    manifest["task_prompt_profile"] = prompt_profile
+    manifest["label_scope"] = get_bbb_prompt_profile(prompt_profile).label_scope
     manifest.setdefault("paths", {})["final_reasoning_output"] = str(final_path)
     manifest.setdefault("paths", {})["trace_messages"] = str(trace_path)
     _write_json(manifest_path, manifest)
     _print_summary(final_output, manifest)
     return 0
-
-
-def _load_env(path: Path) -> None:
-    if not path.exists():
-        return
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        # The explicit --env-file is the run configuration source of truth.
-        os.environ[key] = value
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -1280,7 +1213,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--retrieval-source", default="chembl")
     parser.add_argument(
         "--neighbor-identity-policy",
-        choices=["operational", "parent_disjoint"],
+        choices=NEIGHBOR_IDENTITY_POLICIES,
         default="operational",
     )
     parser.add_argument("--identity-blind", action="store_true")
@@ -1385,6 +1318,16 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--neighbor-context-profile",
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
+    )
+    add_final_evidence_surface_argument(parser)
+    add_final_decision_profile_argument(
+        parser,
+        choices=BBB_FINAL_DECISION_PROFILES,
+    )
+    parser.add_argument(
+        "--bbb-prompt-profile",
+        choices=BBB_PROMPT_PROFILES,
+        default=DEFAULT_BBB_PROMPT_PROFILE,
     )
     parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
     args = parser.parse_args(argv)

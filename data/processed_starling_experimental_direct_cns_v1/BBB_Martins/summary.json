@@ -1,0 +1,222 @@
+{
+  "task": "BBB_Martins",
+  "protocol_version": "starling_experimental_direct_cns_benchmark.v1",
+  "identity_normalizer_version": "rdkit_fragment_parent.v1",
+  "seed": 20260809,
+  "parent_label_policy": {
+    "method": "record_weighted_majority",
+    "agreement_formula": "max(n_label_0, n_label_1) / (n_label_0 + n_label_1)",
+    "agreement_threshold": 0.7,
+    "vote_unit": "accepted_source_record",
+    "tie_policy": "reject_exact_ties"
+  },
+  "split_size_policy": {
+    "formula": "BBB min(500, floor(0.1*n)); Bioavailability/Skin floor(0.1*n)",
+    "target_valid_size": 419,
+    "target_test_size": 419
+  },
+  "n_source_rows_considered": 304845,
+  "n_source_rows_labeled_before_structure_normalization": 11406,
+  "source_rejection_counts": {
+    "computational_or_predicted_result": 12463,
+    "in_vitro_or_passive_permeability_result": 7284,
+    "indirect_outcome_inference": 135,
+    "interpretation_altering_qualifying_conditions": 103340,
+    "invalid_or_unresolved_smiles": 56,
+    "no_direct_cns_outcome": 146879,
+    "no_explicit_binary_permeability_label": 12983,
+    "no_explicit_experimental_basis": 7034,
+    "non_systemic_or_altered_barrier_context": 3314,
+    "within_record_direction_conflict": 7
+  },
+  "n_parent_groups_with_any_label": 4454,
+  "n_parent_groups_with_label_conflict": 480,
+  "n_parent_groups_recovered_by_majority": 221,
+  "n_rejected_parent_groups": 259,
+  "parent_rejection_counts": {
+    "parent_record_agreement_below_threshold": 138,
+    "parent_record_label_tie": 121
+  },
+  "n_binary_molecules": 4195,
+  "all_label_counts": {
+    "0": 1120,
+    "1": 3075
+  },
+  "n_unique_bemis_murcko_scaffolds": 2403,
+  "n_acyclic_molecules": 354,
+  "splits": {
+    "scaffold": {
+      "method": "quality_lexicographic_milp_scaffold_groups",
+      "lineage": "experimental_direct_cns_v1",
+      "target_valid_size": 419,
+      "target_test_size": 419,
+      "actual_valid_size": 419,
+      "actual_test_size": 419,
+      "valid_size_shortfall": 0,
+      "test_size_shortfall": 0,
+      "optimization": {
+        "minimum_singletons_in_heldout": 29,
+        "minimum_singleton_imbalance": 1,
+        "minimum_label_deviation": 13,
+        "desired_positive_count_per_eval_split": 307,
+        "maximum_prior_valid_reuse": 117,
+        "n_scaffold_groups": 2403,
+        "n_candidate_scaffold_groups": 2403
+      },
+      "n_train": 3357,
+      "train_label_counts": {
+        "0": 883,
+        "1": 2474
+      },
+      "train_record_tier_counts": {
+        "multi_record": 621,
+        "singleton": 2736
+      },
+      "n_train_scaffolds": 1688,
+      "n_valid": 419,
+      "valid_label_counts": {
+        "0": 112,
+        "1": 307
+      },
+      "valid_record_tier_counts": {
+        "multi_record": 405,
+        "singleton": 14
+      },
+      "n_valid_scaffolds": 369,
+      "n_test": 419,
+      "test_label_counts": {
+        "0": 125,
+        "1": 294
+      },
+      "test_record_tier_counts": {
+        "multi_record": 404,
+        "singleton": 15
+      },
+      "n_test_scaffolds": 346,
+      "pairwise_scaffold_overlap": {
+        "train_valid": 0,
+        "train_test": 0,
+        "valid_test": 0
+      },
+      "pairwise_identity_overlap": {
+        "train_valid": 0,
+        "train_test": 0,
+        "valid_test": 0
+      },
+      "train_valid_scaffold_overlap": 0,
+      "train_test_scaffold_overlap": 0,
+      "valid_test_scaffold_overlap": 0,
+      "train_valid_identity_overlap": 0,
+      "train_test_identity_overlap": 0,
+      "valid_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/scaffold/train.jsonl",
+        "valid": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/scaffold/valid.jsonl",
+        "test": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/scaffold/test.jsonl",
+        "train_molecule_labels": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/scaffold/train_molecule_labels.jsonl",
+        "valid_molecule_labels": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/scaffold/valid_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/scaffold/test_molecule_labels.jsonl",
+        "heldout_molecule_labels": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/scaffold/heldout_molecule_labels.jsonl"
+      }
+    }
+  },
+  "source_metadata": {
+    "dataset": "starling-labs/BBB",
+    "requested_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+    "resolved_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+    "split": "train",
+    "gold_contract": {
+      "version": "bbb_experimental_direct_cns_gold.v1",
+      "target": "experimental direct CNS exposure after systemic administration",
+      "positive_label": "reported experimental CNS access",
+      "negative_label": "reported experimentally restricted CNS access",
+      "included_endpoint_families": [
+        "brain_unbound",
+        "brain_systemic_ratio",
+        "brain_tissue",
+        "csf",
+        "pet_or_autoradiography",
+        "experimental_bbb_outcome"
+      ],
+      "excluded_from_gold": [
+        "computational predictions",
+        "PAMPA and cell-based in-vitro permeability",
+        "non-systemic CNS delivery",
+        "artificially disrupted or disease-altered barriers"
+      ],
+      "label_rule": "use explicit bbb_permeability_label only after experimental direct-outcome scope validation; do not derive heterogeneous brain/CSF metrics through a shared numeric threshold"
+    },
+    "benchmark_lineage": "experimental_direct_cns_v1"
+  },
+  "paths": {
+    "molecule_labels": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/molecule_labels.jsonl",
+    "conflicting_molecules": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/conflicting_molecules.jsonl",
+    "rejected_parent_molecules": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/rejected_parent_molecules.jsonl",
+    "source_rejection_examples": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/source_rejection_examples.jsonl",
+    "record_supported_scaffold_root": "data/processed_starling_experimental_direct_cns_v1/BBB_Martins/scaffold"
+  },
+  "record_support_policy": {
+    "record_tier": "multi_record iff source_record_count >= 2",
+    "heldout_objective": "lexicographically minimize held-out singleton parents before label imbalance and deterministic tie-breaking",
+    "target_valid_size": 419,
+    "target_test_size": 419
+  },
+  "gold_distribution": {
+    "record_tier_counts": {
+      "multi_record": 1430,
+      "singleton": 2765
+    },
+    "endpoint_families": {
+      "brain_tissue": {
+        "accepted_records": 3740,
+        "parent_molecules": 2304,
+        "y0_parents": 605,
+        "y1_parents": 1699
+      },
+      "csf": {
+        "accepted_records": 2571,
+        "parent_molecules": 711,
+        "y0_parents": 217,
+        "y1_parents": 494
+      },
+      "brain_systemic_ratio": {
+        "accepted_records": 2080,
+        "parent_molecules": 1326,
+        "y0_parents": 363,
+        "y1_parents": 963
+      },
+      "pet_or_autoradiography": {
+        "accepted_records": 1055,
+        "parent_molecules": 673,
+        "y0_parents": 158,
+        "y1_parents": 515
+      },
+      "brain_unbound": {
+        "accepted_records": 329,
+        "parent_molecules": 214,
+        "y0_parents": 64,
+        "y1_parents": 150
+      },
+      "experimental_bbb_outcome": {
+        "accepted_records": 181,
+        "parent_molecules": 165,
+        "y0_parents": 22,
+        "y1_parents": 143
+      }
+    }
+  },
+  "artifact_sha256": {
+    "molecule_labels.jsonl": "40e3d89fa935285ae37a3c476702811f6d5b82ca255851defaeeff534ec1a052",
+    "conflicting_molecules.jsonl": "5a34557cc3266851cf041e9b41a7cd0702f6c64f047c7333abd94dd74ce24bf0",
+    "rejected_parent_molecules.jsonl": "2ebc00db47838c8ad67870d4abee9b9bee18db4f5113bc241550bfd8b6a46bba",
+    "source_rejection_examples.jsonl": "0485752f092b5017e449d10105f5bdad819a39d4f78276ddd97362f9c871f227",
+    "scaffold/train.jsonl": "1808366657ad0660e56903ada64cfc62e2f3c15ecd55b217451280f4f602923d",
+    "scaffold/valid.jsonl": "10d97cd2499aa9f9ac45d38f58adaf2f8588864aff606b5fa77980ce283a4b53",
+    "scaffold/test.jsonl": "7e439540a6fa74a3ab31e12b911f04e9b343fa404705821766af249102b6e256",
+    "scaffold/train_molecule_labels.jsonl": "3fe1a7cfae1024b4d28960d68efeb84c110212a410e7d1538bd914f84161c26d",
+    "scaffold/valid_molecule_labels.jsonl": "75d6f7725a0732e31c4cf0cac2369fe675bf8891d0bd9cc41582a64dd59520db",
+    "scaffold/test_molecule_labels.jsonl": "c5bcebaa48f2f260cec5851d7a71de601345f4c4a53ec85ff96ad93305584e69",
+    "scaffold/heldout_molecule_labels.jsonl": "c5f7ede4b1125079a596ad7c49fa7f3de383b7efa139d85a9b23cd30878d1040"
+  },
+  "build_fingerprint": "a99416012caa5d6e548d66419623c30140888bae67a05101e8ee75e77f094f28"
+}

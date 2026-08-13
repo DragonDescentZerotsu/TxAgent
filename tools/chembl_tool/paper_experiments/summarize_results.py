@@ -14,6 +14,11 @@ from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.identity_blind import find_identity_blind_leaks
+from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from tools.chembl_tool.common.retrieval_policy import (
+    NEIGHBOR_IDENTITY_POLICIES,
+    decide_candidate,
+)
 
 from .molecular_evidence_agent import (
     DEPLOYMENT_VISIBLE,
@@ -34,6 +39,7 @@ COMPARISONS = {
         ("chembl_direct", "chembl_full_flat"),
         ("chembl_full_flat", "chembl_full_mechanism"),
         ("chembl_direct", "starling_direct"),
+        ("chembl_full_flat", "starling_full_flat"),
         ("starling_direct", "starling_full_flat"),
         ("starling_full_flat", "starling_full_mechanism"),
         ("chembl_full_mechanism", "starling_full_mechanism"),
@@ -44,6 +50,7 @@ COMPARISONS = {
         ("chembl_full_flat", "chembl_full_mechanism"),
         ("none", "starling_direct"),
         ("chembl_direct", "starling_direct"),
+        ("chembl_full_flat", "starling_full_flat"),
         ("starling_direct", "starling_full_flat"),
         ("starling_full_flat", "starling_full_mechanism"),
         ("chembl_full_mechanism", "starling_full_mechanism"),
@@ -59,6 +66,7 @@ COMPARISONS = {
         ("starling_direct_scalar_knn", "starling_direct_numeric"),
         ("chembl_direct", "starling_direct_numeric"),
         ("chembl_direct", "starling_direct_full"),
+        ("chembl_full_flat", "starling_full_flat"),
         ("starling_direct_numeric", "starling_direct_full"),
         ("chembl_direct", "chembl_full_flat"),
         ("chembl_full_flat", "chembl_full_mechanism"),
@@ -81,11 +89,15 @@ def main(argv: list[str] | None = None) -> int:
 
     for visibility_mode in VISIBILITY_MODES:
         for experiment in experiments:
-            batch_dir = (
-                experiment_run_root(visibility_mode, paper_root=paper_root)
-                / experiment.task
-                / experiment.name
-            )
+            try:
+                run_root = experiment_run_root(
+                    visibility_mode,
+                    args.neighbor_identity_policy,
+                    paper_root=paper_root,
+                )
+            except ValueError:
+                continue
+            batch_dir = run_root / experiment.task / experiment.name
             metrics_path = batch_dir / "metrics.json"
             predictions_path = batch_dir / "predictions.jsonl"
             if not metrics_path.exists() or not predictions_path.exists():
@@ -107,6 +119,7 @@ def main(argv: list[str] | None = None) -> int:
                     predictions,
                     bootstrap_replicates=args.bootstrap_replicates,
                     visibility_mode=visibility_mode,
+                    neighbor_identity_policy=args.neighbor_identity_policy,
                 )
             )
 
@@ -178,6 +191,7 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps(
             {
                 "data_split": args.split,
+                "neighbor_identity_policy": args.neighbor_identity_policy,
                 "experiments": summaries,
                 "source_inventory": source_inventory,
                 "contextual_baselines": contextual_baselines,
@@ -220,6 +234,7 @@ def summarize_experiment(
     *,
     bootstrap_replicates: int,
     visibility_mode: str = IDENTITY_BLIND,
+    neighbor_identity_policy: str = "operational",
 ) -> dict[str, Any]:
     evaluable = [row for row in predictions if row.get("pred_label") is not None]
     labels = [int(row["label"]) for row in evaluable]
@@ -230,6 +245,11 @@ def summarize_experiment(
     trace_matches = _count_identity_leaks(predictions)
     prompt_audit = _audit_prompt_identities(batch_dir, predictions)
     deployment_audit = _audit_deployment_visibility(batch_dir, predictions)
+    policy_audit = _audit_retrieval_policy(
+        batch_dir,
+        predictions,
+        neighbor_identity_policy,
+    )
     identity_blind = visibility_mode == IDENTITY_BLIND
     if identity_blind:
         visibility_contract_satisfied: bool | None = prompt_audit["prompt_identity_leak_runs"] == 0
@@ -274,6 +294,35 @@ def summarize_experiment(
         "visibility_contract_satisfied": visibility_contract_satisfied,
         **prompt_audit,
         **deployment_audit,
+        **policy_audit,
+    }
+
+
+def _audit_retrieval_policy(
+    batch_dir: Path,
+    predictions: list[dict[str, Any]],
+    policy: str,
+) -> dict[str, int]:
+    """Count retained neighbors that violate the declared generic identity policy."""
+    audited_runs = retained_neighbors = conflicts = 0
+    for prediction in predictions:
+        retrieval_path = _resolve_run_dir(batch_dir, prediction) / "retrieval.json"
+        if not retrieval_path.exists():
+            continue
+        retrieval = json.loads(retrieval_path.read_text(encoding="utf-8"))
+        query_smiles = str((retrieval.get("query") or {}).get("input_smiles") or "")
+        if not query_smiles:
+            continue
+        audited_runs += 1
+        query = normalize_molecule_identity(query_smiles)
+        for group in retrieval.get("groups") or []:
+            for neighbor in group.get("neighbors") or []:
+                retained_neighbors += 1
+                conflicts += int(decide_candidate(query, neighbor, policy).excluded)
+    return {
+        "retrieval_policy_audited_runs": audited_runs,
+        "retained_neighbors": retained_neighbors,
+        "retrieval_policy_conflicts": conflicts,
     }
 
 
@@ -483,7 +532,9 @@ def build_coverage_performance_rows(
 
         labelled = [row for row in current.values() if row.get("label") is not None]
         by_class = {label: [row for row in labelled if int(row["label"]) == label] for label in (0, 1)}
-        covered = lambda row: int(row.get("n_groups_with_neighbors") or 0) > 0
+        def covered(row: dict[str, Any]) -> bool:
+            return int(row.get("n_groups_with_neighbors") or 0) > 0
+
         common = sorted(set(current) & set(baseline))
         labels = [int(current[index]["label"]) for index in common]
         baseline_labels = [int(baseline[index]["label"]) for index in common]
@@ -1088,6 +1139,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--split", choices=("test", "valid"), default="test")
     parser.add_argument("--paper-root", default="")
     parser.add_argument("--output-dir", default="")
+    parser.add_argument(
+        "--neighbor-identity-policy",
+        choices=NEIGHBOR_IDENTITY_POLICIES,
+        default="operational",
+    )
     parser.add_argument("--bootstrap-replicates", type=int, default=10_000)
     return parser.parse_args(argv)
 

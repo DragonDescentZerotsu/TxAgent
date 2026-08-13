@@ -11,7 +11,7 @@
 - 什么结果可以进入主表，什么只能作为补充或失败分析；
 - 在预计 9 至 10 周的时间窗口内按什么顺序执行。
 
-### 2026-08-01 v4 主矩阵决策
+### 2026-08-01 historical v4 与 2026-08-09 current lineage 决策
 
 For `record_agreement70_split811_v1` and later datasets, the formal default is an
 `identity_blind + parent_disjoint` fresh run. Operational, deployment-visible, and matched-prefetch paths are
@@ -21,12 +21,16 @@ the historical GLM reasoning settings. The direct loopback tunnel remains an exp
 endpoint budget remains 512, but one `parallelism=128` global prompt pool is the default because earlier 384/512
 reasoning-enabled runs produced long group-request timeouts. Outer launcher fan-out must not multiply that limit.
 
-这一决策覆盖下文基于 2026-07 historical operational/deployment-visible 矩阵的“主表”措辞，但不删除历史
-结果或 relation taxonomy。新 v4 先跑 valid 并通过完整性、identity leak、parent conflict 和 held-out overlap
-gate，冻结后再跑 test。blind+parent-disjoint fresh-run、独立 root 和全局并发实现 gate 已完成；
-scaffold-valid 的 GLM、GPT-OSS-20B/120B blind 矩阵、GPT 两套 visible 矩阵与 matched baselines 已完成，
-GLM visible 也已达到 6887/6887 严格成功并进入同一总图。正式 test 仍须等 valid 合同和 failure contingency
-冻结后才可启动。
+这一决策覆盖下文基于 2026-07 operational/deployment-visible 矩阵的“主表”措辞，但不删除历史结果或 relation
+taxonomy。下文 `22 conditions / 6,887 sample-conditions` 只描述 historical combined v4 contract，不能继续
+作为 current release gate。当前 lineage 已拆分：BBB 使用 `experimental_meaningful_cns_access_v2`，Bio/Skin
+使用 `record_supported_v2`；完整性必须按 `lineage × task × declared conditions` 分别检查。当前已完成
+GPT-OSS-120B BBB 4-condition/366-row valid，以及 Bio/Skin 各 4-condition valid bugfix matrix；Bio 还完成了
+`f20_evidence_calibrated_v2` 的 matched/full-pool fresh valid 对照，full-flat 和 full-mechanism paired CI 均高于
+0。2026-08-10 在设置冻结后首次运行 Bio full-flat/full-mechanism formal scaffold-test 和三项对应 baseline；
+BBB/Skin formal test 均未启动；BBB 在 E20 gate 失败后已停止且不再列为待办，Skin 仍需独立 gate。
+record-supported-v2 GLM blind root 仍是 5,876/6,887 partial，visible 尚未启动，
+不得进入正式表。
 
 当前 test 已完成 73 个 GLM 条件：26 个 identity-blind、21 个 matched-prefetch 和 26 个
 deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个。它们用于确定研究问题、估算成本和
@@ -75,24 +79,33 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | RQ6 | 观察到的增益和下降是否跨模型、跨重复稳定？ | 第二模型 confirmation matrix；GLM 关键条件重复运行 |
 | RQ7 | Retrieval coverage 与 macro-F1 增幅有什么关系？ | Blind parent-disjoint retrieval 条件的 overall/positive-class/negative-class coverage 与相对同任务 `none` 的 paired macro-F1 差值 |
 | RQ8 | 超出当前 curated mechanism envelope 多远后，增加更多 assay evidence 不再帮助 LLM？ | ChEMBL-only 的 `none`、`D`、`D+C`、`D+C+H1`、`D+C+H1+H2` 累计扩展曲线 |
+| RQ9 | Retrieval 差异是否在 group-to-final 汇总中被压缩？ | 固定 retrieval/single/group artifact 的 `summary_only`、`summary_plus_cards`、`cards_only` final-only 配对消融 |
 
 ## 实验与贡献索引
 
 | 实验 | 核心内容 | 对应贡献 | 优先级 | 当前状态 |
 |---|---|---|---|---|
 | E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；2026-07-23 valid 扩展矩阵为 3 x 26 条件和 22 个 parent-disjoint 条件，均 0 失败，prefetch 2,713 / 2,713 matched |
-| E1 | None vs direct retrieval | C1、C3 | P0 | v4 scaffold-valid 的 GLM、GPT-OSS-20B/120B blind 矩阵完成；2026-08-06 completed matched GLM Morgan k=3/k=7 no-floor validation ablations with zero failures; GLM random-valid 余 2 个失败，正式 test 未启动 |
-| E2 | ChEMBL vs Starling | C2 | P0 | BBB、Bio、Skin 的 v4 scaffold-valid 三模型 source comparison 已完成；ClinTox 因无同定义 Starling direct source 不进入当前 v4 |
+| E1 | None vs direct retrieval | C1、C3 | P0 | historical v4 三模型 valid 已保留；current GPT-OSS-120B valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；Bio test 仅运行 none prerequisite，未运行 direct |
+| E2 | ChEMBL vs Starling | C2 | P0 | historical v4 source comparison 已保留；current split lineage 尚未完成跨 source/model confirmation |
 | E3 | Source-quality 人工 annotation | C2、C6 | P0 | 未开始 |
-| E4 | Flat vs mechanism | C3 | P0 | BBB/Bio/Skin v4 scaffold-valid 三模型 blind 配对已完成；2026-08-06 completed the all-task V11 k=3 unique-molecule/r=5 validation ablation with zero failures; coverage context pilots 为 mixed/no-go，正式 test 待跑 |
-| E5 | Deployment-visible agentic 补充矩阵与工具行为分析 | C4、C5 | P0 | GPT-OSS-20B/120B 和 GLM scaffold-valid visible 各完成 22 条件；均为显式 ablation 而非主矩阵 |
+| E4 | Flat vs mechanism | C3 | P0 | current GPT-OSS-120B valid 已完成；Bio formal test 已一次性完成，flat/mechanism 为 0.6663/0.6720，paired CI 跨0；BBB E20 no-go 后不跑 test，Skin 仍待独立 gate；historical 2026-08-06 V11 k=3 unique-molecule/r=5 validation ablation completed with zero failures |
+| E5 | Deployment-visible agentic 补充矩阵与工具行为分析 | C4、C5 | P0 | historical v4 visible 各 22 条件已保留；current split lineage 尚未启动 visible |
 | E6 | Blind/visible 合同差异与细粒度 visibility attribution | C4、C5 | P1 精选条件 | GPT-OSS 两模型已有完整 blind/visible valid 对照，但同时改变 identity 与 tool execution；细粒度单因素 policy 未实现 |
 | E7 | Numeric vs non-numeric | C2 补充 | P1 | Bio 第一轮完成 |
 | E8 | KNN、vote、ECFP learned、MiniMol、pretrained baselines | C1、C3 | P0 | 历史 strict-conflict full-test baselines 与 v4 scaffold-valid 的 MiniMol/Morgan/MiniMol-KNN 已完成；其余 baseline 待补 |
-| E9 | 跨模型 confirmation | C1、C5 | P0 | 同一 v4 scaffold-valid blind contract 的 GLM、GPT-OSS-20B/120B 已完成；GPT 两模型 visible 已完成，独立模型家族与重复运行待补 |
-| E10 | 关键条件重复运行 | C5、C6 | P0 | 未开始 |
+| E9 | 跨模型 confirmation | C1、C5 | P0 | historical v4 三模型结果已保留；current split lineage 目前仅完成 GPT-OSS-120B valid，跨模型 confirmation 待补 |
+| E10 | 关键条件重复运行 | C5、C6 | P0 | Bio full-flat matched valid 已累计5次：macro-F1 均值0.6444、sample SD 0.0357、范围0.6098–0.7004；其它 task/condition 未开始 |
 | E11 | Coverage–performance 关联分析 | C3、C6 | P0 | 第一轮 test/valid 各 17 个 agentic retrieval 条件已完成；TSV/JSON/report/canonical SVG 和 class-conditional coverage 已生成，最终矩阵冻结后需重跑 |
 | E12 | ChEMBL mechanistic-distance / evidence-quantity expansion | C7、C6 | P0 | C-family tree 协议已重冻；通用旧 graph/index/retrieval prototype 已实现，但 BBB v2 因 MMP-3 shortcut 只保留历史审计，四任务 tree mapping 与 batch/LLM runner 均待完成 |
+| E13 | Final evidence surface / aggregation bottleneck | C3、C6 | P0 诊断 | record-supported v2 scaffold-valid 已完成 1,908/1,908、contract audit 0 failure；六个 paired CI 均跨 0，card surface 不升级默认 |
+| E14 | Final evidence-state + train-ratio tie-break calibration | C3、C5、C6 | P1 诊断 | BBB/Bio current full-flat valid final-only 已完成 575/575、零失败；两 task promotion gate 均失败，不进入 test/default |
+| E15 | Matched train-label direct agent vs Morgan KNN | C1、C3、C6 | P0 诊断 | 三 task valid 820/820 完成并通过 parity/leak gate；无跨任务稳定优势，不运行 formal test |
+| E16 | BBB property-compatible analog selector | C1、C3、C6 | 已终止 | 唯一 0.02 matched-v3 valid 候选仅 +0.0012 macro-F1，CI 跨 0；不 promotion、不跑 test |
+| E17 | GPT-OSS-120B train-only LoRA-GRPO final-synthesis calibration | C1、C3、C5、C6 | P0 新实验 | 合同已冻结；node002 8×A100 完成 1-step NeMo RL LoRA 机械闭环，下一 gate 为 nonzero-advantage grpo-10；valid/test 尚未读取 |
+| E18 | GPT-OSS-120B one-pass full-flat LoRA-GRPO | C1、C3、C5、C6 | P0 新实验 | blind/visible-prefetched frozen-base 三任务 valid 已完成；SDK-default rank-32 all-module matched 三步 Tinker smoke 已通过，96 rollout 最大4,911、0 cap hit，曲线/W&B/checkpoint/valid-3 reload 均通过；待用户确认正式 Bio train，test 未读取 |
+| E19 | Skin AOP source/topology-gated final-only integration | C3、C5、C6 | 已终止 | DeepSeek-v4-pro canonical-v3 MiniMol top-3 valid 完成零成本 materialization：78 个 direct=no_risk 中 75 个 AOP 为 non-voting，剩余 3 个均未同时通过 source-context 与 reactive-topology/activation-route gate；因此 0 fresh final、0 flip，macro-F1/accuracy 严格保持 0.641036/0.693878，promotion 失败，不读取 test |
+| E20 | BBB DeepSeek direct-anchored residual adjudication | C3、C5、C6 | 已终止 | 366 条 valid 零失败；Direct/standard mechanism/residual/recheck-hybrid macro-F1 为 0.7000/0.7184/0.7084/0.7109，hybrid delta CI `[-0.0186,+0.0412]`；gate 失败，不读取 test，BBB 方法开发停止 |
 
 ## 当前资产与缺口
 
@@ -101,16 +114,16 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | 通用 runner、Evidence Contract、validation、trace、batch | 已实现；v4 新增 model-specific roots、global prompt pool、selector/context profiles、strict watchdog 和 persistent tool cache | 新实验不得复制 task pipeline；v4 不得使用旧 TDC summarizer | 持续 gate |
 | ChEMBL 四任务 evidence | 已有 direct/flat/mechanism | 需要冻结最终 source manifest | 数据冻结前 |
 | ChEMBL distance expansion | C-family tree ontology 已冻结；通用旧 config/validator、assay-manifest、superset index 和 cumulative retrieval prototype 已实现 | 需先升级 tree-node schema/retrieval；BBB v2 需重建，另外三任务 graph/mapping 与独立 batch/replay、汇总、绘图 runner 均缺失 | 数据冻结前 |
-| Bioavailability Starling | canonical direct v2、direct numeric/full、flat、mechanism 与 v4 held-out index 已冻结 | source-quality 人工核验和正式 test 尚缺 | 数据冻结 gate 已过 |
-| BBB Starling | direct + passive permeability + efflux + influx、v4 held-out index 和 scaffold-valid blind/visible 已完成 | 正式 test 与 source-quality 尚缺 | 数据冻结 gate 已过 |
-| Skin Starling | direct + sensitization + phototoxicity/irritation/local damage + skin exposure、v4 held-out index 和 scaffold-valid blind/visible 已完成 | 正式 test 与 source-quality 尚缺 | 数据冻结 gate 已过 |
+| Bioavailability Starling | canonical direct v2、direct numeric/full、flat、mechanism 与 v4 held-out index 已冻结；full-flat/full-mechanism formal test 已完成 | source-quality 人工核验仍缺；direct test 未运行 | 数据冻结及 selected-condition test gate 已过 |
+| BBB Starling | experimental meaningful-CNS-access v2 gold、direct/full held-out index、coverage、baselines、GPT-OSS-120B 4-condition valid 与 DeepSeek E20 已完成 | source-quality 新数据仍缺；E20 gate 失败后不再开发、不读取 test | 方法线已终止 |
+| Skin Starling | record-supported-v2 gold/index 与 sensitization-aligned-v2 GPT-OSS-120B 4-condition valid 已完成 | 正式 test、跨模型与 source-quality 尚缺 | current valid gate 已过 |
 | ClinTox Starling | 无与 toxicity-caused clinical-trial failure 同定义的 direct source，当前明确不构造 v4 split | 若未来新增 source 必须另做 ontology/source freeze，不能补几个 family 后混入当前 lineage | future lineage |
-| Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；现有 22 条 retrieval conditions 在 test/valid 均完成且为 0 conflict | 最终数据冻结后若 index 改变需重建与复跑 | 2026-08-02 |
-| V4 blind main matrix | GLM、GPT-OSS-20B/120B scaffold-valid 各 22 条件完成；GLM 0 failure，两个 GPT 各 1 个 context-limit failure 按预定 policy 计错 | random-valid/正式 test、repeats 和 release audit 待完成 | 2026-08-23 |
-| Visible deployment ablation | GPT-OSS-20B/120B 与 GLM scaffold-valid 同合同各 22 条件均已完成 | 完整合同同时改变 identity 与 tool execution，不能当纯 visibility effect | 已完成；因果拆分仍待 E6 |
+| Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；current BBB/Bio/Skin valid indices 均通过 held-out/parent gate；Bio selected test 条件通过同一 gate | Skin formal test 仍需独立 lineage gate；BBB 已 gate-failed/no-test | 2026-08-23 |
+| Current blind main matrix | GPT-OSS-120B current valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；Bio selected test 条件已完成；BBB DeepSeek continuation 已 no-go；GLM record-v2 仍 partial | Skin formal test、跨模型、其余 repeats 和 release audit 待完成；BBB test 不再列为待办 | 2026-08-23 |
+| Visible deployment ablation | historical v4 三模型 22-condition visible 保留；current lineages 未启动 | 完整合同同时改变 identity 与 tool execution，不能当纯 visibility effect | current 待定 |
 | Source quality gold | 未建立 | 需要双人 annotation 和原始文献/assay 核验 | 2026-08-30 |
-| Learned baselines | 历史 strict-conflict random/scaffold full-test baselines 已完成；当前 v4 已完成 scaffold-valid MiniMol train-all、Morgan KNN 和 MiniMol embedding cosine KNN | 缺 v4 random/test、ECFP RF/XGBoost、matched-neighbor retrieval-only vote 和独立的第二种 pretrained encoder baseline | 2026-08-16 |
-| Cross-model evidence | v4 scaffold-valid 已完成 GLM、GPT-OSS-20B 与 GPT-OSS-120B blind 同合同对照 | 缺独立模型家族、关键条件重复和正式 test | 2026-08-23 |
+| Learned baselines | 历史 strict-conflict baselines 已保留；current BBB experimental-v2 与 Bio/Skin record-v2 已有 lineage-matched MiniMol/Morgan/MiniMol-KNN；Bio formal test 三项 baseline 已完成 | 缺 Skin current formal test、ECFP RF/XGBoost、matched-neighbor retrieval-only vote 和独立第二 encoder；BBB 不再进入 test | 2026-08-16 |
+| Cross-model evidence | v4 scaffold-valid 已完成 GLM、GPT-OSS-20B 与 GPT-OSS-120B blind 同合同对照；BBB 已补 DeepSeek valid-only 诊断，Bio GPT-OSS-120B selected test 已完成 | 缺其它关键重复和 Skin formal test；BBB DeepSeek 未 promotion、不进入 test | 2026-08-23 |
 | Run-to-run variance | 当前每个条件一次 | 关键比较需至少 3 次独立生成 | 2026-08-30 |
 | Visibility failure audit | 第一轮已完成 | 需要第二 annotator 和 targeted causal ablation | 2026-08-30 |
 | 论文主文与图表 | 未开始正式写作 | 不能等所有实验结束后才写 | 第一版 2026-09-06 |
@@ -312,7 +325,7 @@ policy。H1/H2 聚合 node 内的多个 target/measurement families 共享这 3 
   MiniMol/modern encoder、ECFP model、retrieval-only vote、KNN，以及 agent tokens/tool calls。
 ```
 
-当前 v4 每个 split/model 的主矩阵是 22 个 condition：
+Historical combined v4 每个 split/model 的矩阵是 22 个 condition：
 
 ```text
 3 none conditions（identity policy not applicable）
@@ -321,9 +334,9 @@ policy。H1/H2 聚合 node 内的多个 target/measurement families 共享这 3 
 ```
 
 ClinTox 不在这 22 条件中，因为当前没有与其 gold 定义匹配的 Starling direct source。若未来找到合格 source，
-必须建立新 frozen lineage，不能把新条件追加到当前 6,887 分母。当前 scaffold-valid 已完成 GLM、
-GPT-OSS-20B/120B blind 三套矩阵；两个 GPT 和 GLM visible 补充矩阵也已完成。正式 test
-只能在 valid setting 冻结并通过完整性/泄漏/parent/held-out gates 后启动。
+必须建立新 frozen lineage，不能把新条件追加到 historical 6,887 分母。BBB 已经拆到 experimental-v2，
+Bio/Skin 保留 record-supported-v2，因此 current 不再存在单一 22-condition/6,887 completion gate。正式 test
+只能按各 lineage 的 valid setting 冻结并通过完整性/泄漏/parent/held-out gates 后启动。
 
 E12 是与上述 22 条件 source/grouping matrix 正交的 ChEMBL-only 扩展实验，不计入 22 条件。其完整累计
 曲线先在 `deployment_visible_prefetched` matched-prefetch setting 中运行，用于控制工具证据和 single prior；
@@ -385,8 +398,11 @@ chembl_full_mechanism vs starling_full_mechanism
 必须并列报告 source coverage、每个 molecule 的 evidence count、condition completeness、provenance
 availability、retrieved-neighbor overlap 和 token cost。不能把 coverage 差异静默解释成 row quality。
 
-资源：当前 v4 只覆盖 BBB、Bioavailability、Skin；ClinTox 无同定义 direct source，明确不进入本 lineage。
-三任务 scaffold-valid blind source comparisons 已在三模型完成，正式 test 尚缺。Starling 生成成本单独记账，
+Historical v4 只覆盖 BBB、Bioavailability、Skin；ClinTox 无同定义 direct source。historical 三任务
+scaffold-valid blind source comparisons 已在三模型完成；current split lineage 的跨 source/model comparison 与
+正式 test 尚未全部完成。Bio frozen full-flat/full-mechanism 与三项 baseline 已完成一次 scaffold-test；
+Skin formal test、Bio direct test 和 current 跨模型 comparison 仍缺；BBB 已因 E20 gate 失败主动 no-test。
+Starling 生成成本单独记账，
 不与 LLM reasoning tokens 合并。
 
 完成标准：将“source quality”和“downstream performance”分开下结论；只有跨任务方向稳定时才声称
@@ -447,9 +463,10 @@ deployment-visible workflow，报告 Macro-F1、accuracy、per-class F1、paired
 identity/source-ID 使用和 evidence utilization。该合同同时恢复结构/身份并让模型自主 function-call，
 所以 blind/visible 差异是完整部署合同差异，不是单一 visibility effect。
 
-资源：GPT-OSS-20B/120B 各 22 条件已经完成；两者各有一个确定性的 Bioavailability context-limit failure，
-按预先声明 policy 计错。GLM 同合同 22 条件也已达到 6887/6887 严格成功，并进入 blind+visible 总图。旧 TDC 26 条件 agentic、
+Historical 资源：GPT-OSS-20B/120B 各 22 条件已经完成；两者各有一个确定性的 Bioavailability context-limit failure，
+按预先声明 policy 计错。historical GLM 同合同 22 条件也已达到 6887/6887 严格成功，并进入旧 blind+visible 总图。旧 TDC 26 条件 agentic、
 21 条件 matched-prefetch 和 operational parent-disjoint 结果保留为 historical appendix，不扩成 v4 主表。
+Current split lineages 尚未启动 visible matrix。
 
 完成标准：visible 结果只能与同 model、同 split/subset、同 retrieval policy 的 blind 结果并列；不得用它
 选择 test prompt 或覆盖 blind 主结果。完整性、parent/threshold/held-out 和 visible contract audit 必须通过。
@@ -506,7 +523,7 @@ agent 对应 policy 下的相同 neighbors，防止比较不同候选池。Opera
 
 资源：1 至 4 张 GPU 足够完成 learned baseline；CPU 可跑 KNN/RF/XGBoost。上一版 strict-conflict 的
 三任务、两种 Starling split 已完成 MiniMol train-all、full-test Morgan KNN 和复用冻结 MiniMol embedding
-的 cosine KNN；当前 v4 已完成对应的 scaffold-valid 三种 baseline。Bioavailability scalar KNN 仍作为
+的 cosine KNN；current lineages 已完成对应的 scaffold-valid 三种 baseline。Bioavailability scalar KNN 仍作为
 numeric direct-F 专项对照。尚缺 v4 random/test、ECFP RF/XGBoost、使用 agent
 相同 neighbors 的 retrieval-only vote，以及用于确认表示选择稳健性的独立第二种 pretrained encoder。
 当前数值与入口见 `STARLING_BENCHMARK_RESULTS.md`。
@@ -518,12 +535,13 @@ numeric direct-F 专项对照。尚缺 v4 random/test、ECFP RF/XGBoost、使用
 
 **支撑贡献：C1、C5。回答 RQ6。优先级：P0。**
 
-当前已在完整 scaffold-valid 22-condition blind contract 上运行 GLM-5.2 NVFP4、GPT-OSS-20B 和
-GPT-OSS-120B，并在 GPT 两个规模上完成 visible contract。后续不再按结果挑 8 个条件替代这一事实；正式
-test 是否运行完整三模型矩阵，必须在 valid 后按算力和预注册 claim 冻结。
+Historical combined v4 已在完整 scaffold-valid 22-condition blind contract 上运行 GLM-5.2 NVFP4、
+GPT-OSS-20B 和 GPT-OSS-120B，并在 GPT 两个规模上完成 visible contract。Current split lineages 目前只完成
+GPT-OSS-120B valid，以及 Bio GPT-OSS-120B frozen full-flat/full-mechanism 的一次 formal scaffold-test；
+Skin formal test 和 current 跨模型范围仍须按算力和预注册 claim 冻结；BBB 不再进入 formal test。
 
-资源：现有三模型 blind/visible valid 结果和统一 `plot_starling_model_comparison.py` 总图已就绪；仍缺与
-GPT-OSS 不同的独立模型家族、关键条件 repeats，以及 GLM visible 的 paired flips/合同分析。
+资源：historical 三模型 blind/visible valid 结果和统一 `plot_starling_model_comparison.py` 总图已保留；current
+仍缺第二模型、关键条件 repeats 和 visible 合同分析。
 
 完成标准：比较同 condition 的 effect direction、paired flips 和模型排序，而不是只比较各模型 best-of-7。
 若 retrieval/source/mechanism 结论只在某一模型成立，论文明确标为 model-specific。
@@ -620,6 +638,249 @@ agentic confirmation；mechanism 必含 H1 point，并在至少一个 family H2 
 coverage/evidence volume/tokens 可审计；必需 H1 point 与任何 available H2 point 均完成且通过 branch-reuse
 与 flat/mechanism evidence-parity audit；所有 paired comparison 使用共同 sample set；不存在用 Starling
 缺少 distant coverage 来人为放大 ChEMBL quantity 的跨 source comparison。
+
+### E13：Final evidence surface / aggregation bottleneck
+
+**支撑贡献：C3、C6。回答 RQ9。优先级：P0 诊断。**
+
+该实验固定 record-supported v2 scaffold-valid 的 identity-blind parent-disjoint
+`starling_full_flat` retrieval、single 和 group artifacts，只重新运行 final：
+
+```text
+summary_only       = 当前冻结 control，final 只看 single/group summaries
+summary_plus_cards = 同一 summaries + 确定性 compact evidence cards
+cards_only         = 同一 raw evidence cards，不向 final 提供 group LLM summary
+```
+
+`summary_only` 必须保持历史 prompt 的严格 no-op。Card 只从已经 identity-redacted、tool-prefetched 的
+reasoning retrieval 构建；固定最多 12 个 cards、每 card 最多 3 条 deterministic-even-spacing evidence rows，
+保存 card contract version、SHA-256、原始/保留行数和字节数。它不得重新检索、改变 neighbor、暴露身份、
+加入 label vote/threshold 或把 card 与对应 group summary 当作独立 evidence。
+
+第一阶段只使用 scaffold-valid 诊断，不能根据结果修改 test prompt。三个 task 以共同样本做 paired
+macro-F1 bootstrap、exact McNemar/Holm、prediction flips 和 rescue/harm。若 cards 不能稳定改善，停止把
+aggregation bottleneck 当成主因；若有稳定改善，冻结 surface 后才能考虑一次 test confirmation。
+
+Metadata census 只审计 endpoint、context、example-level measurement、multi-record/PMID support、scope 和
+uncertainty 是否存在；它不产生 relevance score，也不自动进入 compatibility selector。内部 sidecar 不进入
+`minimal_evidence.v1` 或 LLM prompt。完整协议、命令和输出结构见
+`FINAL_EVIDENCE_SURFACE_EXPERIMENT.md`。
+
+2026-08-07 实测完成六个 batch、`1,908/1,908` final、`n_failed_runs=0`，全量 artifact/card/identity
+contract audit 为 0 failure。Summary+cards 相对 summary-only 的 macro-F1 delta 为 BBB `-0.0016`
+（95% CI `[-0.0244,+0.0217]`）、Bioavailability `+0.0011`（`[-0.0376,+0.0392]`）、Skin `-0.0132`
+（`[-0.0524,+0.0261]`）；cards-only 分别为 `-0.0285`、`+0.0073`、`+0.0018`，三个 interval 也均跨 0。
+Final prompt token 均值增加到 control 的 `3.32x–4.72x`，仍无稳定增益。因此 E13 的结论是 no-go：
+aggregation compression 不是当前主瓶颈，card surface 保留为可复现实验插件，不进入默认路径或 formal test。
+
+### 近期小计划：Skin task alignment 与 final bottleneck audit
+
+目标是先判断错误主要来自 task scope、上游 group reasoning，还是 final synthesis；这不是 group ablation，
+也不搜索 router/selector。
+
+1. **Skin scope 修复（2026-08-09 已运行 valid）**：保留历史 `legacy_skin_reaction_v1` 结果；新增版本化
+   `sensitization_aligned_v2` prompt profile。Gold label 不变；phototoxicity、irritation/corrosion、generic local
+   damage 和 exposure 只作为 out-of-scope/context，不得单独支持 `risk` 或 `no_risk`。Manifest 记录 profile；
+   single/group/final branch 跨 profile 复用会被拒绝，旧无 profile manifest 按 legacy v1 解释。
+2. **现有 trace audit（2026-08-08 已完成，无模型调用）**：审计 GPT-OSS-120B scaffold-valid
+   `starling_full_mechanism` 的 245 条 legacy v1 trace。90 个错误中，严格 `final_recoverable` 仅 6
+   （6.7%）；`upstream_conflict` 3、`upstream_wrong_direction` 39、`upstream_insufficient` 42，合计
+   84/90（93.3%）不是 final-only 可恢复。另有 23/90 错误的 final `main_evidence_type` 为 phototoxicity、
+   irritation/corrosion 或 exposure；这确认 scope bug，但只有 2 条同时满足严格 final-recoverable。
+   逐样本和汇总位于 `outputs/paper/skin_reaction_task_alignment_audit_record_supported_v2_valid_gpt_oss_120b/`。
+3. **Aligned-v2 valid 与复审（2026-08-09 已完成）**：四条件 macro-F1 为
+   `0.5225/0.5725/0.5698/0.5423`（none/direct/full-flat/full-mechanism），全部零失败。scope-contaminated
+   error 从 legacy 的 23 降到 0，证明合同修复生效；但 full-mechanism macro-F1 没有提升，同 cohort fresh-run
+   delta 为 `-0.0587`（95% CI `[-0.1250,+0.0089]`，包含 generation nondeterminism）。新 98 个错误中只有
+   3 个 final-recoverable，95 个为 upstream conflict/wrong/insufficient。结果位于
+   `outputs/paper/skin_reaction_task_alignment_audit_record_supported_v2_valid_gpt_oss_120b_sensitization_aligned_v2/`。
+4. **唯一 continuation gate（未通过）**：只有 final-recoverable 是明确主导来源时，
+   才允许一个 final-only ICL 候选：
+   每个 query 总共 3 个 compact train examples，而不是每个 group 3 个；只用 train、排除同 parent/scaffold，
+   不做 k、长度、retriever 或 hidden-CoT sweep。legacy 6/90 与 aligned-v2 3/98 都不构成主导来源，因此不生成 ICL 候选。
+5. **Direct source-scope parity（2026-08-09 已完成）**：发现历史 Tier-1 cards 聚合了 gold scope 外的
+   broad-skin records。新 versioned source 复用 gold filter；245-query audit 有 37 个 top-3 identities 和 203 个
+   visible contexts 改变。clean-index direct macro-F1 `0.5666`，相对 reference `-0.0059`
+   （95% CI `[-0.0724,+0.0603]`），因此作为 correctness fix 保留，但不宣称性能增益。
+6. **唯一 negative-transfer candidate（已运行，未 promotion）**：clean-index trace 中 low/moderate negative
+   direction 为 6 aligned / 13 opposed，满足预先约定的 continuation gate。v3 将 negative direction 收紧到 3 个
+   high-transferability 且全部 gold-aligned，但 macro-F1 降至 `0.5531`、Y=0 recall 降至 `0.3425`。因此停止，
+   不扩展 full-flat/full-mechanism/test；v3 只保留为 failed experimental lineage。
+
+明确不做：per-group train reasoning 注入、full-mechanism train trace bank、group drop/add ablation，以及把最终
+label 正确的 trace 直接称为“正确 reasoning”。
+
+### 近期小计划：BBB gold repair 后的 agent alignment
+
+旧 BBB gold 将 direct in-vivo、CSF、PAMPA/细胞 permeability、计算预测和笼统声明折叠进同一个
+`bbb_permeability_label`；因此旧 trace 的“agent 与 label 不一致”不能全部归因于 agent calibration。2026-08-09
+已完成第一步：冻结 `experimental_meaningful_cns_access_v2`，目标为系统给药后实验支持的
+meaningful/adequate CNS access vs restricted/poor access；它不限 passive mechanism，也不把任意微量可检出当
+positive。当前有 3,667 parents，scaffold train/valid/test 为 2,935/366/366，held-out identity/scaffold
+overlap 为 0。366 条 unique source records 经三名 `gpt-5.6-sol` reviewer 审计，最终 294 条分层 sample 全通过。
+旧 lineage 全部保留。
+
+以下简单顺序已在 2026-08-09 完成 scaffold-valid gate：
+
+1. **Gold/index gate（完成）**：使用新 valid+test union 重建 held-out-parent-filtered direct/full evidence indices；检查
+   source revision、input hash、parent overlap 和 evidence-family coverage。这里必须另外报告 direct、passive、
+   efflux、influx 对 held-out queries 的 usable-neighbor coverage；不按 group 配额重采样或改 gold。旧 index 不得复用。
+2. **Baseline gate（完成）**：先重跑 Morgan KNN、MiniMol embedding KNN 和 MiniMol head，建立新任务难度；不从旧
+   19,425-parent metrics 外推。
+3. **Agent task contract（完成）**：single 只输出 physicochemical/passive prior；direct group 判断实验 CNS outcome
+   analog transfer；passive/efflux/influx groups 只解释机制；final 预测 meaningful/adequate CNS access vs
+   restricted/poor access，不把 poor passive permeability 硬等同于 fail，不把低但非零 exposure 自动判 pass，
+   也不把任一 mechanism signal 硬覆盖 direct outcome。
+4. **Structured-output gate（完成）**：所有 single/group 顶层枚举和固定 literal 现在从 prompt schema 自动提取并做
+   allowed-value validation；final 继续由 task 显式冻结 prediction、scope 和必要枚举。非法近义词触发同 setting
+   retry，合法 prediction 不 post-process。该 gate 只修复 contract reliability，不作为性能贡献。
+5. **Valid-only paired evaluation（完成）**：完成新 index 后只在 scaffold-valid 比较 none/direct/full-flat/full-mechanism
+   与三类 baseline；先报告 paired flips、class recall、failure paths 和 coverage，再决定是否需要下一项方法改动。
+
+当前结果为 none/direct/full-flat/full-mechanism macro-F1 `0.5526/0.6452/0.6690/0.6665`。`none -> direct`
+有明确 paired 增益；`direct -> full-flat` interval 跨 0，`full-flat -> full-mechanism` 基本为 0。114 个
+full-mechanism 错误中 final aggregation 只有 5，故 final-only ICL continuation gate 仍未通过；不做 per-group
+demonstrations、group ablation 或 router。旧 BBB failure-cause audit 只保留为 historical diagnosis，新 audit
+位于 `outputs/paper/starling_trace_failure_cause_audit_experimental_meaningful_cns_access_v2_valid_gpt_oss_120b/`。
+
+### E14：Final evidence-state + train-ratio tie-break calibration
+
+该诊断只在 BBB 与 Bioavailability 的 current scaffold-valid `starling_full_flat` 上运行。Retrieval、single、
+group artifacts 从 frozen source batch 逐文件复制，fresh call 只发生在 final。Skin 不参与。候选
+`train_ratio_tiebreak_v1` 要求 final 先输出
+`consistent_positive / consistent_negative / mixed / insufficient`；consistent evidence 决定 label，train
+prior 不得覆盖。只有 mixed/insufficient 且两类确实无法区分时，才必须使用 train majority tie-break，并输出
+`prior_used=true`。它不是 batch prediction quota。
+
+冻结 train prior 为 BBB `2162/2935 = 73.66%` Y=1、Bioavailability `1213/1674 = 72.46%` Y=1。Runner
+启动前验证 train JSONL 的 exact count 与 SHA-256；结果分析检查 575 个 candidate manifests，以及 1,725 对
+copied retrieval/single/group artifacts，mismatch 为 0。575/575 final 全部成功，所有结构化结果首轮即通过
+allowed-value、boolean type 和 cross-field consistency validation。
+
+| task | full-flat control macro-F1 / acc | candidate macro-F1 / acc | macro-F1 delta (95% paired CI) | prior used | prior corrected / broken | gate |
+|---|---:|---:|---|---:|---:|---|
+| BBB | 0.6690 / 0.6913 | 0.6672 / 0.6967 | -0.0017 [-0.0272,+0.0236] | 10/366 | 2 / 4 | FAIL |
+| Bioavailability | 0.6117 / 0.6220 | 0.6203 / 0.6364 | +0.0086 [-0.0325,+0.0478] | 10/209 | 5 / 2 | FAIL |
+
+BBB 的 prior-triggered rows 净伤害 2 个判断；Bioavailability 净挽救 3 个，但样本只有 10 个且总体 paired CI
+明显跨 0。除此之外，新增 evidence-state 合同在 `prior_used=false` rows 仍造成 BBB 16 次、Bio 12 次 prediction
+flip；因此总体 candidate delta 是“state contract + narrow prior”的联合效果，不能把全部变化归因于 class
+ratio。预冻结 promotion 要求 macro-F1 delta 为正、95% CI lower bound > 0 且 accuracy 不下降；两 task 都失败。
+不运行 formal test，不把 profile 设为默认，也不继续增强 prior 语气或强制预测比例。
+
+```text
+tools/chembl_tool/common/final_decision_prior.py
+tools/chembl_tool/paper_experiments/run_train_ratio_prior_experiment.py
+tools/chembl_tool/paper_experiments/train_ratio_prior_analysis.py
+outputs/paper/train_ratio_tiebreak_v1_scaffold_valid_gpt_oss_120b/
+```
+
+### E15：Matched train-label direct agent vs Morgan KNN
+
+该实验只回答一个问题：在 retrieval 完全一致时，现有 direct-agent reasoning 是否优于未加权多数票。每个
+scaffold-valid query 固定复用正式 Morgan KNN artifact 中按相似度排序的三个 scaffold-train neighbors；两边
+看到同一 neighbor identity/order、Morgan similarity 和冻结 train `Y`。KNN 仍做 `k=3` 未加权多数票；agent
+只把这三个 train label 当作 direct supervised analog outcomes，并保留现有 identity-blind query properties、
+pairwise MMP/property comparison、group reasoning 和 final synthesis。它不得看到任何其它 Starling record。
+
+因此这里的“matched”指 retrieval 与监督 outcome 完全相同，不是说两个 predictor 的计算能力相同；agent
+额外使用结构/性质工具和 reasoning，实验测量的正是这些额外步骤相对多数票的净价值。当前 formal KNN top-3
+逐项 identity audit 显示 BBB/Bio/Skin 的 1,098/627/735 个 query-neighbor pairs 全为
+`structural_analog`，没有 parent-disjoint conflict。
+
+Primary 只运行 current scaffold-valid：BBB `experimental_meaningful_cns_access_v2` 366 条，Bio 209 条，Skin
+245 条。逐 task 报告 accuracy、macro-F1、class recall、paired macro-F1 bootstrap CI、McNemar、agent-only
+correct 与 KNN-only correct。任何一项 valid 结论冻结前不运行 test，也不把该 evidence source注册进正式
+Starling matrix。
+
+2026-08-09 valid 已完成 820/820，失败为 0；逐 query 的 neighbor identity/order/similarity/train label mismatch
+为 0，820 个实际 LLM prompt 的 identity leak 为 0，且 evidence source 全部为
+`frozen_benchmark_train_label`。结果没有形成跨任务一致优势：BBB/Skin 的 agent-minus-KNN macro-F1 为
+`+0.0514`/`+0.0408`，但 paired 95% CI 均跨 0；Bio 为 `-0.0595`，CI 也跨 0，同时 accuracy 下降
+`0.1818`。BBB/Bio 的主要失败模式是 agent 频繁推翻三邻居全票一致结果，分别造成 17/48 和 9/41 的
+rescue/harm。预冻结结论为 no-go：不运行 formal test，不把 train-label direct source 注册进默认 matrix。
+相对原 full-Starling direct，train-only direct 的 macro-F1 在 BBB/Bio/Skin 分别低
+`0.0041/0.0316/0.0116`，但三项 paired CI 均跨 0；full pool 明显提高 top-1 analog similarity，尚未证明
+稳定提高最终预测。由于两侧 evidence representation 和 threshold 也不同，该差值不能解释成 data-count-only
+因果效应。
+
+BBB 后续只运行了两个 versioned contract 候选，没有做 group ablation/router。v2 将 fail 限制为可迁移负 outcome
+或 measured efflux，造成 322/366 预测 pass、macro-F1 `0.5652`，明确失败。v3 增加窄的 convergent intrinsic
+barrier basis 后，matched train-label direct 达到 `0.6696`（v1 `0.6411`），但真正 full-Starling direct 仅为
+`0.6416`（v1 `0.6452`；paired delta `-0.0036 [-0.0471,+0.0402]`）。因此 continuation gate 失败：v1 保持
+默认，v2/v3 作为 rejected reproducible lineage 保留；不运行 formal test，不根据该 valid 继续搜索 v4。
+
+Bio 后续 trace audit 将 109 个三邻居全为 Y=1 的样本进一步分解：agent 的 48 个 low 决策仅救回 9 个、
+误伤 39 个；相似度从 `<0.30` 升到 `>=0.40` 时，agent low rate 从 `71.9%` 降到 `25.9%`，但 gold positive
+rate 始终约 `84–87%`。39 个误伤中 36 个 gold 为 record-unanimous，故主因冻结为 task-threshold calibration、
+direction/transferability 混淆和 insufficient→low 的 final 默认，而非 gold ambiguity。下一轮只测试一个 Bio
+合同候选：低 transferability 降权但不翻转 direction，且 low 必须有明确 F<20 支持；不扩展 router/ablation。
+该候选已实现为默认 `f20_evidence_calibrated_v2`；旧合同保留为 `legacy_bioavailability_v1`，profile 写入
+manifest 并参与 reuse gate。2026-08-09 Bio valid 已完成：matched/full-direct/full-flat/full-mechanism 的
+macro-F1 分别从 `0.5261/0.5577/0.6117/0.5869` 提高到 `0.6140/0.6375/0.7004/0.6844`。其中 full-flat 与
+full-mechanism 的 paired macro-F1 95% CI 分别为 `[+0.0163,+0.1606]` 和 `[+0.0230,+0.1694]`，完整
+artifact gate 为 209/209、0 failed，retrieval SHA mismatch=0。`none` macro-F1 降到 `0.4129` 且几乎全预测
+high，故结论不是“prior 已修好”，而是新合同能让实际 evidence 发挥作用。v2 保留为 Bio 默认；formal test
+在2026-08-10按冻结设置首次运行：full-flat/full-mechanism macro-F1 为 `0.6663/0.6720`，Morgan KNN、
+MiniMol embedding KNN、MiniMol trained head 为 `0.6801/0.6484/0.7027`；所有 paired macro-F1 CI 均跨0。
+不再基于 valid 或 test 调整该 prompt。
+
+```text
+tools/chembl_tool/paper_experiments/matched_train_label_agent/
+outputs/paper/matched_train_label_direct_agent_v1_scaffold_valid_gpt_oss_120b/
+outputs/paper/matched_train_label_direct_agent_f20_calibrated_v2_scaffold_valid_gpt_oss_120b/
+outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_gpt_oss_120b_f20_calibrated_v2/
+outputs/paper/matched_train_label_direct_agent_meaningful_cns_adjudication_v3_scaffold_valid_gpt_oss_120b_formal/
+outputs/paper/molecular_evidence_agent_starling_scaffold_experimental_meaningful_cns_access_v2_valid_gpt_oss_120b_bbb_adjudication_v3/
+```
+
+```bash
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.materialize
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.run --limit 1
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.run
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.summarize
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.diagnose_bio_unanimous_positive
+```
+
+### E16：BBB property-compatible analog selector（已终止）
+
+E15 已经覆盖“scope-clean train outcome + Morgan top-3 + agent”的 matched 合同，因此不再把同一批 train parents
+重新包装为新的 scoped direct condition。E16 只做 zero-LLM valid availability audit：在同一 2,935-parent BBB
+train pool 中扩展到 Morgan top-20，并在相对当前 rank-3 similarity 的预注册 `0.02/0.05/0.10` 成本预算内，按
+ionization-class match、train-only IQR 标准化的 neutral fraction/logD/MW/TPSA/HBD/rotor distance、Morgan
+similarity依次选择 top-3。选择不读取任何 train/valid label；valid label 只在 neighbor set 冻结后用于描述性
+vote 诊断。
+
+366-query 正式 Morgan top-3 parity mismatch 为 0。最保守的 0.02 budget 改变 217/366 个 neighbor sets，
+其中覆盖 v3 low-transferability 128/178；mean similarity 仅降低 0.0099，同 ionization-class neighbors 平均
+增加 0.45 个。描述性 KNN vote macro-F1 从 0.5896 升至 0.6335（delta `+0.0438`，paired 95% CI
+`[-0.0024,+0.0905]`），accuracy 从 0.7049 升至 0.7322；36 flips 为 23 rescue/13 harm。更宽预算 point
+estimate 没有继续上升，故不再根据 valid 搜索权重或阈值。该 audit 只证明 compatible candidates 普遍存在，
+不是 agent causal result。
+
+唯一授权的 0.02 selector-only matched-v3 candidate 已完成 366/366、0 failure。Agent macro-F1 从 0.6696
+变为 0.6708，paired delta `+0.0012`，95% CI `[-0.0410,+0.0450]`，accuracy 均为 0.7022；58 次 flip
+正好 29 rescue / 29 harm。217 个 changed-membership queries 是 21/21；149 个 same-membership queries 中
+有 107 个只发生重排，真正 ordered group input 相同的 42 个 rerun control 仍有 8 flips（5/3）。36 个
+vote-change queries 中只有 5 个改变 agent prediction。Promotion gate 已失败：E16 停止，
+不得运行 formal test，也不得继续在 valid 上搜索 selector 权重、similarity budget 或 BBB v4 prompt。
+
+Post-run trace diagnosis 进一步确认：42 个 exact ordered group inputs 中有 20 个 group core 和 23 个 final state
+改变；191 个 property-distance 改善样本的 transferability 仅 33 up / 32 down；三邻居全为 positive 却被 intrinsic
+barriers 判 fail 的 38 个样本中有 25 个 false negatives。曾考虑用 compact analog ledger 收缩 group→final，
+但该方案会增加 BBB 专项状态与 compiler 复杂度，已明确否决并归档。E16 之后不再从同一 valid trace 派生 selector、
+prompt 或 transport 候选；当前没有任何 BBB continuation 的 valid/test 运行授权。
+
+```bash
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.bbb_property_compatibility_audit
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.bbb_property_compatible_experiment all
+python -m tools.chembl_tool.paper_experiments.matched_train_label_agent.bbb_property_compatible_trace_diagnosis
+```
+
+```text
+outputs/paper/bbb_property_compatibility_availability_experimental_meaningful_cns_access_v2_valid/
+outputs/paper/matched_train_label_direct_agent_bbb_property_compatible_v1_scaffold_valid_gpt_oss_120b/
+```
 
 ## 资源预算
 
@@ -752,7 +1013,7 @@ ICLR 2027 官方 deadline 尚未发布。本时间表按往年 9 月中下旬 ab
 
 ## 投稿前硬性清单
 
-- [ ] 三任务 22-condition blind parent-disjoint 正式 test 完成；ClinTox 不可得边界有冻结说明。
+- [ ] 按 current lineage×task×declared-condition 完成 blind parent-disjoint 正式 test；ClinTox 不可得边界有冻结说明。
 - [ ] 所有主表 run 使用冻结的 identity-blind/parent-disjoint contract、held-out index 和 source manifest。
 - [ ] 主表 `n_failed_runs=0`，identity-blind contract 通过；parent-disjoint conflict、threshold violation 和 held-out overlap 均为 0。
 - [ ] Source-quality annotation 完成双人一致率和分歧仲裁。

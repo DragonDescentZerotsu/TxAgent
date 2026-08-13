@@ -15,6 +15,8 @@ from tools.chembl_tool.common.identity_blind import (
     prepare_reasoning_retrieval,
     sanitize_identity_blind_branch_outputs,
 )
+from tools.chembl_tool.common.final_evidence_surface import SUMMARY_ONLY
+from tools.chembl_tool.common.final_decision_prior import STANDARD_FINAL_DECISION
 from tools.chembl_tool.common.openai_reasoning_client import (
     OpenAICompatibleClient,
     ToolServiceClient,
@@ -61,7 +63,9 @@ class StageState:
 
     @property
     def key(self) -> tuple[str, int]:
-        return (self.prepared.batch_id, self.item.index)
+        # batch_id is only unique inside one batch root. Matrix schedulers may
+        # legitimately run the same condition over multiple isolated folds.
+        return (str(self.prepared.batch_dir.resolve()), self.item.index)
 
 
 @dataclass(frozen=True)
@@ -271,6 +275,13 @@ def _initialize_run_manifest(
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "final_evidence_surface": getattr(args, "final_evidence_surface", SUMMARY_ONLY),
+        "final_decision_profile": getattr(
+            args,
+            "final_decision_profile",
+            STANDARD_FINAL_DECISION,
+        ),
+        "task_prompt_profile": getattr(args, "task_prompt_profile", ""),
         "retrieval_replay_source_run_dir": _configured_source_run_dir(
             args.retrieval_replay_source_batch,
             item.index,
@@ -419,6 +430,7 @@ def _execute_single(state: StageState) -> dict[str, Any]:
             module._clean_query_chembl_context(
                 context["reasoning_retrieval"].get("query_chembl_context") or {}
             ),
+            **_task_prompt_kwargs(state),
         )
     with _exclusive_run_lock(state.run_dir):
         _write_json_atomic(
@@ -448,6 +460,7 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
         client,
         module._llm_query_payload(context["reasoning_retrieval"]["query"]),
         group,
+        **_task_prompt_kwargs(state),
     )
     canonical_output = raw_output
     if state.prepared.args.identity_blind:
@@ -485,11 +498,31 @@ def _execute_final(state: StageState) -> dict[str, Any]:
     )
     group_outputs = _canonical_group_outputs(state)
     client = _make_client(state)
+    final_surface = getattr(
+        state.prepared.args,
+        "final_evidence_surface",
+        SUMMARY_ONLY,
+    )
+    final_kwargs = (
+        {"final_evidence_surface": final_surface}
+        if state.prepared.config.supports_shared_retrieval_contract
+        and final_surface != SUMMARY_ONLY
+        else {}
+    )
+    final_kwargs.update(_task_prompt_kwargs(state))
+    final_decision_profile = getattr(
+        state.prepared.args,
+        "final_decision_profile",
+        STANDARD_FINAL_DECISION,
+    )
+    if final_decision_profile != STANDARD_FINAL_DECISION:
+        final_kwargs["final_decision_profile"] = final_decision_profile
     final_output = module._run_final_reasoning(
         client,
         context["reasoning_retrieval"],
         single_output,
         group_outputs,
+        **final_kwargs,
     )
     final_path = state.run_dir / "final_reasoning_output.json"
     trace_path = state.run_dir / "trace_messages.jsonl"
@@ -522,6 +555,12 @@ def _execute_final(state: StageState) -> dict[str, Any]:
                 trace_path.unlink(missing_ok=True)
         _record_stage_event(state, FINAL_STAGE, final_output.get("status", "error"))
     return final_output
+
+
+def _task_prompt_kwargs(state: StageState) -> dict[str, str]:
+    if not state.prepared.config.prompt_profile_option:
+        return {}
+    return {"prompt_profile": str(state.prepared.args.task_prompt_profile)}
 
 
 def _invalidate_dependent_final(run_dir: Path) -> None:

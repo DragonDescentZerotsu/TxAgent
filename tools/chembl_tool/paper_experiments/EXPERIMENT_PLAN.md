@@ -162,16 +162,24 @@ ChEMBL source manifest，出现 Starling 或其它 source row 时该 condition �
 | ClinTox | yes | yes | yes | yes | no | no | no | no | no |
 | Bioavailability_Ma | yes | yes | yes | yes | yes | yes | yes | yes | yes |
 
-新 v4 当前包含 BBB、Skin 和 Bioavailability 的 22 个 identity-blind 条件/构造方法 split，其中 3 个
-`none` 的 identity policy 不适用，19 个 retrieval 条件使用 parent-disjoint。Random/scaffold 分别先跑 valid
-再跑 test。当前 scaffold-valid 已完成 GLM、GPT-OSS-20B、GPT-OSS-120B 的 22-condition blind matrix，
-以及 matched MiniMol head、Morgan KNN 和 MiniMol embedding KNN；GLM 0 failure，两个 GPT 各有一个确定性
-context-limit failure并按预先声明 policy 计错。GPT 两套 visible matrix、coverage-aware 和 MMP-ledger valid
-ablation 也已完成；GLM visible 也已达到 6887/6887 严格成功并进入总图。正式 test 尚未启动，random/GLM 的详细状态以
-`STARLING_BENCHMARK_RESULTS.md` 为准。旧 26-condition TDC visibility/operational 结果属于历史 lineage。
+Historical combined v4 包含 BBB、Skin 和 Bioavailability 的 22 个 identity-blind conditions，其中 3 个
+`none` 的 identity policy 不适用，19 个 retrieval conditions 使用 parent-disjoint；其三模型 blind/visible、
+baselines 和 ablations 均保留作 historical lineage。Current 已按 task 拆分：BBB 使用
+`experimental_meaningful_cns_access_v2`，Bio/Skin 使用 `record_supported_v2`，不再共享单一 22-condition/
+6,887 completion gate。2026-08-10 已完成 GPT-OSS-120B current scaffold-valid：BBB 7×366，Bio 7×209，
+Skin 7×245，均零失败；其中新补齐的 9 个 ChEMBL batch 为 `2460/2460` 完整。2026-08-10 之后仅 Bio
+frozen full-flat/full-mechanism 与三项对应 baseline 已完成一次 formal scaffold-test；BBB/Skin formal test、
+Bio direct test、current visible 与跨模型 confirmation 仍未启动。Bio full-flat matched valid 另有5次完全
+同输入重复，macro-F1 均值 `0.6444`、sample SD `0.0357`。详细状态以
+`STARLING_BENCHMARK_RESULTS.md` 为准。旧 26-condition TDC visibility/operational 结果也只属 historical lineage。
 ClinTox 当前没有 Starling gold split，不计入这轮 v4 矩阵。
 
-RQ8 的 ChEMBL-only cumulative distance curve 是与这套 22-condition v4 source/grouping matrix 正交的新增
+同日已完成独立 `scaffold_disjoint` matched-source ablation：ChEMBL/Starling × direct/full-flat/
+full-mechanism 共 18 个 batch、`4920/4920` 完整，实际保留 neighbor policy conflict 为 0。九个 Starling-minus-
+ChEMBL 点估计均为正，但只有 BBB 三个 mode 的 paired-bootstrap 95% CI 不跨 0；Bio/Skin source claim 仍不确定。
+artifact 与完整统计见 `STARLING_BENCHMARK_RESULTS.md`，该 ablation 不替代 canonical parent-disjoint current runs。
+
+RQ8 的 ChEMBL-only cumulative distance curve 是与 historical 22-condition v4 source/grouping matrix 正交的新增
 实验，不计入上述条件数；完整 curve 先作为 matched-prefetch 受控实验运行，再做少量 agentic confirmation。
 
 ## 固定模型和检索设置
