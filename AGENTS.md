@@ -401,7 +401,8 @@ lineage，不删除，也不混入新 v4 主结果。
 
 当前代码已经完成以下实现 gate；GPT-OSS-120B v2 valid 已完成。2026-08-10 已首次完成 Bioavailability
 full-flat/full-mechanism 及对应 Morgan KNN、MiniMol embedding KNN、MiniMol trained head 的 frozen
-scaffold-test；BBB/Skin formal test 与 GLM v2 valid/test 仍须等待完整 artifact gate：
+scaffold-test。2026-08-13 的 BBB DeepSeek residual-adjudication valid gate 已失败，BBB 方法开发停止且
+formal test 不再列为待办；Skin formal test 与 GLM v2 valid/test 仍须等待独立 promotion/artifact gate：
 
 1. runner 默认改为 `identity_blind + parent_disjoint`，并允许该组合 fresh-run；
 2. parent-disjoint fresh-run 不要求 operational `reuse_plan.json`，且输出到独立
@@ -593,7 +594,13 @@ reasoning_validation.py
 final_decision_prior.py
   提供显式 opt-in 的 final-stage decision profile。默认 `standard` 严格 no-op；
   `train_ratio_tiebreak_v1` 只允许 BBB/Bio final-only valid 诊断在真正 evidence tie 时使用 frozen train majority，
-  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。不得变成 batch quota。
+  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。BBB 还保留
+  `direct_anchored_residual_v1` / `direct_override_recheck_v1` 历史诊断；它们不向 Bio CLI 暴露，valid gate 已失败，
+  不得成为默认或启动 formal test。任何 profile 都不得变成 batch quota。
+
+tasks/bbb_martins/final_decision_profiles.py
+  只拥有 BBB 的 direct-anchor、mechanism-weight 和 override/recheck prompt/schema/cross-field validation；公共
+  `final_decision_prior.py` 不包含 passive/efflux/influx 等 task 语义。该模块仅用于已失败的 E20 历史复现。
 
 prompt_profile.py
   只负责 task prompt profile 的 manifest provenance、历史缺省映射和 branch-reuse 一致性 gate。具体 task

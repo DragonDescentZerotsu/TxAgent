@@ -21,6 +21,7 @@ from tools.chembl_tool.common.final_evidence_surface import (
     add_final_evidence_surface_argument,
 )
 from tools.chembl_tool.common.final_decision_prior import (
+    GENERAL_FINAL_DECISION_PROFILES,
     STANDARD_FINAL_DECISION,
     add_final_decision_profile_argument,
 )
@@ -57,6 +58,7 @@ class BatchConfig:
     negative_predictions: frozenset[str]
     supports_shared_retrieval_contract: bool = True
     supports_final_decision_profiles: bool = False
+    final_decision_profile_choices: tuple[str, ...] = GENERAL_FINAL_DECISION_PROFILES
     prompt_profile_option: str = ""
     prompt_profile_choices: tuple[str, ...] = ()
     default_prompt_profile: str = ""
@@ -965,7 +967,10 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     add_final_evidence_surface_argument(parser)
     if config.supports_final_decision_profiles:
-        add_final_decision_profile_argument(parser)
+        add_final_decision_profile_argument(
+            parser,
+            choices=config.final_decision_profile_choices,
+        )
     else:
         parser.set_defaults(final_decision_profile=STANDARD_FINAL_DECISION)
     if config.prompt_profile_option:

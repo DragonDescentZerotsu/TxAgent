@@ -11,7 +11,8 @@ formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind �
 
 下表只比较 scaffold-valid、`identity_blind + parent_disjoint`、GPT-OSS-120B 的当前数据与当前默认 prompt。
 它是“现在应该引用哪个版本”的短索引；完整逐条件结果、paired CI 和历史 lineage 仍在
-`STARLING_BENCHMARK_RESULTS.md`。BBB 与 Skin formal test 尚未运行；Bioavailability 已在设置冻结后完成一次
+`STARLING_BENCHMARK_RESULTS.md`。BBB 与 Skin formal test 尚未运行，其中 BBB 已因 E20 promotion gate
+失败而有意停止、不再作为待办；Bioavailability 已在设置冻结后完成一次
 full-flat/full-mechanism 和三项 train-derived baseline 的 scaffold-test，不能把下表 valid 数字写成 test 结果。
 
 | task | frozen data lineage | 默认 prompt profile | 当前最佳 agent 条件 | macro-F1 | Morgan KNN | MiniMol KNN | MiniMol trained head |
@@ -52,7 +53,7 @@ Canonical figure 现在同时标注每个 task 的 best valid-selected agent 相
 MiniMol embedding KNN 的 one-sided paired permutation raw p-value。BBB/Bio 对 Morgan 的 raw p 分别为
 `0.015/0.020`，BBB 对 MiniMol embedding KNN 为 `0.027`；但这 9 项均为 valid-selected exploratory tests，
 Holm 校正后无一低于 0.05；这些仍是 valid exploratory annotation。Bio 的独立 formal-test 结果见上文，
-BBB 与 Skin formal test 尚未运行。
+BBB 与 Skin formal test 尚未运行；BBB 是 gate-failed 后的主动 no-test，Skin 仍需独立 gate。
 
 当前默认代码入口固定为：
 
@@ -67,7 +68,8 @@ tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
 ```
 
 其余本轮尝试全部保留为历史复现，不进入默认 pipeline：matched train-label agent（E15）、BBB prompt v2/v3、
-BBB property-compatible selector（E16）、Skin negative-transfer v3 和 train-ratio prior。它们的代码、固定命令、
+BBB property-compatible selector（E16）、BBB DeepSeek residual adjudication（E20）、Skin negative-transfer v3
+和 train-ratio prior。它们的代码、固定命令、
 artifact 与 no-go 原因由 `matched_train_label_agent/README.md`、`ICLR_2027_EXECUTION_PLAN.md` 和本文件后续
 历史章节索引；不得覆盖上表，也不得据此启动 formal test。
 
@@ -76,6 +78,13 @@ scaffold-valid 分子中没有一个 direct=`no_risk` 样本同时满足 positiv
 reactive-topology/activation-route gate，故 0 fresh final、0 flip，macro-F1/accuracy 严格保持
 `0.641036/0.693878`。该结果未通过 promotion gate，Skin formal test 仍未读取；完整 gate audit 见
 `outputs/paper/skin_aop_gated_final_v1_scaffold_valid_deepseek_v4_pro/`。
+
+同日完成的 DeepSeek BBB E20 也属于 no-go。366 条 scaffold-valid 上，Direct、标准 Full-mechanism、
+direct-anchored residual 和 residual+override-recheck 的 macro-F1 分别为
+`0.7000/0.7184/0.7084/0.7109`；标准 Full-mechanism 是 nominal best，但相对 Direct 的 paired 95% CI
+为 `[-0.0121,+0.0496]`。Hybrid 的 delta 为 `+0.0109`，CI `[-0.0186,+0.0412]`，未通过预冻结 gate。
+因此 BBB 不读取 test，也不再从同一 valid 派生 prompt、weighting 或 recheck 候选；完整 receipt 见
+`outputs/paper/bbb_deepseek_residual_adjudication_valid_v1/analysis/`。
 
 2026-08-09 的 current Starling scaffold-valid E15 matched train-label 诊断已完成：三 task 共 820/820
 成功，strict retrieval parity 和 prompt identity audit 均为 0 failure；BBB/Bio/Skin 的 agent-minus-Morgan-KNN

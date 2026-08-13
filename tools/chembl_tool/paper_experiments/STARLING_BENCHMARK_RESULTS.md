@@ -485,6 +485,42 @@ outputs/paper/bbb_property_compatibility_availability_experimental_meaningful_cn
 outputs/paper/matched_train_label_direct_agent_bbb_property_compatible_v1_scaffold_valid_gpt_oss_120b/
 ```
 
+#### BBB DeepSeek direct-anchored residual adjudication（E20；valid-only，已终止）
+
+2026-08-13 在同一 `experimental_meaningful_cns_access_v2` scaffold-valid 366 条、`identity_blind +
+parent_disjoint`、Morgan top-3、Tanimoto `>=0.30` 合同下运行 DeepSeek-v4-pro。标准 Full-mechanism 使用
+heldout-filtered Starling full index；residual 与 recheck 逐文件复用其 retrieval、single 和 mechanism-family
+group artifacts，只重跑 final。Direct 来自相同数据、检索和模型的既有 matched anchor。
+
+| condition | accuracy | macro-F1 | delta macro-F1 vs Direct | paired 95% CI | Direct-only / candidate-only correct |
+|---|---:|---:|---:|---|---:|
+| Direct | 0.7350 | 0.7000 | — | — | — |
+| Standard Full-mechanism | **0.7486** | **0.7184** | +0.0184 | [-0.0121,+0.0496] | 13 / 18 |
+| Direct-anchored residual | 0.7377 | 0.7084 | +0.0084 | [-0.0216,+0.0390] | 15 / 16 |
+| Residual + override recheck | 0.7404 | 0.7109 | +0.0109 | [-0.0186,+0.0412] | 14 / 16 |
+
+四个 batch 均零失败。Residual 把 366 条中的 181/113/68/4 条 mechanism evidence 分为
+`supporting/context_only/none/decisive`，只提出 4 个 override；独立 recheck uphold/reject 各 2 个。
+标准 Full-mechanism 的小幅 point gain 主要出现在 direct-anchor state 为 mixed 的 66 条：Direct、standard、
+residual 分别做对 35/43/40 条。严格 residual 没有扩大收益，说明把所有非-decisive mechanism 变成
+non-voting context 会丢失部分软 adjudication signal。
+
+另有 29 条重新推导的 anchor 与冻结 Direct prediction 不同（14 rescue / 15 harm），说明“要求模型重建
+Direct anchor”不是冻结 Direct output 的纯因果 ablation。虽然可以把 frozen Direct output 显式注入再做一次
+诊断，但它不能解决当前 outcome evidence 稀缺和 transporter endpoint direction 不明确的问题，预期收益与
+generation variation 同量级，因此不再运行。
+
+预冻结 promotion gate 要求 hybrid macro-F1 上升、accuracy 不降且 paired CI lower bound `>=0`；E20 失败。
+BBB formal test 未读取，且 BBB 方法开发在此终止。Residual 的 1,098 对、recheck 的 12 对 copied artifacts
+全部通过 SHA-256 equality audit。
+
+```text
+tools/chembl_tool/common/final_decision_prior.py
+tools/chembl_tool/tasks/bbb_martins/final_decision_profiles.py
+tools/chembl_tool/paper_experiments/analyze_bbb_residual_adjudication.py
+outputs/paper/bbb_deepseek_residual_adjudication_valid_v1/{protocol.md,analysis/}
+```
+
 #### Bio 三个正类邻居仍被改成 low 的 trace 诊断
 
 针对 Bio 三个 train neighbors 全为 `Y=1` 的 109 个 valid 样本进行了 deterministic trace audit，不新增模型
@@ -1865,7 +1901,8 @@ compressed predictions、cross-task fold exclusions 和 thresholds 保存在相�
   GLM p-value 都无效；
 - GLM random-valid blind 仍有 Bioavailability 两个 ChEMBL full 条件各 1 个失败，尚未通过 zero-failure gate；
 - v4 random-valid 的 matched train-label baselines 尚未生成；
-- Bio selected-condition formal test 已按冻结合同运行一次；BBB/Skin formal test 尚未启动；
+- Bio selected-condition formal test 已按冻结合同运行一次；BBB/Skin formal test 均未启动，其中 BBB E20
+  已 gate-failed 并停止、不再列为待办，Skin 仍需独立 promotion gate；
 - test matched-prefetch 尚未扩展到全部当前 Starling conditions；
 - ECFP RF/XGBoost 和 matched-neighbor evidence retrieval-only vote 未完成；
 - 用于确认表示选择稳健性的独立第二种 pretrained encoder baseline 未完成；

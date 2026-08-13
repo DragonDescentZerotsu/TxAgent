@@ -1,9 +1,10 @@
-"""Versioned final-stage decision priors for binary reasoning tasks.
+"""Shared final-stage decision contracts for binary reasoning tasks.
 
 The default profile is a strict no-op.  The train-ratio profile exposes one
 frozen training-split prior and requires the final model to use it only for a
 genuine evidence tie.  It never changes retrieval, branch reasoning, or an
-already directional evidence decision.
+already directional evidence decision. Task-specific profiles live with their
+task prompts and delegate shared profiles back to this module.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ from typing import Any, Mapping
 
 STANDARD_FINAL_DECISION = "standard"
 TRAIN_RATIO_TIEBREAK_V1 = "train_ratio_tiebreak_v1"
-FINAL_DECISION_PROFILES = (
+GENERAL_FINAL_DECISION_PROFILES = (
     STANDARD_FINAL_DECISION,
     TRAIN_RATIO_TIEBREAK_V1,
 )
@@ -66,14 +67,18 @@ class FinalDecisionPrompt:
     required_fields: tuple[str, ...]
 
 
-def add_final_decision_profile_argument(parser: Any) -> None:
+def add_final_decision_profile_argument(
+    parser: Any,
+    *,
+    choices: tuple[str, ...] = GENERAL_FINAL_DECISION_PROFILES,
+) -> None:
     parser.add_argument(
         "--final-decision-profile",
-        choices=FINAL_DECISION_PROFILES,
+        choices=choices,
         default=STANDARD_FINAL_DECISION,
         help=(
             "Versioned final-stage decision contract. The default is a strict "
-            "no-op; train_ratio_tiebreak_v1 is an explicit final-only ablation."
+            "no-op; every non-standard profile is an explicit final-only ablation."
         ),
     )
 
@@ -156,6 +161,14 @@ def final_decision_validation_errors(
     return errors
 
 
+def final_decision_allowed_values(profile: str) -> dict[str, set[str]]:
+    """Return profile-owned enum validation without task-specific labels."""
+    _validate_profile(profile)
+    if profile == STANDARD_FINAL_DECISION:
+        return {}
+    return {"evidence_state": set(EVIDENCE_STATES)}
+
+
 def _validate_profile(profile: str) -> None:
-    if profile not in FINAL_DECISION_PROFILES:
+    if profile not in GENERAL_FINAL_DECISION_PROFILES:
         raise ValueError(f"Unknown final decision profile: {profile}")

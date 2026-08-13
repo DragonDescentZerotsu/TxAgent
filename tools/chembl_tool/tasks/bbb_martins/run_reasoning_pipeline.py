@@ -29,12 +29,9 @@ from tools.chembl_tool.common.final_evidence_surface import (
     prepare_resumed_final_inputs,
 )
 from tools.chembl_tool.common.final_decision_prior import (
-    EVIDENCE_STATES,
     STANDARD_FINAL_DECISION,
     TrainRatioPrior,
     add_final_decision_profile_argument,
-    build_final_decision_prompt,
-    final_decision_validation_errors,
 )
 from tools.chembl_tool.common.identity_blind import (
     prepare_reasoning_retrieval,
@@ -87,6 +84,12 @@ from tools.chembl_tool.tasks.bbb_martins.prompt_profiles import (
     get_bbb_prompt_profile,
 )
 from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index, retrieve_neighbors
+from tools.chembl_tool.tasks.bbb_martins.final_decision_profiles import (
+    BBB_FINAL_DECISION_PROFILES,
+    bbb_final_decision_allowed_values,
+    bbb_final_decision_validation_errors,
+    build_bbb_final_decision_prompt,
+)
 
 
 DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
@@ -741,7 +744,7 @@ def _run_final_reasoning(
         compact_group_reasoning_outputs(group_outputs),
         surface=final_evidence_surface,
     )
-    decision_prompt = build_final_decision_prompt(
+    decision_prompt = build_bbb_final_decision_prompt(
         final_decision_profile,
         TRAIN_RATIO_PRIOR,
     )
@@ -784,16 +787,12 @@ def _run_final_reasoning(
         required_fields=(*profile.final_required_fields, *decision_prompt.required_fields),
         allowed_values={
             **profile.final_allowed_values,
-            **(
-                {"evidence_state": set(EVIDENCE_STATES)}
-                if final_decision_profile != STANDARD_FINAL_DECISION
-                else {}
-            ),
+            **bbb_final_decision_allowed_values(final_decision_profile),
         },
         content_validator=lambda content: [
             *final_profile_validation_errors(content, profile=prompt_profile),
             *(
-                final_decision_validation_errors(
+                bbb_final_decision_validation_errors(
                     content,
                     profile=final_decision_profile,
                     prior=TRAIN_RATIO_PRIOR,
@@ -1035,7 +1034,10 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
     add_final_evidence_surface_argument(parser)
-    add_final_decision_profile_argument(parser)
+    add_final_decision_profile_argument(
+        parser,
+        choices=BBB_FINAL_DECISION_PROFILES,
+    )
     parser.add_argument(
         "--bbb-prompt-profile",
         choices=BBB_PROMPT_PROFILES,

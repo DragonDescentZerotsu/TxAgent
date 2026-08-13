@@ -23,6 +23,9 @@
   RL-specific prompt/data/evaluation lifecycle。
 - Train-ratio final-only 诊断：`run_train_ratio_prior_experiment.py` 负责 source/train contract、恢复运行和
   versioned output；`train_ratio_prior_analysis.py` 独立完成 paired statistics、trigger audit 和 copied-artifact parity。
+- BBB DeepSeek residual adjudication：`analyze_bbb_residual_adjudication.py` 汇总 Direct、标准
+  Full-mechanism、direct-anchored residual 和 override recheck，验证 final-only artifact parity 并执行
+  paired promotion gate；该 valid-only 方法线已终止且未读取 test。
 
 ## 当前 Starling gold lineages
 

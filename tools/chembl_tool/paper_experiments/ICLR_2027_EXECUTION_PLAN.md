@@ -28,7 +28,8 @@ taxonomy。下文 `22 conditions / 6,887 sample-conditions` 只描述 historical
 GPT-OSS-120B BBB 4-condition/366-row valid，以及 Bio/Skin 各 4-condition valid bugfix matrix；Bio 还完成了
 `f20_evidence_calibrated_v2` 的 matched/full-pool fresh valid 对照，full-flat 和 full-mechanism paired CI 均高于
 0。2026-08-10 在设置冻结后首次运行 Bio full-flat/full-mechanism formal scaffold-test 和三项对应 baseline；
-BBB/Skin formal test 仍未启动。record-supported-v2 GLM blind root 仍是 5,876/6,887 partial，visible 尚未启动，
+BBB/Skin formal test 均未启动；BBB 在 E20 gate 失败后已停止且不再列为待办，Skin 仍需独立 gate。
+record-supported-v2 GLM blind root 仍是 5,876/6,887 partial，visible 尚未启动，
 不得进入正式表。
 
 当前 test 已完成 73 个 GLM 条件：26 个 identity-blind、21 个 matched-prefetch 和 26 个
@@ -88,7 +89,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | E1 | None vs direct retrieval | C1、C3 | P0 | historical v4 三模型 valid 已保留；current GPT-OSS-120B valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；Bio test 仅运行 none prerequisite，未运行 direct |
 | E2 | ChEMBL vs Starling | C2 | P0 | historical v4 source comparison 已保留；current split lineage 尚未完成跨 source/model confirmation |
 | E3 | Source-quality 人工 annotation | C2、C6 | P0 | 未开始 |
-| E4 | Flat vs mechanism | C3 | P0 | current GPT-OSS-120B valid 已完成；Bio formal test 已一次性完成，flat/mechanism 为 0.6663/0.6720，paired CI 跨0；BBB/Skin test 待跑 |
+| E4 | Flat vs mechanism | C3 | P0 | current GPT-OSS-120B valid 已完成；Bio formal test 已一次性完成，flat/mechanism 为 0.6663/0.6720，paired CI 跨0；BBB E20 no-go 后不跑 test，Skin 仍待独立 gate |
 | E5 | Deployment-visible agentic 补充矩阵与工具行为分析 | C4、C5 | P0 | historical v4 visible 各 22 条件已保留；current split lineage 尚未启动 visible |
 | E6 | Blind/visible 合同差异与细粒度 visibility attribution | C4、C5 | P1 精选条件 | GPT-OSS 两模型已有完整 blind/visible valid 对照，但同时改变 identity 与 tool execution；细粒度单因素 policy 未实现 |
 | E7 | Numeric vs non-numeric | C2 补充 | P1 | Bio 第一轮完成 |
@@ -104,6 +105,7 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | E17 | GPT-OSS-120B train-only LoRA-GRPO final-synthesis calibration | C1、C3、C5、C6 | P0 新实验 | 合同已冻结；node002 8×A100 完成 1-step NeMo RL LoRA 机械闭环，下一 gate 为 nonzero-advantage grpo-10；valid/test 尚未读取 |
 | E18 | GPT-OSS-120B one-pass full-flat LoRA-GRPO | C1、C3、C5、C6 | P0 新实验 | blind/visible-prefetched frozen-base 三任务 valid 已完成；SDK-default rank-32 all-module matched 三步 Tinker smoke 已通过，96 rollout 最大4,911、0 cap hit，曲线/W&B/checkpoint/valid-3 reload 均通过；待用户确认正式 Bio train，test 未读取 |
 | E19 | Skin AOP source/topology-gated final-only integration | C3、C5、C6 | 已终止 | DeepSeek-v4-pro canonical-v3 MiniMol top-3 valid 完成零成本 materialization：78 个 direct=no_risk 中 75 个 AOP 为 non-voting，剩余 3 个均未同时通过 source-context 与 reactive-topology/activation-route gate；因此 0 fresh final、0 flip，macro-F1/accuracy 严格保持 0.641036/0.693878，promotion 失败，不读取 test |
+| E20 | BBB DeepSeek direct-anchored residual adjudication | C3、C5、C6 | 已终止 | 366 条 valid 零失败；Direct/standard mechanism/residual/recheck-hybrid macro-F1 为 0.7000/0.7184/0.7084/0.7109，hybrid delta CI `[-0.0186,+0.0412]`；gate 失败，不读取 test，BBB 方法开发停止 |
 
 ## 当前资产与缺口
 
@@ -113,15 +115,15 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | ChEMBL 四任务 evidence | 已有 direct/flat/mechanism | 需要冻结最终 source manifest | 数据冻结前 |
 | ChEMBL distance expansion | C-family tree ontology 已冻结；通用旧 config/validator、assay-manifest、superset index 和 cumulative retrieval prototype 已实现 | 需先升级 tree-node schema/retrieval；BBB v2 需重建，另外三任务 graph/mapping 与独立 batch/replay、汇总、绘图 runner 均缺失 | 数据冻结前 |
 | Bioavailability Starling | canonical direct v2、direct numeric/full、flat、mechanism 与 v4 held-out index 已冻结；full-flat/full-mechanism formal test 已完成 | source-quality 人工核验仍缺；direct test 未运行 | 数据冻结及 selected-condition test gate 已过 |
-| BBB Starling | experimental meaningful-CNS-access v2 gold、direct/full held-out index、coverage、baselines 与 GPT-OSS-120B 4-condition valid 已完成 | 正式 test、跨模型与 source-quality 尚缺 | current valid gate 已过 |
+| BBB Starling | experimental meaningful-CNS-access v2 gold、direct/full held-out index、coverage、baselines、GPT-OSS-120B 4-condition valid 与 DeepSeek E20 已完成 | source-quality 新数据仍缺；E20 gate 失败后不再开发、不读取 test | 方法线已终止 |
 | Skin Starling | record-supported-v2 gold/index 与 sensitization-aligned-v2 GPT-OSS-120B 4-condition valid 已完成 | 正式 test、跨模型与 source-quality 尚缺 | current valid gate 已过 |
 | ClinTox Starling | 无与 toxicity-caused clinical-trial failure 同定义的 direct source，当前明确不构造 v4 split | 若未来新增 source 必须另做 ontology/source freeze，不能补几个 family 后混入当前 lineage | future lineage |
-| Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；current BBB/Bio/Skin valid indices 均通过 held-out/parent gate；Bio selected test 条件通过同一 gate | BBB/Skin formal test 仍需按 lineage 分开 gate | 2026-08-23 |
-| Current blind main matrix | GPT-OSS-120B current valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；Bio selected test 条件已完成；GLM record-v2 仍 partial | BBB/Skin formal test、跨模型、其余 repeats 和 release audit 待完成 | 2026-08-23 |
+| Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；current BBB/Bio/Skin valid indices 均通过 held-out/parent gate；Bio selected test 条件通过同一 gate | Skin formal test 仍需独立 lineage gate；BBB 已 gate-failed/no-test | 2026-08-23 |
+| Current blind main matrix | GPT-OSS-120B current valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；Bio selected test 条件已完成；BBB DeepSeek continuation 已 no-go；GLM record-v2 仍 partial | Skin formal test、跨模型、其余 repeats 和 release audit 待完成；BBB test 不再列为待办 | 2026-08-23 |
 | Visible deployment ablation | historical v4 三模型 22-condition visible 保留；current lineages 未启动 | 完整合同同时改变 identity 与 tool execution，不能当纯 visibility effect | current 待定 |
 | Source quality gold | 未建立 | 需要双人 annotation 和原始文献/assay 核验 | 2026-08-30 |
-| Learned baselines | 历史 strict-conflict baselines 已保留；current BBB experimental-v2 与 Bio/Skin record-v2 已有 lineage-matched MiniMol/Morgan/MiniMol-KNN；Bio formal test 三项 baseline 已完成 | 缺 BBB/Skin current formal test、ECFP RF/XGBoost、matched-neighbor retrieval-only vote 和独立第二 encoder | 2026-08-16 |
-| Cross-model evidence | v4 scaffold-valid 已完成 GLM、GPT-OSS-20B 与 GPT-OSS-120B blind 同合同对照；Bio GPT-OSS-120B selected test 已完成 | 缺独立模型家族、其它关键重复和 BBB/Skin formal test | 2026-08-23 |
+| Learned baselines | 历史 strict-conflict baselines 已保留；current BBB experimental-v2 与 Bio/Skin record-v2 已有 lineage-matched MiniMol/Morgan/MiniMol-KNN；Bio formal test 三项 baseline 已完成 | 缺 Skin current formal test、ECFP RF/XGBoost、matched-neighbor retrieval-only vote 和独立第二 encoder；BBB 不再进入 test | 2026-08-16 |
+| Cross-model evidence | v4 scaffold-valid 已完成 GLM、GPT-OSS-20B 与 GPT-OSS-120B blind 同合同对照；BBB 已补 DeepSeek valid-only 诊断，Bio GPT-OSS-120B selected test 已完成 | 缺其它关键重复和 Skin formal test；BBB DeepSeek 未 promotion、不进入 test | 2026-08-23 |
 | Run-to-run variance | 当前每个条件一次 | 关键比较需至少 3 次独立生成 | 2026-08-30 |
 | Visibility failure audit | 第一轮已完成 | 需要第二 annotator 和 targeted causal ablation | 2026-08-30 |
 | 论文主文与图表 | 未开始正式写作 | 不能等所有实验结束后才写 | 第一版 2026-09-06 |
@@ -399,7 +401,8 @@ availability、retrieved-neighbor overlap 和 token cost。不能把 coverage �
 Historical v4 只覆盖 BBB、Bioavailability、Skin；ClinTox 无同定义 direct source。historical 三任务
 scaffold-valid blind source comparisons 已在三模型完成；current split lineage 的跨 source/model comparison 与
 正式 test 尚未全部完成。Bio frozen full-flat/full-mechanism 与三项 baseline 已完成一次 scaffold-test；
-BBB/Skin formal test、Bio direct test 和 current 跨模型 comparison 仍缺。Starling 生成成本单独记账，
+Skin formal test、Bio direct test 和 current 跨模型 comparison 仍缺；BBB 已因 E20 gate 失败主动 no-test。
+Starling 生成成本单独记账，
 不与 LLM reasoning tokens 合并。
 
 完成标准：将“source quality”和“downstream performance”分开下结论；只有跨任务方向稳定时才声称
@@ -535,7 +538,7 @@ numeric direct-F 专项对照。尚缺 v4 random/test、ECFP RF/XGBoost、使用
 Historical combined v4 已在完整 scaffold-valid 22-condition blind contract 上运行 GLM-5.2 NVFP4、
 GPT-OSS-20B 和 GPT-OSS-120B，并在 GPT 两个规模上完成 visible contract。Current split lineages 目前只完成
 GPT-OSS-120B valid，以及 Bio GPT-OSS-120B frozen full-flat/full-mechanism 的一次 formal scaffold-test；
-BBB/Skin formal test 和 current 跨模型范围仍须按算力和预注册 claim 冻结。
+Skin formal test 和 current 跨模型范围仍须按算力和预注册 claim 冻结；BBB 不再进入 formal test。
 
 资源：historical 三模型 blind/visible valid 结果和统一 `plot_starling_model_comparison.py` 总图已保留；current
 仍缺第二模型、关键条件 repeats 和 visible 合同分析。

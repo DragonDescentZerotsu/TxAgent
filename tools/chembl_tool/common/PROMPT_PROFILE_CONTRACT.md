@@ -20,7 +20,10 @@ prompt_profile.py
 
 final_decision_prior.py
   An orthogonal final-only decision profile. `standard` is a strict no-op;
-  non-standard profiles must be explicit, versioned, and auditable.
+  non-standard profiles must be explicit, versioned, and auditable. General
+  task CLIs expose only `standard` and `train_ratio_tiebreak_v1`; BBB also
+  exposes its historical `direct_anchored_residual_v1` and
+  `direct_override_recheck_v1` diagnostics.
 
 tasks/<task>/prompt_profiles.py
   Task-local system roles, instructions, required schemas, allowed values,
@@ -55,6 +58,10 @@ postprocessing, or the prediction after a valid model response.
 
 BBB v2/v3 and Skin v3 remain explicit historical/diagnostic opt-ins. They are
 not promoted defaults and do not authorize formal-test tuning.
+
+The two direct-anchored final-decision profiles are likewise BBB-only
+diagnostics. Their DeepSeek scaffold-valid promotion gate failed, so they are
+not defaults and must not be selected by Bioavailability or other task CLIs.
 
 ## Artifact requirements
 
