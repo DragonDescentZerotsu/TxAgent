@@ -1,160 +1,83 @@
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 5, "extraction_id": "ext_6", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 6, "extraction_id": "ext_7", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 7, "extraction_id": "ext_8", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 8, "extraction_id": "ext_9", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 9, "extraction_id": "ext_10", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 10, "extraction_id": "ext_14", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 11, "extraction_id": "ext_18", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 12, "extraction_id": "ext_19", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 13, "extraction_id": "ext_20", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 14, "extraction_id": "ext_21", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 15, "extraction_id": "ext_22", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 16, "extraction_id": "ext_23", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 17, "extraction_id": "ext_24", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 18, "extraction_id": "ext_25", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 20, "extraction_id": "ext_27", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 21, "extraction_id": "ext_28", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 22, "extraction_id": "ext_29", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 23, "extraction_id": "ext_30", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 24, "extraction_id": "ext_33", "pmid": "34272718"}}
-{"reason": "interpretation_altering_qualifying_conditions", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 32, "extraction_id": "ext_55", "pmid": "34272718"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_255"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_2"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_232"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_40"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_45"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_168"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_342"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_188"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_189"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_216"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_83"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_84"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_85"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_86"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_3"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_4"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_5"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_6"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_7"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_record_id": "ext_10"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 116590, "extraction_id": "ext_166", "pmid": "32626195"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 127163, "extraction_id": "ext_1", "pmid": "29101309"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132174, "extraction_id": "ext_1", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132175, "extraction_id": "ext_2", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132176, "extraction_id": "ext_6", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132177, "extraction_id": "ext_7", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132182, "extraction_id": "ext_15", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132183, "extraction_id": "ext_16", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132184, "extraction_id": "ext_17", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132185, "extraction_id": "ext_18", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132186, "extraction_id": "ext_19", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132187, "extraction_id": "ext_20", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132188, "extraction_id": "ext_21", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132189, "extraction_id": "ext_22", "pmid": "12904107"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 140895, "extraction_id": "ext_79", "pmid": "12635415"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 142551, "extraction_id": "ext_58", "pmid": "12868798"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 144635, "extraction_id": "ext_12", "pmid": "15354312"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 144636, "extraction_id": "ext_13", "pmid": "15354312"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 154343, "extraction_id": "ext_9", "pmid": "33103432"}}
-{"reason": "missing_or_invalid_effect_status", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 161118, "extraction_id": "ext_26", "pmid": "26986803"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4286, "extraction_id": "ext_278", "pmid": "14651045"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 16420, "extraction_id": "ext_328", "pmid": "8723616"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 17830, "extraction_id": "ext_43", "pmid": "16973444"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 25845, "extraction_id": "ext_43", "pmid": "16127684"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 25846, "extraction_id": "ext_44", "pmid": "16127684"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 25847, "extraction_id": "ext_45", "pmid": "16127684"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 25848, "extraction_id": "ext_46", "pmid": "16127684"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 25860, "extraction_id": "ext_58", "pmid": "16127684"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 25861, "extraction_id": "ext_59", "pmid": "16127684"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 25862, "extraction_id": "ext_60", "pmid": "16127684"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 25863, "extraction_id": "ext_61", "pmid": "16127684"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 37889, "extraction_id": "ext_248", "pmid": "9050165"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 37890, "extraction_id": "ext_249", "pmid": "9050165"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 37891, "extraction_id": "ext_250", "pmid": "9050165"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 39207, "extraction_id": "ext_314", "pmid": "9597943"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 39208, "extraction_id": "ext_315", "pmid": "9597943"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 49646, "extraction_id": "ext_18", "pmid": "36036297"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 51421, "extraction_id": "ext_9", "pmid": "34715071"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 51422, "extraction_id": "ext_10", "pmid": "34715071"}}
-{"reason": "missing_or_invalid_organ_system", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 51423, "extraction_id": "ext_11", "pmid": "34715071"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 346, "extraction_id": "ext_22", "pmid": "24584752"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 347, "extraction_id": "ext_23", "pmid": "24584752"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 348, "extraction_id": "ext_24", "pmid": "24584752"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 912, "extraction_id": "ext_107", "pmid": "32625895"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1340, "extraction_id": "ext_181", "pmid": "17447101"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1431, "extraction_id": "ext_44", "pmid": "30737535"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1462, "extraction_id": "ext_76", "pmid": "30737535"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1652, "extraction_id": "ext_253", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1675, "extraction_id": "ext_305", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1680, "extraction_id": "ext_310", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1681, "extraction_id": "ext_311", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1833, "extraction_id": "ext_474", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1854, "extraction_id": "ext_503", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1872, "extraction_id": "ext_521", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1873, "extraction_id": "ext_522", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1874, "extraction_id": "ext_523", "pmid": "5333770"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 3100, "extraction_id": "ext_535", "pmid": "36999063"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 3102, "extraction_id": "ext_537", "pmid": "36999063"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 3103, "extraction_id": "ext_538", "pmid": "36999063"}}
-{"reason": "missing_source_smiles", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 3104, "extraction_id": "ext_539", "pmid": "36999063"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 57658, "extraction_id": "ext_21", "pmid": "10451263"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 57659, "extraction_id": "ext_22", "pmid": "10451263"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 75765, "extraction_id": "ext_23", "pmid": "33848589"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 113831, "extraction_id": "ext_61", "pmid": "27612845"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 113832, "extraction_id": "ext_62", "pmid": "27612845"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 113833, "extraction_id": "ext_63", "pmid": "27612845"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 117903, "extraction_id": "ext_24", "pmid": "2264926"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 120142, "extraction_id": "ext_251", "pmid": "38239496"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 120143, "extraction_id": "ext_252", "pmid": "38239496"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 124600, "extraction_id": "ext_75", "pmid": "4148762"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 132202, "extraction_id": "ext_37", "pmid": "12904107"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 142517, "extraction_id": "ext_16", "pmid": "12868798"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 142518, "extraction_id": "ext_17", "pmid": "12868798"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 142519, "extraction_id": "ext_18", "pmid": "12868798"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 154066, "extraction_id": "ext_64", "pmid": "26344706"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 154067, "extraction_id": "ext_65", "pmid": "26344706"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 154069, "extraction_id": "ext_67", "pmid": "26344706"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 154070, "extraction_id": "ext_68", "pmid": "26344706"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 154071, "extraction_id": "ext_69", "pmid": "26344706"}}
-{"reason": "missing_toxicity_endpoint", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 154324, "extraction_id": "ext_43", "pmid": "32140423"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1657, "extraction_id": "ext_258", "pmid": "5333770"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1658, "extraction_id": "ext_259", "pmid": "5333770"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1847, "extraction_id": "ext_488", "pmid": "5333770"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 1866, "extraction_id": "ext_515", "pmid": "5333770"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4102, "extraction_id": "ext_71", "pmid": "14651045"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4103, "extraction_id": "ext_72", "pmid": "14651045"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4104, "extraction_id": "ext_73", "pmid": "14651045"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4122, "extraction_id": "ext_94", "pmid": "14651045"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4771, "extraction_id": "ext_400", "pmid": "6152565"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4772, "extraction_id": "ext_401", "pmid": "6152565"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4774, "extraction_id": "ext_403", "pmid": "6152565"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4934, "extraction_id": "ext_29", "pmid": "5338386"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4935, "extraction_id": "ext_30", "pmid": "5338386"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4936, "extraction_id": "ext_31", "pmid": "5338386"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4955, "extraction_id": "ext_54", "pmid": "5338386"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4975, "extraction_id": "ext_80", "pmid": "5338386"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4976, "extraction_id": "ext_81", "pmid": "5338386"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 6310, "extraction_id": "ext_90", "pmid": "12748001"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 6457, "extraction_id": "ext_250", "pmid": "12748001"}}
-{"reason": "needs_more_context", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 6458, "extraction_id": "ext_251", "pmid": "12748001"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 4, "extraction_id": "ext_5", "pmid": "34272718"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 34, "extraction_id": "ext_1", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 35, "extraction_id": "ext_2", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 36, "extraction_id": "ext_3", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 37, "extraction_id": "ext_4", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 38, "extraction_id": "ext_5", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 39, "extraction_id": "ext_6", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 40, "extraction_id": "ext_7", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 41, "extraction_id": "ext_8", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 42, "extraction_id": "ext_9", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 43, "extraction_id": "ext_10", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 44, "extraction_id": "ext_11", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 45, "extraction_id": "ext_12", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 46, "extraction_id": "ext_13", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 47, "extraction_id": "ext_14", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 48, "extraction_id": "ext_15", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 49, "extraction_id": "ext_16", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 50, "extraction_id": "ext_17", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 51, "extraction_id": "ext_18", "pmid": "19598034"}}
-{"reason": "not_human_clinical", "example": {"source_id": "starling_raw_v1:organ_specific_toxicity", "source_index": 52, "extraction_id": "ext_23", "pmid": "19598034"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000000084:ext_28"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000004137:ext_2"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006071:ext_7"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006505:ext_253"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006716:ext_1"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006718:ext_3"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006719:ext_4"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006720:ext_5"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006721:ext_6"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006722:ext_7"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006723:ext_8"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006724:ext_9"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006725:ext_10"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006726:ext_11"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006727:ext_12"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006728:ext_13"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006729:ext_14"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006733:ext_18"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006735:ext_20"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000008658:ext_33"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 6, "extraction_id": "ext_7", "pmid": "29784139"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7, "extraction_id": "ext_8", "pmid": "29784139"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 14, "extraction_id": "ext_7", "pmid": "16880787"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 23, "extraction_id": "ext_16", "pmid": "16880787"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 37, "extraction_id": "ext_6", "pmid": "3137469"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 122, "extraction_id": "ext_20", "pmid": "26661047"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 123, "extraction_id": "ext_21", "pmid": "26661047"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 125, "extraction_id": "ext_1", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 126, "extraction_id": "ext_2", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 127, "extraction_id": "ext_3", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 128, "extraction_id": "ext_4", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 129, "extraction_id": "ext_5", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 130, "extraction_id": "ext_6", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 134, "extraction_id": "ext_11", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 135, "extraction_id": "ext_12", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 137, "extraction_id": "ext_14", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 138, "extraction_id": "ext_15", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 149, "extraction_id": "ext_26", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 201, "extraction_id": "ext_18", "pmid": "26581586"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 269, "extraction_id": "ext_2", "pmid": "7666078"}}
+{"reason": "missing_support_text", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 11560, "extraction_id": "ext_16", "pmid": "33391855"}}
+{"reason": "missing_support_text", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 80544, "extraction_id": "ext_9", "pmid": "34454035"}}
+{"reason": "missing_support_text", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 334059, "extraction_id": "ext_5", "pmid": "26686256"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 262, "extraction_id": "ext_66", "pmid": "17054231"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 342, "extraction_id": "ext_2", "pmid": "23179472"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 516, "extraction_id": "ext_15", "pmid": "38579193"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 1038, "extraction_id": "ext_36", "pmid": "11735647"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 2566, "extraction_id": "ext_62", "pmid": "23620168"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 2603, "extraction_id": "ext_7", "pmid": "30649751"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 3566, "extraction_id": "ext_35", "pmid": "38515839"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 3567, "extraction_id": "ext_36", "pmid": "38515839"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 4809, "extraction_id": "ext_17", "pmid": "11405181"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 5359, "extraction_id": "ext_43", "pmid": "34533782"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7268, "extraction_id": "ext_8", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7269, "extraction_id": "ext_9", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7270, "extraction_id": "ext_10", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7271, "extraction_id": "ext_11", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7272, "extraction_id": "ext_12", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 8110, "extraction_id": "ext_304", "pmid": "21438920"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 9017, "extraction_id": "ext_1", "pmid": "33753457"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 12274, "extraction_id": "ext_91", "pmid": "33725357"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 13808, "extraction_id": "ext_14", "pmid": "23572409"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 14550, "extraction_id": "ext_6", "pmid": "22683289"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 2, "extraction_id": "ext_3", "pmid": "29784139"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 12, "extraction_id": "ext_5", "pmid": "16880787"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 13, "extraction_id": "ext_6", "pmid": "16880787"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 27, "extraction_id": "ext_20", "pmid": "16880787"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 108, "extraction_id": "ext_2", "pmid": "30259313"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 113, "extraction_id": "ext_7", "pmid": "30259313"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 119, "extraction_id": "ext_15", "pmid": "26661047"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 145, "extraction_id": "ext_22", "pmid": "34626339"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 165, "extraction_id": "ext_5", "pmid": "38750093"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 182, "extraction_id": "ext_20", "pmid": "32974950"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 183, "extraction_id": "ext_21", "pmid": "32974950"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 209, "extraction_id": "ext_10", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 210, "extraction_id": "ext_11", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 211, "extraction_id": "ext_12", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 212, "extraction_id": "ext_13", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 213, "extraction_id": "ext_14", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 228, "extraction_id": "ext_29", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 229, "extraction_id": "ext_30", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 258, "extraction_id": "ext_62", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 267, "extraction_id": "ext_71", "pmid": "17054231"}}

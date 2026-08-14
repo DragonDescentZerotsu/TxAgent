@@ -1,5 +1,9 @@
 # ClinTox Starling raw_v1
 
+> Historical lineage: this source and its artifacts remain reproducible, but
+> the active `ClinTox_Human_Toxicity` candidate now uses `clintox_base_v1`.
+> See `CLINTOX_BASE_V1.md`.
+
 ## Scope
 
 `starling_raw_v1` is a raw-first literature evidence source. It supports toxicity evidence retrieval and a
@@ -68,7 +72,7 @@ claim depends on a material context—such as a susceptible genotype, disease mo
 route/formulation, or critical pregnancy stage—so it is retained as evidence but excluded from the broadly
 applicable gold benchmark.
 
-## Candidate benchmark result
+## Historical candidate benchmark result
 
 The task adapter accepts v2 rows only when:
 

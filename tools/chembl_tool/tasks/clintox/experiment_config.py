@@ -71,7 +71,34 @@ STARLING_RAW = SourceExperimentConfig(
     ),
 )
 
-SOURCES = {"chembl": CHEMBL, "starling_raw": STARLING_RAW}
+CLINTOX_BASE = SourceExperimentConfig(
+    source_name="clintox_base",
+    direct_groups=(
+        EvidenceGroupSpec(
+            "Direct.human_clinical_toxicity",
+            "Direct",
+            "clinical_human_safety",
+            source_groups=("Direct.human_clinical_toxicity",),
+        ),
+    ),
+    # This source intentionally contains direct gold-eligible rows only. Using
+    # the same single family keeps full views executable without implying that
+    # a separate mechanism source was imported.
+    mechanism_groups=(
+        EvidenceGroupSpec(
+            "Direct.human_clinical_toxicity",
+            "Direct",
+            "clinical_human_safety",
+            source_groups=("Direct.human_clinical_toxicity",),
+        ),
+    ),
+)
+
+SOURCES = {
+    "chembl": CHEMBL,
+    "starling_raw": STARLING_RAW,
+    "clintox_base": CLINTOX_BASE,
+}
 
 
 def get_source_config(source: str) -> SourceExperimentConfig:

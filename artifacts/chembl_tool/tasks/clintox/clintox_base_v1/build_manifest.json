@@ -1,0 +1,124 @@
+{
+  "catalog": {
+    "group_counts": {
+      "Direct.human_clinical_toxicity": 7424
+    },
+    "n_evidence_rows": 7424,
+    "n_index_molecules": 7424,
+    "source_record_count": 296545
+  },
+  "cleaning": {
+    "n_rows": 338780,
+    "path": "outputs/chembl_tool/tasks/clintox/evidence_library/clintox_base_v1/01_cleaned/records.parquet",
+    "source_sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285"
+  },
+  "cleaning_policy": {
+    "assay_transfer_normalization": false,
+    "null_sentinels_case_insensitive": [
+      "",
+      "n/a",
+      "na",
+      "nan",
+      "none",
+      "null"
+    ],
+    "operations": [
+      "trim surrounding whitespace",
+      "collapse internal whitespace",
+      "map shared null sentinels to null"
+    ],
+    "raw_source_modified": false,
+    "semantic_normalization": false
+  },
+  "evidence_scope": "gold-eligible direct records only",
+  "identity_normalizer_version": "rdkit_fragment_parent.v1",
+  "index": {
+    "fingerprint": {
+      "n_bits": 2048,
+      "radius": 2,
+      "type": "RDKit-Morgan",
+      "useBondTypes": true,
+      "useChirality": false,
+      "useFeatures": false
+    },
+    "groups": [
+      "Direct.human_clinical_toxicity"
+    ],
+    "index_version": "clintox.clintox_base_v1.evidence_library.v1",
+    "n_evidence_rows": 7424,
+    "n_index_molecules": 7424,
+    "path": "outputs/chembl_tool/tasks/clintox/evidence_library/clintox_base_v1/04_neighbor_index/neighbor_index.pkl"
+  },
+  "library_version": "clintox.clintox_base_v1.evidence_library.v1",
+  "organization": {
+    "accepted_category_counts": {
+      "cardiotoxicity": 22685,
+      "dermatologic_toxicity": 14632,
+      "gastrointestinal_toxicity": 14034,
+      "general_adverse_events": 79189,
+      "hematologic_toxicity": 28420,
+      "hepatotoxicity": 24772,
+      "metabolic_or_electrolyte_toxicity": 5098,
+      "nephrotoxicity": 13327,
+      "neurotoxicity": 21156,
+      "ocular_toxicity": 1347,
+      "other": 49719,
+      "toxicity_absent": 22166
+    },
+    "gold_status_counts": {
+      "accepted": 296545,
+      "invalid_or_unresolved_smiles": 717,
+      "missing_or_invalid_toxicity_category": 27994,
+      "missing_support_text": 3,
+      "missing_toxicity_outcome": 269,
+      "needs_more_context": 13252
+    },
+    "n_unique_source_smiles": 8066,
+    "qualifying_conditions_status": "unavailable_in_source_schema"
+  },
+  "qualifying_conditions_policy": {
+    "effect": "no qualifying-condition exclusion can be applied",
+    "status": "unavailable_in_source_schema"
+  },
+  "raw_version": "clintox_base_v1",
+  "record_supported_v2_scaffold_view": {
+    "benchmark_task": "ClinTox_Human_Toxicity",
+    "exclusion_scope": "the sole direct gold source",
+    "heldout_contract": "data/processed_starling_record_supported_v2/ClinTox_Human_Toxicity/scaffold/heldout_molecule_labels.jsonl",
+    "heldout_direct_source_parent_overlap": 0,
+    "index": {
+      "fingerprint": {
+        "n_bits": 2048,
+        "radius": 2,
+        "type": "RDKit-Morgan",
+        "useBondTypes": true,
+        "useChirality": false,
+        "useFeatures": false
+      },
+      "groups": [
+        "Direct.human_clinical_toxicity"
+      ],
+      "index_version": "clintox.clintox_base_v1.evidence_library.v1.record_supported_v2_scaffold_heldout_filtered",
+      "n_evidence_rows": 6059,
+      "n_index_molecules": 6059,
+      "path": "outputs/chembl_tool/tasks/clintox/evidence_library/clintox_base_v1/06_record_supported_v2_scaffold_view/neighbor_index.pkl"
+    },
+    "n_excluded_evidence_rows": 1365,
+    "n_full_evidence_rows": 7424,
+    "n_heldout_parents": 1208,
+    "n_retained_evidence_rows": 6059,
+    "query_time_identity_policy_required": "parent_disjoint",
+    "schema_version": "clintox_base_record_supported_v2_scaffold_view.v1"
+  },
+  "schema_version": "clintox_base_evidence_library.v1",
+  "source_path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+  "source_sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285",
+  "stages": [
+    "01_cleaned",
+    "02_organized",
+    "03_evidence_catalog",
+    "04_neighbor_index",
+    "05_audits",
+    "06_record_supported_v2_scaffold_view"
+  ]
+}

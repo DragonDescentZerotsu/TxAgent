@@ -15,76 +15,73 @@
     "max_eval_size": 500,
     "valid_fraction": 0.1,
     "test_fraction": 0.1,
-    "target_valid_size": 331,
-    "target_test_size": 331
+    "target_valid_size": 500,
+    "target_test_size": 500
   },
-  "n_source_rows_considered": 720399,
-  "n_source_rows_labeled_before_structure_normalization": 79571,
+  "n_source_rows_considered": 338780,
+  "n_source_rows_labeled_before_structure_normalization": 297262,
   "source_rejection_counts": {
-    "interpretation_altering_qualifying_conditions": 63707,
-    "invalid_or_unresolved_smiles": 233,
-    "missing_or_invalid_effect_status": 234,
-    "missing_or_invalid_organ_system": 3299,
-    "missing_source_smiles": 15464,
-    "missing_toxicity_endpoint": 230,
-    "needs_more_context": 4225,
-    "not_human_clinical": 553669
+    "invalid_or_unresolved_smiles": 717,
+    "missing_or_invalid_toxicity_category": 27994,
+    "missing_support_text": 3,
+    "missing_toxicity_outcome": 269,
+    "needs_more_context": 13252
   },
-  "n_parent_groups_with_any_label": 3869,
-  "n_parent_groups_with_label_conflict": 1587,
-  "n_parent_groups_recovered_by_majority": 1037,
-  "n_rejected_parent_groups": 550,
+  "n_parent_groups_with_any_label": 6615,
+  "n_parent_groups_with_label_conflict": 2496,
+  "n_parent_groups_recovered_by_majority": 1928,
+  "n_rejected_parent_groups": 568,
   "parent_rejection_counts": {
-    "parent_record_agreement_below_threshold": 411,
-    "parent_record_label_tie": 139
+    "parent_record_agreement_below_threshold": 365,
+    "parent_record_label_tie": 203
   },
-  "n_binary_molecules": 3319,
+  "n_binary_molecules": 6047,
   "all_label_counts": {
-    "0": 454,
-    "1": 2865
+    "0": 548,
+    "1": 5499
   },
-  "n_unique_bemis_murcko_scaffolds": 1570,
-  "n_acyclic_molecules": 606,
+  "n_unique_bemis_murcko_scaffolds": 3251,
+  "n_acyclic_molecules": 746,
   "splits": {
     "random": {
       "method": "label_stratified_stable_hash",
-      "target_valid_size": 331,
-      "target_test_size": 331,
-      "actual_valid_size": 331,
-      "actual_test_size": 331,
+      "target_valid_size": 500,
+      "target_test_size": 500,
+      "actual_valid_size": 500,
+      "actual_test_size": 500,
       "valid_size_shortfall": 0,
       "test_size_shortfall": 0,
-      "n_train": 2657,
-      "n_valid": 331,
-      "n_test": 331,
+      "n_train": 5047,
+      "n_valid": 500,
+      "n_test": 500,
       "train_label_counts": {
-        "0": 364,
-        "1": 2293
+        "0": 458,
+        "1": 4589
       },
       "valid_label_counts": {
         "0": 45,
-        "1": 286
+        "1": 455
       },
       "test_label_counts": {
         "0": 45,
-        "1": 286
+        "1": 455
       },
-      "n_train_scaffolds": 1326,
-      "n_valid_scaffolds": 214,
-      "n_test_scaffolds": 197,
+      "n_train_scaffolds": 2820,
+      "n_valid_scaffolds": 366,
+      "n_test_scaffolds": 343,
       "pairwise_scaffold_overlap": {
-        "train_valid": 85,
-        "train_test": 77,
-        "valid_test": 35
+        "train_valid": 138,
+        "train_test": 138,
+        "valid_test": 47
       },
       "pairwise_identity_overlap": {
         "train_valid": 0,
         "train_test": 0,
         "valid_test": 0
       },
-      "train_valid_scaffold_overlap": 85,
-      "train_test_scaffold_overlap": 77,
-      "valid_test_scaffold_overlap": 35,
+      "train_valid_scaffold_overlap": 138,
+      "train_test_scaffold_overlap": 138,
+      "valid_test_scaffold_overlap": 47,
       "train_valid_identity_overlap": 0,
       "train_test_identity_overlap": 0,
       "valid_test_identity_overlap": 0,
@@ -100,30 +97,30 @@
     },
     "scaffold": {
       "method": "bemis_murcko_scaffold_group_subset_sum",
-      "target_valid_size": 331,
-      "target_test_size": 331,
-      "actual_valid_size": 331,
-      "actual_test_size": 331,
+      "target_valid_size": 500,
+      "target_test_size": 500,
+      "actual_valid_size": 500,
+      "actual_test_size": 500,
       "valid_size_shortfall": 0,
       "test_size_shortfall": 0,
-      "n_train": 2657,
-      "n_valid": 331,
-      "n_test": 331,
+      "n_train": 5047,
+      "n_valid": 500,
+      "n_test": 500,
       "train_label_counts": {
-        "0": 351,
-        "1": 2306
+        "0": 465,
+        "1": 4582
       },
       "valid_label_counts": {
-        "0": 56,
-        "1": 275
+        "0": 38,
+        "1": 462
       },
       "test_label_counts": {
-        "0": 47,
-        "1": 284
+        "0": 45,
+        "1": 455
       },
-      "n_train_scaffolds": 1104,
-      "n_valid_scaffolds": 243,
-      "n_test_scaffolds": 223,
+      "n_train_scaffolds": 2557,
+      "n_valid_scaffolds": 358,
+      "n_test_scaffolds": 336,
       "pairwise_scaffold_overlap": {
         "train_valid": 0,
         "train_test": 0,
@@ -152,51 +149,63 @@
     }
   },
   "cross_method_eval_identity_overlap": {
-    "valid": 30,
-    "test": 28
+    "valid": 49,
+    "test": 40
   },
   "source_metadata": {
     "source": {
-      "path": "data/starling_data/clintox/raw_v1/organ_specific_toxicity/extractions.parquet",
-      "sha256": "5c15a8e12a92dd8adfdce21903acf86f45bdf376f4f34e5ee075438eaab42848",
-      "source_shard": "v2 organ-specific toxicity",
-      "rows_available": 720399,
-      "rows_requested": 720399
+      "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+      "sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285",
+      "source_shard": "clintox_base_v1 human clinical toxicity and FDA extraction",
+      "rows_available": 338780,
+      "rows_requested": 338780
     },
     "task_definition": {
       "name": "ClinTox_Human_Toxicity",
-      "positive": "explicit injury_observed in a human clinical context",
-      "negative": "explicit no_injury_observed in a human clinical context",
-      "organ_systems": [
-        "cardiac",
-        "developmental",
-        "gastrointestinal",
-        "hematological",
-        "hepatic",
-        "neurological",
-        "pulmonary",
-        "renal",
-        "reproductive"
+      "positive": "a declared human clinical toxicity category other than toxicity_absent",
+      "negative": "the declared toxicity_category is exactly toxicity_absent",
+      "categories": [
+        "cardiotoxicity",
+        "dermatologic_toxicity",
+        "gastrointestinal_toxicity",
+        "general_adverse_events",
+        "hematologic_toxicity",
+        "hepatotoxicity",
+        "metabolic_or_electrolyte_toxicity",
+        "nephrotoxicity",
+        "neurotoxicity",
+        "ocular_toxicity",
+        "other",
+        "toxicity_absent"
       ],
       "not_equivalent_to": "TDC/MoleculeNet toxicity-related clinical-trial failure"
     },
-    "adapter_version": "clintox_human_organ_toxicity.v1",
-    "qualifying_conditions_policy": {
-      "helper": "benchmark_dataset.has_reported_text",
-      "empty_values": [
-        "null",
-        "blank",
-        "nan",
-        "none",
-        "n/a",
-        "na"
+    "adapter_version": "clintox_base_human_toxicity.v1",
+    "label_policy": {
+      "source_field": "toxicity_category",
+      "negative_category": "toxicity_absent",
+      "positive_categories": [
+        "cardiotoxicity",
+        "dermatologic_toxicity",
+        "gastrointestinal_toxicity",
+        "general_adverse_events",
+        "hematologic_toxicity",
+        "hepatotoxicity",
+        "metabolic_or_electrolyte_toxicity",
+        "nephrotoxicity",
+        "neurotoxicity",
+        "ocular_toxicity",
+        "other"
       ],
-      "explicitly_not_empty": [
-        "-",
-        "unspecified"
-      ]
+      "off_schema_values": "reject_without_rewrite",
+      "fda_status_used_for_label": false,
+      "confidence_threshold": null
     },
-    "confidence_threshold": null
+    "qualifying_conditions_policy": {
+      "status": "unavailable_in_source_schema",
+      "effect": "no qualifying-condition exclusion can be applied",
+      "mitigation": "candidate_pending_qa with deterministic category-stratified review"
+    }
   },
   "paths": {
     "molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/molecule_labels.jsonl",

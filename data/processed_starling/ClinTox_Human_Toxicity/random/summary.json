@@ -1,42 +1,42 @@
 {
   "method": "label_stratified_stable_hash",
-  "target_valid_size": 331,
-  "target_test_size": 331,
-  "actual_valid_size": 331,
-  "actual_test_size": 331,
+  "target_valid_size": 500,
+  "target_test_size": 500,
+  "actual_valid_size": 500,
+  "actual_test_size": 500,
   "valid_size_shortfall": 0,
   "test_size_shortfall": 0,
-  "n_train": 2657,
-  "n_valid": 331,
-  "n_test": 331,
+  "n_train": 5047,
+  "n_valid": 500,
+  "n_test": 500,
   "train_label_counts": {
-    "0": 364,
-    "1": 2293
+    "0": 458,
+    "1": 4589
   },
   "valid_label_counts": {
     "0": 45,
-    "1": 286
+    "1": 455
   },
   "test_label_counts": {
     "0": 45,
-    "1": 286
+    "1": 455
   },
-  "n_train_scaffolds": 1326,
-  "n_valid_scaffolds": 214,
-  "n_test_scaffolds": 197,
+  "n_train_scaffolds": 2820,
+  "n_valid_scaffolds": 366,
+  "n_test_scaffolds": 343,
   "pairwise_scaffold_overlap": {
-    "train_valid": 85,
-    "train_test": 77,
-    "valid_test": 35
+    "train_valid": 138,
+    "train_test": 138,
+    "valid_test": 47
   },
   "pairwise_identity_overlap": {
     "train_valid": 0,
     "train_test": 0,
     "valid_test": 0
   },
-  "train_valid_scaffold_overlap": 85,
-  "train_test_scaffold_overlap": 77,
-  "valid_test_scaffold_overlap": 35,
+  "train_valid_scaffold_overlap": 138,
+  "train_test_scaffold_overlap": 138,
+  "valid_test_scaffold_overlap": 47,
   "train_valid_identity_overlap": 0,
   "train_test_identity_overlap": 0,
   "valid_test_identity_overlap": 0,
