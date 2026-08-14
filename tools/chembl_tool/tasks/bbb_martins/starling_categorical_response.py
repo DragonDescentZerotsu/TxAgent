@@ -16,10 +16,10 @@ from tools.chembl_tool.common.starling.categorical_response import (
 )
 
 
-CATEGORICAL_RESPONSE_VERSION = "bbb_martins_categorical_response.v2"
+CATEGORICAL_RESPONSE_VERSION = "bbb_martins_categorical_response.v3"
 
 DIRECT_POSITIVE = frozenset(
-    {"permeable", "good_penetration", "increased_permeability", "high_permeability"}
+    {"permeable", "good_penetration", "good_permeability", "high_permeability"}
 )
 DIRECT_NEGATIVE = frozenset(
     {"poor_penetration", "impermeable", "low_permeability", "restricted"}

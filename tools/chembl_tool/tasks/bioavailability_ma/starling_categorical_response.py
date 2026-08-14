@@ -14,6 +14,7 @@ from typing import Any
 
 from tools.chembl_tool.common.starling.categorical_response import (
     BINARY_OUTCOME_UNIT,
+    ORDINAL_OUTCOME_UNIT,
     CanonicalCategory,
     CategoricalEncoding,
     CategoricalResponsePolicy,
@@ -26,14 +27,12 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
 )
 
 
-CATEGORICAL_RESPONSE_VERSION = "bioavailability_ma_categorical_response.v3"
+CATEGORICAL_RESPONSE_VERSION = "bioavailability_ma_categorical_response.v4"
 FG_TARGET_ALIAS_VERSION = "bioavailability_fg_target_aliases.v1"
 
 _DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS = (
-    r"\bmoderate\b",
     r"\bvariable\b",
     r"\bunpredictable\b",
-    r"\bintermediate\b",
     r"\borally bioavailable\b",
     r"\borally available\b",
 )
@@ -58,6 +57,11 @@ _DIRECT_POSITIVE_FULL = re.compile(
 )
 _DIRECT_NEGATIVE_FULL = re.compile(
     rf"^{_DIRECT_NEGATIVE_STRENGTH}(?: {_DIRECT_OUTCOME_NOUN})?$"
+)
+_DIRECT_MIDDLE_FULL = re.compile(
+    r"^(?:moderate|intermediate)(?: "
+    r"(?:(?:absolute|oral|systemic|absolute oral|oral absolute|systemic oral) )?"
+    r"(?:bioavailability|availability)| ba)?$"
 )
 _RELATIVE_DIRECT_PATTERN = re.compile(
     r"\b(?:fold|times|relative)\b|"
@@ -206,6 +210,8 @@ def classify_direct_qualitative_text(value: Any) -> tuple[str | None, str]:
         for pattern in _DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS
     ):
         return None, "qualitative_value_not_threshold_anchored"
+    if _DIRECT_MIDDLE_FULL.fullmatch(text):
+        return "middle", "explicit_qualitative_middle"
     if _DIRECT_POSITIVE_FULL.fullmatch(text):
         return "high", "explicit_qualitative_high"
     if _DIRECT_NEGATIVE_FULL.fullmatch(text):
@@ -213,16 +219,17 @@ def classify_direct_qualitative_text(value: Any) -> tuple[str | None, str]:
     return None, "unmapped_or_ambiguous_qualitative_value"
 
 
-def _binary_encoding(
+def _categorical_encoding(
     *,
     encoder_id: str,
     value: float,
+    unit: str,
     inputs: Mapping[str, Any],
 ) -> CategoricalEncoding:
     return CategoricalEncoding(
         encoder_id=encoder_id,
         value=value,
-        unit=BINARY_OUTCOME_UNIT,
+        unit=unit,
         measurement_text=render_measurement(value),
         inputs=inputs,
     )
@@ -243,9 +250,10 @@ def encode_direct_oral_bioavailability(
     category, _ = classify_direct_qualitative_text(raw)
     if category is None:
         return None
-    return _binary_encoding(
-        encoder_id="direct_oral_bioavailability_binary.v1",
-        value=1.0 if category == "high" else -1.0,
+    return _categorical_encoding(
+        encoder_id="direct_oral_bioavailability_ordinal.v1",
+        value={"low": -1.0, "middle": 0.0, "high": 1.0}[category],
+        unit=ORDINAL_OUTCOME_UNIT,
         inputs={"measurement_text": raw},
     )
 
@@ -267,9 +275,10 @@ def encode_fg_substrate_status(
     target_id = canonical_fg_target_id(raw_target)
     if target_id is None:
         return None
-    return _binary_encoding(
+    return _categorical_encoding(
         encoder_id="fg_substrate_status_binary.v1",
         value=1.0 if status == "substrate" else -1.0,
+        unit=BINARY_OUTCOME_UNIT,
         inputs={
             "substrate_status": raw_status,
             "transporter_or_enzyme": raw_target,
@@ -280,7 +289,8 @@ def encode_fg_substrate_status(
 
 DIRECT_DOMAIN = (
     CanonicalCategory("low", 0, -1.0),
-    CanonicalCategory("high", 1, 1.0),
+    CanonicalCategory("middle", 1, 0.0),
+    CanonicalCategory("high", 2, 1.0),
 )
 FG_SUBSTRATE_DOMAIN = (
     CanonicalCategory("not_substrate", 0, -1.0),
@@ -289,13 +299,13 @@ FG_SUBSTRATE_DOMAIN = (
 
 CONTROLLED_MEASUREMENTS = (
     ControlledMeasurementSpec(
-        scale_id="direct_oral_bioavailability_binary.v1",
+        scale_id="direct_oral_bioavailability_ordinal.v1",
         source_id="hf_bioavailability",
         input_fields=("measurement_text", "bioavailability_report_type"),
         encoder=encode_direct_oral_bioavailability,
-        kind="binary",
-        parser_id="bioavailability.direct_qualitative_binary.v1",
-        definition="explicit low versus high direct oral-bioavailability wording",
+        kind="ordinal",
+        parser_id="bioavailability.direct_qualitative_ordinal.v1",
+        definition="explicit low, middle, or high direct oral-bioavailability wording",
         categories=DIRECT_DOMAIN,
     ),
     ControlledMeasurementSpec(
@@ -322,9 +332,9 @@ def encoding_policy_manifest() -> dict[str, Any]:
     return {
         **POLICY.manifest(),
         "version": CATEGORICAL_RESPONSE_VERSION,
-        "unit": BINARY_OUTCOME_UNIT,
+        "units": [BINARY_OUTCOME_UNIT, ORDINAL_OUTCOME_UNIT],
         "semantic_endpoint_by_encoder": {
-            "direct_oral_bioavailability_binary.v1": "oral_bioavailability_outcome",
+            "direct_oral_bioavailability_ordinal.v1": "oral_bioavailability_outcome",
             "fg_substrate_status_binary.v1": "fg_substrate_outcome:{canonical_target_id}",
         },
         "direct_claim_scope": "all_explicit_source_claims_with_context_retained",

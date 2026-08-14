@@ -1,0 +1,27 @@
+{
+  "assignment_method_counts": {
+    "gpt_5_4_mini_single_pass:labels_only": 175041
+  },
+  "generation_version": "reference_semantics_generation.v2",
+  "input_path": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet",
+  "input_sha256": "da05bf7aaafaf8231652f49724b5c34164cae20a20bf1aaad2231fd2b44382f7",
+  "mapping_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet",
+  "mapping_rows": 175041,
+  "mapping_sha256": "844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695",
+  "prompt_sha256": "9dbd5502101225ccff8b5dba1688a3d73648ad56d77d34397a9d52a859243bf7",
+  "prompt_version": "bioavailability_reference_semantics_prompt.v2",
+  "safe_gate_conflicts": 0,
+  "scope_counts": {
+    "absolute": 164173,
+    "comparator_relative": 6876,
+    "endpoint_defined_ratio": 3241,
+    "standardized_control_ratio": 283,
+    "unknown": 468
+  },
+  "task_id": "bioavailability_ma",
+  "validations": {
+    "each_row_submitted_at_most_once": true,
+    "one_mapping_per_candidate": true,
+    "unique_cleaned_record_ids": true
+  }
+}

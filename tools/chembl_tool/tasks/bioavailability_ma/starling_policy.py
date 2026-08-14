@@ -580,7 +580,7 @@ def _enrich_record(
     )
     if encoded:
         encoder_id = str(encoded["categorical_encoder_id"])
-        if encoder_id == "direct_oral_bioavailability_binary.v1":
+        if encoder_id == "direct_oral_bioavailability_ordinal.v1":
             semantic_endpoint = "oral_bioavailability_outcome"
         elif encoder_id == "fg_substrate_status_binary.v1":
             target_id = canonical_fg_target_id(canonical.get("transporter_or_enzyme"))

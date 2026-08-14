@@ -504,6 +504,20 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                     "cleaned_records": out_dir / CLEANED_FILENAME,
                     "contextual_unit_policy": unit_policy_manifest["path"],
                     "qualifier_vocabulary": qualifier_manifest["path"],
+                    **(
+                        {"auxiliary_mapping": Path(args.auxiliary_mapping)}
+                        if getattr(args, "auxiliary_mapping", None)
+                        else {}
+                    ),
+                    **(
+                        {
+                            "reference_semantics_mapping": Path(
+                                args.reference_semantics_mapping
+                            )
+                        }
+                        if getattr(args, "reference_semantics_mapping", None)
+                        else {}
+                    ),
                 },
                 output_filename=normalized_records_filename,
                 row_counts={

@@ -1,0 +1,17 @@
+{
+  "attempted_rows": 175041,
+  "batch_size": 50,
+  "budget_epoch": "openai_key_20260811_bio_02",
+  "budget_max_tokens": 9750000,
+  "budget_spent_tokens": 5059986,
+  "candidate_rows": 175041,
+  "completed": true,
+  "generation_version": "reference_semantics_generation.v2",
+  "model": "gpt-5.4-mini",
+  "no_call_rows": 0,
+  "prompt_version": "bioavailability_reference_semantics_prompt.v2",
+  "reasoning_effort": "low",
+  "task_id": "bioavailability_ma",
+  "terminal_rows": 175041,
+  "unattempted_api_rows": 0
+}

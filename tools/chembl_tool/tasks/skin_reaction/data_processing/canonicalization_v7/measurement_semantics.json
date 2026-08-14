@@ -2,8 +2,8 @@
   "schema_version": "skin_reaction_measurement_semantics.schema.v1",
   "policy_version": "skin_reaction_measurement_semantics.v1",
   "frozen_auxiliary_mapping": {
-    "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2",
-    "sha256": "34db0efcd64769699e4b86f7cdcb16e9dc12e466e5f04eb2352eca43440ebd45"
+    "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4",
+    "sha256": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07"
   },
   "source_sha256": {
     "sensitization_aop": "3eca3f70d1243795bc37f06e31795566295ce8ea3bf03e810efd3807152cf2c8",

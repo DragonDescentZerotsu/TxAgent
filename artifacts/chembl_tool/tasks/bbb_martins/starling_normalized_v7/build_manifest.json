@@ -1,7 +1,7 @@
 {
   "artifact_version": "starling_canonical_evidence.v7",
   "auxiliary_attachment_version": "starling_auxiliary_attachment.v1",
-  "categorical_response_version": "bbb_martins_categorical_response.v2",
+  "categorical_response_version": "bbb_martins_categorical_response.v3",
   "compact_artifact_version": "bbb_martins.compact_v6.v1.v7",
   "completed_artifact_stages": [
     "01_cleaned",
@@ -31,23 +31,23 @@
     "sha256": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef"
   },
   "downstream_artifact_hashes": {
-    "distance_calibration": "b1e9964b4cef48c52779526e8ed16739c6f0e500ff9bc1da356bc7b4e2a9b5ae",
+    "distance_calibration": "9dd8b69ba473970874b2c574d0e65b140fa3dfcea565b5f2a54a5bf94a869944",
     "heldout_exclusions": "da3f12a200f0debe1a3c214be8c999757019563733e737c28256fa6fa683d0e8",
-    "heldout_overlap_manifest": "3a278362bea00af148aa6de5a808c1865b1dc67a24567a0cb0fbbe606018c81f",
-    "pair_bucket_metadata": "e51d317df2da1dab68357bd74d85ac55791bb95555b8cf1236cc93faffe2c2f4",
-    "pair_bucket_records": "c36a9db20cee5f3e34799a83a8fe9480ec43671f3caeb059ba88d523bcf95aff",
-    "random_filtered_records": "13f5c28993d0d51cd6f3bf1002f97fa3f70df3f337fa222ff6e435f514807663",
-    "random_molecule_families": "366bb2b0270a86ec0c0d78f4495239dbdf4b9b06e48c046ec41470effb4f378c",
-    "random_molecule_family_records": "3032d861ba034165bea18c975a2bd9d16649f912f4a30083d97467dc580ceb6b",
-    "random_neighbor_index_manifest": "65533089ea29584ed5e0213a0d2fbb0b36d26a3587c2e2b89bf4f9bfc47d7f82",
-    "scaffold_filtered_records": "3fc2be38a6e9554fb8eadd9e6f1019444326b8c0349d1235313e426610e1e8cd",
-    "scaffold_molecule_families": "4edbe5970ebfe7fe2c0171fe99071352ab7e3a35f48527bfb0b3ea6078923caa",
-    "scaffold_molecule_family_records": "58baca81830d02af90d96b55c09d7b047015c5304e20d0f959c8b162f56ae9eb",
-    "scaffold_neighbor_index_manifest": "fb29e01428758dc3e05c5a61e76e53b9dda70b0617b861b39fda486ff0c42405"
+    "heldout_overlap_manifest": "db273f4a1550ecae9a8567a0c949fb2a4c944864ad9da1ab34c07cc991e8c457",
+    "pair_bucket_metadata": "7d054c64ee00a8317e480d7fed58c74f1634e5a3f00bf743594a7c125588531e",
+    "pair_bucket_records": "73e415e24972ee9d959f83aaa4251be357ae67b3d5ac3c388f3b0f052c6a3bdc",
+    "random_filtered_records": "b057e760d3dc50d4d42dbd87b6e0f3275e3990a9844a3baa8112d53f75f613b6",
+    "random_molecule_families": "c46b6808af3e2f9808c364cac42359d9813c562eb354106d5c4f962d3530d924",
+    "random_molecule_family_records": "9337577154e638903aab84f2481846da38cde35d67c52bd8bde7acb7af865f3d",
+    "random_neighbor_index_manifest": "36fa0b50757c6080a468d80380b8d4ab9b932f96762c599998a59383204f9d20",
+    "scaffold_filtered_records": "7310496d8e8c25b780f490498b03f9411961be18d27cc67fe645bfa5d0c4f0dc",
+    "scaffold_molecule_families": "ddbd3d61eedebfda329fd0ace03c4aef5cfc9f3932063296e7146f787846d1ef",
+    "scaffold_molecule_family_records": "5157695dc1b280b1ed0acbfc770d47b60ce21b08eec35a8c3cc69999233baab8",
+    "scaffold_neighbor_index_manifest": "72d919356614de5a5b976d95b1e9d55a301a38e8cb06d04242815eab936a18f6"
   },
   "downstream_build_cache": {
     "completed_stage": "09_audits",
-    "content_key": "27cec620d5df36ed0a042e431a63086b3d02aa1147dbb459c4a27a1ec2ec5cc8",
+    "content_key": "b48fe2bb95eb550b7a79ad51635b14aec224f9c06a90961a5ff325ce565cf804",
     "implementation": {
       "files": {
         "tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
@@ -58,12 +58,13 @@
         "tools/chembl_tool/common/starling/auxiliary_metadata.py": "8d541c3cec6d88917104bf34bed927d0f3b09cf34127179d80d8f9a2a59bf343",
         "tools/chembl_tool/common/starling/benchmark_dataset.py": "3e35bf02dcd9bfd9c18f464a40eab2f225f0c9caf3979ec09bd1f4eb1e2965a4",
         "tools/chembl_tool/common/starling/build_benchmark_datasets.py": "ee6e54011b8ffdf56e875ef218f63a88a7305e7774105e12bb3cb45ee15e07c4",
-        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "0fe0ad913f1054fd172a7b9a2cf83002b529a1b64234518a089393eb5d6367fa",
-        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "e5070ce794543c4b3f69bd512459f10d4a67099ce63971ac1a24ade8a390038f",
+        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "b56fe23d6ea17bed45eb37305ac0f4e0f9b94854be66fa8458010dc833d0baba",
+        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "41c466a4df72d733db58f73fd50531db768c454717e677ffb39dfd860abe0957",
         "tools/chembl_tool/common/starling/build_pair_bucket_transfer_policy.py": "5bcd027201aa4bf55020d2651db7999fa1e8f4aa267d099636d90ff78020522a",
+        "tools/chembl_tool/common/starling/build_reference_semantics_mapping.py": "1c855975c60fd4cb3c613dd6d42d1884fe0a306ad9f3f652f89f3c9825ee866d",
         "tools/chembl_tool/common/starling/build_runtime.py": "12096532ba7dc7f6eedd4ea1e34ca2435816b0e436e66c6394aca6782f159a9b",
-        "tools/chembl_tool/common/starling/canonicalization_v7.py": "08a57eefd0fd68ac6440b30aa9f099f71f26c5aea41ccd29197b42bb7292c5dd",
-        "tools/chembl_tool/common/starling/categorical_response.py": "cb0e26fc76fa5eac334989d3b1e746917000893dbf2cb620c9c5a4fa51e48547",
+        "tools/chembl_tool/common/starling/canonicalization_v7.py": "ba1f1e7c45f3b9d4e941f2fed99dbf1eaf341d91debacdefa3632c8a84390129",
+        "tools/chembl_tool/common/starling/categorical_response.py": "56ebb5a90dfdba6506f0a9a2b80fb3098210c04dcbe60f0e2b9818a24251bb7d",
         "tools/chembl_tool/common/starling/clustered_auxiliary_mapping.py": "978fd30b6e127bf428f6aaf9c2d138cd03a19e9364dd6137b9555016ac25610b",
         "tools/chembl_tool/common/starling/compact_artifacts.py": "7588f9651a57231e300e68caadc423cf69bcfe35d9ad720030a29e54a07d5f44",
         "tools/chembl_tool/common/starling/evidence_library.py": "0cf14431925e7c9557ec36e53aa260ab549956de687210cba9c16665b9eb2568",
@@ -75,13 +76,14 @@
         "tools/chembl_tool/common/starling/normalization/measurements.py": "a4a2f783012914883f1467b1e012e230c648e8d5bd14151ec0cda9057583838d",
         "tools/chembl_tool/common/starling/normalization/organization.py": "2354ae5f39446dc5fb8daa074a00553d7945b8613f6ede21b4f616f782aede1d",
         "tools/chembl_tool/common/starling/normalization/source_value_cleaning.py": "e24ed4dc3d28d4c016580e2eaae0f6dbc26b88be5db23dd97c13e09797096849",
-        "tools/chembl_tool/common/starling/normalization/task_policy.py": "79e98cf23e35d534a8b74a84b58048d1922f7e5bc954f3e02f8d52e05ef885bd",
+        "tools/chembl_tool/common/starling/normalization/task_policy.py": "246792dff0fa483a4143e409a2d977aeb161135a0d8e98a7c6ed54421b529d95",
         "tools/chembl_tool/common/starling/normalized_evidence.py": "c94439d0afbfd260dda7d42b35e80bdd31b9a552ed8fdd3e00e775076437e870",
         "tools/chembl_tool/common/starling/oral_bioavailability.py": "cb9ffd7d828e0ab4083f6d98da132c227da20816371823a25396ae311a4f88fe",
         "tools/chembl_tool/common/starling/pair_bucket_transfer_policy.py": "2797fc74b90197003946e382d825f4f2b9f5e6a2fd5d76673a5c5d4159396580",
-        "tools/chembl_tool/common/starling/pair_buckets.py": "c194068f930675ed18d10d94efe188618d69d0e109efa9e05c0c54ae4a9301a8",
+        "tools/chembl_tool/common/starling/pair_buckets.py": "5911a5e1165719202f726bab40a0151fff71c4e9d455ebb97b0a43f73f8fb790",
         "tools/chembl_tool/common/starling/policy_distance.py": "17f2170b2c65718d84258f60af7a6882ca785d000a5992984babe4db8a5fc6e9",
-        "tools/chembl_tool/common/starling/split_downstream.py": "e2dda862d2788e2c19794750483416c1b1644350abb38326ec81cb8753beece9",
+        "tools/chembl_tool/common/starling/reference_semantics.py": "14a5c8ed2929ccf6486e0fa589556e91d14c666cee7abe0a8feabe5f2f72ce42",
+        "tools/chembl_tool/common/starling/split_downstream.py": "99a6adbd8a9ba05d3285bf5d1156f40f16957c3d708c0d828ba12f929dc8c92d",
         "tools/chembl_tool/common/starling/stage_artifact_store.py": "e74992cb936e89f2907b83a47a65c31831f1333b3ecd9abef341d134cc78d7da",
         "tools/chembl_tool/common/starling/v7_benchmark_view.py": "a766f15d444714d31510d9f89cdd16104715003d5aa62cb282ab72ba85f08a96",
         "tools/chembl_tool/common/task_workflows/evidence_library.py": "03d96fa341ecef662155dfcdd42354e25084698b2176006a403320202ad34fe2",
@@ -91,62 +93,64 @@
         "tools/chembl_tool/tasks/bbb_martins/build_starling_downstream_artifacts.py": "c8b525726aca4c93283091f9b3838d33a0a1a023a2040b778e89e1dc328c5cb6",
         "tools/chembl_tool/tasks/bbb_martins/build_starling_evidence_library.py": "c29027aed06d2786f6159fa948a98b436bfda28f6cc176e42b4c572450bd111a",
         "tools/chembl_tool/tasks/bbb_martins/build_starling_full_evidence_library.py": "4b421d65e9a744796e67454f0e6827da305cc4c68d29b300edd37e9f75daa2a9",
-        "tools/chembl_tool/tasks/bbb_martins/build_starling_pair_bucket_sidecar.py": "9a9881e2c4810ce2da059d05c53f49d807611a68c63c413df3587910179bff16",
-        "tools/chembl_tool/tasks/bbb_martins/build_starling_pair_bucket_transfer_policy.py": "c7d46d7de7aedef411be83e8e245a149bf0c403452ccc014d0822e9135a5c62e",
+        "tools/chembl_tool/tasks/bbb_martins/build_starling_pair_bucket_sidecar.py": "7abb0cdc411823c0b488ec58599dee0b773bf826905a1ae52dc642c502ff5ead",
+        "tools/chembl_tool/tasks/bbb_martins/build_starling_pair_bucket_transfer_policy.py": "49713dfc8a9ece10ce8ce57aaef4e45b4380c9621885745c19604ba08826af0d",
         "tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v7/measurement_semantics.v1.json": "1ddf8b5a99173262c5e127b726bad8b259604a49393cb792815cd1fa58efc907",
+        "tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_prompts.json": "5ba13a477366556e5b0133f30bfdfc023a4d7def52a5596e78e89d681df11668",
         "tools/chembl_tool/tasks/bbb_martins/starling_artifact_store.py": "2174924f82a62638f8f84e7a70e067f8abb139229310883d53eb768b4b902c8e",
         "tools/chembl_tool/tasks/bbb_martins/starling_auxiliary_metadata.py": "0d3b96a04ce63868553807c96ecb7694b70283f7eb74f87ee3b91de33470a926",
         "tools/chembl_tool/tasks/bbb_martins/starling_benchmark.py": "a9edee8d897fd42f0da9a7a790f500d022cbd673bf48d18d0e3923a796ba5977",
-        "tools/chembl_tool/tasks/bbb_martins/starling_categorical_response.py": "7e51dcfbc9527298199b4e6da7f6debb0f6f0fae1e7b42aa6cbe85a9077e6390",
+        "tools/chembl_tool/tasks/bbb_martins/starling_categorical_response.py": "d29e6a30ca56db8577f10e2d68c9fc4733953f7cbbc1ebe8c5e36b7ddd20a85a",
         "tools/chembl_tool/tasks/bbb_martins/starling_compact_artifacts.py": "e3d2aa87ca98fe5585f7c9de43d36e2b7a741bff803c96b7bbba6d14d5d1ad4a",
         "tools/chembl_tool/tasks/bbb_martins/starling_endpoint_normalization.py": "0860e422bbdbb11f9f0fb4af759663cdda3bc65b960c0a950b69242dd3b28bd7",
         "tools/chembl_tool/tasks/bbb_martins/starling_measurement_semantics.py": "6d1756c9350d0729c4fa41e2a6a85b457c178ad9937267e52619ac6ace9d0c22",
         "tools/chembl_tool/tasks/bbb_martins/starling_normalization_policy.py": "0cbd14841ce4909f1886111fb4049d3e5327f21e0a82808f0cd4b3f81e46d49a",
         "tools/chembl_tool/tasks/bbb_martins/starling_normalization_sources.py": "9f540e7f92f53d8636b65146345da7368ec7493ad9b012910c1f7cc6df1f1346",
         "tools/chembl_tool/tasks/bbb_martins/starling_pair_bucket_transfer_policy.py": "926eae10e13dd3ab7017bb073b24ccf59d8c85ee853dad33214b8bac394b43d8",
-        "tools/chembl_tool/tasks/bbb_martins/starling_pair_buckets.py": "c918b30d2ad4175557141cba79e217aae5b0e7c44cf161c208854eabdb94e3aa",
-        "tools/chembl_tool/tasks/bbb_martins/starling_policy.py": "2a5eb338e9b7098801a740990853765607008901cfe4ce0fe9af0c6ed9e04d3e",
+        "tools/chembl_tool/tasks/bbb_martins/starling_pair_buckets.py": "684f671194307217c4ac00bd0f4df89408ce695046f84c5032f653d51b6e153f",
+        "tools/chembl_tool/tasks/bbb_martins/starling_policy.py": "1352f146978cb004a94154f094a869228fa47f92e3fd84af9cc3ddeeeca0eedd",
         "tools/chembl_tool/tasks/bbb_martins/starling_record_canonicalization.py": "7b5225eb60984c8fd3f9b631d4fec8e0db6fc72e29e88dbdb6b72af31af438fa",
-        "tools/chembl_tool/tasks/bbb_martins/starling_schema.py": "8677a76611886f70ce599f44746df3637d89cfd36c5d61372af8ec8c0903167f",
+        "tools/chembl_tool/tasks/bbb_martins/starling_reference_semantics.py": "c97e0872a8ce2c7e6b83faf896ba00d53aa55ff96f19e157048b029b8811d1c9",
+        "tools/chembl_tool/tasks/bbb_martins/starling_schema.py": "6e14a874bb353bea67601ecfae043298a94d0ba0996d89a4a3e44e3d49be89e1",
         "tools/chembl_tool/tasks/bbb_martins/starling_source_column_contracts.py": "d01a9a36455e9e0c3bf58ebd71317204a5b9f706d13175815ecae77715d4fefc",
         "tools/chembl_tool/tasks/bbb_martins/starling_spacing_and_spelling.py": "73e9772e46c87fe45a199b346c12e511c00852642b203dfdfc4b365d70482b5c",
         "tools/chembl_tool/tasks/bbb_martins/starling_v7_artifact_store.py": "dd9d10cc936e4c09be0b0ef20df1266d206e289b8dae712b400820f9cb00f8f8"
       },
-      "sha256": "6abe3dc24490317810f8f559c1fa3d4ae41ee0371c410b65aee11c14bfa800c1",
+      "sha256": "ddf2f25fa3e69ec254957b21e7a8e42f06b5011ddab64c55d76dbf2f62136d33",
       "version": "starling_build_runtime.v2"
     },
-    "implementation_sha256": "6abe3dc24490317810f8f559c1fa3d4ae41ee0371c410b65aee11c14bfa800c1",
+    "implementation_sha256": "ddf2f25fa3e69ec254957b21e7a8e42f06b5011ddab64c55d76dbf2f62136d33",
     "inputs": {
       "data/processed_starling/BBB_Martins/random/heldout_molecule_labels.jsonl": "d44e0f473777e72cd470d9e3ac344edb1f0f87a68ca3b683032ac00ceef70fb2",
       "data/processed_starling/BBB_Martins/random/train_molecule_labels.jsonl": "0691bee38cc1e6e928dce2dc98048e28b34842a698d4061f23ca48d2464e176b",
       "data/processed_starling/BBB_Martins/scaffold/heldout_molecule_labels.jsonl": "e660bbb9598c9bd008599385fce1bba100e0e7993946b95541f999e7c267b833",
       "data/processed_starling/BBB_Martins/scaffold/train_molecule_labels.jsonl": "28734aeaa1ac053c17761a5822d7f0eb8b4836e3daed870146e1922c18e29f22",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "acfa3d2ca4d356d75afc878fccff3a6be6499ee122dc1800465ac7500579cf3e",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/records.parquet": "2623bb048d20e22ace905202d51878fecee204cf9926ccddafc58629a63c5208"
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/records.parquet": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1"
     },
     "outputs": {
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_metadata.json": "e51d317df2da1dab68357bd74d85ac55791bb95555b8cf1236cc93faffe2c2f4",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_records.parquet": "c36a9db20cee5f3e34799a83a8fe9480ec43671f3caeb059ba88d523bcf95aff",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/05_distance_calibration/pair_bucket_distance_calibration.json.gz": "b1e9964b4cef48c52779526e8ed16739c6f0e500ff9bc1da356bc7b4e2a9b5ae",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_metadata.json": "7d054c64ee00a8317e480d7fed58c74f1634e5a3f00bf743594a7c125588531e",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_records.parquet": "73e415e24972ee9d959f83aaa4251be357ae67b3d5ac3c388f3b0f052c6a3bdc",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/05_distance_calibration/pair_bucket_distance_calibration.json.gz": "9dd8b69ba473970874b2c574d0e65b140fa3dfcea565b5f2a54a5bf94a869944",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/excluded_direct_bbb_records.parquet": "da3f12a200f0debe1a3c214be8c999757019563733e737c28256fa6fa683d0e8",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/manifest.json": "3a278362bea00af148aa6de5a808c1865b1dc67a24567a0cb0fbbe606018c81f",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/random/records.parquet": "13f5c28993d0d51cd6f3bf1002f97fa3f70df3f337fa222ff6e435f514807663",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/scaffold/records.parquet": "3fc2be38a6e9554fb8eadd9e6f1019444326b8c0349d1235313e426610e1e8cd",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/random/manifest.json": "afe12591bde2892ffe174871237cb0f4cbd2972fd961be29d2f5391be4fee5fc",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_families.parquet": "366bb2b0270a86ec0c0d78f4495239dbdf4b9b06e48c046ec41470effb4f378c",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_family_records.parquet": "3032d861ba034165bea18c975a2bd9d16649f912f4a30083d97467dc580ceb6b",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/manifest.json": "8695c3ef7fea72cad6be7f9a6619378a04278b3953612422acbba10b698a52cf",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_families.parquet": "4edbe5970ebfe7fe2c0171fe99071352ab7e3a35f48527bfb0b3ea6078923caa",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_family_records.parquet": "58baca81830d02af90d96b55c09d7b047015c5304e20d0f959c8b162f56ae9eb",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/manifest.json": "db273f4a1550ecae9a8567a0c949fb2a4c944864ad9da1ab34c07cc991e8c457",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/random/records.parquet": "b057e760d3dc50d4d42dbd87b6e0f3275e3990a9844a3baa8112d53f75f613b6",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/scaffold/records.parquet": "7310496d8e8c25b780f490498b03f9411961be18d27cc67fe645bfa5d0c4f0dc",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/random/manifest.json": "63860b37e9529c6b8c75416a75d89408ac4c899185e561e4a9d51c144d0cdc89",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_families.parquet": "c46b6808af3e2f9808c364cac42359d9813c562eb354106d5c4f962d3530d924",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_family_records.parquet": "9337577154e638903aab84f2481846da38cde35d67c52bd8bde7acb7af865f3d",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/manifest.json": "7c22f46f57d5bb582437f936145563c71108cad3b492fd0124eb4c71af84a1b7",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_families.parquet": "ddbd3d61eedebfda329fd0ace03c4aef5cfc9f3932063296e7146f787846d1ef",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_family_records.parquet": "5157695dc1b280b1ed0acbfc770d47b60ce21b08eec35a8c3cc69999233baab8",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/random/fingerprints.npz": "6addf6cc30fd8083f22151bdd4e6b088e8df3818eeebede424365bbfa902c674",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/random/group_membership.parquet": "c41ba5692eb8b7624c3ad45ab900d44533d7fb8f48dc77cca7c4259af739fdb0",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/random/manifest.json": "65533089ea29584ed5e0213a0d2fbb0b36d26a3587c2e2b89bf4f9bfc47d7f82",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/random/manifest.json": "36fa0b50757c6080a468d80380b8d4ab9b932f96762c599998a59383204f9d20",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/random/molecules.parquet": "1cbbe62d5fb61ea28361448abff2b4d3988a6b9205301ae5cdc34741e2a89148",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/fingerprints.npz": "3e938148467c64507a4cce24f2cdea6303c4538821dc282c5c38e96ec960dd82",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/group_membership.parquet": "a3cbc740d7a11e9bafaf497977a09f55777cba75f71ae89192abfe8b9cf6ba46",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/manifest.json": "fb29e01428758dc3e05c5a61e76e53b9dda70b0617b861b39fda486ff0c42405",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/manifest.json": "72d919356614de5a5b976d95b1e9d55a301a38e8cb06d04242815eab936a18f6",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/molecules.parquet": "d6efcb7c670518396ff950e9236be7be4012001b800219b635ea0e701c390206",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/09_audits/heldout_overlap.json": "3681adc08fdd7f5a4d18b360a68413fc279d9393f32fd0c8bc5ddaff86bc42ba"
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/09_audits/heldout_overlap.json": "ffd4a621f362e1dab6c1446dc18a650e1dfd74368dfa93f049fc3ec8fde2f167"
     },
     "semantic_arguments": {
       "benchmark_split_root": "data/processed_starling/BBB_Martins",
@@ -172,8 +176,8 @@
     "unfiltered_record_stage": "03_records"
   },
   "downstream_stats": {
-    "calibration_valid_buckets": 687,
-    "pair_buckets": 55663,
+    "calibration_valid_buckets": 617,
+    "pair_buckets": 52628,
     "splits": {
       "random": {
         "excluded_filter_source_records": 6965,
@@ -189,8 +193,8 @@
       }
     }
   },
-  "elapsed_downstream_s": 101.353,
-  "elapsed_s": 485.745,
+  "elapsed_downstream_s": 138.006,
+  "elapsed_s": 494.455,
   "endpoint_inventory": {
     "direct_bbb": {
       "count": 22744,
@@ -161508,7 +161512,13 @@
     "03_records/exclusions.parquet",
     "03_records/manifest.json",
     "03_records/records.parquet",
-    "03_records/scalar_distribution.parquet"
+    "03_records/scalar_distribution.parquet",
+    "04_pair_buckets",
+    "05_distance_calibration",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits"
   ],
   "measurement_semantics_policy_sha256": "1ddf8b5a99173262c5e127b726bad8b259604a49393cb792815cd1fa58efc907",
   "measurement_semantics_policy_version": "bbb_martins_measurement_semantics.v1",
@@ -161622,7 +161632,7 @@
   },
   "record_build_cache": {
     "completed_stage": "organize",
-    "content_key": "c9f9f5de9db0f4eac7b84a4d4ac76fae4bacc7828e0d24fd733b73f64fbbe46e",
+    "content_key": "ad62090505f61845b45a4f5234868a990fd9a1f256b4f104c86498dfa7b96408",
     "implementation": {
       "files": {
         "tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
@@ -161633,12 +161643,13 @@
         "tools/chembl_tool/common/starling/auxiliary_metadata.py": "8d541c3cec6d88917104bf34bed927d0f3b09cf34127179d80d8f9a2a59bf343",
         "tools/chembl_tool/common/starling/benchmark_dataset.py": "3e35bf02dcd9bfd9c18f464a40eab2f225f0c9caf3979ec09bd1f4eb1e2965a4",
         "tools/chembl_tool/common/starling/build_benchmark_datasets.py": "ee6e54011b8ffdf56e875ef218f63a88a7305e7774105e12bb3cb45ee15e07c4",
-        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "0fe0ad913f1054fd172a7b9a2cf83002b529a1b64234518a089393eb5d6367fa",
-        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "e5070ce794543c4b3f69bd512459f10d4a67099ce63971ac1a24ade8a390038f",
+        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "b56fe23d6ea17bed45eb37305ac0f4e0f9b94854be66fa8458010dc833d0baba",
+        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "41c466a4df72d733db58f73fd50531db768c454717e677ffb39dfd860abe0957",
         "tools/chembl_tool/common/starling/build_pair_bucket_transfer_policy.py": "5bcd027201aa4bf55020d2651db7999fa1e8f4aa267d099636d90ff78020522a",
+        "tools/chembl_tool/common/starling/build_reference_semantics_mapping.py": "1c855975c60fd4cb3c613dd6d42d1884fe0a306ad9f3f652f89f3c9825ee866d",
         "tools/chembl_tool/common/starling/build_runtime.py": "12096532ba7dc7f6eedd4ea1e34ca2435816b0e436e66c6394aca6782f159a9b",
-        "tools/chembl_tool/common/starling/canonicalization_v7.py": "08a57eefd0fd68ac6440b30aa9f099f71f26c5aea41ccd29197b42bb7292c5dd",
-        "tools/chembl_tool/common/starling/categorical_response.py": "cb0e26fc76fa5eac334989d3b1e746917000893dbf2cb620c9c5a4fa51e48547",
+        "tools/chembl_tool/common/starling/canonicalization_v7.py": "ba1f1e7c45f3b9d4e941f2fed99dbf1eaf341d91debacdefa3632c8a84390129",
+        "tools/chembl_tool/common/starling/categorical_response.py": "56ebb5a90dfdba6506f0a9a2b80fb3098210c04dcbe60f0e2b9818a24251bb7d",
         "tools/chembl_tool/common/starling/clustered_auxiliary_mapping.py": "978fd30b6e127bf428f6aaf9c2d138cd03a19e9364dd6137b9555016ac25610b",
         "tools/chembl_tool/common/starling/compact_artifacts.py": "7588f9651a57231e300e68caadc423cf69bcfe35d9ad720030a29e54a07d5f44",
         "tools/chembl_tool/common/starling/evidence_library.py": "0cf14431925e7c9557ec36e53aa260ab549956de687210cba9c16665b9eb2568",
@@ -161650,13 +161661,14 @@
         "tools/chembl_tool/common/starling/normalization/measurements.py": "a4a2f783012914883f1467b1e012e230c648e8d5bd14151ec0cda9057583838d",
         "tools/chembl_tool/common/starling/normalization/organization.py": "2354ae5f39446dc5fb8daa074a00553d7945b8613f6ede21b4f616f782aede1d",
         "tools/chembl_tool/common/starling/normalization/source_value_cleaning.py": "e24ed4dc3d28d4c016580e2eaae0f6dbc26b88be5db23dd97c13e09797096849",
-        "tools/chembl_tool/common/starling/normalization/task_policy.py": "79e98cf23e35d534a8b74a84b58048d1922f7e5bc954f3e02f8d52e05ef885bd",
+        "tools/chembl_tool/common/starling/normalization/task_policy.py": "246792dff0fa483a4143e409a2d977aeb161135a0d8e98a7c6ed54421b529d95",
         "tools/chembl_tool/common/starling/normalized_evidence.py": "c94439d0afbfd260dda7d42b35e80bdd31b9a552ed8fdd3e00e775076437e870",
         "tools/chembl_tool/common/starling/oral_bioavailability.py": "cb9ffd7d828e0ab4083f6d98da132c227da20816371823a25396ae311a4f88fe",
         "tools/chembl_tool/common/starling/pair_bucket_transfer_policy.py": "2797fc74b90197003946e382d825f4f2b9f5e6a2fd5d76673a5c5d4159396580",
-        "tools/chembl_tool/common/starling/pair_buckets.py": "c194068f930675ed18d10d94efe188618d69d0e109efa9e05c0c54ae4a9301a8",
+        "tools/chembl_tool/common/starling/pair_buckets.py": "5911a5e1165719202f726bab40a0151fff71c4e9d455ebb97b0a43f73f8fb790",
         "tools/chembl_tool/common/starling/policy_distance.py": "17f2170b2c65718d84258f60af7a6882ca785d000a5992984babe4db8a5fc6e9",
-        "tools/chembl_tool/common/starling/split_downstream.py": "e2dda862d2788e2c19794750483416c1b1644350abb38326ec81cb8753beece9",
+        "tools/chembl_tool/common/starling/reference_semantics.py": "14a5c8ed2929ccf6486e0fa589556e91d14c666cee7abe0a8feabe5f2f72ce42",
+        "tools/chembl_tool/common/starling/split_downstream.py": "99a6adbd8a9ba05d3285bf5d1156f40f16957c3d708c0d828ba12f929dc8c92d",
         "tools/chembl_tool/common/starling/stage_artifact_store.py": "e74992cb936e89f2907b83a47a65c31831f1333b3ecd9abef341d134cc78d7da",
         "tools/chembl_tool/common/starling/v7_benchmark_view.py": "a766f15d444714d31510d9f89cdd16104715003d5aa62cb282ab72ba85f08a96",
         "tools/chembl_tool/common/task_workflows/evidence_library.py": "03d96fa341ecef662155dfcdd42354e25084698b2176006a403320202ad34fe2",
@@ -161666,40 +161678,44 @@
         "tools/chembl_tool/tasks/bbb_martins/build_starling_downstream_artifacts.py": "c8b525726aca4c93283091f9b3838d33a0a1a023a2040b778e89e1dc328c5cb6",
         "tools/chembl_tool/tasks/bbb_martins/build_starling_evidence_library.py": "c29027aed06d2786f6159fa948a98b436bfda28f6cc176e42b4c572450bd111a",
         "tools/chembl_tool/tasks/bbb_martins/build_starling_full_evidence_library.py": "4b421d65e9a744796e67454f0e6827da305cc4c68d29b300edd37e9f75daa2a9",
-        "tools/chembl_tool/tasks/bbb_martins/build_starling_pair_bucket_sidecar.py": "9a9881e2c4810ce2da059d05c53f49d807611a68c63c413df3587910179bff16",
-        "tools/chembl_tool/tasks/bbb_martins/build_starling_pair_bucket_transfer_policy.py": "c7d46d7de7aedef411be83e8e245a149bf0c403452ccc014d0822e9135a5c62e",
+        "tools/chembl_tool/tasks/bbb_martins/build_starling_pair_bucket_sidecar.py": "7abb0cdc411823c0b488ec58599dee0b773bf826905a1ae52dc642c502ff5ead",
+        "tools/chembl_tool/tasks/bbb_martins/build_starling_pair_bucket_transfer_policy.py": "49713dfc8a9ece10ce8ce57aaef4e45b4380c9621885745c19604ba08826af0d",
         "tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v7/measurement_semantics.v1.json": "1ddf8b5a99173262c5e127b726bad8b259604a49393cb792815cd1fa58efc907",
+        "tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_prompts.json": "5ba13a477366556e5b0133f30bfdfc023a4d7def52a5596e78e89d681df11668",
         "tools/chembl_tool/tasks/bbb_martins/starling_artifact_store.py": "2174924f82a62638f8f84e7a70e067f8abb139229310883d53eb768b4b902c8e",
         "tools/chembl_tool/tasks/bbb_martins/starling_auxiliary_metadata.py": "0d3b96a04ce63868553807c96ecb7694b70283f7eb74f87ee3b91de33470a926",
         "tools/chembl_tool/tasks/bbb_martins/starling_benchmark.py": "a9edee8d897fd42f0da9a7a790f500d022cbd673bf48d18d0e3923a796ba5977",
-        "tools/chembl_tool/tasks/bbb_martins/starling_categorical_response.py": "7e51dcfbc9527298199b4e6da7f6debb0f6f0fae1e7b42aa6cbe85a9077e6390",
+        "tools/chembl_tool/tasks/bbb_martins/starling_categorical_response.py": "d29e6a30ca56db8577f10e2d68c9fc4733953f7cbbc1ebe8c5e36b7ddd20a85a",
         "tools/chembl_tool/tasks/bbb_martins/starling_compact_artifacts.py": "e3d2aa87ca98fe5585f7c9de43d36e2b7a741bff803c96b7bbba6d14d5d1ad4a",
         "tools/chembl_tool/tasks/bbb_martins/starling_endpoint_normalization.py": "0860e422bbdbb11f9f0fb4af759663cdda3bc65b960c0a950b69242dd3b28bd7",
         "tools/chembl_tool/tasks/bbb_martins/starling_measurement_semantics.py": "6d1756c9350d0729c4fa41e2a6a85b457c178ad9937267e52619ac6ace9d0c22",
         "tools/chembl_tool/tasks/bbb_martins/starling_normalization_policy.py": "0cbd14841ce4909f1886111fb4049d3e5327f21e0a82808f0cd4b3f81e46d49a",
         "tools/chembl_tool/tasks/bbb_martins/starling_normalization_sources.py": "9f540e7f92f53d8636b65146345da7368ec7493ad9b012910c1f7cc6df1f1346",
         "tools/chembl_tool/tasks/bbb_martins/starling_pair_bucket_transfer_policy.py": "926eae10e13dd3ab7017bb073b24ccf59d8c85ee853dad33214b8bac394b43d8",
-        "tools/chembl_tool/tasks/bbb_martins/starling_pair_buckets.py": "c918b30d2ad4175557141cba79e217aae5b0e7c44cf161c208854eabdb94e3aa",
-        "tools/chembl_tool/tasks/bbb_martins/starling_policy.py": "2a5eb338e9b7098801a740990853765607008901cfe4ce0fe9af0c6ed9e04d3e",
+        "tools/chembl_tool/tasks/bbb_martins/starling_pair_buckets.py": "684f671194307217c4ac00bd0f4df89408ce695046f84c5032f653d51b6e153f",
+        "tools/chembl_tool/tasks/bbb_martins/starling_policy.py": "1352f146978cb004a94154f094a869228fa47f92e3fd84af9cc3ddeeeca0eedd",
         "tools/chembl_tool/tasks/bbb_martins/starling_record_canonicalization.py": "7b5225eb60984c8fd3f9b631d4fec8e0db6fc72e29e88dbdb6b72af31af438fa",
-        "tools/chembl_tool/tasks/bbb_martins/starling_schema.py": "8677a76611886f70ce599f44746df3637d89cfd36c5d61372af8ec8c0903167f",
+        "tools/chembl_tool/tasks/bbb_martins/starling_reference_semantics.py": "c97e0872a8ce2c7e6b83faf896ba00d53aa55ff96f19e157048b029b8811d1c9",
+        "tools/chembl_tool/tasks/bbb_martins/starling_schema.py": "6e14a874bb353bea67601ecfae043298a94d0ba0996d89a4a3e44e3d49be89e1",
         "tools/chembl_tool/tasks/bbb_martins/starling_source_column_contracts.py": "d01a9a36455e9e0c3bf58ebd71317204a5b9f706d13175815ecae77715d4fefc",
         "tools/chembl_tool/tasks/bbb_martins/starling_spacing_and_spelling.py": "73e9772e46c87fe45a199b346c12e511c00852642b203dfdfc4b365d70482b5c",
         "tools/chembl_tool/tasks/bbb_martins/starling_v7_artifact_store.py": "dd9d10cc936e4c09be0b0ef20df1266d206e289b8dae712b400820f9cb00f8f8"
       },
-      "sha256": "6abe3dc24490317810f8f559c1fa3d4ae41ee0371c410b65aee11c14bfa800c1",
+      "sha256": "ddf2f25fa3e69ec254957b21e7a8e42f06b5011ddab64c55d76dbf2f62136d33",
       "version": "starling_build_runtime.v2"
     },
-    "implementation_sha256": "6abe3dc24490317810f8f559c1fa3d4ae41ee0371c410b65aee11c14bfa800c1",
+    "implementation_sha256": "ddf2f25fa3e69ec254957b21e7a8e42f06b5011ddab64c55d76dbf2f62136d33",
     "inputs": {
       "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
       "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/globally_reconciled_auxiliary_value_mapping.json": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4",
+      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_v2/reference_semantics.parquet": "431a8a962c8595f2098474a82fb17fe8ee40964d42ec161d5825be80a3f95bef",
       "data/starling_data/bbb_martins/Direct_BBB/records.parquet": "14c01314377b6c31f18e6ec9c1ee72a8605a06800d74385fc8a7273f2334df57",
       "data/starling_data/bbb_martins/efflux_transport/extractions.parquet": "cc24fe33857a2032143c7b6f54d18e7796204b33fa459c2ec94e9af46a0f3db0",
       "data/starling_data/bbb_martins/influx_transport/extractions.parquet": "846acb38e8c9adad2b18835aa1ff7516ca043adfd8f402413b2170ebd1387ab4",
       "data/starling_data/bbb_martins/passive_permeability/extractions.parquet": "1c1b602fe640666c4fb2e006c9712673ecba7ae097bbd7f3e027094762e7c5a2",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "219d9ae75812fd5cdc45e31c7754ecbf5a9019b2cfc0b240385397beba845402",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "82aaf680134faf43bbb51e8b301d1fe4e294f55b4a598dc98829cc7b80c2944c"
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "4e9966a9308ced778baa3f0359a77377bd5268fcde464f3fec90be5dc47ba829"
     },
     "outputs": {
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/endpoint_inventory.json": "aa7e481759aa88773547a85d02aef264bc710fc3a95ce997ea783e68ed57b12e",
@@ -161708,20 +161724,22 @@
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/source_inventory.json": "6966e6b4294c7ce60870625d6337c33e92d95fd1d658342470b1b859159269f5",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/source_value_cleaning_audit.parquet": "a131999a9e755e6ec96b3ba114b66b35768f7b38ee441bb5df9c8276f9b22439",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "acfa3d2ca4d356d75afc878fccff3a6be6499ee122dc1800465ac7500579cf3e",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/endpoint_registry.json": "d833422a95e73db18df5329ef8f2551d910f5437e7c7521f5e5e10a8b9b22f3a",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "70b65d60808ffae82942192fd2ee4b717b5f604d23bd8437d3d342e325971017",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "7ff3ad607684fde73914be715b5a0fd4d34d171fa58f5672ca56dd23c55a2395",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "82aaf680134faf43bbb51e8b301d1fe4e294f55b4a598dc98829cc7b80c2944c",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "dfc23ce69eb7ef5b1f613fa6455b391f235426e1405dcf17861f6e1c98e90e16",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "b0cce1f6580403757823f3beea5503b14ede212c04abfaa26ffa6d2b7357cbf9",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/endpoint_registry.json": "8c87687096102d5f4b98dcc1b02db9be679da179fba67d6ca83eee731b0bf01c",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "c5e74523bb7f0e84eb1c12397cb8b34df9ce502ad5c906f06ce4990559cfb2af",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "6ea9b47081e67b06738feb6dc60f46c781589974133782884cf99d2c38b29bf3",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "4e9966a9308ced778baa3f0359a77377bd5268fcde464f3fec90be5dc47ba829",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "a856928ecc85ee4579de4839050f885a9f4849292d7bec9584f7af89e2a2ba91",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "650810d338b1992a15ac8dcd565a97aaefdbe51b6ddb517f601cea392fe3f889",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "4aa519d14410a02c8dec022ee6d7388494a4a8e9034012cc5a02367a79b60084",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/exclusions.parquet": "89998e3bb2f5e16854cfbb15855beb2847e5b32cd70f2313cdffbbedd402edd7",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/manifest.json": "f22bb338fdb9c7bcae4853104f693a1a22120ad729293cbccb263713ff3a0759",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/records.parquet": "2623bb048d20e22ace905202d51878fecee204cf9926ccddafc58629a63c5208",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/scalar_distribution.parquet": "a3f8a8655f3106cd14b07e83a2d0d11ba1810c93b4f52b71744be1a432737de4"
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/manifest.json": "1c1c794733a23eb0110435cbcaa8b178e99f768c664e549e8653cf7ca12c00ad",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/records.parquet": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/scalar_distribution.parquet": "f4b4da28434c3b93feff97ef769ff8f0d47da47204f29cca4d511a3a571676b4"
     },
     "semantic_arguments": {
       "allow_missing_auxiliary_mapping": false,
       "allow_missing_direct_endpoint_mapping": false,
+      "allow_missing_reference_semantics": false,
       "auxiliary_mapping": {
         "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/globally_reconciled_auxiliary_value_mapping.json",
         "sha256": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4"
@@ -161733,6 +161751,10 @@
       },
       "max_record_examples": 6,
       "max_rows_per_source": 0,
+      "reference_semantics_mapping": {
+        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_v2/reference_semantics.parquet",
+        "sha256": "431a8a962c8595f2098474a82fb17fe8ee40964d42ec161d5825be80a3f95bef"
+      },
       "starling_data_dir": "data/starling_data/bbb_martins",
       "strict_endpoint_inventory": true
     },
@@ -161837,8 +161859,18 @@
           "canonical_unit_text",
           "canonical_measurement_scale_id",
           "canonical_assay_context",
-          "canonical_species_context"
+          "canonical_species_context",
+          "canonical_reference_scope",
+          "canonical_reference_basis"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "endpoint_defined_ratio",
+          "standardized_control_ratio",
+          "not_applicable"
+        ],
+        "reference_basis_required": true,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "bbb_transport_label",
           "qualifying_conditions"
@@ -161852,8 +161884,18 @@
           "canonical_transporter_identifier",
           "canonical_evidence_type",
           "canonical_assay_context",
-          "canonical_species_context"
+          "canonical_species_context",
+          "canonical_reference_scope",
+          "canonical_reference_basis"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "endpoint_defined_ratio",
+          "standardized_control_ratio",
+          "not_applicable"
+        ],
+        "reference_basis_required": true,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "perturbation",
           "qualifying_conditions",
@@ -161864,8 +161906,18 @@
         "canonical_dimensions": [
           "canonical_endpoint_name",
           "canonical_unit_text",
-          "canonical_transport_mechanism"
+          "canonical_transport_mechanism",
+          "canonical_reference_scope",
+          "canonical_reference_basis"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "endpoint_defined_ratio",
+          "standardized_control_ratio",
+          "not_applicable"
+        ],
+        "reference_basis_required": true,
+        "required_known_dimensions": [],
         "variance_candidates": []
       },
       "passive_permeability": {
@@ -161875,8 +161927,18 @@
           "canonical_measurement_scale_id",
           "canonical_assay_type",
           "canonical_assay_context",
-          "canonical_species_context"
+          "canonical_species_context",
+          "canonical_reference_scope",
+          "canonical_reference_basis"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "endpoint_defined_ratio",
+          "standardized_control_ratio",
+          "not_applicable"
+        ],
+        "reference_basis_required": true,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "metric_uncertainty",
           "qualifying_conditions",
@@ -161897,6 +161959,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -161922,7 +161985,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "bbb_permeability_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "endpoint_name",
@@ -161930,6 +161993,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -161961,7 +162025,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "bbb_permeability_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "measurement",
@@ -161969,6 +162033,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -162000,7 +162065,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "bbb_permeability_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "unit",
@@ -162008,6 +162073,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -162024,6 +162090,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "bbb_permeability_label"
@@ -162036,10 +162103,59 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "measurement_scale",
-            "version": "bbb_martins_categorical_response.v2"
+            "version": "bbb_martins_categorical_response.v3"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "assay_model",
+              "species",
+              "qualifying_conditions",
+              "extra_details"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bbb_reference_semantics.v2"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "assay_model",
+              "species",
+              "qualifying_conditions",
+              "extra_details"
+            ],
+            "legacy_value_field": "canonical_reference_basis",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_basis",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_basis",
+            "version": "bbb_reference_semantics.v2"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_model"
@@ -162056,6 +162172,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "species"
@@ -162130,6 +162247,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -162155,7 +162273,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "efflux_substrate_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               },
               {
                 "input_fields": [
@@ -162163,7 +162281,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "efflux_inhibitor_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "endpoint_name",
@@ -162171,6 +162289,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -162202,7 +162321,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "efflux_substrate_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               },
               {
                 "input_fields": [
@@ -162210,7 +162329,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "efflux_inhibitor_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "measurement",
@@ -162218,6 +162337,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -162249,7 +162369,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "efflux_substrate_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               },
               {
                 "input_fields": [
@@ -162257,7 +162377,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "efflux_inhibitor_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "unit",
@@ -162265,6 +162385,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -162281,6 +162402,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "interaction_conclusion"
@@ -162293,10 +162415,67 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "measurement_scale",
-            "version": "bbb_martins_categorical_response.v2"
+            "version": "bbb_martins_categorical_response.v3"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "transporter_identifier",
+              "evidence_type",
+              "interaction_conclusion",
+              "assay_system",
+              "perturbation",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bbb_reference_semantics.v2"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "transporter_identifier",
+              "evidence_type",
+              "interaction_conclusion",
+              "assay_system",
+              "perturbation",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_basis",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_basis",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_basis",
+            "version": "bbb_reference_semantics.v2"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "evidence_type"
@@ -162313,6 +162492,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "transporter_identifier"
@@ -162329,6 +162509,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_system"
@@ -162345,6 +162526,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_system"
@@ -162432,6 +162614,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -162457,6 +162640,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -162488,6 +162672,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -162519,6 +162704,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -162534,7 +162720,62 @@
             "version": "rdkit_standardized_source_smiles.v1"
           },
           {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "transport_mechanism",
+              "evidence_basis",
+              "assay_model",
+              "reported_result",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bbb_reference_semantics.v2"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "transport_mechanism",
+              "evidence_basis",
+              "assay_model",
+              "reported_result",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_basis",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_basis",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_basis",
+            "version": "bbb_reference_semantics.v2"
+          },
+          {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "transport_mechanism"
@@ -162623,6 +162864,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -162648,7 +162890,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "passive_bbb_interpretation_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "endpoint_name",
@@ -162656,6 +162898,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -162687,7 +162930,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "passive_bbb_interpretation_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "measurement",
@@ -162695,6 +162938,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -162726,7 +162970,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "passive_bbb_interpretation_binary.v1",
-                "version": "bbb_martins_categorical_response.v2"
+                "version": "bbb_martins_categorical_response.v3"
               }
             ],
             "semantic_dimension": "unit",
@@ -162734,6 +162978,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -162750,6 +162995,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "passive_bbb_interpretation"
@@ -162762,10 +163008,65 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "measurement_scale",
-            "version": "bbb_martins_categorical_response.v2"
+            "version": "bbb_martins_categorical_response.v3"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "assay_type",
+              "biological_system",
+              "metric_uncertainty",
+              "passive_bbb_interpretation",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bbb_reference_semantics.v2"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "assay_type",
+              "biological_system",
+              "metric_uncertainty",
+              "passive_bbb_interpretation",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_basis",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_basis",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_basis",
+            "version": "bbb_reference_semantics.v2"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_type"
@@ -162782,6 +163083,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "biological_system"
@@ -162798,6 +163100,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "biological_system"

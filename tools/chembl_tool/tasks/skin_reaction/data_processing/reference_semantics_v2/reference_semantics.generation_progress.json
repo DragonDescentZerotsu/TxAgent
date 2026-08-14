@@ -1,0 +1,17 @@
+{
+  "attempted_rows": 87054,
+  "batch_size": 50,
+  "budget_epoch": "openai_key_20260812_skin_02",
+  "budget_max_tokens": 9750000,
+  "budget_spent_tokens": 4320591,
+  "candidate_rows": 87054,
+  "completed": true,
+  "generation_version": "reference_semantics_generation.v2",
+  "model": "gpt-5.4-mini",
+  "no_call_rows": 0,
+  "prompt_version": "skin_reaction_reference_semantics_prompt.v2",
+  "reasoning_effort": "low",
+  "task_id": "skin_reaction",
+  "terminal_rows": 87054,
+  "unattempted_api_rows": 0
+}

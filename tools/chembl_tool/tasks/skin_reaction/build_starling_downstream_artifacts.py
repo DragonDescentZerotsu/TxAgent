@@ -27,7 +27,7 @@ from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_transfer_p
     build_pair_bucket_transfer_policy,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
-    SKIN_REACTION_PAIR_BUCKET_VERSION,
+    SKIN_REACTION_V7_PAIR_BUCKET_VERSION,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_policy import POLICY
 
@@ -52,7 +52,7 @@ def _spec() -> SplitDownstreamSpec:
         policy=POLICY,
         pipeline_layout_version=PIPELINE_LAYOUT_VERSION,
         heldout_overlap_version=HELDOUT_OVERLAP_VERSION,
-        pair_bucket_version=SKIN_REACTION_PAIR_BUCKET_VERSION,
+        pair_bucket_version=SKIN_REACTION_V7_PAIR_BUCKET_VERSION,
         filter_source_id="direct_skin_reaction",
         benchmark_splits=BENCHMARK_SPLITS,
         build_sidecar=build_sidecar,

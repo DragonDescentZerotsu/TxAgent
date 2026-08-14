@@ -894,17 +894,17 @@ def _manifest_update(
         "pipeline_layout_version": spec.pipeline_layout_version,
         "compact_artifact_version": _compact_profile(
             spec,
-            v7=str(pair_metadata.get("contract_version") or "").endswith(".v7"),
+            v7=v7,
         ).artifact_version,
         "index_version": _compact_profile(
             spec,
-            v7=str(pair_metadata.get("contract_version") or "").endswith(".v7"),
+            v7=v7,
         ).index_version,
         "completed_artifact_stages": [
             "01_cleaned",
             (
                 "02_canonicalized"
-                if str(pair_metadata.get("contract_version") or "").endswith(".v7")
+                if v7
                 else "02_normalized"
             ),
             "03_records",

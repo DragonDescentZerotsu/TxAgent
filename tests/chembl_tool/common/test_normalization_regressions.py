@@ -32,6 +32,9 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
 from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
     classify_direct_qualitative_text,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.starling_contextual_unit_reconciliation import (
+    contextual_canonical_record_fields,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.starling_fg_scalar_rules import (
     propose_fg_scalar,
 )
@@ -199,3 +202,20 @@ def test_directional_scalar_gate_cannot_be_undone_by_task_enrichment():
     assert normalized["normalization_validity_status"] == (
         "non_scalar_measurement"
     )
+
+
+def test_bioavailability_contextual_reconciliation_preserves_directional_gate():
+    fields = contextual_canonical_record_fields(
+        {
+            "source_id": "fa",
+            "canonical_endpoint": "gi_stability",
+            "canonical_measurement": "60 ± 0.47 reduction",
+            "canonical_unit": "%",
+            "measurement_unit_status": "cleaned_pair",
+            "unit_notation_status": "none",
+        }
+    )
+
+    assert fields["finite_scalar_value"] is None
+    assert fields["is_absolute_and_continuous"] is False
+    assert fields["measurement_unit_status"] == "non_atomic_directional_context"

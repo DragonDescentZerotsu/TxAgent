@@ -1,0 +1,29 @@
+{
+  "attempts": 1118,
+  "by_extraction": {
+    "sensitization_aop/global_species_context": {
+      "attempts": 1118,
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 5237319,
+        "output_tokens": 414612,
+        "reasoning_tokens": 107337,
+        "total_tokens": 5651931
+      }
+    }
+  },
+  "ledger_version": "starling_skin_auxiliary_token_ledger.v1",
+  "lifetime_usage": {
+    "cached_input_tokens": 0,
+    "input_tokens": 5237319,
+    "output_tokens": 414612,
+    "reasoning_tokens": 107337,
+    "total_tokens": 5651931
+  },
+  "model": "gpt-5.4-mini",
+  "prompt_version": "starling_skin_embedding_bucket_mapping.v4",
+  "reasoning_effort": "low",
+  "status_counts": {
+    "valid": 1118
+  }
+}

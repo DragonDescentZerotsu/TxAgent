@@ -20,6 +20,7 @@ from __future__ import annotations
 
 
 SKIN_REACTION_PAIR_BUCKET_VERSION = "skin_reaction_pair_buckets.v4"
+SKIN_REACTION_V7_PAIR_BUCKET_VERSION = "skin_reaction_pair_buckets.v5"
 
 SOURCE_PAIR_FIELDS = {
     "direct_skin_reaction": (
@@ -45,5 +46,6 @@ ENDPOINT_FIELD_BY_SOURCE = {"sensitization_aop": "global_endpoint_context"}
 __all__ = [
     "ENDPOINT_FIELD_BY_SOURCE",
     "SKIN_REACTION_PAIR_BUCKET_VERSION",
+    "SKIN_REACTION_V7_PAIR_BUCKET_VERSION",
     "SOURCE_PAIR_FIELDS",
 ]

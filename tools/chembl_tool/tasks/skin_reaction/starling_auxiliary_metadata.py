@@ -13,6 +13,8 @@ never be mistaken for a complete artifact.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -31,13 +33,20 @@ DEFAULT_MAPPING_PATH = (
     / "data_processing"
     / "globally_reconciled_auxiliary_value_mapping.json"
 )
+DEFAULT_PUBLICATION_RECORD = (
+    Path(__file__).resolve().parent
+    / "data_processing"
+    / "species_context_v3"
+    / "reconciliation"
+    / "PUBLICATION_RECORD.json"
+)
 APPLICABLE_SOURCES = (
     "direct_skin_reaction",
     "sensitization_aop",
     "phototoxicity_irritation_local_damage",
     "skin_exposure",
 )
-AUXILIARY_ATTACHMENT_VERSION = "starling_auxiliary_attachment.skin_reaction.v2"
+AUXILIARY_ATTACHMENT_VERSION = "starling_auxiliary_attachment.skin_reaction.v3"
 SOURCE_COLUMN_ALIASES = {
     "direct_skin_reaction": {"effect_metric": "measurement_text"},
     "sensitization_aop": {"endpoint_or_target": "endpoint_name"},
@@ -73,6 +82,9 @@ OUTPUT_FIELDS = tuple(
 
 class AuxiliaryMetadataAttacher(_AuxiliaryMetadataAttacher):
     def __init__(self, path: str | Path = DEFAULT_MAPPING_PATH):
+        resolved = Path(path)
+        if resolved.resolve() == DEFAULT_MAPPING_PATH.resolve():
+            _validate_reviewed_publication(resolved)
         super().__init__(
             path,
             mapping_version=MAPPING_VERSION,
@@ -85,6 +97,36 @@ class AuxiliaryMetadataAttacher(_AuxiliaryMetadataAttacher):
                 "sensitization_aop": ("global_endpoint_context",),
             },
         )
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _validate_reviewed_publication(mapping_path: Path) -> None:
+    """Fail closed while the focused species candidate is under review."""
+    if not DEFAULT_PUBLICATION_RECORD.is_file():
+        raise ValueError(
+            "Skin species context is an unreviewed candidate: publication record "
+            f"is absent at {DEFAULT_PUBLICATION_RECORD}"
+        )
+    record = json.loads(DEFAULT_PUBLICATION_RECORD.read_text(encoding="utf-8"))
+    if record.get("publication_status") != "human_approved":
+        raise ValueError("Skin species publication record is not human-approved")
+    if record.get("runtime_mapping_sha256") != _sha256(mapping_path):
+        raise ValueError("Skin species publication record does not match runtime mapping")
+    manifest_path = Path(str(record.get("review_manifest_path") or ""))
+    if not manifest_path.is_absolute():
+        manifest_path = DEFAULT_PUBLICATION_RECORD.parent / manifest_path
+    if (
+        not manifest_path.is_file()
+        or record.get("review_manifest_sha256") != _sha256(manifest_path)
+    ):
+        raise ValueError("Skin species publication record does not match review manifest")
 
 
 class PendingAuxiliaryAttacher:
@@ -142,6 +184,7 @@ __all__ = [
     "AUXILIARY_ATTACHMENT_VERSION",
     "AuxiliaryMetadataAttacher",
     "DEFAULT_MAPPING_PATH",
+    "DEFAULT_PUBLICATION_RECORD",
     "OUTPUT_FIELDS",
     "OUTPUT_FIELDS_BY_SOURCE",
     "SOURCE_COLUMN_ALIASES",

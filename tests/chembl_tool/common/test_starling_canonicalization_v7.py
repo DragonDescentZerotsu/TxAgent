@@ -43,7 +43,11 @@ def test_one_cleaned_input_can_feed_multiple_canonical_dimensions() -> None:
         if item.output_field == "canonical_species_context"
     )
     assert assay.input_fields == ("assay_type",)
-    assert species.input_fields == ("assay_type",)
+    assert species.input_fields == (
+        "assay_type",
+        "experimental_conditions",
+        "support_text",
+    )
     assert "species_context" not in profile.cleaned_source_fields
 
 
@@ -317,6 +321,36 @@ def test_v7_pair_bucket_uses_v7_names_and_canonical_dimensions() -> None:
     assert rows[0]["canonical_endpoint_name"] == "endpoint"
     assert "normalized_record_id" not in rows[0]
     assert audit["validations"]["one_sidecar_row_per_input_record"]
+
+
+def test_required_known_dimension_excludes_unknown_without_dropping_record() -> None:
+    record = {
+        "canonical_record_id": "r1",
+        "source_id": "sensitization_aop",
+        "canonical_endpoint_name": "stimulation_index",
+        "canonical_unit_text": "fold",
+        "canonical_species_context": None,
+        "canonicalization_status": "valid",
+        "canonical_smiles": "CCO",
+    }
+    rows, audit = materialize_pair_buckets(
+        [record],
+        source_required_fields={
+            "sensitization_aop": ("canonical_species_context",)
+        },
+        required_known_fields_by_source={
+            "sensitization_aop": ("canonical_species_context",)
+        },
+    )
+    assert len(rows) == 1
+    assert rows[0]["bucket_eligible"] is False
+    assert rows[0]["pair_bucket_key"] is None
+    assert rows[0]["bucket_exclusion_reason"] == (
+        "unknown_canonical_species_context"
+    )
+    assert audit["exclusion_reason_counts"] == {
+        "unknown_canonical_species_context": 1
+    }
 
 
 def test_controlled_categorical_scale_persists_kind_and_category_identity() -> None:

@@ -15,8 +15,8 @@
   "root_file": {
     "path": "build_manifest.json",
     "restored_path": "manifest.json",
-    "sha256": "d837fae9f0d8991a9b86effd79eb398e0b8603bd793d983f0b8d67647a5b06ad",
-    "size": 145602
+    "sha256": "30cfc504c6ade6e44036b77888d81163ac931c077b83acafd90a1810fefbd0a7",
+    "size": 154990
   },
   "stages": {
     "01_cleaned": {
@@ -59,8 +59,8 @@
       "uncompressed_tar_size": 64071680
     },
     "02_canonicalized": {
-      "archive_sha256": "b701b8c6d948d01c19ec469d83eb50e676717b5e8698feceab90ae028e11c3fd",
-      "archive_size": 85793696,
+      "archive_sha256": "a4dafda7c8d919c8bc0c5765e3d5a918978fa06f694c02597f36aa8d8e03a56b",
+      "archive_size": 85952073,
       "files": [
         {
           "path": "auxiliary_mapping_manifest.json",
@@ -74,42 +74,47 @@
         },
         {
           "path": "manifest.json",
-          "sha256": "f42808705f6e325b52fc0e065c5df02165403a5ecc491e5f4b15a1a3a589949d",
-          "size": 1840
+          "sha256": "2169917705481aec450efdaf3186acb23a798bf3b9b4c9861702436443012bae",
+          "size": 2430
         },
         {
           "path": "record_validity_policy.json",
-          "sha256": "d304c8efa397117442fb5e96dbf8cf83c7185363c6e43125220d5198388da094",
-          "size": 5851
+          "sha256": "c41f0aa4f3a16724443b73c172ee4364066238a1c2da4a7a07ab04b7d908f541",
+          "size": 6024
         },
         {
           "path": "records.parquet",
-          "sha256": "da05bf7aaafaf8231652f49724b5c34164cae20a20bf1aaad2231fd2b44382f7",
-          "size": 88020664
+          "sha256": "c4f6a0f558fbd819f6645873a7537e5900dd24bc8cd86cfc6ecd0eebad756f22",
+          "size": 88181814
+        },
+        {
+          "path": "reference_semantics_manifest.json",
+          "sha256": "3825b271dd7e41b209310c17741fc08e17f26cb5a1bc73aa3b2bb352aa0dd092",
+          "size": 970
         },
         {
           "path": "source_contract.json",
-          "sha256": "866eba5bed02638ef374b5612e4c51361c26dbd145e61cba8b6028a692008890",
-          "size": 42445
+          "sha256": "ac1145ae4da626d75c1aab29374b4cf951fe540a571a56d2df65c6ac1c80a7bb",
+          "size": 43445
         }
       ],
       "parts": [
         {
           "path": "02_canonicalized/stage.tar.zst.part-0001",
-          "sha256": "b701b8c6d948d01c19ec469d83eb50e676717b5e8698feceab90ae028e11c3fd",
-          "size": 85793696
+          "sha256": "a4dafda7c8d919c8bc0c5765e3d5a918978fa06f694c02597f36aa8d8e03a56b",
+          "size": 85952073
         }
       ],
-      "uncompressed_tar_size": 88145920
+      "uncompressed_tar_size": 88309760
     },
     "03_records": {
-      "archive_sha256": "1fae14e4ede910708fdd3cff111fae0370c7c601a4eb7dfa684af4fb7bf79a9e",
-      "archive_size": 104593975,
+      "archive_sha256": "bc036b79c260b885130d78efc80b91ba5d894e3bf37ca1035b7249d063dc71b4",
+      "archive_size": 104751613,
       "files": [
         {
           "path": "duplicates.parquet",
-          "sha256": "e7b23ae5164b4953f88143ddffa484b47d1e67e814bae6148c74d182b1739521",
-          "size": 21502
+          "sha256": "fc43485f3dd1c89cf0b47adef403fe47767ae17eb5fb84abb93837d40bc332a1",
+          "size": 21501
         },
         {
           "path": "exclusions.parquet",
@@ -118,80 +123,80 @@
         },
         {
           "path": "manifest.json",
-          "sha256": "fded6eb75252b561332151e684e43bc61195ec95fe78894d06c52303876773d3",
+          "sha256": "f4280944d37334b42113008390aa0dcf6cd9fea299347c7eed6a5ab55da41e15",
           "size": 943
         },
         {
           "path": "records.parquet",
-          "sha256": "74b277ae2c058cd7a6668aab25b5a1369d0c4b95e1c08871d83f839692c5306e",
-          "size": 104743394
+          "sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+          "size": 104905183
         },
         {
           "path": "scalar_distribution.parquet",
-          "sha256": "c918c07a2a9df5d29a549ba11d0d8a56c3b001415a9dc4aa82d2e982e983cfc4",
-          "size": 129604
+          "sha256": "ec5dc0c0022ed0fb384794ad6c92ea731a49fed2951ac2bd3a7937cb4a7527e1",
+          "size": 129611
         }
       ],
       "parts": [
         {
           "path": "03_records/stage.tar.zst.part-0001",
-          "sha256": "a572164a3560caa1c0097d2cc92cdbc95692bde60105b56f48027a4b58ed1575",
+          "sha256": "d8f4e34a27f15e90d1bf6cc800ca600a889030fe3ee3d42f133345b9faab629b",
           "size": 90000000
         },
         {
           "path": "03_records/stage.tar.zst.part-0002",
-          "sha256": "35bbae88cf1f662d936586eb689b28bc5fbaaaf649556633ff530ef8dc7cdcb2",
-          "size": 14593975
+          "sha256": "588fdb9f036ea0a170ac8d477b592a803d277ed81b478b6c2be8be0141c71270",
+          "size": 14751613
         }
       ],
-      "uncompressed_tar_size": 107079680
+      "uncompressed_tar_size": 107243520
     },
     "04_pair_buckets": {
-      "archive_sha256": "45c3bd044563797c91120c3a101ca7bf60e5f800c3cfaf02e97a2083e6c9d183",
-      "archive_size": 17517356,
+      "archive_sha256": "1601f1b76d3b521e74486f61f5a1cdfad36133e9b6aadc92f2898325f46c67ed",
+      "archive_size": 17593014,
       "files": [
         {
           "path": "pair_bucket_metadata.json",
-          "sha256": "34f0faa2ed1ec752e61f4301f5204b67f054bd0c06415c642ebc69424de5dc5e",
-          "size": 3518
+          "sha256": "8e6d8927f3bf5fb4326d739970ee0efbd40fc57bb9661948ec51a055bf3ee77e",
+          "size": 4699
         },
         {
           "path": "pair_bucket_records.parquet",
-          "sha256": "6284d61f1988b56f73db8ac02098bae0094b504418a6fa620a6620ee2efd35c6",
-          "size": 17544834
+          "sha256": "5e434bb269204768a5e264f854d676deba752008b32ae244679b969d6a12d0df",
+          "size": 17622496
         }
       ],
       "parts": [
         {
           "path": "04_pair_buckets/stage.tar.zst.part-0001",
-          "sha256": "45c3bd044563797c91120c3a101ca7bf60e5f800c3cfaf02e97a2083e6c9d183",
-          "size": 17517356
+          "sha256": "1601f1b76d3b521e74486f61f5a1cdfad36133e9b6aadc92f2898325f46c67ed",
+          "size": 17593014
         }
       ],
-      "uncompressed_tar_size": 17551360
+      "uncompressed_tar_size": 17633280
     },
     "05_distance_calibration": {
-      "archive_sha256": "4061b8771fa1b1c251eb79d6cd8678a9642e82519824209bfb0607ec81a9b367",
-      "archive_size": 549706,
+      "archive_sha256": "fe8b138e875faa2db0f8b15c54dc8434d96e977f25654fa075f05d8addc15aaa",
+      "archive_size": 724144,
       "files": [
         {
           "path": "pair_bucket_distance_calibration.json.gz",
-          "sha256": "d4e0e64bdb31364c7eb1edcaec159ddf8239f88d5f903bb75f3c548c3c211700",
-          "size": 549901
+          "sha256": "825f16e9bd96a54c7eecf39943bd3e5cd316473e400839df192f7ad47cbda2ee",
+          "size": 730170
         }
       ],
       "parts": [
         {
           "path": "05_distance_calibration/stage.tar.zst.part-0001",
-          "sha256": "4061b8771fa1b1c251eb79d6cd8678a9642e82519824209bfb0607ec81a9b367",
-          "size": 549706
+          "sha256": "fe8b138e875faa2db0f8b15c54dc8434d96e977f25654fa075f05d8addc15aaa",
+          "size": 724144
         }
       ],
-      "uncompressed_tar_size": 552960
+      "uncompressed_tar_size": 737280
     },
     "06_remove_heldout_overlap": {
-      "archive_sha256": "b47e682ffe11b4d9bdc97c166c4ff8bf98ba993adb15e293599a48a8c5b364ac",
-      "archive_size": 202448053,
+      "archive_sha256": "4f42765ad87899139a69d72736f29eac9fe3eb9acb3c17a06d235e4d22fa938c",
+      "archive_size": 202758543,
       "files": [
         {
           "path": "excluded_direct_bioavailability_records.parquet",
@@ -200,86 +205,86 @@
         },
         {
           "path": "manifest.json",
-          "sha256": "1e9dee11850024743374ee4c6abc8bbebe5cd0778f4962a243138cbb8332558e",
+          "sha256": "7f77bc01cb60a08610316d20fd4cf687b307bac0bdab1a6662fce4acceae7f1d",
           "size": 4122
         },
         {
           "path": "random/records.parquet",
-          "sha256": "13e9f5ab04b3be1bba4aaca7b2d275fe360d23b3ca125dece78e0bfda2fd85fa",
-          "size": 103351452
+          "sha256": "b183fa4998d921e662dffe38d41185dca14e144bbe787c62d386e6845c354a25",
+          "size": 103509038
         },
         {
           "path": "scaffold/records.parquet",
-          "sha256": "05fa6806b564b07787b2d93a20bb23b3d8bdc04541580cf4c0692be67cbc9ac9",
-          "size": 103380883
+          "sha256": "b53696b7e184fbe3650ad8d5017f0b6a028a5aa5aacefbb579aec2876bc2b662",
+          "size": 103541829
         }
       ],
       "parts": [
         {
           "path": "06_remove_heldout_overlap/stage.tar.zst.part-0001",
-          "sha256": "70fee3c58a7d7973faa4264113e839b4ec37fd0f5a32e91d5c108b0536c67ddd",
+          "sha256": "44d87ad2a5cfcc7a84e7a72e6321b88010b50205e6ba21312978cadbc75277ba",
           "size": 90000000
         },
         {
           "path": "06_remove_heldout_overlap/stage.tar.zst.part-0002",
-          "sha256": "9f5169f32dfbec1a13629f23962ee86f3bfd4a770635489720096d281cec62a2",
+          "sha256": "a42bd2b68cacb8cdd5e383f2ceeafb3f755f2e44b97c39997675323f719f6d81",
           "size": 90000000
         },
         {
           "path": "06_remove_heldout_overlap/stage.tar.zst.part-0003",
-          "sha256": "f53d3a972851766414c1dd11472ad92b1c90c14a296b2c92c49ce2738e894ebc",
-          "size": 22448053
+          "sha256": "5ba9a90e1040940179a4f65fc9f4155f6085aaaedb1eb0f4bfc007d213e0ca32",
+          "size": 22758543
         }
       ],
-      "uncompressed_tar_size": 207175680
+      "uncompressed_tar_size": 207493120
     },
     "07_molecule_evidence": {
-      "archive_sha256": "7bb4763306b6ccc3fe96b4d87f7cb75c9f8d63a8737eb92c2f11b92be98725d7",
-      "archive_size": 37694010,
+      "archive_sha256": "25b36fddd874659f599b5dbb9b037b0a47f5c430eff34f7232698e4dfcc4b47c",
+      "archive_size": 37693972,
       "files": [
         {
           "path": "random/manifest.json",
-          "sha256": "5f094806d56e7d2b6aa2dda48283a4339afc60592d0180910286fd7a57b0993d",
+          "sha256": "3814cc03b35d7fbae25b6db952aa7090381682d330d5ea90c41f3a18353f46aa",
           "size": 767
         },
         {
           "path": "random/molecule_families.parquet",
-          "sha256": "b15949362bde03fdc7938f0c6f9e63051fb4c0ce63045ca2b3f88efde5c5129c",
-          "size": 2567756
+          "sha256": "78eab365f47e4c6f616ce66e3c0d83420d69ce80d7bc1c025b1b8922f4e1c73f",
+          "size": 2567755
         },
         {
           "path": "random/molecule_family_records.parquet",
-          "sha256": "65e4fb8c425e233123beb4a89a34a45c99c9e937614eb2675ee0c9cc68712e8c",
-          "size": 17008062
+          "sha256": "2311bb21d700ada5e4964a2a69ee3970c05245646cb817cba05137521e02d709",
+          "size": 17008069
         },
         {
           "path": "scaffold/manifest.json",
-          "sha256": "3d8d6477f3ba79f46f822d22e7a4a3e6a0b5e16580ed9467573403913c9731a2",
+          "sha256": "516ef02584875ff06512ecde4be8eeef0bfc434605c857192ef5eb3c5a008d9b",
           "size": 771
         },
         {
           "path": "scaffold/molecule_families.parquet",
-          "sha256": "6bd5cae4927fe9df168f08f1feb3e67e6640eb9d5b8c181974722a654957feea",
-          "size": 2568551
+          "sha256": "e0ee21b777947b889f4b18a6e7725e98684621e350dcdcf7b132e68d6577db40",
+          "size": 2568547
         },
         {
           "path": "scaffold/molecule_family_records.parquet",
-          "sha256": "26e6c2f0e36f3472713790f1de4a85f7bbc91fed1b2cba95b15a580b8857714e",
-          "size": 17011780
+          "sha256": "82cc01aa3b0fd920121dcd7924e314c4879aea7d0b567d62895b2d9d0fd930b1",
+          "size": 17011779
         }
       ],
       "parts": [
         {
           "path": "07_molecule_evidence/stage.tar.zst.part-0001",
-          "sha256": "7bb4763306b6ccc3fe96b4d87f7cb75c9f8d63a8737eb92c2f11b92be98725d7",
-          "size": 37694010
+          "sha256": "25b36fddd874659f599b5dbb9b037b0a47f5c430eff34f7232698e4dfcc4b47c",
+          "size": 37693972
         }
       ],
       "uncompressed_tar_size": 39168000
     },
     "08_neighbor_index": {
-      "archive_sha256": "c88dac6cd7a320ce5d3408d7dd6d603b7d9cd36107b81287c06761b35dd21344",
-      "archive_size": 10873886,
+      "archive_sha256": "853ecb37b06cbd2ec8c1fad11967d6c319a3dd502a22778dec2477eeae143822",
+      "archive_size": 10873888,
       "files": [
         {
           "path": "random/fingerprints.npz",
@@ -293,7 +298,7 @@
         },
         {
           "path": "random/manifest.json",
-          "sha256": "1579cab2eee4ab0fca15dad5ecd4529924b99e90491ea93c0568f7eaaea91d9e",
+          "sha256": "28ee7876df3f62875526013229189f675bc3f5bd57109ebe7c94245311ed27d6",
           "size": 1893
         },
         {
@@ -313,7 +318,7 @@
         },
         {
           "path": "scaffold/manifest.json",
-          "sha256": "d6daf2fa3f9cb8c05a20f0110ed92604f98edb7e31d4b4105f90160ce577015b",
+          "sha256": "8207a509178ffef51d52be50f5a3a66a69a7f2b07a99444333a3aec81d06af55",
           "size": 1899
         },
         {
@@ -325,27 +330,27 @@
       "parts": [
         {
           "path": "08_neighbor_index/stage.tar.zst.part-0001",
-          "sha256": "c88dac6cd7a320ce5d3408d7dd6d603b7d9cd36107b81287c06761b35dd21344",
-          "size": 10873886
+          "sha256": "853ecb37b06cbd2ec8c1fad11967d6c319a3dd502a22778dec2477eeae143822",
+          "size": 10873888
         }
       ],
       "uncompressed_tar_size": 12615680
     },
     "09_audits": {
-      "archive_sha256": "12b77c0d2e9e8b15a6dd2bd5a6361349d11a382bf012b4a0efd7ea99dc1ff13f",
-      "archive_size": 532,
+      "archive_sha256": "2cff8e3b3305b13127b8bf879f1da650ab6be6c3b0d830af87416174b3c4a1a5",
+      "archive_size": 524,
       "files": [
         {
           "path": "heldout_overlap.json",
-          "sha256": "a3f39993bb25aa47ae85738222ea74f315496ec94d728ecf0a0e5aa268437b67",
-          "size": 1144
+          "sha256": "9731bdcf4b83aec71de5674af8a93a7b354ecb12a9fa4a8f60a9602c20ba6d85",
+          "size": 1152
         }
       ],
       "parts": [
         {
           "path": "09_audits/stage.tar.zst.part-0001",
-          "sha256": "12b77c0d2e9e8b15a6dd2bd5a6361349d11a382bf012b4a0efd7ea99dc1ff13f",
-          "size": 532
+          "sha256": "2cff8e3b3305b13127b8bf879f1da650ab6be6c3b0d830af87416174b3c4a1a5",
+          "size": 524
         }
       ],
       "uncompressed_tar_size": 10240

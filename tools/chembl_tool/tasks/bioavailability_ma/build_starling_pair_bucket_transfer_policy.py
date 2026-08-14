@@ -40,6 +40,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_bucket_transfer_po
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
+    BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
@@ -74,7 +75,7 @@ def build_pair_bucket_transfer_policy(
 ) -> dict[str, Any]:
     metadata = json.loads(Path(pair_bucket_metadata_path).read_text(encoding="utf-8"))
     spec = BUILD_SPEC
-    if metadata.get("contract_version") == RECORD_CONTRACT.version:
+    if metadata.get("contract_version") == BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION:
         profile = replace(
             TRANSFER_POLICY_PROFILE,
             source_candidate_fields={
@@ -85,10 +86,14 @@ def build_pair_bucket_transfer_policy(
         spec = replace(
             BUILD_SPEC,
             profile=profile,
-            pair_bucket_version=RECORD_CONTRACT.version,
+            pair_bucket_version=BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION,
             source_pair_fields={
                 source: item.additional_dimensions
                 for source, item in RECORD_CONTRACT.pair_buckets.items()
+            },
+            endpoint_field_by_source={
+                source: "canonical_endpoint_name"
+                for source in RECORD_CONTRACT.pair_buckets
             },
         )
         return _build_distance_calibration(

@@ -33,6 +33,13 @@ DEFAULT_RUNTIME_MAPPING = (
     DATA_PROCESSING_DIR / "globally_reconciled_auxiliary_value_mapping.json"
 )
 
+HISTORICAL_PROFILE = "historical-v2"
+SENSITIZATION_SPECIES_PROFILE = "sensitization-species-v3"
+RECONCILIATION_PROFILES = (
+    HISTORICAL_PROFILE,
+    SENSITIZATION_SPECIES_PROFILE,
+)
+
 
 def _read_json(path: str | Path) -> dict[str, Any]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -64,7 +71,15 @@ def _review_assignments(path: str | Path) -> pd.DataFrame:
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        epilog=(
+            "Use --profile sensitization-species-v3 before or after the command "
+            "to run the structured three-field species reconciliation. The "
+            "default historical-v2 profile preserves the archived all-source "
+            "workflow."
+        ),
+    )
     commands = parser.add_subparsers(dest="command", required=True)
 
     snapshot = commands.add_parser(
@@ -113,8 +128,56 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _extract_profile(argv: list[str]) -> tuple[str, list[str]]:
+    """Remove the profile selector before handing off to a profile parser.
+
+    The selector is accepted before or after the subcommand so existing command
+    lines remain valid and the focused profile can own its argument surface.
+    """
+    profile = HISTORICAL_PROFILE
+    remaining: list[str] = []
+    selected = False
+    index = 0
+    while index < len(argv):
+        value = argv[index]
+        if value == "--profile":
+            if selected:
+                raise ValueError("--profile may be supplied only once")
+            if index + 1 >= len(argv):
+                raise ValueError("--profile requires a value")
+            profile = argv[index + 1]
+            selected = True
+            index += 2
+            continue
+        if value.startswith("--profile="):
+            if selected:
+                raise ValueError("--profile may be supplied only once")
+            profile = value.split("=", 1)[1]
+            selected = True
+            index += 1
+            continue
+        remaining.append(value)
+        index += 1
+    if profile not in RECONCILIATION_PROFILES:
+        raise ValueError(
+            f"unknown reconciliation profile {profile!r}; "
+            f"choose one of {', '.join(RECONCILIATION_PROFILES)}"
+        )
+    return profile, remaining
+
+
 def main(argv: list[str] | None = None) -> int:
-    args = _build_parser().parse_args(argv)
+    import sys
+
+    profile, profile_argv = _extract_profile(
+        list(sys.argv[1:] if argv is None else argv)
+    )
+    if profile == SENSITIZATION_SPECIES_PROFILE:
+        from .species_context_reconciliation import main as species_main
+
+        return species_main(profile_argv)
+
+    args = _build_parser().parse_args(profile_argv)
     if args.command == "snapshot":
         result = write_provisional_artifacts(
             output_dir=args.output_dir,

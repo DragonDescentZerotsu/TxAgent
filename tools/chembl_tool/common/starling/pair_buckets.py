@@ -71,6 +71,7 @@ def materialize_pair_buckets(
     reference_eligibility_by_source: Mapping[
         str, ReferenceEligibilitySpec
     ] | None = None,
+    required_known_fields_by_source: Mapping[str, tuple[str, ...]] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Map persisted canonical fields to one source-aware key per eligible row.
 
@@ -125,6 +126,16 @@ def materialize_pair_buckets(
             if value == unknown_token:
                 unknown_counts[field] += 1
 
+        required_known_fields = (required_known_fields_by_source or {}).get(
+            source_id, ()
+        )
+        absent_required_fields = set(required_known_fields) - set(fields)
+        if absent_required_fields:
+            raise ValueError(
+                f"required-known fields are not in the {source_id!r} pair key: "
+                f"{sorted(absent_required_fields)}"
+            )
+
         exclusion = _exclusion_reason(
             record,
             endpoint,
@@ -139,6 +150,11 @@ def materialize_pair_buckets(
                     f"no reference eligibility policy for source_id={source_id!r}"
                 )
             exclusion = reference_exclusion_reason(record, reference_spec)
+        if exclusion is None:
+            for field in required_known_fields:
+                if canonical_fields[field] == unknown_token:
+                    exclusion = f"unknown_{field}"
+                    break
         bucket_values = [
             source_id,
             endpoint,
@@ -221,6 +237,12 @@ def materialize_pair_buckets(
             }
             for source, spec in sorted(
                 (reference_eligibility_by_source or {}).items()
+            )
+        },
+        "required_known_fields_by_source": {
+            source: list(fields)
+            for source, fields in sorted(
+                (required_known_fields_by_source or {}).items()
             )
         },
         "stats": {

@@ -730,7 +730,7 @@ The complete layout is:
 02_canonicalized/
 03_records/                 complete unfiltered normalized source records
 04_pair_buckets/            complete source-aware bucket membership
-05_distance_calibration/    complete-data, label-free distance geometry
+05_distance_calibration/    complete-data, label-free SD and empirical-CDF geometry
 06_remove_heldout_overlap/  independent random/scaffold record views
 07_molecule_evidence/       split-specific relational evidence
 08_neighbor_index/          split-specific compact indices
@@ -738,8 +738,9 @@ The complete layout is:
 ```
 
 Stages 04 and 05 use the complete unfiltered Stage-03 records. This means held-out
-`direct_bbb` measurements contribute only to aggregate bucket validation, sample SD,
-and empirical percentile geometry; Stage 05 does not use benchmark labels or expose
+`direct_bbb` measurements contribute only to aggregate bucket validation, first-class sample SD,
+and continuous value-CDF geometry; the shared contract also supports ordinal category-rank CDFs, although
+BBB currently declares no ordinal scale. Stage 05 does not use benchmark labels or expose
 individual records to prediction. This is the sole permitted held-out-data exception,
 and it follows the shared all-task contract in `tools/chembl_tool/tasks/AGENTS.md`.
 
@@ -747,7 +748,8 @@ Stage 06 is the mandatory leakage boundary. It removes `direct_bbb` rows for ben
 held-out parents before molecule evidence and neighbor indices are built. Passive,
 efflux, and influx mechanism records remain available even when their molecule identity
 appears in the benchmark. Pair-bucket membership remains a complete source audit, and
-distance calibration must not declare a held-out source or held-out key loader.
+calibration must not declare a held-out source or held-out key loader. The v2 artifact stores no raw-
+distance CDF; its historical stage and filename remain unchanged for archived-v1 compatibility.
 
 The four LLM-visible group IDs remain exactly:
 

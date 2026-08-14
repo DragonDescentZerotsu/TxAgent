@@ -409,13 +409,28 @@ transactionally by `common/starling/split_downstream.py`, with thin task binding
 The current v7 tree uses `02_canonicalized` and `05_distance_calibration`. Stage 04 is the sole bucket
 membership authority. Stage 05 uses rank geometry for the declared binary/ordinal scales, requires both
 binary levels or at least three ordinal levels with three records per observed level, and emits no transfer
-cutoff, Boolean label, or soft probability. The layout below documents frozen v6 lineage.
+cutoff, Boolean label, or soft probability. Its v2 artifact exposes sample SD as first-class metadata and
+adds an exact value CDF for valid continuous buckets plus an exact category-rank CDF for valid ordinal
+buckets; binary buckets do not publish a CDF. It stores no raw-distance CDF. The historical
+stage name remains for archived-v1 compatibility. The layout below documents frozen v6 lineage.
 
 Skin v7 also freezes `canonical_reference_scope` and `canonical_reference_basis`. Stage 04 accepts
 absolute values, endpoint-defined ratios with explicit denominators, standardized controls, and declared
 categorical scales; comparator-relative or unknown scalar claims remain retrieval evidence only. Both
 fields are in each source's pair identity so applied-dose, vehicle-control, baseline, or other denominators
-cannot mix. The mapping comes from the shared 25-row, single-submission `gpt-5.4-mini` workflow.
+cannot mix. Skin v2 uses the shared single-submission `gpt-5.4-mini` workflow with low reasoning and
+source-local batches of at most 50 rows. Each visible row contains only a batch-local ID,
+`measurement_text`, and `support_text`; the response contains `reference_scope` and `reference_basis`.
+Direct controlled categorical rows remain deterministic outside GPT.
+
+The two Skin v2 epochs on 2026-08-12 completed all 87,054 candidates in 1,742 requests: 2,637
+sensitization-AOP and 84,417 skin-exposure rows. The first epoch consumed 4,669,300 tokens from a shared
+key; the resumed epoch used 4,320,591 of its 9,750,000-token ceiling. Across both epochs, 85,553 rows
+passed strict response validation and 1,501 (1.72%) failed closed as `unknown`; there were zero duplicate,
+unreported-usage, or stranded rows. The frozen mapping is
+`data_processing/reference_semantics_v2/reference_semantics.parquet` with SHA-256
+`f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2`. Generation does not rebuild
+Stages 02-09; those stages must consume the completed mapping in one later rebuild.
 
 ```text
 starling_normalized_v6/
@@ -541,8 +556,14 @@ The recommended run order is the 711-call non-phototoxicity phase, then the 938-
 phototoxicity phase. Each invocation has a 500,000-token guard and a lifetime ledger; status 75 is a
 clean resumable budget stop, and completed caches are removed only after final publication.
 
-The accepted prompt lineage is `starling_skin_embedding_bucket_mapping.v3`, currently using standard
-OpenAI `gpt-5.4-mini` with `reasoning_effort=low`. The completed direct and sensitization snapshots retain
+The general auxiliary prompt lineage is `starling_skin_embedding_bucket_mapping.v3`; sensitization
+species extraction is upgraded by `starling_skin_embedding_bucket_mapping.v4`. Its item identity is the
+cleaned `(assay_type, experimental_conditions, support_text)` tuple, and each request contains at most 50
+complete packets. It uses `/data1/joseph/therapeutic-tuning/distillation/api.py` with `gpt-5.4-mini` and
+`reasoning_effort=low`. The classifier assigns only the unique measurement-producing subject, donor, or
+cell-system species and abstains on incidental, conflicting, pooled, or ambiguous species mentions.
+Unknown sensitization species remains retrieval evidence but is excluded from Stage-04 pair buckets.
+The completed direct and sensitization snapshots retain
 their earlier `gpt-5.4` provenance and are accepted during mixed-source finalization only through the
 explicit compatible-snapshot model flag. Every open-vocabulary request performs neighbourhood-level
 reconciliation: it considers all values in the embedding cluster together, reuses the same label for
@@ -550,6 +571,37 @@ the same core concept, and minimizes the scientifically defensible label invento
 row-wise prompt semantics were rejected before publication and its cache must never be resumed into v3.
 All species outputs are base species; human occupations, nationalities, ages, and clinical populations
 normalize to `human` rather than creating comparison strata.
+
+The completed sensitization species pass has three separate label layers that must not be conflated:
+
+1. cluster-local GPT output in `species_context_v3/cluster_cache/`;
+2. the fail-closed v3 candidate after literal-support validation and base-species alias normalization; and
+3. an unpublished, globally reconciled v4 proposal.
+
+The v3 candidate contains 44,919 cleaned source tuples: 24,219 non-null species assignments and 20,700
+null assignments. The null assignments are frozen during global reconciliation and cannot be promoted.
+Every non-null assignment must receive two independent Codex reviews (primary and checker), and every
+disagreement must receive a third review by a distinct Codex adjudicator. This review phase makes no API
+calls. A reviewer may normalize a supported alias to the controlled base species, correct a label to a
+different base species explicitly tied to the measurement-producing subject, donor, or cell system, or
+demote the assignment to null. Reviewers must demote reagent organisms, background-only mentions,
+conflicting species, and other ambiguous cases. They may not infer a species, create non-base or pooled
+species labels, promote a v3 null, or modify another namespace. The exact artifact and reviewer contract is
+documented in `data_processing/species_context_v3/reconciliation/README.md`.
+
+Global reconciliation produces only an unpublished v4 proposal. It cannot replace the runtime mapping or
+trigger a downstream build without explicit human approval. The v4 proposal was explicitly approved on
+2026-08-13 and published through
+`data_processing/species_context_v3/reconciliation/PUBLICATION_RECORD.json`. The approved proposal SHA-256
+is `76ebdecfad4eee87e7f338bcf446f62e6d54151cc60a222b4daf7c1481a455dc`; the formatted runtime mapping
+SHA-256 is `152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07`. The Stage-02 attacher still
+fails closed if that record, review-manifest hash, or runtime hash does not match.
+
+Skin v7 Stages 02-09 were rebuilt and repackaged after publication. The change removes one Stage-04-eligible
+sensitization record and its singleton bucket: Stage 04 contains 23,968 buckets and 342,740 eligible records.
+The usable calibration sets are unchanged at 889 calibration-valid buckets, 643 ordinal category-CDF
+buckets, and 232 continuous value-CDF buckets. Both local and tracked artifact stores pass checksum
+verification.
 
 The completed local pass is preserved separately from the cross-cluster proposal under
 `data_processing/auxiliary_reconciliation_v2/`. Its 2026-08-03 review covers all 17,368 non-null labels

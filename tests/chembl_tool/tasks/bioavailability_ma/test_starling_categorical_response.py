@@ -4,6 +4,7 @@ import pytest
 
 from tools.chembl_tool.common.starling.categorical_response import (
     BINARY_OUTCOME_UNIT,
+    ORDINAL_OUTCOME_UNIT,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
     POLICY,
@@ -26,6 +27,11 @@ class _NoAuxiliary:
         }
 
 
+class _NoReference:
+    def attach(self, record):
+        return {"canonical_reference_scope": "not_applicable"}
+
+
 def _apply(source_id: str, **fields):
     return POLICY.apply(
         {"source_id": source_id, "finite_scalar_value": None, **fields}
@@ -40,9 +46,9 @@ def test_direct_positive_wording_uses_the_high_category(value):
         bioavailability_report_type="absolute",
     )
     assert encoded["finite_scalar_value"] == 1.0
-    assert encoded["canonical_unit"] == BINARY_OUTCOME_UNIT
+    assert encoded["canonical_unit"] == ORDINAL_OUTCOME_UNIT
     assert encoded["categorical_encoder_id"] == (
-        "direct_oral_bioavailability_binary.v1"
+        "direct_oral_bioavailability_ordinal.v1"
     )
 
 
@@ -60,6 +66,31 @@ def test_direct_negative_wording_uses_the_low_category(value):
     "value",
     [
         "moderate",
+        "intermediate",
+        "moderate BA",
+        "intermediate oral bioavailability",
+        "moderate absolute oral bioavailability",
+    ],
+)
+def test_direct_middle_wording_uses_the_middle_category(value):
+    encoded = _apply(
+        "hf_bioavailability",
+        measurement_text=value,
+        bioavailability_report_type="absolute",
+    )
+    assert encoded["finite_scalar_value"] == 0.0
+    assert encoded["canonical_unit"] == ORDINAL_OUTCOME_UNIT
+    assert encoded["categorical_encoder_id"] == (
+        "direct_oral_bioavailability_ordinal.v1"
+    )
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "low to moderate",
+        "moderate to high",
+        "moderate/high",
         "orally bioavailable",
         "2-fold higher",
         "higher than reference",
@@ -99,8 +130,8 @@ def test_direct_qualitative_classifier_keeps_evidence_reason_vocabulary():
         "explicit_qualitative_low",
     )
     assert classify_direct_qualitative_text("moderate") == (
-        None,
-        "qualitative_value_not_threshold_anchored",
+        "middle",
+        "explicit_qualitative_middle",
     )
     assert classify_direct_qualitative_text("not high") == (
         None,
@@ -203,16 +234,17 @@ def test_enrichment_assigns_semantic_direct_endpoint_and_producer_ids():
             oral_bioavailability_value="high",
         ),
         _NoAuxiliary(),
+        _NoReference(),
     )
     assert enriched["canonical_endpoint"] == "oral_bioavailability_outcome"
     assert enriched["categorical_encoder_id"] == (
-        "direct_oral_bioavailability_binary.v1"
+        "direct_oral_bioavailability_ordinal.v1"
     )
     assert enriched["canonical_endpoint_producer_id"] == (
-        "direct_oral_bioavailability_binary.v1"
+        "direct_oral_bioavailability_ordinal.v1"
     )
     assert enriched["canonical_pair_producer_id"] == (
-        "direct_oral_bioavailability_binary.v1"
+        "direct_oral_bioavailability_ordinal.v1"
     )
     assert enriched["normalization_validity_status"] == "valid"
 
@@ -225,6 +257,7 @@ def test_enrichment_assigns_target_specific_fg_endpoint():
             transporter_or_enzyme="P-gp/ABCB1",
         ),
         _NoAuxiliary(),
+        _NoReference(),
     )
     assert enriched["canonical_endpoint"] == "fg_substrate_outcome:ABCB1"
     assert enriched["normalization_validity_status"] == "valid"
@@ -240,6 +273,7 @@ def test_parseable_unresolved_numeric_measurement_is_not_overwritten():
             transporter_or_enzyme="ABCB1",
         ),
         _NoAuxiliary(),
+        _NoReference(),
     )
     assert "categorical_encoder_id" not in enriched
 
@@ -250,8 +284,8 @@ def test_manifest_freezes_separate_domains_and_target_policy():
         item["scale_id"]: item for item in manifest["controlled_measurements"]
     }
     assert [item["category_id"] for item in scales[
-        "direct_oral_bioavailability_binary.v1"
-    ]["categories"]] == ["low", "high"]
+        "direct_oral_bioavailability_ordinal.v1"
+    ]["categories"]] == ["low", "middle", "high"]
     assert [item["category_id"] for item in scales[
         "fg_substrate_status_binary.v1"
     ]["categories"]] == ["not_substrate", "substrate"]

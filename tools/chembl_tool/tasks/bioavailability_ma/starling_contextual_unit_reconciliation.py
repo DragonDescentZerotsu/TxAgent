@@ -8,6 +8,7 @@ from typing import Any
 
 from tools.chembl_tool.common.starling.normalization.contracts import MeasurementPair
 from tools.chembl_tool.common.starling.normalization.measurements import (
+    has_non_atomic_directional_context,
     parse_point_measurement,
     render_point_measurement,
 )
@@ -100,19 +101,30 @@ def contextual_canonical_record_fields(record: Mapping[str, Any]) -> dict[str, A
     pair = contextual_standardization_of_unit(record, source_pair)
     parsed = parse_point_measurement(pair.canonical_measurement)
     canonical_unit_result = canonicalize_unit(pair.canonical_unit, task=_TASK_VOCAB)
+    non_atomic_directional_context = (
+        parsed.value is not None
+        and has_non_atomic_directional_context(
+            pair.canonical_measurement, pair.canonical_unit
+        )
+    )
     finite_scalar = (
         parsed.value
         if parsed.value is not None
         and bool(canonical_unit_result.cleaned)
         and not canonical_unit_result.unknown_tokens
         and pair.status != "ambiguous_scientific_notation"
+        and not non_atomic_directional_context
         else None
     )
     return {
         "canonical_measurement": pair.canonical_measurement,
         "canonical_unit": pair.canonical_unit,
         "measurement_parse_kind": parsed.kind,
-        "measurement_unit_status": pair.status,
+        "measurement_unit_status": (
+            "non_atomic_directional_context"
+            if non_atomic_directional_context
+            else pair.status
+        ),
         "unit_notation_status": pair.unit_notation_status,
         "unit_notation_factor": pair.unit_notation_factor,
         "unit_dimension_json": json.dumps(

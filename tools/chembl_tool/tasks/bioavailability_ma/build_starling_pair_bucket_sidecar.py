@@ -23,6 +23,7 @@ from tools.chembl_tool.common.starling.reference_semantics import (
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
+    BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
@@ -60,7 +61,9 @@ def build_sidecar(
         records,
         source_required_fields=pair_fields,
         contract_version=(
-            BIOAVAILABILITY_PAIR_BUCKET_VERSION
+            BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION
+            if v7
+            else BIOAVAILABILITY_PAIR_BUCKET_VERSION
         ),
         reference_eligibility_by_source=(
             {

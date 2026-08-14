@@ -29,6 +29,11 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling im
 )
 
 
+class _NoReference:
+    def attach(self, record):
+        return {"canonical_reference_scope": "not_applicable"}
+
+
 @pytest.mark.parametrize(
     ("text", "value", "variation", "semantic_label"),
     [
@@ -435,7 +440,7 @@ def test_fg_scalar_rules_integrate_with_normalization_and_pair_validation():
         source_measurement_resolver=resolve_fg_measurement_pair,
         family_resolver=family_assignment,
         record_enricher=lambda record: starling_policy._enrich_record(
-            record, auxiliary_attacher
+            record, auxiliary_attacher, _NoReference()
         ),
     )
 

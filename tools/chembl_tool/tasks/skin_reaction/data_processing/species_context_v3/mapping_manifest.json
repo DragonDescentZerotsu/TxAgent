@@ -1,0 +1,114 @@
+{
+  "artifact_version": "skin_species_context_mapping.v3",
+  "audit": {
+    "direct_skin_reaction": {
+      "global_context": {
+        "distinct_labels": 502,
+        "non_null": 7173,
+        "null": 1,
+        "tuples": 7174
+      },
+      "global_severity_grade": {
+        "distinct_labels": 5,
+        "non_null": 1876,
+        "null": 8566,
+        "tuples": 10442
+      },
+      "global_species_context": {
+        "distinct_labels": 24,
+        "non_null": 10966,
+        "null": 65,
+        "tuples": 11031
+      }
+    },
+    "phototoxicity_irritation_local_damage": {
+      "global_context": {
+        "distinct_labels": 13353,
+        "non_null": 157737,
+        "null": 1,
+        "tuples": 157738
+      },
+      "global_species_context": {
+        "distinct_labels": 13,
+        "non_null": 77,
+        "null": 11,
+        "tuples": 88
+      }
+    },
+    "sensitization_aop": {
+      "global_context": {
+        "distinct_labels": 966,
+        "non_null": 6291,
+        "null": 1,
+        "tuples": 6292
+      },
+      "global_endpoint_context": {
+        "distinct_labels": 1359,
+        "non_null": 7349,
+        "null": 1,
+        "tuples": 7350
+      },
+      "global_species_context": {
+        "distinct_labels": 12,
+        "non_null": 24219,
+        "null": 20700,
+        "tuples": 44919
+      }
+    },
+    "skin_exposure": {
+      "global_context": {
+        "distinct_labels": 22,
+        "non_null": 65,
+        "null": 14,
+        "tuples": 79
+      },
+      "global_species_context": {
+        "distinct_labels": 212,
+        "non_null": 21013,
+        "null": 1228,
+        "tuples": 22241
+      }
+    }
+  },
+  "base_mapping": {
+    "path": "tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+    "sha256": "d362f5dd94df41956a4c43a2e8de39f787b6d75cf8d2270461960277f78765fc"
+  },
+  "distillation_api": "/data1/joseph/therapeutic-tuning/distillation/api.py",
+  "mapping_version": "starling_auxiliary.skin_reaction.globally_reconciled.v3",
+  "model": "gpt-5.4-mini",
+  "output": {
+    "path": "tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+    "sha256": "63cfaa7b4764e2163d741197fdd4247963056cfc69b3d5266892822e9ad2965b"
+  },
+  "prompt_registry": {
+    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_value_prompts.json",
+    "sha256": "5794af50252a3cb40b5f77744a0b7315d189bd974e611175581efcd838503001"
+  },
+  "prompt_version": "starling_skin_embedding_bucket_mapping.v4",
+  "reasoning_effort": "low",
+  "response_validation_version": "skin_species_literal_support_gate.v1",
+  "selected_outputs": {
+    "sensitization_aop": [
+      "global_species_context"
+    ]
+  },
+  "token_usage": {
+    "budget": 500000,
+    "lifetime_usage": {
+      "cached_input_tokens": 0,
+      "input_tokens": 5237319,
+      "output_tokens": 414612,
+      "reasoning_tokens": 107337,
+      "total_tokens": 5651931
+    },
+    "request_reserve": 12000,
+    "run_usage": {
+      "cached_input_tokens": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 0
+    }
+  }
+}

@@ -199,8 +199,6 @@ class SkinMeasurementSemantics:
         if payload.get("policy_version") != MEASUREMENT_SEMANTICS_VERSION:
             raise ValueError("Skin measurement-semantics policy version mismatch")
         mapping = payload.get("frozen_auxiliary_mapping") or {}
-        if mapping.get("version") != MAPPING_VERSION:
-            raise ValueError("Skin measurement semantics names the wrong mapping version")
         expected_mapping_sha = _text(mapping.get("sha256"))
         from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 
@@ -209,6 +207,14 @@ class SkinMeasurementSemantics:
             raise ValueError(
                 "Skin measurement semantics mapping digest mismatch: "
                 f"expected {expected_mapping_sha}, found {actual_mapping_sha}"
+            )
+        actual_mapping_version = json.loads(
+            DEFAULT_MAPPING_PATH.read_text(encoding="utf-8")
+        ).get("mapping_version")
+        if mapping.get("version") != actual_mapping_version:
+            raise ValueError(
+                "Skin measurement semantics mapping version mismatch: "
+                f"expected {mapping.get('version')}, found {actual_mapping_version}"
             )
         source_sha = payload.get("source_sha256") or {}
         for source_id in NUMERIC_SOURCES:

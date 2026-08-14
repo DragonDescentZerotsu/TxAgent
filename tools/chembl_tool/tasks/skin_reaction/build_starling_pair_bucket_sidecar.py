@@ -27,6 +27,7 @@ from tools.chembl_tool.common.starling.reference_semantics import (
 from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
     ENDPOINT_FIELD_BY_SOURCE,
     SKIN_REACTION_PAIR_BUCKET_VERSION,
+    SKIN_REACTION_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_policy import DEFAULT_OUT_DIR
@@ -60,7 +61,9 @@ def build_sidecar(
         records,
         source_required_fields=pair_fields,
         contract_version=(
-            SKIN_REACTION_PAIR_BUCKET_VERSION
+            SKIN_REACTION_V7_PAIR_BUCKET_VERSION
+            if v7
+            else SKIN_REACTION_PAIR_BUCKET_VERSION
         ),
         endpoint_field_by_source=None if v7 else ENDPOINT_FIELD_BY_SOURCE,
         reference_eligibility_by_source=(
@@ -70,6 +73,15 @@ def build_sidecar(
                     spec.reference_basis_required,
                 )
                 for source, spec in RECORD_CONTRACT.pair_buckets.items()
+            }
+            if v7
+            else None
+        ),
+        required_known_fields_by_source=(
+            {
+                source: spec.required_known_dimensions
+                for source, spec in RECORD_CONTRACT.pair_buckets.items()
+                if spec.required_known_dimensions
             }
             if v7
             else None

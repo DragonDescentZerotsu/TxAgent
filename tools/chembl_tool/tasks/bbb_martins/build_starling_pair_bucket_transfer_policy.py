@@ -73,6 +73,10 @@ def build_pair_bucket_transfer_policy(
                 source: item.additional_dimensions
                 for source, item in RECORD_CONTRACT.pair_buckets.items()
             },
+            endpoint_field_by_source={
+                source: "canonical_endpoint_name"
+                for source in RECORD_CONTRACT.pair_buckets
+            },
         )
         return _build_distance_calibration(
             spec=spec,

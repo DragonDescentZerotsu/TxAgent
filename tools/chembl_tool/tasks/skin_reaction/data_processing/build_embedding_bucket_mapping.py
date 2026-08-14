@@ -11,12 +11,14 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import math
 import os
 import random
 import re
 import shutil
+import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -31,10 +33,14 @@ from sklearn.cluster import KMeans, MiniBatchKMeans
 from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers.reconciliation import (
     DEFAULT_OUTPUT,
     FORBIDDEN_OUTPUT,
+    MAPPING_VERSION,
     NULL_LIKE,
     SOURCE_SPECS,
     OutputSpec,
     build_mapping,
+    build_output_section,
+    _distinct_source_tuples,
+    _tuple_key,
     load_reviewed_mapping,
     validate_mapping,
 )
@@ -49,9 +55,14 @@ CLUSTER_RANDOM_SEED = 20260801
 MINIBATCH_SIZE = 4096
 MINIBATCH_N_INIT = 3
 MINIBATCH_MAX_ITER = 100
-PROMPT_VERSION = "starling_skin_embedding_bucket_mapping.v3"
+GENERAL_PROMPT_VERSION = "starling_skin_embedding_bucket_mapping.v3"
+SPECIES_PROMPT_VERSION = "starling_skin_embedding_bucket_mapping.v4"
+MIXED_PROMPT_VERSION = "starling_skin_embedding_bucket_mapping.mixed.v3_v4"
 LEDGER_VERSION = "starling_skin_auxiliary_token_ledger.v1"
 PROMPT_REGISTRY_PATH = Path(__file__).with_name("auxiliary_value_prompts.json")
+DISTILLATION_API_PATH = Path("/data1/joseph/therapeutic-tuning/distillation/api.py")
+DEFAULT_WORK_DIR = Path(__file__).with_name("species_context_v3")
+RESPONSE_VALIDATION_VERSION = "skin_species_literal_support_gate.v1"
 BUDGET_EXIT_CODE = 75
 USAGE_EXIT_CODE = 76
 API_EXIT_CODE = 77
@@ -71,6 +82,15 @@ class ExtractionSpec:
     clustering: str
     cluster_target_size: int = CLUSTER_TARGET_SIZE
     max_labels_per_call: int | None = None
+    input_columns: tuple[str, ...] = ()
+
+    @property
+    def resolved_input_columns(self) -> tuple[str, ...]:
+        return self.input_columns or (self.input_column,)
+
+    @property
+    def is_composite(self) -> bool:
+        return len(self.resolved_input_columns) > 1
 
 
 @dataclass(frozen=True)
@@ -115,18 +135,18 @@ def _atomic_json(path: Path, payload: Any) -> None:
 
 def _load_prompt_registry() -> dict[str, Any]:
     payload = json.loads(PROMPT_REGISTRY_PATH.read_text(encoding="utf-8"))
-    if payload.get("registry_version") != "starling_skin_auxiliary_prompts.v3":
+    if payload.get("registry_version") != "starling_skin_auxiliary_prompts.v4":
         raise ValueError("Skin auxiliary prompt registry version mismatch")
     prompts = payload.get("prompts")
     if not isinstance(prompts, dict):
         raise ValueError("Skin auxiliary prompt registry has no prompts")
     expected = {
-        (source_id, output.output_name): output.current_input_column
+        (source_id, output.output_name): list(output.extraction_input_columns)
         for source_id, source in SOURCE_SPECS.items()
         for output in source.outputs
         if output.label_source == "llm"
     }
-    actual: dict[tuple[str, str], str] = {}
+    actual: dict[tuple[str, str], list[str]] = {}
     for source_id, outputs in prompts.items():
         if not isinstance(outputs, dict):
             raise ValueError(f"prompt source {source_id!r} is not an object")
@@ -134,10 +154,12 @@ def _load_prompt_registry() -> dict[str, Any]:
             if not isinstance(section, dict):
                 raise ValueError(f"prompt {source_id}/{output_name} is not an object")
             prompt = section.get("prompt")
-            input_column = section.get("input_column")
+            input_columns = section.get("input_columns")
+            if input_columns is None and isinstance(section.get("input_column"), str):
+                input_columns = [section["input_column"]]
             if not isinstance(prompt, str) or not prompt.strip():
                 raise ValueError(f"prompt {source_id}/{output_name} is empty")
-            actual[(source_id, output_name)] = str(input_column or "")
+            actual[(source_id, output_name)] = list(input_columns or [])
     if actual != expected:
         raise ValueError(
             f"prompt inventory differs from SOURCE_SPECS: expected={expected} actual={actual}"
@@ -167,11 +189,43 @@ def _extraction(source_id: str, output: OutputSpec) -> ExtractionSpec:
         clustering=output.clustering,
         cluster_target_size=output.cluster_target_size,
         max_labels_per_call=output.max_labels_per_call,
+        input_columns=output.extraction_input_columns,
     )
 
 
 def _source_extractions(source_id: str) -> tuple[ExtractionSpec, ...]:
     return tuple(_extraction(source_id, output) for output in SOURCE_SPECS[source_id].outputs)
+
+
+def _uses_species_v4(extraction: ExtractionSpec) -> bool:
+    return (
+        extraction.source_id == "sensitization_aop"
+        and extraction.output_name == "global_species_context"
+    )
+
+
+def _prompt_version(extraction: ExtractionSpec) -> str:
+    return SPECIES_PROMPT_VERSION if _uses_species_v4(extraction) else GENERAL_PROMPT_VERSION
+
+
+def _client_kind(extraction: ExtractionSpec) -> str:
+    return "distillation" if _uses_species_v4(extraction) else "openai"
+
+
+def _selected_prompt_version(
+    selected_outputs: Mapping[str, set[str]],
+) -> str:
+    versions = {
+        _prompt_version(extraction)
+        for source_id, output_names in selected_outputs.items()
+        for extraction in _source_extractions(source_id)
+        if extraction.output_name in output_names
+    }
+    if versions == {GENERAL_PROMPT_VERSION}:
+        return GENERAL_PROMPT_VERSION
+    if versions == {SPECIES_PROMPT_VERSION}:
+        return SPECIES_PROMPT_VERSION
+    return MIXED_PROMPT_VERSION
 
 
 def _distinct_values(series: pd.Series) -> list[str]:
@@ -181,6 +235,33 @@ def _distinct_values(series: pd.Series) -> list[str]:
         if str(value).strip().casefold() not in NULL_LIKE
     }
     return sorted(values, key=lambda value: (value.casefold(), value))
+
+
+def _extraction_values(frame: pd.DataFrame, extraction: ExtractionSpec) -> list[str]:
+    if not extraction.is_composite:
+        return _distinct_values(frame[extraction.resolved_input_columns[0]])
+    return [
+        _tuple_key(values)
+        for values in _distinct_source_tuples(frame, extraction.resolved_input_columns)
+    ]
+
+
+def _packet_fields(extraction: ExtractionSpec, value: str) -> dict[str, str | None]:
+    if not extraction.is_composite:
+        return {extraction.resolved_input_columns[0]: value}
+    decoded = json.loads(value)
+    if not isinstance(decoded, list) or len(decoded) != len(extraction.resolved_input_columns):
+        raise ValueError("invalid composite extraction key")
+    return dict(zip(extraction.resolved_input_columns, decoded, strict=True))
+
+
+def _embedding_value(extraction: ExtractionSpec, value: str) -> str:
+    if not _uses_species_v4(extraction):
+        return value
+    return "\n".join(
+        f"{field}: {item or '[missing]'}"
+        for field, item in _packet_fields(extraction, value).items()
+    )
 
 
 def _mean_pool(last_hidden_state: Any, attention_mask: Any) -> Any:
@@ -324,6 +405,56 @@ def _clean_bucket(
     return bucket
 
 
+_SPECIES_LITERAL_PATTERNS: dict[str, re.Pattern[str]] = {
+    "human": re.compile(
+        r"\b(?:human|humans|patients?|subjects?|volunteers?|participants?|donors?)\b",
+        re.I,
+    ),
+    "mouse": re.compile(r"\b(?:mouse|mice|murine|mus\s+musculus)\b", re.I),
+    "rat": re.compile(r"\b(?:rat|rats|rattus(?:\s+norvegicus)?)\b", re.I),
+    "guinea pig": re.compile(r"\bguinea[\s-]*pigs?\b|\bcavia\s+porcellus\b", re.I),
+    "rabbit": re.compile(r"\b(?:rabbit|rabbits|oryctolagus\s+cuniculus)\b", re.I),
+    "pig": re.compile(r"(?<!guinea[\s-])\b(?:pig|pigs|porcine|swine|minipigs?|micropigs?|sus\s+scrofa)\b", re.I),
+    "dog": re.compile(r"\b(?:dog|dogs|canine|canines|beagle|beagles)\b", re.I),
+    "cattle": re.compile(r"\b(?:cattle|bovine|cow|cows)\b", re.I),
+    "sheep": re.compile(r"\b(?:sheep|ovine)\b", re.I),
+    "goat": re.compile(r"\b(?:goat|goats|caprine)\b", re.I),
+    "hamster": re.compile(r"\bhamsters?\b", re.I),
+    "rhesus monkey": re.compile(r"\b(?:rhesus|macaca\s+mulatta)\b", re.I),
+    "cynomolgus monkey": re.compile(r"\b(?:cynomolgus|macaca\s+fascicularis)\b", re.I),
+    "monkey": re.compile(r"\b(?:monkey|monkeys|macaque|macaques)\b", re.I),
+    "cat": re.compile(r"\b(?:cat|cats|feline)\b", re.I),
+    "horse": re.compile(r"\b(?:horse|horses|equine)\b", re.I),
+    "chicken": re.compile(r"\bchickens?\b", re.I),
+    "frog": re.compile(r"\b(?:frog|frogs|xenopus(?:\s+laevis)?)\b", re.I),
+    "snake": re.compile(r"\b(?:snake|snakes|snakeskin)\b", re.I),
+}
+_SPECIES_LABEL_ALIASES = {
+    "bovine": "cattle",
+    "cow": "cattle",
+    "canine": "dog",
+    "murine": "mouse",
+    "porcine": "pig",
+    "ovine": "sheep",
+    "caprine": "goat",
+}
+
+
+def _fail_closed_unsupported_species(
+    value: str | None, *, raw_packet: str, extraction: ExtractionSpec
+) -> str | None:
+    if value is None or not (
+        extraction.source_id == "sensitization_aop"
+        and extraction.output_name == "global_species_context"
+    ):
+        return value
+    canonical = _SPECIES_LABEL_ALIASES.get(value, value)
+    pattern = _SPECIES_LITERAL_PATTERNS.get(canonical)
+    if pattern is None or pattern.search(raw_packet) is None:
+        return None
+    return value
+
+
 def _validate_response(
     content: str | None, *, item_ids: Mapping[str, str], extraction: ExtractionSpec
 ) -> dict[str, str | None]:
@@ -340,14 +471,17 @@ def _validate_response(
         raise ValueError(
             f"mapping ID mismatch: missing={len(expected - actual)} extra={len(actual - expected)}"
         )
-    return {
-        item_id: _clean_bucket(
+    output: dict[str, str | None] = {}
+    for item_id, raw_packet in item_ids.items():
+        cleaned = _clean_bucket(
             mapping[item_id],
             null_sentinel=extraction.null_sentinel,
             bucket_pattern=extraction.bucket_pattern,
         )
-        for item_id in item_ids
-    }
+        output[item_id] = _fail_closed_unsupported_species(
+            cleaned, raw_packet=raw_packet, extraction=extraction
+        )
+    return output
 
 
 def _empty_usage() -> dict[str, int]:
@@ -381,14 +515,21 @@ def _response_usage(response: Any) -> tuple[dict[str, int], bool]:
 
 
 class TokenLedger:
-    def __init__(self, path: Path, *, model: str, reasoning_effort: str):
+    def __init__(
+        self,
+        path: Path,
+        *,
+        model: str,
+        reasoning_effort: str,
+        prompt_version: str = GENERAL_PROMPT_VERSION,
+    ):
         self.path = path
         self.lock = threading.RLock()
         if path.exists():
             payload = json.loads(path.read_text(encoding="utf-8"))
             if payload.get("ledger_version") != LEDGER_VERSION:
                 raise ValueError("token ledger version mismatch")
-            if payload.get("prompt_version") != PROMPT_VERSION:
+            if payload.get("prompt_version") != prompt_version:
                 raise ValueError("token ledger prompt identity mismatch")
             if payload.get("model") != model or payload.get("reasoning_effort") != reasoning_effort:
                 raise ValueError("token ledger model/reasoning identity mismatch")
@@ -396,7 +537,7 @@ class TokenLedger:
         else:
             self.payload = {
                 "ledger_version": LEDGER_VERSION,
-                "prompt_version": PROMPT_VERSION,
+                "prompt_version": prompt_version,
                 "model": model,
                 "reasoning_effort": reasoning_effort,
                 "lifetime_usage": _empty_usage(),
@@ -426,14 +567,18 @@ class TokenLedger:
 
 
 class TokenBudget:
-    def __init__(self, *, limit: int, ledger: TokenLedger):
+    def __init__(
+        self, *, limit: int, ledger: TokenLedger, request_reserve: int = 0
+    ):
         self.limit = limit
         self.ledger = ledger
+        self.request_reserve = request_reserve
         self.lock = threading.RLock()
         self.stop_event = threading.Event()
         self.accounting_error = threading.Event()
         self.non_retryable_error: str | None = None
         self.run_usage = _empty_usage()
+        self.in_flight_attempts = 0
 
     def before_attempt(self) -> None:
         with self.lock:
@@ -441,9 +586,13 @@ class TokenBudget:
                 raise NonRetryableAPIError(self.non_retryable_error)
             if self.accounting_error.is_set():
                 raise UsageUnavailable("provider token usage was unavailable")
-            if self.stop_event.is_set() or self.run_usage["total_tokens"] >= self.limit:
+            projected = self.run_usage["total_tokens"] + (
+                self.in_flight_attempts + 1
+            ) * self.request_reserve
+            if self.stop_event.is_set() or projected > self.limit:
                 self.stop_event.set()
                 raise BudgetExhausted("per-invocation token budget reached")
+            self.in_flight_attempts += 1
 
     def record(
         self,
@@ -454,6 +603,9 @@ class TokenBudget:
         usage_present: bool,
     ) -> None:
         with self.lock:
+            if self.in_flight_attempts < 1:
+                raise RuntimeError("token-budget attempt accounting underflow")
+            self.in_flight_attempts -= 1
             self.ledger.record(extraction_key, usage, status)
             for key in _empty_usage():
                 self.run_usage[key] += int(usage.get(key) or 0)
@@ -472,6 +624,7 @@ class TokenBudget:
     def summary(self) -> dict[str, Any]:
         return {
             "budget": self.limit,
+            "request_reserve": self.request_reserve,
             "run_usage": dict(self.run_usage),
             "lifetime_usage": dict(self.ledger.payload["lifetime_usage"]),
         }
@@ -481,23 +634,90 @@ class ClientHolder:
     def __init__(self, *, api_key_env: str | None):
         self.api_key_env = api_key_env
         self.lock = threading.Lock()
-        self.client: Any = None
+        self.clients: dict[str, Any] = {}
 
-    def get(self) -> Any:
+    def get(self, extraction: ExtractionSpec) -> Any:
+        client_kind = _client_kind(extraction)
         with self.lock:
-            if self.client is not None:
-                return self.client
-            if not self.api_key_env:
-                raise RuntimeError("--api-key-env is required for paid extraction")
-            api_key = os.environ.get(self.api_key_env)
-            if not api_key:
-                raise RuntimeError(
-                    f"environment variable {self.api_key_env} is unset; its value is never read from a file"
-                )
-            from openai import OpenAI
+            if client_kind in self.clients:
+                return self.clients[client_kind]
+            if client_kind == "openai":
+                if not self.api_key_env:
+                    raise RuntimeError("--api-key-env is required for v3 paid extraction")
+                api_key = os.environ.get(self.api_key_env)
+                if not api_key:
+                    raise RuntimeError(
+                        f"environment variable {self.api_key_env} is unset; its value is never read from a file"
+                    )
+                from openai import OpenAI
 
-            self.client = OpenAI(api_key=api_key)
-            return self.client
+                self.clients[client_kind] = OpenAI(api_key=api_key)
+                return self.clients[client_kind]
+            if self.api_key_env and not os.environ.get(self.api_key_env):
+                raise RuntimeError(
+                    f"environment variable {self.api_key_env} is unset; its value is never logged"
+                )
+            if not DISTILLATION_API_PATH.is_file():
+                raise FileNotFoundError(
+                    f"distillation API not found: {DISTILLATION_API_PATH}"
+                )
+            spec = importlib.util.spec_from_file_location(
+                "_txagent_skin_species_distillation_api", DISTILLATION_API_PATH
+            )
+            if spec is None or spec.loader is None:
+                raise RuntimeError("could not load the distillation API module")
+            module = importlib.util.module_from_spec(spec)
+            distillation_root = str(DISTILLATION_API_PATH.parent)
+            sys.path.insert(0, distillation_root)
+            try:
+                spec.loader.exec_module(module)
+            finally:
+                if sys.path and sys.path[0] == distillation_root:
+                    sys.path.pop(0)
+            self.clients[client_kind] = _DistillationClient(module.llm)
+            return self.clients[client_kind]
+
+
+class _DistillationCompletions:
+    def __init__(self, llm: Any):
+        self._llm = llm
+
+    def create(self, **request: Any) -> Any:
+        messages = request["messages"]
+        result = self._llm(
+            {"system": messages[0]["content"], "user": messages[1]["content"]},
+            model=request["model"],
+            max_tokens=16_384,
+            temperature=0.0,
+            verbose=False,
+            reasoning_effort=request.get("reasoning_effort"),
+            max_retries=1,
+        )
+        content = result.get("content")
+        usage = result.get("usage")
+        if content is None:
+            raise RuntimeError("distillation API returned no completion content")
+        return type(
+            "DistillationResponse",
+            (),
+            {
+                "choices": [
+                    type(
+                        "Choice",
+                        (),
+                        {"message": type("Message", (), {"content": content})()},
+                    )()
+                ],
+                "usage": usage,
+            },
+        )()
+
+
+class _DistillationClient:
+    def __init__(self, llm: Any):
+        self.chat = type(
+            "Chat", (), {"completions": _DistillationCompletions(llm)}
+        )()
 
 
 def _cache_identity(
@@ -508,7 +728,7 @@ def _cache_identity(
     reasoning_effort: str,
 ) -> str:
     payload = {
-        "prompt_version": PROMPT_VERSION,
+        "prompt_version": _prompt_version(extraction),
         "source_id": extraction.source_id,
         "input_column": extraction.input_column,
         "output_name": extraction.output_name,
@@ -521,6 +741,8 @@ def _cache_identity(
         "model": model,
         "reasoning_effort": reasoning_effort,
     }
+    if _uses_species_v4(extraction):
+        payload["input_columns"] = extraction.resolved_input_columns
     return hashlib.sha256(
         json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
     ).hexdigest()
@@ -569,6 +791,20 @@ def _append_cache(
             handle.flush()
 
 
+def _request_items(
+    extraction: ExtractionSpec, item_ids: Mapping[str, str]
+) -> list[dict[str, Any]]:
+    if _uses_species_v4(extraction):
+        return [
+            {"id": item_id, "fields": _packet_fields(extraction, value)}
+            for item_id, value in item_ids.items()
+        ]
+    return [
+        {"id": item_id, "value": value}
+        for item_id, value in item_ids.items()
+    ]
+
+
 def _query_cluster(
     client_holder: ClientHolder,
     *,
@@ -606,10 +842,7 @@ def _query_cluster(
                                 "response_contract": (
                                     "Return exactly one JSON object containing only the mapping object."
                                 ),
-                                "items": [
-                                    {"id": item_id, "value": value}
-                                    for item_id, value in item_ids.items()
-                                ]
+                                "items": _request_items(extraction, item_ids),
                             },
                             ensure_ascii=False,
                         ),
@@ -618,7 +851,7 @@ def _query_cluster(
             }
             if reasoning_effort:
                 request["reasoning_effort"] = reasoning_effort
-            response = client_holder.get().chat.completions.create(**request)
+            response = client_holder.get(extraction).chat.completions.create(**request)
             content = response.choices[0].message.content or ""
             usage, usage_present = _response_usage(response)
             try:
@@ -746,14 +979,18 @@ def _map_clusters(
         if not isinstance(raw_mapping, dict) or set(raw_mapping) != set(item_ids):
             raise ValueError(f"cached mapping ID mismatch for {cluster.cluster_id}")
         cluster_mappings[cluster.cluster_id] = {
-            item_id: (
-                None
-                if raw_mapping[item_id] is None
-                else _clean_bucket(
-                    raw_mapping[item_id],
-                    null_sentinel=extraction.null_sentinel,
-                    bucket_pattern=extraction.bucket_pattern,
-                )
+            item_id: _fail_closed_unsupported_species(
+                (
+                    None
+                    if raw_mapping[item_id] is None
+                    else _clean_bucket(
+                        raw_mapping[item_id],
+                        null_sentinel=extraction.null_sentinel,
+                        bucket_pattern=extraction.bucket_pattern,
+                    )
+                ),
+                raw_packet=item_ids[item_id],
+                extraction=extraction,
             )
             for item_id in item_ids
         }
@@ -843,14 +1080,20 @@ def _source_identity(
     source_id: str, *, model: str, reasoning_effort: str, embedding_model: str
 ) -> str:
     spec = SOURCE_SPECS[source_id]
+    extractions = _source_extractions(source_id)
+    uses_species_v4 = any(_uses_species_v4(item) for item in extractions)
     extraction_payload = []
-    for extraction in _source_extractions(source_id):
+    for extraction in extractions:
         reviewed_hash = (
             _file_sha256(extraction.reviewed_mapping_path)
             if extraction.reviewed_mapping_path is not None
             else None
         )
         extraction_identity = dict(extraction.__dict__)
+        if not uses_species_v4:
+            # Reproduce the frozen v3 dataclass payload exactly so unaffected
+            # source snapshots remain valid after the species-only upgrade.
+            extraction_identity.pop("input_columns")
         if extraction.cluster_target_size == CLUSTER_TARGET_SIZE:
             extraction_identity.pop("cluster_target_size")
         if extraction.max_labels_per_call is None:
@@ -863,7 +1106,9 @@ def _source_identity(
             }
         )
     payload = {
-        "prompt_version": PROMPT_VERSION,
+        "prompt_version": (
+            MIXED_PROMPT_VERSION if uses_species_v4 else GENERAL_PROMPT_VERSION
+        ),
         "source_id": source_id,
         "source_sha256": _file_sha256(spec.parquet_path),
         "model": model,
@@ -878,6 +1123,8 @@ def _source_identity(
         },
         "extractions": extraction_payload,
     }
+    if uses_species_v4:
+        payload["response_validation_version"] = RESPONSE_VALIDATION_VERSION
     return hashlib.sha256(
         json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str).encode()
     ).hexdigest()
@@ -939,32 +1186,44 @@ def _build_source(
     cache_dir: Path,
     client_holder: ClientHolder,
     budget: TokenBudget,
+    selected_output_names: set[str] | None = None,
 ) -> dict[str, Any]:
-    cached_snapshot = _load_snapshot(
-        cache_dir,
-        source_id,
-        model=args.model,
-        reasoning_effort=args.reasoning_effort,
-        embedding_model=args.embedding_model,
-    )
-    if cached_snapshot is not None:
-        print(f"[{source_id}] complete source snapshot cached", flush=True)
-        return cached_snapshot
     spec = SOURCE_SPECS[source_id]
-    extractions = _source_extractions(source_id)
-    columns = sorted({item.input_column for item in extractions})
+    all_extractions = _source_extractions(source_id)
+    extractions = tuple(
+        item
+        for item in all_extractions
+        if selected_output_names is None or item.output_name in selected_output_names
+    )
+    if not extractions:
+        return {}
+    complete_source = len(extractions) == len(all_extractions)
+    if complete_source:
+        cached_snapshot = _load_snapshot(
+            cache_dir,
+            source_id,
+            model=args.model,
+            reasoning_effort=args.reasoning_effort,
+            embedding_model=args.embedding_model,
+        )
+        if cached_snapshot is not None:
+            print(f"[{source_id}] complete source snapshot cached", flush=True)
+            return cached_snapshot
+    columns = sorted(
+        {column for item in extractions for column in item.resolved_input_columns}
+    )
     frame = pd.read_parquet(spec.parquet_path, columns=columns)
-    values_by_column = {
-        column: _distinct_values(frame[column]) for column in columns
-    }
-    clustered_columns = {
-        extraction.input_column: extraction
+    values_by_extraction = {
+        extraction.output_name: _extraction_values(frame, extraction)
         for extraction in extractions
-        if extraction.label_source == "llm"
     }
     groups = {
-        f"{source_id}/{column}": values_by_column[column]
-        for column in clustered_columns
+        f"{source_id}/{extraction.output_name}": [
+            _embedding_value(extraction, value)
+            for value in values_by_extraction[extraction.output_name]
+        ]
+        for extraction in extractions
+        if extraction.label_source == "llm"
     }
     device = args.device
     if device == "auto":
@@ -981,10 +1240,9 @@ def _build_source(
         if groups
         else {}
     )
-    clusters_by_config: dict[tuple[str, str, int, int | None], list[Cluster]] = {}
     nested: dict[str, dict[str, dict[str, str | None]]] = {}
     for extraction in extractions:
-        values = values_by_column[extraction.input_column]
+        values = values_by_extraction[extraction.output_name]
         if extraction.label_source == "reviewed_table":
             if extraction.reviewed_mapping_path is None:
                 raise ValueError(f"{source_id}/{extraction.output_name} has no reviewed table")
@@ -996,22 +1254,13 @@ def _build_source(
                 )
             resolved = {value: mapping[value] for value in values}
         else:
-            cluster_config = (
-                extraction.input_column,
-                extraction.clustering,
-                extraction.cluster_target_size,
-                extraction.max_labels_per_call,
+            clusters = _clusters_from_embeddings(
+                values,
+                embeddings[f"{source_id}/{extraction.output_name}"],
+                clustering=extraction.clustering,
+                target_size=extraction.cluster_target_size,
+                max_labels_per_call=extraction.max_labels_per_call,
             )
-            clusters = clusters_by_config.get(cluster_config)
-            if clusters is None:
-                clusters = _clusters_from_embeddings(
-                    values,
-                    embeddings[f"{source_id}/{extraction.input_column}"],
-                    clustering=extraction.clustering,
-                    target_size=extraction.cluster_target_size,
-                    max_labels_per_call=extraction.max_labels_per_call,
-                )
-                clusters_by_config[cluster_config] = clusters
             cache_path = cache_dir / f"{source_id}__{extraction.output_name}.jsonl"
             resolved = _map_clusters(
                 client_holder=client_holder,
@@ -1036,39 +1285,47 @@ def _build_source(
             f"labels={counts.index.dropna().nunique():,} null={sum(v is None for v in resolved.values()):,}",
             flush=True,
         )
-    _atomic_json(
-        _snapshot_path(cache_dir, source_id),
-        {
-            "identity": _source_identity(
-                source_id,
-                model=args.model,
-                reasoning_effort=args.reasoning_effort,
-                embedding_model=args.embedding_model,
-            ),
-            "mapping": nested,
-        },
-    )
+    if complete_source:
+        _atomic_json(
+            _snapshot_path(cache_dir, source_id),
+            {
+                "identity": _source_identity(
+                    source_id,
+                    model=args.model,
+                    reasoning_effort=args.reasoning_effort,
+                    embedding_model=args.embedding_model,
+                ),
+                "mapping": nested,
+            },
+        )
     return nested
 
 
 def dry_run(args: argparse.Namespace) -> None:
-    selected = args.sources or list(SOURCE_SPECS)
+    selected_outputs = _selected_outputs(args)
     total = 0
-    for source_id in selected:
+    for source_id, output_names in selected_outputs.items():
         spec = SOURCE_SPECS[source_id]
-        columns = sorted({item.current_input_column for item in spec.outputs})
+        extractions = tuple(
+            item for item in _source_extractions(source_id) if item.output_name in output_names
+        )
+        columns = sorted({column for item in extractions for column in item.resolved_input_columns})
         frame = pd.read_parquet(spec.parquet_path, columns=columns)
-        for extraction in _source_extractions(source_id):
-            values = _distinct_values(frame[extraction.input_column])
-            calls = (
-                math.ceil(len(values) / extraction.cluster_target_size)
-                if extraction.label_source == "llm"
-                else 0
-            )
+        for extraction in extractions:
+            values = _extraction_values(frame, extraction)
+            calls = 0
+            if extraction.label_source == "llm":
+                calls = math.ceil(
+                    len(values)
+                    / min(
+                        extraction.cluster_target_size,
+                        extraction.max_labels_per_call or extraction.cluster_target_size,
+                    )
+                )
             total += calls
             print(
                 f"[{source_id}/{extraction.output_name}] method={extraction.label_source} "
-                f"column={extraction.input_column} distinct={len(values):,} "
+                f"columns={','.join(extraction.resolved_input_columns)} distinct={len(values):,} "
                 f"clustering={extraction.clustering} minimum_calls={calls:,} "
                 f"max_labels_per_call={extraction.max_labels_per_call or 'unbounded'}"
             )
@@ -1076,31 +1333,140 @@ def dry_run(args: argparse.Namespace) -> None:
     print("dry run complete; no API client or embedding model was loaded")
 
 
+def _selected_outputs(args: argparse.Namespace) -> dict[str, set[str]]:
+    if args.only_output:
+        selected: dict[str, set[str]] = {}
+        valid = {
+            f"{source_id}/{output.output_name}"
+            for source_id, source in SOURCE_SPECS.items()
+            for output in source.outputs
+        }
+        for key in args.only_output:
+            if key not in valid:
+                raise ValueError(f"unknown --only-output {key!r}")
+            source_id, output_name = key.split("/", 1)
+            selected.setdefault(source_id, set()).add(output_name)
+        return selected
+    sources = args.sources or list(SOURCE_SPECS)
+    return {
+        source_id: {output.output_name for output in SOURCE_SPECS[source_id].outputs}
+        for source_id in sources
+    }
+
+
+def _publish_focused_mapping(
+    *,
+    args: argparse.Namespace,
+    first_stage: Mapping[str, Any],
+    selected_outputs: Mapping[str, set[str]],
+    budget: TokenBudget,
+    work_dir: Path,
+) -> dict[str, Any]:
+    uses_species_v4 = any(
+        _uses_species_v4(extraction)
+        for source_id, output_names in selected_outputs.items()
+        for extraction in _source_extractions(source_id)
+        if extraction.output_name in output_names
+    )
+    base_path = Path(args.base_mapping)
+    if not base_path.is_file():
+        raise FileNotFoundError(f"focused publication requires --base-mapping: {base_path}")
+    base_sha256 = _file_sha256(base_path)
+    payload = json.loads(base_path.read_text(encoding="utf-8"))
+    if set(payload) != {"mapping_version", "sources"}:
+        raise ValueError("invalid base auxiliary mapping")
+    payload["mapping_version"] = MAPPING_VERSION
+    for source_id, output_names in selected_outputs.items():
+        for output_name in output_names:
+            payload["sources"][source_id][output_name] = build_output_section(
+                first_stage[source_id], source=source_id, output_name=output_name
+            )
+    audit = validate_mapping(payload)
+    # A focused paid pass is only a local candidate.  It must not replace the
+    # runtime mapping before independent global reconciliation and explicit
+    # publication approval.
+    destination = work_dir / "candidate_v3_mapping.json"
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    os.replace(temporary, destination)
+    manifest = {
+        "artifact_version": "skin_species_context_mapping.v3",
+        "mapping_version": MAPPING_VERSION,
+        "prompt_version": _selected_prompt_version(selected_outputs),
+        "model": args.model,
+        "reasoning_effort": args.reasoning_effort,
+        "selected_outputs": {
+            source: sorted(outputs) for source, outputs in sorted(selected_outputs.items())
+        },
+        "base_mapping": {"path": str(base_path), "sha256": base_sha256},
+        "candidate_output": {
+            "path": str(destination),
+            "sha256": _file_sha256(destination),
+            "publication_status": "requires_global_reconciliation",
+        },
+        "prompt_registry": {
+            "path": str(PROMPT_REGISTRY_PATH),
+            "sha256": _file_sha256(PROMPT_REGISTRY_PATH),
+        },
+        "audit": audit,
+        "token_usage": budget.summary(),
+    }
+    if uses_species_v4:
+        manifest["response_validation_version"] = RESPONSE_VALIDATION_VERSION
+        manifest["distillation_api"] = str(DISTILLATION_API_PATH)
+    _atomic_json(work_dir / "mapping_manifest.json", manifest)
+    return manifest
+
+
 def run(args: argparse.Namespace) -> int:
     if args.dry_run:
         dry_run(args)
         return 0
     destination = Path(args.output)
-    if destination.exists() and not args.overwrite:
-        raise FileExistsError(f"output exists: {destination}; pass --overwrite to replace it")
-    cache_dir = destination.with_suffix(destination.suffix + ".cache")
-    ledger_path = Path(args.token_ledger) if args.token_ledger else destination.with_suffix(
-        destination.suffix + ".token_ledger.json"
+    selected_outputs = _selected_outputs(args)
+    focused = bool(args.only_output)
+    work_dir = Path(args.work_dir) if focused else destination.parent
+    write_target = work_dir / "candidate_v3_mapping.json" if focused else destination
+    if write_target.exists() and not args.overwrite:
+        raise FileExistsError(
+            f"output exists: {write_target}; pass --overwrite to replace it"
+        )
+    cache_dir = (
+        work_dir / "cluster_cache"
+        if focused
+        else destination.with_suffix(destination.suffix + ".cache")
+    )
+    ledger_path = Path(args.token_ledger) if args.token_ledger else (
+        work_dir / "token_ledger.json"
+        if focused
+        else destination.with_suffix(destination.suffix + ".token_ledger.json")
     )
     ledger = TokenLedger(
-        ledger_path, model=args.model, reasoning_effort=args.reasoning_effort
+        ledger_path,
+        model=args.model,
+        reasoning_effort=args.reasoning_effort,
+        prompt_version=_selected_prompt_version(selected_outputs),
     )
-    budget = TokenBudget(limit=args.token_budget, ledger=ledger)
+    budget = TokenBudget(
+        limit=args.token_budget,
+        ledger=ledger,
+        request_reserve=args.request_token_reserve,
+    )
     client_holder = ClientHolder(api_key_env=args.api_key_env)
-    selected = args.sources or list(SOURCE_SPECS)
+    first_stage: dict[str, Any] = {}
     try:
-        for source_id in selected:
-            _build_source(
+        for source_id, output_names in selected_outputs.items():
+            first_stage[source_id] = _build_source(
                 args,
                 source_id=source_id,
                 cache_dir=cache_dir,
                 client_holder=client_holder,
                 budget=budget,
+                selected_output_names=output_names,
             )
     except BudgetExhausted as exc:
         print(f"budget stop: {exc}", flush=True)
@@ -1115,7 +1481,20 @@ def run(args: argparse.Namespace) -> int:
         print(json.dumps(budget.summary(), indent=2, sort_keys=True), flush=True)
         return API_EXIT_CODE
 
-    first_stage: dict[str, Any] = {}
+    if focused:
+        manifest = _publish_focused_mapping(
+            args=args,
+            first_stage=first_stage,
+            selected_outputs=selected_outputs,
+            budget=budget,
+            work_dir=work_dir,
+        )
+        print(json.dumps(manifest["audit"], indent=2, sort_keys=True), flush=True)
+        print(json.dumps(budget.summary(), indent=2, sort_keys=True), flush=True)
+        print(f"wrote candidate {manifest['candidate_output']['path']}", flush=True)
+        return 0
+
+    first_stage = {}
     missing: list[str] = []
     accepted_snapshot_models = [args.model, *args.compatible_snapshot_model]
     for source_id in SOURCE_SPECS:
@@ -1181,8 +1560,24 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--max-retries", type=int, default=5)
     parser.add_argument("--retry-delay", type=float, default=2.0)
     parser.add_argument("--token-budget", type=int, default=DEFAULT_TOKEN_BUDGET)
+    parser.add_argument(
+        "--request-token-reserve",
+        type=int,
+        default=12_000,
+        help=(
+            "Conservative reservation for each in-flight request so concurrency "
+            "cannot overshoot the invocation token ceiling."
+        ),
+    )
     parser.add_argument("--token-ledger")
     parser.add_argument("--api-key-env")
+    parser.add_argument("--work-dir", default=str(DEFAULT_WORK_DIR))
+    parser.add_argument("--base-mapping", default=str(DEFAULT_OUTPUT))
+    parser.add_argument(
+        "--only-output",
+        action="append",
+        help="Build and replace one source/output section using --base-mapping; may repeat.",
+    )
     parser.add_argument(
         "--sources", nargs="+", choices=tuple(SOURCE_SPECS), help="Paid phase sources"
     )
@@ -1193,10 +1588,10 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("batch size, workers, and retries must be positive")
     if args.retry_delay < 0:
         parser.error("retry delay cannot be negative")
-    if args.token_budget < 1:
-        parser.error("--token-budget must be positive")
-    if not args.dry_run and not args.api_key_env:
-        parser.error("--api-key-env is required for paid extraction or cache finalization")
+    if args.token_budget < 1 or args.request_token_reserve < 0:
+        parser.error("--token-budget must be positive and --request-token-reserve nonnegative")
+    if args.only_output and args.sources:
+        parser.error("--only-output and --sources are mutually exclusive")
     return args
 
 

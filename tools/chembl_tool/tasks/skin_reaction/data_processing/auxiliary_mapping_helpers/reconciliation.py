@@ -24,7 +24,7 @@ REPO_ROOT = Path(__file__).resolve().parents[6]
 DATA_ROOT = REPO_ROOT / "data/starling_data/skin_reaction"
 MAPPING_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = MAPPING_ROOT / "globally_reconciled_auxiliary_value_mapping.json"
-MAPPING_VERSION = "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+MAPPING_VERSION = "starling_auxiliary.skin_reaction.globally_reconciled.v4"
 
 NULL_LIKE = {
     "",
@@ -59,6 +59,14 @@ class OutputSpec:
     clustering: str = "lloyd"
     cluster_target_size: int = 100
     max_labels_per_call: int | None = None
+    # Most historical extractions normalize one source column.  Composite
+    # extractions keep the same first-stage container shape but build each
+    # item from this complete source-field tuple.
+    current_input_columns: tuple[str, ...] | None = None
+
+    @property
+    def extraction_input_columns(self) -> tuple[str, ...]:
+        return self.current_input_columns or (self.current_input_column,)
 
 
 @dataclass(frozen=True)
@@ -101,11 +109,18 @@ SOURCE_SPECS = {
         outputs=(
             OutputSpec(("assay_type",), "global_context", "assay_type", "canonical_context"),
             OutputSpec(
-                ("assay_type",),
+                ("assay_type", "experimental_conditions", "support_text"),
                 "global_species_context",
-                "assay_type",
+                "species_evidence_packet",
                 "canonical_species",
                 null_sentinel="no species",
+                clustering="minibatch",
+                max_labels_per_call=50,
+                current_input_columns=(
+                    "assay_type",
+                    "experimental_conditions",
+                    "support_text",
+                ),
             ),
             OutputSpec(
                 ("endpoint_or_target",),
@@ -402,16 +417,20 @@ def _current_value(
     output: OutputSpec,
     source_values: tuple[str | None, ...],
 ) -> str | None:
-    primary_index = output.source_columns.index(output.current_input_column)
-    primary_value = source_values[primary_index]
-    if primary_value is None:
-        return None
     mapping = current[output.current_input_column][output.current_output_column]
-    if primary_value not in mapping:
+    if output.current_input_column in output.source_columns:
+        primary_index = output.source_columns.index(output.current_input_column)
+        primary_value = source_values[primary_index]
+        if primary_value is None:
+            return None
+        lookup_key = primary_value
+    else:
+        lookup_key = _tuple_key(source_values)
+    if lookup_key not in mapping:
         raise KeyError(
-            f"current mapping lacks {output.current_input_column}={primary_value!r}"
+            f"current mapping lacks {output.current_input_column}={lookup_key!r}"
         )
-    return mapping[primary_value]
+    return mapping[lookup_key]
 
 
 def _context_override(raw_value: str | None, current_label: str | None) -> str | None:
@@ -483,6 +502,12 @@ def _species_context(
 
     if baseline_species:
         return _format_species_set(baseline_species)
+
+    if source == "sensitization_aop":
+        # The v3 classifier has already seen the complete row-level species
+        # packet.  A null is an intentional abstention and must not be replaced
+        # by a regex match over incidental prose or reagent organisms.
+        return None
 
     if source in {"skin_exposure", "direct_skin_reaction"}:
         # These are dedicated tissue/population fields; a species named there is
@@ -558,6 +583,35 @@ def build_mapping(first_stage: Mapping[str, Any]) -> dict[str, Any]:
             }
         sources[source] = source_outputs
     return {"mapping_version": MAPPING_VERSION, "sources": sources}
+
+
+def build_output_section(
+    first_stage_source: Mapping[str, Any],
+    *,
+    source: str,
+    output_name: str,
+) -> dict[str, Any]:
+    """Build one final tuple-keyed section for a focused resumable run."""
+    source_spec = SOURCE_SPECS[source]
+    output = next(
+        (item for item in source_spec.outputs if item.output_name == output_name),
+        None,
+    )
+    if output is None:
+        raise ValueError(f"unknown auxiliary output {source}/{output_name}")
+    current = {str(key): value for key, value in first_stage_source.items()}
+    _source_first_stage({source: current}, source, SourceSpec(source_spec.parquet_path, (output,)))
+    frame = pd.read_parquet(source_spec.parquet_path, columns=list(output.source_columns))
+    result: dict[str, str | None] = {}
+    for source_values in _distinct_source_tuples(frame, output.source_columns):
+        baseline = _current_value(current, output, source_values)
+        result[_tuple_key(source_values)] = _reconcile_output(
+            source, output, source_values, baseline
+        )
+    return {
+        "source_columns": list(output.source_columns),
+        "mapping": dict(sorted(result.items())),
+    }
 
 
 def validate_mapping(payload: dict[str, Any]) -> dict[str, Any]:

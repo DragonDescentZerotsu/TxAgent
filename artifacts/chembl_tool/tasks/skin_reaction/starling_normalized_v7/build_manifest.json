@@ -1,6 +1,6 @@
 {
   "artifact_version": "starling_canonical_evidence.v7",
-  "auxiliary_attachment_version": "starling_auxiliary_attachment.skin_reaction.v2",
+  "auxiliary_attachment_version": "starling_auxiliary_attachment.skin_reaction.v3",
   "categorical_response_version": "skin_reaction_categorical_response.v1",
   "compact_artifact_version": "skin_reaction.compact_v6.v1.v7",
   "completed_artifact_stages": [
@@ -31,23 +31,23 @@
     "sha256": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef"
   },
   "downstream_artifact_hashes": {
-    "distance_calibration": "aa5d3f750bb3af59ec9d9c0ed772810aed0ccc28ec8aee8bbbe7157d37fb624a",
+    "distance_calibration": "f0b17f9a1150d5f9bb4d942a807e4d4efb8e2799f93265b36d5d0131e5006334",
     "heldout_exclusions": "88f5e71dd3b44c92bfcd285cffdee41f3601937e2880228533b06662381cb73d",
-    "heldout_overlap_manifest": "50817bec108d2b524f7e1ad55be62b7ac9df2a59827f34ff6688ff2cf16d361d",
-    "pair_bucket_metadata": "b659ecb61b298f025d63d0de2b29940d03ddb1e97df7b27f1b51517e45bd77f7",
-    "pair_bucket_records": "e3dd61d51b6c060c03f05be6739cfb13562808e6d764b66edd12125734ebf38f",
-    "random_filtered_records": "c79c95ac67d805d43390135c81103e63ccd498e458aab32d334b0f6827b59b12",
+    "heldout_overlap_manifest": "278f749b70258bf837d08a77f6e42816f0b21c528cb03e02e7c50dd22396ddff",
+    "pair_bucket_metadata": "5366503f052663af02542b86ce15637c9f388e9ff96a4ce34ca6d27dbac1ae0a",
+    "pair_bucket_records": "cf483cd9457ad7b008c79d44dd10d943f88ee3f19cdf8e5fd65dd76041aacc76",
+    "random_filtered_records": "e67dde9f15bdba88c72450333647b3ee3a4eeaba6bc96ee2719bb8a486c28a90",
     "random_molecule_families": "eeea5922ca33f22f32bd0558e02a208edf92ac71a2cb5d8aa7a4a99f78e24227",
     "random_molecule_family_records": "77200e168879d2cfaff925d31ee5569acc89e69876b7e6c853af4eefb858e1a7",
-    "random_neighbor_index_manifest": "680fd890216c2b9b3601485ab1b830512a857005855537dea7c24a7997713a2e",
-    "scaffold_filtered_records": "987dd46809dc40058f61f967427430666ec181bfabdd116ecea616d502dfa650",
+    "random_neighbor_index_manifest": "c861c273bfd933a9efed39acb7c03a54de9913fef97bfed22ea95f01f7d37e55",
+    "scaffold_filtered_records": "a5057754ce5a48a229912bc0a2e444dcb49e2fc0ce2422f033e68c6cdad8aa9d",
     "scaffold_molecule_families": "2d1deed60c9795862ec8ec7d60a57610d91010e0d2ea0eac17e2f768cc30109d",
     "scaffold_molecule_family_records": "bf75034d9efbfa499f295fb183b3488dff3005783542fabc81ec185e6ad66d20",
-    "scaffold_neighbor_index_manifest": "bc1b272a7bc1a971cf11575c6956ca1f31294d42dd442ea4814595924aba89d3"
+    "scaffold_neighbor_index_manifest": "bd3fb6cc1d0f45981265e903683172b62d82976fb5265bdc55e3a4740cb3a7ad"
   },
   "downstream_build_cache": {
     "completed_stage": "09_audits",
-    "content_key": "959af9e6b4502caa1a222370253ad747cb831b1fbf02e1239e9c1a5a112e5e0d",
+    "content_key": "00b9e6360864e79ff9bab84a0499c2e4aae971bbe6adeef17b58a47be5646e46",
     "implementation": {
       "files": {
         "tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
@@ -58,12 +58,13 @@
         "tools/chembl_tool/common/starling/auxiliary_metadata.py": "8d541c3cec6d88917104bf34bed927d0f3b09cf34127179d80d8f9a2a59bf343",
         "tools/chembl_tool/common/starling/benchmark_dataset.py": "3e35bf02dcd9bfd9c18f464a40eab2f225f0c9caf3979ec09bd1f4eb1e2965a4",
         "tools/chembl_tool/common/starling/build_benchmark_datasets.py": "ee6e54011b8ffdf56e875ef218f63a88a7305e7774105e12bb3cb45ee15e07c4",
-        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "0fe0ad913f1054fd172a7b9a2cf83002b529a1b64234518a089393eb5d6367fa",
-        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "e5070ce794543c4b3f69bd512459f10d4a67099ce63971ac1a24ade8a390038f",
+        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "b56fe23d6ea17bed45eb37305ac0f4e0f9b94854be66fa8458010dc833d0baba",
+        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "41c466a4df72d733db58f73fd50531db768c454717e677ffb39dfd860abe0957",
         "tools/chembl_tool/common/starling/build_pair_bucket_transfer_policy.py": "5bcd027201aa4bf55020d2651db7999fa1e8f4aa267d099636d90ff78020522a",
+        "tools/chembl_tool/common/starling/build_reference_semantics_mapping.py": "1c855975c60fd4cb3c613dd6d42d1884fe0a306ad9f3f652f89f3c9825ee866d",
         "tools/chembl_tool/common/starling/build_runtime.py": "12096532ba7dc7f6eedd4ea1e34ca2435816b0e436e66c6394aca6782f159a9b",
-        "tools/chembl_tool/common/starling/canonicalization_v7.py": "08a57eefd0fd68ac6440b30aa9f099f71f26c5aea41ccd29197b42bb7292c5dd",
-        "tools/chembl_tool/common/starling/categorical_response.py": "cb0e26fc76fa5eac334989d3b1e746917000893dbf2cb620c9c5a4fa51e48547",
+        "tools/chembl_tool/common/starling/canonicalization_v7.py": "ba1f1e7c45f3b9d4e941f2fed99dbf1eaf341d91debacdefa3632c8a84390129",
+        "tools/chembl_tool/common/starling/categorical_response.py": "56ebb5a90dfdba6506f0a9a2b80fb3098210c04dcbe60f0e2b9818a24251bb7d",
         "tools/chembl_tool/common/starling/clustered_auxiliary_mapping.py": "978fd30b6e127bf428f6aaf9c2d138cd03a19e9364dd6137b9555016ac25610b",
         "tools/chembl_tool/common/starling/compact_artifacts.py": "7588f9651a57231e300e68caadc423cf69bcfe35d9ad720030a29e54a07d5f44",
         "tools/chembl_tool/common/starling/evidence_library.py": "0cf14431925e7c9557ec36e53aa260ab549956de687210cba9c16665b9eb2568",
@@ -75,74 +76,80 @@
         "tools/chembl_tool/common/starling/normalization/measurements.py": "a4a2f783012914883f1467b1e012e230c648e8d5bd14151ec0cda9057583838d",
         "tools/chembl_tool/common/starling/normalization/organization.py": "2354ae5f39446dc5fb8daa074a00553d7945b8613f6ede21b4f616f782aede1d",
         "tools/chembl_tool/common/starling/normalization/source_value_cleaning.py": "e24ed4dc3d28d4c016580e2eaae0f6dbc26b88be5db23dd97c13e09797096849",
-        "tools/chembl_tool/common/starling/normalization/task_policy.py": "79e98cf23e35d534a8b74a84b58048d1922f7e5bc954f3e02f8d52e05ef885bd",
+        "tools/chembl_tool/common/starling/normalization/task_policy.py": "246792dff0fa483a4143e409a2d977aeb161135a0d8e98a7c6ed54421b529d95",
         "tools/chembl_tool/common/starling/normalized_evidence.py": "c94439d0afbfd260dda7d42b35e80bdd31b9a552ed8fdd3e00e775076437e870",
         "tools/chembl_tool/common/starling/oral_bioavailability.py": "cb9ffd7d828e0ab4083f6d98da132c227da20816371823a25396ae311a4f88fe",
         "tools/chembl_tool/common/starling/pair_bucket_transfer_policy.py": "2797fc74b90197003946e382d825f4f2b9f5e6a2fd5d76673a5c5d4159396580",
-        "tools/chembl_tool/common/starling/pair_buckets.py": "c194068f930675ed18d10d94efe188618d69d0e109efa9e05c0c54ae4a9301a8",
+        "tools/chembl_tool/common/starling/pair_buckets.py": "5911a5e1165719202f726bab40a0151fff71c4e9d455ebb97b0a43f73f8fb790",
         "tools/chembl_tool/common/starling/policy_distance.py": "17f2170b2c65718d84258f60af7a6882ca785d000a5992984babe4db8a5fc6e9",
-        "tools/chembl_tool/common/starling/split_downstream.py": "e2dda862d2788e2c19794750483416c1b1644350abb38326ec81cb8753beece9",
+        "tools/chembl_tool/common/starling/reference_semantics.py": "14a5c8ed2929ccf6486e0fa589556e91d14c666cee7abe0a8feabe5f2f72ce42",
+        "tools/chembl_tool/common/starling/split_downstream.py": "99a6adbd8a9ba05d3285bf5d1156f40f16957c3d708c0d828ba12f929dc8c92d",
         "tools/chembl_tool/common/starling/stage_artifact_store.py": "e74992cb936e89f2907b83a47a65c31831f1333b3ecd9abef341d134cc78d7da",
         "tools/chembl_tool/common/starling/v7_benchmark_view.py": "a766f15d444714d31510d9f89cdd16104715003d5aa62cb282ab72ba85f08a96",
         "tools/chembl_tool/common/task_workflows/evidence_library.py": "03d96fa341ecef662155dfcdd42354e25084698b2176006a403320202ad34fe2",
         "tools/chembl_tool/common/units.py": "a6f03bc9409bef9d334aa042293944ea35ad5adbaa2fdf273610eb788b3cca5c",
         "tools/chembl_tool/tasks/skin_reaction/build_normalized_starling_evidence_library.py": "7fe5b2e0d33b282f3b734f5036caad161254f94633d35bdac5dc7d65f453c3d8",
-        "tools/chembl_tool/tasks/skin_reaction/build_starling_downstream_artifacts.py": "e1210130a3b40a0d0876da8431420423e7e5d268ef35ea2415bed9e753fa02a7",
+        "tools/chembl_tool/tasks/skin_reaction/build_starling_downstream_artifacts.py": "032ad5bb8838ffa047c61c67b62acd0685a6a5551bc57a6d18cc4d483a14145c",
         "tools/chembl_tool/tasks/skin_reaction/build_starling_evidence_library.py": "4746f4481b1739cd75a8bbdc5a59fd0355b494d0c57cb4bdc5e5b99b27341347",
-        "tools/chembl_tool/tasks/skin_reaction/build_starling_pair_bucket_sidecar.py": "e19639ef064172f1e7cdaf57a48413d999bc4578a2200c4e69c3ac137807fcf6",
-        "tools/chembl_tool/tasks/skin_reaction/build_starling_pair_bucket_transfer_policy.py": "0c8cca52285d61431ba1b23764061bbeb1e1aee9c058ca8a862338ad214b6ec6",
-        "tools/chembl_tool/tasks/skin_reaction/data_processing/canonicalization_v7/measurement_semantics.json": "5865da52f26413ef2c238c72af1de6f1ece6a7aebf6dc3312d158db6317ba2c2",
+        "tools/chembl_tool/tasks/skin_reaction/build_starling_pair_bucket_sidecar.py": "64d988133b190834535bc50d69f60868253c0a2a505a6a59a752c0e2969193e7",
+        "tools/chembl_tool/tasks/skin_reaction/build_starling_pair_bucket_transfer_policy.py": "1321fd0795fe7ef1d0dab8be47e33af6454465313921e32109635aeb01d6f090",
+        "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_value_prompts.json": "5794af50252a3cb40b5f77744a0b7315d189bd974e611175581efcd838503001",
+        "tools/chembl_tool/tasks/skin_reaction/data_processing/canonicalization_v7/measurement_semantics.json": "b74be1d294c70338bdd4fca18713962500108060c3f49ebb22b0958458ae6097",
+        "tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07",
+        "tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_prompts.json": "76a90a480811ab82c4f4e65925a60cffb8556830c44dfe385e60fb4632b270f0",
         "tools/chembl_tool/tasks/skin_reaction/starling_artifact_store.py": "6f3a5a9ea327fdf70f314177f37c1f9e57243b60e023a57d8a1af840e351e9a2",
-        "tools/chembl_tool/tasks/skin_reaction/starling_auxiliary_metadata.py": "ce736e237f0627b24e60f83b569fedcb44832da591d0b0b019cb2d48280910d3",
+        "tools/chembl_tool/tasks/skin_reaction/starling_auxiliary_metadata.py": "c0d97cd0f7989cdcc43f1076289922e676620f890b6076923677e8c134574e3d",
         "tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py": "342590dc23ece453c73fe7cec4a0c4bb251bfa980103e0caab2262a971a19633",
         "tools/chembl_tool/tasks/skin_reaction/starling_categorical_response.py": "01c889a0a3ca2cc9e6da3c16a041026e5a2fb2bbd5b20a00d2d4bb0ae51a7f32",
         "tools/chembl_tool/tasks/skin_reaction/starling_compact_artifacts.py": "e4bf9590aa4805f4a459c23d0e37ee3d587baf5fb1e50f88c342be79d39d7588",
-        "tools/chembl_tool/tasks/skin_reaction/starling_measurement_semantics.py": "1eb0aaefa6ce98eb5a180c13ea8ffe1d21f24372defb432ef95ebe4b14dadb12",
+        "tools/chembl_tool/tasks/skin_reaction/starling_measurement_semantics.py": "56dd19b95f318169ecc1772a44f8ee87dc37a1c0058c515dd1a76c2858a8efb3",
         "tools/chembl_tool/tasks/skin_reaction/starling_normalization_policy.py": "28bfa07766479ed3729acd7a6c60cb34b768f522106a941f4484eca0a4e40964",
         "tools/chembl_tool/tasks/skin_reaction/starling_normalization_sources.py": "4e1a24b389cbe88c6af1558c130dc43b7284fb1f9e20e341eefbe14433834a2e",
         "tools/chembl_tool/tasks/skin_reaction/starling_pair_bucket_transfer_policy.py": "a3373088cc3c4cca625ac0c34974ec9eb222ff2aea28e3679db5aa464475fad7",
-        "tools/chembl_tool/tasks/skin_reaction/starling_pair_buckets.py": "a4e8c5695a258b4157566a3ede64b314248bc914233894d3f99254c4087e387c",
-        "tools/chembl_tool/tasks/skin_reaction/starling_policy.py": "b2cbd1d35da0986311c4e989b322c8c19425681dda2696a2c7bf0cfc66b44a2e",
+        "tools/chembl_tool/tasks/skin_reaction/starling_pair_buckets.py": "5f2190802c1d030f849629613859b88dc78556e3a5e275ba6d0d98bdc0416dce",
+        "tools/chembl_tool/tasks/skin_reaction/starling_policy.py": "62284ba933c574d1e5962b2c94af56f6f5d3fbc868463f4cc10f8b1d63b8dbd5",
         "tools/chembl_tool/tasks/skin_reaction/starling_record_canonicalization.py": "d20283b4b272e1b96fecddf1ab8c25daabc5deb45377e35054e57907fcddf6d2",
-        "tools/chembl_tool/tasks/skin_reaction/starling_schema.py": "09776e540458995ad5aec2c80f8e4fe3c077046bd254e8d6376d278e5834b37c",
+        "tools/chembl_tool/tasks/skin_reaction/starling_reference_semantics.py": "1237a3a02c62a25137eabeb32831a33d57191a3287a421fe4b41b589c1f6c2d3",
+        "tools/chembl_tool/tasks/skin_reaction/starling_schema.py": "4703954ee2521089136f17b013794fbf5a8c8dcfc0f9f2f99b26c679636ee4f6",
         "tools/chembl_tool/tasks/skin_reaction/starling_source_column_contracts.py": "011a15fee0c3cf5d82e5ac3a7824ee8d32d276db13cd5799a9179b7320c3037c",
-        "tools/chembl_tool/tasks/skin_reaction/starling_spacing_and_spelling.py": "08593ae21bec6ccf41cd6670e017537ee48f737aee10b222c712f3975fbf52df"
+        "tools/chembl_tool/tasks/skin_reaction/starling_spacing_and_spelling.py": "08593ae21bec6ccf41cd6670e017537ee48f737aee10b222c712f3975fbf52df",
+        "tools/chembl_tool/tasks/skin_reaction/starling_v7_artifact_store.py": "6fe47ab0dc202fd2cd24eb6827ae075044ad7012bf40e92ff1986c5f5f2f24a5"
       },
-      "sha256": "a527f8abf0fd423f004201aab5feca7ed2f95967ce9974531a9a1d30cd74ee08",
+      "sha256": "42167719e3094f5462737aceb60a153ceb172e1054c892ddf9d60a49026c6026",
       "version": "starling_build_runtime.v2"
     },
-    "implementation_sha256": "a527f8abf0fd423f004201aab5feca7ed2f95967ce9974531a9a1d30cd74ee08",
+    "implementation_sha256": "42167719e3094f5462737aceb60a153ceb172e1054c892ddf9d60a49026c6026",
     "inputs": {
       "data/processed_starling/Skin_Reaction/random/heldout_molecule_labels.jsonl": "9f5031b98eaf458252aa310f1b75bc28759e15ca75a2c163814c3d93bbc8bd59",
       "data/processed_starling/Skin_Reaction/random/train_molecule_labels.jsonl": "887b5e065f47ac6327de6bbe2944ae1a1c345af3e17617beaebb9634d8fdc6e1",
       "data/processed_starling/Skin_Reaction/scaffold/heldout_molecule_labels.jsonl": "145b473fc15215e0ff8a1930f67f3b86f62d5a6f5ddab749a1a63520d6f20a6d",
       "data/processed_starling/Skin_Reaction/scaffold/train_molecule_labels.jsonl": "92dca143558fc197f0126c8aa498ee76735744b9118b68d569c563f1448d9fa0",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "d5751b6fe650baa526d81fe45ad36fa58f0dbcaf2d319e1a7a7e37e66c3c13b8",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet": "14741bd1bb8bf6fe1a81bcc4343603d4d4430fc4a8fb1f4c3c9e132f91b75191"
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "e1479ffc975a97c490ff228f0de93aef7ddb143c4b710adbb903cc481f7fc339",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697"
     },
     "outputs": {
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_metadata.json": "b659ecb61b298f025d63d0de2b29940d03ddb1e97df7b27f1b51517e45bd77f7",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_records.parquet": "e3dd61d51b6c060c03f05be6739cfb13562808e6d764b66edd12125734ebf38f",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/05_distance_calibration/pair_bucket_distance_calibration.json.gz": "aa5d3f750bb3af59ec9d9c0ed772810aed0ccc28ec8aee8bbbe7157d37fb624a",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_metadata.json": "5366503f052663af02542b86ce15637c9f388e9ff96a4ce34ca6d27dbac1ae0a",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_records.parquet": "cf483cd9457ad7b008c79d44dd10d943f88ee3f19cdf8e5fd65dd76041aacc76",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/05_distance_calibration/pair_bucket_distance_calibration.json.gz": "f0b17f9a1150d5f9bb4d942a807e4d4efb8e2799f93265b36d5d0131e5006334",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/excluded_direct_skin_reaction_records.parquet": "88f5e71dd3b44c92bfcd285cffdee41f3601937e2880228533b06662381cb73d",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/manifest.json": "50817bec108d2b524f7e1ad55be62b7ac9df2a59827f34ff6688ff2cf16d361d",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/random/records.parquet": "c79c95ac67d805d43390135c81103e63ccd498e458aab32d334b0f6827b59b12",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/scaffold/records.parquet": "987dd46809dc40058f61f967427430666ec181bfabdd116ecea616d502dfa650",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/07_molecule_evidence/random/manifest.json": "8df0a16555b375b2c4b77522386e8f609b0a683e94236417eb098becc082aa2f",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/manifest.json": "278f749b70258bf837d08a77f6e42816f0b21c528cb03e02e7c50dd22396ddff",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/random/records.parquet": "e67dde9f15bdba88c72450333647b3ee3a4eeaba6bc96ee2719bb8a486c28a90",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/scaffold/records.parquet": "a5057754ce5a48a229912bc0a2e444dcb49e2fc0ce2422f033e68c6cdad8aa9d",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/07_molecule_evidence/random/manifest.json": "a30ae670ef9e5669772cebf3011ad1dda1a00ec943757469796d3535ccd7e5e1",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_families.parquet": "eeea5922ca33f22f32bd0558e02a208edf92ac71a2cb5d8aa7a4a99f78e24227",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_family_records.parquet": "77200e168879d2cfaff925d31ee5569acc89e69876b7e6c853af4eefb858e1a7",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/manifest.json": "d5ef203cc9a30d320c902e711bd2fe683d0b4212b904c51a2413dde6a6bd3b2e",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/manifest.json": "6e22e7be8c074aa2dfeaf127938a8b14a21733330ba7f672a42291c16057029e",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_families.parquet": "2d1deed60c9795862ec8ec7d60a57610d91010e0d2ea0eac17e2f768cc30109d",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_family_records.parquet": "bf75034d9efbfa499f295fb183b3488dff3005783542fabc81ec185e6ad66d20",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/random/fingerprints.npz": "58226ec57bbbcb5f6d370797af10c98d8c31c014f4a69a65a87f26df237831d6",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/random/group_membership.parquet": "582ef67e32b322745342806558586fceef2e799177758799736c3b7ef3540e90",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/random/manifest.json": "680fd890216c2b9b3601485ab1b830512a857005855537dea7c24a7997713a2e",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/random/manifest.json": "c861c273bfd933a9efed39acb7c03a54de9913fef97bfed22ea95f01f7d37e55",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/random/molecules.parquet": "739d3eff3a7252ca5a384a77103cbc56368daeb958d89a9c250334c1a5c1a403",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/fingerprints.npz": "bcd908b37ee8c0926cf0bbc82b5d1121636f8475da106cd6f4ca35335256e80b",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/group_membership.parquet": "ac6e1c23efae85495c98cc8f8f8d8faccbb141d77fccf9bc7cb39fa74e94c073",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/manifest.json": "bc1b272a7bc1a971cf11575c6956ca1f31294d42dd442ea4814595924aba89d3",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/manifest.json": "bd3fb6cc1d0f45981265e903683172b62d82976fb5265bdc55e3a4740cb3a7ad",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/molecules.parquet": "35d9c633847d57c4894a6509f0beed1ec744982ec142d6e5dc98422ff4d114b8",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/09_audits/heldout_overlap.json": "12a8b2b06a5ae4f2b870d3b0b128676a1e1cf5172d0cfb6724610a16b9509b71"
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/09_audits/heldout_overlap.json": "01730bcce85047288848426ed96a1653f923ab4d90b6b93c55c83192e57249ac"
     },
     "semantic_arguments": {
       "benchmark_split_root": "data/processed_starling/Skin_Reaction",
@@ -168,8 +175,8 @@
     "unfiltered_record_stage": "03_records"
   },
   "downstream_stats": {
-    "calibration_valid_buckets": 920,
-    "pair_buckets": 23630,
+    "calibration_valid_buckets": 889,
+    "pair_buckets": 23968,
     "splits": {
       "random": {
         "excluded_filter_source_records": 5820,
@@ -185,8 +192,8 @@
       }
     }
   },
-  "elapsed_downstream_s": 105.994,
-  "elapsed_s": 518.571,
+  "elapsed_downstream_s": 117.34,
+  "elapsed_s": 535.53,
   "endpoint_inventory": {
     "direct_skin_reaction": {
       "count": 30,
@@ -52928,7 +52935,13 @@
     "03_records/exclusions.parquet",
     "03_records/manifest.json",
     "03_records/records.parquet",
-    "03_records/scalar_distribution.parquet"
+    "03_records/scalar_distribution.parquet",
+    "04_pair_buckets",
+    "05_distance_calibration",
+    "06_remove_heldout_overlap",
+    "07_molecule_evidence",
+    "08_neighbor_index",
+    "09_audits"
   ],
   "measurement_semantics_version": "skin_reaction_measurement_semantics.v1",
   "normalization_domain_rules_version": "skin_reaction_normalization_domains.v1",
@@ -53041,7 +53054,7 @@
   },
   "record_build_cache": {
     "completed_stage": "organize",
-    "content_key": "d91b2cfed5670fcce6269cc671345fa1a04347d4aa8aff1ff74d56a10bf6d61c",
+    "content_key": "138675e0353d44c5417c8d8aeedd41682f64be747c7aeb3557e1c71250449e07",
     "implementation": {
       "files": {
         "tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
@@ -53052,12 +53065,13 @@
         "tools/chembl_tool/common/starling/auxiliary_metadata.py": "8d541c3cec6d88917104bf34bed927d0f3b09cf34127179d80d8f9a2a59bf343",
         "tools/chembl_tool/common/starling/benchmark_dataset.py": "3e35bf02dcd9bfd9c18f464a40eab2f225f0c9caf3979ec09bd1f4eb1e2965a4",
         "tools/chembl_tool/common/starling/build_benchmark_datasets.py": "ee6e54011b8ffdf56e875ef218f63a88a7305e7774105e12bb3cb45ee15e07c4",
-        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "0fe0ad913f1054fd172a7b9a2cf83002b529a1b64234518a089393eb5d6367fa",
-        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "e5070ce794543c4b3f69bd512459f10d4a67099ce63971ac1a24ade8a390038f",
+        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "b56fe23d6ea17bed45eb37305ac0f4e0f9b94854be66fa8458010dc833d0baba",
+        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "41c466a4df72d733db58f73fd50531db768c454717e677ffb39dfd860abe0957",
         "tools/chembl_tool/common/starling/build_pair_bucket_transfer_policy.py": "5bcd027201aa4bf55020d2651db7999fa1e8f4aa267d099636d90ff78020522a",
+        "tools/chembl_tool/common/starling/build_reference_semantics_mapping.py": "1c855975c60fd4cb3c613dd6d42d1884fe0a306ad9f3f652f89f3c9825ee866d",
         "tools/chembl_tool/common/starling/build_runtime.py": "12096532ba7dc7f6eedd4ea1e34ca2435816b0e436e66c6394aca6782f159a9b",
-        "tools/chembl_tool/common/starling/canonicalization_v7.py": "08a57eefd0fd68ac6440b30aa9f099f71f26c5aea41ccd29197b42bb7292c5dd",
-        "tools/chembl_tool/common/starling/categorical_response.py": "cb0e26fc76fa5eac334989d3b1e746917000893dbf2cb620c9c5a4fa51e48547",
+        "tools/chembl_tool/common/starling/canonicalization_v7.py": "ba1f1e7c45f3b9d4e941f2fed99dbf1eaf341d91debacdefa3632c8a84390129",
+        "tools/chembl_tool/common/starling/categorical_response.py": "56ebb5a90dfdba6506f0a9a2b80fb3098210c04dcbe60f0e2b9818a24251bb7d",
         "tools/chembl_tool/common/starling/clustered_auxiliary_mapping.py": "978fd30b6e127bf428f6aaf9c2d138cd03a19e9364dd6137b9555016ac25610b",
         "tools/chembl_tool/common/starling/compact_artifacts.py": "7588f9651a57231e300e68caadc423cf69bcfe35d9ad720030a29e54a07d5f44",
         "tools/chembl_tool/common/starling/evidence_library.py": "0cf14431925e7c9557ec36e53aa260ab549956de687210cba9c16665b9eb2568",
@@ -53069,52 +53083,60 @@
         "tools/chembl_tool/common/starling/normalization/measurements.py": "a4a2f783012914883f1467b1e012e230c648e8d5bd14151ec0cda9057583838d",
         "tools/chembl_tool/common/starling/normalization/organization.py": "2354ae5f39446dc5fb8daa074a00553d7945b8613f6ede21b4f616f782aede1d",
         "tools/chembl_tool/common/starling/normalization/source_value_cleaning.py": "e24ed4dc3d28d4c016580e2eaae0f6dbc26b88be5db23dd97c13e09797096849",
-        "tools/chembl_tool/common/starling/normalization/task_policy.py": "79e98cf23e35d534a8b74a84b58048d1922f7e5bc954f3e02f8d52e05ef885bd",
+        "tools/chembl_tool/common/starling/normalization/task_policy.py": "246792dff0fa483a4143e409a2d977aeb161135a0d8e98a7c6ed54421b529d95",
         "tools/chembl_tool/common/starling/normalized_evidence.py": "c94439d0afbfd260dda7d42b35e80bdd31b9a552ed8fdd3e00e775076437e870",
         "tools/chembl_tool/common/starling/oral_bioavailability.py": "cb9ffd7d828e0ab4083f6d98da132c227da20816371823a25396ae311a4f88fe",
         "tools/chembl_tool/common/starling/pair_bucket_transfer_policy.py": "2797fc74b90197003946e382d825f4f2b9f5e6a2fd5d76673a5c5d4159396580",
-        "tools/chembl_tool/common/starling/pair_buckets.py": "c194068f930675ed18d10d94efe188618d69d0e109efa9e05c0c54ae4a9301a8",
+        "tools/chembl_tool/common/starling/pair_buckets.py": "5911a5e1165719202f726bab40a0151fff71c4e9d455ebb97b0a43f73f8fb790",
         "tools/chembl_tool/common/starling/policy_distance.py": "17f2170b2c65718d84258f60af7a6882ca785d000a5992984babe4db8a5fc6e9",
-        "tools/chembl_tool/common/starling/split_downstream.py": "e2dda862d2788e2c19794750483416c1b1644350abb38326ec81cb8753beece9",
+        "tools/chembl_tool/common/starling/reference_semantics.py": "14a5c8ed2929ccf6486e0fa589556e91d14c666cee7abe0a8feabe5f2f72ce42",
+        "tools/chembl_tool/common/starling/split_downstream.py": "99a6adbd8a9ba05d3285bf5d1156f40f16957c3d708c0d828ba12f929dc8c92d",
         "tools/chembl_tool/common/starling/stage_artifact_store.py": "e74992cb936e89f2907b83a47a65c31831f1333b3ecd9abef341d134cc78d7da",
         "tools/chembl_tool/common/starling/v7_benchmark_view.py": "a766f15d444714d31510d9f89cdd16104715003d5aa62cb282ab72ba85f08a96",
         "tools/chembl_tool/common/task_workflows/evidence_library.py": "03d96fa341ecef662155dfcdd42354e25084698b2176006a403320202ad34fe2",
         "tools/chembl_tool/common/units.py": "a6f03bc9409bef9d334aa042293944ea35ad5adbaa2fdf273610eb788b3cca5c",
         "tools/chembl_tool/tasks/skin_reaction/build_normalized_starling_evidence_library.py": "7fe5b2e0d33b282f3b734f5036caad161254f94633d35bdac5dc7d65f453c3d8",
-        "tools/chembl_tool/tasks/skin_reaction/build_starling_downstream_artifacts.py": "e1210130a3b40a0d0876da8431420423e7e5d268ef35ea2415bed9e753fa02a7",
+        "tools/chembl_tool/tasks/skin_reaction/build_starling_downstream_artifacts.py": "032ad5bb8838ffa047c61c67b62acd0685a6a5551bc57a6d18cc4d483a14145c",
         "tools/chembl_tool/tasks/skin_reaction/build_starling_evidence_library.py": "4746f4481b1739cd75a8bbdc5a59fd0355b494d0c57cb4bdc5e5b99b27341347",
-        "tools/chembl_tool/tasks/skin_reaction/build_starling_pair_bucket_sidecar.py": "e19639ef064172f1e7cdaf57a48413d999bc4578a2200c4e69c3ac137807fcf6",
-        "tools/chembl_tool/tasks/skin_reaction/build_starling_pair_bucket_transfer_policy.py": "0c8cca52285d61431ba1b23764061bbeb1e1aee9c058ca8a862338ad214b6ec6",
-        "tools/chembl_tool/tasks/skin_reaction/data_processing/canonicalization_v7/measurement_semantics.json": "5865da52f26413ef2c238c72af1de6f1ece6a7aebf6dc3312d158db6317ba2c2",
+        "tools/chembl_tool/tasks/skin_reaction/build_starling_pair_bucket_sidecar.py": "64d988133b190834535bc50d69f60868253c0a2a505a6a59a752c0e2969193e7",
+        "tools/chembl_tool/tasks/skin_reaction/build_starling_pair_bucket_transfer_policy.py": "1321fd0795fe7ef1d0dab8be47e33af6454465313921e32109635aeb01d6f090",
+        "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_value_prompts.json": "5794af50252a3cb40b5f77744a0b7315d189bd974e611175581efcd838503001",
+        "tools/chembl_tool/tasks/skin_reaction/data_processing/canonicalization_v7/measurement_semantics.json": "b74be1d294c70338bdd4fca18713962500108060c3f49ebb22b0958458ae6097",
+        "tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07",
+        "tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_prompts.json": "76a90a480811ab82c4f4e65925a60cffb8556830c44dfe385e60fb4632b270f0",
         "tools/chembl_tool/tasks/skin_reaction/starling_artifact_store.py": "6f3a5a9ea327fdf70f314177f37c1f9e57243b60e023a57d8a1af840e351e9a2",
-        "tools/chembl_tool/tasks/skin_reaction/starling_auxiliary_metadata.py": "ce736e237f0627b24e60f83b569fedcb44832da591d0b0b019cb2d48280910d3",
+        "tools/chembl_tool/tasks/skin_reaction/starling_auxiliary_metadata.py": "c0d97cd0f7989cdcc43f1076289922e676620f890b6076923677e8c134574e3d",
         "tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py": "342590dc23ece453c73fe7cec4a0c4bb251bfa980103e0caab2262a971a19633",
         "tools/chembl_tool/tasks/skin_reaction/starling_categorical_response.py": "01c889a0a3ca2cc9e6da3c16a041026e5a2fb2bbd5b20a00d2d4bb0ae51a7f32",
         "tools/chembl_tool/tasks/skin_reaction/starling_compact_artifacts.py": "e4bf9590aa4805f4a459c23d0e37ee3d587baf5fb1e50f88c342be79d39d7588",
-        "tools/chembl_tool/tasks/skin_reaction/starling_measurement_semantics.py": "1eb0aaefa6ce98eb5a180c13ea8ffe1d21f24372defb432ef95ebe4b14dadb12",
+        "tools/chembl_tool/tasks/skin_reaction/starling_measurement_semantics.py": "56dd19b95f318169ecc1772a44f8ee87dc37a1c0058c515dd1a76c2858a8efb3",
         "tools/chembl_tool/tasks/skin_reaction/starling_normalization_policy.py": "28bfa07766479ed3729acd7a6c60cb34b768f522106a941f4484eca0a4e40964",
         "tools/chembl_tool/tasks/skin_reaction/starling_normalization_sources.py": "4e1a24b389cbe88c6af1558c130dc43b7284fb1f9e20e341eefbe14433834a2e",
         "tools/chembl_tool/tasks/skin_reaction/starling_pair_bucket_transfer_policy.py": "a3373088cc3c4cca625ac0c34974ec9eb222ff2aea28e3679db5aa464475fad7",
-        "tools/chembl_tool/tasks/skin_reaction/starling_pair_buckets.py": "a4e8c5695a258b4157566a3ede64b314248bc914233894d3f99254c4087e387c",
-        "tools/chembl_tool/tasks/skin_reaction/starling_policy.py": "b2cbd1d35da0986311c4e989b322c8c19425681dda2696a2c7bf0cfc66b44a2e",
+        "tools/chembl_tool/tasks/skin_reaction/starling_pair_buckets.py": "5f2190802c1d030f849629613859b88dc78556e3a5e275ba6d0d98bdc0416dce",
+        "tools/chembl_tool/tasks/skin_reaction/starling_policy.py": "62284ba933c574d1e5962b2c94af56f6f5d3fbc868463f4cc10f8b1d63b8dbd5",
         "tools/chembl_tool/tasks/skin_reaction/starling_record_canonicalization.py": "d20283b4b272e1b96fecddf1ab8c25daabc5deb45377e35054e57907fcddf6d2",
-        "tools/chembl_tool/tasks/skin_reaction/starling_schema.py": "09776e540458995ad5aec2c80f8e4fe3c077046bd254e8d6376d278e5834b37c",
+        "tools/chembl_tool/tasks/skin_reaction/starling_reference_semantics.py": "1237a3a02c62a25137eabeb32831a33d57191a3287a421fe4b41b589c1f6c2d3",
+        "tools/chembl_tool/tasks/skin_reaction/starling_schema.py": "4703954ee2521089136f17b013794fbf5a8c8dcfc0f9f2f99b26c679636ee4f6",
         "tools/chembl_tool/tasks/skin_reaction/starling_source_column_contracts.py": "011a15fee0c3cf5d82e5ac3a7824ee8d32d276db13cd5799a9179b7320c3037c",
-        "tools/chembl_tool/tasks/skin_reaction/starling_spacing_and_spelling.py": "08593ae21bec6ccf41cd6670e017537ee48f737aee10b222c712f3975fbf52df"
+        "tools/chembl_tool/tasks/skin_reaction/starling_spacing_and_spelling.py": "08593ae21bec6ccf41cd6670e017537ee48f737aee10b222c712f3975fbf52df",
+        "tools/chembl_tool/tasks/skin_reaction/starling_v7_artifact_store.py": "6fe47ab0dc202fd2cd24eb6827ae075044ad7012bf40e92ff1986c5f5f2f24a5"
       },
-      "sha256": "a527f8abf0fd423f004201aab5feca7ed2f95967ce9974531a9a1d30cd74ee08",
+      "sha256": "42167719e3094f5462737aceb60a153ceb172e1054c892ddf9d60a49026c6026",
       "version": "starling_build_runtime.v2"
     },
-    "implementation_sha256": "a527f8abf0fd423f004201aab5feca7ed2f95967ce9974531a9a1d30cd74ee08",
+    "implementation_sha256": "42167719e3094f5462737aceb60a153ceb172e1054c892ddf9d60a49026c6026",
     "inputs": {
       "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
       "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07",
+      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet": "f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2",
       "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1",
       "data/starling_data/skin_reaction/phototoxicity_irritation_local_damage/extractions.parquet": "c942e956be13c80d3f6075922dcc3731ffaea298dd824b2cf8f09598238501db",
       "data/starling_data/skin_reaction/sensitization_aop/extractions.parquet": "3eca3f70d1243795bc37f06e31795566295ce8ea3bf03e810efd3807152cf2c8",
       "data/starling_data/skin_reaction/skin_exposure/extractions.parquet": "14f9ba586b6744e7412867110080ad9bf7b51b2ae39be0d12572f9ce66fd7713",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "3747038e3f6c6be11efd1af85c1e7863254ee3824ce1e2f81342b5f1ff8f70cf",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "a082ea46661fa342be43c77852c663f0e757ea5f3ee22c037bd433181163b623"
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "f92e6c12ee40cffb5ba6443e5da50d70075ac309beb315a5f561e877936dde0e"
     },
     "outputs": {
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/01_cleaned/endpoint_inventory.json": "ef962a9c2fb24f7d6dd5ba5d6ba03fab37f8721405be471a9bd41b3887bc9b67",
@@ -53122,27 +53144,33 @@
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "3747038e3f6c6be11efd1af85c1e7863254ee3824ce1e2f81342b5f1ff8f70cf",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/01_cleaned/source_inventory.json": "d0ad9c520f0fc9d57c9e607f570bf428bab30af13ca7482c59ecc03fb95b9ad3",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/01_cleaned/source_value_cleaning_audit.parquet": "3322b8180d8fa4a37a657516f1450cd9844d1dd73a27493a725ffbc886df1a43",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "d5751b6fe650baa526d81fe45ad36fa58f0dbcaf2d319e1a7a7e37e66c3c13b8",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "e1479ffc975a97c490ff228f0de93aef7ddb143c4b710adbb903cc481f7fc339",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/endpoint_registry.json": "6efc73ccc31d922fb69b565d9b4842465b5ce65fe9023a566623ee3471002c2d",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "89e703dc0dc6d7db104309fd9eeba9f3ba754caefd79c3dbcefb48dee78c8ebe",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "98321be36af27668ba7d481c722d04cb9eb4b87a3a9b4747a4ec8db3c59b42a1",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "a082ea46661fa342be43c77852c663f0e757ea5f3ee22c037bd433181163b623",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "aa9909d2626da605a7364c99dd7f3ee78c5822001bd1782b4335624ed2e84766",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "be5481fb1a9bea6256237f2914559e19069bccb519390649884b732cd3414f9c",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "e0dd63b336102b0799db29d600719d6ca0fdf1892656122b5c191027eb788ddf",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "f92e6c12ee40cffb5ba6443e5da50d70075ac309beb315a5f561e877936dde0e",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "0c41d6c7d553aa3284dee14a879526c1960b21708c8076d383e007457ec2b889",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "40ac8cec4b49479372a668c598b6b7ed612f942881a23590d75d7986e3719c9e",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/exclusions.parquet": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/manifest.json": "b68e44518cd936e2fa50888c524e6f92b46e4d555d37125c879637ff01b088b4",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet": "14741bd1bb8bf6fe1a81bcc4343603d4d4430fc4a8fb1f4c3c9e132f91b75191",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/manifest.json": "93e8cca779947f2b66fdb23efcb8b9bc254ef42c1865b45fc6079e39d28da83b",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/scalar_distribution.parquet": "800e112b3a264c76850076b9db6e51a0fcafe925981a6c0bf2639e0b8d394f8a"
     },
     "semantic_arguments": {
       "allow_missing_auxiliary_mapping": false,
+      "allow_missing_reference_semantics": false,
       "auxiliary_mapping": {
         "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json",
-        "sha256": "34db0efcd64769699e4b86f7cdcb16e9dc12e466e5f04eb2352eca43440ebd45"
+        "sha256": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07"
       },
       "benchmark_split_root": "data/processed_starling/Skin_Reaction",
       "max_record_examples": 6,
       "max_rows_per_source": 0,
+      "reference_semantics_mapping": {
+        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet",
+        "sha256": "f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2"
+      },
       "starling_data_dir": "data/starling_data/skin_reaction",
       "strict_endpoint_inventory": true
     },
@@ -53272,8 +53300,18 @@
           "canonical_unit_text",
           "canonical_assay_or_test",
           "canonical_species_or_population",
-          "canonical_measurement_scale_id"
+          "canonical_measurement_scale_id",
+          "canonical_reference_scope",
+          "canonical_reference_basis"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "endpoint_defined_ratio",
+          "standardized_control_ratio",
+          "not_applicable"
+        ],
+        "reference_basis_required": true,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "dose_or_concentration",
           "extra_details"
@@ -53285,8 +53323,18 @@
           "canonical_unit_text",
           "canonical_assay_method",
           "canonical_evidence_system",
-          "canonical_measurement_scale_id"
+          "canonical_measurement_scale_id",
+          "canonical_reference_scope",
+          "canonical_reference_basis"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "endpoint_defined_ratio",
+          "standardized_control_ratio",
+          "not_applicable"
+        ],
+        "reference_basis_required": true,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "light_conditions",
           "qualifying_conditions"
@@ -53298,10 +53346,21 @@
           "canonical_unit_text",
           "canonical_aop_event",
           "canonical_assay_type",
+          "canonical_species_context",
+          "canonical_reference_scope",
+          "canonical_reference_basis"
+        ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "endpoint_defined_ratio",
+          "standardized_control_ratio",
+          "not_applicable"
+        ],
+        "reference_basis_required": true,
+        "required_known_dimensions": [
           "canonical_species_context"
         ],
         "variance_candidates": [
-          "experimental_conditions",
           "qualifying_conditions"
         ]
       },
@@ -53310,8 +53369,18 @@
           "canonical_endpoint_name",
           "canonical_unit_text",
           "canonical_study_design",
-          "canonical_species_context"
+          "canonical_species_context",
+          "canonical_reference_scope",
+          "canonical_reference_basis"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "endpoint_defined_ratio",
+          "standardized_control_ratio",
+          "not_applicable"
+        ],
+        "reference_basis_required": true,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "formulation_vehicle",
           "exposure_time",
@@ -53332,6 +53401,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -53348,6 +53418,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -53369,6 +53440,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -53390,6 +53462,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -53406,6 +53479,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "positive_count",
@@ -53424,7 +53498,62 @@
             "version": "skin_reaction_categorical_response.v1"
           },
           {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "outcome_label",
+              "assay_or_test",
+              "species_or_population",
+              "dose_or_concentration",
+              "positive_count",
+              "total_tested",
+              "extra_details"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "skin_reaction_reference_semantics.v2"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "outcome_label",
+              "assay_or_test",
+              "species_or_population",
+              "dose_or_concentration",
+              "positive_count",
+              "total_tested",
+              "extra_details"
+            ],
+            "legacy_value_field": "canonical_reference_basis",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_basis",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_basis",
+            "version": "skin_reaction_reference_semantics.v2"
+          },
+          {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_or_test"
@@ -53437,10 +53566,11 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "assay_or_test",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "species_or_population"
@@ -53453,10 +53583,11 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "species_or_population",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "measurement_text"
@@ -53469,7 +53600,7 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "severity_grade",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           }
         ],
         "cleaned_source_fields": [
@@ -53538,6 +53669,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -53554,6 +53686,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -53572,6 +53705,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -53590,6 +53724,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -53606,6 +53741,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "result_label"
@@ -53621,7 +53757,64 @@
             "version": "skin_reaction_categorical_response.v1"
           },
           {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "evidence_system",
+              "assay_method",
+              "result_label",
+              "experimental_conditions",
+              "light_conditions",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "skin_reaction_reference_semantics.v2"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "evidence_system",
+              "assay_method",
+              "result_label",
+              "experimental_conditions",
+              "light_conditions",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_basis",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_basis",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_basis",
+            "version": "skin_reaction_reference_semantics.v2"
+          },
+          {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_method"
@@ -53634,10 +53827,11 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "assay_method",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "evidence_system"
@@ -53650,7 +53844,7 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "evidence_system",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           }
         ],
         "cleaned_source_fields": [
@@ -53725,6 +53919,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name",
@@ -53743,6 +53938,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -53763,6 +53959,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -53783,6 +53980,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -53798,7 +53996,62 @@
             "version": "rdkit_standardized_source_smiles.v1"
           },
           {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "assay_type",
+              "aop_event",
+              "result_label",
+              "experimental_conditions",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "skin_reaction_reference_semantics.v2"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "assay_type",
+              "aop_event",
+              "result_label",
+              "experimental_conditions",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_basis",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_basis",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_basis",
+            "version": "skin_reaction_reference_semantics.v2"
+          },
+          {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_type"
@@ -53811,13 +54064,16 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "assay_type",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
-              "assay_type"
+              "assay_type",
+              "experimental_conditions",
+              "support_text"
             ],
             "legacy_value_field": "global_species_context",
             "method": "frozen_mapping",
@@ -53827,10 +54083,11 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "species_context",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "aop_event"
@@ -53917,6 +54174,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name",
@@ -53935,6 +54193,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -53955,6 +54214,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -53975,6 +54235,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -53990,7 +54251,62 @@
             "version": "rdkit_standardized_source_smiles.v1"
           },
           {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "study_design",
+              "skin_source",
+              "formulation_vehicle",
+              "exposure_time",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "skin_reaction_reference_semantics.v2"
+          },
+          {
+            "atomic_group": "canonical_reference_semantics_pair",
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "study_design",
+              "skin_source",
+              "formulation_vehicle",
+              "exposure_time",
+              "qualifying_conditions",
+              "extra_details",
+              "needs_more_context"
+            ],
+            "legacy_value_field": "canonical_reference_basis",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_basis",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_basis",
+            "version": "skin_reaction_reference_semantics.v2"
+          },
+          {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "study_design"
@@ -54003,10 +54319,11 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "study_design",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "skin_source"
@@ -54019,7 +54336,7 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "species_context",
-            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v2"
+            "version": "starling_auxiliary.skin_reaction.globally_reconciled.v4"
           }
         ],
         "cleaned_source_fields": [

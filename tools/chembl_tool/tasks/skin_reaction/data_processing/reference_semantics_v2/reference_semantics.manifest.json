@@ -1,0 +1,32 @@
+{
+  "assignment_method_counts": {
+    "gpt_5_4_mini_single_pass:labels_only": 85553,
+    "invalid_row_response:absolute_basis_mismatch": 6,
+    "invalid_row_response:comparator_basis_mismatch": 811,
+    "invalid_row_response:endpoint_ratio_basis_mismatch": 618,
+    "invalid_row_response:unsupported_basis": 65,
+    "invalid_row_response:unsupported_scope": 1
+  },
+  "generation_version": "reference_semantics_generation.v2",
+  "input_path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet",
+  "input_sha256": "a082ea46661fa342be43c77852c663f0e757ea5f3ee22c037bd433181163b623",
+  "mapping_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet",
+  "mapping_rows": 87054,
+  "mapping_sha256": "f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2",
+  "prompt_sha256": "76a90a480811ab82c4f4e65925a60cffb8556830c44dfe385e60fb4632b270f0",
+  "prompt_version": "skin_reaction_reference_semantics_prompt.v2",
+  "safe_gate_conflicts": 0,
+  "scope_counts": {
+    "absolute": 69720,
+    "comparator_relative": 343,
+    "endpoint_defined_ratio": 13046,
+    "standardized_control_ratio": 602,
+    "unknown": 3343
+  },
+  "task_id": "skin_reaction",
+  "validations": {
+    "each_row_submitted_at_most_once": true,
+    "one_mapping_per_candidate": true,
+    "unique_cleaned_record_ids": true
+  }
+}

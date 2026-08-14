@@ -28,7 +28,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_trans
     build_pair_bucket_transfer_policy,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
-    BIOAVAILABILITY_PAIR_BUCKET_VERSION,
+    BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import POLICY
 
@@ -47,7 +47,7 @@ def _spec() -> SplitDownstreamSpec:
         policy=POLICY,
         pipeline_layout_version=PIPELINE_LAYOUT_VERSION,
         heldout_overlap_version=HELDOUT_OVERLAP_VERSION,
-        pair_bucket_version=BIOAVAILABILITY_PAIR_BUCKET_VERSION,
+        pair_bucket_version=BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION,
         filter_source_id="hf_bioavailability",
         filter_scope_field="canonical_bioavailability_evidence_scope",
         filter_scope_value="direct",

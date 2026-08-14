@@ -7,6 +7,7 @@ the source record and rationale before this file is edited.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from collections import Counter
 from pathlib import Path
@@ -30,6 +31,13 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_policy import (
     POLICY as SKIN_POLICY,
+)
+from tools.chembl_tool.tasks.skin_reaction.starling_auxiliary_metadata import (
+    DEFAULT_MAPPING_PATH as SKIN_SPECIES_MAPPING_PATH,
+    DEFAULT_PUBLICATION_RECORD as SKIN_SPECIES_PUBLICATION_RECORD,
+)
+from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers.reconciliation import (
+    MAPPING_VERSION as SKIN_SPECIES_MAPPING_VERSION,
 )
 
 
@@ -72,11 +80,22 @@ def test_manual_audit_corpus_is_fixed_complete_and_source_grounded() -> None:
         "skin_reaction": 500,
     }
     assert len({case["audit_case_id"] for case in CASES}) == len(CASES)
+    publication = json.loads(
+        SKIN_SPECIES_PUBLICATION_RECORD.read_text(encoding="utf-8")
+    )
+    mapping_sha256 = hashlib.sha256(SKIN_SPECIES_MAPPING_PATH.read_bytes()).hexdigest()
+    assert publication["publication_status"] == "human_approved"
+    assert publication["runtime_mapping_sha256"] == mapping_sha256
+    assert MANIFEST["skin_species_mapping_provenance"] == {
+        "mapping_version": SKIN_SPECIES_MAPPING_VERSION,
+        "publication_version": publication["publication_version"],
+        "runtime_mapping_sha256": mapping_sha256,
+    }
     assert sum(
         case["human_review"]["finding"]
         == "excluded_unencoded_directional_context"
         for case in CASES
-    ) == 25
+    ) == 29
     for case in CASES:
         source = case["stage_01_record"]
         assert source["cleaned_record_id"]

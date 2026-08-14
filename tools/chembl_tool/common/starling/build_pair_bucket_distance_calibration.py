@@ -1,15 +1,16 @@
-"""Build v7 pair-bucket distance geometry without transfer labels or cutoffs.
+"""Build v7 pair-bucket SD and empirical-CDF geometry without transfer targets.
 
 Stage 04 is the sole authority for bucket membership and measurement kind.
 This module only validates whether the observed bucket can support a distance
-scale, audits residual heterogeneity in untouched source fields, and stores an
-empirical within-bucket percentile curve.  It never emits a pair label, a
-transfer threshold, or a probability.
+scale, audits residual heterogeneity in untouched source fields, and stores a
+first-class sample SD, an exact value CDF for valid continuous buckets, and an
+exact category-rank CDF for valid ordinal buckets. It never emits a pair label,
+transfer threshold, soft target, or raw-distance CDF.
 """
 
 from __future__ import annotations
 
-import hashlib
+import bisect
 import json
 import math
 import multiprocessing as mp
@@ -31,13 +32,14 @@ from tools.chembl_tool.common.starling.build_pair_bucket_transfer_policy import 
 from tools.chembl_tool.common.starling.canonicalization_v7 import (
     StarlingRecordContract,
 )
+from tools.chembl_tool.common.starling.categorical_response import (
+    ControlledMeasurementSpec,
+)
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
-    MAX_REFERENCE_PAIRS,
     MINIMUM_COVERAGE,
     MINIMUM_LEVEL_RECORDS,
     MINIMUM_OMEGA_SQUARED,
-    PERCENTILE_KNOTS,
     STANDARD_DEVIATION_DDOF,
     normalize_candidate_value,
     select_variance_candidate,
@@ -45,7 +47,11 @@ from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
 
 
 CALIBRATION_FILENAME = "pair_bucket_distance_calibration.json.gz"
-CALIBRATION_VERSION = "pair_bucket_distance_calibration.v1"
+CALIBRATION_VERSION = "pair_bucket_distance_calibration.v2"
+LEGACY_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v1"
+VALUE_CDF_VERSION = "empirical_value_cdf.v1"
+CATEGORY_CDF_VERSION = "empirical_category_rank_cdf.v1"
+LEGACY_DISTANCE_PERCENTILE_KNOTS = 101
 MINIMUM_BUCKET_RECORDS = 25
 MINIMUM_CATEGORICAL_CRAMERS_V_SQUARED = 0.20
 
@@ -62,7 +68,7 @@ def build_pair_bucket_distance_calibration(
     minimum_samples: int = MINIMUM_BUCKET_RECORDS,
     workers: int = 1,
 ) -> dict[str, Any]:
-    """Materialize one observed distance calibration per Stage-04 bucket."""
+    """Materialize first-class SD and empirical CDF metadata per Stage-04 bucket."""
     if minimum_samples != MINIMUM_BUCKET_RECORDS:
         raise ValueError("the v7 calibration contract requires exactly 25 records")
     records_path = Path(records_path)
@@ -132,12 +138,22 @@ def build_pair_bucket_distance_calibration(
     )
 
     valid_entries = [entry for entry in entries.values() if entry["calibration_valid"]]
+    value_cdf_entries = [entry for entry in entries.values() if entry["value_cdf_valid"]]
+    category_cdf_entries = [
+        entry for entry in entries.values() if entry["category_cdf_valid"]
+    ]
     flagged_entries = [
         entry
         for entry in entries.values()
         if entry["residual_heterogeneity_gate"]["variance_gate_flagged"]
     ]
     reasons = Counter(str(entry["calibration_reason"]) for entry in entries.values())
+    value_cdf_reasons = Counter(
+        str(entry["value_cdf_reason"]) for entry in entries.values()
+    )
+    category_cdf_reasons = Counter(
+        str(entry["category_cdf_reason"]) for entry in entries.values()
+    )
     payload: dict[str, Any] = {
         "calibration_version": CALIBRATION_VERSION,
         "record_contract_version": record_contract.version,
@@ -148,10 +164,29 @@ def build_pair_bucket_distance_calibration(
             "pair_labels_emitted": False,
             "transfer_cutoff_emitted": False,
             "transfer_probability_emitted": False,
-            "continuous_geometry": "finite_scalar_value",
-            "binary_and_ordinal_geometry": "canonical_category_rank",
-            "distance": "abs(left - right) / observed_sample_standard_deviation",
-            "percentile_scope": "within_pair_bucket",
+            "standard_deviation": "first_class_per_pair_bucket_sample_sd",
+            "standard_deviation_ddof": STANDARD_DEVIATION_DDOF,
+            "continuous_standard_deviation_value_field": "finite_scalar_value",
+            "binary_and_ordinal_standard_deviation_value_field": (
+                "canonical_category_rank"
+            ),
+            "raw_distance_cdf_emitted": False,
+            "continuous_value_cdf": (
+                "exact empirical midrank CDF over finite_scalar_value"
+            ),
+            "value_cdf_scope": "within_pair_bucket",
+            "value_cdf_fit_scope": "same_records_as_standard_deviation",
+            "value_cdf_measurement_kinds": ["continuous"],
+            "value_cdf_tie_convention": "midrank",
+            "value_cdf_unseen_value_rule": "records_strictly_less_than_value / total_records",
+            "value_cdf_outside_support": "saturate_to_zero_or_one",
+            "ordinal_category_cdf": (
+                "exact empirical midrank CDF over canonical_category_rank"
+            ),
+            "category_cdf_scope": "within_pair_bucket",
+            "category_cdf_measurement_kinds": ["ordinal"],
+            "category_cdf_tie_convention": "midrank",
+            "binary_category_cdf_emitted": False,
         },
         "measurement_scales": {
             key: value.manifest()
@@ -160,7 +195,10 @@ def build_pair_bucket_distance_calibration(
         "validation_contract": {
             "minimum_bucket_records": minimum_samples,
             "binary": "all declared levels observed; every observed level has >=3 records",
-            "ordinal": "at least three declared levels observed; every observed level has >=3 records",
+            "ordinal": (
+                "at least three declared levels observed; every observed level "
+                "has >=3 records"
+            ),
             "categorical_residual_heterogeneity": {
                 "statistic": "bias_corrected_cramers_v_squared",
                 "minimum_records_per_candidate_level": MINIMUM_LEVEL_RECORDS,
@@ -175,17 +213,41 @@ def build_pair_bucket_distance_calibration(
         "inputs": {
             "records": {"path": str(records_path), "sha256": file_sha256(records_path)},
             "pair_bucket_records": {"path": str(bucket_path), "sha256": file_sha256(bucket_path)},
-            "pair_bucket_metadata": {"path": str(metadata_path), "sha256": file_sha256(metadata_path)},
-            "auxiliary_mapping_manifest": {"path": str(auxiliary_path), "sha256": file_sha256(auxiliary_path)},
+            "pair_bucket_metadata": {
+                "path": str(metadata_path),
+                "sha256": file_sha256(metadata_path),
+            },
+            "auxiliary_mapping_manifest": {
+                "path": str(auxiliary_path),
+                "sha256": file_sha256(auxiliary_path),
+            },
         },
         "summary": {
             "pair_buckets": len(entries),
             "records_in_pair_buckets": sum(item["record_count"] for item in entries.values()),
-            "minimum_support_buckets": sum(item["minimum_support_met"] for item in entries.values()),
+            "minimum_support_buckets": sum(
+                item["minimum_support_met"] for item in entries.values()
+            ),
             "residual_heterogeneity_flagged_buckets": len(flagged_entries),
             "calibration_valid_buckets": len(valid_entries),
             "calibration_valid_records": sum(item["record_count"] for item in valid_entries),
             "calibration_reason_counts": dict(sorted(reasons.items())),
+            "value_cdf_valid_buckets": len(value_cdf_entries),
+            "value_cdf_valid_records": sum(
+                item["record_count"] for item in value_cdf_entries
+            ),
+            "value_cdf_distinct_support_points": sum(
+                item["value_cdf"]["distinct_value_count"]
+                for item in value_cdf_entries
+            ),
+            "value_cdf_reason_counts": dict(sorted(value_cdf_reasons.items())),
+            "category_cdf_valid_buckets": len(category_cdf_entries),
+            "category_cdf_valid_records": sum(
+                item["record_count"] for item in category_cdf_entries
+            ),
+            "category_cdf_reason_counts": dict(
+                sorted(category_cdf_reasons.items())
+            ),
         },
         "buckets": entries,
     }
@@ -321,7 +383,6 @@ def _build_calibration_entry(
         variance_gate = _empty_variance_gate(evaluated=False)
     variance_flagged = bool(variance_gate["variance_gate_flagged"])
 
-    calibration = None
     reason = "valid"
     if not support_met:
         reason = f"fewer_than_{minimum_samples}_records"
@@ -335,12 +396,26 @@ def _build_calibration_entry(
         reason = "nonfinite_geometry_value"
     elif not positive_sd:
         reason = "nonpositive_or_nonfinite_sample_sd"
+    calibration_valid = reason == "valid"
+    value_cdf = None
+    if kind != "continuous":
+        value_cdf_reason = "non_continuous_measurement"
+    elif not calibration_valid:
+        value_cdf_reason = reason
     else:
-        calibration = _distance_calibration(
-            finite.tolist(),
-            group["canonical_record_id"].astype(str).tolist(),
-            pair_bucket_key=key,
-        )
+        value_cdf = _value_cdf(finite.tolist())
+        value_cdf_reason = "valid"
+    category_cdf = None
+    if kind != "ordinal":
+        category_cdf_reason = "non_ordinal_measurement"
+    elif not calibration_valid:
+        category_cdf_reason = reason
+    else:
+        scale = record_contract.measurement_scales.get(str(scale_id or ""))
+        if scale is None:
+            raise ValueError(f"valid ordinal bucket {key!r} has no declared scale")
+        category_cdf = _category_cdf(group, scale=scale)
+        category_cdf_reason = "valid"
     return {
         "source_id": source_id,
         "measurement_kind": kind,
@@ -350,10 +425,25 @@ def _build_calibration_entry(
         "minimum_support_met": support_met,
         "category_domain_gate": category_gate,
         "residual_heterogeneity_gate": variance_gate,
-        "observed_sample_standard_deviation": sample_sd if positive_sd else None,
-        "calibration_valid": calibration is not None,
+        "observed_sample_standard_deviation": (
+            sample_sd if calibration_valid else None
+        ),
+        "standard_deviation_ddof": STANDARD_DEVIATION_DDOF,
+        "standard_deviation_value_field": (
+            "canonical_category_rank"
+            if kind in {"binary", "ordinal"}
+            else "finite_scalar_value"
+        ),
+        "standard_deviation_valid": calibration_valid,
+        "standard_deviation_reason": reason,
+        "calibration_valid": calibration_valid,
         "calibration_reason": reason,
-        "distance_calibration": calibration,
+        "value_cdf_valid": value_cdf is not None,
+        "value_cdf_reason": value_cdf_reason,
+        "value_cdf": value_cdf,
+        "category_cdf_valid": category_cdf is not None,
+        "category_cdf_reason": category_cdf_reason,
+        "category_cdf": category_cdf,
     }
 
 
@@ -529,60 +619,217 @@ def _empty_variance_gate(*, evaluated: bool = True) -> dict[str, Any]:
     }
 
 
-def _distance_calibration(
-    measurements: Sequence[Any],
-    record_ids: Sequence[str],
-    *,
-    pair_bucket_key: str,
-) -> dict[str, Any]:
-    ordered = sorted(
-        ((str(record_id), float(value)) for record_id, value in zip(record_ids, measurements)),
-        key=lambda item: item[0],
-    )
-    values = np.asarray([value for _, value in ordered], dtype=float)
-    sample_sd = float(np.std(values, ddof=STANDARD_DEVIATION_DDOF))
-    total_pairs = len(values) * (len(values) - 1) // 2
-    if total_pairs <= MAX_REFERENCE_PAIRS:
-        differences = np.fromiter(
-            (
-                abs(float(values[left]) - float(values[right]))
-                for left in range(len(values) - 1)
-                for right in range(left + 1, len(values))
-            ),
-            dtype=float,
-            count=total_pairs,
-        )
-        method = "all_unordered_record_pairs"
-    else:
-        differences = np.empty(MAX_REFERENCE_PAIRS, dtype=float)
-        for pair_index in range(MAX_REFERENCE_PAIRS):
-            left, right = _hashed_distinct_indices(pair_bucket_key, pair_index, len(values))
-            differences[pair_index] = abs(float(values[left]) - float(values[right]))
-        method = "deterministic_hash_sample_with_replacement"
-    standardized = differences / sample_sd
-    knots = np.quantile(
-        standardized, np.linspace(0.0, 1.0, PERCENTILE_KNOTS), method="linear"
-    )
+def _value_cdf(measurements: Sequence[Any]) -> dict[str, Any]:
+    """Build an exact tie-aware empirical CDF for one continuous bucket."""
+    values = np.asarray([float(value) for value in measurements], dtype=float)
+    if not len(values) or not np.isfinite(values).all():
+        raise ValueError("value CDF requires finite measurements")
+    support, counts = np.unique(values, return_counts=True)
+    cumulative_before = np.cumsum(counts, dtype=np.int64) - counts
+    midranks = (cumulative_before + 0.5 * counts) / len(values)
     return {
-        "sample_standard_deviation": sample_sd,
-        "standard_deviation_ddof": STANDARD_DEVIATION_DDOF,
-        "distance_definition": "abs(left - right) / sample_standard_deviation",
-        "percentile_knot_count": PERCENTILE_KNOTS,
-        "standardized_distance_percentile_knots": [float(value) for value in knots],
-        "reference_method": method,
-        "reference_pair_count": int(len(standardized)),
-        "total_possible_unordered_pairs": total_pairs,
+        "contract_version": VALUE_CDF_VERSION,
+        "measurement_field": "finite_scalar_value",
+        "definition": "(records_less_than_value + 0.5 * records_equal_to_value) / total_records",
+        "tie_convention": "midrank",
+        "unseen_value_rule": "records_strictly_less_than_value / total_records",
+        "tie_equality": "exact_canonical_float_equality",
+        "outside_support": "saturate_to_zero_or_one",
+        "total_record_count": int(len(values)),
+        "distinct_value_count": int(len(support)),
+        "support_values": [float(value) for value in support],
+        "support_counts": [int(value) for value in counts],
+        "support_midranks_0_1": [float(value) for value in midranks],
     }
 
 
-def _hashed_distinct_indices(key: str, index: int, size: int) -> tuple[int, int]:
-    digest = hashlib.sha256(
-        f"{CALIBRATION_VERSION}\0{key}\0{index}".encode("utf-8")
-    ).digest()
-    left = int.from_bytes(digest[:8], "big") % size
-    right_without_left = int.from_bytes(digest[8:16], "big") % (size - 1)
-    right = right_without_left if right_without_left < left else right_without_left + 1
-    return left, right
+def _category_cdf(
+    group: pd.DataFrame, *, scale: ControlledMeasurementSpec
+) -> dict[str, Any]:
+    """Build an exact empirical CDF over one declared ordinal domain."""
+    if scale.kind != "ordinal":
+        raise ValueError("category CDF requires an ordinal measurement scale")
+    observed = Counter(group["canonical_category_id"].dropna().astype(str))
+    declared = sorted(scale.categories, key=lambda item: item.rank)
+    declared_ids = {item.category_id for item in declared}
+    if set(observed) - declared_ids:
+        raise ValueError("category CDF contains values outside its declared domain")
+    total = len(group)
+    if total <= 0 or sum(observed.values()) != total:
+        raise ValueError("category CDF requires one declared category per record")
+    cumulative = 0
+    categories: list[dict[str, Any]] = []
+    for category in declared:
+        count = int(observed[category.category_id])
+        midrank = (cumulative + 0.5 * count) / total
+        categories.append(
+            {
+                "category_id": category.category_id,
+                "rank": category.rank,
+                "observed_count": count,
+                "midrank_0_1": float(midrank),
+            }
+        )
+        cumulative += count
+    return {
+        "contract_version": CATEGORY_CDF_VERSION,
+        "measurement_field": "canonical_category_rank",
+        "category_identity_field": "canonical_category_id",
+        "canonical_measurement_scale_id": scale.scale_id,
+        "definition": (
+            "(records_with_lower_rank + 0.5 * records_with_equal_rank) "
+            "/ total_records"
+        ),
+        "tie_convention": "midrank",
+        "unobserved_declared_category_rule": "records_with_lower_rank / total_records",
+        "total_record_count": total,
+        "declared_category_count": len(declared),
+        "observed_category_count": sum(count > 0 for count in observed.values()),
+        "categories": categories,
+    }
+
+
+def value_cdf_percentile(value: Any, value_cdf: Mapping[str, Any]) -> float:
+    """Evaluate a stored exact-midrank CDF with deterministic step lookup."""
+    measurement = float(value)
+    if not math.isfinite(measurement):
+        raise ValueError("value-CDF measurement must be finite")
+    if value_cdf.get("contract_version") != VALUE_CDF_VERSION:
+        raise ValueError("unsupported value-CDF contract")
+    if value_cdf.get("measurement_field") != "finite_scalar_value":
+        raise ValueError("value CDF has an unsupported measurement field")
+    support = [float(item) for item in value_cdf.get("support_values") or []]
+    counts = [int(item) for item in value_cdf.get("support_counts") or []]
+    midranks = [
+        float(item) for item in value_cdf.get("support_midranks_0_1") or []
+    ]
+    total = int(value_cdf.get("total_record_count") or 0)
+    if not support or len(support) != len(counts) or len(support) != len(midranks):
+        raise ValueError("value CDF has invalid support arrays")
+    if total <= 0 or total != sum(counts) or any(count <= 0 for count in counts):
+        raise ValueError("value CDF has invalid support counts")
+    if int(value_cdf.get("distinct_value_count") or 0) != len(support):
+        raise ValueError("value CDF has an invalid distinct-value count")
+    if any(not math.isfinite(item) for item in support) or any(
+        right <= left for left, right in zip(support, support[1:])
+    ):
+        raise ValueError("value CDF has invalid support values")
+    cumulative = 0
+    for count, observed in zip(counts, midranks):
+        expected = (cumulative + 0.5 * count) / total
+        if not math.isclose(observed, expected, rel_tol=0.0, abs_tol=1e-15):
+            raise ValueError("value CDF has invalid support midranks")
+        cumulative += count
+    index = bisect.bisect_left(support, measurement)
+    if index < len(support) and support[index] == measurement:
+        return midranks[index]
+    if index == 0:
+        return 0.0
+    if index == len(support):
+        return 1.0
+    return midranks[index - 1] + counts[index - 1] / (2.0 * total)
+
+
+def category_cdf_percentile(
+    category_id: str, category_cdf: Mapping[str, Any]
+) -> float:
+    """Return the stored empirical percentile for one declared category ID."""
+    if category_cdf.get("contract_version") != CATEGORY_CDF_VERSION:
+        raise ValueError("unsupported category-CDF contract")
+    if category_cdf.get("measurement_field") != "canonical_category_rank":
+        raise ValueError("category CDF has an unsupported measurement field")
+    categories = category_cdf.get("categories")
+    if not isinstance(categories, list):
+        raise ValueError("category CDF has no declared categories")
+    matches = [
+        item
+        for item in categories
+        if isinstance(item, Mapping) and item.get("category_id") == str(category_id)
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"unknown category_id: {category_id}")
+    percentile = float(matches[0].get("midrank_0_1"))
+    if not math.isfinite(percentile) or not 0.0 <= percentile <= 1.0:
+        raise ValueError("category CDF has an invalid midrank")
+    return percentile
+
+
+def calibration_standard_deviation(entry: Mapping[str, Any]) -> float:
+    """Read one valid v2 bucket's first-class sample SD."""
+    if not bool(entry.get("standard_deviation_valid")):
+        reason = str(entry.get("standard_deviation_reason") or "invalid")
+        raise ValueError(f"pair bucket has no valid standard deviation: {reason}")
+    if int(entry.get("standard_deviation_ddof") or -1) != STANDARD_DEVIATION_DDOF:
+        raise ValueError("pair bucket has an unsupported standard-deviation ddof")
+    try:
+        value = float(entry.get("observed_sample_standard_deviation"))
+    except (TypeError, ValueError) as error:
+        raise ValueError("pair bucket has an invalid standard deviation") from error
+    if not math.isfinite(value) or value <= 0:
+        raise ValueError("pair bucket has an invalid standard deviation")
+    return value
+
+
+def value_cdf_separation(
+    calibration: Mapping[str, Any],
+    *,
+    left_pair_bucket_key: str,
+    left_value: Any,
+    right_pair_bucket_key: str,
+    right_value: Any,
+) -> dict[str, float]:
+    """Evaluate location-sensitive separation for two same-bucket values."""
+    left_key = str(left_pair_bucket_key)
+    right_key = str(right_pair_bucket_key)
+    if left_key != right_key:
+        raise ValueError("value-CDF comparison requires the same pair_bucket_key")
+    buckets = calibration.get("buckets")
+    entry = buckets.get(left_key) if isinstance(buckets, Mapping) else None
+    if not isinstance(entry, Mapping):
+        raise ValueError(f"unknown pair_bucket_key: {left_key}")
+    if not bool(entry.get("value_cdf_valid")) or not isinstance(
+        entry.get("value_cdf"), Mapping
+    ):
+        reason = str(entry.get("value_cdf_reason") or "invalid")
+        raise ValueError(f"pair bucket has no valid value CDF: {reason}")
+    left = value_cdf_percentile(left_value, entry["value_cdf"])
+    right = value_cdf_percentile(right_value, entry["value_cdf"])
+    return {
+        "left_percentile_0_1": left,
+        "right_percentile_0_1": right,
+        "percentile_separation_0_1": abs(left - right),
+    }
+
+
+def category_cdf_separation(
+    calibration: Mapping[str, Any],
+    *,
+    left_pair_bucket_key: str,
+    left_category_id: str,
+    right_pair_bucket_key: str,
+    right_category_id: str,
+) -> dict[str, float]:
+    """Evaluate empirical rank separation for two same-bucket categories."""
+    left_key = str(left_pair_bucket_key)
+    right_key = str(right_pair_bucket_key)
+    if left_key != right_key:
+        raise ValueError("category-CDF comparison requires the same pair_bucket_key")
+    buckets = calibration.get("buckets")
+    entry = buckets.get(left_key) if isinstance(buckets, Mapping) else None
+    if not isinstance(entry, Mapping):
+        raise ValueError(f"unknown pair_bucket_key: {left_key}")
+    if not bool(entry.get("category_cdf_valid")) or not isinstance(
+        entry.get("category_cdf"), Mapping
+    ):
+        reason = str(entry.get("category_cdf_reason") or "invalid")
+        raise ValueError(f"pair bucket has no valid category CDF: {reason}")
+    left = category_cdf_percentile(left_category_id, entry["category_cdf"])
+    right = category_cdf_percentile(right_category_id, entry["category_cdf"])
+    return {
+        "left_percentile_0_1": left,
+        "right_percentile_0_1": right,
+        "percentile_separation_0_1": abs(left - right),
+    }
 
 
 def _remove_heldout(
@@ -619,7 +866,8 @@ def _remove_heldout(
 def validate_pair_bucket_distance_calibration(
     payload: Mapping[str, Any], *, record_contract: StarlingRecordContract
 ) -> None:
-    if payload.get("calibration_version") != CALIBRATION_VERSION:
+    version = payload.get("calibration_version")
+    if version not in {LEGACY_CALIBRATION_VERSION, CALIBRATION_VERSION}:
         raise ValueError("distance calibration version mismatch")
     if payload.get("record_contract_version") != record_contract.version:
         raise ValueError("distance calibration record contract mismatch")
@@ -639,15 +887,214 @@ def validate_pair_bucket_distance_calibration(
         if not isinstance(key, str) or not isinstance(entry, Mapping):
             raise ValueError("invalid distance-calibration entry")
         valid = bool(entry.get("calibration_valid"))
-        calibration = entry.get("distance_calibration")
-        if valid != isinstance(calibration, Mapping):
-            raise ValueError(f"calibration validity mismatch for {key}")
-        if valid:
-            knots = calibration.get("standardized_distance_percentile_knots")
-            if not isinstance(knots, list) or len(knots) != PERCENTILE_KNOTS:
-                raise ValueError(f"invalid percentile knots for {key}")
-            if any(float(right) < float(left) for left, right in zip(knots, knots[1:])):
-                raise ValueError(f"nonmonotone percentile knots for {key}")
+        if version == LEGACY_CALIBRATION_VERSION:
+            calibration = entry.get("distance_calibration")
+            if valid != isinstance(calibration, Mapping):
+                raise ValueError(f"calibration validity mismatch for {key}")
+            if valid:
+                knots = calibration.get("standardized_distance_percentile_knots")
+                if (
+                    not isinstance(knots, list)
+                    or len(knots) != LEGACY_DISTANCE_PERCENTILE_KNOTS
+                ):
+                    raise ValueError(f"invalid percentile knots for {key}")
+                if any(
+                    float(right) < float(left)
+                    for left, right in zip(knots, knots[1:])
+                ):
+                    raise ValueError(f"nonmonotone percentile knots for {key}")
+        else:
+            _validate_standard_deviation_entry(str(key), entry)
+            _validate_value_cdf_entry(str(key), entry)
+            _validate_category_cdf_entry(
+                str(key), entry, record_contract=record_contract
+            )
+
+    if version == CALIBRATION_VERSION:
+        raw_distance_fields = {
+            "distance_calibration",
+            "standardized_distance_percentile_knots",
+            "percentile_knot_count",
+            "reference_method",
+            "reference_pair_count",
+            "total_possible_unordered_pairs",
+        }
+        if any(f'"{field}"' in encoded for field in raw_distance_fields):
+            raise ValueError("v2 calibration contains forbidden raw-distance CDF data")
+
+
+def _validate_standard_deviation_entry(
+    key: str, entry: Mapping[str, Any]
+) -> None:
+    valid = bool(entry.get("calibration_valid"))
+    if valid != (entry.get("calibration_reason") == "valid"):
+        raise ValueError(f"calibration validity/reason mismatch for {key}")
+    if bool(entry.get("standard_deviation_valid")) != valid:
+        raise ValueError(f"standard-deviation validity mismatch for {key}")
+    if entry.get("standard_deviation_reason") != entry.get("calibration_reason"):
+        raise ValueError(f"standard-deviation reason mismatch for {key}")
+    if int(entry.get("standard_deviation_ddof") or -1) != STANDARD_DEVIATION_DDOF:
+        raise ValueError(f"standard-deviation ddof mismatch for {key}")
+    kind = str(entry.get("measurement_kind") or "")
+    expected_field = (
+        "canonical_category_rank"
+        if kind in {"binary", "ordinal"}
+        else "finite_scalar_value"
+    )
+    if entry.get("standard_deviation_value_field") != expected_field:
+        raise ValueError(f"standard-deviation value field mismatch for {key}")
+    raw_sd = entry.get("observed_sample_standard_deviation")
+    if valid:
+        calibration_standard_deviation(entry)
+    elif raw_sd is not None:
+        raise ValueError(f"invalid bucket exposes a standard deviation for {key}")
+
+
+def _validate_value_cdf_entry(key: str, entry: Mapping[str, Any]) -> None:
+    kind = str(entry.get("measurement_kind") or "")
+    calibration_valid = bool(entry.get("calibration_valid"))
+    value_cdf_valid = bool(entry.get("value_cdf_valid"))
+    value_cdf = entry.get("value_cdf")
+    expected_valid = kind == "continuous" and calibration_valid
+    if value_cdf_valid != expected_valid or value_cdf_valid != isinstance(
+        value_cdf, Mapping
+    ):
+        raise ValueError(f"value-CDF validity mismatch for {key}")
+    expected_reason = (
+        "valid"
+        if expected_valid
+        else (
+            "non_continuous_measurement"
+            if kind != "continuous"
+            else str(entry.get("calibration_reason") or "")
+        )
+    )
+    if entry.get("value_cdf_reason") != expected_reason:
+        raise ValueError(f"value-CDF reason mismatch for {key}")
+    if not expected_valid:
+        return
+    if value_cdf.get("contract_version") != VALUE_CDF_VERSION:
+        raise ValueError(f"value-CDF contract mismatch for {key}")
+    expected_contract = {
+        "measurement_field": "finite_scalar_value",
+        "tie_convention": "midrank",
+        "unseen_value_rule": (
+            "records_strictly_less_than_value / total_records"
+        ),
+        "tie_equality": "exact_canonical_float_equality",
+        "outside_support": "saturate_to_zero_or_one",
+    }
+    for field, expected in expected_contract.items():
+        if value_cdf.get(field) != expected:
+            raise ValueError(f"value-CDF {field} mismatch for {key}")
+    support = [float(item) for item in value_cdf.get("support_values") or []]
+    counts = [int(item) for item in value_cdf.get("support_counts") or []]
+    midranks = [
+        float(item) for item in value_cdf.get("support_midranks_0_1") or []
+    ]
+    if not support or not (len(support) == len(counts) == len(midranks)):
+        raise ValueError(f"invalid value-CDF support arrays for {key}")
+    if any(not math.isfinite(value) for value in support) or any(
+        right <= left for left, right in zip(support, support[1:])
+    ):
+        raise ValueError(f"non-increasing value-CDF support for {key}")
+    if any(count <= 0 for count in counts):
+        raise ValueError(f"nonpositive value-CDF count for {key}")
+    total = int(value_cdf.get("total_record_count") or 0)
+    if total != sum(counts) or total != int(entry.get("record_count") or 0):
+        raise ValueError(f"value-CDF record count mismatch for {key}")
+    if int(value_cdf.get("distinct_value_count") or 0) != len(support):
+        raise ValueError(f"value-CDF distinct count mismatch for {key}")
+    cumulative = 0
+    for count, observed in zip(counts, midranks):
+        expected = (cumulative + 0.5 * count) / total
+        if not math.isclose(observed, expected, rel_tol=0.0, abs_tol=1e-15):
+            raise ValueError(f"value-CDF midrank mismatch for {key}")
+        cumulative += count
+
+
+def _validate_category_cdf_entry(
+    key: str,
+    entry: Mapping[str, Any],
+    *,
+    record_contract: StarlingRecordContract,
+) -> None:
+    kind = str(entry.get("measurement_kind") or "")
+    calibration_valid = bool(entry.get("calibration_valid"))
+    category_cdf_valid = bool(entry.get("category_cdf_valid"))
+    category_cdf = entry.get("category_cdf")
+    expected_valid = kind == "ordinal" and calibration_valid
+    if category_cdf_valid != expected_valid or category_cdf_valid != isinstance(
+        category_cdf, Mapping
+    ):
+        raise ValueError(f"category-CDF validity mismatch for {key}")
+    expected_reason = (
+        "valid"
+        if expected_valid
+        else (
+            "non_ordinal_measurement"
+            if kind != "ordinal"
+            else str(entry.get("calibration_reason") or "")
+        )
+    )
+    if entry.get("category_cdf_reason") != expected_reason:
+        raise ValueError(f"category-CDF reason mismatch for {key}")
+    if not expected_valid:
+        return
+    if category_cdf.get("contract_version") != CATEGORY_CDF_VERSION:
+        raise ValueError(f"category-CDF contract mismatch for {key}")
+    expected_contract = {
+        "measurement_field": "canonical_category_rank",
+        "category_identity_field": "canonical_category_id",
+        "tie_convention": "midrank",
+        "unobserved_declared_category_rule": (
+            "records_with_lower_rank / total_records"
+        ),
+    }
+    for field, expected in expected_contract.items():
+        if category_cdf.get(field) != expected:
+            raise ValueError(f"category-CDF {field} mismatch for {key}")
+    scale_id = str(entry.get("canonical_measurement_scale_id") or "")
+    if category_cdf.get("canonical_measurement_scale_id") != scale_id:
+        raise ValueError(f"category-CDF scale mismatch for {key}")
+    scale = record_contract.measurement_scales.get(scale_id)
+    if scale is None or scale.kind != "ordinal":
+        raise ValueError(f"category-CDF undeclared ordinal scale for {key}")
+    categories = category_cdf.get("categories")
+    if not isinstance(categories, list):
+        raise ValueError(f"category-CDF categories missing for {key}")
+    declared = sorted(scale.categories, key=lambda item: item.rank)
+    if len(categories) != len(declared):
+        raise ValueError(f"category-CDF declared category count mismatch for {key}")
+    if int(category_cdf.get("declared_category_count") or 0) != len(declared):
+        raise ValueError(f"category-CDF declared category count mismatch for {key}")
+    total = int(category_cdf.get("total_record_count") or 0)
+    if total != int(entry.get("record_count") or 0):
+        raise ValueError(f"category-CDF record count mismatch for {key}")
+    cumulative = 0
+    observed_categories = 0
+    for stored, expected in zip(categories, declared):
+        if not isinstance(stored, Mapping):
+            raise ValueError(f"invalid category-CDF category for {key}")
+        if stored.get("category_id") != expected.category_id or int(
+            stored.get("rank", -1)
+        ) != expected.rank:
+            raise ValueError(f"category-CDF declared domain mismatch for {key}")
+        count = int(stored.get("observed_count", -1))
+        if count < 0:
+            raise ValueError(f"category-CDF negative count for {key}")
+        observed = float(stored.get("midrank_0_1"))
+        expected_midrank = (cumulative + 0.5 * count) / total
+        if not math.isclose(
+            observed, expected_midrank, rel_tol=0.0, abs_tol=1e-15
+        ):
+            raise ValueError(f"category-CDF midrank mismatch for {key}")
+        cumulative += count
+        observed_categories += int(count > 0)
+    if cumulative != total:
+        raise ValueError(f"category-CDF record count mismatch for {key}")
+    if int(category_cdf.get("observed_category_count") or 0) != observed_categories:
+        raise ValueError(f"category-CDF observed category count mismatch for {key}")
 
 
 def _one(values: pd.Series, key: str, field: str) -> str:
@@ -662,9 +1109,18 @@ def _unique_text(values: pd.Series) -> list[str]:
 
 
 __all__ = [
+    "CATEGORY_CDF_VERSION",
     "CALIBRATION_FILENAME",
     "CALIBRATION_VERSION",
+    "LEGACY_CALIBRATION_VERSION",
+    "LEGACY_DISTANCE_PERCENTILE_KNOTS",
     "MINIMUM_BUCKET_RECORDS",
+    "VALUE_CDF_VERSION",
     "build_pair_bucket_distance_calibration",
+    "calibration_standard_deviation",
+    "category_cdf_percentile",
+    "category_cdf_separation",
+    "value_cdf_percentile",
+    "value_cdf_separation",
     "validate_pair_bucket_distance_calibration",
 ]

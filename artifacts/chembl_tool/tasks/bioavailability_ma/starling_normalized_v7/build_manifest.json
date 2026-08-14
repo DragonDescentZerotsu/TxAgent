@@ -2,7 +2,7 @@
   "artifact_version": "starling_canonical_evidence.v7",
   "auxiliary_attachment_version": "starling_auxiliary_attachment.v1",
   "bioavailability_evidence_scope_version": "bioavailability_evidence_scope.v1",
-  "categorical_response_version": "bioavailability_ma_categorical_response.v3",
+  "categorical_response_version": "bioavailability_ma_categorical_response.v4",
   "compact_artifact_version": "bioavailability_ma.compact_v6.v1.v7",
   "completed_artifact_stages": [
     "01_cleaned",
@@ -33,23 +33,23 @@
   },
   "direct_measurement_extraction_version": "bioavailability_direct_measurement_extraction.v1",
   "downstream_artifact_hashes": {
-    "distance_calibration": "d4e0e64bdb31364c7eb1edcaec159ddf8239f88d5f903bb75f3c548c3c211700",
+    "distance_calibration": "825f16e9bd96a54c7eecf39943bd3e5cd316473e400839df192f7ad47cbda2ee",
     "heldout_exclusions": "2974b219c78bb6e51772f06c5b494f92a303cca1800a9b68c7fb3af594d8a74a",
-    "heldout_overlap_manifest": "1e9dee11850024743374ee4c6abc8bbebe5cd0778f4962a243138cbb8332558e",
-    "pair_bucket_metadata": "34f0faa2ed1ec752e61f4301f5204b67f054bd0c06415c642ebc69424de5dc5e",
-    "pair_bucket_records": "6284d61f1988b56f73db8ac02098bae0094b504418a6fa620a6620ee2efd35c6",
-    "random_filtered_records": "13e9f5ab04b3be1bba4aaca7b2d275fe360d23b3ca125dece78e0bfda2fd85fa",
-    "random_molecule_families": "b15949362bde03fdc7938f0c6f9e63051fb4c0ce63045ca2b3f88efde5c5129c",
-    "random_molecule_family_records": "65e4fb8c425e233123beb4a89a34a45c99c9e937614eb2675ee0c9cc68712e8c",
-    "random_neighbor_index_manifest": "1579cab2eee4ab0fca15dad5ecd4529924b99e90491ea93c0568f7eaaea91d9e",
-    "scaffold_filtered_records": "05fa6806b564b07787b2d93a20bb23b3d8bdc04541580cf4c0692be67cbc9ac9",
-    "scaffold_molecule_families": "6bd5cae4927fe9df168f08f1feb3e67e6640eb9d5b8c181974722a654957feea",
-    "scaffold_molecule_family_records": "26e6c2f0e36f3472713790f1de4a85f7bbc91fed1b2cba95b15a580b8857714e",
-    "scaffold_neighbor_index_manifest": "d6daf2fa3f9cb8c05a20f0110ed92604f98edb7e31d4b4105f90160ce577015b"
+    "heldout_overlap_manifest": "7f77bc01cb60a08610316d20fd4cf687b307bac0bdab1a6662fce4acceae7f1d",
+    "pair_bucket_metadata": "8e6d8927f3bf5fb4326d739970ee0efbd40fc57bb9661948ec51a055bf3ee77e",
+    "pair_bucket_records": "5e434bb269204768a5e264f854d676deba752008b32ae244679b969d6a12d0df",
+    "random_filtered_records": "b183fa4998d921e662dffe38d41185dca14e144bbe787c62d386e6845c354a25",
+    "random_molecule_families": "78eab365f47e4c6f616ce66e3c0d83420d69ce80d7bc1c025b1b8922f4e1c73f",
+    "random_molecule_family_records": "2311bb21d700ada5e4964a2a69ee3970c05245646cb817cba05137521e02d709",
+    "random_neighbor_index_manifest": "28ee7876df3f62875526013229189f675bc3f5bd57109ebe7c94245311ed27d6",
+    "scaffold_filtered_records": "b53696b7e184fbe3650ad8d5017f0b6a028a5aa5aacefbb579aec2876bc2b662",
+    "scaffold_molecule_families": "e0ee21b777947b889f4b18a6e7725e98684621e350dcdcf7b132e68d6577db40",
+    "scaffold_molecule_family_records": "82cc01aa3b0fd920121dcd7924e314c4879aea7d0b567d62895b2d9d0fd930b1",
+    "scaffold_neighbor_index_manifest": "8207a509178ffef51d52be50f5a3a66a69a7f2b07a99444333a3aec81d06af55"
   },
   "downstream_build_cache": {
     "completed_stage": "09_audits",
-    "content_key": "b7d5e7cec3cbdb6df9dd92d3845a45fc98038f1e54e68e9c18f60efe4b283ead",
+    "content_key": "5621911b37b33b160ee35f93589e8e495f46ebe3f0b7baaacf0e916e0082b7aa",
     "implementation": {
       "files": {
         "tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
@@ -60,12 +60,13 @@
         "tools/chembl_tool/common/starling/auxiliary_metadata.py": "8d541c3cec6d88917104bf34bed927d0f3b09cf34127179d80d8f9a2a59bf343",
         "tools/chembl_tool/common/starling/benchmark_dataset.py": "3e35bf02dcd9bfd9c18f464a40eab2f225f0c9caf3979ec09bd1f4eb1e2965a4",
         "tools/chembl_tool/common/starling/build_benchmark_datasets.py": "ee6e54011b8ffdf56e875ef218f63a88a7305e7774105e12bb3cb45ee15e07c4",
-        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "0fe0ad913f1054fd172a7b9a2cf83002b529a1b64234518a089393eb5d6367fa",
-        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "e5070ce794543c4b3f69bd512459f10d4a67099ce63971ac1a24ade8a390038f",
+        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "b56fe23d6ea17bed45eb37305ac0f4e0f9b94854be66fa8458010dc833d0baba",
+        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "41c466a4df72d733db58f73fd50531db768c454717e677ffb39dfd860abe0957",
         "tools/chembl_tool/common/starling/build_pair_bucket_transfer_policy.py": "5bcd027201aa4bf55020d2651db7999fa1e8f4aa267d099636d90ff78020522a",
+        "tools/chembl_tool/common/starling/build_reference_semantics_mapping.py": "1c855975c60fd4cb3c613dd6d42d1884fe0a306ad9f3f652f89f3c9825ee866d",
         "tools/chembl_tool/common/starling/build_runtime.py": "12096532ba7dc7f6eedd4ea1e34ca2435816b0e436e66c6394aca6782f159a9b",
-        "tools/chembl_tool/common/starling/canonicalization_v7.py": "08a57eefd0fd68ac6440b30aa9f099f71f26c5aea41ccd29197b42bb7292c5dd",
-        "tools/chembl_tool/common/starling/categorical_response.py": "cb0e26fc76fa5eac334989d3b1e746917000893dbf2cb620c9c5a4fa51e48547",
+        "tools/chembl_tool/common/starling/canonicalization_v7.py": "ba1f1e7c45f3b9d4e941f2fed99dbf1eaf341d91debacdefa3632c8a84390129",
+        "tools/chembl_tool/common/starling/categorical_response.py": "56ebb5a90dfdba6506f0a9a2b80fb3098210c04dcbe60f0e2b9818a24251bb7d",
         "tools/chembl_tool/common/starling/clustered_auxiliary_mapping.py": "978fd30b6e127bf428f6aaf9c2d138cd03a19e9364dd6137b9555016ac25610b",
         "tools/chembl_tool/common/starling/compact_artifacts.py": "7588f9651a57231e300e68caadc423cf69bcfe35d9ad720030a29e54a07d5f44",
         "tools/chembl_tool/common/starling/evidence_library.py": "0cf14431925e7c9557ec36e53aa260ab549956de687210cba9c16665b9eb2568",
@@ -77,79 +78,82 @@
         "tools/chembl_tool/common/starling/normalization/measurements.py": "a4a2f783012914883f1467b1e012e230c648e8d5bd14151ec0cda9057583838d",
         "tools/chembl_tool/common/starling/normalization/organization.py": "2354ae5f39446dc5fb8daa074a00553d7945b8613f6ede21b4f616f782aede1d",
         "tools/chembl_tool/common/starling/normalization/source_value_cleaning.py": "e24ed4dc3d28d4c016580e2eaae0f6dbc26b88be5db23dd97c13e09797096849",
-        "tools/chembl_tool/common/starling/normalization/task_policy.py": "79e98cf23e35d534a8b74a84b58048d1922f7e5bc954f3e02f8d52e05ef885bd",
+        "tools/chembl_tool/common/starling/normalization/task_policy.py": "246792dff0fa483a4143e409a2d977aeb161135a0d8e98a7c6ed54421b529d95",
         "tools/chembl_tool/common/starling/normalized_evidence.py": "c94439d0afbfd260dda7d42b35e80bdd31b9a552ed8fdd3e00e775076437e870",
         "tools/chembl_tool/common/starling/oral_bioavailability.py": "cb9ffd7d828e0ab4083f6d98da132c227da20816371823a25396ae311a4f88fe",
         "tools/chembl_tool/common/starling/pair_bucket_transfer_policy.py": "2797fc74b90197003946e382d825f4f2b9f5e6a2fd5d76673a5c5d4159396580",
-        "tools/chembl_tool/common/starling/pair_buckets.py": "c194068f930675ed18d10d94efe188618d69d0e109efa9e05c0c54ae4a9301a8",
+        "tools/chembl_tool/common/starling/pair_buckets.py": "5911a5e1165719202f726bab40a0151fff71c4e9d455ebb97b0a43f73f8fb790",
         "tools/chembl_tool/common/starling/policy_distance.py": "17f2170b2c65718d84258f60af7a6882ca785d000a5992984babe4db8a5fc6e9",
-        "tools/chembl_tool/common/starling/split_downstream.py": "e2dda862d2788e2c19794750483416c1b1644350abb38326ec81cb8753beece9",
+        "tools/chembl_tool/common/starling/reference_semantics.py": "14a5c8ed2929ccf6486e0fa589556e91d14c666cee7abe0a8feabe5f2f72ce42",
+        "tools/chembl_tool/common/starling/split_downstream.py": "99a6adbd8a9ba05d3285bf5d1156f40f16957c3d708c0d828ba12f929dc8c92d",
         "tools/chembl_tool/common/starling/stage_artifact_store.py": "e74992cb936e89f2907b83a47a65c31831f1333b3ecd9abef341d134cc78d7da",
         "tools/chembl_tool/common/starling/v7_benchmark_view.py": "a766f15d444714d31510d9f89cdd16104715003d5aa62cb282ab72ba85f08a96",
         "tools/chembl_tool/common/task_workflows/evidence_library.py": "03d96fa341ecef662155dfcdd42354e25084698b2176006a403320202ad34fe2",
         "tools/chembl_tool/common/units.py": "a6f03bc9409bef9d334aa042293944ea35ad5adbaa2fdf273610eb788b3cca5c",
         "tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py": "05eb6e320c9ca22cabd9280363b972ff8b193d2b405fb6698c86c0798e6c55dc",
-        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py": "1e6263456f07a47dd894bf3141538171d54d61fce5b1291e1ea07fa2fa740284",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py": "0383c317072fe784074dcae40d8795b1e79739284b063ccd02c5a9549e646910",
         "tools/chembl_tool/tasks/bioavailability_ma/build_starling_evidence_library.py": "c9b8e933c0f78a348ca02d139ee6d732f5170f3454ee184eb3b7cd6ddfbe6fc4",
         "tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py": "41f019a9f63c8b63d2e30b302a9bb13ee30be64dc2141074a87d811612e466ca",
-        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py": "e11e5a8bc869728bfb20c31a2ddfde244994605c007731c4523b81ed98b3d290",
-        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py": "9e6845b65994b6691b54512757634ba666b4aa2d77dcc816cf16f65cfb2fb617",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py": "52acbea158dc25907a7ecc315bee419808509c9b6263762bf8fc1032f3affd17",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py": "a764b053c9ec69407e81c175a7550c9c40154ca0d44a8a828b0205346a00b91a",
+        "tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_prompts.json": "9dbd5502101225ccff8b5dba1688a3d73648ad56d77d34397a9d52a859243bf7",
         "tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_artifact_store.py": "cfdf74f08799959229db0f1f7d3f423e689e0f02f84f8ed97be14ab4161e419a",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_auxiliary_metadata.py": "22715a1767d6cf18ae737bebebd4eba3dda6554ea1debc74100dd8f7a4559d5e",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py": "bc596e35ad13c728f6532d7a9cc9025fa33661f6960c6501fb3825e26b10f528",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_canonicalization.py": "9b1262a6f3580f6f87ac94c52dc62421f46c720516c01e2ae91dddb8353067a5",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_categorical_response.py": "f7194bc21c6b0505763a37aacbe4e2ca2ac57e3f48c267153d6708a938005a72",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_categorical_response.py": "02b83b018617834a6190694e555a888e1669be51e4b6f5f471d5e068acaf712e",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_compact_artifacts.py": "fe701eb39a017d791517b45056793fd195b125370de82b8bf59171b1cf2fda5c",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py": "7eb3763989d0ccdd8050d949fe537a28ffa69c94e1ee10f826fc9cbf6b0f2289",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py": "a5ef565e3dcb131b047091728026f4e941865ea8d602510a99ad5bd48f604bb7",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_fg_scalar_rules.py": "f8e7947aff8ec20a0a2f363884d457e5ffad9bbae7393fc61fd6e8ce1cc680ca",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_policy.py": "437fea586796d2fc550867c63b7833bd4740894bfc56ea1211854dcfa5b86bd1",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_reconciliation.py": "5e2af9c3a41fb623460fc7e22f1c80dcd7b55d38ab7e0d8b0dea9c849e539c76",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_sources.py": "da9a5b32c8cf1f27e2ab0b391d4d189940585dc28754dc0d642e5107a0adc3a1",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_bucket_transfer_policy.py": "cbee919a3bf8e3b83800f80ecdde1e7cb73dde878a7f4fe21de8f9d8b3cdc0d6",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py": "e39ab88297f31667cdb7e34b98afc4efe3d7930e5a9893a87b8d77b382ed7e0e",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py": "c36275644b02c2e19c0d3552ce0e4a5cf226474a00acf555f445a956b1323da8",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py": "0fb4cc890801f1dc29fb80ff3e3ed68d829fafa67c2f3fbaa46d5185226747b3",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py": "ffadcd5eb8d8c26a2f86fe97e2f02a69f05399af6264a841a376ccef407bd9a6",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_record_canonicalization.py": "bcd15395fb6b6777a75b169a2f2a8a2b706d29381d8342f5ab03a3f04787fd19",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_schema.py": "a2ca6bc4bd951fde3dd77f32d217551d9bcc4ebc9fb01a3ceb417279a8e85291",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_reference_semantics.py": "cb050ec159c69fd4e41f1136e3265eb8e37a1bb0a5f5cbe59d87279289cdb3b9",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_schema.py": "25882165ff0c0bebff0de01992a48fe8bf21a8bc4a6e6a6ee33107f2e0329fc2",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_source_column_contracts.py": "28ad54026f34a4ffab4814fda3a459065482f808ed96aae9c43d4534c1940d01",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_spacing_and_spelling.py": "a70fb792f4758d27309b35ebdcf9dc57316181c9ca4d7186dfb54977a9b572fd",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_v7_artifact_store.py": "7cfcedc2eecfc8272aba222d382a3de5410e98262a02c90fd22d1d813bc1d4e7"
       },
-      "sha256": "b13053a7c6fe093c449e95925aeffcfaec3a569cb5b7641891cbe37a48ac2118",
+      "sha256": "242e9bbf0c39c50e2140b56eab7d4d0cc6bbdd53b027e96ae78af7b34cb8bc2c",
       "version": "starling_build_runtime.v2"
     },
-    "implementation_sha256": "b13053a7c6fe093c449e95925aeffcfaec3a569cb5b7641891cbe37a48ac2118",
+    "implementation_sha256": "242e9bbf0c39c50e2140b56eab7d4d0cc6bbdd53b027e96ae78af7b34cb8bc2c",
     "inputs": {
       "data/processed_starling/Bioavailability_Ma/random/heldout_molecule_labels.jsonl": "aa48123401e46e742d699a07002a9f8ac21d736a60e7ba2c51e44a2cef39fc80",
       "data/processed_starling/Bioavailability_Ma/random/train_molecule_labels.jsonl": "0078dbbd561f2c5d80e736fe8b109eb2ae87fbcc41781ceff8a2401efec37a1a",
       "data/processed_starling/Bioavailability_Ma/scaffold/heldout_molecule_labels.jsonl": "de8684d3b7db9b78a0c262e009d44cd7d2013fc3963339339e3fa0c65d3d0860",
       "data/processed_starling/Bioavailability_Ma/scaffold/train_molecule_labels.jsonl": "13b7456a99d74c3ff17a8e0cec375789f65477f7e349e90811d8f231e18a338f",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "dc3b280d321c01499b121f184fe33f4f5d4dc906708769416780845f05cac2b3",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/records.parquet": "74b277ae2c058cd7a6668aab25b5a1369d0c4b95e1c08871d83f839692c5306e"
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/records.parquet": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60"
     },
     "outputs": {
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_metadata.json": "34f0faa2ed1ec752e61f4301f5204b67f054bd0c06415c642ebc69424de5dc5e",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_records.parquet": "6284d61f1988b56f73db8ac02098bae0094b504418a6fa620a6620ee2efd35c6",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/05_distance_calibration/pair_bucket_distance_calibration.json.gz": "d4e0e64bdb31364c7eb1edcaec159ddf8239f88d5f903bb75f3c548c3c211700",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_metadata.json": "8e6d8927f3bf5fb4326d739970ee0efbd40fc57bb9661948ec51a055bf3ee77e",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_records.parquet": "5e434bb269204768a5e264f854d676deba752008b32ae244679b969d6a12d0df",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/05_distance_calibration/pair_bucket_distance_calibration.json.gz": "825f16e9bd96a54c7eecf39943bd3e5cd316473e400839df192f7ad47cbda2ee",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/excluded_direct_bioavailability_records.parquet": "2974b219c78bb6e51772f06c5b494f92a303cca1800a9b68c7fb3af594d8a74a",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/manifest.json": "1e9dee11850024743374ee4c6abc8bbebe5cd0778f4962a243138cbb8332558e",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/random/records.parquet": "13e9f5ab04b3be1bba4aaca7b2d275fe360d23b3ca125dece78e0bfda2fd85fa",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/scaffold/records.parquet": "05fa6806b564b07787b2d93a20bb23b3d8bdc04541580cf4c0692be67cbc9ac9",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/manifest.json": "5f094806d56e7d2b6aa2dda48283a4339afc60592d0180910286fd7a57b0993d",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_families.parquet": "b15949362bde03fdc7938f0c6f9e63051fb4c0ce63045ca2b3f88efde5c5129c",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_family_records.parquet": "65e4fb8c425e233123beb4a89a34a45c99c9e937614eb2675ee0c9cc68712e8c",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/manifest.json": "3d8d6477f3ba79f46f822d22e7a4a3e6a0b5e16580ed9467573403913c9731a2",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_families.parquet": "6bd5cae4927fe9df168f08f1feb3e67e6640eb9d5b8c181974722a654957feea",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_family_records.parquet": "26e6c2f0e36f3472713790f1de4a85f7bbc91fed1b2cba95b15a580b8857714e",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/manifest.json": "7f77bc01cb60a08610316d20fd4cf687b307bac0bdab1a6662fce4acceae7f1d",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/random/records.parquet": "b183fa4998d921e662dffe38d41185dca14e144bbe787c62d386e6845c354a25",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_remove_heldout_overlap/scaffold/records.parquet": "b53696b7e184fbe3650ad8d5017f0b6a028a5aa5aacefbb579aec2876bc2b662",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/manifest.json": "3814cc03b35d7fbae25b6db952aa7090381682d330d5ea90c41f3a18353f46aa",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_families.parquet": "78eab365f47e4c6f616ce66e3c0d83420d69ce80d7bc1c025b1b8922f4e1c73f",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/random/molecule_family_records.parquet": "2311bb21d700ada5e4964a2a69ee3970c05245646cb817cba05137521e02d709",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/manifest.json": "516ef02584875ff06512ecde4be8eeef0bfc434605c857192ef5eb3c5a008d9b",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_families.parquet": "e0ee21b777947b889f4b18a6e7725e98684621e350dcdcf7b132e68d6577db40",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/07_molecule_evidence/scaffold/molecule_family_records.parquet": "82cc01aa3b0fd920121dcd7924e314c4879aea7d0b567d62895b2d9d0fd930b1",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/fingerprints.npz": "64418fc7650a26ec3bdcf6e1cdd2528c14858f9d978e127e9a32963cb8948fcb",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/group_membership.parquet": "379e06406663b0591cbdf275929fe188c06d5c5a0b1aa262b9e5cc491c1e72b9",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/manifest.json": "1579cab2eee4ab0fca15dad5ecd4529924b99e90491ea93c0568f7eaaea91d9e",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/manifest.json": "28ee7876df3f62875526013229189f675bc3f5bd57109ebe7c94245311ed27d6",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/random/molecules.parquet": "857153626fee68c65076e93b47562515fb5402e1d5cdf07ca0bf3036a84c4d15",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/fingerprints.npz": "f5579c37e72fc1fad54302ab4f7f4ac423fe3c650fe297e33ce565a291492000",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/group_membership.parquet": "30e3b58fd0f540e1ccdd33e407e1e6f416973066d26be9c2a469c1ec460b7cd5",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/manifest.json": "d6daf2fa3f9cb8c05a20f0110ed92604f98edb7e31d4b4105f90160ce577015b",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/manifest.json": "8207a509178ffef51d52be50f5a3a66a69a7f2b07a99444333a3aec81d06af55",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/08_neighbor_index/scaffold/molecules.parquet": "00d5bb43e39082f5fbc5b0d49398a1d7a5fd23ca6f9c73e6348c448556a52722",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/09_audits/heldout_overlap.json": "a3f39993bb25aa47ae85738222ea74f315496ec94d728ecf0a0e5aa268437b67"
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/09_audits/heldout_overlap.json": "9731bdcf4b83aec71de5674af8a93a7b354ecb12a9fa4a8f60a9602c20ba6d85"
     },
     "semantic_arguments": {
       "benchmark_split_root": "data/processed_starling/Bioavailability_Ma",
@@ -175,8 +179,8 @@
     "unfiltered_record_stage": "03_records"
   },
   "downstream_stats": {
-    "calibration_valid_buckets": 359,
-    "pair_buckets": 8092,
+    "calibration_valid_buckets": 309,
+    "pair_buckets": 7537,
     "splits": {
       "random": {
         "excluded_filter_source_records": 6232,
@@ -192,8 +196,8 @@
       }
     }
   },
-  "elapsed_downstream_s": 71.669,
-  "elapsed_s": 420.43,
+  "elapsed_downstream_s": 100.225,
+  "elapsed_s": 428.447,
   "endpoint_inventory": {
     "fa": {
       "count": 33,
@@ -1904,7 +1908,7 @@
   },
   "record_build_cache": {
     "completed_stage": "organize",
-    "content_key": "2488c2470f2489d0700fba266f60739cb28c258a2e4964ce68337284badf6a99",
+    "content_key": "4d5f113bcdcfd5a135c0a5b5a4a3089adff8d658714b71b956fca21a8a0c105d",
     "implementation": {
       "files": {
         "tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
@@ -1915,12 +1919,13 @@
         "tools/chembl_tool/common/starling/auxiliary_metadata.py": "8d541c3cec6d88917104bf34bed927d0f3b09cf34127179d80d8f9a2a59bf343",
         "tools/chembl_tool/common/starling/benchmark_dataset.py": "3e35bf02dcd9bfd9c18f464a40eab2f225f0c9caf3979ec09bd1f4eb1e2965a4",
         "tools/chembl_tool/common/starling/build_benchmark_datasets.py": "ee6e54011b8ffdf56e875ef218f63a88a7305e7774105e12bb3cb45ee15e07c4",
-        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "0fe0ad913f1054fd172a7b9a2cf83002b529a1b64234518a089393eb5d6367fa",
-        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "e5070ce794543c4b3f69bd512459f10d4a67099ce63971ac1a24ade8a390038f",
+        "tools/chembl_tool/common/starling/build_normalized_evidence_library.py": "b56fe23d6ea17bed45eb37305ac0f4e0f9b94854be66fa8458010dc833d0baba",
+        "tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py": "41c466a4df72d733db58f73fd50531db768c454717e677ffb39dfd860abe0957",
         "tools/chembl_tool/common/starling/build_pair_bucket_transfer_policy.py": "5bcd027201aa4bf55020d2651db7999fa1e8f4aa267d099636d90ff78020522a",
+        "tools/chembl_tool/common/starling/build_reference_semantics_mapping.py": "1c855975c60fd4cb3c613dd6d42d1884fe0a306ad9f3f652f89f3c9825ee866d",
         "tools/chembl_tool/common/starling/build_runtime.py": "12096532ba7dc7f6eedd4ea1e34ca2435816b0e436e66c6394aca6782f159a9b",
-        "tools/chembl_tool/common/starling/canonicalization_v7.py": "08a57eefd0fd68ac6440b30aa9f099f71f26c5aea41ccd29197b42bb7292c5dd",
-        "tools/chembl_tool/common/starling/categorical_response.py": "cb0e26fc76fa5eac334989d3b1e746917000893dbf2cb620c9c5a4fa51e48547",
+        "tools/chembl_tool/common/starling/canonicalization_v7.py": "ba1f1e7c45f3b9d4e941f2fed99dbf1eaf341d91debacdefa3632c8a84390129",
+        "tools/chembl_tool/common/starling/categorical_response.py": "56ebb5a90dfdba6506f0a9a2b80fb3098210c04dcbe60f0e2b9818a24251bb7d",
         "tools/chembl_tool/common/starling/clustered_auxiliary_mapping.py": "978fd30b6e127bf428f6aaf9c2d138cd03a19e9364dd6137b9555016ac25610b",
         "tools/chembl_tool/common/starling/compact_artifacts.py": "7588f9651a57231e300e68caadc423cf69bcfe35d9ad720030a29e54a07d5f44",
         "tools/chembl_tool/common/starling/evidence_library.py": "0cf14431925e7c9557ec36e53aa260ab549956de687210cba9c16665b9eb2568",
@@ -1932,51 +1937,56 @@
         "tools/chembl_tool/common/starling/normalization/measurements.py": "a4a2f783012914883f1467b1e012e230c648e8d5bd14151ec0cda9057583838d",
         "tools/chembl_tool/common/starling/normalization/organization.py": "2354ae5f39446dc5fb8daa074a00553d7945b8613f6ede21b4f616f782aede1d",
         "tools/chembl_tool/common/starling/normalization/source_value_cleaning.py": "e24ed4dc3d28d4c016580e2eaae0f6dbc26b88be5db23dd97c13e09797096849",
-        "tools/chembl_tool/common/starling/normalization/task_policy.py": "79e98cf23e35d534a8b74a84b58048d1922f7e5bc954f3e02f8d52e05ef885bd",
+        "tools/chembl_tool/common/starling/normalization/task_policy.py": "246792dff0fa483a4143e409a2d977aeb161135a0d8e98a7c6ed54421b529d95",
         "tools/chembl_tool/common/starling/normalized_evidence.py": "c94439d0afbfd260dda7d42b35e80bdd31b9a552ed8fdd3e00e775076437e870",
         "tools/chembl_tool/common/starling/oral_bioavailability.py": "cb9ffd7d828e0ab4083f6d98da132c227da20816371823a25396ae311a4f88fe",
         "tools/chembl_tool/common/starling/pair_bucket_transfer_policy.py": "2797fc74b90197003946e382d825f4f2b9f5e6a2fd5d76673a5c5d4159396580",
-        "tools/chembl_tool/common/starling/pair_buckets.py": "c194068f930675ed18d10d94efe188618d69d0e109efa9e05c0c54ae4a9301a8",
+        "tools/chembl_tool/common/starling/pair_buckets.py": "5911a5e1165719202f726bab40a0151fff71c4e9d455ebb97b0a43f73f8fb790",
         "tools/chembl_tool/common/starling/policy_distance.py": "17f2170b2c65718d84258f60af7a6882ca785d000a5992984babe4db8a5fc6e9",
-        "tools/chembl_tool/common/starling/split_downstream.py": "e2dda862d2788e2c19794750483416c1b1644350abb38326ec81cb8753beece9",
+        "tools/chembl_tool/common/starling/reference_semantics.py": "14a5c8ed2929ccf6486e0fa589556e91d14c666cee7abe0a8feabe5f2f72ce42",
+        "tools/chembl_tool/common/starling/split_downstream.py": "99a6adbd8a9ba05d3285bf5d1156f40f16957c3d708c0d828ba12f929dc8c92d",
         "tools/chembl_tool/common/starling/stage_artifact_store.py": "e74992cb936e89f2907b83a47a65c31831f1333b3ecd9abef341d134cc78d7da",
         "tools/chembl_tool/common/starling/v7_benchmark_view.py": "a766f15d444714d31510d9f89cdd16104715003d5aa62cb282ab72ba85f08a96",
         "tools/chembl_tool/common/task_workflows/evidence_library.py": "03d96fa341ecef662155dfcdd42354e25084698b2176006a403320202ad34fe2",
         "tools/chembl_tool/common/units.py": "a6f03bc9409bef9d334aa042293944ea35ad5adbaa2fdf273610eb788b3cca5c",
         "tools/chembl_tool/tasks/bioavailability_ma/build_normalized_starling_evidence_library.py": "05eb6e320c9ca22cabd9280363b972ff8b193d2b405fb6698c86c0798e6c55dc",
-        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py": "1e6263456f07a47dd894bf3141538171d54d61fce5b1291e1ea07fa2fa740284",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_downstream_artifacts.py": "0383c317072fe784074dcae40d8795b1e79739284b063ccd02c5a9549e646910",
         "tools/chembl_tool/tasks/bioavailability_ma/build_starling_evidence_library.py": "c9b8e933c0f78a348ca02d139ee6d732f5170f3454ee184eb3b7cd6ddfbe6fc4",
         "tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py": "41f019a9f63c8b63d2e30b302a9bb13ee30be64dc2141074a87d811612e466ca",
-        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py": "e11e5a8bc869728bfb20c31a2ddfde244994605c007731c4523b81ed98b3d290",
-        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py": "9e6845b65994b6691b54512757634ba666b4aa2d77dcc816cf16f65cfb2fb617",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_sidecar.py": "52acbea158dc25907a7ecc315bee419808509c9b6263762bf8fc1032f3affd17",
+        "tools/chembl_tool/tasks/bioavailability_ma/build_starling_pair_bucket_transfer_policy.py": "a764b053c9ec69407e81c175a7550c9c40154ca0d44a8a828b0205346a00b91a",
+        "tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_prompts.json": "9dbd5502101225ccff8b5dba1688a3d73648ad56d77d34397a9d52a859243bf7",
         "tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_artifact_store.py": "cfdf74f08799959229db0f1f7d3f423e689e0f02f84f8ed97be14ab4161e419a",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_auxiliary_metadata.py": "22715a1767d6cf18ae737bebebd4eba3dda6554ea1debc74100dd8f7a4559d5e",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py": "bc596e35ad13c728f6532d7a9cc9025fa33661f6960c6501fb3825e26b10f528",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_canonicalization.py": "9b1262a6f3580f6f87ac94c52dc62421f46c720516c01e2ae91dddb8353067a5",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_categorical_response.py": "f7194bc21c6b0505763a37aacbe4e2ca2ac57e3f48c267153d6708a938005a72",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_categorical_response.py": "02b83b018617834a6190694e555a888e1669be51e4b6f5f471d5e068acaf712e",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_compact_artifacts.py": "fe701eb39a017d791517b45056793fd195b125370de82b8bf59171b1cf2fda5c",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py": "7eb3763989d0ccdd8050d949fe537a28ffa69c94e1ee10f826fc9cbf6b0f2289",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_contextual_unit_reconciliation.py": "a5ef565e3dcb131b047091728026f4e941865ea8d602510a99ad5bd48f604bb7",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_fg_scalar_rules.py": "f8e7947aff8ec20a0a2f363884d457e5ffad9bbae7393fc61fd6e8ce1cc680ca",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_policy.py": "437fea586796d2fc550867c63b7833bd4740894bfc56ea1211854dcfa5b86bd1",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_reconciliation.py": "5e2af9c3a41fb623460fc7e22f1c80dcd7b55d38ab7e0d8b0dea9c849e539c76",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_normalization_sources.py": "da9a5b32c8cf1f27e2ab0b391d4d189940585dc28754dc0d642e5107a0adc3a1",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_bucket_transfer_policy.py": "cbee919a3bf8e3b83800f80ecdde1e7cb73dde878a7f4fe21de8f9d8b3cdc0d6",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py": "e39ab88297f31667cdb7e34b98afc4efe3d7930e5a9893a87b8d77b382ed7e0e",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py": "c36275644b02c2e19c0d3552ce0e4a5cf226474a00acf555f445a956b1323da8",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_pair_buckets.py": "0fb4cc890801f1dc29fb80ff3e3ed68d829fafa67c2f3fbaa46d5185226747b3",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_policy.py": "ffadcd5eb8d8c26a2f86fe97e2f02a69f05399af6264a841a376ccef407bd9a6",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_record_canonicalization.py": "bcd15395fb6b6777a75b169a2f2a8a2b706d29381d8342f5ab03a3f04787fd19",
-        "tools/chembl_tool/tasks/bioavailability_ma/starling_schema.py": "a2ca6bc4bd951fde3dd77f32d217551d9bcc4ebc9fb01a3ceb417279a8e85291",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_reference_semantics.py": "cb050ec159c69fd4e41f1136e3265eb8e37a1bb0a5f5cbe59d87279289cdb3b9",
+        "tools/chembl_tool/tasks/bioavailability_ma/starling_schema.py": "25882165ff0c0bebff0de01992a48fe8bf21a8bc4a6e6a6ee33107f2e0329fc2",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_source_column_contracts.py": "28ad54026f34a4ffab4814fda3a459065482f808ed96aae9c43d4534c1940d01",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_spacing_and_spelling.py": "a70fb792f4758d27309b35ebdcf9dc57316181c9ca4d7186dfb54977a9b572fd",
         "tools/chembl_tool/tasks/bioavailability_ma/starling_v7_artifact_store.py": "7cfcedc2eecfc8272aba222d382a3de5410e98262a02c90fd22d1d813bc1d4e7"
       },
-      "sha256": "b13053a7c6fe093c449e95925aeffcfaec3a569cb5b7641891cbe37a48ac2118",
+      "sha256": "242e9bbf0c39c50e2140b56eab7d4d0cc6bbdd53b027e96ae78af7b34cb8bc2c",
       "version": "starling_build_runtime.v2"
     },
-    "implementation_sha256": "b13053a7c6fe093c449e95925aeffcfaec3a569cb5b7641891cbe37a48ac2118",
+    "implementation_sha256": "242e9bbf0c39c50e2140b56eab7d4d0cc6bbdd53b027e96ae78af7b34cb8bc2c",
     "inputs": {
       "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
       "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/globally_reconciled_auxiliary_value_mapping.json": "a0929ef4cf48717b0968f78a9a726b6a198cda3233334593b5dba67c59f17304",
+      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet": "844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695",
       "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
       "data/starling_data/_shared/final_smiles_mapping_v2.parquet": "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b",
       "data/starling_data/bioavailability_ma/Direct_HF/records.parquet": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
@@ -1985,7 +1995,7 @@
       "data/starling_data/bioavailability_ma/Fh/extractions.parquet": "c97626a4cadc0736b01adf3184d1dd0be42ebcbf7ca71997b27465f138efd540",
       "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "510b2a5e496718a94fec13456c8a80b677bb7a2f86a7bc1c882a82b399e883f5",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "da05bf7aaafaf8231652f49724b5c34164cae20a20bf1aaad2231fd2b44382f7"
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "c4f6a0f558fbd819f6645873a7537e5900dd24bc8cd86cfc6ecd0eebad756f22"
     },
     "outputs": {
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/endpoint_inventory.json": "107d7c8874dfbd0d607de26814ed5ec86379e6b0498811e9d8eea36fa42dcc36",
@@ -1995,17 +2005,19 @@
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/source_value_cleaning_audit.parquet": "4d3b10909b82711bd134b2025d12c086d247b165155963f9a45219c67245021a",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "dc3b280d321c01499b121f184fe33f4f5d4dc906708769416780845f05cac2b3",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/endpoint_registry.json": "cec7b06833d381072211992c041f1d2fffd9cbc1b04e9aaa2ede1bfff3a6b6b3",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "f42808705f6e325b52fc0e065c5df02165403a5ecc491e5f4b15a1a3a589949d",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "d304c8efa397117442fb5e96dbf8cf83c7185363c6e43125220d5198388da094",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "da05bf7aaafaf8231652f49724b5c34164cae20a20bf1aaad2231fd2b44382f7",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "866eba5bed02638ef374b5612e4c51361c26dbd145e61cba8b6028a692008890",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "e7b23ae5164b4953f88143ddffa484b47d1e67e814bae6148c74d182b1739521",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "2169917705481aec450efdaf3186acb23a798bf3b9b4c9861702436443012bae",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "c41f0aa4f3a16724443b73c172ee4364066238a1c2da4a7a07ab04b7d908f541",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "c4f6a0f558fbd819f6645873a7537e5900dd24bc8cd86cfc6ecd0eebad756f22",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "3825b271dd7e41b209310c17741fc08e17f26cb5a1bc73aa3b2bb352aa0dd092",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "ac1145ae4da626d75c1aab29374b4cf951fe540a571a56d2df65c6ac1c80a7bb",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "fc43485f3dd1c89cf0b47adef403fe47767ae17eb5fb84abb93837d40bc332a1",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/exclusions.parquet": "98c3d6480ae9d2a7244cb69307ec60e10fc75a5819b58c10557e882dc8e84958",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/manifest.json": "fded6eb75252b561332151e684e43bc61195ec95fe78894d06c52303876773d3",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/records.parquet": "74b277ae2c058cd7a6668aab25b5a1369d0c4b95e1c08871d83f839692c5306e",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/scalar_distribution.parquet": "c918c07a2a9df5d29a549ba11d0d8a56c3b001415a9dc4aa82d2e982e983cfc4"
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/manifest.json": "f4280944d37334b42113008390aa0dcf6cd9fea299347c7eed6a5ab55da41e15",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/records.parquet": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/scalar_distribution.parquet": "ec5dc0c0022ed0fb384794ad6c92ea731a49fed2951ac2bd3a7937cb4a7527e1"
     },
     "semantic_arguments": {
+      "allow_missing_reference_semantics": false,
       "allow_unpinned_smiles_mapping": false,
       "auxiliary_mapping": {
         "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/globally_reconciled_auxiliary_value_mapping.json",
@@ -2020,6 +2032,10 @@
       "max_hf_rows": 0,
       "max_record_examples": 6,
       "max_rows_per_source": 0,
+      "reference_semantics_mapping": {
+        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet",
+        "sha256": "844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695"
+      },
       "smiles_mapping": {
         "path": "data/starling_data/_shared/final_smiles_mapping_v2.parquet",
         "sha256": "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
@@ -2037,7 +2053,7 @@
   },
   "record_contract": {
     "measurement_scales": {
-      "direct_oral_bioavailability_binary.v1": {
+      "direct_oral_bioavailability_ordinal.v1": {
         "categories": [
           {
             "category_id": "low",
@@ -2045,19 +2061,24 @@
             "rank": 0
           },
           {
+            "category_id": "middle",
+            "encoded_value": 0.0,
+            "rank": 1
+          },
+          {
             "category_id": "high",
             "encoded_value": 1.0,
-            "rank": 1
+            "rank": 2
           }
         ],
-        "definition": "explicit low versus high direct oral-bioavailability wording",
+        "definition": "explicit low, middle, or high direct oral-bioavailability wording",
         "input_fields": [
           "measurement_text",
           "bioavailability_report_type"
         ],
-        "kind": "binary",
-        "parser_id": "bioavailability.direct_qualitative_binary.v1",
-        "scale_id": "direct_oral_bioavailability_binary.v1",
+        "kind": "ordinal",
+        "parser_id": "bioavailability.direct_qualitative_ordinal.v1",
+        "scale_id": "direct_oral_bioavailability_ordinal.v1",
         "source_id": "hf_bioavailability"
       },
       "fg_substrate_status_binary.v1": {
@@ -2090,8 +2111,15 @@
           "canonical_endpoint_name",
           "canonical_unit_text",
           "canonical_assay_context",
-          "canonical_species_context"
+          "canonical_species_context",
+          "canonical_reference_scope"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "not_applicable"
+        ],
+        "reference_basis_required": false,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "condition_medium",
           "formulation_or_solid_form",
@@ -2104,8 +2132,15 @@
           "canonical_unit_text",
           "canonical_measurement_scale_id",
           "canonical_assay_context",
-          "canonical_species_context"
+          "canonical_species_context",
+          "canonical_reference_scope"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "not_applicable"
+        ],
+        "reference_basis_required": false,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "transporter_or_enzyme",
           "substrate_status",
@@ -2118,8 +2153,15 @@
           "canonical_endpoint_name",
           "canonical_unit_text",
           "canonical_assay_context",
-          "canonical_species_context"
+          "canonical_species_context",
+          "canonical_reference_scope"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "not_applicable"
+        ],
+        "reference_basis_required": false,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "molecular_form",
           "enzyme_or_pathway",
@@ -2132,8 +2174,15 @@
           "canonical_unit_text",
           "canonical_measurement_scale_id",
           "canonical_bioavailability_report_type",
-          "canonical_bioavailability_evidence_scope"
+          "canonical_bioavailability_evidence_scope",
+          "canonical_reference_scope"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "not_applicable"
+        ],
+        "reference_basis_required": false,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "species_or_population",
           "dose",
@@ -2145,8 +2194,15 @@
       "oral_exposure": {
         "canonical_dimensions": [
           "canonical_endpoint_name",
-          "canonical_unit_text"
+          "canonical_unit_text",
+          "canonical_reference_scope"
         ],
+        "eligible_reference_scopes": [
+          "absolute",
+          "not_applicable"
+        ],
+        "reference_basis_required": false,
+        "required_known_dimensions": [],
         "variance_candidates": [
           "statistic_type",
           "oral_dose",
@@ -2169,6 +2225,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -2194,6 +2251,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -2225,6 +2283,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -2256,6 +2315,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "global_identifier"
@@ -2272,6 +2332,33 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "assay_system",
+              "condition_medium",
+              "biological_context",
+              "formulation_or_solid_form",
+              "qualifying_conditions",
+              "extra_details"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bioavailability_reference_semantics.v2"
+          },
+          {
+            "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_system"
@@ -2288,6 +2375,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "biological_context",
@@ -2372,6 +2460,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -2398,7 +2487,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "fg_substrate_status_binary.v1",
-                "version": "bioavailability_ma_categorical_response.v3"
+                "version": "bioavailability_ma_categorical_response.v4"
               }
             ],
             "semantic_dimension": "endpoint_name",
@@ -2406,6 +2495,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -2438,7 +2528,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "fg_substrate_status_binary.v1",
-                "version": "bioavailability_ma_categorical_response.v3"
+                "version": "bioavailability_ma_categorical_response.v4"
               }
             ],
             "semantic_dimension": "measurement",
@@ -2446,6 +2536,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -2478,7 +2569,7 @@
                 ],
                 "method": "controlled_encoder",
                 "producer_id": "fg_substrate_status_binary.v1",
-                "version": "bioavailability_ma_categorical_response.v3"
+                "version": "bioavailability_ma_categorical_response.v4"
               }
             ],
             "semantic_dimension": "unit",
@@ -2486,6 +2577,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "global_identifier"
@@ -2502,6 +2594,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "substrate_status",
@@ -2515,10 +2608,37 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "measurement_scale",
-            "version": "bioavailability_ma_categorical_response.v3"
+            "version": "bioavailability_ma_categorical_response.v4"
           },
           {
             "atomic_group": null,
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "transporter_or_enzyme",
+              "substrate_status",
+              "assay_system",
+              "intestinal_site",
+              "qualifying_conditions",
+              "extra_details"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bioavailability_reference_semantics.v2"
+          },
+          {
+            "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_system"
@@ -2535,6 +2655,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_system"
@@ -2619,6 +2740,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -2644,6 +2766,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -2675,6 +2798,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -2706,6 +2830,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "global_identifier"
@@ -2722,6 +2847,33 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "assay_system",
+              "species",
+              "molecular_form",
+              "enzyme_or_pathway",
+              "qualifying_conditions",
+              "extra_details"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bioavailability_reference_semantics.v2"
+          },
+          {
+            "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "assay_system"
@@ -2738,6 +2890,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "species",
@@ -2822,6 +2975,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -2847,8 +3001,8 @@
                   "bioavailability_report_type"
                 ],
                 "method": "controlled_encoder",
-                "producer_id": "direct_oral_bioavailability_binary.v1",
-                "version": "bioavailability_ma_categorical_response.v3"
+                "producer_id": "direct_oral_bioavailability_ordinal.v1",
+                "version": "bioavailability_ma_categorical_response.v4"
               }
             ],
             "semantic_dimension": "endpoint_name",
@@ -2856,6 +3010,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -2887,8 +3042,8 @@
                   "bioavailability_report_type"
                 ],
                 "method": "controlled_encoder",
-                "producer_id": "direct_oral_bioavailability_binary.v1",
-                "version": "bioavailability_ma_categorical_response.v3"
+                "producer_id": "direct_oral_bioavailability_ordinal.v1",
+                "version": "bioavailability_ma_categorical_response.v4"
               }
             ],
             "semantic_dimension": "measurement",
@@ -2896,6 +3051,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -2927,8 +3083,8 @@
                   "bioavailability_report_type"
                 ],
                 "method": "controlled_encoder",
-                "producer_id": "direct_oral_bioavailability_binary.v1",
-                "version": "bioavailability_ma_categorical_response.v3"
+                "producer_id": "direct_oral_bioavailability_ordinal.v1",
+                "version": "bioavailability_ma_categorical_response.v4"
               }
             ],
             "semantic_dimension": "unit",
@@ -2936,6 +3092,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "smiles"
@@ -2952,6 +3109,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "measurement_text",
@@ -2965,10 +3123,33 @@
             "producer_id_field": null,
             "producers": [],
             "semantic_dimension": "measurement_scale",
-            "version": "bioavailability_ma_categorical_response.v3"
+            "version": "bioavailability_ma_categorical_response.v4"
           },
           {
             "atomic_group": null,
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "bioavailability_report_type",
+              "comparator"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bioavailability_reference_semantics.v2"
+          },
+          {
+            "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "bioavailability_report_type"
@@ -2985,6 +3166,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "bioavailability_report_type"
@@ -3057,6 +3239,7 @@
         "canonical_dimensions": [
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "endpoint_name"
@@ -3082,6 +3265,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -3113,6 +3297,7 @@
           },
           {
             "atomic_group": "canonical_measurement_unit_pair",
+            "classification_evidence": false,
             "depends_on": [
               "canonical_endpoint_name"
             ],
@@ -3144,6 +3329,7 @@
           },
           {
             "atomic_group": null,
+            "classification_evidence": false,
             "depends_on": [],
             "input_fields": [
               "global_identifier"
@@ -3157,6 +3343,32 @@
             "producers": [],
             "semantic_dimension": "molecular_structure",
             "version": "final_smiles_mapping_v2.98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
+          },
+          {
+            "atomic_group": null,
+            "classification_evidence": true,
+            "depends_on": [],
+            "input_fields": [
+              "endpoint_name",
+              "measurement_text",
+              "unit_text",
+              "support_text",
+              "statistic_type",
+              "oral_dose",
+              "study_context",
+              "comparator_exposure",
+              "qualifying_conditions",
+              "extra_details"
+            ],
+            "legacy_value_field": "canonical_reference_scope",
+            "method": "frozen_mapping",
+            "missing_policy": "explicit_unknown",
+            "output_field": "canonical_reference_scope",
+            "producer_id": null,
+            "producer_id_field": null,
+            "producers": [],
+            "semantic_dimension": "measurement_reference_scope",
+            "version": "bioavailability_reference_semantics.v2"
           }
         ],
         "cleaned_source_fields": [

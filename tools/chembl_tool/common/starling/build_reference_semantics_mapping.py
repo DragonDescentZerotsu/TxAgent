@@ -99,9 +99,13 @@ class TokenLedger:
         *,
         epoch: str,
         start_new_epoch: bool,
+        max_tokens: int = MAX_EPOCH_TOKENS,
     ):
+        if max_tokens < 1:
+            raise ValueError("token ledger maximum must be positive")
         self.path = path
         self.epoch = epoch
+        self.max_tokens = int(max_tokens)
         self._lock = threading.Lock()
         self.payload = self._load()
         epochs = self.payload.setdefault("epochs", {})
@@ -119,7 +123,7 @@ class TokenLedger:
                         f"cannot replace non-exhausted budget epoch {active!r}"
                     )
             epochs[epoch] = {
-                "max_tokens": MAX_EPOCH_TOKENS,
+                "max_tokens": self.max_tokens,
                 "input_tokens": 0,
                 "output_tokens": 0,
                 "conservative_unreported_tokens": 0,
@@ -133,8 +137,10 @@ class TokenLedger:
                 f"cannot resume inactive epoch {epoch!r}; active epoch is {active!r}"
             )
         state = epochs[epoch]
-        if int(state.get("max_tokens") or 0) != MAX_EPOCH_TOKENS:
-            raise ValueError("token ledger maximum differs from 9,000,000")
+        if int(state.get("max_tokens") or 0) != self.max_tokens:
+            raise ValueError(
+                "token ledger maximum differs from the requested epoch maximum"
+            )
         # A process may have died after submission.  Its rows are terminal, and
         # charging the complete reservation is the only safe accounting choice.
         reservations = dict(state.get("reservations") or {})
@@ -172,7 +178,7 @@ class TokenLedger:
             if request_id in reservations:
                 raise ValueError(f"duplicate token reservation {request_id}")
             in_flight = sum(int(value) for value in reservations.values())
-            if self.spent() + in_flight + maximum > MAX_EPOCH_TOKENS:
+            if self.spent() + in_flight + maximum > self.max_tokens:
                 return False
             reservations[request_id] = int(maximum)
             self._write()
@@ -765,7 +771,7 @@ def _write_progress(
         "completed": completed,
         "budget_epoch": ledger.epoch,
         "budget_spent_tokens": ledger.spent(),
-        "budget_max_tokens": MAX_EPOCH_TOKENS,
+        "budget_max_tokens": ledger.max_tokens,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
@@ -898,6 +904,7 @@ def run(args: argparse.Namespace) -> int:
         Path(args.token_ledger),
         epoch=args.budget_epoch,
         start_new_epoch=args.start_new_budget_epoch,
+        max_tokens=args.budget_max_tokens,
     )
     batches = [replace(batch, prompt=prompt) for batch in planned_batches]
     llm = _load_distillation_llm()
@@ -993,6 +1000,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--workers", type=int, default=16)
     parser.add_argument("--budget-epoch")
     parser.add_argument("--start-new-budget-epoch", action="store_true")
+    parser.add_argument(
+        "--budget-max-tokens",
+        type=int,
+        default=MAX_EPOCH_TOKENS,
+        help="Combined input/output token ceiling for this key epoch.",
+    )
     parser.add_argument("--token-ledger", default=str(DEFAULT_LEDGER))
     parser.add_argument(
         "--cache-dir",
@@ -1001,6 +1014,8 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     args = parser.parse_args(argv)
     if args.workers < 1:
         parser.error("--workers must be positive")
+    if args.budget_max_tokens < 1:
+        parser.error("--budget-max-tokens must be positive")
     return args
 
 

@@ -46,6 +46,7 @@ LOGIT_RESPONSE_UNIT = "logit_response"
 SIGNED_DIRECTION_UNIT = "signed_effect_direction"
 ORDINAL_SEVERITY_UNIT = "ordinal_severity_grade"
 BINARY_OUTCOME_UNIT = "binary_outcome_class"
+ORDINAL_OUTCOME_UNIT = "ordinal_outcome_class"
 
 # These units name latent scales, not physical dimensions.  A record carrying
 # one of them is validated against the encoding contract rather than against a
@@ -55,6 +56,7 @@ ENCODED_UNITS = frozenset(
     {
         BINARY_OUTCOME_UNIT,
         LOGIT_RESPONSE_UNIT,
+        ORDINAL_OUTCOME_UNIT,
         SIGNED_DIRECTION_UNIT,
         ORDINAL_SEVERITY_UNIT,
     }
@@ -363,6 +365,7 @@ __all__ = [
     "JEFFREYS_PRIOR_BETA",
     "LOGIT_RESPONSE_UNIT",
     "NON_NEGATIVE_ENCODED_UNITS",
+    "ORDINAL_OUTCOME_UNIT",
     "ORDINAL_SEVERITY_UNIT",
     "SIGNED_DIRECTION_UNIT",
     "encoded_unit_validity_status",

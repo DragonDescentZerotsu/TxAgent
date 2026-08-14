@@ -295,6 +295,18 @@ Stage-04 eligible. Relative increases, ratios to comparator drugs/formulations/t
 references remain retrieval evidence but cannot enter assay-transfer calibration. Reference scope is part
 of every source's pair identity.
 
+The Bioavailability v2 offline classifier uses `gpt-5.4-mini` with low reasoning and source-local batches
+of at most 50 rows. Each visible row contains only a batch-local ID, `measurement_text`, and `support_text`;
+the response contains only `reference_scope`. HF rows remain deterministic from the authoritative report
+type, while every scalar Fa/Fg/Fh/oral-exposure candidate is submitted at most once without endpoint- or
+unit-based shortcuts. The two 2026-08-11 v2 key epochs completed all 175,041 candidates in 3,502 valid
+requests: 41,320 Fa, 1,398 Fg, 29,545 Fh, and 102,778 oral-exposure rows. The first epoch used 9,480,935
+tokens; the resumed epoch used 5,059,986 of its 9,750,000-token ceiling. Across both epochs there were zero
+duplicate, fail-closed, unreported-usage, or stranded rows. The frozen mapping is
+`data_processing/reference_semantics_v2/reference_semantics.parquet` with SHA-256
+`844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695`. Generation does not rebuild
+Stages 02-09; those stages must consume the completed mapping in one later rebuild.
+
 Pair-bucket identity is declared in the same schema and contains only canonical fields. A cleaned field used
 by ordinary canonicalization cannot also be a variance candidate. An input used only by a conditional
 categorical encoder may remain a variance candidate for continuous rows; it is excluded from the selected
@@ -317,14 +329,18 @@ starling_normalized_v7/
 ```
 
 Stage 04 alone defines membership. Stage 05 validates buckets with `n >= 25`, audits untouched source
-fields for residual heterogeneity, and stores SD plus empirical percentile knots. Bioavailability uses
-continuous geometry plus two controlled binary scales: explicit direct oral-F `low/high`, and Fg
-`not_substrate/substrate`. Numeric measurements always take precedence. Fg categorical endpoints include a
+fields for residual heterogeneity, and stores first-class SD metadata plus an exact value CDF for valid
+continuous buckets and an exact category-rank CDF for valid ordinal buckets. It stores no raw-distance CDF
+or pairwise-distance knots. Bioavailability uses continuous geometry, a controlled direct oral-F ordinal
+scale `low/middle/high`, and the binary Fg scale `not_substrate/substrate`. The middle tier accepts only
+standalone `moderate`/`intermediate` wording and unambiguous noun-qualified forms; mixed ranges abstain.
+Numeric measurements always take precedence. Fg categorical endpoints include a
 reviewed transporter/enzyme target ID so different targets never share a categorical bucket; numeric Fg
 grouping is unchanged. The separate nondirect HF partition never uses the direct categorical encoder.
 Ambiguous direct wording, uninformative Fg statuses, and Fg rows without a target remain non-scalar
 evidence. The categorical anchors are distance geometry, not benchmark labels or final
 prediction overrides. The v7 calibration contains no transfer cutoff, Boolean label, or soft probability.
+The historical `05_distance_calibration` path is retained for archived-v1 compatibility.
 The `05_assay_transfer_policy` tree below is historical v6 lineage.
 
 ### Historical v6 implementation details

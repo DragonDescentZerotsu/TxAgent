@@ -227,7 +227,7 @@ SOURCES = {
             _mapped(
                 "canonical_species_context",
                 "species_context",
-                ("assay_type",),
+                ("assay_type", "experimental_conditions", "support_text"),
                 "global_species_context",
             ),
             CanonicalDimensionSpec(
@@ -325,9 +325,12 @@ PAIR_BUCKETS = {
             "canonical_reference_scope",
             "canonical_reference_basis",
         ),
-        variance_candidates=("experimental_conditions", "qualifying_conditions"),
+        # experimental_conditions now participates in the species decision;
+        # only the still-unconsumed qualifier remains a residual candidate.
+        variance_candidates=("qualifying_conditions",),
         eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
         reference_basis_required=True,
+        required_known_dimensions=("canonical_species_context",),
     ),
     "phototoxicity_irritation_local_damage": PairBucketSpec(
         source_id="phototoxicity_irritation_local_damage",

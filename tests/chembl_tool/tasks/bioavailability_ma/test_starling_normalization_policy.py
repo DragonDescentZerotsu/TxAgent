@@ -535,6 +535,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "--out-dir",
         str(out_dir),
         "--no-strict-endpoint-inventory",
+        "--allow-missing-reference-semantics",
         "--max-rows-per-source",
         "1",
         "--max-hf-rows",
@@ -636,7 +637,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     assert manifest["artifact_version"].endswith(".v7")
     assert manifest["normalization_domain_rules_version"].endswith(".v4")
     assert manifest["categorical_response_version"] == (
-        "bioavailability_ma_categorical_response.v3"
+        "bioavailability_ma_categorical_response.v4"
     )
     assert manifest["fg_target_alias_version"] == (
         "bioavailability_fg_target_aliases.v1"

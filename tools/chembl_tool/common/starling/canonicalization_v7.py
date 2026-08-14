@@ -393,6 +393,7 @@ class PairBucketSpec:
     variance_candidates: tuple[str, ...] = ()
     eligible_reference_scopes: tuple[str, ...] = ()
     reference_basis_required: bool = False
+    required_known_dimensions: tuple[str, ...] = ()
 
     @property
     def additional_dimensions(self) -> tuple[str, ...]:
@@ -421,6 +422,14 @@ class PairBucketSpec:
         if noncanonical:
             raise ValueError(
                 f"{self.source_id!r} pair fields are not canonical: {noncanonical}"
+            )
+        unknown_required = set(self.required_known_dimensions) - set(
+            self.canonical_dimensions
+        )
+        if unknown_required:
+            raise ValueError(
+                f"{self.source_id!r} required-known fields are absent from pair identity: "
+                f"{sorted(unknown_required)}"
             )
         absent_candidates = set(self.variance_candidates) - set(
             profile.cleaned_source_fields
@@ -553,6 +562,9 @@ class StarlingRecordContract:
                         spec.eligible_reference_scopes
                     ),
                     "reference_basis_required": spec.reference_basis_required,
+                    "required_known_dimensions": list(
+                        spec.required_known_dimensions
+                    ),
                 }
                 for source_id, spec in sorted(self.pair_buckets.items())
             },

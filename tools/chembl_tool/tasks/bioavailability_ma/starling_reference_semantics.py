@@ -22,10 +22,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
 
 
 TASK_ROOT = Path(__file__).resolve().parent
-PROMPT_VERSION = "bioavailability_reference_semantics_prompt.v1"
-MAPPING_VERSION = "bioavailability_reference_semantics.v1"
+PROMPT_VERSION = "bioavailability_reference_semantics_prompt.v2"
+MAPPING_VERSION = "bioavailability_reference_semantics.v2"
 DEFAULT_MAPPING_PATH = (
-    TASK_ROOT / "data_processing/reference_semantics_v1/reference_semantics.parquet"
+    TASK_ROOT / "data_processing/reference_semantics_v2/reference_semantics.parquet"
 )
 DEFAULT_RECORDS_PATH = Path(
     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
@@ -114,6 +114,10 @@ REFERENCE_SEMANTICS_CONFIG = ReferenceSemanticsConfig(
     },
     deterministic_assignment=deterministic_assignment,
     eligible_scopes=(REFERENCE_SCOPE_ABSOLUTE, REFERENCE_SCOPE_NOT_APPLICABLE),
+    batch_size=50,
+    prompt_fields=("measurement_text", "support_text"),
+    labels_only_output=True,
+    batch_across_sources=False,
 )
 
 

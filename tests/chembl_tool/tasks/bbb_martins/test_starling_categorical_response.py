@@ -14,6 +14,14 @@ class _NoAuxiliary:
         return {}
 
 
+class _NoReference:
+    def attach(self, record):
+        return {
+            "canonical_reference_scope": "not_applicable",
+            "canonical_reference_basis": "none",
+        }
+
+
 def _direct_normalized_record(**updates):
     record = {
         "source_id": "direct_bbb",
@@ -51,6 +59,7 @@ def _apply(source_id: str, **fields):
 def test_reviewed_binary_categories_have_frozen_signed_anchors():
     cases = (
         ("direct_bbb", {"bbb_permeability_label": "permeable"}, 1.0, "bbb_permeability_binary.v1"),
+        ("direct_bbb", {"bbb_permeability_label": "good permeability"}, 1.0, "bbb_permeability_binary.v1"),
         ("direct_bbb", {"bbb_permeability_label": "poor penetration"}, -1.0, "bbb_permeability_binary.v1"),
         ("passive_permeability", {"passive_bbb_interpretation": "permeable_or_high"}, 1.0, "passive_bbb_interpretation_binary.v1"),
         ("passive_permeability", {"passive_bbb_interpretation": "impermeable_or_low"}, -1.0, "passive_bbb_interpretation_binary.v1"),
@@ -65,6 +74,7 @@ def test_reviewed_binary_categories_have_frozen_signed_anchors():
 
 
 def test_unreviewed_transport_and_influx_prose_abstain():
+    assert not _apply("direct_bbb", bbb_permeability_label="increased_permeability")
     assert not _apply("direct_bbb", bbb_transport_label="efflux substrate")
     assert not _apply("efflux_transport", interaction_conclusion="possible substrate")
     assert not _apply("influx_transport", reported_result="increased brain uptake")
@@ -95,6 +105,7 @@ def test_parseable_numeric_with_unresolved_unit_is_not_overwritten_by_binary_anc
             quant_value="2.5",
         ),
         _NoAuxiliary(),
+        _NoReference(),
     )
     assert "categorical_encoder_id" not in enriched
     assert enriched["canonical_measurement_source"] == "source_scalar"
@@ -102,7 +113,9 @@ def test_parseable_numeric_with_unresolved_unit_is_not_overwritten_by_binary_anc
 
 
 def test_categorical_endpoint_and_provenance_are_semantic():
-    enriched = _enrich_record(_direct_normalized_record(), _NoAuxiliary())
+    enriched = _enrich_record(
+        _direct_normalized_record(), _NoAuxiliary(), _NoReference()
+    )
     assert enriched["canonical_endpoint"] == "bbb_permeability_outcome"
     assert enriched["canonical_measurement"] == "1"
     assert enriched["canonical_unit"] == BINARY_OUTCOME_UNIT

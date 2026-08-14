@@ -87,7 +87,7 @@ class _FakeHolder:
             chat=SimpleNamespace(completions=completions)
         )
 
-    def get(self):
+    def get(self, extraction):
         return self.client
 
 
@@ -172,6 +172,24 @@ def test_missing_provider_usage_stops_but_retains_valid_cache(tmp_path):
     assert len(cache.read_text(encoding="utf-8").splitlines()) == 1
 
 
+def test_token_budget_reserves_concurrent_requests_before_launch(tmp_path):
+    ledger = builder.TokenLedger(
+        tmp_path / "ledger.json", model="test-model", reasoning_effort="low"
+    )
+    budget = builder.TokenBudget(limit=20, ledger=ledger, request_reserve=10)
+    budget.before_attempt()
+    budget.before_attempt()
+    with pytest.raises(builder.BudgetExhausted):
+        budget.before_attempt()
+    budget.record(
+        "source/output", builder._empty_usage(), status="api_error", usage_present=True
+    )
+    budget.record(
+        "source/output", builder._empty_usage(), status="api_error", usage_present=True
+    )
+    assert budget.in_flight_attempts == 0
+
+
 def test_non_retryable_provider_error_stops_queued_clusters(tmp_path):
     completions = _QuotaCompletions()
     clusters = [
@@ -217,7 +235,120 @@ def test_free_form_reconciliation_still_rejects_numeric_json_labels():
 def test_builder_defaults_to_low_reasoning_for_the_neighborhood_lineage():
     assert builder.DEFAULT_MODEL == "gpt-5.4-mini"
     assert builder.DEFAULT_REASONING_EFFORT == "low"
-    assert builder.PROMPT_VERSION == "starling_skin_embedding_bucket_mapping.v3"
+    assert builder.GENERAL_PROMPT_VERSION == "starling_skin_embedding_bucket_mapping.v3"
+    assert builder.SPECIES_PROMPT_VERSION == "starling_skin_embedding_bucket_mapping.v4"
+
+
+def test_only_sensitization_species_uses_the_v4_lineage_and_client():
+    species = next(
+        item
+        for item in builder._source_extractions("sensitization_aop")
+        if item.output_name == "global_species_context"
+    )
+    ordinary = _extraction()
+
+    assert builder._prompt_version(ordinary) == builder.GENERAL_PROMPT_VERSION
+    assert builder._client_kind(ordinary) == "openai"
+    assert builder._prompt_version(species) == builder.SPECIES_PROMPT_VERSION
+    assert builder._client_kind(species) == "distillation"
+
+
+def test_selected_prompt_lineage_distinguishes_v3_v4_and_mixed_runs():
+    assert builder._selected_prompt_version(
+        {"direct_skin_reaction": {"global_context"}}
+    ) == builder.GENERAL_PROMPT_VERSION
+    assert builder._selected_prompt_version(
+        {"sensitization_aop": {"global_species_context"}}
+    ) == builder.SPECIES_PROMPT_VERSION
+    assert builder._selected_prompt_version(
+        {
+            "sensitization_aop": {
+                "global_context",
+                "global_species_context",
+            }
+        }
+    ) == builder.MIXED_PROMPT_VERSION
+
+
+def test_v3_cache_identity_preserves_the_historical_payload_shape():
+    extraction = _extraction()
+    cluster = builder.Cluster("cluster_a", ("assay a",))
+    historical_payload = {
+        "prompt_version": builder.GENERAL_PROMPT_VERSION,
+        "source_id": extraction.source_id,
+        "input_column": extraction.input_column,
+        "output_name": extraction.output_name,
+        "output_column": extraction.output_column,
+        "prompt": extraction.prompt,
+        "null_sentinel": extraction.null_sentinel,
+        "bucket_pattern": extraction.bucket_pattern,
+        "cluster_id": cluster.cluster_id,
+        "values": cluster.values,
+        "model": "test-model",
+        "reasoning_effort": "low",
+    }
+    expected = builder.hashlib.sha256(
+        json.dumps(
+            historical_payload, ensure_ascii=False, sort_keys=True
+        ).encode("utf-8")
+    ).hexdigest()
+
+    assert builder._cache_identity(
+        extraction,
+        cluster,
+        model="test-model",
+        reasoning_effort="low",
+    ) == expected
+
+
+def test_unaffected_v3_source_snapshots_keep_their_frozen_identities():
+    cache_dir = builder.DEFAULT_OUTPUT.with_suffix(
+        builder.DEFAULT_OUTPUT.suffix + ".cache"
+    )
+    models = {
+        "direct_skin_reaction": "gpt-5.4",
+        "phototoxicity_irritation_local_damage": "gpt-5.4-mini",
+        "skin_exposure": "gpt-5.4-mini",
+    }
+    for source_id, model in models.items():
+        snapshot = json.loads(
+            builder._snapshot_path(cache_dir, source_id).read_text(encoding="utf-8")
+        )
+        assert snapshot["identity"] == builder._source_identity(
+            source_id,
+            model=model,
+            reasoning_effort="low",
+            embedding_model=builder.EMBEDDING_MODEL,
+        )
+
+
+def test_v3_requests_and_embeddings_remain_raw_while_species_uses_fields():
+    ordinary = _extraction()
+    species = next(
+        item
+        for item in builder._source_extractions("sensitization_aop")
+        if item.output_name == "global_species_context"
+    )
+    packet = json.dumps(
+        ["LLNA", "female CBA mice", "proliferation measured in mice"],
+        separators=(",", ":"),
+    )
+
+    assert builder._embedding_value(ordinary, "patch test") == "patch test"
+    assert builder._request_items(ordinary, {"v0000": "patch test"}) == [
+        {"id": "v0000", "value": "patch test"}
+    ]
+    assert builder._embedding_value(species, packet).startswith("assay_type: LLNA\n")
+    assert builder._request_items(species, {"v0000": packet}) == [
+        {
+            "id": "v0000",
+            "fields": {
+                "assay_type": "LLNA",
+                "experimental_conditions": "female CBA mice",
+                "support_text": "proliferation measured in mice",
+            },
+        }
+    ]
 
 
 def test_token_ledger_rejects_a_different_prompt_lineage(tmp_path):
@@ -285,7 +416,7 @@ def test_species_prompts_require_base_species_not_population_subgroups():
             assert "population descriptions" in prompt or "population qualifiers" in prompt
 
 
-def test_only_phototoxicity_assay_inventory_uses_minibatch_clustering():
+def test_large_or_structured_inventories_use_minibatch_clustering():
     algorithms = {
         (source_id, output.output_name): output.clustering
         for source_id, source in builder.SOURCE_SPECS.items()
@@ -295,14 +426,20 @@ def test_only_phototoxicity_assay_inventory_uses_minibatch_clustering():
     assert algorithms[
         ("phototoxicity_irritation_local_damage", "global_context")
     ] == "minibatch"
+    assert algorithms[
+        ("sensitization_aop", "global_species_context")
+    ] == "minibatch"
     assert all(
         algorithm == "lloyd"
         for key, algorithm in algorithms.items()
-        if key != ("phototoxicity_irritation_local_damage", "global_context")
+        if key not in {
+            ("phototoxicity_irritation_local_damage", "global_context"),
+            ("sensitization_aop", "global_species_context"),
+        }
     )
 
 
-def test_only_phototoxicity_context_uses_250_label_capped_clusters():
+def test_structured_species_packets_are_capped_at_fifty_rows():
     configurations = {
         (source_id, output.output_name): (
             output.cluster_target_size,
@@ -314,11 +451,94 @@ def test_only_phototoxicity_context_uses_250_label_capped_clusters():
     }
     photo_key = ("phototoxicity_irritation_local_damage", "global_context")
     assert configurations[photo_key] == (250, 250)
+    assert configurations[("sensitization_aop", "global_species_context")] == (
+        100,
+        50,
+    )
     assert all(
         configuration == (100, None)
         for key, configuration in configurations.items()
-        if key != photo_key
+        if key not in {
+            photo_key,
+            ("sensitization_aop", "global_species_context"),
+        }
     )
+
+
+def test_sensitization_species_uses_complete_row_packet():
+    extraction = next(
+        item
+        for item in builder._source_extractions("sensitization_aop")
+        if item.output_name == "global_species_context"
+    )
+    assert extraction.resolved_input_columns == (
+        "assay_type",
+        "experimental_conditions",
+        "support_text",
+    )
+    key = json.dumps(
+        ["t-cell proliferation", "human LLDC cultures", "SI measured in LLDCs"],
+        separators=(",", ":"),
+    )
+    assert builder._packet_fields(extraction, key) == {
+        "assay_type": "t-cell proliferation",
+        "experimental_conditions": "human LLDC cultures",
+        "support_text": "SI measured in LLDCs",
+    }
+
+
+def test_sensitization_species_null_is_not_regex_overridden():
+    output = next(
+        item
+        for item in reconciliation.SOURCE_SPECS["sensitization_aop"].outputs
+        if item.output_name == "global_species_context"
+    )
+    values = (
+        "LLNA",
+        "mouse and rat tissues",
+        "Human background literature; pooled cross-species measurement",
+    )
+    assert reconciliation._reconcile_output(
+        "sensitization_aop", output, values, None
+    ) is None
+
+
+def test_sensitization_species_rejects_acronym_inference_to_unknown():
+    extraction = next(
+        item
+        for item in builder._source_extractions("sensitization_aop")
+        if item.output_name == "global_species_context"
+    )
+    unsupported = json.dumps(
+        ["LLNA", None, "Beryllium is a human allergen and was positive in LLNA."],
+        separators=(",", ":"),
+    )
+    supported = json.dumps(
+        ["LLNA", "female CBA mice", "Proliferation was measured in treated mice."],
+        separators=(",", ":"),
+    )
+    assert builder._validate_response(
+        json.dumps({"mapping": {"v0000": "mouse", "v0001": "mouse"}}),
+        item_ids={"v0000": unsupported, "v0001": supported},
+        extraction=extraction,
+    ) == {"v0000": None, "v0001": "mouse"}
+
+
+def test_sensitization_human_population_words_are_literal_support():
+    extraction = next(
+        item
+        for item in builder._source_extractions("sensitization_aop")
+        if item.output_name == "global_species_context"
+    )
+    packet = json.dumps(
+        ["contact allergy time", "39 melanoma patients", "DNCB was applied to patients."],
+        separators=(",", ":"),
+    )
+    assert builder._validate_response(
+        json.dumps({"mapping": {"v0000": "human"}}),
+        item_ids={"v0000": packet},
+        extraction=extraction,
+    ) == {"v0000": "human"}
 
 
 def test_oversized_embedding_cluster_is_split_at_the_call_cap(monkeypatch):

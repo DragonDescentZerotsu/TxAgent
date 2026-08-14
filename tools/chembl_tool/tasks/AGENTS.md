@@ -142,9 +142,14 @@ membership. Every bucket needs at least 25 records. Binary buckets must observe 
 ordinal buckets must observe at least three declared levels; every observed categorical level needs at least
 three records. Continuous residual heterogeneity uses the existing omega-squared audit. Binary and ordinal
 residual heterogeneity uses bias-corrected Cramér's V-squared, requires candidate levels with at least three
-records and at least 50% coverage, and flags values at or above 0.20. Valid buckets store record-weighted
-sample SD and empirical percentile knots. V7 Stage 05 does not store a transfer cutoff, Boolean label, or
-soft probability; a downstream experiment may derive a distance policy from the observed values.
+records and at least 50% coverage, and flags values at or above 0.20. Valid buckets store a first-class
+record-weighted sample SD with its ddof and source field. Valid continuous buckets additionally store the
+exact empirical value CDF as sorted support values, counts, and midranks. Valid ordinal buckets store a
+category-rank CDF over the complete declared domain; binary buckets retain explicit same/different semantics
+and do not publish a CDF. V7 Stage 05 does not store a raw-
+distance CDF, pair samples, transfer cutoff, Boolean label, or soft probability. Downstream code may use SD
+for standardized raw-distance calculations or use same-bucket empirical-CDF separation for
+location-sensitive geometry.
 
 The shared structure is:
 
@@ -161,8 +166,9 @@ tools/chembl_tool/common/starling/split_downstream.py
   random/scaffold label-source filtering, molecule evidence, neighbor indices, and audits.
 
 tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py
-  V7 bucket validation, continuous/categorical residual-heterogeneity audits, and empirical distance
-  geometry. It emits no pair labels, transfer thresholds, or probabilities.
+  V7 bucket validation, continuous/categorical residual-heterogeneity audits, first-class sample SD, exact
+  continuous value-CDF geometry, and exact ordinal category-rank CDF geometry. The historical module/artifact name is retained for compatibility;
+  v2 emits no raw-distance CDF, pair labels, transfer thresholds, or probabilities.
 
 tools/chembl_tool/common/starling/normalization/task_policy.py
   StarlingTaskPolicy: the sole entry point for all task-specific inputs, including source profiles,
@@ -193,8 +199,8 @@ construction, invalidation, resume validation, or manifest assembly logic.
 `compact_persisted_records` removes `assay_tier`, `endpoint_group`, `evidence_role`, and `target_pref_name` because they are derivable. The evidence catalog must therefore accept a `family_resolver` and rederive these fields. Otherwise, a resumed `--from-stage index` build produces a different catalog from a complete build.
 
 `05_distance_calibration` is fit on the complete unfiltered record set in every task, held-out gold
-included. This aggregate, label-free geometry fit is the sole permitted use of benchmark-held-out source
-measurements before evaluation. Distance geometry describes the assay landscape rather than any particular
+included. This aggregate, label-free SD/empirical-CDF fit is the sole permitted use of benchmark-held-out source
+measurements before evaluation. Bucket geometry describes the assay landscape rather than any particular
 molecule set, so excluding gold molecules would bias the statistics without preventing prediction-time
 exposure. `06_remove_heldout_overlap` is the mandatory boundary: it drops held-out label-source records
 before molecule evidence and neighbor indices are built, which prevents those records from reaching a

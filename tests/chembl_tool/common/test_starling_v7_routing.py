@@ -50,7 +50,7 @@ def test_bbb_endpoint_inventory_points_to_v7_registry() -> None:
     )
 
 
-def test_task_policies_declare_measurement_semantics_assets() -> None:
+def test_task_policies_declare_complete_scientific_asset_inventories() -> None:
     assert [path.name for path in BBB_POLICY.scientific_assets] == [
         "measurement_semantics.v1.json",
         "reference_semantics_prompts.json",
@@ -58,4 +58,6 @@ def test_task_policies_declare_measurement_semantics_assets() -> None:
     assert [path.name for path in SKIN_POLICY.scientific_assets] == [
         "measurement_semantics.json",
         "reference_semantics_prompts.json",
+        "globally_reconciled_auxiliary_value_mapping.json",
+        "auxiliary_value_prompts.json",
     ]

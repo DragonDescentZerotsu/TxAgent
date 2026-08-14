@@ -80,6 +80,11 @@ from tools.chembl_tool.tasks.skin_reaction.starling_source_column_contracts impo
     source_column_contract_manifest,
     source_fields_from_record,
 )
+
+
+AUXILIARY_PROMPT_REGISTRY_PATH = (
+    Path(__file__).resolve().parent / "data_processing/auxiliary_value_prompts.json"
+)
 from tools.chembl_tool.tasks.skin_reaction.starling_spacing_and_spelling import (
     SPACING_AND_SPELLING_VERSION,
     family_assignment,
@@ -421,6 +426,8 @@ POLICY = StarlingTaskPolicy(
     scientific_assets=(
         DEFAULT_REGISTRY_PATH,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
+        DEFAULT_MAPPING_PATH,
+        AUXILIARY_PROMPT_REGISTRY_PATH,
     ),
     reference_semantics_enabled=True,
 )
