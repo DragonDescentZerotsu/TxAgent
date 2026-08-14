@@ -1,0 +1,77 @@
+{
+  "task": "Build a molecule-level literature dataset of experimental organ-specific toxicity evidence. Include hepatic, renal, cardiac, neurological, hematological, pulmonary, gastrointestinal, reproductive, and developmental injury endpoints from in vivo or organ-relevant in vitro systems.",
+  "task_instantiation": "Extract experimental evidence that an identified small molecule or small-molecule class causes, increases, or explicitly does not cause injury in one of these organ systems: hepatic, renal, cardiac, neurological, hematological, pulmonary, gastrointestinal, reproductive, or developmental. Eligible evidence must come from exposed humans, in vivo animals, or an organ-relevant in vitro system (including primary cells, organoids, tissue cultures, or organ-derived cell lines). Create one record per molecule/class × organ system × toxicity endpoint × distinct experimental model or materially different exposure condition. Split records when different organs, species/models, endpoints, doses, or time points have separately reported results; keep multiple measures such as NOAEL and LOAEL together only when they characterize the same endpoint in the same study condition.\n\nInclude explicit adverse clinical outcomes, pathology, functional impairment, organ-specific biomarker changes identified as toxicity, cytotoxicity in an eligible organ-derived in vitro system, reproductive/developmental impairment, and explicit negative findings (for example, no hepatotoxicity or no hemolysis). Quantitative effect concentrations such as EC50/LC50/ID50 are eligible only when they quantify an organ-relevant injury or cytotoxicity endpoint. Organ-specific DNA damage is eligible when measured in vivo or in an organ-relevant system. Extract values stated in text or clearly reported in tables/figures, but do not calculate unstated values.\n\nExclude generic viability or mortality in whole organisms without one of the target organ endpoints; effects in non-organ-relevant tumor cells or generic cell lines; isolated enzyme, receptor, or transporter inhibition; metabolism/pharmacokinetics, exposure ratios, predicted toxicity, or mechanistic findings alone unless the same passage links them to an observed eligible injury; bilirubin or other biomarker interaction categories that are merely predictions or are explicitly not evidence of organ injury; efficacy-related killing of cancer cells; and purely epidemiologic associations without molecule exposure attribution. A mechanism may be retained in `extra_details`, but is not sufficient by itself. Do not convert an isolated molecular assay into toxicity. Comparative statements without an absolute toxicity result are insufficient; when each comparator has an explicit result, create separate records.\n\nUse the exposed parent molecule as the primary entity (`global_identifier`). If toxicity is explicitly attributed to a metabolite as the causal toxicant, use that metabolite as the primary entity; otherwise mention the metabolite in `extra_details`. Class-level claims are valid and should use the class entity. Do not attribute a group result to every named molecule unless the text states that all members shared the result. Set `effect_status` from observed evidence only, not from predictions. Default context is an otherwise standard/wild-type experimental system with ordinary administration and no special susceptibility. Put material exceptional contexts—such as a pharmacogenetic subgroup, disease model, pregnancy stage when essential to interpretation, co-treatment, unusual formulation/route, or knockout—in `qualifying_conditions`; routine species/model, dose, duration, and tissue details belong in their dedicated fields. Preserve causal uncertainty and author qualifications in `extra_details`.",
+  "schema_spec": [
+    {
+      "name": "organ_system",
+      "description": "Target system injured or assessed; assign the single best-supported system and split multi-organ findings into separate records.",
+      "value_type": "string",
+      "allowed_values": [
+        "hepatic",
+        "renal",
+        "cardiac",
+        "neurological",
+        "hematological",
+        "pulmonary",
+        "gastrointestinal",
+        "reproductive",
+        "developmental"
+      ]
+    },
+    {
+      "name": "toxicity_endpoint",
+      "description": "Specific observed or assessed injury endpoint, such as acute renal failure, neutropenia, hemolysis, hepatocyte viability loss, fertility impairment, or developmental differentiation inhibition.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "effect_status",
+      "description": "Whether eligible injury was experimentally/clinically observed. Use injury_observed for a positive adverse effect and no_injury_observed only for an explicit negative finding; never use a prediction as observation.",
+      "value_type": "string",
+      "allowed_values": [
+        "injury_observed",
+        "no_injury_observed"
+      ]
+    },
+    {
+      "name": "evidence_context",
+      "description": "Experimental evidence source: exposed humans, in vivo animals, or an organ-relevant in vitro model.",
+      "value_type": "string",
+      "allowed_values": [
+        "human_clinical",
+        "in_vivo_animal",
+        "organ_relevant_in_vitro"
+      ]
+    },
+    {
+      "name": "biological_system",
+      "description": "Species and, for in vitro evidence, the organ-relevant cell line, primary cell, tissue, organoid, or culture system stated in the source.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_regimen",
+      "description": "Reported dose/concentration, route, frequency, and exposure duration/time point, preserving units; null if unstated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "quantitative_result",
+      "description": "Explicit endpoint value(s) with metric and units, such as EC50 195 µM, viability 70%, NOAEL 9.1 mg/kg bw and LOAEL 27.8 mg/kg bw, or incidence; do not derive values.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Material non-default context affecting generalization, such as susceptible genotype, disease model, knockout, co-treatment, unusual route/formulation, or critical pregnancy stage. Null for standard or unspecified conditions; do not place routine species, dose, duration, or tissue here.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

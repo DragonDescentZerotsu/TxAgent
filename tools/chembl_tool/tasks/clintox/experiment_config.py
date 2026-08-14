@@ -32,7 +32,46 @@ CHEMBL = SourceExperimentConfig(
     ),
 )
 
-SOURCES = {"chembl": CHEMBL}
+STARLING_RAW = SourceExperimentConfig(
+    source_name="starling_raw",
+    direct_groups=(
+        EvidenceGroupSpec(
+            "Direct.human_organ_toxicity",
+            "Direct",
+            "clinical_human_safety",
+            source_groups=("Direct.human_organ_toxicity",),
+        ),
+    ),
+    mechanism_groups=(
+        EvidenceGroupSpec(
+            "Mechanism.clinical_human_safety",
+            "Mechanism",
+            "clinical_human_safety",
+            source_groups=(
+                "Direct.human_organ_toxicity",
+                "Context.human_organ_toxicity",
+            ),
+        ),
+        *(
+            EvidenceGroupSpec(
+                f"Mechanism.{family}",
+                "Mechanism",
+                family,
+                source_groups=(f"Mechanism.{family}",),
+            )
+            for family in (
+                "in_vivo_toxicology",
+                "organ_specific_toxicity",
+                "genotoxicity_carcinogenicity",
+                "cellular_stress_pathways",
+                "general_cytotoxicity",
+                "off_target_ddi_exposure",
+            )
+        ),
+    ),
+)
+
+SOURCES = {"chembl": CHEMBL, "starling_raw": STARLING_RAW}
 
 
 def get_source_config(source: str) -> SourceExperimentConfig:

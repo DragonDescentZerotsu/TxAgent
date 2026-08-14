@@ -1,0 +1,72 @@
+{
+  "task": "Build a molecule-level literature dataset of general in vitro cytotoxicity and cell-viability evidence. Include IC50, EC50, TC50, GI50, viability, proliferation inhibition, cell death, membrane integrity, and broad cytotoxicity screens across cell lines.",
+  "task_instantiation": "Extract in vitro evidence that an individual small molecule or explicitly named small-molecule class changes survival, viability, proliferation/growth, death, or plasma-membrane integrity in a specified cultured cell line or primary cell model. In scope are explicitly reported IC50, EC50, TC50, GI50 and other ICx/GIx values; viability or growth/proliferation inhibition percentages; apoptosis/necrosis or total cell-death percentages; LDH release or other direct plasma-membrane-integrity outcomes; and explicit qualitative cytotoxic/non-cytotoxic results from broad cell-based screens. Use the molecule or class global identifier as the record's top-level `global_identifier`; do not add a molecule-name field to `extracted`.\n\nCreate one record per molecule × cell model × endpoint × exposure time × tested concentration/result condition. Split separately attributed molecules, cell models, endpoints, times, and concentrations into separate records. Do not combine several cell lines in `cell_model`. If a range or summary is reported only collectively for multiple molecules and/or multiple cell lines and cannot be assigned to a particular molecule–cell pair, skip it rather than duplicating the aggregate result across entities. Respect “respectively” mappings. A compound label such as “compound 5a” is acceptable only when it unambiguously denotes one chemical structure in the paper; exclude crude extracts, undefined mixtures (for example propolis), formulations, materials, nanoparticles, proteins, and nonchemical interventions unless the claim is separately attributable to a specific small molecule.\n\nExtract quantitative values stated in text or directly readable from a table; do not estimate values from plots or dose-response curves and do not calculate or convert values. For a numeric result, put the central value or stated threshold bound in `result_value`, the exact units in `result_unit`, and preserve inequalities, ± error, ranges, error type, and replicate information in `extra_details`. If no unit is stated, leave `result_unit` null. A treatment described as an “IC50 dose” is not itself a measured IC50 result unless the numeric IC50 is explicitly stated in the passage or an unambiguous linked table. For percentage endpoints, record the percentage as `result_value`, use `%` as `result_unit`, and capture the administered dose in `test_concentration`. Qualitative claims may be extracted only when they explicitly characterize cytotoxicity, viability/survival, growth/proliferation, cell death, or plasma-membrane damage for the molecule in the cell model; leave `result_value` and `result_unit` null. Comparative claims without an absolute or explicit qualitative outcome for the focal molecule are out of scope; when an otherwise valid result includes a comparison, note the comparator in `extra_details`.\n\nRecord the endpoint actually measured: for example, an apoptosis percentage measured after treatment at IC80 is `cell_death_percent`, not IC80. Conversely, an IC50 from an MTT antiproliferative assay is `IC50`. Include annexin V/PI apoptosis or necrosis outcomes and LDH/plasma-membrane leakage outcomes. Exclude mechanism-only observations such as ROS generation, mitochondrial membrane potential, cell-cycle redistribution, caspase expression, DNA damage, morphology, migration/invasion, antimicrobial activity, and biochemical enzyme inhibition unless the same evidence directly reports an in-scope viability, proliferation, death, or plasma-membrane endpoint; do not turn those adjacent observations into separate records.\n\nAssume routine in vitro culture and the stated assay conditions as the default. Put routine cell model, assay method, exposure time, and tested dose in their dedicated fields. Put genuinely exceptional conditions that materially limit interpretation—such as gene knockout/overexpression, resistant or engineered sublines, hypoxia, irradiation, combination treatment, infection, or unusual sensitization—in `qualifying_conditions`; otherwise set it to null. Do not infer missing values, units, assay methods, times, doses, or biological effects.",
+  "schema_spec": [
+    {
+      "name": "cell_model",
+      "description": "Exact cultured cell line, strain, or primary cell model for this result; one model per record. Include species/tissue descriptors only if needed to identify the model.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_type",
+      "description": "The measured cytotoxicity/viability endpoint. Use the exact concentration endpoint when listed; use a percent category for percentage outcomes; `membrane_integrity` covers direct plasma-membrane leakage/damage such as LDH; `qualitative_cytotoxicity` is only for explicit nonnumeric cytotoxic/viability claims; `other_icx_gix` covers stated ICx/GIx endpoints not separately listed.",
+      "value_type": "string",
+      "allowed_values": [
+        "IC50",
+        "EC50",
+        "TC50",
+        "GI50",
+        "other_icx_gix",
+        "viability_percent",
+        "proliferation_inhibition_percent",
+        "cell_death_percent",
+        "membrane_integrity",
+        "qualitative_cytotoxicity",
+        "other_quantitative"
+      ]
+    },
+    {
+      "name": "result_value",
+      "description": "Numeric central result or threshold bound exactly as reported, without units. For percentages, enter the percent number. Null for qualitative claims. Preserve <, >, ± error, and range details in `extra_details`; do not convert units or estimate.",
+      "value_type": "number",
+      "allowed_values": []
+    },
+    {
+      "name": "result_unit",
+      "description": "Unit applying to `result_value`, exactly as reported (for example µM, µg/mL, or %). Null if unstated or for qualitative claims.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "test_concentration",
+      "description": "Administered molecule concentration/dose for fixed-dose percentage or qualitative outcomes, exactly as reported (for example `250 nM` or `IC80`). Null for concentration endpoints such as IC50/GI50 unless a distinct test dose is also relevant.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_time_h",
+      "description": "Exposure/incubation duration in hours as a number. Convert explicitly stated days to hours; null if not stated. Do not place routine timing in qualifying_conditions.",
+      "value_type": "number",
+      "allowed_values": []
+    },
+    {
+      "name": "assay_method",
+      "description": "Named experimental readout used to assess the endpoint, such as MTT, MTS, crystal violet, annexin V/PI flow cytometry, or LDH release. Null if not stated; do not infer it.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Exceptional context materially limiting the claim, such as combination treatment, engineered/resistant cells, hypoxia, irradiation, infection, or sensitization. Null for standard or unspecified culture conditions; routine cell model, time, and dose belong in dedicated fields.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

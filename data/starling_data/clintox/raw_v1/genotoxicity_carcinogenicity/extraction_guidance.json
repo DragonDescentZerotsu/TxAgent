@@ -1,0 +1,88 @@
+{
+  "task": "Build a molecule-level literature dataset of genotoxicity, mutagenicity, and carcinogenicity evidence. Include Ames tests, micronucleus assays, chromosomal aberration, comet assays, DNA damage or adduct formation, mutation assays, transformation assays, and animal carcinogenicity studies.",
+  "task_instantiation": "Extract molecule-attributed evidence of genotoxicity, mutagenicity, or carcinogenicity. In scope are results from Ames/bacterial reverse-mutation and other mutation assays; micronucleus, chromosomal-aberration, comet, DNA-repair/unscheduled-DNA-synthesis, DNA strand-break/damage, and DNA-adduct assays; cell-transformation assays; in vivo tumor/carcinogenicity studies; human epidemiologic cancer outcomes; and explicit authoritative overall conclusions about a molecule's genotoxicity, mutagenicity, or carcinogenicity. Use the molecule or defined small-molecule class as the primary entity/global_identifier. Exclude findings not attributable to a named molecule or defined chemical class (for example, background micronucleus frequencies in a geographic population), undefined mixtures/extracts and broad exposure categories, and assay controls. Exclude protein adduct biomonitoring (including hemoglobin adducts) unless the passage separately reports DNA adducts or a genotoxic endpoint. Exclude cytotoxicity, general toxicity, hemolysis, oxidative stress, enzyme inhibition, or disease treatment effects when no target genotoxic/mutagenic/carcinogenic endpoint is reported.\n\nCreate one record per molecule × distinct assay or evidence type × materially distinct experimental condition/result. If several doses, strains, tissues, sexes, or time points in the same experiment have the same overall interpretation, create one record and summarize the range/details; split records when results differ (for example, positive without S9 but negative with S9, or positive in one tissue and negative in another). When a sentence names several molecules, create a separate record for each. Do not create separate records merely for replicate studies or multiple numeric measurements supporting one common result. For study-count summaries, create one record for the molecule and assay category and report counts in `extra_details`.\n\nAccept explicit qualitative results (including statements such as mutagenic, did not induce DNA damage, produced tumors, or concern ruled out), explicit quantitative endpoint changes, table/figure values that are directly readable, and author/panel weight-of-evidence conclusions. Map the reported interpretation to `result_direction`: positive when the target endpoint increased/was induced or the molecule was called genotoxic, mutagenic, or carcinogenic; negative when no target effect was found or concern was explicitly ruled out; equivocal for inconclusive/ambiguous results; mixed when a single overall assessment explicitly combines positive and negative evidence; and null when only a quantitative target measurement is given without enough information to determine direction. Do not infer a target result from cytotoxicity, statistical significance alone, mechanism, structural alerts, exposure level, or comparison with another molecule. Comparative claims without an absolute target result are out of scope; if an in-scope absolute result is also present, retain the comparison in `extra_details`.\n\nTreat ordinary assay conditions as the default: the reported test system, standard/wild-type organism, and no unusual co-intervention. Record species, tissue/cell type, strain, dose/concentration, route, duration/time point, and S9 status in their designated fields. Put only interpretation-changing exceptional contexts—such as knockout/transgenic susceptibility, disease state, unusual formulation, co-exposure, pretreatment, or nonstandard metabolic manipulation—in `qualifying_conditions`; otherwise use null. Never transfer a dose, tissue, route, S9 condition, or result from another molecule or experiment in the passage.",
+  "schema_spec": [
+    {
+      "name": "evidence_category",
+      "description": "Primary evidence domain represented by the record.",
+      "value_type": "string",
+      "allowed_values": [
+        "genotoxicity",
+        "mutagenicity",
+        "carcinogenicity"
+      ]
+    },
+    {
+      "name": "assay_type",
+      "description": "Normalized assay/evidence type; use other_target_assay only for a directly reported target endpoint not covered by another label.",
+      "value_type": "string",
+      "allowed_values": [
+        "Ames_or_bacterial_reverse_mutation",
+        "other_mutation_assay",
+        "micronucleus_assay",
+        "chromosomal_aberration_assay",
+        "comet_assay",
+        "DNA_damage_or_repair_assay",
+        "DNA_adduct_assay",
+        "cell_transformation_assay",
+        "animal_carcinogenicity_study",
+        "human_cancer_epidemiology",
+        "overall_weight_of_evidence",
+        "other_target_assay"
+      ]
+    },
+    {
+      "name": "study_context",
+      "description": "Experimental context of the evidence; use not_stated when the passage does not establish it.",
+      "value_type": "string",
+      "allowed_values": [
+        "in_vitro",
+        "in_vivo_animal",
+        "human_observational",
+        "overall_assessment",
+        "not_stated"
+      ]
+    },
+    {
+      "name": "endpoint",
+      "description": "Specific target endpoint or outcome, such as revertant mutations, micronuclei, DNA strand breaks, DNA adducts, or liver tumors.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "result_direction",
+      "description": "Direction for the target endpoint: positive=induced/increased or called hazardous; negative=no target effect or concern explicitly ruled out; equivocal=inconclusive; mixed=explicit overall combination of positive and negative evidence. Null if direction is not supported.",
+      "value_type": "string",
+      "allowed_values": [
+        "positive",
+        "negative",
+        "equivocal",
+        "mixed"
+      ]
+    },
+    {
+      "name": "biological_system",
+      "description": "Reported organism/species plus relevant strain, sex, tissue, cell type, or bacterial strain; do not add unstated details.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_conditions",
+      "description": "Reported test-article dose/concentration or range, route, exposure duration/time point, and metabolic activation/S9 status, preserving units.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Only exceptional conditions that materially limit generalization, such as knockout/transgenic model, disease state, co-exposure, pretreatment, unusual formulation, or nonstandard metabolic manipulation. Null for routine or unspecified conditions.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

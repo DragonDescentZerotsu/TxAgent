@@ -1,0 +1,136 @@
+{
+  "catalog": {
+    "group_counts": {
+      "Context.human_organ_toxicity": 3788,
+      "Direct.human_organ_toxicity": 4225,
+      "Mechanism.cellular_stress_pathways": 5020,
+      "Mechanism.general_cytotoxicity": 18625,
+      "Mechanism.genotoxicity_carcinogenicity": 5440,
+      "Mechanism.in_vivo_toxicology": 12158,
+      "Mechanism.off_target_ddi_exposure": 7717,
+      "Mechanism.organ_specific_toxicity": 15447
+    },
+    "n_evidence_rows": 72420,
+    "n_index_molecules": 50875
+  },
+  "cleaning_policy": {
+    "global_identifier_used": false,
+    "not_null_sentinels": [
+      "-",
+      "unspecified"
+    ],
+    "null_sentinels_case_insensitive": [
+      "",
+      "n/a",
+      "na",
+      "nan",
+      "none",
+      "null"
+    ],
+    "operations": [
+      "trim surrounding whitespace",
+      "collapse internal whitespace",
+      "map shared null sentinels to null"
+    ],
+    "semantic_normalization": false
+  },
+  "identity_normalizer_version": "rdkit_fragment_parent.v1",
+  "index": {
+    "fingerprint": {
+      "n_bits": 2048,
+      "radius": 2,
+      "type": "RDKit-Morgan",
+      "useBondTypes": true,
+      "useChirality": false,
+      "useFeatures": false
+    },
+    "groups": [
+      "Context.human_organ_toxicity",
+      "Direct.human_organ_toxicity",
+      "Mechanism.cellular_stress_pathways",
+      "Mechanism.general_cytotoxicity",
+      "Mechanism.genotoxicity_carcinogenicity",
+      "Mechanism.in_vivo_toxicology",
+      "Mechanism.off_target_ddi_exposure",
+      "Mechanism.organ_specific_toxicity"
+    ],
+    "index_version": "clintox.starling_raw_v1.evidence_library.v1",
+    "n_evidence_rows": 72420,
+    "n_index_molecules": 50875,
+    "path": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_raw_v1/04_neighbor_index/neighbor_index.pkl"
+  },
+  "library_version": "clintox.starling_raw_v1.evidence_library.v1",
+  "organization": {
+    "mechanism_family_record_counts": {
+      "cellular_stress_pathways": 611750,
+      "clinical_human_safety": 166730,
+      "general_cytotoxicity": 826011,
+      "genotoxicity_carcinogenicity": 641417,
+      "in_vivo_toxicology": 345174,
+      "off_target_ddi_exposure": 1267205,
+      "organ_specific_toxicity": 553669
+    },
+    "n_unique_source_smiles": 51224,
+    "retrieval_status_counts": {
+      "eligible": 1729067,
+      "invalid_smiles": 12640,
+      "missing_smiles": 2670213,
+      "unresolved_parent": 36
+    },
+    "source_record_counts": {
+      "cellular_stress": 611750,
+      "general_cytotoxicity": 826011,
+      "genotoxicity_carcinogenicity": 641417,
+      "nonclinical_in_vivo_toxicity": 345174,
+      "off_target_ddi_exposure": 1267205,
+      "organ_specific_toxicity": 720399
+    }
+  },
+  "raw_version": "starling_raw_v1",
+  "record_supported_v2_scaffold_view": {
+    "benchmark_task": "ClinTox_Human_Toxicity",
+    "exclusion_scope": "direct gold source only; mechanism sources retained",
+    "heldout_any_source_parent_overlap": 601,
+    "heldout_contract": "data/processed_starling_record_supported_v2/ClinTox_Human_Toxicity/scaffold/heldout_molecule_labels.jsonl",
+    "heldout_direct_source_parent_overlap": 0,
+    "index": {
+      "fingerprint": {
+        "n_bits": 2048,
+        "radius": 2,
+        "type": "RDKit-Morgan",
+        "useBondTypes": true,
+        "useChirality": false,
+        "useFeatures": false
+      },
+      "groups": [
+        "Context.human_organ_toxicity",
+        "Direct.human_organ_toxicity",
+        "Mechanism.cellular_stress_pathways",
+        "Mechanism.general_cytotoxicity",
+        "Mechanism.genotoxicity_carcinogenicity",
+        "Mechanism.in_vivo_toxicology",
+        "Mechanism.off_target_ddi_exposure",
+        "Mechanism.organ_specific_toxicity"
+      ],
+      "index_version": "clintox.starling_raw_v1.evidence_library.v1.record_supported_v2_scaffold_heldout_filtered",
+      "n_evidence_rows": 71710,
+      "n_index_molecules": 50797,
+      "path": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_raw_v1/06_record_supported_v2_scaffold_view/neighbor_index.pkl"
+    },
+    "n_excluded_evidence_rows": 710,
+    "n_full_evidence_rows": 72420,
+    "n_heldout_parents": 662,
+    "n_retained_evidence_rows": 71710,
+    "query_time_identity_policy_required": "parent_disjoint",
+    "schema_version": "clintox_record_supported_v2_scaffold_view.v1"
+  },
+  "schema_version": "clintox_starling_raw_library.v1",
+  "stages": [
+    "01_cleaned",
+    "02_organized",
+    "03_evidence_catalog",
+    "04_neighbor_index",
+    "05_audits",
+    "06_record_supported_v2_scaffold_view"
+  ]
+}

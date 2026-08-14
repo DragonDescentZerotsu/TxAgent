@@ -29,7 +29,13 @@ LINEAGE = "record_supported_v2"
 PROTOCOL_VERSION = "starling_record_supported_benchmark.v2"
 DEFAULT_SOURCE_ROOT = Path("data/processed_starling")
 DEFAULT_OUTPUT_ROOT = Path("data/processed_starling_record_supported_v2")
-TASKS = ("BBB_Martins", "Bioavailability_Ma", "Skin_Reaction")
+TASKS = (
+    "BBB_Martins",
+    "Bioavailability_Ma",
+    "Skin_Reaction",
+    "ClinTox_Human_Toxicity",
+)
+DEFAULT_TASKS = ("BBB_Martins", "Bioavailability_Ma", "Skin_Reaction")
 SEED = 20260807
 
 
@@ -439,9 +445,18 @@ def build_task(
             "bbb_eval_cap": 500,
             "bioavailability_and_skin_ratio": "approximately 8:1:1",
             "prior_valid_reuse_tiebreak": True,
+            **(
+                {"clintox_human_toxicity_ratio": "approximately 8:1:1"}
+                if task == "ClinTox_Human_Toxicity"
+                else {}
+            ),
         },
         "split_size_policy": {
-            "formula": "BBB min(500, floor(0.1*n)); Bioavailability/Skin floor(0.1*n)",
+            "formula": (
+                "floor(0.1*n)"
+                if task == "ClinTox_Human_Toxicity"
+                else "BBB min(500, floor(0.1*n)); Bioavailability/Skin floor(0.1*n)"
+            ),
             "target_valid_size": target,
             "target_test_size": target,
         },
@@ -544,7 +559,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-root", type=Path, default=DEFAULT_SOURCE_ROOT)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
-    parser.add_argument("--tasks", nargs="*", choices=TASKS, default=list(TASKS))
+    parser.add_argument("--tasks", nargs="*", choices=TASKS, default=list(DEFAULT_TASKS))
     args = parser.parse_args(argv)
     summaries = {
         task: build_task(task, source_root=args.source_root, output_root=args.output_root)

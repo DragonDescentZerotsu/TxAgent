@@ -1,0 +1,75 @@
+{
+  "task": "Build a molecule-level literature dataset of safety-relevant off-target, drug-interaction, and exposure evidence. Include hERG or ion-channel activity, safety-pharmacology receptor panels, CYP inhibition or induction, uptake and efflux transporter inhibition, BSEP and related transporters, phospholipidosis liability, tissue accumulation, exposure margins, protein binding, and toxicokinetic context.",
+  "task_instantiation": "Extract only direct, molecule-attributed evidence about safety off-targets, drug interactions, phospholipidosis/accumulation, or safety-relevant exposure. In scope: (1) measured hERG or other ion-channel current/binding/function and ECG/QT results; (2) direct target binding/function from an assay explicitly identified by the paper as a safety-pharmacology panel, secondary-pharmacology panel, broad off-target panel, or selectivity counter-screen; (3) CYP/UGT inhibition, time-dependent inhibition, induction, substrate status, enzyme phenotyping, and fractional clearance contribution; (4) uptake/efflux transporter inhibition, induction/regulation, substrate/transport evidence, and transporter-mediated DDI, including P-gp/ABCB1, BCRP/ABCG2, OATP, OCT, OAT, MATE, NTCP, BSEP and related transporters; (5) phospholipidosis assay outcomes; (6) explicitly described tissue, organ, lysosomal, or cellular accumulation, retention, or tissue-to-plasma partitioning; (7) plasma/serum/microsomal protein binding, unbound fraction, and blood-to-plasma partitioning; and (8) clinical DDI exposure results or AUC/Cmax/concentration/clearance/half-life/exposure ratios explicitly obtained in a toxicology/safety study, supratherapeutic/QT assessment, off-target/toxicity exposure-margin analysis, organ-impairment study, or named special-population safety assessment.\n\nThe subject must be a specific molecule or named molecule class that is explicit in the passage and has a matching top-level `global_identifier` in the entity list. Otherwise skip. Do not use a protein/gene as the primary identifier. If a statement explicitly applies to several identified molecules, make one record per molecule. If a measured outcome belongs only to a drug combination, do not attribute the joint value to either component alone; emit only if the combination itself has an identifier, otherwise skip. Do not resolve an ambiguous word such as “compound,” “drug,” “enantiomers,” or “metabolite” to a named molecule from distant context.\n\nCreate one record per subject molecule/class × target/endpoint × reported result × materially distinct condition. Split different targets, metrics, doses, tissues, populations, time points, and conditions when they have separate values. Keep an estimate together with its CI/variability and stated comparator. An inhibitor cocktail that jointly blocks several transporters supports one cocktail-level transport record, not separate claims for each transporter. A statement that one value applies to a named target panel may remain one panel-level record unless isoform-specific values are reported.\n\nRequire a directly stated measured value, categorical assay outcome, explicit substrate/inhibitor/inducer status, or explicit author interpretation. Tables and figures are valid. Preserve the exact value, inequality, range, fold/percent wording, units, and stereochemical form. Do not calculate ratios, convert units, estimate IC50, invent significance, strengthen “negligible/no meaningful influence” into inhibition, or turn “may/could/potentially” into an observed effect. Use only context supported in the same passage or directly linked table/figure; do not fill assay system, species, target, or mechanism from general knowledge.\n\nFor clinical probe DDIs, use the tested perpetrator as primary when the study measures its effect on a probe and use the victim as primary when the passage measures how a named co-treatment changes that victim’s exposure. Set `evidence_type` to `clinical_drug_interaction` when the passage reports probe/victim PK but does not explicitly establish inhibition, induction, or a transporter mechanism. Assign a CYP/transporter-specific type and target only when the paper explicitly names that mechanism for the result. Thus, do not infer CYP2C9 solely from warfarin or P-gp solely from digoxin. Put probe and co-treatment names in `assay_context`.\n\nDo not infer `substrate` from metabolism, clearance, a high efflux ratio, directional permeability, or reduced uptake. Such direct transport measurements may use `transporter_substrate_or_transport`, but `result_metric` and `result_value` must state only what was measured unless substrate status is explicit. Transporter monolayer/permeability results are in scope only when the text explicitly names the transporter, a transporter-transfected/knockout system, or a transporter-specific inhibitor comparison. Transporter expression/transcription changes use `transporter_regulation`, never a metabolic-enzyme type. CYP/UGT induction requires explicit induction or increased expression/activity; cooperativity, activation, or altered probe PK alone is not induction.\n\nExclude intended-target efficacy/potency and intended receptor pharmacology unless explicitly reported as safety/off-target panel evidence. A receptor assay is not a safety panel merely because it could affect safety. Exclude mitochondrial respiratory-chain findings unless obtained in an explicitly named safety/off-target panel. Also exclude downstream temperature, behavior, signaling, efficacy, and adverse-event incidence; routine discovery PK/bioavailability/clearance; generic tissue concentrations not described as accumulation/retention/partitioning or safety/toxicokinetic evidence; high/low exposure alone; metabolism/metabolite detection alone; dose administration; demographics; molecular weight; LLOQ; assay sensitivity/specificity; generic permeability; and speculative structure-based predictions. Efficacy exposure versus EC50/EC70 is not a safety margin unless the comparator is explicitly an off-target or toxicity threshold.\n\nAssume standard/unqualified conditions if none are stated. Put only stated routine context—species, assay system, matrix/tissue, dose/route/time, population, probe/comparator—in `assay_context`. Put exceptional conditions materially limiting generalization—organ impairment, disease state, essential transfection/knockout, interacting co-treatment, unusual formulation, or supratherapeutic dose—in `qualifying_conditions`; otherwise null. Use `target_identifier` only when it exactly matches the explicitly named target and correct species/namespace in the entity list; otherwise null.",
+  "schema_spec": [
+    {
+      "name": "evidence_type",
+      "description": "Specific evidence type; use clinical_drug_interaction for probe/victim PK when a CYP/transporter mechanism is not explicit.",
+      "value_type": "string",
+      "allowed_values": [
+        "ion_channel_activity",
+        "ecg_or_qt",
+        "safety_off_target_panel",
+        "metabolic_enzyme_inhibition",
+        "metabolic_enzyme_induction",
+        "metabolic_enzyme_substrate_or_phenotyping",
+        "transporter_inhibition",
+        "transporter_regulation",
+        "transporter_substrate_or_transport",
+        "clinical_drug_interaction",
+        "phospholipidosis",
+        "tissue_accumulation",
+        "exposure_or_toxicokinetics",
+        "protein_binding_or_partitioning"
+      ]
+    },
+    {
+      "name": "target_or_endpoint",
+      "description": "Explicitly named target or endpoint, such as hERG, CYP2D6, P-gp, BSEP, QTc, a named target panel, phospholipidosis, liver accumulation, AUC, or plasma protein binding; do not infer a target from a probe.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "target_identifier",
+      "description": "Exact stable identifier of the secondary protein/gene target from the entity list; null for nonprotein endpoints, panels/cocktails without one target, unavailable identifiers, or uncertain species matches.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "result_metric",
+      "description": "Metric or status actually reported, such as IC50, percent inhibition, substrate status, efflux ratio, expression fold-change, fractional clearance contribution, fu, percent bound, tissue:plasma ratio, AUC ratio, or QTc difference.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "result_value",
+      "description": "Exact supported result, preserving inequality, range, ratio, percentage, fold statement, or qualitative wording; do not calculate, normalize, estimate, or strengthen it.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "result_unit",
+      "description": "Unit exactly as reported; null for qualitative results or unitless ratios. Do not repeat a percent/fold marker already retained in result_value.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "assay_context",
+      "description": "Only explicitly stated routine context: species, assay system, matrix/tissue, dose/route/time, population, probe drug, comparator, and routine conditions.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Exceptional conditions materially limiting generalization, such as organ impairment, disease state, essential transfection/knockout, interacting co-treatment, unusual formulation, or supratherapeutic dose; null if standard/unspecified.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

@@ -20,9 +20,35 @@ audit 工具继续保留用于复现与案例分析，不再按 test errors 调�
 toxicology、organ-specific toxicity、genotoxicity/carcinogenicity、cellular stress、general cytotoxicity 和
 off-target/DDI/exposure。并行 reasoning 以这 7 个 family 为上限，而不是以 43 个 endpoint groups 为单位。
 
-当前仓库没有与 ClinTox “toxicity-related clinical-trial failure” 同定义的 Starling direct acquisition，
-因此本轮不构造 ClinTox Starling split，也不从 heterogeneous in vitro/in vivo liability records
-伪造 clinical-failure gold label。
+The supplied `clintox_send.tar.gz` still does not contain a Starling source with the same definition as
+ClinTox "toxicity-related clinical-trial failure". It is now ingested separately as `starling_raw_v1`, and
+the new `ClinTox_Human_Toxicity` candidate benchmark predicts explicit human clinical organ injury. This
+new benchmark must never be described as TDC/MoleculeNet CT_TOX or mixed with the historical TDC lineage.
+
+The raw-first implementation is intentionally narrower than v7 assay-transfer normalization:
+
+```text
+data/starling_data/clintox/raw_v1/
+  <six semantic sources>/{extractions.parquet,extraction_guidance.json}
+  SOURCE_MANIFEST.json
+
+tools/chembl_tool/tasks/clintox/starling_raw.py
+  exact archive import, basic cleanup, source organization, evidence catalog/index,
+  candidate benchmark orchestration, and held-out-filtered index
+
+tools/chembl_tool/tasks/clintox/starling_human_toxicity_benchmark.py
+  task-specific human-clinical binary label adapter
+
+tools/chembl_tool/tasks/clintox/starling_raw_artifact_store.py
+  deterministic Git-split package/verify/restore wrapper
+```
+
+Exact raw Parquets retain `global_identifier`, but derived artifacts and gold decisions never read or emit
+it; source `SMILES` is the only structure input. The benchmark uses the shared basic-null helper, so null,
+blank, `nan`, `none`, `null`, `n/a`, and `na` count as empty qualifying conditions, while `-` and
+`unspecified` are nonempty and are rejected. The candidate uses the existing 70% record-weighted parent
+vote and the scaffold-only `record_supported_v2` allocator, but remains `candidate_pending_qa` until its
+deterministic organ-by-label source-record sample passes review.
 
 2026-07-23 strict-hop availability census 见
 `outputs/chembl_tool/tasks/clintox/distance_expansion/analysis/hop_availability_census/`。当前 C 已覆盖 43 groups、

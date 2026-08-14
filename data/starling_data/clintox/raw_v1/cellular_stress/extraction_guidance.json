@@ -1,0 +1,82 @@
+{
+  "task": "Build a molecule-level literature dataset of mechanistic cellular-stress evidence relevant to toxicity. Include mitochondrial dysfunction, oxidative stress, ROS generation, ER stress, apoptosis, necrosis, phospholipidosis, lysosomal disruption, bile-acid stress, membrane damage, DNA-damage response, and stress-pathway activation.",
+  "task_instantiation": "Extract molecule-level evidence that a small molecule, drug, metabolite, chemical class, or nanoparticle causally induces, worsens, prevents, or reduces a cellular stress mechanism relevant to toxicity. In-scope endpoints are exactly: mitochondrial dysfunction, oxidative stress, ROS generation, ER stress/unfolded-protein response, apoptosis, necrosis, phospholipidosis, lysosomal disruption, bile-acid stress, membrane damage/permeabilization, DNA-damage response, and activation of a named cellular stress pathway. Use the molecule or class as the primary entity and its listed global_identifier. Do not use a protein, gene, ROS, organelle, disease, biomarker, or assay parameter as the primary entity.\n\nCreate one record per primary molecule × experimental/model context × stress endpoint. If one treatment affects several in-scope endpoints (for example ROS generation, mitochondrial membrane-potential loss, and apoptosis), emit separate records for each endpoint, while retaining the shared mechanism in `mechanistic_effect`. Merge repeated measurements of the same endpoint under the same treatment context into one record. For a metabolite/prodrug chain, attribute an effect only to the entity the text identifies as responsible; create separate records when effects are explicitly assigned to both parent and metabolite. For a combination, use a combination entity only when the effect is explicitly attributed to the joint treatment and a corresponding listed entity exists; otherwise do not assign the joint effect to each component unless the text supports each attribution. Class-level claims are valid and should use the listed class identifier.\n\nRequire an explicit molecule-to-stress link. Accept direct experimental results and explicit author-stated causal mechanisms, including protective/attenuating effects. Qualitative and quantitative evidence are both valid. Comparative evidence is valid only when it explicitly establishes the direction of an in-scope stress endpoint for the primary molecule; capture the comparator in `extra_details`. Do not infer a stress effect solely from dose, target binding/inhibition, biomarker concentration, disease association, or use of a compound in an assay. Skip baseline physiology, endogenous ROS or disease stress without a causal small-molecule exposure, protein/gene-only pathway descriptions, generic inflammation, metabolic changes not tied to an in-scope endpoint, assay-method descriptions (for example JC-1 staining), and protocol reagents such as oligomycin/FCCP used only to define respiratory states. Also skip permeability ratios or other barrier measurements unless the authors explicitly interpret them as molecule-induced membrane/barrier damage. Enzyme or respiratory-complex inhibition is in scope only when the passage explicitly links it to mitochondrial dysfunction, impaired bioenergetics, ROS, cell death, or toxicity; do not manufacture that link.\n\nSet `stress_endpoint` to the single best supported endpoint and `effect_direction` from the stated result. Distinguish ROS generation from broader oxidative stress: use `ros_generation` for production/accumulation/scavenging of ROS and `oxidative_stress` for an explicitly named oxidative-stress state or oxidative damage such as lipid peroxidation. Use `mitochondrial_dysfunction` for impaired oxidative phosphorylation/respiration, ATP production, membrane potential, mitochondrial permeability/fragmentation, or mitochondrial damage when causally linked to the molecule. Use `stress_pathway_activation` only for a named stress-response pathway not better represented by another allowed endpoint, and name that pathway in `target_or_pathway`. Do not label a downstream outcome that is merely speculative (for example 'potential apoptosis').\n\nDefault to the ordinary biological/model conditions stated or, if unstated, standard unmodified conditions. Record species, cell/tissue/model, dose, and duration in their dedicated fields. Put genuinely interpretation-changing exceptions—gene knockout/overexpression, disease state when essential to the effect, sensitization, unusual formulation or route, or required co-treatment—in `qualifying_conditions`; leave it null for standard or unqualified conditions. Preserve quantitative outcomes, comparator details, assay names, and other useful nuances in `extra_details` without inventing missing values.",
+  "schema_spec": [
+    {
+      "name": "stress_endpoint",
+      "description": "Single cellular-stress endpoint explicitly linked to the primary molecule in this record.",
+      "value_type": "string",
+      "allowed_values": [
+        "mitochondrial_dysfunction",
+        "oxidative_stress",
+        "ros_generation",
+        "er_stress",
+        "apoptosis",
+        "necrosis",
+        "phospholipidosis",
+        "lysosomal_disruption",
+        "bile_acid_stress",
+        "membrane_damage",
+        "dna_damage_response",
+        "stress_pathway_activation"
+      ]
+    },
+    {
+      "name": "effect_direction",
+      "description": "Direction of the molecule's effect on the selected endpoint: induction/increase, reduction/protection, no effect, or explicitly mixed/context-dependent.",
+      "value_type": "string",
+      "allowed_values": [
+        "induces_or_increases",
+        "reduces_or_protects",
+        "no_effect",
+        "mixed_or_context_dependent"
+      ]
+    },
+    {
+      "name": "evidence_basis",
+      "description": "Basis of the claim: an experimental endpoint measured in the described study, an explicit author-stated causal mechanism from prior/general evidence, or a relative comparison without an absolute result.",
+      "value_type": "string",
+      "allowed_values": [
+        "direct_experimental",
+        "stated_causal_mechanism",
+        "comparative"
+      ]
+    },
+    {
+      "name": "mechanistic_effect",
+      "description": "Concise supported description of how the molecule produces or mitigates the endpoint, including the observed change; do not add unstated causal steps.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "target_or_pathway",
+      "description": "Named molecular target, organelle component, or stress pathway mediating the effect, if explicitly stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_model",
+      "description": "Species plus cell line/type, tissue/organ, organism, or human population in which the evidence was obtained; null if unstated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "dose_and_duration",
+      "description": "Reported molecule dose/concentration and exposure duration in one concise string; null if either or both are unstated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Exceptional condition essential to interpretation, such as disease model, genetic manipulation, sensitization, unusual route/formulation, or required co-treatment; null for standard/unqualified conditions.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

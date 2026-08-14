@@ -1,0 +1,207 @@
+{
+  "task": "ClinTox_Human_Toxicity",
+  "protocol_version": "starling_binary_benchmark.v4",
+  "identity_normalizer_version": "rdkit_fragment_parent.v1",
+  "seed": 20260723,
+  "parent_label_policy": {
+    "method": "record_weighted_majority",
+    "agreement_formula": "max(n_label_0, n_label_1) / (n_label_0 + n_label_1)",
+    "agreement_threshold": 0.7,
+    "vote_unit": "accepted_source_record",
+    "tie_policy": "reject_exact_ties"
+  },
+  "split_size_policy": {
+    "formula": "min(max_eval_size, floor(fraction * n_binary_molecules)) for valid and test",
+    "max_eval_size": 500,
+    "valid_fraction": 0.1,
+    "test_fraction": 0.1,
+    "target_valid_size": 331,
+    "target_test_size": 331
+  },
+  "n_source_rows_considered": 720399,
+  "n_source_rows_labeled_before_structure_normalization": 79571,
+  "source_rejection_counts": {
+    "interpretation_altering_qualifying_conditions": 63707,
+    "invalid_or_unresolved_smiles": 233,
+    "missing_or_invalid_effect_status": 234,
+    "missing_or_invalid_organ_system": 3299,
+    "missing_source_smiles": 15464,
+    "missing_toxicity_endpoint": 230,
+    "needs_more_context": 4225,
+    "not_human_clinical": 553669
+  },
+  "n_parent_groups_with_any_label": 3869,
+  "n_parent_groups_with_label_conflict": 1587,
+  "n_parent_groups_recovered_by_majority": 1037,
+  "n_rejected_parent_groups": 550,
+  "parent_rejection_counts": {
+    "parent_record_agreement_below_threshold": 411,
+    "parent_record_label_tie": 139
+  },
+  "n_binary_molecules": 3319,
+  "all_label_counts": {
+    "0": 454,
+    "1": 2865
+  },
+  "n_unique_bemis_murcko_scaffolds": 1570,
+  "n_acyclic_molecules": 606,
+  "splits": {
+    "random": {
+      "method": "label_stratified_stable_hash",
+      "target_valid_size": 331,
+      "target_test_size": 331,
+      "actual_valid_size": 331,
+      "actual_test_size": 331,
+      "valid_size_shortfall": 0,
+      "test_size_shortfall": 0,
+      "n_train": 2657,
+      "n_valid": 331,
+      "n_test": 331,
+      "train_label_counts": {
+        "0": 364,
+        "1": 2293
+      },
+      "valid_label_counts": {
+        "0": 45,
+        "1": 286
+      },
+      "test_label_counts": {
+        "0": 45,
+        "1": 286
+      },
+      "n_train_scaffolds": 1326,
+      "n_valid_scaffolds": 214,
+      "n_test_scaffolds": 197,
+      "pairwise_scaffold_overlap": {
+        "train_valid": 85,
+        "train_test": 77,
+        "valid_test": 35
+      },
+      "pairwise_identity_overlap": {
+        "train_valid": 0,
+        "train_test": 0,
+        "valid_test": 0
+      },
+      "train_valid_scaffold_overlap": 85,
+      "train_test_scaffold_overlap": 77,
+      "valid_test_scaffold_overlap": 35,
+      "train_valid_identity_overlap": 0,
+      "train_test_identity_overlap": 0,
+      "valid_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling/ClinTox_Human_Toxicity/random/train.jsonl",
+        "valid": "data/processed_starling/ClinTox_Human_Toxicity/random/valid.jsonl",
+        "test": "data/processed_starling/ClinTox_Human_Toxicity/random/test.jsonl",
+        "train_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/train_molecule_labels.jsonl",
+        "valid_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/valid_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/test_molecule_labels.jsonl",
+        "heldout_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/heldout_molecule_labels.jsonl"
+      }
+    },
+    "scaffold": {
+      "method": "bemis_murcko_scaffold_group_subset_sum",
+      "target_valid_size": 331,
+      "target_test_size": 331,
+      "actual_valid_size": 331,
+      "actual_test_size": 331,
+      "valid_size_shortfall": 0,
+      "test_size_shortfall": 0,
+      "n_train": 2657,
+      "n_valid": 331,
+      "n_test": 331,
+      "train_label_counts": {
+        "0": 351,
+        "1": 2306
+      },
+      "valid_label_counts": {
+        "0": 56,
+        "1": 275
+      },
+      "test_label_counts": {
+        "0": 47,
+        "1": 284
+      },
+      "n_train_scaffolds": 1104,
+      "n_valid_scaffolds": 243,
+      "n_test_scaffolds": 223,
+      "pairwise_scaffold_overlap": {
+        "train_valid": 0,
+        "train_test": 0,
+        "valid_test": 0
+      },
+      "pairwise_identity_overlap": {
+        "train_valid": 0,
+        "train_test": 0,
+        "valid_test": 0
+      },
+      "train_valid_scaffold_overlap": 0,
+      "train_test_scaffold_overlap": 0,
+      "valid_test_scaffold_overlap": 0,
+      "train_valid_identity_overlap": 0,
+      "train_test_identity_overlap": 0,
+      "valid_test_identity_overlap": 0,
+      "paths": {
+        "train": "data/processed_starling/ClinTox_Human_Toxicity/scaffold/train.jsonl",
+        "valid": "data/processed_starling/ClinTox_Human_Toxicity/scaffold/valid.jsonl",
+        "test": "data/processed_starling/ClinTox_Human_Toxicity/scaffold/test.jsonl",
+        "train_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/scaffold/train_molecule_labels.jsonl",
+        "valid_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/scaffold/valid_molecule_labels.jsonl",
+        "test_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/scaffold/test_molecule_labels.jsonl",
+        "heldout_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/scaffold/heldout_molecule_labels.jsonl"
+      }
+    }
+  },
+  "cross_method_eval_identity_overlap": {
+    "valid": 30,
+    "test": 28
+  },
+  "source_metadata": {
+    "source": {
+      "path": "data/starling_data/clintox/raw_v1/organ_specific_toxicity/extractions.parquet",
+      "sha256": "5c15a8e12a92dd8adfdce21903acf86f45bdf376f4f34e5ee075438eaab42848",
+      "source_shard": "v2 organ-specific toxicity",
+      "rows_available": 720399,
+      "rows_requested": 720399
+    },
+    "task_definition": {
+      "name": "ClinTox_Human_Toxicity",
+      "positive": "explicit injury_observed in a human clinical context",
+      "negative": "explicit no_injury_observed in a human clinical context",
+      "organ_systems": [
+        "cardiac",
+        "developmental",
+        "gastrointestinal",
+        "hematological",
+        "hepatic",
+        "neurological",
+        "pulmonary",
+        "renal",
+        "reproductive"
+      ],
+      "not_equivalent_to": "TDC/MoleculeNet toxicity-related clinical-trial failure"
+    },
+    "adapter_version": "clintox_human_organ_toxicity.v1",
+    "qualifying_conditions_policy": {
+      "helper": "benchmark_dataset.has_reported_text",
+      "empty_values": [
+        "null",
+        "blank",
+        "nan",
+        "none",
+        "n/a",
+        "na"
+      ],
+      "explicitly_not_empty": [
+        "-",
+        "unspecified"
+      ]
+    },
+    "confidence_threshold": null
+  },
+  "paths": {
+    "molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/molecule_labels.jsonl",
+    "conflicting_molecules": "data/processed_starling/ClinTox_Human_Toxicity/conflicting_molecules.jsonl",
+    "rejected_parent_molecules": "data/processed_starling/ClinTox_Human_Toxicity/rejected_parent_molecules.jsonl",
+    "source_rejection_examples": "data/processed_starling/ClinTox_Human_Toxicity/source_rejection_examples.jsonl"
+  }
+}

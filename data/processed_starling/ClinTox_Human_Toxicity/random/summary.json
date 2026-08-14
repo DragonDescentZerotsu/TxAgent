@@ -1,0 +1,52 @@
+{
+  "method": "label_stratified_stable_hash",
+  "target_valid_size": 331,
+  "target_test_size": 331,
+  "actual_valid_size": 331,
+  "actual_test_size": 331,
+  "valid_size_shortfall": 0,
+  "test_size_shortfall": 0,
+  "n_train": 2657,
+  "n_valid": 331,
+  "n_test": 331,
+  "train_label_counts": {
+    "0": 364,
+    "1": 2293
+  },
+  "valid_label_counts": {
+    "0": 45,
+    "1": 286
+  },
+  "test_label_counts": {
+    "0": 45,
+    "1": 286
+  },
+  "n_train_scaffolds": 1326,
+  "n_valid_scaffolds": 214,
+  "n_test_scaffolds": 197,
+  "pairwise_scaffold_overlap": {
+    "train_valid": 85,
+    "train_test": 77,
+    "valid_test": 35
+  },
+  "pairwise_identity_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "train_valid_scaffold_overlap": 85,
+  "train_test_scaffold_overlap": 77,
+  "valid_test_scaffold_overlap": 35,
+  "train_valid_identity_overlap": 0,
+  "train_test_identity_overlap": 0,
+  "valid_test_identity_overlap": 0,
+  "paths": {
+    "train": "data/processed_starling/ClinTox_Human_Toxicity/random/train.jsonl",
+    "valid": "data/processed_starling/ClinTox_Human_Toxicity/random/valid.jsonl",
+    "test": "data/processed_starling/ClinTox_Human_Toxicity/random/test.jsonl",
+    "train_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/train_molecule_labels.jsonl",
+    "valid_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/valid_molecule_labels.jsonl",
+    "test_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/test_molecule_labels.jsonl",
+    "heldout_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/heldout_molecule_labels.jsonl"
+  }
+}

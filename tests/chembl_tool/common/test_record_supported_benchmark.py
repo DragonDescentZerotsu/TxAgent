@@ -18,6 +18,7 @@ def test_record_supported_targets_keep_bbb_cap_and_other_811_sizes():
     assert target_eval_size("BBB_Martins", 19_425) == 500
     assert target_eval_size("Bioavailability_Ma", 2_092) == 209
     assert target_eval_size("Skin_Reaction", 2_456) == 245
+    assert target_eval_size("ClinTox_Human_Toxicity", 4_266) == 426
 
 
 def test_scaffold_allocator_prioritizes_record_support_and_zero_group_overlap():
