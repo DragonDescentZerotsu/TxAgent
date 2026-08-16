@@ -1,0 +1,122 @@
+{
+  "contract_version": "clintox_clinical_trial_failure.v1",
+  "lineage": "clinical_trial_failure_v1",
+  "status": "benchmark_ready",
+  "source_revision": {
+    "repository": "deepchem/deepchem",
+    "commit": "61620011ac2d376606219e2f3fa539139f80d385"
+  },
+  "source_inputs": {
+    "positive_aacttox": {
+      "path": "data/starling_data/clintox/tdc_clintox_v1/aacttox.csv.gz",
+      "size": 2268,
+      "sha256": "c132ee41f78b44f72c243643fc9e6676feaa6ff44e0178daaa0570525ec9489f"
+    },
+    "negative_comparator_sweetfda": {
+      "path": "data/starling_data/clintox/tdc_clintox_v1/sweetfda_approved_processed.csv.gz",
+      "size": 18750,
+      "sha256": "d79a9f6e7911241086ebcff50dcb4c86b547fb8005d1e19ce1f4617ed0cfafcb"
+    },
+    "joined_reference_only": {
+      "path": "data/starling_data/clintox/tdc_clintox_v1/clintox.csv.gz",
+      "size": 19889,
+      "sha256": "2ee7050a830fe9ae7a8218e6577fa6f54284947034ff904b6d8204e993a297cc"
+    },
+    "starling_coverage_only": {
+      "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+      "sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285",
+      "used_for_labels": false
+    }
+  },
+  "task_definition": {
+    "grain": "molecular parent",
+    "positive": "at least one source record in the AACT-derived list of drugs from clinical trials that failed for toxicity reasons",
+    "negative": "FDA-approved SWEETLEAD comparator with no AACT toxicity-failure record after parent normalization",
+    "out_of_scope_for_labels": [
+      "ordinary adverse events without trial failure",
+      "preclinical or in-vitro toxicity",
+      "organ injury without development failure",
+      "market withdrawal or black-box warning alone",
+      "mechanistic toxicity liabilities",
+      "Starling extraction categories or free-text inference"
+    ]
+  },
+  "label_policy": {
+    "method": "source-role existential positive",
+    "positive_rule": "any AACT toxicity-failure source record => Y=1",
+    "negative_rule": "SWEETLEAD FDA-approved source and no AACT record => Y=0",
+    "source_role_overlap": "Y=1; approval and a toxicity-failed trial can coexist",
+    "record_majority_vote": false,
+    "starling_rows_create_labels": false,
+    "identity_normalization": "rdkit_fragment_parent.v1"
+  },
+  "stats": {
+    "n_aacttox_source_rows": 112,
+    "n_comparator_source_rows": 1397,
+    "n_source_identity_audit_rows": 1509,
+    "source_identity_status_counts": {
+      "accepted": 1505,
+      "invalid_or_unresolved_smiles": 4
+    },
+    "n_binary_parent_molecules": 1428,
+    "parent_label_counts": {
+      "0": 1324,
+      "1": 104
+    },
+    "n_parent_source_role_overlaps": 65,
+    "n_positive_parent_duplicates_collapsed": 8,
+    "n_comparator_parent_duplicates_collapsed": 4,
+    "n_reference_rows": 1491,
+    "n_reference_invalid_structure_rows": 4,
+    "n_reference_parent_molecules": 1421,
+    "n_reference_parent_raw_label_conflicts": 47,
+    "reference_reconciliation_counts": {
+      "label_match": 1421,
+      "source_reconstruction_only": 7
+    },
+    "n_common_reference_parents": 1421,
+    "n_common_reference_label_matches": 1421,
+    "n_common_reference_label_mismatches": 0,
+    "identity_normalizer_version": "rdkit_fragment_parent.v1"
+  },
+  "starling_evidence_coverage": {
+    "n_unique_starling_source_smiles": 8066,
+    "n_invalid_unique_starling_source_smiles": 144,
+    "n_starling_parent_identities": 7024,
+    "n_benchmark_parents_with_clintox_base_evidence": 1128,
+    "coverage_by_label": {
+      "0": {
+        "n_parents": 1324,
+        "n_with_clintox_base_evidence": 1032
+      },
+      "1": {
+        "n_parents": 104,
+        "n_with_clintox_base_evidence": 96
+      }
+    },
+    "starling_rows_used_to_create_labels": 0
+  },
+  "qa_sample": {
+    "method": "stable-hash sample, up to 30 parents per label",
+    "n_rows": 60,
+    "purpose": "inspectable lineage QA, not a source for labels"
+  },
+  "known_limitations": [
+    "The negative class is an approved-drug comparator, not proof that a molecule can never be toxic.",
+    "The source lists are historical and do not represent clinical developments after the frozen source snapshot.",
+    "The upstream joined clintox.csv used a lossy string join; seven valid comparator parents are retained by this source-first reconstruction but absent from that joined reference.",
+    "Individual dataset licensing is not specified by TDC/DeepChem."
+  ],
+  "paths": {
+    "source_identity_audit": "data/starling_data/clintox/canonical_clinical_trial_failure_v1/source_identity_audit.parquet",
+    "source_identity_audit_sha256": "70158fcc5dc3f0185dc61e8fd80865fb29c0ae4a42de6330aaf7385b02e01888",
+    "parent_labels": "data/starling_data/clintox/canonical_clinical_trial_failure_v1/parent_labels.parquet",
+    "parent_labels_sha256": "c5f26e3644fa974f81f52780e094a841c72841b15e9cb20d3a8e7a8281a0ee9c",
+    "reference_reconciliation": "data/starling_data/clintox/canonical_clinical_trial_failure_v1/reference_reconciliation.parquet",
+    "reference_reconciliation_sha256": "90897add720f4bf5b47305f0f8e40d8310da7c8353686c3f15db9318abced5a2",
+    "starling_base_coverage": "data/starling_data/clintox/canonical_clinical_trial_failure_v1/starling_base_coverage.parquet",
+    "starling_base_coverage_sha256": "2fd09b0bc5dc88a26b171c8035258f47722192aa0093124c68db954ffc3d6032",
+    "qa_sample": "data/starling_data/clintox/canonical_clinical_trial_failure_v1/qa_sample.parquet",
+    "qa_sample_sha256": "d745b81fe54d21527ded138b239c36b22f5a49517b49a06ede38493b90e9d300"
+  }
+}

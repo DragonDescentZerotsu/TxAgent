@@ -1030,8 +1030,11 @@ Skin_Reaction:
   irritation、phototoxicity、generic local damage 和 skin exposure 不构成这个 gold label。
 
 ClinTox:
-  当前没有与 toxicity-caused clinical-trial failure 同定义的 Starling direct source，
-  所以没有构造 Starling split。
+  不从 Starling toxicity rows 构造 gold split。独立 `clinical_trial_failure_v1` 从冻结
+  AACT toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators 重建 source-defined
+  parent labels；clinical/mechanistic Starling rows 只用于 retrieval。该 lineage 的 DeepSeek v3
+  结果见 `tools/chembl_tool/tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md`，不得混入本表三项
+  Starling gold 汇总。
 ```
 
 此前所有 17,893/1,828/1,900-parent strict-conflict benchmark 的 baseline、agent 和图表，以及更早的

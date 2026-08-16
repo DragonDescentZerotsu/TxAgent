@@ -63,6 +63,8 @@ class BatchConfig:
     prompt_profile_choices: tuple[str, ...] = ()
     default_prompt_profile: str = ""
     historical_prompt_profile: str = ""
+    default_api_key_env: str = "DEEPSEEK_API_KEY"
+    default_base_url: str = "https://api.deepseek.com"
 
 
 @dataclass(frozen=True)
@@ -938,8 +940,8 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--stream-logs", dest="stream_logs", action="store_true", default=True)
     parser.add_argument("--no-stream-logs", dest="stream_logs", action="store_false")
     parser.add_argument("--env-file", default=".env")
-    parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY")
-    parser.add_argument("--base-url", default="https://api.deepseek.com")
+    parser.add_argument("--api-key-env", default=config.default_api_key_env)
+    parser.add_argument("--base-url", default=config.default_base_url)
     parser.add_argument("--tool-service-url", default="http://127.0.0.1:8765")
     parser.add_argument("--model", default=config.default_model)
     parser.add_argument("--timeout-s", type=int, default=300)

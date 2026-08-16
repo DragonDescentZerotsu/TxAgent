@@ -184,8 +184,13 @@ skin exposure 不等于这个 label。
 
 ### ClinTox
 
-TDC ClinTox positive 表示因 toxicity 导致 clinical-trial failure；不是任意 in vitro liability。
-当前仓库还没有 ClinTox Starling direct acquisition，因此本轮不构造 ClinTox Starling split。
+TDC ClinTox positive 表示冻结 AACT toxicity-failure-associated source class；不是任意 in vitro liability，
+也不是对每条试验重新完成的 molecule-causality adjudication。不从 Starling free text 或 heterogeneous
+liability records 构造 ClinTox label。独立的 `clinical_trial_failure_v1` lineage 从冻结 AACT
+toxicity-failure source 和 SWEETLEAD/FDA-approved comparator 重建原任务语义，路径为
+`data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/`；它不是 Starling gold lineage，
+不得与本协议的三个 Starling task 混称为同源数据。Starling clinical/mechanistic rows 只进入独立
+retrieval library，不参与 gold 投票。
 
 ## Free-text 到 binary label 的精确规则
 

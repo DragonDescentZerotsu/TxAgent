@@ -23,8 +23,10 @@ tools/chembl_tool/tasks/skin_reaction/
 ## 当前 Starling 二分类 benchmark（2026-08-10）
 
 BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
-records 构建；ClinTox 因缺少与 clinical-trial toxicity failure 同定义的 Starling direct source，
-暂不构造 Starling split。公共协议和唯一构建入口为：
+records 构建。ClinTox 仍没有同定义的 Starling direct source，但 2026-08-15 起另有严格的 source-reconstructed
+`clinical_trial_failure_v1` benchmark：它只从冻结 AACT toxicity-failure positives 和 SWEETLEAD/FDA-approved
+comparators 构造 parent labels，不允许 broad Starling toxicity rows 投票。该 lineage 与三个 Starling gold
+lineage 分开维护。Starling 公共协议和入口为：
 
 ```text
 tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
@@ -207,7 +209,10 @@ Starling source 构建的 evidence index 不能直接用于新 benchmark。
 
 旧 `data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
 `data/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` 是既有 TDC 实验的历史输入，不再代表上述
-三个已迁移 task 的当前 benchmark。历史结果和复现命令可以保留，但必须明确标注 TDC lineage。
+三个已迁移 task 的当前 benchmark；旧 ClinTox split 也不代表新的 parent-normalized reconstruction。
+ClinTox 当前严格 split 位于
+`data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/`。历史结果和复现命令可以保留，
+但必须明确标注 lineage。
 
 ## 设计原则
 
@@ -1425,103 +1430,39 @@ tools/chembl_tool/tasks/bbb_martins/
 
 ## ClinTox 代码入口
 
-ClinTox 的 task-specific 细节记录在：
+当前 canonical lineage、source contract、split、retrieval hierarchy、prompt、实验结果和 no-promotion
+结论统一记录在：
 
 ```text
 tools/chembl_tool/tasks/clintox/AGENTS.md
+tools/chembl_tool/tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md
 ```
 
-当前 ClinTox 状态是归档 / stress-test，而不是继续优化的主线任务。结论：
+当前 gold 是独立的 source-reconstructed `clinical_trial_failure_v1`，路径为
+`data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/`；旧
+`data/processed/ClinTox` 和早期 ChEMBL-native 结果只作 historical comparison。唯一 prompt profile 为
+`tdc_source_aligned_v3`，旧 profile 已删除且旧/unversioned branch 不得复用。核心入口：
 
 ```text
-ClinTox 可以复用当前 ChEMBL evidence retrieval + reasoning workflow，但不适合作为该系统的
-主要 benchmark 分类任务。
+tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
+  从冻结 AACT positive 与 SWEETLEAD/FDA comparator 构造 parent labels 和 scaffold split。
 
-核心原因是 label ontology 和 ChEMBL evidence ontology 不完全匹配：
-  ClinTox 的 Y=1/Y=0 是高层 clinical toxicity / clinical failure 类二分类；
-  ChEMBL 检索到的 evidence 更多是 heterogeneous toxicity liability，包括 hERG、5-HT2B、
-  CYP/transporter/DDI、cell viability、DILI、LD50、MTD、organ stress 等。
-
-这些 evidence 对 toxicity risk explanation 有价值，但很多并不等价于 ClinTox-positive。
-因此系统容易把机制性 liability 或 broad medicinal-chemistry risk 解释成 toxic，导致 FP 偏多。
-同时一些 ClinTox label 本身有边界噪声，例如 test set 中存在同 InChIKey connectivity
-但 label 相反的分子对。
-```
-
-已归档的主要结果：
-
-```text
-v7 full final-only, missing rerun 合并估计：
-  batch: outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_full_prompt_v7_final_only_from_v2
-  fill:  outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_full_prompt_v7_missing_rerun_from_v2
-  estimate: TN=220 FP=48 FN=12 TP=6, macro-F1 ~0.523, positive F1 ~0.167
-
-v8 keygroups smoke:
-  batch: outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_group_prompt_v8_keygroups_smoke
-  targeted 9 examples: TN=1 FP=3 FN=1 TP=4, macro-F1=0.50, positive recall=0.80
-
-keygroups 的含义：
-  手动只选择更接近 ClinTox label 的 high-value endpoint groups 进入 targeted smoke，
-  例如 clinical toxicity/MTD、in vivo toxicity/LD50/NOAEL、DILI、hepatic injury、
-  mitochondrial stress、DNA damage、general cytotoxicity，以及少量 off-target/CYP/transporter
-  作为背景。
-
-实验结论：
-  keygroups 能救回部分 positive examples（例如 idx73、idx250）并保住部分 TP
-  （例如 idx84、idx170），说明 final context selection/compression 是有效方向；
-  但 FP 仍然顽固（例如 idx40、idx56、idx65），idx124 仍不稳定。
-```
-
-后续维护原则：
-
-```text
-1. 保留 ClinTox 代码、AGENTS.md、audit 脚本和已产出的 batch 结果用于复现和案例分析。
-2. 不再继续围绕 ClinTox macro-F1 做 prompt 迭代，除非明确把目标改成 dataset-specific calibration。
-3. 如果未来重启 ClinTox，应优先做 final-context compression/filter，而不是继续堆 final prompt：
-   把 evidence 分成 direct severe clinical anchor、in vivo dose-limiting anchor、
-   mechanistic liability、weak/background context；机制性 liability 不能单独决定 toxic。
-4. ClinTox 更适合作为 toxicity evidence retrieval / mechanistic risk explanation 的 stress test，
-   不适合作为证明通用 workflow 有效性的主任务。主线任务应优先选择 label 与 ChEMBL evidence
-   语义更一致的 endpoint。
-```
-
-主要入口：
-
-```text
-tools/chembl_tool/tasks/clintox/constants.py
-  ClinTox label 和 prediction mapping。当前约定：Y=1 -> toxic，Y=0 -> non_toxic。
-
-tools/chembl_tool/tasks/clintox/rules.py
-  ClinTox assay screening 关键词、negative keywords、weak/context-dependent terms、
-  toxicology target genes 和 assay family 配置。
-
-tools/chembl_tool/tasks/clintox/scoring.py
-  ClinTox assay 保留/剔除和打分入口。screen_assays.py 和 rescore_outputs.py 都调用 scored_row()。
-
-tools/chembl_tool/tasks/clintox/endpoint_groups.py
-  ClinTox Tier.endpoint_group、evidence_direction、evidence_strength 和 endpoint assignment 规则。
-
-tools/chembl_tool/tasks/clintox/build_evidence_library.py
-  ClinTox evidence library 构建入口。默认读取 assay_screening/v6，输出
-  clintox_molecule_evidence.jsonl、clintox_neighbor_index.pkl 和 meta。
-
-tools/chembl_tool/tasks/clintox/retrieve_neighbors.py
-  ClinTox analog retrieval 入口。默认 top-k-per-group=3、min-similarity=0.3。
+tools/chembl_tool/tasks/clintox/starling_retrieval.py
+  构造独立 direct/clinical/mechanistic retrieval library；Starling rows 不参与 gold label。
 
 tools/chembl_tool/tasks/clintox/run_reasoning_pipeline.py
-  ClinTox 单分子 reasoning pipeline：retrieval prefetch、single-molecule branch、group-level
-  并发 reasoning、final summary、trace 保存，以及 final-only rerun。支持 `--groups` 做 targeted
-  endpoint-group smoke test。
-
 tools/chembl_tool/tasks/clintox/run_reasoning_batch.py
-  ClinTox 批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、
-  report、logs、runs 和 combined trace。
+  复用公共 retrieval/reasoning workflow；默认 current split、heldout-filtered index、v3 prompt 和
+  PARCC DeepSeek-V4-Flash tunnel。
 
-tools/chembl_tool/tasks/clintox/audit_reasoning_batch.py
-  ClinTox batch 诊断入口。读取已有 predictions/final/group 输出，不重跑 LLM；汇总 FP/FN/TP/TN、
-  evidence category、group evidence direction/confidence/transferability、service/group errors，以及
-  test set 中同 InChIKey connectivity 但 label 相反的分子对。默认输出到目标 batch 的 `audit/`。
+tools/chembl_tool/tasks/clintox/audit_clinical_trial_failure_agent.py
+  审计 direct provenance、coverage、label leak、structured retries 和 paired flips。
 ```
+
+2026-08-16 scaffold-valid 的 best 是 `none` macro-F1 `0.6198`；direct/full-flat/full-mechanism 均未
+通过 promotion gate。test 已经被查看，只保留 `post-test diagnostic`，不得作为新的 formal test，也不得继续在
+同一 valid/test 调 prompt 或 selector。broad toxicity evidence 适合 risk explanation，但不能冒充
+source-defined AACT association。
 
 ## Skin_Reaction 代码入口
 

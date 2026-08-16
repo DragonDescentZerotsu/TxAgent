@@ -36,6 +36,17 @@ permeability。Bioavailability 与 Skin 继续使用 scaffold-only `record_suppo
 `record_supported_v2`、`experimental_direct_cns_v1` 和第一版 `record_agreement70_split811_v1` 都只作 historical
 comparison；不合理的 exploratory `record_supported_v1` 已删除。
 
+ClinTox 是独立的 `clinical_trial_failure_v1`，不是第四个 Starling gold task。它从冻结 AACT
+toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators 构造 1,428 个 parent labels；Starling
+clinical/mechanistic rows 只用于 retrieval。构建、运行和审计入口为：
+
+```text
+tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
+tools/chembl_tool/tasks/clintox/starling_retrieval.py
+tools/chembl_tool/tasks/clintox/audit_clinical_trial_failure_agent.py
+tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+```
+
 ```text
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
 tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py

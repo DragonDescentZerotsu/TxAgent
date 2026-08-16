@@ -33,6 +33,10 @@ from tools.chembl_tool.common.neighbor_selection import (
 from tools.chembl_tool.common.retrieval_policy import NEIGHBOR_IDENTITY_POLICIES
 from tools.chembl_tool.common.json_utils import parse_json_content
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
+from tools.chembl_tool.common.prompt_profile import (
+    prompt_profile_from_manifest,
+    require_matching_prompt_profiles,
+)
 from tools.chembl_tool.common.reasoning_payload import (
     clean_exact_match as _clean_exact_match,
     clean_shared_assay_context as _clean_shared_assay_context,
@@ -63,14 +67,27 @@ from tools.chembl_tool.tasks.clintox.constants import (
     CLINTOX_POSITIVE_PREDICTION,
 )
 from tools.chembl_tool.tasks.clintox.experiment_config import get_source_config
+from tools.chembl_tool.tasks.clintox.prompt_profiles import (
+    CLINTOX_PROMPT_PROFILES,
+    DEFAULT_CLINTOX_PROMPT_PROFILE,
+    get_clintox_prompt_profile,
+)
 from tools.chembl_tool.tasks.clintox.retrieve_neighbors import load_index
 
 
-DEFAULT_INPUT = "data/processed/ClinTox/test.jsonl"
-DEFAULT_INDEX = "outputs/chembl_tool/tasks/clintox/evidence_library/clintox_neighbor_index.pkl"
-DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/clintox/reasoning/single_runs"
-DEFAULT_MODEL = "deepseek-v4-pro"
-DEFAULT_BASE_URL = "https://api.deepseek.com"
+DEFAULT_INPUT = (
+    "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/test.jsonl"
+)
+DEFAULT_INDEX = (
+    "outputs/paper/molecular_evidence_agent_starling_scaffold_"
+    "clinical_trial_failure_v1/evidence/clintox_starling_full/"
+    "starling_clintox_neighbor_index.pkl"
+)
+DEFAULT_OUT_ROOT = (
+    "outputs/chembl_tool/tasks/clintox/reasoning/clinical_trial_failure_v1/single_runs"
+)
+DEFAULT_MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
+DEFAULT_BASE_URL = "http://127.0.0.1:50001/v1"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
 _write_trace_jsonl = partial(write_trace_jsonl, prediction_field="clintox_prediction")
 
@@ -157,6 +174,7 @@ SINGLE_MOLECULE_TOOLS = [
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    _validate_prompt_profile_reuse(args)
     _load_env(Path(args.env_file))
     api_key = os.getenv(args.api_key_env)
     if not api_key and not args.prepare_only:
@@ -270,6 +288,7 @@ def main(argv: list[str] | None = None) -> int:
         max_workers=args.max_workers,
         single_output=frozen_single,
         group_outputs=frozen_groups,
+        prompt_profile=args.clintox_prompt_profile,
     )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
@@ -284,7 +303,13 @@ def main(argv: list[str] | None = None) -> int:
     _write_jsonl(group_path, group_outputs)
     _log(f"wrote {group_path}")
 
-    final_output = _run_final_reasoning(client, reasoning_retrieval, single_output, group_outputs)
+    final_output = _run_final_reasoning(
+        client,
+        reasoning_retrieval,
+        single_output,
+        group_outputs,
+        prompt_profile=args.clintox_prompt_profile,
+    )
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     _log(f"wrote {final_path}")
@@ -311,6 +336,8 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
+        "task_prompt_profile": args.clintox_prompt_profile,
+        "label_scope": get_clintox_prompt_profile(args.clintox_prompt_profile).label_scope,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
@@ -361,12 +388,19 @@ def _run_parallel_reasoning(
     max_workers: int,
     single_output: dict[str, Any] | None = None,
     group_outputs: list[dict[str, Any]] | None = None,
+    prompt_profile: str = DEFAULT_CLINTOX_PROMPT_PROFILE,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs = list(group_outputs or [])
     reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(_reason_one_group, client, _llm_query_payload(retrieval["query"]), group): group["group_id"]
+            executor.submit(
+                _reason_one_group,
+                client,
+                _llm_query_payload(retrieval["query"]),
+                group,
+                prompt_profile=prompt_profile,
+            ): group["group_id"]
             for group in groups
             if str(group.get("group_id") or "") not in reused_group_ids
         }
@@ -408,10 +442,16 @@ def _reason_single_molecule(
     client: OpenAICompatibleClient,
     query: dict[str, Any],
     chembl_context: dict[str, Any] | None = None,
+    *,
+    prompt_profile: str = DEFAULT_CLINTOX_PROMPT_PROFILE,
 ) -> dict[str, Any]:
+    # Keep the shared stage shape fixed while the canonical profile supplies
+    # the task ontology shown to the model.
+    profile = get_clintox_prompt_profile(prompt_profile)
     instructions = [
         "Call molecule_properties for the query molecule before analysis.",
-        "Assess clinical toxicity prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, electrophilic/reactive functional groups, cationic amphiphilicity, and structural alerts.",
+        "Assess only a physicochemical toxicity-risk prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, electrophilic/reactive functional groups, cationic amphiphilicity, and structural alerts.",
+        "Molecular properties cannot establish that a clinical trial or development program failed because of toxicity.",
         "Return JSON with clinical_toxicity_prior, physicochemical_risk_prior, reactive_or_structural_alert_prior, exposure_accumulation_prior, confidence, reasoning_summary, property_drivers, caveats.",
     ]
     if query.get("prefetched_molecule_properties"):
@@ -419,7 +459,7 @@ def _reason_single_molecule(
         if query.get("identity_hidden"):
             instructions[0] += " Do not identify or name the query."
     payload: dict[str, Any] = {
-        "task": "Single-molecule clinical toxicity plausibility analysis.",
+        "task": f"Single-molecule prior for predicting {profile.prediction_target}.",
         "query": query,
         "instructions": instructions,
         "required_json_schema": {
@@ -443,7 +483,7 @@ def _reason_single_molecule(
         {
             "role": "system",
             "content": (
-                "You are a medicinal chemistry clinical toxicity single-molecule analyst. "
+                f"You are a medicinal chemistry analyst estimating a property-only prior for {profile.prediction_target}. "
                 "Only analyze the query molecule itself, without analog evidence. "
                 + (
                     "The harness already supplied molecule_properties; do not call tools. "
@@ -472,13 +512,20 @@ def _reason_single_molecule(
     }
 
 
-def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def _reason_one_group(
+    client: OpenAICompatibleClient,
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    prompt_profile: str = DEFAULT_CLINTOX_PROMPT_PROFILE,
+) -> dict[str, Any]:
+    profile = get_clintox_prompt_profile(prompt_profile)
     messages = [
         {
             "role": "system",
             "content": (
-                "You are a medicinal chemistry clinical toxicity analog evidence analyst. "
-                "Reason about whether analog evidence in one endpoint group is transferable to the query molecule. "
+                "You are a medicinal chemistry ClinTox analog evidence analyst. "
+                f"Reason about whether one evidence family's analog findings transfer to the query molecule and whether they bear on {profile.prediction_target}. "
                 + (
                     "Use the harness-prefetched comparison results; do not call tools. "
                     + ("Do not infer query identity. " if group.get("identity_blind") else "")
@@ -490,7 +537,10 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
         },
         {
             "role": "user",
-            "content": json.dumps(_group_prompt_payload(query, group), ensure_ascii=False),
+            "content": json.dumps(
+                build_group_prompt_payload(query, group, prompt_profile=prompt_profile),
+                ensure_ascii=False,
+            ),
         },
     ]
     response = call_group_branch(
@@ -498,6 +548,16 @@ def _reason_one_group(client: OpenAICompatibleClient, query: dict[str, Any], gro
         messages,
         group=group,
         tools=GROUP_REASONING_TOOLS,
+        required_fields=(
+            "transferability",
+            "confidence",
+            "reasoning_summary",
+            "evidence_direction",
+            "direct_evidence_status",
+        ),
+        content_validator=lambda content: _group_provenance_validation_errors(
+            content, group
+        ),
     )
     return {
         "group_id": group["group_id"],
@@ -514,12 +574,17 @@ def _run_final_reasoning(
     retrieval: dict[str, Any],
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
+    *,
+    prompt_profile: str = DEFAULT_CLINTOX_PROMPT_PROFILE,
 ) -> dict[str, Any]:
+    profile = get_clintox_prompt_profile(prompt_profile)
     messages = [
         {
             "role": "system",
             "content": (
-                "You are a senior clinical toxicity reasoning model. Integrate group-level analog evidence into one final clinical toxicity assessment. "
+                "You are a senior drug-development safety reasoning model. "
+                + profile.final_system_instruction
+                + " "
                 "Return only valid JSON."
             ),
         },
@@ -527,8 +592,8 @@ def _run_final_reasoning(
             "role": "user",
             "content": json.dumps(
                 {
-                    "task": "Final clinical toxicity prediction from analog evidence.",
-                        "query": _llm_query_payload(retrieval["query"]),
+                    "task": profile.final_task_instruction,
+                    "query": _llm_query_payload(retrieval["query"]),
                     "retrieval_coverage": retrieval["coverage"],
                     "single_molecule_analysis": {
                         "status": single_output.get("status"),
@@ -544,25 +609,16 @@ def _run_final_reasoning(
                     ],
                     "instructions": [
                         "Return compact complete JSON.",
-                        f"Use clintox_prediction='{CLINTOX_POSITIVE_PREDICTION}' for ClinTox-positive molecules corresponding to evaluation label 1, and clintox_prediction='{CLINTOX_NEGATIVE_PREDICTION}' for ClinTox-negative molecules corresponding to evaluation label 0.",
+                        profile.class_definition_instruction,
+                        "Do not reinterpret the target as whether the molecule has any toxicity, adverse event, organ injury, safety liability, narrow therapeutic index, or monitoring requirement.",
                         "Use the single-molecule analysis only as a physicochemical plausibility prior; it cannot by itself determine clintox_prediction.",
                         "Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.",
-                        "Interpret ClinTox-positive as clinically consequential toxicity, not merely broad medicinal-chemistry toxicity risk.",
-                        "Clinically consequential toxicity means toxicity that is severe, dose-limiting, requires dose interruption/discontinuation/emergency management, indicates a narrow therapeutic index, or would materially affect clinical development or clinical use.",
-                        "A toxic prediction should have at least one strong anchor: direct/query evidence, an exact or near-exact analog, a close analog with high transferability and a severe endpoint, or multiple coherent moderate-transferability groups that point to the same severe clinical toxicity mechanism.",
-                        "The endpoint severity matters as much as analog similarity. Exact or near-exact analog evidence is not automatically sufficient if the endpoint is only a mild/moderate, literature-mined, model-derived, monitoring-only, or non-severe liability.",
-                        "Weak analogs or low-transferability groups cannot be the main positive anchor even when the proposed toxicity is clinically severe. They can only support an existing direct or close-transferable severe signal.",
-                        "A toxic prediction can be supported by severe human or clinical toxicity, clinical trial toxicity, fatal or severe in vivo toxicity, strong genotoxic/carcinogenic liability, serious organ injury, severe neurotoxicity, marrow suppression, pulmonary toxicity, severe hypercalcemia, or a clinically cytotoxic/narrow-therapeutic-index mechanism.",
-                        "Do not dismiss toxicity only because it is on-target, dose-dependent, marketed, clinically managed, or mechanism-based. Managed toxicity can still be ClinTox-positive when it is severe, dose-limiting, or monitoring-limiting.",
-                        "However, do not classify toxic from routine monitoring requirements, routine mild adverse effects, generic broad safety warnings, structural alerts, physicochemical risk, or single weak/moderate safety-liability groups by themselves.",
-                        "DILI/hepatotoxicity labels support toxic only when direct or close-transferable evidence indicates severe or clinically consequential liver injury, or when several coherent hepatic mechanisms corroborate each other and include at least one severe or high-confidence clinical anchor. Isolated literature-mined DILI, model-derived DILI, mild/moderate severity classes, routine liver enzyme elevation, or weak-analog DILI should be treated as monitoring evidence rather than sufficient positive evidence.",
-                        "If the strongest positive case is only DILI/hepatotoxicity label plus hERG/QT, CYP, transporter, phospholipidosis, structural alert, or physicochemical risk, prefer non_toxic unless the DILI evidence is explicitly severe, dose-limiting, fatal, withdrawal-level, or supported by direct severe in vivo/clinical organ injury.",
-                        "hERG/QT, transporter inhibition, CYP inhibition, receptor binding, nuclear receptor activity, phospholipidosis, and indirect mechanistic assays are safety-liability concerns. They support toxic only with strong potency, close transferability, and explicit severe clinical consequence; otherwise they should not determine clintox_prediction.",
-                        "Generic in vitro cytotoxicity supports toxic only when it is potent, close-transferable, and mechanistically tied to clinically consequential cytotoxic therapy, narrow therapeutic index, or serious organ injury. Generic viability/cell-stress screens without that context are not sufficient.",
-                        "For clinically cytotoxic or narrow-therapeutic-index mechanisms, potent sub-micromolar or nanomolar cytotoxicity/cell-injury evidence from direct, exact, close, or coherent moderate-transferability analogs can be a strong positive anchor even without human or repeat-dose confirmation. Negative hERG, receptor, genotoxicity, or acute LD50 evidence does not negate a specific potent cytotoxic mechanism.",
-                        "Do not convert drug_interaction_or_exposure_risk or mechanistic_context into clintox_prediction='toxic' by itself.",
-                        "When evidence is mixed, weigh severity, directness, transferability, assay relevance, and contradiction by direct negative evidence together. Do not let many low-severity liability signals outvote more direct negative or non-severe evidence.",
-                        "Do not use distant_analog or very_distant_analog neighbors as positive or negative clinical toxicity evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
+                        "Patient-level dose reduction, treatment discontinuation, DLT, MTD, severe adverse events, organ injury, FDA market withdrawal, regulatory restriction, or approval status are proximal/contextual evidence but are not themselves the target event unless the provided Direct.clinical_trial_failure evidence explicitly states the required trial/development failure.",
+                        "Animal toxicity, organ toxicity, genotoxicity/carcinogenicity, cellular stress, general cytotoxicity, hERG/ion-channel, CYP, transporter, DDI, exposure, and physicochemical signals are predictive risk evidence, not observations of the target event.",
+                        "FDA approval and ordinary tolerability are contextual evidence, not proof that a toxicity-failed trial never occurred; approval and a failed trial can coexist.",
+                        "Absence of toxicity in one assay, study, or paper is local negative evidence, not proof of the global negative class.",
+                        *profile.final_policy_instructions,
+                        "Do not use distant_analog or very_distant_analog neighbors as positive or negative trial-failure evidence unless a strong shared scaffold and development-limiting mechanism justify transfer.",
                         "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule or therapeutic class, ignore that recognition.",
                         f"You must choose exactly one clintox_prediction: {CLINTOX_POSITIVE_PREDICTION} or {CLINTOX_NEGATIVE_PREDICTION}. If evidence is mixed or weak, choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.",
                     ],
@@ -572,6 +628,12 @@ def _run_final_reasoning(
                         "main_reasons": ["string"],
                         "single_molecule_assessment": "string",
                         "clinical_or_human_safety_assessment": "string",
+                        "direct_trial_failure_anchor_assessment": "string",
+                        "direct_evidence_status": (
+                            "direct_analog_retrieved_transferable | "
+                            "direct_analog_retrieved_not_transferable | "
+                            "no_direct_analog_retrieved"
+                        ),
                         "in_vivo_toxicology_assessment": "string",
                         "organ_safety_pharmacology_assessment": "string",
                         "genotoxicity_or_carcinogenicity_assessment": "string",
@@ -589,16 +651,40 @@ def _run_final_reasoning(
     response = call_with_json_validation(
         client.chat_json,
         messages,
-        required_fields=("clintox_prediction",),
-        allowed_values={"clintox_prediction": {CLINTOX_POSITIVE_PREDICTION, CLINTOX_NEGATIVE_PREDICTION}},
+        required_fields=("clintox_prediction", "direct_evidence_status"),
+        allowed_values={
+            "clintox_prediction": {
+                CLINTOX_POSITIVE_PREDICTION,
+                CLINTOX_NEGATIVE_PREDICTION,
+            },
+            "direct_evidence_status": {
+                "direct_analog_retrieved_transferable",
+                "direct_analog_retrieved_not_transferable",
+                "no_direct_analog_retrieved",
+            },
+        },
+        content_validator=lambda content: _final_provenance_validation_errors(
+            content,
+            retrieval,
+            group_outputs,
+        ),
         branch_name="final",
     )
     return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
 
 
-def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def build_group_prompt_payload(
+    query: dict[str, Any],
+    group: dict[str, Any],
+    *,
+    prompt_profile: str = DEFAULT_CLINTOX_PROMPT_PROFILE,
+) -> dict[str, Any]:
+    profile = get_clintox_prompt_profile(prompt_profile)
+    direction_values = (
+        "supports_higher_trial_failure_risk | supports_lower_trial_failure_risk | "
+    )
     return bound_group_prompt_payload({
-        "task": "Group-level clinical toxicity analog transferability analysis.",
+        "task": f"Group-level analog transferability analysis for predicting {profile.prediction_target}.",
         "query": query,
         "group": {
             "group_id": group["group_id"],
@@ -623,20 +709,24 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.",
             "Assess structural transferability from neighbors to the query.",
             "Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.",
-            "Do not use distant_analog or very_distant_analog neighbors as positive or negative clinical toxicity evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.",
+            "Do not use distant_analog or very_distant_analog neighbors as positive or negative trial-failure evidence unless the shared scaffold and development-limiting mechanism make a strong medicinal chemistry case.",
             "Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.",
             "Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, logP, molecular size, or polarity could affect clinical toxicity transferability.",
             "Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.",
             "Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.",
             "Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.",
-            "Distinguish clinical/human safety, in vivo animal toxicology, organ safety pharmacology, genotoxicity/carcinogenicity, Tox21/cell-stress, general cytotoxicity, and safety-relevant off-target/DDI evidence.",
+            "Distinguish literal trial/development failure, proximal clinical safety, in vivo animal toxicology, organ toxicity, genotoxicity/carcinogenicity, cellular stress, general cytotoxicity, and safety-relevant off-target/DDI evidence.",
+            "Only evidence explicitly stating that a trial or development program stopped, terminated, suspended, or was withdrawn because of toxicity is direct evidence for the target event.",
+            *profile.group_policy_instructions,
+            "Patient treatment discontinuation, dose reduction, DLT/MTD, serious adverse events, approval status, and ordinary tolerability are proximal or contextual evidence, not direct trial-failure outcomes.",
+            "FDA market withdrawal, postmarketing restriction, or regulatory suspension is not a clinical-trial/development failure unless the provided evidence also explicitly states that the clinical trial or development program stopped because of toxicity.",
             "Do not convert generic inhibition, activity, growth, viability, or ratio endpoints into clinical toxicity without the assay context, target, endpoint, cell type, species, dose, route, and duration supporting that interpretation.",
             "For safety-relevant off-target, receptor-binding, ion-channel, CYP, transporter, or DDI/exposure groups, distinguish target engagement from clinical toxicity. Binding or inhibition alone is usually a liability signal, not supports_clinical_toxicity, unless this group contains direct severe clinical or in vivo toxicity evidence tied to that mechanism.",
             "For hERG/QT, 5-HT2B, AChE, GABA/NMDA, sodium/calcium-channel, CYP, and transporter evidence, describe potency and transferability, but avoid upgrading to clinical toxicity solely from pharmacology or monitoring liability.",
-            "For animal LD50/TD50/MTD/NOAEL evidence, report species, route, dose, duration, and endpoint severity. Acute lethality or a narrow safety margin can be clinically relevant, but class pharmacology or therapeutic mechanism alone is not enough.",
-            "For generic cytotoxicity or cell-viability evidence, distinguish intended antiproliferative/anti-infective efficacy, nonspecific cell stress, and safety cytotoxicity. Generic cell-line cytotoxicity is not clinical toxicity unless potency, cell context, and toxicophore make a strong transferable case.",
-            "Treat inactive/not toxic/no effect activity comments as evidence against that specific assay liability, not as proof of global clinical safety.",
-            "Do not convert CYP IC50/inhibition directly into clinical toxicity; interpret it as DDI/exposure liability only when context supports it.",
+            "For animal LD50/TD50/MTD/NOAEL evidence, report species, route, dose, duration, and endpoint severity, but do not convert it into a clinical-trial-failure event.",
+            "For generic cytotoxicity or cell-viability evidence, distinguish intended efficacy, nonspecific cell stress, and safety cytotoxicity; it can explain risk but cannot establish trial failure.",
+            "Treat inactive/not toxic/no effect comments as evidence against that specific assay liability, not as proof that no toxicity-failed trial occurred.",
+            "Do not convert CYP IC50/inhibition, hERG, transporter, receptor, DDI, or exposure evidence directly into trial failure.",
             "Return key_evidence as structured evidence cards, not a plain list of molecule ids.",
             "For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_clintox_reasoning yourself.",
             "Return JSON with useful_for_clintox_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
@@ -645,11 +735,15 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
             "useful_for_clintox_reasoning": "boolean",
             "transferability": "high | moderate | low | not_applicable",
             "evidence_direction": (
-                "supports_clinical_toxicity | argues_against_clinical_toxicity | cardiotoxicity_risk | "
+                direction_values + "clinical_toxicity_risk | cardiotoxicity_risk | "
                 "hepatotoxicity_risk | nephrotoxicity_risk | neurotoxicity_risk | "
                 "genotoxicity_or_carcinogenicity_risk | mitochondrial_or_cell_stress_risk | "
                 "general_cytotoxicity_risk | drug_interaction_or_exposure_risk | mechanistic_context | "
                 "neutral_or_unclear"
+            ),
+            "direct_evidence_status": (
+                "direct_rows_present_transferable | "
+                "direct_rows_present_not_transferable | no_direct_rows"
             ),
             "confidence": "high | moderate | low",
             "reasoning_summary": "string",
@@ -663,11 +757,98 @@ def _group_prompt_payload(query: dict[str, Any], group: dict[str, Any]) -> dict[
                     "tool_summary": "string",
                     "transferability": "high | moderate | low | not_applicable",
                     "effect_on_clintox_reasoning": "string",
+                    "source_evidence_group_id": "string",
+                    "evidence_claim_type": (
+                        "direct_observed_outcome | contextual_clinical_risk | mechanistic_risk"
+                    ),
                 }
             ],
             "caveats": ["string"],
         },
     })
+
+
+# Preserve the task-pipeline adapter contract used by shared materializers.
+_group_prompt_payload = build_group_prompt_payload
+
+
+def _group_has_direct_evidence(group: dict[str, Any]) -> bool:
+    """Return true only when this concrete retrieval group contains a strict direct row."""
+    for neighbor in group.get("neighbors") or []:
+        for evidence in neighbor.get("evidence_rows") or []:
+            minimal_group = (((evidence.get("minimal_evidence") or {}).get("group") or {}).get("id"))
+            if minimal_group == "Direct.clinical_trial_failure" or evidence.get("group_id") == "Direct.clinical_trial_failure":
+                return True
+    return False
+
+
+def _group_provenance_validation_errors(
+    content: dict[str, Any],
+    group: dict[str, Any],
+) -> list[str]:
+    """Validate direct-outcome claims without constraining the predicted direction."""
+    status = str(content.get("direct_evidence_status") or "")
+    has_direct = _group_has_direct_evidence(group)
+    if not has_direct and status != "no_direct_rows":
+        return [
+            "direct_evidence_status must be no_direct_rows because this group contains no "
+            "Direct.clinical_trial_failure evidence row"
+        ]
+    if has_direct and status == "no_direct_rows":
+        return [
+            "direct_evidence_status cannot be no_direct_rows because this group contains a "
+            "Direct.clinical_trial_failure evidence row; report whether it is transferable"
+        ]
+    return []
+
+
+def _final_provenance_validation_errors(
+    content: dict[str, Any],
+    retrieval: dict[str, Any],
+    group_outputs: list[dict[str, Any]] | None = None,
+) -> list[str]:
+    """Keep final direct-evidence provenance separate from label eligibility."""
+    status = str(content.get("direct_evidence_status") or "")
+    has_direct = any(
+        _group_has_direct_evidence(group)
+        for group in retrieval.get("groups") or []
+    )
+    if not has_direct and status != "no_direct_analog_retrieved":
+        return [
+            "direct_evidence_status must be no_direct_analog_retrieved because retrieval "
+            "contains no Direct.clinical_trial_failure row"
+        ]
+    if has_direct and status == "no_direct_analog_retrieved":
+        return [
+            "direct_evidence_status cannot be no_direct_analog_retrieved because retrieval "
+            "contains a Direct.clinical_trial_failure row; report its transferability"
+        ]
+    if not has_direct:
+        return []
+
+    group_statuses = {
+        str(((output.get("llm") or {}).get("content") or {}).get("direct_evidence_status") or "")
+        for output in group_outputs or []
+    }
+    group_statuses.discard("")
+    if (
+        status == "direct_analog_retrieved_transferable"
+        and group_statuses
+        and "direct_rows_present_transferable" not in group_statuses
+    ):
+        return [
+            "final direct_evidence_status claims a transferable direct analog but no group "
+            "reported direct_rows_present_transferable"
+        ]
+    if (
+        status == "direct_analog_retrieved_not_transferable"
+        and "direct_rows_present_transferable" in group_statuses
+    ):
+        return [
+            "final direct_evidence_status says direct analogs are not transferable but a group "
+            "reported direct_rows_present_transferable"
+        ]
+    return []
 
 
 def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
@@ -692,6 +873,25 @@ def _parse_json_content(content: str) -> Any:
     return parse_json_content(content)
 
 
+def _validate_prompt_profile_reuse(args: argparse.Namespace) -> None:
+    """Reject single/group branch reuse across ClinTox prompt contracts."""
+    require_matching_prompt_profiles(
+        target_profile=str(args.clintox_prompt_profile),
+        source_dirs=(
+            args.single_analysis_source_run_dir,
+            args.group_analysis_source_run_dir,
+        ),
+        historical_profile="",
+    )
+
+
+def _manifest_prompt_profile(manifest: dict[str, Any]) -> str:
+    return prompt_profile_from_manifest(
+        manifest,
+        historical_profile="",
+    )
+
+
 def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) -> int:
     retrieval = json.loads((run_dir / "retrieval.json").read_text(encoding="utf-8"))
     single_output = json.loads((run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8"))
@@ -702,12 +902,19 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     ]
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+    prompt_profile = _manifest_prompt_profile(manifest)
     if manifest.get("identity_blind"):
         group_outputs = sanitize_identity_blind_branch_outputs(group_outputs, retrieval)
         retrieval = prepare_identity_blind_final_retrieval(retrieval, single_output)
     elif manifest.get("harness_prefetch_tools"):
         retrieval = prepare_prefetched_final_retrieval(retrieval, single_output, identity_blind=False)
-    final_output = _run_final_reasoning(client, retrieval, single_output, group_outputs)
+    final_output = _run_final_reasoning(
+        client,
+        retrieval,
+        single_output,
+        group_outputs,
+        prompt_profile=prompt_profile,
+    )
     final_path = run_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
     trace_path = run_dir / "trace_messages.jsonl"
@@ -728,6 +935,8 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
         final_output=final_output,
     )
     manifest["final_rerun_at"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+    manifest["task_prompt_profile"] = prompt_profile
+    manifest["label_scope"] = get_clintox_prompt_profile(prompt_profile).label_scope
     manifest.setdefault("paths", {})["final_reasoning_output"] = str(final_path)
     manifest.setdefault("paths", {})["trace_messages"] = str(trace_path)
     _write_json(manifest_path, manifest)
@@ -779,7 +988,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Write retrieval.json and stop before any LLM request.",
     )
     parser.add_argument("--env-file", default=".env")
-    parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY")
+    parser.add_argument("--api-key-env", default="CLINTOX_LOCAL_API_KEY")
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     parser.add_argument("--tool-service-url", default=DEFAULT_TOOL_SERVICE_URL)
     parser.add_argument("--model", default=DEFAULT_MODEL)
@@ -810,6 +1019,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--neighbor-context-profile",
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
+    )
+    parser.add_argument(
+        "--clintox-prompt-profile",
+        choices=CLINTOX_PROMPT_PROFILES,
+        default=DEFAULT_CLINTOX_PROMPT_PROFILE,
     )
     return parser.parse_args(argv)
 

@@ -1,0 +1,2 @@
+data/starling_data/clintox/**/*.parquet -diff
+data/starling_data/clintox/**/*.tar.gz -diff

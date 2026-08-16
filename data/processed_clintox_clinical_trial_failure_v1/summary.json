@@ -1,0 +1,170 @@
+{
+  "lineage": "clinical_trial_failure_v1",
+  "protocol_version": "clintox_clinical_trial_failure_benchmark.v1",
+  "canonical_manifest": "data/starling_data/clintox/canonical_clinical_trial_failure_v1/manifest.json",
+  "tasks": {
+    "clintox": {
+      "task": "ClinTox",
+      "status": "benchmark_ready",
+      "lineage": "clinical_trial_failure_v1",
+      "protocol_version": "clintox_clinical_trial_failure_benchmark.v1",
+      "gold_contract_version": "clintox_clinical_trial_failure.v1",
+      "seed": 20260815,
+      "task_definition": {
+        "grain": "molecular parent",
+        "positive": "at least one source record in the AACT-derived list of drugs from clinical trials that failed for toxicity reasons",
+        "negative": "FDA-approved SWEETLEAD comparator with no AACT toxicity-failure record after parent normalization",
+        "out_of_scope_for_labels": [
+          "ordinary adverse events without trial failure",
+          "preclinical or in-vitro toxicity",
+          "organ injury without development failure",
+          "market withdrawal or black-box warning alone",
+          "mechanistic toxicity liabilities",
+          "Starling extraction categories or free-text inference"
+        ]
+      },
+      "parent_label_policy": {
+        "method": "source-role existential positive",
+        "positive_rule": "any AACT toxicity-failure source record => Y=1",
+        "negative_rule": "SWEETLEAD FDA-approved source and no AACT record => Y=0",
+        "source_role_overlap": "Y=1; approval and a toxicity-failed trial can coexist",
+        "record_majority_vote": false,
+        "starling_rows_create_labels": false,
+        "identity_normalization": "rdkit_fragment_parent.v1"
+      },
+      "n_binary_molecules": 1428,
+      "all_label_counts": {
+        "0": 1324,
+        "1": 104
+      },
+      "split_size_policy": {
+        "formula": "floor(0.10 * n_binary_parent_molecules) for valid and test",
+        "target_valid_size": 142,
+        "target_test_size": 142
+      },
+      "splits": {
+        "scaffold": {
+          "method": "label_balanced_lexicographic_milp_scaffold_groups",
+          "lineage": "clinical_trial_failure_v1",
+          "target_valid_size": 142,
+          "target_test_size": 142,
+          "actual_valid_size": 142,
+          "actual_test_size": 142,
+          "optimization": {
+            "record_support_objective_enabled": false,
+            "empty_scaffold_heldout_eligible": false,
+            "minimum_singletons_in_heldout": null,
+            "minimum_singleton_imbalance": null,
+            "minimum_label_deviation": 0,
+            "desired_positive_count_per_eval_split": 10,
+            "maximum_prior_valid_reuse": 0,
+            "n_scaffold_groups": 769,
+            "n_candidate_scaffold_groups": 767,
+            "n_empty_scaffold_parents": 129
+          },
+          "empty_bemis_murcko_policy": "parents without a Bemis-Murcko scaffold remain train-only",
+          "pairwise_identity_overlap": {
+            "train_valid": 0,
+            "train_test": 0,
+            "valid_test": 0
+          },
+          "pairwise_scaffold_overlap": {
+            "train_valid": 0,
+            "train_test": 0,
+            "valid_test": 0
+          },
+          "n_train": 1144,
+          "train_label_counts": {
+            "0": 1060,
+            "1": 84
+          },
+          "n_train_scaffolds": 669,
+          "n_valid": 142,
+          "valid_label_counts": {
+            "0": 132,
+            "1": 10
+          },
+          "n_valid_scaffolds": 57,
+          "n_test": 142,
+          "test_label_counts": {
+            "0": 132,
+            "1": 10
+          },
+          "n_test_scaffolds": 43,
+          "paths": {
+            "train": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/train.jsonl",
+            "valid": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/valid.jsonl",
+            "test": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/test.jsonl",
+            "train_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/train_molecule_labels.jsonl",
+            "valid_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/valid_molecule_labels.jsonl",
+            "test_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/test_molecule_labels.jsonl",
+            "heldout_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/heldout_molecule_labels.jsonl"
+          }
+        }
+      },
+      "canonical_source_stats": {
+        "n_aacttox_source_rows": 112,
+        "n_comparator_source_rows": 1397,
+        "n_source_identity_audit_rows": 1509,
+        "source_identity_status_counts": {
+          "accepted": 1505,
+          "invalid_or_unresolved_smiles": 4
+        },
+        "n_binary_parent_molecules": 1428,
+        "parent_label_counts": {
+          "0": 1324,
+          "1": 104
+        },
+        "n_parent_source_role_overlaps": 65,
+        "n_positive_parent_duplicates_collapsed": 8,
+        "n_comparator_parent_duplicates_collapsed": 4,
+        "n_reference_rows": 1491,
+        "n_reference_invalid_structure_rows": 4,
+        "n_reference_parent_molecules": 1421,
+        "n_reference_parent_raw_label_conflicts": 47,
+        "reference_reconciliation_counts": {
+          "label_match": 1421,
+          "source_reconstruction_only": 7
+        },
+        "n_common_reference_parents": 1421,
+        "n_common_reference_label_matches": 1421,
+        "n_common_reference_label_mismatches": 0,
+        "identity_normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "starling_coverage_stats": {
+        "n_unique_starling_source_smiles": 8066,
+        "n_invalid_unique_starling_source_smiles": 144,
+        "n_starling_parent_identities": 7024,
+        "n_benchmark_parents_with_clintox_base_evidence": 1128,
+        "coverage_by_label": {
+          "0": {
+            "n_parents": 1324,
+            "n_with_clintox_base_evidence": 1032
+          },
+          "1": {
+            "n_parents": 104,
+            "n_with_clintox_base_evidence": 96
+          }
+        },
+        "starling_rows_used_to_create_labels": 0
+      },
+      "paths": {
+        "canonical_manifest": "data/starling_data/clintox/canonical_clinical_trial_failure_v1/manifest.json",
+        "molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/molecule_labels.jsonl",
+        "scaffold_root": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold"
+      },
+      "artifact_sha256": {
+        "molecule_labels.jsonl": "e5a3193d89682a7322ba53698f27a0802ff4f822768acace44e0fa3904e5fffb",
+        "scaffold/train.jsonl": "37a73b85c6691092992a5a58adaa45db815f145ac363ee6e5085e80e4afd19e2",
+        "scaffold/valid.jsonl": "9d8057fa07a8c662e20c6a0664fb5e258449c19f40ce4988ab842dd8feaa807a",
+        "scaffold/test.jsonl": "d5f1a9459de1d9bc49208ccc5769ab32229c81c469e56e48782454542612adf3",
+        "scaffold/train_molecule_labels.jsonl": "e843d5a904dc2b4286530bdd565fd653b308514a20483ef023859b834f0625d4",
+        "scaffold/valid_molecule_labels.jsonl": "528320f30979b584a01b8e0e8c2dc1142124692b57d91c61403ad9e11c49a312",
+        "scaffold/test_molecule_labels.jsonl": "75c03bf08c4f00a32452b9dd8b40d998c6377657e85be8cb5d924877d4c303c7",
+        "scaffold/heldout_molecule_labels.jsonl": "88606f2e2c7cd687ff327fe6885e1554af3e07114647fcdf1f832597c10c2541",
+        "scaffold/summary.json": "a717392811c3eeb93ab307dca8db8cd24e2d831753c8fd71d5dc153bc56e38d1"
+      },
+      "build_fingerprint": "16514cd6f845febae7cf8d56bded77b2dc2d81add1a2b0e4e716161f4891c7ed"
+    }
+  }
+}

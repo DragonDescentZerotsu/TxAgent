@@ -1,11 +1,34 @@
 # 冻结的全量实验结果
 
-主体运行日期：2026-07-10 至 2026-07-27；current Starling valid 补充更新至 2026-08-10。
+主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-16。
 
 本文件主体记录旧 TDC test/valid matrix。当前 Starling-held-out random/scaffold 的 frozen data 决策、
 formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind 进度、Skin trace audit
 和新增入口统一见
 `STARLING_BENCHMARK_RESULTS.md`；两种 lineage 不得混表。
+
+## ClinTox `clinical_trial_failure_v1` 独立快照（2026-08-16）
+
+ClinTox 不属于下方三个 Starling-gold task。当前严格 lineage 从冻结 AACT toxicity-failure positives 与
+SWEETLEAD/FDA-approved comparators 构造 1,428 个 parent labels，并使用 scaffold-disjoint
+`1,144/142/142` split。唯一 prompt profile 是 `tdc_source_aligned_v3`；运行使用
+`deepseek-ai/DeepSeek-V4-Flash-0731`、`deployment_visible_prefetched + parent_disjoint`、`top_k=3`、
+`min_similarity=0.3`。valid 四个条件均 142/142 完整、0 failed：
+
+| condition | accuracy | macro-F1 | TN / FP / FN / TP |
+|---|---:|---:|---:|
+| none | 0.8521 | **0.6198** | 116 / 16 / 5 / 5 |
+| Starling direct | 0.8310 | 0.5528 | 115 / 17 / 7 / 3 |
+| Starling full-flat | 0.8028 | 0.5547 | 110 / 22 / 6 / 4 |
+| Starling full-mechanism | 0.8028 | 0.5322 | 111 / 21 / 7 / 3 |
+
+因此 retrieval 未通过 valid promotion gate。随后运行的 test 已经不是未见 test，必须标为
+`post-test diagnostic`；none/direct/full-flat/full-mechanism macro-F1 分别为
+`0.5506/0.5703/0.5028/0.5112`，四个 batch 同样全部完整。direct-vs-none 的 valid/test flips 中分别有
+`9/11`、`11/14` 发生在 zero direct-neighbor 样本，不能归因为 direct evidence；broad retrieval 还会让一般
+hazard override 窄 source label。当前结论是保留 v3 source contract，但不 promotion retrieval，并停止在同一
+valid/test 上继续调 prompt/selector。完整 source、confusion matrix、trace audit 与 artifact roots 见
+`tools/chembl_tool/tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md`。
 
 ## 当前唯一 canonical Starling valid 快照（2026-08-10）
 

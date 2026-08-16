@@ -1,0 +1,66 @@
+{
+  "schema_version": "clintox_tdc_source_manifest.v1",
+  "source_repository": "https://github.com/deepchem/deepchem",
+  "dataset_revision": "61620011ac2d376606219e2f3fa539139f80d385",
+  "raw_policy": "Files are immutable byte-for-byte upstream snapshots; derived files are written outside this directory.",
+  "files": [
+    {
+      "name": "AACT201603_pipe_delimited.tar.gz",
+      "size": 54223289,
+      "sha256": "db0f974ff1218ff9741595c47bb2e78e66167d0d3cc5d9ecb3877feec0498394",
+      "role": "supporting AACT database snapshot"
+    },
+    {
+      "name": "aacttox.csv.gz",
+      "size": 2268,
+      "sha256": "c132ee41f78b44f72c243643fc9e6676feaa6ff44e0178daaa0570525ec9489f",
+      "role": "positive clinical-trial-toxicity-failure source"
+    },
+    {
+      "name": "aacttox_phase_multiclass.csv.gz",
+      "size": 2381,
+      "sha256": "d34317bce8011e54de1ba83c46d8fcdf10eb8c9572267053585e516c88dd4af2",
+      "role": "supporting phase provenance"
+    },
+    {
+      "name": "smiles_cache.csv.gz",
+      "size": 3200,
+      "sha256": "8d6f174ef7e44864ff17ae26c8681b69346bc1f6c5feefb19c56c138ebe28a7b",
+      "role": "supporting AACT molecule mapping"
+    },
+    {
+      "name": "sweetfda_approved_processed.csv.gz",
+      "size": 18750,
+      "sha256": "d79a9f6e7911241086ebcff50dcb4c86b547fb8005d1e19ce1f4617ed0cfafcb",
+      "role": "FDA-approved negative comparator source"
+    },
+    {
+      "name": "clintox.csv.gz",
+      "size": 19889,
+      "sha256": "2ee7050a830fe9ae7a8218e6577fa6f54284947034ff904b6d8204e993a297cc",
+      "role": "joined reference used for reconciliation only"
+    },
+    {
+      "name": "aacttox_sweetfda_join.py",
+      "size": 4151,
+      "sha256": "712a1c8ba33eb91eb242749e4b6249e230b947e8028bd8eee84a2646909bcfd6",
+      "role": "upstream join implementation"
+    },
+    {
+      "name": "UPSTREAM_README.md",
+      "size": 504,
+      "sha256": "934a0bb6bdc61bec9d39eb4ab60b7f21194d4149d00df53681f54b8ed4b27bce",
+      "role": "upstream task description"
+    }
+  ],
+  "semantic_sources": {
+    "positive": "AACT-derived drugs associated with clinical trials that failed for toxicity reasons",
+    "negative_comparator": "SWEETLEAD FDA-approved drugs without an AACT positive after parent normalization",
+    "joined_reference": "DeepChem/MoleculeNet clintox.csv.gz; validation only, not the authoritative reconstruction input"
+  },
+  "known_limitations": [
+    "The historical positive list is source-processed rather than a current ClinicalTrials.gov refresh.",
+    "The negative class is an approved-drug comparator, not proof of universal absence of toxicity.",
+    "The upstream dataset license is not specified."
+  ]
+}

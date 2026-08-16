@@ -1,0 +1,80 @@
+{
+  "task": "Find all molecules mentioned in PubMed for which clinical toxicity outcomes and FDA approval status have been reported.",
+  "task_instantiation": "Extract molecule-specific clinical human toxicity/adverse-event outcomes and FDA approval/regulatory status statements from PubMed passages. Create one record for each molecule (or named small-molecule class, if the passage makes a class-level claim) per passage when the passage explicitly reports at least one of: (a) a clinical toxicity/safety outcome in humans (e.g., adverse event, dose-limiting toxicity, maximum tolerated dose tied to toxicity, toxicity incidence/rate/case count, grade/severity, risk factor or exposure threshold for toxicity, discontinuation/dose reduction due to toxicity, or explicitly reported absence of a toxicity), or (b) FDA/United States approval status for that molecule (approved, not approved, withdrawn/discontinued, black-box warning, or in clinical development when contrasted with approval). If both toxicity and FDA status are reported in the same passage, put both in the same record; if only one is stated, still create a record and leave the other field null. Use the top-level global_identifier for the molecule/entity; do not create records for diseases, genes, proteins, trial regimens, or drug combinations unless a specific molecule/component is the attributed entity.\n\nClinical means human subjects, clinical trials, clinical labels, pharmacovigilance reports, or post-marketing reports. Exclude in vitro, animal-only, mechanistic, formulation-only, pharmacokinetic-only, and efficacy-only statements unless they directly report a human toxicity outcome or FDA approval status. Exclude mere protocol stopping rules, dose-adjustment criteria, warnings about possible toxicity, or background statements that do not say the molecule actually caused/was associated with a clinical toxicity or had an FDA status. Do not infer FDA status from brand names or trial phase unless the passage explicitly states approval/approved/marketed in the United States/FDA, withdrawal/discontinuation, black-box warning, or lack of approval. Do not infer causality beyond the authors' attribution; capture association wording when appropriate.\n\nRecord granularity: within a passage, make one record per molecule per coherent clinical context. Merge multiple adverse events, rates, grades, MTD/DLT information, and approval details for the same molecule/context into one record using semicolon-separated text in outcome fields and numeric/statistical details in `outcome_measure`. If the same molecule is discussed under materially different contexts (e.g., different formulation, monotherapy vs combination, distinct dose cohorts with different toxicity results), create separate records or describe the context in `clinical_context` if a single concise record is clearer. For comparative results, extract the molecule being evaluated and put the comparator and effect direction in `outcome_measure` or `extra_details`; do not create a separate record for the comparator unless the comparator has its own explicit outcome. For ADCs and prodrugs, attribute toxicity/approval to the whole clinical product unless the passage explicitly attributes the outcome or approval status to a component payload.\n\nAssume standard clinical use or the stated study population/therapeutic dosing as the default. Put unusual conditions that materially qualify generalization in `qualifying_conditions` (e.g., co-administration with another agent, lead-in dosing schedule, protective pretreatment, special formulation, disease/age subgroup if essential to approval/toxicity claim); leave it null when the passage is unqualified. Routine trial details such as phase, dose, route, population, and indication should be captured in `clinical_context`, `dose_or_exposure`, or `approved_indication` rather than `qualifying_conditions` unless they are essential unusual modifiers.",
+  "schema_spec": [
+    {
+      "name": "molecule_name",
+      "description": "Name of the molecule, clinical product, or small-molecule class as written in the passage; use the entity linked by the top-level global_identifier.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "toxicity_outcome",
+      "description": "Human clinical toxicity/safety outcome(s) explicitly reported for the molecule, including adverse events, DLTs, MTD-limiting events, toxicity-related dose changes/discontinuations, deaths, or explicitly stated absence of toxicity. Null if the passage only reports FDA status.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "toxicity_category",
+      "description": "Broad toxicity category when identifiable from the passage; choose the closest label, or 'other' for toxicities not represented. Null if no clinical toxicity is reported.",
+      "value_type": "string",
+      "allowed_values": [
+        "cardiotoxicity",
+        "hepatotoxicity",
+        "nephrotoxicity",
+        "neurotoxicity",
+        "hematologic_toxicity",
+        "gastrointestinal_toxicity",
+        "dermatologic_toxicity",
+        "ocular_toxicity",
+        "metabolic_or_electrolyte_toxicity",
+        "general_adverse_events",
+        "toxicity_absent",
+        "other"
+      ]
+    },
+    {
+      "name": "outcome_measure",
+      "description": "Quantitative or comparative details of the toxicity outcome, as stated: incidence/rate, numerator/denominator, grade, case count, relative risk/OR/HR, p-value/CI, exposure threshold, MTD, or comparator effect. Use compact text with units; null if not stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "clinical_context",
+      "description": "Human clinical setting for the outcome/status: trial phase/name, indication, population, monotherapy/combination, formulation, route, or regimen when stated and relevant.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "dose_or_exposure",
+      "description": "Dose, schedule, concentration, exposure metric, or threshold tied to the toxicity or approval claim, with units exactly as stated. Null if not stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "fda_approval_status",
+      "description": "FDA/United States regulatory status explicitly stated for the molecule in the passage. Use one of the allowed labels; null if not stated.",
+      "value_type": "string",
+      "allowed_values": [
+        "FDA_approved",
+        "FDA_not_approved",
+        "FDA_withdrawn_or_discontinued",
+        "FDA_black_box_warning",
+        "component_of_FDA_approved_product",
+        "clinical_development_no_approval_stated"
+      ]
+    },
+    {
+      "name": "approved_indication",
+      "description": "FDA-approved indication/population for the molecule when explicitly stated; null otherwise.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

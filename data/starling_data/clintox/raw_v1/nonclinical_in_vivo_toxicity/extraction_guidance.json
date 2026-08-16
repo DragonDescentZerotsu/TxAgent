@@ -1,0 +1,74 @@
+{
+  "task": "Build a molecule-level literature dataset of nonclinical in vivo toxicity evidence. Include acute and repeat-dose toxicity, LD50 or LC50, MTD, NOAEL, LOAEL, dose-limiting toxicity, mortality, body-weight or clinical-sign changes, and animal toxicology findings.",
+  "task_instantiation": "Extract nonclinical in vivo toxicity evidence attributable to a specific small molecule or small-molecule class in a living nonhuman animal. In scope are explicitly reported acute or repeat-dose toxicity benchmarks (LD50, LC50, MTD, NOAEL, LOAEL, NOEL, LOEL, and dose-limiting toxicity), dose-associated mortality or survival changes, body-weight changes, treatment-related clinical signs, and adverse organ, histopathologic, neurologic, developmental, reproductive, or other animal toxicology findings. Qualitative toxicity assessments such as “low acute toxicity” are in scope only when explicitly attributed to laboratory animals. Create one record per molecule/class × experimental condition × distinct toxicity claim or benchmark. Split separately reported benchmark types (for example, NOAEL and LOAEL) into separate records; split dose groups when they have different outcomes. Multiple closely related adverse findings at the same dose, route, duration, and animal group may be combined in one record. When one statement applies independently to multiple named molecules, emit one record per molecule rather than a record for “all compounds.” Use the entity-list small-molecule identifier as `global_identifier` when available; do not add an identifier field to `extracted`.\n\nRequire direct textual support or a value directly readable from a table/figure. Preserve reported inequality signs, ranges, and basis units; do not convert units, calculate an LD50/NOAEL, promote a highest tested no-effect dose to NOAEL/MTD unless the authors identify it as such, or infer causality from an unqualified observation. A clear statement that treatment caused an adverse effect is sufficient even if no formal benchmark is named. For mortality, body weight, or clinical signs, extract positive and explicitly stated negative findings when exposure to the molecule and an animal group are clear. A statement that adverse effects were “not reported” is weaker than an observed no-effect result: label it as an animal toxicity finding and preserve that wording rather than calling it a NOAEL. Comparative findings without an absolute toxicity outcome are out of scope; comparisons accompanying an absolute result may be retained in `observed_effect` or `extra_details`.\n\nExclude human/clinical safety, in vitro or ex vivo cytotoxicity, efficacy or intended disease-model pharmacology without an explicit toxic/adverse interpretation, exposure-independent conditions such as starvation, environmental/ecological observations lacking a controlled animal exposure, pharmacokinetics alone, and carcinogenicity/tumor-incidence findings alone unless the passage explicitly presents them as a general toxicity finding covered above. Also exclude molecular or biochemical changes alone unless described as adverse/toxic or accompanied by organismal, clinical, pathologic, or organ injury evidence. Do not treat route-local irritation as systemic toxicity, but it remains in scope as an animal clinical/pathologic toxicity finding.\n\nInterpret unqualified claims as conventional intact, untreated laboratory animals receiving the molecule alone. Put species, strain, sex, and life stage in `animal_context`; route, schedule, and duration in `exposure_context`. Use `qualifying_conditions` only for exceptional contexts that materially limit generalization, such as pregnancy, a disease model, neonatal exposure, co-administration, unusual formulation, genetically modified animals, or a regulatory/group-assessment value not directly tied to one study; otherwise set it to null. Routine dose, route, duration, species, strain, and sex are not qualifying conditions.",
+  "schema_spec": [
+    {
+      "name": "evidence_type",
+      "description": "Type of toxicity claim. Use the named benchmark when stated; otherwise choose the principal reported outcome. `animal_toxicity_finding` covers adverse organ/pathology/developmental/reproductive findings or explicitly reported absence of adverse effects not designated as a benchmark; `qualitative_toxicity_assessment` covers author-stated overall toxicity such as low acute toxicity.",
+      "value_type": "string",
+      "allowed_values": [
+        "LD50",
+        "LC50",
+        "MTD",
+        "NOAEL",
+        "LOAEL",
+        "NOEL",
+        "LOEL",
+        "dose_limiting_toxicity",
+        "mortality_or_survival",
+        "body_weight_change",
+        "clinical_sign",
+        "animal_toxicity_finding",
+        "qualitative_toxicity_assessment"
+      ]
+    },
+    {
+      "name": "endpoint_value",
+      "description": "Reported value of the selected endpoint, preserving ranges, inequalities, percentages, or counts (e.g., `2.71`, `30–50`, `>2000`, `3/4`, `-12%`). Null for purely qualitative findings.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_unit",
+      "description": "Unit and basis for `endpoint_value` exactly as reported (e.g., mg/kg bw/day, ppm, %, animals). Null when unitless, embedded in a count, or qualitative.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "administered_dose",
+      "description": "Dose or concentration associated with the finding, including inequality/range and units as one string. For LD50/LC50/MTD/NOAEL/LOAEL/NOEL/LOEL, leave null unless a separate administered-dose context is needed because the benchmark itself belongs in `endpoint_value`.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "animal_context",
+      "description": "Animal species or group plus any stated strain, sex, age/life stage, and group size; do not infer missing details.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_context",
+      "description": "Administration route, frequency/schedule, and study or exposure duration as stated. Do not infer a route from general context unless explicitly established for the study.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "observed_effect",
+      "description": "Concise supported toxicity outcome or benchmark-specific effect, including affected organ/site and explicit no-effect wording. For mortality/body weight/clinical signs, state direction and relevant counts or comparison.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Exceptional conditions materially limiting generalization, such as pregnancy, disease model, neonatal exposure, co-treatment, unusual formulation, genetic modification, or a regulatory/group-assessment value not tied to one study. Null for standard or unspecified conditions.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}
