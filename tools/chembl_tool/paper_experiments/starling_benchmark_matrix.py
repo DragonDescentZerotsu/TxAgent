@@ -6,6 +6,7 @@ import argparse
 from dataclasses import replace
 import hashlib
 import json
+import math
 from pathlib import Path
 import sys
 from typing import Any
@@ -57,6 +58,7 @@ from .molecular_evidence_agent import (
     experiment_run_root,
 )
 from .minimol_retrieval_contract import (
+    DEFAULT_FEATURE_ROOT,
     MINIMOL_RETRIEVAL_FEATURE,
     MORGAN_RETRIEVAL_FEATURE,
     RETRIEVAL_FEATURES,
@@ -75,6 +77,7 @@ TASK_DATA_NAMES = {
 }
 DEFAULT_BENCHMARK_DATA_ROOT = Path("data/processed_starling")
 EVALUATION_SUBSETS = ("valid", "test")
+REFERENCE_POOLS = ("train", "train_valid")
 DEFAULT_ENDPOINT_CONCURRENCY_BUDGET = 512
 DEFAULT_LAUNCHER_PARALLELISM = 128
 
@@ -86,6 +89,7 @@ def experiments_for_starling_benchmark(
     retrieval_feature: str = MORGAN_RETRIEVAL_FEATURE,
     data_root: str | Path = DEFAULT_BENCHMARK_DATA_ROOT,
     canonical_paper_root: str | Path | None = None,
+    minimol_feature_root: str | Path = DEFAULT_FEATURE_ROOT,
 ) -> list[Experiment]:
     """Replace only benchmark inputs and held-out-filtered Starling indices."""
     if evaluation_subset not in EVALUATION_SUBSETS:
@@ -113,7 +117,13 @@ def experiments_for_starling_benchmark(
         if retrieval_feature == MINIMOL_RETRIEVAL_FEATURE and updated.mode != "none":
             updated = replace(
                 updated,
-                index=str(descriptor_path_for_experiment(split, updated.name)),
+                index=str(
+                    descriptor_path_for_experiment(
+                        split,
+                        updated.name,
+                        output_root=Path(minimol_feature_root),
+                    )
+                ),
             )
         experiments.append(updated)
     return experiments
@@ -166,6 +176,7 @@ def main(argv: list[str] | None = None) -> int:
         retrieval_feature=args.retrieval_feature,
         data_root=args.benchmark_data_root,
         canonical_paper_root=custom_canonical_root,
+        minimol_feature_root=args.minimol_feature_root,
     )
     selected = _select_experiments(args.experiments, experiments=experiments)
     selected = _prepare_policy_selection(selected, args)
@@ -181,14 +192,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.list:
         print("\n".join(experiment.name for experiment in selected))
         return 0
+    _validate_reference_pool(selected, args)
 
-    canonical_paper_root = (
+    default_result_root = (
         paper_root_for_minimol_retrieval(args.benchmark_split)
         if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
         else custom_canonical_root
     )
     paper_root = _paper_root_for_evaluation_subset(
-        canonical_paper_root,
+        default_result_root,
         args.evaluation_subset,
         output_root=args.output_root,
     )
@@ -221,7 +233,15 @@ def main(argv: list[str] | None = None) -> int:
         "dataset_lineage": args.benchmark_lineage,
         "benchmark_split": args.benchmark_split,
         "evaluation_subset": args.evaluation_subset,
+        "reference_pool": args.reference_pool,
         "retrieval_feature": args.retrieval_feature,
+        "minimol_feature_root": (
+            args.minimol_feature_root
+            if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE
+            else "not_applicable"
+        ),
+        "top_k_per_group": args.top_k_per_group,
+        "min_similarity": args.min_similarity,
         "model": args.model,
         "served_model": args.model,
         "base_url": args.base_url,
@@ -238,7 +258,7 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
         "paper_root": str(paper_root),
-        "canonical_paper_root": str(canonical_paper_root),
+        "canonical_paper_root": str(custom_canonical_root),
         "single_analysis_root": str(getattr(args, "single_analysis_root", "")),
         "group_analysis_root": str(getattr(args, "group_analysis_root", "")),
         "temperature": 0.0,
@@ -342,6 +362,14 @@ def _validate_concurrency(args: argparse.Namespace) -> None:
 
 def _validate_retrieval_ablation_args(args: argparse.Namespace) -> None:
     """Keep experimental selectors/prompts out of canonical result roots."""
+    if args.top_k_per_group < 1:
+        raise SystemExit("--top-k-per-group must be positive")
+    lower_bound = -1.0 if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE else 0.0
+    if not math.isfinite(args.min_similarity) or not lower_bound <= args.min_similarity <= 1.0:
+        raise SystemExit(
+            f"--min-similarity must be finite and between {lower_bound:g} and 1 "
+            f"for {args.retrieval_feature} retrieval"
+        )
     nonstandard = (
         args.neighbor_selector != SIMILARITY_SELECTOR
         or args.neighbor_context_profile != STANDARD_NEIGHBOR_CONTEXT
@@ -372,6 +400,37 @@ def _validate_inputs(experiments: list[Experiment]) -> None:
                 missing.add(value)
     if missing:
         raise SystemExit("Missing benchmark inputs:\n" + "\n".join(sorted(missing)))
+
+
+def _validate_reference_pool(experiments: list[Experiment], args: argparse.Namespace) -> None:
+    """Match declared reference scope to each held-out-filtered Starling index."""
+    if args.reference_pool == "train_valid" and args.evaluation_subset != "test":
+        raise SystemExit("--reference-pool train_valid is allowed only for test evaluation")
+    expected_heldout = {
+        "train": "heldout_molecule_labels.jsonl",
+        "train_valid": "test_molecule_labels.jsonl",
+    }[args.reference_pool]
+    checked: set[Path] = set()
+    for experiment in experiments:
+        if experiment.mode == "none" or experiment.source != "starling":
+            continue
+        index_path = Path(experiment.index)
+        if args.retrieval_feature == MINIMOL_RETRIEVAL_FEATURE:
+            descriptor = json.loads(index_path.read_text(encoding="utf-8"))
+            index_path = Path(str(descriptor["base_index_path"]))
+        if index_path in checked:
+            continue
+        checked.add(index_path)
+        meta_path = index_path.with_suffix(".meta.json")
+        if not meta_path.is_file():
+            raise SystemExit(f"Missing reference-pool audit metadata: {meta_path}")
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        heldout_path = str((meta.get("source") or {}).get("heldout_labels_jsonl") or "")
+        if Path(heldout_path).name != expected_heldout:
+            raise SystemExit(
+                f"{args.reference_pool} reference pool requires an index excluding "
+                f"{expected_heldout}: {index_path} records {heldout_path!r}"
+            )
 
 
 def _benchmark_provenance(
@@ -475,11 +534,22 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=MORGAN_RETRIEVAL_FEATURE,
     )
     parser.add_argument(
+        "--minimol-feature-root",
+        default=str(DEFAULT_FEATURE_ROOT),
+        help="Root containing MiniMol retrieval descriptors for this lineage/subset.",
+    )
+    parser.add_argument(
         "--benchmark-data-root",
         default=str(DEFAULT_BENCHMARK_DATA_ROOT),
         help="Root containing <Task>/<split> benchmark inputs and provenance.",
     )
     parser.add_argument("--benchmark-lineage", default=BENCHMARK_LINEAGE)
+    parser.add_argument(
+        "--reference-pool",
+        choices=REFERENCE_POOLS,
+        default="train",
+        help="Use train_valid only for post-selection test evaluation with test-only indices.",
+    )
     parser.add_argument(
         "--canonical-paper-root",
         default="",
@@ -520,6 +590,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
+    parser.add_argument("--top-k-per-group", type=int, default=3)
+    parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument(
         "--single-analysis-root",
         default="",

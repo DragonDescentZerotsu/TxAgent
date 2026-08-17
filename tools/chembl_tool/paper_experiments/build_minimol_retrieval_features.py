@@ -23,13 +23,19 @@ from baselines.minimol.embedding_runtime import (
 from tools.chembl_tool.common.retrieval_features import (
     DESCRIPTOR_TYPE,
     candidate_order_sha256,
+    write_finite_array_receipt,
 )
 from tools.chembl_tool.common.starling.heldout_index import (
     identity_key,
     load_heldout_identity_keys,
 )
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
-from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import BENCHMARK_SPLITS
+from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import (
+    BENCHMARK_SPLITS,
+    HELDOUT_SUBSETS,
+    heldout_labels_path,
+    normalize_heldout_subsets,
+)
 from tools.chembl_tool.paper_experiments.minimol_retrieval_contract import (
     DEFAULT_FEATURE_ROOT,
     descriptor_path_for_experiment,
@@ -45,13 +51,23 @@ MODEL_VERSION = "minimol_v1"
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    args.heldout_subsets = list(normalize_heldout_subsets(args.heldout_subsets))
+    if args.heldout_subsets == ["test"] and args.evaluation_subset != "test":
+        raise SystemExit("A train+valid reference pool is allowed only for test evaluation")
     splits = args.splits or list(BENCHMARK_SPLITS)
     experiments = [
         experiment
         for split in splits
-        for experiment in experiments_for_starling_benchmark(split)
-        if experiment.mode != "none"
+        for experiment in experiments_for_starling_benchmark(
+            split,
+            evaluation_subset=args.evaluation_subset,
+            data_root=args.benchmark_data_root,
+            canonical_paper_root=args.canonical_paper_root or None,
+        )
+        if experiment.mode != "none" and experiment.task in args.tasks
     ]
+    if not experiments:
+        raise SystemExit("No MiniMol retrieval experiments matched --tasks/--splits")
     model_provenance = checkpoint_provenance(args.minimol_source)
     base_indices = _load_unique_indices(experiments)
     query_sets = _load_query_sets(experiments)
@@ -68,11 +84,20 @@ def main(argv: list[str] | None = None) -> int:
         }
     )
     registry_dir = args.output_root / "registry"
-    registry_embeddings, registry_rows, registry_manifest = _build_registry(
-        all_smiles,
-        registry_dir=registry_dir,
-        args=args,
-    )
+    if args.registry_source_root:
+        registry_embeddings, registry_rows, registry_manifest = _load_registry_source(
+            all_smiles,
+            source_root=args.registry_source_root,
+            expected_model_provenance=model_provenance,
+            target_registry_dir=registry_dir,
+            args=args,
+        )
+    else:
+        registry_embeddings, registry_rows, registry_manifest = _build_registry(
+            all_smiles,
+            registry_dir=registry_dir,
+            args=args,
+        )
     candidate_stores = _materialize_candidate_stores(
         base_indices,
         registry_embeddings=registry_embeddings,
@@ -127,6 +152,10 @@ def main(argv: list[str] | None = None) -> int:
         candidate_stores=candidate_stores,
         query_sets=query_sets,
         query_stores=query_stores,
+        benchmark_data_root=args.benchmark_data_root,
+        evaluation_subset=args.evaluation_subset,
+        formal_cache_root=args.formal_cache_root,
+        heldout_subsets=args.heldout_subsets,
     )
     summary = {
         "type": "minimol_agent_retrieval_feature_build.v1",
@@ -136,11 +165,18 @@ def main(argv: list[str] | None = None) -> int:
         "normalization": "L2",
         "similarity": "cosine",
         "splits": splits,
+        "evaluation_subset": args.evaluation_subset,
+        "benchmark_lineage": args.benchmark_lineage,
+        "benchmark_data_root": str(args.benchmark_data_root),
+        "canonical_paper_root": str(args.canonical_paper_root),
+        "heldout_subsets": args.heldout_subsets,
+        "tasks": args.tasks,
         "n_unique_smiles": len(all_smiles),
         "n_base_indices": len(base_indices),
         "n_query_sets": len(query_sets),
         "n_descriptors": len(descriptors),
         "registry": registry_manifest,
+        "registry_reused": bool(args.registry_source_root),
         "audit": audit,
         "descriptors": descriptors,
     }
@@ -183,6 +219,147 @@ def _load_query_sets(experiments: Iterable[Any]) -> dict[tuple[str, str, str], l
                 canonical_smiles.append(canonical)
         query_sets[key] = canonical_smiles
     return query_sets
+
+
+def _load_registry_source(
+    canonical_smiles: list[str],
+    *,
+    source_root: Path,
+    expected_model_provenance: dict[str, Any],
+    target_registry_dir: Path | None = None,
+    args: argparse.Namespace | None = None,
+) -> tuple[np.ndarray, dict[str, int], dict[str, Any]]:
+    """Reuse a superset registry built with the exact same frozen MiniMol checkpoint."""
+    summary_path = source_root / "summary.json"
+    if not summary_path.is_file():
+        raise FileNotFoundError(f"Missing reusable MiniMol summary: {summary_path}")
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if summary.get("model_provenance") != expected_model_provenance:
+        raise ValueError("Reusable MiniMol registry checkpoint provenance does not match")
+    manifest = dict(summary.get("registry") or {})
+    embeddings_path = Path(str(manifest.get("embeddings_path") or ""))
+    smiles_path = Path(str(manifest.get("canonical_smiles_path") or ""))
+    if not embeddings_path.is_file() or not smiles_path.is_file():
+        raise FileNotFoundError("Reusable MiniMol registry artifacts are incomplete")
+    rows: dict[str, int] = {}
+    with smiles_path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            rows[str(row["canonical_smiles"])] = int(row["row"])
+    missing = sorted(set(canonical_smiles) - set(rows))
+    if missing:
+        if target_registry_dir is not None and args is not None:
+            return _augment_registry_source(
+                canonical_smiles,
+                missing=missing,
+                source_embeddings=np.load(embeddings_path, mmap_mode="r"),
+                source_rows=rows,
+                source_manifest=manifest,
+                source_root=source_root,
+                target_registry_dir=target_registry_dir,
+                args=args,
+            )
+        raise ValueError(
+            "Reusable MiniMol registry is not a superset; missing "
+            f"{len(missing)} canonical SMILES (first={missing[0]!r})"
+        )
+    embeddings = np.load(embeddings_path, mmap_mode="r")
+    if embeddings.ndim != 2 or embeddings.shape[0] != len(rows):
+        raise ValueError("Reusable MiniMol registry row count is inconsistent")
+    return embeddings, rows, {
+        **manifest,
+        "reuse_source_root": str(source_root),
+        "requested_unique_smiles": len(canonical_smiles),
+        "reused_registry_rows": len(rows),
+        "n_augmented_rows": 0,
+    }
+
+
+def _augment_registry_source(
+    canonical_smiles: list[str],
+    *,
+    missing: list[str],
+    source_embeddings: np.ndarray,
+    source_rows: dict[str, int],
+    source_manifest: dict[str, Any],
+    source_root: Path,
+    target_registry_dir: Path,
+    args: argparse.Namespace,
+) -> tuple[np.ndarray, dict[str, int], dict[str, Any]]:
+    """Copy known rows and embed only molecules absent from an audited source registry."""
+    target_registry_dir.mkdir(parents=True, exist_ok=True)
+    embeddings_path = target_registry_dir / "embeddings.npy"
+    smiles_path = target_registry_dir / "canonical_smiles.jsonl"
+    fallback_path = target_registry_dir / "fallbacks.jsonl"
+    dimension = int(source_embeddings.shape[1])
+    target_rows = {smiles: row for row, smiles in enumerate(canonical_smiles)}
+    target = np.lib.format.open_memmap(
+        embeddings_path,
+        mode="w+",
+        dtype=np.float32,
+        shape=(len(canonical_smiles), dimension),
+    )
+    known = [smiles for smiles in canonical_smiles if smiles in source_rows]
+    for start in range(0, len(known), 10000):
+        chunk = known[start : start + 10000]
+        source_indices = np.asarray([source_rows[smiles] for smiles in chunk], dtype=np.int64)
+        target_indices = np.asarray([target_rows[smiles] for smiles in chunk], dtype=np.int64)
+        target[target_indices] = source_embeddings[source_indices]
+
+    featurizer = create_featurizer(
+        batch_size=min(args.embedding_batch_size, max(1, len(missing))),
+        minimol_source=args.minimol_source,
+    )
+    missing_tensor, fallback_records = _embed_with_audited_fallback(featurizer, missing)
+    missing_array = F.normalize(missing_tensor, p=2, dim=1).numpy().astype(np.float32, copy=False)
+    target_indices = np.asarray([target_rows[smiles] for smiles in missing], dtype=np.int64)
+    target[target_indices] = missing_array
+    target.flush()
+    del target
+
+    smiles_path.write_text(
+        "".join(
+            json.dumps({"row": row, "canonical_smiles": smiles}) + "\n"
+            for row, smiles in enumerate(canonical_smiles)
+        ),
+        encoding="utf-8",
+    )
+    fallback_path.write_text(
+        "".join(json.dumps(record, ensure_ascii=False) + "\n" for record in fallback_records),
+        encoding="utf-8",
+    )
+    smiles_sha256 = hashlib.sha256(
+        "".join(f"{smiles}\n" for smiles in canonical_smiles).encode("utf-8")
+    ).hexdigest()
+    manifest = {
+        "type": "minimol_embedding_registry.v1",
+        "model": MODEL_NAME,
+        "model_version": MODEL_VERSION,
+        "normalization": "L2",
+        "dimension": dimension,
+        "n_rows": len(canonical_smiles),
+        "canonical_smiles_sha256": smiles_sha256,
+        "embeddings_path": str(embeddings_path),
+        "canonical_smiles_path": str(smiles_path),
+        "n_featurization_fallbacks": len(fallback_records),
+        "featurization_fallback_version": "minimol_parseable_parent_or_fragment.v1",
+        "featurization_fallbacks_path": str(fallback_path),
+        "reuse_source_root": str(source_root),
+        "reuse_source_registry_sha256": source_manifest.get("canonical_smiles_sha256"),
+        "reused_requested_rows": len(known),
+        "n_augmented_rows": len(missing),
+    }
+    (target_registry_dir / "manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        f"[minimol_retrieval_features] reused={len(known)} augmented={len(missing)}",
+        flush=True,
+    )
+    return np.load(embeddings_path, mmap_mode="r"), target_rows, manifest
 
 
 def _build_registry(
@@ -406,6 +583,14 @@ def _materialize_candidate_stores(
             "candidate_order_sha256": order_sha256,
             "embeddings_path": str(embeddings_path),
         }
+        embeddings = np.load(embeddings_path, mmap_mode="r")
+        if not np.isfinite(embeddings).all():
+            raise ValueError(f"MiniMol candidate store contains non-finite values: {embeddings_path}")
+        finite_receipt_path = write_finite_array_receipt(
+            embeddings_path,
+            array=embeddings,
+        )
+        manifest["finite_receipt_path"] = str(finite_receipt_path)
         manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
         stores[base_index_path] = {
             **manifest,
@@ -422,8 +607,12 @@ def _audit_build(
     candidate_stores: dict[str, dict[str, Any]],
     query_sets: dict[tuple[str, str, str], list[str]],
     query_stores: dict[tuple[str, str, str], dict[str, Any]],
+    benchmark_data_root: Path,
+    evaluation_subset: str,
+    formal_cache_root: Path | None,
+    heldout_subsets: list[str],
 ) -> dict[str, Any]:
-    """Gate row-order/query coverage and explicit Starling test-parent exclusion."""
+    """Gate row-order/query coverage and explicit Starling held-out-parent exclusion."""
     checked_starling_pairs: set[tuple[str, str]] = set()
     starling_overlap_counts: dict[str, int] = {}
     cache_parity: dict[str, dict[str, Any]] = {}
@@ -450,12 +639,12 @@ def _audit_build(
             raise AssertionError(f"Query embedding coverage mismatch for {experiment.name}")
 
         cache_key = f"{split}:{experiment.task}"
-        if cache_key not in cache_parity:
-            cache_path = (
-                Path("outputs/baselines/minimol_starling")
-                / _task_data_name(experiment.task)
-                / split
-                / "embeddings/test.pt"
+        if cache_key not in cache_parity and formal_cache_root is not None:
+            cache_path = _formal_cache_path(
+                formal_cache_root,
+                task=_task_data_name(experiment.task),
+                split=split,
+                evaluation_subset=evaluation_subset,
             )
             cache_parity[cache_key] = _audit_formal_test_cache_parity(
                 cache_path,
@@ -465,11 +654,11 @@ def _audit_build(
         starling_key = (split, base_path)
         if experiment.source != "starling" or starling_key in checked_starling_pairs:
             continue
-        heldout_path = (
-            Path("data/processed_starling")
-            / _task_data_name(experiment.task)
-            / split
-            / "test_molecule_labels.jsonl"
+        heldout_path = heldout_labels_path(
+            benchmark_data_root,
+            _task_data_name(experiment.task),
+            split,
+            heldout_subsets,
         )
         heldout_keys = load_heldout_identity_keys(heldout_path)
         candidate_keys = {identity_key(molecule) for molecule in index["molecules"]}
@@ -485,13 +674,36 @@ def _audit_build(
         "descriptor_count": len(experiments),
         "candidate_row_order": "passed",
         "query_embedding_coverage": "passed",
-        "formal_test_embedding_cache_parity": "passed",
+        "formal_embedding_cache_parity": (
+            "passed" if formal_cache_root is not None else "not_requested"
+        ),
         "formal_test_embedding_cache_cosine": cache_parity,
-        "starling_test_parent_exclusion": "passed",
+        "starling_heldout_parent_exclusion": "passed",
+        "heldout_subsets": heldout_subsets,
         "n_starling_index_split_pairs": len(checked_starling_pairs),
         "starling_parent_overlap_counts": starling_overlap_counts,
         "chembl_parent_exclusion": "enforced_at_query_time_by_parent_disjoint_policy",
     }
+
+
+def _formal_cache_path(
+    root: Path,
+    *,
+    task: str,
+    split: str,
+    evaluation_subset: str,
+) -> Path:
+    candidates = (
+        root / task / split / f"{evaluation_subset}.pt",
+        root / task / split / "embeddings" / f"{evaluation_subset}.pt",
+    )
+    for path in candidates:
+        if path.is_file():
+            return path
+    raise FileNotFoundError(
+        "Missing formal MiniMol cache; checked: "
+        + ", ".join(str(path) for path in candidates)
+    )
 
 
 def _task_data_name(task: str) -> str:
@@ -555,6 +767,13 @@ def _materialize_query_stores(
             embeddings_path,
             np.asarray(registry_embeddings[rows], dtype=np.float32),
         )
+        embeddings = np.load(embeddings_path, mmap_mode="r")
+        if not np.isfinite(embeddings).all():
+            raise ValueError(f"MiniMol query store contains non-finite values: {embeddings_path}")
+        finite_receipt_path = write_finite_array_receipt(
+            embeddings_path,
+            array=embeddings,
+        )
         manifest = {
             "type": "minimol_query_store.v1",
             "benchmark_split": split,
@@ -568,6 +787,7 @@ def _materialize_query_stores(
                 smiles: row for row, smiles in enumerate(unique_smiles)
             },
             "embeddings_path": str(embeddings_path),
+            "finite_receipt_path": str(finite_receipt_path),
         }
         manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
         stores[(split, task, input_jsonl)] = {
@@ -596,7 +816,44 @@ def _sha256_file(path: Path) -> str:
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--splits", nargs="*", choices=BENCHMARK_SPLITS, default=[])
+    parser.add_argument(
+        "--evaluation-subset",
+        choices=("valid", "test"),
+        default="test",
+    )
+    parser.add_argument(
+        "--tasks",
+        nargs="+",
+        choices=("bbb_martins", "bioavailability_ma", "skin_reaction"),
+        default=["bbb_martins", "bioavailability_ma", "skin_reaction"],
+    )
+    parser.add_argument(
+        "--benchmark-data-root",
+        type=Path,
+        default=Path("data/processed_starling"),
+    )
+    parser.add_argument("--benchmark-lineage", default="record_agreement70_split811_v1")
+    parser.add_argument(
+        "--heldout-subsets",
+        nargs="+",
+        choices=HELDOUT_SUBSETS,
+        default=list(HELDOUT_SUBSETS),
+        help="Subsets excluded from candidate indices; use test for train+valid test retrieval.",
+    )
+    parser.add_argument("--canonical-paper-root", type=Path, default=None)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_FEATURE_ROOT)
+    parser.add_argument(
+        "--registry-source-root",
+        type=Path,
+        default=None,
+        help="Reuse an audited superset MiniMol registry with identical checkpoint provenance.",
+    )
+    parser.add_argument(
+        "--formal-cache-root",
+        type=Path,
+        default=Path("outputs/baselines/minimol_starling"),
+        help="Optional baseline cache root used for exact query-embedding parity audit.",
+    )
     parser.add_argument("--minimol-source", type=Path, default=DEFAULT_MINIMOL_SOURCE)
     parser.add_argument("--embedding-batch-size", type=int, default=256)
     parser.add_argument("--chunk-size", type=int, default=5000)

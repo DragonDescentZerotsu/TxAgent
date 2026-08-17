@@ -1,7 +1,12 @@
+import json
+
+import numpy as np
+import pytest
 import torch
 
 from tools.chembl_tool.paper_experiments.build_minimol_retrieval_features import (
     _embed_with_audited_fallback,
+    _load_registry_source,
     _minimol_fallback_smiles,
 )
 
@@ -41,3 +46,44 @@ def test_embedding_fallback_preserves_original_row_order_and_audit():
             "reason": "largest_parseable_fragment",
         }
     ]
+
+
+def test_registry_source_reuse_requires_matching_checkpoint_and_superset(tmp_path):
+    root = tmp_path / "source"
+    registry = root / "registry"
+    registry.mkdir(parents=True)
+    np.save(registry / "embeddings.npy", np.asarray([[1.0, 0.0], [0.0, 1.0]], dtype=np.float32))
+    (registry / "canonical_smiles.jsonl").write_text(
+        '{"row":0,"canonical_smiles":"CC"}\n'
+        '{"row":1,"canonical_smiles":"CCC"}\n',
+        encoding="utf-8",
+    )
+    provenance = {"model": "MiniMol", "files": {"state_dict.pth": {"sha256": "abc"}}}
+    (root / "summary.json").write_text(
+        json.dumps(
+            {
+                "model_provenance": provenance,
+                "registry": {
+                    "embeddings_path": str(registry / "embeddings.npy"),
+                    "canonical_smiles_path": str(registry / "canonical_smiles.jsonl"),
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    embeddings, rows, manifest = _load_registry_source(
+        ["CCC"],
+        source_root=root,
+        expected_model_provenance=provenance,
+    )
+
+    assert embeddings.shape == (2, 2)
+    assert rows == {"CC": 0, "CCC": 1}
+    assert manifest["requested_unique_smiles"] == 1
+    with pytest.raises(ValueError, match="not a superset"):
+        _load_registry_source(
+            ["CO"],
+            source_root=root,
+            expected_model_provenance=provenance,
+        )

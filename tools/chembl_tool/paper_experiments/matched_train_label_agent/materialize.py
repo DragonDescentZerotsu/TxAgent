@@ -1,4 +1,4 @@
-"""Materialize exact Morgan-KNN neighbors as label-visible direct-agent retrievals."""
+"""Materialize exact frozen-KNN neighbors as label-visible direct-agent retrievals."""
 
 from __future__ import annotations
 
@@ -60,10 +60,12 @@ def materialize_task(spec: TaskSpec, *, output_root: str | Path) -> dict[str, An
         "knn_predictions": str(spec.knn_predictions),
         "n_queries": len(labels),
         "k": 3,
-        "retrieval_feature": "RDKit Morgan radius=2 n_bits=2048",
+        "retrieval_feature": spec.retrieval_feature,
+        "retrieval_similarity": spec.retrieval_similarity,
+        "retrieval_similarity_metric": spec.retrieval_similarity_metric,
         "neighbor_selector": "similarity.v1",
         "neighbor_identity_policy": "parent_disjoint",
-        "neighbor_set_contract": "exactly_the_formal_morgan_knn_top3",
+        "neighbor_set_contract": spec.retrieval_neighbor_set_contract,
         "visible_neighbor_supervision": "frozen_train_Y_and_task_label_meaning",
         "external_starling_records_visible": False,
         "relation_counts": relation_counts,
@@ -126,7 +128,7 @@ def _neighbor(
         "standard_inchi_key": identity.standard_inchi_key,
         "similarity": round(float(source["similarity"]), 6),
         "similarity_bucket": similarity_bucket(float(source["similarity"])),
-        "similarity_metric": "Morgan Tanimoto radius=2 n_bits=2048",
+        "similarity_metric": spec.retrieval_similarity_metric,
         "molecule_relation": relation,
         "source_group_ids": [spec.source_group_id],
         "n_evidence_rows": 1,
@@ -160,12 +162,7 @@ def _retrieval(
             "mode": "direct",
             "source": "matched_train_label_knn",
             "resolved_group_mapping": {spec.group_id: [spec.source_group_id]},
-            "retrieval_feature": {
-                "feature": "morgan_fingerprint",
-                "similarity": "tanimoto",
-                "radius": 2,
-                "n_bits": 2048,
-            },
+            "retrieval_feature": _retrieval_feature_metadata(spec),
             "matched_knn_neighbor_set": True,
             "train_labels_visible": True,
             "external_starling_records_visible": False,
@@ -175,7 +172,7 @@ def _retrieval(
             "input_smiles": query_smiles,
             "canonical_smiles": identity.canonical_smiles,
             "standard_inchi_key": identity.standard_inchi_key,
-            "fingerprint": {"type": "Morgan", "radius": 2, "n_bits": 2048},
+            **_query_feature_metadata(spec),
         },
         "groups": [
             {
@@ -195,6 +192,33 @@ def _retrieval(
             "top_k_per_group": 3,
         },
     }
+
+
+def _retrieval_feature_metadata(spec: TaskSpec) -> dict[str, Any]:
+    if spec.retrieval_feature == "morgan_fingerprint":
+        return {
+            "feature": "morgan_fingerprint",
+            "similarity": spec.retrieval_similarity,
+            "radius": 2,
+            "n_bits": 2048,
+        }
+    if spec.retrieval_feature == "minimol_embedding":
+        return {
+            "feature": "minimol_embedding",
+            "model": "MiniMol",
+            "model_version": "minimol_v1",
+            "dimension": 512,
+            "normalization": "L2",
+            "similarity": spec.retrieval_similarity,
+        }
+    raise ValueError(f"Unsupported matched retrieval feature: {spec.retrieval_feature}")
+
+
+def _query_feature_metadata(spec: TaskSpec) -> dict[str, Any]:
+    feature = _retrieval_feature_metadata(spec)
+    if spec.retrieval_feature == "morgan_fingerprint":
+        return {"fingerprint": {"type": "Morgan", "radius": 2, "n_bits": 2048}}
+    return {"retrieval_embedding": feature}
 
 
 def _validate_alignment(

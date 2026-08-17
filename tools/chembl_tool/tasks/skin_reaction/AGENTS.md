@@ -151,6 +151,14 @@ macro-F1 `0.6410`，direct+AOP mechanism `0.6123`。Mechanism 相对 direct delt
 95% CI `[-0.0801,+0.0224]`；因此 canonical partition 是数据合同修复，不 promotion AOP mechanism 为默认
 性能条件。
 
+2026-08-14 E22 又测试了更严格的 outcome-calibrated multi-event causal cards：reference 必须有 direct outcome、
+MIE、至少一个 downstream KE，且方向一致。Heldout-filtered pool 只有 99 cards（89 positive、10 negative）。
+冻结的 64-query DeepSeek seed 合并回 245 条后 macro-F1 从 direct `0.6410` 降到 `0.6151`；10 flips 为
+2 beneficial/8 harmful。55/64 branch 被模型判为 low-transferability，48/64 neutral/unclear，证明“reference
+内部 causal 完整”仍不等于“对 query 可转移”。E22 不 promotion、不启动 BBB seed、不读取 Skin test；代码和
+trace diagnosis 见 `tools/chembl_tool/paper_experiments/skin_causal_panel_seed/` 与
+`outputs/paper/skin_causal_panel_seed_v1_scaffold_valid_deepseek_v4_pro/analysis/`。
+
 ### Paper-facing tier 的距离语义
 
 Skin 的 `Mechanism.tier_1` 至 `tier_4` 是逐步扩大的 evidence scope，不是像 oral bioavailability

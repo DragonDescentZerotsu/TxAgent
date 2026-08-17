@@ -145,6 +145,9 @@ tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
 tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
 tools/chembl_tool/paper_experiments/watch_glm_tunnel_and_matrix.py
 tools/chembl_tool/paper_experiments/plot_starling_with_minimol_agent.py
+tools/chembl_tool/paper_experiments/run_minimol_valid_matrix_gpt_oss_120b.py
+tools/chembl_tool/paper_experiments/run_assay_retrieval_curve.py
+tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py
 tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
 tools/chembl_tool/paper_experiments/analyze_coverage_selector_retrieval_changes.py
 tools/chembl_tool/paper_experiments/plot_coverage_selector_llm_matrix.py
@@ -220,7 +223,11 @@ ClinTox 当前严格 split 位于
 2. ChEMBL neighbor retrieval 是 pipeline 的 evidence prefetch / context assembly 步骤，不是当前暴露给 LLM 的 function tool，也不是当前 FastAPI service tool。后续 pKa、logD、solubility、toxicity、target affinity、PK property 等模型才按通用 tool contract 接入。
 3. 长初始化模型要常驻。慢启动模型和大索引应在服务启动时加载，通过 FastAPI endpoint 调用，避免每个 query 反复初始化。
 4. evidence retrieval 只提供证据，不直接替代 reasoning。retrieval payload 必须保留 assay 描述、activity 数值、endpoint 语义、similarity 和不确定性。
-5. retrieval 单元优先是 molecule-level evidence，不是 assay-level evidence。assay 信息要保留，但 query-time ranking 应先找相似 molecule，再展开其 assay/activity evidence。
+5. 默认 production/group-level retrieval 单元仍优先是 molecule-level evidence：先找相似 molecule，再展开
+   assay/activity evidence。另有隔离的 Starling assay-level scaling experiment：先按冻结 biological relevance
+   选择 cumulative assay prefix、每个 assay 内检索 train-reference molecules，再把相同 molecule 跨 assays
+   合并为一个 flat branch。该实验不得改写 production family mapping；协议见
+   `tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
 6. LLM reasoning 分为并发证据分支和 final 汇总：single-molecule 分支判断理化性质先验；paper-facing
    group-level 分支按少量、数据源无关的 mechanism family 判断 analog transferability；final-level 汇总所有
    证据。细粒度 `Tier.endpoint_group` 只用于 source-local normalization、检索审计和 legacy native runner，
@@ -470,9 +477,11 @@ tools/chembl_tool/common/distance_index.py
 tools/chembl_tool/common/distance_retrieval.py
 tools/chembl_tool/common/scalar_knn.py
 tools/chembl_tool/common/starling/evidence_library.py
+tools/chembl_tool/common/starling/assay_catalog.py
 tools/chembl_tool/common/starling/benchmark_dataset.py
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
 tools/chembl_tool/common/starling/heldout_index.py
+tools/chembl_tool/common/assay_retrieval.py
 ```
 
 这些公共 workflow 的职责：

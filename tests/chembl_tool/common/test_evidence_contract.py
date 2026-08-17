@@ -1,10 +1,78 @@
 from tools.chembl_tool.common.evidence_contract import (
     CONTRACT_VERSION,
+    ASSAY_COMPACT_PROMPT_PROFILE,
+    assay_evidence_for_llm,
     attach_minimal_evidence,
+    evidence_for_group_llm,
     evidence_for_llm,
     numeric_only_evidence_row,
     validate_minimal_evidence,
 )
+
+
+def test_dense_assay_view_keeps_assay_measurement_and_bounds_repeated_text():
+    row = {
+        "molecule_chembl_id": "M1",
+        "canonical_smiles": "CCO",
+        "assay_chembl_id": "ASSAY1",
+        "group_id": "Assay.ASSAY1",
+        "standard_type": "oral bioavailability",
+        "standard_value": "42",
+        "standard_units": "%",
+        "assay_description": "x" * 1000,
+        "evidence_source": "Starling",
+        "confidence_score": 0.9,
+        "source_record_count": 4,
+        "evidence_scope": {
+            "assay_context": ["in vivo oral study"],
+            "species_context": ["human"],
+        },
+        "relevance_score": 99,
+        "relevance_rank": 1,
+    }
+
+    compact = assay_evidence_for_llm(row)
+
+    assert compact["contract_version"] == CONTRACT_VERSION
+    assert compact["assay_id"] == "ASSAY1"
+    assert compact["endpoint"]["measurement"] == {"value": "42", "unit": "%"}
+    assert compact["annotations"]["scope"]["assay_context"] == ["in vivo oral study"]
+    assert len(compact["text"]["evidence_excerpt"]) == 160
+    assert compact["provenance"]["source_record_count"] == 4
+    assert "molecule" not in compact
+    assert "relevance" not in str(compact)
+
+
+def test_group_prompt_profile_isolated_from_standard_group_evidence():
+    row = {
+        "molecule_chembl_id": "M1",
+        "canonical_smiles": "CCO",
+        "assay_chembl_id": "A1",
+        "standard_type": "endpoint",
+        "standard_value": "1",
+        "assay_description": "evidence",
+        "evidence_source": "Starling",
+    }
+    standard = evidence_for_group_llm(row, {"group_id": "Mechanism.tier_1"})
+    compact = evidence_for_group_llm(
+        row,
+        {
+            "group_id": "Flat.assay_ranked_evidence",
+            "evidence_prompt_profile": ASSAY_COMPACT_PROMPT_PROFILE,
+        },
+    )
+
+    assert standard == evidence_for_llm(row)
+    assert standard["molecule"]["id"] == "M1"
+    assert "molecule" not in compact
+
+
+def test_legacy_assay_replay_without_profile_keeps_compact_view():
+    compact = evidence_for_group_llm(
+        {"assay_chembl_id": "A1", "standard_type": "endpoint"},
+        {"group_id": "Flat.assay_ranked_evidence"},
+    )
+    assert compact["assay_id"] == "A1"
 
 
 def test_legacy_row_maps_to_minimal_contract_without_internal_direction_fields():

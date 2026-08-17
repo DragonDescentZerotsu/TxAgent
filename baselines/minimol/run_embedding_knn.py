@@ -12,7 +12,12 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from baselines.structure_knn.run import _metrics, _read_split, _write_jsonl
+from baselines.structure_knn.run import (
+    _metrics,
+    _read_split,
+    _validate_reference_splits,
+    _write_jsonl,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -20,42 +25,56 @@ def main(argv: list[str] | None = None) -> int:
     if args.k <= 0:
         raise ValueError("--k must be positive")
 
-    train_path = args.data_dir / "train.jsonl"
+    _validate_reference_splits(args.reference_splits, args.evaluation_split)
+    reference_paths = [args.data_dir / f"{split}.jsonl" for split in args.reference_splits]
     test_path = args.data_dir / f"{args.evaluation_split}.jsonl"
-    train = _read_split(train_path)
+    reference = []
+    reference_cache_paths = []
+    reference_embedding_parts = []
+    for split, path in zip(args.reference_splits, reference_paths, strict=True):
+        rows = _read_split(path)
+        cache_path = args.embedding_cache_dir / f"{split}.pt"
+        reference.extend(
+            {**row, "reference_split": split, "reference_index": index}
+            for index, row in enumerate(rows)
+        )
+        reference_cache_paths.append(cache_path)
+        reference_embedding_parts.append(_load_embeddings(cache_path, rows))
     test = _read_split(test_path)
-    if len(train) < args.k:
-        raise ValueError(f"Training set has {len(train)} rows, fewer than k={args.k}")
+    if len(reference) < args.k:
+        raise ValueError(f"Reference pool has {len(reference)} rows, fewer than k={args.k}")
 
-    train_cache_path = args.embedding_cache_dir / "train.pt"
     test_cache_path = args.embedding_cache_dir / f"{args.evaluation_split}.pt"
-    train_embeddings = _load_embeddings(train_cache_path, train)
+    reference_embeddings = torch.cat(reference_embedding_parts, dim=0)
     test_embeddings = _load_embeddings(test_cache_path, test)
-    if train_embeddings.shape[1] != test_embeddings.shape[1]:
+    if reference_embeddings.shape[1] != test_embeddings.shape[1]:
         raise ValueError(
-            "Train/test embedding dimensions differ: "
-            f"{train_embeddings.shape[1]} != {test_embeddings.shape[1]}"
+            "Reference/evaluation embedding dimensions differ: "
+            f"{reference_embeddings.shape[1]} != {test_embeddings.shape[1]}"
         )
 
-    train_embeddings = F.normalize(train_embeddings.float(), p=2, dim=1)
+    reference_embeddings = F.normalize(reference_embeddings.float(), p=2, dim=1)
     test_embeddings = F.normalize(test_embeddings.float(), p=2, dim=1)
-    similarities = (test_embeddings @ train_embeddings.T).clamp(-1.0, 1.0)
+    similarities = (test_embeddings @ reference_embeddings.T).clamp(-1.0, 1.0)
 
     predictions = []
-    train_indices = np.arange(len(train))
+    reference_indices = np.arange(len(reference))
     for query_index, row in enumerate(test):
         query_similarities = similarities[query_index].numpy()
-        # Primary key is descending cosine similarity; train index is a stable tie-break.
-        ranked_indices = np.lexsort((train_indices, -query_similarities))
+        # Primary key is descending cosine similarity; reference-pool index breaks ties.
+        ranked_indices = np.lexsort((reference_indices, -query_similarities))
         selected_indices = ranked_indices[: args.k]
         neighbors = [
             {
-                "train_index": int(train_index),
-                "drug": train[int(train_index)]["drug"],
-                "Y": train[int(train_index)]["Y"],
-                "similarity": float(query_similarities[int(train_index)]),
+                "train_index": int(reference_index),
+                "reference_pool_index": int(reference_index),
+                "reference_split": reference[int(reference_index)]["reference_split"],
+                "reference_index": reference[int(reference_index)]["reference_index"],
+                "drug": reference[int(reference_index)]["drug"],
+                "Y": reference[int(reference_index)]["Y"],
+                "similarity": float(query_similarities[int(reference_index)]),
             }
-            for train_index in selected_indices
+            for reference_index in selected_indices
         ]
         score = sum(neighbor["Y"] for neighbor in neighbors) / args.k
         prediction = int(score >= 0.5)
@@ -85,7 +104,13 @@ def main(argv: list[str] | None = None) -> int:
             "k": args.k,
             "vote": "unweighted_majority",
             "score": "positive_neighbor_fraction",
-            "n_train": len(train),
+            "reference_splits": args.reference_splits,
+            "n_reference": len(reference),
+            "n_reference_by_split": {
+                split: sum(row["reference_split"] == split for row in reference)
+                for split in args.reference_splits
+            },
+            "n_train": sum(row["reference_split"] == "train" for row in reference),
             "n_test": len(test),
             "n_evaluation": len(test),
             "n_evaluated": len(test),
@@ -100,7 +125,7 @@ def main(argv: list[str] | None = None) -> int:
             "embedding": {
                 "model": "MiniMol",
                 "source": "cached formal baseline embeddings",
-                "dimension": int(train_embeddings.shape[1]),
+                "dimension": int(reference_embeddings.shape[1]),
                 "normalization": "L2",
                 "similarity": "cosine",
             },
@@ -109,17 +134,30 @@ def main(argv: list[str] | None = None) -> int:
 
     manifest = {
         "data_dir": str(args.data_dir),
-        "train_path": str(train_path),
+        "train_path": str(args.data_dir / "train.jsonl"),
+        "reference_splits": args.reference_splits,
+        "reference_paths": [str(path) for path in reference_paths],
         "test_path": str(test_path),
         "evaluation_path": str(test_path),
         "embedding_cache_dir": str(args.embedding_cache_dir),
-        "train_embedding_cache": str(train_cache_path),
+        "train_embedding_cache": str(args.embedding_cache_dir / "train.pt"),
+        "reference_embedding_caches": [str(path) for path in reference_cache_paths],
         "test_embedding_cache": str(test_cache_path),
         "output_dir": str(args.output_dir),
         "input_sha256": {
-            "train_jsonl": _sha256(train_path),
+            "train_jsonl": _sha256(args.data_dir / "train.jsonl"),
+            "reference_jsonl": {
+                split: _sha256(path)
+                for split, path in zip(args.reference_splits, reference_paths, strict=True)
+            },
             "test_jsonl": _sha256(test_path),
-            "train_embedding_cache": _sha256(train_cache_path),
+            "train_embedding_cache": _sha256(args.embedding_cache_dir / "train.pt"),
+            "reference_embedding_cache": {
+                split: _sha256(path)
+                for split, path in zip(
+                    args.reference_splits, reference_cache_paths, strict=True
+                )
+            },
             "test_embedding_cache": _sha256(test_cache_path),
         },
         **{
@@ -196,6 +234,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--evaluation-split",
         choices=("valid", "test"),
         default="test",
+    )
+    parser.add_argument(
+        "--reference-splits",
+        nargs="+",
+        choices=("train", "valid"),
+        default=["train"],
+        help="Labeled reference splits. Use train valid only when evaluating test.",
     )
     parser.add_argument("--k", type=int, default=3)
     return parser.parse_args(argv)

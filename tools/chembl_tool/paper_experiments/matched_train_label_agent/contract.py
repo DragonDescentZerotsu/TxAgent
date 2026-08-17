@@ -35,6 +35,10 @@ class TaskSpec:
     positive_label_text: str
     full_pool_direct_batch: Path | None = None
     prompt_profile_args: tuple[str, ...] = ()
+    retrieval_feature: str = "morgan_fingerprint"
+    retrieval_similarity: str = "tanimoto"
+    retrieval_similarity_metric: str = "Morgan Tanimoto radius=2 n_bits=2048"
+    retrieval_neighbor_set_contract: str = "exactly_the_formal_morgan_knn_top3"
 
     def label_text(self, label: int) -> str:
         if label == 0:

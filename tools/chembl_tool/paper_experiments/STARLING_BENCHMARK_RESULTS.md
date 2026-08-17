@@ -1,11 +1,46 @@
 # Starling benchmark：当前决策、结果与入口
 
-更新时间：2026-08-10。
+更新时间：2026-08-17。
 
 本文件是 Starling benchmark 迁移和实验的集中总账。BBB 当前 paper-facing gold 是
 `experimental_meaningful_cns_access_v2`；Bioavailability/Skin 仍为 scaffold-only `record_supported_v2`。旧 BBB
 `record_supported_v2`、第一版 `record_agreement70_split811_v1` 和 TDC `test`/`valid` 结果均保留为
 historical comparison，不得跨 lineage 混表。
+
+## Assay-level retrieval scaling（2026-08-17，scaffold-valid）
+
+新 assay-level 版本不使用 direct/mechanism family；它按冻结 biological relevance 排序选择累计
+`canonical_assay_context` prefix，在每个 assay 内做 Morgan top-3、Tanimoto `>=0.3` 的 train-reference
+retrieval，再把相同 reference molecule 跨 assays 合并为一个 flat branch。Valid 只允许从 train molecules
+检索，继续使用 `identity_blind + parent_disjoint`。Schedule 从 5 开始每次乘 4，最后一点固定为全部 eligible
+assays。
+
+| task | all assays | all-assay macro-F1 | best prefix | best macro-F1 | historical group best | delta |
+|---|---:|---:|---:|---:|---:|---:|
+| BBB | 22,820 | 0.716634 | 20,480 | **0.720856** | full-flat 0.676241 | +0.044615 |
+| Bioavailability | 1,840 | 0.579121 | 20 | **0.640151** | full-flat 0.677652 | -0.037501 |
+| Skin | 12,015 | 0.613003 | 80 | **0.626714** | direct 0.616345 | +0.010369 |
+
+新增 1,797 个 sample-condition 全部成功、0 failure。三个 task-best 的平均 macro-F1 为 `0.662574`，
+historical group-best 平均为 `0.656746`。但 none/group reference 来自既有 OpenRouter Flash artifacts，
+assay points 来自 PARCC `DeepSeek-V4-Flash-0731`，故 delta 是 descriptive historical comparison，不能写成
+endpoint-matched model comparison。完整 pipeline、英文图、retrieval-volume 曲线和维护入口见
+`ASSAY_LEVEL_RETRIEVAL.md`。
+
+## GPT-OSS-120B MiniMol top-5/no-threshold sensitivity（2026-08-16，scaffold-valid）
+
+冻结 launcher 对三个 current lineages 串行调用共享 matrix；MiniMol cosine retrieval 使用
+`top_k_per_group=5`、`min_similarity=0`、identity-blind、parent-disjoint，并只运行 Starling direct/full-flat。
+
+| task | direct | full-flat | n | failures |
+|---|---:|---:|---:|---:|
+| BBB | 0.652832 | **0.690073** | 366 | 0 |
+| Bioavailability | 0.594314 | **0.623542** | 209 | 0 |
+| Skin | 0.599776 | **0.612770** | 245 | 0 |
+
+该 valid-only sensitivity 不替代默认 top-3/0.3 设置。维护入口为
+`run_minimol_valid_matrix_gpt_oss_120b.py`，共享 runtime 和 artifact root 见
+`baselines/minimol/README.md`。
 
 ## Current BBB experimental meaningful-CNS-access gold（scaffold-valid complete）
 
@@ -1666,6 +1701,43 @@ outputs/paper/skin_aop_gated_final_v1_scaffold_valid_deepseek_v4_pro/
 由于该候选没有触发任何样本且未通过 promotion，专用一次性 runner/gate 未进入长期维护代码；结论由上述
 冻结 audit artifact 和本节记录保留。
 
+### Outcome-calibrated multi-event causal-panel seed no-go（E22；2026-08-14，valid-only）
+
+E22 不复用 raw AOP card 作为新方法。版本化 compiler 只保留同一 reference parent 上同时满足 direct
+sensitization outcome、`MIE_protein_binding`、至少一个 KE2/KE3/KE4，且 event-level 70% agreement、AOP
+事件间方向一致并与 direct outcome 一致的 multi-event causal card。Full source 得到 118 cards
+（106 positive、12 negative）；排除 valid+test parents 后 index 保留 99（89/10）。新 index 只追加
+`Mechanism.sensitization_causal_panel`，MiniMol candidate order、全部旧 group membership/evidence 与 245/245
+direct retrieval hash 均保持不变。
+
+零成本 gate 后，按 top causal-card source direction 和 cosine 排名、完全不读取 gold/direct correctness，冻结
+64 个 valid query（32 negative-top、32 positive-top）。运行只 fresh 生成 causal group 与 final；single 和
+`Mechanism.tier_1` 均 64/64 从 frozen DeepSeek artifacts 复用。64/64 成功、0 failure。非触发样本逐条保留
+direct prediction，合并到完整 245 条后的结果为：
+
+| condition | accuracy | macro-F1 | TN / FP / FN / TP |
+|---|---:|---:|---:|
+| frozen canonical direct | 0.6939 | 0.6410 | 38 / 35 / 40 / 132 |
+| causal-panel gated seed | 0.6694 | 0.6151 | 36 / 37 / 44 / 128 |
+
+Delta 为 accuracy `-0.02449`、macro-F1 `-0.02592`；paired-bootstrap macro-F1 95% CI
+`[-0.05630,+0.00217]`。10 个 prediction flips 中 2 beneficial、8 harmful。失败不是 direct retrieval drift：
+single/direct-group parity 全部通过。Trace 显示 55/64 causal branches 为 low transferability，48/64 direction
+为 neutral/unclear；53/64 的三张 card 中最高报告 Morgan Tanimoto 仍小于 0.30。9/10 flips 出现在
+neutral/low-transfer branch 后，其中 8 个有害，说明 extra branch 主要改变 final 的 uncertainty/default policy，
+而非传入可转移的 causal signal。Heldout index 的 89:10 positive/negative card imbalance 是另一明确上游缺口。
+
+事后只让 moderate/high 且 directional branch 生效会留下 9 条、仅 1 个 beneficial flip，完整 245 条
+macro-F1 nominal `+0.00347`；这是读取本次 branch outputs 后的 exploratory sensitivity，不是冻结 gate，不能
+promotion。E22 因此停止，不启动 BBB seed、不读取 Skin test。下一次 Starling acquisition 若要继续，必须把
+reactive mechanism family/activation route 与 outcome+AOP 一起抽取，并在相同机制 family 内补足实验 negative，
+再以 shared reactive route 作为 retrieval eligibility；MiniMol cosine 只能在 eligible family 内排序。
+
+```text
+tools/chembl_tool/paper_experiments/skin_causal_panel_seed/
+outputs/paper/skin_causal_panel_seed_v1_scaffold_valid_deepseek_v4_pro/{source_build_audit.json,retrieval_audit_summary.json,analysis/}
+```
+
 ## 10. 主要运行与汇总入口
 
 ```text
@@ -1674,6 +1746,9 @@ data builder:
 
 held-out index:
   python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices
+
+MiniMol retrieval features:
+  python -m tools.chembl_tool.paper_experiments.build_minimol_retrieval_features
 
 formal/blind matrix:
   python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix
@@ -1710,6 +1785,17 @@ MiniMol embedding agent retrieval:
 generic final-only group filtering:
   tools/chembl_tool/common/task_workflows/reasoning_batch.py
 ```
+
+默认 reference pool 是 train。Test post-selection sensitivity 必须用隔离 root，并显式配对：index builder
+`--heldout-subsets test`、matrix `--reference-pool train_valid`、KNN
+`--reference-splits train valid`；matrix 会核验 base-index metadata 确实只排除了 test。Valid evaluation、
+valid-only/重复 split 或声明与实际 index 不一致都会在模型调用前拒绝。
+
+MiniMol 代码入口总索引为 `baselines/minimol/README.md`。另有
+`baselines/minimol/run_starling_table2.py` 用于外部 Starling 论文 released CSV 的 Table 2 复现，结果见
+`baselines/minimol/STARLING_TABLE2_REPRODUCTION.md`；其中包含作者补充的 `n_extractions` weighted-BCE
+matched 结果。该 release 的任务定义和 split 与当前 gold 不同，因此不纳入本结果总账、上方 canonical
+snapshot 或统一绘图入口。
 
 ### 2026-08-02 至 2026-08-04 入口与 artifact contract 更新
 

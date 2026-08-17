@@ -1,4 +1,5 @@
 import argparse
+from dataclasses import replace
 import json
 
 import pytest
@@ -22,6 +23,7 @@ from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     _matrix_manifest_path,
     _paper_root_for_evaluation_subset,
     _validate_concurrency,
+    _validate_reference_pool,
     _validate_retrieval_ablation_args,
     _write_json_atomic,
     experiments_for_starling_benchmark,
@@ -34,6 +36,8 @@ from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import
     _apply_source_evidence_overrides,
     _collect_existing_index_meta,
     _load_existing_summary,
+    heldout_labels_path,
+    normalize_heldout_subsets,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     _group_prompt_payload,
@@ -183,6 +187,53 @@ def test_index_summary_can_be_rebuilt_after_parallel_partial_builds(tmp_path):
     assert collected == {"random": {"example": {"zero_parent_overlap": True}}}
 
 
+def test_heldout_subset_scope_is_canonical_and_rejects_duplicates(tmp_path):
+    assert normalize_heldout_subsets(["test", "valid"]) == ("valid", "test")
+    assert heldout_labels_path(tmp_path, "BBB_Martins", "scaffold", ["test"]).name == (
+        "test_molecule_labels.jsonl"
+    )
+    with pytest.raises(ValueError, match="Unsupported held-out subsets"):
+        normalize_heldout_subsets(["test", "test"])
+    with pytest.raises(ValueError, match="train pool"):
+        normalize_heldout_subsets(["valid"])
+
+
+@pytest.mark.parametrize(
+    ("reference_pool", "heldout_filename", "should_pass"),
+    [
+        ("train", "heldout_molecule_labels.jsonl", True),
+        ("train", "test_molecule_labels.jsonl", False),
+        ("train_valid", "test_molecule_labels.jsonl", True),
+        ("train_valid", "heldout_molecule_labels.jsonl", False),
+    ],
+)
+def test_matrix_reference_pool_matches_index_scope(
+    tmp_path,
+    reference_pool,
+    heldout_filename,
+    should_pass,
+):
+    index_path = tmp_path / "starling.pkl"
+    index_path.write_bytes(b"placeholder")
+    index_path.with_suffix(".meta.json").write_text(
+        json.dumps({"source": {"heldout_labels_jsonl": str(tmp_path / heldout_filename)}})
+    )
+    experiment = replace(
+        next(item for item in EXPERIMENTS if item.name == "bbb_martins__starling_direct"),
+        index=str(index_path),
+    )
+    args = argparse.Namespace(
+        reference_pool=reference_pool,
+        evaluation_subset="test",
+        retrieval_feature="morgan",
+    )
+    if should_pass:
+        _validate_reference_pool([experiment], args)
+    else:
+        with pytest.raises(SystemExit, match="requires an index excluding"):
+            _validate_reference_pool([experiment], args)
+
+
 def test_starling_minimol_matrix_uses_descriptors_and_isolated_output_root():
     experiments = experiments_for_starling_benchmark(
         "scaffold",
@@ -198,6 +249,21 @@ def test_starling_minimol_matrix_uses_descriptors_and_isolated_output_root():
     )
     assert paper_root_for_minimol_retrieval("scaffold").name == (
         "molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_minimol_retrieval"
+    )
+
+
+def test_starling_minimol_matrix_accepts_lineage_specific_feature_root(tmp_path):
+    feature_root = tmp_path / "current-minimol-features"
+    experiments = experiments_for_starling_benchmark(
+        "scaffold",
+        evaluation_subset="valid",
+        retrieval_feature="minimol",
+        minimol_feature_root=feature_root,
+    )
+
+    direct = next(item for item in experiments if item.name == "bbb_martins__chembl_direct")
+    assert direct.index == str(
+        feature_root / "scaffold/descriptors/bbb_martins__chembl_direct.json"
     )
 
 
@@ -296,6 +362,8 @@ def test_starling_matrix_accepts_manifest_only_mode():
     assert args.parallelism == 128
     assert args.neighbor_selector == "similarity"
     assert args.neighbor_context_profile == "standard"
+    assert args.top_k_per_group == 3
+    assert args.min_similarity == 0.3
 
 
 def test_starling_matrix_isolates_nonstandard_retrieval_profiles():
@@ -582,6 +650,26 @@ def test_matrix_command_freezes_glm_and_identity_conditions():
     assert direct_command[direct_command.index("--single-analysis-source-batch") + 1].endswith(
         "bbb_martins__none"
     )
+
+
+def test_matrix_command_forwards_retrieval_count_and_threshold():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GPT_OSS_LOCAL_API_KEY",
+        parallelism=8,
+        visibility_mode=IDENTITY_BLIND,
+        neighbor_identity_policy=PARENT_DISJOINT,
+        fresh_parent_disjoint=True,
+        paper_root="outputs/test-minimol-top5",
+        split="valid",
+        top_k_per_group=5,
+        min_similarity=0.0,
+    )
+
+    command = _command(EXPERIMENTS[1], args)
+
+    assert command[command.index("--top-k-per-group") + 1] == "5"
+    assert command[command.index("--min-similarity") + 1] == "0.0"
 
 
 def test_valid_split_changes_only_dataset_and_isolates_output_root():

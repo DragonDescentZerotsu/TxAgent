@@ -215,6 +215,20 @@ experiment TSV 的每个 task/split 必须有且仅有一个 `comparison_role=an
 5. 汇总器和图表必须按 benchmark lineage 分区，不得把 TDC、Starling-random 和
    Starling-scaffold sample-condition 合并成一个指标。
 
+Reference pool 只有两个合法合同：
+
+- `train`（默认）：index 必须记录 `heldout_molecule_labels.jsonl`，即同时排除 valid+test parents；KNN 只读
+  labeled `train.jsonl`。
+- `train_valid`（仅 test post-selection sensitivity）：index 必须记录 `test_molecule_labels.jsonl`，即只排除
+  test parents；KNN 显式读取 labeled `train.jsonl + valid.jsonl`。该设置不得用于 valid、不得成为 formal
+  默认，也不得根据 test 结果反向修改 prompt/retriever。
+
+`build_starling_benchmark_indices.py --heldout-subsets`、MiniMol feature builder 的同名参数和
+`starling_benchmark_matrix.py --reference-pool` 必须一致；matrix 在模型调用前从 base-index metadata 反向核验。
+Morgan/MiniMol KNN 的 `--reference-splits` 只接受严格顺序的 `train` 或 `train valid`，metrics 中
+`n_train` 始终仅表示 train rows，扩展池总量使用 `n_reference`。旧 `train_path`、embedding-cache hash 等
+manifest 字段继续保留以兼容既有汇总消费者。
+
 `build_starling_benchmark_indices.py` 从既有 full-source Starling evidence rows 中删除对应构造方法的
 全部 valid+test parents，然后重建 direct/full index；因此可使用不属于 gold train 的其它 Starling records，
 但不能保留任何 evaluation-parent record。构建时必须用当前 normalizer 从 `drug` 重算 held-out parent key 并与

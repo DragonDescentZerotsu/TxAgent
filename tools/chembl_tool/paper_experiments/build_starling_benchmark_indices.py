@@ -17,6 +17,7 @@ from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library impor
 DEFAULT_OUTPUT_ROOT = Path("outputs/paper")
 BENCHMARK_SPLITS = ("random", "scaffold")
 BENCHMARK_LINEAGE = "record_agreement70_split811_v1"
+HELDOUT_SUBSETS = ("valid", "test")
 
 INDEX_SPECS: tuple[dict[str, str], ...] = (
     {
@@ -87,6 +88,7 @@ def paper_root_for_benchmark_split(
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    heldout_subsets = normalize_heldout_subsets(args.heldout_subsets)
     splits = args.splits or list(BENCHMARK_SPLITS)
     specs = _apply_source_evidence_overrides(
         _select_specs(args.indices),
@@ -121,11 +123,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         split_results = dict(results.get(split, {}))
         for spec in specs:
-            heldout_path = (
-                Path(args.benchmark_data_root)
-                / spec["task"]
-                / split
-                / "heldout_molecule_labels.jsonl"
+            heldout_path = heldout_labels_path(
+                args.benchmark_data_root,
+                spec["task"],
+                split,
+                heldout_subsets,
             )
             out_dir = paper_root / "evidence" / spec["name"]
             print(f"[starling_benchmark_index] split={split} index={spec['name']}", flush=True)
@@ -134,7 +136,7 @@ def main(argv: list[str] | None = None) -> int:
                 heldout_labels_jsonl=heldout_path,
                 out_dir=out_dir,
                 index_version=(
-                    f"{spec['name']}.heldout_valid_test_{split}."
+                    f"{spec['name']}.heldout_{'_'.join(heldout_subsets)}_{split}."
                     f"{args.benchmark_lineage}.v1"
                 ),
                 evidence_filename=spec["evidence_filename"],
@@ -228,6 +230,42 @@ def _apply_source_evidence_overrides(
     ]
 
 
+def heldout_labels_path(
+    benchmark_data_root: str | Path,
+    task: str,
+    split: str,
+    heldout_subsets: list[str] | tuple[str, ...],
+) -> Path:
+    """Resolve the benchmark identity file excluded from one reference pool."""
+    subsets = normalize_heldout_subsets(heldout_subsets)
+    split_dir = Path(benchmark_data_root) / task / split
+    if set(subsets) == set(HELDOUT_SUBSETS):
+        return split_dir / "heldout_molecule_labels.jsonl"
+    if len(subsets) == 1:
+        return split_dir / f"{subsets[0]}_molecule_labels.jsonl"
+    raise ValueError(f"Unsupported held-out subset combination: {subsets}")
+
+
+def normalize_heldout_subsets(
+    heldout_subsets: list[str] | tuple[str, ...],
+) -> tuple[str, ...]:
+    """Validate and canonicalize held-out subset names for stable receipts."""
+    requested = tuple(heldout_subsets)
+    if (
+        not requested
+        or len(requested) != len(set(requested))
+        or any(subset not in HELDOUT_SUBSETS for subset in requested)
+    ):
+        raise ValueError(f"Unsupported held-out subsets: {requested}")
+    normalized = tuple(subset for subset in HELDOUT_SUBSETS if subset in requested)
+    if normalized not in (HELDOUT_SUBSETS, ("test",)):
+        raise ValueError(
+            "Held-out scope must represent a train pool (valid test) or a "
+            "train+valid pool (test)"
+        )
+    return normalized
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--splits", nargs="*", choices=BENCHMARK_SPLITS, default=[])
@@ -246,6 +284,16 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Root containing <Task>/<split>/heldout_molecule_labels.jsonl.",
     )
     parser.add_argument("--benchmark-lineage", default=BENCHMARK_LINEAGE)
+    parser.add_argument(
+        "--heldout-subsets",
+        nargs="+",
+        choices=HELDOUT_SUBSETS,
+        default=list(HELDOUT_SUBSETS),
+        help=(
+            "Evaluation subsets excluded from the retrieval reference pool. "
+            "Use 'test' for a post-selection train+valid test reference pool."
+        ),
+    )
     parser.add_argument("--workers", type=int, default=32)
     parser.add_argument("--progress-every", type=int, default=10000)
     parser.add_argument(

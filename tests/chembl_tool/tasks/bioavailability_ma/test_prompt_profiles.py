@@ -10,6 +10,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.prompt_profiles import (
     get_bioavailability_prompt_profile,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
+    _group_evidence_source,
     _group_prompt_payload,
     _manifest_prompt_profile,
     _parse_args,
@@ -69,6 +70,14 @@ def test_group_payload_uses_selected_direction_transfer_contract():
     assert (
         "Low or not-applicable transferability lowers evidence weight" in instructions
     )
+
+
+def test_group_evidence_source_survives_identity_blind_wrapping():
+    source_name = "starling-labs/bioavailability_ma/Fa"
+    row = {"minimal_evidence": {"source": {"name": source_name}}}
+    group = {"neighbors": [{"evidence_rows": [row]}]}
+
+    assert _group_evidence_source(group) == source_name
 
 
 def test_final_payload_contains_threshold_specific_low_evidence_gate():

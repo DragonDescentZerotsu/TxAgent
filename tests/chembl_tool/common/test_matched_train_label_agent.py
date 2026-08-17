@@ -225,6 +225,61 @@ def test_materialize_replays_exact_knn_neighbors_and_labels(tmp_path: Path) -> N
     ]["text"]["evidence"]
 
 
+def test_materialize_can_describe_exact_minimol_knn_neighbors(tmp_path: Path) -> None:
+    labels = tmp_path / "valid.jsonl"
+    predictions = tmp_path / "valid_predictions.jsonl"
+    _write_jsonl(labels, [{"drug": "CCO", "Y": 1}])
+    _write_jsonl(
+        predictions,
+        [
+            {
+                "query_index": 0,
+                "drug": "CCO",
+                "Y": 1,
+                "prediction": 1,
+                "status": "ok",
+                "neighbors": [
+                    {"train_index": 2, "drug": "CCCO", "Y": 1, "similarity": 0.91},
+                    {"train_index": 4, "drug": "CCN", "Y": 0, "similarity": 0.89},
+                    {"train_index": 8, "drug": "CCCCO", "Y": 1, "similarity": 0.87},
+                ],
+            }
+        ],
+    )
+    spec = replace(
+        TASK_SPECS["skin_reaction"],
+        condition="skin_reaction__matched_minimol_train_label_direct",
+        input_jsonl=labels,
+        knn_predictions=predictions,
+        retrieval_feature="minimol_embedding",
+        retrieval_similarity="cosine",
+        retrieval_similarity_metric="MiniMol cosine (L2-normalized, 512 dimensions)",
+        retrieval_neighbor_set_contract="exactly_the_formal_minimol_cosine_knn_top3",
+    )
+
+    manifest = materialize_task(spec, output_root=tmp_path / "out")
+    replay = Path(manifest["batch"])
+    retrieval = json.loads(
+        (replay / "runs" / f"{replay.name}_idx00000" / "retrieval.json").read_text()
+    )
+
+    assert manifest["retrieval_feature"] == "minimol_embedding"
+    assert manifest["neighbor_set_contract"] == "exactly_the_formal_minimol_cosine_knn_top3"
+    assert retrieval["experiment"]["retrieval_feature"] == {
+        "feature": "minimol_embedding",
+        "model": "MiniMol",
+        "model_version": "minimol_v1",
+        "dimension": 512,
+        "normalization": "L2",
+        "similarity": "cosine",
+    }
+    assert "fingerprint" not in retrieval["query"]
+    assert retrieval["query"]["retrieval_embedding"]["feature"] == "minimol_embedding"
+    assert retrieval["groups"][0]["neighbors"][0]["similarity_metric"].startswith(
+        "MiniMol cosine"
+    )
+
+
 def test_materialize_rejects_non_majority_knn_prediction(tmp_path: Path) -> None:
     labels = tmp_path / "valid.jsonl"
     predictions = tmp_path / "valid_predictions.jsonl"

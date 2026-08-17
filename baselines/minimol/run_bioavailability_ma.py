@@ -8,87 +8,33 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import os
 import random
 from copy import deepcopy
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
-from torch.optim.lr_scheduler import LambdaLR
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from baselines.minimol.embedding_runtime import (
     DEFAULT_MINIMOL_SOURCE,
     create_featurizer,
     embed_smiles,
 )
+from baselines.minimol.head_runtime import (
+    EmbeddingDataset,
+    evaluate_loss,
+    make_model,
+    predict_scores,
+    train_one_epoch,
+)
 
 DEFAULT_DATA_DIR = Path("data/processed/Bioavailability_Ma")
 DEFAULT_OUTPUT_DIR = Path("outputs/baselines/minimol/bioavailability_ma")
-
-
-class TaskHead(nn.Module):
-    def __init__(
-        self,
-        hidden_dim: int = 512,
-        input_dim: int = 512,
-        dropout: float = 0.1,
-        depth: int = 3,
-        combine: bool = True,
-    ) -> None:
-        super().__init__()
-        self.dense1 = nn.Linear(input_dim, hidden_dim)
-        self.dense2 = nn.Linear(hidden_dim, hidden_dim)
-        self.dense3 = nn.Linear(hidden_dim, hidden_dim)
-        self.final_dense = nn.Linear(input_dim + hidden_dim, 1) if combine else nn.Linear(hidden_dim, 1)
-        self.bn1 = nn.BatchNorm1d(hidden_dim)
-        self.bn2 = nn.BatchNorm1d(hidden_dim)
-        self.bn3 = nn.BatchNorm1d(hidden_dim)
-        self.dropout = nn.Dropout(dropout)
-        self.combine = combine
-        self.depth = depth
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        original_x = x
-
-        x = self.dense1(x)
-        x = self.bn1(x)
-        x = F.relu(x)
-        x = self.dropout(x)
-
-        x = self.dense2(x)
-        x = self.bn2(x)
-        x = F.relu(x)
-        x = self.dropout(x)
-
-        if self.depth == 4:
-            x = self.dense3(x)
-            x = self.bn3(x)
-            x = F.relu(x)
-            x = self.dropout(x)
-
-        x = torch.cat((x, original_x), dim=1) if self.combine else x
-        return self.final_dense(x)
-
-
-class EmbeddingDataset(Dataset):
-    def __init__(self, embeddings: torch.Tensor, labels: Iterable[int]) -> None:
-        self.embeddings = embeddings.float()
-        self.labels = torch.tensor(list(labels), dtype=torch.float32)
-
-    def __len__(self) -> int:
-        return int(self.labels.shape[0])
-
-    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
-        return self.embeddings[idx], self.labels[idx]
 
 
 @dataclass
@@ -288,68 +234,8 @@ def _load_reusable_embeddings(
     return registry, files
 
 
-def make_model(args: argparse.Namespace, device: torch.device) -> tuple[nn.Module, optim.Optimizer, LambdaLR, nn.Module]:
-    model = TaskHead(hidden_dim=args.hidden_dim, depth=args.depth, dropout=args.dropout, combine=True).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-    loss_fn = nn.BCELoss()
-
-    def lr_fn(epoch: int) -> float:
-        schedule_epoch = epoch + 1
-        if args.warmup > 0 and schedule_epoch <= args.warmup:
-            return schedule_epoch / args.warmup
-        denom = max(1, args.epochs - args.warmup)
-        decay_epoch = (
-            schedule_epoch - args.warmup
-            if args.warmup > 0
-            else epoch
-        )
-        decay_epoch = min(denom, max(0, decay_epoch))
-        return (1 + math.cos(math.pi * decay_epoch / denom)) / 2
-
-    scheduler = LambdaLR(optimizer, lr_lambda=lr_fn)
-    return model, optimizer, scheduler, loss_fn
-
-
-def train_one_epoch(
-    model: nn.Module,
-    loader: DataLoader,
-    optimizer: optim.Optimizer,
-    scheduler: LambdaLR,
-    loss_fn: nn.Module,
-    device: torch.device,
-) -> None:
-    model.train()
-    for inputs, targets in loader:
-        inputs = inputs.to(device)
-        targets = targets.to(device)
-        optimizer.zero_grad(set_to_none=True)
-        logits = model(inputs).squeeze(-1)
-        loss = loss_fn(torch.sigmoid(logits), targets)
-        loss.backward()
-        optimizer.step()
-    scheduler.step()
-
-
-def evaluate_loss(model: nn.Module, loader: DataLoader, loss_fn: nn.Module, device: torch.device) -> float:
-    model.eval()
-    total_loss = 0.0
-    with torch.no_grad():
-        for inputs, targets in loader:
-            inputs = inputs.to(device)
-            targets = targets.to(device)
-            logits = model(inputs).squeeze(-1)
-            total_loss += float(loss_fn(torch.sigmoid(logits), targets).item())
-    return total_loss / max(1, len(loader))
-
-
 def predict_proba(model: nn.Module, loader: DataLoader, device: torch.device) -> np.ndarray:
-    model.eval()
-    predictions: list[np.ndarray] = []
-    with torch.no_grad():
-        for inputs, _ in loader:
-            logits = model(inputs.to(device)).squeeze(-1)
-            predictions.append(torch.sigmoid(logits).detach().cpu().numpy())
-    return np.concatenate(predictions)
+    return predict_scores(model, loader, device, task_type="classification")
 
 
 def choose_threshold(y_true: list[int], y_score: np.ndarray, strategy: str) -> tuple[float, float]:

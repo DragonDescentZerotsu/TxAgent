@@ -13,6 +13,8 @@ from typing import Any
 
 
 CONTRACT_VERSION = "minimal_evidence.v1"
+ASSAY_COMPACT_PROMPT_PROFILE = "assay_compact.v1"
+_LEGACY_ASSAY_FLAT_GROUP_ID = "Flat.assay_ranked_evidence"
 EVIDENCE_ROLES = {
     "direct_outcome",
     "surrogate_proxy",
@@ -123,6 +125,78 @@ def attach_minimal_evidence(row: dict[str, Any]) -> dict[str, Any]:
 def evidence_for_llm(row: Mapping[str, Any]) -> dict[str, Any]:
     """Return only the compact, source-agnostic contract for an LLM prompt."""
     return minimal_evidence_from_row(row)
+
+
+def evidence_for_group_llm(
+    row: Mapping[str, Any],
+    group: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Select the prompt view declared by a retrieval group.
+
+    Ordinary group-level retrieval keeps the full minimal-evidence contract.
+    Dense assay-level replays use a bounded view.  The group-id fallback keeps
+    already materialized v1 assay replay artifacts readable.
+    """
+    profile = str(group.get("evidence_prompt_profile") or "")
+    if profile == ASSAY_COMPACT_PROMPT_PROFILE or (
+        not profile and group.get("group_id") == _LEGACY_ASSAY_FLAT_GROUP_ID
+    ):
+        return assay_evidence_for_llm(row)
+    if profile:
+        raise ValueError(f"Unsupported evidence prompt profile: {profile}")
+    return evidence_for_llm(row)
+
+
+def assay_evidence_for_llm(row: Mapping[str, Any]) -> dict[str, Any]:
+    """Return a bounded minimal-evidence view for dense flat assay prompts.
+
+    Every assay row remains present.  The bounded view removes redundant
+    molecule/group fields already carried by the outer neighbor and flat group,
+    and keeps a short source excerpt instead of repeating long normalized text.
+    """
+    evidence = minimal_evidence_from_row(row)
+    endpoint = evidence.get("endpoint") or {}
+    measurement = endpoint.get("measurement") or {}
+    annotations = evidence.get("annotations") or {}
+    scope = annotations.get("scope") or {}
+    provenance = evidence.get("provenance") or {}
+    compact = {
+        "contract_version": CONTRACT_VERSION,
+        "source": {"name": _bounded_text((evidence.get("source") or {}).get("name"), 80)},
+        "assay_id": _bounded_text(provenance.get("assay_id"), 120),
+        "endpoint": {
+            "name": _bounded_text(endpoint.get("name"), 200),
+            "measurement": {
+                "relation": _bounded_text(measurement.get("relation"), 24),
+                "value": _bounded_text(measurement.get("value"), 200),
+                "unit": _bounded_text(measurement.get("unit"), 80),
+            },
+        },
+        "text": {
+            "evidence_excerpt": _bounded_text(
+                (evidence.get("text") or {}).get("evidence"),
+                160,
+            ),
+        },
+        "annotations": {
+            "evidence_role": _bounded_text(annotations.get("evidence_role"), 40),
+            "scope": {
+                "assay_context": _bounded_list(scope.get("assay_context"), 1, 240),
+                "species_context": _bounded_list(scope.get("species_context"), 4, 80),
+                "qualifying_conditions": _bounded_list(
+                    scope.get("qualifying_conditions"), 4, 120
+                ),
+            },
+            "uncertainty": _bounded_list(annotations.get("uncertainty"), 4, 120),
+        },
+        "quality": {
+            "confidence": (evidence.get("quality") or {}).get("confidence", ""),
+        },
+        "provenance": {
+            "source_record_count": provenance.get("source_record_count", ""),
+        },
+    }
+    return _drop_empty(compact)
 
 
 def numeric_only_evidence_row(row: Mapping[str, Any]) -> dict[str, Any] | None:
@@ -303,6 +377,29 @@ def _text(value: Any) -> str:
     if value is None:
         return ""
     return str(value).strip()
+
+
+def _bounded_text(value: Any, limit: int) -> str:
+    text = _text(value)
+    if len(text) <= limit:
+        return text
+    return text[: max(0, limit - 1)].rstrip() + "…"
+
+
+def _bounded_list(value: Any, limit: int, text_limit: int) -> list[str]:
+    return [_bounded_text(item, text_limit) for item in _string_list(value)[:limit]]
+
+
+def _drop_empty(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return {
+            key: cleaned
+            for key, item in value.items()
+            if (cleaned := _drop_empty(item)) not in (None, "", [], {})
+        }
+    if isinstance(value, list):
+        return [cleaned for item in value if (cleaned := _drop_empty(item)) not in (None, "", [], {})]
+    return value
 
 
 def _json_scalar(value: Any) -> Any:

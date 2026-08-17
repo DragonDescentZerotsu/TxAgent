@@ -13,6 +13,14 @@
 - [当前结果](RESULTS.md)：已完成 full run 的实测结果。
 - [Starling v4 结果总账](STARLING_BENCHMARK_RESULTS.md)：当前 random/scaffold lineage、跨模型、visible 和
   coverage-context 实验的唯一集中记录。
+- [Assay-level retrieval](ASSAY_LEVEL_RETRIEVAL.md)：与 group-level 平行的 context-level assay catalog、
+  relevance-prefix retrieval、train-only replay、英文 scaling figure 和 DeepSeek-V4-Flash 结果。
+- [ClinTox clinical-trial-failure v1](../tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md)：独立
+  AACT/FDA source-reconstructed lineage、retrieval hierarchy、v3 prompt、DeepSeek 结果和 no-promotion 结论。
+- [外部 Starling Table 2 MiniMol 复现](../../../baselines/minimol/STARLING_TABLE2_REPRODUCTION.md)：released
+  CSV、作者补充的 `n_extractions` weighted-BCE 复现、结果和不可与当前 gold 混表的 lineage 边界。
+- [MiniMol 入口索引](../../../baselines/minimol/README.md)：共享 head/embedding runtime、current TxAgent
+  baselines、冻结 GPT-OSS-120B top-5 sensitivity 和外部 Table 2 lineage。
 - [KNN-Agent Router OOF 计划](ROUTER_OOF_IMPLEMENTATION_PLAN.md)：按 task 独立训练的 train-only OOF
   数据隔离、特征、nested evaluation、运行 gate 和当前执行状态。
 - [Trace 保留策略](TRACE_RETENTION.md)：最终 trace 的唯一目录、清理边界和一致性约束。
@@ -161,12 +169,17 @@ tools/chembl_tool/common/starling/build_record_supported_benchmark.py
   record support 和 label balance，再最大化第一版 valid overlap。
 
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
-  读取 heldout union，从 inference evidence 删除全部 valid/test parents，构建 split-specific index。非默认
-  source lineage 通过 `--source-evidence INDEX_NAME=EVIDENCE_JSONL` 显式覆盖，frozen historical spec 不改写。
+  默认读取 heldout union，从 inference evidence 删除全部 valid/test parents，构建 train-reference index。
+  `--heldout-subsets test` 只用于已声明的 test post-selection sensitivity：删除 test parents、允许 valid
+  parents 进入 reference pool。两种 scope 会写入不同 index version/metadata；valid-only 或重复声明会拒绝，
+  `test valid` 会规范化为稳定的 `valid test` receipt。
+  非默认 source lineage 通过 `--source-evidence INDEX_NAME=EVIDENCE_JSONL` 显式覆盖，historical spec 不改写。
 
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
   当前正式 valid/test runner；默认 identity_blind + parent_disjoint、单一 128-slot global prompt pool，
-  valid 与 test root 隔离。
+  valid 与 test root 隔离。默认 `--reference-pool train` 会核验 index 确实排除了 valid+test；显式
+  `--reference-pool train_valid` 只允许 test，并核验 index 只排除 test。MiniMol descriptor 可通过
+  `--minimol-feature-root` 指向同一 scope 的 feature root。
 
 tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
   为新 lineage 新建 retrieval/manifest，再按 molecule key 严格复用兼容的 single/group/final stage。
@@ -181,6 +194,13 @@ tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
 
 tools/chembl_tool/paper_experiments/starling_paired_figure.py
   总图的内部 paired-statistics TSV 校验和 CI/p-value SVG fragment；不是第二个 CLI 或独立图入口。
+
+Reference-pool 默认保持 train：index 排除 valid+test，KNN 只读 `train.jsonl`。只有已明确标为 test
+post-selection sensitivity 时，才组合使用 index builder 的 `--heldout-subsets test`、matrix 的
+`--reference-pool train_valid`，以及两个 KNN 的 `--reference-splits train valid`。这些入口都会记录 scope；
+matrix 还会读取 base-index metadata 反向核验。选择性删除 Bio valid-reference 的重跑没有新增 task-specific
+module：先从 frozen retrieval payload 确定变化 indices，再复用 matrix 的 `--indices` 与 shared prompt pool，
+最终只在 artifact analysis 合并未变化 predictions。
 
 tools/chembl_tool/paper_experiments/router_oof/
   独立的 train-only router 实验入口；不扩展正式 matrix 的 valid/test 枚举。它按 task 分别生成
@@ -722,6 +742,10 @@ MiniMol head 的 train-only scaffold CV 诊断入口为 `python -m baselines.min
 scheduler 修复、regularization sweep 和不替换 canonical baseline 的结论记录在
 `baselines/minimol/HEAD_TRAINING_DIAGNOSTICS.md`。该入口只读取 train embedding cache，不把 outer valid/test
 用于 epoch selection。
+
+MiniMol 入口总索引见 `baselines/minimol/README.md`。外部 Starling 论文 Table 2 的 released-CSV 复现使用
+独立的 `run_starling_table2.py` 和 output root；其任务定义与 split 不属于本项目当前 gold，结果不进入本页
+v4 总账或 canonical figures。
 
 MiniMol head 可重复传 `--reuse-embedding-cache-dir`，按 exact SMILES 从既有 molecule-only cache 复用
 embeddings；命中与未命中统计进入 `metrics.json`。valid-only run 的 canonical 指标键是

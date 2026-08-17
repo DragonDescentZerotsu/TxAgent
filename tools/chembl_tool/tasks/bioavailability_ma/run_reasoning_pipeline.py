@@ -13,7 +13,7 @@ from functools import partial
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.evidence_contract import evidence_for_group_llm, evidence_for_llm
 from tools.chembl_tool.common.coverage_reasoning import (
     NEIGHBOR_CONTEXT_PROFILES,
     STANDARD_NEIGHBOR_CONTEXT,
@@ -685,7 +685,10 @@ def build_group_prompt_payload(
                 "similarity": neighbor["similarity"],
                 "similarity_bucket": neighbor["similarity_bucket"],
                 "prefetched_comparisons": neighbor.get("prefetched_comparisons") or [],
-                "evidence_rows": [_clean_evidence_row(row) for row in neighbor["evidence_rows"]],
+                "evidence_rows": [
+                    evidence_for_group_llm(row, group)
+                    for row in neighbor["evidence_rows"]
+                ],
                 "shared_assay_context": _clean_shared_assay_context(neighbor.get("shared_assay_context") or {}),
             }
             for neighbor in group["neighbors"]
@@ -715,15 +718,13 @@ def build_group_prompt_payload(
 _group_prompt_payload = build_group_prompt_payload
 
 
-def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
-    return evidence_for_llm(row)
-
-
 def _group_evidence_source(group: dict[str, Any]) -> str:
     sources: list[str] = []
     for neighbor in group.get("neighbors", []):
         for row in neighbor.get("evidence_rows", []):
-            source = str(row.get("evidence_source") or "").strip()
+            evidence = row.get("minimal_evidence") or row
+            source = row.get("evidence_source") or (evidence.get("source") or {}).get("name")
+            source = str(source or "").strip()
             if source and source not in sources:
                 sources.append(source)
     if len(sources) > 1:
@@ -742,7 +743,8 @@ def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
         "selected_molecule_chembl_id": context.get("selected_molecule_chembl_id", ""),
         "exact_matches": [_clean_exact_match(match) for match in context.get("exact_matches", [])],
         "bioavailability_relevant_evidence_rows": [
-            _clean_evidence_row(row) for row in context.get("bioavailability_relevant_evidence_rows", [])
+            evidence_for_llm(row)
+            for row in context.get("bioavailability_relevant_evidence_rows", [])
         ],
     }
 

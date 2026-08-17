@@ -18,6 +18,7 @@ import numpy as np
 from rdkit import DataStructs
 
 from tools.chembl_tool.common.neighbor_selection import QUERY_FEATURE_COVERAGE_SELECTOR
+from tools.chembl_tool.common.json_utils import write_json_atomic
 
 
 DESCRIPTOR_TYPE = "retrieval_feature_index.v1"
@@ -166,10 +167,56 @@ def _validate_runtime(index: Mapping[str, Any], runtime: Mapping[str, Any]) -> N
 
 @lru_cache(maxsize=32)
 def _load_array(path: str) -> np.ndarray:
-    array = np.load(path, mmap_mode="r")
-    if not np.isfinite(array).all():
+    array_path = Path(path)
+    array = np.load(array_path, mmap_mode="r")
+    if not _finite_receipt_matches(array_path, array) and not np.isfinite(array).all():
         raise ValueError(f"Retrieval embedding store contains non-finite values: {path}")
+    if not _finite_receipt_matches(array_path, array):
+        write_finite_array_receipt(array_path, array=array)
     return array
+
+
+def write_finite_array_receipt(path: Path, *, array: np.ndarray | None = None) -> Path:
+    """Record a completed full-array finite scan for cheap cross-process reuse."""
+    array = np.load(path, mmap_mode="r") if array is None else array
+    stat = path.stat()
+    receipt_path = _finite_receipt_path(path)
+    write_json_atomic(
+        receipt_path,
+        {
+            "type": "finite_numpy_array_receipt.v1",
+            "path": str(path),
+            "size_bytes": stat.st_size,
+            "mtime_ns": stat.st_mtime_ns,
+            "shape": list(array.shape),
+            "dtype": str(array.dtype),
+            "all_finite": True,
+        },
+    )
+    return receipt_path
+
+
+def _finite_receipt_matches(path: Path, array: np.ndarray) -> bool:
+    receipt_path = _finite_receipt_path(path)
+    if not receipt_path.is_file():
+        return False
+    try:
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        stat = path.stat()
+        return (
+            receipt.get("type") == "finite_numpy_array_receipt.v1"
+            and receipt.get("all_finite") is True
+            and int(receipt.get("size_bytes") or -1) == stat.st_size
+            and int(receipt.get("mtime_ns") or -1) == stat.st_mtime_ns
+            and list(receipt.get("shape") or []) == list(array.shape)
+            and str(receipt.get("dtype") or "") == str(array.dtype)
+        )
+    except (OSError, ValueError, TypeError, json.JSONDecodeError):
+        return False
+
+
+def _finite_receipt_path(path: Path) -> Path:
+    return path.with_name(f"{path.name}.finite.json")
 
 
 @lru_cache(maxsize=32)

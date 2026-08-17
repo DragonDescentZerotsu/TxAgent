@@ -1,0 +1,25 @@
+{
+  "type": "starling_table2_release_snapshot.v1",
+  "paper": {
+    "title": "Self-Driving Datasets: From 20 Million Papers to Nuanced Biomedical Knowledge at Scale",
+    "arxiv": "2605.07022v3",
+    "table": 2
+  },
+  "copied_at": "2026-08-12",
+  "source": "/Users/kirianozan/Documents/Study/Penn/projects/Starling/tdc_starling_data",
+  "copy_policy": "byte-for-byte",
+  "files": {
+    "bbb_lit_test.csv": "054c964be9ba9b5bb1ffa92a830e756233beeecd52355781c74551df47dd1f20",
+    "bbb_lit_train.csv": "3a12493d19939d73aa20c9e76b1bde5a429eed57b70ebc2095994f3324decb38",
+    "bbb_tdc_plus_lit_train.csv": "031bea9b2b120a5c14e1ee238eb295e56fc60bd53e5a769fcb39f45e3ca6181f",
+    "bbb_tdc_test.csv": "687b6cb02f4c44d4e6ddae7c85523a99d1848c0b868f8ee6b79191c4dcc76ebf",
+    "ld50_lit_test.csv": "baa8268392d41206569264e09454a92766e0d3c108340668018593d1897c812c",
+    "ld50_lit_train.csv": "4fa9b11109d13c2c579a830ad407c1a3052f28b96dcf5c356dd3ae2ab59d4283",
+    "ld50_tdc_plus_lit_train.csv": "f6446c28b76a7bb879416181236a5abd6425ef44f78e4e3bb585b028b0958abe",
+    "ld50_tdc_test.csv": "c99b8421a708380f24806cfee3e88472d36d4cd8d69456825049829d1ffe7156",
+    "oral_ba_lit_test.csv": "6056c750c1dc709d694baf1182d213539409eb71661f10a846f9d7327f0517ab",
+    "oral_ba_lit_train.csv": "1047a8a19b51211e9590f2cecb9c0e0f55b9e2c038001c52e892f968f289b4d7",
+    "oral_ba_tdc_plus_lit_train.csv": "775ea762345b5aaa428477a6dcb2609520c7834c89f8f82025ac2142690df16a",
+    "oral_ba_tdc_test.csv": "4ca1f102434c9666844ebcd4df77e2b34ea96bb1cad34d32a25083955cbba7b5"
+  }
+}

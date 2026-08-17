@@ -285,9 +285,22 @@ def _rank_group_candidates(
     decisions: dict[int, Any] = {}
     matched_groups_by_index: dict[int, list[str]] = {}
     evidence_by_index: dict[int, list[dict[str, Any]]] = {}
-    for molecule_index in candidate_indices:
+    ordered_candidate_indices = candidate_indices
+    stop_after_top_k = neighbor_selector == SIMILARITY_SELECTOR
+    if stop_after_top_k:
+        ordered_candidate_indices = sorted(
+            candidate_indices,
+            key=lambda molecule_index: (
+                -float(similarities[molecule_index]),
+                str(index["molecules"][molecule_index]["molecule_chembl_id"]),
+                molecule_index,
+            ),
+        )
+    for molecule_index in ordered_candidate_indices:
         similarity = float(similarities[molecule_index])
         if similarity < min_similarity:
+            if stop_after_top_k:
+                break
             continue
         molecule = index["molecules"][molecule_index]
         decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
@@ -309,13 +322,19 @@ def _rank_group_candidates(
         decisions[molecule_index] = decision
         matched_groups_by_index[molecule_index] = matched_groups
         evidence_by_index[molecule_index] = evidence_rows
+        if stop_after_top_k and len(eligible) >= top_k:
+            break
 
-    selected = select_neighbor_candidates(
-        eligible,
-        query_fingerprint=query_fingerprint,
-        candidate_fingerprints=index["fingerprints"],
-        top_k=top_k,
-        selector=neighbor_selector,
+    selected = (
+        eligible
+        if stop_after_top_k
+        else select_neighbor_candidates(
+            eligible,
+            query_fingerprint=query_fingerprint,
+            candidate_fingerprints=index["fingerprints"],
+            top_k=top_k,
+            selector=neighbor_selector,
+        )
     )
     neighbors = []
     for candidate in selected:

@@ -25,14 +25,25 @@ FP_BITS = 2048
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    train_path = args.data_dir / "train.jsonl"
+    _validate_reference_splits(args.reference_splits, args.evaluation_split)
+    reference_paths = [args.data_dir / f"{split}.jsonl" for split in args.reference_splits]
     test_path = args.data_dir / f"{args.evaluation_split}.jsonl"
-    train = _read_split(train_path)
+    reference = []
+    for split, path in zip(args.reference_splits, reference_paths, strict=True):
+        reference.extend(
+            {
+                **row,
+                "reference_split": split,
+                "reference_index": index,
+                "reference_path": path,
+            }
+            for index, row in enumerate(_read_split(path))
+        )
     test = _read_split(test_path)
     if args.k <= 0:
         raise ValueError("--k must be positive")
-    if len(train) < args.k:
-        raise ValueError(f"Training set has {len(train)} rows, fewer than k={args.k}")
+    if len(reference) < args.k:
+        raise ValueError(f"Reference pool has {len(reference)} rows, fewer than k={args.k}")
 
     generator = rdFingerprintGenerator.GetMorganGenerator(
         radius=FP_RADIUS,
@@ -40,15 +51,20 @@ def main(argv: list[str] | None = None) -> int:
         includeChirality=False,
         useBondTypes=True,
     )
-    train_fps = [
-        _fingerprint(row["drug"], generator, source=train_path, index=index)
-        for index, row in enumerate(train)
+    reference_fps = [
+        _fingerprint(
+            row["drug"],
+            generator,
+            source=row["reference_path"],
+            index=row["reference_index"],
+        )
+        for row in reference
     ]
 
     predictions = []
     for query_index, row in enumerate(test):
         query_fp = _fingerprint(row["drug"], generator, source=test_path, index=query_index)
-        similarities = DataStructs.BulkTanimotoSimilarity(query_fp, train_fps)
+        similarities = DataStructs.BulkTanimotoSimilarity(query_fp, reference_fps)
         candidates = [
             NeighborCandidate(
                 molecule_index=train_index,
@@ -76,15 +92,18 @@ def main(argv: list[str] | None = None) -> int:
         selected = select_neighbor_candidates(
             candidates,
             query_fingerprint=query_fp,
-            candidate_fingerprints=train_fps,
+            candidate_fingerprints=reference_fps,
             top_k=args.k,
             selector=args.neighbor_selector,
         )
         neighbors = [
             {
                 "train_index": candidate.molecule_index,
-                "drug": train[candidate.molecule_index]["drug"],
-                "Y": train[candidate.molecule_index]["Y"],
+                "reference_pool_index": candidate.molecule_index,
+                "reference_split": reference[candidate.molecule_index]["reference_split"],
+                "reference_index": reference[candidate.molecule_index]["reference_index"],
+                "drug": reference[candidate.molecule_index]["drug"],
+                "Y": reference[candidate.molecule_index]["Y"],
                 "similarity": candidate.similarity,
             }
             for candidate in selected
@@ -103,7 +122,7 @@ def main(argv: list[str] | None = None) -> int:
                 "n_eligible_neighbors": len(candidates),
                 "retrieval_diagnostics": _retrieval_diagnostics(
                     query_fp,
-                    [train_fps[candidate.molecule_index] for candidate in selected],
+                    [reference_fps[candidate.molecule_index] for candidate in selected],
                     selected,
                 ),
                 "neighbors": neighbors,
@@ -127,7 +146,13 @@ def main(argv: list[str] | None = None) -> int:
             "k": args.k,
             "vote": "unweighted_majority",
             "score": "positive_neighbor_fraction",
-            "n_train": len(train),
+            "reference_splits": args.reference_splits,
+            "n_reference": len(reference),
+            "n_reference_by_split": {
+                split: sum(row["reference_split"] == split for row in reference)
+                for split in args.reference_splits
+            },
+            "n_train": sum(row["reference_split"] == "train" for row in reference),
             "n_test": len(test),
             "n_evaluation": len(test),
             "n_evaluated": len(evaluated_predictions),
@@ -160,7 +185,9 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps(
             {
                 "data_dir": str(args.data_dir),
-                "train_path": str(train_path),
+                "train_path": str(args.data_dir / "train.jsonl"),
+                "reference_splits": args.reference_splits,
+                "reference_paths": [str(path) for path in reference_paths],
                 "test_path": str(test_path),
                 "evaluation_path": str(test_path),
                 "evaluation_split": args.evaluation_split,
@@ -185,6 +212,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(json.dumps(metrics, indent=2), flush=True)
     return 0
+
+
+def _validate_reference_splits(reference_splits: list[str], evaluation_split: str) -> None:
+    allowed = (["train"], ["train", "valid"])
+    if reference_splits not in allowed:
+        raise ValueError(
+            "--reference-splits must be exactly 'train' or 'train valid'"
+        )
+    if reference_splits == ["train", "valid"] and evaluation_split != "test":
+        raise ValueError("train valid reference pool is allowed only for test evaluation")
 
 
 def _read_split(path: Path) -> list[dict[str, Any]]:
@@ -321,6 +358,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--evaluation-split",
         choices=("valid", "test"),
         default="test",
+    )
+    parser.add_argument(
+        "--reference-splits",
+        nargs="+",
+        choices=("train", "valid"),
+        default=["train"],
+        help="Labeled reference splits. Use train valid only when evaluating test.",
     )
     parser.add_argument("--k", type=int, default=3)
     parser.add_argument(
