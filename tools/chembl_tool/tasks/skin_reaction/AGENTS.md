@@ -39,7 +39,8 @@ fields:
 `data/processed_starling/Skin_Reaction/{random,scaffold}` 属于 `record_agreement70_split811_v1` historical
 comparison。冲突 parent 按 accepted source records 计算 70% agreement，同 PMID 多条 record 分别计票，
 精确 tie 拒绝。当前 v2 正式运行前必须按 scaffold valid+test union 的 `heldout_molecule_labels.jsonl`
-重建 train-only retrieval index；historical v1 的两个 split 仍各自使用对应 union，不能跨 lineage 复用。
+重建 direct-source-filtered retrieval view：只从 `direct_skin_reaction` 删除 held-out parents，保留 mechanism
+records 并在 query time 使用 `parent_disjoint`；historical v1 的两个 split 仍各自使用对应 union，不能跨 lineage 复用。
 构建命令和审计协议见
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
 
@@ -402,14 +403,19 @@ resolve it by that convention; there is no separate registry. The task entry poi
   --workers 128
 ```
 
-Stages 01-03 are built by the shared normalized-record driver. The split-aware stages 04-09 are built
-transactionally by `common/starling/split_downstream.py`, with thin task bindings in
-`build_starling_downstream_artifacts.py`:
+Stages 01-03 are built by the shared normalized-record driver. New task-level builds add only
+split-independent Stage 04-05 through `common/starling/split_downstream.py`. Lineage-specific Stage 06-09
+belongs to paper evidence views; the old complete Stage 04-09 transaction remains available only through
+`--legacy-task-local-downstream`, with thin task bindings in `build_starling_downstream_artifacts.py`:
 
-The current v7 tree uses `02_canonicalized` and `05_distance_calibration`. Stage 04 is the sole bucket
-membership authority. Stage 05 uses rank geometry for the declared binary/ordinal scales, requires both
+The current v7 tree uses `02_canonicalized` and `05_distance_calibration`. Canonical measurement/unit/scalar
+fields are exclusively the assay-transfer numerical contract; retrieval and LLM evidence use the cleaned
+source projection. The shared parser, Skin measurement semantics, contextual reconciliation, v7 projection,
+and frozen `data_processing/assay_transfer_measurements_v1/policy.json` compose the one final canonical
+tuple. Stage 04 retains every record and is the sole assay-transfer eligibility and bucket-membership
+authority; reviewed unit defects are marked ineligible rather than deleted. Stage 05 uses rank geometry for the declared binary/ordinal scales, requires both
 binary levels or at least three ordinal levels with three records per observed level, and emits no transfer
-cutoff, Boolean label, or soft probability. Its v2 artifact exposes sample SD as first-class metadata and
+cutoff, Boolean label, or soft probability. Its v3 artifact exposes sample SD as first-class metadata and
 adds an exact value CDF for valid continuous buckets plus an exact category-rank CDF for valid ordinal
 buckets; binary buckets do not publish a CDF. It stores no raw-distance CDF. The historical
 stage name remains for archived-v1 compatibility. The layout below documents frozen v6 lineage.

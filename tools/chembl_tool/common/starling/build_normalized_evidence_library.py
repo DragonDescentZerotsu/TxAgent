@@ -451,6 +451,17 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                     f"{len(pair_errors)} measurement/unit pair invariant failure(s); "
                     f"first={pair_errors[0]}"
                 )
+            if policy.assay_transfer_measurement_policy is not None:
+                from tools.chembl_tool.common.starling.assay_transfer_measurements import (
+                    validate_final_assay_transfer_measurements,
+                )
+
+                final_errors = validate_final_assay_transfer_measurements(normalized)
+                if final_errors:
+                    raise ValueError(
+                        f"{len(final_errors)} final assay-transfer measurement "
+                        f"failure(s); first={final_errors[0]}"
+                    )
         _require_valid_schema(normalized, "normalize")
         if not policy.record_contract:
             normalized = policy.attach_source_columns(normalized)
@@ -578,6 +589,17 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                     policy.record_contract.inflate_canonical(row)
                     for row in normalized
                 ]
+        if args.frozen_retrieval_normalized_records:
+            from tools.chembl_tool.common.starling.retrieval_boundary import (
+                freeze_normalized_retrieval_identity,
+            )
+
+            normalized = freeze_normalized_retrieval_identity(
+                normalized, args.frozen_retrieval_normalized_records
+            )
+            normalized_persisted = freeze_normalized_retrieval_identity(
+                normalized_persisted, args.frozen_retrieval_normalized_records
+            )
         records, duplicates, exclusions, organization_stats = organize_normalized_records(
             normalized
         )
@@ -615,6 +637,14 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                 )[0]
         else:
             records_persisted = compact_persisted_records(records)
+        if args.frozen_retrieval_records:
+            from tools.chembl_tool.common.starling.retrieval_boundary import (
+                freeze_retrieval_boundary,
+            )
+
+            records_persisted = freeze_retrieval_boundary(
+                records_persisted, args.frozen_retrieval_records
+            )
         assert_compact_schema(records_persisted)
         with _temporary_stage_directory(out_dir, "organize") as stage_dir:
             write_parquet(stage_dir / RECORDS_FILENAME, records_persisted)
@@ -626,7 +656,23 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                 out_dir,
                 "organize",
                 policy=policy,
-                inputs={"normalized_records": out_dir / normalized_records_filename},
+                inputs={
+                    "normalized_records": out_dir / normalized_records_filename,
+                    **(
+                        {"frozen_retrieval_records": args.frozen_retrieval_records}
+                        if args.frozen_retrieval_records
+                        else {}
+                    ),
+                    **(
+                        {
+                            "frozen_retrieval_normalized_records": (
+                                args.frozen_retrieval_normalized_records
+                            )
+                        }
+                        if args.frozen_retrieval_normalized_records
+                        else {}
+                    ),
+                },
                 output_filename=RECORDS_FILENAME,
                 row_counts=organization_stats,
                 validations={
@@ -1383,6 +1429,31 @@ def parse_args(
     )
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--progress-every", type=int, default=10000)
+    parser.add_argument(
+        "--frozen-retrieval-records",
+        type=Path,
+        help=(
+            "Prior Stage-03 records whose retrieval identity and eligibility "
+            "remain authoritative during an assay-transfer-only rebuild."
+        ),
+    )
+    parser.add_argument(
+        "--frozen-retrieval-normalized-records",
+        type=Path,
+        help=(
+            "Prior Stage-02 records whose structure identity is restored "
+            "before retrieval deduplication."
+        ),
+    )
+    parser.add_argument(
+        "--legacy-task-local-downstream",
+        action="store_true",
+        help=(
+            "Reproduce historical task-local Stages 06-09. By default v7 task "
+            "wrappers stop at split-independent Stage 05; current benchmark "
+            "views belong under lineage-specific paper roots."
+        ),
+    )
     parser.add_argument(
         "--validation-level",
         choices=("strict", "full"),

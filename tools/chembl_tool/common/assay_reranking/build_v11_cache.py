@@ -6,9 +6,9 @@ from __future__ import annotations
 import argparse
 import importlib
 import json
+import math
 import multiprocessing as mp
 import queue
-import shutil
 import sqlite3
 import sys
 import time
@@ -33,6 +33,7 @@ from tools.chembl_tool.common.assay_reranking.v11 import (
     ASSET_ROOT,
     BACKBONE_DTYPE,
     CACHE_SCHEMA_VERSION,
+    COMPACT_CACHE_SCHEMA_VERSION,
     CANDIDATE_SCHEMA_VERSION,
     CATALOG_SCHEMA_VERSION,
     DEMAND_SCHEMA_VERSION,
@@ -59,6 +60,8 @@ from tools.chembl_tool.common.assay_reranking.v11 import (
 SUPPORTED_TASKS = ("bioavailability_ma", "skin_reaction", "bbb_martins")
 DEFAULT_TASKS = ("bioavailability_ma", "skin_reaction")
 REQUIRED_TRANSFORMERS_VERSION = "4.57.6"
+RECORD_SCOPES = ("all", "labelable_direct", "numeric_direct")
+ALL_RECORD_SCOPE = "all_stage07_retrieval_eligible_records"
 POPCOUNT = np.asarray([int(value).bit_count() for value in range(256)], dtype=np.uint8)
 
 
@@ -66,45 +69,57 @@ def _log(message: str) -> None:
     print(f"[v11_assay_transfer_cache] {message}", file=sys.stderr, flush=True)
 
 
-def _task_paths(task_id: str, split: str, subset: str, output_root: str) -> dict[str, Path]:
+def _task_paths(args: argparse.Namespace, task_id: str) -> dict[str, Path]:
+    split = args.benchmark_split
+    subset = args.evaluation_subset
     profile = model_profile(task_id)
-    artifact_root = (
-        Path("outputs/chembl_tool/tasks")
-        / task_id
-        / "evidence_library/starling_normalized_v7"
-    )
-    target = (
-        Path(output_root)
-        / task_id
-        / "evidence_library/assay_transfer_rerank"
-        / PROFILE_NAME
-        / split
-        / subset
-    )
+    artifact_root = args.task_evidence_views.get(task_id)
+    query_path = args.task_query_jsonls.get(task_id)
+    target = args.task_cache_dirs.get(task_id)
+    if artifact_root is None:
+        artifact_root = (
+            Path("outputs/chembl_tool/tasks")
+            / task_id
+            / "evidence_library/starling_normalized_v7"
+        )
+        records = artifact_root / "06_remove_heldout_overlap" / split / "records.parquet"
+        evidence = artifact_root / "07_molecule_evidence" / split
+        index = artifact_root / "08_neighbor_index" / split
+    else:
+        records = artifact_root / "06_records/records.parquet"
+        evidence = artifact_root / "07_molecule_evidence"
+        index = artifact_root / "08_neighbor_index"
+    if query_path is None:
+        query_path = (
+            Path("data/processed_starling")
+            / str(profile["dataset_name"])
+            / split
+            / f"{subset}.jsonl"
+        )
+    if target is None:
+        target = (
+            Path(args.output_root)
+            / task_id
+            / "evidence_library/assay_transfer_rerank"
+            / PROFILE_NAME
+            / split
+            / subset
+        )
     return {
         "artifact_root": artifact_root,
-        "records": artifact_root / "06_remove_heldout_overlap" / split / "records.parquet",
-        "evidence": artifact_root / "07_molecule_evidence" / split,
-        "bridge": artifact_root
-        / "07_molecule_evidence"
-        / split
-        / "molecule_family_records.parquet",
-        "index": artifact_root / "08_neighbor_index" / split,
-        "queries": Path("data/processed_starling")
-        / str(profile["dataset_name"])
-        / split
-        / f"{subset}.jsonl",
+        "records": records,
+        "evidence": evidence,
+        "bridge": evidence / "molecule_family_records.parquet",
+        "index": index,
+        "queries": query_path,
         "output": target,
-        "catalog": target / "catalog.jsonl",
-        "candidate_manifest": target / "candidate_manifest.jsonl",
-        "demand": target / "prompt_demand.jsonl",
         "cache": target / "scores.sqlite3",
         "version": target / "VERSION.json",
     }
 
 
 def _required_inputs(paths: Mapping[str, Path]) -> list[Path]:
-    return [
+    inputs = [
         paths["records"],
         paths["bridge"],
         paths["evidence"] / "manifest.json",
@@ -114,6 +129,10 @@ def _required_inputs(paths: Mapping[str, Path]) -> list[Path]:
         paths["index"] / "fingerprints.npz",
         paths["queries"],
     ]
+    root_manifest = paths["artifact_root"] / "manifest.json"
+    if root_manifest.is_file():
+        inputs.append(root_manifest)
+    return inputs
 
 
 def _check_inputs(paths: Mapping[str, Path]) -> None:
@@ -282,10 +301,12 @@ def _candidate_rows(
                     -item[0],
                     index["molecules"][item[1]]["molecule_chembl_id"],
                 ),
-            )[:initial_pool]
+            )
             candidates = []
             excluded = 0
+            examined = 0
             for structural_rank, (similarity, molecule_index) in enumerate(ranked, start=1):
+                examined += 1
                 molecule = index["molecules"][molecule_index]
                 decision = decide_candidate(query_identity, molecule, identity_policy)
                 if decision.excluded:
@@ -321,6 +342,8 @@ def _candidate_rows(
                         "record_ids": unique_ids,
                     }
                 )
+                if len(candidates) == initial_pool:
+                    break
             yield {
                 "record_type": "candidate_group",
                 "query_index": query_index,
@@ -328,7 +351,7 @@ def _candidate_rows(
                 "query_canonical_smiles": canonical,
                 "group_id": spec.group_id,
                 "source_group_ids": list(source_groups),
-                "raw_morgan_pool_size": len(ranked),
+                "morgan_candidates_examined": examined,
                 "n_identity_excluded": excluded,
                 "candidates": candidates,
             }
@@ -347,7 +370,7 @@ def _open_prepare_db(path: Path) -> sqlite3.Connection:
             query_smiles TEXT NOT NULL,
             group_id TEXT NOT NULL,
             molecule_id TEXT NOT NULL,
-            PRIMARY KEY(record_id, query_smiles)
+            PRIMARY KEY(record_id, query_smiles, group_id, molecule_id)
         ) WITHOUT ROWID;
         CREATE TABLE records (
             record_id TEXT PRIMARY KEY,
@@ -373,6 +396,96 @@ def _source_projection(task_id: str, record: Mapping[str, Any]) -> dict[str, Any
     ).POLICY
     profile = policy.compact_profile_for_contract("starling_record_contract.v7")
     return profile.llm_source_projection(record)
+
+
+def _eligible_record_ids(task_id: str, path: Path, scope: str) -> set[str] | None:
+    if scope == "all":
+        return None
+
+    if task_id == "bbb_martins":
+        from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
+            label_record,
+        )
+    elif task_id == "skin_reaction":
+        from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import label_record
+    else:
+        from tools.chembl_tool.common.starling.benchmark_dataset import (
+            has_reported_text,
+            parse_numeric_interval,
+        )
+        from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+            DIRECT_REPORT_TYPES,
+        )
+        from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
+            is_human_context,
+            label_bioavailability_value,
+        )
+
+    eligible = set()
+    direct_sources = {
+        "bbb_martins": {"direct_bbb"},
+        "skin_reaction": {"direct_skin_reaction"},
+        "bioavailability_ma": {"hf_bioavailability", "oral_exposure"},
+    }[task_id]
+    parquet = pq.ParquetFile(path)
+    for batch in parquet.iter_batches(batch_size=16_384):
+        for record in batch.to_pylist():
+            source_id = str(record.get("source_id") or "")
+            if source_id not in direct_sources:
+                continue
+            fields = _source_projection(task_id, record)["source_fields"]
+            if task_id == "bbb_martins":
+                source_index = fields.get("source_index")
+                label, _ = label_record(
+                    {
+                        **fields,
+                        "quant_metric": fields.get("endpoint_name"),
+                        "quant_value": fields.get("measurement_text"),
+                        "quant_units": fields.get("unit_text"),
+                    },
+                    source_index=(
+                        int(source_index) if source_index is not None else None
+                    ),
+                )
+            elif task_id == "skin_reaction":
+                label, _ = label_record(
+                    {
+                        "reaction_type": fields.get("endpoint_name"),
+                        "outcome_label": fields.get("outcome_label"),
+                    }
+                )
+            else:
+                report_type = str(
+                    fields.get("bioavailability_report_type") or ""
+                ).strip().lower()
+                if source_id == "hf_bioavailability" and report_type not in DIRECT_REPORT_TYPES:
+                    continue
+                population = fields.get("species_or_population") or fields.get(
+                    "study_context"
+                )
+                if not is_human_context(population) or has_reported_text(
+                    fields.get("qualifying_conditions")
+                ):
+                    continue
+                measurement = str(fields.get("measurement_text") or "").strip()
+                unit = str(fields.get("unit_text") or "").strip()
+                value_text = f"{measurement} {unit}".strip()
+                label, _ = label_bioavailability_value(value_text)
+            if label is None:
+                continue
+            if scope == "numeric_direct":
+                interval = parse_numeric_interval(
+                    value_text, fraction_to_percent=True
+                )
+                if not (
+                    interval is not None
+                    and interval.method in {"reported_point", "reported_mean_plus_minus"}
+                    and math.isfinite(interval.lower)
+                    and math.isfinite(interval.upper)
+                ):
+                    continue
+            eligible.add(str(record["canonical_record_id"]))
+    return eligible
 
 
 def _catalog_record(
@@ -504,198 +617,304 @@ def _write_demand(
     return count, duplicate_count
 
 
+def _open_compact_build_db(path: Path) -> sqlite3.Connection:
+    path.unlink(missing_ok=True)
+    connection = sqlite3.connect(path)
+    connection.execute("PRAGMA journal_mode=WAL")
+    connection.execute("PRAGMA synchronous=NORMAL")
+    connection.execute("PRAGMA foreign_keys=ON")
+    connection.executescript(
+        """
+        CREATE TABLE cache_metadata(key TEXT PRIMARY KEY, value TEXT NOT NULL);
+        CREATE TABLE queries(query_id INTEGER PRIMARY KEY, query_smiles TEXT UNIQUE NOT NULL);
+        CREATE TABLE groups_dim(group_key INTEGER PRIMARY KEY, group_id TEXT UNIQUE NOT NULL);
+        CREATE TABLE molecules(
+            molecule_key INTEGER PRIMARY KEY, molecule_chembl_id TEXT UNIQUE NOT NULL
+        );
+        CREATE TABLE records(
+            record_key INTEGER PRIMARY KEY,
+            external_record_id TEXT UNIQUE NOT NULL,
+            payload TEXT NOT NULL
+        );
+        CREATE TABLE prompt_tasks(
+            prompt_key INTEGER PRIMARY KEY,
+            cache_key TEXT UNIQUE NOT NULL,
+            prompt TEXT NOT NULL
+        );
+        CREATE TABLE prompt_assignments(
+            query_id INTEGER NOT NULL,
+            group_key INTEGER NOT NULL,
+            molecule_key INTEGER NOT NULL,
+            record_key INTEGER NOT NULL,
+            prompt_key INTEGER NOT NULL,
+            PRIMARY KEY(query_id, group_key, molecule_key, record_key)
+        ) WITHOUT ROWID;
+        CREATE TABLE prompt_scores(
+            prompt_key INTEGER PRIMARY KEY,
+            transfer_probability REAL NOT NULL
+        );
+        """
+    )
+    return connection
+
+
+def _dimension_key(
+    connection: sqlite3.Connection, table: str, key_column: str, value_column: str, value: str
+) -> int:
+    connection.execute(
+        f"INSERT OR IGNORE INTO {table}({value_column}) VALUES (?)", (value,)
+    )
+    row = connection.execute(
+        f"SELECT {key_column} FROM {table} WHERE {value_column}=?", (value,)
+    ).fetchone()
+    if row is None:
+        raise RuntimeError(f"Failed to resolve {table} dimension")
+    return int(row[0])
+
+
+def _winning_record_payload(renderer: V11PromptRenderer, record: Mapping[str, Any]) -> dict:
+    return {
+        "record_id": str(record["record_id"]),
+        "canonical_endpoint_key": renderer.canonical_endpoint_key(record),
+        "canonical_smiles": record.get("canonical_smiles"),
+        "measurement_kind": record.get("measurement_kind"),
+        "training_measurement_kind_supported": record.get(
+            "training_measurement_kind_supported"
+        ),
+        "source_contract": record.get("source_contract"),
+        "source_fields": record.get("source_fields"),
+    }
+
+
+def _materialize_compact_demand(
+    *, task_id: str, source: sqlite3.Connection, target: sqlite3.Connection,
+    renderer: V11PromptRenderer, model: str, revision: str,
+) -> tuple[int, int, int]:
+    query = """
+        SELECT refs.query_smiles, refs.group_id, refs.molecule_id, records.payload
+        FROM refs JOIN records USING(record_id)
+        ORDER BY refs.query_smiles, refs.group_id, refs.molecule_id, refs.record_id
+    """
+    assignments = duplicates = 0
+    for query_smiles, group_id, molecule_id, payload_json in source.execute(query):
+        record = json.loads(payload_json)
+        task = build_prompt_task(
+            renderer, record, query_smiles=str(query_smiles), group_id=str(group_id),
+            molecule_id=str(molecule_id), model=model, model_revision=revision,
+        )
+        query_id = _dimension_key(target, "queries", "query_id", "query_smiles", str(query_smiles))
+        group_key = _dimension_key(target, "groups_dim", "group_key", "group_id", str(group_id))
+        molecule_key = _dimension_key(
+            target, "molecules", "molecule_key", "molecule_chembl_id", str(molecule_id)
+        )
+        record_id = str(record["record_id"])
+        payload = json.dumps(
+            _winning_record_payload(renderer, record), ensure_ascii=False, sort_keys=True
+        )
+        target.execute(
+            "INSERT OR IGNORE INTO records(external_record_id, payload) VALUES (?, ?)",
+            (record_id, payload),
+        )
+        record_key = int(target.execute(
+            "SELECT record_key FROM records WHERE external_record_id=?", (record_id,)
+        ).fetchone()[0])
+        inserted = target.execute(
+            "INSERT OR IGNORE INTO prompt_tasks(cache_key, prompt) VALUES (?, ?)",
+            (task.cache_key, task.prompt),
+        ).rowcount
+        if not inserted:
+            duplicates += 1
+        prompt_key = int(target.execute(
+            "SELECT prompt_key FROM prompt_tasks WHERE cache_key=?", (task.cache_key,)
+        ).fetchone()[0])
+        target.execute(
+            "INSERT OR IGNORE INTO prompt_assignments VALUES (?, ?, ?, ?, ?)",
+            (query_id, group_key, molecule_key, record_key, prompt_key),
+        )
+        assignments += 1
+        if assignments % 100_000 == 0:
+            target.commit()
+            _log(f"{task_id}: materialized {assignments} compact score assignments")
+    target.commit()
+    prompts = int(target.execute("SELECT COUNT(*) FROM prompt_tasks").fetchone()[0])
+    return assignments, prompts, duplicates
+
+
+def _metadata_rows(version: Mapping[str, Any]) -> list[tuple[str, str]]:
+    keys = (
+        "schema_version", "status", "task_id", "profile", "model", "model_revision",
+        "scoring_contract_version", "backbone_dtype", "logit_extraction_dtype",
+        "template_hash", "projection_hash", "candidate_contract", "record_scope",
+    )
+    return [(key, json.dumps(version[key], sort_keys=True)) for key in keys]
+
+
 def prepare_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
     if args.benchmark_split != "scaffold":
         raise ValueError("V11 with-categorical models reserve scaffold valid+test only")
-    verify_vendored_assets()
-    profile = model_profile(task_id)
-    paths = _task_paths(
-        task_id, args.benchmark_split, args.evaluation_subset, args.output_root
-    )
+    source_hashes = verify_vendored_assets()
+    profile = dict(model_profile(task_id))
+    if args.assay_transfer_model:
+        profile["model"] = args.assay_transfer_model
+        profile["revision"] = args.assay_transfer_model_revision
+    paths = _task_paths(args, task_id)
     _check_inputs(paths)
     _check_source_stability(paths)
+    paper_direct_contract = None
+    if args.record_scope != "all":
+        root_manifest_path = paths["artifact_root"] / "manifest.json"
+        root_manifest = json.loads(root_manifest_path.read_text(encoding="utf-8"))
+        heldout_filter = root_manifest.get("heldout_filter") or {}
+        if (
+            root_manifest.get("heldout_filter_mode") != "all_scaffolds"
+            or not heldout_filter.get("zero_parent_overlap")
+            or not heldout_filter.get("zero_heldout_scaffold_overlap")
+        ):
+            raise ValueError(
+                "Direct caches require all-source held-out scaffold filtering"
+            )
+        paper_direct_contract = root_manifest.get("paper_direct_contract")
+        if task_id == "bioavailability_ma" and not paper_direct_contract:
+            raise ValueError(
+                "Bioavailability direct caches require the canonical paper direct contract"
+            )
     input_hashes_before = _input_hashes(paths)
+    record_scope = ALL_RECORD_SCOPE if args.record_scope == "all" else args.record_scope
     paths["output"].mkdir(parents=True, exist_ok=True)
-    paths["version"].unlink(missing_ok=True)
+    if paths["version"].is_file() and paths["cache"].is_file() and not args.force_prepare:
+        existing = json.loads(paths["version"].read_text(encoding="utf-8"))
+        if (
+            existing.get("inputs") == input_hashes_before
+            and existing.get("record_scope") == record_scope
+        ):
+            _log(f"{task_id}: reusing existing {existing.get('status')} compact cache")
+            return existing
+        raise ValueError(f"{task_id}: existing cache contract differs; use --force-prepare")
     renderer = V11PromptRenderer(task_id)
     queries = _read_jsonl(paths["queries"])
     index = _load_lightweight_index(paths["index"])
     bridge = _load_bridge(paths["bridge"])
-    work_db = paths["output"] / ".prepare.sqlite3"
-    work_db.unlink(missing_ok=True)
-    connection = _open_prepare_db(work_db)
-    candidate_rows_tmp = paths["output"] / ".candidate_rows.tmp"
-    catalog_rows_tmp = paths["output"] / ".catalog_rows.tmp"
-    demand_rows_tmp = paths["output"] / ".demand_rows.tmp"
-    n_groups = n_candidates = n_refs = 0
-    try:
-        with candidate_rows_tmp.open("w", encoding="utf-8") as output:
-            for row in _candidate_rows(
-                task_id=task_id,
-                queries=queries,
-                index=index,
-                bridge=bridge,
-                initial_pool=args.assay_transfer_initial_morgan_filter,
-                min_similarity=args.min_similarity,
-                identity_policy=args.neighbor_identity_policy,
-            ):
-                output.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
-                n_groups += 1
-                n_candidates += len(row["candidates"])
-                inserts = []
-                for candidate in row["candidates"]:
-                    for record_id in candidate["record_ids"]:
-                        inserts.append(
-                            (
-                                record_id,
-                                row["query_smiles"],
-                                row["group_id"],
-                                candidate["molecule_id"],
-                            )
-                        )
-                connection.executemany(
-                    "INSERT OR IGNORE INTO refs(record_id, query_smiles, group_id, molecule_id) "
-                    "VALUES (?, ?, ?, ?)",
-                    inserts,
-                )
-                n_refs += len(inserts)
-                if n_groups % 100 == 0:
-                    connection.commit()
-        connection.commit()
-        candidate_header = {
-            "record_type": "manifest_metadata",
-            "schema_version": CANDIDATE_SCHEMA_VERSION,
-            "task_id": task_id,
-            "benchmark_split": args.benchmark_split,
-            "evaluation_subset": args.evaluation_subset,
-            "candidate_contract": "tanimoto_raw_pool_then_identity_exclusion.v1",
-            "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
-            "min_similarity": args.min_similarity,
-            "neighbor_identity_policy": args.neighbor_identity_policy,
-            "record_scope": "all_stage07_retrieval_eligible_records",
-            "n_queries": len(queries),
-            "n_groups": n_groups,
-            "n_candidates": n_candidates,
-            "n_record_references_before_deduplication": n_refs,
+    eligible_record_ids = _eligible_record_ids(task_id, paths["records"], args.record_scope)
+    if eligible_record_ids is not None:
+        config = _experiment_config(task_id)
+        available_groups = set(index["group_to_indices"])
+        direct_groups = {
+            source_group
+            for spec in config.direct_groups
+            for source_group in spec.resolve(available_groups)
         }
-        _publish_jsonl(candidate_header, candidate_rows_tmp, paths["candidate_manifest"])
+        bridge = {
+            evidence_id: selected
+            for evidence_id, record_ids in bridge.items()
+            if (selected := tuple(
+                record_id for record_id in record_ids if record_id in eligible_record_ids
+            ))
+        }
+        retained_evidence = set(bridge)
+        index["evidence_by_index_group"] = {
+            key: evidence_id
+            for key, evidence_id in index["evidence_by_index_group"].items()
+            if evidence_id in retained_evidence and key[1] in direct_groups
+        }
+        groups: dict[str, list[int]] = defaultdict(list)
+        for molecule_index, group_id in index["evidence_by_index_group"]:
+            groups[group_id].append(molecule_index)
+        index["group_to_indices"] = {
+            group_id: sorted(set(indices)) for group_id, indices in groups.items()
+        }
+    work_db = paths["output"] / ".prepare.sqlite3"
+    catalog_tmp = paths["output"] / ".catalog_rows.tmp"
+    work_db.unlink(missing_ok=True)
+    source = _open_prepare_db(work_db)
+    target = _open_compact_build_db(paths["cache"])
+    n_groups = n_candidates = n_refs = n_identity_excluded = 0
+    try:
+        for row in _candidate_rows(
+            task_id=task_id, queries=queries, index=index, bridge=bridge,
+            initial_pool=args.assay_transfer_initial_morgan_filter,
+            min_similarity=args.min_similarity, identity_policy=args.neighbor_identity_policy,
+        ):
+            n_groups += 1
+            n_candidates += len(row["candidates"])
+            n_identity_excluded += int(row["n_identity_excluded"])
+            inserts = [
+                (record_id, row["query_smiles"], row["group_id"], candidate["molecule_id"])
+                for candidate in row["candidates"] for record_id in candidate["record_ids"]
+            ]
+            source.executemany(
+                "INSERT OR IGNORE INTO refs VALUES (?, ?, ?, ?)", inserts
+            )
+            n_refs += len(inserts)
+            if n_groups % 100 == 0:
+                source.commit()
+        source.commit()
         n_records = _hydrate_catalog(
-            task_id=task_id,
-            records_path=paths["records"],
-            connection=connection,
-            catalog_rows_path=catalog_rows_tmp,
-            renderer=renderer,
+            task_id=task_id, records_path=paths["records"], connection=source,
+            catalog_rows_path=catalog_tmp, renderer=renderer,
             training_kinds=set(profile["training_measurement_kinds"]),
         )
-        catalog_header = {
-            "record_type": "catalog_metadata",
-            "schema_version": CATALOG_SCHEMA_VERSION,
-            "task_id": task_id,
-            "profile": PROFILE_NAME,
-            "model": profile["model"],
-            "model_revision": profile["revision"],
-            "scoring_contract_version": SCORING_CONTRACT_VERSION,
-            "backbone_dtype": BACKBONE_DTYPE,
-            "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
-            "template_profile": TEMPLATE_PROFILE,
-            "template_hash": renderer.template_hash,
-            "projection_hash": renderer.projection_hash,
-            "query_context_policy": QUERY_CONTEXT_POLICY,
-            "record_scope": "all_stage07_retrieval_eligible_records",
-            "n_records": n_records,
-        }
-        _publish_jsonl(catalog_header, catalog_rows_tmp, paths["catalog"])
-        n_prompts, n_duplicate_prompts = _write_demand(
-            task_id=task_id,
-            connection=connection,
-            rows_path=demand_rows_tmp,
-            renderer=renderer,
-            model=str(profile["model"]),
-            revision=str(profile["revision"]),
+        n_assignments, n_prompts, n_duplicates = _materialize_compact_demand(
+            task_id=task_id, source=source, target=target, renderer=renderer,
+            model=str(profile["model"]), revision=str(profile["revision"]),
         )
-        demand_header = {
-            "record_type": "demand_metadata",
-            "schema_version": DEMAND_SCHEMA_VERSION,
-            "task_id": task_id,
-            "model": profile["model"],
-            "model_revision": profile["revision"],
-            "template_hash": renderer.template_hash,
-            "projection_hash": renderer.projection_hash,
-            "scoring_contract_version": SCORING_CONTRACT_VERSION,
-            "backbone_dtype": BACKBONE_DTYPE,
-            "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
-            "n_prompt_tasks_before_cache_key_deduplication": (
-                n_prompts + n_duplicate_prompts
-            ),
-            "n_duplicate_prompt_tasks_collapsed": n_duplicate_prompts,
-            "n_prompt_scores": n_prompts,
-        }
-        _publish_jsonl(demand_header, demand_rows_tmp, paths["demand"])
-        _check_inputs(paths)
-        _check_source_stability(paths)
         input_hashes_after = _input_hashes(paths)
         if input_hashes_after != input_hashes_before:
-            changed = sorted(
-                path
-                for path in set(input_hashes_before) | set(input_hashes_after)
-                if input_hashes_before.get(path) != input_hashes_after.get(path)
-            )
-            raise RuntimeError(
-                "Normalized-v7 inputs changed during v11 cache preparation: "
-                + ", ".join(changed)
-            )
-        cache = V11ScoreCache(paths["cache"], mode="read_write")
-        n_cached = int(cache.connection.execute("SELECT COUNT(*) FROM prompt_scores").fetchone()[0])
-        cache.close()
-        inputs = input_hashes_before
+            raise RuntimeError("Lineage inputs changed during compact cache preparation")
         version = {
-            "status": "complete" if n_cached == n_prompts else "prepared",
-            "profile": PROFILE_NAME,
-            "task_id": task_id,
-            "model": profile["model"],
-            "model_revision": profile["revision"],
-            "template_profile": TEMPLATE_PROFILE,
-            "template_hash": renderer.template_hash,
-            "projection_hash": renderer.projection_hash,
-            "projection_path": str(PROJECTION_PATH),
+            "schema_version": COMPACT_CACHE_SCHEMA_VERSION,
+            "status": "prepared", "profile": PROFILE_NAME, "task_id": task_id,
+            "model": profile["model"], "model_revision": profile["revision"],
+            "template_profile": TEMPLATE_PROFILE, "template_hash": renderer.template_hash,
+            "projection_hash": renderer.projection_hash, "projection_path": str(PROJECTION_PATH),
+            "prompt_source_revision": "ee303afdc972fbcef820b6a39076032917b7346f",
+            "prompt_asset_hashes": source_hashes,
             "scoring_contract_version": SCORING_CONTRACT_VERSION,
             "backbone_dtype": BACKBONE_DTYPE,
             "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
-            "cache_schema_version": CACHE_SCHEMA_VERSION,
+            "cache_schema_version": COMPACT_CACHE_SCHEMA_VERSION,
             "benchmark_split": args.benchmark_split,
             "evaluation_subset": args.evaluation_subset,
-            "candidate_contract": "tanimoto_raw_pool_then_identity_exclusion.v1",
+            "candidate_contract": (
+                "tanimoto_identity_exclusion_then_eligible_pool.v1"
+                if args.record_scope == "all"
+                else "record_scope_then_tanimoto_identity_exclusion_then_eligible_pool.v1"
+            ),
             "assay_transfer_initial_morgan_filter": args.assay_transfer_initial_morgan_filter,
             "min_similarity": args.min_similarity,
             "neighbor_identity_policy": args.neighbor_identity_policy,
-            "record_scope": "all_stage07_retrieval_eligible_records",
+            "record_scope": record_scope,
+            "paper_direct_contract": paper_direct_contract,
+            "n_record_scope_records": (
+                None if eligible_record_ids is None else len(eligible_record_ids)
+            ),
+            "n_record_scope_molecules": (
+                None
+                if eligible_record_ids is None
+                else len({key[0] for key in index["evidence_by_index_group"]})
+            ),
             "stage04_or_stage05_filter_applied": False,
             "source_stability_check": "pass",
-            "n_queries": len(queries),
-            "n_candidate_groups": n_groups,
-            "n_candidates": n_candidates,
-            "n_catalog_records": n_records,
+            "n_queries": len(queries), "n_candidate_groups": n_groups,
+            "n_candidates": n_candidates, "n_identity_excluded": n_identity_excluded,
+            "n_catalog_records": n_records, "n_score_assignments": n_assignments,
             "n_prompt_scores": n_prompts,
-            "n_prompt_tasks_before_cache_key_deduplication": (
-                n_prompts + n_duplicate_prompts
-            ),
-            "n_duplicate_prompt_tasks_collapsed": n_duplicate_prompts,
-            "n_cached_scores": n_cached,
-            "catalog": str(paths["catalog"]),
-            "catalog_sha256": file_sha256(paths["catalog"]),
-            "candidate_manifest": str(paths["candidate_manifest"]),
-            "candidate_manifest_sha256": file_sha256(paths["candidate_manifest"]),
-            "prompt_demand": str(paths["demand"]),
-            "prompt_demand_sha256": file_sha256(paths["demand"]),
-            "cache": str(paths["cache"]),
-            "inputs": inputs,
+            "n_prompt_tasks_before_cache_key_deduplication": n_prompts + n_duplicates,
+            "n_duplicate_prompt_tasks_collapsed": n_duplicates,
+            "n_cached_scores": 0, "cache": str(paths["cache"]),
+            "inputs": input_hashes_before,
         }
+        target.executemany(
+            "INSERT OR REPLACE INTO cache_metadata(key, value) VALUES (?, ?)",
+            _metadata_rows(version),
+        )
+        target.commit()
         _write_json_atomic(paths["version"], version)
         return version
     finally:
-        connection.close()
-        for temporary in (candidate_rows_tmp, catalog_rows_tmp, demand_rows_tmp, work_db):
-            temporary.unlink(missing_ok=True)
+        source.close()
+        target.close()
+        catalog_tmp.unlink(missing_ok=True)
+        work_db.unlink(missing_ok=True)
         for suffix in ("-wal", "-shm"):
             Path(str(work_db) + suffix).unlink(missing_ok=True)
 
@@ -901,8 +1120,8 @@ def _gpu_worker(
 
 def _parse_devices(value: str) -> list[int]:
     devices = [int(item.strip()) for item in value.split(",") if item.strip()]
-    if not devices or len(devices) != len(set(devices)):
-        raise ValueError("--devices must contain unique CUDA device indices")
+    if not devices or any(device < 0 for device in devices):
+        raise ValueError("--devices must contain nonnegative CUDA device indices")
     return devices
 
 
@@ -924,7 +1143,7 @@ def _resolve_snapshot(model: str, revision: str, local_files_only: bool) -> str:
 def _run_workers(
     *,
     batches: Iterable[list[PromptTask]],
-    cache: V11ScoreCache,
+    cache: Any,
     snapshot: str,
     devices: list[int],
     dtype: str,
@@ -936,15 +1155,16 @@ def _run_workers(
         context.Process(
             target=_gpu_worker,
             args=(device, snapshot, dtype, work_queue, result_queue),
-            name=f"v11-assay-transfer-{device}",
+            name=f"v11-assay-transfer-{worker_index}-gpu-{device}",
         )
-        for device in devices
+        for worker_index, device in enumerate(devices)
     ]
     for worker in workers:
         worker.start()
     iterator = enumerate(batches)
     in_flight: dict[int, list[PromptTask]] = {}
     completed = 0
+    next_report = 10_000
     try:
         ready = 0
         while ready < len(workers):
@@ -987,8 +1207,9 @@ def _run_workers(
             scores = [PromptScore(**payload) for payload in message["scores"]]
             cache.write_batch(tasks, scores)
             completed += len(tasks)
-            if completed % 1000 == 0:
+            if completed >= next_report:
                 _log(f"scored {completed} missing prompts")
+                next_report += 10_000
             submit()
         for _ in workers:
             work_queue.put(None)
@@ -1005,10 +1226,122 @@ def _run_workers(
                 worker.join(timeout=10)
 
 
+class _CompactBuildWriter:
+    def __init__(self, path: Path):
+        self.connection = sqlite3.connect(path, timeout=60.0)
+        self.connection.execute("PRAGMA journal_mode=WAL")
+
+    def write_batch(
+        self, tasks: Iterable[PromptTask], scores: Iterable[PromptScore]
+    ) -> int:
+        tasks_by_key = {task.cache_key: task for task in tasks}
+        rows = []
+        for score in scores:
+            if score.cache_key not in tasks_by_key:
+                raise ValueError(f"Score has no matching compact prompt: {score.cache_key}")
+            prompt_key = self.connection.execute(
+                "SELECT prompt_key FROM prompt_tasks WHERE cache_key=?", (score.cache_key,)
+            ).fetchone()
+            if prompt_key is None:
+                raise ValueError(f"Unknown compact prompt cache key: {score.cache_key}")
+            rows.append((int(prompt_key[0]), float(score.transfer_probability)))
+        self.connection.executemany(
+            "INSERT OR IGNORE INTO prompt_scores(prompt_key, transfer_probability) VALUES (?, ?)",
+            rows,
+        )
+        self.connection.commit()
+        return len(rows)
+
+    def close(self) -> None:
+        self.connection.close()
+
+
+def _iter_compact_missing_batches(
+    path: Path, *, task_id: str, model: str, revision: str, batch_size: int
+) -> Iterator[list[PromptTask]]:
+    renderer = V11PromptRenderer(task_id)
+    connection = sqlite3.connect(f"file:{path.resolve()}?mode=ro", uri=True)
+    try:
+        cursor = connection.execute(
+            """
+            SELECT p.cache_key, p.prompt
+            FROM prompt_tasks p LEFT JOIN prompt_scores s USING(prompt_key)
+            WHERE s.prompt_key IS NULL ORDER BY p.prompt_key
+            """
+        )
+        batch = []
+        for cache_key, prompt in cursor:
+            batch.append(
+                PromptTask(
+                    cache_key=str(cache_key), prompt_hash="", prompt=str(prompt),
+                    task_id=task_id, query_smiles="", group_id="", molecule_id="",
+                    record_id="", model=model, model_revision=revision,
+                    scoring_contract_version=SCORING_CONTRACT_VERSION,
+                    template_hash=renderer.template_hash,
+                    projection_hash=renderer.projection_hash,
+                )
+            )
+            if len(batch) == batch_size:
+                yield batch
+                batch = []
+        if batch:
+            yield batch
+    finally:
+        connection.close()
+
+
+def _finalize_compact_cache(paths: Mapping[str, Path], version: dict[str, Any]) -> None:
+    connection = sqlite3.connect(paths["cache"])
+    try:
+        expected = int(version["n_prompt_scores"])
+        scored = int(connection.execute("SELECT COUNT(*) FROM prompt_scores").fetchone()[0])
+        if scored != expected:
+            raise ValueError(f"Cannot finalize incomplete compact cache: {scored}/{expected}")
+        connection.executescript(
+            """
+            CREATE TABLE scores(
+                score_key INTEGER PRIMARY KEY,
+                transfer_probability REAL NOT NULL
+            );
+            INSERT INTO scores SELECT prompt_key, transfer_probability FROM prompt_scores;
+            CREATE TABLE assignments(
+                query_id INTEGER NOT NULL,
+                group_key INTEGER NOT NULL,
+                molecule_key INTEGER NOT NULL,
+                record_key INTEGER NOT NULL,
+                score_key INTEGER NOT NULL,
+                PRIMARY KEY(query_id, group_key, molecule_key, record_key)
+            ) WITHOUT ROWID;
+            INSERT INTO assignments
+                SELECT query_id, group_key, molecule_key, record_key, prompt_key
+                FROM prompt_assignments;
+            CREATE INDEX assignments_lookup
+                ON assignments(query_id, group_key, molecule_key);
+            DROP TABLE prompt_assignments;
+            DROP TABLE prompt_scores;
+            DROP TABLE prompt_tasks;
+            """
+        )
+        version["status"] = "complete"
+        version["n_cached_scores"] = scored
+        version["rendered_prompts_retained"] = False
+        connection.executemany(
+            "INSERT OR REPLACE INTO cache_metadata(key, value) VALUES (?, ?)",
+            _metadata_rows(version),
+        )
+        connection.commit()
+        connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        connection.execute("PRAGMA journal_mode=DELETE")
+        connection.execute("VACUUM")
+    finally:
+        connection.close()
+
+
 def score_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
-    paths = _task_paths(task_id, args.benchmark_split, args.evaluation_subset, args.output_root)
+    paths = _task_paths(args, task_id)
     version = json.loads(paths["version"].read_text(encoding="utf-8"))
-    profile = model_profile(task_id)
+    if version.get("status") == "complete":
+        return verify_task(args, task_id)
     expected_precision = {
         "scoring_contract_version": SCORING_CONTRACT_VERSION,
         "backbone_dtype": BACKBONE_DTYPE,
@@ -1024,15 +1357,16 @@ def score_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
             "Prepared v11 cache has incompatible precision provenance: "
             + json.dumps(mismatches, sort_keys=True)
         )
-    if version.get("prompt_demand_sha256") != file_sha256(paths["demand"]):
-        raise ValueError("Prompt demand differs from VERSION.json")
     snapshot = _resolve_snapshot(
-        str(profile["model"]), str(profile["revision"]), args.local_files_only
+        str(version["model"]), str(version["model_revision"]), args.local_files_only
     )
-    cache = V11ScoreCache(paths["cache"], mode="read_write")
+    cache = _CompactBuildWriter(paths["cache"])
     try:
         scored = _run_workers(
-            batches=_iter_missing_batches(paths["demand"], cache, args.batch_size),
+            batches=_iter_compact_missing_batches(
+                paths["cache"], task_id=task_id, model=str(version["model"]),
+                revision=str(version["model_revision"]), batch_size=args.batch_size
+            ),
             cache=cache,
             snapshot=snapshot,
             devices=_parse_devices(args.devices),
@@ -1040,52 +1374,64 @@ def score_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
         )
     finally:
         cache.close()
+    _finalize_compact_cache(paths, version)
+    version["cache_sha256"] = file_sha256(paths["cache"])
+    _write_json_atomic(paths["version"], version)
     result = verify_task(args, task_id)
     result["n_scored_this_run"] = scored
     return result
 
 
 def verify_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
-    paths = _task_paths(task_id, args.benchmark_split, args.evaluation_subset, args.output_root)
+    paths = _task_paths(args, task_id)
     version = json.loads(paths["version"].read_text(encoding="utf-8"))
     expected = int(version["n_prompt_scores"])
-    cache = V11ScoreCache(paths["cache"], mode="read_only")
-    missing = demand_count = 0
-    seen_cache_keys: set[str] = set()
+    connection = sqlite3.connect(f"file:{paths['cache'].resolve()}?mode=ro", uri=True)
     try:
-        chunk: list[PromptTask] = []
-        for task in _iter_demand(paths["demand"]):
-            demand_count += 1
-            if task.cache_key in seen_cache_keys:
-                continue
-            seen_cache_keys.add(task.cache_key)
-            chunk.append(task)
-            if len(chunk) == 500:
-                missing += len(chunk) - len(cache.lookup(chunk))
-                chunk = []
-        if chunk:
-            missing += len(chunk) - len(cache.lookup(chunk))
-        cache_count = int(cache.connection.execute("SELECT COUNT(*) FROM prompt_scores").fetchone()[0])
-        quick_check = str(cache.connection.execute("PRAGMA quick_check").fetchone()[0])
+        tables = {
+            str(row[0]) for row in connection.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            )
+        }
+        quick_check = str(connection.execute("PRAGMA quick_check").fetchone()[0])
+        if version.get("status") != "complete":
+            cached = int(connection.execute("SELECT COUNT(*) FROM prompt_scores").fetchone()[0])
+            return {**version, "n_cached_scores": cached, "cache_quick_check": quick_check}
+        forbidden = {"prompt_tasks", "prompt_assignments", "prompt_scores"} & tables
+        if forbidden:
+            raise ValueError(f"Final compact cache retained build tables: {sorted(forbidden)}")
+        cache_count = int(connection.execute("SELECT COUNT(*) FROM scores").fetchone()[0])
+        assignments = int(connection.execute("SELECT COUNT(*) FROM assignments").fetchone()[0])
+        orphans = int(connection.execute(
+            "SELECT COUNT(*) FROM assignments a LEFT JOIN scores s USING(score_key) "
+            "WHERE s.score_key IS NULL"
+        ).fetchone()[0])
     finally:
-        cache.close()
-    unique_demand_count = len(seen_cache_keys)
-    if (
-        demand_count != expected
-        or unique_demand_count != expected
-        or missing
-        or cache_count != expected
-        or quick_check != "ok"
-    ):
+        connection.close()
+    if cache_count != expected or assignments != int(version["n_score_assignments"]) or orphans or quick_check != "ok":
         raise ValueError(
-            "Incomplete v11 cache: "
-            f"demand={demand_count}/{expected}, unique_demand={unique_demand_count}, "
-            f"missing={missing}, "
-            f"cache_rows={cache_count}, quick_check={quick_check}"
+            "Incomplete compact v11 cache: "
+            f"scores={cache_count}/{expected}, assignments={assignments}, "
+            f"orphans={orphans}, quick_check={quick_check}"
         )
-    version.update(status="complete", n_cached_scores=cache_count, cache_quick_check=quick_check)
+    observed_hash = file_sha256(paths["cache"])
+    if version.get("cache_sha256") != observed_hash:
+        raise ValueError("Compact v11 cache hash differs from VERSION.json")
+    version.update(n_cached_scores=cache_count, cache_quick_check=quick_check)
     _write_json_atomic(paths["version"], version)
     return version
+
+
+def _task_path_map(values: list[str], flag: str) -> dict[str, Path]:
+    output: dict[str, Path] = {}
+    for value in values:
+        task_id, separator, raw_path = value.partition("=")
+        if not separator or task_id not in SUPPORTED_TASKS or not raw_path:
+            raise ValueError(f"{flag} requires TASK=PATH with a supported task")
+        if task_id in output:
+            raise ValueError(f"{flag} repeats task {task_id}")
+        output[task_id] = Path(raw_path)
+    return output
 
 
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -1095,6 +1441,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--evaluation-subset", choices=["valid", "test"], default="valid")
     parser.add_argument("--phase", choices=["prepare", "score", "verify", "all"], default="prepare")
     parser.add_argument("--output-root", default="outputs/chembl_tool/tasks")
+    parser.add_argument("--task-evidence-view", action="append", default=[], metavar="TASK=PATH")
+    parser.add_argument("--task-query-jsonl", action="append", default=[], metavar="TASK=PATH")
+    parser.add_argument("--task-cache-dir", action="append", default=[], metavar="TASK=PATH")
+    parser.add_argument("--force-prepare", action="store_true")
+    parser.add_argument("--record-scope", choices=RECORD_SCOPES, default="all")
     parser.add_argument("--assay-transfer-initial-morgan-filter", type=int, default=50)
     parser.add_argument("--min-similarity", type=float, default=0.0)
     parser.add_argument(
@@ -1106,6 +1457,8 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--dtype", choices=[BACKBONE_DTYPE], default=BACKBONE_DTYPE)
     parser.add_argument("--local-files-only", action="store_true")
+    parser.add_argument("--assay-transfer-model", default=None)
+    parser.add_argument("--assay-transfer-model-revision", default=None)
     args = parser.parse_args(argv)
     if args.assay_transfer_initial_morgan_filter <= 0:
         parser.error("--assay-transfer-initial-morgan-filter must be positive")
@@ -1113,6 +1466,31 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--min-similarity must be between 0 and 1")
     if args.batch_size <= 0:
         parser.error("--batch-size must be positive")
+    if args.record_scope == "numeric_direct" and args.tasks != ["bioavailability_ma"]:
+        parser.error("--record-scope numeric_direct requires only bioavailability_ma")
+    if bool(args.assay_transfer_model) != bool(args.assay_transfer_model_revision):
+        parser.error("model and model revision overrides must be provided together")
+    if args.assay_transfer_model and len(args.tasks) != 1:
+        parser.error("model overrides require exactly one task")
+    try:
+        args.task_evidence_views = _task_path_map(
+            args.task_evidence_view, "--task-evidence-view"
+        )
+        args.task_query_jsonls = _task_path_map(
+            args.task_query_jsonl, "--task-query-jsonl"
+        )
+        args.task_cache_dirs = _task_path_map(args.task_cache_dir, "--task-cache-dir")
+    except ValueError as exc:
+        parser.error(str(exc))
+    configured = set(args.task_evidence_views) | set(args.task_query_jsonls) | set(args.task_cache_dirs)
+    for task_id in configured:
+        if not all(
+            task_id in mapping
+            for mapping in (args.task_evidence_views, args.task_query_jsonls, args.task_cache_dirs)
+        ):
+            parser.error(
+                f"Explicit lineage paths for {task_id} require evidence view, query JSONL, and cache dir"
+            )
     return args
 
 

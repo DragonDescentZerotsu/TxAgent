@@ -44,9 +44,10 @@ It contains 2,092 binary parents, split into 1,674 train, 209 validation, and 20
 `data/processed_starling/Bioavailability_Ma/{random,scaffold}` tree belongs to the historical
 `record_agreement70_split811_v1` comparison. See
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md` for the shared build and audit protocol.
-Before a current v2 formal run, rebuild the train-only retrieval index using the scaffold valid+test union in
-`heldout_molecule_labels.jsonl`; each historical v1 split uses its own union and cannot reuse an index across
-lineages.
+Before a current v2 formal run, rebuild the split-specific retrieval view using the scaffold valid+test union
+in `heldout_molecule_labels.jsonl`. Remove those parents only from direct-scope `hf_bioavailability`; retain
+nondirect HF, oral exposure, Fa, Fg, and Fh records and apply query-time `parent_disjoint`. Each historical v1
+split uses its own union and cannot reuse an index across lineages.
 
 Exact-query evidence is disabled by default. Neighbor retrieval is evidence prefetch, not an LLM function tool.
 
@@ -373,8 +374,13 @@ compresses file/container overhead and allows ordinary GitHub tracking without G
 
 Cleaning is meaning-preserving. Normalization consumes `01_cleaned/records.parquet` directly and emits exactly
 one pre-deduplication record for every `cleaned_record_id`. It owns the atomic `canonical_measurement` /
-`canonical_unit` pair and scalar metadata; organization owns within-source deduplication and retrieval
-eligibility. Cleaning also promotes cleaned source-facing context columns and
+`canonical_unit` pair and scalar metadata for assay transfer; organization independently owns within-source
+deduplication and retrieval eligibility. These canonical numeric fields are never retrieval presentation.
+For v7, the shared parser, Bioavailability endpoint/unit and contextual reconciliation rules, v7 projection,
+and frozen `data_processing/assay_transfer_measurements_v1/policy.json` compose the one final persisted
+measurement/unit/scalar tuple. Stage 04 retains every record; reviewed unit defects are annotated
+`assay_transfer_eligible=false` and receive no bucket key, without changing retrieval eligibility.
+Cleaning also promotes cleaned source-facing context columns and
 `source_smiles` and every declared raw source column to sparse top-level Parquet columns. Endpoint identity
 has three explicit layers:
 
@@ -600,11 +606,13 @@ directly from canonical v7 Stage-03 records:
 - `bioavailability_starling_v7_direct_numeric`: only finite scalar records in
   `Observed.direct_oral_bioavailability`.
 
-For each random/scaffold lineage, the builder removes every valid/test parent
-from every evidence group before writing a self-contained compact directory index.
-The runtime nondirect exclusion flag filters the full v7 view before ranking.
+For current paper-facing lineages, the builder uses `direct_source_only`: it removes valid/test parents only
+from direct-scope `hf_bioavailability` records before writing a self-contained compact directory index.
+Nondirect HF, oral exposure, Fa, Fg, and Fh records remain available and runtime `parent_disjoint` removes the
+query parent before ranking. Historical all-parent views remain reproducible through explicit `all_parents`.
 
-Build the canonical v7 tree and its formal paper views:
+Build the canonical v7 tree and its formal paper views. The task build now stops at split-independent
+Stage 05 by default; `--legacy-task-local-downstream` is only for frozen Stage 06-09 reproduction:
 
 ```bash
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
@@ -614,7 +622,9 @@ Build the canonical v7 tree and its formal paper views:
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
   python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
   --indices bioavailability_starling_v7 bioavailability_starling_v7_direct_numeric \
-  --splits random scaffold --workers 64
+  --splits scaffold --heldout-filter-mode direct_source_only \
+  --benchmark-data-root data/processed_starling_record_supported_v2 \
+  --benchmark-lineage record_supported_v2 --workers 64
 ```
 
 Run the shared reasoning pipeline with that index:
@@ -634,7 +644,8 @@ Run the shared reasoning pipeline with that index:
 Formal paper runs use the `outputs/paper/` v7-derived view above. Do not copy or
 symlink a historical index into that path. Before running, check its root and
 Stage-08 manifests for the source v7 SHA-256, held-out-label SHA-256,
-`zero_parent_overlap=true`, record contract, view name, and group inventory.
+`zero_filter_scope_parent_overlap=true`, retained nonfilter overlap counts, record contract, view name, and
+group inventory.
 
 The 2026-07-23 strict-hop availability census is under
 `outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`.
@@ -819,6 +830,17 @@ Use `--group-prompt-instructions-file <path>` for a versioned instruction ablati
 default file. The batch runner fingerprints the selected UTF-8 file, passes the launch-time SHA-256 guard to
 every molecule process, and records the resolved path, hash, and instruction count in batch and run manifests.
 Missing, empty, unreadable, or mid-run modified files fail before a mixed-prompt condition can be produced.
+
+The paper-facing human-readable Morgan and assay-transfer layouts are frozen together as
+`--group-prompt-version bioavailability_text_v1`. Their Jinja templates live under
+`group_prompt_templates/bioavailability_text_v1/`, and their instruction files live under
+`prompt_instructions/bioavailability_text_v1/`. Manifests fingerprint both assets and the selected output schema.
+`legacy_unversioned` remains the compatibility default for historical commands; a named version is immutable and
+cannot be combined with `--group-prompt-instructions-file`.
+
+For a `full_flat` branch without query-neighbor comparison tools, use `--disable-flat-tools`. This removes tool
+payloads and tool instructions from the flat group prompt while retaining the single branch's prefetched
+`molecule_properties` result. It is intentionally rejected for mechanism mode.
 
 Use `--group-output-schema legacy|assay-transfer` to select the group response contract independently of the
 prompt layout. `legacy` remains the default. The evidence-centric `assay-transfer` profile is permitted only

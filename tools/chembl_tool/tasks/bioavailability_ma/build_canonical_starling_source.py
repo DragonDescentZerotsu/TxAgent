@@ -41,6 +41,47 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
 
 
 MATCH_VALUE_TOLERANCE_PERCENT = 1.0
+PAPER_DEDUP_VERSION = "bioavailability_paper_direct_claim_dedup.v1"
+PAPER_SUPPORT_JACCARD_MINIMUM = 0.10
+
+_CONTEXT_PATTERNS = {
+    "species": {
+        "human": r"\b(?:human|humans|subjects?|participants?|volunteers?|patients?|men|women|adults?|children|pediatric|paediatric)\b",
+        "rat": r"\b(?:rat|rats|rodent|rodents)\b",
+        "mouse": r"\b(?:mouse|mice)\b",
+        "dog": r"\b(?:dog|dogs|canine|beagles?)\b",
+        "pig": r"\b(?:pig|pigs|piglet|piglets|swine)\b",
+        "monkey": r"\b(?:monkey|monkeys|macaque|macaques|primate|primates)\b",
+        "alpaca": r"\b(?:alpaca|alpacas)\b",
+        "rabbit": r"\b(?:rabbit|rabbits)\b",
+        "chicken": r"\b(?:chicken|chickens|broiler|broilers)\b",
+    },
+    "formulation": {
+        "immediate_release": r"\b(?:immediate|instant)[ -]?release\b",
+        "extended_release": r"\b(?:slow|extended|sustained|controlled)[ -]?release\b|\bocas\b",
+        "tablet": r"\btablets?\b",
+        "capsule": r"\bcapsules?\b",
+        "solution": r"\bsolutions?\b",
+        "suspension": r"\bsuspensions?\b",
+        "injection": r"\b(?:injectable|injection)\b",
+    },
+    "cohort": {
+        "healthy": r"\bhealthy\b",
+        "patient": r"\bpatients?\b|\b(?:hiv|cancer|disease|infected)\b",
+        "pediatric": r"\b(?:children|pediatric|paediatric|adolescents?|infants?)\b",
+        "elderly": r"\b(?:elderly|older adults?)\b",
+    },
+    "phase": {
+        "phase_1": r"\bphase\s*(?:i|1)\b",
+        "phase_2": r"\bphase\s*(?:ii|2)\b",
+        "phase_3": r"\bphase\s*(?:iii|3)\b",
+        "phase_4": r"\bphase\s*(?:iv|4)\b",
+    },
+}
+_DOSE_PATTERN = re.compile(
+    r"\b\d+(?:\.\d+)?\s*(?:micrograms?|ug|µg|mcg|mg|g)(?:\s*/\s*kg)?\b",
+    flags=re.IGNORECASE,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -473,6 +514,260 @@ def _deduplicate_cross_source_claims(
         claims.append(representative)
     claims.sort(key=lambda row: (row["parent_identity_key"], row["pmid"], row["canonical_claim_id"]))
     return claims, audits
+
+
+def deduplicate_paper_direct_claims(
+    source_rows: list[dict[str, Any]],
+    *,
+    value_tolerance_percent: float = MATCH_VALUE_TOLERANCE_PERCENT,
+    support_jaccard_minimum: float = PAPER_SUPPORT_JACCARD_MINIMUM,
+) -> tuple[set[str], list[dict[str, Any]], dict[str, Any]]:
+    """Return guarded direct-claim representatives without changing canonical v2."""
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    for row in source_rows:
+        grouped[(str(row["parent_identity_key"]), _text(row.get("pmid")))].append(row)
+
+    retained: set[str] = set()
+    audit: list[dict[str, Any]] = []
+    for (_, pmid), rows in sorted(grouped.items()):
+        ordered = sorted(rows, key=_paper_representative_key)
+        if not pmid:
+            retained.update(str(row["source_record_id"]) for row in ordered)
+            continue
+        clusters: list[list[dict[str, Any]]] = []
+        for row in ordered:
+            compatible: list[tuple[float, float, list[dict[str, Any]], str]] = []
+            for cluster in clusters:
+                matches = [
+                    _paper_claim_match(
+                        member,
+                        row,
+                        tolerance=value_tolerance_percent,
+                        support_jaccard_minimum=support_jaccard_minimum,
+                    )
+                    for member in cluster
+                ]
+                if all(match is not None for match in matches):
+                    compatible.append(
+                        (
+                            max(float(match[0]) for match in matches if match),
+                            -min(float(match[1]) for match in matches if match),
+                            cluster,
+                            str(matches[0][2]),
+                        )
+                    )
+            if compatible:
+                compatible.sort(key=lambda item: (item[0], item[1], item[2][0]["source_record_id"]))
+                compatible[0][2].append(row)
+            else:
+                clusters.append([row])
+
+        for cluster in clusters:
+            representative = cluster[0]
+            representative_id = str(representative["source_record_id"])
+            retained.add(representative_id)
+            for duplicate in cluster[1:]:
+                match = _paper_claim_match(
+                    representative,
+                    duplicate,
+                    tolerance=value_tolerance_percent,
+                    support_jaccard_minimum=support_jaccard_minimum,
+                )
+                if match is None:
+                    raise AssertionError("paper claim cluster lost complete-link compatibility")
+                audit.append(
+                    {
+                        "retained_source_record_id": representative_id,
+                        "discarded_source_record_id": str(duplicate["source_record_id"]),
+                        "retained_source_origin": str(representative["source_origin"]),
+                        "discarded_source_origin": str(duplicate["source_origin"]),
+                        "parent_identity_key": str(representative["parent_identity_key"]),
+                        "pmid": pmid,
+                        "value_distance_percent": match[0],
+                        "support_token_jaccard": match[1],
+                        "match_method": match[2],
+                    }
+                )
+
+    stats = {
+        "version": PAPER_DEDUP_VERSION,
+        "input_direct_source_rows": len(source_rows),
+        "retained_direct_claims": len(retained),
+        "discarded_duplicate_rows": len(audit),
+        "cross_source_duplicates": sum(
+            row["retained_source_origin"] != row["discarded_source_origin"]
+            for row in audit
+        ),
+        "within_source_duplicates": sum(
+            row["retained_source_origin"] == row["discarded_source_origin"]
+            for row in audit
+        ),
+        "support_jaccard_minimum": support_jaccard_minimum,
+        "value_tolerance_percent": value_tolerance_percent,
+        "ambiguous_pairs": "retained_separately",
+    }
+    return retained, audit, stats
+
+
+def apply_paper_direct_contract(
+    records: list[dict[str, Any]],
+    *,
+    direct_source_rows_path: str | Path = DIRECT_SOURCE_ROWS_PATH,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
+    """Split local direct/residual evidence and apply guarded claim deduplication."""
+    import pandas as pd
+
+    path = Path(direct_source_rows_path)
+    frame = pd.read_parquet(path)
+    source_rows = frame.astype(object).where(pd.notna(frame), None).to_dict(
+        orient="records"
+    )
+    direct_ids = {str(row["source_record_id"]) for row in source_rows}
+    canonical_by_source: dict[str, str] = {}
+    source_id_by_record: dict[str, str] = {}
+    for record in records:
+        source_id = str(record.get("source_id") or "")
+        source_record_id = str(record.get("source_record_id") or "")
+        canonical_source_id = ""
+        if source_id == "hf_bioavailability":
+            canonical_source_id = f"hf:{source_record_id}"
+        elif source_id == "oral_exposure":
+            source_row = int(record.get("source_row_number") or 0) - 1
+            canonical_source_id = f"local:{source_row}:{source_record_id}"
+        if canonical_source_id in direct_ids:
+            canonical_by_source[canonical_source_id] = str(record["canonical_record_id"])
+        source_id_by_record[str(record["canonical_record_id"])] = canonical_source_id
+
+    mapped_direct_ids = set(canonical_by_source)
+    available_source_rows = [
+        row for row in source_rows if str(row["source_record_id"]) in mapped_direct_ids
+    ]
+    retained_ids, audit, stats = deduplicate_paper_direct_claims(available_source_rows)
+    prepared: list[dict[str, Any]] = []
+    for record in records:
+        source_id = str(record.get("source_id") or "")
+        canonical_source_id = source_id_by_record[str(record["canonical_record_id"])]
+        if canonical_source_id in direct_ids:
+            if canonical_source_id not in retained_ids:
+                continue
+        if source_id == "oral_exposure":
+            record = dict(record)
+            direct = canonical_source_id in direct_ids
+            record["canonical_paper_direct_scope"] = "direct" if direct else "residual"
+            record["group_id"] = (
+                "Observed.direct_oral_bioavailability"
+                if direct
+                else "Observed.oral_auc_cmax_exposure"
+            )
+        prepared.append(record)
+
+    missing = direct_ids - mapped_direct_ids
+    for row in audit:
+        row["retained_canonical_record_id"] = canonical_by_source[
+            row["retained_source_record_id"]
+        ]
+        row["discarded_canonical_record_id"] = canonical_by_source[
+            row["discarded_source_record_id"]
+        ]
+    stats.update(
+        {
+            "input_v7_records": len(records),
+            "output_v7_records": len(prepared),
+            "input_direct_source_rows": len(source_rows),
+            "dedup_input_mapped_direct_source_rows": len(available_source_rows),
+            "mapped_direct_source_rows": len(mapped_direct_ids),
+            "unmapped_direct_source_rows": len(missing),
+            "unmapped_direct_source_record_ids": sorted(missing),
+            "direct_source_rows_path": str(path),
+        }
+    )
+    return prepared, audit, stats
+
+
+def _paper_claim_match(
+    left: Mapping[str, Any],
+    right: Mapping[str, Any],
+    *,
+    tolerance: float,
+    support_jaccard_minimum: float,
+) -> tuple[float, float, str] | None:
+    left_value = _float_or_none(left.get("value_percent"))
+    right_value = _float_or_none(right.get("value_percent"))
+    left_support = _normalized_text(left.get("support_text"))
+    right_support = _normalized_text(right.get("support_text"))
+    support_similarity = _token_jaccard(left_support, right_support)
+    if left_value is None or right_value is None:
+        if left_support and left_support == right_support and not _context_conflict(left, right):
+            return 0.0, 1.0, "identical_normalized_support_text"
+        return None
+    left_label = _claim_threshold_label(left)
+    right_label = _claim_threshold_label(right)
+    if left_label is None or left_label != right_label:
+        return None
+    distance = min(
+        _interval_distance(left_value, _float_or_none(right.get("value_lower_percent")), _float_or_none(right.get("value_upper_percent"))),
+        _interval_distance(right_value, _float_or_none(left.get("value_lower_percent")), _float_or_none(left.get("value_upper_percent"))),
+    )
+    if distance > tolerance or support_similarity < support_jaccard_minimum:
+        return None
+    if _context_conflict(left, right):
+        return None
+    return distance, support_similarity, "numeric_guarded_support_and_context_match"
+
+
+def _paper_representative_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
+    labelable = (
+        _claim_threshold_label(row) is not None
+        and not _text(row.get("qualifying_conditions"))
+    )
+    lower = _float_or_none(row.get("value_lower_percent"))
+    upper = _float_or_none(row.get("value_upper_percent"))
+    width = upper - lower if lower is not None and upper is not None else math.inf
+    context = sum(bool(_text(row.get(field))) for field in (
+        "support_text", "species_or_population", "dose", "oral_exposure_mode",
+        "qualifying_conditions", "comparator", "extra_details",
+    ))
+    return (
+        str(row.get("source_origin")) != "hf",
+        not labelable,
+        width,
+        -context,
+        str(row.get("source_record_id")),
+    )
+
+
+def _context_conflict(left: Mapping[str, Any], right: Mapping[str, Any]) -> bool:
+    left_text = " ".join(_text(left.get(field)) for field in (
+        "support_text", "species_or_population", "oral_exposure_mode", "extra_details"
+    )).lower()
+    right_text = " ".join(_text(right.get(field)) for field in (
+        "support_text", "species_or_population", "oral_exposure_mode", "extra_details"
+    )).lower()
+    for patterns in _CONTEXT_PATTERNS.values():
+        left_values = {name for name, pattern in patterns.items() if re.search(pattern, left_text)}
+        right_values = {name for name, pattern in patterns.items() if re.search(pattern, right_text)}
+        if left_values and right_values and left_values.isdisjoint(right_values):
+            return True
+    left_doses = {_normalized_text(value) for value in _DOSE_PATTERN.findall(_text(left.get("dose")))}
+    right_doses = {_normalized_text(value) for value in _DOSE_PATTERN.findall(_text(right.get("dose")))}
+    if left_doses and right_doses and left_doses.isdisjoint(right_doses):
+        return True
+    for field in ("qualifying_conditions", "comparator"):
+        left_value = _normalized_text(left.get(field))
+        right_value = _normalized_text(right.get(field))
+        if left_value and right_value and _token_jaccard(left_value, right_value) < 0.10:
+            return True
+    return False
+
+
+def _token_jaccard(left: str, right: str) -> float:
+    left_tokens = set(re.findall(r"[a-z0-9.]+", left))
+    right_tokens = set(re.findall(r"[a-z0-9.]+", right))
+    return (
+        len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
+        if left_tokens and right_tokens
+        else 0.0
+    )
 
 
 def _claim_match(

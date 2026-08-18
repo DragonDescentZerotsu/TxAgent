@@ -66,8 +66,16 @@ from tools.chembl_tool.common.final_decision_prior import (
     final_decision_validation_errors,
 )
 from tools.chembl_tool.common.identity_blind import (
+    expose_neighbor_smiles_only,
     prepare_reasoning_retrieval,
+    query_without_prefetched_tools,
     sanitize_identity_blind_branch_outputs,
+)
+from tools.chembl_tool.common.task_workflows.analogous_flat_prompt import (
+    PROMPT_IDENTITY_VIEW,
+    prompt_provenance as analogous_flat_prompt_provenance,
+    reason_final as reason_analogous_flat_final,
+    reason_group as reason_analogous_flat_group,
 )
 from tools.chembl_tool.common.json_utils import parse_json_content
 from tools.chembl_tool.common.neighbor_selection import (
@@ -122,13 +130,16 @@ from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
     get_source_config,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
+    DEFAULT_GROUP_PROMPT_VERSION,
     GROUP_OUTPUT_SCHEMA_PROFILES,
+    GROUP_PROMPT_VERSIONS,
     SUPPORTED_FORMATS as TEXT_GROUP_PROMPT_FORMATS,
     build_final_messages,
     build_group_messages,
     final_prompt_provenance,
     group_output_schema_provenance,
     group_output_validation,
+    group_prompt_provenance,
     group_system_message,
     instruction_file_provenance,
 )
@@ -360,6 +371,14 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(
             "--group-prompt-instructions-file requires a text group prompt format"
         )
+    if (
+        args.group_prompt_instructions_file
+        and args.group_prompt_version != DEFAULT_GROUP_PROMPT_VERSION
+    ):
+        raise SystemExit(
+            "A named --group-prompt-version is immutable and cannot be combined with "
+            "--group-prompt-instructions-file"
+        )
     group_prompt_instruction_provenance: dict[str, Any] = {}
     if args.group_prompt_format in TEXT_GROUP_PROMPT_FORMATS:
         try:
@@ -367,6 +386,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.group_prompt_format,
                 args.group_prompt_instructions_file or None,
                 output_schema_profile=args.group_output_schema,
+                prompt_version=args.group_prompt_version,
             )
         except ValueError as exc:
             raise SystemExit(str(exc)) from exc
@@ -397,7 +417,11 @@ def main(argv: list[str] | None = None) -> int:
             max_tokens=args.max_tokens,
             temperature=args.temperature,
             tool_service_url=args.tool_service_url,
-            enable_group_tools=not args.disable_group_tools and not args.analogous_reasoning_only,
+            enable_group_tools=(
+                not args.disable_group_tools
+                and not args.disable_flat_tools
+                and not args.analogous_reasoning_only
+            ),
             max_tool_rounds=args.max_tool_rounds,
             reasoning_effort=args.reasoning_effort,
             enable_thinking=args.enable_thinking,
@@ -574,7 +598,11 @@ def main(argv: list[str] | None = None) -> int:
         max_tokens=args.max_tokens,
         temperature=args.temperature,
         tool_service_url=args.tool_service_url,
-        enable_group_tools=not args.disable_group_tools and not args.analogous_reasoning_only,
+        enable_group_tools=(
+            not args.disable_group_tools
+            and not args.disable_flat_tools
+            and not args.analogous_reasoning_only
+        ),
         max_tool_rounds=args.max_tool_rounds,
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
@@ -587,7 +615,15 @@ def main(argv: list[str] | None = None) -> int:
         prefetched_tool_replay_run_dir=args.prefetched_tool_replay_run_dir,
         neighbor_context_profile=args.neighbor_context_profile,
         include_query_tools=not args.analogous_reasoning_only,
+        include_neighbor_tools=(
+            not args.disable_flat_tools and not args.analogous_reasoning_only
+        ),
     )
+    analogous_flat = args.analogous_reasoning_only and args.experiment_mode == "full_flat"
+    if analogous_flat:
+        reasoning_retrieval = expose_neighbor_smiles_only(
+            reasoning_retrieval, retrieval
+        )
     reasoning_groups = [group for group in reasoning_retrieval["groups"] if group.get("neighbors")]
     if args.max_groups:
         reasoning_groups = reasoning_groups[: args.max_groups]
@@ -623,19 +659,30 @@ def main(argv: list[str] | None = None) -> int:
         "instructions_file": args.group_prompt_instructions_file or None,
         "output_schema_profile": args.group_output_schema,
         "presentation_style": args.presentation_style,
-        "omit_query_tools": args.analogous_reasoning_only,
+        "prompt_version": args.group_prompt_version,
+        "omit_query_tools": args.analogous_reasoning_only or args.disable_flat_tools,
     }
-    single_output, group_outputs = _run_parallel_reasoning(
-        client,
-        reasoning_retrieval,
-        reasoning_groups,
-        max_workers=args.max_workers,
-        single_output=frozen_single,
-        group_outputs=frozen_groups,
-        group_prompt_format=args.group_prompt_format,
-        group_prompt_options=group_prompt_options,
-        prompt_profile=args.bioavailability_prompt_profile,
-    )
+    if analogous_flat:
+        single_output = _omitted_single_output()
+        group_outputs = [
+            reason_analogous_flat_group(
+                client, group, task_id="bioavailability_ma"
+            )
+            for group in reasoning_groups
+        ]
+    else:
+        single_output, group_outputs = _run_parallel_reasoning(
+            client,
+            reasoning_retrieval,
+            reasoning_groups,
+            max_workers=args.max_workers,
+            single_output=frozen_single,
+            group_outputs=frozen_groups,
+            group_prompt_format=args.group_prompt_format,
+            group_prompt_options=group_prompt_options,
+            prompt_profile=args.bioavailability_prompt_profile,
+            disable_flat_tools=args.disable_flat_tools,
+        )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
     _log(f"wrote {single_path}")
@@ -649,15 +696,21 @@ def main(argv: list[str] | None = None) -> int:
     _write_jsonl(group_path, group_outputs)
     _log(f"wrote {group_path}")
 
-    final_output = _run_final_reasoning(
-        client,
-        reasoning_retrieval,
-        single_output,
-        group_outputs,
-        final_evidence_surface=args.final_evidence_surface,
-        final_decision_profile=args.final_decision_profile,
-        prompt_profile=args.bioavailability_prompt_profile,
-        analogous_reasoning_only=args.analogous_reasoning_only,
+    final_output = (
+        reason_analogous_flat_final(
+            client, group_outputs, task_id="bioavailability_ma"
+        )
+        if analogous_flat
+        else _run_final_reasoning(
+            client,
+            reasoning_retrieval,
+            single_output,
+            group_outputs,
+            final_evidence_surface=args.final_evidence_surface,
+            final_decision_profile=args.final_decision_profile,
+            prompt_profile=args.bioavailability_prompt_profile,
+            analogous_reasoning_only=args.analogous_reasoning_only,
+        )
     )
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
@@ -719,7 +772,16 @@ def main(argv: list[str] | None = None) -> int:
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
+        "disable_flat_tools": args.disable_flat_tools,
         "analogous_reasoning_only": args.analogous_reasoning_only,
+        "prompt_identity_view": (
+            PROMPT_IDENTITY_VIEW if analogous_flat else "identity_blind"
+            if args.identity_blind else "deployment_visible"
+        ),
+        "analogous_flat_prompt_provenance": (
+            analogous_flat_prompt_provenance("bioavailability_ma")
+            if analogous_flat else {}
+        ),
         "single_branch_execution": (
             "omitted" if args.analogous_reasoning_only else "executed_or_reused"
         ),
@@ -732,8 +794,12 @@ def main(argv: list[str] | None = None) -> int:
         "group_query_tool_instruction_policy": (
             "omitted.v1" if args.analogous_reasoning_only else "standard.v1"
         ),
-        "final_prompt_provenance": final_prompt_provenance(
-            analogous_reasoning_only=args.analogous_reasoning_only
+        "final_prompt_provenance": (
+            {}
+            if analogous_flat
+            else final_prompt_provenance(
+                analogous_reasoning_only=args.analogous_reasoning_only
+            )
         ),
         "harness_prefetch_tools": (
             False
@@ -748,10 +814,16 @@ def main(argv: list[str] | None = None) -> int:
         "reasoning_effort": args.reasoning_effort,
         "temperature": args.temperature,
         "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
-        "group_tools_enabled": not args.disable_group_tools and not args.analogous_reasoning_only,
+        "group_tools_enabled": (
+            not args.disable_group_tools
+            and not args.disable_flat_tools
+            and not args.analogous_reasoning_only
+        ),
         "tool_execution_mode": (
             "omitted"
             if args.analogous_reasoning_only
+            else "harness_prefetch_query_only"
+            if args.disable_flat_tools
             else "harness_prefetch"
             if args.identity_blind or args.harness_prefetch_tools
             else "llm_function_call"
@@ -761,7 +833,9 @@ def main(argv: list[str] | None = None) -> int:
         "chembl_exact_context_enabled": args.enable_chembl_exact_context,
         "chembl_sqlite": args.chembl_sqlite,
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
-        if not args.disable_group_tools and not args.analogous_reasoning_only
+        if not args.disable_group_tools
+        and not args.disable_flat_tools
+        and not args.analogous_reasoning_only
         else [],
         "max_tool_rounds": args.max_tool_rounds,
         "top_k_per_group_requested": args.top_k_per_group,
@@ -769,6 +843,17 @@ def main(argv: list[str] | None = None) -> int:
         "min_similarity": args.min_similarity,
         "assay_transfer_min_score": args.assay_transfer_min_score,
         "group_prompt_format": args.group_prompt_format,
+        "group_prompt_version": args.group_prompt_version,
+        "group_prompt_provenance": (
+            group_prompt_provenance(
+                args.group_prompt_format,
+                prompt_version=args.group_prompt_version,
+                instructions_file=args.group_prompt_instructions_file or None,
+                output_schema_profile=args.group_output_schema,
+            )
+            if args.group_prompt_format in TEXT_GROUP_PROMPT_FORMATS
+            else {}
+        ),
         "group_output_schema": args.group_output_schema,
         "group_output_schema_provenance": group_output_schema_provenance(
             args.group_output_schema
@@ -816,6 +901,7 @@ def _run_parallel_reasoning(
     group_prompt_format: str = "legacy",
     group_prompt_options: dict[str, Any] | None = None,
     prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    disable_flat_tools: bool = False,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs = list(group_outputs or [])
     reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
@@ -825,7 +911,11 @@ def _run_parallel_reasoning(
             executor.submit(
                 _reason_one_group,
                 client,
-                _llm_query_payload(retrieval["query"]),
+                _llm_query_payload(
+                    query_without_prefetched_tools(retrieval["query"])
+                    if disable_flat_tools
+                    else retrieval["query"]
+                ),
                 group,
                 include_assay_transfer_score=include_assay_transfer_score,
                 prompt_format=group_prompt_format,
@@ -1464,6 +1554,14 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--enable-thinking", dest="enable_thinking", action="store_true", default=True)
     parser.add_argument("--disable-thinking", dest="enable_thinking", action="store_false")
     parser.add_argument("--disable-group-tools", action="store_true")
+    parser.add_argument(
+        "--disable-flat-tools",
+        action="store_true",
+        help=(
+            "full_flat only: omit neighbor comparison tools from the flat group branch; "
+            "the single-molecule branch still receives molecule_properties"
+        ),
+    )
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument(
@@ -1573,6 +1671,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--group-prompt-version",
+        choices=GROUP_PROMPT_VERSIONS,
+        default=DEFAULT_GROUP_PROMPT_VERSION,
+    )
+    parser.add_argument(
         "--group-prompt-instructions-file",
         default="",
         help=(
@@ -1605,7 +1708,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         ),
     )
     args = parser.parse_args(argv)
+    if args.disable_flat_tools and args.experiment_mode != "full_flat":
+        parser.error("--disable-flat-tools requires --experiment-mode full_flat")
     if args.assay_transfer_profile == "v11_with_categorical":
+        custom_v11_cache = args.rerank_cache not in {
+            DEFAULT_RERANK_CACHE,
+            V11_DEFAULT_PATHS["cache"],
+        }
         if (
             args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
             and args.index == DEFAULT_INDEX
@@ -1615,11 +1724,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             args.assay_transfer_initial_morgan_filter = 50
         if args.min_similarity == 0.3:
             args.min_similarity = 0.0
-        if args.rerank_catalog == DEFAULT_RERANK_CATALOG:
+        if not custom_v11_cache and args.rerank_catalog == DEFAULT_RERANK_CATALOG:
             args.rerank_catalog = V11_DEFAULT_PATHS["catalog"]
         if args.rerank_cache == DEFAULT_RERANK_CACHE:
             args.rerank_cache = V11_DEFAULT_PATHS["cache"]
-        if not args.rerank_candidate_manifest:
+        if not custom_v11_cache and not args.rerank_candidate_manifest:
             args.rerank_candidate_manifest = V11_DEFAULT_PATHS["candidate_manifest"]
         if args.assay_transfer_model == ASSAY_TRANSFER_MODEL:
             args.assay_transfer_model = V11_MODEL_PROFILE["model"]
@@ -1633,10 +1742,32 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
 def _validate_analogous_reasoning_only(args: argparse.Namespace) -> None:
     if not args.analogous_reasoning_only:
         return
-    if args.experiment_mode != "full_mechanism":
+    if args.experiment_mode not in {"full_flat", "full_mechanism"}:
         raise SystemExit(
-            "--analogous-reasoning-only requires --experiment-mode full_mechanism"
+            "--analogous-reasoning-only requires --experiment-mode "
+            "full_flat or full_mechanism"
         )
+    if args.experiment_mode == "full_flat":
+        if not args.identity_blind:
+            raise SystemExit(
+                "flat --analogous-reasoning-only requires --identity-blind"
+            )
+        if args.retrieval_strategy not in {
+            ASSAY_TRANSFER_TOOL_STRATEGY,
+            "morgan_fingerprint",
+        }:
+            raise SystemExit(
+                "flat --analogous-reasoning-only requires assay_transfer_tool or "
+                "morgan_fingerprint retrieval"
+            )
+        if (
+            args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+            and not args.enable_assay_transfer_scores
+        ):
+            raise SystemExit(
+                "flat assay-transfer --analogous-reasoning-only requires "
+                "--enable-assay-transfer-scores"
+            )
     incompatible = {
         "--single-analysis-source-run-dir": args.single_analysis_source_run_dir,
         "--group-analysis-source-run-dir": args.group_analysis_source_run_dir,

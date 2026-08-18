@@ -47,7 +47,8 @@ from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
 
 
 CALIBRATION_FILENAME = "pair_bucket_distance_calibration.json.gz"
-CALIBRATION_VERSION = "pair_bucket_distance_calibration.v2"
+CALIBRATION_VERSION = "pair_bucket_distance_calibration.v3"
+PREVIOUS_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v2"
 LEGACY_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v1"
 VALUE_CDF_VERSION = "empirical_value_cdf.v1"
 CATEGORY_CDF_VERSION = "empirical_category_rank_cdf.v1"
@@ -122,8 +123,13 @@ def build_pair_bucket_distance_calibration(
     )
     if not (joined["_merge"] == "both").all():
         raise ValueError("one or more pair-bucket rows lack a finalized record")
+    eligibility_field = (
+        "assay_transfer_eligible"
+        if "assay_transfer_eligible" in joined.columns
+        else "bucket_eligible"
+    )
     rows = joined[
-        joined["bucket_eligible"].astype(bool) & joined["pair_bucket_key"].notna()
+        joined[eligibility_field].astype(bool) & joined["pair_bucket_key"].notna()
     ].copy()
     heldout_audit = _remove_heldout(spec, rows)
     if heldout_audit is not None:
@@ -170,6 +176,11 @@ def build_pair_bucket_distance_calibration(
             "binary_and_ordinal_standard_deviation_value_field": (
                 "canonical_category_rank"
             ),
+            "canonical_measurement_scope": "assay_transfer_only_not_retrieval_presentation",
+            "assay_transfer_bucket_eligibility_scope": (
+                "global_stage05_after_row_eligibility_and_heldout_removal"
+            ),
+            "residual_heterogeneity_changes_validity": False,
             "raw_distance_cdf_emitted": False,
             "continuous_value_cdf": (
                 "exact empirical midrank CDF over finite_scalar_value"
@@ -381,8 +392,6 @@ def _build_calibration_entry(
         )
     else:
         variance_gate = _empty_variance_gate(evaluated=False)
-    variance_flagged = bool(variance_gate["variance_gate_flagged"])
-
     reason = "valid"
     if not support_met:
         reason = f"fewer_than_{minimum_samples}_records"
@@ -390,8 +399,6 @@ def _build_calibration_entry(
         reason = "unsupported_measurement_kind"
     elif not category_gate["valid"]:
         reason = str(category_gate["reason"])
-    elif variance_flagged:
-        reason = "automatic_residual_heterogeneity_gate"
     elif not finite_complete:
         reason = "nonfinite_geometry_value"
     elif not positive_sd:
@@ -436,6 +443,10 @@ def _build_calibration_entry(
         ),
         "standard_deviation_valid": calibration_valid,
         "standard_deviation_reason": reason,
+        "assay_transfer_bucket_eligible": calibration_valid,
+        "assay_transfer_bucket_ineligibility_reason": (
+            None if calibration_valid else reason
+        ),
         "calibration_valid": calibration_valid,
         "calibration_reason": reason,
         "value_cdf_valid": value_cdf is not None,
@@ -867,7 +878,11 @@ def validate_pair_bucket_distance_calibration(
     payload: Mapping[str, Any], *, record_contract: StarlingRecordContract
 ) -> None:
     version = payload.get("calibration_version")
-    if version not in {LEGACY_CALIBRATION_VERSION, CALIBRATION_VERSION}:
+    if version not in {
+        LEGACY_CALIBRATION_VERSION,
+        PREVIOUS_CALIBRATION_VERSION,
+        CALIBRATION_VERSION,
+    }:
         raise ValueError("distance calibration version mismatch")
     if payload.get("record_contract_version") != record_contract.version:
         raise ValueError("distance calibration record contract mismatch")
@@ -904,7 +919,11 @@ def validate_pair_bucket_distance_calibration(
                 ):
                     raise ValueError(f"nonmonotone percentile knots for {key}")
         else:
-            _validate_standard_deviation_entry(str(key), entry)
+            _validate_standard_deviation_entry(
+                str(key),
+                entry,
+                require_bucket_eligibility=version == CALIBRATION_VERSION,
+            )
             _validate_value_cdf_entry(str(key), entry)
             _validate_category_cdf_entry(
                 str(key), entry, record_contract=record_contract
@@ -924,13 +943,22 @@ def validate_pair_bucket_distance_calibration(
 
 
 def _validate_standard_deviation_entry(
-    key: str, entry: Mapping[str, Any]
+    key: str,
+    entry: Mapping[str, Any],
+    *,
+    require_bucket_eligibility: bool = False,
 ) -> None:
     valid = bool(entry.get("calibration_valid"))
     if valid != (entry.get("calibration_reason") == "valid"):
         raise ValueError(f"calibration validity/reason mismatch for {key}")
     if bool(entry.get("standard_deviation_valid")) != valid:
         raise ValueError(f"standard-deviation validity mismatch for {key}")
+    if require_bucket_eligibility:
+        if bool(entry.get("assay_transfer_bucket_eligible")) != valid:
+            raise ValueError(f"assay-transfer bucket eligibility mismatch for {key}")
+        expected = None if valid else entry.get("calibration_reason")
+        if entry.get("assay_transfer_bucket_ineligibility_reason") != expected:
+            raise ValueError(f"assay-transfer bucket reason mismatch for {key}")
     if entry.get("standard_deviation_reason") != entry.get("calibration_reason"):
         raise ValueError(f"standard-deviation reason mismatch for {key}")
     if int(entry.get("standard_deviation_ddof") or -1) != STANDARD_DEVIATION_DDOF:

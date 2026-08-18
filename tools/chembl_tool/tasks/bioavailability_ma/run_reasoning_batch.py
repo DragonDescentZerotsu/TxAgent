@@ -14,7 +14,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.precompute_assay_trans
     preflight_cache_coverage as preflight_legacy_cache_coverage,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
+    DEFAULT_GROUP_PROMPT_VERSION,
+    GROUP_PROMPT_VERSIONS,
     final_prompt_provenance,
+    group_prompt_provenance,
 )
 
 
@@ -56,11 +59,15 @@ CONFIG = BatchConfig(
     supports_retrieval_strategy=True,
     supports_nondirect_bioavailability_filter=True,
     supports_analogous_reasoning_only=True,
+    analogous_reasoning_modes=("full_flat", "full_mechanism"),
     final_prompt_provenance=final_prompt_provenance,
     group_prompt_formats=("legacy", "morganfingerprint", "assay_transfer_tool"),
     default_group_prompt_format="legacy",
     group_output_schemas=("legacy", "assay-transfer"),
     default_group_output_schema="legacy",
+    group_prompt_versions=GROUP_PROMPT_VERSIONS,
+    default_group_prompt_version=DEFAULT_GROUP_PROMPT_VERSION,
+    group_prompt_provenance=group_prompt_provenance,
     v11_rerank_catalog_default=default_cache_paths("bioavailability_ma")["catalog"],
     v11_rerank_cache_default=default_cache_paths("bioavailability_ma")["cache"],
     v11_rerank_candidate_manifest_default=default_cache_paths("bioavailability_ma")[

@@ -4,6 +4,10 @@ __pycache__/
 *.py[cod]
 outputs/
 
+# ClinTox send_v2 is tracked as its exact supplied archive split into verified
+# sub-100 MB parts. These byte-identical extracted Parquets are local restores.
+data/starling_data/clintox/send_v2/*/extractions.parquet
+
 # Starling acquisition queues are reproducible local intermediates and may
 # exceed GitHub's per-file size limit. Keep the extracted evidence and compact
 # provenance files, but not the PMID work queue.

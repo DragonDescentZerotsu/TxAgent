@@ -1,7 +1,9 @@
 """Paper-facing ClinTox retrieval views."""
 
-from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
-
+from tools.chembl_tool.common.experiment_retrieval import (
+    EvidenceGroupSpec,
+    SourceExperimentConfig,
+)
 
 CHEMBL = SourceExperimentConfig(
     source_name="chembl",
@@ -94,10 +96,47 @@ CLINTOX_BASE = SourceExperimentConfig(
     ),
 )
 
+STARLING_V7 = SourceExperimentConfig(
+    source_name="starling_v7",
+    direct_groups=(
+        EvidenceGroupSpec(
+            "Direct.human_clinical_toxicity",
+            "Direct",
+            "clinical_human_safety",
+            source_groups=("Direct.human_clinical_toxicity",),
+        ),
+    ),
+    mechanism_groups=(
+        EvidenceGroupSpec(
+            "Mechanism.clinical_human_safety",
+            "Mechanism",
+            "clinical_human_safety",
+            source_groups=("Direct.human_clinical_toxicity",),
+        ),
+        *(
+            EvidenceGroupSpec(
+                f"Mechanism.{family}",
+                "Mechanism",
+                family,
+                source_groups=(f"Mechanism.{family}",),
+            )
+            for family in (
+                "in_vivo_toxicology",
+                "organ_specific_toxicity",
+                "genotoxicity_carcinogenicity",
+                "cellular_stress_pathways",
+                "general_cytotoxicity",
+                "off_target_ddi_exposure",
+            )
+        ),
+    ),
+)
+
 SOURCES = {
     "chembl": CHEMBL,
     "starling_raw": STARLING_RAW,
     "clintox_base": CLINTOX_BASE,
+    "starling_v7": STARLING_V7,
 }
 
 

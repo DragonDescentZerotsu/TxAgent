@@ -17,6 +17,7 @@ from tools.chembl_tool.common.starling.reference_semantics import (
     REFERENCE_SCOPE_ABSOLUTE,
     REFERENCE_SCOPE_COMPARATOR,
     ReferenceEligibilitySpec,
+    ReferenceSemanticsAttacher,
     deterministic_default_assignment,
     reference_exclusion_reason,
 )
@@ -25,6 +26,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_reference_semantics imp
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_reference_semantics import (
     REFERENCE_SEMANTICS_CONFIG as BBB_REFERENCE_SEMANTICS_CONFIG,
+    deterministic_assignment as bbb_deterministic_assignment,
     generation_no_call_assignment,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_reference_semantics import (
@@ -557,6 +559,17 @@ def test_bbb_no_call_gates_are_narrow_and_fail_closed() -> None:
     )
     assert physical is not None
     assert (physical.scope, physical.basis) == ("absolute", "none")
+    runtime = bbb_deterministic_assignment(
+        {
+            "finite_scalar_value": 23.6,
+            "normalization_validity_status": "valid",
+            "canonical_semantics_status": "approved",
+            "canonical_quantity_kind": "auc",
+            "canonical_unit": "h·µM",
+        }
+    )
+    assert runtime is not None
+    assert (runtime.scope, runtime.basis) == ("absolute", "none")
     assert generation_no_call_assignment(
         {
             "canonical_semantics_status": "approved",
@@ -598,6 +611,55 @@ def test_bbb_no_call_gates_are_narrow_and_fail_closed() -> None:
     )
     assert fold is not None
     assert (fold.scope, fold.basis) == ("comparator_relative", "unknown")
+
+
+def test_post_scale_missing_reference_mapping_stays_fail_closed() -> None:
+    attacher = ReferenceSemanticsAttacher(BBB_REFERENCE_SEMANTICS_CONFIG)
+
+    result = attacher.attach_post_scale_fail_closed(
+        {
+            "cleaned_record_id": "newly-valid-after-scale",
+            "finite_scalar_value": 1.01,
+            "normalization_validity_status": "valid",
+        }
+    )
+
+    assert result["canonical_reference_scope"] == "unknown"
+    assert result["canonical_reference_basis"] == "unknown"
+    assert result["reference_semantics_assignment_method"] == (
+        "post_assay_transfer_scale_mapping_not_available"
+    )
+
+
+def test_newly_valid_unmapped_record_gets_explicit_unknown_assignment() -> None:
+    attacher = ReferenceSemanticsAttacher(
+        BBB_REFERENCE_SEMANTICS_CONFIG, fail_closed_unmapped=True
+    )
+
+    result = attacher.attach(
+        {
+            "cleaned_record_id": "newly-valid-parser-record",
+            "finite_scalar_value": 1.0,
+            "normalization_validity_status": "valid",
+        }
+    )
+    coverage = attacher.coverage_audit(
+        [
+            {
+                "cleaned_record_id": "newly-valid-parser-record",
+                "finite_scalar_value": 1.0,
+                "normalization_validity_status": "valid",
+            }
+        ]
+    )
+
+    assert result["canonical_reference_scope"] == "unknown"
+    assert result["reference_semantics_assignment_method"] == (
+        "assay_transfer_mapping_not_available_fail_closed"
+    )
+    assert coverage["fail_closed_unmapped_records"] == 1
+    assert coverage["validations"]["all_applicable_records_mapped"] is False
+    assert coverage["validations"]["all_applicable_records_assigned"] is True
 
 
 def test_prior_safe_gate_conflict_is_preserved_but_excluded() -> None:

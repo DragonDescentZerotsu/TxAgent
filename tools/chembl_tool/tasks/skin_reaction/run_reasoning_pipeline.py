@@ -58,8 +58,16 @@ from tools.chembl_tool.common.final_evidence_surface import (
     prepare_resumed_final_inputs,
 )
 from tools.chembl_tool.common.identity_blind import (
+    expose_neighbor_smiles_only,
     prepare_reasoning_retrieval,
+    query_without_prefetched_tools,
     sanitize_identity_blind_branch_outputs,
+)
+from tools.chembl_tool.common.task_workflows.analogous_flat_prompt import (
+    PROMPT_IDENTITY_VIEW,
+    prompt_provenance as analogous_flat_prompt_provenance,
+    reason_final as reason_analogous_flat_final,
+    reason_group as reason_analogous_flat_group,
 )
 from tools.chembl_tool.common.json_utils import parse_json_content
 from tools.chembl_tool.common.neighbor_selection import (
@@ -211,6 +219,25 @@ SINGLE_MOLECULE_TOOL_CHOICE = {
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    if args.analogous_reasoning_only:
+        if not args.identity_blind:
+            raise SystemExit("Skin analogous-flat reasoning requires --identity-blind")
+        if args.retrieval_strategy not in {
+            ASSAY_TRANSFER_TOOL_STRATEGY,
+            "morgan_fingerprint",
+        }:
+            raise SystemExit(
+                "Skin analogous-flat reasoning requires assay_transfer_tool or "
+                "morgan_fingerprint retrieval"
+            )
+        if (
+            args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+            and not args.enable_assay_transfer_scores
+        ):
+            raise SystemExit(
+                "Skin analogous-flat assay-transfer reasoning requires "
+                "--enable-assay-transfer-scores"
+            )
     if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
         if args.group_prompt_format != "assay_transfer_tool":
             raise SystemExit(
@@ -277,7 +304,7 @@ def main(argv: list[str] | None = None) -> int:
             max_tokens=args.max_tokens,
             temperature=args.temperature,
             tool_service_url=args.tool_service_url,
-            enable_group_tools=not args.disable_group_tools,
+            enable_group_tools=not args.disable_group_tools and not args.disable_flat_tools,
             max_tool_rounds=args.max_tool_rounds,
             reasoning_effort=args.reasoning_effort,
             enable_thinking=args.enable_thinking,
@@ -397,7 +424,11 @@ def main(argv: list[str] | None = None) -> int:
         max_tokens=args.max_tokens,
         temperature=args.temperature,
         tool_service_url=args.tool_service_url,
-        enable_group_tools=not args.disable_group_tools,
+        enable_group_tools=(
+            not args.disable_group_tools
+            and not args.disable_flat_tools
+            and not args.analogous_reasoning_only
+        ),
         max_tool_rounds=args.max_tool_rounds,
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
@@ -409,26 +440,45 @@ def main(argv: list[str] | None = None) -> int:
         harness_prefetch_tools=args.harness_prefetch_tools,
         prefetched_tool_replay_run_dir=args.prefetched_tool_replay_run_dir,
         neighbor_context_profile=args.neighbor_context_profile,
+        include_query_tools=not args.analogous_reasoning_only,
+        include_neighbor_tools=(
+            not args.disable_flat_tools and not args.analogous_reasoning_only
+        ),
     )
+    if args.analogous_reasoning_only:
+        reasoning_retrieval = expose_neighbor_smiles_only(
+            reasoning_retrieval, retrieval
+        )
     reasoning_groups = [group for group in reasoning_retrieval["groups"] if group.get("neighbors")]
     if args.max_groups:
         reasoning_groups = reasoning_groups[: args.max_groups]
-    frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
-    frozen_groups = load_reusable_group_outputs(
-        args.group_analysis_source_run_dir,
-        retrieval,
-        target_neighbor_context_profile=args.neighbor_context_profile,
-    )
-
-    single_output, group_outputs = _run_parallel_reasoning(
-        client,
-        reasoning_retrieval,
-        reasoning_groups,
-        max_workers=args.max_workers,
-        single_output=frozen_single,
-        group_outputs=frozen_groups,
-        prompt_profile=args.skin_prompt_profile,
-    )
+    if args.analogous_reasoning_only:
+        single_output = {
+            "analysis_id": "single_molecule",
+            "status": "omitted",
+            "reason": "analogous_reasoning_only",
+        }
+        group_outputs = [
+            reason_analogous_flat_group(client, group, task_id="skin_reaction")
+            for group in reasoning_groups
+        ]
+    else:
+        frozen_single = load_frozen_single_analysis(args.single_analysis_source_run_dir)
+        frozen_groups = load_reusable_group_outputs(
+            args.group_analysis_source_run_dir,
+            retrieval,
+            target_neighbor_context_profile=args.neighbor_context_profile,
+        )
+        single_output, group_outputs = _run_parallel_reasoning(
+            client,
+            reasoning_retrieval,
+            reasoning_groups,
+            max_workers=args.max_workers,
+            single_output=frozen_single,
+            group_outputs=frozen_groups,
+            prompt_profile=args.skin_prompt_profile,
+            disable_flat_tools=args.disable_flat_tools,
+        )
     single_path = out_dir / "single_molecule_reasoning_output.json"
     _write_json(single_path, single_output)
     _log(f"wrote {single_path}")
@@ -442,13 +492,17 @@ def main(argv: list[str] | None = None) -> int:
     _write_jsonl(group_path, group_outputs)
     _log(f"wrote {group_path}")
 
-    final_output = _run_final_reasoning(
-        client,
-        reasoning_retrieval,
-        single_output,
-        group_outputs,
-        final_evidence_surface=args.final_evidence_surface,
-        prompt_profile=args.skin_prompt_profile,
+    final_output = (
+        reason_analogous_flat_final(client, group_outputs, task_id="skin_reaction")
+        if args.analogous_reasoning_only
+        else _run_final_reasoning(
+            client,
+            reasoning_retrieval,
+            single_output,
+            group_outputs,
+            final_evidence_surface=args.final_evidence_surface,
+            prompt_profile=args.skin_prompt_profile,
+        )
     )
     final_path = out_dir / "final_reasoning_output.json"
     _write_json(final_path, final_output)
@@ -498,7 +552,21 @@ def main(argv: list[str] | None = None) -> int:
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
         "prefetched_tool_replay_source_run_dir": args.prefetched_tool_replay_run_dir,
         "identity_blind": args.identity_blind,
-        "harness_prefetch_tools": args.identity_blind or args.harness_prefetch_tools,
+        "analogous_reasoning_only": args.analogous_reasoning_only,
+        "prompt_identity_view": (
+            PROMPT_IDENTITY_VIEW if args.analogous_reasoning_only else "identity_blind"
+            if args.identity_blind else "deployment_visible"
+        ),
+        "analogous_flat_prompt_provenance": (
+            analogous_flat_prompt_provenance("skin_reaction")
+            if args.analogous_reasoning_only else {}
+        ),
+        "disable_flat_tools": args.disable_flat_tools,
+        "harness_prefetch_tools": (
+            False
+            if args.analogous_reasoning_only
+            else args.identity_blind or args.harness_prefetch_tools
+        ),
         "neighbor_index": args.index if args.experiment_mode != "none" else "",
         "retrieval_evidence_source": retrieval.get("evidence_source", {}),
         "model": args.model,
@@ -507,9 +575,19 @@ def main(argv: list[str] | None = None) -> int:
         "reasoning_effort": args.reasoning_effort,
         "temperature": args.temperature,
         "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
-        "group_tools_enabled": not args.disable_group_tools,
+        "group_tools_enabled": (
+            not args.disable_group_tools
+            and not args.disable_flat_tools
+            and not args.analogous_reasoning_only
+        ),
         "tool_execution_mode": (
-            "harness_prefetch" if args.identity_blind or args.harness_prefetch_tools else "llm_function_call"
+            "omitted"
+            if args.analogous_reasoning_only
+            else "harness_prefetch_query_only"
+            if args.disable_flat_tools
+            else "harness_prefetch"
+            if args.identity_blind or args.harness_prefetch_tools
+            else "llm_function_call"
         ),
         "single_analysis_source_run_dir": args.single_analysis_source_run_dir,
         "group_analysis_source_run_dir": args.group_analysis_source_run_dir,
@@ -517,6 +595,8 @@ def main(argv: list[str] | None = None) -> int:
         "chembl_sqlite": args.chembl_sqlite,
         "group_tool_names": [tool["function"]["name"] for tool in GROUP_REASONING_TOOLS]
         if not args.disable_group_tools
+        and not args.disable_flat_tools
+        and not args.analogous_reasoning_only
         else [],
         "max_tool_rounds": args.max_tool_rounds,
         "top_k_per_group": args.top_k_per_group,
@@ -546,6 +626,7 @@ def _run_parallel_reasoning(
     single_output: dict[str, Any] | None = None,
     group_outputs: list[dict[str, Any]] | None = None,
     prompt_profile: str = DEFAULT_SKIN_PROMPT_PROFILE,
+    disable_flat_tools: bool = False,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     outputs = list(group_outputs or [])
     reused_group_ids = {str(output.get("group_id") or "") for output in outputs}
@@ -554,7 +635,11 @@ def _run_parallel_reasoning(
             executor.submit(
                 _reason_one_group,
                 client,
-                _llm_query_payload(retrieval["query"]),
+                _llm_query_payload(
+                    query_without_prefetched_tools(retrieval["query"])
+                    if disable_flat_tools
+                    else retrieval["query"]
+                ),
                 group,
                 prompt_profile=prompt_profile,
             ): group["group_id"]
@@ -672,8 +757,13 @@ def _reason_one_group(
                 + (
                     "Use the harness-prefetched comparison results; do not call tools. "
                     + ("Do not infer query identity. " if group.get("identity_blind") else "")
-                    if group.get("tools_prefetched") or group.get("identity_blind")
-                    else "You may call the provided molecule comparison tools when structural or property differences matter. "
+                    if group.get("tools_prefetched")
+                    else (
+                        "No tools are available for this branch. "
+                        + ("Do not infer query identity. " if group.get("identity_blind") else "")
+                        if not client.enable_group_tools
+                        else "You may call the provided molecule comparison tools when structural or property differences matter. "
+                    )
                 )
                 + "Return only valid JSON."
             ),
@@ -681,7 +771,15 @@ def _reason_one_group(
         {
             "role": "user",
             "content": json.dumps(
-                _group_prompt_payload(query, group, prompt_profile=prompt_profile),
+                _group_prompt_payload(
+                    query,
+                    group,
+                    prompt_profile=prompt_profile,
+                    include_query_tool_guidance=(
+                        bool(group.get("tools_prefetched"))
+                        or client.enable_group_tools
+                    ),
+                ),
                 ensure_ascii=False,
             ),
         },
@@ -815,6 +913,7 @@ def build_group_prompt_payload(
     group: dict[str, Any],
     *,
     prompt_profile: str = DEFAULT_SKIN_PROMPT_PROFILE,
+    include_query_tool_guidance: bool = True,
 ) -> dict[str, Any]:
     profile = get_skin_prompt_profile(prompt_profile)
     include_assay_transfer_score = bool(
@@ -846,14 +945,34 @@ def build_group_prompt_payload(
                     if include_assay_transfer_score
                     else {}
                 ),
-                "prefetched_comparisons": neighbor.get("prefetched_comparisons") or [],
+                **(
+                    {
+                        "prefetched_comparisons": (
+                            neighbor.get("prefetched_comparisons") or []
+                        )
+                    }
+                    if include_query_tool_guidance
+                    else {}
+                ),
                 "evidence_rows": [_clean_evidence_row(row) for row in neighbor["evidence_rows"]],
                 "shared_assay_context": _clean_shared_assay_context(neighbor.get("shared_assay_context") or {}),
             }
             for neighbor in group["neighbors"]
         ],
         "instructions": [
-            *profile.group_instructions,
+            *[
+                line
+                for line in profile.group_instructions
+                if include_query_tool_guidance
+                or not any(
+                    tool_name in line
+                    for tool_name in (
+                        "mmp_structure_compare",
+                        "properties_compare",
+                        "molecule_properties",
+                    )
+                )
+            ],
             *(
                 [
                     (
@@ -1039,6 +1158,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--enable-thinking", dest="enable_thinking", action="store_true", default=True)
     parser.add_argument("--disable-thinking", dest="enable_thinking", action="store_false")
     parser.add_argument("--disable-group-tools", action="store_true")
+    parser.add_argument("--disable-flat-tools", action="store_true")
+    parser.add_argument(
+        "--analogous-reasoning-only",
+        "--analogous_reasoning_only",
+        dest="analogous_reasoning_only",
+        action="store_true",
+    )
     parser.add_argument("--enable-chembl-exact-context", action="store_true")
     parser.add_argument("--top-k-per-group", type=int, default=3)
     parser.add_argument("--enable-assay-transfer-scores", action="store_true")
@@ -1104,6 +1230,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=DEFAULT_SKIN_PROMPT_PROFILE,
     )
     args = parser.parse_args(argv)
+    if args.disable_flat_tools and args.experiment_mode != "full_flat":
+        parser.error("--disable-flat-tools requires --experiment-mode full_flat")
+    if args.analogous_reasoning_only and args.experiment_mode != "full_flat":
+        parser.error(
+            "Skin --analogous-reasoning-only requires --experiment-mode full_flat"
+        )
     if (
         args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
         and args.assay_transfer_profile == "v11_with_categorical"

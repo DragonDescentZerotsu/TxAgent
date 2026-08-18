@@ -4,7 +4,9 @@ import pytest
 from tools.chembl_tool.common.assay_transfer_selection import (
     ASSAY_TRANSFER_DIVERSITY_ASSAY,
     ASSAY_TRANSFER_DIVERSITY_STRUCTURAL,
+    ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
     ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
+    collapse_assay_transfer_records_by_mean_molecule,
     collapse_assay_transfer_records_by_molecule,
     select_assay_transfer_records,
     validate_assay_transfer_records_per_molecule,
@@ -83,10 +85,48 @@ def test_records_per_molecule_rejects_values_outside_one_to_ten(value):
 
 
 def test_multiple_records_require_unique_molecule_selection():
-    with pytest.raises(ValueError, match="requires selection unit unique_molecule"):
+    with pytest.raises(ValueError, match="unique_molecule or mean_score_molecule"):
         validate_assay_transfer_records_per_molecule(
             2, selection_unit=ASSAY_TRANSFER_SELECTION_SCORED_RECORD
         )
+
+
+def test_mean_score_molecule_uses_all_scores_and_frozen_representatives():
+    rows = [
+        _record("a", 0.9, "record_1"),
+        _record("a", 0.3, "record_2"),
+        _record("a", 0.6, "record_3"),
+        _record("b", 0.7, "record_4"),
+    ]
+    for row in rows[:3]:
+        row["evidence_rows"] = [
+            {"_representative_record_ids": ["a-record_3", "a-record_1"]}
+        ]
+    rows[3]["evidence_rows"] = [
+        {"_representative_record_ids": ["b-record_4"]}
+    ]
+
+    selected, audit = collapse_assay_transfer_records_by_mean_molecule(
+        rows, records_per_molecule=2
+    )
+
+    assert [row["molecule_chembl_id"] for row in selected] == ["b", "a"]
+    assert selected[1]["transfer_selection_score"] == pytest.approx(0.6)
+    assert [
+        record["transfer_winning_record_id"]
+        for record in selected[1]["transfer_selected_records"]
+    ] == ["a-record_3", "a-record_1"]
+    assert audit["selection_unit"] == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
+    assert audit["molecule_score_policy"] == "arithmetic_mean_all_eligible_cached_records"
+
+
+def test_mean_score_molecule_fails_closed_on_missing_representative_score():
+    row = _record("a", 0.9, "record_1")
+    row["evidence_rows"] = [
+        {"_representative_record_ids": ["a-record_1", "a-missing"]}
+    ]
+    with pytest.raises(ValueError, match="missing frozen Stage 07 representative"):
+        collapse_assay_transfer_records_by_mean_molecule([row])
 
 
 def _fingerprint(*bits: int):

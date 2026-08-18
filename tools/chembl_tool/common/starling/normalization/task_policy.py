@@ -50,6 +50,9 @@ class NormalizationHooks:
     endpoint_standardizer: Callable[[str, MeasurementPair], MeasurementPair]
     family_resolver: Callable[[str, str, Mapping[str, Any] | None], Any]
     record_enricher: Callable[[dict[str, Any]], dict[str, Any]]
+    assay_transfer_revalidator: (
+        Callable[[dict[str, Any]], dict[str, Any]] | None
+    ) = None
     source_measurement_resolver: Callable[..., Any] | None = None
     contextual_standardizer: Callable[..., Any] | None = None
     run_state: Any = None
@@ -150,6 +153,9 @@ class StarlingTaskPolicy:
     # are not necessarily exposed as CLI arguments.  The shared build cache
     # fingerprints these alongside implementation code.
     scientific_assets: tuple[Path, ...] = ()
+    # Frozen assay-transfer measurement policy. Canonical measurement/unit
+    # fields are numerical training geometry, never retrieval presentation.
+    assay_transfer_measurement_policy: Path | None = None
     # When enabled, Stage 02 publishes the frozen row-level reference
     # classification mapping and coverage as a first-class side artifact.
     reference_semantics_enabled: bool = False

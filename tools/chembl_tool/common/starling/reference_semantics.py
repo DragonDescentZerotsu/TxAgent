@@ -143,10 +143,17 @@ class ReferenceEligibilitySpec:
 class ReferenceSemanticsAttacher:
     """Attach one frozen row mapping with deterministic no-call precedence."""
 
-    def __init__(self, config: ReferenceSemanticsConfig, *, allow_missing: bool = False):
+    def __init__(
+        self,
+        config: ReferenceSemanticsConfig,
+        *,
+        allow_missing: bool = False,
+        fail_closed_unmapped: bool = False,
+    ):
         self.config = config
         self.path = Path(config.mapping_path)
         self.allow_missing = allow_missing
+        self.fail_closed_unmapped = fail_closed_unmapped
         self._mapping: dict[str, ReferenceAssignment] = {}
         if self.path.exists():
             frame = pd.read_parquet(self.path)
@@ -191,6 +198,12 @@ class ReferenceSemanticsAttacher:
                 REFERENCE_BASIS_UNKNOWN if self.config.output_basis else None,
                 "mapping_not_available",
             )
+        if self.fail_closed_unmapped:
+            return ReferenceAssignment(
+                REFERENCE_SCOPE_UNKNOWN,
+                REFERENCE_BASIS_UNKNOWN if self.config.output_basis else None,
+                "assay_transfer_mapping_not_available_fail_closed",
+            )
         raise ValueError(f"missing reference-semantics assignment for {record_id!r}")
 
     def attach(self, record: Mapping[str, Any]) -> dict[str, Any]:
@@ -203,9 +216,27 @@ class ReferenceSemanticsAttacher:
             output["canonical_reference_basis"] = assignment.basis
         return output
 
+    def attach_post_scale_fail_closed(self, record: Mapping[str, Any]) -> dict[str, Any]:
+        """Keep newly valid scale repairs ineligible when no mapping existed."""
+        try:
+            return self.attach(record)
+        except ValueError as exc:
+            if not str(exc).startswith("missing reference-semantics assignment"):
+                raise
+        output = {
+            "canonical_reference_scope": REFERENCE_SCOPE_UNKNOWN,
+            "reference_semantics_assignment_method": (
+                "post_assay_transfer_scale_mapping_not_available"
+            ),
+        }
+        if self.config.output_basis:
+            output["canonical_reference_basis"] = REFERENCE_BASIS_UNKNOWN
+        return output
+
     def coverage_audit(self, records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         counts: Counter[str] = Counter()
         missing: list[str] = []
+        fail_closed: list[str] = []
         for record in records:
             deterministic = self.config.deterministic_assignment(record)
             if deterministic is not None:
@@ -214,6 +245,10 @@ class ReferenceSemanticsAttacher:
             record_id = str(record.get("cleaned_record_id") or "")
             if record_id in self._mapping:
                 counts[self._mapping[record_id].method] += 1
+            elif self.fail_closed_unmapped:
+                method = "assay_transfer_mapping_not_available_fail_closed"
+                counts[method] += 1
+                fail_closed.append(record_id)
             else:
                 missing.append(record_id)
         return {
@@ -221,9 +256,12 @@ class ReferenceSemanticsAttacher:
             "assignment_method_counts": dict(sorted(counts.items())),
             "missing_mapping_records": len(missing),
             "missing_mapping_record_examples": missing[:20],
+            "fail_closed_unmapped_records": len(fail_closed),
+            "fail_closed_unmapped_record_examples": fail_closed[:20],
             "validations": {
                 "mapping_available": self.ready,
-                "all_applicable_records_mapped": not missing,
+                "all_applicable_records_mapped": not missing and not fail_closed,
+                "all_applicable_records_assigned": not missing,
             },
         }
 

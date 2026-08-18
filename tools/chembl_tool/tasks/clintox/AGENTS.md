@@ -1,5 +1,44 @@
 # ClinTox task notes
 
+## Current send_v2 lineage (2026-08-17)
+
+The active ClinTox data pipeline is built only from
+`/vast/projects/myatskar/lab/shared_docs/clintox_send_v2.tar.gz`, pinned by
+archive SHA-256
+`bf6da36bf2ac347d4763e5c3a234292c7f5c04576cccc4b75f6a4741246ac4ea`.
+Its immutable import lives at `data/starling_data/clintox/send_v2/` and contains
+4,846,914 rows across one human-clinical direct source and six mechanism
+sources. Every row has a nonempty source `SMILES`; 4,816,479 rows pass the
+repository RDKit structure normalizer and 30,435 remain visible but fail
+closed. The delivery has no `global_identifier`, and derived artifacts must
+not synthesize one.
+
+The supplied archive is tracked as verified sub-100 MB parts under
+`artifacts/chembl_tool/tasks/clintox/clintox_send_v2_source/`. Extracted
+Parquets under `data/starling_data/clintox/send_v2/` are byte-identical local
+restores and are excluded as duplicate Git blobs. Use
+`starling_source_artifact_store restore-source` in a fresh checkout.
+
+The active human-clinical benchmark adapter produces 7,628 binary parents.
+The `record_supported_v2` scaffold candidate is 6,104 train / 762 valid / 762
+test with zero parent-identity or Bemis-Murcko scaffold overlap. It remains
+`candidate_pending_qa` because the direct clinical schema does not contain
+`qualifying_conditions`; this missing semantic gate cannot be reconstructed
+from the other sources.
+
+Task-owned canonical evidence ends at Stage 05 under
+`outputs/chembl_tool/tasks/clintox/evidence_library/starling_normalized_v7/`.
+Benchmark-dependent Stages 06-09 belong under the
+`record_supported_v2` paper lineage and must use direct-source held-out
+exclusion plus query-time `parent_disjoint` retrieval.
+
+All earlier ClinTox source, gold, evidence, and index artifacts are superseded.
+Prior experiment outputs are preserved only as historical results: any result
+whose manifest does not pin the send_v2 archive and current Stage-08 index is
+incompatible with this lineage and must not be merged into current summaries.
+The older sections below are retained as historical task context; their
+`clintox_base_v1`, `starling_raw_v1`, and TDC paths are not active inputs.
+
 本文件只记录 ClinTox 的 task-specific 语义：label、当前数据、临床毒性 evidence tier、
 assay/endpoint 解释、过滤规则和 reasoning schema。通用 ChEMBL workflow、wrapper 结构、
 batch/resume、viewer、cost 和目录规范统一记录在仓库根 `AGENTS.md`。
@@ -20,12 +59,15 @@ audit 工具继续保留用于复现与案例分析，不再按 test errors 调�
 toxicology、organ-specific toxicity、genotoxicity/carcinogenicity、cellular stress、general cytotoxicity 和
 off-target/DDI/exposure。并行 reasoning 以这 7 个 family 为上限，而不是以 43 个 endpoint groups 为单位。
 
-The supplied `clintox_send.tar.gz` still does not contain a Starling source with the same definition as
-ClinTox "toxicity-related clinical-trial failure". It is now ingested separately as `starling_raw_v1`, and
-the new `ClinTox_Human_Toxicity` candidate benchmark predicts explicit human clinical organ injury. This
-new benchmark must never be described as TDC/MoleculeNet CT_TOX or mixed with the historical TDC lineage.
+Historical `clintox_send.tar.gz` did not contain a source with the same
+definition as ClinTox "toxicity-related clinical-trial failure". It was
+ingested as `starling_raw_v1`; that pipeline is now superseded by send_v2.
+The active `ClinTox_Human_Toxicity` candidate predicts explicit declared human
+clinical toxicity and must never be described as TDC/MoleculeNet CT_TOX or
+mixed with the historical TDC lineage.
 
-The raw-first implementation is intentionally narrower than v7 assay-transfer normalization:
+The historical raw-first implementation was intentionally narrower than v7
+assay-transfer normalization:
 
 ```text
 data/starling_data/clintox/raw_v1/
@@ -43,8 +85,8 @@ tools/chembl_tool/tasks/clintox/starling_raw_artifact_store.py
   deterministic Git-split package/verify/restore wrapper
 ```
 
-Exact raw Parquets retain `global_identifier`, but derived artifacts and gold decisions never read or emit
-it; source `SMILES` is the only structure input. The benchmark uses the shared basic-null helper, so null,
+Those exact raw Parquets retained `global_identifier`, but derived artifacts and gold decisions never read or emitted
+it; source `SMILES` was the only structure input. The benchmark used the shared basic-null helper, so null,
 blank, `nan`, `none`, `null`, `n/a`, and `na` count as empty qualifying conditions, while `-` and
 `unspecified` are nonempty and are rejected. The candidate uses the existing 70% record-weighted parent
 vote and the scaffold-only `record_supported_v2` allocator, but remains `candidate_pending_qa` until its

@@ -208,19 +208,24 @@ experiment TSV 的每个 task/split 必须有且仅有一个 `comparison_role=an
    记录 task、`input_jsonl_sha256` 和 task provenance reference；top-level `benchmark_provenance`
    保存 protocol、identity normalizer、seed、source revision/metadata、parent agreement policy，以及 task/split
    summary、valid/test inputs、各自 label audit 和 valid+test union `heldout_molecule_labels.jsonl` 的 SHA-256；
-2. random 与 scaffold 分别使用对应 `heldout_molecule_labels.jsonl` 构建的 train-only evidence index，
-   不能复用从 full Starling direct source 构建的旧 index；
-3. 在运行 LLM 前审计 valid+test parent identity union 与 index molecule identity 为零重叠；scaffold split
-   还需保留 train/valid/test scaffold 两两零重叠的 builder audit；
+2. random 与 scaffold 分别使用对应 `heldout_molecule_labels.jsonl` 构建 direct-source-filtered evidence view，
+   不能复用未执行该 exclusion 的旧 index；mechanism records 保留并在 query time 使用 `parent_disjoint`；
+3. 在运行 LLM 前审计 valid+test parent identity union 与 direct gold source 为零重叠、非 direct mechanism
+   overlap 的保留数量和 runtime same-parent exclusion；scaffold split 还需保留 train/valid/test scaffold
+   两两零重叠的 builder audit；
 4. 两种 Starling split 使用不同 output root/batch ID，且都与旧 TDC test/valid root 隔离；
 5. 汇总器和图表必须按 benchmark lineage 分区，不得把 TDC、Starling-random 和
    Starling-scaffold sample-condition 合并成一个指标。
 
-`build_starling_benchmark_indices.py` 从既有 full-source Starling evidence rows 中删除对应构造方法的
-全部 valid+test parents，然后重建 direct/full index；因此可使用不属于 gold train 的其它 Starling records，
-但不能保留任何 evaluation-parent record。构建时必须用当前 normalizer 从 `drug` 重算 held-out parent key 并与
-artifact 中保存的 key 一致；无法解析 parent 的 source evidence row 采用保守排除，不能在无法证明 disjoint
-时仍写入 evidence artifact。`starling_benchmark_matrix.py` 复用冻结的 GLM、prompt、retrieval mode、
+`build_starling_benchmark_indices.py --heldout-filter-mode direct_source_only` 从既有 full-source Starling v7 rows
+中只删除 task 声明的 direct gold source 内对应 valid+test parents，然后重建 full index。其它 mechanism sources
+继续保留，包括 evaluation-parent mechanism records；这些 records 必须在 query time 通过 `parent_disjoint` 排除
+same-parent candidate。构建时必须用当前 normalizer 从 `drug` 重算 held-out parent key 并与 artifact 中保存的 key
+一致；无法解析 parent 的 direct-source row 采用保守排除。历史 `all_parents` mode 只用于复现旧 index contract。
+Each paper evidence view owns its Stage 06 records, Stage 07 molecule evidence, Stage 08 neighbor index,
+and Stage 09 audit manifests. New formal runs must use this lineage-local Stage 08 explicitly; task-local
+Stage 06-09 directories are historical compatibility artifacts, not current paper inputs.
+`starling_benchmark_matrix.py` 复用冻结的 GLM、prompt、retrieval mode、
 tool 和 batch pipeline，仅替换 test input、Starling index 与隔离 output root：
 
 ```text

@@ -43,8 +43,13 @@ def prepare_harness_prefetched_retrieval(
     *,
     identity_blind: bool,
     include_query_tools: bool = True,
+    include_neighbor_tools: bool | None = None,
 ) -> dict[str, Any]:
     """Prefetch the same fixed tools, optionally hiding molecule identities."""
+    if include_neighbor_tools is None:
+        include_neighbor_tools = include_query_tools
+    if include_neighbor_tools and not include_query_tools:
+        raise ValueError("Neighbor comparison tools require query tools")
     output = deepcopy(retrieval)
     query = output.get("query") or {}
     query_smiles = str(query.get("canonical_smiles") or query.get("input_smiles") or "")
@@ -58,7 +63,7 @@ def prepare_harness_prefetched_retrieval(
         for neighbor in group.get("neighbors") or []:
             reference_smiles = str(neighbor.get("canonical_smiles") or "")
             neighbor_smiles.append(reference_smiles)
-            if include_query_tools:
+            if include_neighbor_tools:
                 calls.extend(
                     [
                         (
@@ -110,7 +115,7 @@ def prepare_harness_prefetched_retrieval(
     result_index = 1 if include_query_tools else 0
     neighbor_smiles_index = 0
     for group_index, group in enumerate(output.get("groups") or [], start=1):
-        if include_query_tools:
+        if include_neighbor_tools:
             group["tools_prefetched"] = True
         if identity_blind:
             group["identity_blind"] = True
@@ -118,7 +123,7 @@ def prepare_harness_prefetched_retrieval(
             reference_smiles = neighbor_smiles[neighbor_smiles_index]
             neighbor_smiles_index += 1
             alias = f"neighbor_{group_index}_{neighbor_index}"
-            if include_query_tools:
+            if include_neighbor_tools:
                 comparisons = results[result_index : result_index + 2]
                 result_index += 2
                 neighbor["prefetched_comparisons"] = [
@@ -136,7 +141,11 @@ def prepare_harness_prefetched_retrieval(
                 ]
     experiment = output.setdefault("experiment", {})
     experiment["tool_execution_mode"] = (
-        "harness_prefetch" if include_query_tools else "omitted"
+        "harness_prefetch"
+        if include_neighbor_tools
+        else "harness_prefetch_query_only"
+        if include_query_tools
+        else "omitted"
     )
     if identity_blind:
         output = _replace_identity_terms(output, _retrieval_sensitive_terms(retrieval))
@@ -162,6 +171,7 @@ def prepare_reasoning_retrieval(
     prefetched_tool_replay_run_dir: str = "",
     neighbor_context_profile: str = STANDARD_NEIGHBOR_CONTEXT,
     include_query_tools: bool = True,
+    include_neighbor_tools: bool | None = None,
 ) -> dict[str, Any]:
     """Apply the requested paper tool-execution contract to retrieval."""
     if not include_query_tools and prefetched_tool_replay_run_dir:
@@ -187,6 +197,7 @@ def prepare_reasoning_retrieval(
             tool_service,
             identity_blind=True,
             include_query_tools=include_query_tools,
+            include_neighbor_tools=include_neighbor_tools,
         )
     if not include_query_tools:
         reasoning_input.setdefault("experiment", {})["tool_execution_mode"] = "omitted"
@@ -201,8 +212,53 @@ def prepare_reasoning_retrieval(
             reasoning_input,
             tool_service,
             identity_blind=False,
+            include_neighbor_tools=include_neighbor_tools,
         )
     return reasoning_input
+
+
+def query_without_prefetched_tools(query: dict[str, Any]) -> dict[str, Any]:
+    """Return the query identity surface without any harness tool payload."""
+    output = deepcopy(query)
+    output.pop("tools_prefetched", None)
+    output.pop("prefetched_molecule_properties", None)
+    return output
+
+
+def expose_neighbor_smiles_only(
+    reasoning_retrieval: dict[str, Any],
+    source_retrieval: dict[str, Any],
+) -> dict[str, Any]:
+    """Expose canonical neighbor structures while keeping the query identity blind.
+
+    This is the narrow prompt view used by tool-free analogous reasoning.  Evidence
+    rows stay redacted and the query remains the anonymous ``query`` object.
+    """
+    output = deepcopy(reasoning_retrieval)
+    query = output.get("query") or {}
+    if not query.get("identity_hidden"):
+        raise ValueError("Neighbor-SMILES prompt view requires an identity-blind query")
+    source_groups = source_retrieval.get("groups") or []
+    visible_groups = output.get("groups") or []
+    if len(source_groups) != len(visible_groups):
+        raise ValueError("Neighbor-SMILES prompt view group count mismatch")
+    for source_group, visible_group in zip(source_groups, visible_groups, strict=True):
+        if source_group.get("group_id") != visible_group.get("group_id"):
+            raise ValueError("Neighbor-SMILES prompt view group ordering mismatch")
+        source_neighbors = source_group.get("neighbors") or []
+        visible_neighbors = visible_group.get("neighbors") or []
+        if len(source_neighbors) != len(visible_neighbors):
+            raise ValueError("Neighbor-SMILES prompt view neighbor count mismatch")
+        for source_neighbor, visible_neighbor in zip(
+            source_neighbors, visible_neighbors, strict=True
+        ):
+            smiles = str(source_neighbor.get("canonical_smiles") or "")
+            if not smiles:
+                raise ValueError("Retrieved neighbor is missing canonical_smiles")
+            visible_neighbor["canonical_smiles"] = smiles
+    experiment = output.setdefault("experiment", {})
+    experiment["prompt_identity_view"] = "query_blind_neighbor_smiles"
+    return output
 
 
 def prepare_replayed_prefetched_retrieval(

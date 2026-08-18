@@ -4,7 +4,9 @@ import pandas as pd
 import pytest
 
 from tools.chembl_tool.tasks.bioavailability_ma.build_canonical_starling_source import (
+    apply_paper_direct_contract,
     build_canonical_frames,
+    deduplicate_paper_direct_claims,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     LOCAL_PARTITION_AMBIGUOUS,
@@ -248,3 +250,137 @@ def test_cross_source_dedup_does_not_collapse_threshold_crossing_interval():
 
     assert result["stats"]["n_cross_source_matches"] == 0
     assert result["stats"]["n_canonical_direct_claims"] == 2
+
+
+def test_paper_dedup_prefers_hf_for_the_same_supported_claim():
+    shared = {
+        "parent_identity_key": "MCGSCOLBFJQGHM-SCZZXKLOSA-N",
+        "pmid": "10453964",
+        "value_percent": 83.0,
+        "value_lower_percent": 83.0,
+        "value_upper_percent": 83.0,
+        "support_text": "The absolute bioavailability of oral abacavir was 83% in HIV-infected patients.",
+        "species_or_population": "HIV-infected patients",
+        "dose": "300 mg",
+        "oral_exposure_mode": "oral",
+        "qualifying_conditions": "",
+        "comparator": "intravenous dose",
+        "extra_details": "",
+    }
+    rows = [
+        {**shared, "source_origin": "local", "source_record_id": "local:1:ext_1"},
+        {**shared, "source_origin": "hf", "source_record_id": "hf:1"},
+    ]
+
+    retained, audit, stats = deduplicate_paper_direct_claims(rows)
+
+    assert retained == {"hf:1"}
+    assert audit[0]["discarded_source_record_id"] == "local:1:ext_1"
+    assert stats["cross_source_duplicates"] == 1
+
+
+def test_paper_dedup_keeps_context_conflicts_and_collapses_within_source():
+    common = {
+        "parent_identity_key": "LINOMUASTDIRTM-QGRHZQQGSA-N",
+        "pmid": "29774371",
+        "value_percent": 52.7,
+        "value_lower_percent": 52.7,
+        "value_upper_percent": 52.7,
+        "dose": "",
+        "oral_exposure_mode": "oral",
+        "qualifying_conditions": "",
+        "comparator": "intravenous",
+        "extra_details": "",
+    }
+    rows = [
+        {
+            **common,
+            "source_origin": "hf",
+            "source_record_id": "hf:human",
+            "support_text": "Human oral bioavailability of deoxynivalenol was 52.7%.",
+            "species_or_population": "human subjects",
+        },
+        {
+            **common,
+            "source_origin": "local",
+            "source_record_id": "local:pig:ext_1",
+            "support_text": "Oral bioavailability of deoxynivalenol was 52.7% in piglets.",
+            "species_or_population": "piglets",
+        },
+        {
+            **common,
+            "source_origin": "hf",
+            "source_record_id": "hf:human-copy",
+            "support_text": "Human oral bioavailability of deoxynivalenol was 52.7%.",
+            "species_or_population": "human subjects",
+        },
+    ]
+
+    retained, audit, stats = deduplicate_paper_direct_claims(rows)
+
+    assert retained == {"hf:human", "local:pig:ext_1"}
+    assert audit[0]["discarded_source_record_id"] == "hf:human-copy"
+    assert stats["within_source_duplicates"] == 1
+
+
+def test_paper_direct_contract_removes_duplicate_and_marks_local_residual(tmp_path):
+    shared = {
+        "parent_identity_key": "LFQSCWFLJHTTHZ-UHFFFAOYSA-N",
+        "pmid": "10",
+        "value_percent": 50.0,
+        "value_lower_percent": 50.0,
+        "value_upper_percent": 50.0,
+        "support_text": "Absolute oral bioavailability was 50% in human volunteers.",
+        "species_or_population": "human volunteers",
+        "dose": "10 mg",
+        "oral_exposure_mode": "solution",
+        "qualifying_conditions": "",
+        "comparator": "intravenous",
+        "extra_details": "",
+    }
+    source_path = tmp_path / "direct_source_rows.parquet"
+    pd.DataFrame(
+        [
+            {**shared, "source_origin": "hf", "source_record_id": "hf:7"},
+            {**shared, "source_origin": "local", "source_record_id": "local:2:ext_3"},
+        ]
+    ).to_parquet(source_path, index=False)
+    records = [
+        {
+            "canonical_record_id": "hf-record",
+            "source_id": "hf_bioavailability",
+            "source_record_id": "7",
+            "source_row_number": 8,
+            "group_id": "Observed.direct_oral_bioavailability",
+        },
+        {
+            "canonical_record_id": "local-direct-record",
+            "source_id": "oral_exposure",
+            "source_record_id": "ext_3",
+            "source_row_number": 3,
+            "group_id": "Observed.direct_oral_bioavailability",
+        },
+        {
+            "canonical_record_id": "local-residual-record",
+            "source_id": "oral_exposure",
+            "source_record_id": "ext_4",
+            "source_row_number": 4,
+            "group_id": "Observed.direct_oral_bioavailability",
+        },
+    ]
+
+    prepared, audit, stats = apply_paper_direct_contract(
+        records, direct_source_rows_path=source_path
+    )
+
+    assert [row["canonical_record_id"] for row in prepared] == [
+        "hf-record",
+        "local-residual-record",
+    ]
+    assert prepared[1]["canonical_paper_direct_scope"] == "residual"
+    assert prepared[0]["group_id"] == "Observed.direct_oral_bioavailability"
+    assert prepared[1]["group_id"] == "Observed.oral_auc_cmax_exposure"
+    assert audit[0]["discarded_canonical_record_id"] == "local-direct-record"
+    assert stats["input_direct_source_rows"] == 2
+    assert stats["dedup_input_mapped_direct_source_rows"] == 2
+    assert stats["mapped_direct_source_rows"] == 2

@@ -1,24 +1,24 @@
 {
-  "active_source_lineage": "clintox_base_v1",
+  "active_source_lineage": "clintox_send_v2",
   "base_summary": {
     "all_label_counts": {
-      "0": 548,
-      "1": 5499
+      "0": 755,
+      "1": 6873
     },
     "cross_method_eval_identity_overlap": {
-      "test": 40,
-      "valid": 49
+      "test": 28,
+      "valid": 38
     },
     "identity_normalizer_version": "rdkit_fragment_parent.v1",
-    "n_acyclic_molecules": 746,
-    "n_binary_molecules": 6047,
-    "n_parent_groups_recovered_by_majority": 1928,
-    "n_parent_groups_with_any_label": 6615,
-    "n_parent_groups_with_label_conflict": 2496,
-    "n_rejected_parent_groups": 568,
-    "n_source_rows_considered": 338780,
-    "n_source_rows_labeled_before_structure_normalization": 297262,
-    "n_unique_bemis_murcko_scaffolds": 3251,
+    "n_acyclic_molecules": 980,
+    "n_binary_molecules": 7628,
+    "n_parent_groups_recovered_by_majority": 2613,
+    "n_parent_groups_with_any_label": 8434,
+    "n_parent_groups_with_label_conflict": 3419,
+    "n_rejected_parent_groups": 806,
+    "n_source_rows_considered": 584307,
+    "n_source_rows_labeled_before_structure_normalization": 511805,
+    "n_unique_bemis_murcko_scaffolds": 3860,
     "parent_label_policy": {
       "agreement_formula": "max(n_label_0, n_label_1) / (n_label_0 + n_label_1)",
       "agreement_threshold": 0.7,
@@ -27,8 +27,8 @@
       "vote_unit": "accepted_source_record"
     },
     "parent_rejection_counts": {
-      "parent_record_agreement_below_threshold": 365,
-      "parent_record_label_tie": 203
+      "parent_record_agreement_below_threshold": 510,
+      "parent_record_label_tie": 296
     },
     "paths": {
       "conflicting_molecules": "data/processed_starling/ClinTox_Human_Toxicity/conflicting_molecules.jsonl",
@@ -39,7 +39,7 @@
     "protocol_version": "starling_binary_benchmark.v4",
     "seed": 20260723,
     "source_metadata": {
-      "adapter_version": "clintox_base_human_toxicity.v1",
+      "adapter_version": "clintox_send_v2_human_toxicity.v2",
       "label_policy": {
         "confidence_threshold": null,
         "fda_status_used_for_label": false,
@@ -66,11 +66,12 @@
         "status": "unavailable_in_source_schema"
       },
       "source": {
-        "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
-        "rows_available": 338780,
-        "rows_requested": 338780,
-        "sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285",
-        "source_shard": "clintox_base_v1 human clinical toxicity and FDA extraction"
+        "path": "data/starling_data/clintox/send_v2/human_clinical_toxicity/extractions.parquet",
+        "rows_available": 584307,
+        "rows_requested": 584307,
+        "sha256": "e09d712cc87a12c0e72195b5050c8b82bc5e4908b84bd38f43a4a00753f4b157",
+        "source_release": "clintox_send_v2",
+        "source_shard": "clintox_send_v2 human clinical toxicity and FDA extraction"
       },
       "task_definition": {
         "categories": [
@@ -94,11 +95,11 @@
       }
     },
     "source_rejection_counts": {
-      "invalid_or_unresolved_smiles": 717,
-      "missing_or_invalid_toxicity_category": 27994,
-      "missing_support_text": 3,
-      "missing_toxicity_outcome": 269,
-      "needs_more_context": 13252
+      "invalid_or_unresolved_smiles": 1185,
+      "missing_or_invalid_toxicity_category": 49369,
+      "missing_support_text": 4,
+      "missing_toxicity_outcome": 291,
+      "needs_more_context": 22838
     },
     "split_size_policy": {
       "formula": "min(max_eval_size, floor(fraction * n_binary_molecules)) for valid and test",
@@ -114,20 +115,20 @@
         "actual_valid_size": 500,
         "method": "label_stratified_stable_hash",
         "n_test": 500,
-        "n_test_scaffolds": 343,
-        "n_train": 5047,
-        "n_train_scaffolds": 2820,
+        "n_test_scaffolds": 344,
+        "n_train": 6628,
+        "n_train_scaffolds": 3450,
         "n_valid": 500,
-        "n_valid_scaffolds": 366,
+        "n_valid_scaffolds": 351,
         "pairwise_identity_overlap": {
           "train_test": 0,
           "train_valid": 0,
           "valid_test": 0
         },
         "pairwise_scaffold_overlap": {
-          "train_test": 138,
-          "train_valid": 138,
-          "valid_test": 47
+          "train_test": 148,
+          "train_valid": 134,
+          "valid_test": 49
         },
         "paths": {
           "heldout_molecule_labels": "data/processed_starling/ClinTox_Human_Toxicity/random/heldout_molecule_labels.jsonl",
@@ -141,36 +142,36 @@
         "target_test_size": 500,
         "target_valid_size": 500,
         "test_label_counts": {
-          "0": 45,
-          "1": 455
+          "0": 49,
+          "1": 451
         },
         "test_size_shortfall": 0,
         "train_label_counts": {
-          "0": 458,
-          "1": 4589
+          "0": 656,
+          "1": 5972
         },
         "train_test_identity_overlap": 0,
-        "train_test_scaffold_overlap": 138,
+        "train_test_scaffold_overlap": 148,
         "train_valid_identity_overlap": 0,
-        "train_valid_scaffold_overlap": 138,
+        "train_valid_scaffold_overlap": 134,
         "valid_label_counts": {
-          "0": 45,
-          "1": 455
+          "0": 50,
+          "1": 450
         },
         "valid_size_shortfall": 0,
         "valid_test_identity_overlap": 0,
-        "valid_test_scaffold_overlap": 47
+        "valid_test_scaffold_overlap": 49
       },
       "scaffold": {
         "actual_test_size": 500,
         "actual_valid_size": 500,
         "method": "bemis_murcko_scaffold_group_subset_sum",
         "n_test": 500,
-        "n_test_scaffolds": 336,
-        "n_train": 5047,
-        "n_train_scaffolds": 2557,
+        "n_test_scaffolds": 316,
+        "n_train": 6628,
+        "n_train_scaffolds": 3192,
         "n_valid": 500,
-        "n_valid_scaffolds": 358,
+        "n_valid_scaffolds": 352,
         "pairwise_identity_overlap": {
           "train_test": 0,
           "train_valid": 0,
@@ -193,21 +194,21 @@
         "target_test_size": 500,
         "target_valid_size": 500,
         "test_label_counts": {
-          "0": 45,
-          "1": 455
+          "0": 51,
+          "1": 449
         },
         "test_size_shortfall": 0,
         "train_label_counts": {
-          "0": 465,
-          "1": 4582
+          "0": 655,
+          "1": 5973
         },
         "train_test_identity_overlap": 0,
         "train_test_scaffold_overlap": 0,
         "train_valid_identity_overlap": 0,
         "train_valid_scaffold_overlap": 0,
         "valid_label_counts": {
-          "0": 38,
-          "1": 462
+          "0": 49,
+          "1": 451
         },
         "valid_size_shortfall": 0,
         "valid_test_identity_overlap": 0,
@@ -216,32 +217,32 @@
     },
     "task": "ClinTox_Human_Toxicity"
   },
-  "historical_commit": "f056084332fbb5cec87cce5ec2a0d82a9b25b2fc",
   "missing_semantic_gate": {
     "effect": "no qualifying-condition exclusion can be applied",
     "mitigation": "candidate_pending_qa with deterministic category-stratified review",
     "status": "unavailable_in_source_schema"
   },
+  "prior_experiment_compatibility": "incompatible: results built from earlier ClinTox source hashes are historical only and must not be merged with this candidate",
   "promotion_policy": "Do not add to default paper matrices until every row in the deterministic category-stratified source-record QA sample passes.",
   "record_supported_v2_summary": {
     "all_label_counts": {
-      "0": 548,
-      "1": 5499
+      "0": 755,
+      "1": 6873
     },
     "cross_method_eval_identity_overlap": {
-      "test": 40,
-      "valid": 49
+      "test": 28,
+      "valid": 38
     },
     "identity_normalizer_version": "rdkit_fragment_parent.v1",
-    "n_acyclic_molecules": 746,
-    "n_binary_molecules": 6047,
-    "n_parent_groups_recovered_by_majority": 1928,
-    "n_parent_groups_with_any_label": 6615,
-    "n_parent_groups_with_label_conflict": 2496,
-    "n_rejected_parent_groups": 568,
-    "n_source_rows_considered": 338780,
-    "n_source_rows_labeled_before_structure_normalization": 297262,
-    "n_unique_bemis_murcko_scaffolds": 3251,
+    "n_acyclic_molecules": 980,
+    "n_binary_molecules": 7628,
+    "n_parent_groups_recovered_by_majority": 2613,
+    "n_parent_groups_with_any_label": 8434,
+    "n_parent_groups_with_label_conflict": 3419,
+    "n_rejected_parent_groups": 806,
+    "n_source_rows_considered": 584307,
+    "n_source_rows_labeled_before_structure_normalization": 511805,
+    "n_unique_bemis_murcko_scaffolds": 3860,
     "parent_label_policy": {
       "agreement_formula": "max(n_label_0, n_label_1) / (n_label_0 + n_label_1)",
       "agreement_threshold": 0.7,
@@ -250,8 +251,8 @@
       "vote_unit": "accepted_source_record"
     },
     "parent_rejection_counts": {
-      "parent_record_agreement_below_threshold": 365,
-      "parent_record_label_tie": 203
+      "parent_record_agreement_below_threshold": 510,
+      "parent_record_label_tie": 296
     },
     "paths": {
       "conflicting_molecules": "data/processed_starling/ClinTox_Human_Toxicity/conflicting_molecules.jsonl",
@@ -271,7 +272,7 @@
     },
     "seed": 20260807,
     "source_metadata": {
-      "adapter_version": "clintox_base_human_toxicity.v1",
+      "adapter_version": "clintox_send_v2_human_toxicity.v2",
       "label_policy": {
         "confidence_threshold": null,
         "fda_status_used_for_label": false,
@@ -298,11 +299,12 @@
         "status": "unavailable_in_source_schema"
       },
       "source": {
-        "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
-        "rows_available": 338780,
-        "rows_requested": 338780,
-        "sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285",
-        "source_shard": "clintox_base_v1 human clinical toxicity and FDA extraction"
+        "path": "data/starling_data/clintox/send_v2/human_clinical_toxicity/extractions.parquet",
+        "rows_available": 584307,
+        "rows_requested": 584307,
+        "sha256": "e09d712cc87a12c0e72195b5050c8b82bc5e4908b84bd38f43a4a00753f4b157",
+        "source_release": "clintox_send_v2",
+        "source_shard": "clintox_send_v2 human clinical toxicity and FDA extraction"
       },
       "task_definition": {
         "categories": [
@@ -326,37 +328,37 @@
       }
     },
     "source_rejection_counts": {
-      "invalid_or_unresolved_smiles": 717,
-      "missing_or_invalid_toxicity_category": 27994,
-      "missing_support_text": 3,
-      "missing_toxicity_outcome": 269,
-      "needs_more_context": 13252
+      "invalid_or_unresolved_smiles": 1185,
+      "missing_or_invalid_toxicity_category": 49369,
+      "missing_support_text": 4,
+      "missing_toxicity_outcome": 291,
+      "needs_more_context": 22838
     },
     "split_size_policy": {
       "formula": "floor(0.1*n)",
-      "target_test_size": 604,
-      "target_valid_size": 604
+      "target_test_size": 762,
+      "target_valid_size": 762
     },
     "splits": {
       "scaffold": {
-        "actual_test_size": 604,
-        "actual_valid_size": 604,
+        "actual_test_size": 762,
+        "actual_valid_size": 762,
         "lineage": "record_supported_v2",
         "method": "quality_lexicographic_milp_scaffold_groups",
-        "n_test": 604,
-        "n_test_scaffolds": 440,
-        "n_train": 4839,
-        "n_train_scaffolds": 2304,
-        "n_valid": 604,
-        "n_valid_scaffolds": 507,
+        "n_test": 762,
+        "n_test_scaffolds": 547,
+        "n_train": 6104,
+        "n_train_scaffolds": 2689,
+        "n_valid": 762,
+        "n_valid_scaffolds": 624,
         "optimization": {
-          "desired_positive_count_per_eval_split": 549,
-          "maximum_prior_valid_reuse": 239,
-          "minimum_label_deviation": 29,
+          "desired_positive_count_per_eval_split": 687,
+          "maximum_prior_valid_reuse": 259,
+          "minimum_label_deviation": 48,
           "minimum_singleton_imbalance": 0,
           "minimum_singletons_in_heldout": 0,
-          "n_candidate_scaffold_groups": 3250,
-          "n_scaffold_groups": 3251
+          "n_candidate_scaffold_groups": 3859,
+          "n_scaffold_groups": 3860
         },
         "pairwise_identity_overlap": {
           "train_test": 0,
@@ -377,34 +379,34 @@
           "valid": "data/processed_starling_record_supported_v2/ClinTox_Human_Toxicity/scaffold/valid.jsonl",
           "valid_molecule_labels": "data/processed_starling_record_supported_v2/ClinTox_Human_Toxicity/scaffold/valid_molecule_labels.jsonl"
         },
-        "target_test_size": 604,
-        "target_valid_size": 604,
+        "target_test_size": 762,
+        "target_valid_size": 762,
         "test_label_counts": {
-          "0": 39,
-          "1": 565
+          "0": 45,
+          "1": 717
         },
         "test_record_tier_counts": {
-          "multi_record": 604
+          "multi_record": 762
         },
         "test_size_shortfall": 0,
         "train_label_counts": {
-          "0": 467,
-          "1": 4372
+          "0": 653,
+          "1": 5451
         },
         "train_record_tier_counts": {
-          "multi_record": 2662,
-          "singleton": 2177
+          "multi_record": 3377,
+          "singleton": 2727
         },
         "train_test_identity_overlap": 0,
         "train_test_scaffold_overlap": 0,
         "train_valid_identity_overlap": 0,
         "train_valid_scaffold_overlap": 0,
         "valid_label_counts": {
-          "0": 42,
-          "1": 562
+          "0": 57,
+          "1": 705
         },
         "valid_record_tier_counts": {
-          "multi_record": 604
+          "multi_record": 762
         },
         "valid_size_shortfall": 0,
         "valid_test_identity_overlap": 0,
@@ -413,8 +415,8 @@
     },
     "task": "ClinTox_Human_Toxicity"
   },
+  "replacement_scope": "ClinTox source, gold, evidence, and index data pipeline",
   "status": "candidate_pending_qa",
-  "supersedes_candidate_lineage": "starling_raw_v1 organ-specific toxicity",
   "task_definition": {
     "categories": [
       "cardiotoxicity",

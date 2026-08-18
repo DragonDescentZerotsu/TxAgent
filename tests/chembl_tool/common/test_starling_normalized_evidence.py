@@ -115,6 +115,39 @@ def test_clean_and_normalize_stages_use_one_authoritative_source_pair():
     assert validate_measurement_pairs(result.normalized_records) == []
 
 
+def test_pair_validation_recomputes_from_pretransform_canonical_context():
+    record = {
+        "normalized_record_id": "transformed-record",
+        "measurement_text": "~4",
+        "unit_text": None,
+        "canonical_endpoint": "p_gp",
+        "canonical_measurement": "0.602059991328",
+        "canonical_unit": "log10(ratio)",
+        "measurement_unit_status": "reviewed_semantic_standardization",
+        "unit_notation_status": "none",
+        "unit_notation_factor": None,
+        "assay_transfer_transform_id": "log10.v1",
+        "assay_transfer_pretransform_measurement_text": "~4",
+        "assay_transfer_pretransform_unit_text": "ratio",
+    }
+
+    def resolver(row, endpoint, pair):
+        del endpoint
+        if row.get("canonical_unit") != "ratio":
+            return pair
+        return MeasurementPair(
+            pair.canonical_measurement,
+            "ratio",
+            "reviewed_semantic_standardization",
+            pair.unit_notation_status,
+            pair.unit_notation_factor,
+        )
+
+    assert validate_measurement_pairs(
+        [record], source_measurement_resolver=resolver
+    ) == []
+
+
 def test_declared_literal_taxonomy_preserves_unspecified_without_global_change(tmp_path):
     raw = {
         "source_index": 0,

@@ -711,7 +711,7 @@ Architecture:
 ```text
 tools/chembl_tool/common/starling/
   build_normalized_evidence_library.py   shared stages 01-03
-  split_downstream.py                    shared split-aware stages 04-09
+  split_downstream.py                    canonical Stage 04-05 plus historical Stage 04-09 compatibility
   clustered_auxiliary_mapping.py         shared embedding-cluster reconciliation
   stage_artifact_store.py                shared deterministic packaging
 
@@ -737,6 +737,13 @@ The complete layout is:
 09_audits/
 ```
 
+The Stage-02/03 canonical measurement tuple is exclusively an assay-transfer numerical contract; retrieval
+and LLM evidence continue to use the cleaned source measurement, unit, and support projection. The shared
+parser, BBB endpoint/unit rules, source reconciliation, v7 projection, and frozen
+`data_processing/assay_transfer_measurements_v1/policy.json` compose one final measurement/unit/scalar
+tuple. Stage 04 retains every record and marks reviewed unit defects `assay_transfer_eligible=false`; it
+does not delete them or change `retrieval_eligible`.
+
 Stages 04 and 05 use the complete unfiltered Stage-03 records. This means held-out
 `direct_bbb` measurements contribute only to aggregate bucket validation, first-class sample SD,
 and continuous value-CDF geometry; the shared contract also supports ordinal category-rank CDFs, although
@@ -748,7 +755,7 @@ Stage 06 is the mandatory leakage boundary. It removes `direct_bbb` rows for ben
 held-out parents before molecule evidence and neighbor indices are built. Passive,
 efflux, and influx mechanism records remain available even when their molecule identity
 appears in the benchmark. Pair-bucket membership remains a complete source audit, and
-calibration must not declare a held-out source or held-out key loader. The v2 artifact stores no raw-
+calibration must not declare a held-out source or held-out key loader. The v3 artifact stores no raw-
 distance CDF; its historical stage and filename remain unchanged for archived-v1 compatibility.
 
 The four LLM-visible group IDs remain exactly:

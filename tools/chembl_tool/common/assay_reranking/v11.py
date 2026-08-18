@@ -32,6 +32,7 @@ SCORING_CONTRACT_VERSION = (
 CATALOG_SCHEMA_VERSION = "txagent_assay_transfer_catalog.v11"
 CANDIDATE_SCHEMA_VERSION = "txagent_assay_transfer_candidates.v11"
 CACHE_SCHEMA_VERSION = "txagent_assay_transfer_cache.v11"
+COMPACT_CACHE_SCHEMA_VERSION = "txagent_assay_transfer_compact_cache.v1"
 DEMAND_SCHEMA_VERSION = "txagent_assay_transfer_prompt_demand.v11"
 
 
@@ -433,6 +434,67 @@ class V11CandidateManifest:
         return self._records[key]
 
 
+class V11CompactScoreCache:
+    """Read-only finalized cache keyed directly by retrieval identities."""
+
+    def __init__(self, path: str | Path, *, task_id: str):
+        self.path = Path(path)
+        if not self.path.is_file():
+            raise FileNotFoundError(self.path)
+        self.connection = sqlite3.connect(
+            f"file:{self.path.resolve()}?mode=ro", uri=True, timeout=60.0
+        )
+        self.connection.row_factory = sqlite3.Row
+        metadata = {
+            str(row["key"]): json.loads(str(row["value"]))
+            for row in self.connection.execute("SELECT key, value FROM cache_metadata")
+        }
+        if metadata.get("schema_version") != COMPACT_CACHE_SCHEMA_VERSION:
+            raise ValueError(f"Unsupported compact v11 cache schema: {self.path}")
+        if metadata.get("task_id") != task_id:
+            raise ValueError("Compact v11 cache task mismatch")
+        if metadata.get("status") != "complete":
+            raise ValueError("Compact v11 cache is not finalized")
+        self.metadata = metadata
+
+    def close(self) -> None:
+        self.connection.close()
+
+    def records_for_candidates(
+        self, query_smiles: str, group_id: str, molecule_ids: Iterable[str]
+    ) -> dict[str, list[dict[str, Any]]]:
+        ids = list(dict.fromkeys(str(value) for value in molecule_ids))
+        output = {value: [] for value in ids}
+        for offset in range(0, len(ids), 400):
+            chunk = ids[offset : offset + 400]
+            if not chunk:
+                continue
+            placeholders = ",".join("?" for _ in chunk)
+            sql = f"""
+                SELECT m.molecule_chembl_id, r.external_record_id, r.payload,
+                       s.transfer_probability
+                FROM assignments a
+                JOIN queries q USING(query_id)
+                JOIN groups_dim g USING(group_key)
+                JOIN molecules m USING(molecule_key)
+                JOIN records r USING(record_key)
+                JOIN scores s USING(score_key)
+                WHERE q.query_smiles = ? AND g.group_id = ?
+                  AND m.molecule_chembl_id IN ({placeholders})
+                ORDER BY m.molecule_chembl_id, r.external_record_id
+            """
+            for row in self.connection.execute(sql, [query_smiles, group_id, *chunk]):
+                payload = json.loads(str(row["payload"]))
+                output[str(row["molecule_chembl_id"])].append(
+                    {
+                        "record_id": str(row["external_record_id"]),
+                        "transfer_probability": float(row["transfer_probability"]),
+                        "payload": payload,
+                    }
+                )
+        return output
+
+
 class V11CachedAssayReranker:
     name = "assay_transfer"
 
@@ -440,8 +502,8 @@ class V11CachedAssayReranker:
         self,
         *,
         task_id: str,
-        catalog_path: str | Path,
-        candidate_manifest_path: str | Path,
+        catalog_path: str | Path | None = None,
+        candidate_manifest_path: str | Path | None = None,
         cache_path: str | Path,
         cache_mode: str = "read_only",
         model: str | None = None,
@@ -453,9 +515,22 @@ class V11CachedAssayReranker:
         self.model = str(model or profile["model"])
         self.model_revision = require_immutable_revision(str(model_revision or profile["revision"]))
         self.renderer = V11PromptRenderer(task_id)
-        self.catalog = V11Catalog(catalog_path, task_id=task_id)
-        self.candidate_manifest = V11CandidateManifest(candidate_manifest_path, task_id=task_id)
-        self.cache = V11ScoreCache(cache_path, mode=cache_mode)
+        self.compact_cache: V11CompactScoreCache | None = None
+        self.catalog: V11Catalog | None = None
+        self.candidate_manifest: V11CandidateManifest | None = None
+        if catalog_path and candidate_manifest_path:
+            self.catalog = V11Catalog(catalog_path, task_id=task_id)
+            self.candidate_manifest = V11CandidateManifest(candidate_manifest_path, task_id=task_id)
+            self.cache: V11ScoreCache | V11CompactScoreCache = V11ScoreCache(
+                cache_path, mode=cache_mode
+            )
+            observed_metadata = self.catalog.metadata
+        else:
+            if cache_mode != "read_only":
+                raise ValueError("Compact v11 caches are runtime read-only")
+            self.compact_cache = V11CompactScoreCache(cache_path, task_id=task_id)
+            self.cache = self.compact_cache
+            observed_metadata = self.compact_cache.metadata
         self.allow_missing = allow_missing
         expected = {
             "model": self.model,
@@ -467,12 +542,12 @@ class V11CachedAssayReranker:
             "projection_hash": self.renderer.projection_hash,
         }
         mismatches = {
-            key: {"expected": value, "observed": self.catalog.metadata.get(key)}
+            key: {"expected": value, "observed": observed_metadata.get(key)}
             for key, value in expected.items()
-            if self.catalog.metadata.get(key) != value
+            if observed_metadata.get(key) != value
         }
         if mismatches:
-            raise ValueError(f"V11 catalog provenance mismatch: {json.dumps(mismatches, sort_keys=True)}")
+            raise ValueError(f"V11 cache provenance mismatch: {json.dumps(mismatches, sort_keys=True)}")
 
     def provenance(self) -> dict[str, Any]:
         return {
@@ -488,12 +563,17 @@ class V11CachedAssayReranker:
             "template_hash": self.renderer.template_hash,
             "projection_hash": self.renderer.projection_hash,
             "query_context_policy": QUERY_CONTEXT_POLICY,
-            "candidate_manifest_sha256": self.candidate_manifest.sha256,
+            "candidate_contract": (
+                self.compact_cache.metadata.get("candidate_contract")
+                if self.compact_cache else "tanimoto_raw_pool_then_identity_exclusion.v1"
+            ),
         }
 
     def _tasks(
         self, query_smiles: str, group_id: str, candidates: list[dict[str, Any]]
     ) -> dict[str, list[PromptTask]]:
+        if self.catalog is None or self.candidate_manifest is None:
+            raise RuntimeError("Prompt tasks are unavailable for compact finalized caches")
         output: dict[str, list[PromptTask]] = {}
         for candidate in candidates:
             molecule_id = str(candidate["molecule_chembl_id"])
@@ -516,6 +596,10 @@ class V11CachedAssayReranker:
     def rerank_records(
         self, *, query_smiles: str, group_id: str, candidates: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
+        if self.compact_cache is not None:
+            return self._rerank_compact(
+                query_smiles=query_smiles, group_id=group_id, candidates=candidates
+            )
         tasks = self._tasks(query_smiles, group_id, candidates)
         flat = [task for values in tasks.values() for task in values]
         cached = self.cache.lookup(flat)
@@ -532,6 +616,7 @@ class V11CachedAssayReranker:
                 score = cached.get(task.cache_key)
                 if score is None:
                     continue
+                assert self.catalog is not None
                 record = self.catalog.by_id[task.record_id]
                 canonical_endpoint_key = self.renderer.canonical_endpoint_key(record)
                 output.append({
@@ -561,6 +646,49 @@ class V11CachedAssayReranker:
             row["transfer_selection_rank"] = rank
         return output
 
+    def _rerank_compact(
+        self, *, query_smiles: str, group_id: str, candidates: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        assert self.compact_cache is not None
+        by_molecule = {str(row["molecule_chembl_id"]): row for row in candidates}
+        found = self.compact_cache.records_for_candidates(
+            query_smiles, group_id, by_molecule
+        )
+        output = []
+        missing = []
+        for molecule_id, candidate in by_molecule.items():
+            rows = found.get(molecule_id) or []
+            if not rows:
+                missing.append(molecule_id)
+                continue
+            for scored in rows:
+                record = scored["payload"]
+                output.append(
+                    {
+                        **candidate,
+                        "transfer_selection_score": scored["transfer_probability"],
+                        "transfer_winning_record_id": scored["record_id"],
+                        "transfer_winning_record": record,
+                        "transfer_scored_record_count": 1,
+                    }
+                )
+        if missing and not self.allow_missing:
+            raise AssayTransferCacheMiss(
+                f"Compact v11 cache is missing {len(missing)} of "
+                f"{len(by_molecule)} candidates for {group_id}"
+            )
+        output.sort(
+            key=lambda row: (
+                -float(row["transfer_selection_score"]),
+                -float(row.get("similarity") or 0.0),
+                str(row.get("molecule_chembl_id") or ""),
+                str(row.get("transfer_winning_record_id") or ""),
+            )
+        )
+        for rank, row in enumerate(output, start=1):
+            row["transfer_selection_rank"] = rank
+        return output
+
     def rerank(
         self, *, query_smiles: str, group_id: str, candidates: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
@@ -579,8 +707,8 @@ def probability_from_logits(logit_a: float, logit_b: float) -> float:
 def preflight_cache_coverage(
     *,
     task_id: str,
-    catalog_path: str,
-    candidate_manifest_path: str,
+    catalog_path: str = "",
+    candidate_manifest_path: str = "",
     cache_path: str,
     model: str,
     model_revision: str,
@@ -600,7 +728,8 @@ def preflight_cache_coverage(
     )
     try:
         quick_check = str(reranker.cache.connection.execute("PRAGMA quick_check").fetchone()[0])
-        count = int(reranker.cache.connection.execute("SELECT COUNT(*) FROM prompt_scores").fetchone()[0])
+        score_table = "scores" if reranker.compact_cache is not None else "prompt_scores"
+        count = int(reranker.cache.connection.execute(f"SELECT COUNT(*) FROM {score_table}").fetchone()[0])
         if quick_check != "ok":
             raise ValueError(f"V11 cache quick_check failed: {quick_check}")
         if expected_score_count and count != expected_score_count:

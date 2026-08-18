@@ -38,13 +38,13 @@ def _value(command: list[str], flag: str) -> str:
 def test_launcher_builds_exact_v11_k3_commands(tmp_path):
     commands = _command_map(launcher.build_batch_commands(_args(tmp_path)))
     assert set(commands) == {
-        "bbb_martins__starling_full_mechanism__assay_transfer_v11_scored_k3_morgan50",
-        "bioavailability_ma__starling_full_mechanism__assay_transfer_v11_scored_assay_schema_k3_morgan50",
-        "skin_reaction__starling_full_mechanism__assay_transfer_v11_scored_k3_morgan50",
+        "bbb_martins__starling_full_flat__assay_transfer_v11_scored_k3_morgan50",
+        "bioavailability_ma__starling_full_flat__assay_transfer_v11_scored_assay_schema_k3_morgan50",
+        "skin_reaction__starling_full_flat__assay_transfer_v11_scored_k3_morgan50",
     }
 
     for command in commands.values():
-        assert _value(command, "--experiment-mode") == "full_mechanism"
+        assert _value(command, "--experiment-mode") == "full_flat"
         assert _value(command, "--retrieval-source") == "starling"
         assert _value(command, "--neighbor-identity-policy") == "parent_disjoint"
         assert _value(command, "--retrieval-strategy") == "assay_transfer_tool"
@@ -68,27 +68,23 @@ def test_launcher_builds_exact_v11_k3_commands(tmp_path):
 
     bbb = next(value for key, value in commands.items() if key.startswith("bbb_martins"))
     bio = next(value for key, value in commands.items() if key.startswith("bioavailability"))
-    skin = next(value for key, value in commands.items() if key.startswith("skin_reaction"))
     assert _value(bio, "--group-output-schema") == "assay-transfer"
-    assert "--group-output-schema" not in skin
-    assert _value(bio, "--rerank-expected-score-count") == "840608"
-    assert _value(skin, "--rerank-expected-score-count") == "964543"
-    assert _value(bbb, "--rerank-expected-score-count") == "893133"
-    assert "jiosephlee/assay-transfer-tool-soft-v11-multitask-with-categorical" in bbb
+    assert _value(bio, "--group-prompt-version") == "bioavailability_text_v1"
+    assert _value(bio, "--rerank-expected-score-count") == "870332"
+    assert _value(bbb, "--rerank-expected-score-count") == "633694"
+    assert "jiosephlee/assay-transfer-tool-soft-v11-bbb-martins-with-categorical" in bbb
     assert "jiosephlee/assay-transfer-tool-soft-v11-bioavailability-ma-with-categorical" in bio
-    assert "jiosephlee/assay-transfer-tool-soft-v11-skin-reaction-with-categorical" in skin
-    assert "starling_normalized_v7/08_neighbor_index/scaffold" in _value(bio, "--index")
-    assert "starling_normalized_v7/08_neighbor_index/scaffold" in _value(skin, "--index")
-    assert "starling_normalized_v7/08_neighbor_index/scaffold" in _value(bbb, "--index")
+    assert "record_supported_v2/evidence/bioavailability_starling_v7/08_neighbor_index" in _value(bio, "--index")
+    assert "experimental_meaningful_cns_access_v2/evidence/bbb_starling_v7/08_neighbor_index" in _value(bbb, "--index")
 
 
 def test_commands_retain_v11_paths_after_real_task_parser_normalization(tmp_path):
     for spec in launcher.build_batch_commands(_args(tmp_path)):
         config = importlib.import_module(spec.command[2]).CONFIG
         parsed = parse_batch_args(config, spec.command[3:])
-        assert parsed.rerank_catalog.endswith("/catalog.jsonl")
+        assert parsed.rerank_catalog == ""
         assert parsed.rerank_cache.endswith("/scores.sqlite3")
-        assert parsed.rerank_candidate_manifest.endswith("/candidate_manifest.jsonl")
+        assert parsed.rerank_candidate_manifest == ""
         assert parsed.rerank_cache_version_manifest.endswith("/VERSION.json")
         assert parsed.assay_transfer_model.startswith("jiosephlee/")
         assert len(parsed.assay_transfer_model_revision) == 40
@@ -109,6 +105,109 @@ def test_limit_is_applied_to_both_tasks(tmp_path):
         assert _value(command.command, "--limit") == "1"
 
 
+def test_task_scope_includes_ready_skin_cache_and_supports_explicit_subset():
+    default_args = launcher._parse_args([])
+    assert default_args.tasks == ["bbb_martins", "bioavailability_ma", "skin_reaction"]
+    skin_args = launcher._parse_args(["--tasks", "skin_reaction"])
+    assert [
+        command.experiment_name.split("__", 1)[0]
+        for command in launcher.build_batch_commands(skin_args)
+    ] == ["skin_reaction"]
+
+
+def test_disable_flat_tools_is_isolated_and_forwarded_to_all_tasks():
+    args = launcher._parse_args(["--disable-flat-tools"])
+    assert Path(args.output_root).name.endswith("_no_flat_tools")
+    for spec in launcher.build_batch_commands(args):
+        assert "--disable-flat-tools" in spec.command
+        parsed = parse_batch_args(
+            importlib.import_module(spec.command[2]).CONFIG,
+            spec.command[3:],
+        )
+        assert parsed.disable_flat_tools is True
+
+
+def test_disable_flat_tools_rejects_mechanism_mode():
+    with pytest.raises(SystemExit):
+        launcher._parse_args(
+            ["--experiment-mode", "full_mechanism", "--disable-flat-tools"]
+        )
+
+
+def test_analogous_flat_v1_is_isolated_and_forwarded_to_all_tasks():
+    args = launcher._parse_args(["--analogous-reasoning-only"])
+    assert Path(args.output_root).name.endswith("_analogous_flat_v1")
+    for spec in launcher.build_batch_commands(args):
+        assert "--analogous-reasoning-only" in spec.command
+        assert "--group-output-schema" not in spec.command
+        assert "--group-prompt-version" not in spec.command
+        parsed = parse_batch_args(
+            importlib.import_module(spec.command[2]).CONFIG,
+            spec.command[3:],
+        )
+        assert parsed.analogous_reasoning_only is True
+        assert parsed.experiment_mode == "full_flat"
+        assert parsed.identity_blind is True
+        assert parsed.enable_assay_transfer_scores is True
+
+
+def test_retrieval_comparison_uses_one_nine_batch_prompt_pool(tmp_path):
+    args = launcher._parse_args(
+        [
+            "--output-root",
+            str(tmp_path),
+            "--analogous-reasoning-only",
+            "--retrieval-condition",
+            "morgan",
+            "--retrieval-condition",
+            "assay_transfer_record",
+            "--retrieval-condition",
+            "assay_transfer_molecule",
+        ]
+    )
+    commands = launcher.build_batch_commands(args)
+
+    assert len(commands) == 9
+    assert len({command.experiment_name for command in commands}) == 9
+    for spec in commands:
+        command = spec.command
+        assert _value(command, "--top-k-per-group") == "3"
+        assert _value(command, "--min-similarity") == "0.0"
+        assert _value(command, "--neighbor-identity-policy") == "parent_disjoint"
+        assert "--identity-blind" in command
+        assert "--analogous-reasoning-only" in command
+        parsed = parse_batch_args(
+            importlib.import_module(command[2]).CONFIG,
+            command[3:],
+        )
+        assert parsed.experiment_mode == "full_flat"
+        if "__morgan__" in spec.experiment_name:
+            assert parsed.retrieval_strategy == "morgan_fingerprint"
+            assert parsed.enable_assay_transfer_scores is False
+            assert "--rerank-cache" not in command
+        elif "__assay_transfer_record__" in spec.experiment_name:
+            assert parsed.retrieval_strategy == "assay_transfer_tool"
+            assert parsed.assay_transfer_selection_unit == "scored_record"
+            assert parsed.assay_transfer_records_per_molecule == 1
+        else:
+            assert "__assay_transfer_molecule__" in spec.experiment_name
+            assert parsed.retrieval_strategy == "assay_transfer_tool"
+            assert parsed.assay_transfer_selection_unit == "mean_score_molecule"
+            assert parsed.assay_transfer_records_per_molecule == 6
+
+
+def test_retrieval_conditions_require_analogous_prompt():
+    with pytest.raises(SystemExit):
+        launcher._parse_args(["--retrieval-condition", "morgan"])
+
+
+def test_analogous_reasoning_rejects_mechanism_launcher_mode():
+    with pytest.raises(SystemExit):
+        launcher._parse_args(
+            ["--experiment-mode", "full_mechanism", "--analogous-reasoning-only"]
+        )
+
+
 def test_unique_molecule_variant_is_isolated_and_reuses_exact_singles(tmp_path):
     args = launcher._parse_args(
         [
@@ -118,17 +217,11 @@ def test_unique_molecule_variant_is_isolated_and_reuses_exact_singles(tmp_path):
             "unique_molecule",
         ]
     )
-    assert Path(args.output_root) == launcher.UNIQUE_MOLECULE_OUTPUT_ROOT
+    assert Path(args.output_root).name == "full_flat_k3_unique_molecules_scored_assay_schema"
     for spec in launcher.build_batch_commands(args):
         assert "unique_molecule_k3_morgan50" in spec.experiment_name
         assert _value(spec.command, "--assay-transfer-selection-unit") == "unique_molecule"
-        source = _value(spec.command, "--single-analysis-source-batch")
-        if spec.experiment_name.startswith("bbb_martins"):
-            assert str(launcher.MORGAN_K3_CONTROL_ROOT) in source
-            assert source.endswith("bbb_martins/bbb_martins__none")
-        else:
-            assert str(launcher.DEFAULT_OUTPUT_ROOT) in source
-        assert "unique_molecule" not in Path(source).name
+        assert "--single-analysis-source-batch" not in spec.command
 
 
 def test_k7_variants_have_isolated_roots_ids_and_reuse_exact_singles():
@@ -154,13 +247,7 @@ def test_k7_variants_have_isolated_roots_ids_and_reuse_exact_singles():
         for spec in launcher.build_batch_commands(args):
             assert batch_marker in spec.experiment_name
             assert _value(spec.command, "--top-k-per-group") == "7"
-            source = _value(spec.command, "--single-analysis-source-batch")
-            if spec.experiment_name.startswith("bbb_martins"):
-                assert str(launcher.MORGAN_K3_CONTROL_ROOT) in source
-                assert Path(source).name == "bbb_martins__none"
-            else:
-                assert str(launcher.DEFAULT_OUTPUT_ROOT) in source
-                assert "_k3_morgan50" in Path(source).name
+            assert "--single-analysis-source-batch" not in spec.command
 
 
 def test_multiple_records_per_molecule_are_isolated_and_forwarded():
@@ -228,7 +315,7 @@ def test_structural_diversity_uses_task_slacks_and_isolated_artifacts():
         ]
     )
     assert Path(args.output_root).name == (
-        "assay_transfer_v11_k3_unique_molecules_"
+        "full_flat_k3_unique_molecules_"
         "structural_diversity_scored_assay_schema"
     )
     commands = _command_map(launcher.build_batch_commands(args))
@@ -242,12 +329,7 @@ def test_structural_diversity_uses_task_slacks_and_isolated_artifacts():
             "skin_reaction": "0.025",
         }[batch_id.split("__", 1)[0]]
         assert _value(command, "--assay-transfer-diversity-score-slack") == expected_slack
-        source = _value(command, "--single-analysis-source-batch")
-        if batch_id.startswith("bbb_martins"):
-            assert str(launcher.MORGAN_K3_CONTROL_ROOT) in source
-        else:
-            assert str(launcher.DEFAULT_OUTPUT_ROOT) in source
-        assert "structural_diversity" not in Path(source).name
+        assert "--single-analysis-source-batch" not in command
 
 
 def test_diversity_requires_unique_molecule_selection():
@@ -292,7 +374,7 @@ def test_manifest_contract_never_contains_api_key_value(tmp_path, monkeypatch):
     monkeypatch.setattr(
         launcher,
         "_validate_inputs",
-        lambda: {"bioavailability_ma": {}, "skin_reaction": {}},
+        lambda _tasks=None: {"bbb_martins": {}, "bioavailability_ma": {}},
     )
     assert launcher.main(
         [
@@ -312,4 +394,4 @@ def test_manifest_contract_never_contains_api_key_value(tmp_path, monkeypatch):
     tasks = {task["task_id"]: task for task in manifest["tasks"]}
     assert tasks["bbb_martins"]["group_output_schema"] == ""
     assert tasks["bioavailability_ma"]["group_output_schema"] == "assay-transfer"
-    assert tasks["skin_reaction"]["group_output_schema"] == ""
+    assert set(tasks) == {"bbb_martins", "bioavailability_ma", "skin_reaction"}

@@ -226,6 +226,38 @@ def test_v2_persists_first_class_sd_and_exact_value_cdf_only() -> None:
     )
 
 
+def test_residual_heterogeneity_is_audit_only_not_bucket_rejection() -> None:
+    values = [1.0] * 13 + [100.0] * 12
+    frame = pd.DataFrame(
+        {
+            "pair_bucket_key": "heterogeneous",
+            "source_id": "direct_bbb",
+            "measurement_kind": "continuous",
+            "canonical_measurement_scale_id": None,
+            "canonical_category_id": None,
+            "canonical_category_rank": None,
+            "finite_scalar_value": values,
+            "canonical_record_id": [f"record-{index:03d}" for index in range(25)],
+            "bbb_transport_label": None,
+            "qualifying_conditions": ["low"] * 13 + ["high"] * 12,
+        }
+    )
+    entry = _build_calibration_entries(
+        frame,
+        spec=BUILD_SPEC,
+        record_contract=BBB_RECORD_CONTRACT,
+        minimum_samples=25,
+        workers=1,
+    )["heterogeneous"]
+
+    assert entry["residual_heterogeneity_gate"]["variance_gate_flagged"] is True
+    assert entry["calibration_valid"] is True
+    assert entry["calibration_reason"] == "valid"
+    assert entry["assay_transfer_bucket_eligible"] is True
+    assert entry["assay_transfer_bucket_ineligibility_reason"] is None
+    assert entry["standard_deviation_valid"] is True
+
+
 def test_value_cdf_lookup_uses_midranks_and_empirical_unseen_values() -> None:
     cdf = _value_cdf([10.0, 10.0, 15.0, 20.0])
 
@@ -372,6 +404,10 @@ def test_category_cdf_separation_uses_category_ids_and_same_bucket() -> None:
 def test_invalid_or_categorical_buckets_do_not_publish_a_value_cdf() -> None:
     invalid = _continuous_entry([1.0] * 25)
     assert invalid["calibration_valid"] is False
+    assert invalid["assay_transfer_bucket_eligible"] is False
+    assert invalid["assay_transfer_bucket_ineligibility_reason"] == (
+        "nonpositive_or_nonfinite_sample_sd"
+    )
     assert invalid["standard_deviation_valid"] is False
     assert invalid["standard_deviation_reason"] == "nonpositive_or_nonfinite_sample_sd"
     assert invalid["value_cdf_valid"] is False

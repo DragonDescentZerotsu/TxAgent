@@ -46,6 +46,36 @@ def test_clean_unit_canonicalizes_time_and_permeability_spellings():
     assert clean_unit("cm/sec") == "cm/s"
     assert clean_unit("ng/ml") == "ng/mL"
     assert clean_unit("µg/ml") == "µg/mL"
+    assert clean_unit("msec") == "ms"
+    assert clean_unit("milliseconds") == "ms"
+    assert clean_unit("ng•h/mL") == "ng·h/mL"
+
+    # Unit casing is meaningful: these are not safe millisecond aliases.
+    assert canonicalize_unit("mS").unknown_tokens == ("mS",)
+    assert canonicalize_unit("MS").unknown_tokens == ("MS",)
+
+
+def test_long_signed_identifier_suffix_fails_closed_without_overflow():
+    for unit in (
+        "% of DA-8159 dose",
+        "% of dose of DA-8159",
+        "% of oral dose of DA-8159",
+    ):
+        parsed = canonicalize_unit(unit, task="clintox")
+        assert parsed.scale == 1.0
+        assert parsed.dimension == ()
+        assert "Da-8159" in parsed.unknown_tokens
+
+    malformed_power = canonicalize_unit("Da^-8159", task="clintox")
+    assert malformed_power.unknown_tokens == ("Da^-8159",)
+
+
+def test_clintox_qualifiers_do_not_leak_to_other_tasks():
+    clintox = canonicalize_unit("µL/min/pmol CYP3A4", task="clintox")
+    assert not clintox.unknown_tokens
+    assert canonicalize_unit(
+        "µL/min/pmol CYP3A4", task="bbb_martins"
+    ).unknown_tokens == ("CYP3A4",)
 
 
 def test_clean_unit_parses_common_composite_notations():
@@ -74,7 +104,15 @@ def test_clean_unit_treats_nan_and_null_as_empty():
 # --------------------------------------------------------------------------- #
 
 def test_scientific_notation_variants_share_one_canonical_and_scale():
-    forms = ["×10⁻⁶ cm/s", "x10^-6 cm/s", "10^-6 cm/s", "10-6 cm/s", "×10^-6 cm/s"]
+    forms = [
+        "×10⁻⁶ cm/s",
+        "x10^-6 cm/s",
+        "10^-6 cm/s",
+        "10-6 cm/s",
+        "10‐6 cm/s",
+        "10‑6 cm/s",
+        "×10^-6 cm/s",
+    ]
     results = [canonicalize_unit(f) for f in forms]
     canonicals = {r.canonical for r in results}
     scales = {r.scale for r in results}

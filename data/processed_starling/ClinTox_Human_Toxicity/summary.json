@@ -18,30 +18,30 @@
     "target_valid_size": 500,
     "target_test_size": 500
   },
-  "n_source_rows_considered": 338780,
-  "n_source_rows_labeled_before_structure_normalization": 297262,
+  "n_source_rows_considered": 584307,
+  "n_source_rows_labeled_before_structure_normalization": 511805,
   "source_rejection_counts": {
-    "invalid_or_unresolved_smiles": 717,
-    "missing_or_invalid_toxicity_category": 27994,
-    "missing_support_text": 3,
-    "missing_toxicity_outcome": 269,
-    "needs_more_context": 13252
+    "invalid_or_unresolved_smiles": 1185,
+    "missing_or_invalid_toxicity_category": 49369,
+    "missing_support_text": 4,
+    "missing_toxicity_outcome": 291,
+    "needs_more_context": 22838
   },
-  "n_parent_groups_with_any_label": 6615,
-  "n_parent_groups_with_label_conflict": 2496,
-  "n_parent_groups_recovered_by_majority": 1928,
-  "n_rejected_parent_groups": 568,
+  "n_parent_groups_with_any_label": 8434,
+  "n_parent_groups_with_label_conflict": 3419,
+  "n_parent_groups_recovered_by_majority": 2613,
+  "n_rejected_parent_groups": 806,
   "parent_rejection_counts": {
-    "parent_record_agreement_below_threshold": 365,
-    "parent_record_label_tie": 203
+    "parent_record_agreement_below_threshold": 510,
+    "parent_record_label_tie": 296
   },
-  "n_binary_molecules": 6047,
+  "n_binary_molecules": 7628,
   "all_label_counts": {
-    "0": 548,
-    "1": 5499
+    "0": 755,
+    "1": 6873
   },
-  "n_unique_bemis_murcko_scaffolds": 3251,
-  "n_acyclic_molecules": 746,
+  "n_unique_bemis_murcko_scaffolds": 3860,
+  "n_acyclic_molecules": 980,
   "splits": {
     "random": {
       "method": "label_stratified_stable_hash",
@@ -51,37 +51,37 @@
       "actual_test_size": 500,
       "valid_size_shortfall": 0,
       "test_size_shortfall": 0,
-      "n_train": 5047,
+      "n_train": 6628,
       "n_valid": 500,
       "n_test": 500,
       "train_label_counts": {
-        "0": 458,
-        "1": 4589
+        "0": 656,
+        "1": 5972
       },
       "valid_label_counts": {
-        "0": 45,
-        "1": 455
+        "0": 50,
+        "1": 450
       },
       "test_label_counts": {
-        "0": 45,
-        "1": 455
+        "0": 49,
+        "1": 451
       },
-      "n_train_scaffolds": 2820,
-      "n_valid_scaffolds": 366,
-      "n_test_scaffolds": 343,
+      "n_train_scaffolds": 3450,
+      "n_valid_scaffolds": 351,
+      "n_test_scaffolds": 344,
       "pairwise_scaffold_overlap": {
-        "train_valid": 138,
-        "train_test": 138,
-        "valid_test": 47
+        "train_valid": 134,
+        "train_test": 148,
+        "valid_test": 49
       },
       "pairwise_identity_overlap": {
         "train_valid": 0,
         "train_test": 0,
         "valid_test": 0
       },
-      "train_valid_scaffold_overlap": 138,
-      "train_test_scaffold_overlap": 138,
-      "valid_test_scaffold_overlap": 47,
+      "train_valid_scaffold_overlap": 134,
+      "train_test_scaffold_overlap": 148,
+      "valid_test_scaffold_overlap": 49,
       "train_valid_identity_overlap": 0,
       "train_test_identity_overlap": 0,
       "valid_test_identity_overlap": 0,
@@ -103,24 +103,24 @@
       "actual_test_size": 500,
       "valid_size_shortfall": 0,
       "test_size_shortfall": 0,
-      "n_train": 5047,
+      "n_train": 6628,
       "n_valid": 500,
       "n_test": 500,
       "train_label_counts": {
-        "0": 465,
-        "1": 4582
+        "0": 655,
+        "1": 5973
       },
       "valid_label_counts": {
-        "0": 38,
-        "1": 462
+        "0": 49,
+        "1": 451
       },
       "test_label_counts": {
-        "0": 45,
-        "1": 455
+        "0": 51,
+        "1": 449
       },
-      "n_train_scaffolds": 2557,
-      "n_valid_scaffolds": 358,
-      "n_test_scaffolds": 336,
+      "n_train_scaffolds": 3192,
+      "n_valid_scaffolds": 352,
+      "n_test_scaffolds": 316,
       "pairwise_scaffold_overlap": {
         "train_valid": 0,
         "train_test": 0,
@@ -149,16 +149,17 @@
     }
   },
   "cross_method_eval_identity_overlap": {
-    "valid": 49,
-    "test": 40
+    "valid": 38,
+    "test": 28
   },
   "source_metadata": {
     "source": {
-      "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
-      "sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285",
-      "source_shard": "clintox_base_v1 human clinical toxicity and FDA extraction",
-      "rows_available": 338780,
-      "rows_requested": 338780
+      "path": "data/starling_data/clintox/send_v2/human_clinical_toxicity/extractions.parquet",
+      "sha256": "e09d712cc87a12c0e72195b5050c8b82bc5e4908b84bd38f43a4a00753f4b157",
+      "source_release": "clintox_send_v2",
+      "source_shard": "clintox_send_v2 human clinical toxicity and FDA extraction",
+      "rows_available": 584307,
+      "rows_requested": 584307
     },
     "task_definition": {
       "name": "ClinTox_Human_Toxicity",
@@ -180,7 +181,7 @@
       ],
       "not_equivalent_to": "TDC/MoleculeNet toxicity-related clinical-trial failure"
     },
-    "adapter_version": "clintox_base_human_toxicity.v1",
+    "adapter_version": "clintox_send_v2_human_toxicity.v2",
     "label_policy": {
       "source_field": "toxicity_category",
       "negative_category": "toxicity_absent",

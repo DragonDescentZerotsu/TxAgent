@@ -20,6 +20,24 @@ PAIR_BUCKET_CONTRACT_VERSION = "source_aware_pair_bucket.v4"
 UNKNOWN_TOKEN = "__unknown__"
 
 
+def raw_pair_bucket_key(
+    record: Mapping[str, Any], *, record_contract: Any,
+) -> str:
+    """Build the pre-transform bucket identity used by scientific review."""
+    source_id = str(record.get("source_id") or "")
+    spec = record_contract.pair_buckets[source_id]
+    values = [
+        source_id,
+        str(record.get("canonical_endpoint_name") or ""),
+        str(record.get("canonical_unit_text") or ""),
+        *[
+            _persisted_value(record.get(field), unknown_token=UNKNOWN_TOKEN)
+            for field in spec.additional_dimensions
+        ],
+    ]
+    return _canonical_json(values)
+
+
 def read_pair_bucket_input(
     records_path: str | Path,
     *,
@@ -72,8 +90,15 @@ def materialize_pair_buckets(
         str, ReferenceEligibilitySpec
     ] | None = None,
     required_known_fields_by_source: Mapping[str, tuple[str, ...]] | None = None,
+    assay_transfer_record_ineligibility: Mapping[
+        str, str | Mapping[str, Any]
+    ]
+    | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Map persisted canonical fields to one source-aware key per eligible row.
+    """Annotate every record with assay-transfer eligibility and an optional key.
+
+    Ineligible rows remain in the Stage-04 sidecar. They receive no pair-bucket
+    key and are omitted only from assay-transfer calibration/model inputs.
 
     ``endpoint_field_by_source`` lets a source nominate a different record field
     to occupy the endpoint slot of the bucket key.  A source whose raw endpoint
@@ -155,6 +180,15 @@ def materialize_pair_buckets(
                 if canonical_fields[field] == unknown_token:
                     exclusion = f"unknown_{field}"
                     break
+        if exclusion is None and record_id in (
+            assay_transfer_record_ineligibility or {}
+        ):
+            reviewed = assay_transfer_record_ineligibility[record_id]
+            exclusion = str(
+                reviewed.get("reason")
+                if isinstance(reviewed, Mapping)
+                else reviewed
+            )
         bucket_values = [
             source_id,
             endpoint,
@@ -173,15 +207,19 @@ def materialize_pair_buckets(
             source_counts[source_id]["excluded_records"] += 1
             exclusions[exclusion] += 1
         sidecar_row = {
-                record_id_field: record_id,
-                "source_id": source_id,
-                canonical_endpoint_field: canonical_endpoint or None,
-                canonical_unit_field: unit or None,
-                "canonical_pair_fields_json": _canonical_json(canonical_fields),
-                "pair_bucket_key": bucket_key,
-                "bucket_eligible": exclusion is None,
-                "bucket_exclusion_reason": exclusion,
-            }
+            record_id_field: record_id,
+            "source_id": source_id,
+            canonical_endpoint_field: canonical_endpoint or None,
+            canonical_unit_field: unit or None,
+            "canonical_pair_fields_json": _canonical_json(canonical_fields),
+            "pair_bucket_key": bucket_key,
+            "assay_transfer_eligible": exclusion is None,
+            "assay_transfer_ineligibility_reason": exclusion,
+            # Historical row-status aliases. Despite their names, these never
+            # represented Stage-05 bucket-level eligibility.
+            "bucket_eligible": exclusion is None,
+            "bucket_exclusion_reason": exclusion,
+        }
         if v7:
             sidecar_row.update(
                 {
@@ -245,10 +283,15 @@ def materialize_pair_buckets(
                 (required_known_fields_by_source or {}).items()
             )
         },
+        "reviewed_record_ineligibility_count": len(
+            assay_transfer_record_ineligibility or {}
+        ),
         "stats": {
             "input_records": len(records),
             "sidecar_records": len(output),
             "eligible_records": eligible_count,
+            "ineligible_records": len(output) - eligible_count,
+            # Legacy metadata alias retained for frozen readers.
             "excluded_records": len(output) - eligible_count,
             "buckets": len(buckets),
             "pairable_buckets": sum(count >= 2 for count in molecule_counts.values()),
@@ -262,6 +305,7 @@ def materialize_pair_buckets(
             source: dict(sorted(counts.items()))
             for source, counts in sorted(source_counts.items())
         },
+        "ineligibility_reason_counts": dict(sorted(exclusions.items())),
         "exclusion_reason_counts": dict(sorted(exclusions.items())),
         "unknown_field_rates": {
             field: unknown_counts[field] / count
@@ -324,5 +368,6 @@ __all__ = [
     "PAIR_BUCKET_CONTRACT_VERSION",
     "UNKNOWN_TOKEN",
     "materialize_pair_buckets",
+    "raw_pair_bucket_key",
     "read_pair_bucket_input",
 ]

@@ -1,8 +1,9 @@
 # Editable instructions for the assay_transfer_tool group prompt.
 # One instruction per line, rendered numbered at the top of the prompt.
 # Blank lines and lines starting with '#' are ignored.
-Each ranked entry is one of the top-k assay records across all candidate molecules, with a transfer likelihood (a 0-1 model estimate).
-Trust these likelihoods as they are the best estimates available.
+Each mechanism family contributes its independently selected top-k evidence; Flat.all_evidence keeps those family assignments when the same molecule appears more than once.
+For record selection, transfer likelihood is the exact record score. For molecule-mean selection, the molecule mean is computed over all eligible cached records and each displayed frozen Stage 07 Morgan representative retains its own record score.
+Use these uncalibrated transfer estimates as evidence relevance estimates, not as oral bioavailability probabilities, label votes, or deterministic overrides.
 Based on the transfer liklihoods, determine the implications for the query's oral bioavailability.
 Do not treat qualitative, relative, or surrogate_proxy evidence as a direct absolute F% measurement.
 Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.

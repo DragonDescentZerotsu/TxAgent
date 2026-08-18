@@ -28,7 +28,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.reasoning_validation import validated_branch_content
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
-    public_assay_transfer_records,
+    public_assay_transfer_families,
     public_assay_transfer_score,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
@@ -42,6 +42,31 @@ GROUP_DESCRIPTIONS_PATH = INSTRUCTIONS_DIR / "group_descriptions.md"
 
 SUPPORTED_FORMATS = ("morganfingerprint", "assay_transfer_tool")
 GROUP_OUTPUT_SCHEMA_PROFILES = ("legacy", "assay-transfer")
+GROUP_PROMPT_VERSIONS = ("legacy_unversioned", "bioavailability_text_v1")
+DEFAULT_GROUP_PROMPT_VERSION = "legacy_unversioned"
+
+
+def _prompt_asset_paths(
+    prompt_format: str,
+    *,
+    prompt_version: str,
+    output_schema_profile: str,
+) -> tuple[Path, Path]:
+    if prompt_format not in SUPPORTED_FORMATS:
+        raise ValueError(f"Unknown text group-prompt format: {prompt_format!r}")
+    if prompt_version not in GROUP_PROMPT_VERSIONS:
+        raise ValueError(f"Unknown Bioavailability group-prompt version: {prompt_version!r}")
+    version_dir = "" if prompt_version == "legacy_unversioned" else prompt_version
+    instruction_name = (
+        "assay_transfer_tool_assay_transfer_schema.txt"
+        if prompt_format == "assay_transfer_tool"
+        and output_schema_profile == "assay-transfer"
+        else f"{prompt_format}.txt"
+    )
+    return (
+        TEMPLATE_DIR / version_dir / f"{prompt_format}.jinja",
+        INSTRUCTIONS_DIR / version_dir / instruction_name,
+    )
 
 
 def instruction_file_provenance(
@@ -49,17 +74,21 @@ def instruction_file_provenance(
     instructions_file: str | Path | None = None,
     *,
     output_schema_profile: str = "legacy",
+    prompt_version: str = DEFAULT_GROUP_PROMPT_VERSION,
 ) -> dict[str, Any]:
     """Resolve, validate, and fingerprint one editable prompt-instruction file."""
     if instructions_file:
         path = Path(instructions_file)
-    elif (
-        prompt_format == "assay_transfer_tool"
-        and output_schema_profile == "assay-transfer"
-    ):
-        path = INSTRUCTIONS_DIR / "assay_transfer_tool_assay_transfer_schema.txt"
-    else:
+    elif prompt_format not in SUPPORTED_FORMATS:
+        # Final-synthesis assets predate versioned group prompts and retain their
+        # historical root-level names.
         path = INSTRUCTIONS_DIR / f"{prompt_format}.txt"
+    else:
+        _, path = _prompt_asset_paths(
+            prompt_format,
+            prompt_version=prompt_version,
+            output_schema_profile=output_schema_profile,
+        )
     try:
         resolved = path.expanduser().resolve(strict=True)
         raw = resolved.read_bytes()
@@ -86,6 +115,7 @@ def load_instructions(
     instructions_file: str | Path | None = None,
     *,
     output_schema_profile: str = "legacy",
+    prompt_version: str = DEFAULT_GROUP_PROMPT_VERSION,
 ) -> list[str]:
     """Load the editable, numbered instruction lines for a group prompt format.
 
@@ -97,8 +127,42 @@ def load_instructions(
             prompt_format,
             instructions_file,
             output_schema_profile=output_schema_profile,
+            prompt_version=prompt_version,
         )["instructions"]
     )
+
+
+def group_prompt_provenance(
+    prompt_format: str,
+    *,
+    prompt_version: str = DEFAULT_GROUP_PROMPT_VERSION,
+    instructions_file: str | Path | None = None,
+    output_schema_profile: str = "legacy",
+) -> dict[str, Any]:
+    """Fingerprint the complete rendered prompt contract, including its Jinja."""
+    template_path, _ = _prompt_asset_paths(
+        prompt_format,
+        prompt_version=prompt_version,
+        output_schema_profile=output_schema_profile,
+    )
+    instruction = instruction_file_provenance(
+        prompt_format,
+        instructions_file,
+        output_schema_profile=output_schema_profile,
+        prompt_version=prompt_version,
+    )
+    template_raw = template_path.read_bytes()
+    return {
+        "prompt_contract_version": "bioavailability_group_prompt.v1",
+        "prompt_version": prompt_version,
+        "prompt_format": prompt_format,
+        "template_path": str(template_path.resolve()),
+        "template_sha256": hashlib.sha256(template_raw).hexdigest(),
+        "instructions_path": instruction["path"],
+        "instructions_sha256": instruction["sha256"],
+        "instruction_count": instruction["instruction_count"],
+        **group_output_schema_provenance(output_schema_profile),
+    }
 
 
 # The historical group-output contract. Keep this object unchanged so the default
@@ -212,13 +276,17 @@ def group_system_message(
     system_role: str | None = None,
 ) -> str:
     """System message shared with the legacy branch (kept byte-identical there)."""
-    prefetched = group.get("tools_prefetched") or group.get("identity_blind")
+    prefetched = group.get("tools_prefetched") or (
+        group.get("identity_blind") and group_tools_enabled
+    )
     if prefetched:
         middle = "Use the harness-prefetched comparison results; do not call tools. " + (
             "Do not infer query identity. " if group.get("identity_blind") else ""
         )
     elif not group_tools_enabled:
         middle = "No tools are available for this branch. "
+        if group.get("identity_blind"):
+            middle += "Do not infer query identity. "
         if use_assay_transfer_likelihoods:
             middle += (
                 "Use the supplied assay-transfer likelihoods as the best available "
@@ -285,6 +353,8 @@ def _neighbor_header_source(neighbor: dict[str, Any], *, with_transfer_score: bo
         "similarity": neighbor.get("similarity"),
         "similarity_bucket": neighbor.get("similarity_bucket", ""),
     }
+    if source["canonical_smiles"] in {"[hidden]", "[identity hidden]"}:
+        source["canonical_smiles"] = ""
     if with_transfer_score and "transfer_selection_score" in neighbor:
         source["assay_transfer_score"] = public_assay_transfer_score(neighbor)
     return source
@@ -351,7 +421,11 @@ def _assay_transfer_evidence_record(
     normalized_example = (normalized.get("examples") or [{}])[0]
     return _render_fields(
         normalized_example,
-        included_fields("morganfingerprint.record", dataset, style),
+        [
+            pair
+            for pair in included_fields("morganfingerprint.record", dataset, style)
+            if pair[0] != "source_contract"
+        ],
     )
 
 
@@ -383,6 +457,9 @@ def _resolve_evidence_source(group: dict[str, Any]) -> str:
         for row in neighbor.get("evidence_rows") or []:
             if row.get("evidence_source"):
                 return str(row["evidence_source"])
+            source = (evidence_for_llm(row).get("source") or {}).get("name")
+            if source:
+                return str(source)
     return ""
 
 
@@ -409,6 +486,7 @@ def _build_morgan_context(
     min_similarity: float,
     instructions_file: str | Path | None = None,
     output_schema_profile: str = "legacy",
+    prompt_version: str = DEFAULT_GROUP_PROMPT_VERSION,
     style: str = "legacy",
 ) -> dict[str, Any]:
     dataset = _dataset_key(group)
@@ -432,6 +510,7 @@ def _build_morgan_context(
             "morganfingerprint",
             instructions_file,
             output_schema_profile=output_schema_profile,
+            prompt_version=prompt_version,
         ),
         "group": _group_meta(group),
         "query_smiles": _query_smiles(query),
@@ -450,39 +529,47 @@ def _build_assay_transfer_context(
     *,
     instructions_file: str | Path | None = None,
     output_schema_profile: str = "legacy",
+    prompt_version: str = DEFAULT_GROUP_PROMPT_VERSION,
     style: str = "legacy",
 ) -> dict[str, Any]:
     dataset = _dataset_key(group)
     header_pairs = included_fields("assay_transfer_tool.neighbor", dataset)
     neighbors_ctx = []
     for neighbor in group.get("neighbors") or []:
-        selected_records = public_assay_transfer_records(neighbor)
-        multiple_records = len(selected_records) > 1
-        selected_record = selected_records[0]["record"]
+        families = public_assay_transfer_families(neighbor, group)
         neighbors_ctx.append(
             {
                 "rank": neighbor.get("rank"),
                 "header": _render_fields(
-                    _neighbor_header_source(
-                        neighbor, with_transfer_score=not multiple_records
-                    ),
+                    _neighbor_header_source(neighbor, with_transfer_score=False),
                     header_pairs,
                 ),
-                "selected_record": (
-                    _assay_transfer_evidence_record(selected_record, dataset, group, style)
-                    if selected_record
-                    else []
-                ),
-                "selected_records": [
+                "families": [
                     {
-                        "rank": record["record_rank"],
-                        "assay_transfer_score": record["assay_transfer_score"],
-                        "record": _assay_transfer_evidence_record(
-                            record["record"], dataset, group, style
-                        ),
+                        "group_id": family["group_id"],
+                        "family_rank": family["family_rank"],
+                        "score_kind": family["score_kind"],
+                        "assay_transfer_score": family["assay_transfer_score"],
+                        "records": [
+                            {
+                                "rank": record["record_rank"],
+                                "assay_transfer_score": record["assay_transfer_score"],
+                                "record": _assay_transfer_evidence_record(
+                                    record["record"],
+                                    dataset,
+                                    {
+                                        "group_id": family["group_id"],
+                                        "tier": family["tier"],
+                                        "endpoint_group": family["endpoint_group"],
+                                    },
+                                    style,
+                                ),
+                            }
+                            for record in family["records"]
+                            if record["record"]
+                        ],
                     }
-                    for record in selected_records
-                    if record["record"]
+                    for family in families
                 ],
             }
         )
@@ -491,13 +578,11 @@ def _build_assay_transfer_context(
             "assay_transfer_tool",
             instructions_file,
             output_schema_profile=output_schema_profile,
+            prompt_version=prompt_version,
         ),
         "group": _group_meta(group),
         "query_smiles": _query_smiles(query),
         "neighbors": neighbors_ctx,
-        "multi_record": any(
-            len(neighbor["selected_records"]) > 1 for neighbor in neighbors_ctx
-        ),
         "output_schema": json.dumps(
             group_output_schema(output_schema_profile),
             indent=2,
@@ -516,6 +601,9 @@ def build_group_messages(
     """Return [system, user] messages for a new text group-prompt format."""
     options = options or {}
     output_schema_profile = str(options.get("output_schema_profile", "legacy"))
+    prompt_version = str(
+        options.get("prompt_version") or DEFAULT_GROUP_PROMPT_VERSION
+    )
     style = str(options.get("presentation_style", "legacy"))
     if prompt_format == "morganfingerprint":
         context = _build_morgan_context(
@@ -524,20 +612,30 @@ def build_group_messages(
             min_similarity=float(options.get("prompt_min_similarity", 0.0)),
             instructions_file=options.get("instructions_file"),
             output_schema_profile=output_schema_profile,
+            prompt_version=prompt_version,
             style=style,
         )
-        template = "morganfingerprint.jinja"
+        template_path, _ = _prompt_asset_paths(
+            prompt_format,
+            prompt_version=prompt_version,
+            output_schema_profile=output_schema_profile,
+        )
     elif prompt_format == "assay_transfer_tool":
         context = _build_assay_transfer_context(
             query,
             group,
             instructions_file=options.get("instructions_file"),
             output_schema_profile=output_schema_profile,
+            prompt_version=prompt_version,
             style=style,
         )
         # The layout is assay-transfer-specific, but record fields still come from
         # the shared minimal_evidence.v1 / morganfingerprint.record policy.
-        template = "assay_transfer_tool.jinja"
+        template_path, _ = _prompt_asset_paths(
+            prompt_format,
+            prompt_version=prompt_version,
+            output_schema_profile=output_schema_profile,
+        )
     else:
         raise ValueError(f"Unknown text group-prompt format: {prompt_format!r}")
     context["instructions"] = [
@@ -552,7 +650,9 @@ def build_group_messages(
             and "properties_compare" not in line
             and "molecule_properties" not in line
         ]
-    user_content = _env().get_template(template).render(**context)
+    user_content = _env().get_template(
+        str(template_path.relative_to(TEMPLATE_DIR))
+    ).render(**context)
     return [
         {
             "role": "system",

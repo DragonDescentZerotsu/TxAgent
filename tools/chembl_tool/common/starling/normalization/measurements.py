@@ -544,6 +544,8 @@ def normalize_cleaned_records(
     source_measurement_resolver: SourceMeasurementResolver | None = None,
     family_resolver: FamilyResolver,
     record_enricher: RecordEnricher | None = None,
+    assay_transfer_measurement_policy: Mapping[str, Any] | None = None,
+    assay_transfer_revalidator: RecordEnricher | None = None,
     task: str | None = None,
 ) -> list[dict[str, Any]]:
     """Normalize each cleaned source record exactly once.
@@ -640,6 +642,20 @@ def normalize_cleaned_records(
         )
         if record_enricher is not None:
             record.update(dict(record_enricher(record)))
+        if assay_transfer_measurement_policy is not None:
+            from tools.chembl_tool.common.starling.assay_transfer_measurements import (
+                canonicalize_assay_transfer_base,
+            )
+
+            record, scale_changed = canonicalize_assay_transfer_base(
+                record, assay_transfer_measurement_policy
+            )
+            if scale_changed:
+                if assay_transfer_revalidator is None:
+                    raise ValueError(
+                        "assay-transfer base scaling requires a task revalidator"
+                    )
+                record.update(dict(assay_transfer_revalidator(record)))
         _enforce_non_atomic_directional_context(record)
         records.append(record)
     return records

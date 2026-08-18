@@ -1,0 +1,1976 @@
+{
+  "audit_version": "clintox_measurement_unit_manual_review.v1",
+  "manual_review_failures": 0,
+  "manual_review_passes": 360,
+  "manual_review_records": 360,
+  "manual_review_status": "complete",
+  "manual_review_tsv_sha256": "70f9fe5366cf90d76ff765d17a186cee6db56cdd032a0e8963c40fbeaf138578",
+  "pair_buckets_path": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_normalized_v7/04_pair_buckets/pair_bucket_records.parquet",
+  "records": 4729401,
+  "records_path": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_normalized_v7/03_records/records.parquet",
+  "sample_design": {
+    "categorical": "30 rows for each of four sources",
+    "continuous": "40 eligible plus 40 excluded for each of three sources",
+    "forced": "all DA-8159 unit rows within the off-target excluded stratum",
+    "order": "sha256(canonical_record_id) within round-robin strata"
+  },
+  "sample_records": 360,
+  "source_census": {
+    "cellular_stress": {
+      "assay_transfer_eligible": 591501,
+      "assay_transfer_exclusions": [
+        {
+          "assay_transfer_ineligibility_reason": "__missing__",
+          "records": 591501
+        },
+        {
+          "assay_transfer_ineligibility_reason": "off_schema_controlled_value",
+          "records": 8485
+        },
+        {
+          "assay_transfer_ineligibility_reason": "non_scalar_measurement",
+          "records": 8259
+        }
+      ],
+      "canonicalization_status": [
+        {
+          "canonicalization_status": "valid",
+          "records": 591501
+        },
+        {
+          "canonicalization_status": "off_schema_controlled_value",
+          "records": 8485
+        },
+        {
+          "canonicalization_status": "non_scalar_measurement",
+          "records": 8259
+        }
+      ],
+      "finite_scalars": 592103,
+      "records": 608245,
+      "reference_semantics": [
+        {
+          "canonical_reference_basis": "none",
+          "canonical_reference_scope": "not_applicable",
+          "records": 592103
+        },
+        {
+          "canonical_reference_basis": "unknown",
+          "canonical_reference_scope": "unknown",
+          "records": 16142
+        }
+      ],
+      "semantic_rules": [
+        {
+          "canonical_semantics_rule_id": "clintox_cellular_stress_direction.v1",
+          "canonical_semantics_status": "approved",
+          "records": 592103
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.unreviewed_measurement.v1",
+          "canonical_semantics_status": "evidence_only",
+          "records": 16142
+        }
+      ],
+      "top_canonical_units": [
+        {
+          "canonical_unit_text": "signed_effect_direction",
+          "records": 592103
+        },
+        {
+          "canonical_unit_text": "__missing__",
+          "records": 16142
+        }
+      ]
+    },
+    "clintox_base_v1": {
+      "assay_transfer_eligible": 310404,
+      "assay_transfer_exclusions": [
+        {
+          "assay_transfer_ineligibility_reason": "__missing__",
+          "records": 310404
+        },
+        {
+          "assay_transfer_ineligibility_reason": "non_scalar_measurement",
+          "records": 26698
+        },
+        {
+          "assay_transfer_ineligibility_reason": "off_schema_controlled_value",
+          "records": 1670
+        }
+      ],
+      "canonicalization_status": [
+        {
+          "canonicalization_status": "valid",
+          "records": 310404
+        },
+        {
+          "canonicalization_status": "non_scalar_measurement",
+          "records": 26698
+        },
+        {
+          "canonicalization_status": "off_schema_controlled_value",
+          "records": 1670
+        }
+      ],
+      "finite_scalars": 310781,
+      "records": 338772,
+      "reference_semantics": [
+        {
+          "canonical_reference_basis": "none",
+          "canonical_reference_scope": "not_applicable",
+          "records": 310781
+        },
+        {
+          "canonical_reference_basis": "unknown",
+          "canonical_reference_scope": "unknown",
+          "records": 27991
+        }
+      ],
+      "semantic_rules": [
+        {
+          "canonical_semantics_rule_id": "clintox_human_toxicity_binary.v1",
+          "canonical_semantics_status": "approved",
+          "records": 310781
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.unreviewed_measurement.v1",
+          "canonical_semantics_status": "evidence_only",
+          "records": 27991
+        }
+      ],
+      "top_canonical_units": [
+        {
+          "canonical_unit_text": "binary_outcome_class",
+          "records": 310781
+        },
+        {
+          "canonical_unit_text": "__missing__",
+          "records": 27991
+        }
+      ]
+    },
+    "general_cytotoxicity": {
+      "assay_transfer_eligible": 547953,
+      "assay_transfer_exclusions": [
+        {
+          "assay_transfer_ineligibility_reason": "__missing__",
+          "records": 547953
+        },
+        {
+          "assay_transfer_ineligibility_reason": "non_scalar_measurement",
+          "records": 196642
+        },
+        {
+          "assay_transfer_ineligibility_reason": "support_reports_censored_value",
+          "records": 45103
+        },
+        {
+          "assay_transfer_ineligibility_reason": "unreviewed_measurement_semantics",
+          "records": 29475
+        },
+        {
+          "assay_transfer_ineligibility_reason": "off_schema_controlled_value",
+          "records": 2979
+        },
+        {
+          "assay_transfer_ineligibility_reason": "outside_bounded_0_100_domain",
+          "records": 908
+        },
+        {
+          "assay_transfer_ineligibility_reason": "outside_positive_domain",
+          "records": 215
+        },
+        {
+          "assay_transfer_ineligibility_reason": "implausible_source_literal_concentration_scale",
+          "records": 1
+        }
+      ],
+      "canonicalization_status": [
+        {
+          "canonicalization_status": "valid",
+          "records": 547954
+        },
+        {
+          "canonicalization_status": "non_scalar_measurement",
+          "records": 196642
+        },
+        {
+          "canonicalization_status": "support_reports_censored_value",
+          "records": 45103
+        },
+        {
+          "canonicalization_status": "unreviewed_measurement_semantics",
+          "records": 29475
+        },
+        {
+          "canonicalization_status": "off_schema_controlled_value",
+          "records": 2979
+        },
+        {
+          "canonicalization_status": "outside_bounded_0_100_domain",
+          "records": 908
+        },
+        {
+          "canonicalization_status": "outside_positive_domain",
+          "records": 215
+        }
+      ],
+      "finite_scalars": 626256,
+      "records": 823276,
+      "reference_semantics": [
+        {
+          "canonical_reference_basis": "none",
+          "canonical_reference_scope": "absolute",
+          "records": 421365
+        },
+        {
+          "canonical_reference_basis": "unknown",
+          "canonical_reference_scope": "unknown",
+          "records": 227210
+        },
+        {
+          "canonical_reference_basis": "assay_control",
+          "canonical_reference_scope": "standardized_control_ratio",
+          "records": 97116
+        },
+        {
+          "canonical_reference_basis": "other_explicit",
+          "canonical_reference_scope": "endpoint_defined_ratio",
+          "records": 77585
+        }
+      ],
+      "semantic_rules": [
+        {
+          "canonical_semantics_rule_id": "clintox.cytotoxicity.potency_molar.v1",
+          "canonical_semantics_status": "approved",
+          "records": 385483
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.unreviewed_measurement.v1",
+          "canonical_semantics_status": "evidence_only",
+          "records": 219798
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.cytotoxicity.viability_control_percent.v1",
+          "canonical_semantics_status": "approved",
+          "records": 97984
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.cytotoxicity.cell_death_percent.v1",
+          "canonical_semantics_status": "approved",
+          "records": 78252
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.cytotoxicity.potency_mass.v1",
+          "canonical_semantics_status": "approved",
+          "records": 41713
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.cytotoxicity.membrane_control_percent.v1",
+          "canonical_semantics_status": "approved",
+          "records": 46
+        }
+      ],
+      "top_canonical_units": [
+        {
+          "canonical_unit_text": "M",
+          "records": 201389
+        },
+        {
+          "canonical_unit_text": "__missing__",
+          "records": 193377
+        },
+        {
+          "canonical_unit_text": "log10(M)",
+          "records": 179118
+        },
+        {
+          "canonical_unit_text": "ratio to control",
+          "records": 97428
+        },
+        {
+          "canonical_unit_text": "ratio",
+          "records": 95599
+        },
+        {
+          "canonical_unit_text": "mg/L",
+          "records": 29341
+        },
+        {
+          "canonical_unit_text": "log10(mg/L)",
+          "records": 11974
+        },
+        {
+          "canonical_unit_text": "fold",
+          "records": 3348
+        },
+        {
+          "canonical_unit_text": "\u00b5M",
+          "records": 1914
+        },
+        {
+          "canonical_unit_text": "\u00b5g/mL",
+          "records": 493
+        },
+        {
+          "canonical_unit_text": "log(M)",
+          "records": 376
+        },
+        {
+          "canonical_unit_text": "\u00b5m",
+          "records": 317
+        },
+        {
+          "canonical_unit_text": "mol/dm^3",
+          "records": 295
+        },
+        {
+          "canonical_unit_text": "\u00b5M/mL",
+          "records": 279
+        },
+        {
+          "canonical_unit_text": "h",
+          "records": 272
+        },
+        {
+          "canonical_unit_text": "cells",
+          "records": 271
+        },
+        {
+          "canonical_unit_text": "fold\u00b7increase",
+          "records": 266
+        },
+        {
+          "canonical_unit_text": "nM",
+          "records": 242
+        },
+        {
+          "canonical_unit_text": "ppm",
+          "records": 210
+        },
+        {
+          "canonical_unit_text": "colonies",
+          "records": 206
+        },
+        {
+          "canonical_unit_text": "log(\u00b5M)",
+          "records": 201
+        },
+        {
+          "canonical_unit_text": "U/L",
+          "records": 169
+        },
+        {
+          "canonical_unit_text": "mkM",
+          "records": 168
+        },
+        {
+          "canonical_unit_text": "cells/mL",
+          "records": 161
+        },
+        {
+          "canonical_unit_text": "mM",
+          "records": 153
+        },
+        {
+          "canonical_unit_text": "mm",
+          "records": 128
+        },
+        {
+          "canonical_unit_text": "mm^3",
+          "records": 111
+        },
+        {
+          "canonical_unit_text": "pIC50",
+          "records": 109
+        },
+        {
+          "canonical_unit_text": "\u00b5mol",
+          "records": 107
+        },
+        {
+          "canonical_unit_text": "d",
+          "records": 103
+        },
+        {
+          "canonical_unit_text": "\u00b5g",
+          "records": 95
+        },
+        {
+          "canonical_unit_text": "nmol",
+          "records": 89
+        },
+        {
+          "canonical_unit_text": "ng/mL",
+          "records": 82
+        },
+        {
+          "canonical_unit_text": "\u00b5mol/L",
+          "records": 79
+        },
+        {
+          "canonical_unit_text": "g",
+          "records": 75
+        },
+        {
+          "canonical_unit_text": "fold induction",
+          "records": 75
+        },
+        {
+          "canonical_unit_text": "J/cm^2",
+          "records": 74
+        },
+        {
+          "canonical_unit_text": "OD",
+          "records": 66
+        },
+        {
+          "canonical_unit_text": "\u00b5g/cm^3",
+          "records": 65
+        },
+        {
+          "canonical_unit_text": "\u00b5M/L",
+          "records": 65
+        },
+        {
+          "canonical_unit_text": "mg/kg",
+          "records": 65
+        },
+        {
+          "canonical_unit_text": "cpm",
+          "records": 63
+        },
+        {
+          "canonical_unit_text": "\u00b5mol/dm^3",
+          "records": 62
+        },
+        {
+          "canonical_unit_text": "min",
+          "records": 61
+        },
+        {
+          "canonical_unit_text": "pg/mL",
+          "records": 58
+        },
+        {
+          "canonical_unit_text": "change\u00b7fold",
+          "records": 56
+        },
+        {
+          "canonical_unit_text": "kcal/mol",
+          "records": 55
+        },
+        {
+          "canonical_unit_text": "nM/mL",
+          "records": 54
+        },
+        {
+          "canonical_unit_text": "nm",
+          "records": 53
+        },
+        {
+          "canonical_unit_text": "log(mM)",
+          "records": 51
+        },
+        {
+          "canonical_unit_text": "\u00b5gL-1",
+          "records": 50
+        },
+        {
+          "canonical_unit_text": "U/mL",
+          "records": 50
+        },
+        {
+          "canonical_unit_text": "control\u00b7fold\u00b7of",
+          "records": 48
+        },
+        {
+          "canonical_unit_text": "log",
+          "records": 44
+        },
+        {
+          "canonical_unit_text": "IU/mL",
+          "records": 41
+        },
+        {
+          "canonical_unit_text": "10^6 cells/well",
+          "records": 41
+        },
+        {
+          "canonical_unit_text": "/cells",
+          "records": 39
+        },
+        {
+          "canonical_unit_text": "% Cell Survival",
+          "records": 39
+        },
+        {
+          "canonical_unit_text": "t\u00b7c\u00b7v",
+          "records": 38
+        },
+        {
+          "canonical_unit_text": "/1000 BNC",
+          "records": 36
+        },
+        {
+          "canonical_unit_text": "nmol/cells",
+          "records": 36
+        },
+        {
+          "canonical_unit_text": "log10GI50",
+          "records": 35
+        },
+        {
+          "canonical_unit_text": "mg I^-1",
+          "records": 34
+        },
+        {
+          "canonical_unit_text": "cells/\u00b5L",
+          "records": 34
+        },
+        {
+          "canonical_unit_text": "\u0394OD 405 nm",
+          "records": 32
+        },
+        {
+          "canonical_unit_text": "fraction affected",
+          "records": 31
+        },
+        {
+          "canonical_unit_text": "nmol/mg\u00b7protein",
+          "records": 30
+        },
+        {
+          "canonical_unit_text": "fraction",
+          "records": 30
+        },
+        {
+          "canonical_unit_text": "surviving fraction",
+          "records": 29
+        },
+        {
+          "canonical_unit_text": "J cm^-2",
+          "records": 29
+        },
+        {
+          "canonical_unit_text": "% reduction",
+          "records": 28
+        },
+        {
+          "canonical_unit_text": "%\u00b7increase",
+          "records": 28
+        },
+        {
+          "canonical_unit_text": "nM/L",
+          "records": 27
+        },
+        {
+          "canonical_unit_text": "mg/mL",
+          "records": 27
+        },
+        {
+          "canonical_unit_text": "\u00b5L/mL",
+          "records": 27
+        },
+        {
+          "canonical_unit_text": "mg",
+          "records": 26
+        },
+        {
+          "canonical_unit_text": "\\u00b5M",
+          "records": 25
+        },
+        {
+          "canonical_unit_text": "Gy",
+          "records": 25
+        },
+        {
+          "canonical_unit_text": "% of untreated control",
+          "records": 25
+        },
+        {
+          "canonical_unit_text": "OD_490 nm",
+          "records": 25
+        },
+        {
+          "canonical_unit_text": "ng/cells",
+          "records": 24
+        },
+        {
+          "canonical_unit_text": "arbitrary units",
+          "records": 23
+        },
+        {
+          "canonical_unit_text": "\u00c2\u00b5M",
+          "records": 23
+        },
+        {
+          "canonical_unit_text": "% of 0.1nM E2",
+          "records": 22
+        },
+        {
+          "canonical_unit_text": "fold reduction",
+          "records": 22
+        },
+        {
+          "canonical_unit_text": "log10(\u00b5M)",
+          "records": 22
+        },
+        {
+          "canonical_unit_text": "control\u00b7fold",
+          "records": 22
+        },
+        {
+          "canonical_unit_text": "",
+          "records": 22
+        },
+        {
+          "canonical_unit_text": "\u2030",
+          "records": 22
+        },
+        {
+          "canonical_unit_text": "% decrease",
+          "records": 21
+        },
+        {
+          "canonical_unit_text": "RFU",
+          "records": 20
+        },
+        {
+          "canonical_unit_text": "absorbance units",
+          "records": 20
+        },
+        {
+          "canonical_unit_text": "/h",
+          "records": 19
+        },
+        {
+          "canonical_unit_text": "cm/s",
+          "records": 18
+        },
+        {
+          "canonical_unit_text": "ng/mL MTX",
+          "records": 18
+        },
+        {
+          "canonical_unit_text": "IU/L",
+          "records": 18
+        },
+        {
+          "canonical_unit_text": "\u00b5g/well",
+          "records": 18
+        },
+        {
+          "canonical_unit_text": "fold decrease",
+          "records": 17
+        },
+        {
+          "canonical_unit_text": "\u00b5g/L",
+          "records": 17
+        },
+        {
+          "canonical_unit_text": "CPM \u00d7 10^-3",
+          "records": 17
+        }
+      ]
+    },
+    "genotoxicity_carcinogenicity": {
+      "assay_transfer_eligible": 602097,
+      "assay_transfer_exclusions": [
+        {
+          "assay_transfer_ineligibility_reason": "__missing__",
+          "records": 602097
+        },
+        {
+          "assay_transfer_ineligibility_reason": "non_scalar_measurement",
+          "records": 22836
+        },
+        {
+          "assay_transfer_ineligibility_reason": "off_schema_controlled_value",
+          "records": 8665
+        }
+      ],
+      "canonicalization_status": [
+        {
+          "canonicalization_status": "valid",
+          "records": 602097
+        },
+        {
+          "canonicalization_status": "non_scalar_measurement",
+          "records": 22836
+        },
+        {
+          "canonicalization_status": "off_schema_controlled_value",
+          "records": 8665
+        }
+      ],
+      "finite_scalars": 609504,
+      "records": 633598,
+      "reference_semantics": [
+        {
+          "canonical_reference_basis": "none",
+          "canonical_reference_scope": "not_applicable",
+          "records": 609504
+        },
+        {
+          "canonical_reference_basis": "unknown",
+          "canonical_reference_scope": "unknown",
+          "records": 24094
+        }
+      ],
+      "semantic_rules": [
+        {
+          "canonical_semantics_rule_id": "clintox_genotoxicity_binary.v1",
+          "canonical_semantics_status": "approved",
+          "records": 609504
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.unreviewed_measurement.v1",
+          "canonical_semantics_status": "evidence_only",
+          "records": 24094
+        }
+      ],
+      "top_canonical_units": [
+        {
+          "canonical_unit_text": "binary_outcome_class",
+          "records": 609504
+        },
+        {
+          "canonical_unit_text": "__missing__",
+          "records": 24094
+        }
+      ]
+    },
+    "nonclinical_in_vivo_toxicity": {
+      "assay_transfer_eligible": 29763,
+      "assay_transfer_exclusions": [
+        {
+          "assay_transfer_ineligibility_reason": "non_scalar_measurement",
+          "records": 292656
+        },
+        {
+          "assay_transfer_ineligibility_reason": "__missing__",
+          "records": 29763
+        },
+        {
+          "assay_transfer_ineligibility_reason": "unreviewed_measurement_semantics",
+          "records": 17475
+        },
+        {
+          "assay_transfer_ineligibility_reason": "reference_scope_comparator_relative",
+          "records": 4309
+        },
+        {
+          "assay_transfer_ineligibility_reason": "off_schema_controlled_value",
+          "records": 921
+        },
+        {
+          "assay_transfer_ineligibility_reason": "outside_bounded_0_100_domain",
+          "records": 9
+        },
+        {
+          "assay_transfer_ineligibility_reason": "outside_positive_domain",
+          "records": 4
+        }
+      ],
+      "canonicalization_status": [
+        {
+          "canonicalization_status": "non_scalar_measurement",
+          "records": 292656
+        },
+        {
+          "canonicalization_status": "valid",
+          "records": 34072
+        },
+        {
+          "canonicalization_status": "unreviewed_measurement_semantics",
+          "records": 17475
+        },
+        {
+          "canonicalization_status": "off_schema_controlled_value",
+          "records": 921
+        },
+        {
+          "canonicalization_status": "outside_bounded_0_100_domain",
+          "records": 9
+        },
+        {
+          "canonicalization_status": "outside_positive_domain",
+          "records": 4
+        }
+      ],
+      "finite_scalars": 51982,
+      "records": 345137,
+      "reference_semantics": [
+        {
+          "canonical_reference_basis": "unknown",
+          "canonical_reference_scope": "unknown",
+          "records": 310670
+        },
+        {
+          "canonical_reference_basis": "none",
+          "canonical_reference_scope": "absolute",
+          "records": 27410
+        },
+        {
+          "canonical_reference_basis": "baseline",
+          "canonical_reference_scope": "comparator_relative",
+          "records": 4309
+        },
+        {
+          "canonical_reference_basis": "other_explicit",
+          "canonical_reference_scope": "endpoint_defined_ratio",
+          "records": 2748
+        }
+      ],
+      "semantic_rules": [
+        {
+          "canonical_semantics_rule_id": "clintox.unreviewed_measurement.v1",
+          "canonical_semantics_status": "evidence_only",
+          "records": 301344
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.nonclinical.benchmark_dose.v1",
+          "canonical_semantics_status": "approved",
+          "records": 16992
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.nonclinical.benchmark_dose_rate.v1",
+          "canonical_semantics_status": "approved",
+          "records": 10131
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.nonclinical.benchmark_mass_concentration.v1",
+          "canonical_semantics_status": "approved",
+          "records": 3428
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.nonclinical.mortality_fraction.v1",
+          "canonical_semantics_status": "approved",
+          "records": 3357
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.nonclinical.body_weight_percent.v1",
+          "canonical_semantics_status": "approved",
+          "records": 3216
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.nonclinical.benchmark_ppm_ppb.v1",
+          "canonical_semantics_status": "approved",
+          "records": 3125
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.nonclinical.body_weight_mass.v1",
+          "canonical_semantics_status": "approved",
+          "records": 3081
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.nonclinical.benchmark_molar_concentration.v1",
+          "canonical_semantics_status": "approved",
+          "records": 463
+        }
+      ],
+      "top_canonical_units": [
+        {
+          "canonical_unit_text": "__missing__",
+          "records": 241789
+        },
+        {
+          "canonical_unit_text": "mg/kg",
+          "records": 17198
+        },
+        {
+          "canonical_unit_text": "mg/kg/d",
+          "records": 10197
+        },
+        {
+          "canonical_unit_text": "ratio",
+          "records": 9212
+        },
+        {
+          "canonical_unit_text": "animals",
+          "records": 7203
+        },
+        {
+          "canonical_unit_text": "g",
+          "records": 3999
+        },
+        {
+          "canonical_unit_text": "%",
+          "records": 3886
+        },
+        {
+          "canonical_unit_text": "ppm",
+          "records": 3604
+        },
+        {
+          "canonical_unit_text": "mg/L",
+          "records": 3361
+        },
+        {
+          "canonical_unit_text": "g/kg",
+          "records": 1203
+        },
+        {
+          "canonical_unit_text": "d",
+          "records": 1110
+        },
+        {
+          "canonical_unit_text": "mg/d\u00b7kg",
+          "records": 829
+        },
+        {
+          "canonical_unit_text": "mg/m^3",
+          "records": 697
+        },
+        {
+          "canonical_unit_text": "ratio to control",
+          "records": 514
+        },
+        {
+          "canonical_unit_text": "\u00b5g/kg",
+          "records": 487
+        },
+        {
+          "canonical_unit_text": "mg/dL",
+          "records": 465
+        },
+        {
+          "canonical_unit_text": "mL/kg",
+          "records": 459
+        },
+        {
+          "canonical_unit_text": "\u00b5g/L",
+          "records": 429
+        },
+        {
+          "canonical_unit_text": "mg",
+          "records": 417
+        },
+        {
+          "canonical_unit_text": "U/L",
+          "records": 400
+        },
+        {
+          "canonical_unit_text": "% of control",
+          "records": 399
+        },
+        {
+          "canonical_unit_text": "M",
+          "records": 397
+        },
+        {
+          "canonical_unit_text": "mg/kg feed",
+          "records": 371
+        },
+        {
+          "canonical_unit_text": "\u00b5M",
+          "records": 361
+        },
+        {
+          "canonical_unit_text": "mice",
+          "records": 357
+        },
+        {
+          "canonical_unit_text": "deaths",
+          "records": 339
+        },
+        {
+          "canonical_unit_text": "fold",
+          "records": 328
+        },
+        {
+          "canonical_unit_text": "% mortality",
+          "records": 306
+        },
+        {
+          "canonical_unit_text": "% reduction",
+          "records": 294
+        },
+        {
+          "canonical_unit_text": "min",
+          "records": 291
+        },
+        {
+          "canonical_unit_text": "log10(mg/kg)",
+          "records": 268
+        },
+        {
+          "canonical_unit_text": "h",
+          "records": 260
+        },
+        {
+          "canonical_unit_text": "\u00b5g/kg bw/d",
+          "records": 232
+        },
+        {
+          "canonical_unit_text": "% incidence",
+          "records": 225
+        },
+        {
+          "canonical_unit_text": "\u00b5g/mL",
+          "records": 224
+        },
+        {
+          "canonical_unit_text": "mmol/kg",
+          "records": 224
+        },
+        {
+          "canonical_unit_text": "% survival",
+          "records": 218
+        },
+        {
+          "canonical_unit_text": "% of animals",
+          "records": 215
+        },
+        {
+          "canonical_unit_text": "ng/mL",
+          "records": 212
+        },
+        {
+          "canonical_unit_text": "incidence",
+          "records": 209
+        },
+        {
+          "canonical_unit_text": "mmol/L",
+          "records": 194
+        },
+        {
+          "canonical_unit_text": "fold increase",
+          "records": 192
+        },
+        {
+          "canonical_unit_text": "\u00b5mol/kg",
+          "records": 185
+        },
+        {
+          "canonical_unit_text": "dogs",
+          "records": 185
+        },
+        {
+          "canonical_unit_text": "rats",
+          "records": 172
+        },
+        {
+          "canonical_unit_text": "% decrease",
+          "records": 169
+        },
+        {
+          "canonical_unit_text": "IU/L",
+          "records": 167
+        },
+        {
+          "canonical_unit_text": "mm",
+          "records": 161
+        },
+        {
+          "canonical_unit_text": "ppb",
+          "records": 158
+        },
+        {
+          "canonical_unit_text": "score",
+          "records": 158
+        },
+        {
+          "canonical_unit_text": "mg PFOS/L",
+          "records": 155
+        },
+        {
+          "canonical_unit_text": "wk",
+          "records": 153
+        },
+        {
+          "canonical_unit_text": "fetuses",
+          "records": 147
+        },
+        {
+          "canonical_unit_text": "kg",
+          "records": 140
+        },
+        {
+          "canonical_unit_text": "mg kg^-1",
+          "records": 139
+        },
+        {
+          "canonical_unit_text": "% of fetuses",
+          "records": 136
+        },
+        {
+          "canonical_unit_text": "mg DON/kg feed",
+          "records": 132
+        },
+        {
+          "canonical_unit_text": "% inhibition",
+          "records": 131
+        },
+        {
+          "canonical_unit_text": "g/d",
+          "records": 130
+        },
+        {
+          "canonical_unit_text": "mg/L F^-",
+          "records": 126
+        },
+        {
+          "canonical_unit_text": "\u00b0C",
+          "records": 126
+        },
+        {
+          "canonical_unit_text": "% in diet",
+          "records": 120
+        },
+        {
+          "canonical_unit_text": "mg/mL",
+          "records": 119
+        },
+        {
+          "canonical_unit_text": "mg/body\u00b7g\u00b7weight",
+          "records": 114
+        },
+        {
+          "canonical_unit_text": "",
+          "records": 109
+        },
+        {
+          "canonical_unit_text": "p\u00b7p\u00b7m",
+          "records": 105
+        },
+        {
+          "canonical_unit_text": "\u00b5g/g",
+          "records": 103
+        },
+        {
+          "canonical_unit_text": "%\u00b7increase",
+          "records": 103
+        },
+        {
+          "canonical_unit_text": "ppm in diet",
+          "records": 102
+        },
+        {
+          "canonical_unit_text": "mg/m^2",
+          "records": 101
+        },
+        {
+          "canonical_unit_text": "g/dL",
+          "records": 101
+        },
+        {
+          "canonical_unit_text": "s",
+          "records": 100
+        },
+        {
+          "canonical_unit_text": "percentage",
+          "records": 97
+        },
+        {
+          "canonical_unit_text": "%\u00b7body\u00b7of\u00b7weight",
+          "records": 90
+        },
+        {
+          "canonical_unit_text": "\u00b5mol/L",
+          "records": 90
+        },
+        {
+          "canonical_unit_text": "% relative to control",
+          "records": 90
+        },
+        {
+          "canonical_unit_text": "mg/g",
+          "records": 88
+        },
+        {
+          "canonical_unit_text": "pg/mL",
+          "records": 88
+        },
+        {
+          "canonical_unit_text": "\u00b5g/\u00b5",
+          "records": 87
+        },
+        {
+          "canonical_unit_text": "animals affected/total",
+          "records": 85
+        },
+        {
+          "canonical_unit_text": "mg/kg diet",
+          "records": 85
+        },
+        {
+          "canonical_unit_text": "/\u00b5L",
+          "records": 82
+        },
+        {
+          "canonical_unit_text": "\u00b5m",
+          "records": 81
+        },
+        {
+          "canonical_unit_text": "mkd",
+          "records": 80
+        },
+        {
+          "canonical_unit_text": "g/L",
+          "records": 78
+        },
+        {
+          "canonical_unit_text": "dams",
+          "records": 77
+        },
+        {
+          "canonical_unit_text": "mg L^-1",
+          "records": 76
+        },
+        {
+          "canonical_unit_text": "mmol/d\u00b7kg",
+          "records": 74
+        },
+        {
+          "canonical_unit_text": "% increase",
+          "records": 74
+        },
+        {
+          "canonical_unit_text": "mortality",
+          "records": 74
+        },
+        {
+          "canonical_unit_text": "% increase relative to control",
+          "records": 73
+        },
+        {
+          "canonical_unit_text": "mM",
+          "records": 72
+        },
+        {
+          "canonical_unit_text": "%\u00b7body\u00b7weight",
+          "records": 72
+        },
+        {
+          "canonical_unit_text": "mg-min/m^3",
+          "records": 72
+        },
+        {
+          "canonical_unit_text": "ng/L",
+          "records": 71
+        },
+        {
+          "canonical_unit_text": "ng/kg bw",
+          "records": 71
+        },
+        {
+          "canonical_unit_text": "cm",
+          "records": 69
+        },
+        {
+          "canonical_unit_text": "% of patients",
+          "records": 69
+        },
+        {
+          "canonical_unit_text": "count",
+          "records": 68
+        },
+        {
+          "canonical_unit_text": "fold change",
+          "records": 67
+        }
+      ]
+    },
+    "off_target_ddi_exposure": {
+      "assay_transfer_eligible": 253512,
+      "assay_transfer_exclusions": [
+        {
+          "assay_transfer_ineligibility_reason": "non_scalar_measurement",
+          "records": 786405
+        },
+        {
+          "assay_transfer_ineligibility_reason": "__missing__",
+          "records": 253512
+        },
+        {
+          "assay_transfer_ineligibility_reason": "unreviewed_measurement_semantics",
+          "records": 213768
+        },
+        {
+          "assay_transfer_ineligibility_reason": "off_schema_controlled_value",
+          "records": 2676
+        },
+        {
+          "assay_transfer_ineligibility_reason": "reference_scope_comparator_relative",
+          "records": 1744
+        },
+        {
+          "assay_transfer_ineligibility_reason": "outside_bounded_0_1_domain",
+          "records": 1200
+        },
+        {
+          "assay_transfer_ineligibility_reason": "outside_nonnegative_domain",
+          "records": 469
+        },
+        {
+          "assay_transfer_ineligibility_reason": "outside_bounded_0_100_domain",
+          "records": 313
+        },
+        {
+          "assay_transfer_ineligibility_reason": "outside_positive_domain",
+          "records": 80
+        }
+      ],
+      "canonicalization_status": [
+        {
+          "canonicalization_status": "non_scalar_measurement",
+          "records": 786405
+        },
+        {
+          "canonicalization_status": "valid",
+          "records": 255256
+        },
+        {
+          "canonicalization_status": "unreviewed_measurement_semantics",
+          "records": 213768
+        },
+        {
+          "canonicalization_status": "off_schema_controlled_value",
+          "records": 2676
+        },
+        {
+          "canonicalization_status": "outside_bounded_0_1_domain",
+          "records": 1200
+        },
+        {
+          "canonicalization_status": "outside_nonnegative_domain",
+          "records": 469
+        },
+        {
+          "canonicalization_status": "outside_bounded_0_100_domain",
+          "records": 313
+        },
+        {
+          "canonicalization_status": "outside_positive_domain",
+          "records": 80
+        }
+      ],
+      "finite_scalars": 472013,
+      "records": 1260167,
+      "reference_semantics": [
+        {
+          "canonical_reference_basis": "unknown",
+          "canonical_reference_scope": "unknown",
+          "records": 1002372
+        },
+        {
+          "canonical_reference_basis": "none",
+          "canonical_reference_scope": "absolute",
+          "records": 222809
+        },
+        {
+          "canonical_reference_basis": "other_explicit",
+          "canonical_reference_scope": "endpoint_defined_ratio",
+          "records": 18185
+        },
+        {
+          "canonical_reference_basis": "assay_control",
+          "canonical_reference_scope": "standardized_control_ratio",
+          "records": 7331
+        },
+        {
+          "canonical_reference_basis": "plasma",
+          "canonical_reference_scope": "endpoint_defined_ratio",
+          "records": 3199
+        },
+        {
+          "canonical_reference_basis": "oral_dose",
+          "canonical_reference_scope": "endpoint_defined_ratio",
+          "records": 3101
+        },
+        {
+          "canonical_reference_basis": "comparator_treatment",
+          "canonical_reference_scope": "comparator_relative",
+          "records": 1744
+        },
+        {
+          "canonical_reference_basis": "administered_dose",
+          "canonical_reference_scope": "endpoint_defined_ratio",
+          "records": 1426
+        }
+      ],
+      "semantic_rules": [
+        {
+          "canonical_semantics_rule_id": "clintox.unreviewed_measurement.v1",
+          "canonical_semantics_status": "evidence_only",
+          "records": 912912
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.potency_molar.v1",
+          "canonical_semantics_status": "approved",
+          "records": 121072
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.pk_duration.v1",
+          "canonical_semantics_status": "approved",
+          "records": 46406
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.auc_mass.v1",
+          "canonical_semantics_status": "approved",
+          "records": 39465
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.exposure_concentration_mass.v1",
+          "canonical_semantics_status": "approved",
+          "records": 34307
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.control_response_percent.v1",
+          "canonical_semantics_status": "approved",
+          "records": 13045
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.protein_binding_percent.v1",
+          "canonical_semantics_status": "approved",
+          "records": 12462
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.ddi_comparator_percent.v1",
+          "canonical_semantics_status": "approved",
+          "records": 11026
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.protein_binding_fraction.v1",
+          "canonical_semantics_status": "approved",
+          "records": 10017
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.normalized_clearance.v1",
+          "canonical_semantics_status": "approved",
+          "records": 9064
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.enzyme_rate.v1",
+          "canonical_semantics_status": "approved",
+          "records": 9003
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.exposure_concentration_molar.v1",
+          "canonical_semantics_status": "approved",
+          "records": 6271
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.qt_time.v1",
+          "canonical_semantics_status": "approved",
+          "records": 6113
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.clearance.v1",
+          "canonical_semantics_status": "approved",
+          "records": 5813
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.auc_molar.v1",
+          "canonical_semantics_status": "approved",
+          "records": 4964
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.efflux_ratio.v1",
+          "canonical_semantics_status": "approved",
+          "records": 4886
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.bioavailability_fraction.v1",
+          "canonical_semantics_status": "approved",
+          "records": 4773
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.tissue_plasma_ratio.v1",
+          "canonical_semantics_status": "approved",
+          "records": 4058
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.potency_mass.v1",
+          "canonical_semantics_status": "approved",
+          "records": 2522
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.offtarget.administered_dose_fraction.v1",
+          "canonical_semantics_status": "approved",
+          "records": 1988
+        }
+      ],
+      "top_canonical_units": [
+        {
+          "canonical_unit_text": "__missing__",
+          "records": 639009
+        },
+        {
+          "canonical_unit_text": "M",
+          "records": 92983
+        },
+        {
+          "canonical_unit_text": "ratio",
+          "records": 81038
+        },
+        {
+          "canonical_unit_text": "h",
+          "records": 72246
+        },
+        {
+          "canonical_unit_text": "\u00b5M",
+          "records": 42021
+        },
+        {
+          "canonical_unit_text": "mg/L",
+          "records": 30946
+        },
+        {
+          "canonical_unit_text": "mg\u00b7h/L",
+          "records": 27748
+        },
+        {
+          "canonical_unit_text": "ng/mL",
+          "records": 20380
+        },
+        {
+          "canonical_unit_text": "%",
+          "records": 18696
+        },
+        {
+          "canonical_unit_text": "ratio to control",
+          "records": 14841
+        },
+        {
+          "canonical_unit_text": "\u00b5g/mL",
+          "records": 9834
+        },
+        {
+          "canonical_unit_text": "mL/min",
+          "records": 8657
+        },
+        {
+          "canonical_unit_text": "fold",
+          "records": 8265
+        },
+        {
+          "canonical_unit_text": "ms",
+          "records": 8231
+        },
+        {
+          "canonical_unit_text": "fraction",
+          "records": 7784
+        },
+        {
+          "canonical_unit_text": "L/h",
+          "records": 7254
+        },
+        {
+          "canonical_unit_text": "mL/kg\u00b7min",
+          "records": 7116
+        },
+        {
+          "canonical_unit_text": "L/kg",
+          "records": 6657
+        },
+        {
+          "canonical_unit_text": "nM",
+          "records": 6290
+        },
+        {
+          "canonical_unit_text": "min",
+          "records": 5445
+        },
+        {
+          "canonical_unit_text": "ng\u00b7h/mL",
+          "records": 5229
+        },
+        {
+          "canonical_unit_text": "L",
+          "records": 4655
+        },
+        {
+          "canonical_unit_text": "log10(M)",
+          "records": 4464
+        },
+        {
+          "canonical_unit_text": "/min",
+          "records": 4384
+        },
+        {
+          "canonical_unit_text": "M\u00b7h",
+          "records": 3871
+        },
+        {
+          "canonical_unit_text": "L/h\u00b7kg",
+          "records": 3397
+        },
+        {
+          "canonical_unit_text": "cm/s",
+          "records": 3378
+        },
+        {
+          "canonical_unit_text": "\u00b5mol/L",
+          "records": 2814
+        },
+        {
+          "canonical_unit_text": "h\u00b7ng/mL",
+          "records": 2709
+        },
+        {
+          "canonical_unit_text": "\u00b5g/L",
+          "records": 2708
+        },
+        {
+          "canonical_unit_text": "/h",
+          "records": 2352
+        },
+        {
+          "canonical_unit_text": "ng/h\u00b7mL",
+          "records": 2100
+        },
+        {
+          "canonical_unit_text": "\u00b5g/g",
+          "records": 2028
+        },
+        {
+          "canonical_unit_text": "\u00b5g\u00b7h/mL",
+          "records": 1744
+        },
+        {
+          "canonical_unit_text": "pmol/mg\u00b7min\u00b7protein",
+          "records": 1708
+        },
+        {
+          "canonical_unit_text": "mg/kg",
+          "records": 1648
+        },
+        {
+          "canonical_unit_text": "ng/g",
+          "records": 1608
+        },
+        {
+          "canonical_unit_text": "\u00b5L/mg\u00b7min",
+          "records": 1530
+        },
+        {
+          "canonical_unit_text": "\u00b5L/mg\u00b7min\u00b7protein",
+          "records": 1528
+        },
+        {
+          "canonical_unit_text": "d",
+          "records": 1437
+        },
+        {
+          "canonical_unit_text": "/P450\u00b7min",
+          "records": 1369
+        },
+        {
+          "canonical_unit_text": "mL/h\u00b7kg",
+          "records": 1341
+        },
+        {
+          "canonical_unit_text": "mL/kg",
+          "records": 1249
+        },
+        {
+          "canonical_unit_text": "pmol/mg\u00b7min",
+          "records": 1227
+        },
+        {
+          "canonical_unit_text": "mg",
+          "records": 1198
+        },
+        {
+          "canonical_unit_text": "mg/L\u00b7h",
+          "records": 1180
+        },
+        {
+          "canonical_unit_text": "\u00b5g/h\u00b7mL",
+          "records": 1113
+        },
+        {
+          "canonical_unit_text": "\u00b5g/L\u00b7h",
+          "records": 1035
+        },
+        {
+          "canonical_unit_text": "nmol/L",
+          "records": 1017
+        },
+        {
+          "canonical_unit_text": "mL/min/kg",
+          "records": 1013
+        },
+        {
+          "canonical_unit_text": "mM",
+          "records": 940
+        },
+        {
+          "canonical_unit_text": "pg/mL",
+          "records": 871
+        },
+        {
+          "canonical_unit_text": "nmol/mg\u00b7min\u00b7protein",
+          "records": 847
+        },
+        {
+          "canonical_unit_text": "h\u00b7\u00b5g/mL",
+          "records": 844
+        },
+        {
+          "canonical_unit_text": "dimensionless",
+          "records": 826
+        },
+        {
+          "canonical_unit_text": "L/h/kg",
+          "records": 770
+        },
+        {
+          "canonical_unit_text": "mV",
+          "records": 745
+        },
+        {
+          "canonical_unit_text": "\u00b5g",
+          "records": 734
+        },
+        {
+          "canonical_unit_text": "nmol/mg\u00b7min",
+          "records": 675
+        },
+        {
+          "canonical_unit_text": "ng mL^-1",
+          "records": 674
+        },
+        {
+          "canonical_unit_text": "mL/h",
+          "records": 640
+        },
+        {
+          "canonical_unit_text": "ng h/mL",
+          "records": 603
+        },
+        {
+          "canonical_unit_text": "\u00b5g\u00b7h/L",
+          "records": 589
+        },
+        {
+          "canonical_unit_text": "\u00b5L/cells\u00b7min",
+          "records": 569
+        },
+        {
+          "canonical_unit_text": "kcal/mol",
+          "records": 561
+        },
+        {
+          "canonical_unit_text": "h^-1",
+          "records": 528
+        },
+        {
+          "canonical_unit_text": "\u00b5L/min\u00b7pmol",
+          "records": 499
+        },
+        {
+          "canonical_unit_text": "bpm",
+          "records": 491
+        },
+        {
+          "canonical_unit_text": "h*ng/mL",
+          "records": 466
+        },
+        {
+          "canonical_unit_text": "mL",
+          "records": 458
+        },
+        {
+          "canonical_unit_text": "/min\u00b7\u00b5M",
+          "records": 453
+        },
+        {
+          "canonical_unit_text": "ng*h/mL",
+          "records": 448
+        },
+        {
+          "canonical_unit_text": "ng mL^-1 h",
+          "records": 436
+        },
+        {
+          "canonical_unit_text": "/CYP\u00b7min",
+          "records": 426
+        },
+        {
+          "canonical_unit_text": "\u00b5L/P450\u00b7min\u00b7pmol",
+          "records": 418
+        },
+        {
+          "canonical_unit_text": "nm/s",
+          "records": 401
+        },
+        {
+          "canonical_unit_text": "s",
+          "records": 384
+        },
+        {
+          "canonical_unit_text": "\u00b5g mL^-1",
+          "records": 381
+        },
+        {
+          "canonical_unit_text": "L/m^2",
+          "records": 360
+        },
+        {
+          "canonical_unit_text": "h\u00b7\u00b5g/g",
+          "records": 340
+        },
+        {
+          "canonical_unit_text": "\u00b5L/CYP\u00b7min\u00b7pmol",
+          "records": 331
+        },
+        {
+          "canonical_unit_text": "ng\u00b7mL^-1",
+          "records": 326
+        },
+        {
+          "canonical_unit_text": "mg/d\u00b7kg",
+          "records": 317
+        },
+        {
+          "canonical_unit_text": "mg/mL",
+          "records": 312
+        },
+        {
+          "canonical_unit_text": "mmHg",
+          "records": 309
+        },
+        {
+          "canonical_unit_text": "h\u00b7ng/g",
+          "records": 308
+        },
+        {
+          "canonical_unit_text": "\u00b5g/mL\u00b7min",
+          "records": 307
+        },
+        {
+          "canonical_unit_text": "mL min^-1",
+          "records": 295
+        },
+        {
+          "canonical_unit_text": "\u00b5mol/L\u00b7h",
+          "records": 292
+        },
+        {
+          "canonical_unit_text": "L/min",
+          "records": 289
+        },
+        {
+          "canonical_unit_text": "mmol/L",
+          "records": 289
+        },
+        {
+          "canonical_unit_text": "h\u00b7mg/L",
+          "records": 284
+        },
+        {
+          "canonical_unit_text": "mL/mg\u00b7min\u00b7protein",
+          "records": 284
+        },
+        {
+          "canonical_unit_text": "L/h\u00b7m^2",
+          "records": 280
+        },
+        {
+          "canonical_unit_text": "mL/mg\u00b7min",
+          "records": 279
+        },
+        {
+          "canonical_unit_text": "beats/min",
+          "records": 279
+        },
+        {
+          "canonical_unit_text": "mL/h/kg",
+          "records": 277
+        },
+        {
+          "canonical_unit_text": "ng/mL\u00b7h",
+          "records": 269
+        },
+        {
+          "canonical_unit_text": "\u00b5g h/mL",
+          "records": 268
+        },
+        {
+          "canonical_unit_text": "pg\u00b7h/mL",
+          "records": 265
+        }
+      ]
+    },
+    "organ_specific_toxicity": {
+      "assay_transfer_eligible": 710643,
+      "assay_transfer_exclusions": [
+        {
+          "assay_transfer_ineligibility_reason": "__missing__",
+          "records": 710643
+        },
+        {
+          "assay_transfer_ineligibility_reason": "off_schema_controlled_value",
+          "records": 6425
+        },
+        {
+          "assay_transfer_ineligibility_reason": "non_scalar_measurement",
+          "records": 3138
+        }
+      ],
+      "canonicalization_status": [
+        {
+          "canonicalization_status": "valid",
+          "records": 710643
+        },
+        {
+          "canonicalization_status": "off_schema_controlled_value",
+          "records": 6425
+        },
+        {
+          "canonicalization_status": "non_scalar_measurement",
+          "records": 3138
+        }
+      ],
+      "finite_scalars": 714948,
+      "records": 720206,
+      "reference_semantics": [
+        {
+          "canonical_reference_basis": "none",
+          "canonical_reference_scope": "not_applicable",
+          "records": 714948
+        },
+        {
+          "canonical_reference_basis": "unknown",
+          "canonical_reference_scope": "unknown",
+          "records": 5258
+        }
+      ],
+      "semantic_rules": [
+        {
+          "canonical_semantics_rule_id": "clintox_organ_injury_binary.v1",
+          "canonical_semantics_status": "approved",
+          "records": 714948
+        },
+        {
+          "canonical_semantics_rule_id": "clintox.unreviewed_measurement.v1",
+          "canonical_semantics_status": "evidence_only",
+          "records": 5258
+        }
+      ],
+      "top_canonical_units": [
+        {
+          "canonical_unit_text": "binary_outcome_class",
+          "records": 714948
+        },
+        {
+          "canonical_unit_text": "__missing__",
+          "records": 5258
+        }
+      ]
+    }
+  },
+  "supplemental_censored_support_review": {
+    "design": "up to five SHA-256-selected rows per semantic-rule and censor-qualifier stratum",
+    "failures": 0,
+    "passes": 72,
+    "records": 72,
+    "status": "complete",
+    "tsv_sha256": "3ff361737cd3fa03c8fdef49ef5dab9d3c1779a8eaca901328f570397e74bcf2"
+  }
+}

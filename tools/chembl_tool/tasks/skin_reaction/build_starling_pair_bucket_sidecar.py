@@ -21,6 +21,9 @@ from tools.chembl_tool.common.starling.pair_buckets import (
     materialize_pair_buckets,
     read_pair_bucket_input,
 )
+from tools.chembl_tool.common.starling.assay_transfer_measurements import (
+    load_measurement_policy,
+)
 from tools.chembl_tool.common.starling.reference_semantics import (
     ReferenceEligibilitySpec,
 )
@@ -30,7 +33,7 @@ from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
     SKIN_REACTION_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_policy import DEFAULT_OUT_DIR
+from tools.chembl_tool.tasks.skin_reaction.starling_policy import DEFAULT_OUT_DIR, POLICY
 from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
 
 
@@ -86,6 +89,9 @@ def build_sidecar(
             if v7
             else None
         ),
+        assay_transfer_record_ineligibility=load_measurement_policy(
+            POLICY.assay_transfer_measurement_policy
+        ).get("record_ineligibility", {}),
     )
     if not all(metadata["validations"].values()):
         raise ValueError(

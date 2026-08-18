@@ -37,7 +37,8 @@ DEFAULT_RECORDS_PATH = Path(
 
 
 def deterministic_assignment(record: Mapping[str, Any]) -> ReferenceAssignment | None:
-    return deterministic_default_assignment(record, output_basis=True)
+    default = deterministic_default_assignment(record, output_basis=True)
+    return default if default is not None else generation_no_call_assignment(record)
 
 
 _PHYSICAL_ABSOLUTE_QUANTITY_KINDS = frozenset(
@@ -74,7 +75,9 @@ def generation_no_call_assignment(
     if (
         status == "approved"
         and quantity_kind in _PHYSICAL_ABSOLUTE_QUANTITY_KINDS
-        and not _unit_has_reference_basis(record.get("canonical_unit_text"))
+        and not _unit_has_reference_basis(
+            record.get("canonical_unit_text") or record.get("canonical_unit")
+        )
     ):
         return ReferenceAssignment(
             REFERENCE_SCOPE_ABSOLUTE,

@@ -717,6 +717,27 @@ class StarlingRecordContract:
         source_id = str(record.get("source_id") or "")
         profile = self.source(source_id)
         output = dict(record)
+        # Parquet resumes materialize the union of every source's columns.
+        # Restore the sparse per-source shape used by a fresh Stage-01 build;
+        # a populated foreign field is corruption and must not be hidden.
+        foreign_fields = {
+            field
+            for other_source_id, other_profile in self.sources.items()
+            if other_source_id != source_id
+            for field in other_profile.source_columns
+        } - set(profile.source_columns)
+        populated_foreign = {
+            field: output[field]
+            for field in foreign_fields
+            if output.get(field) is not None
+        }
+        if populated_foreign:
+            raise ValueError(
+                f"{source_id!r} resumed row populated foreign source fields "
+                f"{sorted(populated_foreign)}"
+            )
+        for field in foreign_fields:
+            output.pop(field, None)
         payload: dict[str, Any] = {}
         role_values = {
             field: value

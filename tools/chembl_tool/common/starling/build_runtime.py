@@ -23,6 +23,7 @@ _NON_SEMANTIC_ARGUMENTS = frozenset(
     {
         "cache_mode",
         "from_stage",
+        "legacy_task_local_downstream",
         "out_dir",
         "progress_every",
         "through_stage",
@@ -277,6 +278,15 @@ def _normalize_range(bounds: tuple[int, int]) -> list[dict[str, Any]]:
         raise RuntimeError("normalization worker was not initialized")
     start, stop = bounds
     hooks = _NORMALIZE_HOOKS
+    measurement_policy = None
+    if _NORMALIZE_POLICY is not None:
+        policy_path = _NORMALIZE_POLICY.assay_transfer_measurement_policy
+        if policy_path is not None:
+            from tools.chembl_tool.common.starling.assay_transfer_measurements import (
+                load_measurement_policy,
+            )
+
+            measurement_policy = load_measurement_policy(policy_path)
     return normalize_cleaned_records(
         _NORMALIZE_RECORDS[start:stop],
         endpoint_normalizer=hooks.endpoint_normalizer,
@@ -284,6 +294,8 @@ def _normalize_range(bounds: tuple[int, int]) -> list[dict[str, Any]]:
         source_measurement_resolver=hooks.source_measurement_resolver,
         family_resolver=hooks.family_resolver,
         record_enricher=hooks.record_enricher,
+        assay_transfer_measurement_policy=measurement_policy,
+        assay_transfer_revalidator=hooks.assay_transfer_revalidator,
         task=_NORMALIZE_TASK,
     )
 
@@ -299,13 +311,31 @@ def _normalize_and_project_range(
     if _NORMALIZE_POLICY is None or _NORMALIZE_POLICY.record_contract is None:
         raise RuntimeError("canonical projection worker has no v7 policy")
     attached = _NORMALIZE_POLICY.attach_source_columns(normalized)
-    persisted = compact_persisted_records(
-        [
+    policy_path = _NORMALIZE_POLICY.assay_transfer_measurement_policy
+    if policy_path is None:
+        projected = [
             _NORMALIZE_POLICY.record_contract.canonical_projection(record)
             for record in attached
         ]
+        return attached, compact_persisted_records(projected)
+    from tools.chembl_tool.common.starling.assay_transfer_measurements import (
+        finalize_assay_transfer_measurement,
+        load_measurement_policy,
     )
-    return attached, persisted
+
+    measurement_policy = load_measurement_policy(policy_path)
+    transformed, projected = [], []
+    for record in attached:
+        base = _NORMALIZE_POLICY.record_contract.canonical_projection(record)
+        working, persisted = finalize_assay_transfer_measurement(
+            record,
+            base,
+            record_contract=_NORMALIZE_POLICY.record_contract,
+            policy=measurement_policy,
+        )
+        transformed.append(working)
+        projected.append(persisted)
+    return transformed, compact_persisted_records(projected)
 
 
 def normalize_records_ordered(

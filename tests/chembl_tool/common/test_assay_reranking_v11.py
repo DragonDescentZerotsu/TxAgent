@@ -8,14 +8,21 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
+from tools.chembl_tool.common.assay_reranking import build_v11_cache
 from tools.chembl_tool.common.assay_reranking.build_v11_cache import (
     _catalog_record,
+    _eligible_record_ids,
+    _finalize_compact_cache,
+    _iter_compact_missing_batches,
     _load_bridge,
+    _parse_args as parse_cache_args,
     _selected_fp32_head_logits,
+    _task_paths,
     _write_demand,
 )
 from tools.chembl_tool.common.assay_reranking.v11 import (
     BACKBONE_DTYPE,
+    COMPACT_CACHE_SCHEMA_VERSION,
     CANDIDATE_SCHEMA_VERSION,
     CATALOG_SCHEMA_VERSION,
     LOGIT_EXTRACTION_DTYPE,
@@ -74,16 +81,24 @@ def _bio_record(record_id: str, measurement: str = "42") -> dict:
 def test_vendored_assets_match_pinned_hashes():
     observed = verify_vendored_assets()
     assert observed["prompt_projection.json"] == (
-        "339f3bf95ae71e14fd5b288a0bdec8d66c5fadfd8d2aa13b76b9f9c13b48fd99"
+        "430c561f0788eccfb03a3f7d44ae96e4184257bf8266a186b475fca4f9165af8"
     )
 
 
-def test_bbb_multitask_model_is_pinned():
+def test_bbb_task_specific_model_is_pinned():
     profile = model_profile("bbb_martins")
     assert profile["model"] == (
-        "jiosephlee/assay-transfer-tool-soft-v11-multitask-with-categorical"
+        "jiosephlee/assay-transfer-tool-soft-v11-bbb-martins-with-categorical"
     )
-    assert profile["revision"] == "3220147ce9e56240670bb120e582f35cb66ec434"
+    assert profile["revision"] == "6b4795761fb7d2daf663f14927cdfb210a4d3e40"
+
+
+def test_skin_v11_1_task_specific_model_is_pinned():
+    profile = model_profile("skin_reaction")
+    assert profile["model"] == (
+        "jiosephlee/assay-transfer-tool-soft-v11.1-skin-reaction-with-categorical"
+    )
+    assert profile["revision"] == "4a0442ae2e1cdc20de102c3159766689a6704358"
 
 
 def test_selected_output_head_uses_fp32_accumulation():
@@ -270,6 +285,257 @@ def test_stage07_bridge_includes_nonrepresentative_records(tmp_path: Path):
         "not-representative",
         "representative",
     )
+
+
+def test_compact_cache_reranks_without_catalog_or_candidate_jsonl(tmp_path: Path):
+    path = tmp_path / "scores.sqlite3"
+    renderer = V11PromptRenderer("bioavailability_ma")
+    profile = model_profile("bioavailability_ma")
+    metadata = {
+        "schema_version": COMPACT_CACHE_SCHEMA_VERSION,
+        "status": "complete",
+        "task_id": "bioavailability_ma",
+        "model": profile["model"],
+        "model_revision": profile["revision"],
+        "scoring_contract_version": SCORING_CONTRACT_VERSION,
+        "backbone_dtype": BACKBONE_DTYPE,
+        "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
+        "template_hash": renderer.template_hash,
+        "projection_hash": renderer.projection_hash,
+        "candidate_contract": "tanimoto_identity_exclusion_then_eligible_pool.v1",
+    }
+    connection = sqlite3.connect(path)
+    connection.executescript(
+        """
+        CREATE TABLE cache_metadata(key TEXT PRIMARY KEY, value TEXT NOT NULL);
+        CREATE TABLE queries(query_id INTEGER PRIMARY KEY, query_smiles TEXT UNIQUE);
+        CREATE TABLE groups_dim(group_key INTEGER PRIMARY KEY, group_id TEXT UNIQUE);
+        CREATE TABLE molecules(molecule_key INTEGER PRIMARY KEY, molecule_chembl_id TEXT UNIQUE);
+        CREATE TABLE records(record_key INTEGER PRIMARY KEY, external_record_id TEXT UNIQUE, payload TEXT);
+        CREATE TABLE scores(score_key INTEGER PRIMARY KEY, transfer_probability REAL);
+        CREATE TABLE assignments(
+            query_id INTEGER, group_key INTEGER, molecule_key INTEGER,
+            record_key INTEGER, score_key INTEGER,
+            PRIMARY KEY(query_id, group_key, molecule_key, record_key)
+        ) WITHOUT ROWID;
+        """
+    )
+    connection.executemany(
+        "INSERT INTO cache_metadata VALUES (?, ?)",
+        [(key, json.dumps(value)) for key, value in metadata.items()],
+    )
+    connection.execute("INSERT INTO queries VALUES (1, 'CCN')")
+    connection.execute("INSERT INTO groups_dim VALUES (1, 'Fa.absorption_solubility_permeability')")
+    connection.execute("INSERT INTO molecules VALUES (1, 'STARLING_1')")
+    winning = {
+        "record_id": "record-1",
+        "canonical_endpoint_key": "aqueous_solubility",
+        "canonical_smiles": "CCO",
+        "measurement_kind": "continuous",
+        "training_measurement_kind_supported": True,
+        "source_contract": {"source_id": "fa"},
+        "source_fields": {"measurement_text": "42"},
+    }
+    connection.execute(
+        "INSERT INTO records VALUES (1, 'record-1', ?)", (json.dumps(winning),)
+    )
+    connection.execute("INSERT INTO scores VALUES (1, 0.8)")
+    connection.execute("INSERT INTO assignments VALUES (1, 1, 1, 1, 1)")
+    connection.commit()
+    connection.close()
+
+    reranker = V11CachedAssayReranker(
+        task_id="bioavailability_ma",
+        cache_path=path,
+        model=profile["model"],
+        model_revision=profile["revision"],
+    )
+    try:
+        rows = reranker.rerank_records(
+            query_smiles="CCN",
+            group_id="Fa.absorption_solubility_permeability",
+            candidates=[{"molecule_chembl_id": "STARLING_1", "similarity": 0.4}],
+        )
+    finally:
+        reranker.cache.close()
+    assert len(rows) == 1
+    assert rows[0]["transfer_selection_score"] == pytest.approx(0.8)
+    assert rows[0]["transfer_winning_record"] == winning
+
+
+def test_explicit_lineage_paths_resolve_paper_stage_layout(tmp_path: Path):
+    view = tmp_path / "paper" / "evidence" / "bioavailability_starling_v7"
+    query = tmp_path / "valid.jsonl"
+    cache = tmp_path / "paper" / "assay_transfer_rerank" / "valid"
+    args = parse_cache_args(
+        [
+            "--tasks", "bioavailability_ma",
+            "--task-evidence-view", f"bioavailability_ma={view}",
+            "--task-query-jsonl", f"bioavailability_ma={query}",
+            "--task-cache-dir", f"bioavailability_ma={cache}",
+        ]
+    )
+    paths = _task_paths(args, "bioavailability_ma")
+    assert paths["records"] == view / "06_records/records.parquet"
+    assert paths["bridge"] == view / "07_molecule_evidence/molecule_family_records.parquet"
+    assert paths["index"] == view / "08_neighbor_index"
+    assert paths["queries"] == query
+    assert paths["cache"] == cache / "scores.sqlite3"
+
+
+def test_numeric_record_scope_requires_only_bioavailability():
+    with pytest.raises(SystemExit):
+        parse_cache_args(
+            ["--tasks", "bbb_martins", "--record-scope", "numeric_direct"]
+        )
+
+
+def test_model_override_requires_one_task_and_an_immutable_pair():
+    revision = "a" * 40
+    args = parse_cache_args(
+        [
+            "--tasks", "bbb_martins",
+            "--assay-transfer-model", "organization/model",
+            "--assay-transfer-model-revision", revision,
+        ]
+    )
+    assert args.assay_transfer_model == "organization/model"
+    assert args.assay_transfer_model_revision == revision
+    with pytest.raises(SystemExit):
+        parse_cache_args(["--tasks", "bbb_martins", "--assay-transfer-model", "model"])
+    with pytest.raises(SystemExit):
+        parse_cache_args(
+            [
+                "--tasks", "bbb_martins", "skin_reaction",
+                "--assay-transfer-model", "organization/model",
+                "--assay-transfer-model-revision", revision,
+            ]
+        )
+
+
+def test_compact_resume_tasks_keep_frozen_model_provenance(tmp_path: Path):
+    cache = tmp_path / "scores.sqlite3"
+    connection = sqlite3.connect(cache)
+    connection.executescript(
+        """
+        CREATE TABLE prompt_tasks(
+            prompt_key INTEGER PRIMARY KEY, cache_key TEXT, prompt TEXT
+        );
+        CREATE TABLE prompt_scores(prompt_key INTEGER PRIMARY KEY, transfer_probability REAL);
+        INSERT INTO prompt_tasks VALUES (1, 'cache-key', 'prompt');
+        """
+    )
+    connection.commit()
+    connection.close()
+    revision = "b" * 40
+    batches = list(
+        _iter_compact_missing_batches(
+            cache, task_id="bbb_martins", model="organization/model",
+            revision=revision, batch_size=8,
+        )
+    )
+    assert batches[0][0].model == "organization/model"
+    assert batches[0][0].model_revision == revision
+
+
+def test_bio_record_scope_filters_before_cache_selection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    records = tmp_path / "records.parquet"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {"canonical_record_id": "numeric", "source_id": "hf_bioavailability"},
+                {"canonical_record_id": "qualitative", "source_id": "hf_bioavailability"},
+                {"canonical_record_id": "nondirect", "source_id": "hf_bioavailability"},
+                {"canonical_record_id": "mechanism", "source_id": "fa"},
+            ]
+        ),
+        records,
+    )
+    projected = {
+        "numeric": {
+            "bioavailability_report_type": "absolute",
+            "measurement_text": "42%",
+            "species_or_population": "human",
+            "qualifying_conditions": None,
+        },
+        "qualitative": {
+            "bioavailability_report_type": "absolute",
+            "measurement_text": "high bioavailability",
+            "species_or_population": "human",
+            "qualifying_conditions": None,
+        },
+        "nondirect": {
+            "bioavailability_report_type": "relative",
+            "measurement_text": "42%",
+            "species_or_population": "human",
+            "qualifying_conditions": None,
+        },
+    }
+    monkeypatch.setattr(
+        build_v11_cache,
+        "_source_projection",
+        lambda _task, row: {"source_fields": projected[row["canonical_record_id"]]},
+    )
+
+    assert _eligible_record_ids("bioavailability_ma", records, "labelable_direct") == {
+        "numeric",
+        "qualitative",
+    }
+    assert _eligible_record_ids("bioavailability_ma", records, "numeric_direct") == {
+        "numeric"
+    }
+
+
+def test_compact_finalization_drops_rendered_prompts_and_build_joins(tmp_path: Path):
+    cache = tmp_path / "scores.sqlite3"
+    connection = sqlite3.connect(cache)
+    connection.executescript(
+        """
+        CREATE TABLE cache_metadata(key TEXT PRIMARY KEY, value TEXT NOT NULL);
+        CREATE TABLE prompt_tasks(prompt_key INTEGER PRIMARY KEY, cache_key TEXT, prompt TEXT);
+        CREATE TABLE prompt_scores(prompt_key INTEGER PRIMARY KEY, transfer_probability REAL);
+        CREATE TABLE prompt_assignments(
+            query_id INTEGER, group_key INTEGER, molecule_key INTEGER,
+            record_key INTEGER, prompt_key INTEGER
+        );
+        INSERT INTO prompt_tasks VALUES (1, 'key', 'large rendered prompt');
+        INSERT INTO prompt_scores VALUES (1, 0.75);
+        INSERT INTO prompt_assignments VALUES (1, 1, 1, 1, 1);
+        """
+    )
+    connection.commit()
+    connection.close()
+    renderer = V11PromptRenderer("bioavailability_ma")
+    profile = model_profile("bioavailability_ma")
+    version = {
+        "schema_version": COMPACT_CACHE_SCHEMA_VERSION,
+        "status": "prepared",
+        "task_id": "bioavailability_ma",
+        "profile": "v11_with_categorical",
+        "model": profile["model"],
+        "model_revision": profile["revision"],
+        "scoring_contract_version": SCORING_CONTRACT_VERSION,
+        "backbone_dtype": BACKBONE_DTYPE,
+        "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
+        "template_hash": renderer.template_hash,
+        "projection_hash": renderer.projection_hash,
+        "candidate_contract": "tanimoto_identity_exclusion_then_eligible_pool.v1",
+        "record_scope": "all_stage07_retrieval_eligible_records",
+        "n_prompt_scores": 1,
+    }
+    _finalize_compact_cache({"cache": cache}, version)
+    connection = sqlite3.connect(cache)
+    tables = {
+        row[0] for row in connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'"
+        )
+    }
+    assert {"scores", "assignments"} <= tables
+    assert not ({"prompt_tasks", "prompt_scores", "prompt_assignments"} & tables)
+    assert connection.execute("SELECT transfer_probability FROM scores").fetchone()[0] == 0.75
+    connection.close()
 
 
 def _write_jsonl(path: Path, rows: list[dict]) -> None:

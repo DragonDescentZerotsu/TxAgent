@@ -1,0 +1,17 @@
+## TASK
+Produce the final {{ task.name }} prediction using only the flat analog analysis below.
+
+Use {{ task.prediction_field }}='{{ task.positive_value }}' for {{ task.positive }}.
+Use {{ task.prediction_field }}='{{ task.negative_value }}' for {{ task.negative }}.
+You must choose exactly one prediction. Express uncertainty through confidence and evidence_gaps.
+Do not introduce a query-only property prior, molecule recognition, or outside evidence.
+
+## FLAT ANALOG ANALYSIS
+{% for analysis in analyses %}
+Status: {{ analysis.status }}
+Content: {{ analysis.content | tojson }}
+{% endfor %}
+
+Return one JSON object with exactly this schema:
+{{ output_schema }}
+Return only valid JSON.

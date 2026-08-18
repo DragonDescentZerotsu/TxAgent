@@ -57,6 +57,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_downstream_artifa
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
     PAIR_BUCKET_STAGE,
+    build_canonical_artifacts,
     build_downstream_artifacts,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
@@ -68,17 +69,21 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
 )
 
 
-ARTIFACT_STAGES = (
+CANONICAL_ARTIFACT_STAGES = (
     "01_cleaned",
     "02_canonicalized",
     "03_records",
     PAIR_BUCKET_STAGE,
     DISTANCE_CALIBRATION_STAGE,
+)
+LEGACY_ARTIFACT_STAGES = (
+    *CANONICAL_ARTIFACT_STAGES,
     HELDOUT_STAGE,
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
     AUDIT_STAGE,
 )
+ARTIFACT_STAGES = CANONICAL_ARTIFACT_STAGES
 EVIDENCE_FAMILIES_TEMPLATE = (
     f"{MOLECULE_EVIDENCE_STAGE}/{{benchmark_split}}/molecule_families.parquet"
 )
@@ -109,7 +114,19 @@ def main(argv: list[str] | None = None) -> int:
         if result:
             return result
 
-    return _build_downstream(args)
+    if args.legacy_task_local_downstream:
+        return _build_downstream(args)
+    build_canonical_artifacts(
+        normalized_root=args.out_dir,
+        workers=args.workers,
+        rebuild_request={
+            "from_stage": args.from_stage,
+            "through_stage": args.through_stage,
+        },
+        validation_level=args.validation_level,
+        cache_mode=args.cache_mode,
+    )
+    return 0
 
 
 def _build_downstream(args) -> int:

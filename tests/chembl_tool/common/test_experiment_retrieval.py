@@ -8,6 +8,7 @@ from tools.chembl_tool.common.experiment_retrieval import (
     EvidenceGroupSpec,
     SourceExperimentConfig,
     _rank_group_candidates,
+    flatten_retrieval_groups,
     retrieve_experiment_view,
 )
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
@@ -251,6 +252,15 @@ class _ReverseScoreReranker:
         return {"name": self.name, "version": "test.v1"}
 
 
+class _EligiblePoolReranker(_ReverseScoreReranker):
+    def provenance(self):
+        return {
+            "name": self.name,
+            "version": "test.v1",
+            "candidate_contract": "tanimoto_identity_exclusion_then_eligible_pool.v1",
+        }
+
+
 def test_rerank_contract_truncates_raw_pool_before_exclusion_and_does_not_backfill():
     molecules = [
         {"molecule_chembl_id": "exact", "canonical_smiles": "CCO"},
@@ -285,6 +295,43 @@ def test_rerank_contract_truncates_raw_pool_before_exclusion_and_does_not_backfi
     assert [row["molecule_chembl_id"] for row in neighbors] == ["b", "a"]
     assert "below_raw_pool" not in {row["molecule_chembl_id"] for row in neighbors}
     assert [row["structural_rank"] for row in neighbors] == [3, 2]
+
+
+def test_compact_v11_contract_backfills_to_fifty_after_identity_exclusion():
+    molecules = [
+        {"molecule_chembl_id": "exact", "canonical_smiles": "CCO"},
+        {"molecule_chembl_id": "a", "canonical_smiles": "CCN"},
+        {"molecule_chembl_id": "b", "canonical_smiles": "CCC"},
+        {"molecule_chembl_id": "backfill", "canonical_smiles": "CCCC"},
+    ]
+    index = {
+        "molecules": molecules,
+        "evidence_by_molecule_group": {
+            row["molecule_chembl_id"]: {
+                "Tier 1.direct": [{"id": row["molecule_chembl_id"]}]
+            }
+            for row in molecules
+        },
+    }
+    neighbors = _rank_group_candidates(
+        index,
+        [0, 1, 2, 3],
+        source_groups=("Tier 1.direct",),
+        similarities=[1.0, 0.9, 0.8, 0.7],
+        query_canonical_smiles="CCO",
+        query_inchi_key="",
+        top_k=3,
+        min_similarity=0.0,
+        query_identity=normalize_molecule_identity("CCO"),
+        neighbor_identity_policy="operational",
+        query_smiles="CCO",
+        group_id="Direct.outcome",
+        reranker=_EligiblePoolReranker(),
+        assay_transfer_initial_morgan_filter=3,
+    )
+
+    assert {row["molecule_chembl_id"] for row in neighbors} == {"a", "b", "backfill"}
+    assert {row["structural_rank"] for row in neighbors} == {2, 3, 4}
 
 
 class _ThresholdReranker:
@@ -421,6 +468,51 @@ def test_unique_molecule_top_k_is_unchanged_by_multi_record_presentation():
         "n_duplicate_endpoint_records_skipped": 1,
         "duplicate_endpoint_backfill": False,
     }
+
+
+def test_flat_assay_transfer_merge_preserves_family_order_and_bundles():
+    def neighbor(molecule_id, similarity, score, record_id):
+        return {
+            "rank": 1,
+            "molecule_chembl_id": molecule_id,
+            "similarity": similarity,
+            "transfer_selection_score": score,
+            "transfer_winning_record": {"record_id": record_id},
+            "evidence_rows": [{"evidence_id": record_id, "group_id": record_id[0]}],
+            "source_group_ids": [record_id[0]],
+        }
+
+    flat = flatten_retrieval_groups(
+        [
+            {
+                "group_id": "family_a",
+                "tier": "A",
+                "endpoint_group": "a",
+                "source_group_ids": ["a"],
+                "transfer_neighbor_selection": {"diversity": {"selection_unit": "scored_record"}},
+                "neighbors": [neighbor("shared", 0.4, 0.9, "a1"), neighbor("first", 0.2, 0.8, "a2")],
+            },
+            {
+                "group_id": "family_b",
+                "tier": "B",
+                "endpoint_group": "b",
+                "source_group_ids": ["b"],
+                "transfer_neighbor_selection": {"diversity": {"selection_unit": "scored_record"}},
+                "neighbors": [neighbor("shared", 0.4, 0.7, "b1"), neighbor("higher_morgan", 0.99, 0.6, "b2")],
+            },
+        ]
+    )
+
+    assert [row["molecule_chembl_id"] for row in flat["neighbors"]] == [
+        "shared", "first", "higher_morgan"
+    ]
+    assert [
+        family["group_id"]
+        for family in flat["neighbors"][0]["transfer_family_selections"]
+    ] == ["family_a", "family_b"]
+    assert flat["transfer_neighbor_selection"]["flat_merge_policy"] == (
+        "stable_family_rank_merge_preserve_family_bundles.v1"
+    )
 
 
 def test_reranker_disabled_preserves_structural_selection_order():

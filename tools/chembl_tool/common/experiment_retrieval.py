@@ -14,9 +14,11 @@ from typing import Any, Mapping
 from tools.chembl_tool.common.assay_transfer_selection import (
     ASSAY_TRANSFER_DIVERSITY_NONE,
     ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+    ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
     ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
     ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE,
     assay_transfer_selection_policy,
+    collapse_assay_transfer_records_by_mean_molecule,
     collapse_assay_transfer_records_by_molecule,
     select_assay_transfer_records,
     validate_assay_transfer_diversity,
@@ -164,6 +166,11 @@ def retrieve_experiment_view(
         raise ValueError("assay_transfer_min_score must be between 0 and 1 inclusive")
     if assay_transfer_min_score is not None and reranker is None:
         raise ValueError("assay_transfer_min_score requires a retrieval reranker")
+    if (
+        assay_transfer_selection_unit == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
+        and assay_transfer_min_score is not None
+    ):
+        raise ValueError("mean_score_molecule requires no assay-transfer score floor")
     validate_assay_transfer_diversity(
         mode=assay_transfer_diversity_mode,
         score_slack=assay_transfer_diversity_score_slack,
@@ -174,6 +181,11 @@ def retrieve_experiment_view(
     )
     if reranker is None and assay_transfer_diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
         raise ValueError("assay-transfer diversity requires a retrieval reranker")
+    if (
+        assay_transfer_selection_unit == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
+        and assay_transfer_diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE
+    ):
+        raise ValueError("mean_score_molecule does not support diversity selection")
     if (
         reranker is None
         and assay_transfer_records_per_molecule
@@ -553,7 +565,13 @@ def _assay_transfer_neighbors(
         ),
         key=lambda item: (-item[0], index["molecules"][item[1]]["molecule_chembl_id"]),
     )
-    raw_ranked = ranked[:initial_morgan_filter]
+    candidate_contract = str(
+        (reranker.provenance() or {}).get("candidate_contract") or ""
+    )
+    eligible_pool = (
+        candidate_contract == "tanimoto_identity_exclusion_then_eligible_pool.v1"
+    )
+    raw_ranked = ranked if eligible_pool else ranked[:initial_morgan_filter]
     # 2. Candidate-validation policies (parent-disjoint / identity exclusion + evidence
     #    presence). Keep *all* validated candidates -- the whole pool is reranked.
     neighbors = []
@@ -584,6 +602,8 @@ def _assay_transfer_neighbors(
                 "structural_rank": structural_rank,
             }
         )
+        if eligible_pool and len(neighbors) == initial_morgan_filter:
+            break
     # 3. Record-level rerank across the full validated set.
     rerank_records = getattr(reranker, "rerank_records", None) or reranker.rerank
     record_neighbors = rerank_records(
@@ -608,6 +628,11 @@ def _assay_transfer_neighbors(
     }
     if selection_unit == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE:
         record_neighbors, collapse_audit = collapse_assay_transfer_records_by_molecule(
+            record_neighbors,
+            records_per_molecule=records_per_molecule,
+        )
+    elif selection_unit == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE:
+        record_neighbors, collapse_audit = collapse_assay_transfer_records_by_mean_molecule(
             record_neighbors,
             records_per_molecule=records_per_molecule,
         )
@@ -712,29 +737,106 @@ class _RankedNeighbors(list[dict[str, Any]]):
 def _flatten_groups(groups: list[dict[str, Any]]) -> dict[str, Any]:
     merged: dict[str, dict[str, Any]] = {}
     source_group_ids: set[str] = set()
+    transfer_selections = [
+        group.get("transfer_neighbor_selection")
+        for group in groups
+        if group.get("transfer_neighbor_selection") is not None
+    ]
     for group in groups:
         source_group_ids.update(group.get("source_group_ids") or [])
         for neighbor in group.get("neighbors") or []:
             molecule_id = str(neighbor.get("molecule_chembl_id") or "")
             target = merged.get(molecule_id)
             if target is None:
-                target = {**neighbor, "evidence_rows": [], "source_group_ids": []}
+                target = {
+                    **neighbor,
+                    "evidence_rows": [],
+                    "source_group_ids": [],
+                    "transfer_family_selections": [],
+                }
                 merged[molecule_id] = target
-            seen_rows = {id(row) for row in target["evidence_rows"]}
+            seen_rows = {_evidence_row_key(row) for row in target["evidence_rows"]}
             target["evidence_rows"].extend(
-                row for row in neighbor.get("evidence_rows") or [] if id(row) not in seen_rows
+                row
+                for row in neighbor.get("evidence_rows") or []
+                if _evidence_row_key(row) not in seen_rows
             )
             target["source_group_ids"] = sorted(
                 set(target["source_group_ids"]) | set(neighbor.get("source_group_ids") or [])
             )
             target["n_evidence_rows"] = len(target["evidence_rows"])
-    neighbors = sorted(
-        merged.values(),
-        key=lambda item: (-float(item.get("similarity") or 0.0), str(item.get("molecule_chembl_id") or "")),
-    )
+            if group.get("transfer_neighbor_selection") is not None:
+                selected_records = neighbor.get("transfer_selected_records") or [
+                    {
+                        "record_rank": 1,
+                        "transfer_selection_score": neighbor.get(
+                            "transfer_selection_score"
+                        ),
+                        "transfer_winning_record_id": neighbor.get(
+                            "transfer_winning_record_id"
+                        ),
+                        "transfer_winning_record": neighbor.get(
+                            "transfer_winning_record"
+                        )
+                        or {},
+                    }
+                ]
+                existing_family = next(
+                    (
+                        family
+                        for family in target["transfer_family_selections"]
+                        if family.get("group_id") == group.get("group_id")
+                    ),
+                    None,
+                )
+                if existing_family is None:
+                    target["transfer_family_selections"].append(
+                        {
+                            "group_id": group.get("group_id"),
+                            "tier": group.get("tier"),
+                            "endpoint_group": group.get("endpoint_group"),
+                            "family_rank": neighbor.get("rank"),
+                            "transfer_selection_score": neighbor.get(
+                                "transfer_selection_score"
+                            ),
+                            "transfer_molecule_mean_score": neighbor.get(
+                                "transfer_molecule_mean_score"
+                            ),
+                            "transfer_scored_record_count": neighbor.get(
+                                "transfer_scored_record_count"
+                            ),
+                            "transfer_selected_records": list(selected_records),
+                            "transfer_winning_record": neighbor.get(
+                                "transfer_winning_record"
+                            )
+                            or {},
+                        }
+                    )
+                else:
+                    seen_record_ids = {
+                        str(record.get("transfer_winning_record_id") or "")
+                        for record in existing_family["transfer_selected_records"]
+                    }
+                    for record in selected_records:
+                        record_id = str(record.get("transfer_winning_record_id") or "")
+                        if record_id and record_id not in seen_record_ids:
+                            existing_family["transfer_selected_records"].append(
+                                {
+                                    **record,
+                                    "record_rank": len(
+                                        existing_family["transfer_selected_records"]
+                                    )
+                                    + 1,
+                                }
+                            )
+                            seen_record_ids.add(record_id)
+    # ``dict`` insertion order is the mechanism-spec order followed by each
+    # family's reranker order.  This is the selected-evidence order; a Morgan
+    # re-sort here would silently change the flat assay-transfer condition.
+    neighbors = list(merged.values())
     for rank, neighbor in enumerate(neighbors, start=1):
         neighbor["rank"] = rank
-    return {
+    payload = {
         "group_id": "Flat.all_evidence",
         "tier": "Flat",
         "endpoint_group": "all_evidence",
@@ -742,6 +844,30 @@ def _flatten_groups(groups: list[dict[str, Any]]) -> dict[str, Any]:
         "n_candidate_molecules": len(neighbors),
         "neighbors": neighbors,
     }
+    if transfer_selections:
+        payload["transfer_neighbor_selection"] = {
+            "selection_unit": (
+                (transfer_selections[0].get("molecule_collapse") or {}).get(
+                    "selection_unit"
+                )
+                or (transfer_selections[0].get("diversity") or {}).get(
+                    "selection_unit"
+                )
+            ),
+            "n_source_families": len(transfer_selections),
+            "n_selected": len(neighbors),
+            "flat_merge_policy": "stable_family_rank_merge_preserve_family_bundles.v1",
+            "selection_metadata_is_llm_hidden": True,
+        }
+    return payload
+
+
+def _evidence_row_key(row: Mapping[str, Any]) -> tuple[str, str, str]:
+    return (
+        str(row.get("evidence_id") or ""),
+        str(row.get("group_id") or ""),
+        str(row.get("molecule_chembl_id") or ""),
+    )
 
 
 def _query_only_retrieval(query_smiles: str, *, mode: str) -> dict[str, Any]:

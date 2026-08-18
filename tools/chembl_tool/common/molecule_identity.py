@@ -88,6 +88,19 @@ def bemis_murcko_scaffold(smiles: str) -> str:
     molecule = Chem.MolFromSmiles(str(smiles or ""))
     if molecule is None:
         raise ValueError(f"cannot calculate scaffold for invalid SMILES: {smiles}")
+    with rdBase.BlockLogs():
+        try:
+            return _murcko_scaffold_smiles(molecule)
+        except RuntimeError:
+            # Some valid source molecules carry inconsistent double-bond stereo.
+            # Stereo is outside this non-chiral scaffold contract, so remove it
+            # and retry on the same molecular graph instead of losing the molecule.
+            without_stereo = Chem.Mol(molecule)
+            Chem.RemoveStereochemistry(without_stereo)
+            return _murcko_scaffold_smiles(without_stereo)
+
+
+def _murcko_scaffold_smiles(molecule: Chem.Mol) -> str:
     return MurckoScaffold.MurckoScaffoldSmiles(
         mol=molecule,
         includeChirality=False,

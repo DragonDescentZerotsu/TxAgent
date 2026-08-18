@@ -83,6 +83,16 @@ V7_DOWNSTREAM_STAGES = (
     NEIGHBOR_INDEX_STAGE,
     AUDIT_STAGE,
 )
+CANONICAL_V7_STAGES = (
+    PAIR_BUCKET_STAGE,
+    DISTANCE_CALIBRATION_STAGE,
+)
+LINEAGE_VIEW_STAGES = (
+    HELDOUT_STAGE,
+    MOLECULE_EVIDENCE_STAGE,
+    NEIGHBOR_INDEX_STAGE,
+    AUDIT_STAGE,
+)
 
 
 def _downstream_stages(*, v7: bool) -> tuple[str, ...]:
@@ -134,6 +144,108 @@ class SplitDownstreamSpec:
         return PAIR_BUCKET_METADATA_FILENAME
 
 
+def build_canonical_artifacts(
+    spec: SplitDownstreamSpec,
+    *,
+    normalized_root: str | Path,
+    workers: int = 1,
+    rebuild_request: Mapping[str, Any] | None = None,
+    validation_level: str = "strict",
+    cache_mode: str = "auto",
+) -> dict[str, Any]:
+    """Build split-independent Stage-04/05 artifacts under the canonical root."""
+    started = time.monotonic()
+    root = Path(normalized_root)
+    root.mkdir(parents=True, exist_ok=True)
+    records_path = root / "03_records/records.parquet"
+    if "canonical_record_id" not in pq.read_schema(records_path).names:
+        raise ValueError("canonical-only downstream builds require v7 records")
+    auxiliary_manifest = root / "02_canonicalized/auxiliary_mapping_manifest.json"
+    inputs = _preflight_canonical_inputs(
+        records_path=records_path,
+        auxiliary_manifest=auxiliary_manifest,
+    )
+    root_manifest_path = root / MANIFEST_FILENAME
+    previous_manifest = root_manifest_path.read_bytes() if root_manifest_path.exists() else None
+    manifest = json.loads(previous_manifest.decode()) if previous_manifest else {}
+    cache_args = SimpleNamespace(artifact_scope="canonical")
+    digests = FileDigestCache()
+    cached = manifest.get("canonical_artifact_build_cache")
+    if (
+        cache_mode == "auto"
+        and validation_level == "strict"
+        and not any((root / stage).exists() for stage in LINEAGE_VIEW_STAGES)
+        and cache_metadata_matches(
+            cached,
+            task_id=spec.task_id,
+            completed_stage=DISTANCE_CALIBRATION_STAGE,
+            args=cache_args,
+            digests=digests,
+            scientific_assets=spec.policy.scientific_assets,
+        )
+        and manifest.get("canonical_artifact_hashes")
+        == _canonical_artifact_hashes(spec, root)
+    ):
+        print(
+            "[build_starling_canonical] cache hit: "
+            f"content_key={cached['content_key']}",
+            flush=True,
+        )
+        return manifest
+
+    with tempfile.TemporaryDirectory(dir=root, prefix=".canonical-build-") as name:
+        candidate = Path(name)
+        pair_metadata, transfer = _build_pair_and_transfer(
+            spec,
+            records_path=records_path,
+            auxiliary_manifest=auxiliary_manifest,
+            candidate=candidate,
+            published_root=root,
+            workers=workers,
+            v7=True,
+        )
+        manifest.update(
+            _canonical_manifest_update(
+                spec=spec,
+                pair_metadata=pair_metadata,
+                transfer=transfer,
+                candidate=candidate,
+                rebuild_request=rebuild_request,
+                elapsed_s=round(time.monotonic() - started, 3),
+            )
+        )
+        for key in (
+            "downstream_build_cache",
+            "downstream_artifact_hashes",
+            "downstream_scope",
+            "downstream_stats",
+            "elapsed_downstream_s",
+        ):
+            manifest.pop(key, None)
+        canonical_cache = build_cache_metadata(
+            task_id=spec.task_id,
+            completed_stage=DISTANCE_CALIBRATION_STAGE,
+            args=cache_args,
+            input_paths=inputs,
+            output_paths=_canonical_output_paths(spec, candidate),
+            digests=digests,
+            scientific_assets=spec.policy.scientific_assets,
+        )
+        canonical_cache["outputs"] = {
+            str(root / Path(path).relative_to(candidate)): sha256
+            for path, sha256 in canonical_cache["outputs"].items()
+        }
+        manifest["canonical_artifact_build_cache"] = canonical_cache
+        _write_json(candidate / MANIFEST_FILENAME, manifest)
+        _validate_canonical_candidate(spec, candidate)
+        _verify_inputs(inputs)
+        actual_manifest = root_manifest_path.read_bytes() if root_manifest_path.exists() else None
+        if actual_manifest != previous_manifest:
+            raise RuntimeError("root manifest changed during canonical candidate build")
+        _publish_canonical_candidate(root, candidate)
+    return manifest
+
+
 def _compact_profile(
     spec: SplitDownstreamSpec, *, v7: bool
 ) -> CompactArtifactProfile:
@@ -142,6 +254,49 @@ def _compact_profile(
         if v7 and spec.policy.record_contract is not None
         else ""
     )
+
+
+def _build_pair_and_transfer(
+    spec: SplitDownstreamSpec,
+    *,
+    records_path: Path,
+    auxiliary_manifest: Path,
+    candidate: Path,
+    published_root: Path,
+    workers: int,
+    v7: bool,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    paths = _stage_paths(candidate, v7=v7)
+    pair_metadata = spec.build_sidecar(
+        records_path=records_path,
+        out_dir=paths["pair_buckets"],
+    )
+    pair_metadata = _project_paths(pair_metadata, candidate, published_root)
+    _write_json(
+        paths["pair_buckets"] / spec.pair_bucket_metadata_filename,
+        pair_metadata,
+    )
+    transfer_kwargs = {
+        "records_path": records_path,
+        "pair_bucket_records_path": (
+            paths["pair_buckets"] / spec.pair_bucket_records_filename
+        ),
+        "pair_bucket_metadata_path": (
+            paths["pair_buckets"] / spec.pair_bucket_metadata_filename
+        ),
+        "auxiliary_manifest_path": auxiliary_manifest,
+        "out_dir": paths["transfer_policy"],
+    }
+    if "workers" in inspect.signature(spec.build_transfer_policy).parameters:
+        transfer_kwargs["workers"] = workers
+    transfer = spec.build_transfer_policy(**transfer_kwargs)
+    transfer = _project_paths(transfer, candidate, published_root)
+    payload_filename = CALIBRATION_FILENAME if v7 else POLICY_FILENAME
+    write_deterministic_gzip(
+        paths["transfer_policy"] / payload_filename,
+        transfer,
+    )
+    return pair_metadata, transfer
 
 
 def build_downstream_artifacts(
@@ -209,35 +364,14 @@ def build_downstream_artifacts(
         candidate = Path(name)
         paths = _stage_paths(candidate, v7=v7)
         _seed_audits(root, paths["audits"])
-        pair_metadata = spec.build_sidecar(
+        pair_metadata, transfer = _build_pair_and_transfer(
+            spec,
             records_path=records_path,
-            out_dir=paths["pair_buckets"],
-        )
-        pair_metadata = _project_paths(pair_metadata, candidate, root)
-        _write_json(
-            paths["pair_buckets"] / spec.pair_bucket_metadata_filename,
-            pair_metadata,
-        )
-        transfer_kwargs = {
-            "records_path": records_path,
-            "pair_bucket_records_path": (
-                paths["pair_buckets"] / spec.pair_bucket_records_filename
-            ),
-            "pair_bucket_metadata_path": (
-                paths["pair_buckets"] / spec.pair_bucket_metadata_filename
-            ),
-            "auxiliary_manifest_path": auxiliary_manifest,
-            "out_dir": paths["transfer_policy"],
-        }
-        if "workers" in inspect.signature(spec.build_transfer_policy).parameters:
-            transfer_kwargs["workers"] = workers
-        transfer = spec.build_transfer_policy(
-            **transfer_kwargs,
-        )
-        transfer = _project_paths(transfer, candidate, root)
-        stage_payload_filename = CALIBRATION_FILENAME if v7 else POLICY_FILENAME
-        write_deterministic_gzip(
-            paths["transfer_policy"] / stage_payload_filename, transfer
+            auxiliary_manifest=auxiliary_manifest,
+            candidate=candidate,
+            published_root=root,
+            workers=workers,
+            v7=v7,
         )
         filtered = materialize_filtered_record_views(
             spec,
@@ -285,6 +419,15 @@ def build_downstream_artifacts(
                 v7=v7,
             )
         )
+        for key in (
+            "artifact_scope",
+            "canonical_artifact_build_cache",
+            "canonical_artifact_hashes",
+            "canonical_scope",
+            "canonical_stats",
+            "elapsed_canonical_s",
+        ):
+            manifest.pop(key, None)
         downstream_cache = build_cache_metadata(
             task_id=spec.task_id,
             completed_stage=AUDIT_STAGE,
@@ -784,6 +927,18 @@ def _preflight_inputs(
     return {path: file_sha256(path) for path in paths}
 
 
+def _preflight_canonical_inputs(
+    *, records_path: Path, auxiliary_manifest: Path
+) -> dict[Path, str]:
+    _require_file(records_path)
+    _require_file(auxiliary_manifest)
+    json.loads(auxiliary_manifest.read_text(encoding="utf-8"))
+    return {
+        records_path: file_sha256(records_path),
+        auxiliary_manifest: file_sha256(auxiliary_manifest),
+    }
+
+
 def _heldout_audit(
     spec: SplitDownstreamSpec,
     pair_metadata: Mapping[str, Any],
@@ -948,6 +1103,75 @@ def _manifest_update(
         "downstream_artifact_hashes": _downstream_hashes(spec, candidate, v7=v7),
         "elapsed_downstream_s": elapsed_s,
     }
+
+
+def _canonical_manifest_update(
+    *,
+    spec: SplitDownstreamSpec,
+    pair_metadata: Mapping[str, Any],
+    transfer: Mapping[str, Any],
+    candidate: Path,
+    rebuild_request: Mapping[str, Any] | None,
+    elapsed_s: float,
+) -> dict[str, Any]:
+    pair_bucket_version = str(pair_metadata.get("contract_version") or "")
+    calibration_pair_bucket_version = str(transfer.get("pair_bucket_version") or "")
+    if not pair_bucket_version:
+        raise ValueError("Stage-04 pair-bucket metadata lacks contract_version")
+    if (
+        calibration_pair_bucket_version
+        and calibration_pair_bucket_version != pair_bucket_version
+    ):
+        raise ValueError(
+            "Stage-04/Stage-05 pair-bucket contract mismatch: "
+            f"{pair_bucket_version!r} != {calibration_pair_bucket_version!r}"
+        )
+    return {
+        **spec.policy.manifest_versions(),
+        "pipeline_layout_version": spec.pipeline_layout_version,
+        "completed_artifact_stages": [
+            "01_cleaned",
+            "02_canonicalized",
+            "03_records",
+            *CANONICAL_V7_STAGES,
+        ],
+        "rebuild_request": dict(
+            rebuild_request or {"from_stage": "index", "through_stage": "index"}
+        ),
+        "artifact_scope": "canonical_split_independent",
+        "canonical_scope": {
+            "record_stage": "03_records",
+            "pair_bucket_stage": PAIR_BUCKET_STAGE,
+            "distance_calibration_stage": DISTANCE_CALIBRATION_STAGE,
+            "benchmark_split": None,
+            "heldout_filter": None,
+        },
+        "canonical_stats": {
+            "pair_buckets": pair_metadata["stats"]["buckets"],
+            "calibration_valid_buckets": transfer["summary"][
+                "calibration_valid_buckets"
+            ],
+        },
+        "canonical_artifact_hashes": _canonical_artifact_hashes(spec, candidate),
+        "elapsed_canonical_s": elapsed_s,
+    }
+
+
+def _canonical_artifact_hashes(
+    spec: SplitDownstreamSpec, root: Path
+) -> dict[str, str]:
+    paths = {
+        "pair_bucket_records": (
+            root / PAIR_BUCKET_STAGE / spec.pair_bucket_records_filename
+        ),
+        "pair_bucket_metadata": (
+            root / PAIR_BUCKET_STAGE / spec.pair_bucket_metadata_filename
+        ),
+        "distance_calibration": (
+            root / DISTANCE_CALIBRATION_STAGE / CALIBRATION_FILENAME
+        ),
+    }
+    return {key: file_sha256(path) for key, path in sorted(paths.items())}
 
 
 def _downstream_hashes(
@@ -1115,6 +1339,70 @@ def _downstream_output_paths(
     return paths
 
 
+def _canonical_output_paths(spec: SplitDownstreamSpec, root: Path) -> list[Path]:
+    return [
+        root / PAIR_BUCKET_STAGE / spec.pair_bucket_records_filename,
+        root / PAIR_BUCKET_STAGE / spec.pair_bucket_metadata_filename,
+        root / DISTANCE_CALIBRATION_STAGE / CALIBRATION_FILENAME,
+    ]
+
+
+def _validate_canonical_candidate(
+    spec: SplitDownstreamSpec, candidate: Path
+) -> None:
+    for path in (*_canonical_output_paths(spec, candidate), candidate / MANIFEST_FILENAME):
+        _require_file(path)
+    manifest = json.loads((candidate / MANIFEST_FILENAME).read_text(encoding="utf-8"))
+    if manifest.get("canonical_artifact_hashes") != _canonical_artifact_hashes(
+        spec, candidate
+    ):
+        raise ValueError("candidate canonical hashes differ from its manifest")
+    token = str(candidate)
+    for path in candidate.rglob("*.json"):
+        if token in path.read_text(encoding="utf-8"):
+            raise ValueError(f"candidate path leaked into published JSON: {path}")
+    calibration_text = gzip.decompress(
+        (candidate / DISTANCE_CALIBRATION_STAGE / CALIBRATION_FILENAME).read_bytes()
+    ).decode("utf-8")
+    if token in calibration_text:
+        raise ValueError("candidate path leaked into distance calibration")
+
+
+def _publish_canonical_candidate(root: Path, candidate: Path) -> None:
+    """Publish Stage 04/05 and retire task-local lineage views atomically."""
+    stages = (*CANONICAL_V7_STAGES, *LINEAGE_VIEW_STAGES)
+    backup = Path(tempfile.mkdtemp(dir=root, prefix=".canonical-backup-"))
+    active_manifest = root / MANIFEST_FILENAME
+    had_manifest = active_manifest.exists()
+    if had_manifest:
+        shutil.copyfile(active_manifest, backup / MANIFEST_FILENAME)
+    moved: list[str] = []
+    published: list[str] = []
+    try:
+        for stage in stages:
+            active = root / stage
+            if active.exists():
+                os.replace(active, backup / stage)
+                moved.append(stage)
+        for stage in CANONICAL_V7_STAGES:
+            os.replace(candidate / stage, root / stage)
+            published.append(stage)
+        os.replace(candidate / MANIFEST_FILENAME, active_manifest)
+    except BaseException:
+        for stage in reversed(published):
+            if (root / stage).exists():
+                os.replace(root / stage, candidate / stage)
+        for stage in reversed(moved):
+            os.replace(backup / stage, root / stage)
+        if had_manifest:
+            os.replace(backup / MANIFEST_FILENAME, active_manifest)
+        elif active_manifest.exists():
+            active_manifest.unlink()
+        raise
+    finally:
+        shutil.rmtree(backup, ignore_errors=True)
+
+
 def _publish_downstream_candidate(
     spec: SplitDownstreamSpec, root: Path, candidate: Path, *, v7: bool | None = None
 ) -> None:
@@ -1244,6 +1532,7 @@ def _write_json(path: Path, value: Any) -> None:
 
 __all__ = [
     "AUDIT_STAGE",
+    "CANONICAL_V7_STAGES",
     "DOWNSTREAM_STAGES",
     "EVIDENCE_BRIDGE_FILENAME",
     "EVIDENCE_FAMILIES_FILENAME",
@@ -1257,9 +1546,11 @@ __all__ = [
     "DEFAULT_LEGACY_DOWNSTREAM_STAGES",
     "DISTANCE_CALIBRATION_STAGE",
     "LEGACY_DOWNSTREAM_STAGES",
+    "LINEAGE_VIEW_STAGES",
     "SplitDownstreamSpec",
     "TRANSFER_POLICY_STAGE",
     "V7_DOWNSTREAM_STAGES",
+    "build_canonical_artifacts",
     "build_downstream_artifacts",
     "build_split_downstream_artifacts",
     "build_filtered_molecule_evidence",

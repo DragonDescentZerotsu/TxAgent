@@ -197,6 +197,7 @@ def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
             mapping_path=Path(args.reference_semantics_mapping),
         ),
         allow_missing=args.allow_missing_reference_semantics,
+        fail_closed_unmapped=True,
     )
 
     def resolve_measurement_semantics(
@@ -254,8 +255,21 @@ def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
         record_enricher=lambda record: _enrich_record(
             record, attacher, semantic_results, reference_attacher
         ),
+        assay_transfer_revalidator=lambda record: _revalidate_assay_transfer_record(
+            record, reference_attacher
+        ),
         run_state={"auxiliary": attacher, "reference": reference_attacher},
     )
+
+
+def _revalidate_assay_transfer_record(
+    record: dict[str, Any], reference_attacher: ReferenceSemanticsAttacher
+) -> dict[str, Any]:
+    validity = enrich_skin_reaction_validity(record)
+    reference = reference_attacher.attach_post_scale_fail_closed(
+        {**record, **validity}
+    )
+    return {**validity, **reference}
 
 
 def attach_source_columns(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -313,7 +327,7 @@ def stage_documents(
                 ]
             ),
             "reference_semantics_mapping_complete": bool(
-                reference_coverage["validations"]["all_applicable_records_mapped"]
+                reference_coverage["validations"]["all_applicable_records_assigned"]
             ),
         },
         reference_semantics_manifest={
@@ -428,6 +442,12 @@ POLICY = StarlingTaskPolicy(
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         DEFAULT_MAPPING_PATH,
         AUXILIARY_PROMPT_REGISTRY_PATH,
+        Path(__file__).parent
+        / "data_processing/assay_transfer_measurements_v1/policy.json",
+    ),
+    assay_transfer_measurement_policy=(
+        Path(__file__).parent
+        / "data_processing/assay_transfer_measurements_v1/policy.json"
     ),
     reference_semantics_enabled=True,
 )

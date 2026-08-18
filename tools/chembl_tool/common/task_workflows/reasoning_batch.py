@@ -54,6 +54,10 @@ from tools.chembl_tool.common.prompt_profile import (
     prompt_profile_from_manifest,
     require_matching_prompt_profiles,
 )
+from tools.chembl_tool.common.task_workflows.analogous_flat_prompt import (
+    PROMPT_IDENTITY_VIEW,
+    prompt_provenance as analogous_flat_prompt_provenance,
+)
 
 
 @dataclass(frozen=True)
@@ -74,16 +78,20 @@ class BatchConfig:
     negative_predictions: frozenset[str]
     rerank_preflight: Callable[..., dict[str, Any]] | None = None
     supports_assay_transfer_scores: bool = False
-    # True only for tasks wired to the unified --retrieval-strategy CLI (bioavailability_ma).
+    # True for tasks wired to the unified --retrieval-strategy CLI.
     # Every task receives the strict --morgan-neighbor-selector flag.
     supports_retrieval_strategy: bool = False
     group_prompt_formats: tuple[str, ...] = ()
     default_group_prompt_format: str = ""
     group_output_schemas: tuple[str, ...] = ()
     default_group_output_schema: str = ""
+    group_prompt_versions: tuple[str, ...] = ()
+    default_group_prompt_version: str = ""
+    group_prompt_provenance: Callable[..., dict[str, Any]] | None = None
     supports_shared_retrieval_contract: bool = True
     supports_nondirect_bioavailability_filter: bool = False
     supports_analogous_reasoning_only: bool = False
+    analogous_reasoning_modes: tuple[str, ...] = ("full_mechanism",)
     final_prompt_provenance: Callable[..., dict[str, Any]] | None = None
     assay_transfer_profile_default: str = "legacy_bio"
     rerank_catalog_default: str = (
@@ -171,10 +179,23 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         )
     else:
         args.group_prompt_instructions_sha256 = ""
+    group_prompt_provenance = (
+        config.group_prompt_provenance(
+            args.group_prompt_format,
+            prompt_version=args.group_prompt_version,
+            instructions_file=args.group_prompt_instructions_file or None,
+            output_schema_profile=args.group_output_schema,
+        )
+        if config.group_prompt_provenance is not None
+        and args.group_prompt_format in {"morganfingerprint", "assay_transfer_tool"}
+        and not _is_analogous_flat(args)
+        else {}
+    )
     records = _read_jsonl(Path(args.input_jsonl))
     indices = _select_indices(args, len(records))
     batch_id = args.batch_id or time.strftime(f"{config.batch_id_prefix}_%Y%m%d_%H%M%S")
     batch_dir = _ensure_dir(Path(args.batch_root) / batch_id)
+    _validate_group_prompt_contract(batch_dir, group_prompt_provenance)
     _validate_final_decision_profile_contract(args, batch_dir)
     _validate_prompt_profile_contract(config, args, batch_dir)
     logs_dir = _ensure_dir(batch_dir / "logs")
@@ -286,7 +307,15 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         ),
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
-        "group_output_schema": args.group_output_schema,
+        "group_prompt_version": (
+            "analogous_flat_v1" if _is_analogous_flat(args) else args.group_prompt_version
+        ),
+        "group_prompt_provenance": group_prompt_provenance,
+        "group_output_schema": (
+            "analogous_flat_minimal_v1"
+            if _is_analogous_flat(args)
+            else args.group_output_schema
+        ),
         "group_prompt_instructions_file": group_prompt_instruction_provenance.get(
             "path", ""
         ),
@@ -297,7 +326,9 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
             "instruction_count", 0
         ),
         "group_evidence_presentation": (
-            "minimal_evidence.v1"
+            "analogous_flat_minimal.v1"
+            if _is_analogous_flat(args)
+            else "minimal_evidence.v1"
             if args.group_prompt_format in {"morganfingerprint", "assay_transfer_tool"}
             else "legacy"
         ),
@@ -331,6 +362,17 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         ),
         "task_prompt_profile": getattr(args, "task_prompt_profile", ""),
         "identity_blind": args.identity_blind,
+        "disable_flat_tools": args.disable_flat_tools,
+        "group_tools_enabled": (
+            not args.disable_group_tools
+            and not args.disable_flat_tools
+            and not args.analogous_reasoning_only
+        ),
+        "flat_group_tool_policy": (
+            "omitted.v1"
+            if args.disable_flat_tools or args.analogous_reasoning_only
+            else "standard.v1"
+        ),
         "analogous_reasoning_only": args.analogous_reasoning_only,
         "single_branch_execution": (
             "omitted" if args.analogous_reasoning_only else "executed_or_reused"
@@ -348,7 +390,12 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
             config.final_prompt_provenance(
                 analogous_reasoning_only=args.analogous_reasoning_only
             )
-            if config.final_prompt_provenance is not None
+            if config.final_prompt_provenance is not None and not _is_analogous_flat(args)
+            else {}
+        ),
+        "analogous_flat_prompt_provenance": (
+            analogous_flat_prompt_provenance(config.pipeline_module.split(".")[-2])
+            if _is_analogous_flat(args)
             else {}
         ),
         "harness_prefetch_tools": (
@@ -357,7 +404,9 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
             else args.identity_blind or args.harness_prefetch_tools
         ),
         "visibility_mode": (
-            "identity_blind"
+            PROMPT_IDENTITY_VIEW
+            if _is_analogous_flat(args)
+            else "identity_blind"
             if args.identity_blind
             else "deployment_visible_prefetched"
             if args.harness_prefetch_tools
@@ -775,6 +824,8 @@ def _single_run_command(
         )
     if args.group_prompt_format:
         command.extend(["--group-prompt-format", args.group_prompt_format])
+    if args.group_prompt_version:
+        command.extend(["--group-prompt-version", args.group_prompt_version])
     if args.group_output_schema:
         command.extend(["--group-output-schema", args.group_output_schema])
     if args.group_prompt_instructions_file:
@@ -822,6 +873,8 @@ def _single_run_command(
             command.extend(args.tier1_replacement_groups)
     if args.disable_group_tools:
         command.append("--disable-group-tools")
+    if args.disable_flat_tools:
+        command.append("--disable-flat-tools")
     if args.analogous_reasoning_only:
         command.append("--analogous-reasoning-only")
     if args.identity_blind and config.supports_shared_retrieval_contract:
@@ -1459,6 +1512,14 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         choices=list(config.group_output_schemas) or None,
         default=config.default_group_output_schema,
     )
+    if config.group_prompt_versions:
+        parser.add_argument(
+            "--group-prompt-version",
+            choices=config.group_prompt_versions,
+            default=config.default_group_prompt_version,
+        )
+    else:
+        parser.set_defaults(group_prompt_version="")
     parser.add_argument(
         "--group-prompt-instructions-file",
         default="",
@@ -1511,18 +1572,30 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     parser.add_argument("--max-groups", type=int, default=0)
     parser.add_argument("--disable-group-tools", action="store_true")
+    parser.add_argument(
+        "--disable-flat-tools",
+        action="store_true",
+        help=(
+            "full_flat only: omit neighbor comparison tools from the flat group branch; "
+            "the single-molecule branch still receives molecule_properties"
+        ),
+    )
     parser.add_argument("--harness-prefetch-tools", action="store_true")
     args = parser.parse_args(argv)
     if args.assay_transfer_profile == "v11_with_categorical":
+        custom_v11_cache = args.rerank_cache != config.rerank_cache_default
         if args.assay_transfer_initial_morgan_filter == 100:
             args.assay_transfer_initial_morgan_filter = 50
         if args.min_similarity == 0.3:
             args.min_similarity = 0.0
-        if args.rerank_catalog == config.rerank_catalog_default:
+        if not custom_v11_cache and args.rerank_catalog == config.rerank_catalog_default:
             args.rerank_catalog = config.v11_rerank_catalog_default
         if args.rerank_cache == config.rerank_cache_default:
             args.rerank_cache = config.v11_rerank_cache_default
-        if args.rerank_candidate_manifest == config.rerank_candidate_manifest_default:
+        if (
+            not custom_v11_cache
+            and args.rerank_candidate_manifest == config.rerank_candidate_manifest_default
+        ):
             args.rerank_candidate_manifest = config.v11_rerank_candidate_manifest_default
         if args.rerank_cache_version_manifest == config.rerank_version_manifest_default:
             args.rerank_cache_version_manifest = config.v11_rerank_version_manifest_default
@@ -1559,6 +1632,8 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         parser.error("--final-only-groups requires --final-only-source-batch")
     if args.max_stage_requeues < 0:
         parser.error("--max-stage-requeues must be non-negative")
+    if args.disable_flat_tools and args.experiment_mode != "full_flat":
+        parser.error("--disable-flat-tools requires --experiment-mode full_flat")
     if not config.supports_shared_retrieval_contract:
         unsupported = []
         if args.experiment_mode != "native":
@@ -1605,10 +1680,32 @@ def _validate_analogous_reasoning_only(
         raise SystemExit(
             f"Pipeline {config.pipeline_module} does not support --analogous-reasoning-only"
         )
-    if args.experiment_mode != "full_mechanism":
+    if args.experiment_mode not in config.analogous_reasoning_modes:
         raise SystemExit(
-            "--analogous-reasoning-only requires --experiment-mode full_mechanism"
+            "--analogous-reasoning-only requires --experiment-mode "
+            + " or ".join(config.analogous_reasoning_modes)
         )
+    if args.experiment_mode == "full_flat":
+        if not args.identity_blind:
+            raise SystemExit(
+                "flat --analogous-reasoning-only requires --identity-blind"
+            )
+        if args.retrieval_strategy not in {
+            ASSAY_TRANSFER_TOOL_STRATEGY,
+            "morgan_fingerprint",
+        }:
+            raise SystemExit(
+                "flat --analogous-reasoning-only requires --retrieval-strategy "
+                "assay_transfer_tool or morgan_fingerprint"
+            )
+        if (
+            args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
+            and not args.enable_assay_transfer_scores
+        ):
+            raise SystemExit(
+                "flat --analogous-reasoning-only requires "
+                "--enable-assay-transfer-scores for assay_transfer_tool retrieval"
+            )
     incompatible = {
         "--single-analysis-source-batch": args.single_analysis_source_batch,
         "--group-analysis-source-batch": args.group_analysis_source_batch,
@@ -1636,13 +1733,15 @@ def _validate_analogous_reasoning_only(
         )
 
 
+def _is_analogous_flat(args: argparse.Namespace) -> bool:
+    return bool(args.analogous_reasoning_only) and args.experiment_mode == "full_flat"
+
+
 def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespace) -> None:
     is_assay_transfer = args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
     if args.assay_transfer_profile == "v11_with_categorical":
         required = {
-            "rerank catalog": args.rerank_catalog,
             "rerank cache": args.rerank_cache,
-            "candidate manifest": args.rerank_candidate_manifest,
             "model": args.assay_transfer_model,
             "model revision": args.assay_transfer_model_revision,
         }
@@ -1728,12 +1827,24 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
         raise SystemExit(
             "--group-prompt-instructions-file requires a non-legacy text group prompt format"
         )
+    if (
+        args.group_prompt_instructions_file
+        and args.group_prompt_version
+        and args.group_prompt_version != "legacy_unversioned"
+    ):
+        raise SystemExit(
+            "A named --group-prompt-version is immutable and cannot be combined with "
+            "--group-prompt-instructions-file"
+        )
     if not args.enable_assay_transfer_scores:
         return
     if not config.supports_assay_transfer_scores:
         raise SystemExit(f"Pipeline {config.pipeline_module} does not support --enable-assay-transfer-scores")
-    if args.experiment_mode != "full_mechanism":
-        raise SystemExit("--enable-assay-transfer-scores requires --experiment-mode full_mechanism")
+    if args.experiment_mode not in {"full_flat", "full_mechanism"}:
+        raise SystemExit(
+            "--enable-assay-transfer-scores requires --experiment-mode "
+            "full_flat or full_mechanism"
+        )
     if args.retrieval_source not in {"starling", "starling_in_distribution"}:
         raise SystemExit(
             "--enable-assay-transfer-scores requires --retrieval-source "
@@ -1774,6 +1885,28 @@ def _validate_prompt_profile_contract(
         ),
         historical_profile=config.historical_prompt_profile,
     )
+
+
+def _validate_group_prompt_contract(
+    batch_dir: Path,
+    target: dict[str, Any],
+) -> None:
+    """Prevent a named text prompt from sharing a batch with another prompt hash."""
+    if not target:
+        return
+    manifest_path = batch_dir / "manifest.json"
+    if not manifest_path.exists():
+        return
+    existing = _read_json(manifest_path).get("group_prompt_provenance") or {}
+    named_target = target.get("prompt_version") != "legacy_unversioned"
+    if (named_target and existing != target) or (existing and existing != target):
+        raise ValueError(
+            "Batch group-prompt provenance mismatch: "
+            f"existing={existing.get('prompt_version')!r}/"
+            f"{existing.get('template_sha256')!r}, target="
+            f"{target.get('prompt_version')!r}/{target.get('template_sha256')!r}, "
+            f"batch={batch_dir}"
+        )
 
 
 def _validate_final_decision_profile_contract(

@@ -4,20 +4,20 @@
     "bioavailability_ma": {
       "dataset_name": "Bioavailability_Ma",
       "model": "jiosephlee/assay-transfer-tool-soft-v11-bioavailability-ma-with-categorical",
-      "revision": "881af1d75d28bb9116c16e2b5e3c5811880f6387",
-      "training_measurement_kinds": ["continuous", "binary"]
+      "revision": "b3c0509741744f495a03f349bfbd22720a0b1e6d",
+      "training_measurement_kinds": ["continuous", "binary", "ordinal"]
     },
     "skin_reaction": {
       "dataset_name": "Skin_Reaction",
-      "model": "jiosephlee/assay-transfer-tool-soft-v11-skin-reaction-with-categorical",
-      "revision": "825024317986c10573bbccb3d5c8abfda26801de",
+      "model": "jiosephlee/assay-transfer-tool-soft-v11.1-skin-reaction-with-categorical",
+      "revision": "4a0442ae2e1cdc20de102c3159766689a6704358",
       "training_measurement_kinds": ["continuous", "binary", "ordinal"]
     },
     "bbb_martins": {
       "dataset_name": "BBB_Martins",
-      "model": "jiosephlee/assay-transfer-tool-soft-v11-multitask-with-categorical",
-      "revision": "3220147ce9e56240670bb120e582f35cb66ec434",
-      "training_measurement_kinds": ["continuous", "binary", "ordinal"]
+      "model": "jiosephlee/assay-transfer-tool-soft-v11-bbb-martins-with-categorical",
+      "revision": "6b4795761fb7d2daf663f14927cdfb210a4d3e40",
+      "training_measurement_kinds": ["continuous", "binary"]
     }
   }
 }

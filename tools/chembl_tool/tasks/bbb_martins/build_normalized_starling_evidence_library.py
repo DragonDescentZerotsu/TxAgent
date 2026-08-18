@@ -21,6 +21,7 @@ from tools.chembl_tool.tasks.bbb_martins.build_starling_downstream_artifacts imp
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
     PAIR_BUCKET_STAGE,
+    build_canonical_artifacts,
     build_downstream_artifacts,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
@@ -29,17 +30,21 @@ from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
 )
 
 
-ARTIFACT_STAGES = (
+CANONICAL_ARTIFACT_STAGES = (
     "01_cleaned",
     "02_canonicalized",
     "03_records",
     PAIR_BUCKET_STAGE,
     DISTANCE_CALIBRATION_STAGE,
+)
+LEGACY_ARTIFACT_STAGES = (
+    *CANONICAL_ARTIFACT_STAGES,
     HELDOUT_STAGE,
     MOLECULE_EVIDENCE_STAGE,
     NEIGHBOR_INDEX_STAGE,
     AUDIT_STAGE,
 )
+ARTIFACT_STAGES = CANONICAL_ARTIFACT_STAGES
 EVIDENCE_FAMILIES_TEMPLATE = (
     f"{MOLECULE_EVIDENCE_STAGE}/{{benchmark_split}}/molecule_families.parquet"
 )
@@ -70,19 +75,25 @@ def main(argv: list[str] | None = None) -> int:
         if result:
             return result
 
-    build_downstream_artifacts(
-        normalized_root=args.out_dir,
-        benchmark_split_root=args.benchmark_split_root,
-        workers=args.workers,
-        progress_every=args.progress_every,
-        max_record_examples=args.max_record_examples,
-        rebuild_request={
+    common = {
+        "normalized_root": args.out_dir,
+        "workers": args.workers,
+        "rebuild_request": {
             "from_stage": args.from_stage,
             "through_stage": args.through_stage,
         },
-        validation_level=args.validation_level,
-        cache_mode=args.cache_mode,
-    )
+        "validation_level": args.validation_level,
+        "cache_mode": args.cache_mode,
+    }
+    if args.legacy_task_local_downstream:
+        build_downstream_artifacts(
+            **common,
+            benchmark_split_root=args.benchmark_split_root,
+            progress_every=args.progress_every,
+            max_record_examples=args.max_record_examples,
+        )
+    else:
+        build_canonical_artifacts(**common)
     return 0
 
 

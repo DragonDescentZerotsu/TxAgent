@@ -45,12 +45,17 @@ from tools.chembl_tool.tasks.clintox.clintox_base_benchmark import (
     label_record,
     load_label_decisions,
 )
+from tools.chembl_tool.tasks.clintox.starling_source import (
+    DIRECT_SOURCE_ID,
+    EXPECTED_SOURCE_SHA256,
+    SOURCE_RELEASE,
+)
 
-RAW_VERSION = "clintox_base_v1"
-LIBRARY_VERSION = "clintox.clintox_base_v1.evidence_library.v1"
-SOURCE_SHA256 = "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285"
+RAW_VERSION = SOURCE_RELEASE
+LIBRARY_VERSION = "clintox.send_v2.direct_evidence_library.v2"
+SOURCE_SHA256 = EXPECTED_SOURCE_SHA256[DIRECT_SOURCE_ID]
 DEFAULT_LOCAL_ROOT = Path(
-    "outputs/chembl_tool/tasks/clintox/evidence_library/clintox_base_v1"
+    "outputs/chembl_tool/tasks/clintox/evidence_library/clintox_send_v2_direct"
 )
 DEFAULT_BASE_BENCHMARK_ROOT = Path("data/processed_starling")
 DEFAULT_RECORD_SUPPORTED_ROOT = Path("data/processed_starling_record_supported_v2")
@@ -105,7 +110,7 @@ def build_evidence_library(
         workers=workers,
     )
     summary = {
-        "schema_version": "clintox_base_evidence_library.v1",
+        "schema_version": "clintox_direct_evidence_library.v2",
         "raw_version": RAW_VERSION,
         "library_version": LIBRARY_VERSION,
         "source_path": str(source),
@@ -179,8 +184,11 @@ def build_candidate_benchmark(
     candidate = {
         "status": "candidate_pending_qa",
         "active_source_lineage": RAW_VERSION,
-        "supersedes_candidate_lineage": "starling_raw_v1 organ-specific toxicity",
-        "historical_commit": "f056084332fbb5cec87cce5ec2a0d82a9b25b2fc",
+        "replacement_scope": "ClinTox source, gold, evidence, and index data pipeline",
+        "prior_experiment_compatibility": (
+            "incompatible: results built from earlier ClinTox source hashes are "
+            "historical only and must not be merged with this candidate"
+        ),
         "promotion_policy": (
             "Do not add to default paper matrices until every row in the "
             "deterministic category-stratified source-record QA sample passes."
@@ -253,7 +261,7 @@ def build_heldout_filtered_view(
     }
     overlap = len(retained_keys & heldout_keys)
     summary = {
-        "schema_version": "clintox_base_record_supported_v2_scaffold_view.v1",
+        "schema_version": "clintox_direct_record_supported_v2_scaffold_view.v2",
         "benchmark_task": TASK_NAME,
         "heldout_contract": str(heldout_path),
         "n_heldout_parents": len(heldout_keys),
@@ -575,7 +583,7 @@ def _write_index(
         progress_every=10_000,
     )
     index["source"] = {
-        "name": "clintox_base",
+        "name": "clintox_send_v2_direct",
         "raw_version": RAW_VERSION,
         "evidence_scope": "gold-eligible direct records only",
     }

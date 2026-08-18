@@ -62,6 +62,14 @@ def _spec() -> SplitDownstreamSpec:
     )
 
 
+def get_spec() -> SplitDownstreamSpec:
+    return _spec()
+
+
+def build_canonical_artifacts(**kwargs: Any) -> dict[str, Any]:
+    return _shared.build_canonical_artifacts(_spec(), **kwargs)
+
+
 def build_downstream_artifacts(**kwargs: Any) -> dict[str, Any]:
     return _shared.build_downstream_artifacts(_spec(), **kwargs)
 
@@ -100,7 +108,9 @@ __all__ = [
     "PIPELINE_LAYOUT_VERSION",
     "TRANSFER_POLICY_STAGE",
     "build_downstream_artifacts",
+    "build_canonical_artifacts",
     "build_filtered_molecule_evidence",
     "build_filtered_neighbor_indices",
+    "get_spec",
     "materialize_filtered_record_views",
 ]

@@ -20,8 +20,11 @@ def validate_scored_neighbors_configuration(
 ) -> None:
     if not enabled:
         return
-    if experiment_mode != "full_mechanism":
-        raise ValueError("--enable-assay-transfer-scores requires --experiment-mode full_mechanism")
+    if experiment_mode not in {"full_flat", "full_mechanism"}:
+        raise ValueError(
+            "--enable-assay-transfer-scores requires --experiment-mode "
+            "full_flat or full_mechanism"
+        )
     if retrieval_source not in {"starling", "starling_in_distribution"}:
         raise ValueError(
             "--enable-assay-transfer-scores requires --retrieval-source "
@@ -35,8 +38,11 @@ def prepare_assay_transfer_selected_neighbors(
     retrieval: dict[str, Any], *, expose_scores: bool
 ) -> None:
     experiment = retrieval.get("experiment") or {}
-    if experiment.get("mode") != "full_mechanism":
-        raise ValueError("Scored-neighbor prompt policy requires full_mechanism retrieval")
+    mode = str(experiment.get("mode") or "")
+    if mode not in {"full_flat", "full_mechanism"}:
+        raise ValueError(
+            "Scored-neighbor prompt policy requires full_flat or full_mechanism retrieval"
+        )
     reranker = experiment.get("retrieval_reranker") or {}
     if reranker.get("name") != "assay_transfer":
         raise ValueError("Scored-neighbor prompt policy requires assay_transfer retrieval metadata")
@@ -54,6 +60,14 @@ def prepare_assay_transfer_selected_neighbors(
             selection["remaining_audit_metadata_is_llm_hidden"] = True
         scoreable = []
         for neighbor in group.get("neighbors") or []:
+            family_selections = neighbor.get("transfer_family_selections") or []
+            if mode == "full_flat" and not family_selections:
+                raise ValueError("Flat assay-transfer neighbor is missing family selections")
+            for family in family_selections:
+                _validate_public_score_bundle(
+                    family,
+                    context=f"{group.get('group_id')!r}/{family.get('group_id')!r}",
+                )
             if "transfer_selection_score" not in neighbor:
                 raise ValueError(
                     "Missing cached transfer_selection_score for selected record "
@@ -66,14 +80,10 @@ def prepare_assay_transfer_selected_neighbors(
                 continue
             if not math.isfinite(score) or not 0.0 <= score <= 1.0:
                 raise ValueError(f"Invalid transfer_selection_score: {score!r}")
-            for selected_record in neighbor.get("transfer_selected_records") or []:
-                selected_score = float(selected_record["transfer_selection_score"])
-                if not math.isfinite(selected_score) or not 0.0 <= selected_score <= 1.0:
-                    raise ValueError(
-                        f"Invalid bundled transfer_selection_score: {selected_score!r}"
-                    )
-                if not selected_record.get("transfer_winning_record"):
-                    raise ValueError("Bundled assay-transfer record is missing its source payload")
+            _validate_public_score_bundle(
+                neighbor,
+                context=f"{group.get('group_id')!r}",
+            )
             scoreable.append(neighbor)
         for rank, neighbor in enumerate(scoreable, start=1):
             neighbor["rank"] = rank
@@ -137,3 +147,61 @@ def public_assay_transfer_records(neighbor: dict[str, Any]) -> list[dict[str, An
         }
         for rank, record in enumerate(bundled, start=1)
     ]
+
+
+def public_assay_transfer_families(
+    neighbor: dict[str, Any], group: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """Return family-attributed score bundles without internal record IDs."""
+    families = neighbor.get("transfer_family_selections") or []
+    if not families:
+        families = [
+            {
+                "group_id": group.get("group_id"),
+                "tier": group.get("tier"),
+                "endpoint_group": group.get("endpoint_group"),
+                "family_rank": neighbor.get("rank"),
+                "transfer_selection_score": neighbor.get("transfer_selection_score"),
+                "transfer_molecule_mean_score": neighbor.get(
+                    "transfer_molecule_mean_score"
+                ),
+                "transfer_selected_records": neighbor.get("transfer_selected_records") or [],
+                "transfer_winning_record": neighbor.get("transfer_winning_record") or {},
+            }
+        ]
+    output = []
+    for family in families:
+        mean_score = family.get("transfer_molecule_mean_score")
+        output.append(
+            {
+                "group_id": str(family.get("group_id") or ""),
+                "tier": str(family.get("tier") or ""),
+                "endpoint_group": str(family.get("endpoint_group") or ""),
+                "family_rank": int(family.get("family_rank") or 0),
+                "score_kind": "molecule_mean" if mean_score is not None else "selected_record",
+                "assay_transfer_score": round(
+                    float(
+                        mean_score
+                        if mean_score is not None
+                        else family["transfer_selection_score"]
+                    ),
+                    SCORED_NEIGHBORS_SCORE_DECIMALS,
+                ),
+                "records": public_assay_transfer_records(family),
+            }
+        )
+    return output
+
+
+def _validate_public_score_bundle(bundle: dict[str, Any], *, context: str) -> None:
+    score = float(bundle["transfer_selection_score"])
+    if not math.isfinite(score) or not 0.0 <= score <= 1.0:
+        raise ValueError(f"Invalid transfer_selection_score in {context}: {score!r}")
+    for selected_record in bundle.get("transfer_selected_records") or []:
+        selected_score = float(selected_record["transfer_selection_score"])
+        if not math.isfinite(selected_score) or not 0.0 <= selected_score <= 1.0:
+            raise ValueError(
+                f"Invalid bundled transfer_selection_score in {context}: {selected_score!r}"
+            )
+        if not selected_record.get("transfer_winning_record"):
+            raise ValueError("Bundled assay-transfer record is missing its source payload")

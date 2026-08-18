@@ -6,24 +6,24 @@
   "actual_test_size": 500,
   "valid_size_shortfall": 0,
   "test_size_shortfall": 0,
-  "n_train": 5047,
+  "n_train": 6628,
   "n_valid": 500,
   "n_test": 500,
   "train_label_counts": {
-    "0": 465,
-    "1": 4582
+    "0": 655,
+    "1": 5973
   },
   "valid_label_counts": {
-    "0": 38,
-    "1": 462
+    "0": 49,
+    "1": 451
   },
   "test_label_counts": {
-    "0": 45,
-    "1": 455
+    "0": 51,
+    "1": 449
   },
-  "n_train_scaffolds": 2557,
-  "n_valid_scaffolds": 358,
-  "n_test_scaffolds": 336,
+  "n_train_scaffolds": 3192,
+  "n_valid_scaffolds": 352,
+  "n_test_scaffolds": 316,
   "pairwise_scaffold_overlap": {
     "train_valid": 0,
     "train_test": 0,

@@ -1,0 +1,25 @@
+{
+  "audit_version": "clintox_send_v2_source_delta_review.v1",
+  "delta_type_counts": {
+    "changed_smiles": 20,
+    "direct_smiles_backfill": 20,
+    "invalid_source_smiles": 41,
+    "new_record": 21,
+    "retained_record": 38
+  },
+  "sample_records": 140,
+  "manual_review_failures": 0,
+  "manual_review_passes": 140,
+  "manual_review_tsv_sha256": "348fcdaf8f82e0732311832dd15c3c34ab35c44a92ff5d86d26fabd019f5711b",
+  "sampling_policy": "20 deterministic rows per source, round-robin across release delta types",
+  "source_counts": {
+    "cellular_stress": 20,
+    "general_cytotoxicity": 20,
+    "genotoxicity_carcinogenicity": 20,
+    "human_clinical_toxicity": 20,
+    "nonclinical_in_vivo_toxicity": 20,
+    "off_target_ddi_exposure": 20,
+    "organ_specific_toxicity": 20
+  },
+  "status": "complete"
+}

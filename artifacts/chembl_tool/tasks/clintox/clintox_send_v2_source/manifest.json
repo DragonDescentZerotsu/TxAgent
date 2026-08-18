@@ -1,0 +1,39 @@
+{
+  "archive_name": "clintox_send_v2.tar.gz",
+  "archive_sha256": "bf6da36bf2ac347d4763e5c3a234292c7f5c04576cccc4b75f6a4741246ac4ea",
+  "archive_size": 537951887,
+  "part_size_limit": 90000000,
+  "parts": [
+    {
+      "path": "clintox_send_v2.tar.gz.part-0001",
+      "sha256": "5fa8822a7d45a969571596b2126fa1af0a89e8799c7f1194b7bca66814f581c1",
+      "size": 90000000
+    },
+    {
+      "path": "clintox_send_v2.tar.gz.part-0002",
+      "sha256": "19587a81b6c3e99f6f70522e77b94b3bc525e4a36deca9804bbcd8f9a4bbdc56",
+      "size": 90000000
+    },
+    {
+      "path": "clintox_send_v2.tar.gz.part-0003",
+      "sha256": "6cbfd0be77c6cd3077ee615462a310580088df87265ae3ead021015876726358",
+      "size": 90000000
+    },
+    {
+      "path": "clintox_send_v2.tar.gz.part-0004",
+      "sha256": "da85864f9771900ebe3646766edd614fb9c19f1a56a34373787a310d449d0d2c",
+      "size": 90000000
+    },
+    {
+      "path": "clintox_send_v2.tar.gz.part-0005",
+      "sha256": "dc019cbdb625b8ec197fb47aef768fa37aeba31b883a4141583a43fb775d0c60",
+      "size": 90000000
+    },
+    {
+      "path": "clintox_send_v2.tar.gz.part-0006",
+      "sha256": "65dbb60353fdb757799738156e11e3810473c6a74016dc1e537d49ac2a13029a",
+      "size": 87951887
+    }
+  ],
+  "store_version": "clintox.send_v2_source_archive.v1"
+}

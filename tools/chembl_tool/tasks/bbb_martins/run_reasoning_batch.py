@@ -43,6 +43,8 @@ CONFIG = BatchConfig(
     rerank_preflight=partial(preflight_cache_coverage, task_id="bbb_martins"),
     supports_assay_transfer_scores=True,
     supports_retrieval_strategy=True,
+    supports_analogous_reasoning_only=True,
+    analogous_reasoning_modes=("full_flat",),
     group_prompt_formats=("legacy", "assay_transfer_tool"),
     default_group_prompt_format="legacy",
     assay_transfer_profile_default="v11_with_categorical",

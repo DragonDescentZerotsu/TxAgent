@@ -1,0 +1,714 @@
+{
+  "bucket_decisions": {
+    "[\"direct_bbb\",\"apparent_permeability\",\"cm/s\",\"__unknown__\",\"__unknown__\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 54,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"ng/g\",\"__unknown__\",\"__unknown__\",\"mouse\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 36,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"ng/g\",\"__unknown__\",\"__unknown__\",\"rat\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 38,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"ng/g\",\"__unknown__\",\"in vivo\",\"mouse\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 88,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"ng/g\",\"__unknown__\",\"in vivo\",\"rat\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 47,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"nmol/g\",\"__unknown__\",\"in vivo\",\"rat\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 37,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"µg/g\",\"__unknown__\",\"__unknown__\",\"rat\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 45,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"µg/g\",\"__unknown__\",\"brain concentration\",\"mouse\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 29,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"µg/g\",\"__unknown__\",\"in vivo\",\"mouse\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 41,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"µg/g\",\"__unknown__\",\"in vivo\",\"rat\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 76,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_concentration\",\"µg/g\",\"__unknown__\",\"post-mortem\",\"human\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 26,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_auc_ratio\",\"ratio\",\"__unknown__\",\"microdialysis\",\"rat\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 95,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"__unknown__\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 97,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"mouse\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 49,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"rat\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 79,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_ratio\",\"ratio\",\"__unknown__\",\"biodistribution\",\"mouse\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 30,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_ratio\",\"ratio\",\"__unknown__\",\"biodistribution\",\"rat\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 35,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_ratio\",\"ratio\",\"__unknown__\",\"in silico prediction\",\"__unknown__\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 204,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_ratio\",\"ratio\",\"__unknown__\",\"in vivo\",\"__unknown__\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 28,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_blood_ratio\",\"ratio\",\"__unknown__\",\"post-mortem\",\"human\",\"endpoint_defined_ratio\",\"blood\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 25,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_auc_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"__unknown__\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 32,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_auc_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 61,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_auc_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"rat\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 56,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_auc_ratio\",\"ratio\",\"__unknown__\",\"in vivo\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 42,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"human\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 66,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 320,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"rat\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 389,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"in vivo brain exposure\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 43,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"in vivo brain exposure\",\"rat\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 28,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"in vivo\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 216,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"in vivo\",\"rat\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 249,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"intraperitoneal infusion\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 25,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"oral administration\",\"rat\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 25,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"pharmacokinetic study\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 46,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_serum_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"__unknown__\",\"endpoint_defined_ratio\",\"serum\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 28,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"brain_to_serum_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"rat\",\"endpoint_defined_ratio\",\"serum\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 30,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_concentration\",\"mg/L\",\"__unknown__\",\"__unknown__\",\"human\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 41,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_concentration\",\"mg/L\",\"__unknown__\",\"case report\",\"human\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 26,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_concentration\",\"mg/L\",\"__unknown__\",\"csf measurement\",\"human\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 27,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_concentration\",\"ng/mL\",\"__unknown__\",\"__unknown__\",\"human\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 31,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_concentration\",\"ng/mL\",\"__unknown__\",\"csf measurement\",\"human\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 30,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_concentration\",\"µg/mL\",\"__unknown__\",\"__unknown__\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 33,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_concentration\",\"µg/mL\",\"__unknown__\",\"csf measurement\",\"human\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 94,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_concentration\",\"µg/mL\",\"__unknown__\",\"lumbar puncture\",\"human\",\"absolute\",\"none\"]": {
+      "rationale": "Concentration is a positive multiplicative quantity spanning orders of magnitude; log10 provides a scientifically meaningful fold-change distance.",
+      "review_record_count": 30,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"__unknown__\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 436,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"human\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 474,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"clinical study\",\"human\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 44,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"csf/plasma ratio\",\"__unknown__\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 29,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"csf/plasma ratio\",\"human\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 125,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"in vivo\",\"human\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 35,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_plasma_ratio\",\"ratio\",\"__unknown__\",\"lumbar puncture\",\"human\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 70,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_serum_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"human\",\"endpoint_defined_ratio\",\"serum\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 237,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_serum_ratio\",\"ratio\",\"__unknown__\",\"blood-csf ratio\",\"human\",\"endpoint_defined_ratio\",\"serum\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 37,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_serum_ratio\",\"ratio\",\"__unknown__\",\"clinical study\",\"human\",\"endpoint_defined_ratio\",\"serum\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 67,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"csf_to_serum_ratio\",\"ratio\",\"__unknown__\",\"csf sampling\",\"human\",\"endpoint_defined_ratio\",\"serum\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 51,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 26,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"mdck-mdr1 permeability assay\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 26,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"mdck-mdr1\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 170,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"mdck-mdr1\",\"human\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 29,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"influx_rate_constant\",\"µL/g·s\",\"__unknown__\",\"in situ brain perfusion\",\"mouse\",\"absolute\",\"none\"]": {
+      "rationale": "Clearance or influx rate is positive and multiplicative; log10 distance represents fold differences in transport rate.",
+      "review_record_count": 36,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"kp\",\"ratio\",\"__unknown__\",\"__unknown__\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 40,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"kp\",\"ratio\",\"__unknown__\",\"__unknown__\",\"rat\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 33,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"kp\",\"ratio\",\"__unknown__\",\"in vivo\",\"mouse\",\"endpoint_defined_ratio\",\"plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 27,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"kp_uu\",\"ratio\",\"__unknown__\",\"__unknown__\",\"__unknown__\",\"endpoint_defined_ratio\",\"unbound_plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 42,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"kp_uu\",\"ratio\",\"__unknown__\",\"__unknown__\",\"mouse\",\"endpoint_defined_ratio\",\"unbound_plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 43,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"kp_uu\",\"ratio\",\"__unknown__\",\"__unknown__\",\"rat\",\"endpoint_defined_ratio\",\"unbound_plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 55,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"kp_uu\",\"ratio\",\"__unknown__\",\"in vivo\",\"mouse\",\"endpoint_defined_ratio\",\"unbound_plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 35,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"kp_uu\",\"ratio\",\"__unknown__\",\"in vivo\",\"rat\",\"endpoint_defined_ratio\",\"unbound_plasma\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 26,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"papp\",\"cm/s\",\"__unknown__\",\"endothelial monolayer\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 81,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"papp\",\"cm/s\",\"__unknown__\",\"endothelial monolayer\",\"cow\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 38,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"papp\",\"cm/s\",\"__unknown__\",\"mdck-mdr1\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 74,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"permeability\",\"cm/s\",\"__unknown__\",\"pampa-bbb\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 66,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"permeability_coefficient\",\"cm/s\",\"__unknown__\",\"endothelial monolayer\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 25,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"permeability_surface_area_product\",\"mL/g·s\",\"__unknown__\",\"in situ brain perfusion\",\"rat\",\"absolute\",\"none\"]": {
+      "rationale": "Clearance or influx rate is positive and multiplicative; log10 distance represents fold differences in transport rate.",
+      "review_record_count": 33,
+      "transform": "log10"
+    },
+    "[\"direct_bbb\",\"plasma_to_csf_ratio\",\"ratio\",\"__unknown__\",\"csf/plasma measurement\",\"human\",\"endpoint_defined_ratio\",\"csf\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 25,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"NCBIGene:5243\",\"bidirectional_transport\",\"caco-2 bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 27,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"NCBIGene:5243\",\"bidirectional_transport\",\"mdck-mdr1 bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 40,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"bidirectional transport assay\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 38,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 94,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"caco-2 bidirectional permeability\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 32,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"caco-2 bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 222,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"llc-pk1 mdr1 bidirectional\",\"human\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 41,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"mdck-mdr1 bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 198,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"mdck-mdr1 cells\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 51,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"mdck-pgp bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 65,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"bidirectional_transport\",\"mdckii-pgp bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 36,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:P06795\",\"pharmacological_inhibition\",\"caco-2 bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 38,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"UniProt:Q9NGP5\",\"bidirectional_transport\",\"bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 26,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"bidirectional_transport\",\"bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 35,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"bidirectional_transport\",\"caco-2 bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 142,
+      "transform": "log10"
+    },
+    "[\"efflux_transport\",\"efflux_ratio\",\"ratio\",\"__unknown__\",\"__unknown__\",\"bidirectional_transport\",\"mdck-mdr1 bidirectional transport\",\"__unknown__\",\"endpoint_defined_ratio\",\"a_to_b_transport\"]": {
+      "rationale": "This is a positive multiplicative ratio; log10 distance represents fold change and avoids additive treatment of order-of-magnitude tails.",
+      "review_record_count": 88,
+      "transform": "log10"
+    },
+    "[\"passive_permeability\",\"apparent_permeability\",\"cm/s\",\"__unknown__\",\"brain_endothelial_cell\",\"brain endothelial monolayer\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 30,
+      "transform": "log10"
+    },
+    "[\"passive_permeability\",\"apparent_permeability\",\"cm/s\",\"__unknown__\",\"mdck\",\"mdck-mdr1 monolayer\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 38,
+      "transform": "log10"
+    },
+    "[\"passive_permeability\",\"apparent_permeability\",\"cm/s\",\"__unknown__\",\"mdck\",\"mdck-mdr1\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 145,
+      "transform": "log10"
+    },
+    "[\"passive_permeability\",\"apparent_permeability\",\"cm/s\",\"__unknown__\",\"other_cell_monolayer\",\"caco-2 monolayer\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 35,
+      "transform": "log10"
+    },
+    "[\"passive_permeability\",\"negative_log_effective_permeability\",\"-log10(cm/s)\",\"__unknown__\",\"pampa_bbb\",\"pampa-bbb\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "The endpoint is already reported as -log10(cm/s); applying log10 again would destroy its scientific scale.",
+      "review_record_count": 30,
+      "transform": "raw"
+    },
+    "[\"passive_permeability\",\"passive_permeability\",\"cm/s\",\"__unknown__\",\"other_cell_monolayer\",\"caco-2 monolayer\",\"__unknown__\",\"absolute\",\"none\"]": {
+      "rationale": "Permeability is a positive rate coefficient commonly compared by orders of magnitude; log10 provides the appropriate transfer distance.",
+      "review_record_count": 28,
+      "transform": "log10"
+    }
+  },
+  "contract_version": "assay_transfer_canonical_measurement.v1",
+  "policy_version": "bbb_martins.assay_transfer_canonical_measurement.v1",
+  "record_corrections": {},
+  "record_ineligibility": {
+    "068c0ac986f8d1b9480f968ba4d35c269c02302c468761afa460354df0bc68b6": {
+      "measurement_text": "10.9 ± 0.6",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69725",
+      "source_row_number": 69726,
+      "support_text": "At 36 hr after administration of galactosamine, the Sucrose PS in the basal ganglia was 10.9 ± 0.6 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "133d6ee0d0bc3073c82b7a36f9f09d1b45dc73bd7cbaf19800c64ade20eab4a4": {
+      "measurement_text": "8.5 ± 1.9",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69722",
+      "source_row_number": 69723,
+      "support_text": "At 42 hr after administration of galactosamine, the Sucrose PS in the cortex was 8.5 ± 1.9 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "1d0074b49fb27a5627f99e2005b1c53afd8efb7c29b4a9cd8a8c4a7c3cc02be0": {
+      "measurement_text": "9.6 ± 2.4",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69731",
+      "source_row_number": 69732,
+      "support_text": "In control rats, the Sucrose PS in the brainstem was 9.6 ± 2.4 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "2bceacfcbe40aaede1772c0380c103469a83e782dcabe3831b44e92a00ff766f": {
+      "measurement_text": "9.2 ± 1.6",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69729",
+      "source_row_number": 69730,
+      "support_text": "At 36 hr after administration of galactosamine, the Sucrose PS in the cerebellum was 9.2 ± 1.6 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "3fa5e4d10fd8c1a20428c01cba354c7988695fcbf029bb65dce6092fb101448c": {
+      "measurement_text": "4.0",
+      "pmid": "15713540",
+      "rationale": "Reported Papp is 4.0 cm/s while neighboring records from the same PMID use x 10^-6 cm/s; the row is an extreme exact-decade scale mismatch, but its own support omits the factor.",
+      "reason": "probable_omitted_scientific_factor",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "111258",
+      "source_row_number": 111259,
+      "support_text": "For Sucrose, the apparent permeability coefficient (Pappa) was 4.0 cm/s in the BBEC model.",
+      "unit_text": "cm/s"
+    },
+    "44c6b4a2f75c00e1343993e325bb3cddf333fab2957d1cde907e121380c60867": {
+      "measurement_text": "10.4 ± 2.3",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69734",
+      "source_row_number": 69735,
+      "support_text": "At 42 hr after administration of galactosamine, the Sucrose PS in the brainstem was 10.4 ± 2.3 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "47b29b5ffe751fdffa9f0ed0fab69f3a4f7a3503acfdb4e0c0adb32d5246b6ae": {
+      "measurement_text": "10.6 ± 2.2",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69732",
+      "source_row_number": 69733,
+      "support_text": "At 24 hr after administration of galactosamine, the Sucrose PS in the brainstem was 10.6 ± 2.2 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "5ed45e058ca9b457ad6a705b645e8c91a3234ffbe8a7eb6dd23f8a9a775eef85": {
+      "measurement_text": "16.9 ± 2.3",
+      "pmid": "20170117",
+      "rationale": "Reported Papp uses x 10^6 cm/s and lands about 12 decades above the bucket center; changing the exponent sign lands in the supported range, but the support itself is defective so the row must not be silently corrected.",
+      "reason": "probable_lost_exponent_minus_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "2503",
+      "source_row_number": 2504,
+      "support_text": "In the BBMEC model, propranolol exhibited an apparent permeability (Papp) of 16.9 ± 2.3 x 10^6 cm/s.",
+      "unit_text": "x 10^6 cm/s"
+    },
+    "65925eb48edd92a7b903de32165f14b8a4f7850cd234c5992fae5dbbb90375f5": {
+      "measurement_text": "10.2 ± 0.8",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69728",
+      "source_row_number": 69729,
+      "support_text": "At 24 hr after administration of galactosamine, the Sucrose PS in the cerebellum was 10.2 ± 0.8 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "66e18c68d16d907cc692108c341f06c6c434fa8bc2239f47e2a57b6762eaf14c": {
+      "measurement_text": "11.1 ± 0.7",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69727",
+      "source_row_number": 69728,
+      "support_text": "In control rats, the Sucrose PS in the cerebellum was 11.1 ± 0.7 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "976757c3932050fa7598f7760e8376c18a509e7a15331be608171999ff307d8e": {
+      "measurement_text": "11.3 ± 0.4",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69724",
+      "source_row_number": 69725,
+      "support_text": "At 24 hr after administration of galactosamine, the Sucrose PS in the basal ganglia was 11.3 ± 0.4 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "ab12a9f29358ec1c249aec080d5c5802914b610a82c11f3589b6977c09e95adb": {
+      "measurement_text": "7.4 ± 1.2",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69721",
+      "source_row_number": 69722,
+      "support_text": "At 36 hr after administration of galactosamine, the Sucrose PS in the cortex was 7.4 ± 1.2 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "b02571787dd93f7ed55d8a1af95fe1f463186ecfa6d913b1109e1f64936a8408": {
+      "measurement_text": "10.6 ± 1.7",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69723",
+      "source_row_number": 69724,
+      "support_text": "In control rats, the Sucrose PS in the basal ganglia was 10.6 ± 1.7 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "b5d23de2cce3263442db6c21a7e280237c0ab34ddbd288498624c6aedf75f43d": {
+      "measurement_text": "9.7 ± 2.1",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69730",
+      "source_row_number": 69731,
+      "support_text": "At 42 hr after administration of galactosamine, the Sucrose PS in the cerebellum was 9.7 ± 2.1 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "bdae3a9b2d5e2424c6ff4e2914d7dfb45f7198e7bd39edc84909e3d287d633bd": {
+      "measurement_text": "10.8 ± 3.2",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69720",
+      "source_row_number": 69721,
+      "support_text": "At 24 hr after administration of galactosamine, the Sucrose PS in the cortex was 10.8 ± 3.2 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    },
+    "c1349df7359dcd81feadae84d1218b98f90e1135a2bd05ba742fd2478df42381": {
+      "measurement_text": "51.8 ± 3.2",
+      "pmid": "10895416",
+      "rationale": "Reported permeability-surface-area product becomes 51800 mL/g*s from x 10^3, while the same PMID reports the corresponding control on a 10^-2 scale; the support is contradictory, so the row must not be silently repaired.",
+      "reason": "probable_wrong_exponent_sign_or_magnitude",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "41859",
+      "source_row_number": 41860,
+      "support_text": "In the parietal cortex of rat brain, the control PA (Permeability Area) value for [14C]L-leucine without any additional compounds was 51.8 ± 3.2 x 10^3 mL/sec/g.",
+      "unit_text": "10^3 mL/sec/g"
+    },
+    "ea90ab34ab2b3431118765721767ca8849d6dcb708074cb3c84faf2d445d7fad": {
+      "measurement_text": "16.5 ± 1.8",
+      "pmid": "20170117",
+      "rationale": "Reported Papp uses x 10^6 cm/s and lands about 12 decades above the bucket center; changing the exponent sign lands in the supported range, but the support itself is defective so the row must not be silently corrected.",
+      "reason": "probable_lost_exponent_minus_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "2506",
+      "source_row_number": 2507,
+      "support_text": "In the BBMEC model, carbamazepine exhibited an apparent permeability (Papp) of 16.5 ± 1.8 x 10^6 cm/s.",
+      "unit_text": "x 10^6 cm/s"
+    },
+    "f3d6c8050ee2d154a7cb572dade20b9b271c4c53e70f466c714af5cffaabf8d6": {
+      "measurement_text": "10.3 ± 2.6",
+      "pmid": "3570156",
+      "rationale": "The source support renders x 104 and Stage 03 interpreted it as x 10^4, creating a separated five-decade cluster. The missing exponent sign cannot be reconstructed safely.",
+      "reason": "ambiguous_lost_exponent_sign",
+      "retrieval_eligibility_unchanged": true,
+      "source_id": "direct_bbb",
+      "source_record_id": "69726",
+      "source_row_number": 69727,
+      "support_text": "At 42 hr after administration of galactosamine, the Sucrose PS in the basal ganglia was 10.3 ± 2.6 ml/gm/min × 104.",
+      "unit_text": "ml/gm/min × 10^4"
+    }
+  },
+  "retrieval_eligibility_policy": "unchanged",
+  "review_input_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+  "review_version": "bbb_assay_transfer_measurement_review.v1",
+  "task_id": "bbb_martins"
+}

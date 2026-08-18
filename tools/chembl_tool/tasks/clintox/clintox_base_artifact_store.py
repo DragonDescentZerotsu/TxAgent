@@ -1,4 +1,4 @@
-"""Package, restore, and verify ClinTox-base derived stage bundles."""
+"""Package, restore, and verify send_v2 direct-source stage bundles."""
 
 from __future__ import annotations
 
@@ -23,11 +23,11 @@ ARTIFACT_STAGES = (
     "06_record_supported_v2_scaffold_view",
 )
 PROFILE = StageArtifactStoreProfile(
-    store_version="clintox.clintox_base_v1_store.v1",
+    store_version="clintox.send_v2_direct_store.v2",
     task_id="clintox",
     stages=ARTIFACT_STAGES,
-    local_root=Path("outputs/chembl_tool/tasks/clintox/evidence_library/clintox_base_v1"),
-    tracked_root=Path("artifacts/chembl_tool/tasks/clintox/clintox_base_v1"),
+    local_root=Path("outputs/chembl_tool/tasks/clintox/evidence_library/clintox_send_v2_direct"),
+    tracked_root=Path("artifacts/chembl_tool/tasks/clintox/clintox_send_v2_direct"),
 )
 
 

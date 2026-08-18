@@ -74,6 +74,15 @@ def test_scaffold_disjoint_does_not_collapse_acyclic_molecules():
     assert decision.relation is MoleculeRelation.STRUCTURAL_ANALOG
 
 
+def test_scaffold_ignores_inconsistent_double_bond_stereo():
+    smiles = "Oc1cc(C/N=C(S)/C=C/c2cc(O)c(O)c(Br)c2)cc(O)c1O"
+
+    scaffold = bemis_murcko_scaffold(smiles)
+
+    assert scaffold
+    assert scaffold == bemis_murcko_scaffold(smiles.replace("/", ""))
+
+
 def test_scaffold_policy_metadata_is_a_strict_parent_disjoint_superset():
     parent_relations = set(policy_metadata("parent_disjoint")["excluded_relations"])
     scaffold_relations = set(policy_metadata("scaffold_disjoint")["excluded_relations"])

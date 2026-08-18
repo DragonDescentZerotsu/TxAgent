@@ -7,6 +7,18 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_v7_artifact_store impor
 from tools.chembl_tool.tasks.skin_reaction.starling_v7_artifact_store import (
     PROFILE as SKIN_PROFILE,
 )
+from tools.chembl_tool.tasks.bbb_martins.build_normalized_starling_evidence_library import (
+    ARTIFACT_STAGES as BBB_CANONICAL_STAGES,
+    LEGACY_ARTIFACT_STAGES as BBB_LEGACY_STAGES,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.build_normalized_starling_evidence_library import (
+    ARTIFACT_STAGES as BIO_CANONICAL_STAGES,
+    LEGACY_ARTIFACT_STAGES as BIO_LEGACY_STAGES,
+)
+from tools.chembl_tool.tasks.skin_reaction.build_normalized_starling_evidence_library import (
+    ARTIFACT_STAGES as SKIN_CANONICAL_STAGES,
+    LEGACY_ARTIFACT_STAGES as SKIN_LEGACY_STAGES,
+)
 
 
 EXPECTED_STAGES = (
@@ -34,3 +46,19 @@ def test_all_v7_artifact_profiles_cover_the_complete_stage_layout():
         assert profile.local_root.name == "starling_normalized_v7"
         assert profile.tracked_root.name == "starling_normalized_v7"
         assert profile.store_version.endswith(".normalized_v7_store.v1")
+
+
+def test_current_build_boundary_stops_at_split_independent_stage_05():
+    canonical = (
+        "01_cleaned",
+        "02_canonicalized",
+        "03_records",
+        "04_pair_buckets",
+        "05_distance_calibration",
+    )
+    assert BBB_CANONICAL_STAGES == canonical
+    assert BIO_CANONICAL_STAGES == canonical
+    assert SKIN_CANONICAL_STAGES == canonical
+    assert BBB_LEGACY_STAGES == EXPECTED_STAGES
+    assert BIO_LEGACY_STAGES == EXPECTED_STAGES
+    assert SKIN_LEGACY_STAGES == EXPECTED_STAGES

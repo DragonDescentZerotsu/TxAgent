@@ -10,6 +10,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
     group_output_schema_provenance,
     group_output_validation,
     group_system_message,
+    group_prompt_provenance,
     instruction_file_provenance,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
@@ -91,6 +92,40 @@ def test_morgan_is_text_not_json_and_shows_records():
     assert "blob" not in content
 
 
+@pytest.mark.parametrize("prompt_format", ["morganfingerprint", "assay_transfer_tool"])
+def test_named_text_prompt_version_fingerprints_jinja_and_instructions(prompt_format):
+    provenance = group_prompt_provenance(
+        prompt_format,
+        prompt_version="bioavailability_text_v1",
+        output_schema_profile=(
+            "assay-transfer" if prompt_format == "assay_transfer_tool" else "legacy"
+        ),
+    )
+    assert provenance["prompt_version"] == "bioavailability_text_v1"
+    assert len(provenance["template_sha256"]) == 64
+    assert len(provenance["instructions_sha256"]) == 64
+    assert "bioavailability_text_v1" in provenance["template_path"]
+
+
+def test_flat_no_tools_text_prompt_omits_tool_guidance():
+    group = _group([_neighbor("M1", "c1ccccc1", 0.45, [EXAMPLE])])
+    group["identity_blind"] = True
+    messages = build_group_messages(
+        QUERY,
+        group,
+        prompt_format="morganfingerprint",
+        options={
+            "prompt_version": "bioavailability_text_v1",
+            "group_tools_enabled": False,
+            "omit_query_tools": True,
+        },
+    )
+    assert "No tools are available for this branch" in messages[0]["content"]
+    assert "Do not infer query identity" in messages[0]["content"]
+    assert "mmp_structure_compare" not in messages[1]["content"]
+    assert "properties_compare" not in messages[1]["content"]
+
+
 def test_starling_v5_evidence_row_renders_non_blank_endpoint_value_unit():
     """Regression guard: normalized Starling example dicts must use the same
     endpoint_type/reported_value/reported_units keys as the legacy factor library,
@@ -170,8 +205,9 @@ def test_assay_transfer_shows_score_and_one_record_per_ranked_entry():
     _, user = build_group_messages(QUERY, group, prompt_format="assay_transfer_tool")
     content = user["content"]
     assert "transfer likelihood (0-1): 0.29" in content
-    assert "SELECTED ASSAY RECORDS (1)" in content
-    assert "[Record 1]" in content
+    assert "SELECTED MOLECULES (1)" in content
+    assert "[Molecule 1]" in content
+    assert "[Assay record 1.1]" in content
     assert "[Neighbor 1]" not in content
     assert "Records (1):" not in content
     assert "endpoint: Fg.efflux" in content

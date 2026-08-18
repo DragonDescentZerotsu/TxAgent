@@ -1,10 +1,15 @@
-# ClinTox base v1 candidate lineage
+# ClinTox base v1 candidate lineage (superseded)
 
-`clintox_base_v1` is the active source candidate for
-`ClinTox_Human_Toxicity`. It replaces the candidate built from raw-v1
-organ-specific toxicity while preserving that older source, adapter, and
-artifact store as historical lineage. The previous active snapshot is commit
-`f056084332fbb5cec87cce5ec2a0d82a9b25b2fc`.
+This document describes a historical source pipeline. The active ClinTox
+source, gold candidate, canonical evidence, and held-out indices are rebuilt
+from `clintox_send_v2` and documented in
+`CLINTOX_STARLING_NORMALIZED_V7.md`. The old source data are no longer active;
+results produced from their hashes are incompatible with the send_v2 lineage.
+
+`clintox_base_v1` was the source candidate for `ClinTox_Human_Toxicity` before
+the send_v2 replacement. It had replaced the candidate built from raw-v1
+organ-specific toxicity. The previous active snapshot is commit
+`f056084332fbb5cec87cce5ec2a0d82a9b25b2fc`; all counts below are historical.
 
 This task predicts whether the controlled source category reports human
 clinical toxicity (`Y=1`) or explicitly reports `toxicity_absent` (`Y=0`). It

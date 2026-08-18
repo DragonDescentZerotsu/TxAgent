@@ -140,8 +140,13 @@ def build_pair_bucket_transfer_policy(
     )
     if not (joined["_merge"] == "both").all():
         raise ValueError("one or more pair-bucket rows lack a finalized record")
+    eligibility_field = (
+        "assay_transfer_eligible"
+        if "assay_transfer_eligible" in joined.columns
+        else "bucket_eligible"
+    )
     bucket_rows = joined[
-        joined["bucket_eligible"].astype(bool) & joined["pair_bucket_key"].notna()
+        joined[eligibility_field].astype(bool) & joined["pair_bucket_key"].notna()
     ].copy()
     heldout_audit: dict[str, Any] | None = None
     if profile.heldout_sources:

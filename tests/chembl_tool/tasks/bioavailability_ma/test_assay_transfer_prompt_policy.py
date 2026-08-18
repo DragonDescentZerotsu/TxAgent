@@ -82,14 +82,13 @@ def test_score_visibility_preserves_requested_top_k(top_k):
     assert retrieval["experiment"]["llm_neighbor_score_policy"]["effective_top_k_per_group"] == top_k
 
 
-def test_configuration_requires_full_mechanism_starling_reranking():
-    with pytest.raises(ValueError, match="full_mechanism"):
-        validate_scored_neighbors_configuration(
-            enabled=True,
-            experiment_mode="full_flat",
-            retrieval_source="starling",
-            retrieval_reranker="assay_transfer",
-        )
+def test_configuration_accepts_full_flat_starling_reranking():
+    validate_scored_neighbors_configuration(
+        enabled=True,
+        experiment_mode="full_flat",
+        retrieval_source="starling",
+        retrieval_reranker="assay_transfer",
+    )
 
 
 def test_enabled_prompt_exposes_only_rounded_public_score_and_semantics():
@@ -193,6 +192,20 @@ def test_batch_switch_preserves_k_and_is_forwarded_to_pipeline(top_k):
     assert args.top_k_per_group == top_k
     assert command[command.index("--top-k-per-group") + 1] == str(top_k)
     assert "--enable-assay-transfer-scores" in command
+
+
+def test_batch_score_switch_accepts_full_flat():
+    args = _parse_batch_args(
+        CONFIG,
+        [
+            "--experiment-mode", "full_flat",
+            "--retrieval-source", "starling",
+            "--retrieval-strategy", "assay_transfer_tool",
+            "--group-prompt-format", "assay_transfer_tool",
+            "--enable-assay-transfer-scores",
+        ],
+    )
+    _validate_assay_transfer_scores(CONFIG, args)
 
 
 def test_removed_top5_flag_is_rejected():

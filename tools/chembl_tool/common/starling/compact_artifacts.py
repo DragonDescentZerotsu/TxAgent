@@ -465,7 +465,7 @@ def load_compact_neighbor_index(
             bridge_by_evidence.get(evidence_id, []),
             key=lambda row: int(row.get("record_order") or 0),
         )
-        representative_records: list[tuple[int, dict[str, Any]]] = []
+        representative_records: list[tuple[int, str, dict[str, Any]]] = []
         for link in links:
             record_id = str(link[bridge_record_id_field])
             record = records_by_id.get(record_id)
@@ -475,12 +475,19 @@ def load_compact_neighbor_index(
                 )
             rank = link.get("representative_rank")
             if rank is not None and not _is_nan(rank):
-                representative_records.append((int(rank), record))
+                representative_records.append((int(rank), record_id, record))
+        ordered_representatives = sorted(representative_records)
         evidence = _hydrate_family_evidence(
             family,
-            [record for _, record in sorted(representative_records)],
+            [record for _, _, record in ordered_representatives],
             profile,
         )
+        # Runtime-only bridge used to join frozen Stage 07 Morgan representatives
+        # to their cached assay-transfer scores.  The leading underscore keeps
+        # these source identifiers out of minimal_evidence.v1 and LLM prompts.
+        evidence["_representative_record_ids"] = [
+            record_id for _, record_id, _ in ordered_representatives
+        ]
         evidence_by_molecule_group[molecule_id][group_id] = [evidence]
 
     if len(molecules) != len(fingerprints):

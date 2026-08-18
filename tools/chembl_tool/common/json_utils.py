@@ -36,17 +36,20 @@ def parse_json_content(content: str) -> Any:
         return json.loads(content)
     except (json.JSONDecodeError, TypeError) as first_error:
         text = str(content or "")
-        start = text.find("{")
         end = text.rfind("}")
-        if start >= 0 and end > start:
+        starts = [index for index, character in enumerate(text) if character == "{"]
+        nested_error: json.JSONDecodeError | None = None
+        for start in starts:
+            if end <= start:
+                continue
             try:
                 return json.loads(text[start : end + 1])
-            except json.JSONDecodeError as nested_error:
-                return {
-                    "unparsed_text": text,
-                    "parse_error": str(nested_error),
-                }
-        return {"unparsed_text": text, "parse_error": str(first_error)}
+            except json.JSONDecodeError as error:
+                nested_error = error
+        return {
+            "unparsed_text": text,
+            "parse_error": str(nested_error or first_error),
+        }
 
 
 @contextmanager

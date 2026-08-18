@@ -4,6 +4,7 @@ import json
 
 import pandas as pd
 
+from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import retrieve_neighbors
 from tools.chembl_tool.tasks.bioavailability_ma.starling_compact_artifacts import (
     BANNED_PERSISTED_FIELDS,
@@ -76,6 +77,8 @@ def test_compact_catalog_and_index_hydrate_referenced_records(tmp_path):
     examples = evidence["minimal_evidence"]["examples"]
     assert examples[0]["source_fields"]["support_text"].startswith("paid evidence")
     assert examples[0]["source_contract"]["source_or_simply_cleaned"]["support_text"] is True
+    assert evidence["_representative_record_ids"] == ["record-1", "record-2"]
+    assert "_representative_record_ids" not in str(evidence_for_llm(evidence))
 
 
 def test_compact_index_contains_no_pickle(tmp_path):

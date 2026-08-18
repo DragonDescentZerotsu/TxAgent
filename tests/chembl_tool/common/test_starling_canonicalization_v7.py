@@ -25,6 +25,9 @@ from tools.chembl_tool.tasks.bbb_martins.starling_schema import (
 from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
     RECORD_CONTRACT as BIO_CONTRACT,
 )
+from tools.chembl_tool.tasks.clintox.starling_schema import (
+    RECORD_CONTRACT as CLINTOX_CONTRACT,
+)
 from tools.chembl_tool.tasks.skin_reaction.starling_schema import (
     RECORD_CONTRACT as SKIN_CONTRACT,
 )
@@ -84,6 +87,26 @@ def test_dataset_constants_are_not_claimed_as_source_visible() -> None:
     # The unified source uses embedded units because nondirect rows may carry
     # percent/fold/ratio text; unit_text is no longer a dataset constant.
     assert "unit_text" in profile.source_visible_fields
+
+
+def test_inflate_cleaned_restores_sparse_source_shape_after_parquet_resume() -> None:
+    resumed = {
+        "source_id": "clintox_base_v1",
+        "endpoint_name": "human_clinical_toxicity",
+        "measurement_text": "toxicity_absent",
+        "unit_text": None,
+        "smiles": "CCO",
+        "clinical_context": "trial",
+        "assay_context": None,
+        "result_metric": None,
+    }
+    inflated = CLINTOX_CONTRACT.inflate_cleaned(resumed)
+    assert "assay_context" not in inflated
+    assert "result_metric" not in inflated
+    assert inflated["clinical_context"] == "trial"
+
+    with pytest.raises(ValueError, match="populated foreign source fields"):
+        CLINTOX_CONTRACT.inflate_cleaned({**resumed, "assay_context": "in vitro"})
 
 
 def test_all_pair_identity_fields_are_canonical() -> None:

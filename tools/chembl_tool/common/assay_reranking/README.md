@@ -1,100 +1,103 @@
 # V11 assay-transfer reranker cache
 
-This module builds frozen, read-only assay-transfer score caches for the V7
-Starling retrieval artifacts. It supports Bioavailability_Ma, Skin_Reaction,
-and BBB_Martins through the same builder and runtime cache contract.
+This module builds frozen, read-only assay-transfer score caches from a
+lineage-owned Starling V7 paper evidence view. The scaffold-validation contract is:
 
-The cache is scoped to scaffold validation queries and uses this fixed
-retrieval contract by default:
-
-- raw Morgan/Tanimoto pool of 50 molecules per reasoning group;
+- up to 50 Morgan/Tanimoto molecules per reasoning group after identity exclusion;
 - minimum similarity 0.0;
-- `parent_disjoint` identity exclusion after the raw top-50 pool;
-- every retrieval-eligible Stage07 record for each candidate molecule;
-- no Stage04 pair-bucket or Stage05 calibration eligibility filter;
-- record-level assay-transfer ranking;
-- BF16 model backbone with FP32 selected A/B output-head accumulation.
+- `parent_disjoint` identity exclusion before the eligible top-50 truncation;
+- every in-scope Stage 07 record for each candidate molecule;
+- no Stage 04 pair-bucket or Stage 05 calibration filter;
+- record-level ranking with a BF16 backbone and FP32 selected A/B head logits.
+
+The prompt projection and Jinja templates are vendored from the pinned
+`starling_assay_transfer` revision recorded in `assets/v11/SOURCE.json`.
 
 ## Runtime
 
-The pinned model tokenizer requires `transformers==4.57.6`. Keep this scoring
-runtime isolated from the main `txagent-glm` package set. On node002, the
-current node-local overlay is:
-
-```text
-/local/joseph/huggingface/assay_transfer_v11/python_transformers_4_57_6
-```
-
-Prefix scoring commands with:
+The tokenizer requires `transformers==4.57.6`. On dgx012, use the existing
+environment and keep model downloads on `/vast`:
 
 ```bash
-PYTHONPATH=/local/joseph/huggingface/assay_transfer_v11/python_transformers_4_57_6 \
-HF_HUB_CACHE=/local/joseph/huggingface/assay_transfer_v11/hub \
-HF_HOME=/local/joseph/huggingface/assay_transfer_v11
+export HF_HOME=/vast/projects/myatskar/design-documents/joseph/.cache/huggingface_assay_transfer_v11
+export PYTORCH_ALLOC_CONF=expandable_segments:True
+V11_PYTHON=/vast/projects/myatskar/design-documents/conda_env/open_rlhf_intern/bin/python
 ```
 
-The worker rejects any other Transformers version so an environment change
-cannot silently alter tokenization or selected-token scoring.
+The worker rejects any other Transformers version.
 
 ## Build and resume
 
-Preparation is CPU-only and freezes the catalog, raw Morgan candidate manifest,
-and exact prompt demand:
+Supply all three lineage mappings for each task. Preparation is CPU-only:
 
 ```bash
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.common.assay_reranking.build_v11_cache \
-  --tasks bioavailability_ma skin_reaction \
-  --benchmark-split scaffold --evaluation-subset valid --phase prepare
+$V11_PYTHON -m tools.chembl_tool.common.assay_reranking.build_v11_cache \
+  --tasks bioavailability_ma --phase prepare \
+  --task-evidence-view bioavailability_ma=<paper-root>/evidence/bioavailability_starling_v7 \
+  --task-query-jsonl bioavailability_ma=<current-scaffold-valid.jsonl> \
+  --task-cache-dir bioavailability_ma=<paper-root>/assay_transfer_rerank/bioavailability_starling_v7/v11_with_categorical/scaffold/valid
 ```
 
-Scoring is append-only and resumable. The default batch size is 128. A full
-Skin_Reaction run showed that 192 can exceed an 80 GB GPU on later, longer
-prompt batches even when early batches appear to leave ample memory.
+Scoring is append-only and resumable until finalization:
 
 ```bash
-PYTHONPATH=/local/joseph/huggingface/assay_transfer_v11/python_transformers_4_57_6 \
-HF_HUB_CACHE=/local/joseph/huggingface/assay_transfer_v11/hub \
-HF_HOME=/local/joseph/huggingface/assay_transfer_v11 \
-PYTORCH_ALLOC_CONF=expandable_segments:True \
-/data1/joseph/miniconda3/condabin/conda run --no-capture-output -n txagent-glm \
-  python -m tools.chembl_tool.common.assay_reranking.build_v11_cache \
-  --tasks bioavailability_ma skin_reaction \
-  --benchmark-split scaffold --evaluation-subset valid --phase score \
-  --devices 0,1,2,3,4,5,6,7 --batch-size 128 --local-files-only
+$V11_PYTHON -m tools.chembl_tool.common.assay_reranking.build_v11_cache \
+  --tasks bioavailability_ma --phase score \
+  --task-evidence-view bioavailability_ma=<paper-evidence-view> \
+  --task-query-jsonl bioavailability_ma=<current-scaffold-valid.jsonl> \
+  --task-cache-dir bioavailability_ma=<lineage-cache-dir> \
+  --devices 0,1,2,3 --batch-size 128 --local-files-only
 ```
 
-Verify exact demand coverage and SQLite integrity without loading a model:
+Use the same mappings with `--phase verify` for a read-only integrity check.
+
+### Record scope
+
+`--record-scope all` is the backward-compatible default. Two narrower scopes
+filter the record bridge before identity exclusion and Morgan top-50 selection:
+
+- `labelable_direct` retains only direct-source records accepted by the frozen
+  task labeler;
+- `numeric_direct` additionally requires a finite direct numeric value and is
+  supported only for Bioavailability.
+
+For example, a classification cache can be prepared with:
 
 ```bash
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.common.assay_reranking.build_v11_cache \
-  --tasks bioavailability_ma skin_reaction \
-  --benchmark-split scaffold --evaluation-subset valid --phase verify
+$V11_PYTHON -m tools.chembl_tool.common.assay_reranking.build_v11_cache \
+  --tasks bioavailability_ma --phase prepare \
+  --record-scope labelable_direct \
+  --task-evidence-view bioavailability_ma=<paper-evidence-view> \
+  --task-query-jsonl bioavailability_ma=<current-scaffold-valid.jsonl> \
+  --task-cache-dir bioavailability_ma=<new-lineage-cache-dir>
 ```
 
-Each task writes `catalog.jsonl`, `candidate_manifest.jsonl`,
-`prompt_demand.jsonl`, `scores.sqlite3`, and `VERSION.json` under:
+`VERSION.json` records the scope, preselection record and molecule counts, and
+the `record_scope_then_tanimoto_identity_exclusion_then_eligible_pool.v1`
+candidate contract. Resume and verification require the same scope.
+
+Each finalized lineage retains only:
 
 ```text
-outputs/chembl_tool/tasks/<task>/evidence_library/assay_transfer_rerank/
-  v11_with_categorical/scaffold/valid/
+scores.sqlite3
+VERSION.json
 ```
 
-`VERSION.json` becomes `complete` only after exact cache coverage and
-`PRAGMA quick_check=ok`. Reasoning runners open the SQLite cache read-only.
-Distinct record references that render to the same immutable prompt cache key
-remain in the catalog and candidate manifest but share one score row. The
-version manifest records the pre-deduplication task count, the number collapsed,
-and the exact unique score count separately.
+Rendered prompts and preparation joins live in temporary SQLite tables while
+scoring is incomplete. Successful finalization checks exact coverage, drops the
+build tables, vacuums the database, and requires `PRAGMA quick_check=ok`.
+Reasoning runners use direct query/group/molecule assignments from SQLite.
 
-## BBB model
+## Models
 
-BBB uses the task-aware multitask checkpoint pinned in `assets/v11/models.json`:
+The task-specific Bioavailability, BBB, and Skin Reaction checkpoints and
+immutable revisions are pinned in `assets/v11/models.json`. Historical
+task-local caches and the old BBB multitask checkpoint remain separate lineage
+artifacts.
 
-```text
-jiosephlee/assay-transfer-tool-soft-v11-multitask-with-categorical
-```
-
-Its cache uses the vendored BBB templates, the compact V7 held-out scaffold
-index, and the same Morgan-pool/precision provenance as the other tasks.
+On four full 180 GiB B200s, worst-prompt profiling found that larger batches
+fit but did not improve throughput. For BBB's 984-token maximum, batch 128 used
+29.71 GiB and delivered 36.71 prompts/s/GPU; batch 1,408 used 173.58 GiB and
+delivered 35.50 prompts/s/GPU. For Skin Reaction's 1,214-token maximum, batch
+128 used 33.11 GiB and delivered 29.75 prompts/s/GPU. Batch 128 is therefore the
+measured throughput-oriented default, not a memory ceiling.

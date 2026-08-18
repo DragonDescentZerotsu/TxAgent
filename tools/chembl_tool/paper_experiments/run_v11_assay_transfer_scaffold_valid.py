@@ -1,7 +1,8 @@
 """Run a V11 assay-transfer scaffold-validation experiment.
 
-The launcher covers BBB_Martins, Bioavailability_Ma, and Skin_Reaction with
-held-out scaffold-validation indices and complete task-specific V11 caches.
+The launcher covers the current BBB_Martins, Bioavailability_Ma, and
+Skin_Reaction scaffold-valid lineages with their paper-local Stage 06-09
+artifacts and compact V11 caches.
 """
 
 from __future__ import annotations
@@ -26,7 +27,6 @@ from tools.chembl_tool.common.assay_reranking.v11 import (
     PROFILE_NAME,
     SCORING_CONTRACT_VERSION,
     TEMPLATE_PROFILE,
-    default_cache_paths,
     file_sha256,
     model_profile,
 )
@@ -34,6 +34,7 @@ from tools.chembl_tool.common.assay_transfer_selection import (
     ASSAY_TRANSFER_DIVERSITY_MODES,
     ASSAY_TRANSFER_DIVERSITY_NONE,
     ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+    ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
     ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
     ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE,
     ASSAY_TRANSFER_SELECTION_UNITS,
@@ -56,18 +57,22 @@ from tools.chembl_tool.paper_experiments.molecular_evidence_agent import (
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_OUTPUT_ROOT = Path(
-    "outputs/paper/"
-    "molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid/"
-    "assay_transfer_v11_k3_scored_assay_schema"
-)
+DEFAULT_OUTPUT_ROOT = Path("outputs/paper/v11_assay_transfer_scaffold_valid_launcher")
 UNIQUE_MOLECULE_OUTPUT_ROOT = DEFAULT_OUTPUT_ROOT.with_name(
     "assay_transfer_v11_k3_unique_molecules_scored_assay_schema"
 )
 RUNS_DIR = "runs_identity_blind_parent_disjoint"
-LAUNCH_CONTRACT_VERSION = "v11_assay_transfer_scaffold_valid.v3"
+LAUNCH_CONTRACT_VERSION = "v11_assay_transfer_scaffold_valid.v4"
 EXPECTED_TOOL_COUNT = 3
 ENDPOINT_CONCURRENCY_BUDGET = 500
+RETRIEVAL_CONDITION_MORGAN = "morgan"
+RETRIEVAL_CONDITION_ASSAY_TRANSFER_RECORD = "assay_transfer_record"
+RETRIEVAL_CONDITION_ASSAY_TRANSFER_MOLECULE = "assay_transfer_molecule"
+RETRIEVAL_CONDITIONS = (
+    RETRIEVAL_CONDITION_MORGAN,
+    RETRIEVAL_CONDITION_ASSAY_TRANSFER_RECORD,
+    RETRIEVAL_CONDITION_ASSAY_TRANSFER_MOLECULE,
+)
 MORGAN_K3_CONTROL_ROOT = Path(
     "outputs/paper/"
     "molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid/"
@@ -82,19 +87,14 @@ class TaskSpec:
     batch_module: str
     expected_queries: int
     expected_scores: int
+    input_jsonl: str
+    index: str
+    cache: str
+    version: str
+    paper_output_root: str
     group_output_schema: str = ""
+    group_prompt_version: str = ""
     single_analysis_source_batch: str = ""
-
-    @property
-    def input_jsonl(self) -> str:
-        return f"data/processed_starling/{self.data_name}/scaffold/valid.jsonl"
-
-    @property
-    def index(self) -> str:
-        return (
-            f"outputs/chembl_tool/tasks/{self.task_id}/evidence_library/"
-            "starling_normalized_v7/08_neighbor_index/scaffold"
-        )
 
     @property
     def batch_id(self) -> str:
@@ -110,8 +110,13 @@ TASKS = (
         task_id="bbb_martins",
         data_name="BBB_Martins",
         batch_module="tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch",
-        expected_queries=500,
-        expected_scores=893_133,
+        expected_queries=366,
+        expected_scores=633_694,
+        input_jsonl="data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/valid.jsonl",
+        index="outputs/paper/molecular_evidence_agent_starling_scaffold_experimental_meaningful_cns_access_v2/evidence/bbb_starling_v7/08_neighbor_index",
+        cache="outputs/paper/molecular_evidence_agent_starling_scaffold_experimental_meaningful_cns_access_v2/assay_transfer_rerank/bbb_starling_v7/v11_with_categorical/scaffold/valid/scores.sqlite3",
+        version="outputs/paper/molecular_evidence_agent_starling_scaffold_experimental_meaningful_cns_access_v2/assay_transfer_rerank/bbb_starling_v7/v11_with_categorical/scaffold/valid/VERSION.json",
+        paper_output_root="outputs/paper/molecular_evidence_agent_starling_scaffold_experimental_meaningful_cns_access_v2",
         single_analysis_source_batch=str(
             MORGAN_K3_CONTROL_ROOT / "bbb_martins" / "bbb_martins__none"
         ),
@@ -121,28 +126,51 @@ TASKS = (
         data_name="Bioavailability_Ma",
         batch_module="tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch",
         expected_queries=209,
-        expected_scores=840_608,
+        expected_scores=870_332,
+        input_jsonl="data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/valid.jsonl",
+        index="outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/evidence/bioavailability_starling_v7/08_neighbor_index",
+        cache="outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/assay_transfer_rerank/bioavailability_starling_v7/v11_with_categorical/scaffold/valid/scores.sqlite3",
+        version="outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/assay_transfer_rerank/bioavailability_starling_v7/v11_with_categorical/scaffold/valid/VERSION.json",
+        paper_output_root="outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2",
         group_output_schema="assay-transfer",
+        group_prompt_version="bioavailability_text_v1",
     ),
     TaskSpec(
         task_id="skin_reaction",
         data_name="Skin_Reaction",
         batch_module="tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch",
         expected_queries=245,
-        expected_scores=964_543,
+        expected_scores=254_657,
+        input_jsonl="data/processed_starling_record_supported_v2/Skin_Reaction/scaffold/valid.jsonl",
+        index="outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/evidence/skin_reaction_starling_v7/08_neighbor_index",
+        cache="outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/assay_transfer_rerank/skin_reaction_starling_v7/v11_with_categorical/scaffold/valid/scores.sqlite3",
+        version="outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/assay_transfer_rerank/skin_reaction_starling_v7/v11_with_categorical/scaffold/valid/VERSION.json",
+        paper_output_root="outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2",
     ),
 )
+ACTIVE_TASKS = TASKS
+DEFAULT_TASK_IDS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+
+
+def _selected_tasks(args: argparse.Namespace | None = None) -> tuple[TaskSpec, ...]:
+    requested = set(getattr(args, "tasks", DEFAULT_TASK_IDS))
+    return tuple(task for task in ACTIVE_TASKS if task.task_id in requested)
 
 
 def _default_output_root(
     top_k: int,
     selection_unit: str,
+    experiment_mode: str = "full_flat",
     diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
     records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+    disable_flat_tools: bool = False,
+    analogous_reasoning_only: bool = False,
 ) -> Path:
     suffix = (
         "unique_molecules_scored_assay_schema"
         if selection_unit == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE
+        else "mean_score_molecules_scored_assay_schema"
+        if selection_unit == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
         else "scored_assay_schema"
     )
     if diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
@@ -151,20 +179,29 @@ def _default_output_root(
         )
     if records_per_molecule > ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT:
         suffix = f"{suffix}_r{records_per_molecule}"
-    return DEFAULT_OUTPUT_ROOT.with_name(f"assay_transfer_v11_k{top_k}_{suffix}")
+    if disable_flat_tools:
+        suffix = f"{suffix}_no_flat_tools"
+    if analogous_reasoning_only:
+        suffix = f"{suffix}_analogous_flat_v1"
+    return DEFAULT_OUTPUT_ROOT / f"{experiment_mode}_k{top_k}_{suffix}"
 
 
 def _task_batch_id(
     task: TaskSpec,
     selection_unit: str,
+    experiment_mode: str = "full_flat",
     top_k: int = 3,
     diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
     records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
 ) -> str:
-    batch_id = task.batch_id.replace("_k3_morgan50", f"_k{top_k}_morgan50")
+    batch_id = task.batch_id.replace("full_mechanism", experiment_mode).replace(
+        "_k3_morgan50", f"_k{top_k}_morgan50"
+    )
     markers = []
     if selection_unit == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE:
         markers.append("unique_molecule")
+    elif selection_unit == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE:
+        markers.append("mean_score_molecule")
     if diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
         markers.append(f"{diversity_mode}_diversity")
     if records_per_molecule > ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT:
@@ -206,15 +243,18 @@ class ToolService:
 
 
 def build_batch_commands(args: argparse.Namespace) -> list[BatchCommand]:
-    """Build the three auditable batch commands consumed by the global pool."""
+    """Build the three lineage-local batch commands consumed by the global pool."""
+    if args.retrieval_conditions:
+        return _build_retrieval_condition_commands(args)
     commands: list[BatchCommand] = []
-    for task in TASKS:
-        paths = default_cache_paths(task.task_id)
+    for task in _selected_tasks(args):
         profile = model_profile(task.task_id)
-        batch_root = Path(args.output_root) / RUNS_DIR / task.task_id
+        condition = Path(args.output_root).name
+        batch_root = Path(task.paper_output_root) / "assay_transfer_v11_glm" / condition / RUNS_DIR
         batch_id = _task_batch_id(
             task,
             args.assay_transfer_selection_unit,
+            args.experiment_mode,
             args.top_k_per_group,
             args.assay_transfer_diversity_mode,
             args.assay_transfer_records_per_molecule,
@@ -228,7 +268,7 @@ def build_batch_commands(args: argparse.Namespace) -> list[BatchCommand]:
             "--index",
             task.index,
             "--experiment-mode",
-            "full_mechanism",
+            args.experiment_mode,
             "--retrieval-source",
             "starling",
             "--neighbor-identity-policy",
@@ -249,13 +289,13 @@ def build_batch_commands(args: argparse.Namespace) -> list[BatchCommand]:
             "--assay-transfer-initial-morgan-filter",
             "50",
             "--rerank-catalog",
-            paths["catalog"],
+            "",
             "--rerank-cache",
-            paths["cache"],
+            task.cache,
             "--rerank-candidate-manifest",
-            paths["candidate_manifest"],
+            "",
             "--rerank-cache-version-manifest",
-            paths["version"],
+            task.version,
             "--rerank-expected-score-count",
             str(task.expected_scores),
             "--rerank-cache-mode",
@@ -310,38 +350,196 @@ def build_batch_commands(args: argparse.Namespace) -> list[BatchCommand]:
         ]
         if args.limit:
             command.extend(["--limit", str(args.limit)])
-        if task.group_output_schema:
+        if task.group_output_schema and not args.analogous_reasoning_only:
             command.extend(["--group-output-schema", task.group_output_schema])
-        if (
-            args.assay_transfer_selection_unit == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE
-            or args.top_k_per_group != 3
-            or args.assay_transfer_records_per_molecule
-            != ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT
-        ):
-            source_batch = (
-                Path(task.single_analysis_source_batch)
-                if task.single_analysis_source_batch
-                else DEFAULT_OUTPUT_ROOT / RUNS_DIR / task.task_id / task.batch_id
-            )
-            command.extend(["--single-analysis-source-batch", str(source_batch)])
+        if task.group_prompt_version and not args.analogous_reasoning_only:
+            command.extend(["--group-prompt-version", task.group_prompt_version])
+        if args.disable_flat_tools:
+            command.append("--disable-flat-tools")
+        if args.analogous_reasoning_only:
+            command.append("--analogous-reasoning-only")
         commands.append(BatchCommand(batch_id, command))
     return commands
+
+
+def _build_retrieval_condition_commands(
+    args: argparse.Namespace,
+) -> list[BatchCommand]:
+    commands: list[BatchCommand] = []
+    for condition_name in args.retrieval_conditions:
+        for task in _selected_tasks(args):
+            commands.append(
+                _retrieval_condition_command(args, task, condition_name)
+            )
+    return commands
+
+
+def _retrieval_condition_command(
+    args: argparse.Namespace,
+    task: TaskSpec,
+    condition_name: str,
+) -> BatchCommand:
+    condition_root = Path(args.output_root).name
+    batch_root = (
+        Path(task.paper_output_root)
+        / "analogous_flat_v1_retrieval_comparison"
+        / condition_root
+        / RUNS_DIR
+    )
+    batch_id = _retrieval_condition_batch_id(
+        task, condition_name, args.top_k_per_group
+    )
+    command = [
+        sys.executable,
+        "-m",
+        task.batch_module,
+        "--input-jsonl",
+        task.input_jsonl,
+        "--index",
+        task.index,
+        "--experiment-mode",
+        "full_flat",
+        "--retrieval-source",
+        "starling",
+        "--neighbor-identity-policy",
+        "parent_disjoint",
+        "--identity-blind",
+        "--top-k-per-group",
+        str(args.top_k_per_group),
+        "--min-similarity",
+        "0.0",
+        "--neighbor-context-profile",
+        "standard",
+        "--morgan-neighbor-selector",
+        "similarity",
+        "--batch-root",
+        str(batch_root),
+        "--batch-id",
+        batch_id,
+        "--api-key-env",
+        args.api_key_env,
+        "--base-url",
+        args.base_url,
+        "--tool-service-url",
+        args.tool_service_url,
+        "--model",
+        args.model,
+        "--disable-thinking",
+        "--reasoning-effort",
+        args.reasoning_effort,
+        "--temperature",
+        "0",
+        "--max-tokens",
+        "20480",
+        "--timeout-s",
+        "300",
+        "--max-tool-rounds",
+        "3",
+        "--parallelism",
+        str(args.parallelism),
+        "--max-stage-requeues",
+        str(args.max_stage_requeues),
+        "--skip-existing",
+        "--no-stream-logs",
+        "--no-combine-traces",
+        "--analogous-reasoning-only",
+    ]
+    if args.limit:
+        command.extend(["--limit", str(args.limit)])
+    if condition_name == RETRIEVAL_CONDITION_MORGAN:
+        command.extend(["--retrieval-strategy", "morgan_fingerprint"])
+    else:
+        profile = model_profile(task.task_id)
+        selection_unit = (
+            ASSAY_TRANSFER_SELECTION_SCORED_RECORD
+            if condition_name == RETRIEVAL_CONDITION_ASSAY_TRANSFER_RECORD
+            else ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
+        )
+        records_per_molecule = (
+            ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT
+            if selection_unit == ASSAY_TRANSFER_SELECTION_SCORED_RECORD
+            else 6
+        )
+        command.extend(
+            [
+                "--retrieval-strategy",
+                "assay_transfer_tool",
+                "--assay-transfer-profile",
+                PROFILE_NAME,
+                "--assay-transfer-selection-unit",
+                selection_unit,
+                "--assay-transfer-records-per-molecule",
+                str(records_per_molecule),
+                "--assay-transfer-diversity-mode",
+                ASSAY_TRANSFER_DIVERSITY_NONE,
+                "--assay-transfer-diversity-score-slack",
+                "0.0",
+                "--assay-transfer-initial-morgan-filter",
+                "50",
+                "--rerank-catalog",
+                "",
+                "--rerank-cache",
+                task.cache,
+                "--rerank-candidate-manifest",
+                "",
+                "--rerank-cache-version-manifest",
+                task.version,
+                "--rerank-expected-score-count",
+                str(task.expected_scores),
+                "--rerank-cache-mode",
+                "read_only",
+                "--assay-transfer-model",
+                str(profile["model"]),
+                "--assay-transfer-model-revision",
+                str(profile["revision"]),
+                "--assay-transfer-template-profile",
+                TEMPLATE_PROFILE,
+                "--group-prompt-format",
+                "assay_transfer_tool",
+                "--enable-assay-transfer-scores",
+            ]
+        )
+        if (batch_root / batch_id / "manifest.json").exists():
+            command.append("--reuse-existing-rerank-preflight")
+    return BatchCommand(batch_id, command)
+
+
+def _retrieval_condition_batch_id(
+    task: TaskSpec, condition_name: str, top_k: int
+) -> str:
+    return (
+        f"{task.task_id}__starling_full_flat__{condition_name}__"
+        f"k{top_k}__analogous_flat_v1"
+    )
+
+
+def _retrieval_condition_batch_dir(
+    args: argparse.Namespace, task: TaskSpec, condition_name: str
+) -> Path:
+    return (
+        Path(task.paper_output_root)
+        / "analogous_flat_v1_retrieval_comparison"
+        / Path(args.output_root).name
+        / RUNS_DIR
+        / _retrieval_condition_batch_id(task, condition_name, args.top_k_per_group)
+    )
 
 
 def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _validate_inputs() -> dict[str, dict[str, Any]]:
+def _validate_inputs(
+    tasks: tuple[TaskSpec, ...] | None = None,
+) -> dict[str, dict[str, Any]]:
     """Fail before endpoint work if a cache/index no longer matches its build."""
     validated: dict[str, dict[str, Any]] = {}
-    for task in TASKS:
-        paths = default_cache_paths(task.task_id)
-        required = [Path(task.input_jsonl), Path(task.index), *(Path(value) for value in paths.values())]
+    for task in tasks or _selected_tasks():
+        required = [Path(task.input_jsonl), Path(task.index), Path(task.cache), Path(task.version)]
         missing = [str(path) for path in required if not path.exists()]
         if missing:
             raise SystemExit("Missing V11 run inputs:\n" + "\n".join(missing))
-        version = _read_json(Path(paths["version"]))
+        version = _read_json(Path(task.version))
         profile = model_profile(task.task_id)
         expected = {
             "status": "complete",
@@ -377,8 +575,8 @@ def _validate_inputs() -> dict[str, dict[str, Any]]:
         if input_hash != observed_hash:
             raise SystemExit(f"Query input hash mismatch for {task.task_id}")
         validated[task.task_id] = {
-            "version_path": paths["version"],
-            "version_sha256": file_sha256(paths["version"]),
+            "version_path": task.version,
+            "version_sha256": file_sha256(task.version),
             "input_jsonl_sha256": observed_hash,
             "cache_quick_check": version.get("cache_quick_check"),
             **expected,
@@ -504,13 +702,203 @@ def _batch_dir(
     output_root: Path,
     task: TaskSpec,
     selection_unit: str,
+    experiment_mode: str = "full_flat",
     top_k: int = 3,
     diversity_mode: str = ASSAY_TRANSFER_DIVERSITY_NONE,
     records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
 ) -> Path:
-    return output_root / RUNS_DIR / task.task_id / _task_batch_id(
-        task, selection_unit, top_k, diversity_mode, records_per_molecule
+    condition = output_root.name
+    return Path(task.paper_output_root) / "assay_transfer_v11_glm" / condition / RUNS_DIR / _task_batch_id(
+        task,
+        selection_unit,
+        experiment_mode,
+        top_k,
+        diversity_mode,
+        records_per_molecule,
     )
+
+
+def _audit_retrieval_condition_artifacts(
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    output_root = Path(args.output_root)
+    errors: list[str] = []
+    batches: dict[str, Any] = {}
+    for condition_name in args.retrieval_conditions:
+        expected_strategy = (
+            "morgan_fingerprint"
+            if condition_name == RETRIEVAL_CONDITION_MORGAN
+            else "assay_transfer_tool"
+        )
+        expected_selection_unit = {
+            RETRIEVAL_CONDITION_ASSAY_TRANSFER_RECORD: (
+                ASSAY_TRANSFER_SELECTION_SCORED_RECORD
+            ),
+            RETRIEVAL_CONDITION_ASSAY_TRANSFER_MOLECULE: (
+                ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
+            ),
+        }.get(condition_name)
+        for task in _selected_tasks(args):
+            key = f"{task.task_id}/{condition_name}"
+            batch_id = _retrieval_condition_batch_id(
+                task, condition_name, args.top_k_per_group
+            )
+            batch_dir = _retrieval_condition_batch_dir(args, task, condition_name)
+            expected_queries = min(
+                task.expected_queries, args.limit or task.expected_queries
+            )
+            metrics_path = batch_dir / "metrics.json"
+            manifest_path = batch_dir / "manifest.json"
+            metrics = _read_json(metrics_path) if metrics_path.exists() else {}
+            manifest = _read_json(manifest_path) if manifest_path.exists() else {}
+            for field, expected in (
+                ("n_total", expected_queries),
+                ("n_successful", expected_queries),
+                ("n_failed_runs", 0),
+            ):
+                if metrics.get(field) != expected:
+                    errors.append(
+                        f"{key}: metrics {field}={metrics.get(field)!r}, "
+                        f"expected={expected!r}"
+                    )
+            manifest_expected = {
+                "experiment_mode": "full_flat",
+                "retrieval_source": "starling",
+                "retrieval_strategy": expected_strategy,
+                "neighbor_identity_policy": "parent_disjoint",
+                "identity_blind": True,
+                "top_k_per_group": args.top_k_per_group,
+                "analogous_reasoning_only": True,
+                "group_prompt_version": "analogous_flat_v1",
+                "group_tools_enabled": False,
+            }
+            if expected_selection_unit is not None:
+                manifest_expected.update(
+                    {
+                        "enable_assay_transfer_scores": True,
+                        "assay_transfer_selection_unit": expected_selection_unit,
+                        "assay_transfer_min_score": None,
+                    }
+                )
+            for field, expected in manifest_expected.items():
+                if manifest.get(field) != expected:
+                    errors.append(
+                        f"{key}: manifest {field}={manifest.get(field)!r}, "
+                        f"expected={expected!r}"
+                    )
+            run_dirs = sorted((batch_dir / "runs").glob(f"{batch_id}_idx*"))
+            if len(run_dirs) != expected_queries:
+                errors.append(
+                    f"{key}: run directory count={len(run_dirs)}, "
+                    f"expected={expected_queries}"
+                )
+            observed_neighbors = 0
+            for run_dir in run_dirs:
+                required = (
+                    run_dir / "retrieval.json",
+                    run_dir / "group_reasoning_outputs.jsonl",
+                    run_dir / "single_molecule_reasoning_output.json",
+                    run_dir / "final_reasoning_output.json",
+                    run_dir / "trace_messages.jsonl",
+                )
+                missing = [path.name for path in required if not path.exists()]
+                if missing:
+                    errors.append(f"{key}/{run_dir.name}: missing {missing}")
+                    continue
+                retrieval = _read_json(run_dir / "retrieval.json")
+                policy = retrieval.get("retrieval_policy") or {}
+                coverage = retrieval.get("coverage") or {}
+                experiment = retrieval.get("experiment") or {}
+                if policy.get("neighbor_identity_policy") != "parent_disjoint":
+                    errors.append(f"{key}/{run_dir.name}: retrieval is not parent-disjoint")
+                if coverage.get("top_k_per_group") != args.top_k_per_group:
+                    errors.append(f"{key}/{run_dir.name}: retrieval top-k mismatch")
+                groups = retrieval.get("groups") or []
+                if len(groups) != 1 or groups[0].get("group_id") != "Flat.all_evidence":
+                    errors.append(f"{key}/{run_dir.name}: expected one flat evidence group")
+                    continue
+                neighbors = groups[0].get("neighbors") or []
+                observed_neighbors += len(neighbors)
+                maximum_flat_neighbors = args.top_k_per_group * max(
+                    1, len(groups[0].get("source_group_ids") or [])
+                )
+                if not 1 <= len(neighbors) <= maximum_flat_neighbors:
+                    errors.append(
+                        f"{key}/{run_dir.name}: flat neighbor count outside "
+                        f"per-family k={args.top_k_per_group} bound"
+                    )
+                for neighbor in neighbors:
+                    relation = str(neighbor.get("molecule_relation") or "")
+                    if relation in {
+                        "exact_record",
+                        "same_connectivity_variant",
+                        "same_parent",
+                    }:
+                        errors.append(f"{key}/{run_dir.name}: identity leak {relation}")
+                    score_field = (
+                        "similarity"
+                        if condition_name == RETRIEVAL_CONDITION_MORGAN
+                        else "transfer_selection_score"
+                    )
+                    score = neighbor.get(score_field)
+                    if not isinstance(score, (int, float)) or not 0 <= float(score) <= 1:
+                        errors.append(
+                            f"{key}/{run_dir.name}: invalid {score_field}"
+                        )
+                if expected_selection_unit is not None:
+                    selection = experiment.get("assay_transfer_selection_policy") or {}
+                    diversity = selection.get("diversity") or {}
+                    if diversity.get("selection_unit") != expected_selection_unit:
+                        errors.append(f"{key}/{run_dir.name}: selection-unit mismatch")
+                    if selection.get("min_score") is not None:
+                        errors.append(f"{key}/{run_dir.name}: score floor was applied")
+            batches[key] = {
+                "condition": condition_name,
+                "task_id": task.task_id,
+                "batch_id": batch_id,
+                "batch_dir": str(batch_dir),
+                "expected_queries": expected_queries,
+                "observed_run_directories": len(run_dirs),
+                "observed_neighbors": observed_neighbors,
+                "metrics": metrics,
+            }
+    audit = {
+        "contract_version": LAUNCH_CONTRACT_VERSION,
+        "status": "pass" if not errors else "fail",
+        "errors": errors,
+        "batches": batches,
+        "audited_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+    }
+    write_json_atomic(output_root / "completion_audit.json", audit)
+    return audit
+
+
+def _write_retrieval_condition_summary(
+    args: argparse.Namespace,
+    failed: list[dict[str, Any]],
+    audit: dict[str, Any],
+) -> dict[str, Any]:
+    summary = {
+        "contract_version": LAUNCH_CONTRACT_VERSION,
+        "status": "complete" if not failed else "failed",
+        "retrieval_conditions": list(args.retrieval_conditions),
+        "total_expected_llm_requests": sum(
+            min(task.expected_queries, args.limit or task.expected_queries)
+            for task in _selected_tasks(args)
+        )
+        * len(args.retrieval_conditions)
+        * 2,
+        "failed": failed,
+        "completion_audit": {
+            "status": audit["status"],
+            "path": str(Path(args.output_root) / "completion_audit.json"),
+            "n_errors": len(audit["errors"]),
+        },
+        "batches": audit["batches"],
+        "finished_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+    }
+    write_json_atomic(Path(args.output_root) / "completion_summary.json", summary)
+    return summary
 
 
 def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
@@ -521,13 +909,14 @@ def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
     expected_group_counts = {
         "bbb_martins": 4,
         "bioavailability_ma": 5,
-        "skin_reaction": 4,
+        "skin_reaction": 2,
     }
-    for task in TASKS:
+    for task in _selected_tasks(args):
         batch_dir = _batch_dir(
             output_root,
             task,
             args.assay_transfer_selection_unit,
+            args.experiment_mode,
             args.top_k_per_group,
             args.assay_transfer_diversity_mode,
             args.assay_transfer_records_per_molecule,
@@ -548,7 +937,7 @@ def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
                 )
         manifest_expected = {
             "n_items": expected_queries,
-            "experiment_mode": "full_mechanism",
+            "experiment_mode": args.experiment_mode,
             "retrieval_source": "starling",
             "retrieval_strategy": "assay_transfer_tool",
             "assay_transfer_profile": PROFILE_NAME,
@@ -567,7 +956,21 @@ def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
             "neighbor_context_profile": "standard",
             "identity_blind": True,
             "top_k_per_group": args.top_k_per_group,
-            "group_output_schema": task.group_output_schema,
+            "group_output_schema": (
+                "analogous_flat_minimal_v1"
+                if args.analogous_reasoning_only
+                else task.group_output_schema
+            ),
+            "group_prompt_version": (
+                "analogous_flat_v1"
+                if args.analogous_reasoning_only
+                else task.group_prompt_version
+            ),
+            "disable_flat_tools": args.disable_flat_tools,
+            "group_tools_enabled": (
+                not args.disable_flat_tools and not args.analogous_reasoning_only
+            ),
+            "analogous_reasoning_only": args.analogous_reasoning_only,
         }
         for field, expected in manifest_expected.items():
             if manifest.get(field) != expected:
@@ -586,6 +989,7 @@ def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
         batch_id = _task_batch_id(
             task,
             args.assay_transfer_selection_unit,
+            args.experiment_mode,
             args.top_k_per_group,
             args.assay_transfer_diversity_mode,
             args.assay_transfer_records_per_molecule,
@@ -641,10 +1045,13 @@ def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
             if reranker.get("logit_extraction_dtype") != LOGIT_EXTRACTION_DTYPE:
                 errors.append(f"{task.task_id}/{run_dir.name}: retrieval provenance is not FP32 logits")
             groups = retrieval.get("groups") or []
-            if len(groups) != expected_group_counts[task.task_id]:
+            expected_group_count = (
+                1 if args.experiment_mode == "full_flat" else expected_group_counts[task.task_id]
+            )
+            if len(groups) != expected_group_count:
                 errors.append(
                     f"{task.task_id}/{run_dir.name}: group count={len(groups)}, "
-                    f"expected={expected_group_counts[task.task_id]}"
+                    f"expected={expected_group_count}"
                 )
             for group in groups:
                 neighbors = group.get("neighbors") or []
@@ -657,7 +1064,10 @@ def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
                     )
                 if (
                     args.assay_transfer_selection_unit
-                    == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE
+                    in {
+                        ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE,
+                        ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
+                    }
                     and len({str(row.get("molecule_chembl_id") or "") for row in neighbors})
                     != len(neighbors)
                 ):
@@ -673,13 +1083,25 @@ def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
                         )
                     if not isinstance(score, (int, float)) or not 0.0 <= float(score) <= 1.0:
                         errors.append(f"{task.task_id}/{run_dir.name}: invalid transfer score")
-                    selected_records = neighbor.get("transfer_selected_records") or [
-                        {
-                            "transfer_selection_score": score,
-                            "transfer_winning_record": neighbor.get(
-                                "transfer_winning_record"
-                            ) or {},
-                        }
+                    selected_records = [
+                        selected
+                        for family in (
+                            neighbor.get("transfer_family_selections") or [neighbor]
+                        )
+                        for selected in (
+                            family.get("transfer_selected_records")
+                            or [
+                                {
+                                    "transfer_selection_score": family.get(
+                                        "transfer_selection_score"
+                                    ),
+                                    "transfer_winning_record": family.get(
+                                        "transfer_winning_record"
+                                    )
+                                    or {},
+                                }
+                            ]
+                        )
                     ]
                     if (
                         args.assay_transfer_records_per_molecule > 1
@@ -719,9 +1141,14 @@ def _audit_completed_artifacts(args: argparse.Namespace) -> dict[str, Any]:
                         errors.append(
                             f"{task.task_id}/{run_dir.name}: invalid bundled transfer score"
                         )
-                    if args.assay_transfer_records_per_molecule > 1 and (
+                    if (
+                        args.assay_transfer_selection_unit
+                        == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE
+                        and args.assay_transfer_records_per_molecule > 1
+                        and (
                         any(not key for key in endpoint_keys)
                         or len(endpoint_keys) != len(set(endpoint_keys))
+                        )
                     ):
                         errors.append(
                             f"{task.task_id}/{run_dir.name}: selected records are not "
@@ -759,11 +1186,12 @@ def _write_completion_summary(
 ) -> dict[str, Any]:
     output_root = Path(args.output_root)
     batches: dict[str, Any] = {}
-    for task in TASKS:
+    for task in _selected_tasks(args):
         batch_dir = _batch_dir(
             output_root,
             task,
             args.assay_transfer_selection_unit,
+            args.experiment_mode,
             args.top_k_per_group,
             args.assay_transfer_diversity_mode,
             args.assay_transfer_records_per_molecule,
@@ -774,6 +1202,7 @@ def _write_completion_summary(
             "batch_id": _task_batch_id(
                 task,
                 args.assay_transfer_selection_unit,
+                args.experiment_mode,
                 args.top_k_per_group,
                 args.assay_transfer_diversity_mode,
                 args.assay_transfer_records_per_molecule,
@@ -803,15 +1232,16 @@ def _write_completion_summary(
         "# V11 assay-transfer scaffold-validation run",
         "",
         (
-            "This run used an initial Morgan pool of 50, selected three unique "
-            "molecules per mechanism group, and exposed up to five endpoint-distinct "
-            "records per molecule. Transfer logits were extracted in FP32."
+            f"This run used an initial Morgan pool of 50, selected top-{args.top_k_per_group} "
+            f"per mechanism group with {args.assay_transfer_selection_unit}, and displayed "
+            f"up to {args.assay_transfer_records_per_molecule} record(s) per molecule. "
+            "Transfer logits were extracted in FP32."
         ),
         "",
         "| Task | n | Accuracy | Macro-F1 | Records / molecule | Max records |",
         "|---|---:|---:|---:|---:|---:|",
     ]
-    for task in TASKS:
+    for task in _selected_tasks(args):
         batch = batches[task.task_id]
         task_audit = audit["tasks"].get(task.task_id, {})
         lines.append(
@@ -839,6 +1269,28 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", default="")
     parser.add_argument(
+        "--tasks",
+        nargs="+",
+        choices=tuple(task.task_id for task in ACTIVE_TASKS),
+        default=list(DEFAULT_TASK_IDS),
+    )
+    parser.add_argument(
+        "--experiment-mode",
+        choices=("full_flat", "full_mechanism"),
+        default="full_flat",
+    )
+    parser.add_argument(
+        "--retrieval-condition",
+        dest="retrieval_conditions",
+        action="append",
+        choices=RETRIEVAL_CONDITIONS,
+        default=[],
+        help=(
+            "Repeat to schedule Morgan, assay-transfer record-level, and/or "
+            "assay-transfer molecule-level retrieval in one global prompt pool."
+        ),
+    )
+    parser.add_argument(
         "--assay-transfer-selection-unit",
         choices=ASSAY_TRANSFER_SELECTION_UNITS,
         default=ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
@@ -846,9 +1298,12 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--assay-transfer-records-per-molecule",
         type=int,
-        default=ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+        default=None,
         metavar="N",
-        help="Maximum endpoint-distinct records shown per selected unique molecule.",
+        help=(
+            "Displayed records per molecule. Defaults to 6 for mean_score_molecule "
+            "and 1 otherwise."
+        ),
     )
     parser.add_argument(
         "--assay-transfer-diversity-mode",
@@ -880,17 +1335,52 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=f"/local/joseph/txagent/assay-v11-k3-tool-cache-{os.getuid()}.sqlite3",
     )
     parser.add_argument("--tool-start-timeout-s", type=int, default=300)
+    parser.add_argument(
+        "--disable-flat-tools",
+        action="store_true",
+        help=(
+            "Disable flat group-branch molecule comparison tools while retaining "
+            "single-branch molecule_properties"
+        ),
+    )
+    parser.add_argument(
+        "--analogous-reasoning-only",
+        action="store_true",
+        help=(
+            "Run the versioned tool-free analogous_flat_v1 prompt: omit the "
+            "single stage, show neighbor SMILES and record transfer scores, then "
+            "run one flat analysis followed by final synthesis."
+        ),
+    )
     parser.add_argument("--manifest-only", action="store_true")
     args = parser.parse_args(argv)
-    if not args.output_root:
-        args.output_root = str(
-            _default_output_root(
-                args.top_k_per_group,
-                args.assay_transfer_selection_unit,
-                args.assay_transfer_diversity_mode,
-                args.assay_transfer_records_per_molecule,
-            )
+    args.retrieval_conditions = list(dict.fromkeys(args.retrieval_conditions))
+    if args.assay_transfer_records_per_molecule is None:
+        args.assay_transfer_records_per_molecule = (
+            6
+            if args.assay_transfer_selection_unit
+            == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
+            else ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT
         )
+    if not args.output_root:
+        if args.retrieval_conditions:
+            condition_slug = "_".join(args.retrieval_conditions)
+            args.output_root = str(
+                DEFAULT_OUTPUT_ROOT
+                / f"full_flat_k{args.top_k_per_group}_{condition_slug}_analogous_flat_v1"
+            )
+        else:
+            args.output_root = str(
+                _default_output_root(
+                    args.top_k_per_group,
+                    args.assay_transfer_selection_unit,
+                    experiment_mode=args.experiment_mode,
+                    diversity_mode=args.assay_transfer_diversity_mode,
+                    records_per_molecule=args.assay_transfer_records_per_molecule,
+                    disable_flat_tools=args.disable_flat_tools,
+                    analogous_reasoning_only=args.analogous_reasoning_only,
+                )
+            )
     if args.limit < 0:
         parser.error("--limit must be non-negative")
     if not 1 <= args.top_k_per_group <= 50:
@@ -904,6 +1394,16 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--retrieval-preparation-workers must be positive")
     if args.max_stage_requeues < 0:
         parser.error("--max-stage-requeues must be non-negative")
+    if args.disable_flat_tools and args.experiment_mode != "full_flat":
+        parser.error("--disable-flat-tools requires --experiment-mode full_flat")
+    if args.analogous_reasoning_only and args.experiment_mode != "full_flat":
+        parser.error(
+            "--analogous-reasoning-only requires --experiment-mode full_flat"
+        )
+    if args.retrieval_conditions and not args.analogous_reasoning_only:
+        parser.error(
+            "--retrieval-condition requires --analogous-reasoning-only"
+        )
     if args.tool_workers < 1:
         parser.error("--tool-workers must be positive")
     try:
@@ -941,16 +1441,27 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     output_root = Path(args.output_root)
-    validated = _validate_inputs()
+    selected_tasks = _selected_tasks(args)
+    validated = _validate_inputs(selected_tasks)
     commands = build_batch_commands(args)
     manifest = {
         "contract_version": LAUNCH_CONTRACT_VERSION,
         "scheduler": SCHEDULER_VERSION,
         "benchmark_split": "scaffold",
         "evaluation_subset": "valid",
-        "visibility_mode": "identity_blind",
+        "experiment_mode": args.experiment_mode,
+        "visibility_mode": (
+            "query_blind_neighbor_smiles"
+            if args.analogous_reasoning_only
+            else "identity_blind"
+        ),
         "neighbor_identity_policy": "parent_disjoint",
-        "retrieval_strategy": "assay_transfer_tool",
+        "retrieval_strategy": (
+            "comparison_suite"
+            if args.retrieval_conditions
+            else "assay_transfer_tool"
+        ),
+        "retrieval_conditions": list(args.retrieval_conditions),
         "assay_transfer_profile": PROFILE_NAME,
         "assay_transfer_initial_morgan_filter": 50,
         "top_k_per_group": args.top_k_per_group,
@@ -958,13 +1469,31 @@ def main(argv: list[str] | None = None) -> int:
         "assay_transfer_min_score": None,
         "assay_transfer_diversity_mode": args.assay_transfer_diversity_mode,
         "assay_transfer_diversity_score_slack_by_task": {
-            task.task_id: _task_diversity_score_slack(task, args) for task in TASKS
+            task.task_id: _task_diversity_score_slack(task, args) for task in selected_tasks
         },
         "assay_transfer_selection_unit": args.assay_transfer_selection_unit,
         "assay_transfer_records_per_molecule": (
             args.assay_transfer_records_per_molecule
         ),
         "scores_visible": True,
+        "analogous_reasoning_only": args.analogous_reasoning_only,
+        "effective_prompt_version": (
+            "analogous_flat_v1" if args.analogous_reasoning_only else ""
+        ),
+        "group_prompt_versions": {
+            task.task_id: (
+                "analogous_flat_v1"
+                if args.analogous_reasoning_only
+                else task.group_prompt_version
+            )
+            for task in selected_tasks
+        },
+        "disable_flat_tools": args.disable_flat_tools or args.analogous_reasoning_only,
+        "flat_group_tool_policy": (
+            "omitted.v1"
+            if args.disable_flat_tools or args.analogous_reasoning_only
+            else "standard.v1"
+        ),
         "score_decimals": 2,
         "backbone_dtype": BACKBONE_DTYPE,
         "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
@@ -980,7 +1509,7 @@ def main(argv: list[str] | None = None) -> int:
         "tool_service_url": args.tool_service_url,
         "tool_workers": args.tool_workers,
         "validated_caches": validated,
-        "tasks": [asdict(task) for task in TASKS],
+        "tasks": [asdict(task) for task in selected_tasks],
         "commands": [
             {"experiment_name": command.experiment_name, "command": command.command}
             for command in commands
@@ -996,14 +1525,22 @@ def main(argv: list[str] | None = None) -> int:
     endpoint = _check_endpoint(args)
     manifest["endpoint_health"] = endpoint
     write_json_atomic(output_root / "launch_manifest.json", manifest)
-    service = _start_or_reuse_tool_service(args)
-    manifest["tool_service"] = {
-        "status": "healthy",
-        "reused_existing": service.reused,
-        "workers": args.tool_workers,
-        "native_threads": 1,
-        "batch_workers_per_process": 8,
-    }
+    service = (
+        ToolService()
+        if args.analogous_reasoning_only
+        else _start_or_reuse_tool_service(args)
+    )
+    manifest["tool_service"] = (
+        {"status": "omitted", "reason": "analogous_flat_v1"}
+        if args.analogous_reasoning_only
+        else {
+            "status": "healthy",
+            "reused_existing": service.reused,
+            "workers": args.tool_workers,
+            "native_threads": 1,
+            "batch_workers_per_process": 8,
+        }
+    )
     write_json_atomic(output_root / "launch_manifest.json", manifest)
     try:
         failed = run_global_prompt_pool(
@@ -1012,7 +1549,11 @@ def main(argv: list[str] | None = None) -> int:
             max_stage_requeues=args.max_stage_requeues,
             preparation_workers=args.retrieval_preparation_workers,
         )
-        audit = _audit_completed_artifacts(args)
+        audit = (
+            _audit_retrieval_condition_artifacts(args)
+            if args.retrieval_conditions
+            else _audit_completed_artifacts(args)
+        )
         if audit["status"] != "pass":
             failed.append(
                 {
@@ -1021,7 +1562,11 @@ def main(argv: list[str] | None = None) -> int:
                     "n_errors": len(audit["errors"]),
                 }
             )
-        summary = _write_completion_summary(args, failed, audit)
+        summary = (
+            _write_retrieval_condition_summary(args, failed, audit)
+            if args.retrieval_conditions
+            else _write_completion_summary(args, failed, audit)
+        )
         print(json.dumps(summary, indent=2), flush=True)
         return 1 if failed else 0
     finally:

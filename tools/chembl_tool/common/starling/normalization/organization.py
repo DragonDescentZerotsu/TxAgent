@@ -50,8 +50,15 @@ def deduplicate_within_source(
             source.get("canonical_smiles"),
             source.get("group_id"),
             source.get("endpoint_name"),
-            source.get("canonical_measurement"),
-            source.get("canonical_unit"),
+            # Assay-transfer base-unit and tail transforms happen before this
+            # organization step. Retrieval membership must instead retain the
+            # exact dedup identity that existed at the source-canonical layer.
+            source.get("assay_transfer_prebase_measurement_text")
+            if "assay_transfer_prebase_measurement_text" in source
+            else source.get("canonical_measurement"),
+            source.get("assay_transfer_prebase_unit_text")
+            if "assay_transfer_prebase_unit_text" in source
+            else source.get("canonical_unit"),
             context_identity,
             source.get("support_text"),
         )

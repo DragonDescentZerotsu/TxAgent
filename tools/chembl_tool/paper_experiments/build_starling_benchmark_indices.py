@@ -9,17 +9,20 @@ from pathlib import Path
 from typing import Any
 
 from tools.chembl_tool.common.starling.v7_benchmark_view import (
+    ALL_PARENT_FILTER,
+    ALL_SCAFFOLD_FILTER,
     DIRECT_NUMERIC_VIEW,
+    DIRECT_SOURCE_ONLY_FILTER,
     FULL_VIEW,
+    HELDOUT_FILTER_MODES,
     build_v7_benchmark_view,
 )
-
 
 DEFAULT_OUTPUT_ROOT = Path("outputs/paper")
 BENCHMARK_SPLITS = ("random", "scaffold")
 BENCHMARK_LINEAGE = "record_agreement70_split811_v1"
 
-INDEX_SPECS: tuple[dict[str, str], ...] = (
+INDEX_SPECS: tuple[dict[str, Any], ...] = (
     {
         "name": "bbb_starling_v7",
         "task": "BBB_Martins",
@@ -51,6 +54,20 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
         "view": FULL_VIEW,
     },
     {
+        "name": "bioavailability_starling_v7_direct_dedup_scaffold_disjoint_v1",
+        "task": "Bioavailability_Ma",
+        "task_id": "bioavailability_ma",
+        "normalized_root": (
+            "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
+            "starling_normalized_v7"
+        ),
+        "paper_direct_source_rows": (
+            "data/starling_data/bioavailability_ma/canonical_direct_v2/"
+            "direct_source_rows.parquet"
+        ),
+        "view": FULL_VIEW,
+    },
+    {
         "name": "skin_reaction_starling_v7",
         "task": "Skin_Reaction",
         "task_id": "skin_reaction",
@@ -59,6 +76,20 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
             "starling_normalized_v7"
         ),
         "view": FULL_VIEW,
+    },
+    {
+        "name": "clintox_starling_v7",
+        "task": "ClinTox_Human_Toxicity",
+        "task_id": "clintox",
+        "normalized_root": (
+            "outputs/chembl_tool/tasks/clintox/evidence_library/"
+            "starling_normalized_v7"
+        ),
+        "view": FULL_VIEW,
+        # ClinTox has only the candidate record_supported_v2 scaffold split.
+        # Keep it selectable without changing the established default matrix.
+        "benchmark_splits": ("scaffold",),
+        "default": False,
     },
 )
 
@@ -110,6 +141,8 @@ def main(argv: list[str] | None = None) -> int:
         )
         split_results = dict(results.get(split, {}))
         for spec in specs:
+            if split not in spec.get("benchmark_splits", BENCHMARK_SPLITS):
+                continue
             heldout_path = (
                 Path(args.benchmark_data_root)
                 / spec["task"]
@@ -121,6 +154,13 @@ def main(argv: list[str] | None = None) -> int:
             policy_module = importlib.import_module(
                 f"tools.chembl_tool.tasks.{spec['task_id']}.starling_policy"
             )
+            downstream_spec = None
+            if args.heldout_filter_mode == DIRECT_SOURCE_ONLY_FILTER:
+                downstream_module = importlib.import_module(
+                    f"tools.chembl_tool.tasks.{spec['task_id']}."
+                    "build_starling_downstream_artifacts"
+                )
+                downstream_spec = downstream_module.get_spec()
             meta = build_v7_benchmark_view(
                 policy=policy_module.POLICY,
                 normalized_root=spec["normalized_root"],
@@ -128,6 +168,9 @@ def main(argv: list[str] | None = None) -> int:
                 out_dir=out_dir,
                 benchmark_split=split,
                 view=spec["view"],
+                heldout_filter_mode=args.heldout_filter_mode,
+                downstream_spec=downstream_spec,
+                paper_direct_source_rows=spec.get("paper_direct_source_rows"),
                 workers=args.workers,
                 progress_every=args.progress_every,
             )
@@ -152,7 +195,7 @@ def _load_existing_summary(path: Path) -> dict[str, Any]:
 def _collect_existing_index_meta(
     *,
     splits: list[str],
-    specs: list[dict[str, str]],
+    specs: list[dict[str, Any]],
     output_root: str | Path,
     lineage: str = BENCHMARK_LINEAGE,
 ) -> dict[str, Any]:
@@ -166,6 +209,8 @@ def _collect_existing_index_meta(
         )
         split_results: dict[str, Any] = {}
         for spec in specs:
+            if split not in spec.get("benchmark_splits", BENCHMARK_SPLITS):
+                continue
             meta_path = (
                 paper_root
                 / "evidence"
@@ -184,9 +229,9 @@ def _collect_existing_index_meta(
     return results
 
 
-def _select_specs(names: list[str]) -> list[dict[str, str]]:
+def _select_specs(names: list[str]) -> list[dict[str, Any]]:
     if not names:
-        return [dict(spec) for spec in INDEX_SPECS]
+        return [dict(spec) for spec in INDEX_SPECS if spec.get("default", True)]
     by_name = {spec["name"]: spec for spec in INDEX_SPECS}
     missing = sorted(set(names) - set(by_name))
     if missing:
@@ -195,9 +240,9 @@ def _select_specs(names: list[str]) -> list[dict[str, str]]:
 
 
 def _apply_source_evidence_overrides(
-    specs: list[dict[str, str]],
+    specs: list[dict[str, Any]],
     overrides: list[str],
-) -> list[dict[str, str]]:
+) -> list[dict[str, Any]]:
     """Return copied specs with explicit NAME=JSONL source overrides."""
     parsed: dict[str, str] = {}
     for item in overrides:
@@ -215,7 +260,7 @@ def _apply_source_evidence_overrides(
         raise SystemExit(
             "Source override does not match a selected index: " + ", ".join(unknown)
         )
-    updated: list[dict[str, str]] = []
+    updated: list[dict[str, Any]] = []
     for spec in specs:
         replacement = parsed.get(spec["name"])
         if replacement is None:
@@ -247,6 +292,17 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Root containing <Task>/<split>/heldout_molecule_labels.jsonl.",
     )
     parser.add_argument("--benchmark-lineage", default=BENCHMARK_LINEAGE)
+    parser.add_argument(
+        "--heldout-filter-mode",
+        choices=HELDOUT_FILTER_MODES,
+        default=ALL_PARENT_FILTER,
+        help=(
+            "all_parents preserves the historical paper-index contract; "
+            "direct_source_only removes held-out parents only from the task's "
+            "declared direct label source and retains mechanism evidence; "
+            f"{ALL_SCAFFOLD_FILTER} removes every held-out scaffold from all sources."
+        ),
+    )
     parser.add_argument("--workers", type=int, default=32)
     parser.add_argument("--progress-every", type=int, default=10000)
     parser.add_argument(

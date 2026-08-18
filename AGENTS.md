@@ -21,15 +21,22 @@ Most code should be implemented in a modular coherent manner; for instance, if I
 Don’t over-engineer the infrastructure. While we want good testing it should not be overkill.
 
 ## Env instruction
-This checkout is owned and run from `/data1/joseph/TxAgent` on `node002`. For RDKit, the tool service,
-and the reasoning pipeline, use the local `txagent-glm` environment, cloned from `vllm` and provisioned
-for this project:
+TxAgent has more than one checkout. Always inspect the current hostname and resolved repository root
+before choosing paths or reporting validation. The `/vast/projects/myatskar/design-documents/joseph/TxAgent`
+checkout is a valid source checkout and is authoritative when work is explicitly started there. The separate
+`/data1/joseph/TxAgent` checkout is node002-local and must not be assumed to exist or be synchronized from
+another host.
+
+When actually running from `/data1/joseph/TxAgent` on `node002`, use the local `txagent-glm` environment for
+RDKit, the tool service, and the reasoning pipeline. It is cloned from `vllm` and provisioned for this project:
 
 ```bash
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm <command>
 ```
 
-Do not assume that `/data1/tianang/anaconda3` or a colleague's project checkout is readable. The local
+Outside node002, use the environment available to the active checkout and report exactly what was used; do
+not claim node002 validation. Do not assume that `/data1/tianang/anaconda3` or a colleague's project checkout
+is readable. The node002-local
 `txagent-glm` environment includes `mmpdb==3.1.4` and `molgpka==0.1.0` from commit
 `f23ebcb12bba7ea2c9295db9527ceb07188d600e`, in addition to the cloned RDKit, FastAPI, OpenAI, requests
 and AccFG dependencies. Verify with:
@@ -67,11 +74,17 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Starling 二分类 benchmark（2026-08-10）
+## Current Starling binary benchmarks (2026-08-17)
 
-BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
-records 构建；ClinTox 因缺少与 clinical-trial toxicity failure 同定义的 Starling direct source，
-暂不构造 Starling split。公共协议和唯一构建入口为：
+BBB_Martins, Bioavailability_Ma, and Skin_Reaction have promoted Starling
+benchmarks. ClinTox now also has a separate Starling
+`ClinTox_Human_Toxicity` candidate built from `clintox_send_v2`; it predicts
+explicit human clinical toxicity rather than TDC/MoleculeNet CT_TOX. Its
+`record_supported_v2` scaffold split is 6,104/762/762 and remains
+`candidate_pending_qa` because the clinical source lacks
+`qualifying_conditions`. It must not be added to default paper matrices until
+that source-semantic limitation and the frozen gold QA gate are resolved. The
+shared protocol and builders are:
 
 ```text
 tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
@@ -81,6 +94,7 @@ tools/chembl_tool/common/starling/build_benchmark_datasets.py
 task adapters:
   tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
   tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
+  tools/chembl_tool/tasks/clintox/clintox_base_benchmark.py
   tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
 ```
 
@@ -249,8 +263,9 @@ Duo approval 仍由用户完成。
 
 split 中的 `train.jsonl` / `valid.jsonl` / `test.jsonl` 仍只含 `drug` 和 `Y`。label provenance、source row
 accept/reject reason、parent identity 和冲突记录保存在同目录 audit artifacts。正式评估前必须针对
-random/scaffold 分别按 valid+test union 的 `heldout_molecule_labels.jsonl` 重建 train-only retrieval index；现有从 full
-Starling source 构建的 evidence index 不能直接用于新 benchmark。
+random/scaffold 分别按 valid+test union 的 `heldout_molecule_labels.jsonl` 重建 split-specific retrieval view：
+只从 task 声明的 direct gold source 删除 held-out parent records；其它 mechanism sources 保留，并在 query time
+统一应用 `parent_disjoint`。现有从 full Starling source 构建、未执行 direct-source exclusion 的 index 不能直接用于新 benchmark。
 
 旧 `data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
 `data/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` 是既有 TDC 实验的历史输入，不再代表上述
@@ -517,6 +532,16 @@ tools/chembl_tool/common/starling/benchmark_dataset.py
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
 tools/chembl_tool/common/starling/heldout_index.py
 ```
+
+Artifact ownership is split at Stage 05. Task-level
+`outputs/chembl_tool/tasks/<task>/evidence_library/starling_normalized_v7/`
+is the reusable canonical source, and new builds stop after Stage 04 pair
+buckets and Stage 05 distance calibration. Benchmark-dependent Stage 06
+records, Stage 07 molecule evidence, Stage 08 neighbor indices, and Stage 09
+audits belong under `outputs/paper/<benchmark-lineage>/evidence/<task>/`.
+Restored task-local Stage 06-09 directories are frozen historical artifacts;
+reproduce them only with `--legacy-task-local-downstream`. Formal runners must
+receive the paper Stage 08 path explicitly.
 
 这些公共 workflow 的职责：
 
@@ -798,9 +823,10 @@ single-molecule、mechanism-family/flat/direct 和 final stages，并递归展�
 
 这里的既有 `test` / `valid` 和 2026-07-23 frozen results 来自旧 TDC lineage，应作为历史结果保留；
 `--split test|valid` 目前不能解释为 Starling 的 `random|scaffold`。新 Starling 正式实验必须显式选择
-`data/processed_starling/<Task>/random/test.jsonl` 或 `scaffold/test.jsonl`，使用相应 train-only
-retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
-test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
+`data/processed_starling/<Task>/random/test.jsonl` 或 `scaffold/test.jsonl`，使用相应 split-specific
+retrieval view，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
+direct-source test-parent exclusion、retained-mechanism audit 和 runtime `parent_disjoint` audit 前，不得把现有
+paper 指标改称 Starling 结果。
 
 Bioavailability/Skin `record_supported_v2` 与 BBB `experimental_meaningful_cns_access_v2` 后续 paper-facing
 structural-analog 主结果默认使用

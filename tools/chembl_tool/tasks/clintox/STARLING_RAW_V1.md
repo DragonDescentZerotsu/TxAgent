@@ -1,8 +1,14 @@
-# ClinTox Starling raw_v1
+# ClinTox Starling raw_v1 (superseded)
 
-> Historical lineage: this source and its artifacts remain reproducible, but
-> the active `ClinTox_Human_Toxicity` candidate now uses `clintox_base_v1`.
-> See `CLINTOX_BASE_V1.md`.
+This document describes a historical source pipeline. The active seven-source
+ClinTox delivery is `clintox_send_v2`; the old raw source data and derived
+evidence/index pipeline are no longer current. Historical experiment outputs
+remain reproducible only from their recorded source hashes and must not be
+mixed with send_v2 results.
+
+> Historical lineage: this source and its derived pipeline were superseded
+> first by `clintox_base_v1` and then by `clintox_send_v2`. See
+> `CLINTOX_STARLING_NORMALIZED_V7.md` for the active architecture.
 
 ## Scope
 

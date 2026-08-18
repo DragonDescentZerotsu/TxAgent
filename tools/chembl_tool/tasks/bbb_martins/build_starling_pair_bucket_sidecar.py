@@ -13,6 +13,9 @@ from tools.chembl_tool.common.starling.pair_buckets import (
     materialize_pair_buckets,
     read_pair_bucket_input,
 )
+from tools.chembl_tool.common.starling.assay_transfer_measurements import (
+    load_measurement_policy,
+)
 from tools.chembl_tool.common.starling.reference_semantics import (
     ReferenceEligibilitySpec,
 )
@@ -22,7 +25,7 @@ from tools.chembl_tool.tasks.bbb_martins.starling_pair_buckets import (
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_schema import RECORD_CONTRACT
-from tools.chembl_tool.tasks.bbb_martins.starling_policy import DEFAULT_OUT_DIR
+from tools.chembl_tool.tasks.bbb_martins.starling_policy import DEFAULT_OUT_DIR, POLICY
 
 
 DEFAULT_NORMALIZED_DIR = Path(DEFAULT_OUT_DIR)
@@ -62,6 +65,9 @@ def build_sidecar(*, records_path: str | Path, out_dir: str | Path) -> dict[str,
             if v7
             else None
         ),
+        assay_transfer_record_ineligibility=load_measurement_policy(
+            POLICY.assay_transfer_measurement_policy
+        ).get("record_ineligibility", {}),
     )
     if not all(metadata["validations"].values()):
         raise ValueError(f"pair-bucket audit failed: {metadata['validations']}")

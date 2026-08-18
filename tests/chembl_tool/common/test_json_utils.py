@@ -34,6 +34,12 @@ def test_parse_json_content_extracts_valid_embedded_object():
     assert parse_json_content('prefix {"ok": true} suffix') == {"ok": True}
 
 
+def test_parse_json_content_recovers_complete_object_after_extra_open_brace():
+    assert parse_json_content('{\n{"prediction": "pass"}') == {
+        "prediction": "pass"
+    }
+
+
 def test_atomic_json_writers_publish_complete_files(tmp_path):
     json_path = tmp_path / "nested" / "payload.json"
     jsonl_path = tmp_path / "rows.jsonl"

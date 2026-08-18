@@ -23,9 +23,11 @@ ASSAY_TRANSFER_DIVERSITY_MODES = (
 ASSAY_TRANSFER_SELECTION_VERSION = "assay_transfer_score_slack_diversity.v2"
 ASSAY_TRANSFER_SELECTION_SCORED_RECORD = "scored_record"
 ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE = "unique_molecule"
+ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE = "mean_score_molecule"
 ASSAY_TRANSFER_SELECTION_UNITS = (
     ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
     ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE,
+    ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
 )
 ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT = 1
 ASSAY_TRANSFER_RECORDS_PER_MOLECULE_MAX = 10
@@ -57,12 +59,114 @@ def validate_assay_transfer_records_per_molecule(
         )
     if (
         records_per_molecule > ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT
-        and selection_unit != ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE
+        and selection_unit
+        not in {
+            ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE,
+            ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
+        }
     ):
         raise ValueError(
             "assay-transfer records per molecule greater than 1 requires "
-            "selection unit unique_molecule"
+            "selection unit unique_molecule or mean_score_molecule"
         )
+
+
+def collapse_assay_transfer_records_by_mean_molecule(
+    records: Sequence[dict[str, Any]],
+    *,
+    records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Rank molecules by the mean over every eligible cached record.
+
+    Prompt records are not chosen by that score.  They are the exact frozen
+    Stage 07 Morgan representatives carried by the compact evidence index.
+    Missing representative scores fail closed so the displayed evidence can
+    never silently diverge from the frozen paper artifact.
+    """
+    validate_assay_transfer_records_per_molecule(
+        records_per_molecule,
+        selection_unit=ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
+    )
+    records_by_molecule: dict[str, list[dict[str, Any]]] = {}
+    for record in records:
+        molecule_id = str(record.get("molecule_chembl_id") or "")
+        records_by_molecule.setdefault(molecule_id, []).append(record)
+
+    output: list[dict[str, Any]] = []
+    n_underfilled_molecules = 0
+    for molecule_id, molecule_records in records_by_molecule.items():
+        representative_ids: list[str] = []
+        for evidence in molecule_records[0].get("evidence_rows") or []:
+            for record_id in evidence.get("_representative_record_ids") or []:
+                value = str(record_id)
+                if value and value not in representative_ids:
+                    representative_ids.append(value)
+        if not representative_ids:
+            raise ValueError(
+                "mean_score_molecule requires frozen Stage 07 representative record IDs "
+                f"for molecule {molecule_id!r}"
+            )
+        by_record_id = {
+            str(record.get("transfer_winning_record_id") or ""): record
+            for record in molecule_records
+        }
+        missing = [record_id for record_id in representative_ids if record_id not in by_record_id]
+        if missing:
+            raise ValueError(
+                "Cached assay-transfer scores are missing frozen Stage 07 representative "
+                f"records for molecule {molecule_id!r}: {missing[:3]}"
+            )
+        displayed = [by_record_id[record_id] for record_id in representative_ids[:records_per_molecule]]
+        mean_score = sum(
+            float(record["transfer_selection_score"]) for record in molecule_records
+        ) / len(molecule_records)
+        underfilled = len(displayed) < records_per_molecule
+        n_underfilled_molecules += int(underfilled)
+        base = molecule_records[0]
+        output.append(
+            {
+                **base,
+                "transfer_selection_score": mean_score,
+                "transfer_molecule_mean_score": mean_score,
+                "transfer_scored_record_count": len(molecule_records),
+                "transfer_records_per_molecule_limit": records_per_molecule,
+                "transfer_selected_record_count": len(displayed),
+                "transfer_representative_records_available": len(representative_ids),
+                "transfer_records_underfilled": underfilled,
+                "transfer_selected_records": [
+                    {
+                        "record_rank": rank,
+                        "transfer_selection_score": float(record["transfer_selection_score"]),
+                        "transfer_winning_record_id": record.get("transfer_winning_record_id"),
+                        "canonical_endpoint_key": _endpoint_key(record),
+                        "transfer_winning_record": record.get("transfer_winning_record") or {},
+                    }
+                    for rank, record in enumerate(displayed, start=1)
+                ],
+            }
+        )
+    output.sort(
+        key=lambda row: (
+            -float(row["transfer_selection_score"]),
+            -float(row.get("similarity") or 0.0),
+            str(row.get("molecule_chembl_id") or ""),
+        )
+    )
+    for rank, row in enumerate(output, start=1):
+        row["transfer_molecule_selection_rank"] = rank
+    return output, {
+        "selection_unit": ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
+        "molecule_identity_field": "molecule_chembl_id",
+        "molecule_score_policy": "arithmetic_mean_all_eligible_cached_records",
+        "within_molecule_record_policy": "frozen_stage07_morgan_representative_order",
+        "records_per_molecule": records_per_molecule,
+        "n_valid_records_before_collapse": len(records),
+        "n_unique_molecules_after_collapse": len(output),
+        "n_selected_records_after_collapse": sum(
+            int(row["transfer_selected_record_count"]) for row in output
+        ),
+        "n_underfilled_molecules": n_underfilled_molecules,
+    }
 
 
 def collapse_assay_transfer_records_by_molecule(
@@ -183,16 +287,24 @@ def assay_transfer_selection_policy(
         "within_molecule_record_policy": (
             "highest_score_per_canonical_endpoint_no_duplicate_backfill"
             if selection_unit == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE
+            else "frozen_stage07_morgan_representative_order"
+            if selection_unit == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
             else "not_applicable"
         ),
         "molecule_identity_field": (
             "molecule_chembl_id"
-            if selection_unit == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE
+            if selection_unit
+            in {
+                ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE,
+                ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE,
+            }
             else "not_applicable"
         ),
         "winning_record_policy": (
             "highest_transfer_score"
             if selection_unit == ASSAY_TRANSFER_SELECTION_UNIQUE_MOLECULE
+            else "arithmetic_mean_all_eligible_cached_records"
+            if selection_unit == ASSAY_TRANSFER_SELECTION_MEAN_SCORE_MOLECULE
             else "not_applicable"
         ),
         "score_frontier": "best_remaining_score_minus_score_slack.v1",

@@ -16,6 +16,7 @@ from tools.chembl_tool.common.units import canonicalize_unit
 from .measurements import (
     EndpointStandardizer,
     SourceMeasurementResolver,
+    has_non_atomic_directional_context,
     normalize_measurement_and_unit,
     parse_point_measurement,
 )
@@ -137,6 +138,23 @@ def validate_measurement_pairs(
     """
     errors: list[str] = []
     for record in records:
+        recompute_record = record
+        if record.get("assay_transfer_transform_id"):
+            recompute_record = {
+                **record,
+                "canonical_measurement": record.get(
+                    "assay_transfer_pretransform_measurement_text"
+                ),
+                "canonical_unit": record.get(
+                    "assay_transfer_pretransform_unit_text"
+                ),
+                "canonical_measurement_text": record.get(
+                    "assay_transfer_pretransform_measurement_text"
+                ),
+                "canonical_unit_text": record.get(
+                    "assay_transfer_pretransform_unit_text"
+                ),
+            }
         baseline = normalize_measurement_and_unit(
             record.get("measurement_text"), record.get("unit_text"), task=task
         )
@@ -165,25 +183,45 @@ def validate_measurement_pairs(
         )
         if source_measurement_resolver is not None:
             expected = source_measurement_resolver(
-                record,
+                recompute_record,
                 str(record.get("canonical_endpoint") or ""),
                 expected,
             )
         if contextual_standardizer is not None:
-            expected = contextual_standardizer(record, expected)
+            expected = contextual_standardizer(recompute_record, expected)
+        if record.get("assay_transfer_scale_factor") is not None:
+            # The frozen task policy, rather than the source parser, owns this
+            # reviewed base-unit correction. Its arithmetic and final tuple are
+            # checked by validate_final_assay_transfer_measurements.
+            continue
+        actual_measurement = record.get("canonical_measurement")
+        actual_unit = record.get("canonical_unit")
+        if record.get("assay_transfer_transform_id"):
+            actual_measurement = record.get(
+                "assay_transfer_pretransform_measurement_text"
+            )
+            actual_unit = record.get("assay_transfer_pretransform_unit_text")
+        expected_status = expected.status
         if (
-            record.get("canonical_measurement") != expected.canonical_measurement
-            or record.get("canonical_unit") != expected.canonical_unit
-            or record.get("measurement_unit_status") != expected.status
+            parse_point_measurement(actual_measurement).value is not None
+            and has_non_atomic_directional_context(actual_measurement, actual_unit)
+        ):
+            expected_status = "non_atomic_directional_context"
+        if (
+            actual_measurement != expected.canonical_measurement
+            or actual_unit != expected.canonical_unit
+            or record.get("measurement_unit_status") != expected_status
             or record.get("unit_notation_status") != expected.unit_notation_status
             or record.get("unit_notation_factor") != expected.unit_notation_factor
         ):
             errors.append(
                 f"{record.get('normalized_record_id') or '<missing>'}: "
-                f"actual=({record.get('canonical_measurement')!r}, "
-                f"{record.get('canonical_unit')!r}) expected=("
+                f"actual=({actual_measurement!r}, "
+                f"{actual_unit!r}, {record.get('measurement_unit_status')!r}, "
+                f"{record.get('unit_notation_status')!r}, "
+                f"{record.get('unit_notation_factor')!r}) expected=("
                 f"{expected.canonical_measurement!r}, "
-                f"{expected.canonical_unit!r}, {expected.status!r}, "
+                f"{expected.canonical_unit!r}, {expected_status!r}, "
                 f"{expected.unit_notation_status!r}, "
                 f"{expected.unit_notation_factor!r})"
             )

@@ -21,13 +21,17 @@ from tools.chembl_tool.common.starling.benchmark_dataset import (
     rejected,
     sha256_file,
 )
+from tools.chembl_tool.tasks.clintox.starling_source import (
+    DEFAULT_DATA_ROOT,
+    DIRECT_SOURCE_ID,
+    EXPECTED_SOURCE_SHA256,
+    SOURCE_RELEASE,
+)
 
 TASK_NAME = "ClinTox_Human_Toxicity"
-ADAPTER_VERSION = "clintox_base_human_toxicity.v1"
-SOURCE_ID = "clintox_base_v1:human_clinical_toxicity"
-DEFAULT_SOURCE_PATH = Path(
-    "data/starling_data/clintox/clintox_base_v1/extractions.parquet"
-)
+ADAPTER_VERSION = "clintox_send_v2_human_toxicity.v2"
+SOURCE_ID = f"{SOURCE_RELEASE}:{DIRECT_SOURCE_ID}"
+DEFAULT_SOURCE_PATH = DEFAULT_DATA_ROOT / DIRECT_SOURCE_ID / "extractions.parquet"
 ALLOWED_CATEGORIES = frozenset(
     {
         "cardiotoxicity",
@@ -119,6 +123,13 @@ def load_label_decisions(
 ) -> tuple[Iterable[LabelDecision], dict[str, Any]]:
     """Stream decisions and return complete source and policy provenance."""
     path = Path(source_path)
+    source_digest = sha256_file(path)
+    expected_digest = EXPECTED_SOURCE_SHA256[DIRECT_SOURCE_ID]
+    if source_digest != expected_digest:
+        raise ValueError(
+            "ClinTox clinical source digest mismatch: "
+            f"expected {expected_digest}, found {source_digest}"
+        )
     parquet = pq.ParquetFile(path)
     missing = sorted(set(SOURCE_COLUMNS) - set(parquet.schema_arrow.names))
     if missing:
@@ -137,8 +148,9 @@ def load_label_decisions(
     metadata = {
         "source": {
             "path": str(path),
-            "sha256": sha256_file(path),
-            "source_shard": "clintox_base_v1 human clinical toxicity and FDA extraction",
+            "sha256": source_digest,
+            "source_release": SOURCE_RELEASE,
+            "source_shard": "clintox_send_v2 human clinical toxicity and FDA extraction",
             "rows_available": parquet.metadata.num_rows,
             "rows_requested": limit,
         },

@@ -122,19 +122,36 @@ not also be a variance candidate. The narrow exception is an input used exclusiv
 controlled encoder: because real scalars and encoded outcomes are mutually exclusive, that field may remain
 a residual-heterogeneity candidate for the continuous rows. The selected categorical scale's inputs are
 excluded from its categorical residual audit. Other untouched cleaned source fields may be evaluated for
-residual heterogeneity, and they do not silently create child buckets. Measurement and unit canonicalization is an
-atomic, task-reviewed decision: never change a numeric value without changing its unit provenance in the
-same rule. A parser is not applied blindly to every source value. Each controlled measurement has a frozen
+residual heterogeneity, and they do not silently create child buckets.
+
+Canonical measurement fields are exclusively the numerical assay-transfer contract. They are not retrieval
+presentation fields and must never be substituted into an LLM-visible source projection. Retrieval preserves
+the cleaned `measurement_text`, `unit_text`, support, and context fields; `retrieval_eligible` is decided
+independently by organization. A canonical scale change may alter assay-transfer values and buckets, but it
+must preserve the source projection, scalar null/non-null status, and retrieval membership.
+
+Measurement and unit canonicalization is an atomic, task-reviewed decision: never change a numeric value
+without changing its unit provenance in the same rule. The final tuple is composed in one fixed order:
+the shared scalar/unit parser, endpoint standardization, source/context-specific reconciliation, controlled
+measurement encoding, canonical v7 projection, then the frozen assay-transfer scale/transform policy.
+Only that last composed result is persisted as `canonical_measurement_text`, `canonical_unit_text`,
+`finite_scalar_value`, and `variation_value`; no helper independently rewrites the persisted tuple later.
+The tuple also persists `assay_transfer_measurement_contract_version`, the applied transform ID, and the
+task measurement-policy version so downstream consumers can reject stale artifacts without reading the
+task's correction policy.
+A parser is not applied blindly to every source value. Each controlled measurement has a frozen
 source ID, real input fields, parser ID, measurement kind, and definition. Binary and ordinal declarations
 also freeze category IDs, ranks, and encoded values.
 
-Stage 04 is the only layer that decides pair-bucket membership. Its key uses canonical fields only and its
-sidecar persists `measurement_kind`, `canonical_measurement_scale_id`, `canonical_category_id`, and
-`canonical_category_rank`. Current supported kinds are `continuous`, `binary`, and `ordinal`; nominal
+Stage 04 is the only layer that annotates assay-transfer eligibility and pair-bucket membership. It retains
+one sidecar row for every Stage-03 record and persists `assay_transfer_eligible` plus an explicit
+`assay_transfer_ineligibility_reason`; it does not delete unit-defect records. Its key uses canonical fields
+only and its sidecar persists `measurement_kind`, `canonical_measurement_scale_id`,
+`canonical_category_id`, and `canonical_category_rank`. Current supported kinds are `continuous`, `binary`, and `ordinal`; nominal
 unordered outcomes remain evidence-only. A source with a controlled scale must include
 `canonical_measurement_scale_id` in its bucket identity, so incompatible scales cannot mix.
 Task schemas also declare eligible reference scopes. Unknown and comparator-relative measurements remain
-valid evidence records but are excluded from assay-transfer buckets; accepted reference scope, and basis
+valid evidence records but are marked assay-transfer-ineligible and receive no pair-bucket key; accepted reference scope, and basis
 for tasks that use it, are part of the bucket key so different denominators cannot mix.
 
 Stage 05 validates and calibrates the bucket observed in Stage 04; it never creates child buckets or changes
@@ -142,7 +159,8 @@ membership. Every bucket needs at least 25 records. Binary buckets must observe 
 ordinal buckets must observe at least three declared levels; every observed categorical level needs at least
 three records. Continuous residual heterogeneity uses the existing omega-squared audit. Binary and ordinal
 residual heterogeneity uses bias-corrected Cramér's V-squared, requires candidate levels with at least three
-records and at least 50% coverage, and flags values at or above 0.20. Valid buckets store a first-class
+records and at least 50% coverage, and flags values at or above 0.20. These statistics are audit-only: they
+must not invalidate or remove an entire bucket. Valid buckets store a first-class
 record-weighted sample SD with its ddof and source field. Valid continuous buckets additionally store the
 exact empirical value CDF as sorted support values, counts, and midranks. Valid ordinal buckets store a
 category-rank CDF over the complete declared domain; binary buckets retain explicit same/different semantics
@@ -150,6 +168,10 @@ and do not publish a CDF. V7 Stage 05 does not store a raw-
 distance CDF, pair samples, transfer cutoff, Boolean label, or soft probability. Downstream code may use SD
 for standardized raw-distance calculations or use same-bucket empirical-CDF separation for
 location-sensitive geometry.
+
+Stage 05 explicitly persists `assay_transfer_bucket_eligible` and
+`assay_transfer_bucket_ineligibility_reason`. This is global V7 bucket eligibility after Stage-04 row
+filtering and is separate from both row eligibility and any downstream release's train-only bucket gate.
 
 The shared structure is:
 
@@ -162,13 +184,19 @@ tools/chembl_tool/common/starling/canonicalization_v7.py
   aliases that exist only in memory.
 
 tools/chembl_tool/common/starling/split_downstream.py
-  Shared transactional Stages 04-09: complete-data pair buckets and distance calibration, then
-  random/scaffold label-source filtering, molecule evidence, neighbor indices, and audits.
+  Builds split-independent Stage 04 pair buckets and Stage 05 distance calibration under the task
+  canonical root. Its historical complete Stage 04-09 transaction remains available only through
+  `--legacy-task-local-downstream` for frozen-lineage reproduction.
+
+tools/chembl_tool/common/starling/v7_benchmark_view.py
+  Builds lineage-owned Stage 06 filtered records, Stage 07 molecule evidence, Stage 08 neighbor
+  indices, and Stage 09 audits under a paper experiment root.
 
 tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py
   V7 bucket validation, continuous/categorical residual-heterogeneity audits, first-class sample SD, exact
   continuous value-CDF geometry, and exact ordinal category-rank CDF geometry. The historical module/artifact name is retained for compatibility;
-  v2 emits no raw-distance CDF, pair labels, transfer thresholds, or probabilities.
+  v3 emits no raw-distance CDF, pair labels, transfer thresholds, or probabilities; unlike v2,
+  residual heterogeneity is audit-only and cannot invalidate a bucket.
 
 tools/chembl_tool/common/starling/normalization/task_policy.py
   StarlingTaskPolicy: the sole entry point for all task-specific inputs, including source profiles,
@@ -233,14 +261,18 @@ behavior genuinely differs at that scope:
 3. `common/contextual_unit_policy.json` -- reviewed exact-match assay-context rules.
 4. The `source_measurement_resolver` hook, per source and endpoint. Skin's
    `measurement_semantics.json` is the model: a declarative reviewed registry, not ad hoc
-   code. This is the granular floor; there is no record-level override.
+   code.
+5. The frozen assay-transfer measurement policy: explicit source-supported scale repairs,
+   base-unit normalization, reviewed tail transforms, and evidence-backed row-level
+   assay-transfer ineligibility. Row-level entries must carry provenance and never change
+   retrieval eligibility.
 
 Descending is allowed -- some data is genuinely too messy to generalize -- but the narrower
 layers all carry a `review` block, so say there why a general rule was not possible.
 
 **Do not chase every residual form.** A unit that cannot be parsed correctly should stay
 unrecognized, which already makes the record non-scalar and therefore ineligible for pair
-buckets and assay transfer. That is the intended outcome, not a gap to close: dropping a
+buckets and assay transfer. That is the intended outcome, not a gap to close: marking a
 handful of unparseable records costs far less than a bespoke rule that encodes one dataset's
 mess, or an approximation that yields a confidently wrong number. Prefer failing closed.
 
@@ -296,7 +328,9 @@ data/processed_starling_record_supported_v2/{Bioavailability_Ma,Skin_Reaction}/s
 
 The current builder first keeps Bemis-Murcko scaffolds disjoint, then constructs train/valid/test using the
 frozen lexicographic quality objective. `heldout_molecule_labels.jsonl` is the valid+test exclusion contract
-for the train-only retrieval index. Formal evaluation must wait for zero parent and scaffold overlap audits.
+for each task's direct gold source. Mechanism sources remain in the split-specific retrieval view and use
+query-time `parent_disjoint`. Formal evaluation must wait for zero direct-source parent overlap, retained-
+mechanism, runtime identity-policy, and scaffold-overlap audits.
 `data/processed_starling/<Task>/{random,scaffold}` is the first historical lineage and must not be mixed with
 current results. See `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md` for the full rules,
 frozen counts, and commands.

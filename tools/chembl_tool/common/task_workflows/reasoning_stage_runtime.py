@@ -12,7 +12,9 @@ import time
 from typing import Any
 
 from tools.chembl_tool.common.identity_blind import (
+    expose_neighbor_smiles_only,
     prepare_reasoning_retrieval,
+    query_without_prefetched_tools,
     sanitize_identity_blind_branch_outputs,
 )
 from tools.chembl_tool.common.final_evidence_surface import SUMMARY_ONLY
@@ -27,6 +29,12 @@ from tools.chembl_tool.common.json_utils import (
     write_jsonl_atomic as _write_jsonl_atomic,
 )
 from tools.chembl_tool.common.reasoning_calls import load_frozen_single_analysis
+from tools.chembl_tool.common.task_workflows.analogous_flat_prompt import (
+    PROMPT_IDENTITY_VIEW,
+    prompt_provenance as analogous_flat_prompt_provenance,
+    reason_final as reason_analogous_flat_final,
+    reason_group as reason_analogous_flat_group,
+)
 from tools.chembl_tool.common.retrieval_ablation import load_reusable_group_outputs
 from tools.chembl_tool.common.task_workflows.reasoning_batch import (
     BatchItem,
@@ -299,6 +307,7 @@ def _initialize_run_manifest(
             item.index,
         ),
         "identity_blind": args.identity_blind,
+        "disable_flat_tools": bool(getattr(args, "disable_flat_tools", False)),
         "analogous_reasoning_only": analogous_reasoning_only,
         "single_branch_execution": (
             "omitted" if analogous_reasoning_only else "executed_or_reused"
@@ -317,7 +326,17 @@ def _initialize_run_manifest(
                 analogous_reasoning_only=analogous_reasoning_only
             )
             if prepared.config.final_prompt_provenance is not None
+            and not _analogous_flat_args(args)
             else {}
+        ),
+        "analogous_flat_prompt_provenance": (
+            analogous_flat_prompt_provenance(_task_id(prepared))
+            if _analogous_flat_args(args)
+            else {}
+        ),
+        "prompt_identity_view": (
+            PROMPT_IDENTITY_VIEW if _analogous_flat_args(args) else "identity_blind"
+            if args.identity_blind else "deployment_visible"
         ),
         "harness_prefetch_tools": (
             False
@@ -332,10 +351,16 @@ def _initialize_run_manifest(
         "reasoning_effort": args.reasoning_effort,
         "temperature": args.temperature,
         "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
-        "group_tools_enabled": not args.disable_group_tools and not analogous_reasoning_only,
+        "group_tools_enabled": (
+            not args.disable_group_tools
+            and not getattr(args, "disable_flat_tools", False)
+            and not analogous_reasoning_only
+        ),
         "tool_execution_mode": (
             "omitted"
             if analogous_reasoning_only
+            else "harness_prefetch_query_only"
+            if getattr(args, "disable_flat_tools", False)
             else "harness_prefetch"
             if args.identity_blind or args.harness_prefetch_tools
             else "llm_function_call"
@@ -354,7 +379,9 @@ def _initialize_run_manifest(
             tool["function"]["name"]
             for tool in getattr(module, "GROUP_REASONING_TOOLS", [])
         ]
-        if not args.disable_group_tools and not analogous_reasoning_only
+        if not args.disable_group_tools
+        and not getattr(args, "disable_flat_tools", False)
+        and not analogous_reasoning_only
         else [],
         "max_tool_rounds": args.max_tool_rounds,
         "top_k_per_group": args.top_k_per_group,
@@ -502,7 +529,10 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
         raise ValueError(f"Reasoning group is not available: {group_id}")
     client = _make_client(state)
     group_kwargs: dict[str, Any] = {}
-    if state.prepared.config.supports_analogous_reasoning_only:
+    if (
+        state.prepared.config.supports_analogous_reasoning_only
+        and not _analogous_flat(state)
+    ):
         group_kwargs = {
             "include_assay_transfer_score": module.scored_neighbors_prompt_enabled(
                 context["reasoning_retrieval"]
@@ -519,16 +549,30 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
                 ),
                 "output_schema_profile": state.prepared.args.group_output_schema,
                 "presentation_style": state.prepared.args.presentation_style,
-                "omit_query_tools": _analogous_reasoning_only(state),
+                "prompt_version": state.prepared.args.group_prompt_version,
+                "omit_query_tools": (
+                    _analogous_reasoning_only(state)
+                    or getattr(state.prepared.args, "disable_flat_tools", False)
+                ),
             },
         }
     group_kwargs.update(_task_prompt_kwargs(state))
-    raw_output = module._reason_one_group(
-        client,
-        module._llm_query_payload(context["reasoning_retrieval"]["query"]),
-        group,
-        **group_kwargs,
-    )
+    group_query = context["reasoning_retrieval"]["query"]
+    if getattr(state.prepared.args, "disable_flat_tools", False):
+        group_query = query_without_prefetched_tools(group_query)
+    if _analogous_flat(state):
+        raw_output = reason_analogous_flat_group(
+            client,
+            group,
+            task_id=_task_id(state.prepared),
+        )
+    else:
+        raw_output = module._reason_one_group(
+            client,
+            module._llm_query_payload(group_query),
+            group,
+            **group_kwargs,
+        )
     canonical_output = raw_output
     if state.prepared.args.identity_blind:
         canonical_output = sanitize_identity_blind_branch_outputs(
@@ -586,13 +630,20 @@ def _execute_final(state: StageState) -> dict[str, Any]:
         final_kwargs["final_decision_profile"] = final_decision_profile
     if _analogous_reasoning_only(state):
         final_kwargs["analogous_reasoning_only"] = True
-    final_output = module._run_final_reasoning(
-        client,
-        context["reasoning_retrieval"],
-        single_output,
-        group_outputs,
-        **final_kwargs,
-    )
+    if _analogous_flat(state):
+        final_output = reason_analogous_flat_final(
+            client,
+            group_outputs,
+            task_id=_task_id(state.prepared),
+        )
+    else:
+        final_output = module._run_final_reasoning(
+            client,
+            context["reasoning_retrieval"],
+            single_output,
+            group_outputs,
+            **final_kwargs,
+        )
     final_path = state.run_dir / "final_reasoning_output.json"
     trace_path = state.run_dir / "trace_messages.jsonl"
     with _exclusive_run_lock(state.run_dir):
@@ -659,7 +710,16 @@ def _stage_context(state: StageState) -> dict[str, Any]:
             prefetched_tool_replay_run_dir=prefetched_replay,
             neighbor_context_profile=state.prepared.args.neighbor_context_profile,
             include_query_tools=not _analogous_reasoning_only(state),
+            include_neighbor_tools=(
+                not getattr(state.prepared.args, "disable_flat_tools", False)
+                and not _analogous_reasoning_only(state)
+            ),
         )
+        if _analogous_flat(state):
+            reasoning_retrieval = expose_neighbor_smiles_only(
+                reasoning_retrieval,
+                state.retrieval,
+            )
         state._context = {
             "module": module,
             "reasoning_retrieval": reasoning_retrieval,
@@ -681,7 +741,9 @@ def _make_client(state: StageState) -> OpenAICompatibleClient:
         temperature=args.temperature,
         tool_service_url=args.tool_service_url,
         enable_group_tools=(
-            not args.disable_group_tools and not _analogous_reasoning_only(state)
+            not args.disable_group_tools
+            and not getattr(args, "disable_flat_tools", False)
+            and not _analogous_reasoning_only(state)
         ),
         max_tool_rounds=args.max_tool_rounds,
         reasoning_effort=args.reasoning_effort,
@@ -737,6 +799,20 @@ def _expected_single_status(state: StageState) -> str:
 
 def _analogous_reasoning_only(state: StageState) -> bool:
     return bool(getattr(state.prepared.args, "analogous_reasoning_only", False))
+
+
+def _analogous_flat(state: StageState) -> bool:
+    return _analogous_flat_args(state.prepared.args)
+
+
+def _analogous_flat_args(args: Any) -> bool:
+    return bool(getattr(args, "analogous_reasoning_only", False)) and str(
+        getattr(args, "experiment_mode", "")
+    ) == "full_flat"
+
+
+def _task_id(prepared: PreparedBatch) -> str:
+    return prepared.config.pipeline_module.split(".")[-2]
 
 
 def _canonical_group_outputs(state: StageState) -> list[dict[str, Any]]:

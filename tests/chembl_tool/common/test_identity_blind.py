@@ -7,6 +7,7 @@ from tools.chembl_tool.common.identity_blind import (
     prepare_identity_blind_retrieval,
     prepare_replayed_prefetched_retrieval,
     prepare_reasoning_retrieval,
+    query_without_prefetched_tools,
     sanitize_identity_blind_branch_outputs,
 )
 
@@ -227,6 +228,43 @@ def test_query_tool_omission_never_contacts_tool_service():
     assert "prefetched_comparisons" not in visible["groups"][0]["neighbors"][0]
     assert blind["experiment"]["tool_execution_mode"] == "omitted"
     assert blind["query"] == {"molecule_id": "query", "identity_hidden": True}
+
+
+def test_flat_tool_omission_keeps_query_properties_but_skips_neighbor_comparisons():
+    retrieval = {
+        "query": {"input_smiles": "CCO", "canonical_smiles": "CCO"},
+        "experiment": {"mode": "full_flat"},
+        "groups": [
+            {
+                "group_id": "Flat.all_evidence",
+                "neighbors": [
+                    {
+                        "rank": 1,
+                        "molecule_chembl_id": "CHEMBL1",
+                        "canonical_smiles": "CCN",
+                        "evidence_rows": [],
+                    }
+                ],
+            }
+        ],
+    }
+    service = FakeToolService()
+    output = prepare_reasoning_retrieval(
+        retrieval,
+        service,
+        identity_blind=True,
+        harness_prefetch_tools=False,
+        include_query_tools=True,
+        include_neighbor_tools=False,
+    )
+
+    assert [name for name, _ in service.calls] == ["molecule_properties"]
+    assert output["query"]["tools_prefetched"] is True
+    assert output["groups"][0].get("tools_prefetched") is None
+    assert "prefetched_comparisons" not in output["groups"][0]["neighbors"][0]
+    assert output["experiment"]["tool_execution_mode"] == "harness_prefetch_query_only"
+    group_query = query_without_prefetched_tools(output["query"])
+    assert group_query == {"molecule_id": "query", "identity_hidden": True}
 
 
 def test_prefetched_tool_replay_keeps_visible_identity(tmp_path):

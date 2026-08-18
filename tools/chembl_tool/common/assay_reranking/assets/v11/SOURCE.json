@@ -1,6 +1,8 @@
 {
-  "source_template_root": "/data1/joseph/starling_assay_transfer/templates/assay_transfer_v11_intern",
-  "source_projection": "/data1/joseph/starling_assay_transfer/configs/assay_transfer/v11/prompt_projection.json",
+  "source_repository": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer",
+  "source_revision": "ee303afdc972fbcef820b6a39076032917b7346f",
+  "source_template_root": "templates/assay_transfer_v11_intern",
+  "source_projection": "configs/assay_transfer/v11/prompt_projection.json",
   "files": {
     "_macros.jinja": "4c48f2509b9b0b3df71910de572b7a30747141e651e1eeccf82196eec34fdd54",
     "bbb_martins/direct_bbb.jinja": "70c068c0399ee29f517fb2441151f12d08da801d656d47f5c5e186f871371530",
@@ -13,7 +15,7 @@
     "bioavailability_ma/fh.jinja": "63a174cb59807e578de4e892a6c134dcdfbca08715f5252364a6558c775d8dc7",
     "bioavailability_ma/hf_bioavailability.jinja": "b2f6a389990b84e4d3d5cca4cbb5779c279b668d32dac37b8920d605a0de8949",
     "bioavailability_ma/oral_exposure.jinja": "e955004c1337371e1e78dc216b7f8f0dc4782c1f282903b735ec620de3cc8bef",
-    "prompt_projection.json": "339f3bf95ae71e14fd5b288a0bdec8d66c5fadfd8d2aa13b76b9f9c13b48fd99",
+    "prompt_projection.json": "430c561f0788eccfb03a3f7d44ae96e4184257bf8266a186b475fca4f9165af8",
     "skin_reaction/direct_skin_reaction.jinja": "041fc82cba63654c5bc69906adcc3aa6834ce7e202ab2cf1c8768e1e395652dd",
     "skin_reaction/phototoxicity_irritation_local_damage.jinja": "5144c77646b47e07e73503840c76e5ec8e2eff83336cc57edca15da95c0633e5",
     "skin_reaction/sensitization_aop.jinja": "23020d97d86598e710bf2c250ebcb488ae4ff2e5f6695126aec18c7f7901068f",

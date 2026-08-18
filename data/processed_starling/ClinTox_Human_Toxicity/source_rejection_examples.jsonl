@@ -1,83 +1,84 @@
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000000084:ext_28"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000004137:ext_2"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006071:ext_7"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006505:ext_253"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006716:ext_1"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006718:ext_3"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006719:ext_4"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006720:ext_5"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006721:ext_6"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006722:ext_7"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006723:ext_8"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006724:ext_9"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006725:ext_10"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006726:ext_11"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006727:ext_12"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006728:ext_13"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006729:ext_14"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006733:ext_18"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000006735:ext_20"}}
-{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_record_id": "row:000008658:ext_33"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 6, "extraction_id": "ext_7", "pmid": "29784139"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7, "extraction_id": "ext_8", "pmid": "29784139"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 14, "extraction_id": "ext_7", "pmid": "16880787"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 23, "extraction_id": "ext_16", "pmid": "16880787"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 37, "extraction_id": "ext_6", "pmid": "3137469"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 122, "extraction_id": "ext_20", "pmid": "26661047"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 123, "extraction_id": "ext_21", "pmid": "26661047"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 125, "extraction_id": "ext_1", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 126, "extraction_id": "ext_2", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 127, "extraction_id": "ext_3", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 128, "extraction_id": "ext_4", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 129, "extraction_id": "ext_5", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 130, "extraction_id": "ext_6", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 134, "extraction_id": "ext_11", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 135, "extraction_id": "ext_12", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 137, "extraction_id": "ext_14", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 138, "extraction_id": "ext_15", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 149, "extraction_id": "ext_26", "pmid": "34626339"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 201, "extraction_id": "ext_18", "pmid": "26581586"}}
-{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 269, "extraction_id": "ext_2", "pmid": "7666078"}}
-{"reason": "missing_support_text", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 11560, "extraction_id": "ext_16", "pmid": "33391855"}}
-{"reason": "missing_support_text", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 80544, "extraction_id": "ext_9", "pmid": "34454035"}}
-{"reason": "missing_support_text", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 334059, "extraction_id": "ext_5", "pmid": "26686256"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 262, "extraction_id": "ext_66", "pmid": "17054231"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 342, "extraction_id": "ext_2", "pmid": "23179472"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 516, "extraction_id": "ext_15", "pmid": "38579193"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 1038, "extraction_id": "ext_36", "pmid": "11735647"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 2566, "extraction_id": "ext_62", "pmid": "23620168"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 2603, "extraction_id": "ext_7", "pmid": "30649751"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 3566, "extraction_id": "ext_35", "pmid": "38515839"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 3567, "extraction_id": "ext_36", "pmid": "38515839"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 4809, "extraction_id": "ext_17", "pmid": "11405181"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 5359, "extraction_id": "ext_43", "pmid": "34533782"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7268, "extraction_id": "ext_8", "pmid": "18159037"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7269, "extraction_id": "ext_9", "pmid": "18159037"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7270, "extraction_id": "ext_10", "pmid": "18159037"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7271, "extraction_id": "ext_11", "pmid": "18159037"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 7272, "extraction_id": "ext_12", "pmid": "18159037"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 8110, "extraction_id": "ext_304", "pmid": "21438920"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 9017, "extraction_id": "ext_1", "pmid": "33753457"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 12274, "extraction_id": "ext_91", "pmid": "33725357"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 13808, "extraction_id": "ext_14", "pmid": "23572409"}}
-{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 14550, "extraction_id": "ext_6", "pmid": "22683289"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 2, "extraction_id": "ext_3", "pmid": "29784139"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 12, "extraction_id": "ext_5", "pmid": "16880787"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 13, "extraction_id": "ext_6", "pmid": "16880787"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 27, "extraction_id": "ext_20", "pmid": "16880787"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 108, "extraction_id": "ext_2", "pmid": "30259313"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 113, "extraction_id": "ext_7", "pmid": "30259313"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 119, "extraction_id": "ext_15", "pmid": "26661047"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 145, "extraction_id": "ext_22", "pmid": "34626339"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 165, "extraction_id": "ext_5", "pmid": "38750093"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 182, "extraction_id": "ext_20", "pmid": "32974950"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 183, "extraction_id": "ext_21", "pmid": "32974950"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 209, "extraction_id": "ext_10", "pmid": "17054231"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 210, "extraction_id": "ext_11", "pmid": "17054231"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 211, "extraction_id": "ext_12", "pmid": "17054231"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 212, "extraction_id": "ext_13", "pmid": "17054231"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 213, "extraction_id": "ext_14", "pmid": "17054231"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 228, "extraction_id": "ext_29", "pmid": "17054231"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 229, "extraction_id": "ext_30", "pmid": "17054231"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 258, "extraction_id": "ext_62", "pmid": "17054231"}}
-{"reason": "needs_more_context", "example": {"source_id": "clintox_base_v1:human_clinical_toxicity", "source_index": 267, "extraction_id": "ext_71", "pmid": "17054231"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000000084:ext_28"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000004137:ext_2"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006071:ext_7"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006505:ext_253"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006716:ext_1"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006718:ext_3"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006719:ext_4"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006720:ext_5"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006721:ext_6"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006722:ext_7"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006723:ext_8"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006724:ext_9"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006725:ext_10"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006726:ext_11"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006727:ext_12"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006728:ext_13"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006729:ext_14"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006733:ext_18"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000006735:ext_20"}}
+{"reason": "invalid_or_unresolved_smiles", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_record_id": "row:000008658:ext_33"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 6, "extraction_id": "ext_7", "pmid": "29784139"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 7, "extraction_id": "ext_8", "pmid": "29784139"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 14, "extraction_id": "ext_7", "pmid": "16880787"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 23, "extraction_id": "ext_16", "pmid": "16880787"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 37, "extraction_id": "ext_6", "pmid": "3137469"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 122, "extraction_id": "ext_20", "pmid": "26661047"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 123, "extraction_id": "ext_21", "pmid": "26661047"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 125, "extraction_id": "ext_1", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 126, "extraction_id": "ext_2", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 127, "extraction_id": "ext_3", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 128, "extraction_id": "ext_4", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 129, "extraction_id": "ext_5", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 130, "extraction_id": "ext_6", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 134, "extraction_id": "ext_11", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 135, "extraction_id": "ext_12", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 137, "extraction_id": "ext_14", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 138, "extraction_id": "ext_15", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 149, "extraction_id": "ext_26", "pmid": "34626339"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 201, "extraction_id": "ext_18", "pmid": "26581586"}}
+{"reason": "missing_or_invalid_toxicity_category", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 269, "extraction_id": "ext_2", "pmid": "7666078"}}
+{"reason": "missing_support_text", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 11560, "extraction_id": "ext_16", "pmid": "33391855"}}
+{"reason": "missing_support_text", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 80544, "extraction_id": "ext_9", "pmid": "34454035"}}
+{"reason": "missing_support_text", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 334059, "extraction_id": "ext_5", "pmid": "26686256"}}
+{"reason": "missing_support_text", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 402453, "extraction_id": "ext_2", "pmid": "33074469"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 262, "extraction_id": "ext_66", "pmid": "17054231"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 342, "extraction_id": "ext_2", "pmid": "23179472"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 516, "extraction_id": "ext_15", "pmid": "38579193"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 1038, "extraction_id": "ext_36", "pmid": "11735647"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 2566, "extraction_id": "ext_62", "pmid": "23620168"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 2603, "extraction_id": "ext_7", "pmid": "30649751"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 3566, "extraction_id": "ext_35", "pmid": "38515839"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 3567, "extraction_id": "ext_36", "pmid": "38515839"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 4809, "extraction_id": "ext_17", "pmid": "11405181"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 5359, "extraction_id": "ext_43", "pmid": "34533782"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 7268, "extraction_id": "ext_8", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 7269, "extraction_id": "ext_9", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 7270, "extraction_id": "ext_10", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 7271, "extraction_id": "ext_11", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 7272, "extraction_id": "ext_12", "pmid": "18159037"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 8110, "extraction_id": "ext_304", "pmid": "21438920"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 9017, "extraction_id": "ext_1", "pmid": "33753457"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 12274, "extraction_id": "ext_91", "pmid": "33725357"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 13808, "extraction_id": "ext_14", "pmid": "23572409"}}
+{"reason": "missing_toxicity_outcome", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 14550, "extraction_id": "ext_6", "pmid": "22683289"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 2, "extraction_id": "ext_3", "pmid": "29784139"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 12, "extraction_id": "ext_5", "pmid": "16880787"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 13, "extraction_id": "ext_6", "pmid": "16880787"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 27, "extraction_id": "ext_20", "pmid": "16880787"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 108, "extraction_id": "ext_2", "pmid": "30259313"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 113, "extraction_id": "ext_7", "pmid": "30259313"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 119, "extraction_id": "ext_15", "pmid": "26661047"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 145, "extraction_id": "ext_22", "pmid": "34626339"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 165, "extraction_id": "ext_5", "pmid": "38750093"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 182, "extraction_id": "ext_20", "pmid": "32974950"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 183, "extraction_id": "ext_21", "pmid": "32974950"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 209, "extraction_id": "ext_10", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 210, "extraction_id": "ext_11", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 211, "extraction_id": "ext_12", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 212, "extraction_id": "ext_13", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 213, "extraction_id": "ext_14", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 228, "extraction_id": "ext_29", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 229, "extraction_id": "ext_30", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 258, "extraction_id": "ext_62", "pmid": "17054231"}}
+{"reason": "needs_more_context", "example": {"source_id": "clintox_send_v2:human_clinical_toxicity", "source_index": 267, "extraction_id": "ext_71", "pmid": "17054231"}}

@@ -1,0 +1,42 @@
+## TASK
+Predict {{ task.name }} by analogous reasoning over the supplied experimental evidence.
+
+Positive means {{ task.positive }}.
+Negative means {{ task.negative }}.
+
+## INSTRUCTIONS
+1. Use only the evidence below. Do not use molecule recognition or outside knowledge.
+2. The query structure is intentionally hidden. The retrieved molecules were selected upstream for the query.
+{% if retrieval_basis == "assay_transfer" %}
+3. Treat each assay-transfer likelihood as an estimate of how relevant that exact evidence record is to the hidden query. It is not an endpoint outcome, class probability, label vote, or deterministic rule.
+4. Infer the observed endpoint direction from the scientific record, then weight that direction by its transfer likelihood and relevance to the task.
+{% else %}
+3. Treat Morgan Tanimoto similarity as structural proximity to the hidden query. It is not an endpoint outcome, class probability, label vote, or deterministic rule.
+4. Infer the observed endpoint direction from each scientific record, then weight that direction by structural similarity and relevance to the task.
+{% endif %}
+5. Do not count repeated records for one molecule as independent molecules.
+6. Refer to analogs only as Molecule 1, Molecule 2, and so on.
+7. Choose supports_positive or supports_negative only when the transferable evidence favors that class; otherwise use mixed or insufficient.
+
+## ANALOG MOLECULES
+{% for molecule in molecules %}
+Molecule {{ molecule.number }}: {{ molecule.smiles }}
+{% if molecule.morgan_similarity is not none %}
+Morgan Tanimoto similarity: {{ "%.2f"|format(molecule.morgan_similarity) }}
+{% endif %}
+{% for record in molecule.evidence %}
+
+Evidence {{ loop.index }}
+Mechanism family: {{ record.mechanism_family }}
+{% if record.assay_transfer_score is not none %}
+Assay-transfer likelihood: {{ "%.2f"|format(record.assay_transfer_score) }}
+{% endif %}
+{% for field in record.fields %}
+{{ field.label }}: {{ field.value }}
+{% endfor %}
+{% endfor %}
+
+{% endfor %}
+Return one JSON object with exactly this schema:
+{{ output_schema }}
+Return only valid JSON.

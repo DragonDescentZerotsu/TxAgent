@@ -51,7 +51,9 @@ DEFAULT_QUALIFIER_VOCABULARY_PATH = Path(__file__).with_name(
 _NULL_VALUES = {"", "nan", "none", "null", "na", "n/a", "-", "unspecified"}
 
 # Fold the several unicode dashes/minus signs onto ASCII hyphen-minus.
-_DASHES = str.maketrans({"–": "-", "—": "-", "‑": "-", "‒": "-", "−": "-"})
+_DASHES = str.maketrans(
+    {"‐": "-", "–": "-", "—": "-", "‑": "-", "‒": "-", "−": "-"}
+)
 # Superscript characters -> their plain equivalents (used with a leading ``^``).
 _SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻", "0123456789+-")
 _SUPERSCRIPT_RE = re.compile(r"[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+")
@@ -65,6 +67,12 @@ _TOKEN_CASE = {
     "h": "h", "hr": "h", "hrs": "h", "hour": "h", "hours": "h",
     "min": "min", "mins": "min", "minute": "min", "minutes": "min",
     "s": "s", "sec": "s", "secs": "s", "second": "s", "seconds": "s",
+    # Millisecond spellings are lowercase.  Preserve mixed/upper-case forms
+    # such as mS/MS as unresolved tokens instead of silently turning
+    # conductance or mass-spectrometry notation into time.
+    "mS": "mS", "Ms": "Ms", "MS": "MS",
+    "ms": "ms", "msec": "ms", "msecs": "ms",
+    "millisecond": "ms", "milliseconds": "ms",
     "d": "d", "day": "d", "days": "d",
     "wk": "wk", "week": "wk", "weeks": "wk",
     # volume (litre): capital L, lowercase prefix
@@ -152,6 +160,12 @@ def _bare_exponent(match: re.Match[str]) -> str:
     base, exponent = match.group("base"), match.group("exponent")
     if not _is_known_unit_token(base):
         return match.group(0)
+    # Unit powers in biomedical data are small integers.  A long signed suffix
+    # is an identifier (for example the drug designator ``DA-8159``), not a
+    # physically meaningful power of daltons.  Leaving it intact sends it to
+    # the ordinary unknown-token path instead of attempting ``Da ** -8159``.
+    if abs(int(exponent)) > 12:
+        return match.group(0)
     # The base may be a prefix of a longer designator that is itself declared: once ``CYP``
     # is vocabulary, ``CYP2D6`` would otherwise split into ``CYP^2·D6``. Whenever the run
     # continues past the digits, prefer the longest declared token.
@@ -217,6 +231,7 @@ def clean_unit(value: Any) -> str | None:
     text = unicodedata.normalize("NFKC", text)
     text = text.translate(_DASHES)
     text = text.replace("μ", "µ")  # Greek small mu (U+03BC) -> micro sign (U+00B5)
+    text = text.replace("•", "·").replace("∙", "·")
     # ``per cent`` is one word split by a space, not a division: join it before the ``per``
     # operator runs, or the rewrite yields ``/cent``.
     text = re.sub(r"(?i)\bper\s+cent\b", "percent", text)
@@ -480,6 +495,12 @@ def _evaluate(
             else:
                 token = base or factor
                 exponent = int(exp_text) if separator else 1
+                if separator and abs(exponent) > 12:
+                    # Fail closed before arithmetic.  This is also a final
+                    # guard for explicit malformed powers that bypassed the
+                    # compact bare-exponent cleaner.
+                    token = factor
+                    exponent = 1
             plain.append([token, exponent, bool(separator)])
         if fold_numeric_basis:
             scale *= _fold_numeric_basis(plain, sign)

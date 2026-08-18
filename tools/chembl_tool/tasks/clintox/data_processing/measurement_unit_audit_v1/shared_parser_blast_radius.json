@@ -1,0 +1,81 @@
+{
+  "audit_date": "2026-08-17",
+  "audit_scope": "explicit source unit columns in the complete pinned BBB, Bioavailability, Skin, and ClinTox raw Parquets",
+  "baseline_git_commit": "5c641561e6e6c7998497b73e702a6d0766f795de",
+  "comparison": "HEAD units.py versus working-tree units.py; both use the working-tree task qualifier policy so code and vocabulary effects are separated",
+  "qualifier_policy_isolation": {
+    "bbb_martins_changed_forms": 0,
+    "bioavailability_ma_changed_forms": 0,
+    "skin_reaction_changed_forms": 0
+  },
+  "shared_assay_transfer_percent_rate_conversion": {
+    "bbb_martins_ratio_per_day_rows": 0,
+    "bioavailability_ma_ratio_per_day_rows": 0,
+    "clintox_ratio_per_day_rows": 53,
+    "clintox_source_unit_forms": [
+      "% day^-1",
+      "% per day",
+      "%/d",
+      "%/day"
+    ],
+    "skin_reaction_ratio_per_day_rows": 0,
+    "target_unit": "ratio/d"
+  },
+  "results": {
+    "bbb_martins": {
+      "changed_forms": 24,
+      "changed_rows": 43,
+      "explicit_unit_rows": 67265,
+      "unique_unit_forms": 4254,
+      "changes_by_cause": {
+        "exponent_fail_closed_guard": {"forms": 10, "rows": 18},
+        "multiplication_dot": {"forms": 13, "rows": 24},
+        "unicode_hyphen_normalization_preexisting": {"forms": 1, "rows": 1}
+      }
+    },
+    "bioavailability_ma": {
+      "changed_forms": 53,
+      "changed_rows": 213,
+      "explicit_unit_rows": 212978,
+      "unique_unit_forms": 4137,
+      "changes_by_cause": {
+        "exponent_fail_closed_guard": {"forms": 47, "rows": 172},
+        "multiplication_dot": {"forms": 6, "rows": 41}
+      }
+    },
+    "skin_reaction": {
+      "changed_forms": 30,
+      "changed_rows": 117,
+      "explicit_unit_rows": 242641,
+      "unique_unit_forms": 5682,
+      "changes_by_cause": {
+        "exponent_fail_closed_guard": {"forms": 18, "rows": 46},
+        "multiplication_dot": {"forms": 12, "rows": 71}
+      }
+    },
+    "clintox": {
+      "changed_forms": 188,
+      "changed_rows": 3717,
+      "explicit_unit_rows": 1332336,
+      "unique_unit_forms": 19030,
+      "changes_by_cause": {
+        "exponent_fail_closed_guard": {"forms": 21, "rows": 64},
+        "millisecond_alias": {"forms": 33, "rows": 2305},
+        "multiplication_dot": {"forms": 122, "rows": 1314},
+        "unicode_hyphen_normalization_preexisting": {"forms": 12, "rows": 34}
+      }
+    }
+  },
+  "review_notes": [
+    "Lowercase msec/millisecond forms are unambiguous time units; mS, Ms, and MS remain unresolved to avoid a conductance or mass-spectrometry collision.",
+    "Bullet and dot-operator glyphs are multiplication separators; the existing parser keeps slash-then-dot factors in the denominator unless an endpoint-specific standardizer resolves the quantity.",
+    "Large signed powers fail closed before arithmetic, which prevents compound and radiolabel identifiers from becoming physical exponents.",
+    "Removing bw/BW from the ClinTox qualifier vocabulary eliminated the only observed cross-task vocabulary effect; reviewed body-weight units are handled by exact ClinTox aliases instead.",
+    "The shared atomic percent-rate conversion is exercised by 53 ClinTox Stage-03 rows and by zero BBB, Bioavailability, or Skin Stage-03 rows."
+  ],
+  "working_tree_hashes": {
+    "qualifier_vocabulary_policy.json": "c3ba9b56f0009f6346ee627365d8d37a7dabd14e",
+    "starling/assay_transfer_measurements.py": "7b76547befb1ba7e51a84446203240f6649f8781",
+    "units.py": "fee3686c8e4c4b1db4c2ccc7bd5915ac28636f18"
+  }
+}

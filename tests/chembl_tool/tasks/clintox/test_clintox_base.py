@@ -1,8 +1,6 @@
 import json
 from pathlib import Path
 
-import pyarrow.parquet as pq
-
 from tools.chembl_tool.tasks.clintox.clintox_base import (
     DIRECT_GROUP,
     clean_text,
@@ -37,11 +35,14 @@ def test_artifact_profile_covers_all_stages():
 
 
 def test_tracked_source_manifest_discloses_missing_qualifier():
-    root = Path("data/starling_data/clintox/clintox_base_v1")
+    root = Path("data/starling_data/clintox/send_v2")
     manifest = json.loads((root / "SOURCE_MANIFEST.json").read_text())
-    parquet = pq.ParquetFile(root / "extractions.parquet")
-    assert manifest["parquet"]["n_rows"] == parquet.metadata.num_rows == 338_780
-    assert "qualifying_conditions" not in parquet.schema_arrow.names
-    assert any(
-        "qualifying_conditions" in item for item in manifest["known_limitations"]
+    source = next(
+        item for item in manifest["sources"]
+        if item["source_id"] == "human_clinical_toxicity"
+    )
+    assert source["rows"] == 584_307
+    assert "qualifying_conditions" not in source["columns"]
+    assert manifest["qualifying_conditions"]["human_clinical_toxicity"] == (
+        "unavailable_in_source_schema"
     )

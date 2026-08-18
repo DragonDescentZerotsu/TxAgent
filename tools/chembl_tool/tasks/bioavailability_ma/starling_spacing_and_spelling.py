@@ -138,7 +138,11 @@ def family_assignment(
             "relative or apparent oral bioavailability",
         )
     if source_id == "oral_exposure":
-        if endpoint in {"bioavailability", "absolute_bioavailability"}:
+        paper_scope = str((record or {}).get("canonical_paper_direct_scope") or "")
+        if paper_scope == "direct" or (
+            not paper_scope
+            and endpoint in {"bioavailability", "absolute_bioavailability"}
+        ):
             return FamilyAssignment(
                 "Observed.direct_oral_bioavailability",
                 "Observed",

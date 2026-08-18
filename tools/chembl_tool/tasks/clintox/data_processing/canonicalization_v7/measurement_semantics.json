@@ -1,0 +1,720 @@
+{
+  "schema_version": "clintox_measurement_semantics.schema.v1",
+  "policy_version": "clintox_measurement_semantics.v2",
+  "source_sha256": {
+    "cellular_stress": "5f1aae6e9f3a9d5b23d7ec1cfb46a7e18f09fdf8ba5bd8cca6957095de3cf3d9",
+    "general_cytotoxicity": "d6716731c1a283b00dc1b09dfbecaabe9045ed1765132ba736d4b0144537a99a",
+    "genotoxicity_carcinogenicity": "99a5eca0e26b97211ce2e980cd481529d2d4d7f534520918a4ce6c5f2d43193a",
+    "human_clinical_toxicity": "e09d712cc87a12c0e72195b5050c8b82bc5e4908b84bd38f43a4a00753f4b157",
+    "nonclinical_in_vivo_toxicity": "923c9b43ecf4513c1fe2ed130472117b088981b07d8d2d07d12b1946a64256dc",
+    "off_target_ddi_exposure": "c16b8051e2543ab73d47a40ad1d737b26a513f0c588f42d1c72479a5009ea2d1",
+    "organ_specific_toxicity": "d1c43db1e666ce253586cf52dfac8fd6de9320c639463a8ab3a84b1e7a70c0f6"
+  },
+  "review_basis": "Full seven-source endpoint, metric and unit census; exact source schema definitions; representative support-text review; fail-closed long tail.",
+  "unit_aliases": [
+    {
+      "rule_id": "clintox.nonclinical.body_weight_daily_mg_alias.v1",
+      "source_ids": ["nonclinical_in_vivo_toxicity"],
+      "raw_units": [
+        "mg/kg b.w. per day",
+        "mg/kg b.w./d",
+        "mg/kg b.w./day",
+        "mg/kg body weight per day",
+        "mg/kg body weight/day",
+        "mg/kg bw per day",
+        "mg/kg bw/d",
+        "mg/kg bw/day",
+        "mg/kg bw/day (nominal)",
+        "mg/kg bw/day nominal",
+        "mg/kg-d",
+        "mg/kg-day"
+      ],
+      "replacement_unit": "mg/kg/d",
+      "review": "Exact toxicology dose-basis spellings; bw and b.w. mean body weight and per day is retained."
+    },
+    {
+      "rule_id": "clintox.nonclinical.body_weight_mg_alias.v1",
+      "source_ids": ["nonclinical_in_vivo_toxicity"],
+      "raw_units": [
+        "mg/kg b.w.",
+        "mg/kg body wt",
+        "mg/kg body weight",
+        "mg/kg of body weight",
+        "mg/kg bw"
+      ],
+      "replacement_unit": "mg/kg",
+      "review": "Exact mass-per-body-weight spellings; no time basis is added."
+    },
+    {
+      "rule_id": "clintox.nonclinical.mortality_duration_percent_alias.v1",
+      "source_ids": [
+        "nonclinical_in_vivo_toxicity"
+      ],
+      "raw_units": [
+        "% (50 h)",
+        "% (72 h)"
+      ],
+      "replacement_unit": "%",
+      "review": "The parenthesized hour is an observation-time annotation, not a multiplicative unit factor."
+    },
+    {
+      "rule_id": "clintox.cytotoxicity.cell_population_percent_alias.v1",
+      "source_ids": [
+        "general_cytotoxicity"
+      ],
+      "raw_units": [
+        "% of cells"
+      ],
+      "replacement_unit": "%",
+      "review": "The assessed cell population is the percentage denominator, not a count multiplier."
+    },
+    {
+      "rule_id": "clintox.offtarget.administered_dose_percent_alias.v1",
+      "source_ids": [
+        "off_target_ddi_exposure"
+      ],
+      "raw_units": [
+        "% administered dose",
+        "% dose",
+        "% of administered dose",
+        "% of dose",
+        "percent of administered dose",
+        "percent of dose"
+      ],
+      "replacement_unit": "%",
+      "review": "These reviewed generic spellings all use the administered dose as denominator; compound-specific dose strings remain unresolved."
+    },
+    {
+      "rule_id": "clintox.nonclinical.body_weight_g_alias.v1",
+      "source_ids": ["nonclinical_in_vivo_toxicity"],
+      "raw_units": ["g/kg b.w.", "g/kg body weight", "g/kg bw"],
+      "replacement_unit": "g/kg",
+      "review": "Exact gram-per-body-weight spellings; mass prefix is preserved before conversion."
+    },
+    {
+      "rule_id": "clintox.nonclinical.body_weight_ug_alias.v1",
+      "source_ids": ["nonclinical_in_vivo_toxicity"],
+      "raw_units": ["µg/kg body weight", "µg/kg bw"],
+      "replacement_unit": "µg/kg",
+      "review": "Exact microgram-per-body-weight spellings; mass prefix is preserved before conversion."
+    }
+  ],
+  "rules": [
+    {
+      "rule_id": "clintox.nonclinical.benchmark_dose_rate.v1",
+      "priority": 900,
+      "selector": {
+        "source_ids": ["nonclinical_in_vivo_toxicity"],
+        "field_regex": {"canonical_endpoint": "(?:ld|lc|td|ec)\\d+|mtd|noael|loael|noel|loel|noec|loec|noaec|loaec|dose_limiting_toxicity"},
+        "unit_kinds": ["mass_dose_rate"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "toxicology_benchmark_dose_rate",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "mass_per_body_weight_per_time",
+        "target_unit": "mg/kg/d",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Named in-vivo toxicology benchmark with an explicit body-weight and time basis."
+    },
+    {
+      "rule_id": "clintox.nonclinical.benchmark_dose.v1",
+      "priority": 890,
+      "selector": {
+        "source_ids": ["nonclinical_in_vivo_toxicity"],
+        "field_regex": {"canonical_endpoint": "(?:ld|lc|td|ec)\\d+|mtd|noael|loael|noel|loel|noec|loec|noaec|loaec|dose_limiting_toxicity"},
+        "unit_kinds": ["mass_dose"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "toxicology_benchmark_dose",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "mass_per_body_weight",
+        "target_unit": "mg/kg",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Named in-vivo toxicology benchmark with an explicit body-weight basis."
+    },
+    {
+      "rule_id": "clintox.nonclinical.benchmark_mass_concentration.v1",
+      "priority": 880,
+      "selector": {
+        "source_ids": ["nonclinical_in_vivo_toxicity"],
+        "field_regex": {"canonical_endpoint": "(?:ld|lc|td|ec)\\d+|mtd|noael|loael|noel|loel|noec|loec|noaec|loaec"},
+        "unit_kinds": ["mass_concentration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "toxicology_benchmark_mass_concentration",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "mass_concentration",
+        "target_unit": "mg/L",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Named LC/EC or no-effect benchmark reported as a mass concentration."
+    },
+    {
+      "rule_id": "clintox.nonclinical.benchmark_molar_concentration.v1",
+      "priority": 870,
+      "selector": {
+        "source_ids": ["nonclinical_in_vivo_toxicity"],
+        "field_regex": {"canonical_endpoint": "(?:ld|lc|td|ec)\\d+|mtd|noael|loael|noel|loel|noec|loec|noaec|loaec"},
+        "unit_kinds": ["molar_concentration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "toxicology_benchmark_molar_concentration",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "molar_concentration",
+        "target_unit": "M",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Named LC/EC benchmark reported as a molar concentration."
+    },
+    {
+      "rule_id": "clintox.nonclinical.benchmark_ppm_ppb.v1",
+      "priority": 860,
+      "selector": {
+        "source_ids": ["nonclinical_in_vivo_toxicity"],
+        "field_regex": {"canonical_endpoint": "(?:ld|lc|td|ec)\\d+|mtd|noael|loael|noel|loel|noec|loec|noaec|loaec"},
+        "unit_kinds": ["ppm", "ppb"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "toxicology_benchmark_declared_fraction",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "declared_ppm_or_ppb_basis",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Preserve the explicitly reported ppm or ppb basis; do not infer feed, water or air equivalence."
+    },
+    {
+      "rule_id": "clintox.nonclinical.mortality_fraction.v1",
+      "priority": 850,
+      "selector": {
+        "source_ids": ["nonclinical_in_vivo_toxicity"],
+        "field_exact": {"canonical_endpoint": ["mortality_or_survival"]},
+        "unit_kinds": ["percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "animal_mortality_or_survival_fraction",
+        "numeric_domain": "bounded_0_100",
+        "semantic_unit_basis": "fraction_of_animals",
+        "target_unit": "%",
+        "reference_scope": "endpoint_defined_ratio",
+        "reference_basis": "other_explicit"
+      },
+      "review": "The source schema defines percentage mortality/survival as a cohort fraction, not assay control response."
+    },
+    {
+      "rule_id": "clintox.nonclinical.body_weight_percent.v1",
+      "priority": 840,
+      "selector": {
+        "source_ids": ["nonclinical_in_vivo_toxicity"],
+        "field_exact": {"canonical_endpoint": ["body_weight_change"]},
+        "unit_kinds": ["percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "body_weight_relative_change",
+        "numeric_domain": "finite_signed",
+        "semantic_unit_basis": "percent_change_from_baseline_or_control",
+        "target_unit": "%",
+        "reference_scope": "comparator_relative",
+        "reference_basis": "baseline"
+      },
+      "review": "Body-weight percentages are changes from baseline or control and remain comparator-relative."
+    },
+    {
+      "rule_id": "clintox.nonclinical.body_weight_mass.v1",
+      "priority": 830,
+      "selector": {
+        "source_ids": ["nonclinical_in_vivo_toxicity"],
+        "field_exact": {"canonical_endpoint": ["body_weight_change"]},
+        "unit_kinds": ["mass"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "body_weight_absolute_change",
+        "numeric_domain": "finite_signed",
+        "semantic_unit_basis": "reported_mass_change",
+        "reference_scope": "comparator_relative",
+        "reference_basis": "baseline"
+      },
+      "review": "A reported mass change is meaningful but depends on the animal's baseline body weight."
+    },
+    {
+      "rule_id": "clintox.cytotoxicity.potency_molar.v1",
+      "priority": 800,
+      "selector": {
+        "source_ids": ["general_cytotoxicity"],
+        "field_regex": {"canonical_endpoint": "(?:ic|ec|gi|tc|lc|cc|ed|id)\\d+|other_icx_gix|tgi"},
+        "unit_kinds": ["molar_concentration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "cytotoxicity_potency_molar",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "molar_concentration",
+        "target_unit": "M",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Concentration endpoints explicitly defined by the source schema; compatible molar prefixes collapse to M."
+    },
+    {
+      "rule_id": "clintox.cytotoxicity.potency_mass.v1",
+      "priority": 790,
+      "selector": {
+        "source_ids": ["general_cytotoxicity"],
+        "field_regex": {"canonical_endpoint": "(?:ic|ec|gi|tc|lc|cc|ed|id)\\d+|other_icx_gix|tgi"},
+        "unit_kinds": ["mass_concentration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "cytotoxicity_potency_mass",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "mass_concentration",
+        "target_unit": "mg/L",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Concentration endpoints explicitly defined by the source schema; compatible mass prefixes collapse to mg/L."
+    },
+    {
+      "rule_id": "clintox.cytotoxicity.viability_control_percent.v1",
+      "priority": 780,
+      "selector": {
+        "source_ids": ["general_cytotoxicity"],
+        "field_exact": {"canonical_endpoint": ["viability_percent", "proliferation_inhibition_percent"]},
+        "unit_kinds": ["percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "cytotoxicity_control_response_fraction",
+        "numeric_domain": "bounded_0_100",
+        "semantic_unit_basis": "percent_of_assay_control",
+        "target_unit": "% of control",
+        "reference_scope": "standardized_control_ratio",
+        "reference_basis": "assay_control"
+      },
+      "review": "The source schema places fixed-dose viability and proliferation response percentages in these endpoint classes."
+    },
+    {
+      "rule_id": "clintox.cytotoxicity.cell_death_percent.v1",
+      "priority": 770,
+      "selector": {
+        "source_ids": ["general_cytotoxicity"],
+        "field_exact": {"canonical_endpoint": ["cell_death_percent"]},
+        "unit_kinds": ["percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "cell_death_fraction",
+        "numeric_domain": "bounded_0_100",
+        "semantic_unit_basis": "fraction_of_cells",
+        "target_unit": "%",
+        "reference_scope": "endpoint_defined_ratio",
+        "reference_basis": "other_explicit"
+      },
+      "review": "Cell-death percentage uses the assessed cell population as denominator, not an assay-control value."
+    },
+    {
+      "rule_id": "clintox.cytotoxicity.membrane_control_percent.v1",
+      "priority": 760,
+      "selector": {
+        "source_ids": ["general_cytotoxicity"],
+        "field_exact": {"canonical_endpoint": ["membrane_integrity"], "unit_text": ["% of control", "percent of control"]},
+        "unit_kinds": ["percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "membrane_integrity_control_response",
+        "numeric_domain": "bounded_0_100",
+        "semantic_unit_basis": "percent_of_assay_control",
+        "target_unit": "% of control",
+        "reference_scope": "standardized_control_ratio",
+        "reference_basis": "assay_control"
+      },
+      "review": "Only an explicit control denominator is accepted; generic membrane-integrity percentages remain evidence-only."
+    },
+    {
+      "rule_id": "clintox.offtarget.qt_time.v1",
+      "priority": 750,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_exact": {"evidence_type": ["ecg_or_qt"]},
+        "field_regex": {"result_metric": ".*(?:qt|qtc|interval|duration).*"},
+        "unit_kinds": ["duration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "qt_interval_duration",
+        "numeric_domain": "nonnegative",
+        "semantic_unit_basis": "duration",
+        "target_unit": "ms",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "ECG/QT interval measurements with explicit time units, including msec and milliseconds."
+    },
+    {
+      "rule_id": "clintox.offtarget.potency_molar.v1",
+      "priority": 740,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "(?:ic|ec|ac|cc|tc|gi|lc)\\s?\\d+|ki|kd|km"},
+        "unit_kinds": ["molar_concentration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "off_target_potency_molar",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "molar_concentration",
+        "target_unit": "M",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Explicit off-target, transporter, ion-channel or metabolic potency metric with a molar unit."
+    },
+    {
+      "rule_id": "clintox.offtarget.potency_mass.v1",
+      "priority": 730,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "(?:ic|ec|ac|cc|tc|gi|lc)\\s?\\d+|ki|kd|km"},
+        "unit_kinds": ["mass_concentration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "off_target_potency_mass",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "mass_concentration",
+        "target_unit": "mg/L",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Explicit off-target, transporter, ion-channel or metabolic potency metric with a mass-concentration unit."
+    },
+    {
+      "rule_id": "clintox.offtarget.exposure_concentration_molar.v1",
+      "priority": 720,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "cmax|cmin|concentration|plasma concentration|blood concentration|tissue concentration"},
+        "unit_kinds": ["molar_concentration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "exposure_molar_concentration",
+        "numeric_domain": "nonnegative",
+        "semantic_unit_basis": "molar_concentration",
+        "target_unit": "M",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Explicit exposure concentration with a molar unit; no safety threshold is inferred."
+    },
+    {
+      "rule_id": "clintox.offtarget.exposure_concentration_mass.v1",
+      "priority": 710,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "cmax|cmin|concentration|plasma concentration|blood concentration|tissue concentration"},
+        "unit_kinds": ["mass_concentration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "exposure_mass_concentration",
+        "numeric_domain": "nonnegative",
+        "semantic_unit_basis": "mass_concentration",
+        "target_unit": "mg/L",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Explicit exposure concentration with a mass unit; no safety threshold is inferred."
+    },
+    {
+      "rule_id": "clintox.offtarget.auc_molar.v1",
+      "priority": 700,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": ".*auc.*"},
+        "unit_kinds": ["molar_auc"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "exposure_molar_auc",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "molar_concentration_time",
+        "target_unit": "M·h",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Absolute AUC with a molar concentration-time unit; AUC ratios are handled separately."
+    },
+    {
+      "rule_id": "clintox.offtarget.auc_mass.v1",
+      "priority": 690,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": ".*auc.*"},
+        "unit_kinds": ["mass_auc"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "exposure_mass_auc",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "mass_concentration_time",
+        "target_unit": "mg·h/L",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Absolute AUC with a mass concentration-time unit; AUC ratios are handled separately."
+    },
+    {
+      "rule_id": "clintox.offtarget.pk_duration.v1",
+      "priority": 680,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "t1/2|tmax|half-life|elimination half-life|terminal half-life|mrt|duration"},
+        "unit_kinds": ["duration"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "pk_duration",
+        "numeric_domain": "nonnegative",
+        "semantic_unit_basis": "duration",
+        "target_unit": "h",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Explicit PK duration metric; hours, minutes and days collapse to hours."
+    },
+    {
+      "rule_id": "clintox.offtarget.clearance.v1",
+      "priority": 670,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "cl|cl/f|clearance|total clearance|plasma clearance"},
+        "unit_kinds": ["clearance"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "clearance",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "volume_per_time",
+        "target_unit": "mL/min",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Absolute clearance without a body-weight or protein denominator."
+    },
+    {
+      "rule_id": "clintox.offtarget.normalized_clearance.v1",
+      "priority": 660,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "cl|cl/f|clint|clearance|intrinsic clearance|total clearance|plasma clearance"},
+        "unit_kinds": ["mass_normalized_clearance"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "mass_normalized_clearance",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "volume_per_time_per_declared_mass_basis",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Preserve the explicit kg, tissue, microsomal-protein or other mass denominator in the canonical unit."
+    },
+    {
+      "rule_id": "clintox.offtarget.enzyme_rate.v1",
+      "priority": 650,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "vmax|kinact|kdeg|turnover|metabolic rate|formation rate|activity"},
+        "unit_kinds": ["rate_constant", "mass_normalized_clearance", "recognized"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "enzyme_kinetic_rate",
+        "numeric_domain": "nonnegative",
+        "semantic_unit_basis": "explicit_enzyme_or_protein_rate_basis",
+        "reference_scope": "absolute",
+        "reference_basis": "none"
+      },
+      "review": "Only explicit kinetic metrics with fully recognized units; CYP/P450 qualifiers remain in the unit key."
+    },
+    {
+      "rule_id": "clintox.offtarget.protein_binding_percent.v1",
+      "priority": 640,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_exact": {"evidence_type": ["protein_binding_or_partitioning"]},
+        "field_regex": {"result_metric": ".*(?:percent bound|percent unbound|protein binding).*"},
+        "unit_kinds": ["missing", "percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "protein_binding_fraction",
+        "numeric_domain": "bounded_0_100",
+        "semantic_unit_basis": "fraction_bound_or_unbound",
+        "default_unit": "%",
+        "target_unit": "%",
+        "reference_scope": "endpoint_defined_ratio",
+        "reference_basis": "other_explicit"
+      },
+      "review": "Percent bound/unbound is a fraction of total material, never an assay-control response."
+    },
+    {
+      "rule_id": "clintox.offtarget.protein_binding_fraction.v1",
+      "priority": 630,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_exact": {"evidence_type": ["protein_binding_or_partitioning"]},
+        "field_regex": {"result_metric": ".*(?:fraction unbound|unbound fraction|free fraction|fu).*"},
+        "unit_kinds": ["missing", "fraction", "ratio"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "protein_unbound_fraction",
+        "numeric_domain": "bounded_0_1",
+        "semantic_unit_basis": "fraction_unbound",
+        "default_unit": "fraction",
+        "target_unit": "fraction",
+        "reference_scope": "endpoint_defined_ratio",
+        "reference_basis": "other_explicit"
+      },
+      "review": "Explicit unbound/free fraction metric with a 0-1 domain."
+    },
+    {
+      "rule_id": "clintox.offtarget.bioavailability_fraction.v1",
+      "priority": 620,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_exact": {"evidence_type": ["exposure_or_toxicokinetics"]},
+        "field_regex": {"result_metric": "f|bioavailability|oral bioavailability|absolute bioavailability"},
+        "unit_kinds": ["missing", "percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "oral_bioavailability_fraction",
+        "numeric_domain": "bounded_0_100",
+        "semantic_unit_basis": "fraction_of_oral_dose_systemically_available",
+        "default_unit": "%",
+        "target_unit": "%",
+        "reference_scope": "endpoint_defined_ratio",
+        "reference_basis": "oral_dose"
+      },
+      "review": "Explicit F/bioavailability percentage; do not apply this rule to generic exposure percentages."
+    },
+    {
+      "rule_id": "clintox.offtarget.administered_dose_fraction.v1",
+      "priority": 610,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"unit_text": "% (?:of )?(?:administered )?dose|percent (?:of )?(?:administered )?dose"},
+        "unit_kinds": ["percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "administered_dose_fraction",
+        "numeric_domain": "bounded_0_100",
+        "semantic_unit_basis": "fraction_of_administered_dose",
+        "target_unit": "%",
+        "reference_scope": "endpoint_defined_ratio",
+        "reference_basis": "administered_dose"
+      },
+      "review": "Exact generic administered-dose denominator. Compound-specific dose strings remain unresolved and evidence-only."
+    },
+    {
+      "rule_id": "clintox.offtarget.control_response_percent.v1",
+      "priority": 600,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": "percent inhibition|percent activity|percent of control|inhibition percent|activity percent"},
+        "unit_kinds": ["missing", "percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "assay_control_response_fraction",
+        "numeric_domain": "bounded_0_100",
+        "semantic_unit_basis": "percent_of_assay_control",
+        "default_unit": "% of control",
+        "target_unit": "% of control",
+        "reference_scope": "standardized_control_ratio",
+        "reference_basis": "assay_control"
+      },
+      "review": "Metric explicitly states inhibition/activity relative to the assay control."
+    },
+    {
+      "rule_id": "clintox.offtarget.efflux_ratio.v1",
+      "priority": 590,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_exact": {"result_metric": ["efflux ratio"]},
+        "unit_kinds": ["missing", "ratio", "fold"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "efflux_ratio",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "explicit_directional_transport_ratio",
+        "default_unit": "ratio",
+        "target_unit": "ratio",
+        "reference_scope": "endpoint_defined_ratio",
+        "reference_basis": "other_explicit"
+      },
+      "review": "The metric explicitly declares an efflux ratio; assay context retains direction and system."
+    },
+    {
+      "rule_id": "clintox.offtarget.tissue_plasma_ratio.v1",
+      "priority": 580,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_regex": {"result_metric": ".*(?:tissue.to.plasma|blood.to.plasma|partition).*ratio.*"},
+        "unit_kinds": ["missing", "ratio", "fold"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "tissue_or_blood_to_plasma_ratio",
+        "numeric_domain": "positive",
+        "semantic_unit_basis": "explicit_compartment_ratio",
+        "default_unit": "ratio",
+        "target_unit": "ratio",
+        "reference_scope": "endpoint_defined_ratio",
+        "reference_basis": "plasma"
+      },
+      "review": "Explicit tissue/blood-to-plasma ratio; numerator compartment remains in endpoint and context."
+    },
+    {
+      "rule_id": "clintox.offtarget.ddi_comparator_percent.v1",
+      "priority": 570,
+      "selector": {
+        "source_ids": ["off_target_ddi_exposure"],
+        "field_exact": {"evidence_type": ["clinical_drug_interaction"]},
+        "field_regex": {"result_metric": ".*percent (?:increase|decrease|change|reduction|difference).*"},
+        "unit_kinds": ["missing", "percent"]
+      },
+      "action": {
+        "status": "approved",
+        "quantity_kind": "ddi_comparator_relative_change",
+        "numeric_domain": "finite_signed",
+        "semantic_unit_basis": "percent_change_from_comparator_treatment",
+        "default_unit": "%",
+        "target_unit": "%",
+        "reference_scope": "comparator_relative",
+        "reference_basis": "comparator_treatment"
+      },
+      "review": "Clinical DDI change from a named co-treatment/comparator is factual but not assay-transfer eligible."
+    }
+  ]
+}
