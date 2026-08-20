@@ -1,0 +1,17 @@
+{
+  "n_queue": 14059,
+  "n_status_agreement": 11484,
+  "n_status_disagreement": 2575,
+  "agreement_rate": 0.8168433032221353,
+  "consensus_status_counts": {
+    "accepted": 8740,
+    "rejected": 2744,
+    "needs_adjudication": 2575
+  },
+  "disagreement_directions": {
+    "rejected->accepted": 1316,
+    "accepted->rejected": 1259
+  },
+  "notice": "Agreement is a QA signal only and is not a terminal gold review verdict.",
+  "conservative_prereview_policy": "accept only when both semantic reviews accept; still requires final audit"
+}

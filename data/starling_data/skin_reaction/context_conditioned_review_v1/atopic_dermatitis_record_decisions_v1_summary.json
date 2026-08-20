@@ -1,0 +1,454 @@
+{
+  "version": "skin_atopic_dermatitis_record_audit.v1",
+  "condition_group": "disease=atopic_dermatitis",
+  "exact_signature_policy": "Composite signatures are excluded, not collapsed.",
+  "agreement_threshold": 0.6,
+  "record_counts": {
+    "all_condition_atom_records": 388,
+    "pure_signature_records": 191,
+    "composite_signature_records": 197,
+    "strict_eligible_records": 57,
+    "strict_excluded_records": 331
+  },
+  "strict_exclusion_reason_counts": {
+    "condition_is_not_actual_preexisting_atopic_dermatitis": 8,
+    "duplicate_same_study_claim": 17,
+    "exact_composite_signature_not_collapsed": 197,
+    "hidden_or_more_specific_condition_signature": 44,
+    "mixed_or_non_atopic_population_without_stratified_ad_outcome": 8,
+    "no_direct_observed_query_outcome": 2,
+    "outcome_enriched_or_cosensitized_subgroup": 10,
+    "query_outcome_identity_or_attribution_ambiguous": 24,
+    "relative_effect_without_absolute_ad_arm_label": 21
+  },
+  "parent_label_counts": {
+    "total": 35,
+    "Y=0": 3,
+    "Y=1": 32,
+    "vote_rejected": 0
+  },
+  "split_parent_counts": {
+    "train": 31,
+    "valid": 1,
+    "test": 3,
+    "unassigned": 0
+  },
+  "distinct_scaffold_count": 18,
+  "parent_labels": [
+    {
+      "parent_key": "ANZUDYZHSVGBRF-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:2750"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "BISFDZNIUZIKJD-XDANTLIUSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:47422",
+        "direct_skin_reaction:56115"
+      ],
+      "scaffold": "O=C1C=C2CCC3C4CCCC4CCC3C2CC1",
+      "split": "train"
+    },
+    {
+      "parent_key": "BMCQMVFGOVHVNG-TUFAYURCSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:47456"
+      ],
+      "scaffold": "O=C1C=C2CCC3C4CCCC4CCC3C2CC1",
+      "split": "train"
+    },
+    {
+      "parent_key": "CBCKQZAAMUWICA-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:47454",
+        "direct_skin_reaction:8479"
+      ],
+      "scaffold": "c1ccccc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "CEAZRRDELHUEMR-URQXQFDESA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:9049"
+      ],
+      "scaffold": "C1CCC(OC2CCCC(OC3CCCCO3)C2)OC1",
+      "split": "train"
+    },
+    {
+      "parent_key": "CHUZDWOCSGISNS-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:25599",
+        "direct_skin_reaction:65862"
+      ],
+      "scaffold": "O=C1CNC(=O)N1",
+      "split": "train"
+    },
+    {
+      "parent_key": "DALKLAYLIPSCQL-YPYQNWSCSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:33552"
+      ],
+      "scaffold": "O=C1C=CC2C(=C1)CCC1C3CCCC3CCC21",
+      "split": "train"
+    },
+    {
+      "parent_key": "DFJWYKPCYBFACH-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 5,
+      "source_record_ids": [
+        "direct_skin_reaction:16047",
+        "direct_skin_reaction:36794",
+        "direct_skin_reaction:53000",
+        "direct_skin_reaction:66250",
+        "direct_skin_reaction:8478"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "DHCDFWKWKRSZHF-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:44676"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "DLICJXPMMTZITN-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:42339",
+        "direct_skin_reaction:45230"
+      ],
+      "scaffold": "O=C1C=NSC1",
+      "split": "train"
+    },
+    {
+      "parent_key": "GAZOQRUEIUBTNF-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:65861"
+      ],
+      "scaffold": "O=C(NCNC(=O)NC1NC(=O)NC1=O)NC1NC(=O)NC1=O",
+      "split": "train"
+    },
+    {
+      "parent_key": "GDXCHXZXSDPUCJ-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:25600"
+      ],
+      "scaffold": "C1=NSCC1",
+      "split": "train"
+    },
+    {
+      "parent_key": "GODLCSLPZIBRMG-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:1735"
+      ],
+      "scaffold": "O=C(Oc1ccccc1)c1ccccc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "GSLDEZOOOSBFGP-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:1734"
+      ],
+      "scaffold": "C=C1CCOC1=O",
+      "split": "test"
+    },
+    {
+      "parent_key": "GUTLYIVDDKVIGB-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:31336",
+        "direct_skin_reaction:47453"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "HXQVQGWHFRNKMS-UHFFFAOYSA-M",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:57959",
+        "direct_skin_reaction:8477"
+      ],
+      "scaffold": "c1ccccc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "IWVCMVBTMGNXQD-PXOLEDIWSA-N",
+      "Y": 0,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:47844"
+      ],
+      "scaffold": "O=C1C2=CC3C(=O)C=CCC3CC2Cc2ccccc21",
+      "split": "test"
+    },
+    {
+      "parent_key": "KYDXWCHDUCDNGR-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:40765",
+        "direct_skin_reaction:42324"
+      ],
+      "scaffold": "c1ccccc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "LDLCEGCJYSDJLX-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:25597",
+        "direct_skin_reaction:65860"
+      ],
+      "scaffold": "C1N2CN3CN1C[NH+](C2)C3",
+      "split": "test"
+    },
+    {
+      "parent_key": "LVDKZNITIUWNER-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:65863"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "MXJWRABVEGLYDG-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:56116"
+      ],
+      "scaffold": "c1ccccc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "OQLKNTOKMBVBKV-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:56114"
+      ],
+      "scaffold": "c1ccc(OCCCCCCOc2ccccc2)cc1",
+      "split": "valid"
+    },
+    {
+      "parent_key": "PAYRUJLWNCNPSJ-UHFFFAOYSA-N",
+      "Y": 0,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:48817"
+      ],
+      "scaffold": "c1ccccc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "PGBHMTALBVVCIT-VCIWKGPPSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:22240"
+      ],
+      "scaffold": "C1CCC(OC2COC(OC3CCCCC3OC3CCCCO3)C2)OC1",
+      "split": "train"
+    },
+    {
+      "parent_key": "PXHVJJICTQNCMI-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 7,
+      "source_record_ids": [
+        "direct_skin_reaction:2998",
+        "direct_skin_reaction:31335",
+        "direct_skin_reaction:47451",
+        "direct_skin_reaction:51473",
+        "direct_skin_reaction:52295",
+        "direct_skin_reaction:52695",
+        "direct_skin_reaction:63597"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "QLAVHMSZFMBGNY-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:52998",
+        "direct_skin_reaction:8480"
+      ],
+      "scaffold": "O=C1C=NSC1",
+      "split": "train"
+    },
+    {
+      "parent_key": "VOVIALXJUBGFJZ-KWVAZRHASA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:47447",
+        "direct_skin_reaction:47457"
+      ],
+      "scaffold": "O=C1C=CC2C(=C1)CCC1C2CCC2C1CC1OCOC12",
+      "split": "train"
+    },
+    {
+      "parent_key": "VYZAHLCBVHPDDF-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "sensitization_aop:22321"
+      ],
+      "scaffold": "c1ccccc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "VYZAMTAEIAYCRO-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:47452"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "WSFSSNUMVMOOMR-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:25598",
+        "direct_skin_reaction:47420"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "WVDDGKGOMKODPV-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:60069"
+      ],
+      "scaffold": "c1ccccc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "XEFQLINVKFYRCS-UHFFFAOYSA-N",
+      "Y": 0,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:51478"
+      ],
+      "scaffold": "c1ccc(Oc2ccccc2)cc1",
+      "split": "train"
+    },
+    {
+      "parent_key": "XLJKHNWPARRRJB-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 2,
+      "source_record_ids": [
+        "direct_skin_reaction:65853",
+        "direct_skin_reaction:8476"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "YXIWHUQXZSMYRE-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:16049"
+      ],
+      "scaffold": "c1ccc2scnc2c1",
+      "split": "train"
+    },
+    {
+      "parent_key": "ZQPPMHVWECSIRJ-KTKRTIGZSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:32609"
+      ],
+      "scaffold": "",
+      "split": "train"
+    }
+  ],
+  "vote_rejected_parents": [],
+  "promotion_gates": {
+    "at_least_3_parents": true,
+    "at_least_3_distinct_scaffolds": true,
+    "train_valid_test_each_nonempty": true,
+    "all_parents_assigned": true
+  },
+  "formal_benchmark_decision": "promote_group"
+}

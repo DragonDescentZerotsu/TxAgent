@@ -1,0 +1,20 @@
+{
+  "review_contract": "conditioned_gold_record_review.v1",
+  "task": "Skin_Reaction",
+  "proposal_version": "skin_external_condition_proposal.v2",
+  "n_candidates": 14059,
+  "queue_path": "data/starling_data/skin_reaction/context_conditioned_review_v1/review_queue.jsonl",
+  "queue_sha256": "20bbbfbb57fec30d77dfc5eb283186f946e21f20f81883a3228a25ff41329035",
+  "proposal_audit": {
+    "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/proposal_audit.jsonl",
+    "sha256": "269ef36a3f56a04e5b039809e6158e230bc7eb8930e2cc43d4f1c5d48b4527ac",
+    "n_rows": 54596
+  },
+  "source_artifacts": [
+    {
+      "path": "data/starling_data/skin_reaction/canonical_sensitization_v3/direct_records.parquet",
+      "sha256": "3c19125594c7b9f4c2029fbd466121f7c7b784cace3fe6a4566e8a5713d9987b"
+    }
+  ],
+  "policy": "Every queue row requires exactly one terminal accepted/rejected verdict; the benchmark builder rejects incomplete or stale ledgers."
+}

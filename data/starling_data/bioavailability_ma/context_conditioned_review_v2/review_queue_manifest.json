@@ -1,0 +1,20 @@
+{
+  "review_contract": "conditioned_gold_record_review.v1",
+  "task": "Bioavailability_Ma",
+  "proposal_version": "bioavailability_external_condition_proposal.v6",
+  "n_candidates": 2452,
+  "queue_path": "data/starling_data/bioavailability_ma/context_conditioned_review_v2/review_queue.jsonl",
+  "queue_sha256": "e9aa3cad53b515470c6e4531d7dfa5a5c10cfc7fbc32eacf9198fc8bd8b77396",
+  "proposal_audit": {
+    "path": "data/starling_data/bioavailability_ma/context_conditioned_review_v2/proposal_audit.jsonl",
+    "sha256": "c099cfbcc5ce98ee159a459263296dda2c2013acfc8f25ec2c3b5575ff309348",
+    "n_rows": 34107
+  },
+  "source_artifacts": [
+    {
+      "path": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
+      "sha256": "045261cbda785092143eeadd636f78399f7b02f951b23480b16fb8dde22661c5"
+    }
+  ],
+  "policy": "Every queue row requires exactly one terminal accepted/rejected verdict; the benchmark builder rejects incomplete or stale ledgers."
+}

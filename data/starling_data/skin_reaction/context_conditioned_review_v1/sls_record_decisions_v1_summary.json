@@ -1,0 +1,93 @@
+{
+  "version": "skin_sls_record_audit.v1",
+  "condition_group": "coexposure=sls_barrier_enhancement",
+  "exact_signature_policy": "Composite signatures are excluded, not collapsed.",
+  "agreement_threshold": 0.6,
+  "record_counts": {
+    "all_condition_atom_records": 133,
+    "pure_signature_records": 50,
+    "composite_signature_records": 83,
+    "strict_eligible_records": 4,
+    "strict_excluded_records": 129
+  },
+  "strict_exclusion_reason_counts": {
+    "additional_unmodeled_repeat_induction_or_nonreactor_history": 1,
+    "control_material_across_mixed_sls_and_normal_arms": 1,
+    "diagnostic_or_provocative_elicitation_in_selected_sensitized_population": 33,
+    "duplicate_same_experimental_arm": 1,
+    "exact_composite_signature_not_collapsed": 83,
+    "explicit_no_sls_pretreatment": 2,
+    "false_positive_acronym_sds_means_safety_data_sheet": 1,
+    "in_vitro_or_control_mix_not_direct_human_outcome": 1,
+    "mixed_sls_and_no_sls_arms_not_condition_specific": 1,
+    "outcome_query_molecule_mismatch": 4,
+    "sls_reactor_population_not_coexposure": 1
+  },
+  "parent_label_counts": {
+    "total": 4,
+    "Y=0": 3,
+    "Y=1": 1,
+    "vote_rejected": 0
+  },
+  "split_parent_counts": {
+    "train": 4,
+    "valid": 0,
+    "test": 0,
+    "unassigned": 0
+  },
+  "distinct_scaffold_count": 1,
+  "parent_labels": [
+    {
+      "parent_key": "ODJQKYXPKWQWNK-UHFFFAOYSA-N",
+      "Y": 0,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:60036"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "ONKUXPIBXRRIDU-UHFFFAOYSA-N",
+      "Y": 0,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:39863"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "SUZKAIPUWCLPCH-UHFFFAOYSA-N",
+      "Y": 0,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:1582"
+      ],
+      "scaffold": "",
+      "split": "train"
+    },
+    {
+      "parent_key": "VEQPNABPJHWNSG-UHFFFAOYSA-N",
+      "Y": 1,
+      "agreement": 1.0,
+      "record_count": 1,
+      "source_record_ids": [
+        "direct_skin_reaction:39389"
+      ],
+      "scaffold": "",
+      "split": "train"
+    }
+  ],
+  "vote_rejected_parents": [],
+  "promotion_gates": {
+    "at_least_3_parents": true,
+    "at_least_3_distinct_scaffolds": false,
+    "train_valid_test_each_nonempty": false,
+    "all_parents_assigned": true
+  },
+  "formal_benchmark_decision": "reject_group_from_formal_benchmark"
+}

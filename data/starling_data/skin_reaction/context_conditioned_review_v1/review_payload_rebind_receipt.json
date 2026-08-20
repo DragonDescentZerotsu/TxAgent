@@ -1,0 +1,20 @@
+{
+  "policy": "reuse_only_when_source_id_condition_signature_label_and_method_are_unchanged",
+  "queue_rows": 14059,
+  "ledgers": {
+    "model_prereview.jsonl": {
+      "input_rows": 15257,
+      "output_rows": 14059,
+      "payload_hashes_rebound_after_equivalence_check": 11824,
+      "signature_changed_for_rerun": 235,
+      "errors_retained_for_rerun": 1
+    },
+    "model_prereview_round2.jsonl": {
+      "input_rows": 15257,
+      "output_rows": 14059,
+      "payload_hashes_rebound_after_equivalence_check": 11824,
+      "signature_changed_for_rerun": 235,
+      "errors_retained_for_rerun": 0
+    }
+  }
+}

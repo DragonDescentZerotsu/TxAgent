@@ -4,6 +4,10 @@
 `train.jsonl` / `valid.jsonl` / `test.jsonl`。它与 Starling evidence retrieval index 分离：benchmark builder
 负责 gold-label 构建，`minimal_evidence.v1` 继续只负责 inference-time evidence。
 
+在冻结 molecule-only gold 之上增加 exact external-condition groups 的当前规则、allowlist、
+60% vote 和逐条 group/lineage artifact 合同，统一见
+[`REVIEWED_CONDITIONED_BENCHMARK.md`](REVIEWED_CONDITIONED_BENCHMARK.md)。两套 lineage 不得混称。
+
 ## 当前 BBB experimental meaningful-CNS-access lineage（2026-08-09）
 
 BBB 当前 paper-facing gold 是 `experimental_meaningful_cns_access_v2`，不再把所有 Starling

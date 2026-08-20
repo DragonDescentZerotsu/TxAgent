@@ -1,0 +1,101 @@
+{
+  "version": "skin_sls_manual_review.v1",
+  "scope": "All records whose proposed condition atoms contain coexposure=sls_barrier_enhancement; only the exact pure signature is eligible for the pure SLS group.",
+  "source_artifacts": {
+    "review_queue.jsonl": "20bbbfbb57fec30d77dfc5eb283186f946e21f20f81883a3228a25ff41329035",
+    "review_verdicts.jsonl": "896a5b5fab2b5ae49bcda2d1a1d9504c9cce34fadfa693942fb40e7c9820bcef"
+  },
+  "eligibility_contract": [
+    "The query molecule is the material whose absolute sensitization outcome is reported.",
+    "SLS is an actual pretreatment, vehicle, or co-exposure in the same experimental arm.",
+    "The record is a predictive induction/sensitization experiment, not a diagnostic elicitation study in already sensitized or selected allergic participants.",
+    "Relative-only effects, mixed SLS/no-SLS arms, controls, duplicate arms, and acronym false positives are excluded.",
+    "Composite signatures are retained as their exact signatures and never collapsed into the pure SLS group."
+  ],
+  "eligible_records": [
+    {
+      "source_record_id": "direct_skin_reaction:1582",
+      "manual_reason": "Query material tested in a human maximization repeat-insult patch test with explicit SLS pretreatment and an absolute negative sensitization outcome."
+    },
+    {
+      "source_record_id": "direct_skin_reaction:39389",
+      "manual_reason": "Nickel chloride tested by repeated human exposure in an explicit 0.1% SLS vehicle with an absolute positive sensitization outcome."
+    },
+    {
+      "source_record_id": "direct_skin_reaction:39863",
+      "manual_reason": "Query material tested in a human maximization study with an SLS-enhanced induction protocol and an absolute negative outcome."
+    },
+    {
+      "source_record_id": "direct_skin_reaction:60036",
+      "manual_reason": "Query material tested in a human maximization study using the stated SLS/patch protocol with an absolute negative outcome."
+    }
+  ],
+  "excluded_records_by_reason": {
+    "outcome_query_molecule_mismatch": [
+      "direct_skin_reaction:13651",
+      "direct_skin_reaction:13652",
+      "direct_skin_reaction:16074",
+      "direct_skin_reaction:19768"
+    ],
+    "sls_reactor_population_not_coexposure": [
+      "direct_skin_reaction:13653"
+    ],
+    "diagnostic_or_provocative_elicitation_in_selected_sensitized_population": [
+      "direct_skin_reaction:16080",
+      "direct_skin_reaction:16083",
+      "direct_skin_reaction:16085",
+      "direct_skin_reaction:16086",
+      "direct_skin_reaction:16087",
+      "direct_skin_reaction:16088",
+      "direct_skin_reaction:16089",
+      "direct_skin_reaction:16090",
+      "direct_skin_reaction:16091",
+      "direct_skin_reaction:16092",
+      "direct_skin_reaction:16093",
+      "direct_skin_reaction:16094",
+      "direct_skin_reaction:16095",
+      "direct_skin_reaction:16096",
+      "direct_skin_reaction:17600",
+      "direct_skin_reaction:17601",
+      "direct_skin_reaction:19503",
+      "direct_skin_reaction:19504",
+      "direct_skin_reaction:41622",
+      "direct_skin_reaction:41661",
+      "direct_skin_reaction:46938",
+      "direct_skin_reaction:46941",
+      "direct_skin_reaction:47639",
+      "direct_skin_reaction:49433",
+      "direct_skin_reaction:49504",
+      "direct_skin_reaction:49505",
+      "direct_skin_reaction:55574",
+      "direct_skin_reaction:55575",
+      "direct_skin_reaction:57207",
+      "direct_skin_reaction:59308",
+      "direct_skin_reaction:59309",
+      "direct_skin_reaction:64912",
+      "sensitization_aop:32155"
+    ],
+    "additional_unmodeled_repeat_induction_or_nonreactor_history": [
+      "direct_skin_reaction:200"
+    ],
+    "false_positive_acronym_sds_means_safety_data_sheet": [
+      "direct_skin_reaction:23302"
+    ],
+    "in_vitro_or_control_mix_not_direct_human_outcome": [
+      "direct_skin_reaction:39166"
+    ],
+    "duplicate_same_experimental_arm": [
+      "direct_skin_reaction:39864"
+    ],
+    "mixed_sls_and_no_sls_arms_not_condition_specific": [
+      "direct_skin_reaction:42043"
+    ],
+    "explicit_no_sls_pretreatment": [
+      "direct_skin_reaction:49430",
+      "direct_skin_reaction:49434"
+    ],
+    "control_material_across_mixed_sls_and_normal_arms": [
+      "direct_skin_reaction:49432"
+    ]
+  }
+}

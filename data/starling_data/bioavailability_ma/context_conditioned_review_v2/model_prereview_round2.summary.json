@@ -1,0 +1,30 @@
+{
+  "task": "Bioavailability_Ma",
+  "queue": "data/starling_data/bioavailability_ma/context_conditioned_review_v2/review_queue.jsonl",
+  "output": "data/starling_data/bioavailability_ma/context_conditioned_review_v2/model_prereview_round2.jsonl",
+  "model": "gpt-oss-120b",
+  "served_model_ids": [
+    "gpt-oss-120b"
+  ],
+  "execution": {
+    "base_url": "http://127.0.0.1:8001/v1",
+    "reasoning_effort": "medium",
+    "temperature": 0.0,
+    "max_tokens": 1024,
+    "timeout_seconds": 180,
+    "attempts": 3,
+    "workers": 256,
+    "thinking_parameter_enabled": false,
+    "tools_enabled": false
+  },
+  "review_protocol_version": "condition_semantic_prereview.v2",
+  "review_contract_sha256": "50a1eab34fa9040ffcea1ef1ba96088104622ac3bf26e721d839f22efc2aedc6",
+  "n_queue": 2452,
+  "n_reviewed_this_run": 0,
+  "status_counts": {
+    "accepted": 2053,
+    "rejected": 399,
+    "error": 0
+  },
+  "notice": "Model-assisted semantic review; any consensus promotion remains model-derived and is not human annotation."
+}

@@ -42,6 +42,33 @@ def test_accepts_measured_brain_exposure() -> None:
     assert ":brain_systemic_ratio:" in method
 
 
+def test_conditioned_mode_allows_measured_access_with_altered_barrier_context() -> None:
+    record = {
+        "bbb_permeability_label": "high_permeability",
+        "quant_metric": "brain/plasma ratio",
+        "quant_value": "0.95",
+        "assay_model": "in vivo pharmacokinetic study",
+        "qualifying_conditions": "bacterial meningitis",
+        "support_text": "Brain exposure was measured after intravenous dosing in meningitis.",
+    }
+    assert label_record(record)[0] is None
+    assert label_record(record, allow_conditioned_context=True)[0] == 1
+
+
+def test_conditioned_mode_still_rejects_non_systemic_cns_administration() -> None:
+    record = {
+        "bbb_permeability_label": "high_permeability",
+        "quant_metric": "brain concentration",
+        "quant_value": "10",
+        "assay_model": "in vivo study",
+        "qualifying_conditions": "intracerebroventricular administration",
+        "support_text": "The molecule was administered intracerebroventricularly.",
+    }
+    label, reason = label_record(record, allow_conditioned_context=True)
+    assert label is None
+    assert reason == "non_systemic_or_altered_barrier_context"
+
+
 def test_accepts_measured_csf_restriction_as_proxy_outcome() -> None:
     record = {
         "bbb_permeability_label": "poor_penetration",

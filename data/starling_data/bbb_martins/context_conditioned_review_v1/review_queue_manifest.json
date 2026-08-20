@@ -1,0 +1,20 @@
+{
+  "review_contract": "conditioned_gold_record_review.v1",
+  "task": "BBB_Martins",
+  "proposal_version": "bbb_external_condition_proposal.v2",
+  "n_candidates": 2466,
+  "queue_path": "data/starling_data/bbb_martins/context_conditioned_review_v1/review_queue.jsonl",
+  "queue_sha256": "e998b978464a2df6d31369568c7ea0f51c6beb397a09122e413280af038ef611",
+  "proposal_audit": {
+    "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/proposal_audit.jsonl",
+    "sha256": "2e8814187f96f78e86a0c8122c00ffd886d5fea8861a0460abf7bbc712afea92",
+    "n_rows": 103349
+  },
+  "source_artifacts": [
+    {
+      "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/frozen_candidate_source.parquet",
+      "sha256": "67219971dc7a949bae294d9d0755b191ddaa481881e7e1c67cfbd8c1be9cd61b"
+    }
+  ],
+  "policy": "Every queue row requires exactly one terminal accepted/rejected verdict; the benchmark builder rejects incomplete or stale ledgers."
+}

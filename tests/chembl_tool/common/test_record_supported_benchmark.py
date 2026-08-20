@@ -47,3 +47,28 @@ def test_scaffold_allocator_accepts_a_lineage_specific_seed():
     first, _ = allocate_scaffold_groups(rows, target_size=2, seed=17)
     replay, _ = allocate_scaffold_groups(rows, target_size=2, seed=17)
     assert first == replay
+
+
+def test_scaffold_allocator_can_disable_record_support_and_keep_acyclic_train_only():
+    rows = [
+        _row("", 0, 2, "acyclic"),
+        _row("A", 0, 1, "A0"),
+        _row("B", 1, 1, "B1"),
+        _row("C", 0, 1, "C0"),
+        _row("D", 1, 1, "D1"),
+        _row("E", 0, 1, "E0"),
+        _row("F", 1, 1, "F1"),
+    ]
+
+    assignment, audit = allocate_scaffold_groups(
+        rows,
+        target_size=2,
+        optimize_record_support=False,
+        exclude_empty_scaffold_from_heldout=True,
+    )
+
+    assert assignment[""] == "train"
+    assert audit["record_support_objective_enabled"] is False
+    assert audit["empty_scaffold_heldout_eligible"] is False
+    assert audit["minimum_singletons_in_heldout"] is None
+    assert audit["n_empty_scaffold_parents"] == 1

@@ -79,10 +79,13 @@ _IN_VITRO_PATTERN = re.compile(
     r"transwell|monolayer|cell culture|hcmec|bcec|artificial membrane",
     re.IGNORECASE,
 )
-_ALTERED_CONTEXT_PATTERN = re.compile(
+_NON_SYSTEMIC_ROUTE_PATTERN = re.compile(
     r"intrathecal|intracisternal|intracerebroventricular|intracerebral|"
     r"intraparenchymal|"
-    r"direct(?:ly)? inject(?:ed|ion)? into (?:the )?(?:brain|csf)|"
+    r"direct(?:ly)? inject(?:ed|ion)? into (?:the )?(?:brain|csf)",
+    re.IGNORECASE,
+)
+_CONDITIONABLE_ALTERED_CONTEXT_PATTERN = re.compile(
     r"focused ultrasound|hyperosmolar|osmotic (?:bbb )?(?:opening|disruption)|"
     r"breach(?:ing|ed)? (?:of )?(?:the )?blood.brain barrier|"
     r"brain tumor|intracranial tumou?r|glioma|meningitis|"
@@ -296,9 +299,13 @@ def load_label_decisions(
     return (_label_record(index, row) for index, row in enumerate(dataset)), metadata
 
 
-def classify_scope(record: Mapping[str, Any]) -> ScopeDecision:
+def classify_scope(
+    record: Mapping[str, Any],
+    *,
+    allow_conditioned_context: bool = False,
+) -> ScopeDecision:
     """Classify an eligible meaningful-CNS-access endpoint or reject it."""
-    if has_reported_text(record.get("qualifying_conditions")):
+    if has_reported_text(record.get("qualifying_conditions")) and not allow_conditioned_context:
         return ScopeDecision(None, None, "interpretation_altering_qualifying_conditions")
 
     assay_model = str(record.get("assay_model") or "")
@@ -318,7 +325,12 @@ def classify_scope(record: Mapping[str, Any]) -> ScopeDecision:
         return ScopeDecision(None, None, "in_vitro_or_passive_permeability_result")
     if _EX_VIVO_ONLY_PATTERN.search(searchable):
         return ScopeDecision(None, None, "ex_vivo_only_result")
-    if _ALTERED_CONTEXT_PATTERN.search(searchable):
+    if _NON_SYSTEMIC_ROUTE_PATTERN.search(searchable):
+        return ScopeDecision(None, None, "non_systemic_or_altered_barrier_context")
+    if (
+        _CONDITIONABLE_ALTERED_CONTEXT_PATTERN.search(searchable)
+        and not allow_conditioned_context
+    ):
         return ScopeDecision(None, None, "non_systemic_or_altered_barrier_context")
 
     endpoint_family = _first_match(quant_metric, _METRIC_ENDPOINT_PATTERNS)
@@ -372,6 +384,7 @@ def label_record(
     record: Mapping[str, Any],
     *,
     source_index: int | None = None,
+    allow_conditioned_context: bool = False,
 ) -> tuple[int | None, str]:
     """Return a label only for an eligible experimental CNS-access outcome."""
     if _UNSUPPORTED_METAL_SMILES_PATTERN.search(str(record.get("smiles") or "")):
@@ -381,7 +394,10 @@ def label_record(
             None,
             f"manual_source_exclusion:{MANUAL_SOURCE_EXCLUSIONS[source_index]}",
         )
-    scope = classify_scope(record)
+    scope = classify_scope(
+        record,
+        allow_conditioned_context=allow_conditioned_context,
+    )
     if scope.rejection_reason:
         return None, scope.rejection_reason
 

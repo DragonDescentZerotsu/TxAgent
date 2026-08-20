@@ -1,0 +1,218 @@
+{
+  "task": "Skin_Reaction",
+  "lineage": "skin_sensitization_context_conditioned_selected_v1",
+  "protocol_version": "skin_context_conditioned_selected.v1",
+  "generated_at": "2026-08-20T04:02:01.910468+00:00",
+  "seed": 20260818,
+  "source_artifacts": [
+    {
+      "path": "data/starling_data/skin_reaction/canonical_sensitization_v3/direct_records.parquet",
+      "sha256": "3c19125594c7b9f4c2029fbd466121f7c7b784cace3fe6a4566e8a5713d9987b"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/review_queue.jsonl",
+      "sha256": "20bbbfbb57fec30d77dfc5eb283186f946e21f20f81883a3228a25ff41329035"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/review_queue_manifest.json",
+      "sha256": "9dae79f8d771fdf3614e13e8e8ca8b77388916eafea4785b302532de5de283ca"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/model_prereview.jsonl",
+      "sha256": "4ea7bda010f1db7c56d28462686e54c33ef95f08fa1631d3f4d1d492328bd461"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/model_prereview_round2.jsonl",
+      "sha256": "19d471ff35c40bda023df93a84ceea739b59b63936ae01edbdfc727873f7fecb"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/review_payload_rebind_receipt.json",
+      "sha256": "96f9f0dfe16d7dee5a88d22d5ac9253327a0ad6dbd3213ebd42cf86060c60eae"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/review_comparison_summary.json",
+      "sha256": "9facb9ef6a946e47bf4eac3fd0cc10bca79cbff2eaadbabd16345b584c05b44a"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/review_verdicts.jsonl",
+      "sha256": "896a5b5fab2b5ae49bcda2d1a1d9504c9cce34fadfa693942fb40e7c9820bcef"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/atopic_dermatitis_manual_review_v1.json",
+      "sha256": "e3a97f39b4810067520e863bdb7f112b56944e87fbca24a0cbb221c0236ec82a"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/atopic_dermatitis_record_decisions_v1.jsonl",
+      "sha256": "8ede955b7084c452d5be94acac760ded812755885c9c84d54724886eb0b33528"
+    },
+    {
+      "path": "data/starling_data/skin_reaction/context_conditioned_review_v1/atopic_dermatitis_record_decisions_v1_summary.json",
+      "sha256": "6e6ef2c868c60f2653332bd432911218d8cf3bf95a070d2104c85e99a54c24f2"
+    }
+  ],
+  "frozen_molecule_only_source": {
+    "path": "data/processed_starling_record_supported_v2/Skin_Reaction/scaffold",
+    "lineage": "record_supported_v2",
+    "n_rows": 2456,
+    "split_sha256": {
+      "train": "b9f7328c62b041b4f6dcf14639399b3573b8371eae66d1a37a15c736e3715bd5",
+      "valid": "7c6b0d7d2d1c6860a525e20b19ffda8c2fd9ead36578ed146e7b87dbf4816a25",
+      "test": "b83ccf5c0f849aa56a7a28bd77a5cf2536a95d1be0fdcaaa38ad967c88672d10"
+    },
+    "preservation_policy": "labels and split assignments copied without modification"
+  },
+  "label_policy": {
+    "gold_unit": "parent_molecule_x_exact_condition_signature",
+    "none_reported_group": "no_reported_external_condition",
+    "external_condition_agreement_threshold": 0.6,
+    "tie_policy": "reject exact ties",
+    "review_policy": "two semantic prereviews plus exhaustive manual adjudication of the pure atopic-dermatitis signature; relative-only, duplicate, hidden-composite, and attribution-ambiguous records are rejected"
+  },
+  "group_gate": {
+    "minimum_accepted_parents": 3,
+    "minimum_distinct_scaffolds": 3,
+    "minimum_per_split": 1,
+    "task_semantic_excluded_groups": [],
+    "condition_group_allowlist": [
+      "disease=atopic_dermatitis"
+    ],
+    "preallocation": {
+      "disease=atopic_dermatitis": {
+        "accepted_parents": 35,
+        "distinct_scaffolds": 18,
+        "label_counts": {
+          "1": 32,
+          "0": 3
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      }
+    },
+    "allocation": {
+      "method": "frozen_parent_scaffold_plus_milp_group_coverage",
+      "seed": 20260818,
+      "n_candidate_groups": 1,
+      "n_selected_groups": 1,
+      "selected_groups": [
+        "disease=atopic_dermatitis"
+      ],
+      "n_novel_scaffolds": 1,
+      "group_split_counts": {
+        "disease=atopic_dermatitis": {
+          "train": 31,
+          "valid": 1,
+          "test": 3
+        }
+      },
+      "group_exclusion_reasons": {}
+    }
+  },
+  "counts": {
+    "n_full_review_ledger_records": 14059,
+    "n_published_group_review_records": 191,
+    "n_reviewed_source_records": 191,
+    "n_review_accepted": 57,
+    "n_review_rejected": 134,
+    "n_frozen_no_reported_rows": 2456,
+    "n_added_external_condition_rows": 35,
+    "n_total_benchmark_rows": 2491,
+    "n_unique_parents": 2458,
+    "n_external_groups": 1,
+    "n_parent_conditions_accepted_before_group_gate": 35,
+    "n_parent_conditions_rejected_by_vote": 0,
+    "n_parent_conditions_rejected_by_group_gate": 0
+  },
+  "review": {
+    "reviewer_counts": {
+      "manual_atopic_dermatitis_review_v1": 191
+    },
+    "status_counts": {
+      "rejected": 134,
+      "accepted": 57
+    },
+    "reason_counts": {
+      "condition_is_not_actual_preexisting_atopic_dermatitis": 8,
+      "mixed_or_non_atopic_population_without_stratified_ad_outcome": 8,
+      "hidden_or_more_specific_condition_signature": 44,
+      "strict_manual_condition_eligibility": 57,
+      "query_outcome_identity_or_attribution_ambiguous": 24,
+      "duplicate_same_study_claim": 17,
+      "outcome_enriched_or_cosensitized_subgroup": 10,
+      "no_direct_observed_query_outcome": 2,
+      "relative_effect_without_absolute_ad_arm_label": 21
+    }
+  },
+  "splits": {
+    "train": {
+      "n_rows": 1997,
+      "n_unique_parents": 1967,
+      "n_no_reported": 1966,
+      "n_external": 31,
+      "label_counts": {
+        "1": 1391,
+        "0": 606
+      }
+    },
+    "valid": {
+      "n_rows": 246,
+      "n_unique_parents": 246,
+      "n_no_reported": 245,
+      "n_external": 1,
+      "label_counts": {
+        "1": 173,
+        "0": 73
+      }
+    },
+    "test": {
+      "n_rows": 248,
+      "n_unique_parents": 245,
+      "n_no_reported": 245,
+      "n_external": 3,
+      "label_counts": {
+        "1": 174,
+        "0": 74
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "group_distribution": [
+    {
+      "condition_group": "no_reported_external_condition",
+      "condition_scope": "none_reported",
+      "n_molecule_condition_rows": 2456,
+      "n_unique_parents": 2456,
+      "n_distinct_scaffolds": 754,
+      "n_train": 1966,
+      "n_valid": 245,
+      "n_test": 245,
+      "n_y0": 750,
+      "n_y1": 1706
+    },
+    {
+      "condition_group": "disease=atopic_dermatitis",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 35,
+      "n_unique_parents": 35,
+      "n_distinct_scaffolds": 18,
+      "n_train": 31,
+      "n_valid": 1,
+      "n_test": 3,
+      "n_y0": 3,
+      "n_y1": 32
+    }
+  ],
+  "paths": {
+    "root": "data/processed_starling_context_conditioned_selected_v1/Skin_Reaction/scaffold",
+    "group_distribution": "data/processed_starling_context_conditioned_selected_v1/Skin_Reaction/scaffold/group_distribution.csv",
+    "source_condition_review": "data/processed_starling_context_conditioned_selected_v1/Skin_Reaction/scaffold/source_condition_review.jsonl"
+  }
+}
