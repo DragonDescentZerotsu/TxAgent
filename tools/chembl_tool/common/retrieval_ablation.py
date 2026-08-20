@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 from typing import Any
 
-from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.evidence_contract import evidence_for_group_llm
 
 
 def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
@@ -32,7 +32,10 @@ def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
                         "canonical_smiles": neighbor.get("canonical_smiles", ""),
                         "similarity": neighbor.get("similarity"),
                         "similarity_bucket": neighbor.get("similarity_bucket", ""),
-                        "evidence_rows": [evidence_for_llm(row) for row in neighbor.get("evidence_rows") or []],
+                        "evidence_rows": [
+                            evidence_for_group_llm(row, group)
+                            for row in neighbor.get("evidence_rows") or []
+                        ],
                     }
                     for neighbor in group.get("neighbors") or []
                 ],

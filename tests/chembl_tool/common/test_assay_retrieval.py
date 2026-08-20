@@ -1,5 +1,10 @@
+from pathlib import Path
+
+import pandas as pd
+
 from tools.chembl_tool.common.assay_retrieval import (
     FLAT_GROUP_ID,
+    _filter_heldout_direct_records,
     geometric_assay_prefixes,
     retrieve_assay_prefix,
     retrieve_assay_prefixes,
@@ -139,3 +144,55 @@ def test_geometric_assay_prefixes_always_ends_at_full_catalog():
     assert geometric_assay_prefixes(22820) == (5, 20, 80, 320, 1280, 5120, 20480, 22820)
     assert geometric_assay_prefixes(1840) == (5, 20, 80, 320, 1280, 1840)
     assert geometric_assay_prefixes(3) == (3,)
+
+
+def test_direct_only_filter_keeps_heldout_nondirect_records(tmp_path: Path):
+    heldout = tmp_path / "heldout.jsonl"
+    heldout.write_text('{"drug":"CCO"}\n', encoding="utf-8")
+    records = pd.DataFrame(
+        [
+            {
+                "canonical_smiles": "CCO",
+                "source_id": "hf_bioavailability",
+                "canonical_bioavailability_evidence_scope": "direct",
+                "record": "remove",
+            },
+            {
+                "canonical_smiles": "CCO",
+                "source_id": "hf_bioavailability",
+                "canonical_bioavailability_evidence_scope": "residual",
+                "record": "keep-same-source-nondirect",
+            },
+            {
+                "canonical_smiles": "CCO",
+                "source_id": "mechanism_source",
+                "canonical_bioavailability_evidence_scope": "direct",
+                "record": "keep-other-source",
+            },
+            {
+                "canonical_smiles": "CCN",
+                "source_id": "hf_bioavailability",
+                "canonical_bioavailability_evidence_scope": "direct",
+                "record": "keep-nonheldout",
+            },
+        ]
+    )
+
+    filtered, stats = _filter_heldout_direct_records(
+        records,
+        heldout_molecules_path=heldout,
+        heldout_smiles_field="drug",
+        filter_source_id="hf_bioavailability",
+        filter_scope_field="canonical_bioavailability_evidence_scope",
+        filter_scope_value="direct",
+    )
+
+    assert set(filtered["record"]) == {
+        "keep-same-source-nondirect",
+        "keep-other-source",
+        "keep-nonheldout",
+    }
+    assert stats["reference_pool"] == "direct_only_heldout_filtered"
+    assert stats["n_direct_heldout_records_excluded"] == 1
+    assert stats["n_heldout_nondirect_records_retained"] == 2
+    assert stats["n_direct_heldout_records_after_filter"] == 0

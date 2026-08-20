@@ -225,8 +225,9 @@ ClinTox 当前严格 split 位于
 4. evidence retrieval 只提供证据，不直接替代 reasoning。retrieval payload 必须保留 assay 描述、activity 数值、endpoint 语义、similarity 和不确定性。
 5. 默认 production/group-level retrieval 单元仍优先是 molecule-level evidence：先找相似 molecule，再展开
    assay/activity evidence。另有隔离的 Starling assay-level scaling experiment：先按冻结 biological relevance
-   选择 cumulative assay prefix、每个 assay 内检索 train-reference molecules，再把相同 molecule 跨 assays
-   合并为一个 flat branch。该实验不得改写 production family mapping；协议见
+   选择 cumulative assay prefix、先删除 valid+test parents 的 direct-outcome rows，再从保留的 source records
+   检索 query-scaffold-disjoint molecules，并把相同 molecule 跨 assays 合并为一个 flat branch。该实验不得
+   改写 production family mapping；协议见
    `tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
 6. LLM reasoning 分为并发证据分支和 final 汇总：single-molecule 分支判断理化性质先验；paper-facing
    group-level 分支按少量、数据源无关的 mechanism family 判断 analog transferability；final-level 汇总所有

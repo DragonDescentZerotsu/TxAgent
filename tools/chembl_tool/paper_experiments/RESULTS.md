@@ -1,11 +1,26 @@
 # 冻结的全量实验结果
 
-主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-16。
+主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-18。
 
 本文件主体记录旧 TDC test/valid matrix。当前 Starling-held-out random/scaffold 的 frozen data 决策、
 formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind 进度、Skin trace audit
 和新增入口统一见
 `STARLING_BENCHMARK_RESULTS.md`；两种 lineage 不得混表。
+
+2026-08-17 完成与 group-level 平行的 historical **train-only** assay-level retrieval scaling。BBB/Bio/Skin catalog 分别有
+22,820/1,840/12,015 个 eligible assays；按 5 起步、四倍递增并强制加入全 catalog，PARCC
+DeepSeek-V4-Flash-0731 的 task-best macro-F1 为 `0.720856/0.640151/0.626714`，分别出现在
+20,480/20/80 assays。相对 historical group-best 的描述性 delta 为 `+0.044615/-0.037501/+0.010369`。
+新增 1,797 个 sample-condition 全部成功、0 failure。合同、入口、全部-assay端点和 artifact 路径统一见
+`ASSAY_LEVEL_RETRIEVAL.md`。
+
+Historical v2 改用 `direct_only_heldout_filtered + parent_disjoint`：只从 benchmark-defining direct source/scope
+删除 valid+test parents，保留其 non-direct records，但每个 query 仍排除 same molecular parent。截至
+2026-08-18，BBB 与 Bioavailability 的保留档位均完成、0 failed；Skin 完成至 Top-5,120，all 在用户要求下
+停止并保留 checkpoint。Current/default v5 复用 v2 的 direct-heldout-filtered index，并在每个 query 动态执行
+`scaffold_disjoint`；不同 scaffold 的 held-out molecules 只能通过保留的 non-direct evidence 作为 analog。
+两个被否决的 pre-LLM source-contract probes 均未启动 reasoning，其临时代码和大型 artifacts 已清理。
+完整数值、source-filter audit、调用复用合同和 artifact 状态见 `ASSAY_LEVEL_RETRIEVAL.md`。
 
 ## ClinTox `clinical_trial_failure_v1` 独立快照（2026-08-16）
 

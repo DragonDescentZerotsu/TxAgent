@@ -37,6 +37,7 @@ from tools.chembl_tool.common.task_workflows.reasoning_stage_runtime import (
     load_stage_state,
     prepare_stage_item,
     ready_stage_jobs,
+    synchronize_configured_single_reuse,
 )
 
 
@@ -207,6 +208,12 @@ def _initialize_pool_runtime(
     initial_stage_jobs: list[StageJob] = []
     for name, prepared in prepared_by_name.items():
         for item in prepared.items:
+            run_id = f"{prepared.batch_id}_idx{item.index:05d}"
+            synchronize_configured_single_reuse(
+                prepared,
+                item,
+                prepared.batch_run_root / run_id,
+            )
             complete = collect_completed_item(prepared, item)
             if complete is not None:
                 results[name].append(complete)

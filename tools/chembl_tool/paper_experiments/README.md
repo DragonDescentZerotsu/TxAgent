@@ -14,7 +14,8 @@
 - [Starling v4 结果总账](STARLING_BENCHMARK_RESULTS.md)：当前 random/scaffold lineage、跨模型、visible 和
   coverage-context 实验的唯一集中记录。
 - [Assay-level retrieval](ASSAY_LEVEL_RETRIEVAL.md)：与 group-level 平行的 context-level assay catalog、
-  relevance-prefix retrieval、train-only replay、英文 scaling figure 和 DeepSeek-V4-Flash 结果。
+  relevance-prefix retrieval、current/default direct-heldout-filtered + query-time `scaffold_disjoint` 与 historical
+  reference-pool 合同、scaffold audit、single/evidence-equivalent reuse、英文五-panel scaling figure 和实测结果。
 - [ClinTox clinical-trial-failure v1](../tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md)：独立
   AACT/FDA source-reconstructed lineage、retrieval hierarchy、v3 prompt、DeepSeek 结果和 no-promotion 结论。
 - [外部 Starling Table 2 MiniMol 复现](../../../baselines/minimol/STARLING_TABLE2_REPRODUCTION.md)：released

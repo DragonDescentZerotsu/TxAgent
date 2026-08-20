@@ -31,6 +31,11 @@ DISTANCE_EXPANSION_DESIGN.md
   E12 的 D-root/C-family/H1/H2 tree 定义、flat 主曲线、tree-node mechanism supplementary、
   顺序 branch reuse、独立代码路径、资源控制、artifact contract 和回归 gate。
 
+ASSAY_LEVEL_RETRIEVAL.md
+  与 group-level 平行的 Starling context-assay ranking/prefix 实验；集中记录 train-only historical 与
+  historical direct-filtered/parent-disjoint、current direct-filtered/scaffold-disjoint 合同、泄漏审计、
+  调用复用策略、运行入口和结果状态。
+
 FINAL_EVIDENCE_SURFACE_EXPERIMENT.md
   E13 固定 retrieval/single/group 的 final-only surface 诊断、复现命令、metadata census 和 no-go 结论。
   Card surface 仅为可复现实验插件，不进入默认 prompt 或 formal test。

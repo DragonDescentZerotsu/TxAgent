@@ -37,6 +37,7 @@ from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
 INDEX_VERSION = "starling_assay_ranked_morgan.v1"
 FLAT_GROUP_ID = "Flat.assay_ranked_evidence"
 DEFAULT_RETRIEVAL_PREFIXES = (10, 100, 400)
+DIRECT_ONLY_HELDOUT_FILTERED = "direct_only_heldout_filtered"
 
 
 def geometric_assay_prefixes(
@@ -105,6 +106,70 @@ def _load_allowed_parent_keys(path: Path, smiles_field: str) -> tuple[set[str], 
     if not keys:
         raise ValueError(f"{path} contains no usable molecules in field {smiles_field!r}")
     return keys, len(rows)
+
+
+def _filter_heldout_direct_records(
+    records: pd.DataFrame,
+    *,
+    heldout_molecules_path: Path,
+    heldout_smiles_field: str,
+    filter_source_id: str,
+    filter_scope_field: str = "",
+    filter_scope_value: str = "",
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    """Remove held-out parents only from the benchmark-defining direct source."""
+    if not filter_source_id:
+        raise ValueError("filter_source_id is required with heldout_molecules_path")
+    if bool(filter_scope_field) != bool(filter_scope_value):
+        raise ValueError("filter_scope_field and filter_scope_value must be set together")
+
+    heldout_keys, n_heldout_rows = _load_allowed_parent_keys(
+        heldout_molecules_path,
+        heldout_smiles_field,
+    )
+    smiles_to_key = {
+        smiles: _parent_key(smiles)
+        for smiles in records["canonical_smiles"].dropna().astype(str).unique()
+    }
+    record_keys = records["canonical_smiles"].astype(str).map(smiles_to_key)
+    direct_scope = records["source_id"].astype(str).eq(filter_source_id)
+    if filter_scope_field:
+        direct_scope &= records[filter_scope_field].astype(str).eq(filter_scope_value)
+    heldout = record_keys.isin(heldout_keys)
+    excluded = direct_scope & heldout
+    retained = records.loc[~excluded].copy()
+
+    retained_keys = retained["canonical_smiles"].astype(str).map(smiles_to_key)
+    retained_direct_scope = retained["source_id"].astype(str).eq(filter_source_id)
+    if filter_scope_field:
+        retained_direct_scope &= retained[filter_scope_field].astype(str).eq(
+            filter_scope_value
+        )
+    overlap_after = retained_direct_scope & retained_keys.isin(heldout_keys)
+    if overlap_after.any():
+        raise AssertionError(
+            f"{int(overlap_after.sum())} held-out direct records remain after filtering"
+        )
+
+    excluded_keys = set(record_keys.loc[excluded])
+    retained_heldout_nondirect = heldout & ~direct_scope
+    return retained, {
+        "reference_pool": DIRECT_ONLY_HELDOUT_FILTERED,
+        "direct_only_heldout_filtered": True,
+        "heldout_molecules": str(heldout_molecules_path.resolve()),
+        "heldout_smiles_field": heldout_smiles_field,
+        "n_heldout_rows": n_heldout_rows,
+        "n_heldout_parent_identities": len(heldout_keys),
+        "filter_source_id": filter_source_id,
+        "filter_scope_field": filter_scope_field,
+        "filter_scope_value": filter_scope_value,
+        "n_records_before_heldout_filter": len(records),
+        "n_direct_heldout_records_excluded": int(excluded.sum()),
+        "n_matched_heldout_parent_identities": len(excluded_keys),
+        "n_records_after_heldout_filter": len(retained),
+        "n_heldout_nondirect_records_retained": int(retained_heldout_nondirect.sum()),
+        "n_direct_heldout_records_after_filter": 0,
+    }
 
 
 def _representative_records(group: pd.DataFrame, *, limit: int) -> list[dict[str, Any]]:
@@ -222,13 +287,18 @@ def build_assay_evidence_rows(
     *,
     task: str,
     records_path: Path,
-    membership_path: Path,
+    membership_path: Path | None,
     ranked_assays_path: Path,
     max_record_examples: int = 3,
     max_support_text_chars: int = 0,
     max_assays: int = 0,
     allowed_molecules_path: Path | None = None,
     allowed_smiles_field: str = "drug",
+    heldout_molecules_path: Path | None = None,
+    heldout_smiles_field: str = "drug",
+    filter_source_id: str = "",
+    filter_scope_field: str = "",
+    filter_scope_value: str = "",
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     import pyarrow.parquet as pq
 
@@ -247,6 +317,12 @@ def build_assay_evidence_rows(
         "source_name",
         "molecule_name",
     ]
+    if membership_path is None:
+        columns.append("retrieval_eligible")
+    if heldout_molecules_path is not None:
+        columns.append("source_id")
+        if filter_scope_field:
+            columns.append(filter_scope_field)
     ranked_all = sorted(
         read_jsonl(ranked_assays_path),
         key=lambda item: int(item["relevance_rank"]),
@@ -255,14 +331,39 @@ def build_assay_evidence_rows(
     selected_assay_ids = {str(row["assay_id"]) for row in ranked}
 
     records = pq.read_table(records_path, columns=columns).to_pandas()
-    member_ids = set(
-        pq.read_table(membership_path, columns=["canonical_record_id"])
-        .column("canonical_record_id")
-        .to_pylist()
-    )
-    records = records.loc[records["canonical_record_id"].isin(member_ids)].copy()
+    if membership_path is not None:
+        member_ids = set(
+            pq.read_table(membership_path, columns=["canonical_record_id"])
+            .column("canonical_record_id")
+            .to_pylist()
+        )
+        records = records.loc[records["canonical_record_id"].isin(member_ids)].copy()
+        membership_stats = {
+            "record_selection": "stage07_membership",
+            "membership": str(membership_path.resolve()),
+        }
+    else:
+        records = records.loc[records["retrieval_eligible"].eq(True)].copy()  # noqa: E712
+        membership_stats = {
+            "record_selection": "stage03_retrieval_eligible",
+            "membership": "",
+        }
     n_membership_records = len(records)
     n_membership_molecules = int(records["molecule_id"].nunique())
+    if allowed_molecules_path is not None and heldout_molecules_path is not None:
+        raise ValueError(
+            "allowed_molecules_path and heldout_molecules_path are mutually exclusive"
+        )
+    heldout_stats: dict[str, Any] = {}
+    if heldout_molecules_path is not None:
+        records, heldout_stats = _filter_heldout_direct_records(
+            records,
+            heldout_molecules_path=heldout_molecules_path,
+            heldout_smiles_field=heldout_smiles_field,
+            filter_source_id=filter_source_id,
+            filter_scope_field=filter_scope_field,
+            filter_scope_value=filter_scope_value,
+        )
     allowed_stats: dict[str, Any] = {}
     if allowed_molecules_path is not None:
         allowed_keys, n_allowed_rows = _load_allowed_parent_keys(
@@ -341,6 +442,8 @@ def build_assay_evidence_rows(
         "n_assays": len(ranking),
         "n_assay_molecule_rows": len(evidence_rows),
         "n_molecules": int(records["molecule_id"].nunique()),
+        **membership_stats,
+        **heldout_stats,
         **allowed_stats,
     }
     return evidence_rows, ranking, stats
@@ -350,7 +453,7 @@ def build_assay_index(
     *,
     task: str,
     records_path: Path,
-    membership_path: Path,
+    membership_path: Path | None,
     ranked_assays_path: Path,
     workers: int = 1,
     max_record_examples: int = 3,
@@ -358,6 +461,11 @@ def build_assay_index(
     max_assays: int = 0,
     allowed_molecules_path: Path | None = None,
     allowed_smiles_field: str = "drug",
+    heldout_molecules_path: Path | None = None,
+    heldout_smiles_field: str = "drug",
+    filter_source_id: str = "",
+    filter_scope_field: str = "",
+    filter_scope_value: str = "",
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
     evidence_rows, ranking, stats = build_assay_evidence_rows(
         task=task,
@@ -369,6 +477,11 @@ def build_assay_index(
         max_assays=max_assays,
         allowed_molecules_path=allowed_molecules_path,
         allowed_smiles_field=allowed_smiles_field,
+        heldout_molecules_path=heldout_molecules_path,
+        heldout_smiles_field=heldout_smiles_field,
+        filter_source_id=filter_source_id,
+        filter_scope_field=filter_scope_field,
+        filter_scope_value=filter_scope_value,
     )
     index = build_neighbor_index(
         evidence_rows,
@@ -521,7 +634,7 @@ def _build_command(args: argparse.Namespace) -> None:
     index, evidence_rows, stats = build_assay_index(
         task=args.task,
         records_path=Path(args.records),
-        membership_path=Path(args.membership),
+        membership_path=Path(args.membership) if args.membership else None,
         ranked_assays_path=Path(args.ranked_assays),
         workers=args.workers,
         max_record_examples=args.max_record_examples,
@@ -531,6 +644,13 @@ def _build_command(args: argparse.Namespace) -> None:
             Path(args.allowed_molecules_jsonl) if args.allowed_molecules_jsonl else None
         ),
         allowed_smiles_field=args.allowed_smiles_field,
+        heldout_molecules_path=(
+            Path(args.heldout_molecules_jsonl) if args.heldout_molecules_jsonl else None
+        ),
+        heldout_smiles_field=args.heldout_smiles_field,
+        filter_source_id=args.filter_source_id,
+        filter_scope_field=args.filter_scope_field,
+        filter_scope_value=args.filter_scope_value,
     )
     index_path = output_dir / "assay_neighbor_index.pkl"
     evidence_path = output_dir / "assay_molecule_evidence.jsonl"
@@ -542,8 +662,8 @@ def _build_command(args: argparse.Namespace) -> None:
         "task": args.task,
         "records": str(Path(args.records).resolve()),
         "records_sha256": sha256_file(Path(args.records)),
-        "membership": str(Path(args.membership).resolve()),
-        "membership_sha256": sha256_file(Path(args.membership)),
+        "membership": str(Path(args.membership).resolve()) if args.membership else "",
+        "membership_sha256": sha256_file(Path(args.membership)) if args.membership else "",
         "ranked_assays": str(Path(args.ranked_assays).resolve()),
         "ranked_assays_sha256": sha256_file(Path(args.ranked_assays)),
         "index": str(index_path.resolve()),
@@ -552,7 +672,7 @@ def _build_command(args: argparse.Namespace) -> None:
         "evidence_sha256": sha256_file(evidence_path),
         "top_k_per_assay_default": 3,
         "min_similarity_default": 0.3,
-        "neighbor_identity_policy_default": "parent_disjoint",
+        "neighbor_identity_policy_default": args.neighbor_identity_policy_default,
         "relevance_scores_visible_to_llm": False,
         "max_assays_materialized": args.max_assays,
         "max_record_examples": args.max_record_examples,
@@ -560,6 +680,11 @@ def _build_command(args: argparse.Namespace) -> None:
         "allowed_molecules_jsonl_sha256": (
             sha256_file(Path(args.allowed_molecules_jsonl))
             if args.allowed_molecules_jsonl
+            else ""
+        ),
+        "heldout_molecules_jsonl_sha256": (
+            sha256_file(Path(args.heldout_molecules_jsonl))
+            if args.heldout_molecules_jsonl
             else ""
         ),
         **stats,
@@ -645,10 +770,23 @@ def build_parser() -> argparse.ArgumentParser:
     build = subparsers.add_parser("build-index")
     build.add_argument("--task", required=True)
     build.add_argument("--records", required=True)
-    build.add_argument("--membership", required=True)
+    build.add_argument(
+        "--membership",
+        default="",
+        help=(
+            "Optional Stage 07 record-membership parquet. If omitted, use all "
+            "Stage 03 rows with retrieval_eligible=true."
+        ),
+    )
     build.add_argument("--ranked-assays", required=True)
     build.add_argument("--output-dir", required=True)
     build.add_argument("--workers", type=int, default=1)
+    build.add_argument(
+        "--neighbor-identity-policy-default",
+        choices=("parent_disjoint", "scaffold_disjoint"),
+        default="parent_disjoint",
+        help="Document the intended query-time identity policy in the index manifest.",
+    )
     build.add_argument("--max-record-examples", type=int, default=3)
     build.add_argument(
         "--max-support-text-chars",
@@ -668,6 +806,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional hard allowlist; only molecules whose normalized parent occurs here are indexed.",
     )
     build.add_argument("--allowed-smiles-field", default="drug")
+    build.add_argument(
+        "--heldout-molecules-jsonl",
+        default="",
+        help=(
+            "Optional held-out parent union. Matching parents are removed only from "
+            "the declared direct source/scope."
+        ),
+    )
+    build.add_argument("--heldout-smiles-field", default="drug")
+    build.add_argument("--filter-source-id", default="")
+    build.add_argument("--filter-scope-field", default="")
+    build.add_argument("--filter-scope-value", default="")
     build.set_defaults(func=_build_command)
 
     retrieve = subparsers.add_parser("retrieve")

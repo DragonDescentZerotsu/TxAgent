@@ -12,6 +12,7 @@ import argparse
 import csv
 from dataclasses import dataclass
 import json
+import math
 from pathlib import Path
 from statistics import mean
 from typing import Any
@@ -204,6 +205,35 @@ def collect_curve_data(
     return performance_rows, retrieval_rows, {"experiment": experiment, "best": best_rows}
 
 
+def incomplete_curve_conditions(
+    performance_rows: list[dict[str, Any]],
+    experiment: dict[str, Any],
+) -> list[str]:
+    """List absent, failed, or sample-incomplete assay-prefix metrics."""
+    prefixes_by_task = _prefixes_by_task(experiment)
+    none_n = {
+        row["task"]: int(row["n_total"])
+        for row in performance_rows
+        if row["condition"] == "none_reused"
+    }
+    observed = {
+        (row["task"], int(row["assay_count"])): row
+        for row in performance_rows
+        if row["condition"] == "assay_level"
+    }
+    incomplete = []
+    for task in experiment["tasks"]:
+        for prefix in prefixes_by_task[task]:
+            row = observed.get((task, prefix))
+            if (
+                row is None
+                or int(row["n_failed_runs"]) != 0
+                or int(row["n_total"]) != none_n[task]
+            ):
+                incomplete.append(f"{task}__assay_flat_top{prefix}")
+    return incomplete
+
+
 def _write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
     if not rows:
         return
@@ -211,6 +241,163 @@ def _write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]), delimiter="\t")
         writer.writeheader()
         writer.writerows(rows)
+
+
+def collect_relevance_decay_data(
+    *,
+    ranked_assay_paths: dict[str, Path],
+    prefixes_by_task: dict[str, list[int]],
+) -> list[dict[str, Any]]:
+    """Compute cumulative relevance summaries for frozen assay rankings."""
+    rows: list[dict[str, Any]] = []
+    for task, prefixes in prefixes_by_task.items():
+        path = ranked_assay_paths[task]
+        records = [
+            json.loads(line)
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        scores = [float(record["relevance_score"]) for record in records]
+        if not scores or any(not 0 <= score <= 100 for score in scores):
+            raise ValueError(f"Invalid relevance scores: {path}")
+        if any(left < right for left, right in zip(scores, scores[1:])):
+            raise ValueError(f"Assay ranking is not score-descending: {path}")
+        for prefix in prefixes:
+            if prefix > len(scores):
+                raise ValueError(
+                    f"Prefix {prefix} exceeds {len(scores)} ranked assays: {path}"
+                )
+            selected = scores[:prefix]
+            rows.append(
+                {
+                    "task": task,
+                    "task_label": TASK_SPECS[task].label,
+                    "assay_count": prefix,
+                    "catalog_size": len(scores),
+                    "mean_relevance_score": mean(selected),
+                    "boundary_relevance_score": selected[-1],
+                    "minimum_selected_score": min(selected),
+                    "maximum_selected_score": max(selected),
+                    "ranked_assays_path": str(path),
+                }
+            )
+    return rows
+
+
+def _draw_assay_relevance_decay(
+    ax: plt.Axes,
+    rows: list[dict[str, Any]],
+    *,
+    panel_title: str = "",
+) -> None:
+    """Draw cumulative assay relevance on an existing axis."""
+    tasks = list(dict.fromkeys(row["task"] for row in rows))
+    for task in tasks:
+        spec = TASK_SPECS[task]
+        task_rows = sorted(
+            (row for row in rows if row["task"] == task),
+            key=lambda row: row["assay_count"],
+        )
+        ax.plot(
+            [row["assay_count"] for row in task_rows],
+            [row["mean_relevance_score"] for row in task_rows],
+            color=spec.color,
+            marker=spec.marker,
+            markersize=6.5,
+            linewidth=2.2,
+            label=spec.label,
+        )
+        endpoint = task_rows[-1]
+        ax.annotate(
+            f"{spec.label}: {endpoint['mean_relevance_score']:.1f}",
+            (endpoint["assay_count"], endpoint["mean_relevance_score"]),
+            xytext=(-5, 8),
+            textcoords="offset points",
+            ha="right",
+            color=spec.color,
+            fontsize=8.5,
+        )
+
+    ticks = sorted({int(row["assay_count"]) for row in rows})
+    tick_labels: list[str] = []
+    for index, value in enumerate(ticks):
+        label = f"{value:,}"
+        if index and value / ticks[index - 1] < 1.6:
+            label = "\n" + label
+        tick_labels.append(label)
+    ax.set_xscale("log", base=4)
+    ax.set_xticks(ticks, labels=tick_labels)
+    ax.tick_params(axis="x", labelrotation=28)
+    ax.set_xlim(min(ticks) / 1.25, max(ticks) * 1.15)
+    ax.set_ylim(0, 105)
+    ax.set_xlabel("Number of retrieved assays (log scale)")
+    ax.set_ylabel("Mean relevance score among retrieved assays (0–100)")
+    ax.grid(axis="y", color="#DDDDDD", linewidth=0.8)
+    ax.legend(frameon=False, loc="lower left")
+    if panel_title:
+        ax.set_title(panel_title, loc="left")
+
+
+def plot_assay_relevance_decay(
+    *,
+    rows: list[dict[str, Any]],
+    output_svg: Path,
+    output_png: Path,
+) -> None:
+    """Plot cumulative mean relevance as progressively more assays are retrieved."""
+    plt.rcParams.update(
+        {
+            "font.family": "DejaVu Sans",
+            "font.size": 10,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "svg.fonttype": "none",
+        }
+    )
+    fig, ax = plt.subplots(figsize=(9.6, 5.8))
+    _draw_assay_relevance_decay(ax, rows)
+    fig.suptitle(
+        "Mean relevance of retrieved assays",
+        fontsize=15,
+        fontweight="bold",
+        x=0.08,
+        ha="left",
+    )
+    fig.text(
+        0.08,
+        0.905,
+        "Cumulative mean relevance within each frozen Top-N assay ranking",
+        fontsize=9.5,
+        color="#555555",
+    )
+    fig.text(
+        0.08,
+        0.025,
+        "Scores were assigned offline by Codex GPT-5.6 Sol; each curve includes the full assay catalog.",
+        fontsize=8.2,
+        color="#555555",
+    )
+    fig.subplots_adjust(left=0.12, right=0.97, top=0.84, bottom=0.2)
+    output_svg.parent.mkdir(parents=True, exist_ok=True)
+    output_png.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_svg, bbox_inches="tight")
+    fig.savefig(output_png, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
+def _current_relevance_rows(tasks: list[str]) -> list[dict[str, Any]]:
+    """Load frozen assay rankings using the current task-specific prefix plan."""
+    from tools.chembl_tool.paper_experiments.run_assay_retrieval_curve import (
+        TASKS,
+        prefix_plan,
+    )
+
+    return collect_relevance_decay_data(
+        ranked_assay_paths={
+            task: Path(TASKS[task]["ranked_assays"]) for task in tasks
+        },
+        prefixes_by_task=prefix_plan(tasks),
+    )
 
 
 def write_analysis(
@@ -227,9 +414,14 @@ def write_analysis(
     payload = {
         "comparison_contract": {
             "split": "scaffold-valid",
-            "assay_reference_pool": "train_only",
+            "assay_retrieval_contract": summary["experiment"].get(
+                "retrieval_contract", ""
+            ),
+            "assay_reference_pool": summary["experiment"].get("reference_pool", ""),
             "visibility_mode": "identity_blind",
-            "neighbor_identity_policy": "parent_disjoint",
+            "neighbor_identity_policy": summary["experiment"].get(
+                "neighbor_identity_policy", ""
+            ),
             "zero_retrieval": "reused_historical_none",
             "comparison_type": "descriptive_historical_reference_not_endpoint_matched",
         },
@@ -258,15 +450,37 @@ def _set_assay_axis(ax: plt.Axes, ticks: list[int]) -> None:
     ax.set_xlabel("Number of retrieved assays (symmetric log scale)")
 
 
+def _best_panel_xlim(best_rows: list[dict[str, Any]]) -> tuple[float, float]:
+    """Return rounded, data-driven bounds with room for delta annotations."""
+    values = [
+        float(row[field])
+        for row in best_rows
+        for field in ("group_best_macro_f1", "assay_best_macro_f1")
+    ]
+    if not values:
+        return 0.0, 1.0
+
+    value_min = min(values)
+    value_max = max(values)
+    span = max(value_max - value_min, 0.05)
+    lower_padding = max(0.01, span * 0.08)
+    upper_padding = max(0.015, span * 0.15)
+    tick_step = 0.01
+    lower = max(0.0, math.floor((value_min - lower_padding) / tick_step) * tick_step)
+    upper = min(1.0, math.ceil((value_max + upper_padding) / tick_step) * tick_step)
+    return lower, upper
+
+
 def plot_assay_retrieval_curves(
     *,
     performance_rows: list[dict[str, Any]],
     retrieval_rows: list[dict[str, Any]],
     best_rows: list[dict[str, Any]],
+    relevance_rows: list[dict[str, Any]],
     output_svg: Path,
     output_png: Path,
 ) -> None:
-    """Render the reusable four-panel assay retrieval figure."""
+    """Render the reusable five-panel assay retrieval figure."""
     plt.rcParams.update(
         {
             "font.family": "DejaVu Sans",
@@ -277,8 +491,13 @@ def plot_assay_retrieval_curves(
             "svg.fonttype": "none",
         }
     )
-    fig, axes = plt.subplots(2, 2, figsize=(13.4, 9.0))
-    ax_perf, ax_best, ax_molecules, ax_records = axes.flat
+    fig = plt.figure(figsize=(13.4, 13.0))
+    grid = fig.add_gridspec(3, 2, height_ratios=(1.0, 1.0, 0.95))
+    ax_perf = fig.add_subplot(grid[0, 0])
+    ax_best = fig.add_subplot(grid[0, 1])
+    ax_molecules = fig.add_subplot(grid[1, 0])
+    ax_records = fig.add_subplot(grid[1, 1])
+    ax_relevance = fig.add_subplot(grid[2, :])
     tasks = list(dict.fromkeys(row["task"] for row in performance_rows))
     performance_ticks = sorted({int(row["assay_count"]) for row in performance_rows})
     assay_ticks = sorted({int(row["assay_count"]) for row in retrieval_rows})
@@ -346,6 +565,7 @@ def plot_assay_retrieval_curves(
     ax_perf.legend(frameon=False, ncol=3, loc="best")
 
     best_by_task = {row["task"]: row for row in best_rows}
+    best_xlim = _best_panel_xlim(best_rows)
     for y, task in enumerate(tasks):
         if task not in best_by_task:
             continue
@@ -373,7 +593,7 @@ def plot_assay_retrieval_curves(
     ax_best.set_xlabel("Best Macro-F1")
     ax_best.set_title("B. Best assay-level vs historical group-level", loc="left")
     ax_best.grid(axis="x", color="#DDDDDD", linewidth=0.8)
-    ax_best.set_xlim(0.59, 0.705)
+    ax_best.set_xlim(*best_xlim)
     ax_best.legend(
         handles=[
             Line2D(
@@ -389,6 +609,12 @@ def plot_assay_retrieval_curves(
         loc="upper left",
     )
 
+    _draw_assay_relevance_decay(
+        ax_relevance,
+        relevance_rows,
+        panel_title="E. Mean relevance of retrieved assays",
+    )
+
     fig.suptitle(
         "Assay-level retrieval scaling on scaffold validation sets",
         fontsize=15,
@@ -400,11 +626,19 @@ def plot_assay_retrieval_curves(
         0.06,
         0.025,
         "No-retrieval and group-level references reuse historical OpenRouter DeepSeek-V4-Flash runs; "
-        "assay-level points use PARCC DeepSeek-V4-Flash-0731. This is a descriptive, not endpoint-matched, comparison.",
+        "assay-level points use PARCC DeepSeek-V4-Flash-0731. This is a descriptive, not endpoint-matched, comparison. "
+        "Panel E uses frozen Codex GPT-5.6 Sol assay-relevance scores.",
         fontsize=8.2,
         color="#555555",
     )
-    fig.subplots_adjust(left=0.09, right=0.98, top=0.91, bottom=0.15, hspace=0.48, wspace=0.27)
+    fig.subplots_adjust(
+        left=0.09,
+        right=0.98,
+        top=0.94,
+        bottom=0.09,
+        hspace=0.52,
+        wspace=0.27,
+    )
     output_svg.parent.mkdir(parents=True, exist_ok=True)
     output_png.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_svg, bbox_inches="tight")
@@ -417,8 +651,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-root",
         default=(
-            "outputs/paper/starling_assay_retrieval_curve_v1/"
-            "scaffold_valid_train_only_epyc_deepseek_v4_flash_0731"
+            "outputs/paper/starling_assay_retrieval_curve_v5/"
+            "scaffold_valid_direct_only_heldout_filtered_scaffold_disjoint_"
+            "epyc_deepseek_v4_flash_0731"
         ),
     )
     parser.add_argument(
@@ -431,6 +666,16 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--analysis-dir", default="")
     parser.add_argument("--output-stem", default="assay_retrieval_scaling")
+    parser.add_argument(
+        "--allow-incomplete",
+        action="store_true",
+        help="Allow a diagnostic partial figure; complete zero-failure curves are required by default.",
+    )
+    parser.add_argument(
+        "--relevance-decay-only",
+        action="store_true",
+        help="Plot cumulative mean relevance from frozen assay rankings without requiring LLM metrics.",
+    )
     return parser
 
 
@@ -438,25 +683,64 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     output_root = Path(args.output_root)
     analysis_dir = Path(args.analysis_dir) if args.analysis_dir else output_root / "analysis"
+    if args.relevance_decay_only:
+        tasks = list(TASK_SPECS)
+        relevance_rows = _current_relevance_rows(tasks)
+        analysis_dir.mkdir(parents=True, exist_ok=True)
+        _write_tsv(analysis_dir / "assay_relevance_decay.tsv", relevance_rows)
+        figure_dir = analysis_dir / "figures"
+        plot_assay_relevance_decay(
+            rows=relevance_rows,
+            output_svg=figure_dir / "assay_relevance_decay.svg",
+            output_png=figure_dir / "assay_relevance_decay.png",
+        )
+        print(
+            json.dumps(
+                {
+                    "analysis_dir": str(analysis_dir),
+                    "n_relevance_rows": len(relevance_rows),
+                },
+                indent=2,
+            )
+        )
+        return 0
     performance, retrieval, summary = collect_curve_data(
         output_root=output_root,
         historical_group_root=Path(args.historical_group_root),
     )
+    incomplete = incomplete_curve_conditions(performance, summary["experiment"])
+    if incomplete and not args.allow_incomplete:
+        raise SystemExit(
+            "Refusing to publish an incomplete assay curve:\n" + "\n".join(incomplete)
+        )
+    relevance_rows = _current_relevance_rows(list(summary["experiment"]["tasks"]))
     write_analysis(
         analysis_dir=analysis_dir,
         performance_rows=performance,
         retrieval_rows=retrieval,
         summary=summary,
     )
+    _write_tsv(analysis_dir / "assay_relevance_decay.tsv", relevance_rows)
     figure_dir = analysis_dir / "figures"
     plot_assay_retrieval_curves(
         performance_rows=performance,
         retrieval_rows=retrieval,
         best_rows=summary["best"],
+        relevance_rows=relevance_rows,
         output_svg=figure_dir / f"{args.output_stem}.svg",
         output_png=figure_dir / f"{args.output_stem}.png",
     )
-    print(json.dumps({"analysis_dir": str(analysis_dir), "n_performance_rows": len(performance), "n_retrieval_rows": len(retrieval)}, indent=2))
+    print(
+        json.dumps(
+            {
+                "analysis_dir": str(analysis_dir),
+                "n_performance_rows": len(performance),
+                "n_retrieval_rows": len(retrieval),
+                "n_relevance_rows": len(relevance_rows),
+            },
+            indent=2,
+        )
+    )
     return 0
 
 
