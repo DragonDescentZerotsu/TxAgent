@@ -1,6 +1,6 @@
 """Build the split-aware canonical Starling v7 BBB Martins library.
 
-Stages 01-03 use the shared normalization engine. Stages 04-09 are produced by
+Stages 00-03 use the shared normalization engine. Stages 04-09 are produced by
 the shared split-aware downstream engine, with BBB-specific policies supplied
 by this task package.
 """
@@ -31,6 +31,7 @@ from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
 
 
 CANONICAL_ARTIFACT_STAGES = (
+    "00_source",
     "01_cleaned",
     "02_canonicalized",
     "03_records",

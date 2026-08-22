@@ -18,7 +18,13 @@ from tools.chembl_tool.common.starling.normalization.measurements import (
 )
 
 
-ENDPOINT_NORMALIZATION_VERSION = "bbb_martins_endpoint_normalization.v1"
+ENDPOINT_NORMALIZATION_VERSION = "bbb_martins_endpoint_normalization.v2"
+PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID = (
+    "bbb.passive.interpretation_endpoint.v1"
+)
+EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID = (
+    "bbb.efflux.interaction_conclusion_endpoint.v1"
+)
 DIRECT_ENDPOINT_MAPPING_VERSION = "bbb_martins_direct_endpoint.globally_reconciled.v1"
 DIRECT_ENDPOINT_MAPPING_V2_VERSION = "bbb_martins_direct_endpoint.errata.v2"
 SUPPORTED_DIRECT_ENDPOINT_MAPPING_VERSIONS = frozenset(
@@ -464,14 +470,70 @@ def context_fields(record: Mapping[str, Any]) -> dict[str, Any]:
     return output
 
 
+def alternate_endpoint_fields(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Resolve a missing primary endpoint from one approved structured field."""
+    current = str(
+        record.get("canonical_endpoint")
+        or record.get("canonical_endpoint_name")
+        or ""
+    ).strip().casefold()
+    if current not in _NULL_LIKE:
+        return {}
+
+    source_id = str(record.get("source_id") or "")
+    if source_id == "passive_permeability":
+        label = _snake(record.get("passive_bbb_interpretation"))
+        if label not in {"permeable_or_high", "impermeable_or_low"}:
+            return {}
+        endpoint = "passive_bbb_permeability_outcome"
+        source_field = "passive_bbb_interpretation"
+        producer_id = PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID
+        rule_id = "passive_interpretation_outcome"
+    elif source_id == "efflux_transport":
+        label = _snake(record.get("interaction_conclusion"))
+        endpoint_by_label = {
+            "substrate": "efflux_substrate_outcome",
+            "non_substrate": "efflux_substrate_outcome",
+            "inhibitor": "efflux_inhibition_outcome",
+            "non_inhibitor": "efflux_inhibition_outcome",
+            "transporter_limited_brain_exposure": (
+                "transporter_limited_brain_exposure_outcome"
+            ),
+        }
+        endpoint = endpoint_by_label.get(label)
+        if endpoint is None:
+            return {}
+        source_field = "interaction_conclusion"
+        producer_id = EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID
+        rule_id = f"efflux_interaction_conclusion_{label}"
+    else:
+        return {}
+
+    return {
+        "canonical_endpoint": endpoint,
+        "spacing_and_spelling_endpoint": endpoint,
+        "spacing_and_spelling_status": "reviewed_structured_fallback",
+        "spacing_and_spelling_reason": rule_id,
+        "spacing_and_spelling_version": ENDPOINT_NORMALIZATION_VERSION,
+        "canonical_endpoint_source_field": source_field,
+        "canonical_endpoint_policy_status": "reviewed_structured_fallback",
+        "canonical_endpoint_rule_id": rule_id,
+        "canonical_endpoint_policy_version": ENDPOINT_NORMALIZATION_VERSION,
+        "canonical_endpoint_producer_id": producer_id,
+    }
+
+
 __all__ = [
     "DEFAULT_APPROVED_DIRECT_ENDPOINT_MAPPING",
     "APPROVED_DIRECT_ENDPOINT_V1_MAPPING",
     "DIRECT_ENDPOINT_MAPPING_VERSION",
     "DIRECT_ENDPOINT_MAPPING_V2_VERSION",
+    "EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID",
     "ENDPOINT_NORMALIZATION_VERSION",
     "ENDPOINT_SOURCE_FIELD",
     "EndpointNormalizer",
+    "PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID",
+    "alternate_endpoint_fields",
     "canonical_assay_type",
     "canonical_efflux_endpoint",
     "canonical_evidence_type",

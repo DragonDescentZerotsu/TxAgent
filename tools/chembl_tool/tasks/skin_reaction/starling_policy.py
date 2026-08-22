@@ -22,17 +22,31 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
     StageDocuments,
     StarlingTaskPolicy,
 )
+from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+    DEFAULT_EXACT_UNIT_MAPPING,
+    RESOLUTION_APPLY_VERSION,
+)
 from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
     clean_source_values,
 )
+from tools.chembl_tool.common.starling.measurement_routing import (
+    attach_stage1_routes,
+)
 from tools.chembl_tool.common.starling.normalization.contracts import MeasurementPair
 from tools.chembl_tool.common.starling.normalization.measurements import (
+    canonicalize_endpoint,
+    normalize_measurement_and_unit,
     parse_point_measurement,
 )
 from tools.chembl_tool.common.starling.reference_semantics import (
     ReferenceSemanticsAttacher,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
+from tools.chembl_tool.tasks.skin_reaction.starling_schema import (
+    RECORD_CONTRACT,
+    SOURCE_EXTRACTION_PAIR_PRODUCER_IDS,
+    SOURCE_PAIR_PRODUCER_IDS,
+    SOURCE_RULE_PAIR_PRODUCER_IDS,
+)
 from tools.chembl_tool.tasks.skin_reaction.starling_categorical_response import (
     CATEGORICAL_RESPONSE_VERSION,
     encoding_policy_manifest,
@@ -89,6 +103,7 @@ from tools.chembl_tool.tasks.skin_reaction.starling_spacing_and_spelling import 
     SPACING_AND_SPELLING_VERSION,
     family_assignment,
     spacing_and_spelling_decision,
+    spacing_and_spelling_endpoint,
     validate_endpoint_inventory,
 )
 
@@ -102,8 +117,59 @@ DEFAULT_OUT_DIR = (
 
 
 def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
-    del args
-    return clean_source_values(records, task_id=TASK_ID)
+    result = clean_source_values(records, task_id=TASK_ID)
+    auxiliary_mapping = Path(args.auxiliary_mapping)
+    attacher = (
+        PendingAuxiliaryAttacher(auxiliary_mapping)
+        if args.allow_missing_auxiliary_mapping
+        else AuxiliaryMetadataAttacher(auxiliary_mapping)
+    )
+
+    def endpoint(record: dict[str, Any]) -> str:
+        source_id = str(record.get("source_id") or "")
+        initial = canonicalize_endpoint(
+            spacing_and_spelling_endpoint(
+                source_id, str(record.get("endpoint_name") or "")
+            )
+        )
+        if source_id not in {"sensitization_aop", "skin_exposure"}:
+            return initial
+        pair = normalize_measurement_and_unit(
+            record.get("measurement_text"),
+            record.get("unit_text"),
+            task=TASK_ID,
+        )
+        pair = endpoint_specific_standardization_of_unit(initial, pair)
+        parsed = parse_point_measurement(pair.canonical_measurement)
+        semantic = apply_measurement_semantics(
+            {
+                **record,
+                **attacher.attach(record),
+                "canonical_endpoint": initial,
+                "canonical_measurement": pair.canonical_measurement,
+                "canonical_unit": pair.canonical_unit,
+                "measurement_unit_status": pair.status,
+                "unit_notation_status": pair.unit_notation_status,
+                "unit_notation_factor": pair.unit_notation_factor,
+                "finite_scalar_value": parsed.value,
+                "variation_value": parsed.variation,
+            }
+        )
+        return str(semantic.get("canonical_endpoint") or initial)
+
+    return replace(
+        result,
+        records=attach_stage1_routes(
+            result.records,
+            task=TASK_ID,
+            endpoint_resolver=endpoint,
+        ),
+        input_paths=(
+            *result.input_paths,
+            *((auxiliary_mapping,) if auxiliary_mapping.is_file() else ()),
+            DEFAULT_REGISTRY_PATH,
+        ),
+    )
 
 
 DEFAULT_BENCHMARK_SPLIT_ROOT = "data/processed_starling/Skin_Reaction"
@@ -142,7 +208,11 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
 def validate_arguments(
     parser: argparse.ArgumentParser, args: argparse.Namespace
 ) -> None:
-    if not Path(args.auxiliary_mapping).exists() and not args.allow_missing_auxiliary_mapping:
+    needs_normalization = args.through_stage not in {"source", "clean"}
+    if (
+        not Path(args.auxiliary_mapping).exists()
+        and not args.allow_missing_auxiliary_mapping
+    ):
         parser.error(
             f"reconciled auxiliary mapping not found: {args.auxiliary_mapping}. "
             "Build it with tasks.skin_reaction.data_processing, or pass "
@@ -151,7 +221,7 @@ def validate_arguments(
         )
     reference_mapping = Path(args.reference_semantics_mapping)
     if (
-        args.through_stage != "clean"
+        needs_normalization
         and not reference_mapping.exists()
         and not args.allow_missing_reference_semantics
     ):
@@ -274,13 +344,10 @@ def _revalidate_assay_transfer_record(
 
 def attach_source_columns(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Columnize the raw source contract before removing duplicate JSON."""
-    output: list[dict[str, Any]] = []
     for row in rows:
-        enriched = dict(row)
         for field, value in source_fields_from_record(row).items():
-            enriched.setdefault(field, value)
-        output.append(enriched)
-    return output
+            row.setdefault(field, value)
+    return rows
 
 
 def stage_documents(
@@ -309,8 +376,7 @@ def stage_documents(
             sorted({column for row in persisted for column in row})
         ),
         validations={
-            "one_to_one_cleaned_to_normalized_ids": True,
-            "measurement_unit_pair_errors": 0,
+            "one_to_one_measurement_inputs_to_normalized_ids": True,
             "endpoint_orthography_provenance": True,
             "canonical_endpoint_present": True,
             "policy_independent_validity_present": True,
@@ -377,24 +443,93 @@ def _enrich_record(
 ) -> dict[str, Any]:
     source_projection = llm_source_projection(record)
     auxiliary = attacher.attach(record)
+    exact = str(record.get("measurement_resolution_status") or "") in {
+        "ok",
+        "relative",
+        "unsure",
+        "unavailable",
+    }
+    resolution_route = str(record.get("measurement_resolution_route") or "")
+    routed = exact or (
+        bool(record.get("measurement_resolution_active")) and bool(resolution_route)
+    )
+    mapped = exact and record.get("measurement_unit_mapping_status") == "mapped"
     semantic = semantic_results.get(str(record.get("cleaned_record_id") or ""))
-    if semantic is None:
+    if semantic is None and not routed:
         raise ValueError("measurement semantics were not resolved atomically")
+    semantic = semantic or (
+        {
+            "measurement_semantics_status": "exact_measurement_unit_map",
+            "measurement_semantics_rule_id": "starling_exact_measurement_units.v1",
+            "measurement_semantics_policy_version": "starling_exact_measurement_units.v1",
+            "measurement_numeric_domain": record.get("measurement_numeric_domain"),
+        }
+        if mapped
+        else {
+            "measurement_semantics_status": "frozen_measurement_resolution",
+            "measurement_semantics_rule_id": RESOLUTION_APPLY_VERSION,
+            "measurement_semantics_policy_version": RESOLUTION_APPLY_VERSION,
+            "measurement_numeric_domain": None,
+        }
+        if exact
+        else {
+            "measurement_semantics_status": "categorical_or_non_scalar_route",
+            "measurement_semantics_rule_id": "measurement_resolution_route.v1",
+            "measurement_semantics_policy_version": "measurement_resolution_route.v1",
+            "measurement_numeric_domain": None,
+        }
+    )
     # Categorical sources report an outcome, not a measurement, so they carry no
     # scalar and never reach a pair bucket.  The encoder places the informative
     # subset on a named latent scale; it only ever fills a record that has no
     # scalar of its own, so a real measurement is never overwritten.
-    encoded = CATEGORICAL_RESPONSE_POLICY.apply(
-        {**record, **auxiliary, **semantic}
+    encoded = (
+        CATEGORICAL_RESPONSE_POLICY.apply({**record, **auxiliary, **semantic})
+        if resolution_route == "categorical" or not routed
+        else {}
     )
-    validity = enrich_skin_reaction_validity(
-        {**record, **auxiliary, **semantic, **encoded}
+    source_id = str(record.get("source_id") or "")
+    pair_producer_id = str(encoded.get("categorical_encoder_id") or "") or (
+        SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id]
+        if routed and resolution_route == "extract"
+        else SOURCE_RULE_PAIR_PRODUCER_IDS[source_id]
+        if routed and resolution_route == "accept"
+        else SOURCE_PAIR_PRODUCER_IDS[source_id]
     )
+    if exact:
+        validity = {
+            "normalization_validity_status": (
+                "unresolved_structure"
+                if str(record.get("structure_status") or "") != "resolved"
+                or not record.get("canonical_smiles")
+                else "valid" if mapped else "exact_measurement_excluded"
+            ),
+            "normalization_domain_rules_version": (
+                "starling_exact_measurement_units.v1"
+                if mapped
+                else RESOLUTION_APPLY_VERSION
+            ),
+        }
+    elif routed:
+        validity = {
+            "normalization_validity_status": (
+                "unresolved_structure"
+                if str(record.get("structure_status") or "") != "resolved"
+                or not record.get("canonical_smiles")
+                else "valid" if encoded else "non_scalar_measurement"
+            ),
+            "normalization_domain_rules_version": "measurement_resolution_route.v1",
+        }
+    else:
+        validity = enrich_skin_reaction_validity(
+            {**record, **auxiliary, **semantic, **encoded}
+        )
     reference = reference_attacher.attach(
         {**record, **auxiliary, **semantic, **encoded, **validity}
     )
     return {
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
+        "canonical_pair_producer_id": pair_producer_id,
         **encoded,
         "llm_source_contract_json": json.dumps(
             {
@@ -438,6 +573,7 @@ POLICY = StarlingTaskPolicy(
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
     scientific_assets=(
+        DEFAULT_EXACT_UNIT_MAPPING,
         DEFAULT_REGISTRY_PATH,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         DEFAULT_MAPPING_PATH,
@@ -450,6 +586,12 @@ POLICY = StarlingTaskPolicy(
         / "data_processing/assay_transfer_measurements_v1/policy.json"
     ),
     reference_semantics_enabled=True,
+    measurement_resolution_enabled=True,
+    endpoint_identity_required_sources=(
+        "sensitization_aop",
+        "phototoxicity_irritation_local_damage",
+        "skin_exposure",
+    ),
 )
 
 

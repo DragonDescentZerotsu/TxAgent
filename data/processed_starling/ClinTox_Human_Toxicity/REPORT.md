@@ -7,4 +7,5 @@ This active candidate uses the tracked ClinTox base human clinical source. It is
 - Parent label counts: `{"0": 755, "1": 6873}`
 - Vote policy: one accepted source row per vote, 70% parent agreement, exact ties rejected.
 - `qualifying_conditions` is unavailable in the delivered source schema; it was not treated as empty.
-- Status: candidate pending deterministic source-record QA.
+- Frozen source QA: `failed_manual_review` (108/360 non-passing rows: 96 fail and 12 uncertain).
+- Status: candidate pending source-wide claim-policy revision and a new frozen QA sample.

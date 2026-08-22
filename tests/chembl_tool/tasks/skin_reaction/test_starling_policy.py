@@ -87,6 +87,30 @@ def test_missing_auxiliary_mapping_must_be_opted_into():
     assert args.allow_missing_auxiliary_mapping is True
 
 
+def test_stage01_auxiliary_dependency_must_be_present_or_explicitly_pending():
+    with pytest.raises(SystemExit):
+        parse_args(
+            POLICY,
+            [
+                "--through-stage",
+                "clean",
+                "--auxiliary-mapping",
+                "/nonexistent/mapping.json",
+            ],
+        )
+    args = parse_args(
+        POLICY,
+        [
+            "--through-stage",
+            "clean",
+            "--auxiliary-mapping",
+            "/nonexistent/mapping.json",
+            "--allow-missing-auxiliary-mapping",
+        ],
+    )
+    assert args.through_stage == "clean"
+
+
 def test_pending_attacher_marks_applicable_sources_unavailable_not_mapped():
     attacher = PendingAuxiliaryAttacher()
     scalar = attacher.attach({"source_id": "skin_exposure"})

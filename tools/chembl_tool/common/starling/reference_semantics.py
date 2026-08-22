@@ -188,7 +188,11 @@ class ReferenceSemanticsAttacher:
         deterministic = self.config.deterministic_assignment(record)
         if deterministic is not None:
             return deterministic
-        record_id = str(record.get("cleaned_record_id") or "")
+        record_id = str(
+            record.get("measurement_resolution_parent_cleaned_record_id")
+            or record.get("cleaned_record_id")
+            or ""
+        )
         mapped = self._mapping.get(record_id)
         if mapped is not None:
             return mapped
@@ -242,7 +246,11 @@ class ReferenceSemanticsAttacher:
             if deterministic is not None:
                 counts[deterministic.method] += 1
                 continue
-            record_id = str(record.get("cleaned_record_id") or "")
+            record_id = str(
+                record.get("measurement_resolution_parent_cleaned_record_id")
+                or record.get("cleaned_record_id")
+                or ""
+            )
             if record_id in self._mapping:
                 counts[self._mapping[record_id].method] += 1
             elif self.fail_closed_unmapped:

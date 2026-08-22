@@ -1,3 +1,9 @@
+import csv
+import json
+from collections import Counter
+from pathlib import Path
+
+from tools.chembl_tool.common.starling.benchmark_dataset import sha256_file
 from tools.chembl_tool.tasks.clintox.clintox_base_benchmark import (
     ALLOWED_CATEGORIES,
     NEGATIVE_CATEGORY,
@@ -75,3 +81,22 @@ def test_source_row_number_makes_duplicate_extraction_ids_unique():
 def test_missing_qualifying_conditions_is_not_a_synthetic_empty_gate():
     decision = label_record(_row(), source_index=0)
     assert decision.record is not None
+
+
+def test_frozen_gold_review_fails_promotion_gate():
+    root = Path("tools/chembl_tool/tasks/clintox/data_processing/gold_qa_v1")
+    summary = json.loads((root / "summary.json").read_text(encoding="utf-8"))
+    sample = Path(summary["sample"]["path"])
+    contract = Path(summary["required_source_correction"]["path"])
+    with (root / "reviewed_rows.tsv").open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle, delimiter="\t"))
+
+    assert sha256_file(sample) == summary["sample"]["sha256"]
+    assert sha256_file(contract) == summary["required_source_correction"]["sha256"]
+    assert len(rows) == summary["n_reviewed"] == 360
+    assert Counter(row["manual_review_status"] for row in rows) == {
+        "pass": 252,
+        "fail": 96,
+        "uncertain": 12,
+    }
+    assert summary["promotion_gate_passed"] is False

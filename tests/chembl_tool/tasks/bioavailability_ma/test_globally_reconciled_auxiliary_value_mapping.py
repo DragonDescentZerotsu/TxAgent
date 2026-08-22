@@ -42,6 +42,21 @@ def test_prompt_registry_contains_only_the_original_six_prompts():
     }
 
 
+def test_oral_context_extraction_is_frozen_into_the_global_mapping(built_mapping):
+    oral = built_mapping["sources"]["oral_exposure"]
+    assert set(oral) == {
+        "global_species_context",
+        "global_biological_matrix",
+    }
+    for section in oral.values():
+        assert section["source_columns"] == ["study_context"]
+        assert len(section["mapping"]) == 37_009
+        assert section["mapping"]["[null]"] is None
+    assert mapping.validate_mapping(built_mapping)["oral_exposure"][
+        "global_species_context"
+    ]["distinct_labels"] == 10
+
+
 def test_tuple_keys_round_trip_strings_and_nulls():
     key = mapping._tuple_key(("human", None, "Caco-2"))
     assert key == '["human",null,"Caco-2"]'
@@ -190,7 +205,7 @@ def test_role_assignment_respects_expression_and_tissue_precedence():
 
 def test_full_mapping_has_complete_deterministic_source_tuple_coverage(built_mapping):
     audit = mapping.validate_mapping(built_mapping)
-    assert set(audit) == {"fa", "fg", "fh"}
+    assert set(audit) == {"oral_exposure", "fa", "fg", "fh"}
     assert built_mapping["mapping_version"] == mapping.MAPPING_VERSION
 
     for source, source_spec in mapping.SOURCE_SPECS.items():
@@ -225,6 +240,6 @@ def test_full_mapping_contains_expected_real_source_examples(built_mapping):
 
 def test_persisted_mapping_hash_and_complete_validation_are_frozen(built_mapping):
     assert hashlib.sha256(mapping.DEFAULT_OUTPUT.read_bytes()).hexdigest() == (
-        "a0929ef4cf48717b0968f78a9a726b6a198cda3233334593b5dba67c59f17304"
+        "423cb60a17ac10e152092afdce3d225b2e663835aa7e455acd2768a105d196f5"
     )
     assert mapping.validate_mapping(built_mapping)

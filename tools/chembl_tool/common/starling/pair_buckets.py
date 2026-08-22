@@ -69,7 +69,13 @@ def read_pair_bucket_input(
     if v7:
         columns.update(
             {
+                "retrieval_eligible",
+                "organization_status",
+                "canonical_measurement_text",
+                "finite_scalar_value",
                 "measurement_kind",
+                "measurement_parse_kind",
+                "measurement_unit_status",
                 "canonical_measurement_scale_id",
                 "canonical_category_id",
                 "canonical_category_rank",
@@ -90,6 +96,7 @@ def materialize_pair_buckets(
         str, ReferenceEligibilitySpec
     ] | None = None,
     required_known_fields_by_source: Mapping[str, tuple[str, ...]] | None = None,
+    semantic_pair_bucket_sources: Sequence[str] = (),
     assay_transfer_record_ineligibility: Mapping[
         str, str | Mapping[str, Any]
     ]
@@ -97,14 +104,20 @@ def materialize_pair_buckets(
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Annotate every record with assay-transfer eligibility and an optional key.
 
-    Ineligible rows remain in the Stage-04 sidecar. They receive no pair-bucket
-    key and are omitted only from assay-transfer calibration/model inputs.
+    Ineligible rows remain in the Stage-04 sidecar.  Non-semantic sources
+    receive no key; retrieval-eligible semantic sources retain a key but stay
+    omitted from assay-transfer calibration/model inputs.
 
     ``endpoint_field_by_source`` lets a source nominate a different record field
     to occupy the endpoint slot of the bucket key.  A source whose raw endpoint
     is free text can then compare on a reconciled concept while
     ``canonical_endpoint`` stays on the record at full granularity: the
     substitution changes the comparison stratum, never the endpoint's identity.
+
+    Sources in ``semantic_pair_bucket_sources`` retain a key whenever they are
+    retrieval eligible, even when the row is not eligible for assay transfer.
+    Missing physical units receive an explicit semantic bucket type without
+    changing the canonical measurement/unit fields.
     """
     output: list[dict[str, Any]] = []
     seen_ids: set[str] = set()
@@ -120,6 +133,7 @@ def materialize_pair_buckets(
     )
     canonical_unit_field = "canonical_unit_text" if v7 else "canonical_unit"
     validity_field = "canonicalization_status" if v7 else "normalization_validity_status"
+    semantic_sources = set(semantic_pair_bucket_sources)
 
     for record in records:
         record_id = str(record.get(record_id_field) or "")
@@ -142,6 +156,11 @@ def materialize_pair_buckets(
             else str(record.get(endpoint_field) or "")
         )
         unit = str(record.get(canonical_unit_field) or "")
+        pair_bucket_unit = (
+            _semantic_bucket_unit(record, unit)
+            if source_id in semantic_sources
+            else unit
+        )
         canonical_fields = {
             field: _persisted_value(record.get(field), unknown_token=unknown_token)
             for field in fields
@@ -189,28 +208,45 @@ def materialize_pair_buckets(
                 if isinstance(reviewed, Mapping)
                 else reviewed
             )
+        retrieval_eligible = bool(record.get("retrieval_eligible"))
+        if source_id in semantic_sources and not retrieval_eligible and exclusion is None:
+            exclusion = str(
+                record.get("organization_status") or "retrieval_ineligible"
+            )
+        semantic_bucket_eligible = bool(
+            source_id in semantic_sources
+            and retrieval_eligible
+            and _endpoint_is_resolved(endpoint)
+        )
         bucket_values = [
             source_id,
             endpoint,
-            unit,
+            pair_bucket_unit,
             *[canonical_fields[field] for field in fields],
         ]
-        bucket_key = _canonical_json(bucket_values) if exclusion is None else None
+        bucket_key = (
+            _canonical_json(bucket_values)
+            if exclusion is None or semantic_bucket_eligible
+            else None
+        )
         source_counts[source_id]["input_records"] += 1
         if exclusion is None:
             source_counts[source_id]["eligible_records"] += 1
+        else:
+            source_counts[source_id]["excluded_records"] += 1
+            exclusions[exclusion] += 1
+        if bucket_key is not None:
+            source_counts[source_id]["semantic_bucket_records"] += 1
             molecule_key = str(
                 record.get("molecule_id") or record.get("canonical_smiles") or ""
             )
             buckets[str(bucket_key)].append((source_id, molecule_key))
-        else:
-            source_counts[source_id]["excluded_records"] += 1
-            exclusions[exclusion] += 1
         sidecar_row = {
             record_id_field: record_id,
             "source_id": source_id,
             canonical_endpoint_field: canonical_endpoint or None,
             canonical_unit_field: unit or None,
+            "pair_bucket_unit_text": pair_bucket_unit or None,
             "canonical_pair_fields_json": _canonical_json(canonical_fields),
             "pair_bucket_key": bucket_key,
             "assay_transfer_eligible": exclusion is None,
@@ -244,6 +280,7 @@ def materialize_pair_buckets(
         for bucket, members in buckets.items()
     }
     eligible_count = sum(bool(row["bucket_eligible"]) for row in output)
+    semantic_bucket_count = sum(bool(row["pair_bucket_key"]) for row in output)
     has_endpoint_override = any(
         (endpoint_field_by_source or {}).get(source, canonical_endpoint_field)
         != canonical_endpoint_field
@@ -255,9 +292,10 @@ def materialize_pair_buckets(
         "bucket_tuple_order": [
             "source_id",
             "bucket_endpoint" if has_endpoint_override else canonical_endpoint_field,
-            canonical_unit_field,
+            "pair_bucket_unit_text",
             "source_specific_canonical_fields_in_mapping_order",
         ],
+        "semantic_pair_bucket_sources": sorted(semantic_sources),
         "source_required_fields": {
             source: list(fields)
             for source, fields in sorted(source_required_fields.items())
@@ -291,6 +329,7 @@ def materialize_pair_buckets(
             "sidecar_records": len(output),
             "eligible_records": eligible_count,
             "ineligible_records": len(output) - eligible_count,
+            "semantic_bucket_records": semantic_bucket_count,
             # Legacy metadata alias retained for frozen readers.
             "excluded_records": len(output) - eligible_count,
             "buckets": len(buckets),
@@ -322,6 +361,19 @@ def materialize_pair_buckets(
                 not row["pair_bucket_key"]
                 for row in output
                 if not row["bucket_eligible"]
+                and row["source_id"] not in semantic_sources
+            ),
+            "retrieval_eligible_semantic_records_have_exactly_one_bucket": all(
+                bool(row["pair_bucket_key"])
+                for row, record in zip(output, records, strict=True)
+                if row["source_id"] in semantic_sources
+                and bool(record.get("retrieval_eligible"))
+            ),
+            "retrieval_ineligible_semantic_records_have_no_bucket": all(
+                not row["pair_bucket_key"]
+                for row, record in zip(output, records, strict=True)
+                if row["source_id"] in semantic_sources
+                and not bool(record.get("retrieval_eligible"))
             ),
             "no_bucket_spans_sources": all(
                 len(sources) == 1 for sources in bucket_sources.values()
@@ -356,6 +408,40 @@ def _persisted_value(value: Any, *, unknown_token: str) -> str:
         return unknown_token
     text = str(value).strip()
     return text if text else unknown_token
+
+
+def _semantic_bucket_unit(record: Mapping[str, Any], canonical_unit: str) -> str:
+    if canonical_unit:
+        return canonical_unit
+    if str(record.get("canonical_reference_scope") or "") in {
+        "comparator_relative",
+        "standardized_control_ratio",
+        "endpoint_defined_ratio",
+    }:
+        return "relative-scalar"
+    if record.get("finite_scalar_value") is not None or str(
+        record.get("measurement_parse_kind") or ""
+    ) in {
+        "point",
+        "approximate_point",
+        "mean_with_variation",
+        "mean_with_context",
+        "point_with_interval",
+        "range",
+        "bound",
+    }:
+        return "unresolved-scalar"
+    return "free-text"
+
+
+def _endpoint_is_resolved(endpoint: str) -> bool:
+    return endpoint.strip().casefold() not in {
+        "",
+        "missing_endpoint",
+        "unknown",
+        "__unknown__",
+        "__unknown_endpoint__",
+    }
 
 
 def _canonical_json(value: Any) -> str:

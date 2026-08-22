@@ -16,6 +16,7 @@ from tools.chembl_tool.common.starling.stage_artifact_store import (
 
 
 ARTIFACT_STAGES = (
+    "00_source",
     "01_cleaned",
     "02_canonicalized",
     "03_records",
@@ -27,7 +28,7 @@ ARTIFACT_STAGES = (
     "09_audits",
 )
 PROFILE = StageArtifactStoreProfile(
-    store_version="skin_reaction.normalized_v7_store.v1",
+    store_version="skin_reaction.normalized_v7_store.v2",
     task_id="skin_reaction",
     stages=ARTIFACT_STAGES,
     local_root=Path(

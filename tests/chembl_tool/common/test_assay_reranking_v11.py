@@ -412,6 +412,51 @@ def test_model_override_requires_one_task_and_an_immutable_pair():
             ]
         )
 
+    local = parse_cache_args(
+        [
+            "--tasks", "bioavailability_ma",
+            "--assay-transfer-local-model-dir", "checkpoint",
+        ]
+    )
+    assert local.assay_transfer_local_model_dir == Path("checkpoint")
+    with pytest.raises(SystemExit):
+        parse_cache_args(
+            [
+                "--tasks", "bbb_martins", "skin_reaction",
+                "--assay-transfer-local-model-dir", "checkpoint",
+            ]
+        )
+
+
+def test_processed_gold_catalog_preserves_frozen_voter_labels():
+    renderer = V11PromptRenderer("bbb_martins")
+    record = {
+        "canonical_record_id": "BBB_Martins:source_row:9",
+        "source_id": "direct_bbb",
+        "source_name": "starling-labs/BBB",
+        "group_id": "Tier 1.starling_direct_bbb_evidence",
+        "canonical_smiles": "CCO",
+        "measurement_kind": "binary",
+        "processed_gold_voting_record_key": "BBB_Martins:source_row:9",
+        "processed_gold_lineage": "experimental_meaningful_cns_access_v2",
+        "processed_gold_split": "train",
+        "record_vote": 0,
+        "molecule_Y": 1,
+        "smiles": "CCO",
+        "endpoint_name": "brain concentration",
+        "measurement_text": "2",
+        "unit_text": "ng/mL",
+    }
+    catalog = _catalog_record(
+        "bbb_martins", record, renderer, {"continuous", "binary"}
+    )
+    assert catalog["record_vote"] == 0
+    assert catalog["molecule_Y"] == 1
+    assert catalog["source_fields"]["measurement_text"] == "2"
+    assert catalog["source_contract"]["record_contract_version"] == (
+        "processed_starling_gold.v1"
+    )
+
 
 def test_compact_resume_tasks_keep_frozen_model_provenance(tmp_path: Path):
     cache = tmp_path / "scores.sqlite3"

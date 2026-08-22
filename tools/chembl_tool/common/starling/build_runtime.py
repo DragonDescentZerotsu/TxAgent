@@ -308,6 +308,13 @@ def _normalize_and_project_range(
     )
 
     normalized = _normalize_range(bounds)
+    from tools.chembl_tool.common.starling.normalization.audit import (
+        validate_stage_schema,
+    )
+
+    schema_errors = validate_stage_schema(normalized, "normalize")
+    if schema_errors:
+        raise ValueError(schema_errors[0])
     if _NORMALIZE_POLICY is None or _NORMALIZE_POLICY.record_contract is None:
         raise RuntimeError("canonical projection worker has no v7 policy")
     attached = _NORMALIZE_POLICY.attach_source_columns(normalized)
@@ -391,6 +398,8 @@ def normalize_and_project_records_ordered(
     policy: Any,
     workers: int,
     chunk_rows: int = 10_000,
+    release_input: bool = False,
+    retain_working: bool = True,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Normalize, attach source columns, and project v7 rows in one pass."""
     workers = max(1, int(workers or 1))
@@ -409,7 +418,20 @@ def normalize_and_project_records_ordered(
             or len(records) < max(2_000, chunk_rows)
             or "fork" not in mp.get_all_start_methods()
         ):
-            chunks = [_normalize_and_project_range(bound) for bound in bounds]
+            normalized: list[dict[str, Any]] = []
+            persisted: list[dict[str, Any]] = []
+            for start, stop in bounds:
+                normalized_chunk, persisted_chunk = _normalize_and_project_range(
+                    (start, stop)
+                )
+                if retain_working:
+                    normalized.extend(normalized_chunk)
+                persisted.extend(persisted_chunk)
+                if release_input:
+                    if not isinstance(records, list):
+                        raise TypeError("release_input requires a mutable list")
+                    records[start:stop] = [None] * (stop - start)
+            return (normalized if retain_working else persisted), persisted
         else:
             with mp.get_context("fork").Pool(processes=workers) as pool:
                 chunks = pool.map(_normalize_and_project_range, bounds, chunksize=1)

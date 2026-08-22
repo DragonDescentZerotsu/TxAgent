@@ -16,8 +16,22 @@ from .cleaning import stable_id
 from .contracts import ORGANIZATION_STAGE_VERSION, NormalizationResult
 
 
+def is_absolute_continuous(record: Mapping[str, Any]) -> bool:
+    """Read the working flag or its equivalent compact v7 representation."""
+    explicit = record.get("is_absolute_and_continuous")
+    if explicit is not None:
+        return bool(explicit)
+    return (
+        record.get("measurement_kind") == "continuous"
+        and record.get("finite_scalar_value") is not None
+    )
+
+
 def deduplicate_within_source(
     records: Sequence[Mapping[str, Any]],
+    *,
+    endpoint_identity_required_sources: Sequence[str] = (),
+    reuse_mutable_records: bool = False,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Collapse exact semantic duplicates within, never across, one source."""
     kept_by_key: dict[str, dict[str, Any]] = {}
@@ -65,7 +79,11 @@ def deduplicate_within_source(
         existing = kept_by_key.get(key)
         source_record_id = str(source.get("source_record_id") or "")
         if existing is None:
-            kept_by_key[key] = dict(source)
+            kept_by_key[key] = (
+                source
+                if reuse_mutable_records and isinstance(source, dict)
+                else dict(source)
+            )
             duplicate_ids[key].append(source_record_id)
             continue
         duplicate_ids[key].append(source_record_id)
@@ -79,9 +97,27 @@ def deduplicate_within_source(
             }
         )
     output: list[dict[str, Any]] = []
+    endpoint_required = set(endpoint_identity_required_sources)
     for key, record in kept_by_key.items():
         ids = duplicate_ids[key]
-        retrieval_eligible = bool(record.get("canonical_smiles") and record.get("group_id"))
+        endpoint = str(
+            record.get("canonical_endpoint")
+            or record.get("canonical_endpoint_name")
+            or ""
+        ).strip().casefold()
+        endpoint_resolved = endpoint not in {
+            "",
+            "missing_endpoint",
+            "unknown",
+            "__unknown__",
+            "__unknown_endpoint__",
+        }
+        source_id = str(record.get("source_id") or "")
+        retrieval_eligible = bool(
+            record.get("canonical_smiles")
+            and record.get("group_id")
+            and (source_id not in endpoint_required or endpoint_resolved)
+        )
         record.update(
             {
                 "organization_version": ORGANIZATION_STAGE_VERSION,
@@ -95,7 +131,11 @@ def deduplicate_within_source(
                     else (
                         str(record.get("structure_status") or "unresolved")
                         if not record.get("canonical_smiles")
-                        else "unresolved_mechanism_family"
+                        else (
+                            "unresolved_mechanism_family"
+                            if not record.get("group_id")
+                            else "missing_endpoint_identity"
+                        )
                     )
                 ),
             }
@@ -106,8 +146,15 @@ def deduplicate_within_source(
 
 def organize_normalized_records(
     normalized_records: Sequence[Mapping[str, Any]],
+    *,
+    endpoint_identity_required_sources: Sequence[str] = (),
+    reuse_mutable_records: bool = False,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
-    records, duplicates = deduplicate_within_source(normalized_records)
+    records, duplicates = deduplicate_within_source(
+        normalized_records,
+        endpoint_identity_required_sources=endpoint_identity_required_sources,
+        reuse_mutable_records=reuse_mutable_records,
+    )
     exclusions = [
         {
             "normalized_record_id": record.get("normalized_record_id"),
@@ -127,8 +174,12 @@ def organize_normalized_records(
         "n_duplicates_removed": len(duplicates),
         "n_retrieval_eligible": sum(bool(row.get("retrieval_eligible")) for row in records),
         "n_organization_exclusions": len(exclusions),
+        "n_missing_endpoint_identity": sum(
+            row.get("organization_status") == "missing_endpoint_identity"
+            for row in records
+        ),
         "n_absolute_and_continuous": sum(
-            bool(row.get("is_absolute_and_continuous")) for row in records
+            is_absolute_continuous(row) for row in records
         ),
     }
     return records, duplicates, exclusions, stats
@@ -292,7 +343,7 @@ def combine_normalization_results(results: Sequence[NormalizationResult]) -> Nor
             "n_rejections": len(rejections),
             "n_duplicates_removed": len(duplicates),
             "n_absolute_and_continuous": sum(
-                bool(record.get("is_absolute_and_continuous")) for record in records
+                is_absolute_continuous(record) for record in records
             ),
             "sources": {
                 str(result.stats.get("source_id")): result.stats for result in results
@@ -397,6 +448,7 @@ __all__ = [
     "combine_normalization_results",
     "deduplicate_within_source",
     "examples_text",
+    "is_absolute_continuous",
     "organize_normalized_records",
     "representative_examples",
 ]

@@ -1,0 +1,250 @@
+Sample 1
+========
+Gold vote: Positive
+Source origin: hf
+Molecule name: Didanosine
+SMILES: OC[C@@H]1CC[C@H](n2cnc3c(O)ncnc32)O1
+Bioavailability report type: unspecified
+Reported oral bioavailability: 35%
+Normalized value (%): 35
+Lower bound (%): 35
+Upper bound (%): 35
+Value representation: reported_point
+Value units: %
+Species or population: fasting patients
+Dose: Not reported
+Oral exposure mode: liquid form or citrate-buffered tablets after antacids
+Qualifying conditions: Not reported
+Comparator: Not reported
+Support text:
+  For Didanosine, the average oral bioavailability was 35% when administered to fasting patients
+  in liquid form or as citrate-buffered tablets after antacids.
+Extra details: Not reported
+
+
+Sample 2
+========
+Gold vote: Negative
+Source origin: local
+Molecule name: SMILES:1635013
+SMILES: CC[C@H](CC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3CC[C@H]4C[C@@H](O)CC[C@]4(C)[C@H]3CC[C@]12C)C(C)C
+Bioavailability report type: absolute
+Reported oral bioavailability: 0.04 %
+Normalized value (%): 0.04
+Lower bound (%): 0.04
+Upper bound (%): 0.04
+Value representation: local_normalized_point
+Value units: %
+Species or population:
+  Oral administration of 600 mg unesterified soy plant stanols in healthy subjects; systemic
+  exposure measured using labeled isotopes.
+Dose: 600 mg
+Oral exposure mode: oral
+Qualifying conditions: Not reported
+Comparator: Intravenous injection of labeled isotopes used as reference.
+Support text:
+  The bioavailability from 600 mg unesterified soy plant stanols was only 0.04% for sitostanol.
+Extra details: Reported in referenced study [22]; fasting state.
+
+
+Sample 3
+========
+Gold vote: Negative
+Source origin: hf
+Molecule name: TBBPA
+SMILES: OC1(Cl)CC(Cl)=CC=C1c1ccc(Cl)cc1
+Bioavailability report type: systemic_availability
+Reported oral bioavailability: low
+Normalized value (%): Not reported
+Lower bound (%): Not reported
+Upper bound (%): Not reported
+Value representation: Not reported
+Value units: Not reported
+Species or population: humans
+Dose: Not reported
+Oral exposure mode: Not reported
+Qualifying conditions: Not reported
+Comparator: Not reported
+Support text:
+  Data show that the systemic bioavailability of TBBPA both in rodents and humans is low.
+Extra details: Not reported
+
+
+Sample 4
+========
+Gold vote: Positive
+Source origin: hf
+Molecule name: allopurinol
+SMILES: Oc1ncnc2[nH]ncc12
+Bioavailability report type: extent_f
+Reported oral bioavailability: 0.81±0.16
+Normalized value (%): 81
+Lower bound (%): 65
+Upper bound (%): 97
+Value representation: reported_mean_plus_minus
+Value units: %
+Species or population: humans (two elderly and two young subjects)
+Dose: 200 mg
+Oral exposure mode: Not reported
+Qualifying conditions: Not reported
+Comparator: vs IV
+Support text:
+  Following an oral dose of 200 mg allopurinol, the fractional peroral bioavailability was
+  reported as 0.81±0.16 in a group of four subjects (two elderly and two young subjects).
+Extra details:
+  Sample size n=4; compared against intravenous dosing of 200 mg as described in the methods.
+
+
+Sample 5
+========
+Gold vote: Positive
+Source origin: hf
+Molecule name: CIT
+SMILES: N=C(N)NCCC[C@H](N)C(=O)O.NC(=O)NCCC[C@H](N)C(=O)O
+Bioavailability report type: unspecified
+Reported oral bioavailability: 0.37–0.52
+Normalized value (%): 44.5
+Lower bound (%): 37
+Upper bound (%): 52
+Value representation: reported_range
+Value units: %
+Species or population: children undergoing cardiopulmonary bypass
+Dose: 5 doses (1.9 g/m² BSA)
+Oral exposure mode: oral
+Qualifying conditions: Not reported
+Comparator: vs IV
+Support text:
+  A randomized controlled trial of oral citrulline in 40 children undergoing cardiopulmonary
+  bypass reported a mean bioavailability of 0.37–0.52 for 5 doses of 1.9 g/m² BSA.
+Extra details:
+  Mean AUC range after oral dose was 651–894 µg/min/mL/g, and mean AUC range after IV dose was
+  1762–1926 µg/min/mL/g.
+
+
+Sample 6
+========
+Gold vote: Positive
+Source origin: hf
+Molecule name: terbinafine
+SMILES: CN(C/C=C/C#CC(C)(C)C)Cc1cccc2ccccc12
+Bioavailability report type: unspecified
+Reported oral bioavailability: at least 70%
+Normalized value (%): 70
+Lower bound (%): 70
+Upper bound (%): Not reported
+Value representation: lower_bound
+Value units: %
+Species or population: volunteers
+Dose: 250mg
+Oral exposure mode: single oral dose
+Qualifying conditions: Not reported
+Comparator: Not reported
+Support text:
+  In volunteers after a single oral dose of terbinafine 250mg, the bioavailability was reported to
+  be at least 70%.
+Extra details:
+  Peak plasma concentrations (Cmax) ranged from 0.86 to 1.34 mg/L and the area under the plasma
+  concentration-time curve (AUC) ranged from 3.14 to 4.74 mg/L·h.
+
+
+Sample 7
+========
+Gold vote: Negative
+Source origin: hf
+Molecule name: pentosan polysulfate
+SMILES:
+  O=S(=O)(O)O[C@@H]1[C@@H](OS(=O)(=O)O)[C@H](O[C@@H]2CO[C@@H](O)[C@H](OS(=O)(=O)O)[C@H]2OS(=O)(=O)O)OC[C@H]1O
+Bioavailability report type: unspecified
+Reported oral bioavailability: very low (≤3%)
+Normalized value (%): 3
+Lower bound (%): Not reported
+Upper bound (%): 3
+Value representation: upper_bound
+Value units: %
+Species or population: humans
+Dose: Not reported
+Oral exposure mode: oral administration
+Qualifying conditions: Not reported
+Comparator: Not reported
+Support text:
+  The bioavailability of pentosan polysulfate is reported to be very low (≤3%) following oral
+  administration.
+Extra details: Not reported
+
+
+Sample 8
+========
+Gold vote: Positive
+Source origin: hf
+Molecule name: lindane
+SMILES: Cl[C@H]1[C@H](Cl)[C@@H](Cl)[C@@H](Cl)[C@H](Cl)[C@H]1Cl
+Bioavailability report type: absolute
+Reported oral bioavailability: 0.8
+Normalized value (%): 80
+Lower bound (%): 80
+Upper bound (%): 80
+Value representation: reported_point
+Value units: %
+Species or population: human
+Dose: 86 mg/kg
+Oral exposure mode: Not reported
+Qualifying conditions: Not reported
+Comparator: Not reported
+Support text:
+  In the parameters for the human lindane PBPK model, the oral bioavailability (fraction) F0 is
+  listed as 0.8 for an oral dose (D0) of 86 mg/kg, noting that this value was assumed to be the
+  same as for the rat.
+Extra details: Assumed same value as for rat
+
+
+Sample 9
+========
+Gold vote: Negative
+Source origin: hf
+Molecule name: Pseudohypericin
+SMILES: [c]1ccccc1
+Bioavailability report type: systemic_availability
+Reported oral bioavailability: low
+Normalized value (%): Not reported
+Lower bound (%): Not reported
+Upper bound (%): Not reported
+Value representation: Not reported
+Value units: Not reported
+Species or population: volunteer
+Dose: Not reported
+Oral exposure mode: Not reported
+Qualifying conditions: Not reported
+Comparator: Not reported
+Support text:
+  Variation of absorption following oral treatment for Hypericin (H) and Pseudohypericin (PH) is
+  supported by their low systemic availability.
+Extra details:
+  Variation of absorption is assumed as a source of pharmacokinetic variability after oral
+  treatment.
+
+
+Sample 10
+=========
+Gold vote: Positive
+Source origin: hf
+Molecule name: Tolmesoxide
+SMILES: COc1cc(C)c(S(C)=O)cc1OC
+Bioavailability report type: systemic_availability
+Reported oral bioavailability: 84% ± 9%
+Normalized value (%): 84
+Lower bound (%): 84
+Upper bound (%): 84
+Value representation: reported_point
+Value units: %
+Species or population: healthy volunteers
+Dose: 200 mg
+Oral exposure mode: ingestion
+Qualifying conditions: Not reported
+Comparator: vs IV (100 mg)
+Support text:
+  The mean areas under the tolmesoxide curves following administration of 100 mg intravenous and
+  200 mg oral doses were 7.5 ± 1.0 and 12.6 ± 1.2 µg ml⁻¹ respectively, which is equivalent to an
+  oral systemic availability of 84% ± 9%.
+Extra details:
+  Calculated based on mean AUC values: 12.6 ± 1.2 µg ml⁻¹ for the 200 mg oral dose and 7.5 ± 1.0
+  µg ml⁻¹ for the 100 mg IV dose.

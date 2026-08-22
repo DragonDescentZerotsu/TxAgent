@@ -567,40 +567,100 @@ def normalize_cleaned_records(
             )
         spacing_and_spelling_endpoint = decision.spacing_and_spelling_endpoint
         canonical_endpoint = canonicalize_endpoint(spacing_and_spelling_endpoint)
-        baseline = normalize_measurement_and_unit(
-            cleaned.get("measurement_text"), cleaned.get("unit_text"), task=task
+        resolution_status = str(cleaned.get("measurement_resolution_status") or "")
+        resolution_route = str(cleaned.get("measurement_resolution_route") or "")
+        exact_authoritative = resolution_status in {
+            "ok",
+            "relative",
+            "unsure",
+            "unavailable",
+        }
+        resolution_routed = exact_authoritative or (
+            bool(cleaned.get("measurement_resolution_active"))
+            and bool(resolution_route)
         )
-        pair = (
-            endpoint_standardizer(canonical_endpoint, baseline)
-            if endpoint_standardizer is not None
-            else baseline
-        )
-        if source_measurement_resolver is not None:
-            pair = source_measurement_resolver(cleaned, canonical_endpoint, pair)
-        parsed = parse_point_measurement(pair.canonical_measurement)
-        recognized_unit = _recognized_unit(pair.canonical_unit, task)
-        non_atomic_directional_context = (
-            parsed.value is not None
-            and has_non_atomic_directional_context(
-                pair.canonical_measurement, pair.canonical_unit
+        exact_mapping_status = str(cleaned.get("measurement_unit_mapping_status") or "")
+        if resolution_routed:
+            canonical_endpoint = str(
+                cleaned.get("canonical_endpoint_name") or canonical_endpoint
             )
-        )
-        measurement_unit_status = (
-            "non_atomic_directional_context"
-            if non_atomic_directional_context
-            else pair.status
-        )
-        finite_scalar = (
-            parsed.value
-            if parsed.value is not None
-            and recognized_unit
-            and pair.status != "ambiguous_scientific_notation"
-            and not non_atomic_directional_context
-            else None
-        )
+        if exact_authoritative:
+            mapped = exact_mapping_status == "mapped"
+            unresolved_status = (
+                f"exact_unit_{exact_mapping_status}"
+                if resolution_status == "ok" and exact_mapping_status
+                else f"measurement_resolution_{resolution_status}"
+            )
+            finite_scalar = (
+                float(cleaned["resolved_scalar_value"]) if mapped else None
+            )
+            pair = MeasurementPair(
+                cleaned.get("resolved_measurement_text") if mapped else None,
+                cleaned.get("resolved_unit_text") if mapped else None,
+                "exact_unit_mapping" if mapped else unresolved_status,
+            )
+            parsed = ParsedPoint(
+                finite_scalar,
+                None,
+                False,
+                "point" if mapped else "missing",
+            )
+            non_atomic_directional_context = False
+            measurement_unit_status = pair.status
+            unit_dimension_json = None
+        elif resolution_routed:
+            pair = MeasurementPair(
+                None,
+                None,
+                (
+                    "categorical_route"
+                    if resolution_route == "categorical"
+                    else f"measurement_resolution_{resolution_status}"
+                ),
+            )
+            parsed = ParsedPoint(None, None, False, "missing")
+            finite_scalar = None
+            non_atomic_directional_context = False
+            measurement_unit_status = pair.status
+            unit_dimension_json = None
+        else:
+            baseline = normalize_measurement_and_unit(
+                cleaned.get("measurement_text"), cleaned.get("unit_text"), task=task
+            )
+            pair = (
+                endpoint_standardizer(canonical_endpoint, baseline)
+                if endpoint_standardizer is not None
+                else baseline
+            )
+            if source_measurement_resolver is not None:
+                pair = source_measurement_resolver(cleaned, canonical_endpoint, pair)
+            parsed = parse_point_measurement(pair.canonical_measurement)
+            recognized_unit = _recognized_unit(pair.canonical_unit, task)
+            non_atomic_directional_context = (
+                parsed.value is not None
+                and has_non_atomic_directional_context(
+                    pair.canonical_measurement, pair.canonical_unit
+                )
+            )
+            measurement_unit_status = (
+                "non_atomic_directional_context"
+                if non_atomic_directional_context
+                else pair.status
+            )
+            finite_scalar = (
+                parsed.value
+                if parsed.value is not None
+                and recognized_unit
+                and pair.status != "ambiguous_scientific_notation"
+                and not non_atomic_directional_context
+                else None
+            )
+            unit_dimension_json = json.dumps(
+                canonicalize_unit(pair.canonical_unit, task=task).dimension,
+                ensure_ascii=False,
+            )
         absolute_continuous = finite_scalar is not None
         family = family_resolver(source_id, endpoint_name, cleaned)
-        unit_result = canonicalize_unit(pair.canonical_unit, task=task)
         record = dict(cleaned)
         record.update(
             {
@@ -620,9 +680,7 @@ def normalize_cleaned_records(
                 "measurement_unit_status": measurement_unit_status,
                 "unit_notation_status": pair.unit_notation_status,
                 "unit_notation_factor": pair.unit_notation_factor,
-                "unit_dimension_json": json.dumps(
-                    unit_result.dimension, ensure_ascii=False
-                ),
+                "unit_dimension_json": unit_dimension_json,
                 "finite_scalar_value": finite_scalar,
                 "is_absolute_and_continuous": bool(absolute_continuous),
                 "absolute_and_continuous_value": (
@@ -642,7 +700,24 @@ def normalize_cleaned_records(
         )
         if record_enricher is not None:
             record.update(dict(record_enricher(record)))
-        if assay_transfer_measurement_policy is not None:
+        if exact_authoritative:
+            record.update(
+                {
+                    "canonical_endpoint": canonical_endpoint,
+                    "canonical_measurement": pair.canonical_measurement,
+                    "canonical_unit": pair.canonical_unit,
+                    "measurement_parse_kind": parsed.kind,
+                    "measurement_unit_status": measurement_unit_status,
+                    "unit_notation_status": "none",
+                    "unit_notation_factor": None,
+                    "unit_dimension_json": None,
+                    "finite_scalar_value": finite_scalar,
+                    "is_absolute_and_continuous": finite_scalar is not None,
+                    "absolute_and_continuous_value": finite_scalar,
+                    "variation_value": None,
+                }
+            )
+        elif not resolution_routed and assay_transfer_measurement_policy is not None:
             from tools.chembl_tool.common.starling.assay_transfer_measurements import (
                 canonicalize_assay_transfer_base,
             )
@@ -656,7 +731,8 @@ def normalize_cleaned_records(
                         "assay-transfer base scaling requires a task revalidator"
                     )
                 record.update(dict(assay_transfer_revalidator(record)))
-        _enforce_non_atomic_directional_context(record)
+        if not resolution_routed:
+            _enforce_non_atomic_directional_context(record)
         records.append(record)
     return records
 

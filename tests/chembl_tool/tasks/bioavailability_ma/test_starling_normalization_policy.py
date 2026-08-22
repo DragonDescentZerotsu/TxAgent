@@ -542,6 +542,8 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         "2",
         "--progress-every",
         "0",
+        "--measurement-resolution-mapping",
+        "",
     ]
     assert normalized_builder.main(common_args) == 0
 
@@ -565,6 +567,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
             "canonical_bioavailability_report_type",
             "canonical_assay_context",
             "canonical_species_context",
+            "canonical_biological_matrix",
             "auxiliary_mapping_status",
         )
     )
@@ -588,13 +591,17 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         (records["source_id"] == "hf_bioavailability")
         & (records["canonical_bioavailability_evidence_scope"] == "nondirect")
     ].iloc[0]
-    assert nondirect["canonical_measurement_text"] == "2"
-    assert nondirect["canonical_unit_text"] == "fold"
+    assert nondirect["measurement_text"] == "2 fold"
+    assert nondirect["measurement_resolution_route"] == "extract"
+    assert nondirect["measurement_resolution_status"] == "not_extracted"
+    assert pd.isna(nondirect["canonical_measurement_text"])
+    assert pd.isna(nondirect["canonical_unit_text"])
     encoded_fg = records[records["source_id"] == "fg"].iloc[0]
-    assert encoded_fg["canonical_endpoint_name"] == "fg_substrate_outcome:ABCB1"
+    assert encoded_fg["canonical_endpoint_name"] == "intestinal_metabolism"
     assert encoded_fg["canonical_measurement_scale_id"] == (
         "fg_substrate_status_binary.v1"
     )
+    assert encoded_fg["canonical_measurement_target_id"] == "ABCB1"
     assert encoded_fg["measurement_kind"] == "binary"
     assert encoded_fg["canonical_category_id"] == "substrate"
     assert encoded_fg["canonical_category_rank"] == 1
@@ -622,14 +629,20 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         (out_dir / "01_cleaned/manifest.json").read_text(encoding="utf-8")
     )
     source_inventory = json.loads(
-        (out_dir / "01_cleaned/source_inventory.json").read_text(encoding="utf-8")
+        (out_dir / "00_source/source_inventory.json").read_text(encoding="utf-8")
+    )
+    source_value_cleaning = json.loads(
+        (out_dir / "01_cleaned/source_value_cleaning_manifest.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert (
         out_dir / "01_cleaned/source_value_cleaning_audit.parquet"
     ).is_file()
     assert "source_value_cleaning_audit" in clean_manifest["sidecars"]
-    assert source_inventory["source_value_cleaning"]["n_input_records"] == 6
-    assert source_inventory["source_value_cleaning"]["n_output_records"] == 6
+    assert sum(source_inventory["source_row_counts"].values()) == 6
+    assert source_value_cleaning["n_input_records"] == 6
+    assert source_value_cleaning["n_output_records"] == 6
     assert manifest["v65_reconciliation"] == {
         "matching_performed": False,
         "status": "not_performed",
@@ -637,7 +650,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     assert manifest["artifact_version"].endswith(".v7")
     assert manifest["normalization_domain_rules_version"].endswith(".v4")
     assert manifest["categorical_response_version"] == (
-        "bioavailability_ma_categorical_response.v4"
+        "bioavailability_ma_categorical_response.v5"
     )
     assert manifest["fg_target_alias_version"] == (
         "bioavailability_fg_target_aliases.v1"
@@ -663,7 +676,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         )
     )
     assert auxiliary_manifest["mapping_version"] == (
-        "starling_auxiliary.globally_reconciled.v1"
+        "starling_auxiliary.globally_reconciled.v2"
     )
     assert auxiliary_manifest["coverage"]["records"] == 6
     source_contract = json.loads(
@@ -784,7 +797,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         normalized_builder.main(failed_args)
     assert all(path.read_bytes() == preserved_bytes[path] for path in preserved_paths)
 
-    for directory in normalized_builder.ARTIFACT_STAGES[3:]:
+    for directory in normalized_builder.ARTIFACT_STAGES[4:]:
         target = out_dir / directory
         target.mkdir(exist_ok=True)
         (target / "stale.txt").write_text("stale", encoding="utf-8")
@@ -812,7 +825,12 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         check_like=True,
         check_dtype=False,
     )
-    assert restarted["completed_stages"] == ["clean", "normalize", "organize"]
+    assert restarted["completed_stages"] == [
+        "source",
+        "clean",
+        "normalize",
+        "organize",
+    ]
     assert restarted["rebuild_request"] == {
         "from_stage": "normalize",
         "through_stage": "organize",
@@ -827,7 +845,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     } <= set(restarted["invalidated_artifacts"])
     assert all(
         not (out_dir / directory).exists()
-        for directory in normalized_builder.ARTIFACT_STAGES[3:]
+        for directory in normalized_builder.ARTIFACT_STAGES[4:]
     )
     assert not any("-stage-" in path.name for path in out_dir.iterdir())
 
@@ -840,7 +858,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     clean_only = json.loads(
         (out_dir / normalized_builder.MANIFEST_FILENAME).read_text(encoding="utf-8")
     )
-    assert clean_only["completed_stages"] == ["clean"]
+    assert clean_only["completed_stages"] == ["source", "clean"]
     assert not (out_dir / normalized_builder.NORMALIZED_RECORDS_FILENAME).exists()
     assert not (out_dir / normalized_builder.RECORDS_FILENAME).exists()
     assert not (out_dir / "07_endpoint_policies").exists()
@@ -850,6 +868,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
 @pytest.mark.parametrize(
     ("stage", "removes_record_dependents"),
     [
+        ("source", True),
         ("clean", True),
         ("normalize", True),
         ("organize", True),

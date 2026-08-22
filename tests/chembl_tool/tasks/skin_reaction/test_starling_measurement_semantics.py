@@ -44,7 +44,7 @@ def _record(
 def test_registry_is_pinned_and_fail_closed():
     manifest = default_policy().manifest()
     assert manifest["policy_version"] == MEASUREMENT_SEMANTICS_VERSION
-    assert manifest["n_rules"] == 85
+    assert manifest["n_rules"] == 87
     assert manifest["fail_closed"] is True
     assert manifest["counts_are_human_reviewed"] is False
 
@@ -74,6 +74,37 @@ def test_ec3_percentage_is_a_threshold_not_an_incidence_percentage():
     assert result["canonical_endpoint"] == "llna_ec3"
     assert result["measurement_quantity_kind"] == "threshold_concentration"
     assert result["measurement_numeric_domain"] == "positive"
+
+
+def test_ec2_7_percentage_remains_distinct_from_ec3():
+    result = default_policy().apply(
+        _record(
+            source_id="sensitization_aop",
+            endpoint_name="skin sensitization (EC2.7)",
+            frozen_endpoint="ec3",
+            measurement="32.02",
+            unit="%",
+        )
+    )
+    assert result["measurement_semantics_status"] == "approved"
+    assert result["canonical_endpoint"] == "llna_ec2_7"
+    assert result["measurement_quantity_kind"] == "threshold_concentration"
+
+
+def test_kinetic_dpra_log_k_is_not_cysteine_depletion_percentage():
+    result = default_policy().apply(
+        _record(
+            source_id="sensitization_aop",
+            endpoint_name="cysteine depletion",
+            frozen_endpoint="cysteine depletion",
+            measurement="-2.22",
+            unit="log(s^-1 M^-1)",
+            support_text="Kinetic DPRA log k highest reactivity was -2.22.",
+        )
+    )
+    assert result["measurement_semantics_status"] == "approved"
+    assert result["canonical_endpoint"] == "kinetic_dpra_log_k"
+    assert result["measurement_quantity_kind"] == "kinetic_dpra_log_rate_constant"
 
 
 def test_ambiguous_clinical_percentage_is_evidence_only():

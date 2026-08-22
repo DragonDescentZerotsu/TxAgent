@@ -22,44 +22,52 @@ from .measurements import (
 )
 
 PARQUET_COMPRESSION_LEVEL = 3
+PARQUET_BATCH_ROWS = 10_000
 
 
 def write_parquet(path: str | Path, rows: Sequence[Mapping[str, Any]]) -> None:
-    import pandas as pd
+    import pyarrow as pa
+    import pyarrow.parquet as pq
 
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    frame = pd.DataFrame.from_records(rows)
-    frame.to_parquet(
+    if not rows:
+        pq.write_table(pa.table({}), target, compression="zstd")
+        return
+
+    slices = [
+        (start, min(start + PARQUET_BATCH_ROWS, len(rows)))
+        for start in range(0, len(rows), PARQUET_BATCH_ROWS)
+    ]
+    schemas = [
+        pa.Table.from_pylist(list(rows[start:stop])).schema for start, stop in slices
+    ]
+    schema = pa.unify_schemas(schemas, promote_options="permissive")
+    with pq.ParquetWriter(
         target,
-        index=False,
-        engine="pyarrow",
+        schema,
         compression="zstd",
         compression_level=PARQUET_COMPRESSION_LEVEL,
-    )
+    ) as writer:
+        for start, stop in slices:
+            writer.write_table(
+                pa.Table.from_pylist(list(rows[start:stop]), schema=schema)
+            )
 
 
 def read_parquet_records(
     path: str | Path, *, columns: Sequence[str] | None = None
 ) -> list[dict[str, Any]]:
-    import pandas as pd
+    import pyarrow.parquet as pq
 
-    frame = pd.read_parquet(path, columns=list(columns) if columns is not None else None)
-    return [
-        {
-            key: (
-                None
-                if value is None
-                or (
-                    isinstance(value, float)
-                    and math.isnan(value)
-                )
-                else value
-            )
-            for key, value in row.items()
-        }
-        for row in frame.to_dict(orient="records")
-    ]
+    records: list[dict[str, Any]] = []
+    parquet = pq.ParquetFile(path)
+    for batch in parquet.iter_batches(
+        batch_size=10_000,
+        columns=list(columns) if columns is not None else None,
+    ):
+        records.extend(batch.to_pylist())
+    return records
 
 
 def validate_cleaned_normalized_identity(
@@ -67,8 +75,16 @@ def validate_cleaned_normalized_identity(
     normalized_records: Sequence[Mapping[str, Any]],
 ) -> list[str]:
     """Require a one-to-one cleaned-to-normalized identity before deduplication."""
-    errors: list[str] = []
     cleaned_ids = [str(row.get("cleaned_record_id") or "") for row in cleaned_records]
+    return validate_cleaned_normalized_identity_ids(cleaned_ids, normalized_records)
+
+
+def validate_cleaned_normalized_identity_ids(
+    cleaned_ids: Sequence[str],
+    normalized_records: Sequence[Mapping[str, Any]],
+) -> list[str]:
+    """Validate identity when the large cleaned rows were released during projection."""
+    errors: list[str] = []
     normalized_counts = Counter(
         str(row.get("cleaned_record_id") or "") for row in normalized_records
     )
@@ -98,7 +114,12 @@ def validate_cleaned_normalized_identity(
             f"{len(unknown)} normalized cleaned record ID(s) are unknown; first={unknown[0]}"
         )
     normalized_ids = [
-        str(row.get("normalized_record_id") or "") for row in normalized_records
+        str(
+            row.get("normalized_record_id")
+            or row.get("canonical_record_id")
+            or ""
+        )
+        for row in normalized_records
     ]
     if not all(normalized_ids):
         errors.append("one or more normalized record IDs are empty")
@@ -138,6 +159,100 @@ def validate_measurement_pairs(
     """
     errors: list[str] = []
     for record in records:
+        resolution_status = str(record.get("measurement_resolution_status") or "")
+        if resolution_status in {"ok", "relative", "unsure", "unavailable"}:
+            record_id = str(
+                record.get("normalized_record_id")
+                or record.get("canonical_record_id")
+                or "<missing>"
+            )
+            mapping_status = str(record.get("measurement_unit_mapping_status") or "")
+            mapped = mapping_status == "mapped"
+            if resolution_status == "ok" and mapping_status not in {
+                "mapped",
+                "excluded",
+                "domain_excluded",
+            }:
+                errors.append(f"{record_id}: resolved quantity lacks an exact unit decision")
+                continue
+            if resolution_status != "ok" and mapping_status:
+                errors.append(f"{record_id}: unresolved quantity has an exact unit decision")
+                continue
+            actual_measurement = record.get("canonical_measurement")
+            if actual_measurement is None:
+                actual_measurement = record.get("canonical_measurement_text")
+            actual_unit = record.get("canonical_unit")
+            if actual_unit is None:
+                actual_unit = record.get("canonical_unit_text")
+            actual_scalar = record.get("finite_scalar_value")
+            if record.get("assay_transfer_transform_id"):
+                actual_measurement = record.get(
+                    "assay_transfer_pretransform_measurement_text"
+                )
+                actual_unit = record.get("assay_transfer_pretransform_unit_text")
+                actual_scalar = record.get(
+                    "assay_transfer_pretransform_scalar_value"
+                )
+            if mapped:
+                expected_scalar = record.get("resolved_scalar_value")
+                scalar_matches = (
+                    actual_scalar is not None
+                    and expected_scalar is not None
+                    and math.isclose(
+                        float(actual_scalar),
+                        float(expected_scalar),
+                        rel_tol=1e-12,
+                        abs_tol=1e-15,
+                    )
+                )
+                if (
+                    actual_measurement != record.get("resolved_measurement_text")
+                    or actual_unit != record.get("resolved_unit_text")
+                    or not scalar_matches
+                    or record.get("measurement_unit_status")
+                    != "exact_unit_mapping"
+                    or record.get("variation_value") is not None
+                ):
+                    errors.append(f"{record_id}: exact mapped tuple drifted")
+            else:
+                expected_status = (
+                    f"exact_unit_{mapping_status}"
+                    if resolution_status == "ok"
+                    else f"measurement_resolution_{resolution_status}"
+                )
+                if record.get("measurement_unit_status") != expected_status:
+                    errors.append(f"{record_id}: unresolved unit status drifted")
+                elif any(
+                    value is not None
+                    for value in (actual_measurement, actual_unit, actual_scalar)
+                ):
+                    errors.append(f"{record_id}: excluded extraction retained a scalar")
+            continue
+        resolution_route = str(record.get("measurement_resolution_route") or "")
+        if resolution_route and record.get("measurement_resolution_active"):
+            record_id = str(
+                record.get("normalized_record_id")
+                or record.get("canonical_record_id")
+                or "<missing>"
+            )
+            if resolution_route == "categorical":
+                if not (
+                    record.get("categorical_encoder_id")
+                    or record.get("canonical_measurement_scale_id")
+                ):
+                    errors.append(f"{record_id}: categorical route lacks an encoder")
+            elif any(
+                record.get(field) is not None
+                for field in (
+                    "canonical_measurement",
+                    "canonical_measurement_text",
+                    "canonical_unit",
+                    "canonical_unit_text",
+                    "finite_scalar_value",
+                )
+            ):
+                errors.append(f"{record_id}: unresolved route retained a scalar")
+            continue
         recompute_record = record
         if record.get("assay_transfer_transform_id"):
             recompute_record = {
@@ -324,6 +439,7 @@ __all__ = [
     "stage_manifest",
     "validate_measurement_pairs",
     "validate_cleaned_normalized_identity",
+    "validate_cleaned_normalized_identity_ids",
     "validate_stage_schema",
     "write_parquet",
 ]

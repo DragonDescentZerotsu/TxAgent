@@ -118,3 +118,23 @@ def test_reviewed_qualified_unit_aliases_preserve_the_qualifier():
     )
     pair = normalize_measurement_and_unit("4", "%ID/g")
     assert pair.canonical_unit == "%ID/g"
+
+
+def test_a_bare_log_unit_lands_on_the_same_axis_as_the_rest_of_logbb():
+    """The extraction spells logBB's unit `log10`; logBB rows are dimensionless.
+
+    Pair buckets key on the canonical unit string, so admitting `log10` as a
+    second compatible unit would split one endpoint across two axes. The alias
+    normalizes the spelling instead.
+    """
+    for spelling in ("log10", "logBB", "log BB", "log10(Brain/Blood)"):
+        alias = resolve_qualified_unit_alias(
+            {"source_id": "direct_bbb", "unit_text": spelling}
+        )
+        assert alias == ("dimensionless", "bbb.unit.dimensionless_log_ratio.v1")
+    semantics = resolve_measurement_semantics(
+        {"source_id": "direct_bbb", "endpoint_name": "logbb", "canonical_endpoint": "logbb"}
+    )
+    assert unit_is_compatible(semantics, "dimensionless") is True
+    # A log concentration is not dimensionless and must stay out.
+    assert unit_is_compatible(semantics, "log10(mol/L)") is not True

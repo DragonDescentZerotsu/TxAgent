@@ -16,3 +16,4 @@ temp.md
 temp.tsv
 keys.py
 .runtime/
+.claude/*.lock

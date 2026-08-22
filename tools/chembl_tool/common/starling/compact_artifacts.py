@@ -79,14 +79,16 @@ def compact_persisted_records(
     rows: Sequence[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
     """Remove only frozen, derivable, or duplicated infrastructure fields."""
-    return [
-        {
-            str(field): value
-            for field, value in row.items()
-            if field not in BANNED_PERSISTED_FIELDS
-        }
-        for row in rows
-    ]
+    return [compact_persisted_record(row) for row in rows]
+
+
+def compact_persisted_record(row: Mapping[str, Any]) -> dict[str, Any]:
+    """Compact one row without requiring a second corpus-sized list."""
+    return {
+        str(field): value
+        for field, value in row.items()
+        if field not in BANNED_PERSISTED_FIELDS
+    }
 
 
 def assert_compact_schema(rows: Sequence[Mapping[str, Any]]) -> None:

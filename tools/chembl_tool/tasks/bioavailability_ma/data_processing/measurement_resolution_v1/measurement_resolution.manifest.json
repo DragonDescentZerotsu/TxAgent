@@ -1,0 +1,141 @@
+{
+  "api_base_url": "http://epyc-1-4:50000/v1",
+  "assignment_method_counts": {
+    "model_single_pass": 214024,
+    "model_structural_retry": 7268,
+    "schema_revalidated_frozen_response": 1387
+  },
+  "base_mapping": {
+    "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bioavailability_v3_stage1_current_full_w2048_20260821/measurement_resolution.parquet",
+    "sha256": "6da911e0b30b48006ecb189312cdbe7ef3d273e741bf50df649d3b4eaac39e49"
+  },
+  "cleaned_records_path": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "361d0b5aafc62ae13212a6eee7391be803c2523933fc7cc2262399336826d95e",
+  "endpoint_profile": {
+    "path": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "acf25a0915652d2f2ed032b8f3b5703dd2356e8ee3b0cb4080bfcc8cc6755389",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "generation_version": "measurement_resolution_generation.v5",
+  "inference": {
+    "max_completion_tokens": 32768,
+    "reasoning_mode": "server_default",
+    "temperature": 1.0
+  },
+  "inference_provenance": {
+    "api_base_url": "http://epyc-1-4:50000/v1",
+    "cleaned_records_path": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
+    "cleaned_records_sha256": "2a86cf9973f3564ea0663acf99ce90ae8c783b03a47cc0cecf96730f0a47bec8",
+    "generation_version": "measurement_resolution_generation.v4",
+    "inference": {
+      "max_completion_tokens": 32768,
+      "reasoning_mode": "server_default",
+      "temperature": 1.0
+    },
+    "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "new_llm_calls_for_schema_revalidation": 0,
+    "prompt": {
+      "batch_size": 10,
+      "prompt_version": "bioavailability_measurement_resolution_prompt.v3",
+      "rendered_sha256": {
+        "fa": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81",
+        "fg": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
+        "fh": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81",
+        "hf_bioavailability": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
+        "oral_exposure": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81"
+      },
+      "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
+      "template_sha256": "e3ce4e97bb3db8ea4da6e22816ebec6991cccdc6c80d5cbfd70bf6946bb6b908"
+    },
+    "routing_version": "starling_measurement_routing.v2"
+  },
+  "mapping_path": "tools/chembl_tool/tasks/bioavailability_ma/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
+  "mapping_rows": 222679,
+  "mapping_sha256": "82074ee7abefdd664e9f6ece0359c56e4864b85e5624211fab5d7a178b6ba48f",
+  "mapping_version": "bioavailability_ma_measurement_resolution.v1",
+  "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+  "prompt": {
+    "batch_size": 10,
+    "prompt_version": "bioavailability_measurement_resolution_prompt.v3",
+    "rendered_sha256": {
+      "fa": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81",
+      "fg": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
+      "fh": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81",
+      "hf_bioavailability": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
+      "oral_exposure": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81"
+    },
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
+    "template_sha256": "e3ce4e97bb3db8ea4da6e22816ebec6991cccdc6c80d5cbfd70bf6946bb6b908"
+  },
+  "publication_source": {
+    "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bioavailability_v3_stage1_current_full_w2048_20260821/repaired/measurement_resolution.parquet",
+    "role": "pre_schema_revalidation_frozen_source",
+    "sha256": "50be8c034485e7a9ed5e9e5f7f879843e9d8bf642d776e49a93c31f60e1b1287"
+  },
+  "rejected_rows": 0,
+  "repair_overlays": [
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bioavailability_v3_stage1_current_full_w2048_20260821/repair_round1/measurement_resolution.parquet",
+      "rows": 186,
+      "sha256": "db55e5ada622f772a8e29fbce2cabce013261fd51ee3521da03c064bb5e77268"
+    },
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bioavailability_v3_stage1_current_full_w2048_20260821/repair_round2/measurement_resolution.parquet",
+      "rows": 24,
+      "sha256": "c4f330cf0f3a3b554d83eed32dc85429ed81d36600161db2c6319a61bf99f1c2"
+    },
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bioavailability_v3_stage1_current_full_w2048_20260821/repair_round3/measurement_resolution.parquet",
+      "rows": 1,
+      "sha256": "da4cc8b4214d108279db075881096bc9f2ab57c85c38478dd8ecf5637bf6bd99"
+    },
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bioavailability_v3_stage1_current_full_w2048_20260821/repair_repeated_units/measurement_resolution.parquet",
+      "rows": 1492,
+      "sha256": "ea636109324d3a6cfc77d8b89857fa53ef259ff9ce96d7abfcc25c659d831e8d"
+    },
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bioavailability_v3_stage1_current_full_w2048_20260821/repair_final_id/measurement_resolution.parquet",
+      "rows": 1,
+      "sha256": "1216871c3ecd2dc154ddf0d28ed545462e9019cc6b4478f0305f11052b81b646"
+    }
+  ],
+  "routing_version": "starling_measurement_routing.v3",
+  "schema_revalidation_receipt": {
+    "cleaned_records_sha256": "361d0b5aafc62ae13212a6eee7391be803c2523933fc7cc2262399336826d95e",
+    "contract": {
+      "each_measurement_has_a_nonempty_unit": true,
+      "each_measurement_is_a_finite_plain_decimal": true,
+      "matching_cleaned_record_id": true,
+      "ok_has_measurements": true,
+      "repeated_units_allowed": true,
+      "supported_status": true
+    },
+    "eligible_assignment_method": "invalid_row_response:repeated_measurement_unit:structural_retry",
+    "eligible_rows": 1387,
+    "method": "deterministic_frozen_raw_response_revalidation",
+    "new_llm_calls": 0,
+    "output_assignment_method": "schema_revalidated_frozen_response",
+    "output_mapping_sha256": "82074ee7abefdd664e9f6ece0359c56e4864b85e5624211fab5d7a178b6ba48f",
+    "recovered_quantity_count": 3720,
+    "recovered_rows": 1387,
+    "routing_version": "starling_measurement_routing.v3",
+    "source_mapping_sha256": "50be8c034485e7a9ed5e9e5f7f879843e9d8bf642d776e49a93c31f60e1b1287",
+    "still_invalid_rows": 0,
+    "validator_generation_version": "measurement_resolution_generation.v5"
+  },
+  "status_counts": {
+    "ok": 142090,
+    "relative": 42606,
+    "unavailable": 7919,
+    "unsure": 30064
+  },
+  "task_id": "bioavailability_ma",
+  "validations": {
+    "frozen_responses_revalidated_under_current_schema": true,
+    "no_ambiguous_process_termination": true,
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

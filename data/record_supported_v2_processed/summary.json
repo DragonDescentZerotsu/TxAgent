@@ -1,0 +1,111 @@
+{
+  "schema_version": "processed_starling_gold.v1",
+  "source_lineage": "record_supported_v2",
+  "tasks": {
+    "Bioavailability_Ma": {
+      "schema_version": "processed_starling_gold.v1",
+      "task": "Bioavailability_Ma",
+      "source_lineage": "record_supported_v2",
+      "source_gold_root": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold",
+      "source_parquet": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
+      "source_parquet_locator": "git:5a6484f156edb2612b61e95b8f7c38116a8ea021:data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
+      "source_parquet_sha256": "045261cbda785092143eeadd636f78399f7b02f951b23480b16fb8dde22661c5",
+      "source_gold_sha256": {
+        "train": "8da78aaedfc9700a7fb1853853b4bb029236ce7ea0379282114f4573365b9194",
+        "valid": "08bb8f454bd9b87c810e389a169500049a2f588e7b488aca77e4cb15f18db8fc",
+        "test": "a38c2e8e565a8c53859187847f1c0102badbe1c772fceb7d97114fdcd4a04243"
+      },
+      "n_molecules": 2092,
+      "n_voting_records": 17929,
+      "split_molecule_counts": {
+        "train": 1674,
+        "valid": 209,
+        "test": 209
+      },
+      "split_voting_record_counts": {
+        "train": 12380,
+        "valid": 2336,
+        "test": 3213
+      },
+      "voting_record_type_counts": {
+        "continuous_only": 1255,
+        "mixed": 527,
+        "categorical_only": 310
+      },
+      "continuous_value_policy": {
+        "unit": "percent_oral_bioavailability",
+        "positive_threshold": 20.0,
+        "class_means": {
+          "0": 7.390366242699545,
+          "1": 63.88137381425105
+        },
+        "calibration_counts": {
+          "0": 1541,
+          "1": 9066
+        },
+        "calibration_split": "train"
+      },
+      "paths": {
+        "train_molecule_labels": "data/record_supported_v2_processed/Bioavailability_Ma/scaffold/train_molecule_labels.jsonl",
+        "valid_molecule_labels": "data/record_supported_v2_processed/Bioavailability_Ma/scaffold/valid_molecule_labels.jsonl",
+        "test_molecule_labels": "data/record_supported_v2_processed/Bioavailability_Ma/scaffold/test_molecule_labels.jsonl",
+        "heldout_molecule_labels": "data/record_supported_v2_processed/Bioavailability_Ma/scaffold/heldout_molecule_labels.jsonl",
+        "voting_records": "data/record_supported_v2_processed/Bioavailability_Ma/scaffold/voting_records.jsonl"
+      },
+      "artifact_sha256": {
+        "train_molecule_labels": "6f55f246d45b8e6b817008aa97e17b7c727e809a7672e80ec98fdad91d38a8ea",
+        "valid_molecule_labels": "06684519110bdf0d10e1ace888c9b425d3ff71abfb9b3e5d37d07f5d97dee212",
+        "test_molecule_labels": "8fb38bc66c3e62923f0106ed2d42dacc2c1afbe74d859207d31bf2e4c922143d",
+        "heldout_molecule_labels": "e5cffc2002ef4d6c5974bd0dc94b485d85a12a060499abe93ceb390183cde654",
+        "voting_records": "f271843fd7be36f5aae8adfc53f58f90663ffca67c4ca438457736c779be7514"
+      }
+    },
+    "Skin_Reaction": {
+      "schema_version": "processed_starling_gold.v1",
+      "task": "Skin_Reaction",
+      "source_lineage": "record_supported_v2",
+      "source_gold_root": "data/processed_starling_record_supported_v2/Skin_Reaction/scaffold",
+      "source_parquet": "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet",
+      "source_parquet_locator": "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet",
+      "source_parquet_sha256": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1",
+      "source_gold_sha256": {
+        "train": "e3be01530eb1466428abbdc92adaad6969d581d04e0367005682603dd78fefa9",
+        "valid": "9c97a4629c3b1f05f9478bff80387dd8ff640451218ec76521dc4f63f35c3bee",
+        "test": "9cbb44a1416ba9e2670aeaffe3f573bcacb4acb7d8cf72f30cbba5b30c8822ed"
+      },
+      "n_molecules": 2456,
+      "n_voting_records": 36532,
+      "split_molecule_counts": {
+        "train": 1966,
+        "valid": 245,
+        "test": 245
+      },
+      "split_voting_record_counts": {
+        "train": 29702,
+        "valid": 3495,
+        "test": 3335
+      },
+      "voting_record_type_counts": {
+        "categorical_only": 2456
+      },
+      "continuous_value_policy": {
+        "unit": "positive_vote_fraction",
+        "class_means": null
+      },
+      "paths": {
+        "train_molecule_labels": "data/record_supported_v2_processed/Skin_Reaction/scaffold/train_molecule_labels.jsonl",
+        "valid_molecule_labels": "data/record_supported_v2_processed/Skin_Reaction/scaffold/valid_molecule_labels.jsonl",
+        "test_molecule_labels": "data/record_supported_v2_processed/Skin_Reaction/scaffold/test_molecule_labels.jsonl",
+        "heldout_molecule_labels": "data/record_supported_v2_processed/Skin_Reaction/scaffold/heldout_molecule_labels.jsonl",
+        "voting_records": "data/record_supported_v2_processed/Skin_Reaction/scaffold/voting_records.jsonl"
+      },
+      "artifact_sha256": {
+        "train_molecule_labels": "3258944c38527cdda73d266c4430408adf39796608a762290f52dad1d4f26b3b",
+        "valid_molecule_labels": "59b04f52ce1cbba6567984c3370f5139fae66484e2fa5beb44315813efe22264",
+        "test_molecule_labels": "81fd6f12ee6b04aa1d254d31b1a5e13264d0a719bc5feebad3d568741b54702e",
+        "heldout_molecule_labels": "849ba6c2b505931b1d16fb65bb681856067ad6bbb85be03b637f037170111bc2",
+        "voting_records": "f64ea7797c52852d7ad206cecf8ff33a5951e58b97697d48f40371c21fc083d5"
+      }
+    }
+  }
+}

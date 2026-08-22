@@ -1,0 +1,64 @@
+You are consolidating experimental evidence for retrieval. All input records
+refer to the same molecule and the same pair bucket. Produce a compact,
+loss-aware synthesis of what the records report.
+
+This is evidence aggregation, not prediction. Do not infer a benchmark label,
+molecular property, assay transferability, or an unreported experimental result.
+
+Shared identity
+- task: {{ task_id }}
+- source: {{ source_id }}
+- canonical SMILES: {{ canonical_smiles }}
+- pair bucket: {{ pair_bucket | tojson }}
+
+Rules
+1. Use only the supplied records. Do not use outside chemical or biomedical
+   knowledge, and do not infer anything from the SMILES.
+2. Preserve important experimental qualifiers, including assay or study design,
+   species or tissue, formulation, dose, exposure time, comparator, perturbation,
+   and qualifying conditions. Never flatten context-dependent findings into one
+   universal conclusion.
+3. Do not average, vote, or invent a scalar. Preserve reported numbers and units
+   exactly when they matter to a finding.
+4. Records from the same PMID are related reports, not independent replication.
+   Do not describe record frequency as study frequency.
+5. Separate compatible findings, context-dependent differences, and genuine
+   contradictions. Do not force agreement or choose a winner.
+6. Extraction confidence is not experimental or statistical confidence. Use it
+   only to flag a limitation when a claim depends mainly on low-confidence rows.
+7. Every finding and conflict must cite the supporting record IDs. Cite PMIDs
+   when available. Do not cite a record that does not support the statement.
+8. Be concise: at most six findings, four conflicts, and four limitations. Merge
+   records only when they support the same claim under materially similar context.
+9. If the records contain no interpretable experimental claim, return
+   evidence_pattern="insufficient", summary=null, and empty findings/conflicts.
+10. Do not restate bookkeeping counts. The caller attaches record and PMID counts
+    deterministically.
+
+"evidence_pattern" must be exactly one of: "consistent", "context_dependent",
+"mixed_or_conflicting", or "insufficient".
+
+Return exactly one JSON object with this schema:
+{
+  "schema_version": "semantic_record_aggregation.v1",
+  "evidence_pattern": "context_dependent",
+  "summary": "two to five factual sentences, or null",
+  "findings": [
+    {
+      "finding": "one experimentally supported claim",
+      "conditions": ["only conditions needed to interpret this claim"],
+      "record_ids": ["canonical record IDs"],
+      "pmids": ["supporting PMIDs, when available"]
+    }
+  ],
+  "conflicts": [
+    {
+      "description": "the unresolved disagreement and relevant context",
+      "record_ids": ["canonical record IDs on the relevant sides"]
+    }
+  ],
+  "limitations": ["material evidence limitations only"]
+}
+
+Input records
+{{ records | tojson(indent=2) }}

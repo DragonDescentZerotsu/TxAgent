@@ -1,10 +1,10 @@
 """Staged builder for a task's layered normalized-Starling evidence library.
 
-Stages are ``clean -> normalize -> organize -> index``.  Each stage writes into
-a temporary directory and is published only after its outputs exist and its
-validations pass, so a failed computation leaves the previous coherent build in
-place.  Resuming a stage re-verifies both the stage artifact hash and the
-recorded immediate-upstream input hash, so a self-consistent but stale
+Stages are ``source -> clean -> normalize -> organize -> index``.  Each stage
+writes into a temporary directory and is published only after its outputs exist
+and its validations pass, so a failed computation leaves the previous coherent
+build in place.  Resuming a stage re-verifies both the stage artifact hash and
+the recorded immediate-upstream input hash, so a self-consistent but stale
 downstream stage cannot be resumed.
 
 Everything task-specific arrives through a
@@ -32,6 +32,7 @@ from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.starling.compact_artifacts import (
     assert_compact_schema,
     build_relational_evidence_catalog,
+    compact_persisted_record,
     compact_persisted_records,
     write_compact_neighbor_index,
 )
@@ -51,10 +52,16 @@ from tools.chembl_tool.common.starling.normalization.audit import (
     read_parquet_records,
     scalar_distribution_audit,
     stage_manifest,
-    validate_cleaned_normalized_identity,
+    validate_cleaned_normalized_identity_ids,
     validate_measurement_pairs,
     validate_stage_schema,
     write_parquet,
+)
+from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+    DEFAULT_EXACT_UNIT_MAPPING,
+    EXACT_UNIT_MAPPING_VERSION,
+    RESOLUTION_APPLY_VERSION,
+    apply_measurement_resolution,
 )
 from tools.chembl_tool.common.starling.normalization.cleaning import (
     file_sha256,
@@ -68,8 +75,10 @@ from tools.chembl_tool.common.starling.normalization.contracts import (
     NORMALIZED_RECORD_VERSION,
     ORGANIZATION_STAGE_VERSION,
     SCALAR_PARSER_VERSION,
+    SOURCE_STAGE_VERSION,
 )
 from tools.chembl_tool.common.starling.normalization.organization import (
+    is_absolute_continuous,
     organize_normalized_records,
 )
 from tools.chembl_tool.common.starling.normalization.task_policy import (
@@ -85,6 +94,8 @@ from tools.chembl_tool.common.units import (
 )
 
 
+SOURCE_INVENTORY_FILENAME = "00_source/source_inventory.json"
+ENDPOINT_INVENTORY_FILENAME = "00_source/endpoint_inventory.json"
 CLEANED_FILENAME = "01_cleaned/records.parquet"
 NORMALIZED_RECORDS_FILENAME = "02_normalized/records.parquet"
 CANONICALIZED_RECORDS_FILENAME = "02_canonicalized/records.parquet"
@@ -93,10 +104,12 @@ REJECTIONS_FILENAME = "03_records/exclusions.parquet"
 DUPLICATES_FILENAME = "03_records/duplicates.parquet"
 DISTRIBUTION_AUDIT_FILENAME = "03_records/scalar_distribution.parquet"
 ENDPOINT_REGISTRY_FILENAME = "02_normalized/endpoint_registry.json"
-ENDPOINT_INVENTORY_FILENAME = "01_cleaned/endpoint_inventory.json"
-SOURCE_INVENTORY_FILENAME = "01_cleaned/source_inventory.json"
+ENDPOINT_UNIT_PROFILE_FILENAME = "01_cleaned/endpoint_unit_profile.json"
 SOURCE_VALUE_CLEANING_AUDIT_FILENAME = (
     "01_cleaned/source_value_cleaning_audit.parquet"
+)
+SOURCE_VALUE_CLEANING_MANIFEST_FILENAME = (
+    "01_cleaned/source_value_cleaning_manifest.json"
 )
 MANIFEST_FILENAME = "manifest.json"
 EVIDENCE_FAMILIES_FILENAME = "04_evidence_catalog/molecule_families.parquet"
@@ -109,6 +122,44 @@ INDEX_META_FILENAME = "05_neighbor_index/manifest.json"
 VALIDITY_POLICY_FILENAME = "02_normalized/record_validity_policy.json"
 AUXILIARY_MAPPING_MANIFEST_FILENAME = "02_normalized/auxiliary_mapping_manifest.json"
 SOURCE_COLUMN_CONTRACT_FILENAME = "02_normalized/source_contract.json"
+
+
+def _measurement_resolution_mapping(args: argparse.Namespace) -> Path | None:
+    """The frozen extraction to apply, or None for a pre-generation build."""
+    path = getattr(args, "measurement_resolution_mapping", None)
+    return Path(path) if path else None
+
+
+def _measurement_resolution_manifest(
+    policy: StarlingTaskPolicy, args: argparse.Namespace
+) -> dict[str, Any]:
+    mapping = _measurement_resolution_mapping(args)
+    enabled = policy.measurement_resolution_enabled
+    return {
+        "enabled": enabled,
+        "active": enabled,
+        "frozen_extraction_loaded": mapping is not None,
+        "apply_version": RESOLUTION_APPLY_VERSION,
+        "exact_unit_mapping_version": EXACT_UNIT_MAPPING_VERSION,
+        "exact_unit_mapping_path": str(DEFAULT_EXACT_UNIT_MAPPING),
+        "exact_unit_mapping_sha256": (
+            file_sha256(DEFAULT_EXACT_UNIT_MAPPING) if enabled else None
+        ),
+        "legacy_parser_active": not enabled,
+    }
+
+
+def _scientific_assets(
+    policy: StarlingTaskPolicy, args: argparse.Namespace
+) -> tuple[Path, ...]:
+    assets = [Path(path) for path in policy.scientific_assets]
+    if policy.measurement_resolution_enabled:
+        if DEFAULT_EXACT_UNIT_MAPPING not in assets:
+            assets.append(DEFAULT_EXACT_UNIT_MAPPING)
+        mapping = _measurement_resolution_mapping(args)
+        if mapping is not None:
+            assets.append(mapping)
+    return tuple(assets)
 
 
 def _stage_paths(policy: StarlingTaskPolicy | None) -> dict[str, str]:
@@ -150,8 +201,15 @@ def _stage_output_filenames(
 ) -> dict[str, tuple[str, ...]]:
     paths = _stage_paths(policy)
     clean_outputs = STAGE_OUTPUT_FILENAMES["clean"] + (
-        (SOURCE_VALUE_CLEANING_AUDIT_FILENAME,)
+        (
+            SOURCE_VALUE_CLEANING_AUDIT_FILENAME,
+            SOURCE_VALUE_CLEANING_MANIFEST_FILENAME,
+        )
         if policy is not None and policy.source_value_cleaner is not None
+        else ()
+    ) + (
+        (ENDPOINT_UNIT_PROFILE_FILENAME,)
+        if policy is not None and policy.measurement_resolution_enabled
         else ()
     )
     return {
@@ -172,8 +230,13 @@ def _stage_output_filenames(
         ),
     }
 
-STAGES = ("clean", "normalize", "organize", "index")
+STAGES = ("source", "clean", "normalize", "organize", "index")
 STAGE_ARTIFACTS = {
+    "source": (
+        SOURCE_INVENTORY_FILENAME,
+        "00_source/manifest.json",
+        SOURCE_STAGE_VERSION,
+    ),
     "clean": (CLEANED_FILENAME, "01_cleaned/manifest.json", CLEANING_STAGE_VERSION),
     "normalize": (
         NORMALIZED_RECORDS_FILENAME,
@@ -183,11 +246,14 @@ STAGE_ARTIFACTS = {
     "organize": (RECORDS_FILENAME, "03_records/manifest.json", ORGANIZATION_STAGE_VERSION),
 }
 STAGE_OUTPUT_FILENAMES = {
+    "source": (
+        SOURCE_INVENTORY_FILENAME,
+        ENDPOINT_INVENTORY_FILENAME,
+        "00_source/manifest.json",
+    ),
     "clean": (
         CLEANED_FILENAME,
         "01_cleaned/manifest.json",
-        SOURCE_INVENTORY_FILENAME,
-        ENDPOINT_INVENTORY_FILENAME,
     ),
     "normalize": (
         NORMALIZED_RECORDS_FILENAME,
@@ -216,6 +282,7 @@ STAGE_OUTPUT_FILENAMES = {
     ),
 }
 STAGE_UPSTREAM_INPUTS = {
+    "clean": ("source_inventory", SOURCE_INVENTORY_FILENAME),
     "normalize": ("cleaned_records", CLEANED_FILENAME),
     "organize": ("normalized_records", NORMALIZED_RECORDS_FILENAME),
 }
@@ -238,6 +305,11 @@ RECORD_DEPENDENT_DIRECTORIES = (
 RECORD_DEPENDENT_FILES = (
     "v65_reconciliation.parquet",
     "v65_reconciliation_summary.json",
+    "source_inventory.json",
+    "endpoint_inventory.json",
+    "01_cleaned/source_inventory.json",
+    "01_cleaned/endpoint_inventory.json",
+    "03_records/scalar_distribution_audit.parquet",
 )
 LEGACY_FLAT_ARTIFACTS = (
     "01_cleaned_records.parquet",
@@ -253,8 +325,6 @@ LEGACY_FLAT_ARTIFACTS = (
     "neighbor_index.pkl",
     "neighbor_index.meta.json",
     "endpoint_metric_registry.json",
-    "endpoint_inventory.json",
-    "source_inventory.json",
 )
 
 
@@ -307,7 +377,7 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
     if (
         args.cache_mode == "auto"
         and args.validation_level == "strict"
-        and first_stage == 0
+        and first_stage == STAGES.index("source")
         and cached_stage in STAGES
         and cached_stage == args.through_stage
         and cache_metadata_matches(
@@ -316,7 +386,7 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             completed_stage=cached_stage,
             args=args,
             digests=digests,
-            scientific_assets=policy.scientific_assets,
+            scientific_assets=_scientific_assets(policy, args),
         )
     ):
         _log(
@@ -327,75 +397,47 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
     source_inventory = _read_optional_json(out_dir / SOURCE_INVENTORY_FILENAME)
     endpoint_inventories = _read_optional_json(out_dir / ENDPOINT_INVENTORY_FILENAME)
 
-    if first_stage == 0:
-        (
-            cleaned,
-            source_inventory,
-            endpoint_inventories,
-            cleaning_inputs,
-            source_value_cleaning_audit,
-        ) = _build_cleaned_records(policy, args)
-        _require_valid_schema(cleaned, "clean")
-        cleaned_attached = policy.attach_source_columns(cleaned)
-        cleaned_persisted = compact_persisted_records(
-            [
-                policy.record_contract.clean_projection(row)
-                for row in cleaned_attached
-            ]
-            if policy.record_contract
-            else cleaned_attached
-        )
-        assert_compact_schema(cleaned_persisted)
-        with _temporary_stage_directory(out_dir, "clean") as stage_dir:
-            write_parquet(stage_dir / CLEANED_FILENAME, cleaned_persisted)
-            if policy.source_value_cleaner is not None:
-                write_parquet(
-                    stage_dir / SOURCE_VALUE_CLEANING_AUDIT_FILENAME,
-                    source_value_cleaning_audit,
-                )
+    prepared_sources = None
+    if first_stage <= STAGES.index("source"):
+        prepared_sources = _prepare_source_inputs(policy, args)
+        _, source_inventory, endpoint_inventories, source_inputs = prepared_sources
+        with _temporary_stage_directory(out_dir, "source") as stage_dir:
             _write_json(stage_dir / SOURCE_INVENTORY_FILENAME, source_inventory)
-            _write_json(stage_dir / ENDPOINT_INVENTORY_FILENAME, endpoint_inventories)
+            _write_json(
+                stage_dir / ENDPOINT_INVENTORY_FILENAME, endpoint_inventories
+            )
             _write_staged_stage_manifest(
                 stage_dir,
                 out_dir,
-                "clean",
+                "source",
                 policy=policy,
-                inputs=cleaning_inputs,
-                output_filename=CLEANED_FILENAME,
-                row_counts={"cleaned_records": len(cleaned)},
-                validations={
-                    "one_cleaned_record_per_source_row": True,
-                    "source_value_cleaning_audited": (
-                        policy.source_value_cleaner is not None
-                    ),
-                    "source_value_cleaning_row_identity_preserved": True,
+                inputs=source_inputs,
+                output_filename=SOURCE_INVENTORY_FILENAME,
+                row_counts={
+                    "source_records": sum(
+                        source_inventory["source_row_counts"].values()
+                    )
                 },
-                sidecars=(
-                    {
-                        "source_value_cleaning_audit": (
-                            stage_dir / SOURCE_VALUE_CLEANING_AUDIT_FILENAME
-                        )
-                    }
-                    if policy.source_value_cleaner is not None
-                    else None
-                ),
+                validations={
+                    "source_hashes_recorded": True,
+                    "source_row_counts_verified": True,
+                    "source_rows_immutable": True,
+                },
+                sidecars={
+                    "endpoint_inventory": stage_dir / ENDPOINT_INVENTORY_FILENAME
+                },
             )
             invalidated_artifacts.extend(
-                _commit_stage_outputs(out_dir, "clean", stage_dir, policy)
+                _commit_stage_outputs(out_dir, "source", stage_dir, policy)
             )
-        _log(f"clean: records={len(cleaned):,}")
-    else:
-        cleaned_persisted = (
-            _load_verified_stage(out_dir, "clean", policy) if first_stage == 1 else []
+        _log(
+            "source: records="
+            f"{sum(source_inventory['source_row_counts'].values()):,}"
         )
-        cleaned = cleaned_persisted
-        if cleaned and policy.record_contract:
-            cleaned = [policy.record_contract.inflate_cleaned(row) for row in cleaned]
-            _restore_v7_cleaned_structures(
-                policy, args, cleaned, source_inventory=source_inventory
-            )
+    else:
+        _verify_stage_artifact(out_dir, "source", policy)
 
-    if final_stage == 0:
+    if final_stage == STAGES.index("source"):
         return _finish_partial(
             policy,
             out_dir,
@@ -406,7 +448,127 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             invalidated_artifacts,
         )
 
-    if first_stage <= 1:
+    if first_stage <= STAGES.index("clean"):
+        if prepared_sources is None:
+            prepared_sources = _prepare_source_inputs(policy, args)
+            _, current_inventory, current_endpoints, _ = prepared_sources
+            if (
+                current_inventory != source_inventory
+                or current_endpoints != endpoint_inventories
+            ):
+                raise ValueError("current sources differ from the frozen Stage-00 snapshot")
+        (
+            cleaned,
+            cleaning_inputs,
+            source_value_cleaning_audit,
+            source_value_cleaning_manifest,
+        ) = _clean_prepared_sources(policy, args, prepared_sources)
+        _require_valid_schema(cleaned, "clean")
+        if policy.measurement_resolution_enabled:
+            from tools.chembl_tool.common.starling.measurement_routing import (
+                STAGE1_ROUTE_BUCKETS,
+            )
+
+            invalid_routes = [
+                row.get("measurement_resolution_route")
+                for row in cleaned
+                if row.get("measurement_resolution_route") not in STAGE1_ROUTE_BUCKETS
+                or not row.get("canonical_endpoint_name")
+            ]
+            if invalid_routes:
+                raise ValueError(
+                    "Stage 01 has invalid measurement routing; "
+                    f"first={invalid_routes[0]!r}"
+                )
+        cleaned_attached = policy.attach_source_columns(cleaned)
+        if policy.record_contract:
+            for index, row in enumerate(cleaned_attached):
+                cleaned_attached[index] = compact_persisted_record(
+                    policy.record_contract.clean_projection(row)
+                )
+            cleaned_persisted = cleaned_attached
+        else:
+            cleaned_persisted = compact_persisted_records(cleaned_attached)
+        assert_compact_schema(cleaned_persisted)
+        with _temporary_stage_directory(out_dir, "clean") as stage_dir:
+            write_parquet(stage_dir / CLEANED_FILENAME, cleaned_persisted)
+            sidecars: dict[str, Path] = {}
+            if policy.source_value_cleaner is not None:
+                write_parquet(
+                    stage_dir / SOURCE_VALUE_CLEANING_AUDIT_FILENAME,
+                    source_value_cleaning_audit,
+                )
+                sidecars["source_value_cleaning_audit"] = (
+                    stage_dir / SOURCE_VALUE_CLEANING_AUDIT_FILENAME
+                )
+                _write_json(
+                    stage_dir / SOURCE_VALUE_CLEANING_MANIFEST_FILENAME,
+                    source_value_cleaning_manifest,
+                )
+                sidecars["source_value_cleaning_manifest"] = (
+                    stage_dir / SOURCE_VALUE_CLEANING_MANIFEST_FILENAME
+                )
+            if policy.measurement_resolution_enabled:
+                sidecars["endpoint_unit_profile"] = _write_endpoint_unit_profile(
+                    stage_dir / CLEANED_FILENAME,
+                    stage_dir / ENDPOINT_UNIT_PROFILE_FILENAME,
+                    task=policy.task_id,
+                )
+            route_counts = count_by(cleaned, "measurement_resolution_route")
+            _write_staged_stage_manifest(
+                stage_dir,
+                out_dir,
+                "clean",
+                policy=policy,
+                inputs={
+                    "source_inventory": out_dir / SOURCE_INVENTORY_FILENAME,
+                    **cleaning_inputs,
+                },
+                output_filename=CLEANED_FILENAME,
+                row_counts={"cleaned_records": len(cleaned)},
+                validations={
+                    "one_cleaned_record_per_source_row": True,
+                    "source_value_cleaning_audited": (
+                        policy.source_value_cleaner is not None
+                    ),
+                    "source_value_cleaning_row_identity_preserved": True,
+                    "measurement_routing_is_partition": (
+                        not policy.measurement_resolution_enabled
+                        or sum(route_counts.values()) == len(cleaned)
+                    ),
+                    "measurement_route_counts": route_counts,
+                },
+                sidecars=sidecars,
+            )
+            invalidated_artifacts.extend(
+                _commit_stage_outputs(out_dir, "clean", stage_dir, policy)
+            )
+        _log(f"clean: records={len(cleaned):,}")
+    else:
+        cleaned_persisted = (
+            _load_verified_stage(out_dir, "clean", policy)
+            if first_stage == STAGES.index("normalize")
+            else []
+        )
+        cleaned = cleaned_persisted
+        if cleaned and policy.record_contract:
+            cleaned = [policy.record_contract.inflate_cleaned(row) for row in cleaned]
+            _restore_v7_cleaned_structures(
+                policy, args, cleaned, source_inventory=source_inventory
+            )
+
+    if final_stage == STAGES.index("clean"):
+        return _finish_partial(
+            policy,
+            out_dir,
+            args,
+            source_inventory,
+            endpoint_inventories,
+            started,
+            invalidated_artifacts,
+        )
+
+    if first_stage <= STAGES.index("normalize"):
         if not cleaned:
             cleaned_persisted = _load_verified_stage(out_dir, "clean", policy)
             cleaned = cleaned_persisted
@@ -417,13 +579,30 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                 _restore_v7_cleaned_structures(
                     policy, args, cleaned, source_inventory=source_inventory
                 )
+        cleaned_parent_count = len(cleaned)
+        resolution_mapping = _measurement_resolution_mapping(args)
+        measurement_resolution_audit = (
+            apply_measurement_resolution(
+                cleaned,
+                mapping_path=resolution_mapping,
+                task=policy.task_id,
+                allow_partial=args.allow_partial_measurement_resolution,
+            )
+            if policy.measurement_resolution_enabled
+            else None
+        )
         hooks = policy.build_hooks(args)
+        measurement_input_ids = [
+            str(record.get("cleaned_record_id") or "") for record in cleaned
+        ]
         if policy.record_contract:
             normalized, normalized_persisted = normalize_and_project_records_ordered(
                 cleaned,
                 hooks=hooks,
                 policy=policy,
                 workers=args.workers,
+                release_input=args.workers == 1,
+                retain_working=False,
             )
         else:
             normalized = normalize_records_ordered(
@@ -432,7 +611,9 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                 task=policy.task_id,
                 workers=args.workers,
             )
-        identity_errors = validate_cleaned_normalized_identity(cleaned, normalized)
+        identity_errors = validate_cleaned_normalized_identity_ids(
+            measurement_input_ids, normalized
+        )
         if identity_errors:
             raise ValueError(
                 f"{len(identity_errors)} cleaned/normalized identity failure(s); "
@@ -462,7 +643,8 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                         f"{len(final_errors)} final assay-transfer measurement "
                         f"failure(s); first={final_errors[0]}"
                     )
-        _require_valid_schema(normalized, "normalize")
+        if not policy.record_contract:
+            _require_valid_schema(normalized, "normalize")
         if not policy.record_contract:
             normalized = policy.attach_source_columns(normalized)
             normalized_persisted = compact_persisted_records(normalized)
@@ -529,25 +711,57 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                         if getattr(args, "reference_semantics_mapping", None)
                         else {}
                     ),
+                    **(
+                        {"measurement_resolution_mapping": resolution_mapping}
+                        if measurement_resolution_audit and resolution_mapping
+                        else {}
+                    ),
+                    **(
+                        {"exact_measurement_unit_map": DEFAULT_EXACT_UNIT_MAPPING}
+                        if measurement_resolution_audit and resolution_mapping
+                        else {}
+                    ),
                 },
                 output_filename=normalized_records_filename,
                 row_counts={
-                    "cleaned_records": len(cleaned),
+                    "cleaned_records": cleaned_parent_count,
+                    "measurement_input_records": len(cleaned),
                     "normalized_records": len(normalized),
                     "finite_scalars": sum(
                         row.get("finite_scalar_value") is not None
                         for row in normalized
                     ),
                     "absolute_and_continuous": sum(
-                        bool(row.get("is_absolute_and_continuous"))
-                        for row in normalized
+                        is_absolute_continuous(row) for row in normalized
                     ),
                     "normalization_valid": sum(
-                        row.get("normalization_validity_status") == "valid"
+                        (
+                            row.get("normalization_validity_status")
+                            or row.get("canonicalization_status")
+                        )
+                        == "valid"
                         for row in normalized
                     ),
                 },
-                validations=documents.validations,
+                validations={
+                    **documents.validations,
+                    "measurement_unit_pair_validation": (
+                        "passed" if args.validation_level == "full" else "not_run"
+                    ),
+                    "final_assay_transfer_measurement_validation": (
+                        "passed"
+                        if args.validation_level == "full"
+                        and policy.assay_transfer_measurement_policy is not None
+                        else "not_applicable"
+                        if policy.assay_transfer_measurement_policy is None
+                        else "not_run"
+                    ),
+                    **(
+                        {"measurement_resolution": measurement_resolution_audit}
+                        if measurement_resolution_audit is not None
+                        else {}
+                    ),
+                },
             )
             invalidated_artifacts.extend(
                 _commit_stage_outputs(out_dir, "normalize", stage_dir, policy)
@@ -557,19 +771,23 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             f"records={len(normalized):,} "
             f"scalars={sum(row.get('finite_scalar_value') is not None for row in normalized):,}"
         )
+        if final_stage > STAGES.index("normalize") and policy.record_contract:
+            for index, row in enumerate(normalized):
+                normalized[index] = policy.record_contract.inflate_canonical(row)
+            normalized_persisted = []
     else:
         normalized_persisted = (
             _load_verified_stage(out_dir, "normalize", policy)
-            if first_stage == 2
+            if first_stage == STAGES.index("organize")
             else []
         )
         normalized = normalized_persisted
         if normalized and policy.record_contract:
-            normalized = [
-                policy.record_contract.inflate_canonical(row) for row in normalized
-            ]
+            for index, row in enumerate(normalized):
+                normalized[index] = policy.record_contract.inflate_canonical(row)
+            normalized_persisted = []
 
-    if final_stage == 1:
+    if final_stage == STAGES.index("normalize"):
         return _finish_partial(
             policy,
             out_dir,
@@ -580,15 +798,14 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             invalidated_artifacts,
         )
 
-    if first_stage <= 2:
+    if first_stage <= STAGES.index("organize"):
         if not normalized:
             normalized_persisted = _load_verified_stage(out_dir, "normalize", policy)
             normalized = normalized_persisted
             if policy.record_contract:
-                normalized = [
-                    policy.record_contract.inflate_canonical(row)
-                    for row in normalized
-                ]
+                for index, row in enumerate(normalized):
+                    normalized[index] = policy.record_contract.inflate_canonical(row)
+                normalized_persisted = []
         if args.frozen_retrieval_normalized_records:
             from tools.chembl_tool.common.starling.retrieval_boundary import (
                 freeze_normalized_retrieval_identity,
@@ -597,44 +814,38 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             normalized = freeze_normalized_retrieval_identity(
                 normalized, args.frozen_retrieval_normalized_records
             )
-            normalized_persisted = freeze_normalized_retrieval_identity(
-                normalized_persisted, args.frozen_retrieval_normalized_records
-            )
         records, duplicates, exclusions, organization_stats = organize_normalized_records(
-            normalized
+            normalized,
+            endpoint_identity_required_sources=(
+                policy.endpoint_identity_required_sources
+            ),
+            reuse_mutable_records=True,
         )
         _require_valid_schema(records, "organize")
         distribution_rows = scalar_distribution_audit(records)
+        census_extras = policy.census_extras(records) if policy.census_extras else {}
+        normalization_validity_status_counts = count_by(
+            records, "normalization_validity_status"
+        )
+        if normalized is not records and isinstance(normalized, list):
+            normalized.clear()
         if policy.record_contract:
-            canonical_by_id = {
-                str(row.get("canonical_record_id") or ""): row
-                for row in normalized_persisted
-            }
-            records_persisted = []
-            for record in records:
-                record_id = str(record.get("normalized_record_id") or "")
-                base = canonical_by_id.get(record_id)
-                if base is None:
-                    raise ValueError(
-                        f"organized record lacks its canonical Stage-02 row: {record_id}"
-                    )
-                persisted = dict(base)
+            required_contract_fields = {
+                field
+                for bucket in policy.record_contract.pair_buckets.values()
                 for field in (
-                    "duplicate_group_id",
-                    "duplicate_group_size",
-                    "retrieval_eligible",
-                    "organization_status",
-                ):
-                    persisted[field] = record.get(field)
-                records_persisted.append(persisted)
-            # Preserve the established global Parquet column order without
-            # re-projecting every record.  Pandas fixes the initial columns
-            # from the first mapping and appends source-specific fields as
-            # they first appear in later mappings.
-            if records_persisted:
-                records_persisted[0] = compact_persisted_records(
-                    [policy.record_contract.canonical_projection(records[0])]
-                )[0]
+                    *bucket.canonical_dimensions,
+                    *bucket.core_context_dimensions,
+                    *bucket.variance_candidates,
+                )
+            }
+            for index, record in enumerate(records):
+                projected = policy.record_contract.canonical_projection(record)
+                if index == 0:
+                    for field in required_contract_fields:
+                        projected.setdefault(field, None)
+                records[index] = compact_persisted_record(projected)
+            records_persisted = records
         else:
             records_persisted = compact_persisted_records(records)
         if args.frozen_retrieval_records:
@@ -645,6 +856,7 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             records_persisted = freeze_retrieval_boundary(
                 records_persisted, args.frozen_retrieval_records
             )
+        records = records_persisted
         assert_compact_schema(records_persisted)
         with _temporary_stage_directory(out_dir, "organize") as stage_dir:
             write_parquet(stage_dir / RECORDS_FILENAME, records_persisted)
@@ -704,10 +916,18 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             "n_organization_exclusions": sum(
                 not bool(row.get("retrieval_eligible")) for row in records
             ),
+            "n_missing_endpoint_identity": sum(
+                row.get("organization_status") == "missing_endpoint_identity"
+                for row in records
+            ),
             "n_absolute_and_continuous": sum(
-                bool(row.get("is_absolute_and_continuous")) for row in records
+                is_absolute_continuous(row) for row in records
             ),
         }
+        census_extras = policy.census_extras(records) if policy.census_extras else {}
+        normalization_validity_status_counts = count_by(
+            records, "normalization_validity_status"
+        )
 
     frozen_census = {
         "n_cleaned_records": sum(
@@ -715,13 +935,11 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             for value in (source_inventory.get("source_row_counts") or {}).values()
         ),
         **organization_stats,
-        **(policy.census_extras(records) if policy.census_extras else {}),
-        "normalization_validity_status_counts": count_by(
-            records, "normalization_validity_status"
-        ),
+        **census_extras,
+        "normalization_validity_status_counts": normalization_validity_status_counts,
     }
 
-    if final_stage == 2:
+    if final_stage == STAGES.index("organize"):
         return _finish_partial(
             policy,
             out_dir,
@@ -814,6 +1032,7 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             ),
             "scalar_parser_version": SCALAR_PARSER_VERSION,
             "unit_normalizer_version": UNIT_NORMALIZER_VERSION,
+            "measurement_resolution": _measurement_resolution_manifest(policy, args),
             "contextual_unit_policy": unit_policy_manifest,
             "qualifier_vocabulary": qualifier_manifest,
             "index_version": compact_profile.index_version,
@@ -869,15 +1088,14 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
     return 0
 
 
-def _build_cleaned_records(
+def _prepare_source_inputs(
     policy: StarlingTaskPolicy,
     args: argparse.Namespace,
 ) -> tuple[
-    list[dict[str, Any]],
+    list[tuple[Any, Any, str, Any]],
     dict[str, Any],
     dict[str, Any],
     dict[str, Path],
-    list[dict[str, Any]],
 ]:
     data_dir = Path(args.starling_data_dir)
     mapping_spec = policy.smiles_mapping(args) if policy.smiles_mapping else None
@@ -978,31 +1196,14 @@ def _build_cleaned_records(
             )
             source_hashes[extra.source_id] = extra.source_sha256
 
-    cleaned = clean_sources_ordered(clean_batches, workers=args.workers)
-    source_value_cleaning_audit: list[dict[str, Any]] = []
-    source_value_cleaning_manifest: dict[str, Any] | None = None
-    if policy.source_value_cleaner is not None:
-        before_ids = [str(row.get("cleaned_record_id") or "") for row in cleaned]
-        cleaning_result = policy.source_value_cleaner(cleaned, args)
-        cleaned = cleaning_result.records
-        after_ids = [str(row.get("cleaned_record_id") or "") for row in cleaned]
-        if before_ids != after_ids:
-            raise ValueError(
-                "source-value cleaning changed Stage-01 row count, order, or identity"
-            )
-        source_value_cleaning_audit = cleaning_result.audit_rows
-        source_value_cleaning_manifest = cleaning_result.manifest
-        for index, path in enumerate(cleaning_result.input_paths, start=1):
-            inputs[f"source_value_cleaning_asset_{index}"] = path
-
     source_inventory: dict[str, Any] = {
         "dataset": policy.dataset_name,
         "source_hashes": source_hashes,
-        "source_row_counts": count_by(cleaned, "source_id"),
+        "source_row_counts": {
+            batch[0].source_id: len(batch[1]) for batch in clean_batches
+        },
         **extra_entries,
     }
-    if source_value_cleaning_manifest is not None:
-        source_inventory["source_value_cleaning"] = source_value_cleaning_manifest
     if mapping_spec is not None:
         source_inventory["smiles_mapping"] = {
             "path": str(mapping_spec.path),
@@ -1011,12 +1212,39 @@ def _build_cleaned_records(
             "n_loaded_identifiers": len(smiles_mapping),
         }
     return (
-        cleaned,
+        clean_batches,
         source_inventory,
         endpoint_inventories,
         inputs,
-        source_value_cleaning_audit,
     )
+
+
+def _clean_prepared_sources(
+    policy: StarlingTaskPolicy,
+    args: argparse.Namespace,
+    prepared: tuple[
+        list[tuple[Any, Any, str, Any]],
+        dict[str, Any],
+        dict[str, Any],
+        dict[str, Path],
+    ],
+) -> tuple[list[dict[str, Any]], dict[str, Path], list[dict[str, Any]], dict[str, Any]]:
+    clean_batches, _, _, _ = prepared
+    cleaned = clean_sources_ordered(clean_batches, workers=args.workers)
+    if policy.source_value_cleaner is None:
+        return cleaned, {}, [], {}
+    before_ids = [str(row.get("cleaned_record_id") or "") for row in cleaned]
+    result = policy.source_value_cleaner(cleaned, args)
+    after_ids = [str(row.get("cleaned_record_id") or "") for row in result.records]
+    if before_ids != after_ids:
+        raise ValueError(
+            "source-value cleaning changed Stage-01 row count, order, or identity"
+        )
+    inputs = {
+        f"source_value_cleaning_asset_{index}": path
+        for index, path in enumerate(result.input_paths, start=1)
+    }
+    return result.records, inputs, result.audit_rows, result.manifest
 
 
 def load_smiles_mapping(path: Path, needed_identifiers: set[str]) -> dict[str, str]:
@@ -1076,19 +1304,6 @@ def _restore_v7_cleaned_structures(
                 "SMILES mapping changed since Stage 01: "
                 f"expected {inventory_sha}, found {mapping_sha}"
             )
-        clean_manifest_path = Path(args.out_dir) / "01_cleaned/manifest.json"
-        clean_manifest = json.loads(clean_manifest_path.read_text(encoding="utf-8"))
-        manifest_sha = str(
-            ((clean_manifest.get("inputs") or {}).get("smiles_mapping") or {}).get(
-                "sha256"
-            )
-            or ""
-        )
-        if not manifest_sha or mapping_sha != manifest_sha:
-            raise ValueError(
-                "SMILES mapping differs from the Stage 01 input contract: "
-                f"expected {manifest_sha or '<missing>'}, found {mapping_sha}"
-            )
     identifiers = {
         str(row.get("global_identifier") or "")
         for row in records
@@ -1128,6 +1343,12 @@ def count_by(rows: list[dict[str, Any]], field: str) -> dict[str, int]:
 def _load_verified_stage(
     out_dir: Path, stage: str, policy: StarlingTaskPolicy | None = None
 ) -> list[dict[str, Any]]:
+    return read_parquet_records(_verify_stage_artifact(out_dir, stage, policy))
+
+
+def _verify_stage_artifact(
+    out_dir: Path, stage: str, policy: StarlingTaskPolicy | None = None
+) -> Path:
     filename, manifest_filename, version = _stage_artifacts(policy)[stage]
     artifact = out_dir / filename
     manifest_path = out_dir / manifest_filename
@@ -1167,7 +1388,26 @@ def _load_verified_stage(
                 f"{stage} stage upstream input hash mismatch for {input_name}: "
                 f"expected {expected_upstream_hash}, found {actual_upstream_hash}"
             )
-    return read_parquet_records(artifact)
+    return artifact
+
+
+def _write_endpoint_unit_profile(
+    records_path: Path, output_path: Path, *, task: str
+) -> Path:
+    from tools.chembl_tool.common.starling.build_endpoint_unit_profile import (
+        build_profile,
+    )
+
+    config = importlib.import_module(
+        f"tools.chembl_tool.tasks.{task}.starling_measurement_resolution"
+    )
+    profile = build_profile(
+        records_path,
+        config.source_routing_rules(),
+        task=task,
+    )
+    _write_json(output_path, profile)
+    return output_path
 
 
 def _write_staged_stage_manifest(
@@ -1254,7 +1494,6 @@ def _invalidate_downstream_artifacts(
         targets.extend(out_dir / directory for directory in RECORD_DEPENDENT_DIRECTORIES)
     if stage == "clean":
         targets.extend(out_dir / filename for filename in LEGACY_FLAT_ARTIFACTS)
-
     invalidated: list[str] = []
     for target in targets:
         if not target.exists():
@@ -1285,6 +1524,9 @@ def _finish_partial(
     started: float,
     invalidated_artifacts: list[str],
 ) -> int:
+    compact_profile = policy.compact_profile_for_contract(
+        policy.record_contract.version if policy.record_contract else ""
+    )
     payload = {
         "artifact_version": (
             CANONICAL_ARTIFACT_VERSION
@@ -1299,7 +1541,10 @@ def _finish_partial(
         "record_contract": (
             policy.record_contract.manifest() if policy.record_contract else None
         ),
+        "compact_artifact_version": compact_profile.artifact_version,
+        "index_version": compact_profile.index_version,
         "scalar_parser_version": SCALAR_PARSER_VERSION,
+        "measurement_resolution": _measurement_resolution_manifest(policy, args),
         "contextual_unit_policy": contextual_unit_policy_manifest(),
         "qualifier_vocabulary": qualifier_vocabulary_manifest(),
         **policy.manifest_versions(complete=False),
@@ -1369,7 +1614,7 @@ def _record_build_cache(
         input_paths=input_paths,
         output_paths=physical_output_paths,
         digests=digests,
-        scientific_assets=policy.scientific_assets,
+        scientific_assets=_scientific_assets(policy, args),
     )
     if staged_to_published:
         metadata["outputs"] = {
@@ -1418,7 +1663,7 @@ def parse_args(
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--starling-data-dir", default=policy.default_data_dir)
     parser.add_argument("--out-dir", default=policy.default_out_dir)
-    parser.add_argument("--from-stage", choices=STAGES, default="clean")
+    parser.add_argument("--from-stage", choices=STAGES, default="source")
     parser.add_argument("--through-stage", choices=STAGES, default="index")
     parser.add_argument("--max-rows-per-source", type=int, default=0)
     parser.add_argument("--max-record-examples", type=int, default=6)
@@ -1469,6 +1714,26 @@ def parse_args(
         default="auto",
         help="reuse a complete content-matched build, or force recomputation",
     )
+    if policy.measurement_resolution_enabled:
+        default_mapping = importlib.import_module(
+            f"tools.chembl_tool.tasks.{policy.task_id}.starling_measurement_resolution"
+        ).DEFAULT_MAPPING_PATH
+        parser.add_argument(
+            "--measurement-resolution-mapping",
+            default=str(default_mapping) if Path(default_mapping).is_file() else "",
+            help=(
+                "Frozen offline measurement extraction applied as Stage-02 input. "
+                "Empty retains numeric source rows as evidence without a scalar."
+            ),
+        )
+        parser.add_argument(
+            "--allow-partial-measurement-resolution",
+            action="store_true",
+            help=(
+                "Permit extract-routed rows the frozen extraction does not cover; "
+                "they remain evidence without a scalar."
+            ),
+        )
     if policy.add_cli_arguments is not None:
         policy.add_cli_arguments(parser)
     args = parser.parse_args(argv)

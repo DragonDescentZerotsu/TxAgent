@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from tools.chembl_tool.common.starling.canonicalization_v7 import (
     CanonicalDimensionSpec,
+    CanonicalProducerSpec,
     PairBucketSpec,
     SourceProfile,
     StarlingRecordContract,
@@ -37,6 +38,24 @@ ENDPOINT_RULE_VERSION = "skin_reaction_endpoint_name.v7"
 MEASUREMENT_UNIT_VERSION = MEASUREMENT_SEMANTICS_VERSION
 SMILES_VERSION = "rdkit_standardized_source_smiles.v1"
 MEASUREMENT_ATOMIC_GROUP = "canonical_measurement_unit_pair"
+PAIR_PRODUCER_FIELD = "canonical_pair_producer_id"
+SOURCE_PAIR_PRODUCER_IDS = {
+    source_id: f"skin_reaction.{source_id}.legacy_measurement_pair.v1"
+    for source_id in (
+        "direct_skin_reaction",
+        "sensitization_aop",
+        "phototoxicity_irritation_local_damage",
+        "skin_exposure",
+    )
+}
+SOURCE_RULE_PAIR_PRODUCER_IDS = {
+    source_id: f"skin_reaction.{source_id}.exact_source_pair.v1"
+    for source_id in SOURCE_PAIR_PRODUCER_IDS
+}
+SOURCE_EXTRACTION_PAIR_PRODUCER_IDS = {
+    source_id: f"skin_reaction.{source_id}.frozen_extraction_pair.v1"
+    for source_id in SOURCE_RULE_PAIR_PRODUCER_IDS
+}
 
 
 def _base_dimensions(
@@ -48,18 +67,30 @@ def _base_dimensions(
     endpoint_version: str = ENDPOINT_RULE_VERSION,
     categorical_inputs: tuple[str, ...] = (),
 ) -> tuple[CanonicalDimensionSpec, ...]:
-    measurement_inputs = (
-        categorical_inputs
-        if categorical_inputs
-        else ("endpoint_name", "measurement_text", "unit_text")
+    measurement_inputs = ("endpoint_name", "measurement_text", "unit_text")
+    categorical_producers = tuple(
+        CanonicalProducerSpec(
+            scale.scale_id,
+            categorical_inputs,
+            "controlled_encoder",
+            CATEGORICAL_RESPONSE_VERSION,
+        )
+        for scale in MEASUREMENT_SCALES.values()
+        if scale.source_id == source_id
     )
-    measurement_method = (
-        "controlled_encoder" if categorical_inputs else "deterministic_rule"
-    )
-    measurement_version = (
-        CATEGORICAL_RESPONSE_VERSION
-        if categorical_inputs
-        else MEASUREMENT_UNIT_VERSION
+    pair_producers = categorical_producers + (
+        CanonicalProducerSpec(
+            SOURCE_RULE_PAIR_PRODUCER_IDS[source_id],
+            measurement_inputs,
+            "deterministic_rule",
+            "starling_exact_measurement_units.v1",
+        ),
+        CanonicalProducerSpec(
+            SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id],
+            measurement_inputs,
+            "frozen_extraction",
+            "starling_exact_measurement_units.v1",
+        ),
     )
     output = [
         CanonicalDimensionSpec(
@@ -74,20 +105,26 @@ def _base_dimensions(
             "canonical_measurement_text",
             "measurement",
             measurement_inputs,
-            measurement_method,
-            measurement_version,
+            "deterministic_rule",
+            MEASUREMENT_UNIT_VERSION,
             atomic_group=MEASUREMENT_ATOMIC_GROUP,
             depends_on=("canonical_endpoint_name",),
+            producer_id=SOURCE_PAIR_PRODUCER_IDS[source_id],
+            producer_id_field=PAIR_PRODUCER_FIELD,
+            producer_variants=pair_producers,
             legacy_value_field="canonical_measurement",
         ),
         CanonicalDimensionSpec(
             "canonical_unit_text",
             "unit",
             measurement_inputs,
-            measurement_method,
-            measurement_version,
+            "deterministic_rule",
+            MEASUREMENT_UNIT_VERSION,
             atomic_group=MEASUREMENT_ATOMIC_GROUP,
             depends_on=("canonical_endpoint_name",),
+            producer_id=SOURCE_PAIR_PRODUCER_IDS[source_id],
+            producer_id_field=PAIR_PRODUCER_FIELD,
+            producer_variants=pair_producers,
             legacy_value_field="canonical_unit",
         ),
         CanonicalDimensionSpec(
@@ -379,4 +416,12 @@ RECORD_CONTRACT = StarlingRecordContract(
 )
 
 
-__all__ = ["PAIR_BUCKETS", "RECORD_CONTRACT", "SOURCES", "TASK_ID"]
+__all__ = [
+    "PAIR_BUCKETS",
+    "RECORD_CONTRACT",
+    "SOURCE_EXTRACTION_PAIR_PRODUCER_IDS",
+    "SOURCE_PAIR_PRODUCER_IDS",
+    "SOURCE_RULE_PAIR_PRODUCER_IDS",
+    "SOURCES",
+    "TASK_ID",
+]

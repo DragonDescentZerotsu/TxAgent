@@ -22,6 +22,7 @@ from tools.chembl_tool.tasks.skin_reaction.build_normalized_starling_evidence_li
 
 
 EXPECTED_STAGES = (
+    "00_source",
     "01_cleaned",
     "02_canonicalized",
     "03_records",
@@ -45,11 +46,12 @@ def test_all_v7_artifact_profiles_cover_the_complete_stage_layout():
         assert profile.stages == EXPECTED_STAGES
         assert profile.local_root.name == "starling_normalized_v7"
         assert profile.tracked_root.name == "starling_normalized_v7"
-        assert profile.store_version.endswith(".normalized_v7_store.v1")
+        assert profile.store_version.endswith(".normalized_v7_store.v2")
 
 
 def test_current_build_boundary_stops_at_split_independent_stage_05():
     canonical = (
+        "00_source",
         "01_cleaned",
         "02_canonicalized",
         "03_records",

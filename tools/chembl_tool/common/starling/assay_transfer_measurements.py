@@ -111,7 +111,12 @@ def finalize_assay_transfer_measurement(
             raise ValueError(f"log10 policy would double-transform {raw_key}")
         scalar = math.log10(scalar)
         _set_log_value(updated_working, updated_projected, scalar, unit)
-    elif kind == "continuous" and scalar is not None:
+    elif (
+        kind == "continuous"
+        and scalar is not None
+        and str(working.get("measurement_resolution_status") or "")
+        not in {"ok", "relative", "unsure", "unavailable"}
+    ):
         text = _measurement_text(scalar, _finite(updated_projected.get("variation_value")))
         updated_working["canonical_measurement"] = text
         updated_projected["canonical_measurement_text"] = text
@@ -198,13 +203,34 @@ def validate_final_assay_transfer_measurements(
         ):
             errors.append(f"{record_id}: canonical tuple contract mismatch")
             continue
-        parsed = parse_point_measurement(
+        measurement_text = (
             record.get("canonical_measurement_text")
             or record.get("canonical_measurement")
         )
+        exact = str(record.get("measurement_resolution_status") or "") in {
+            "ok",
+            "relative",
+            "unsure",
+            "unavailable",
+        }
+        parsed_value = _finite(measurement_text) if exact else parse_point_measurement(
+            measurement_text
+        ).value
         kind = str(record.get("measurement_kind") or "")
-        if kind == "continuous" and not _same_optional_number(scalar, parsed.value):
+        if kind == "continuous" and not _same_optional_number(scalar, parsed_value):
             errors.append(f"{record_id}: canonical text/scalar mismatch")
+            continue
+        has_absolute_tuple = (
+            "is_absolute_and_continuous" in record
+            or "absolute_and_continuous_value" in record
+        )
+        if kind == "continuous" and has_absolute_tuple and (
+            not record.get("is_absolute_and_continuous")
+            or not _same_optional_number(
+                scalar, _finite(record.get("absolute_and_continuous_value"))
+            )
+        ):
+            errors.append(f"{record_id}: absolute continuous scalar mismatch")
             continue
         prevalue = _finite(record.get("assay_transfer_pretransform_scalar_value"))
         preunit = str(record.get("assay_transfer_pretransform_unit_text") or "")
@@ -324,6 +350,8 @@ def _set_log_value(
     for row in (working, projected):
         row["finite_scalar_value"] = scalar
         row["variation_value"] = None
+        row["is_absolute_and_continuous"] = True
+        row["absolute_and_continuous_value"] = scalar
     working.update({"canonical_measurement": text, "canonical_unit": transformed_unit})
     projected.update(
         {"canonical_measurement_text": text, "canonical_unit_text": transformed_unit}

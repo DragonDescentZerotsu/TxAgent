@@ -55,7 +55,11 @@ def test_bioavailability_source_field_mapping_uses_only_persisted_canonical_fiel
         ),
         "oral_exposure": (),
         "fa": ("global_context", "global_species_context"),
-        "fg": ("global_context", "global_species_context"),
+        "fg": (
+            "canonical_measurement_target_id",
+            "global_context",
+            "global_species_context",
+        ),
         "fh": ("global_context", "global_species_context"),
     }
 
@@ -68,6 +72,23 @@ def test_materializer_maps_persisted_values_without_recanonicalizing_them():
     rows, metadata = _materialize(records)
     assert rows[0]["pair_bucket_key"] != rows[1]["pair_bucket_key"]
     assert metadata["stats"]["buckets"] == 2
+
+
+def test_fg_categorical_targets_remain_in_separate_buckets():
+    records = [
+        _record(
+            number,
+            source="fg",
+            endpoint="intestinal_efflux",
+            unit="binary_outcome_class",
+            canonical_measurement_target_id=target,
+            global_context="caco_2",
+            global_species_context="human",
+        )
+        for number, target in enumerate(("ABCB1", "ABCG2"), start=1)
+    ]
+    rows, _ = _materialize(records)
+    assert rows[0]["pair_bucket_key"] != rows[1]["pair_bucket_key"]
 
 
 def test_unknown_fields_match_unknown_and_sources_remain_distinct():
@@ -195,6 +216,8 @@ def test_standalone_builder_writes_exactly_two_files_without_rewriting_v5(tmp_pa
         "input_records": 2,
         "sidecar_records": 2,
         "eligible_records": 2,
+        "ineligible_records": 0,
+        "semantic_bucket_records": 2,
         "excluded_records": 0,
         "buckets": 1,
         "pairable_buckets": 1,
@@ -210,8 +233,11 @@ def test_standalone_builder_writes_exactly_two_files_without_rewriting_v5(tmp_pa
         "source_id",
         "canonical_endpoint",
         "canonical_unit",
+        "pair_bucket_unit_text",
         "canonical_pair_fields_json",
         "pair_bucket_key",
+        "assay_transfer_eligible",
+        "assay_transfer_ineligibility_reason",
         "bucket_eligible",
         "bucket_exclusion_reason",
     ]

@@ -103,7 +103,7 @@ def test_invalid_metric_rows_are_retained_with_a_status_not_a_comparison_value()
 def test_declared_categorical_anchor_uses_encoded_validity_contract():
     record = _record(
         source="fg",
-        endpoint="fg_substrate_outcome:ABCB1",
+        endpoint="intestinal_efflux",
         measurement="1",
         unit="binary_outcome_class",
         value=1.0,
@@ -115,7 +115,7 @@ def test_declared_categorical_anchor_uses_encoded_validity_contract():
 def test_encoded_unit_without_encoder_fails_closed():
     record = _record(
         source="fg",
-        endpoint="fg_substrate_outcome:ABCB1",
+        endpoint="intestinal_efflux",
         measurement="1",
         unit="binary_outcome_class",
         value=1.0,

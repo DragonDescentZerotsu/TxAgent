@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from tools.chembl_tool.common.starling.normalization import measurements
 from tools.chembl_tool.common.starling.normalization.measurements import (
     normalize_cleaned_records,
     normalize_measurement_and_unit,
@@ -202,6 +203,51 @@ def test_directional_scalar_gate_cannot_be_undone_by_task_enrichment():
     assert normalized["normalization_validity_status"] == (
         "non_scalar_measurement"
     )
+
+
+def test_exact_resolution_bypasses_the_legacy_measurement_parser(monkeypatch):
+    def legacy_parser_called(*_args, **_kwargs):
+        raise AssertionError("the legacy parser handled an exact extraction")
+
+    monkeypatch.setattr(
+        measurements, "normalize_measurement_and_unit", legacy_parser_called
+    )
+    base = {
+        "source_id": "source",
+        "endpoint_name": "raw endpoint",
+        "canonical_endpoint_name": "permeability",
+        "measurement_resolution_status": "ok",
+        "measurement_resolution_parent_cleaned_record_id": "parent",
+        "measurement_text": "source prose",
+        "unit_text": "source unit",
+    }
+    mapped = {
+        **base,
+        "cleaned_record_id": "mapped",
+        "measurement_unit_mapping_status": "mapped",
+        "resolved_measurement_text": "0.0000056",
+        "resolved_unit_text": "cm/s",
+        "resolved_scalar_value": 0.0000056,
+    }
+    excluded = {
+        **base,
+        "cleaned_record_id": "excluded",
+        "measurement_unit_mapping_status": "excluded",
+    }
+    normalized = normalize_cleaned_records(
+        [mapped, excluded],
+        endpoint_normalizer=lambda _source_id, endpoint: endpoint,
+        family_resolver=lambda _source_id, _endpoint, _record: None,
+        task="test_task",
+    )
+    assert normalized[0]["canonical_measurement"] == "0.0000056"
+    assert normalized[0]["canonical_unit"] == "cm/s"
+    assert normalized[0]["finite_scalar_value"] == 0.0000056
+    assert normalized[0]["variation_value"] is None
+    assert normalized[1]["canonical_measurement"] is None
+    assert normalized[1]["canonical_unit"] is None
+    assert normalized[1]["finite_scalar_value"] is None
+    assert normalized[1]["measurement_unit_status"] == "exact_unit_excluded"
 
 
 def test_bioavailability_contextual_reconciliation_preserves_directional_gate():

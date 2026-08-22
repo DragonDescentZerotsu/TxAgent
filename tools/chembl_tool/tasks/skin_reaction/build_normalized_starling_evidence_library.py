@@ -55,6 +55,7 @@ from tools.chembl_tool.tasks.skin_reaction.starling_policy import (
 
 
 CANONICAL_ARTIFACT_STAGES = (
+    "00_source",
     "01_cleaned",
     "02_canonicalized",
     "03_records",
@@ -89,7 +90,10 @@ INDEX_META_TEMPLATE = f"{NEIGHBOR_INDEX_STAGE}/{{benchmark_split}}/manifest.json
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(POLICY, argv)
-    if args.allow_missing_auxiliary_mapping:
+    if (
+        args.allow_missing_auxiliary_mapping
+        and args.through_stage not in {"source", "clean"}
+    ):
         # Pair buckets and every later stage require the reconciled v2 mapping.
         # The explicit pending mode is only a way to inspect source cleaning,
         # normalization, and categorical encoding before that paid pass exists.

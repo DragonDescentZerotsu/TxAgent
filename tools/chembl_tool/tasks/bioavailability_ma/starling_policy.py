@@ -25,8 +25,14 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
     StageDocuments,
     StarlingTaskPolicy,
 )
+from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+    DEFAULT_EXACT_UNIT_MAPPING,
+)
 from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
     clean_source_values,
+)
+from tools.chembl_tool.common.starling.measurement_routing import (
+    attach_stage1_routes,
 )
 from tools.chembl_tool.common.starling.reference_semantics import (
     ReferenceSemanticsAttacher,
@@ -37,6 +43,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response im
     MEASUREMENT_SCALES,
     POLICY as CATEGORICAL_RESPONSE_POLICY,
     canonical_fg_target_id,
+    encode_fg_substrate_status,
     encoding_policy_manifest,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
@@ -47,9 +54,12 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     nondirect_measurement_fields,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
+    FG_SUBSTRATE_ENDPOINT_PRODUCER_ID,
     RECORD_CONTRACT,
     SOURCE_ENDPOINT_PRODUCER_IDS,
+    SOURCE_EXTRACTION_PAIR_PRODUCER_IDS,
     SOURCE_PAIR_PRODUCER_IDS,
+    SOURCE_RULE_PAIR_PRODUCER_IDS,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_auxiliary_metadata import (
     AUXILIARY_ATTACHMENT_VERSION,
@@ -88,6 +98,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
     REPORT_TYPE_NORMALIZATION_VERSION,
     bioavailability_evidence_scope,
     enrich_bioavailability_validity,
+    normalize_bioavailability_report_type,
     validity_policy_manifest,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_reference_semantics import (
@@ -138,11 +149,15 @@ def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace
         and not _max_hf_rows(args)
         and not int(getattr(args, "max_rows_per_source", 0) or 0)
     )
-    return clean_source_values(
+    result = clean_source_values(
         records,
         task_id=TASK_ID,
         reviewed_repairs_path=DEFAULT_SOURCE_VALUE_REPAIRS,
         require_all_reviewed_repairs=require_all,
+    )
+    return replace(
+        result,
+        records=attach_stage1_routes(result.records, task=TASK_ID),
     )
 
 
@@ -214,7 +229,7 @@ def validate_arguments(
         parser.error("bounded source runs require --no-strict-endpoint-inventory")
     reference_mapping = Path(args.reference_semantics_mapping)
     if (
-        args.through_stage != "clean"
+        args.through_stage not in {"source", "clean"}
         and not reference_mapping.exists()
         and not args.allow_missing_reference_semantics
     ):
@@ -420,13 +435,10 @@ def _revalidate_assay_transfer_record(
 
 def attach_source_columns(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Columnize the raw source contract before removing duplicate JSON."""
-    output: list[dict[str, Any]] = []
     for row in rows:
-        enriched = dict(row)
         for field, value in source_fields_from_record(row).items():
-            enriched.setdefault(field, value)
-        output.append(enriched)
-    return output
+            row.setdefault(field, value)
+    return rows
 
 
 def stage_documents(
@@ -454,8 +466,7 @@ def stage_documents(
             sorted({column for row in persisted for column in row})
         ),
         validations={
-            "one_to_one_cleaned_to_normalized_ids": True,
-            "measurement_unit_pair_errors": 0,
+            "one_to_one_measurement_inputs_to_normalized_ids": True,
             "endpoint_orthography_provenance": True,
             "canonical_endpoint_present": True,
             "policy_independent_validity_present": True,
@@ -552,9 +563,28 @@ def _enrich_record(
     auxiliary_attacher: AuxiliaryMetadataAttacher,
     reference_attacher: ReferenceSemanticsAttacher,
 ) -> dict[str, Any]:
-    provenance = fg_scalar_rule_provenance(record)
+    exact = str(record.get("measurement_resolution_status") or "") in {
+        "ok",
+        "relative",
+        "unsure",
+        "unavailable",
+    }
+    resolution_route = str(record.get("measurement_resolution_route") or "")
+    routed = exact or (
+        bool(record.get("measurement_resolution_active")) and bool(resolution_route)
+    )
+    provenance = (
+        {
+            "source_scalar_rule_version": None,
+            "source_scalar_rule_id": None,
+            "source_scalar_rule_reason": None,
+            "scalar_semantic_label": None,
+        }
+        if exact or routed
+        else fg_scalar_rule_provenance(record)
+    )
     measurement_extraction: dict[str, Any] = {}
-    if str(record.get("source_id") or "") == "hf_bioavailability":
+    if not routed and str(record.get("source_id") or "") == "hf_bioavailability":
         scope = bioavailability_evidence_scope(
             record.get("bioavailability_report_type")
         )
@@ -582,43 +612,120 @@ def _enrich_record(
     source_projection = llm_source_projection(enriched)
     auxiliary = auxiliary_attacher.attach(enriched)
     with_auxiliary = {**enriched, **auxiliary}
-    contextual_fields = contextual_canonical_record_fields(with_auxiliary)
+    contextual_fields = {} if routed else contextual_canonical_record_fields(with_auxiliary)
     canonical = {**with_auxiliary, **contextual_fields}
     # Preserve a parseable source number even when its unit is unresolved.  A
     # categorical anchor may fill only a genuinely nonnumeric outcome.
-    parsed_source = parse_point_measurement(canonical.get("canonical_measurement"))
-    encoded = (
-        {}
-        if parsed_source.value is not None
-        else CATEGORICAL_RESPONSE_POLICY.apply(canonical)
+    parsed_source_value = (
+        None
+        if routed
+        else parse_point_measurement(canonical.get("canonical_measurement")).value
     )
-    if encoded:
-        encoder_id = str(encoded["categorical_encoder_id"])
-        if encoder_id == "direct_oral_bioavailability_ordinal.v1":
-            semantic_endpoint = "oral_bioavailability_outcome"
-        elif encoder_id == "fg_substrate_status_binary.v1":
-            target_id = canonical_fg_target_id(canonical.get("transporter_or_enzyme"))
-            if target_id is None:
-                raise ValueError("encoded Fg substrate status lacks a canonical target")
-            semantic_endpoint = f"fg_substrate_outcome:{target_id}"
-        else:
-            raise ValueError(f"unknown Bioavailability categorical encoder: {encoder_id}")
-        encoded = {**encoded, "canonical_endpoint": semantic_endpoint}
+    encoded = (
+        CATEGORICAL_RESPONSE_POLICY.apply(canonical)
+        if resolution_route == "categorical"
+        or (not routed and parsed_source_value is None)
+        else {}
+    )
     source_id = str(record.get("source_id") or "")
+    primary_endpoint = str(canonical.get("canonical_endpoint") or "").casefold()
+    endpoint_missing = primary_endpoint in {
+        "",
+        "missing_endpoint",
+        "unknown",
+        "__unknown__",
+        "__unknown_endpoint__",
+    }
+    structured_fg_endpoint = (
+        encode_fg_substrate_status(canonical)
+        if (resolution_route == "categorical" or not routed)
+        and source_id == "fg"
+        and endpoint_missing
+        else None
+    )
+    measurement_target_id = (
+        canonical_fg_target_id(canonical.get("transporter_or_enzyme"))
+        if source_id == "fg" and (encoded or structured_fg_endpoint is not None)
+        else None
+    )
+    if source_id == "fg" and encoded and measurement_target_id is None:
+        raise ValueError("encoded Fg substrate status lacks a canonical target")
     producer_id = str(encoded.get("categorical_encoder_id") or "")
     producer_fields = {
         "canonical_endpoint_producer_id": (
-            producer_id or SOURCE_ENDPOINT_PRODUCER_IDS[source_id]
+            FG_SUBSTRATE_ENDPOINT_PRODUCER_ID
+            if structured_fg_endpoint is not None and measurement_target_id
+            else SOURCE_ENDPOINT_PRODUCER_IDS[source_id]
         ),
         "canonical_pair_producer_id": (
-            producer_id or SOURCE_PAIR_PRODUCER_IDS[source_id]
+            producer_id
+            or (
+                SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id]
+                if routed and resolution_route == "extract"
+                else SOURCE_RULE_PAIR_PRODUCER_IDS[source_id]
+                if routed and resolution_route == "accept"
+                else SOURCE_PAIR_PRODUCER_IDS[source_id]
+            )
         ),
     }
-    validity = enrich_bioavailability_validity(
-        {**canonical, **encoded, **producer_fields}
-    )
+    encoded_record = {
+        **canonical,
+        **encoded,
+        **(
+            {"canonical_endpoint": "fg_substrate_outcome"}
+            if structured_fg_endpoint is not None and measurement_target_id
+            else {}
+        ),
+        "canonical_measurement_target_id": measurement_target_id,
+        **producer_fields,
+    }
+    if exact:
+        report_type = normalize_bioavailability_report_type(
+            record.get("bioavailability_report_type")
+        )
+        evidence_scope = (
+            bioavailability_evidence_scope(report_type)
+            if source_id == "hf_bioavailability"
+            else None
+        )
+        mapped = record.get("measurement_unit_mapping_status") == "mapped"
+        validity = {
+            "canonical_bioavailability_report_type": report_type,
+            "canonical_bioavailability_evidence_scope": evidence_scope,
+            "normalization_validity_status": (
+                "unresolved_structure"
+                if str(record.get("structure_status") or "") != "resolved"
+                or not record.get("canonical_smiles")
+                else "valid" if mapped else "exact_measurement_excluded"
+            ),
+            "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
+            "bioavailability_evidence_scope_version": EVIDENCE_SCOPE_VERSION,
+        }
+    elif routed:
+        report_type = normalize_bioavailability_report_type(
+            record.get("bioavailability_report_type")
+        )
+        evidence_scope = (
+            bioavailability_evidence_scope(report_type)
+            if source_id == "hf_bioavailability"
+            else None
+        )
+        validity = {
+            "canonical_bioavailability_report_type": report_type,
+            "canonical_bioavailability_evidence_scope": evidence_scope,
+            "normalization_validity_status": (
+                "unresolved_structure"
+                if str(record.get("structure_status") or "") != "resolved"
+                or not record.get("canonical_smiles")
+                else "valid" if encoded else "non_scalar_measurement"
+            ),
+            "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
+            "bioavailability_evidence_scope_version": EVIDENCE_SCOPE_VERSION,
+        }
+    else:
+        validity = enrich_bioavailability_validity(encoded_record)
     reference = reference_attacher.attach(
-        {**canonical, **encoded, **producer_fields, **validity}
+        {**encoded_record, **validity}
     )
     return {
         **provenance,
@@ -641,6 +748,12 @@ def _enrich_record(
         **auxiliary,
         **contextual_fields,
         **encoded,
+        **(
+            {"canonical_endpoint": "fg_substrate_outcome"}
+            if structured_fg_endpoint is not None and measurement_target_id
+            else {}
+        ),
+        "canonical_measurement_target_id": measurement_target_id,
         **producer_fields,
         **validity,
         **reference,
@@ -669,6 +782,7 @@ POLICY = StarlingTaskPolicy(
     census_extras=census_extras,
     smiles_mapping=smiles_mapping,
     scientific_assets=(
+        DEFAULT_EXACT_UNIT_MAPPING,
         DEFAULT_SOURCE_VALUE_REPAIRS,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         Path(__file__).parent
@@ -679,6 +793,8 @@ POLICY = StarlingTaskPolicy(
         / "data_processing/assay_transfer_measurements_v1/policy.json"
     ),
     reference_semantics_enabled=True,
+    measurement_resolution_enabled=True,
+    endpoint_identity_required_sources=("oral_exposure", "fa", "fg", "fh"),
     family_resolver_input_fields=(
         "canonical_bioavailability_evidence_scope",
         "canonical_paper_direct_scope",

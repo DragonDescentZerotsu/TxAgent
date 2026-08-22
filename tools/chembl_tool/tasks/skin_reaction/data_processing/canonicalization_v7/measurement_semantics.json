@@ -17,6 +17,46 @@
   },
   "rules": [
     {
+      "rule_id": "sensitization.cysteine.kinetic_dpra_log_k.v1",
+      "priority": 1002,
+      "matched_record_count": 38,
+      "review_basis": "complete pinned-source census of cysteine-depletion rows reported as kinetic DPRA log k",
+      "selector": {
+        "source_id": "sensitization_aop",
+        "raw_endpoint_exact": "cysteine depletion",
+        "unit_text_exact": "log(s^-1 M^-1)"
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "kinetic_dpra_log_k",
+        "canonical_unit_text": "log(s^-1 M^-1)",
+        "canonical_basis": "base-10 logarithm of the kinetic DPRA second-order rate constant",
+        "quantity_kind": "kinetic_dpra_log_rate_constant",
+        "numeric_domain": "finite_signed",
+        "value_transform": "identity"
+      }
+    },
+    {
+      "rule_id": "sensitization.ec2_7.percent_threshold.v1",
+      "priority": 1001,
+      "matched_record_count": 13,
+      "review_basis": "complete pinned-source census of the explicit skin sensitization (EC2.7) percent family",
+      "selector": {
+        "source_id": "sensitization_aop",
+        "raw_endpoint_exact": "skin sensitization (EC2.7)",
+        "unit_text_exact": "%"
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "llna_ec2_7",
+        "canonical_unit_text": "%",
+        "canonical_basis": "formulation fraction at stimulation index 2.7",
+        "quantity_kind": "threshold_concentration",
+        "numeric_domain": "positive",
+        "value_transform": "identity"
+      }
+    },
+    {
       "rule_id": "skin.exposure.flux.compact_areic_time_ug.v1",
       "priority": 1000,
       "matched_record_count": 926,

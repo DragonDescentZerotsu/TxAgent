@@ -19,8 +19,14 @@ from tools.chembl_tool.common.starling.normalization.cleaning import (
     clean_measurement_text,
     clean_text,
 )
+from tools.chembl_tool.common.starling.normalization.organization import (
+    is_absolute_continuous,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
     hf_bioavailability_profile,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.starling_canonicalization import (
+    RECORD_CONTRACT as BIOAVAILABILITY_RECORD_CONTRACT,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling import (
     family_assignment as bioavailability_family_assignment,
@@ -115,6 +121,35 @@ def test_clean_and_normalize_stages_use_one_authoritative_source_pair():
     assert validate_measurement_pairs(result.normalized_records) == []
 
 
+def test_v7_categorical_route_accepts_the_canonical_encoder_field():
+    record = {
+        "canonical_record_id": "categorical-1",
+        "measurement_resolution_active": True,
+        "measurement_resolution_route": "categorical",
+        "measurement_resolution_status": "not_extracted",
+        "canonical_measurement_scale_id": "binary.v1",
+        "canonical_measurement_text": "1",
+        "finite_scalar_value": 1.0,
+    }
+    assert validate_measurement_pairs([record]) == []
+
+
+def test_compact_v7_continuous_rows_retain_absolute_census_semantics():
+    assert is_absolute_continuous(
+        {"measurement_kind": "continuous", "finite_scalar_value": 0.0}
+    )
+    assert is_absolute_continuous(
+        {
+            "is_absolute_and_continuous": None,
+            "measurement_kind": "continuous",
+            "finite_scalar_value": 0.0,
+        }
+    )
+    assert not is_absolute_continuous(
+        {"measurement_kind": "binary", "finite_scalar_value": 1.0}
+    )
+
+
 def test_pair_validation_recomputes_from_pretransform_canonical_context():
     record = {
         "normalized_record_id": "transformed-record",
@@ -159,8 +194,10 @@ def test_declared_literal_taxonomy_preserves_unspecified_without_global_change(t
     profile = hf_bioavailability_profile(tmp_path / "unused.parquet")
 
     cleaned = clean_source_rows([raw], profile, smiles_mapping=None)[0]
+    projected = BIOAVAILABILITY_RECORD_CONTRACT.clean_projection(cleaned)
 
     assert cleaned["bioavailability_report_type"] == "unspecified"
+    assert projected["bioavailability_report_type"] == "unspecified"
     assert cleaned["support_text"] is None
     assignment = bioavailability_family_assignment(
         "hf_bioavailability", "oral_bioavailability", cleaned

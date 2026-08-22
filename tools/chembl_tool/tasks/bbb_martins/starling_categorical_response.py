@@ -16,7 +16,7 @@ from tools.chembl_tool.common.starling.categorical_response import (
 )
 
 
-CATEGORICAL_RESPONSE_VERSION = "bbb_martins_categorical_response.v3"
+CATEGORICAL_RESPONSE_VERSION = "bbb_martins_categorical_response.v4"
 
 DIRECT_POSITIVE = frozenset(
     {"permeable", "good_penetration", "good_permeability", "high_permeability"}
@@ -196,12 +196,6 @@ def encoding_policy_manifest() -> dict[str, Any]:
             "efflux_substrate_binary.v1",
             "efflux_inhibitor_binary.v1",
         ],
-        "semantic_endpoint_by_encoder": {
-            "bbb_permeability_binary.v1": "bbb_permeability_outcome",
-            "passive_bbb_interpretation_binary.v1": "passive_bbb_permeability_outcome",
-            "efflux_substrate_binary.v1": "efflux_substrate_outcome",
-            "efflux_inhibitor_binary.v1": "efflux_inhibition_outcome",
-        },
         "abstentions": {
             "direct_transport_labels": True,
             "passive_intermediate_or_not_stated": True,

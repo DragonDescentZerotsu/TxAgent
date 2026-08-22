@@ -466,22 +466,22 @@ profiles use `structure_mode="direct"`. There is no shared identifier-to-SMILES 
 separately pinned HuggingFace direct snapshot. Row counts and file digests are pinned from
 `data/starling_data/skin_reaction/SOURCE_MANIFEST.json` and asserted on every build.
 
-Second, only two of the four sources carry numeric measurements:
+Second, two sources have explicit unit columns and two embed any unit in the value/support text:
 
 | source | rows | endpoint column | measurement / unit | scalar |
 |---|---:|---|---|---|
-| `direct_skin_reaction` | 66,597 | `reaction_type` | `effect_metric`, embedded | no |
+| `direct_skin_reaction` | 66,597 | `reaction_type` | `effect_metric`, embedded | categorical first, otherwise extract |
 | `sensitization_aop` | 45,985 | `endpoint_or_target` | `result_value` / `result_unit` | yes |
-| `phototoxicity_irritation_local_damage` | 382,726 | `evidence_endpoint` | `observed_effect`, free prose | no |
+| `phototoxicity_irritation_local_damage` | 382,726 | `evidence_endpoint` | `observed_effect`, embedded/free prose | categorical first, otherwise extract |
 | `skin_exposure` | 311,834 | `evidence_type` | `result_value` / `result_unit` | yes |
 
-`direct_skin_reaction` and `phototoxicity_irritation_local_damage` are categorical: their outcome lives
-in `outcome_label` / `result_label`, and their measurement columns are semi-quantitative scores (`++`,
-`+++`) or free prose. The v6 contract keeps such records as retrieval evidence with a **null scalar**,
-which meant they could never reach a pair bucket — 296,567 structurally resolved records excluded for
-`missing_canonical_unit` alone, a larger pool than the entire measured set. They reach a bucket now, but
-only through the explicit encoders below; they are still never coerced into a number by the measurement
-parser.
+`direct_skin_reaction` and `phototoxicity_irritation_local_damage` are predominantly categorical: their
+outcome lives in `outcome_label` / `result_label`, and the controlled encoder is checked first for routing.
+Rows not claimed by an encoder still go through the frozen endpoint-aware extraction because some carry a
+real embedded scalar. Stage 02 explodes every successful extraction, then applies the singular shared exact
+`(skin_reaction, canonical_endpoint, input_unit)` JSON map. Unmapped, excluded, relative, unsure, and
+unavailable quantities remain evidence with null scalars. Runtime unit regexes and the historical Skin
+measurement-semantics parser do not run on this exact path; variation is null.
 
 ### Categorical response encoding
 

@@ -63,6 +63,38 @@ This split remains `candidate_pending_qa`. The supplied direct schema lacks
 The frozen measurement/unit audit does not promote the benchmark; the
 category-stratified direct-source QA gate still applies.
 
+The 2026-08-18 manual review failed that gate. Of 360 frozen source records,
+252 passed, 96 failed, and 12 were uncertain: 108/360 (30.0%) were therefore
+non-passing. The proposed positive class had 252 pass, 74 fail, and 4
+uncertain records. None of the 30 proposed `toxicity_absent` records passed;
+22 failed and 8 were uncertain. The largest failure modes were unresolved
+combination/comparator attribution (27), formulation or entity mismatch (22),
+wrong outcome direction (21), and endpoint-limited absence incorrectly
+treated as global safety (17).
+
+The frozen 7,628-parent split is consequently diagnostic only. It must not be
+used for paper-facing training, validation, or test. The source must first be
+re-adjudicated across all direct records for entity alignment, causal
+attribution, outcome direction, and material qualifiers. Failed sampled rows
+must not be deleted or replaced, and audit-specific keyword filters are not a
+valid correction.
+
+The durable audit contract is:
+
+```text
+tools/chembl_tool/tasks/clintox/data_processing/gold_qa_v1/
+  REVIEW_PROTOCOL.md
+  reextraction_contract_v1.json
+  reviewed_rows.tsv
+  summary.json
+```
+
+`clintox_base build-benchmark` now revalidates the pinned sample and
+synchronizes the failed gate into `CANDIDATE_STATUS.json` and the runtime QA
+receipt. A corrected gold and dependent held-out evidence view have not been
+built because there is not yet a source-wide adjudication policy to build them
+from.
+
 ## Canonical measurement and unit policy
 
 Shared parsing and conversion live in
@@ -96,7 +128,7 @@ and 27 `raw`. It has 54 record-level exclusions: 53 source points outside
 their own reported intervals and one implausible literal `6×10^12 nM`
 concentration.
 
-## Frozen audit and build receipt
+## Frozen measurement/unit audit and build receipt
 
 The three manual audits are complete with zero failures:
 

@@ -335,7 +335,7 @@ continuous buckets and an exact category-rank CDF for valid ordinal buckets. It 
 or pairwise-distance knots. Bioavailability uses continuous geometry, a controlled direct oral-F ordinal
 scale `low/middle/high`, and the binary Fg scale `not_substrate/substrate`. The middle tier accepts only
 standalone `moderate`/`intermediate` wording and unambiguous noun-qualified forms; mixed ranges abstain.
-Numeric measurements always take precedence. Fg categorical endpoints include a
+Numeric measurements always take precedence. Fg categorical pair keys include a
 reviewed transporter/enzyme target ID so different targets never share a categorical bucket; numeric Fg
 grouping is unchanged. The separate nondirect HF partition never uses the direct categorical encoder.
 Ambiguous direct wording, uninformative Fg statuses, and Fg rows without a target remain non-scalar
@@ -410,11 +410,14 @@ this performs no LLM/API call and no normalization. Retrieval
 identity/similarity and an optional assay-transfer score are a separate retrieval envelope. Assay-transfer
 scoring may consume canonical fields, but its winning-record display must resolve to this source projection.
 
-Measurement normalization has one authoritative path. Cleaning preserves the source-facing
-`measurement_text` and `unit_text`; normalization removes an exact repeated source-unit suffix, parses one
-complete atomic numeric expression, folds explicit notation once, canonicalizes the unit once, applies the
-reviewed endpoint conversion, and then evaluates factual domain validity. No alternate raw-unit argument or
-hidden `source_payload_json` fallback participates in normalization or pair-invariant validation.
+Measurement normalization uses the shared exact Stage-02 contract. Cleaning preserves source-facing
+`measurement_text` and `unit_text`. The frozen LLM extraction may emit several quantities and every one is
+exploded. A positive source decimal with a unit bypasses the LLM unchanged. The singular shared JSON then
+maps or excludes the exact `(bioavailability_ma, canonical_endpoint, input_unit)` key and applies only its
+declared fixed-point scale/domain. Bioavailability F fraction/ratio values are mapped to `%` there. Runtime
+unit regexes, contextual prefix rules, source-specific numeric parsers, and row corrections are not part of
+the active path. Relative/unsure/unavailable and excluded quantities remain evidence with null scalars;
+variation is null.
 
 `is_absolute_and_continuous` means an explicit finite point value. It includes valid percentage, ratio,
 fold, permeability and other scalar endpoint measurements; it does not mean "non-ratio" or specifically
@@ -423,11 +426,8 @@ null scalar. `normalization_validity_status` records policy-independent structur
 domain validity. The existing `finite_scalar_value` and `canonical_unit` are the policy-ready comparison
 input; v6 does not persist labeling policy, distance, threshold or comparison-value duplicates.
 
-Joint and compound measurements are never split. Papp/efflux, AUC/Cmax ratios, Vmax/Km, statistics,
-vector-valued series, condition series, dissolution-model parameters, clock times, and formulation ratios each
-remain one intact record. If the complete row cannot be parsed as one measurement it receives no finite scalar,
-but remains retrieval-eligible when its structure and mechanism family resolve. Later scalar assay-transfer
-datasets must select only records with non-null `absolute_and_continuous_value`.
+Successful compound extractions are always split into child evidence records, regardless of whether a child
+unit is compatible with the endpoint. Exact-map exclusion, not explosion, controls scalar eligibility.
 
 The v1-v5 directories are historical audit artifacts. The v6 code does not reproduce or rewrite them.
 The read-only `audit_starling_v5_v6_migration.py` records both artifact hashes, normalized-record identity
@@ -441,6 +441,8 @@ Direct oral-bioavailability evidence is loaded from the single complete pinned s
 preparation reason. The normalized-v6 builder must not depend on the legacy benchmark JSONLs under
 `outputs/chembl_tool/activity_transfer_benchmark/`.
 
+The following scientific-notation, endpoint-conversion, and contextual-reconciliation rules describe the
+historical parser path only; they are retained for artifact replay and are not called by an active exact build.
 Scientific notation is folded only when explicit, whether the factor appears in the source unit or in an
 atomic source measurement. `2.5` with unit `×10^-6 cm/s` and `2.5×10^-6 cm/s` with unit `cm/s` both become
 `0.0000025 cm/s`. Shared-factor point estimates such as `175 ± 19 ×10^-6` scale the value and variation

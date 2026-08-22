@@ -12,13 +12,19 @@
 
 Simplify code whenever possible.
 
+Before modifying or reviewing code, read and follow
+`.agents/skills/simplicity-first/SKILL.md`. This mandatory gate applies even
+when the skill is not explicitly invoked.
+
 All communication should be truthful but also concise and easy to understand; don’t use weird jargon but stick to language that NLPers and MLers use; assume I don’t have background context on what you’re building; start with a high level description of the changes and then go in more detail.
 
 When you communicate new implementations with me, whether we’re planning or brainstorming, always discuss the changes we’re making on a file system/architectural/structural level; what files we’re adding and how it connects to other files etc. and what is the scope of the change.
 
 Most code should be implemented in a modular coherent manner; for instance, if I wanted to have a pipeline that normalizes molecules, splits them, etc. this should not sprawl many many files or directories. It should be self contained in a clear manner so we can easily import it to perhaps new repositories. Modular refactors are welcome but they should be simple and clear. Whenever we do this, suggest multiple options and I’ll let you know.
 
-Don’t over-engineer the infrastructure. While we want good testing it should not be overkill.
+Don’t over-engineer testing and the infrastructure. While we want good testing it should not be overkill.
+
+Whenever you implement something, consider if there is an existing library that implements it.
 
 ## Env instruction
 TxAgent has more than one checkout. Always inspect the current hostname and resolved repository root

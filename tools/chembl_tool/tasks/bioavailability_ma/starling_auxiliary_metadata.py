@@ -27,7 +27,16 @@ DEFAULT_MAPPING_PATH = (
     / "data_processing"
     / "globally_reconciled_auxiliary_value_mapping.json"
 )
-APPLICABLE_SOURCES = ("fa", "fg", "fh")
+APPLICABLE_SOURCES = ("oral_exposure", "fa", "fg", "fh")
+OUTPUT_FIELDS_BY_SOURCE = {
+    "oral_exposure": (
+        "global_species_context",
+        "global_biological_matrix",
+    ),
+    "fa": OUTPUT_FIELDS,
+    "fg": OUTPUT_FIELDS,
+    "fh": OUTPUT_FIELDS,
+}
 
 
 class AuxiliaryMetadataAttacher(_AuxiliaryMetadataAttacher):
@@ -37,6 +46,7 @@ class AuxiliaryMetadataAttacher(_AuxiliaryMetadataAttacher):
             mapping_version=MAPPING_VERSION,
             applicable_sources=APPLICABLE_SOURCES,
             null_like=NULL_LIKE,
+            output_fields=OUTPUT_FIELDS_BY_SOURCE,
         )
 
 
@@ -46,4 +56,5 @@ __all__ = [
     "AuxiliaryMetadataAttacher",
     "DEFAULT_MAPPING_PATH",
     "OUTPUT_FIELDS",
+    "OUTPUT_FIELDS_BY_SOURCE",
 ]

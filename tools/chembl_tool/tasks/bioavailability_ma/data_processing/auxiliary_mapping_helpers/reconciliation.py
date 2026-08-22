@@ -16,7 +16,13 @@ REPO_ROOT = Path(__file__).resolve().parents[6]
 DATA_ROOT = REPO_ROOT / "data/starling_data/bioavailability_ma"
 MAPPING_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = MAPPING_ROOT / "globally_reconciled_auxiliary_value_mapping.json"
-MAPPING_VERSION = "starling_auxiliary.globally_reconciled.v1"
+MAPPING_VERSION = "starling_auxiliary.globally_reconciled.v2"
+ORAL_EXTRACTION_PATH = MAPPING_ROOT / "oral_study_context_extractions.json"
+ORAL_SOURCE_ID = "oral_exposure"
+ORAL_OUTPUT_FIELDS = {
+    "global_species_context": "canonical_species_context",
+    "global_biological_matrix": "canonical_biological_matrix",
+}
 
 NULL_LIKE = {
     "",
@@ -686,6 +692,32 @@ def _distinct_source_tuples(frame: pd.DataFrame, columns: tuple[str, ...]) -> li
     return sorted(values, key=lambda row: tuple("" if value is None else value.casefold() for value in row))
 
 
+def _oral_source_mapping() -> dict[str, Any]:
+    payload = json.loads(ORAL_EXTRACTION_PATH.read_text(encoding="utf-8"))
+    if payload.get("artifact_version") != "oral_study_context_extraction.v1":
+        raise ValueError("oral study-context extraction version mismatch")
+    extracted = payload.get("mapping")
+    if not isinstance(extracted, dict):
+        raise ValueError("oral study-context extraction lacks mapping")
+    outputs: dict[str, Any] = {}
+    for output_name, extracted_field in ORAL_OUTPUT_FIELDS.items():
+        values = {_tuple_key((None,)): None}
+        for study_context, result in extracted.items():
+            if not isinstance(result, dict):
+                raise ValueError("invalid oral study-context extraction result")
+            cleaned_context = _clean_source_value(study_context)
+            if cleaned_context is None:
+                raise ValueError("oral study-context extraction contains null-like key")
+            values[_tuple_key((cleaned_context,))] = _clean_label(
+                result.get(extracted_field)
+            )
+        outputs[output_name] = {
+            "source_columns": ["study_context"],
+            "mapping": dict(sorted(values.items())),
+        }
+    return outputs
+
+
 def build_mapping(current_mappings: dict[str, dict[str, Any]]) -> dict[str, Any]:
     """Reconcile the six first-stage mappings into the shared global vocabulary."""
     if set(current_mappings) != set(SOURCE_SPECS):
@@ -714,13 +746,14 @@ def build_mapping(current_mappings: dict[str, dict[str, Any]]) -> dict[str, Any]
                 "mapping": dict(sorted(result.items())),
             }
         sources[source] = source_outputs
+    sources[ORAL_SOURCE_ID] = _oral_source_mapping()
     return {"mapping_version": MAPPING_VERSION, "sources": sources}
 
 
 def validate_mapping(payload: dict[str, Any]) -> dict[str, Any]:
     if payload.get("mapping_version") != MAPPING_VERSION or set(payload) != {"mapping_version", "sources"}:
         raise ValueError("invalid mapping root")
-    if set(payload["sources"]) != set(SOURCE_SPECS):
+    if set(payload["sources"]) != {*SOURCE_SPECS, ORAL_SOURCE_ID}:
         raise ValueError("source inventory mismatch")
 
     audit: dict[str, Any] = {}
@@ -769,4 +802,19 @@ def validate_mapping(payload: dict[str, Any]) -> dict[str, Any]:
                 ),
             }
         audit[source] = source_audit
+    expected_oral = _oral_source_mapping()
+    if payload["sources"][ORAL_SOURCE_ID] != expected_oral:
+        raise ValueError("oral study-context mapping differs from frozen extraction")
+    audit[ORAL_SOURCE_ID] = {
+        output_name: {
+            "tuples": len(section["mapping"]),
+            "non_null": sum(value is not None for value in section["mapping"].values()),
+            "null": sum(value is None for value in section["mapping"].values()),
+            "distinct_labels": len(
+                {value for value in section["mapping"].values() if value is not None}
+            ),
+            "role_bearing": 0,
+        }
+        for output_name, section in expected_oral.items()
+    }
     return audit

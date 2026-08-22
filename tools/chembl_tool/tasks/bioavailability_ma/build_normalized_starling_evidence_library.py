@@ -70,6 +70,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
 
 
 CANONICAL_ARTIFACT_STAGES = (
+    "00_source",
     "01_cleaned",
     "02_canonicalized",
     "03_records",

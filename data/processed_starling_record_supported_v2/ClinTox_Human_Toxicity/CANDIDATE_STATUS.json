@@ -217,13 +217,55 @@
     },
     "task": "ClinTox_Human_Toxicity"
   },
+  "gold_qa_gate": {
+    "audit_version": "clintox_send_v2_gold_manual_review.v1",
+    "conclusion": "The category-only adapter is not source-faithful. The direct source must be re-adjudicated for entity alignment, attribution, direction, and qualifying context before rebuilding gold labels.",
+    "failure_action": "Keep the candidate out of default paper matrices. Do not delete sampled failures or add audit-derived keyword filters; define and validate a source-wide claim adjudication policy, then draw a new frozen sample.",
+    "failure_reason_counts": {
+      "absence_not_global_safety": 17,
+      "background_event_not_attributed": 4,
+      "category_outcome_mismatch": 3,
+      "combination_or_comparator_confounded": 27,
+      "formulation_or_entity_mismatch": 22,
+      "insufficient_attribution": 10,
+      "not_human_clinical_exposure": 1,
+      "protective_or_preventive_context": 3,
+      "wrong_outcome_direction": 21
+    },
+    "label_status_counts": {
+      "0": {
+        "fail": 22,
+        "uncertain": 8
+      },
+      "1": {
+        "fail": 74,
+        "pass": 252,
+        "uncertain": 4
+      }
+    },
+    "n_nonpass": 108,
+    "n_reviewed": 360,
+    "nonpass_fraction": 0.3,
+    "promotion_gate_passed": false,
+    "required_source_correction": {
+      "path": "tools/chembl_tool/tasks/clintox/data_processing/gold_qa_v1/reextraction_contract_v1.json",
+      "sha256": "69323e3867d3305f0811121ee9cbba37a49c163b49cba215fcd56d78a25bd842",
+      "status": "awaiting_new_source_delivery"
+    },
+    "status": "failed_manual_review",
+    "status_counts": {
+      "fail": 96,
+      "pass": 252,
+      "uncertain": 12
+    }
+  },
   "missing_semantic_gate": {
     "effect": "no qualifying-condition exclusion can be applied",
     "mitigation": "candidate_pending_qa with deterministic category-stratified review",
     "status": "unavailable_in_source_schema"
   },
   "prior_experiment_compatibility": "incompatible: results built from earlier ClinTox source hashes are historical only and must not be merged with this candidate",
-  "promotion_policy": "Do not add to default paper matrices until every row in the deterministic category-stratified source-record QA sample passes.",
+  "promotion_policy": "The frozen manual audit failed. Do not add this candidate to default paper matrices until a source-wide claim policy is implemented, the gold is rebuilt, and every row in a new frozen sample passes.",
   "record_supported_v2_summary": {
     "all_label_counts": {
       "0": 755,

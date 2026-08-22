@@ -59,6 +59,9 @@ DEFAULT_LOCAL_ROOT = Path(
 )
 DEFAULT_BASE_BENCHMARK_ROOT = Path("data/processed_starling")
 DEFAULT_RECORD_SUPPORTED_ROOT = Path("data/processed_starling_record_supported_v2")
+GOLD_QA_SUMMARY = Path(
+    "tools/chembl_tool/tasks/clintox/data_processing/gold_qa_v1/summary.json"
+)
 SOURCE_BATCH_SIZE = 32_768
 NULL_TEXT_VALUES = frozenset({"", "nan", "none", "null", "n/a", "na"})
 DIRECT_GROUP = "Direct.human_clinical_toxicity"
@@ -168,19 +171,21 @@ def build_candidate_benchmark(
         source_metadata=metadata,
         output_dir=Path(base_root) / TASK_NAME,
     )
-    base_task_root = Path(base_root) / TASK_NAME
-    legacy_report = base_task_root / "report_zh.md"
-    if legacy_report.exists():
-        legacy_report.unlink()
-    (base_task_root / "REPORT.md").write_text(
-        _benchmark_report(base_summary), encoding="utf-8"
-    )
-
     final_summary = build_record_supported_task(
         TASK_NAME,
         source_root=Path(base_root),
         output_root=Path(record_supported_root),
     )
+
+    audit_root = Path(local_root) / "05_audits"
+    audit_root.mkdir(parents=True, exist_ok=True)
+    sample_path = audit_root / "gold_qa_sample.parquet"
+    _write_gold_qa_sample(source, sample_path)
+    gold_qa = json.loads(GOLD_QA_SUMMARY.read_text(encoding="utf-8"))
+    if sha256_file(sample_path) != gold_qa["sample"]["sha256"]:
+        raise ValueError("ClinTox gold QA sample does not match the frozen review")
+    _write_json(audit_root / "gold_qa_status.json", gold_qa)
+
     candidate = {
         "status": "candidate_pending_qa",
         "active_source_lineage": RAW_VERSION,
@@ -190,28 +195,41 @@ def build_candidate_benchmark(
             "historical only and must not be merged with this candidate"
         ),
         "promotion_policy": (
-            "Do not add to default paper matrices until every row in the "
-            "deterministic category-stratified source-record QA sample passes."
+            "The frozen manual audit failed. Do not add this candidate to default "
+            "paper matrices until a source-wide claim policy is implemented, the "
+            "gold is rebuilt, and every row in a new frozen sample passes."
         ),
         "task_definition": metadata["task_definition"],
         "missing_semantic_gate": metadata["qualifying_conditions_policy"],
+        "gold_qa_gate": {
+            key: gold_qa[key]
+            for key in (
+                "audit_version",
+                "status",
+                "promotion_gate_passed",
+                "n_reviewed",
+                "n_nonpass",
+                "nonpass_fraction",
+                "status_counts",
+                "label_status_counts",
+                "failure_reason_counts",
+                "required_source_correction",
+                "conclusion",
+                "failure_action",
+            )
+        },
         "base_summary": base_summary,
         "record_supported_v2_summary": final_summary,
     }
     task_root = Path(record_supported_root) / TASK_NAME
     _write_json(task_root / "CANDIDATE_STATUS.json", candidate)
 
-    audit_root = Path(local_root) / "05_audits"
-    audit_root.mkdir(parents=True, exist_ok=True)
-    sample = _write_gold_qa_sample(source, audit_root / "gold_qa_sample.parquet")
-    _write_json(
-        audit_root / "gold_qa_status.json",
-        {
-            "status": "pending_manual_review",
-            "pass_condition": "every sampled row passes",
-            "failure_action": "keep candidate pending and revise source policy; do not replace failed rows",
-            **sample,
-        },
+    base_task_root = Path(base_root) / TASK_NAME
+    legacy_report = base_task_root / "report_zh.md"
+    if legacy_report.exists():
+        legacy_report.unlink()
+    (base_task_root / "REPORT.md").write_text(
+        _benchmark_report(base_summary, gold_qa=gold_qa), encoding="utf-8"
     )
     return candidate
 
@@ -667,7 +685,9 @@ def _clean_schema() -> pa.Schema:
     )
 
 
-def _benchmark_report(summary: Mapping[str, Any]) -> str:
+def _benchmark_report(
+    summary: Mapping[str, Any], *, gold_qa: Mapping[str, Any]
+) -> str:
     return "\n".join(
         [
             "# ClinTox Human Toxicity candidate benchmark",
@@ -679,7 +699,12 @@ def _benchmark_report(summary: Mapping[str, Any]) -> str:
             f"- Parent label counts: `{json.dumps(summary['all_label_counts'], sort_keys=True)}`",
             "- Vote policy: one accepted source row per vote, 70% parent agreement, exact ties rejected.",
             "- `qualifying_conditions` is unavailable in the delivered source schema; it was not treated as empty.",
-            "- Status: candidate pending deterministic source-record QA.",
+            (
+                "- Frozen source QA: "
+                f"{gold_qa['status']} "
+                f"({gold_qa['n_nonpass']}/{gold_qa['n_reviewed']} non-passing rows)."
+            ),
+            "- Status: candidate pending source-wide claim-policy revision and a new frozen QA sample.",
             "",
         ]
     )

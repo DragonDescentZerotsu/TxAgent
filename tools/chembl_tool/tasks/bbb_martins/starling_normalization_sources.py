@@ -95,6 +95,12 @@ def source_profiles(data_dir: Path) -> list[NormalizedSourceProfile]:
             source_name="Starling/BBB/influx_transport",
             source_path=str(data_dir / "influx_transport" / "extractions.parquet"),
             endpoint_field="transport_endpoint",
+            # Influx reports its quantity in ``reported_result`` and has no unit
+            # column, so the value carries its own unit inline.  Before this was
+            # declared, the source had no measurement role at all and every
+            # influx row resolved to a non-scalar.
+            measurement_field="reported_result",
+            embedded_unit=True,
             smiles_field="SMILES",
             structure_mode="direct",
             name_fields=("global_identifier",),
@@ -104,7 +110,6 @@ def source_profiles(data_dir: Path) -> list[NormalizedSourceProfile]:
                 "transport_mechanism",
                 "evidence_basis",
                 "assay_model",
-                "reported_result",
                 "qualifying_conditions",
                 "extra_details",
                 "needs_more_context",

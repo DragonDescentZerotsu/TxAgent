@@ -62,9 +62,12 @@ def deterministic_assignment(record: Mapping[str, Any]) -> ReferenceAssignment |
     common = deterministic_default_assignment(record, output_basis=False)
     if common is not None:
         return common
-    if str(record.get("cleaned_record_id") or "") in (
-        _REVIEWED_ABSOLUTE_PERMEABILITY_RECORDS
-    ):
+    record_id = str(
+        record.get("measurement_resolution_parent_cleaned_record_id")
+        or record.get("cleaned_record_id")
+        or ""
+    )
+    if record_id in _REVIEWED_ABSOLUTE_PERMEABILITY_RECORDS:
         return ReferenceAssignment(
             REFERENCE_SCOPE_ABSOLUTE,
             None,

@@ -53,7 +53,16 @@ ROLE_FIELD_NAMES = {
 ROLE_FIELDS = frozenset(ROLE_FIELD_NAMES.values())
 
 CANONICAL_METHODS = frozenset(
-    {"deterministic_rule", "frozen_mapping", "controlled_encoder"}
+    {
+        "deterministic_rule",
+        "frozen_mapping",
+        "controlled_encoder",
+        # A reviewed per-row extraction, frozen offline and joined by record ID.
+        # It differs from ``frozen_mapping`` in cardinality: a mapping is keyed
+        # by a distinct source *value* and reused across every row sharing it,
+        # while an extraction is keyed by one row and never reused.
+        "frozen_extraction",
+    }
 )
 
 _LEGACY_CANONICAL_FIELDS = {
@@ -62,6 +71,7 @@ _LEGACY_CANONICAL_FIELDS = {
     "canonical_unit": "canonical_unit_text",
     "global_context": "canonical_assay_context",
     "global_species_context": "canonical_species_context",
+    "global_biological_matrix": "canonical_biological_matrix",
     "categorical_encoder_id": "canonical_measurement_scale_id",
     "normalized_record_id": "canonical_record_id",
     "normalization_validity_status": "canonicalization_status",
@@ -84,6 +94,15 @@ _ROW_ONLY_INTERMEDIATES = frozenset(
     }
 )
 
+_STAGE1_DERIVED_FIELDS = frozenset(
+    {
+        "canonical_endpoint_name",
+        "measurement_resolution_route",
+        "measurement_resolution_rule_id",
+        "measurement_routing_version",
+    }
+)
+
 
 @dataclass(frozen=True)
 class CanonicalProducerSpec:
@@ -98,7 +117,10 @@ class CanonicalProducerSpec:
     producer_id: str
     input_fields: tuple[str, ...]
     method: Literal[
-        "deterministic_rule", "frozen_mapping", "controlled_encoder"
+        "deterministic_rule",
+        "frozen_mapping",
+        "controlled_encoder",
+        "frozen_extraction",
     ]
     version: str
 
@@ -137,7 +159,10 @@ class CanonicalDimensionSpec:
     semantic_dimension: str
     input_fields: tuple[str, ...]
     method: Literal[
-        "deterministic_rule", "frozen_mapping", "controlled_encoder"
+        "deterministic_rule",
+        "frozen_mapping",
+        "controlled_encoder",
+        "frozen_extraction",
     ]
     version: str
     missing_policy: Literal["null", "explicit_unknown"] = "null"
@@ -294,6 +319,7 @@ class SourceProfile:
                 )
         cleaned = set(self.cleaned_source_fields)
         outputs: set[str] = set()
+        atomic_producer_fields: dict[str, set[str | None]] = {}
         for dimension in self.canonical_dimensions:
             if dimension.output_field in outputs:
                 raise ValueError(
@@ -311,11 +337,26 @@ class SourceProfile:
                 for dependency in dimension.depends_on
                 if not dependency.startswith("canonical_")
             }
+            # An atomic group asserts that its members are produced by one
+            # operation.  That is only checkable when every member records the
+            # same producer field, so require the declarations to agree here
+            # rather than discovering the gap at projection time.
+            if dimension.atomic_group:
+                atomic_producer_fields.setdefault(
+                    dimension.atomic_group, set()
+                ).add(dimension.producer_id_field)
             if unknown_dependencies:
                 raise ValueError(
                     f"{self.source_id!r} canonical dimension "
                     f"{dimension.output_field!r} has noncanonical dependencies "
                     f"{sorted(unknown_dependencies)}"
+                )
+        for atomic_group, producer_fields in sorted(atomic_producer_fields.items()):
+            if len(producer_fields) != 1:
+                raise ValueError(
+                    f"{self.source_id!r} atomic group {atomic_group!r} spans "
+                    f"different producer fields {sorted(map(str, producer_fields))}; "
+                    "members of one atomic group must record the same producer"
                 )
 
     @cached_property
@@ -402,6 +443,20 @@ class PairBucketSpec:
             field
             for field in self.canonical_dimensions
             if field not in {"canonical_endpoint_name", "canonical_unit_text"}
+        )
+
+    @property
+    def core_context_dimensions(self) -> tuple[str, ...]:
+        """Context dimensions, excluding endpoint/unit and measurement scale."""
+        return tuple(
+            field
+            for field in self.canonical_dimensions
+            if field
+            not in {
+                "canonical_endpoint_name",
+                "canonical_unit_text",
+                "canonical_measurement_scale_id",
+            }
         )
 
     def validate(self, profile: SourceProfile) -> None:
@@ -557,6 +612,21 @@ class StarlingRecordContract:
             "pair_buckets": {
                 source_id: {
                     "canonical_dimensions": list(spec.canonical_dimensions),
+                    "core_context_dimensions": list(
+                        spec.core_context_dimensions
+                    ),
+                    "endpoint_identity_inputs": sorted(
+                        {
+                            field
+                            for dimension in self.sources[
+                                source_id
+                            ].canonical_dimensions
+                            if dimension.output_field
+                            == "canonical_endpoint_name"
+                            for producer in dimension.producers
+                            for field in producer.input_fields
+                        }
+                    ),
                     "variance_candidates": list(spec.variance_candidates),
                     "eligible_reference_scopes": list(
                         spec.eligible_reference_scopes
@@ -586,6 +656,12 @@ class StarlingRecordContract:
             if all(field in record for field in profile.source_columns)
             else _source_payload(record)
         )
+        foreign_fields = {
+            field
+            for other_source_id, other_profile in self.sources.items()
+            if other_source_id != source_id
+            for field in other_profile.source_columns
+        } - set(profile.source_columns) - ROLE_FIELDS
         output: dict[str, Any] = {
             key: value
             for key, value in record.items()
@@ -597,13 +673,20 @@ class StarlingRecordContract:
                 *profile.raw_role_fields,
                 *_LEGACY_CANONICAL_FIELDS,
                 *_ROW_ONLY_INTERMEDIATES,
+                *foreign_fields,
             }
-            and not key.startswith("canonical_")
+            and (
+                not key.startswith("canonical_")
+                or key in _STAGE1_DERIVED_FIELDS
+            )
             and key not in {"molecule_id", "structure_status"}
         }
-        output["endpoint_name"] = clean_scalar(record.get("endpoint_name"))
-        output["measurement_text"] = clean_scalar(record.get("measurement_text"))
-        output["unit_text"] = clean_scalar(record.get("unit_text"))
+        # Stage 01 already cleaned these values under the source profile,
+        # including its declared literal-text fields.  Re-cleaning during a
+        # projection would erase meaningful literals such as "unspecified".
+        output["endpoint_name"] = record.get("endpoint_name")
+        output["measurement_text"] = record.get("measurement_text")
+        output["unit_text"] = record.get("unit_text")
         output["deduplication_context_id"] = stable_id(
             "source_context",
             source_id,
@@ -616,7 +699,7 @@ class StarlingRecordContract:
             if field in profile.raw_role_fields:
                 continue
             value = record.get(field, payload.get(field))
-            output[field] = clean_scalar(value)
+            output[field] = value
         _validate_source_projection(output, profile)
         return output
 
@@ -725,7 +808,7 @@ class StarlingRecordContract:
             for other_source_id, other_profile in self.sources.items()
             if other_source_id != source_id
             for field in other_profile.source_columns
-        } - set(profile.source_columns)
+        } - set(profile.source_columns) - ROLE_FIELDS
         populated_foreign = {
             field: output[field]
             for field in foreign_fields

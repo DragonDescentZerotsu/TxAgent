@@ -105,6 +105,20 @@ canonical outputs. For example, `assay_system` may independently support `canoni
 `canonical_species_context`; both outputs must record `assay_system` as their input. Missing canonical
 values do not fall back to a differently named source field.
 
+BBB, Bioavailability, and Skin use one exact measurement path. Stage 01 first routes controlled
+categorical outcomes. A finite positive decimal with a nonempty source unit bypasses the LLM unchanged;
+all other numeric candidates use the task's frozen extraction. Stage 02 explodes every successful
+multi-quantity extraction into child records, without endpoint-compatibility filtering, while preserving
+the parent ID and original `measurement_text`/`unit_text`. Each extracted or bypassed tuple is then looked
+up by exact `(task, canonical_endpoint, input_unit)` in
+`common/starling/exact_measurement_unit_map.v1.json`. A rule either supplies a canonical unit, fixed-point
+scale, and numeric domain, or explicitly excludes the tuple. Missing and duplicate keys are build errors;
+runtime unit regexes, source-specific substitutions, and per-record corrections do not participate.
+`relative`, `unsure`, `unavailable`, excluded, and domain-invalid quantities remain evidence with a null
+scalar. Variation is intentionally null. The downstream reviewed raw/log10 bucket transform remains in
+place. The older scalar/unit parsers and contextual normalization modules are retained only for historical
+replay and tasks that have not migrated to this exact contract.
+
 Scalar reference semantics are also a Stage-02 canonical dimension. Each task freezes its own bounded
 `gpt-5.4-mini` request shape while the shared offline classifier assigns each record at most once; invalid
 responses and failed requests become `unknown` without retry. Its frozen row mapping is joined as

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib
 import json
 import math
@@ -499,10 +500,19 @@ def _catalog_record(
     if config is None:
         raise ValueError(f"Stage 07 retained source absent from v11 projection: {task_id}/{source_id}")
     prompt_fields = [*config["both"], *config.get("retrieval_only", [])]
-    projection = _source_projection(task_id, record)
-    source_contract = {
-        key: value for key, value in projection.items() if key != "source_fields"
-    }
+    if record.get("processed_gold_voting_record_key"):
+        source_contract = {
+            "source_id": source_id,
+            "source_name": record.get("source_name"),
+            "record_contract_version": "processed_starling_gold.v1",
+        }
+        source_fields = {field: record.get(field) for field in prompt_fields}
+    else:
+        projection = _source_projection(task_id, record)
+        source_contract = {
+            key: value for key, value in projection.items() if key != "source_fields"
+        }
+        source_fields = projection["source_fields"]
     return {
         "record_type": "assay_record",
         "record_id": str(record["canonical_record_id"]),
@@ -515,7 +525,14 @@ def _catalog_record(
             str(record.get("measurement_kind") or "") in training_kinds
         ),
         "source_contract": source_contract,
-        "source_fields": projection["source_fields"],
+        "source_fields": source_fields,
+        "processed_gold_voting_record_key": record.get(
+            "processed_gold_voting_record_key"
+        ),
+        "processed_gold_lineage": record.get("processed_gold_lineage"),
+        "processed_gold_split": record.get("processed_gold_split"),
+        "record_vote": record.get("record_vote"),
+        "molecule_Y": record.get("molecule_Y"),
         **{field: record.get(field) for field in prompt_fields},
     }
 
@@ -683,6 +700,13 @@ def _winning_record_payload(renderer: V11PromptRenderer, record: Mapping[str, An
         ),
         "source_contract": record.get("source_contract"),
         "source_fields": record.get("source_fields"),
+        "processed_gold_voting_record_key": record.get(
+            "processed_gold_voting_record_key"
+        ),
+        "processed_gold_lineage": record.get("processed_gold_lineage"),
+        "processed_gold_split": record.get("processed_gold_split"),
+        "record_vote": record.get("record_vote"),
+        "molecule_Y": record.get("molecule_Y"),
     }
 
 
@@ -757,6 +781,15 @@ def prepare_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
     if args.assay_transfer_model:
         profile["model"] = args.assay_transfer_model
         profile["revision"] = args.assay_transfer_model_revision
+    local_model = None
+    if args.assay_transfer_local_model_dir:
+        model_path = args.assay_transfer_local_model_dir.resolve()
+        model_hash = _directory_sha256(model_path)
+        local_model = {"path": str(model_path), "sha256": model_hash}
+        profile["model"] = f"local:{model_path.name}"
+        # Prompt cache keys require a 40-character immutable revision. The
+        # complete SHA-256 remains in local_model and is rechecked at scoring.
+        profile["revision"] = model_hash[:40]
     paths = _task_paths(args, task_id)
     _check_inputs(paths)
     _check_source_stability(paths)
@@ -864,6 +897,7 @@ def prepare_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
             "schema_version": COMPACT_CACHE_SCHEMA_VERSION,
             "status": "prepared", "profile": PROFILE_NAME, "task_id": task_id,
             "model": profile["model"], "model_revision": profile["revision"],
+            "local_model": local_model,
             "template_profile": TEMPLATE_PROFILE, "template_hash": renderer.template_hash,
             "projection_hash": renderer.projection_hash, "projection_path": str(PROJECTION_PATH),
             "prompt_source_revision": "ee303afdc972fbcef820b6a39076032917b7346f",
@@ -1140,6 +1174,19 @@ def _resolve_snapshot(model: str, revision: str, local_files_only: bool) -> str:
     )
 
 
+def _directory_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    files = sorted(item for item in path.rglob("*") if item.is_file())
+    if not files:
+        raise ValueError(f"Local model directory contains no files: {path}")
+    for item in files:
+        digest.update(str(item.relative_to(path)).encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(file_sha256(item).encode("ascii"))
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
 def _run_workers(
     *,
     batches: Iterable[list[PromptTask]],
@@ -1357,9 +1404,15 @@ def score_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
             "Prepared v11 cache has incompatible precision provenance: "
             + json.dumps(mismatches, sort_keys=True)
         )
-    snapshot = _resolve_snapshot(
-        str(version["model"]), str(version["model_revision"]), args.local_files_only
-    )
+    local_model = version.get("local_model")
+    if local_model:
+        snapshot = str(Path(local_model["path"]).resolve())
+        if _directory_sha256(Path(snapshot)) != local_model["sha256"]:
+            raise ValueError("Local assay-transfer model content changed after preparation")
+    else:
+        snapshot = _resolve_snapshot(
+            str(version["model"]), str(version["model_revision"]), args.local_files_only
+        )
     cache = _CompactBuildWriter(paths["cache"])
     try:
         scored = _run_workers(
@@ -1385,6 +1438,9 @@ def score_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
 def verify_task(args: argparse.Namespace, task_id: str) -> dict[str, Any]:
     paths = _task_paths(args, task_id)
     version = json.loads(paths["version"].read_text(encoding="utf-8"))
+    local_model = version.get("local_model")
+    if local_model and _directory_sha256(Path(local_model["path"])) != local_model["sha256"]:
+        raise ValueError("Local assay-transfer model content differs from VERSION.json")
     expected = int(version["n_prompt_scores"])
     connection = sqlite3.connect(f"file:{paths['cache'].resolve()}?mode=ro", uri=True)
     try:
@@ -1459,6 +1515,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--assay-transfer-model", default=None)
     parser.add_argument("--assay-transfer-model-revision", default=None)
+    parser.add_argument("--assay-transfer-local-model-dir", type=Path, default=None)
     args = parser.parse_args(argv)
     if args.assay_transfer_initial_morgan_filter <= 0:
         parser.error("--assay-transfer-initial-morgan-filter must be positive")
@@ -1472,6 +1529,10 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("model and model revision overrides must be provided together")
     if args.assay_transfer_model and len(args.tasks) != 1:
         parser.error("model overrides require exactly one task")
+    if args.assay_transfer_local_model_dir and (
+        len(args.tasks) != 1 or args.assay_transfer_model
+    ):
+        parser.error("a local model requires exactly one task and no model override")
     try:
         args.task_evidence_views = _task_path_map(
             args.task_evidence_view, "--task-evidence-view"

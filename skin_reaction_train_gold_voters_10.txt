@@ -1,0 +1,183 @@
+Sample 1
+========
+Gold vote: Positive
+SMILES: C=CC(=O)OC
+Outcome label: positive
+Reaction type: allergic_contact_dermatitis_contact_allergy
+Assay or test: clinical case report
+Species or population: human
+Dose or concentration: Not reported
+Positive count: Not reported
+Total tested: Not reported
+Effect metric: Not reported
+Support text:
+  Patients allergic to epoxy resin, polyfunctional aziridine hardener, methyl acrylate,
+  phenol‑formaldehyde resin, and tear gas developed eczema at the site of exposure 7‑14 days after
+  accidental exposure.
+Extra details: Methyl acrylate exposure produced eczema within 7‑14 days, indicating sensitization.
+
+
+Sample 2
+========
+Gold vote: Negative
+SMILES:
+  CCCC(=O)O[C@]1(C(=O)COC(C)=O)CC[C@H]2[C@@H]3C[C@H](F)C4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@@]21C
+Outcome label: negative
+Reaction type: sensitization
+Assay or test: maximization test
+Species or population: guinea pig (12 animals)
+Dose or concentration: 1 mg/0.2 mL per animal, occluded 24 h
+Positive count: 0
+Total tested: 12
+Effect metric: score 0
+Support text:
+  In a maximization test, 12 guinea pigs sensitized with difluprednate were challenged by applying
+  1 mg/0.2 mL of difluprednate to the flank under an occlusive patch for 24 h; 24 h after patch
+  removal all animals showed no contact allergy reaction (score 0).
+Extra details: Not reported
+
+
+Sample 3
+========
+Gold vote: Positive
+SMILES: Clc1nc(Cl)nc(Cl)n1
+Outcome label: positive
+Reaction type: sensitization
+Assay or test: standard guinea‑pig sensitizer test
+Species or population: guinea‑pig
+Dose or concentration: 10 % in DMF (sensitization) and 1 % in DMF (challenge)
+Positive count: Not reported
+Total tested: 8
+Effect metric: Not reported
+Support text:
+  Cyanuric chloride (2,4,6‑trichlorotriazine) sensitized 8 guinea‑pig animals when applied as a
+  10 % solution in DMF for sensitization and 1 % in DMF for challenge, giving a ++ erythema in one
+  animal and lower‑grade reactions in others.
+Extra details: Observed ++ reaction in one animal; other reactions at lower grades.
+
+
+Sample 4
+========
+Gold vote: Negative
+SMILES: CC1=C(C)/C(=N/O)CCC1
+Outcome label: negative
+Reaction type: sensitization
+Assay or test: LLNA
+Species or population: mouse
+Dose or concentration: Not reported
+Positive count: 0
+Total tested: Not reported
+Effect metric: Not reported
+Support text:
+  The formation of –2 Da conjugates from oximes does not seem important for the development of
+  contact allergy to oximes, since 2, 6, and 8 were inactive in the LLNA.
+Extra details: Oxime 6 showed no sensitization activity in the local lymph node assay.
+
+
+Sample 5
+========
+Gold vote: Positive
+SMILES: Nc1ccc(N=Nc2ccccc2)cc1
+Outcome label: positive
+Reaction type: allergic_contact_dermatitis_contact_allergy
+Assay or test: patch test
+Species or population: children with hearing‑aid dermatitis
+Dose or concentration: Not reported
+Positive count: Not reported
+Total tested: Not reported
+Effect metric: 3+ reaction
+Support text:
+  A 7‑year‑old girl wearing a coloured hearing aid showed a 3+ reaction to para‑aminoazobenzol on
+  patch testing.
+Extra details: Not reported
+
+
+Sample 6
+========
+Gold vote: Positive
+SMILES: CC1(C)NC(=O)NC1=O
+Outcome label: positive
+Reaction type: allergic_contact_dermatitis_contact_allergy
+Assay or test: ROAT
+Species or population: human patients allergic to formaldehyde (subset of 4 retested)
+Dose or concentration: 0.25 % DMDM hydantoin cream, twice daily for 1 week
+Positive count: 1
+Total tested: 4
+Effect metric: 25 % of retested subjects showed mild dermatitis
+Support text:
+  The same four patients were retested with a cream containing 0.25 % DMDM hydantoin (≈200 ppm
+  free formaldehyde); the test was negative in two, caused only itching in one, and provoked mild
+  dermatitis in one subject.
+Extra details:
+  Itching without visible changes in one subject was not counted as a positive dermatitis.
+
+
+Sample 7
+========
+Gold vote: Negative
+SMILES: Cc1ccc(OCCO)cc1
+Outcome label: negative
+Reaction type: sensitization
+Assay or test: HRIPT
+Species or population: human volunteers
+Dose or concentration: 2.5% in alcohol SDA
+Positive count: 0
+Total tested: 44
+Effect metric: Not reported
+Support text:
+  The primary alcohol 2‑(4‑methylphenoxy) ethanol was tested in two HRIPT studies at 2.5% in
+  alcohol SDA; none of the 44 volunteers exhibited a positive reaction.
+Extra details: Not reported
+
+
+Sample 8
+========
+Gold vote: Positive
+SMILES: O1[As]2O[As]3O[As]1O[As](O2)O3
+Outcome label: positive
+Reaction type: sensitization
+Assay or test: clinical observation
+Species or population: human (clinical reports)
+Dose or concentration: Not reported
+Positive count: Not reported
+Total tested: Not reported
+Effect metric: Not reported
+Support text:
+  Both arsenic trioxide and pentoxide have been characterized as definite sensitizers, giving rise
+  to eczematous and follicular type dermatitis.
+Extra details: Definite sensitizer causing eczematous and follicular dermatitis.
+
+
+Sample 9
+========
+Gold vote: Positive
+SMILES: s1p2sp3p1p3s2
+Outcome label: positive
+Reaction type: allergic_contact_dermatitis_contact_allergy
+Assay or test: clinical observation of airborne exposure
+Species or population: human
+Dose or concentration: Not reported
+Positive count: Not reported
+Total tested: Not reported
+Effect metric: Not reported
+Support text: Airborne phosphoric sesquisulfide can cause ... allergic contact dermatitis.
+Extra details:
+  Phosphorus sesquisulfide reported as airborne allergen causing allergic contact dermatitis.
+
+
+Sample 10
+=========
+Gold vote: Positive
+SMILES: C1C2CC3CC1CC(C2)C3
+Outcome label: positive
+Reaction type: allergic_contact_dermatitis_contact_allergy
+Assay or test: epicutaneous test (patch test)
+Species or population: human patients
+Dose or concentration: Not reported
+Positive count: 3
+Total tested: 15
+Effect metric: Not reported
+Support text:
+  Eine Kontaktsensibilisierung gegenüber Adamantan registrierten wir immerhin bei drei der 15
+  Getesteten.
+Extra details: Not reported

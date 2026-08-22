@@ -1,0 +1,108 @@
+{
+  "audit_version": "clintox_send_v2_gold_manual_review.v1",
+  "benchmark_status": "candidate_pending_qa",
+  "category_status_counts": {
+    "cardiotoxicity": {
+      "fail": 9,
+      "pass": 21
+    },
+    "dermatologic_toxicity": {
+      "fail": 3,
+      "pass": 26,
+      "uncertain": 1
+    },
+    "gastrointestinal_toxicity": {
+      "fail": 6,
+      "pass": 24
+    },
+    "general_adverse_events": {
+      "fail": 8,
+      "pass": 22
+    },
+    "hematologic_toxicity": {
+      "fail": 6,
+      "pass": 23,
+      "uncertain": 1
+    },
+    "hepatotoxicity": {
+      "fail": 8,
+      "pass": 22
+    },
+    "metabolic_or_electrolyte_toxicity": {
+      "fail": 9,
+      "pass": 20,
+      "uncertain": 1
+    },
+    "nephrotoxicity": {
+      "fail": 9,
+      "pass": 21
+    },
+    "neurotoxicity": {
+      "fail": 3,
+      "pass": 27
+    },
+    "ocular_toxicity": {
+      "fail": 4,
+      "pass": 26
+    },
+    "other": {
+      "fail": 9,
+      "pass": 20,
+      "uncertain": 1
+    },
+    "toxicity_absent": {
+      "fail": 22,
+      "uncertain": 8
+    }
+  },
+  "conclusion": "The category-only adapter is not source-faithful. The direct source must be re-adjudicated for entity alignment, attribution, direction, and qualifying context before rebuilding gold labels.",
+  "failure_action": "Keep the candidate out of default paper matrices. Do not delete sampled failures or add audit-derived keyword filters; define and validate a source-wide claim adjudication policy, then draw a new frozen sample.",
+  "failure_reason_counts": {
+    "absence_not_global_safety": 17,
+    "background_event_not_attributed": 4,
+    "category_outcome_mismatch": 3,
+    "combination_or_comparator_confounded": 27,
+    "formulation_or_entity_mismatch": 22,
+    "insufficient_attribution": 10,
+    "not_human_clinical_exposure": 1,
+    "protective_or_preventive_context": 3,
+    "wrong_outcome_direction": 21
+  },
+  "label_status_counts": {
+    "0": {
+      "fail": 22,
+      "uncertain": 8
+    },
+    "1": {
+      "fail": 74,
+      "pass": 252,
+      "uncertain": 4
+    }
+  },
+  "n_nonpass": 108,
+  "n_reviewed": 360,
+  "nonpass_fraction": 0.3,
+  "pass_condition": "every sampled row passes",
+  "promotion_gate_passed": false,
+  "required_source_correction": {
+    "path": "tools/chembl_tool/tasks/clintox/data_processing/gold_qa_v1/reextraction_contract_v1.json",
+    "sha256": "69323e3867d3305f0811121ee9cbba37a49c163b49cba215fcd56d78a25bd842",
+    "status": "awaiting_new_source_delivery"
+  },
+  "reviewed_rows": {
+    "path": "tools/chembl_tool/tasks/clintox/data_processing/gold_qa_v1/reviewed_rows.tsv",
+    "sha256": "b02fbbdf402dc1960fbcf11a3d5c6fe5cbd8442b01c84eccda7f1b79f6a8c1d1"
+  },
+  "sample": {
+    "n_rows": 360,
+    "path": "outputs/chembl_tool/tasks/clintox/evidence_library/clintox_send_v2_direct/05_audits/gold_qa_sample.parquet",
+    "sampling_policy": "deterministic SHA-256 rank; 30 accepted source records per declared toxicity_category",
+    "sha256": "953387d884c42fb7d966b8a3f063cdd2612f1ae23bea0241e8183f416f4c8188"
+  },
+  "status": "failed_manual_review",
+  "status_counts": {
+    "fail": 96,
+    "pass": 252,
+    "uncertain": 12
+  }
+}

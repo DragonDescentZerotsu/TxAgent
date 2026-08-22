@@ -156,9 +156,14 @@ class StarlingTaskPolicy:
     # Frozen assay-transfer measurement policy. Canonical measurement/unit
     # fields are numerical training geometry, never retrieval presentation.
     assay_transfer_measurement_policy: Path | None = None
+    # Stage 01 publishes the canonical endpoint and pre-LLM measurement route.
+    measurement_resolution_enabled: bool = False
     # When enabled, Stage 02 publishes the frozen row-level reference
     # classification mapping and coverage as a first-class side artifact.
     reference_semantics_enabled: bool = False
+    # Non-direct sources must resolve an endpoint identity before retrieval.
+    # Direct-label sources keep their historical retrieval policy.
+    endpoint_identity_required_sources: tuple[str, ...] = ()
     # Additional compact columns required when the task's family resolver
     # re-derives labels after a persisted-stage reload.
     family_resolver_input_fields: tuple[str, ...] = ()

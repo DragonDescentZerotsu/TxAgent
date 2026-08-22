@@ -27,7 +27,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
 )
 
 
-CATEGORICAL_RESPONSE_VERSION = "bioavailability_ma_categorical_response.v4"
+CATEGORICAL_RESPONSE_VERSION = "bioavailability_ma_categorical_response.v5"
 FG_TARGET_ALIAS_VERSION = "bioavailability_fg_target_aliases.v1"
 
 _DIRECT_AMBIGUOUS_QUALITATIVE_PATTERNS = (
@@ -333,10 +333,6 @@ def encoding_policy_manifest() -> dict[str, Any]:
         **POLICY.manifest(),
         "version": CATEGORICAL_RESPONSE_VERSION,
         "units": [BINARY_OUTCOME_UNIT, ORDINAL_OUTCOME_UNIT],
-        "semantic_endpoint_by_encoder": {
-            "direct_oral_bioavailability_ordinal.v1": "oral_bioavailability_outcome",
-            "fg_substrate_status_binary.v1": "fg_substrate_outcome:{canonical_target_id}",
-        },
         "direct_claim_scope": "all_explicit_source_claims_with_context_retained",
         "fg_target_alias_policy": {
             "version": FG_TARGET_ALIAS_VERSION,

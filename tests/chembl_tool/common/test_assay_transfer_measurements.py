@@ -112,6 +112,18 @@ def test_percent_base_conversion_is_atomic(unit, factor, target):
 
 def test_reviewed_log_transform_is_the_final_canonical_tuple():
     working, projected = _rows(value=1e-6, unit="cm/s")
+    working.update(
+        {
+            "is_absolute_and_continuous": True,
+            "absolute_and_continuous_value": 1e-6,
+        }
+    )
+    projected.update(
+        {
+            "is_absolute_and_continuous": True,
+            "absolute_and_continuous_value": 1e-6,
+        }
+    )
     key = json.dumps(
         ["source", "endpoint", "cm/s", "context"], separators=(",", ":")
     )
@@ -129,7 +141,13 @@ def test_reviewed_log_transform_is_the_final_canonical_tuple():
         CANONICAL_TUPLE_CONTRACT_VERSION
     )
     assert persisted["assay_transfer_pretransform_scalar_value"] == 1e-6
+    assert persisted["absolute_and_continuous_value"] == -6
     assert persisted["retrieval_eligible"] is True
+    assert validate_final_assay_transfer_measurements([persisted]) == []
+    stale = {**persisted, "absolute_and_continuous_value": 1e-6}
+    assert validate_final_assay_transfer_measurements([stale]) == [
+        "record-1: absolute continuous scalar mismatch"
+    ]
 
 
 def test_reviewed_log_transform_does_not_touch_invalid_rows():
@@ -259,3 +277,40 @@ def test_retrieval_dedup_uses_the_frozen_prebase_pair():
     assert len(kept) == 2
     assert duplicates == []
     assert all(row["retrieval_eligible"] for row in kept)
+
+
+def test_endpoint_identity_gate_applies_only_to_configured_sources() -> None:
+    common = {
+        "canonical_smiles": "CCO",
+        "group_id": "group",
+        "endpoint_name": "",
+        "canonical_endpoint": "missing_endpoint",
+        "canonical_measurement": "reported outcome",
+        "canonical_unit": None,
+        "evidence_context_json": "{}",
+    }
+    kept, _ = deduplicate_within_source(
+        [
+            {
+                **common,
+                "source_id": "semantic",
+                "source_record_id": "semantic-1",
+                "source_row_number": 1,
+                "normalized_record_id": "semantic-1",
+            },
+            {
+                **common,
+                "source_id": "direct",
+                "source_record_id": "direct-1",
+                "source_row_number": 1,
+                "normalized_record_id": "direct-1",
+            },
+        ],
+        endpoint_identity_required_sources=("semantic",),
+    )
+    by_source = {row["source_id"]: row for row in kept}
+    assert by_source["semantic"]["retrieval_eligible"] is False
+    assert by_source["semantic"]["organization_status"] == (
+        "missing_endpoint_identity"
+    )
+    assert by_source["direct"]["retrieval_eligible"] is True

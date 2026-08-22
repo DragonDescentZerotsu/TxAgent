@@ -16,6 +16,12 @@ from tools.chembl_tool.common.starling.canonicalization_v7 import (
     SourceProfile,
     StarlingRecordContract,
 )
+from tools.chembl_tool.common.starling.measurement_routing import (
+    MEASUREMENT_ROUTING_VERSION,
+)
+from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+    MAPPING_VERSION as MEASUREMENT_RESOLUTION_VERSION,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_auxiliary_metadata import (
     MAPPING_VERSION,
 )
@@ -24,7 +30,9 @@ from tools.chembl_tool.tasks.bbb_martins.starling_categorical_response import (
     MEASUREMENT_SCALES,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
+    EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID,
     ENDPOINT_NORMALIZATION_VERSION,
+    PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_normalization_policy import (
     SOURCE_MEASUREMENT_RESOLVER_VERSION,
@@ -54,6 +62,17 @@ SOURCE_PAIR_PRODUCER_IDS = {
     source_id: f"bbb.{source_id}.source_scalar_pair.v3"
     for source_id in SOURCE_ENDPOINT_PRODUCER_IDS
 }
+# Rule-routed rows: the source already separated a bare number from a reviewed,
+# dimensioned unit, so the pair is taken as written.
+SOURCE_RULE_PAIR_PRODUCER_IDS = {
+    source_id: f"bbb.{source_id}.routed_rule_pair.v1"
+    for source_id in SOURCE_ENDPOINT_PRODUCER_IDS
+}
+# Rows the rules decline: the pair comes from the frozen per-row extraction.
+SOURCE_EXTRACTION_PAIR_PRODUCER_IDS = {
+    source_id: f"bbb.{source_id}.frozen_extraction_pair.v1"
+    for source_id in SOURCE_ENDPOINT_PRODUCER_IDS
+}
 
 
 def _base_dimensions(
@@ -61,6 +80,24 @@ def _base_dimensions(
     source_id: str,
     endpoint_method: str,
 ) -> tuple[CanonicalDimensionSpec, ...]:
+    endpoint_producer_variants = {
+        "passive_permeability": (
+            CanonicalProducerSpec(
+                PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID,
+                ("passive_bbb_interpretation",),
+                "controlled_encoder",
+                ENDPOINT_NORMALIZATION_VERSION,
+            ),
+        ),
+        "efflux_transport": (
+            CanonicalProducerSpec(
+                EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID,
+                ("interaction_conclusion",),
+                "controlled_encoder",
+                ENDPOINT_NORMALIZATION_VERSION,
+            ),
+        ),
+    }.get(source_id, ())
     categorical_producers = tuple(
         CanonicalProducerSpec(
             scale.scale_id,
@@ -76,6 +113,21 @@ def _base_dimensions(
         "measurement_text",
         "unit_text",
     )
+    extraction_inputs = (*scalar_inputs, "support_text")
+    pair_producers = categorical_producers + (
+        CanonicalProducerSpec(
+            SOURCE_RULE_PAIR_PRODUCER_IDS[source_id],
+            scalar_inputs,
+            "deterministic_rule",
+            f"{MEASUREMENT_ROUTING_VERSION}+starling_exact_measurement_units.v1",
+        ),
+        CanonicalProducerSpec(
+            SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id],
+            extraction_inputs,
+            "frozen_extraction",
+            f"{MEASUREMENT_RESOLUTION_VERSION}+starling_exact_measurement_units.v1",
+        ),
+    )
     dimensions = [
         CanonicalDimensionSpec(
             "canonical_endpoint_name",
@@ -85,7 +137,7 @@ def _base_dimensions(
             ENDPOINT_NORMALIZATION_VERSION,
             producer_id=SOURCE_ENDPOINT_PRODUCER_IDS[source_id],
             producer_id_field=ENDPOINT_PRODUCER_FIELD,
-            producer_variants=categorical_producers,
+            producer_variants=endpoint_producer_variants,
             legacy_value_field="canonical_endpoint",
         ),
         CanonicalDimensionSpec(
@@ -98,7 +150,7 @@ def _base_dimensions(
             depends_on=("canonical_endpoint_name",),
             producer_id=SOURCE_PAIR_PRODUCER_IDS[source_id],
             producer_id_field=PAIR_PRODUCER_FIELD,
-            producer_variants=categorical_producers,
+            producer_variants=pair_producers,
             legacy_value_field="canonical_measurement",
         ),
         CanonicalDimensionSpec(
@@ -111,7 +163,7 @@ def _base_dimensions(
             depends_on=("canonical_endpoint_name",),
             producer_id=SOURCE_PAIR_PRODUCER_IDS[source_id],
             producer_id_field=PAIR_PRODUCER_FIELD,
-            producer_variants=categorical_producers,
+            producer_variants=pair_producers,
             legacy_value_field="canonical_unit",
         ),
         CanonicalDimensionSpec(
@@ -311,6 +363,7 @@ SOURCES = {
         source_id="influx_transport",
         source_columns=SOURCE_COLUMNS["influx_transport"],
         endpoint_field="transport_endpoint",
+        measurement_field="reported_result",
         smiles_field="SMILES",
         canonical_dimensions=(
             *_base_dimensions(

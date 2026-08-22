@@ -804,9 +804,17 @@ Normalized stages 02-09 must not be rebuilt before that checkpoint. Physical
 permeability rows without an explicit source unit or unit embedded in the raw
 endpoint/measurement remain unit-unresolved and are excluded from pair buckets;
 they remain available as sidecar evidence. Binary categorical values are encoded
-as dimensionless scalar anchors with encoder-specific semantic endpoints before
-pair bucketing. Source-aware pair keys then use canonical endpoint, canonical
-unit, categorical encoder, and the relevant canonical context fields.
+as dimensionless scalar anchors without changing the normalized source endpoint.
+Source-aware pair keys separate them using canonical unit, measurement scale,
+and the relevant canonical context fields.
+
+Measurement values and units now use the shared exact Stage-02 contract. The frozen BBB extraction is
+endpoint-aware and every successful multi-quantity result is exploded. Positive source decimals with a unit
+bypass the model unchanged. The single shared JSON maps or excludes exact
+`(bbb_martins, canonical_endpoint, input_unit)` keys, including reviewed PAMPA header scales, logBB aliases,
+and percent-to-ratio conversions. No runtime unit regex, support-text factor correction, or per-record numeric
+override runs on this path. Original source fields and the parent cleaned ID remain attached to every child;
+variation is null. The historical normalization modules remain available only for replay.
 
 BBB additionally freezes `canonical_reference_scope` and `canonical_reference_basis` per scalar row.
 Stage 04 accepts absolute values, endpoint-defined ratios with an explicit endpoint denominator,

@@ -6,10 +6,27 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_auxiliary_metadata impo
     AUXILIARY_ATTACHMENT_VERSION,
     AuxiliaryMetadataAttacher,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import PAIR_BUCKETS
 
 
 def _write_mapping(path, *, fa_context="caco_2"):
     sections = {
+        "oral_exposure": {
+            "global_species_context": {
+                "source_columns": ["study_context"],
+                "mapping": {
+                    '["healthy volunteers, plasma"]': "human",
+                    "[null]": None,
+                },
+            },
+            "global_biological_matrix": {
+                "source_columns": ["study_context"],
+                "mapping": {
+                    '["healthy volunteers, plasma"]': "plasma",
+                    "[null]": None,
+                },
+            },
+        },
         "fa": {
             "global_context": {
                 "source_columns": ["assay_system"],
@@ -48,7 +65,7 @@ def _write_mapping(path, *, fa_context="caco_2"):
     path.write_text(
         json.dumps(
             {
-                "mapping_version": "starling_auxiliary.globally_reconciled.v1",
+                "mapping_version": "starling_auxiliary.globally_reconciled.v2",
                 "sources": sections,
             }
         ),
@@ -69,6 +86,7 @@ def test_attachment_uses_cleaned_source_tuples_and_preserves_role_labels(tmp_pat
     ) == {
         "global_context": "caco_2",
         "global_species_context": "rat",
+        "global_biological_matrix": None,
         "auxiliary_mapping_status": "mapped",
         "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
     }
@@ -124,15 +142,31 @@ def test_source_null_sentinels_join_the_frozen_null_tuple(tmp_path):
     assert attached["auxiliary_mapping_status"] == "mapped"
 
 
-def test_direct_and_oral_exposure_are_explicitly_not_applicable(tmp_path):
+def test_oral_exposure_attaches_both_context_fields(tmp_path):
     path = tmp_path / "mapping.json"
     _write_mapping(path)
-    attacher = AuxiliaryMetadataAttacher(path)
-    for source_id in ("hf_bioavailability", "oral_exposure"):
-        attached = attacher.attach({"source_id": source_id})
-        assert attached["auxiliary_mapping_status"] == "not_applicable"
-        assert attached["global_context"] is None
-        assert attached["global_species_context"] is None
+    attached = AuxiliaryMetadataAttacher(path).attach(
+        {
+            "source_id": "oral_exposure",
+            "study_context": "healthy volunteers, plasma",
+        }
+    )
+    assert attached["auxiliary_mapping_status"] == "mapped"
+    assert attached["global_context"] is None
+    assert attached["global_species_context"] == "human"
+    assert attached["global_biological_matrix"] == "plasma"
+
+
+def test_direct_hf_is_explicitly_not_applicable(tmp_path):
+    path = tmp_path / "mapping.json"
+    _write_mapping(path)
+    attached = AuxiliaryMetadataAttacher(path).attach(
+        {"source_id": "hf_bioavailability"}
+    )
+    assert attached["auxiliary_mapping_status"] == "not_applicable"
+    assert attached["global_context"] is None
+    assert attached["global_species_context"] is None
+    assert attached["global_biological_matrix"] is None
 
 
 def test_conflicting_cleaned_tuple_keys_are_rejected(tmp_path):
@@ -159,3 +193,10 @@ def test_manifest_and_coverage_are_deterministic(tmp_path):
     ]
     audit = left.coverage_audit(records)
     assert audit["validations"]["all_applicable_records_mapped"] is True
+
+
+def test_oral_pair_bucket_uses_extracted_context_dimensions():
+    spec = PAIR_BUCKETS["oral_exposure"]
+    assert "canonical_species_context" in spec.canonical_dimensions
+    assert "canonical_biological_matrix" in spec.canonical_dimensions
+    assert "study_context" not in spec.variance_candidates

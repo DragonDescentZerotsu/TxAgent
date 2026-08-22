@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 
-BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v11"
-BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v12"
+BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v12"
+BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v14"
 
 SOURCE_PAIR_FIELDS = {
     "hf_bioavailability": (
@@ -13,7 +13,11 @@ SOURCE_PAIR_FIELDS = {
     ),
     "oral_exposure": (),
     "fa": ("global_context", "global_species_context"),
-    "fg": ("global_context", "global_species_context"),
+    "fg": (
+        "canonical_measurement_target_id",
+        "global_context",
+        "global_species_context",
+    ),
     "fh": ("global_context", "global_species_context"),
 }
 

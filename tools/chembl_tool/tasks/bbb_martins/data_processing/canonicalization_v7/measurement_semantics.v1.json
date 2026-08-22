@@ -1,6 +1,6 @@
 {
   "schema_version": "bbb_martins_measurement_semantics.schema.v1",
-  "policy_version": "bbb_martins_measurement_semantics.v1",
+  "policy_version": "bbb_martins_measurement_semantics.v2",
   "rules": [
     {
       "rule_id": "bbb.direct.raw_bbb_ambiguous.v1",
@@ -271,6 +271,12 @@
       "source_ids": ["direct_bbb"],
       "raw_units": ["nmol/g brain"],
       "canonical_unit": "nmol/g brain"
+    },
+    {
+      "rule_id": "bbb.unit.dimensionless_log_ratio.v1",
+      "source_ids": ["direct_bbb", "passive_permeability"],
+      "raw_units": ["log10", "logbb", "log bb", "log10(brain/blood)"],
+      "canonical_unit": "dimensionless"
     }
   ]
 }

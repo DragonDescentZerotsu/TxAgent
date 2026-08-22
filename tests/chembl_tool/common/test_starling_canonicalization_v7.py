@@ -63,6 +63,7 @@ def test_mapped_structure_keeps_raw_source_smiles_in_cleaned_view() -> None:
         "unit_text": None,
         "source_smiles": "MAPPED",
         "canonical_smiles": "CCO",
+        "molecule_name": "sibling-source-only",
         "source_payload_json": json.dumps(
             {
                 **{field: None for field in profile.source_columns},
@@ -76,6 +77,7 @@ def test_mapped_structure_keeps_raw_source_smiles_in_cleaned_view() -> None:
     cleaned = BIO_CONTRACT.clean_projection(row)
     assert cleaned["smiles"] == "RAW-SOURCE"
     assert "source_smiles" not in cleaned
+    assert "molecule_name" not in cleaned
     assert "endpoint_category" not in cleaned
 
 
@@ -376,6 +378,77 @@ def test_required_known_dimension_excludes_unknown_without_dropping_record() -> 
     }
 
 
+def test_semantic_pair_bucket_uses_effective_unit_without_enabling_transfer() -> None:
+    records = [
+        {
+            "canonical_record_id": "free-text",
+            "source_id": "source",
+            "canonical_endpoint_name": "outcome",
+            "canonical_unit_text": None,
+            "canonicalization_status": "non_scalar_measurement",
+            "canonical_smiles": "CCO",
+            "retrieval_eligible": True,
+            "canonical_measurement_text": "reported response",
+        },
+        {
+            "canonical_record_id": "relative",
+            "source_id": "source",
+            "canonical_endpoint_name": "outcome",
+            "canonical_unit_text": None,
+            "canonicalization_status": "missing_canonical_unit",
+            "canonical_smiles": "CCN",
+            "retrieval_eligible": True,
+            "canonical_reference_scope": "comparator_relative",
+        },
+        {
+            "canonical_record_id": "unresolved",
+            "source_id": "source",
+            "canonical_endpoint_name": "outcome",
+            "canonical_unit_text": None,
+            "canonicalization_status": "missing_canonical_unit",
+            "canonical_smiles": "CCC",
+            "retrieval_eligible": True,
+            "measurement_parse_kind": "point",
+        },
+        {
+            "canonical_record_id": "no-endpoint",
+            "source_id": "source",
+            "canonical_endpoint_name": None,
+            "canonical_unit_text": None,
+            "canonicalization_status": "non_scalar_measurement",
+            "canonical_smiles": "CCCC",
+            "retrieval_eligible": False,
+        },
+        {
+            "canonical_record_id": "unresolved-mechanism",
+            "source_id": "source",
+            "canonical_endpoint_name": "outcome",
+            "canonical_unit_text": "%",
+            "canonicalization_status": "valid",
+            "canonical_smiles": "CCCCC",
+            "retrieval_eligible": False,
+            "organization_status": "unresolved_mechanism_family",
+        },
+    ]
+    rows, audit = materialize_pair_buckets(
+        records,
+        source_required_fields={"source": ()},
+        semantic_pair_bucket_sources=("source",),
+    )
+    assert [row["pair_bucket_unit_text"] for row in rows] == [
+        "free-text",
+        "relative-scalar",
+        "unresolved-scalar",
+        "free-text",
+        "%",
+    ]
+    assert all(row["pair_bucket_key"] for row in rows[:3])
+    assert all(not row["assay_transfer_eligible"] for row in rows)
+    assert rows[3]["pair_bucket_key"] is None
+    assert rows[4]["pair_bucket_key"] is None
+    assert all(audit["validations"].values())
+
+
 def test_controlled_categorical_scale_persists_kind_and_category_identity() -> None:
     scale = SKIN_CONTRACT.measurement_scales["single_subject_logit"]
     category = scale.category_for_value(1.0986122886681098)
@@ -438,3 +511,95 @@ def test_structure_status_restoration_matches_fresh_resolution() -> None:
         None,
         "invalid_structure",
     )
+
+
+def test_frozen_extraction_is_a_declarable_canonicalization_method() -> None:
+    """A per-row extraction is a distinct method from a per-value mapping.
+
+    ``frozen_mapping`` is keyed by a distinct source value and reused across
+    every row sharing it; ``frozen_extraction`` is keyed by one record and never
+    reused.  Recording that difference is what lets the manifest state how a
+    canonical value was produced.
+    """
+    dimension = CanonicalDimensionSpec(
+        "canonical_measurement_text",
+        "measurement",
+        ("measurement_text",),
+        "frozen_extraction",
+        "bbb_martins_measurement_resolution.v1",
+    )
+    assert dimension.manifest()["method"] == "frozen_extraction"
+
+    with pytest.raises(ValueError, match="unsupported canonicalization method"):
+        CanonicalDimensionSpec(
+            "canonical_measurement_text",
+            "measurement",
+            ("measurement_text",),
+            "llm_freeform",
+            "v1",
+        )
+
+
+def test_atomic_group_members_must_record_the_same_producer() -> None:
+    """An atomic group is only verifiable when its members share a producer field.
+
+    ``_validate_canonical_projection`` can compare selected producers across an
+    atomic group only for dimensions that persist one.  A group mixing a
+    producer-recording dimension with a silent one would be declared atomic but
+    never checked, so the disagreement is refused at declaration time.
+    """
+
+    def dimension(output_field: str, producer_field: str | None) -> CanonicalDimensionSpec:
+        return CanonicalDimensionSpec(
+            output_field,
+            "measurement",
+            ("measurement_text",),
+            "deterministic_rule",
+            "v1",
+            atomic_group="canonical_measurement_unit_pair",
+            producer_id="pair.v1" if producer_field else None,
+            producer_id_field=producer_field,
+        )
+
+    with pytest.raises(ValueError, match="spans different producer fields"):
+        SourceProfile(
+            source_id="s",
+            source_columns=("m", "smiles"),
+            endpoint_constant="e",
+            measurement_field="m",
+            canonical_dimensions=(
+                dimension("canonical_measurement_text", "canonical_pair_producer_id"),
+                dimension("canonical_unit_text", None),
+            ),
+        )
+
+    # Agreeing declarations remain legal, with or without a producer field.
+    for producer_field in ("canonical_pair_producer_id", None):
+        SourceProfile(
+            source_id="s",
+            source_columns=("m", "smiles"),
+            endpoint_constant="e",
+            measurement_field="m",
+            canonical_dimensions=(
+                dimension("canonical_measurement_text", producer_field),
+                dimension("canonical_unit_text", producer_field),
+            ),
+        )
+
+
+def test_influx_reports_its_quantity_through_the_measurement_role() -> None:
+    """Influx's value lives in ``reported_result``; it must be the measurement.
+
+    While the source declared no measurement field, every influx row cleaned to
+    a null ``measurement_text`` and could only ever resolve to a non-scalar, so
+    the whole source was absent from scalar evidence.  Promoting the column also
+    has to remove it from the cleaned schema, or the projection would carry the
+    same value twice under two names.
+    """
+    from tools.chembl_tool.tasks.bbb_martins.starling_schema import SOURCES
+
+    profile = SOURCES["influx_transport"]
+    assert profile.measurement_field == "reported_result"
+    assert "reported_result" in profile.source_columns
+    assert "reported_result" not in profile.cleaned_source_fields
+    assert "measurement_text" in profile.source_visible_fields

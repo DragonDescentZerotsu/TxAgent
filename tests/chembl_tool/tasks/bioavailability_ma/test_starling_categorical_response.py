@@ -226,22 +226,20 @@ def _normalized_record(source_id: str, **updates):
     return record
 
 
-def test_enrichment_assigns_semantic_direct_endpoint_and_producer_ids():
-    enriched = _enrich_record(
-        _normalized_record(
-            "hf_bioavailability",
-            measurement_text="high",
-            oral_bioavailability_value="high",
-        ),
-        _NoAuxiliary(),
-        _NoReference(),
+def test_enrichment_preserves_direct_endpoint_and_separates_producer_ids():
+    source = _normalized_record(
+        "hf_bioavailability",
+        measurement_text="high",
+        oral_bioavailability_value="high",
     )
-    assert enriched["canonical_endpoint"] == "oral_bioavailability_outcome"
+    enriched = _enrich_record(source, _NoAuxiliary(), _NoReference())
+    assert "canonical_endpoint" not in enriched
+    assert {**source, **enriched}["canonical_endpoint"] == "oral_bioavailability"
     assert enriched["categorical_encoder_id"] == (
         "direct_oral_bioavailability_ordinal.v1"
     )
     assert enriched["canonical_endpoint_producer_id"] == (
-        "direct_oral_bioavailability_ordinal.v1"
+        "bioavailability.hf_bioavailability.source_endpoint.v1"
     )
     assert enriched["canonical_pair_producer_id"] == (
         "direct_oral_bioavailability_ordinal.v1"
@@ -249,18 +247,33 @@ def test_enrichment_assigns_semantic_direct_endpoint_and_producer_ids():
     assert enriched["normalization_validity_status"] == "valid"
 
 
-def test_enrichment_assigns_target_specific_fg_endpoint():
-    enriched = _enrich_record(
-        _normalized_record(
-            "fg",
-            substrate_status="substrate",
-            transporter_or_enzyme="P-gp/ABCB1",
-        ),
-        _NoAuxiliary(),
-        _NoReference(),
+def test_enrichment_preserves_fg_endpoint_and_assigns_separate_target():
+    source = _normalized_record(
+        "fg",
+        substrate_status="substrate",
+        transporter_or_enzyme="P-gp/ABCB1",
     )
-    assert enriched["canonical_endpoint"] == "fg_substrate_outcome:ABCB1"
+    enriched = _enrich_record(source, _NoAuxiliary(), _NoReference())
+    assert "canonical_endpoint" not in enriched
+    assert {**source, **enriched}["canonical_endpoint"] == "intestinal_efflux"
+    assert enriched["canonical_measurement_target_id"] == "ABCB1"
+    assert enriched["canonical_pair_producer_id"] == "fg_substrate_status_binary.v1"
     assert enriched["normalization_validity_status"] == "valid"
+
+
+def test_fg_structured_status_rescues_only_a_missing_endpoint():
+    source = _normalized_record(
+        "fg",
+        canonical_endpoint="missing_endpoint",
+        substrate_status="not substrate",
+        transporter_or_enzyme="P-gp/ABCB1",
+    )
+    enriched = _enrich_record(source, _NoAuxiliary(), _NoReference())
+    assert enriched["canonical_endpoint"] == "fg_substrate_outcome"
+    assert enriched["canonical_endpoint_producer_id"] == (
+        "bioavailability.fg.substrate_status_endpoint.v1"
+    )
+    assert enriched["canonical_measurement_target_id"] == "ABCB1"
 
 
 def test_parseable_unresolved_numeric_measurement_is_not_overwritten():

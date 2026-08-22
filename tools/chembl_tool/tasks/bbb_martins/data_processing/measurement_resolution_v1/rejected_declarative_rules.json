@@ -1,0 +1,53 @@
+{
+  "review_version": "bbb_martins_declarative_ruleout_review.v1",
+  "task_id": "bbb_martins",
+  "verdict": "all_candidate_declarative_rules_rejected",
+  "method": {
+    "population": "cleaned rows whose measurement field carries at least one digit and whose candidate rule fires",
+    "false_positive_test": "support_text names an absolute PK parameter (Km|Ki|IC50|EC50|Kd|Papp|Vmax|CL|AUC|Cmax|Kp|clearance) and contains no relative marker (fold|%|percent|compared|versus|vs|relative|probability|ratio|higher|lower)",
+    "note": "The test is a lower bound on false positives: it only counts rows whose absolute quantity is named in the support text."
+  },
+  "candidates": [
+    {
+      "rule": "efflux_transport.evidence_type == 'qualitative_transporter_claim'",
+      "rows_ruled_out": 2823,
+      "genuine_absolute_measurements": 794,
+      "false_positive_rate": 0.281,
+      "examples": [
+        "IC50 of 0.51 uM (laniquidar, P-gp inhibitor)",
+        "Km = 1448 uM, Vmax = 624 pmol/min/mg protein (BCECF in BBM)",
+        "EC50 of 1.6 uM (MC18, P-gp inhibitor)"
+      ]
+    },
+    {
+      "rule": "influx_transport.evidence_basis == 'comparative'",
+      "rows_ruled_out": 6033,
+      "genuine_absolute_measurements": 142,
+      "false_positive_rate": 0.024
+    },
+    {
+      "rule": "influx_transport.evidence_basis == 'inhibition or competition'",
+      "rows_ruled_out": 4308,
+      "genuine_absolute_measurements": 267,
+      "false_positive_rate": 0.062,
+      "examples": ["Ki = 11.8 uM (LAT1)", "Inhibition constant (Ki) of 199 +/- 32 uM (SAM)"]
+    },
+    {
+      "rule": "influx_transport.evidence_basis == 'qualitative substrate claim'",
+      "rows_ruled_out": 18828,
+      "genuine_absolute_measurements": 291,
+      "false_positive_rate": 0.015
+    }
+  ],
+  "totals": {
+    "rows_that_would_have_been_ruled_out": 31992,
+    "genuine_absolute_measurements_at_risk": 1494,
+    "aggregate_false_positive_rate": 0.047,
+    "additional_extraction_rows_from_rejecting_all": 31992
+  },
+  "reasoning": "These columns record the conclusion a study drew -- substrate status, inhibitor status, comparative framing -- not whether a quantity was measured. A paper may report IC50 = 0.51 uM and still conclude only that the compound is an inhibitor, so qualitative evidence and an absolute number coexist freely. The non-scalar bucket discards a row with no extraction pass behind it, so any nonzero false-positive rate silently deletes evidence. The DeclarativeNonScalarRule mechanism is retained for columns that describe the measurement itself, such as bioavailability's bioavailability_report_type == 'relative_comparison'.",
+  "columns_excluded_without_measurement": {
+    "direct_bbb.bbb_permeability_label": "outcome interpretation; a permeable compound still has a reported Papp",
+    "passive_permeability.passive_bbb_interpretation": "outcome interpretation, same reasoning"
+  }
+}

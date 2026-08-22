@@ -35,7 +35,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_reference_semantics imp
 
 
 TASK_ID = "bioavailability_ma"
-ENDPOINT_VERSION = "bioavailability_endpoint_name.v7"
+ENDPOINT_VERSION = "bioavailability_endpoint_name.v8"
 MEASUREMENT_UNIT_VERSION = "bioavailability_measurement_unit.v8"
 SMILES_MAPPING_VERSION = (
     "final_smiles_mapping_v2."
@@ -46,6 +46,9 @@ REPORT_TYPE_VERSION = "bioavailability_report_type_normalization.v1"
 MEASUREMENT_ATOMIC_GROUP = "canonical_measurement_unit_pair"
 ENDPOINT_PRODUCER_FIELD = "canonical_endpoint_producer_id"
 PAIR_PRODUCER_FIELD = "canonical_pair_producer_id"
+FG_SUBSTRATE_ENDPOINT_PRODUCER_ID = (
+    "bioavailability.fg.substrate_status_endpoint.v1"
+)
 
 SOURCE_ENDPOINT_PRODUCER_IDS = {
     source_id: f"bioavailability.{source_id}.source_endpoint.v1"
@@ -55,11 +58,31 @@ SOURCE_PAIR_PRODUCER_IDS = {
     source_id: f"bioavailability.{source_id}.source_scalar_pair.v1"
     for source_id in SOURCE_COLUMNS
 }
+SOURCE_RULE_PAIR_PRODUCER_IDS = {
+    source_id: f"bioavailability.{source_id}.exact_source_pair.v1"
+    for source_id in SOURCE_COLUMNS
+}
+SOURCE_EXTRACTION_PAIR_PRODUCER_IDS = {
+    source_id: f"bioavailability.{source_id}.frozen_extraction_pair.v1"
+    for source_id in SOURCE_COLUMNS
+}
 
 
 def _base_dimensions(
     *, source_id: str, mapped_structure: bool
 ) -> tuple[CanonicalDimensionSpec, ...]:
+    endpoint_producer_variants = (
+        (
+            CanonicalProducerSpec(
+                FG_SUBSTRATE_ENDPOINT_PRODUCER_ID,
+                ("substrate_status", "transporter_or_enzyme"),
+                "controlled_encoder",
+                CATEGORICAL_RESPONSE_VERSION,
+            ),
+        )
+        if source_id == "fg"
+        else ()
+    )
     categorical_producers = tuple(
         CanonicalProducerSpec(
             scale.scale_id,
@@ -71,6 +94,20 @@ def _base_dimensions(
         if scale.source_id == source_id
     )
     scalar_inputs = ("endpoint_name", "measurement_text", "unit_text")
+    pair_producers = categorical_producers + (
+        CanonicalProducerSpec(
+            SOURCE_RULE_PAIR_PRODUCER_IDS[source_id],
+            scalar_inputs,
+            "deterministic_rule",
+            "starling_exact_measurement_units.v1",
+        ),
+        CanonicalProducerSpec(
+            SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id],
+            scalar_inputs,
+            "frozen_extraction",
+            "starling_exact_measurement_units.v1",
+        ),
+    )
     dimensions = [
         CanonicalDimensionSpec(
             "canonical_endpoint_name",
@@ -80,7 +117,7 @@ def _base_dimensions(
             ENDPOINT_VERSION,
             producer_id=SOURCE_ENDPOINT_PRODUCER_IDS[source_id],
             producer_id_field=ENDPOINT_PRODUCER_FIELD,
-            producer_variants=categorical_producers,
+            producer_variants=endpoint_producer_variants,
             legacy_value_field="canonical_endpoint",
         ),
         CanonicalDimensionSpec(
@@ -93,7 +130,7 @@ def _base_dimensions(
             depends_on=("canonical_endpoint_name",),
             producer_id=SOURCE_PAIR_PRODUCER_IDS[source_id],
             producer_id_field=PAIR_PRODUCER_FIELD,
-            producer_variants=categorical_producers,
+            producer_variants=pair_producers,
             legacy_value_field="canonical_measurement",
         ),
         CanonicalDimensionSpec(
@@ -106,7 +143,7 @@ def _base_dimensions(
             depends_on=("canonical_endpoint_name",),
             producer_id=SOURCE_PAIR_PRODUCER_IDS[source_id],
             producer_id_field=PAIR_PRODUCER_FIELD,
-            producer_variants=categorical_producers,
+            producer_variants=pair_producers,
             legacy_value_field="canonical_unit",
         ),
         CanonicalDimensionSpec(
@@ -189,8 +226,20 @@ SOURCES = {
         smiles_field="smiles",
         structure_mode="mapped",
         structure_identity_field="global_identifier",
-        canonical_dimensions=_base_dimensions(
-            source_id="oral_exposure", mapped_structure=True
+        canonical_dimensions=(
+            *_base_dimensions(source_id="oral_exposure", mapped_structure=True),
+            _mapped_context(
+                "canonical_species_context",
+                "species_context",
+                ("study_context",),
+                "global_species_context",
+            ),
+            _mapped_context(
+                "canonical_biological_matrix",
+                "biological_matrix",
+                ("study_context",),
+                "global_biological_matrix",
+            ),
         ),
     ),
     "fa": SourceProfile(
@@ -228,6 +277,13 @@ SOURCES = {
         structure_identity_field="global_identifier",
         canonical_dimensions=(
             *_base_dimensions(source_id="fg", mapped_structure=True),
+            CanonicalDimensionSpec(
+                "canonical_measurement_target_id",
+                "measurement_target",
+                ("transporter_or_enzyme",),
+                "controlled_encoder",
+                CATEGORICAL_RESPONSE_VERSION,
+            ),
             _mapped_context(
                 "canonical_assay_context",
                 "assay_context",
@@ -323,12 +379,13 @@ PAIR_BUCKETS = {
         canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
+            "canonical_species_context",
+            "canonical_biological_matrix",
             "canonical_reference_scope",
         ),
         variance_candidates=(
             "statistic_type",
             "oral_dose",
-            "study_context",
             "comparator_exposure",
             "qualifying_conditions",
         ),
@@ -356,6 +413,7 @@ PAIR_BUCKETS = {
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_measurement_scale_id",
+            "canonical_measurement_target_id",
             "canonical_assay_context",
             "canonical_species_context",
             "canonical_reference_scope",
@@ -397,11 +455,14 @@ RECORD_CONTRACT = StarlingRecordContract(
 
 __all__ = [
     "ENDPOINT_PRODUCER_FIELD",
+    "FG_SUBSTRATE_ENDPOINT_PRODUCER_ID",
     "PAIR_BUCKETS",
     "PAIR_PRODUCER_FIELD",
     "RECORD_CONTRACT",
     "SOURCE_ENDPOINT_PRODUCER_IDS",
+    "SOURCE_EXTRACTION_PAIR_PRODUCER_IDS",
     "SOURCE_PAIR_PRODUCER_IDS",
+    "SOURCE_RULE_PAIR_PRODUCER_IDS",
     "SOURCES",
     "TASK_ID",
 ]

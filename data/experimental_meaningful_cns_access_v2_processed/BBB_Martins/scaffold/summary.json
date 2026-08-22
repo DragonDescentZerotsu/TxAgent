@@ -1,0 +1,47 @@
+{
+  "schema_version": "processed_starling_gold.v1",
+  "task": "BBB_Martins",
+  "source_lineage": "experimental_meaningful_cns_access_v2",
+  "source_gold_root": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold",
+  "source_parquet": "data/starling_data/bbb_martins/Direct_BBB/records.parquet",
+  "source_parquet_locator": "data/starling_data/bbb_martins/Direct_BBB/records.parquet",
+  "source_parquet_sha256": "14c01314377b6c31f18e6ec9c1ee72a8605a06800d74385fc8a7273f2334df57",
+  "source_gold_sha256": {
+    "train": "250b8d46c574eb51561793038acb22c398c25eb7c0d9a8b7b35ecee86df1f14e",
+    "valid": "ddd5c4c3a8025a1d76a5ac24e00d562803673a7ba50daf7282e1e03bab909685",
+    "test": "53d834c2ab7860c959874dfb8cb301c8d54683bb3d361c05363e90d1454768b3"
+  },
+  "n_molecules": 3667,
+  "n_voting_records": 7332,
+  "split_molecule_counts": {
+    "train": 2935,
+    "valid": 366,
+    "test": 366
+  },
+  "split_voting_record_counts": {
+    "train": 4576,
+    "valid": 1415,
+    "test": 1341
+  },
+  "voting_record_type_counts": {
+    "categorical_only": 3667
+  },
+  "continuous_value_policy": {
+    "unit": "positive_vote_fraction",
+    "class_means": null
+  },
+  "paths": {
+    "train_molecule_labels": "data/experimental_meaningful_cns_access_v2_processed/BBB_Martins/scaffold/train_molecule_labels.jsonl",
+    "valid_molecule_labels": "data/experimental_meaningful_cns_access_v2_processed/BBB_Martins/scaffold/valid_molecule_labels.jsonl",
+    "test_molecule_labels": "data/experimental_meaningful_cns_access_v2_processed/BBB_Martins/scaffold/test_molecule_labels.jsonl",
+    "heldout_molecule_labels": "data/experimental_meaningful_cns_access_v2_processed/BBB_Martins/scaffold/heldout_molecule_labels.jsonl",
+    "voting_records": "data/experimental_meaningful_cns_access_v2_processed/BBB_Martins/scaffold/voting_records.jsonl"
+  },
+  "artifact_sha256": {
+    "train_molecule_labels": "a2245ec046224155d2b5d7003dd2058c40aced0b18ef89ef9605208511f9bb7f",
+    "valid_molecule_labels": "54b97702a48e25c9d31f9be0fb16aaf0c7ccd3acbd7d24b65d5766cbbca7c1cb",
+    "test_molecule_labels": "da325eb5a629bab0d86489862daf9b06a4370dda7e5f03651ac444b98924bdc3",
+    "heldout_molecule_labels": "97a9bb7327eeee835db6110cc0d72e45205988423674b852d630f55966584493",
+    "voting_records": "d3aaa2683377ec527b76ba6ec87b48df1c9abae512fb37ee4df1dd8e9a7a4263"
+  }
+}

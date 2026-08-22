@@ -1,0 +1,80 @@
+{
+  "api_base_url": "http://epyc-1-4:50000/v1",
+  "assignment_method_counts": {
+    "invalid_row_response:entry_without_a_unit:structural_retry": 20,
+    "model_single_pass": 113426,
+    "model_structural_retry": 2212
+  },
+  "cleaned_records_path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "3b00b68ec7736313b0a4e9d683f45b12a55dfaaced946814cf06e81061786c51",
+  "endpoint_profile": {
+    "path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "e4f54f6fbb6271fff2c1b8d20422134cbf8eed129ae9ea155efcebfa4865d553",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "generation_version": "measurement_resolution_generation.v4",
+  "inference": {
+    "max_completion_tokens": 32768,
+    "reasoning_mode": "server_default",
+    "temperature": 1.0
+  },
+  "mapping_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
+  "mapping_rows": 115658,
+  "mapping_sha256": "3984c2c17308d46449258c1d6cd0cb7672befdd9bfeaedf5afa6871dd2c0ec76",
+  "mapping_version": "bbb_martins_measurement_resolution.v1",
+  "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+  "prompt": {
+    "batch_size": 10,
+    "prompt_version": "bbb_measurement_resolution_prompt.v11",
+    "rendered_sha256": {
+      "direct_bbb": "5572cc9140c6388c709ff94cc197dc73014c1b64e20717572006551f92970b98",
+      "efflux_transport": "a35b3aaa8764800d3546d799117335a15df9d6c6c87423f74a5298f6620a790c",
+      "influx_transport": "a35b3aaa8764800d3546d799117335a15df9d6c6c87423f74a5298f6620a790c",
+      "passive_permeability": "5572cc9140c6388c709ff94cc197dc73014c1b64e20717572006551f92970b98"
+    },
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
+    "template_sha256": "0c3d5db5dec30456d578371186fbc2c96bdca9ec3076fc038ac67c0ebd498b47"
+  },
+  "publication_source": {
+    "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bbb_v11_stage1_current_full_w1024_20260821/repaired/measurement_resolution.parquet",
+    "sha256": "3984c2c17308d46449258c1d6cd0cb7672befdd9bfeaedf5afa6871dd2c0ec76"
+  },
+  "rejected_rows": 20,
+  "repair_overlays": [
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bbb_v11_stage1_current_full_w1024_20260821/repair_round1/measurement_resolution.parquet",
+      "rows": 10630,
+      "sha256": "35bd4e3beb4ce7c003a88c36550ecc9ca76a76f5d970e6f65fddbefe4459df7d"
+    },
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bbb_v11_stage1_current_full_w1024_20260821/repair_round2/measurement_resolution.parquet",
+      "rows": 119,
+      "sha256": "51dc2335c04731a33ce1bf7623337a685cc362db0024860e00cb8c601f811779"
+    },
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bbb_v11_stage1_current_full_w1024_20260821/repair_round3/measurement_resolution.parquet",
+      "rows": 39,
+      "sha256": "75d7c3b24fd0ce64ad8b5b015e941d190b171b5a758042c29c50f109631b13ee"
+    },
+    {
+      "path": "outputs/chembl_tool/measurement_resolution_generation/deepseek_bbb_v11_stage1_current_full_w1024_20260821/repair_round4/measurement_resolution.parquet",
+      "rows": 20,
+      "sha256": "37461c5adb278ad55fc1e9654f7a06e903e22d84647e867be561ea65ba3e6ea7"
+    }
+  ],
+  "routing_version": "starling_measurement_routing.v2",
+  "status_counts": {
+    "ok": 58953,
+    "relative": 9535,
+    "unavailable": 27192,
+    "unsure": 19978
+  },
+  "task_id": "bbb_martins",
+  "validations": {
+    "no_ambiguous_process_termination": true,
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "skin_zero_or_one_measurement": true,
+    "unique_cleaned_record_ids": true
+  }
+}

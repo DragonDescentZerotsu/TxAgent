@@ -9,10 +9,20 @@ from tools.chembl_tool.common.starling.build_runtime import (
 )
 from tools.chembl_tool.common.starling.build_normalized_evidence_library import (
     MANIFEST_FILENAME,
+    SOURCE_INVENTORY_FILENAME,
+    STAGES,
     _record_build_cache,
     _stage_output_filenames,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import POLICY
+
+
+def test_source_snapshot_precedes_one_row_per_source_cleaning() -> None:
+    assert STAGES[:2] == ("source", "clean")
+    assert SOURCE_INVENTORY_FILENAME == "00_source/source_inventory.json"
+    outputs = _stage_output_filenames(POLICY)
+    assert "00_source/endpoint_inventory.json" in outputs["source"]
+    assert "01_cleaned/endpoint_unit_profile.json" in outputs["clean"]
 
 
 def test_build_cache_tracks_semantic_arguments_and_artifact_bytes(tmp_path) -> None:

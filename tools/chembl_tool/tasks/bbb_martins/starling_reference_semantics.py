@@ -145,7 +145,8 @@ REFERENCE_SEMANTICS_CONFIG = ReferenceSemanticsConfig(
                 "transport_mechanism",
                 "evidence_basis",
                 "assay_model",
-                "reported_result",
+                # ``reported_result`` is the measurement role now, so it reaches
+                # the prompt through CORE_FIELDS' ``measurement_text``.
                 "qualifying_conditions",
                 "extra_details",
                 "needs_more_context",

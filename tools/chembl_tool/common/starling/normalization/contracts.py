@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from typing import Any
 
 
-CLEANING_STAGE_VERSION = "starling_record_cleaning.v8"
+SOURCE_STAGE_VERSION = "starling_source_snapshot.v1"
+CLEANING_STAGE_VERSION = "starling_record_cleaning.v9"
 NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v16"
 ORGANIZATION_STAGE_VERSION = "starling_record_organization.v9"
 
