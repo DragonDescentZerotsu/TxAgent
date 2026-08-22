@@ -25,6 +25,11 @@ from baselines.minimol.embedding_runtime import (
     create_featurizer,
     embed_smiles,
 )
+from baselines.minimol.condition_features import (
+    append_condition_one_hot,
+    condition_feature_contract,
+    condition_vocabulary,
+)
 from baselines.minimol.head_runtime import (
     EmbeddingDataset,
     evaluate_loss,
@@ -41,6 +46,7 @@ DEFAULT_OUTPUT_DIR = Path("outputs/baselines/minimol/bioavailability_ma")
 class SplitData:
     smiles: list[str]
     labels: list[int]
+    conditions: list[str] | None = None
 
 
 @dataclass
@@ -80,6 +86,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--threshold-strategy", choices=["fixed_0.5", "valid_macro_f1"], default="fixed_0.5")
     parser.add_argument(
+        "--decision-threshold",
+        type=float,
+        default=None,
+        help=(
+            "Optional train-only calibrated decision threshold. Supported with "
+            "--train-all; probabilities and AUROC are unchanged."
+        ),
+    )
+    parser.add_argument(
         "--evaluation-split",
         choices=("valid", "test"),
         default="test",
@@ -96,21 +111,37 @@ def parse_args() -> argparse.Namespace:
         help="Materialize validated embedding caches and exit without fitting a task head.",
     )
     parser.add_argument("--force-embed", action="store_true", help="Ignore cached MiniMol embeddings.")
+    parser.add_argument(
+        "--condition-field",
+        default=None,
+        help=(
+            "Optional categorical JSONL field appended to MiniMol embeddings as a "
+            "train-derived one-hot feature."
+        ),
+    )
     return parser.parse_args()
 
 
-def load_split(path: Path) -> SplitData:
+def load_split(path: Path, *, condition_field: str | None = None) -> SplitData:
     smiles: list[str] = []
     labels: list[int] = []
+    conditions: list[str] | None = [] if condition_field else None
     with path.open() as f:
         for line_number, line in enumerate(f, start=1):
             row = json.loads(line)
             try:
                 smiles.append(str(row["drug"]))
                 labels.append(int(row["Y"]))
+                if conditions is not None and condition_field is not None:
+                    value = str(row[condition_field]).strip()
+                    if not value:
+                        raise ValueError(
+                            f"{path}:{line_number} has an empty {condition_field!r}"
+                        )
+                    conditions.append(value)
             except KeyError as exc:
                 raise ValueError(f"{path}:{line_number} is missing required key {exc!s}") from exc
-    return SplitData(smiles=smiles, labels=labels)
+    return SplitData(smiles=smiles, labels=labels, conditions=conditions)
 
 
 def _json_safe(value):
@@ -269,6 +300,11 @@ def evaluate_metrics(y_true: list[int], y_score: np.ndarray, threshold: float) -
 
 def main() -> None:
     args = parse_args()
+    if args.decision_threshold is not None:
+        if not args.train_all:
+            raise ValueError("--decision-threshold requires --train-all")
+        if not 0.0 <= args.decision_threshold <= 1.0:
+            raise ValueError("--decision-threshold must be between 0 and 1")
     if args.evaluation_split == "valid" and not args.train_all:
         raise ValueError("--evaluation-split valid requires --train-all to avoid validation selection leakage")
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -277,9 +313,20 @@ def main() -> None:
     os.environ.setdefault("MPLCONFIGDIR", str(matplotlib_cache_dir))
     device = torch.device(args.device)
 
-    train = load_split(args.data_dir / "train.jsonl")
-    valid = None if args.train_all else load_split(args.data_dir / "valid.jsonl")
-    test = load_split(args.data_dir / f"{args.evaluation_split}.jsonl")
+    train = load_split(
+        args.data_dir / "train.jsonl", condition_field=args.condition_field
+    )
+    valid = (
+        None
+        if args.train_all
+        else load_split(
+            args.data_dir / "valid.jsonl", condition_field=args.condition_field
+        )
+    )
+    test = load_split(
+        args.data_dir / f"{args.evaluation_split}.jsonl",
+        condition_field=args.condition_field,
+    )
 
     print(
         "[minimol] loaded splits: "
@@ -315,9 +362,30 @@ def main() -> None:
         )
         print("[minimol] embeddings-only cache materialization complete")
         return
-    train_embeddings = split_embeddings["train"]
-    valid_embeddings = split_embeddings.get("valid") if valid is not None else None
-    test_embeddings = split_embeddings[args.evaluation_split]
+    molecule_embedding_dim = int(split_embeddings["train"].shape[1])
+    vocabulary = (
+        condition_vocabulary(train.conditions)
+        if train.conditions is not None
+        else None
+    )
+    train_embeddings = append_condition_one_hot(
+        split_embeddings["train"], train.conditions, vocabulary
+    )
+    valid_embeddings = (
+        append_condition_one_hot(
+            split_embeddings["valid"], valid.conditions, vocabulary
+        )
+        if valid is not None
+        else None
+    )
+    test_embeddings = append_condition_one_hot(
+        split_embeddings[args.evaluation_split], test.conditions, vocabulary
+    )
+    feature_contract = condition_feature_contract(
+        field=args.condition_field,
+        vocabulary=vocabulary,
+        molecule_embedding_dim=molecule_embedding_dim,
+    )
 
     valid_loader = (
         DataLoader(
@@ -344,7 +412,9 @@ def main() -> None:
             shuffle=True,
             generator=generator,
         )
-        model, optimizer, scheduler, loss_fn = make_model(args, device)
+        model, optimizer, scheduler, loss_fn = make_model(
+            args, device, input_dim=train_embeddings.shape[1]
+        )
         best_epoch = -1
         best_valid_loss = float("inf")
         best_model = None
@@ -413,7 +483,11 @@ def main() -> None:
         valid_metrics_tuned = evaluate_metrics(valid.labels, valid_scores, valid_tuned_threshold)
         test_metrics_tuned = evaluate_metrics(test.labels, test_scores, valid_tuned_threshold)
     else:
-        threshold = 0.5
+        threshold = (
+            float(args.decision_threshold)
+            if args.decision_threshold is not None
+            else 0.5
+        )
         valid_macro_f1 = None
         valid_metrics = None
         valid_metrics_fixed = None
@@ -433,6 +507,7 @@ def main() -> None:
         "args": {key: _json_safe(value) for key, value in vars(args).items()},
         "splits": split_sizes,
         "evaluation_split": args.evaluation_split,
+        "condition_features": feature_contract,
         "embedding_reuse_manifest": (
             str(args.output_dir / "embedding_reuse_manifest.json")
             if (args.output_dir / "embedding_reuse_manifest.json").exists()
@@ -444,7 +519,20 @@ def main() -> None:
                 if args.train_all
                 else "lowest validation BCE loss per ensemble member"
             ),
-            "threshold_strategy": "fixed_0.5" if args.train_all else args.threshold_strategy,
+            "threshold_strategy": (
+                "configured_train_only_oof"
+                if args.decision_threshold is not None
+                else "fixed_0.5"
+                if args.train_all
+                else args.threshold_strategy
+            ),
+            "decision_threshold_source": (
+                "configured_train_only_oof"
+                if args.decision_threshold is not None
+                else "fixed_0.5"
+                if args.train_all
+                else args.threshold_strategy
+            ),
             "ensemble_valid_macro_f1_at_threshold": (
                 float(valid_macro_f1) if valid_macro_f1 is not None else None
             ),
@@ -467,8 +555,12 @@ def main() -> None:
         json.dump(output, f, indent=2)
         f.write("\n")
     with predictions_path.open("w") as f:
-        for smiles, label, score in zip(test.smiles, test.labels, test_scores):
+        for index, (smiles, label, score) in enumerate(
+            zip(test.smiles, test.labels, test_scores, strict=True)
+        ):
             row = {"drug": smiles, "Y": label, "score": float(score), "prediction": int(score >= threshold)}
+            if args.condition_field is not None and test.conditions is not None:
+                row[args.condition_field] = test.conditions[index]
             f.write(json.dumps(row) + "\n")
     torch.save(
         {
@@ -476,6 +568,7 @@ def main() -> None:
             "run_results": [asdict(result) for result in run_results],
             "threshold": threshold,
             "hparams": output["args"],
+            "condition_features": feature_contract,
         },
         checkpoint_path,
     )

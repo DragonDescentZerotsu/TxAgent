@@ -216,3 +216,40 @@ def test_runner_rejects_cache_that_does_not_match_split(tmp_path):
                 str(tmp_path / "output"),
             ]
         )
+
+
+def test_runner_supports_same_condition_then_null_policy(tmp_path):
+    data_dir = tmp_path / "data"
+    cache_dir = tmp_path / "embeddings"
+    output_dir = tmp_path / "output"
+    null = "no_reported_external_condition"
+    train = [
+        {"drug": "A", "Y": 0, "molecule_identity_key": "A", "condition_group": null},
+        {"drug": "A", "Y": 1, "molecule_identity_key": "A", "condition_group": "disease=x"},
+        {"drug": "B", "Y": 1, "molecule_identity_key": "B", "condition_group": "disease=x"},
+        {"drug": "C", "Y": 0, "molecule_identity_key": "C", "condition_group": null},
+    ]
+    valid = [
+        {"drug": "Q", "Y": 1, "molecule_identity_key": "Q", "condition_group": "disease=x"}
+    ]
+    _write_jsonl(data_dir / "train.jsonl", train)
+    _write_jsonl(data_dir / "valid.jsonl", valid)
+    _write_cache(cache_dir / "train.pt", train, [[1, 0], [1, 0], [0.9, 0.1], [0, 1]])
+    _write_cache(cache_dir / "valid.pt", valid, [[1, 0]])
+
+    assert main(
+        [
+            "--data-dir", str(data_dir),
+            "--embedding-cache-dir", str(cache_dir),
+            "--output-dir", str(output_dir),
+            "--evaluation-split", "valid",
+            "--condition-policy", "same_condition_then_null",
+        ]
+    ) == 0
+    prediction = json.loads((output_dir / "valid_predictions.jsonl").read_text())
+    assert [neighbor["selection_source"] for neighbor in prediction["neighbors"]] == [
+        "same_condition",
+        "same_condition",
+        "null_fallback",
+    ]
+    assert len({neighbor["drug"] for neighbor in prediction["neighbors"]}) == 3

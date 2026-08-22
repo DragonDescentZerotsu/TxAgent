@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import json
 from pathlib import Path
 import pickle
 from typing import Any, Iterable
@@ -19,6 +20,8 @@ import pandas as pd
 
 from tools.chembl_tool.common.evidence_contract import (
     ASSAY_COMPACT_PROMPT_PROFILE,
+    ASSAY_COMPACT_V2_PROMPT_PROFILE,
+    ASSAY_RAW_CARD_PROMPT_PROFILE,
     attach_minimal_evidence,
 )
 from tools.chembl_tool.common.experiment_retrieval import flatten_retrieval_groups
@@ -28,13 +31,21 @@ from tools.chembl_tool.common.json_utils import (
     write_json_atomic,
     write_jsonl_atomic,
 )
+from tools.chembl_tool.common.reasoning_payload import (
+    EXTERNAL_CONDITION_RENDERER_VERSION,
+    attach_external_condition,
+)
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
-from tools.chembl_tool.common.task_workflows.evidence_library import build_neighbor_index
-from tools.chembl_tool.common.task_workflows.retrieve_neighbors import retrieve_neighbors
+from tools.chembl_tool.common.task_workflows.evidence_library import (
+    build_neighbor_index,
+)
+from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
+    retrieve_neighbors,
+)
 from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
 
-
 INDEX_VERSION = "starling_assay_ranked_morgan.v1"
+RAW_CARD_INDEX_VERSION = "starling_assay_ranked_morgan.raw_v3"
 FLAT_GROUP_ID = "Flat.assay_ranked_evidence"
 DEFAULT_RETRIEVAL_PREFIXES = (10, 100, 400)
 DIRECT_ONLY_HELDOUT_FILTERED = "direct_only_heldout_filtered"
@@ -99,12 +110,21 @@ def _parent_key(smiles: str) -> str:
     return identity.parent_inchi_key or identity.parent_smiles
 
 
+def _assay_selection_rank(row: dict[str, Any]) -> int:
+    value = row.get("selection_rank", row.get("relevance_rank"))
+    if value in (None, ""):
+        raise ValueError("assay catalog row lacks selection_rank or relevance_rank")
+    return int(value)
+
+
 def _load_allowed_parent_keys(path: Path, smiles_field: str) -> tuple[set[str], int]:
     rows = read_jsonl(path)
     keys = {_parent_key(str(row.get(smiles_field) or "")) for row in rows}
     keys.discard("")
     if not keys:
-        raise ValueError(f"{path} contains no usable molecules in field {smiles_field!r}")
+        raise ValueError(
+            f"{path} contains no usable molecules in field {smiles_field!r}"
+        )
     return keys, len(rows)
 
 
@@ -121,7 +141,9 @@ def _filter_heldout_direct_records(
     if not filter_source_id:
         raise ValueError("filter_source_id is required with heldout_molecules_path")
     if bool(filter_scope_field) != bool(filter_scope_value):
-        raise ValueError("filter_scope_field and filter_scope_value must be set together")
+        raise ValueError(
+            "filter_scope_field and filter_scope_value must be set together"
+        )
 
     heldout_keys, n_heldout_rows = _load_allowed_parent_keys(
         heldout_molecules_path,
@@ -142,8 +164,8 @@ def _filter_heldout_direct_records(
     retained_keys = retained["canonical_smiles"].astype(str).map(smiles_to_key)
     retained_direct_scope = retained["source_id"].astype(str).eq(filter_source_id)
     if filter_scope_field:
-        retained_direct_scope &= retained[filter_scope_field].astype(str).eq(
-            filter_scope_value
+        retained_direct_scope &= (
+            retained[filter_scope_field].astype(str).eq(filter_scope_value)
         )
     overlap_after = retained_direct_scope & retained_keys.isin(heldout_keys)
     if overlap_after.any():
@@ -232,7 +254,9 @@ def _aggregate_assay_molecule(
     source_names = _unique_text(group["source_name"].tolist(), limit=8)
     molecule_names = _unique_text(group["molecule_name"].tolist(), limit=8)
     species = _unique_text(group["canonical_species_context"].tolist(), limit=8)
-    qualifying_conditions = _unique_text(group["qualifying_conditions"].tolist(), limit=8)
+    qualifying_conditions = _unique_text(
+        group["qualifying_conditions"].tolist(), limit=8
+    )
     endpoint_summary = _compact_counts(group["canonical_endpoint_name"].tolist())
     measurement_summary = _compact_counts(group["canonical_measurement_text"].tolist())
     units_summary = _compact_counts(group["canonical_unit_text"].tolist())
@@ -316,6 +340,7 @@ def build_assay_evidence_rows(
         "confidence",
         "source_name",
         "molecule_name",
+        "group_id",
     ]
     if membership_path is None:
         columns.append("retrieval_eligible")
@@ -325,10 +350,19 @@ def build_assay_evidence_rows(
             columns.append(filter_scope_field)
     ranked_all = sorted(
         read_jsonl(ranked_assays_path),
-        key=lambda item: int(item["relevance_rank"]),
+        key=_assay_selection_rank,
     )
     ranked = ranked_all[:max_assays] if max_assays > 0 else ranked_all
     selected_assay_ids = {str(row["assay_id"]) for row in ranked}
+    family_catalog = any(row.get("first_level") not in (None, "") for row in ranked_all)
+    allowed_source_groups = {
+        str(source_group)
+        for row in ranked_all
+        for source_group in row.get("source_groups") or []
+        if str(source_group)
+    }
+    if family_catalog and not allowed_source_groups:
+        raise ValueError("family assay catalog contains no source_groups")
 
     records = pq.read_table(records_path, columns=columns).to_pandas()
     if membership_path is not None:
@@ -350,6 +384,8 @@ def build_assay_evidence_rows(
         }
     n_membership_records = len(records)
     n_membership_molecules = int(records["molecule_id"].nunique())
+    if family_catalog:
+        records = records.loc[records["group_id"].isin(allowed_source_groups)].copy()
     if allowed_molecules_path is not None and heldout_molecules_path is not None:
         raise ValueError(
             "allowed_molecules_path and heldout_molecules_path are mutually exclusive"
@@ -382,7 +418,9 @@ def build_assay_evidence_rows(
         }
         unexpected = retained_keys - allowed_keys
         if unexpected:
-            raise AssertionError(f"non-train parent leakage remains for {len(unexpected)} identities")
+            raise AssertionError(
+                f"non-train parent leakage remains for {len(unexpected)} identities"
+            )
         allowed_stats = {
             "allowed_molecules": str(allowed_molecules_path.resolve()),
             "allowed_smiles_field": allowed_smiles_field,
@@ -411,7 +449,9 @@ def build_assay_evidence_rows(
     ranking_by_id = {str(row["assay_id"]): row for row in ranked}
     missing_ids = sorted(set(records["assay_id"]) - set(ranking_by_id))
     if missing_ids:
-        raise ValueError(f"Ranked assay catalog is missing {len(missing_ids)} record assay ids")
+        raise ValueError(
+            f"Ranked assay catalog is missing {len(missing_ids)} record assay ids"
+        )
 
     evidence_rows = []
     for (stable_assay_id, molecule_id), group in records.groupby(
@@ -445,6 +485,8 @@ def build_assay_evidence_rows(
         **membership_stats,
         **heldout_stats,
         **allowed_stats,
+        "family_catalog": family_catalog,
+        "allowed_source_groups": sorted(allowed_source_groups),
     }
     return evidence_rows, ranking, stats
 
@@ -466,6 +508,7 @@ def build_assay_index(
     filter_source_id: str = "",
     filter_scope_field: str = "",
     filter_scope_value: str = "",
+    evidence_prompt_profile: str = ASSAY_COMPACT_PROMPT_PROFILE,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
     evidence_rows, ranking, stats = build_assay_evidence_rows(
         task=task,
@@ -483,9 +526,17 @@ def build_assay_index(
         filter_scope_field=filter_scope_field,
         filter_scope_value=filter_scope_value,
     )
+    index_version = {
+        ASSAY_COMPACT_PROMPT_PROFILE: INDEX_VERSION,
+        ASSAY_RAW_CARD_PROMPT_PROFILE: RAW_CARD_INDEX_VERSION,
+    }.get(evidence_prompt_profile)
+    if index_version is None:
+        raise ValueError(
+            f"Unsupported new assay index prompt profile: {evidence_prompt_profile}"
+        )
     index = build_neighbor_index(
         evidence_rows,
-        index_version=INDEX_VERSION,
+        index_version=index_version,
         workers=workers,
         progress_every=10000,
     )
@@ -493,9 +544,15 @@ def build_assay_index(
     index["source"] = {
         "type": "starling_assay_ranked_flat",
         "task": task,
-        "index_version": INDEX_VERSION,
+        "index_version": index_version,
         "ranked_assays_sha256": sha256_file(ranked_assays_path),
         "relevance_scores_visible_to_llm": False,
+        "evidence_prompt_profile": evidence_prompt_profile,
+        "support_text_policy": (
+            "complete_representative_support"
+            if evidence_prompt_profile == ASSAY_RAW_CARD_PROMPT_PROFILE
+            else "legacy_compact_excerpt"
+        ),
     }
     return index, evidence_rows, stats
 
@@ -543,6 +600,14 @@ def _assemble_assay_result(
     min_similarity: float,
     neighbor_identity_policy: str,
 ) -> dict[str, Any]:
+    source = index.get("source") or {}
+    evidence_prompt_profile = str(source.get("evidence_prompt_profile") or "")
+    if not evidence_prompt_profile:
+        evidence_prompt_profile = (
+            ASSAY_COMPACT_V2_PROMPT_PROFILE
+            if source.get("support_summary_cache")
+            else ASSAY_COMPACT_PROMPT_PROFILE
+        )
     groups_with_hits = [group for group in native["groups"] if group.get("neighbors")]
     flat = flatten_retrieval_groups(groups_with_hits)
     flat.update(
@@ -550,10 +615,12 @@ def _assemble_assay_result(
             "group_id": FLAT_GROUP_ID,
             "tier": "Flat",
             "endpoint_group": "assay_ranked_evidence",
-            "evidence_prompt_profile": ASSAY_COMPACT_PROMPT_PROFILE,
+            "evidence_prompt_profile": evidence_prompt_profile,
             "n_selected_assays": len(selected),
             "n_assays_with_neighbors": len(groups_with_hits),
-            "n_assay_neighbor_slots": sum(len(group["neighbors"]) for group in groups_with_hits),
+            "n_assay_neighbor_slots": sum(
+                len(group["neighbors"]) for group in groups_with_hits
+            ),
             "n_unique_neighbor_molecules": len(flat["neighbors"]),
         }
     )
@@ -651,6 +718,7 @@ def _build_command(args: argparse.Namespace) -> None:
         filter_source_id=args.filter_source_id,
         filter_scope_field=args.filter_scope_field,
         filter_scope_value=args.filter_scope_value,
+        evidence_prompt_profile=args.evidence_prompt_profile,
     )
     index_path = output_dir / "assay_neighbor_index.pkl"
     evidence_path = output_dir / "assay_molecule_evidence.jsonl"
@@ -658,12 +726,16 @@ def _build_command(args: argparse.Namespace) -> None:
         pickle.dump(index, handle, protocol=pickle.HIGHEST_PROTOCOL)
     write_jsonl_atomic(evidence_path, evidence_rows)
     manifest = {
-        "index_version": INDEX_VERSION,
+        "index_version": str(
+            (index.get("source") or {}).get("index_version") or INDEX_VERSION
+        ),
         "task": args.task,
         "records": str(Path(args.records).resolve()),
         "records_sha256": sha256_file(Path(args.records)),
         "membership": str(Path(args.membership).resolve()) if args.membership else "",
-        "membership_sha256": sha256_file(Path(args.membership)) if args.membership else "",
+        "membership_sha256": sha256_file(Path(args.membership))
+        if args.membership
+        else "",
         "ranked_assays": str(Path(args.ranked_assays).resolve()),
         "ranked_assays_sha256": sha256_file(Path(args.ranked_assays)),
         "index": str(index_path.resolve()),
@@ -677,6 +749,10 @@ def _build_command(args: argparse.Namespace) -> None:
         "max_assays_materialized": args.max_assays,
         "max_record_examples": args.max_record_examples,
         "max_support_text_chars": args.max_support_text_chars,
+        "evidence_prompt_profile": args.evidence_prompt_profile,
+        "support_text_policy": str(
+            (index.get("source") or {}).get("support_text_policy") or ""
+        ),
         "allowed_molecules_jsonl_sha256": (
             sha256_file(Path(args.allowed_molecules_jsonl))
             if args.allowed_molecules_jsonl
@@ -693,6 +769,86 @@ def _build_command(args: argparse.Namespace) -> None:
     print(
         f"[{args.task}] built assay index: assays={stats['n_assays']:,} "
         f"molecules={stats['n_molecules']:,} assay_molecule_rows={stats['n_assay_molecule_rows']:,}"
+    )
+
+
+def _build_preaggregated_command(args: argparse.Namespace) -> None:
+    """Build a raw-card index from an already filtered assay evidence artifact."""
+    evidence_path = Path(args.evidence_jsonl)
+    source_manifest_path = Path(args.source_manifest)
+    ranked_assays_path = Path(args.ranked_assays)
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    evidence_rows = read_jsonl(evidence_path)
+    for row in evidence_rows:
+        raw_examples = []
+        for original in (row.get("source_record_examples") or [])[:3]:
+            example = dict(original)
+            example.pop("support_summary", None)
+            raw_examples.append(example)
+        row["source_record_examples"] = raw_examples
+
+    ranked = sorted(read_jsonl(ranked_assays_path), key=_assay_selection_rank)
+    ranking = [
+        {
+            "assay_id": str(row["assay_id"]),
+            "assay_context": str(row["assay_context"]),
+            "group_id": f"Assay.{row['assay_id']}",
+        }
+        for row in ranked
+    ]
+    index = build_neighbor_index(
+        evidence_rows,
+        index_version=RAW_CARD_INDEX_VERSION,
+        workers=args.workers,
+        progress_every=10000,
+    )
+    index["assay_ranking"] = ranking
+    index["source"] = {
+        "type": "starling_assay_ranked_flat",
+        "task": args.task,
+        "index_version": RAW_CARD_INDEX_VERSION,
+        "ranked_assays_sha256": sha256_file(ranked_assays_path),
+        "relevance_scores_visible_to_llm": False,
+        "evidence_prompt_profile": ASSAY_RAW_CARD_PROMPT_PROFILE,
+        "support_text_policy": "complete_representative_support",
+    }
+
+    raw_evidence_path = output_dir / "assay_molecule_evidence.jsonl"
+    index_path = output_dir / "assay_neighbor_index.pkl"
+    write_jsonl_atomic(raw_evidence_path, evidence_rows)
+    with index_path.open("wb") as handle:
+        pickle.dump(index, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
+    manifest = {
+        **source_manifest,
+        "index_version": RAW_CARD_INDEX_VERSION,
+        "task": args.task,
+        "ranked_assays": str(ranked_assays_path.resolve()),
+        "ranked_assays_sha256": sha256_file(ranked_assays_path),
+        "index": str(index_path.resolve()),
+        "index_sha256": sha256_file(index_path),
+        "evidence": str(raw_evidence_path.resolve()),
+        "evidence_sha256": sha256_file(raw_evidence_path),
+        "preaggregated_evidence": str(evidence_path.resolve()),
+        "preaggregated_evidence_sha256": sha256_file(evidence_path),
+        "preaggregated_manifest": str(source_manifest_path.resolve()),
+        "preaggregated_manifest_sha256": sha256_file(source_manifest_path),
+        "evidence_prompt_profile": ASSAY_RAW_CARD_PROMPT_PROFILE,
+        "support_text_policy": "complete_representative_support",
+        "neighbor_identity_policy_default": args.neighbor_identity_policy_default,
+        "n_assays": len(ranking),
+        "n_assay_molecule_rows": len(evidence_rows),
+        "n_molecules": len(index.get("molecules") or []),
+        "n_evidence_molecule_ids": len(
+            {str(row.get("molecule_chembl_id") or "") for row in evidence_rows}
+        ),
+    }
+    write_json_atomic(output_dir / "manifest.json", manifest)
+    print(
+        f"[{args.task}] built preaggregated raw assay index: assays={len(ranking):,} "
+        f"molecules={manifest['n_molecules']:,} assay_molecule_rows={len(evidence_rows):,}"
     )
 
 
@@ -723,7 +879,9 @@ def _materialize_batch_command(args: argparse.Namespace) -> None:
     stop = len(records) if args.limit <= 0 else min(len(records), start + args.limit)
     prefixes = sorted({int(prefix) for prefix in args.prefixes})
     output_root = Path(args.output_root)
-    batch_dirs = {prefix: output_root / f"assay_flat_top{prefix}" for prefix in prefixes}
+    batch_dirs = {
+        prefix: output_root / f"assay_flat_top{prefix}" for prefix in prefixes
+    }
     for batch_dir in batch_dirs.values():
         (batch_dir / "runs").mkdir(parents=True, exist_ok=True)
     for query_index in range(start, stop):
@@ -737,11 +895,15 @@ def _materialize_batch_command(args: argparse.Namespace) -> None:
             neighbor_identity_policy=args.neighbor_identity_policy,
         )
         for prefix, result in results.items():
+            if args.condition_field:
+                attach_external_condition(result, records[query_index])
             batch_dir = batch_dirs[prefix]
             run_dir = batch_dir / "runs" / f"{batch_dir.name}_idx{query_index:05d}"
             run_dir.mkdir(parents=True, exist_ok=True)
             write_json_atomic(run_dir / "retrieval.json", result)
-        if (query_index - start + 1) % args.progress_every == 0 or query_index + 1 == stop:
+        if (
+            query_index - start + 1
+        ) % args.progress_every == 0 or query_index + 1 == stop:
             print(f"materialized {query_index - start + 1:,}/{stop - start:,} queries")
     for prefix, batch_dir in batch_dirs.items():
         manifest = {
@@ -759,6 +921,13 @@ def _materialize_batch_command(args: argparse.Namespace) -> None:
             "neighbor_identity_policy": args.neighbor_identity_policy,
             "flat_group_id": FLAT_GROUP_ID,
             "relevance_scores_visible_to_llm": False,
+            "condition_field": args.condition_field,
+            "condition_renderer": (
+                EXTERNAL_CONDITION_RENDERER_VERSION if args.condition_field else ""
+            ),
+            "condition_visibility": (
+                "flat_evidence_and_final_only" if args.condition_field else "none"
+            ),
         }
         write_json_atomic(batch_dir / "manifest.json", manifest)
     print(f"wrote {len(batch_dirs)} replay batches under {output_root}")
@@ -818,7 +987,27 @@ def build_parser() -> argparse.ArgumentParser:
     build.add_argument("--filter-source-id", default="")
     build.add_argument("--filter-scope-field", default="")
     build.add_argument("--filter-scope-value", default="")
+    build.add_argument(
+        "--evidence-prompt-profile",
+        choices=(ASSAY_COMPACT_PROMPT_PROFILE, ASSAY_RAW_CARD_PROMPT_PROFILE),
+        default=ASSAY_COMPACT_PROMPT_PROFILE,
+        help="LLM evidence view recorded in the index; new conditioned indices use raw_v3.",
+    )
     build.set_defaults(func=_build_command)
+
+    preaggregated = subparsers.add_parser("build-preaggregated-index")
+    preaggregated.add_argument("--task", required=True)
+    preaggregated.add_argument("--evidence-jsonl", required=True)
+    preaggregated.add_argument("--source-manifest", required=True)
+    preaggregated.add_argument("--ranked-assays", required=True)
+    preaggregated.add_argument("--output-dir", required=True)
+    preaggregated.add_argument("--workers", type=int, default=1)
+    preaggregated.add_argument(
+        "--neighbor-identity-policy-default",
+        choices=("parent_disjoint", "scaffold_disjoint"),
+        default="parent_disjoint",
+    )
+    preaggregated.set_defaults(func=_build_preaggregated_command)
 
     retrieve = subparsers.add_parser("retrieve")
     retrieve.add_argument("--index", required=True)
@@ -840,6 +1029,11 @@ def build_parser() -> argparse.ArgumentParser:
     materialize.add_argument("--index", required=True)
     materialize.add_argument("--input-jsonl", required=True)
     materialize.add_argument("--smiles-field", default="drug")
+    materialize.add_argument(
+        "--condition-field",
+        default="",
+        help="Optional benchmark condition field rendered into flat/final prompts only.",
+    )
     materialize.add_argument("--prefixes", type=int, nargs="+", required=True)
     materialize.add_argument("--top-k-per-assay", type=int, default=3)
     materialize.add_argument("--min-similarity", type=float, default=0.3)

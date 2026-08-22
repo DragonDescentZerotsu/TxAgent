@@ -1,9 +1,10 @@
-"""Keep a PARCC GLM SSH tunnel and one resumable Starling matrix alive.
+"""Keep a PARCC SSH tunnel and one resumable Python launcher alive.
 
 The watchdog deliberately never stores an SSH password.  When PARCC asks for
 Duo, it selects the configured Push option and waits for the user to approve it.
-Matrix recovery is safe because the paper runner always passes --skip-existing
-to task batches.
+The historical Starling matrix CLI remains the default profile. Other resumable
+launchers can provide a module plus JSON-encoded arguments and use the generic
+reasoning-run completion gate.
 """
 
 from __future__ import annotations
@@ -36,9 +37,10 @@ from tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch import (
 )
 
 
-LOGGER = logging.getLogger("glm_tunnel_watchdog")
+LOGGER = logging.getLogger("resumable_tunnel_watchdog")
 MATRIX_MODULE = "tools.chembl_tool.paper_experiments.starling_benchmark_matrix"
 DEFAULT_PYTHON = "/data1/tianang/anaconda3/envs/vllm/bin/python"
+COMPLETION_MODES = ("starling_matrix", "recursive_reasoning_runs")
 TASK_BATCH_CONFIGS = {
     "bbb_martins": BBB_BATCH_CONFIG,
     "bioavailability_ma": BIOAVAILABILITY_BATCH_CONFIG,
@@ -49,17 +51,15 @@ TASK_BATCH_CONFIGS = {
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", required=True)
-    parser.add_argument("--benchmark-split", choices=("random", "scaffold"), required=True)
+    parser.add_argument("--benchmark-split", choices=("random", "scaffold"))
     parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
     parser.add_argument(
         "--visibility-mode",
         choices=("identity_blind", "deployment_visible_prefetched", "deployment_visible"),
-        required=True,
     )
     parser.add_argument(
         "--neighbor-identity-policy",
         choices=NEIGHBOR_IDENTITY_POLICIES,
-        required=True,
     )
     parser.add_argument("--base-url", default="http://127.0.0.1:50000/v1")
     parser.add_argument("--model", default="nvidia/GLM-5.2-NVFP4")
@@ -69,7 +69,36 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--max-stage-requeues", type=int, default=0)
     parser.add_argument("--timeout-s", type=int, default=300)
     parser.add_argument("--expected-results", type=int, required=True)
+    parser.add_argument(
+        "--completion-mode",
+        choices=COMPLETION_MODES,
+        default="starling_matrix",
+    )
+    parser.add_argument("--launcher-module", default=MATRIX_MODULE)
+    parser.add_argument(
+        "--launcher-args-json",
+        default="",
+        help=(
+            "JSON list of arguments after `python -m <launcher-module>`. "
+            "The watchdog appends --output-root when absent."
+        ),
+    )
+    parser.add_argument(
+        "--reasoning-run-glob",
+        default="*/*/runs/*",
+        help="Run-directory glob below output root for recursive_reasoning_runs.",
+    )
+    parser.add_argument(
+        "--allow-implicit-output-root",
+        action="store_true",
+        help="Attach to a matching live module that started with its default output root.",
+    )
     parser.add_argument("--ssh-host", default="parcc-glm")
+    parser.add_argument(
+        "--ssh-local-forward",
+        default="",
+        help="Optional explicit -L value; also scopes which SSH tunnel may be replaced.",
+    )
     parser.add_argument(
         "--duo-option",
         default="2",
@@ -80,6 +109,12 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--duo-retry-seconds", type=float, default=900.0)
     parser.add_argument("--launcher-retry-seconds", type=float, default=60.0)
     parser.add_argument("--health-timeout-seconds", type=float, default=5.0)
+    parser.add_argument(
+        "--unhealthy-threshold",
+        type=int,
+        default=2,
+        help="Consecutive failed health checks required before stopping the launcher.",
+    )
     parser.add_argument("--duo-approval-timeout-seconds", type=float, default=120.0)
     parser.add_argument("--watchdog-log", required=True)
     parser.add_argument("--launcher-log", required=True)
@@ -88,7 +123,24 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Report current state without reconnecting or launching anything.",
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.expected_results < 1:
+        parser.error("--expected-results must be positive")
+    if args.unhealthy_threshold < 1:
+        parser.error("--unhealthy-threshold must be positive")
+    if args.completion_mode == "starling_matrix":
+        missing = [
+            name
+            for name in ("benchmark_split", "visibility_mode", "neighbor_identity_policy")
+            if not getattr(args, name)
+        ]
+        if missing:
+            parser.error(
+                "starling_matrix completion requires "
+                + ", ".join(f"--{name.replace('_', '-')}" for name in missing)
+            )
+    _launcher_extra_args(args.launcher_args_json, parser=parser)
+    return args
 
 
 def _configure_logging(path: Path) -> None:
@@ -185,6 +237,110 @@ def count_final_results(
     return complete
 
 
+def count_recursive_reasoning_results(
+    output_root: Path,
+    run_glob: str = "*/*/runs/*",
+) -> int:
+    """Count complete runs, trusting complete batch metrics before per-run fallback."""
+    if run_glob == "*/*/runs/*":
+        return sum(_count_reasoning_batch(batch_dir) for batch_dir in _batch_dirs(output_root))
+    return sum(
+        _generic_reasoning_run_is_complete(final_path.parent)
+        for final_path in output_root.glob(f"{run_glob}/final_reasoning_output.json")
+        if final_path.is_file()
+    )
+
+
+def _batch_dirs(output_root: Path) -> Iterable[Path]:
+    try:
+        task_entries = list(os.scandir(output_root))
+    except (FileNotFoundError, NotADirectoryError, PermissionError):
+        return []
+    return [
+        Path(batch.path)
+        for task in task_entries
+        if task.is_dir()
+        for batch in os.scandir(task.path)
+        if batch.is_dir() and Path(batch.path, "runs").is_dir()
+    ]
+
+
+def _count_reasoning_batch(batch_dir: Path) -> int:
+    metrics_path = batch_dir / "metrics.json"
+    try:
+        metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+        n_total = int(metrics["n_total"])
+        n_successful = int(metrics["n_successful"])
+        n_failed = int(metrics["n_failed_runs"])
+        if n_total > 0 and n_successful == n_total and n_failed == 0:
+            return n_total
+    except (FileNotFoundError, KeyError, json.JSONDecodeError, OSError, TypeError, ValueError):
+        pass
+    runs_dir = batch_dir / "runs"
+    try:
+        run_dirs = [Path(entry.path) for entry in os.scandir(runs_dir) if entry.is_dir()]
+    except (FileNotFoundError, NotADirectoryError, PermissionError):
+        return 0
+    return sum(
+        _generic_reasoning_run_is_complete(run_dir)
+        for run_dir in run_dirs
+        if (run_dir / "final_reasoning_output.json").is_file()
+    )
+
+
+def _status_ok_near_start(path: Path, *, limit: int = 1024) -> bool:
+    try:
+        with path.open(encoding="utf-8") as handle:
+            prefix = handle.read(limit)
+    except (FileNotFoundError, OSError, UnicodeDecodeError):
+        return False
+    return '"status": "ok"' in prefix or '"status":"ok"' in prefix
+
+
+def _generic_reasoning_run_is_complete(run_dir: Path) -> bool:
+    """Fast generic gate using stage receipts; fall back to rows only when needed."""
+    try:
+        manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+        expected_count = int(manifest["n_groups_with_neighbors"])
+    except (FileNotFoundError, KeyError, json.JSONDecodeError, OSError, TypeError, ValueError):
+        return False
+    if not _status_ok_near_start(run_dir / "final_reasoning_output.json"):
+        return False
+    if not _status_ok_near_start(run_dir / "single_molecule_reasoning_output.json"):
+        return False
+    expected_ids = [str(value or "") for value in manifest.get("expected_group_ids") or []]
+    if len(expected_ids) != expected_count or len(set(expected_ids)) != expected_count:
+        return False
+    group_path = run_dir / "group_reasoning_outputs.jsonl"
+    if expected_count == 0:
+        return group_path.is_file() and group_path.stat().st_size == 0
+    if not group_path.is_file() or group_path.stat().st_size == 0:
+        return False
+    group_events = {
+        str(event.get("group_id") or "")
+        for event in (manifest.get("stage_pool") or {}).get("events") or []
+        if event.get("stage") == "group" and event.get("status") == "ok"
+    }
+    if set(expected_ids).issubset(group_events):
+        return True
+    if manifest.get("artifact_reuse"):
+        return True
+    try:
+        group_outputs = [
+            json.loads(line)
+            for line in group_path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+    except (json.JSONDecodeError, OSError, TypeError):
+        return False
+    actual_ids = [
+        str(row.get("group_id") or "")
+        for row in group_outputs
+        if row.get("status") == "ok"
+    ]
+    return len(actual_ids) == expected_count and set(actual_ids) == set(expected_ids)
+
+
 def _group_ids_match_retrieval(
     run_dir: Path,
     group_outputs: list[dict],
@@ -235,11 +391,22 @@ def _iter_processes() -> Iterable[tuple[int, list[str]]]:
             yield int(entry.name), args
 
 
-def find_matrix_pids(output_root: Path) -> list[int]:
+def _python_module(args: list[str]) -> str:
+    try:
+        return args[args.index("-m") + 1]
+    except (ValueError, IndexError):
+        return ""
+
+
+def find_launcher_pids(
+    output_root: Path,
+    launcher_module: str,
+    *,
+    allow_implicit_output_root: bool = False,
+) -> list[int]:
     matches: list[int] = []
     for pid, args in _iter_processes():
-        command = "\0".join(args)
-        if MATRIX_MODULE not in command:
+        if _python_module(args) != launcher_module:
             continue
         try:
             root_index = args.index("--output-root") + 1
@@ -247,19 +414,41 @@ def find_matrix_pids(output_root: Path) -> list[int]:
             if not configured_root.is_absolute():
                 configured_root = (Path(f"/proc/{pid}/cwd").resolve() / configured_root)
             configured_root = configured_root.resolve()
-        except (ValueError, IndexError, FileNotFoundError, PermissionError):
+        except ValueError:
+            if allow_implicit_output_root:
+                matches.append(pid)
+            continue
+        except (IndexError, FileNotFoundError, PermissionError):
             continue
         if configured_root == output_root.resolve():
             matches.append(pid)
     return sorted(matches)
 
 
-def find_tunnel_pids(ssh_host: str) -> list[int]:
+def find_matrix_pids(output_root: Path) -> list[int]:
+    """Compatibility wrapper for the historical matrix watchdog tests."""
+    return find_launcher_pids(output_root, MATRIX_MODULE)
+
+
+def _has_local_forward(args: list[str], local_forward: str) -> bool:
+    for index, value in enumerate(args):
+        if value == "-L" and index + 1 < len(args) and args[index + 1] == local_forward:
+            return True
+        if value.startswith("-L") and value[2:] == local_forward:
+            return True
+    return False
+
+
+def find_tunnel_pids(ssh_host: str, local_forward: str = "") -> list[int]:
     matches: list[int] = []
     for pid, args in _iter_processes():
         if Path(args[0]).name != "ssh":
             continue
-        if ssh_host in args and ("-N" in args or any("N" in arg for arg in args[1:] if arg.startswith("-"))):
+        is_tunnel = "-N" in args or any(
+            "N" in arg for arg in args[1:] if arg.startswith("-")
+        )
+        forward_matches = not local_forward or _has_local_forward(args, local_forward)
+        if ssh_host in args and is_tunnel and forward_matches:
             matches.append(pid)
     return sorted(matches)
 
@@ -325,7 +514,10 @@ def reconnect_tunnel(args: argparse.Namespace):
     except ImportError as exc:  # pragma: no cover - deployment environment gate
         raise RuntimeError("pexpect is required for Duo-aware SSH recovery") from exc
 
-    _terminate_pids(find_tunnel_pids(args.ssh_host), label="SSH tunnel")
+    _terminate_pids(
+        find_tunnel_pids(args.ssh_host, args.ssh_local_forward),
+        label="SSH tunnel",
+    )
     command = [
         "ssh",
         "-o",
@@ -339,8 +531,10 @@ def reconnect_tunnel(args: argparse.Namespace):
         "-o",
         "ServerAliveCountMax=10",
         "-NT",
-        args.ssh_host,
     ]
+    if args.ssh_local_forward:
+        command.extend(["-L", args.ssh_local_forward])
+    command.append(args.ssh_host)
     child = pexpect.spawn(command[0], command[1:], encoding="utf-8", timeout=10)
     deadline = time.monotonic() + args.duo_approval_timeout_seconds
     duo_sent = False
@@ -369,7 +563,7 @@ def reconnect_tunnel(args: argparse.Namespace):
             child.close(force=True)
             return None
         if endpoint_healthy(args.base_url, args.health_timeout_seconds):
-            LOGGER.info("GLM tunnel healthy at %s", args.base_url)
+            LOGGER.info("endpoint tunnel healthy at %s", args.base_url)
             return child
         if index == 5 and not child.isalive():
             return None
@@ -414,56 +608,120 @@ def matrix_command(args: argparse.Namespace) -> list[str]:
     ]
 
 
-def start_matrix(args: argparse.Namespace) -> int:
+def _launcher_extra_args(
+    raw: str,
+    *,
+    parser: argparse.ArgumentParser | None = None,
+) -> list[str]:
+    if not raw:
+        return []
+    try:
+        values = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        if parser is not None:
+            parser.error(f"--launcher-args-json is invalid JSON: {exc}")
+        raise ValueError("--launcher-args-json is invalid JSON") from exc
+    if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+        if parser is not None:
+            parser.error("--launcher-args-json must be a JSON list of strings")
+        raise ValueError("--launcher-args-json must be a JSON list of strings")
+    return values
+
+
+def launcher_command(args: argparse.Namespace) -> list[str]:
+    raw_extra = str(getattr(args, "launcher_args_json", "") or "")
+    module = str(getattr(args, "launcher_module", MATRIX_MODULE) or MATRIX_MODULE)
+    if module == MATRIX_MODULE and not raw_extra:
+        return matrix_command(args)
+    extra = _launcher_extra_args(raw_extra)
+    if "--output-root" in extra:
+        index = extra.index("--output-root") + 1
+        if index >= len(extra):
+            raise ValueError("launcher --output-root is missing its value")
+        configured = Path(extra[index])
+        if not configured.is_absolute():
+            configured = Path.cwd() / configured
+        if configured.resolve() != Path(args.output_root).resolve():
+            raise ValueError("launcher args and watchdog use different --output-root values")
+    else:
+        extra.extend(["--output-root", str(args.output_root)])
+    return [args.python_executable, "-u", "-m", module, *extra]
+
+
+def start_launcher(args: argparse.Namespace) -> int:
     log_path = Path(args.launcher_log)
     log_path.parent.mkdir(parents=True, exist_ok=True)
     environment = os.environ.copy()
     environment.setdefault(args.api_key_env, "local-vllm-no-auth")
     with log_path.open("a", encoding="utf-8") as handle:
         process = subprocess.Popen(
-            matrix_command(args),
+            launcher_command(args),
             stdin=subprocess.DEVNULL,
             stdout=handle,
             stderr=subprocess.STDOUT,
             env=environment,
             start_new_session=True,
         )
-    LOGGER.info("started resumable matrix pid=%s log=%s", process.pid, log_path)
+    LOGGER.info("started resumable launcher pid=%s log=%s", process.pid, log_path)
     return process.pid
+
+
+def start_matrix(args: argparse.Namespace) -> int:
+    """Compatibility wrapper for callers using the historical name."""
+    return start_launcher(args)
+
+
+def _count_completed(args: argparse.Namespace, output_root: Path) -> int:
+    if args.completion_mode == "recursive_reasoning_runs":
+        return count_recursive_reasoning_results(output_root, args.reasoning_run_glob)
+    return count_final_results(
+        output_root,
+        args.visibility_mode,
+        args.neighbor_identity_policy,
+    )
+
+
+def _find_launcher_pids(args: argparse.Namespace, output_root: Path) -> list[int]:
+    return find_launcher_pids(
+        output_root,
+        args.launcher_module,
+        allow_implicit_output_root=args.allow_implicit_output_root,
+    )
 
 
 def run(args: argparse.Namespace) -> int:
     output_root = Path(args.output_root).resolve()
     args.output_root = str(output_root)
-    completed = count_final_results(
-        output_root,
-        args.visibility_mode,
-        args.neighbor_identity_policy,
-    )
+    completed = _count_completed(args, output_root)
     healthy = endpoint_healthy(args.base_url, args.health_timeout_seconds)
-    launcher_pids = find_matrix_pids(output_root)
+    launcher_pids = _find_launcher_pids(args, output_root)
+    if len(launcher_pids) > 1:
+        raise RuntimeError(f"multiple matching launchers found: {launcher_pids}")
     LOGGER.info(
-        "initial state completed=%s/%s endpoint_healthy=%s launcher_pids=%s",
+        "initial state completed=%s/%s endpoint_healthy=%s launcher_pids=%s "
+        "module=%s completion_mode=%s",
         completed,
         args.expected_results,
         healthy,
         launcher_pids,
+        args.launcher_module,
+        args.completion_mode,
     )
     if args.check_once:
+        return 0
+    if completed >= args.expected_results:
+        LOGGER.info("expected result count reached; watchdog exiting successfully")
         return 0
 
     next_duo_attempt = 0.0
     next_launcher_attempt = 0.0
     next_count = time.monotonic() + args.count_interval_seconds
     tunnel_child = None
+    consecutive_unhealthy = 0
     while True:
         now = time.monotonic()
         if now >= next_count:
-            completed = count_final_results(
-                output_root,
-                args.visibility_mode,
-                args.neighbor_identity_policy,
-            )
+            completed = _count_completed(args, output_root)
             LOGGER.info("progress completed=%s/%s", completed, args.expected_results)
             next_count = now + args.count_interval_seconds
             if completed >= args.expected_results:
@@ -471,30 +729,39 @@ def run(args: argparse.Namespace) -> int:
                 return 0
 
         healthy = endpoint_healthy(args.base_url, args.health_timeout_seconds)
-        launcher_pids = find_matrix_pids(output_root)
+        launcher_pids = _find_launcher_pids(args, output_root)
+        if len(launcher_pids) > 1:
+            raise RuntimeError(f"multiple matching launchers found: {launcher_pids}")
         if not healthy:
+            consecutive_unhealthy += 1
+            if consecutive_unhealthy < args.unhealthy_threshold:
+                LOGGER.warning(
+                    "endpoint health check failed %s/%s; launcher remains untouched",
+                    consecutive_unhealthy,
+                    args.unhealthy_threshold,
+                )
+                time.sleep(args.check_interval_seconds)
+                continue
             if launcher_pids:
-                _terminate_process_groups(launcher_pids, label="GLM matrix")
+                _terminate_process_groups(launcher_pids, label="resumable launcher")
             if now >= next_duo_attempt:
-                LOGGER.warning("GLM endpoint is unavailable; attempting SSH recovery")
+                LOGGER.warning("endpoint is unavailable; attempting SSH recovery")
                 tunnel_child = reconnect_tunnel(args)
                 next_duo_attempt = time.monotonic() + args.duo_retry_seconds
                 healthy = endpoint_healthy(args.base_url, args.health_timeout_seconds)
                 if healthy:
+                    consecutive_unhealthy = 0
                     next_launcher_attempt = 0.0
             time.sleep(args.check_interval_seconds)
             continue
+        consecutive_unhealthy = 0
 
         if not launcher_pids and now >= next_launcher_attempt:
-            completed = count_final_results(
-                output_root,
-                args.visibility_mode,
-                args.neighbor_identity_policy,
-            )
+            completed = _count_completed(args, output_root)
             if completed >= args.expected_results:
                 LOGGER.info("expected result count reached; watchdog exiting successfully")
                 return 0
-            start_matrix(args)
+            start_launcher(args)
             next_launcher_attempt = time.monotonic() + args.launcher_retry_seconds
         if tunnel_child is not None and not tunnel_child.isalive():
             tunnel_child = None
@@ -507,7 +774,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         return run(args)
     except KeyboardInterrupt:
-        LOGGER.info("watchdog interrupted; leaving current tunnel and matrix untouched")
+        LOGGER.info("watchdog interrupted; leaving current tunnel and launcher untouched")
         return 130
     except Exception:
         LOGGER.exception("watchdog failed")

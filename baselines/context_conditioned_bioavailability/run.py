@@ -30,6 +30,10 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
 
+from baselines.minimol.condition_features import (
+    condition_one_hot as encode_condition_one_hot,
+    condition_vocabulary as build_condition_vocabulary,
+)
 from baselines.minimol.embedding_runtime import (
     DEFAULT_MINIMOL_SOURCE,
     checkpoint_provenance,
@@ -101,21 +105,18 @@ def _set_seed(seed: int) -> None:
 
 
 def condition_vocabulary(train_rows: list[dict[str, Any]]) -> list[str]:
-    groups = sorted({str(row["condition_group"]) for row in train_rows})
+    groups = build_condition_vocabulary(
+        [str(row["condition_group"]) for row in train_rows]
+    )
     if NO_REPORTED_CONDITION not in groups:
         raise ValueError(f"Training rows are missing {NO_REPORTED_CONDITION!r}")
     return groups
 
 
 def condition_one_hot(rows: list[dict[str, Any]], vocabulary: list[str]) -> torch.Tensor:
-    index = {group: idx for idx, group in enumerate(vocabulary)}
-    unknown = sorted({str(row["condition_group"]) for row in rows} - index.keys())
-    if unknown:
-        raise ValueError(f"Rows contain condition groups absent from train: {unknown}")
-    tensor = torch.zeros((len(rows), len(vocabulary)), dtype=torch.float32)
-    for row_index, row in enumerate(rows):
-        tensor[row_index, index[str(row["condition_group"])]] = 1.0
-    return tensor
+    return encode_condition_one_hot(
+        [str(row["condition_group"]) for row in rows], vocabulary
+    )
 
 
 def _metric_block(rows: list[dict[str, Any]]) -> dict[str, Any]:

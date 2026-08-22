@@ -1,13 +1,13 @@
 # Starling benchmark：当前决策、结果与入口
 
-更新时间：2026-08-17。
+更新时间：2026-08-18。
 
 本文件是 Starling benchmark 迁移和实验的集中总账。BBB 当前 paper-facing gold 是
 `experimental_meaningful_cns_access_v2`；Bioavailability/Skin 仍为 scaffold-only `record_supported_v2`。旧 BBB
 `record_supported_v2`、第一版 `record_agreement70_split811_v1` 和 TDC `test`/`valid` 结果均保留为
 historical comparison，不得跨 lineage 混表。
 
-## Assay-level retrieval scaling（2026-08-17，scaffold-valid）
+## Historical train-only assay-level retrieval scaling（2026-08-17，scaffold-valid）
 
 新 assay-level 版本不使用 direct/mechanism family；它按冻结 biological relevance 排序选择累计
 `canonical_assay_context` prefix，在每个 assay 内做 Morgan top-3、Tanimoto `>=0.3` 的 train-reference
@@ -27,6 +27,19 @@ assay points 来自 PARCC `DeepSeek-V4-Flash-0731`，故 delta 是 descriptive h
 endpoint-matched model comparison。完整 pipeline、英文图、retrieval-volume 曲线和维护入口见
 `ASSAY_LEVEL_RETRIEVAL.md`。
 
+## Current direct-only-heldout-filtered assay curve（2026-08-18 checkpoint）
+
+Current v2 不再把全部 reference molecules 限制为 train。它从 Stage-03 eligible records 中只删除 heldout
+parents 的 benchmark-defining direct rows，保留 non-direct rows；query-time 仍对所有 sources 执行
+`identity_blind + parent_disjoint`。三个 index 的 heldout direct overlap 和所有 replay 的 query-parent overlap
+均为 0。默认 19-condition schedule 删除与 all 过密的 BBB Top-20,480 和 Bio Top-1,280，并通过完整-batch
+skip、跨 prefix single reuse、evidence-equivalent carry-forward 和 stage checkpoint 恢复减少调用。
+
+当前仅 BBB Top-5/20/80/320/1,280/5,120 完整，macro-F1 为
+`0.646214/0.641403/0.648371/0.680329/0.724722/0.763566`，每点均 366/366、0 failed；BBB all、Bio 和 Skin
+尚未形成完整 metrics，不能做最终 task-best 或 group-level comparison。完整 source-filter 计数、reuse caveat、
+命令和 artifact roots 统一见 `ASSAY_LEVEL_RETRIEVAL.md`，避免在总账重复维护运行细节。
+
 ## GPT-OSS-120B MiniMol top-5/no-threshold sensitivity（2026-08-16，scaffold-valid）
 
 冻结 launcher 对三个 current lineages 串行调用共享 matrix；MiniMol cosine retrieval 使用
@@ -41,6 +54,92 @@ endpoint-matched model comparison。完整 pipeline、英文图、retrieval-volu
 该 valid-only sensitivity 不替代默认 top-3/0.3 设置。维护入口为
 `run_minimol_valid_matrix_gpt_oss_120b.py`，共享 runtime 和 artifact root 见
 `baselines/minimol/README.md`。
+
+## OpenRouter DeepSeek-V4-Flash 对照（2026-08-14，scaffold-valid）
+
+按统一 current-valid 大图中已有的 DeepSeek-V4-Pro 条件逐项运行 OpenRouter
+`deepseek/deepseek-v4-flash`；只排除已失败且无推广价值的 BBB residual/recheck diagnostics。所有 fresh
+条件保持与 Pro 相同的数据、prompt、identity-blind、parent-disjoint 和 retrieval 设置：BBB/Bio 使用 Morgan，
+Skin canonical direct/AOP 使用 MiniMol cosine，均为 top-3、最低相似度 0.3；单一 global prompt pool 的
+并发为 128。12 个 fresh batch 全部 `n_successful=n_total`、`n_failed_runs=0`；Skin AOP gate 另有 1 个
+model-dependent trigger，其 fresh final 没有造成 prediction flip。
+
+| task | condition | DeepSeek-V4-Pro | DeepSeek-V4-Flash | Flash - Pro |
+|---|---|---:|---:|---:|
+| BBB | none / direct / full-flat / full-mechanism | 0.6086 / 0.7000 / 0.7136 / **0.7184** | 0.4890 / 0.6510 / **0.6762** / 0.6520 | -0.1196 / -0.0489 / -0.0373 / -0.0663 |
+| Bioavailability | none / direct numeric / direct full / full-flat | 0.5019 / 0.6126 / 0.6516 / **0.7346** | 0.5199 / 0.6175 / 0.6301 / **0.6777** | +0.0181 / +0.0049 / -0.0215 / -0.0569 |
+| Skin | none / matched-label direct / canonical direct / direct+AOP / AOP-gated | 0.6364 / 0.6043 / **0.6410** / 0.6123 / **0.6410** | 0.5603 / 0.5956 / **0.6163** / 0.5917 / **0.6163** | -0.0762 / -0.0087 / -0.0247 / -0.0207 / -0.0247 |
+
+因此 Flash 的 task-best macro-F1 比 Pro 分别低 `0.0421/0.0569/0.0247`（BBB/Bio/Skin）；只有 Bio
+`none` 和 `direct numeric` 两个较弱条件有小幅正 delta，不能把 Flash 视为等价替代。它的 best retrieval
+仍明显高于自身 none：BBB `+0.1872`、Bio `+0.1577`、Skin `+0.0561`，说明 evidence 对 Flash 仍有用，
+但没有补回相对 Pro 的 reasoning gap。
+
+成功 artifact 中的 7,370 个响应合计记录 39,119,018 input tokens、15,793,923 output tokens 和约
+`$7.7412`；运行 key 的 usage 增量约 `$7.9167`，后者还包含 preflight/smoke 以及被中断的 transport-hang
+请求。Skin 首轮 600 秒 timeout 出现明显 OpenRouter 长尾；断点恢复只重跑缺失 stage，并将纯 transport
+timeout 降至 180 秒，模型、prompt、token 上限和已完成 artifact 均未改变。
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_current_valid_openrouter_deepseek_v4_flash/
+outputs/paper/skin_aop_gated_final_v1_scaffold_valid_openrouter_deepseek_v4_flash/
+outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_multimodel/figures/starling_model_comparison_highres.png
+```
+
+统一图继续使用唯一 `plot_starling_model_comparison.py` 入口；Flash 追加到既有 experiment TSV，没有新增
+一次性绘图模块。BBB residual/recheck 行已从图中删除，其冻结历史 artifacts 仍保留但专用实现代码不再维护。
+
+## DeepSeek-V4-Pro scaffold-test reference-pool sensitivity（2026-08-13）
+
+这是 valid 开发完成后的 **test post-selection sensitivity**，用于回答将全部已标注 valid 分子加入 reference
+pool 后的性能；它不是 train-only formal primary，也不覆盖下文 GPT-OSS/GLM 的冻结结论。Agent 的 canonical
+Starling index 删除全部 test parents，但仍保留现有合同允许的 non-heldout residual inference evidence，不能将其
+简称为“只含 labeled train+valid”；Morgan/MiniMol KNN 则严格只读取 labeled train+valid JSONL。三 task 继续使用
+各自 current lineage 与默认 prompt：BBB `experimental_meaningful_cns_access_v2`，Bio/Skin
+`record_supported_v2`。执行为 official DeepSeek API、`deepseek-v4-pro`、identity-blind、parent-disjoint、
+全局并发 256；BBB/Bio 用 Morgan，Skin 按默认使用 MiniMol cosine，均为 `k=3, min_similarity=0.3`。
+
+| task | none | direct | full-flat | full-mechanism | Morgan KNN | MiniMol KNN | MiniMol trained head |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| BBB | 0.5808 | **0.6908** | 0.6854 | 0.6808 | 0.5927 | 0.6396 | 0.6133 |
+| Bioavailability | 0.5227 | 0.6502 | **0.7392** | 0.7150 | 0.7230 | 0.6845 | 0.6359 |
+| Skin Reaction | **0.6792** | 0.6460 | 0.6097 | 0.5949 | 0.5870 | 0.5172 | 0.4828 |
+
+12 个 agent condition 全部完整：BBB `366/366`、Bio `209/209`、Skin `245/245`，均 0 failure；2,460 个
+retrieval condition single outputs 与 frozen none 语义一致，test-parent overlap、parent-policy conflict 和
+MiniMol candidate/query audit 均为 0。总实测 API 消耗为 `$59.55`；余额只属于运行时 receipt，不作为稳定文档状态。
+
+为隔离 valid-reference 的贡献，Bio 进一步只重跑删除 valid parents 后 top-k payload 必然变化的样本：direct
+14 条、flat 35 条、mechanism 35 条，共 84/84 成功，其余分别复用 195/174/174 条。完整 209 条合并结果为：
+
+| condition | train+valid reference | canonical train-reference | delta |
+|---|---:|---:|---:|
+| direct | 0.6502 | 0.6416 | -0.0086 |
+| full-flat | 0.7392 | 0.7271 | -0.0121 |
+| full-mechanism | 0.7150 | 0.7105 | -0.0045 |
+
+三项 train-reference minus train+valid 的 paired-bootstrap 95% CI 分别为 `[-0.0317,+0.0085]`、
+`[-0.0318,0.0000]`、`[-0.0311,+0.0218]`，因此 valid reference 带来小幅正向 point estimate，但没有确定性证据。
+Bio full-flat 的 canonical train-reference macro-F1 `0.7271`，比严格 labeled-train Morgan KNN `0.6801` 高
+`+0.0470`；paired-bootstrap 95% CI 为 `[-0.0342,+0.1290]`，双侧 paired randomization `p=0.2752`。
+在预先指定“full-flat 优于 KNN”方向下的单侧 Monte Carlo p-value 为 `0.1380`（1,000,000 swaps，
+MC SE `0.000345`）；该方向是在查看结果后追问，必须标为 exploratory，不能作为 confirmatory significance。
+
+KNN 的 reference-pool sensitivity 也单独保存。严格 labeled-train 的 test macro-F1 为 Morgan
+`0.5617/0.6801/0.5641`、MiniMol KNN `0.6143/0.6484/0.5662`（BBB/Bio/Skin）；加入 valid 后分别变为
+Morgan `0.5927/0.7230/0.5870`、MiniMol `0.6396/0.6845/0.5172`。因此加入 valid 并非跨任务稳定改善：
+Skin MiniMol 反而下降。valid 与 test 的 strict train-only KNN 差异 bootstrap CI 也均跨 0。
+
+本轮没有新增 Bio-specific launcher 或独立小图模块。train/train+valid scope 由已有通用入口参数化，选择性重跑
+通过 frozen retrieval diff、已有 `--indices` 和 shared prompt pool 完成；结果继续接入唯一总图入口。
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_current_v2_test_train_valid_reference_v1_deepseek_v4_pro/
+outputs/paper/starling_benchmark_results_scaffold_test_train_valid_reference_v1_deepseek_v4_pro/
+outputs/baselines/structure_knn_test_train_only_reference_v1/
+outputs/baselines/minimol_embedding_knn_test_train_only_reference_v1/
+outputs/paper/molecular_evidence_agent_starling_scaffold_current_v2_test_train_only_reference_v1_deepseek_v4_pro_bio_selective/analysis/
+```
 
 ## Current BBB experimental meaningful-CNS-access gold（scaffold-valid complete）
 
@@ -550,11 +649,12 @@ BBB formal test 未读取，且 BBB 方法开发在此终止。Residual 的 1,09
 全部通过 SHA-256 equality audit。
 
 ```text
-tools/chembl_tool/common/final_decision_prior.py
-tools/chembl_tool/tasks/bbb_martins/final_decision_profiles.py
-tools/chembl_tool/paper_experiments/analyze_bbb_residual_adjudication.py
 outputs/paper/bbb_deepseek_residual_adjudication_valid_v1/{protocol.md,analysis/}
 ```
+
+2026-08-14 代码整理时已删除这条失败诊断专用的 analyzer、BBB-only decision profiles 和测试；通用
+`standard/train_ratio` final-decision contract 以及上述 frozen historical artifacts 均保留。标准
+Full-mechanism 不是 residual profile，继续由正式通用 pipeline 支持。
 
 #### Bio 三个正类邻居仍被改成 low 的 trace 诊断
 
@@ -642,6 +742,27 @@ p-value（100,000 permutations）：
 和单侧方向都在观察 valid 后确定，这些 raw p-value 只作 exploratory annotation。跨全部 9 项比较做 Holm
 校正后没有一项低于 0.05。这些 p-value 仍只描述 valid；2026-08-10 已完成 Bio selected-condition
 formal-test，BBB/Skin 尚未运行。
+
+同一唯一总图入口的 current-valid **multi-model** 版本现改为选择每个 task 的最高 DeepSeek-V4-Pro condition，
+并在每个 panel 下方对全部三个 train-label baseline 显示 100,000 次单侧 paired-permutation raw p-value：
+
+| task | best DeepSeek condition (macro-F1) | MiniMol train-all | Morgan KNN | MiniMol embedding KNN |
+|---|---|---:|---:|---:|
+| BBB | full-mechanism (0.7184) | 0.0295 | 0.00046 | 0.00037 |
+| Bioavailability | full-flat (0.7346) | 0.1178 | 0.00361 | 0.00781 |
+| Skin Reaction | canonical direct (0.6410) | 0.0586 | 0.00285 | 0.0606 |
+
+图中小于 0.001 的值显示为 `p < 0.001`；机器可读 TSV/JSON 保留完整数值、10,000 次 paired-bootstrap CI 和
+跨 9 项 Holm 校正。Holm 后 BBB 对 Morgan/MiniMol KNN、Bio 对 Morgan/MiniMol KNN、Skin 对 Morgan 低于
+0.05；与 MiniMol train-all 的三项比较以及 Skin 对 MiniMol KNN 均不低于 0.05。由于 DeepSeek condition 和
+方向仍由同一 valid set 选择，这些不能解释为 confirmatory test。
+
+```text
+outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_multimodel/experiment_metrics.tsv
+outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_multimodel/analysis/best_deepseek_agent_paired_all_baselines.{tsv,json,md}
+outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_multimodel/figures/starling_model_comparison.svg
+outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_multimodel/figures/starling_model_comparison_highres.png
+```
 
 2026-08-10 已在完全相同的 current GPT-OSS-120B、scaffold-valid、identity-blind、parent-disjoint 和 task prompt
 合同下补齐 ChEMBL direct/full-flat/full-mechanism。9 个 batch 共 `2460/2460` final 完整，`n_failed_runs=0`，
@@ -2019,3 +2140,15 @@ canonical bar chart；同时存在的 viewer/coverage-selector 独立改动不�
 2026-07-30 的 scoped publish 进一步加入 MiniMol/cosine operational agent retrieval 的 38-condition
 零失败 gate、与已有结果同图比较的独立 SVG/PNG/TSV、绘图入口和本节结果记录；viewer 与
 coverage-selector 独立改动仍不属于该 publish scope。
+
+2026-08-11 的仓库整理已直接进入 `origin/main`：
+
+```text
+4ea18e4  Add one-pass RL training subsystem (#3)
+fa8eec5  Centralize reasoning and prompt profiles
+d359170  Finalize Starling benchmark lineages and diagnostics (#4)
+```
+
+`d359170` 同时冻结 BBB meaningful-CNS-access v2 数据/审计、Skin direct-scope parity、共享 paired
+statistics、matched train-label/train-ratio diagnostics、当前结果总账和对应测试。发布后本地 `main`、
+`origin/main` 与上述 commit 对齐，旧 dirty-worktree inventory 已关闭。

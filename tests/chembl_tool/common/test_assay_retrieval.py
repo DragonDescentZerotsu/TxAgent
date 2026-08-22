@@ -5,12 +5,20 @@ import pandas as pd
 from tools.chembl_tool.common.assay_retrieval import (
     FLAT_GROUP_ID,
     _filter_heldout_direct_records,
+    build_assay_evidence_rows,
     geometric_assay_prefixes,
     retrieve_assay_prefix,
     retrieve_assay_prefixes,
 )
-from tools.chembl_tool.common.evidence_contract import ASSAY_COMPACT_PROMPT_PROFILE
-from tools.chembl_tool.common.task_workflows.evidence_library import build_neighbor_index
+from tools.chembl_tool.common.evidence_contract import (
+    ASSAY_COMPACT_PROMPT_PROFILE,
+    ASSAY_RAW_CARD_PROMPT_PROFILE,
+)
+from tools.chembl_tool.common.json_utils import write_jsonl_atomic
+from tools.chembl_tool.common.starling.assay_catalog import assay_id
+from tools.chembl_tool.common.task_workflows.evidence_library import (
+    build_neighbor_index,
+)
 
 
 def _row(molecule_id, smiles, assay_id, endpoint):
@@ -66,7 +74,9 @@ def test_assay_prefix_is_flat_and_merges_same_molecule_across_assays():
     assert group["n_selected_assays"] == 2
     assert group["n_assay_neighbor_slots"] == 4
     assert group["n_unique_neighbor_molecules"] == 3
-    shared = next(row for row in group["neighbors"] if row["molecule_chembl_id"] == "shared")
+    shared = next(
+        row for row in group["neighbors"] if row["molecule_chembl_id"] == "shared"
+    )
     assert len(shared["evidence_rows"]) == 2
     assert {row["standard_type"] for row in shared["evidence_rows"]} == {
         "endpoint-1",
@@ -87,6 +97,23 @@ def test_assay_prefix_does_not_expose_relevance_scores_to_evidence_prompt_surfac
     assert "relevance_score" not in serialized_group
     assert "relevance_rank" not in serialized_group
     assert result["experiment"]["relevance_scores_visible_to_llm"] is False
+
+
+def test_assay_prefix_uses_index_declared_raw_card_profile():
+    index = _index()
+    index["source"]["evidence_prompt_profile"] = ASSAY_RAW_CARD_PROMPT_PROFILE
+
+    result = retrieve_assay_prefix(
+        "CC",
+        index,
+        assay_prefix=1,
+        min_similarity=0.0,
+        neighbor_identity_policy="operational",
+    )
+
+    assert (
+        result["groups"][0]["evidence_prompt_profile"] == ASSAY_RAW_CARD_PROMPT_PROFILE
+    )
 
 
 def test_prefix_selection_is_strictly_nested():
@@ -196,3 +223,69 @@ def test_direct_only_filter_keeps_heldout_nondirect_records(tmp_path: Path):
     assert stats["n_direct_heldout_records_excluded"] == 1
     assert stats["n_heldout_nondirect_records_retained"] == 2
     assert stats["n_direct_heldout_records_after_filter"] == 0
+
+
+def test_family_catalog_filters_disallowed_source_groups_before_aggregation(
+    tmp_path: Path,
+):
+    records_path = tmp_path / "records.parquet"
+    ranked_path = tmp_path / "family_assays.jsonl"
+    context = "shared physical assay"
+    stable_assay_id = assay_id("skin_reaction", context)
+    base = {
+        "molecule_id": "M1",
+        "canonical_smiles": "CCO",
+        "canonical_endpoint_name": "endpoint",
+        "canonical_measurement_text": "positive",
+        "canonical_unit_text": "",
+        "canonical_assay_context": context,
+        "canonical_species_context": "human",
+        "qualifying_conditions": "",
+        "confidence": 0.9,
+        "source_name": "Starling",
+        "molecule_name": "example",
+        "retrieval_eligible": True,
+    }
+    pd.DataFrame(
+        [
+            {
+                **base,
+                "canonical_record_id": "allowed",
+                "group_id": "Direct.skin_reaction",
+                "support_text": "allowed support",
+            },
+            {
+                **base,
+                "canonical_record_id": "disallowed",
+                "group_id": "Rejected.irritation",
+                "support_text": "disallowed support",
+                "confidence": 1.0,
+            },
+        ]
+    ).to_parquet(records_path, index=False)
+    write_jsonl_atomic(
+        ranked_path,
+        [
+            {
+                "assay_id": stable_assay_id,
+                "assay_context": context,
+                "selection_rank": 1,
+                "first_level": 1,
+                "source_groups": ["Direct.skin_reaction"],
+            }
+        ],
+    )
+
+    rows, ranking, stats = build_assay_evidence_rows(
+        task="skin_reaction",
+        records_path=records_path,
+        membership_path=None,
+        ranked_assays_path=ranked_path,
+    )
+
+    assert len(rows) == 1
+    assert rows[0]["source_record_count"] == 1
+    assert rows[0]["source_record_examples"][0]["support_text"] == "allowed support"
+    assert ranking[0]["assay_id"] == stable_assay_id
+    assert stats["family_catalog"] is True
+    assert stats["allowed_source_groups"] == ["Direct.skin_reaction"]

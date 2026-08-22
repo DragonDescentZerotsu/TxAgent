@@ -6,8 +6,11 @@ import os
 import pytest
 
 from tools.chembl_tool.common.reasoning_payload import (
+    attach_external_condition,
     clean_exact_match,
     clean_shared_assay_context,
+    external_condition_sentence,
+    llm_evidence_query_payload,
     llm_query_payload,
     load_env_file,
     read_jsonl_record,
@@ -41,6 +44,28 @@ def test_llm_query_payload_preserves_visible_and_identity_blind_contracts():
         "identity_hidden": True,
         "prefetched_molecule_properties": properties,
     }
+
+
+def test_external_condition_is_natural_language_and_evidence_only():
+    record = {"condition_group": "disease=bacterial_meningitis"}
+    sentence = external_condition_sentence(record)
+    assert sentence == (
+        "This prediction concerns the query molecule under the disease condition "
+        "bacterial meningitis."
+    )
+    retrieval = {"query": {"identity_hidden": True}}
+    attach_external_condition(retrieval, record)
+    query = retrieval["query"]
+    assert "external_condition" not in llm_query_payload(query)
+    assert llm_evidence_query_payload(query)["external_condition"] == sentence
+
+
+def test_null_or_missing_condition_is_omitted():
+    for record in ({}, {"condition_group": "no_reported_external_condition"}):
+        retrieval = {"query": {"input_smiles": "CC", "canonical_smiles": "CC"}}
+        attach_external_condition(retrieval, record)
+        assert "external_condition" not in retrieval["query"]
+        assert "external_condition" not in llm_evidence_query_payload(retrieval["query"])
 
 
 def test_cleaners_keep_only_frozen_prompt_fields():

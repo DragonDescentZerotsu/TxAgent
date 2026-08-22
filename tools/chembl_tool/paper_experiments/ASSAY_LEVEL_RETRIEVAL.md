@@ -1,6 +1,118 @@
 # Starling assay-level retrieval
 
-更新时间：2026-08-18。
+更新时间：2026-08-22。
+
+## Conditioned cumulative-family flat assay experiment（current）
+
+新的 conditioned 实验与下面的 4× relevance-prefix 曲线平行，旧入口、排序和 artifacts 均不删除。BBB、
+Bioavailability、Skin 读取
+`data/processed_starling_context_conditioned_selected_v1/<Task>/scaffold/`；ClinTox 继续读取冻结的
+`clinical_trial_failure_v1`，没有合格 condition 时不向 agent 添加 condition 句子。
+
+每个 level 累计加入一个 task 已冻结的 Starling mechanism family；被纳入的每个 physical assay 仍独立检索
+Morgan Top-3、Tanimoto `>=0.3`，随后按 molecule 合并为一个 full-flat branch。Reference contract 固定为：
+
+1. 删除 valid+test parent union 在 benchmark-defining direct source/scope 中的 rows；
+2. 保留相同 heldout parents 的 non-direct/mechanism rows；
+3. query time 对所有候选执行 `scaffold_disjoint`；
+4. 同一个 physical assay 若出现在多个 families，只在最早累计 level 引入一次，family/rank 不进入 LLM prompt。
+
+Condition visibility 固定为 `flat_evidence_and_final_only`：external condition 由公共 deterministic renderer
+转成自然英语后只进入 flat branch 和 final branch；`no_reported_external_condition` 完全省略，single-molecule
+branch 始终保持 condition-independent，因而可跨所有 levels 复用。重叠 physical assay 保持原子性：在最早
+level 加入后携带该 assay 的完整 representative records，不按后续 family 再切碎 records。
+
+Family catalog 入口为
+`tools/chembl_tool/paper_experiments/build_assay_family_catalog.py`。当前冻结的 physical-assay 累计数量是：
+
+| task | cumulative physical assays by level | multi-family assays |
+|---|---|---:|
+| BBB | 8,231 / 8,305 / 22,952 / 22,958 | 806 |
+| Bioavailability | 4 / 304 / 434 / 1,403 / 1,871 / 2,140 | 208 |
+| Skin | 479 / 1,219 | 117 |
+| ClinTox | 12 / 13 / 2,356 / 5,665 / 6,002 / 6,064 / 12,207 / 12,485 | 0 |
+
+Bioavailability 的第二级是 `Observed.nondirect_oral_bioavailability`。Normalized-v7 的 HF source 没有
+原生 `assay_system`，历史 family catalog 因此曾遗漏该组全部 111,303 条 retrieval-eligible records。当前先由
+`tools/chembl_tool/tasks/bioavailability_ma/build_nondirect_assay_context.py` 生成版本化 source overlay：只根据
+source-visible report type、粗粒度 population 和 oral exposure mode，把这些 rows 映射到 300 个有解释性的
+assay contexts；不按 PMID、molecule 或单条 record 拆分，也不改 endpoint、measurement、condition 或
+support text。修复后 family union 覆盖全部 435,478 条 Stage-03 retrieval-eligible records，held-out direct
+过滤仍在其后执行。Overlay manifest 和修复后的 raw-v3 index 分别位于：
+
+```text
+outputs/paper/starling_conditioned_assay_family_curve_v1/
+  source_overlays/bioavailability_nondirect_assay_context_v1/{records.parquet,manifest.json}
+  family_catalogs/bioavailability_ma_nondirect_context_v1/
+  indices/bioavailability_ma/raw_v3_nondirect_context_v1/
+```
+
+修复后的 index 在 conditioned held-out direct filter 后保留 425,833 条 source records、103,274 个
+assay×molecule rows 和 27,067 个 molecules；held-out direct、实际 query-neighbor parent overlap 和 scaffold
+overlap均为 0。262 条 valid full-catalog prompt 的 `input + 20,480 completion reserve` 最大值为 110,524
+tokens，未触发 raw-v3 guard。旧缺失-nondirect lineage 继续使用原 catalog/index/replay，避免正在运行或历史
+checkpoint 被新 source hash 污染；修复版 reasoning 独立写入
+`scaffold_valid_epyc_deepseek_v4_flash_0731_bio_nondirect_context_v1/`。
+
+### Current raw support cards（无 summary 模型）
+
+正式 conditioned curve 使用 `assay_compact.raw_v3`。每个 assay×molecule 最多保留三张 representative
+record cards；每张 card 独立保留 endpoint、value、unit、species、conditions 和完整原始 `support_text`。
+只删除重复 contract/source boilerplate、opaque assay id、默认 role/transferability、confidence 和 extraction
+diagnostics。raw-v3 不截断或重写任何被选中 card 的字段，也不在 preparation 或运行时调用 GPT-OSS。
+
+PARCC `deepseek-ai/DeepSeek-V4-Flash-0731` 的实测窗口是 1,048,576 tokens，并按
+`input tokens + max_tokens` 校验；正式 completion reserve 为 20,480。raw-v3 独立使用 900,000-token payload
+gate，给 system/chat envelope 留出超过 128k tokens 的余量。只有 payload 超过安全阈值才按完整 evidence rows
+确定性均匀采样；普通 group-level pipeline 保持原 400 KB guard，不受这次切换影响。
+
+在 1,048 个 valid queries、full-catalog、每 assay Top-3、Morgan `>=0.3`、`scaffold_disjoint`，并为每个
+neighbor 重复历史 trace 中最大的实际 tool-comparison payload 的保守模拟中，完整 raw support 的
+`input + 20,480 completion reserve` 最大值为：BBB 459,798、Bioavailability 163,581、Skin 165,409、
+ClinTox 353,728。去除所有 raw-v3 字段上限后，全局最坏仍有 588,778 tokens 余量，且 1,048 个 query
+均未触发 evidence sampling。
+历史 v2 summary 将全部 long-support corpus token 数减少 41.12%，但旧端到端审计中对完整 prompt 的总 token
+只减少约 0.54%，收益不足以承担额外模型依赖和语义改写风险。
+
+ClinTox source-native bridge 仍为
+`tools/chembl_tool/tasks/clintox/build_flat_assay_support_evidence.py`。当前 raw-v3 与历史 summary artifacts
+分开保存：
+
+```text
+outputs/paper/starling_conditioned_assay_family_curve_v1/
+  family_catalogs/<task>/{family_assays.jsonl,manifest.json}
+  clintox/{assay_support_evidence.jsonl,assay_support_evidence_manifest.json}
+  indices/<task>/raw_v3/{assay_molecule_evidence.jsonl,assay_neighbor_index.pkl,manifest.json}
+  tokenizer/deepseek_v4_flash_0731/{tokenizer.json,tokenizer_config.json,...}
+  prompt_length_audit_raw_v3_untruncated/{prompt_lengths.jsonl,summary.json}
+  replay_batches/valid/<task>/assay_flat_top<prefix>/
+  scaffold_valid_epyc_deepseek_v4_flash_0731/<task>/
+  support_summary_gpt_oss_120b_v1/
+    {inventory.jsonl,inventory_manifest.json,summaries.jsonl,summary_manifest.json}
+  indices/<task>/compact_v2/  # historical comparison only
+```
+
+历史 summary cache/artifacts 不删除，但不再是代码入口、索引构建或 reasoning 的依赖。四任务 replay audit、
+conditioned query-prompt 接线及 raw-v3/compact-v2 的 assay ranking、molecule table、assay→molecule indices
+和 fingerprint-count parity 已逐 task 通过；切换只改变 LLM-visible evidence view，不改变 retrieval 结果。
+
+### Scaffold-valid 运行快照（2026-08-22）
+
+以下只登记 398/398、262/262、245/245 或 142/142 且 `n_failed_runs=0` 的完整 batch。所有 agent batch 都是
+`identity_blind + scaffold_disjoint`；BBB/Bio/Skin 的非 null condition 只在 flat/final 可见，ClinTox 没有
+condition。数值为 macro-F1：
+
+| task | none | L1 | L2 | L3 | L4 | L5 | L6 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| BBB | 0.612483 | **0.727936** | 0.726247 | 0.721957 | — | — | — |
+| Bioavailability | 0.541203 | 0.643302 | **0.678445** | 0.644597 | 0.668787 | 0.668787 | 0.675972 |
+| Skin | 0.611851 | 0.623892 | **0.627364** | — | — | — | — |
+| ClinTox | 0.506945 | **0.519946** | 0.518328 | 0.506945 | — | — | — |
+
+Bioavailability 和 Skin 已到 full catalog。BBB L4 及 ClinTox L4–L8 没有完整 metrics receipt，不能把当前
+task-best 当作最终曲线结论。对应 roots 是
+`scaffold_valid_epyc_deepseek_v4_flash_0731/` 和 Bio 修复后的
+`scaffold_valid_epyc_deepseek_v4_flash_0731_bio_nondirect_context_v1/`。
 
 ## 目的与边界
 
@@ -54,9 +166,21 @@ tools/chembl_tool/paper_experiments/run_assay_retrieval_curve.py
   pools。Prefix 为 5 起步、每次乘 4，并强制最后一点等于该任务全部 assays。Audit 同时验证 held-out direct
   rows 为零、实际 query-neighbor scaffold overlap 为零和 prefix 嵌套。
 
+tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py
+  四任务 conditioned cumulative-family launcher。自动验证 selected-v1/ClinTox split、family overlap policy、
+  raw-v3 index、held-out hashes 和 direct/scaffold gates；一次物化所有严格嵌套 replays，先运行/恢复 none，
+  后续每个 level 复用 none single，并在相邻 level 启动前执行 evidence-equivalent carry-forward。各 task 的同序
+  level 共享一个 128-slot global prompt pool，旧 4× relevance-prefix runner 不受影响。
+
+tools/chembl_tool/paper_experiments/audit_conditioned_assay_prompt_lengths.py
+  不调用 LLM；用 endpoint-matched tokenizer 对四任务 full-catalog raw-v3 prompt 做保守长度审计，同时核对
+  tool-payload、completion reserve 和 evidence-sampling guard。
+
 tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py
-  唯一 assay-scaling 汇总和英文五-panel图入口；A–D 汇总 performance/group comparison/retrieval volume，
-  E 展示累计 mean assay-relevance score；从 artifacts 读取指标，不硬编码曲线数值。
+  唯一 assay-scaling 可视化入口。默认生成 historical 4× curve 的英文五-panel 图；
+  `--conditioned-family-baselines` 从完整零失败 artifacts 生成 conditioned levels 与当前 MiniMol/Morgan
+  baselines 的 2×2 比较图，并输出 paired one-sided permutation p-value、Holm 校正和遗漏 level 审计。
+  两种模式都从 receipts 读取指标，不硬编码曲线数值。
 ```
 
 Task pipeline 不新增 assay-specific runner。BBB、Bioavailability 和 Skin 仍使用原有
@@ -196,10 +320,46 @@ group/final receipts；single 仍按兼容合同复用，其他复用必须重�
 ```bash
 # index/replay builder 的完整参数合同
 python -m tools.chembl_tool.common.assay_retrieval build-index --help
+python -m tools.chembl_tool.common.assay_retrieval build-preaggregated-index --help
 python -m tools.chembl_tool.common.assay_retrieval materialize-batch --help
+
+# raw-v3 超限检查使用冻结的 endpoint-matched tokenizer；不会调用模型
+export TXAGENT_DEEPSEEK_TOKENIZER_JSON=outputs/paper/starling_conditioned_assay_family_curve_v1/tokenizer/deepseek_v4_flash_0731/tokenizer.json
 
 # 审计三任务 replay、记录完整计划但不调用模型
 python -m tools.chembl_tool.paper_experiments.run_assay_retrieval_curve --manifest-only
+
+# conditioned cumulative-family valid；默认 PARCC DeepSeek、单一 128-slot pool，可断点恢复
+python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve
+
+# Bioavailability HF nondirect context overlay；catalog/index 必须读取该版本化 artifact
+python -m tools.chembl_tool.tasks.bioavailability_ma.build_nondirect_assay_context
+python -m tools.chembl_tool.paper_experiments.build_assay_family_catalog --tasks bioavailability_ma
+
+# 只重跑受 source 修复影响的 Bioavailability；复用冻结 none/single，并保护旧 output lineage
+python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve \
+  --tasks bioavailability_ma \
+  --bioavailability-source-revision nondirect_context_v1 \
+  --single-analysis-source-batch \
+    outputs/paper/starling_conditioned_assay_family_curve_v1/scaffold_valid_epyc_deepseek_v4_flash_0731/bioavailability_ma/none
+
+# 无中断接管已经运行的 conditioned curve；断 tunnel 后选择 Duo 2 并从成功 stage 恢复
+python -m tools.chembl_tool.paper_experiments.watch_glm_tunnel_and_matrix \
+  --completion-mode recursive_reasoning_runs --expected-results 5578 \
+  --output-root outputs/paper/starling_conditioned_assay_family_curve_v1/scaffold_valid_epyc_deepseek_v4_flash_0731 \
+  --launcher-module tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve \
+  --launcher-args-json '["--parallelism","128","--preparation-workers","32","--materialize-workers","4","--model","deepseek-ai/DeepSeek-V4-Flash-0731","--base-url","http://127.0.0.1:50001/v1","--api-key-env","DEEPSEEK_API_KEY","--timeout-s","900","--max-stage-requeues","3"]' \
+  --allow-implicit-output-root --base-url http://127.0.0.1:50001/v1 \
+  --api-key-env DEEPSEEK_API_KEY --ssh-host parcc \
+  --ssh-local-forward 127.0.0.1:50001:epyc-1-4:50000 --duo-option 2 \
+  --watchdog-log <watchdog.log> --launcher-log <launcher.log>
+
+# 只物化/检查 conditioned replays、condition prompt 和 batch manifests，不调用 LLM
+python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve --prepare-only
+
+# 绘制当前完整 conditioned levels、latest baselines 和 exploratory paired p-values
+python -m tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve \
+  --conditioned-family-baselines
 
 # 显式复现 historical v2 parent-disjoint 合同
 python -m tools.chembl_tool.paper_experiments.run_assay_retrieval_curve \

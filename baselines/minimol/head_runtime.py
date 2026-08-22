@@ -84,10 +84,12 @@ def make_model(
     device: torch.device,
     *,
     task_type: TaskType = "classification",
+    input_dim: int = 512,
 ) -> tuple[nn.Module, optim.Optimizer, LambdaLR, nn.Module]:
     """Build the current TxAgent MiniMol head, optimizer, schedule, and loss."""
     model = TaskHead(
         hidden_dim=args.hidden_dim,
+        input_dim=input_dim,
         depth=args.depth,
         dropout=args.dropout,
         combine=True,

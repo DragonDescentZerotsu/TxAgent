@@ -72,6 +72,17 @@ INDEX_SPECS: tuple[dict[str, str], ...] = (
         "index_filename": "starling_skin_reaction_neighbor_index.pkl",
         "meta_filename": "starling_skin_reaction_neighbor_index.meta.json",
     },
+    {
+        "name": "clintox_starling_full",
+        "task": "ClinTox",
+        "source_evidence": (
+            "outputs/chembl_tool/tasks/clintox/evidence_library/"
+            "starling_clinical_trial_failure_v1/starling_clintox_evidence.jsonl"
+        ),
+        "evidence_filename": "starling_clintox_evidence.jsonl",
+        "index_filename": "starling_clintox_neighbor_index.pkl",
+        "meta_filename": "starling_clintox_neighbor_index.meta.json",
+    },
 )
 
 

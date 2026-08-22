@@ -8,6 +8,68 @@ from pathlib import Path
 from typing import Any
 
 
+NO_REPORTED_EXTERNAL_CONDITION = "no_reported_external_condition"
+EXTERNAL_CONDITION_RENDERER_VERSION = "external_condition_natural_language.v1"
+
+
+_CONDITION_VALUE_LABELS = {
+    "atopic_dermatitis": "atopic dermatitis",
+    "bacterial_meningitis": "bacterial meningitis",
+    "brain_tumor_or_glioma": "a brain tumor or glioma",
+    "cerebral_ischemia": "cerebral ischemia",
+    "cirrhosis": "cirrhosis",
+    "cystic_fibrosis": "cystic fibrosis",
+    "disrupted": "a disrupted biological barrier",
+    "fasted": "a fasted state",
+    "fed_high_fat": "a high-fat fed state",
+    "fed_unspecified": "a fed state",
+    "meningitis_unspecified": "meningitis",
+    "modified_release": "a modified-release formulation",
+    "pneumococcal_meningitis": "pneumococcal meningitis",
+    "tuberculous_meningitis": "tuberculous meningitis",
+}
+
+
+def external_condition_sentence(record: dict[str, Any]) -> str:
+    """Render a frozen condition group as natural language for evidence/final prompts."""
+    group = str(record.get("condition_group") or "").strip()
+    if not group or group == NO_REPORTED_EXTERNAL_CONDITION:
+        return ""
+    clauses = [_render_condition_atom(atom) for atom in group.split(";") if atom]
+    return "This prediction concerns the query molecule under " + " and ".join(clauses) + "."
+
+
+def attach_external_condition(
+    retrieval: dict[str, Any],
+    query_record: dict[str, Any],
+) -> dict[str, Any]:
+    """Attach only the natural-language condition sentence to the retrieval query."""
+    query = retrieval.setdefault("query", {})
+    query.pop("external_condition", None)
+    sentence = external_condition_sentence(query_record)
+    if sentence:
+        query["external_condition"] = sentence
+    return retrieval
+
+
+def _render_condition_atom(atom: str) -> str:
+    key, separator, raw_value = atom.partition("=")
+    if not separator:
+        return atom.replace("_", " ")
+    value = _CONDITION_VALUE_LABELS.get(raw_value, raw_value.replace("_", " "))
+    if key == "disease":
+        return f"the disease condition {value}"
+    if key == "co_treatment":
+        return f"co-treatment with {value}"
+    if key == "prandial_state":
+        return value
+    if key == "release_profile":
+        return value
+    if key == "barrier_state":
+        return value
+    return f"{key.replace('_', ' ')}: {value}"
+
+
 def llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
     """Expose only the query fields allowed by the active identity contract."""
     if query.get("identity_hidden"):
@@ -28,6 +90,15 @@ def llm_query_payload(query: dict[str, Any]) -> dict[str, Any]:
         payload["prefetched_molecule_properties"] = query[
             "prefetched_molecule_properties"
         ]
+    return payload
+
+
+def llm_evidence_query_payload(query: dict[str, Any]) -> dict[str, Any]:
+    """Expose the condition only to analog-evidence and final-decision branches."""
+    payload = llm_query_payload(query)
+    condition = str(query.get("external_condition") or "").strip()
+    if condition:
+        payload["external_condition"] = condition
     return payload
 
 

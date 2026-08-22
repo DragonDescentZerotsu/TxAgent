@@ -1,9 +1,13 @@
 from argparse import Namespace
 from pathlib import Path
 
+import tools.chembl_tool.paper_experiments.watch_glm_tunnel_and_matrix as watchdog
 from tools.chembl_tool.paper_experiments.watch_glm_tunnel_and_matrix import (
     _run_root_name,
     count_final_results,
+    count_recursive_reasoning_results,
+    find_launcher_pids,
+    launcher_command,
     matrix_command,
 )
 
@@ -135,6 +139,89 @@ def test_count_final_results_rejects_duplicate_or_substituted_groups(
         encoding="utf-8",
     )
     assert count_final_results(tmp_path, "deployment_visible", "parent_disjoint") == 1
+
+
+def test_recursive_counter_uses_manifest_group_ids_without_task_prediction(
+    tmp_path: Path,
+) -> None:
+    run_dir = tmp_path / "task" / "family_level_1" / "runs" / "run-0"
+    run_dir.mkdir(parents=True)
+    (run_dir / "final_reasoning_output.json").write_text(
+        '{"status":"ok","llm":{"content":{"custom_prediction":"yes"}}}\n',
+        encoding="utf-8",
+    )
+    (run_dir / "single_molecule_reasoning_output.json").write_text(
+        '{"status":"ok"}\n', encoding="utf-8"
+    )
+    (run_dir / "manifest.json").write_text(
+        '{"n_groups_with_neighbors":1,"expected_group_ids":["Flat.evidence"]}\n',
+        encoding="utf-8",
+    )
+    (run_dir / "group_reasoning_outputs.jsonl").write_text(
+        '{"group_id":"Flat.evidence","status":"ok"}\n', encoding="utf-8"
+    )
+
+    assert count_recursive_reasoning_results(tmp_path) == 1
+
+    (run_dir / "group_reasoning_outputs.jsonl").write_text(
+        '{"group_id":"Flat.other","status":"ok"}\n', encoding="utf-8"
+    )
+    assert count_recursive_reasoning_results(tmp_path) == 0
+
+
+def test_recursive_counter_uses_complete_batch_metrics(tmp_path: Path) -> None:
+    batch_dir = tmp_path / "task" / "none"
+    (batch_dir / "runs").mkdir(parents=True)
+    (batch_dir / "metrics.json").write_text(
+        '{"n_total":3,"n_successful":3,"n_failed_runs":0}\n',
+        encoding="utf-8",
+    )
+
+    assert count_recursive_reasoning_results(tmp_path) == 3
+
+
+def test_find_launcher_pids_can_attach_to_implicit_default_root(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    module = "tools.example.resumable"
+    processes = [
+        (101, ["python", "-m", module, "--parallelism", "128"]),
+        (
+            102,
+            [
+                "python",
+                "-m",
+                watchdog.__name__,
+                "--launcher-module",
+                module,
+            ],
+        ),
+    ]
+    monkeypatch.setattr(watchdog, "_iter_processes", lambda: iter(processes))
+
+    assert find_launcher_pids(tmp_path, module) == []
+    assert find_launcher_pids(tmp_path, module, allow_implicit_output_root=True) == [101]
+
+
+def test_generic_launcher_command_appends_frozen_output_root() -> None:
+    args = Namespace(
+        python_executable="/env/bin/python",
+        launcher_module="tools.example.resumable",
+        launcher_args_json='["--parallelism","128"]',
+        output_root="/tmp/results",
+    )
+
+    assert launcher_command(args) == [
+        "/env/bin/python",
+        "-u",
+        "-m",
+        "tools.example.resumable",
+        "--parallelism",
+        "128",
+        "--output-root",
+        "/tmp/results",
+    ]
 
 
 def test_count_final_results_rejects_missing_prediction(tmp_path: Path) -> None:

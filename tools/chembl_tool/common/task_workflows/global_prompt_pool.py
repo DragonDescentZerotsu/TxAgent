@@ -83,7 +83,26 @@ def run_global_prompt_pool(
     max_stage_requeues: int = 0,
 ) -> list[dict[str, Any]]:
     """Parse matrix batch commands, then use the canonical prepared-batch pool."""
-    prepared_by_name = {
+    prepared_by_name = prepare_batch_commands(
+        commands,
+        max_workers=max_workers,
+        max_stage_requeues=max_stage_requeues,
+    )
+    return run_prepared_prompt_pool(
+        prepared_by_name,
+        max_workers=max_workers,
+        max_stage_requeues=max_stage_requeues,
+    )
+
+
+def prepare_batch_commands(
+    commands: list[BatchCommand],
+    *,
+    max_workers: int,
+    max_stage_requeues: int = 0,
+) -> dict[str, PreparedBatch]:
+    """Parse batch commands without starting retrieval preparation or LLM stages."""
+    return {
         spec.experiment_name: _prepare_command(
             spec,
             max_workers=max_workers,
@@ -91,11 +110,6 @@ def run_global_prompt_pool(
         )
         for spec in commands
     }
-    return run_prepared_prompt_pool(
-        prepared_by_name,
-        max_workers=max_workers,
-        max_stage_requeues=max_stage_requeues,
-    )
 
 
 def run_prepared_prompt_pool(

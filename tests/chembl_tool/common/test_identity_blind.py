@@ -32,7 +32,11 @@ class FakeToolService:
 def test_identity_blind_prefetch_removes_query_and_neighbor_structures():
     retrieval = {
         "status": "ok",
-        "query": {"input_smiles": "CCO", "canonical_smiles": "CCO"},
+        "query": {
+            "input_smiles": "CCO",
+            "canonical_smiles": "CCO",
+            "external_condition": "This prediction concerns a fasted state.",
+        },
         "experiment": {"mode": "direct"},
         "groups": [
             {
@@ -67,6 +71,9 @@ def test_identity_blind_prefetch_removes_query_and_neighbor_structures():
     serialized = json.dumps(output)
 
     assert output["query"]["identity_hidden"] is True
+    assert output["query"]["external_condition"] == (
+        "This prediction concerns a fasted state."
+    )
     assert output["groups"][0]["identity_blind"] is True
     assert output["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "neighbor_1_1"
     assert "CCO" not in serialized
@@ -211,13 +218,23 @@ def test_prefetched_tool_replay_keeps_visible_identity(tmp_path):
 
 
 def test_final_only_redaction_reuses_saved_property_result():
-    retrieval = {"query": {"input_smiles": "CCO"}, "groups": [], "coverage": {}}
+    retrieval = {
+        "query": {
+            "input_smiles": "CCO",
+            "external_condition": "This prediction concerns a fasted state.",
+        },
+        "groups": [],
+        "coverage": {},
+    }
     single_output = {"llm": {"tool_results": [{"tool_name": "molecule_properties", "content": "hidden"}]}}
 
     output = prepare_identity_blind_final_retrieval(retrieval, single_output)
 
     assert output["query"]["identity_hidden"] is True
     assert output["query"]["prefetched_molecule_properties"]["content"] == "hidden"
+    assert output["query"]["external_condition"] == (
+        "This prediction concerns a fasted state."
+    )
     assert "CCO" not in json.dumps(output)
 
 
@@ -251,6 +268,42 @@ def test_branch_sanitization_removes_model_inferred_neighbor_name():
     assert "ExampleDrug" not in json.dumps(sanitized)
     assert "(ED)" not in json.dumps(sanitized)
     assert sanitized[0]["identity_blind_sanitization"]["changed"] is True
+
+
+def test_branch_sanitization_scales_to_dense_assay_trace_without_mutating_source():
+    names = [f"SourceDrug{index:03d}" for index in range(250)]
+    retrieval = {
+        "query": {"input_smiles": "CCO"},
+        "groups": [
+            {
+                "neighbors": [
+                    {
+                        "molecule_chembl_id": f"CHEMBL{index}",
+                        "canonical_smiles": f"CCN{'C' * index}",
+                        "evidence_rows": [
+                            {
+                                "source_molecule_names": [name],
+                                "standard_type": "outcome",
+                            }
+                        ],
+                    }
+                    for index, name in enumerate(names, start=1)
+                ]
+            }
+        ],
+    }
+    trace = " | ".join(names) * 20
+    raw = [{"status": "ok", "llm": {"messages": [trace], "content": {"summary": trace}}}]
+
+    sanitized = sanitize_identity_blind_branch_outputs(raw, retrieval)
+
+    assert names[0] in raw[0]["llm"]["messages"][0]
+    assert not any(name in json.dumps(sanitized) for name in names)
+    assert sanitized[0]["identity_blind_sanitization"] == {
+        "applied": True,
+        "changed": True,
+        "n_sensitive_terms": 751,
+    }
 
 
 def test_identity_blind_leak_finder_reports_categories():

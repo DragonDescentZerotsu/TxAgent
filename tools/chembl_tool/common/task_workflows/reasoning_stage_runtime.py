@@ -488,7 +488,11 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
     client = _make_client(state)
     raw_output = module._reason_one_group(
         client,
-        module._llm_query_payload(context["reasoning_retrieval"]["query"]),
+        getattr(
+            module,
+            "_llm_evidence_query_payload",
+            module._llm_query_payload,
+        )(context["reasoning_retrieval"]["query"]),
         group,
         **_task_prompt_kwargs(state),
     )

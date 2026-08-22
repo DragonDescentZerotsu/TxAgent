@@ -10,6 +10,9 @@ from tools.chembl_tool.paper_experiments.plot_starling_benchmark_overview import
 from tools.chembl_tool.paper_experiments.plot_starling_model_comparison import (
     render as render_model_comparison,
 )
+from tools.chembl_tool.paper_experiments.starling_paired_figure import (
+    _format_p_value,
+)
 
 
 def _write_metrics(
@@ -154,6 +157,8 @@ def _write_paired_ci_metrics(
     *,
     agent_model="GPT-OSS-120B",
     agent_method_override="",
+    experiment_method="",
+    experiment_delta=0.02,
     delta_offset=0.0,
 ):
     rows = []
@@ -163,16 +168,25 @@ def _write_paired_ci_metrics(
             for method in task.methods
             if method.source not in {"minimol", "knn", "minimol_knn"}
         ]
-        agent_method = next(
-            (
-                method
-                for method in agent_methods
-                if method.key == agent_method_override
-            ),
-            agent_methods[-1],
+        anchor_method = next(
+            method for method in task.methods if method.key == "starling_full_mechanism"
         )
-        agent_index = task.methods.index(agent_method)
-        agent_f1 = 0.5 + agent_index / 100
+        if experiment_method:
+            agent_method_key = experiment_method
+            agent_f1 = (
+                0.5 + task.methods.index(anchor_method) / 100 + experiment_delta
+            )
+        else:
+            agent_method = next(
+                (
+                    method
+                    for method in agent_methods
+                    if method.key == agent_method_override
+                ),
+                agent_methods[-1],
+            )
+            agent_method_key = agent_method.key
+            agent_f1 = 0.5 + task.methods.index(agent_method) / 100
         n = 500 if task.key == "bbb_martins" else 380
         for baseline_method, baseline_label in (
             ("minimol_train_all", "MiniMol train-all"),
@@ -190,7 +204,7 @@ def _write_paired_ci_metrics(
                     "evaluation_subset": "valid",
                     "task": task.key,
                     "agent_model": agent_model,
-                    "agent_method": agent_method.key,
+                    "agent_method": agent_method_key,
                     "baseline": baseline_label,
                     "baseline_method": baseline_method,
                     "n": n,
@@ -599,6 +613,30 @@ def test_model_comparison_supports_visible_experiment_anchor(tmp_path):
     assert svg.count("120B visible · Coverage · standard context") == 3
 
 
+def test_model_comparison_supports_experiment_legend_override(tmp_path):
+    reference = tmp_path / "reference.tsv"
+    candidate = tmp_path / "candidate.tsv"
+    experiments = tmp_path / "experiments.tsv"
+    output = tmp_path / "comparison.svg"
+    splits = (("scaffold", "Scaffold split"),)
+    _write_metrics(reference, splits=splits, evaluation_subset="valid")
+    _write_metrics(candidate, splits=splits, evaluation_subset="valid")
+    _write_experiment_metrics(experiments)
+
+    render_model_comparison(
+        reference,
+        candidate,
+        output,
+        experiment_paths=(experiments,),
+        experiment_legend="Additional current-valid results",
+    )
+
+    svg = output.read_text(encoding="utf-8")
+    assert "Additional current-valid results" in svg
+    assert "Teal rows: Additional current-valid results" in svg
+    assert "Matched GPT-OSS-120B experiment" not in svg
+
+
 def test_model_comparison_adds_paired_bootstrap_intervals(tmp_path):
     reference = tmp_path / "blind_20b.tsv"
     candidate = tmp_path / "blind_120b.tsv"
@@ -689,6 +727,44 @@ def test_model_comparison_can_show_only_one_sided_pvalues(tmp_path):
     assert svg.count("p = 0.123") == 9
     assert "Best agent paired Δ · 95% CI" not in svg
     assert "Paired Δ macro-F1" not in svg
+
+
+def test_model_comparison_can_pair_best_experiment_agent_with_baselines(tmp_path):
+    reference = tmp_path / "reference.tsv"
+    candidate = tmp_path / "candidate.tsv"
+    experiments = tmp_path / "experiments.tsv"
+    paired = tmp_path / "paired.tsv"
+    output = tmp_path / "comparison.svg"
+    splits = (("scaffold", "Scaffold split"),)
+    _write_metrics(reference, splits=splits, evaluation_subset="valid")
+    _write_metrics(candidate, splits=splits, evaluation_subset="valid")
+    _write_experiment_metrics(
+        experiments,
+        experiment_model_label="DeepSeek-v4-pro",
+    )
+    _write_paired_ci_metrics(
+        paired,
+        agent_model="DeepSeek-v4-pro",
+        experiment_method="coverage_aware",
+    )
+
+    render_model_comparison(
+        reference,
+        candidate,
+        output,
+        experiment_paths=(experiments,),
+        paired_ci_path=paired,
+        paired_significance_display="pvalue",
+    )
+
+    svg = output.read_text(encoding="utf-8")
+    assert svg.count("Best: DeepSeek-v4-pro · Coverage · coverage-aware") == 3
+    assert svg.count("p = 0.123") == 9
+
+
+def test_pvalue_formatter_does_not_render_small_values_as_zero():
+    assert _format_p_value(0.00046) == "p < 0.001"
+    assert _format_p_value(0.02955) == "p = 0.030"
 
 
 def test_single_series_partial_matrix_can_show_pvalues(tmp_path):

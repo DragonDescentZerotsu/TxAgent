@@ -23,6 +23,7 @@ from tools.chembl_tool.common.neighbor_selection import (
 from tools.chembl_tool.common.json_utils import (
     write_json_atomic as _write_json_atomic,
 )
+from tools.chembl_tool.common.reasoning_payload import load_env_file
 from tools.chembl_tool.common.task_workflows.global_prompt_pool import (
     BatchCommand,
     SCHEDULER_VERSION as GLOBAL_PROMPT_POOL_VERSION,
@@ -73,6 +74,7 @@ GLOBAL_PROMPT_POOL_SCHEDULER = "global_prompt_pool"
 TASK_DATA_NAMES = {
     "bbb_martins": "BBB_Martins",
     "bioavailability_ma": "Bioavailability_Ma",
+    "clintox": "ClinTox",
     "skin_reaction": "Skin_Reaction",
 }
 DEFAULT_BENCHMARK_DATA_ROOT = Path("data/processed_starling")
@@ -136,6 +138,9 @@ def _starling_index_path(experiment: Experiment, paper_root: Path) -> Path:
     elif experiment.task == "skin_reaction":
         name = CANONICAL_HELDOUT_INDEX_NAME
         filename = "starling_skin_reaction_neighbor_index.pkl"
+    elif experiment.task == "clintox":
+        name = "clintox_starling_full"
+        filename = "starling_clintox_neighbor_index.pkl"
     elif experiment.name.endswith("__starling_direct_numeric"):
         name = "bioavailability_starling_direct_numeric"
         filename = "starling_factor_neighbor_index.pkl"
@@ -253,7 +258,15 @@ def main(argv: list[str] | None = None) -> int:
             "provider_reasoning_preserved": True,
         },
         "visibility_mode": args.visibility_mode,
-        "visibility_contract": _visibility_contract(args.visibility_mode),
+        "visibility_contract": {
+            **_visibility_contract(args.visibility_mode),
+            "tool_execution": (
+                "harness_prefetch"
+                if args.harness_prefetch_tools
+                else _visibility_contract(args.visibility_mode)["tool_execution"]
+            ),
+        },
+        "harness_prefetch_tools": bool(args.harness_prefetch_tools),
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
@@ -305,6 +318,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"matrix_manifest": str(matrix_path)}, indent=2))
         return 0
 
+    load_env_file(Path(args.env_file))
     ensure_endpoint_api_key(args.api_key_env, args.base_url)
     failed = _run_selected_experiments(selected, args)
     if failed:
@@ -563,6 +577,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Validate inputs and write the matrix manifest without launching conditions.",
     )
     parser.add_argument("--api-key-env", default=GLM_API_KEY_ENV)
+    parser.add_argument("--env-file", default=".env")
     parser.add_argument("--base-url", default=GLM_BASE_URL)
     parser.add_argument("--model", default=GLM_MODEL)
     parser.add_argument(
@@ -575,6 +590,15 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     )
     parser.add_argument("--reasoning-effort", default=GLM_REASONING_EFFORT)
     parser.add_argument("--visibility-mode", choices=VISIBILITY_MODES, default=IDENTITY_BLIND)
+    parser.add_argument(
+        "--harness-prefetch-tools",
+        action="store_true",
+        help=(
+            "Prefetch molecule comparison tools while retaining the selected "
+            "identity visibility; useful for OpenAI-compatible models with "
+            "unreliable function-call emission."
+        ),
+    )
     parser.add_argument(
         "--neighbor-identity-policy",
         choices=NEIGHBOR_IDENTITY_POLICIES,

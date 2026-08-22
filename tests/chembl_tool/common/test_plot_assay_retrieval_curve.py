@@ -355,3 +355,78 @@ def test_best_panel_xlim_scales_beyond_previous_fixed_limit():
     )
 
     assert upper == 0.88
+
+
+def test_conditioned_metric_readers_cover_agent_knn_and_minimol_head_receipts():
+    assert plotter._metric_n({"n_total": 398}) == 398
+    assert plotter._metric_n({"n_evaluated": 262}) == 262
+    assert plotter._metric_n({"splits": {"evaluation": 246}}) == 246
+    assert plotter._metric_value({"macro_f1": 0.62}, "macro_f1") == 0.62
+    assert (
+        plotter._metric_value(
+            {"evaluation_metrics": {"macro_f1": 0.69}}, "macro_f1"
+        )
+        == 0.69
+    )
+
+
+def test_conditioned_agent_inclusion_gate_requires_full_zero_failure_metrics():
+    assert (
+        plotter._agent_metric_issue(
+            {"n_total": 398, "n_failed_runs": 0}, expected_n=398
+        )
+        == ""
+    )
+    assert "n_failed_runs=2" == plotter._agent_metric_issue(
+        {"n_total": 398, "n_failed_runs": 2}, expected_n=398
+    )
+    assert "expected=398" in plotter._agent_metric_issue(
+        {"n_total": 397, "n_failed_runs": 0}, expected_n=398
+    )
+
+
+def test_conditioned_comparison_ylim_is_shared_and_data_driven():
+    assert plotter._conditioned_comparison_ylim(
+        [{"macro_f1": 0.506}, {"macro_f1": 0.728}]
+    ) == (0.45, 0.8)
+
+
+def test_conditioned_paired_predictions_preserve_same_molecule_condition_rows(
+    tmp_path,
+):
+    agent_dir = tmp_path / "agent"
+    baseline_dir = tmp_path / "baseline"
+    agent_dir.mkdir()
+    baseline_dir.mkdir()
+    (agent_dir / "predictions.jsonl").write_text(
+        "\n".join(
+            json.dumps(
+                {
+                    "query_index": index,
+                    "smiles": "CC",
+                    "label": label,
+                    "pred_label": prediction,
+                    "final_status": "ok",
+                }
+            )
+            for index, (label, prediction) in enumerate(((0, 0), (1, 1)))
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    (baseline_dir / "valid_predictions.jsonl").write_text(
+        "\n".join(
+            json.dumps({"drug": "CC", "Y": label, "prediction": 0})
+            for label in (0, 1)
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    labels, agent, baseline, _, _ = plotter._read_paired_conditioned_predictions(
+        agent_dir / "metrics.json", baseline_dir / "metrics.json"
+    )
+
+    assert labels.tolist() == [0, 1]
+    assert agent.tolist() == [0, 1]
+    assert baseline.tolist() == [0, 0]

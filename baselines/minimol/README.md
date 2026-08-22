@@ -9,6 +9,12 @@ separate experiment lineages.
   provenance.
 - `head_runtime.py`: the shared classification/regression MLP head, loss,
   corrected epoch-level learning-rate schedule, and prediction helpers.
+- `condition_features.py`: optional train-derived categorical one-hot features.
+  Both the train-only CV selector and final head runner accept
+  `--condition-field`; omitting it preserves the molecule-only 512-dimensional
+  input exactly.
+- `baselines/conditioned_knn.py`: shared unique-molecule condition-first/null-
+  fallback selection used by both Morgan and MiniMol embedding KNN runners.
 
 ## Current TxAgent Starling benchmark
 
@@ -21,6 +27,25 @@ separate experiment lineages.
   `min_similarity=0` GPT-OSS-120B agent sensitivity. It delegates every task
   to the shared `starling_benchmark_matrix.py`; it is not a second matrix
   implementation.
+
+The conditioned benchmark uses `--condition-field condition_group` for BBB,
+Bioavailability, and Skin. The category vocabulary is frozen from the full
+outer-train split, valid/test values must already exist in that vocabulary, and
+outer valid/test labels are never used for epoch or threshold selection. After
+selecting the epoch by train-only scaffold CV AUROC, the same CV's pooled OOF
+scores determine a macro-F1 decision threshold. ClinTox has no accepted
+condition groups and therefore uses the same runner without this option. Fresh
+valid artifacts and the exact feature/threshold contract are under
+`outputs/baselines/starling_conditioned_valid_v1/<Task>/minimol_train_retest/`.
+
+The paper-facing MiniMol baseline is condition-aware whenever the task has an
+accepted condition taxonomy. Fresh valid macro-F1 is 0.6912 for BBB, 0.5872 for
+Bioavailability, 0.6030 for Skin, and 0.6520 for unconditioned ClinTox. The
+train-only OOF thresholds are respectively 0.6474, 0.6056, 0.6306, and 0.2508.
+For the three conditioned tasks, AUROCs are 0.7845, 0.7367, and 0.6776.
+Bioavailability's earlier apparent 0.4748 regression was caused by evaluating
+the same scores at an uncalibrated threshold of 0.5, not by the condition feature
+or generic runner.
 
 The training audit is in
 [`HEAD_TRAINING_DIAGNOSTICS.md`](HEAD_TRAINING_DIAGNOSTICS.md). Canonical

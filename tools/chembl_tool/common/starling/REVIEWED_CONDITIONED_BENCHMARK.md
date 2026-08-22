@@ -34,6 +34,12 @@ about reported external context, not proof that no unreported context existed.
 The older `processed_starling_context_conditioned_reviewed_v1` root is the
 broader exploratory group inventory and is not the selected benchmark.
 
+ClinTox remains on the frozen unconditioned `clinical_trial_failure_v1`
+benchmark. `tasks/clintox/context_conditioned_benchmark.py` preserves the
+source-specific AACT proposal/review audit that established this boundary, but
+no candidate taxonomy passed the publication gate and no conditioned ClinTox
+dataset is selected or consumed by the current agent or baseline runners.
+
 SLS was exhaustively cleaned but is not a formal Skin group: only four strict
 eligible parents remained, all in train and without three distinct usable
 scaffolds/split coverage. Occlusion, vehicle, route, age, formulation, intact
@@ -145,6 +151,33 @@ its reviewer provenance must remain `dual_semantic_prereview_unanimity_v2`.
 (`n_published_group_review_records`). It also records the exact allowlist,
 source hashes, group/split counts, base preservation policy, and identity and
 scaffold overlap checks.
+
+## Paper-facing MiniMol baseline
+
+For tasks with a selected condition taxonomy, the default trained MiniMol
+baseline represents each benchmark row as the frozen 512-dimensional molecule
+embedding concatenated with a one-hot `condition_group` feature. The categorical
+vocabulary comes only from outer train; an unseen evaluation category fails
+closed. ClinTox has no accepted condition taxonomy and therefore retains the
+same molecule-only head.
+
+Model selection is entirely train-only. Scaffold CV selects the epoch by mean
+inner-valid AUROC, then the selected epoch's pooled OOF scores select one
+macro-F1 decision threshold. A five-member head ensemble is fit on all train
+rows and evaluated using that frozen threshold. Outer valid/test labels do not
+select epochs, hyperparameters, categories, or thresholds. The shared entries
+are:
+
+```text
+baselines/minimol/condition_features.py
+baselines/minimol/run_train_cv.py
+baselines/minimol/run_bioavailability_ma.py
+```
+
+Current scaffold-valid results and complete OOF/feature contracts are recorded
+under `outputs/baselines/starling_conditioned_valid_v1/`; valid macro-F1 is
+0.6912 BBB, 0.5872 Bioavailability, 0.6030 Skin, and 0.6520 unconditioned
+ClinTox.
 
 ## Implementation and rebuild
 

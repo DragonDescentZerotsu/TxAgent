@@ -147,6 +147,9 @@ tools/chembl_tool/paper_experiments/watch_glm_tunnel_and_matrix.py
 tools/chembl_tool/paper_experiments/plot_starling_with_minimol_agent.py
 tools/chembl_tool/paper_experiments/run_minimol_valid_matrix_gpt_oss_120b.py
 tools/chembl_tool/paper_experiments/run_assay_retrieval_curve.py
+tools/chembl_tool/paper_experiments/build_assay_family_catalog.py
+tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py
+tools/chembl_tool/paper_experiments/audit_conditioned_assay_prompt_lengths.py
 tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py
 tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
 tools/chembl_tool/paper_experiments/analyze_coverage_selector_retrieval_changes.py
@@ -157,8 +160,14 @@ tools/chembl_tool/paper_experiments/train_ratio_prior_analysis.py
 baselines/minimol/run_bioavailability_ma.py --train-all
 baselines/minimol/run_train_cv.py
 baselines/minimol/run_embedding_knn.py
+baselines/conditioned_knn.py
 baselines/structure_knn/run.py
 ```
+
+Conditioned cumulative-family 的 Bioavailability nondirect context overlay 与 ClinTox source-native support
+bridge 分别由 `tasks/bioavailability_ma/build_nondirect_assay_context.py` 和
+`tasks/clintox/build_flat_assay_support_evidence.py` 构建；两者只生成版本化 source artifacts，不复制 reasoning
+runner。完整合同、当前 valid 进度和复现命令统一见 `ASSAY_LEVEL_RETRIEVAL.md`。
 
 `plot_starling_model_comparison.py` 是 GPT-OSS-20B、GPT-OSS-120B、train-label baselines 和后续
 ablation 的唯一 Starling 总图入口。新增完整 model/visibility summary 通过可重复的
@@ -229,6 +238,10 @@ ClinTox 当前严格 split 位于
    检索 query-scaffold-disjoint molecules，并把相同 molecule 跨 assays 合并为一个 flat branch。该实验不得
    改写 production family mapping；协议见
    `tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
+   Conditioned cumulative-family assay experiments use `assay_compact.raw_v3`:
+   at most three representative record cards per assay×molecule with complete
+   raw card fields and support text. They do not apply field-level truncation
+   and do not require or call a support-summary model.
 6. LLM reasoning 分为并发证据分支和 final 汇总：single-molecule 分支判断理化性质先验；paper-facing
    group-level 分支按少量、数据源无关的 mechanism family 判断 analog transferability；final-level 汇总所有
    证据。细粒度 `Tier.endpoint_group` 只用于 source-local normalization、检索审计和 legacy native runner，
@@ -609,13 +622,9 @@ reasoning_validation.py
 final_decision_prior.py
   提供显式 opt-in 的 final-stage decision profile。默认 `standard` 严格 no-op；
   `train_ratio_tiebreak_v1` 只允许 BBB/Bio final-only valid 诊断在真正 evidence tie 时使用 frozen train majority，
-  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。BBB 还保留
-  `direct_anchored_residual_v1` / `direct_override_recheck_v1` 历史诊断；它们不向 Bio CLI 暴露，valid gate 已失败，
-  不得成为默认或启动 formal test。任何 profile 都不得变成 batch quota。
-
-tasks/bbb_martins/final_decision_profiles.py
-  只拥有 BBB 的 direct-anchor、mechanism-weight 和 override/recheck prompt/schema/cross-field validation；公共
-  `final_decision_prior.py` 不包含 passive/efflux/influx 等 task 语义。该模块仅用于已失败的 E20 历史复现。
+  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。已失败的 BBB
+  `direct_anchored_residual_v1` / `direct_override_recheck_v1` 只保留冻结 artifacts 和 no-go 结论；专用实现已删除，
+  不得启动 formal test。任何 profile 都不得变成 batch quota。
 
 prompt_profile.py
   只负责 task prompt profile 的 manifest provenance、历史缺省映射和 branch-reuse 一致性 gate。具体 task

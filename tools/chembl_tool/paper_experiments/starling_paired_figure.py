@@ -117,16 +117,23 @@ def read_paired_metrics(
 
         agent_model = row["agent_model"]
         agent_method = row["agent_method"]
-        if agent_model not in series_by_label:
-            raise ValueError(f"Paired-CI agent series is not loaded: {agent_model!r}")
-        agent_results = series_by_label[agent_model]
         agent_key = (split, task_key, agent_method)
-        if agent_key not in agent_results:
+        agent_results = series_by_label.get(agent_model, {})
+        agent_row = agent_results.get(agent_key)
+        experiment_agent = next(
+            (
+                item
+                for item in experiments.get((split, task_key), ())
+                if item.model_label == agent_model and item.method == agent_method
+            ),
+            None,
+        )
+        if agent_row is None and experiment_agent is None:
             raise ValueError(
-                f"Paired-CI agent method is not plotted: {agent_key} in {agent_model!r}"
+                "Paired-CI agent method is not plotted in a model series or "
+                f"experiment row: {agent_key} in {agent_model!r}"
             )
-        agent_row = agent_results[agent_key]
-        if agent_row.get("method_family") != "molecular_evidence_agent":
+        if agent_row is not None and agent_row.get("method_family") != "molecular_evidence_agent":
             raise ValueError(f"Paired-CI selected agent is not an agent row: {agent_key}")
 
         baseline_key = (split, task_key, baseline_method)
@@ -142,11 +149,17 @@ def read_paired_metrics(
             raise ValueError(f"Paired-CI baseline is not plotted: {baseline_key}")
 
         n = int(row["n"])
-        if n != int(agent_row["n_test"]) or n != int(baseline_row["n_test"]):
+        agent_n = int(agent_row["n_test"]) if agent_row is not None else experiment_agent.n
+        if n != agent_n or n != int(baseline_row["n_test"]):
             raise ValueError(f"Paired-CI sample-count mismatch for {unique_key}")
         agent_f1 = float(row["agent_macro_f1"])
         baseline_f1 = float(row["baseline_macro_f1"])
-        if abs(agent_f1 - float(agent_row["macro_f1"])) > 5e-6:
+        plotted_agent_f1 = (
+            float(agent_row["macro_f1"])
+            if agent_row is not None
+            else experiment_agent.macro_f1
+        )
+        if abs(agent_f1 - plotted_agent_f1) > 5e-6:
             raise ValueError(f"Paired-CI agent macro-F1 mismatch for {unique_key}")
         if abs(baseline_f1 - float(baseline_row["macro_f1"])) > 5e-6:
             raise ValueError(f"Paired-CI baseline macro-F1 mismatch for {unique_key}")
@@ -175,10 +188,14 @@ def read_paired_metrics(
             baseline_method=baseline_method,
             agent_model=agent_model,
             agent_method=agent_method,
-            agent_label=next(
-                method.label
-                for method in task_by_key[task_key].methods
-                if method.key == agent_method
+            agent_label=(
+                next(
+                    method.label
+                    for method in task_by_key[task_key].methods
+                    if method.key == agent_method
+                )
+                if agent_row is not None
+                else experiment_agent.label
             ),
             n=n,
             agent_f1=agent_f1,
@@ -369,7 +386,21 @@ def render_paired_pvalue_band(
     for index, item in enumerate(comparisons):
         row_y = y + 76 + 25 * index
         parts.append(svg_text(x + 16, row_y, item.baseline_label, size=11, weight=650))
-        parts.append(svg_text(x + width - 16, row_y, f"p = {item.p_value_one_sided:.3f}", size=12, weight=750, fill=PURPLE, anchor="end"))
+        parts.append(
+            svg_text(
+                x + width - 16,
+                row_y,
+                _format_p_value(item.p_value_one_sided),
+                size=12,
+                weight=750,
+                fill=PURPLE,
+                anchor="end",
+            )
+        )
+
+
+def _format_p_value(value: float) -> str:
+    return "p < 0.001" if value < 0.001 else f"p = {value:.3f}"
 
 
 def _short_model_label(label: str) -> str:

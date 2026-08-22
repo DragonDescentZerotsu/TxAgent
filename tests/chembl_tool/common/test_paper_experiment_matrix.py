@@ -58,7 +58,7 @@ from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library impor
 
 def test_frozen_matrix_has_unique_expected_conditions():
     names = [experiment.name for experiment in EXPERIMENTS]
-    assert len(names) == 26
+    assert len(names) == 29
     assert len(names) == len(set(names))
     assert "bioavailability_ma__starling_full_mechanism" in names
     assert "bbb_martins__starling_direct" in names
@@ -67,6 +67,9 @@ def test_frozen_matrix_has_unique_expected_conditions():
     assert "skin_reaction__starling_direct" in names
     assert "skin_reaction__starling_full_flat" in names
     assert "skin_reaction__starling_full_mechanism" in names
+    assert "clintox__starling_direct" in names
+    assert "clintox__starling_full_flat" in names
+    assert "clintox__starling_full_mechanism" in names
 
 
 def test_skin_defaults_use_canonical_direct_aop_source():
@@ -90,10 +93,11 @@ def test_skin_defaults_use_canonical_direct_aop_source():
 
 def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_indices():
     experiments = experiments_for_starling_benchmark("random")
-    assert len(experiments) == 22
+    assert len(experiments) == 29
     assert {experiment.task for experiment in experiments} == {
         "bbb_martins",
         "bioavailability_ma",
+        "clintox",
         "skin_reaction",
     }
     assert all("/random/test.jsonl" in experiment.input_jsonl for experiment in experiments)
@@ -107,6 +111,12 @@ def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_ind
         item for item in experiments if item.name == "skin_reaction__starling_direct"
     )
     assert f"/{CANONICAL_HELDOUT_INDEX_NAME}/" in skin.index
+    clintox = next(
+        item for item in experiments if item.name == "clintox__starling_direct"
+    )
+    assert clintox.index.endswith(
+        "clintox_starling_full/starling_clintox_neighbor_index.pkl"
+    )
 
 
 def test_starling_benchmark_matrix_can_select_valid_without_changing_indices():
@@ -617,6 +627,7 @@ def test_skin_paper_view_excludes_standalone_weak_context_branch():
 def test_bioavailability_starling_mechanism_groups_are_reiterable():
     expected = [
         "Observed.direct_oral_bioavailability",
+        "Observed.nondirect_oral_bioavailability",
         "Observed.oral_auc_cmax_exposure",
         "Fa.absorption_solubility_permeability",
         "Fg.gut_wall_efflux_intestinal_metabolism",
@@ -804,6 +815,29 @@ def test_matched_prefetch_command_is_visible_but_disables_agentic_tool_choice():
     assert "--identity-blind" not in command
     assert "--harness-prefetch-tools" in command
     assert "runs_deployment_visible_prefetched" in command[command.index("--batch-root") + 1]
+
+
+def test_visible_parent_disjoint_can_prefetch_tools_without_hiding_structures():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="OPENROUTER_API_KEY",
+        parallelism=2,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy=PARENT_DISJOINT,
+        fresh_parent_disjoint=True,
+        fresh_disjoint=True,
+        harness_prefetch_tools=True,
+        paper_root="/tmp/visible-prefetch-paper-root",
+        split="test",
+    )
+
+    command = _command(EXPERIMENTS[0], args)
+
+    assert "--identity-blind" not in command
+    assert "--harness-prefetch-tools" in command
+    assert "runs_deployment_visible_parent_disjoint" in command[
+        command.index("--batch-root") + 1
+    ]
 
 
 def test_deployment_prompt_hides_query_name_but_preserves_structures_and_neighbor_name():

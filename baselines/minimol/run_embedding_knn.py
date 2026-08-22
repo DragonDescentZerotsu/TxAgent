@@ -12,6 +12,12 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
+from baselines.conditioned_knn import (
+    CONDITION_POLICIES,
+    NO_REPORTED_CONDITION,
+    benchmark_row_metadata,
+    select_conditioned_ranked_indices,
+)
 from baselines.structure_knn.run import (
     _metrics,
     _read_split,
@@ -63,7 +69,33 @@ def main(argv: list[str] | None = None) -> int:
         query_similarities = similarities[query_index].numpy()
         # Primary key is descending cosine similarity; reference-pool index breaks ties.
         ranked_indices = np.lexsort((reference_indices, -query_similarities))
-        selected_indices = ranked_indices[: args.k]
+        if args.condition_policy == "row_agnostic":
+            selected_with_source = [
+                (int(index), "all_train_rows") for index in ranked_indices[: args.k]
+            ]
+        else:
+            selected_with_source = select_conditioned_ranked_indices(
+                [int(index) for index in ranked_indices],
+                reference,
+                row,
+                k=args.k,
+                policy=args.condition_policy,
+            )
+        if len(selected_with_source) < args.k:
+            predictions.append(
+                {
+                    "query_index": query_index,
+                    "drug": row["drug"],
+                    "Y": row["Y"],
+                    **benchmark_row_metadata(row),
+                    "prediction": None,
+                    "score": None,
+                    "correct": None,
+                    "status": "insufficient_neighbors",
+                    "neighbors": [],
+                }
+            )
+            continue
         neighbors = [
             {
                 "train_index": int(reference_index),
@@ -72,9 +104,14 @@ def main(argv: list[str] | None = None) -> int:
                 "reference_index": reference[int(reference_index)]["reference_index"],
                 "drug": reference[int(reference_index)]["drug"],
                 "Y": reference[int(reference_index)]["Y"],
+                **benchmark_row_metadata(reference[int(reference_index)]),
                 "similarity": float(query_similarities[int(reference_index)]),
+                "condition_group": reference[int(reference_index)].get(
+                    "condition_group", NO_REPORTED_CONDITION
+                ),
+                "selection_source": selection_source,
             }
-            for reference_index in selected_indices
+            for reference_index, selection_source in selected_with_source
         ]
         score = sum(neighbor["Y"] for neighbor in neighbors) / args.k
         prediction = int(score >= 0.5)
@@ -83,6 +120,7 @@ def main(argv: list[str] | None = None) -> int:
                 "query_index": query_index,
                 "drug": row["drug"],
                 "Y": row["Y"],
+                **benchmark_row_metadata(row),
                 "prediction": prediction,
                 "score": score,
                 "correct": prediction == row["Y"],
@@ -91,15 +129,21 @@ def main(argv: list[str] | None = None) -> int:
             }
         )
 
-    metrics = _metrics(predictions)
+    evaluated_predictions = [row for row in predictions if row["status"] == "ok"]
+    if not evaluated_predictions:
+        raise ValueError("No evaluation rows have enough eligible neighbors")
+    metrics = _metrics(evaluated_predictions)
     top_k_similarities = [
         neighbor["similarity"]
         for prediction in predictions
         for neighbor in prediction["neighbors"]
     ]
+    method = f"minimol_embedding_cosine_knn_k{args.k}"
+    if args.condition_policy != "row_agnostic":
+        method += f"_{args.condition_policy}"
     metrics.update(
         {
-            "method": f"minimol_embedding_cosine_knn_k{args.k}",
+            "method": method,
             "evaluation_split": args.evaluation_split,
             "k": args.k,
             "vote": "unweighted_majority",
@@ -113,8 +157,10 @@ def main(argv: list[str] | None = None) -> int:
             "n_train": sum(row["reference_split"] == "train" for row in reference),
             "n_test": len(test),
             "n_evaluation": len(test),
-            "n_evaluated": len(test),
-            "evaluation_coverage": 1.0,
+            "n_evaluated": len(evaluated_predictions),
+            "n_skipped_insufficient_neighbors": len(test) - len(evaluated_predictions),
+            "evaluation_coverage": len(evaluated_predictions) / len(test),
+            "condition_policy": args.condition_policy,
             "retrieval_diagnostics": {
                 "mean_top_k_cosine_similarity": (
                     sum(top_k_similarities) / len(top_k_similarities)
@@ -162,7 +208,14 @@ def main(argv: list[str] | None = None) -> int:
         },
         **{
             key: metrics[key]
-            for key in ("method", "k", "vote", "score", "embedding")
+            for key in (
+                "method",
+                "k",
+                "vote",
+                "score",
+                "condition_policy",
+                "embedding",
+            )
         },
     }
 
@@ -243,6 +296,15 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Labeled reference splits. Use train valid only when evaluating test.",
     )
     parser.add_argument("--k", type=int, default=3)
+    parser.add_argument(
+        "--condition-policy",
+        choices=CONDITION_POLICIES,
+        default="row_agnostic",
+        help=(
+            "Conditioned benchmark retrieval policy. The default preserves the "
+            "historical row-level KNN behavior."
+        ),
+    )
     return parser.parse_args(argv)
 
 

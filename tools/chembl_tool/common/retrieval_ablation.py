@@ -19,6 +19,7 @@ def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
         "query": {
             "input_smiles": query.get("input_smiles", ""),
             "canonical_smiles": query.get("canonical_smiles", ""),
+            "external_condition": query.get("external_condition", ""),
         },
         "groups": [
             {

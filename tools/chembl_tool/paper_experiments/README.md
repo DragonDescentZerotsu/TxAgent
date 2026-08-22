@@ -15,7 +15,8 @@
   coverage-context 实验的唯一集中记录。
 - [Assay-level retrieval](ASSAY_LEVEL_RETRIEVAL.md)：与 group-level 平行的 context-level assay catalog、
   relevance-prefix retrieval、current/default direct-heldout-filtered + query-time `scaffold_disjoint` 与 historical
-  reference-pool 合同、scaffold audit、single/evidence-equivalent reuse、英文五-panel scaling figure 和实测结果。
+  reference-pool 合同、conditioned cumulative-family curve、无 summary 模型的 raw support cards、scaffold audit、
+  single/evidence-equivalent reuse、英文五-panel scaling figure 和实测结果。
 - [ClinTox clinical-trial-failure v1](../tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md)：独立
   AACT/FDA source-reconstructed lineage、retrieval hierarchy、v3 prompt、DeepSeek 结果和 no-promotion 结论。
 - [外部 Starling Table 2 MiniMol 复现](../../../baselines/minimol/STARLING_TABLE2_REPRODUCTION.md)：released
@@ -28,14 +29,10 @@
 - [Final evidence surface 诊断](FINAL_EVIDENCE_SURFACE_EXPERIMENT.md)：固定 retrieval/single/group 的
   summary/card final-only 消融、metadata census、输出 lineage 和已冻结的 no-go 结论。
 - [One-pass LoRA-RL](rl_lora/README.md)：single/group/final 融合、共享 reward/runtime、已停止的 hosted
-  120B 与当前本地 NeMo 20B；[one-pass reasoning 合同](rl_lora/ONE_PASS_REASONING.md) 单独记录
+  120B 与同样已停止的本地 NeMo 20B；[one-pass reasoning 合同](rl_lora/ONE_PASS_REASONING.md) 单独记录
   RL-specific prompt/data/evaluation lifecycle。
 - Train-ratio final-only 诊断：`run_train_ratio_prior_experiment.py` 负责 source/train contract、恢复运行和
   versioned output；`train_ratio_prior_analysis.py` 独立完成 paired statistics、trigger audit 和 copied-artifact parity。
-- BBB DeepSeek residual adjudication：`analyze_bbb_residual_adjudication.py` 汇总 Direct、标准
-  Full-mechanism、direct-anchored residual 和 override recheck，验证 final-only artifact parity 并执行
-  paired promotion gate；该 valid-only 方法线已终止且未读取 test。
-
 ## 当前 Starling gold lineages
 
 BBB 当前 paper-facing dataset 是 `experimental_meaningful_cns_access_v2`：3,667 parents，scaffold
@@ -191,7 +188,8 @@ tools/chembl_tool/paper_experiments/analyze_starling_direct_significance.py
 
 tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
   唯一 Starling model/visibility/dataset-lineage 总图入口；同 dataset 使用共享 baseline，不同 lineage 使用
-  `--baseline-display series` 和 `--baseline-series-group` 合并 visibility-duplicate baseline。
+  `--baseline-display series` 和 `--baseline-series-group` 合并 visibility-duplicate baseline；补充实验可用
+  `--experiment-legend` 增加清晰 legend，不新增一次性绘图模块。
 
 tools/chembl_tool/paper_experiments/starling_paired_figure.py
   总图的内部 paired-statistics TSV 校验和 CI/p-value SVG fragment；不是第二个 CLI 或独立图入口。
@@ -459,6 +457,13 @@ Watchdog 完成计数不是简单统计 `final_reasoning_output.json`：它要�
 仍需用户批准。若长尾修复需要 600 秒 request timeout，必须在 watchdog 和 matrix 两边都显式传
 `--timeout-s 600`。
 
+同一入口也可监控其它支持 `--output-root` 且能从成功 stage 断点恢复的 Python launcher。使用
+`--launcher-module`、`--launcher-args-json` 和 `--completion-mode recursive_reasoning_runs`；通用完成 gate
+要求 single/final、精确 expected group set 全部成功，但不硬编码 task prediction 字段。正在运行且省略了
+`--output-root` 的 singleton launcher 只能显式加 `--allow-implicit-output-root` 后接管；watchdog 自身不会被
+误识别为 launcher。`--ssh-local-forward` 同时冻结重建用的 `-L` 参数和允许替换的 SSH tunnel 范围。
+Endpoint 必须连续达到 `--unhealthy-threshold` 次失败才会停止 launcher，避免一次短暂探测失败造成中断。
+
 V4 parent-disjoint 使用公共 identity normalizer、retrieval policy、top-k backfill 和 manifest provenance，
 但直接 fresh-run，不读取 operational retrieval，也不生成 reuse plan。汇总必须从最终 `retrieval.json`
 逐条验证 parent conflict=0、held-out overlap=0、threshold violation=0，并验证 identity-blind leak=0。
@@ -642,6 +647,10 @@ python -m tools.chembl_tool.paper_experiments.plot_starling_model_comparison \
 Analyzer 从 metrics 自动选择每个 task 的最高 macro-F1 agent，按 molecule+gold 严格对齐三个 baseline，运行
 100,000 次 one-sided paired permutation。JSON/TSV 同时保存 10,000 次 paired-bootstrap CI 和跨全部 9 项
 比较的 Holm p-value；图沿用历史约定显示 raw exploratory p-value，不能解释为 confirmatory inference。
+若 best agent 来自总图追加的 experiment TSV，而不是主 metrics series，使用
+`--agent-metrics <experiment_metrics.tsv> --agent-model <exact model_label>`；analyzer 仍从主 metrics 读取并
+校验同 task/split/subset 的三个 baseline。绘图器随后会反向校验所选 experiment row 的 model、method、n 和
+macro-F1，避免把未画出的条件或错位样本统计量放进图中。
 当前 `parent_disjoint` 不等于 scaffold-disjoint：它只排除 exact、same-connectivity 和 same-parent。外部
 ChEMBL 同-scaffold analog 可以进入检索，因此 ChEMBL 与 train-only scaffold KNN 的数据可见性不完全对称。
 共享 identity policy registry 另提供 opt-in `scaffold_disjoint`：在 `parent_disjoint` 上额外排除标准化 parent

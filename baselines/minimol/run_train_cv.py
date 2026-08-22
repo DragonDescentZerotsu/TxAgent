@@ -22,8 +22,14 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from sklearn.model_selection import StratifiedGroupKFold
 from torch.utils.data import DataLoader
 
+from baselines.minimol.condition_features import (
+    append_condition_one_hot,
+    condition_feature_contract,
+    condition_vocabulary,
+)
 from baselines.minimol.run_bioavailability_ma import (
     EmbeddingDataset,
+    choose_threshold,
     load_split,
     make_model,
     predict_proba,
@@ -49,6 +55,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
+    parser.add_argument(
+        "--condition-field",
+        default=None,
+        help=(
+            "Optional categorical JSONL field appended to MiniMol embeddings as a "
+            "train-derived one-hot feature."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -105,9 +119,11 @@ def load_embedding_cache(path: Path, smiles: list[str], labels: list[int]) -> to
     return embeddings.detach().cpu().float()
 
 
-def binary_metrics(labels: list[int], scores: np.ndarray) -> dict[str, float]:
+def binary_metrics(
+    labels: list[int], scores: np.ndarray, *, threshold: float = 0.5
+) -> dict[str, float]:
     label_array = np.asarray(labels, dtype=np.int64)
-    predictions = (scores >= 0.5).astype(np.int64)
+    predictions = (scores >= threshold).astype(np.int64)
     score_tensor = torch.from_numpy(scores.astype(np.float64))
     label_tensor = torch.from_numpy(label_array.astype(np.float64))
     loss = F.binary_cross_entropy(score_tensor.clamp(1e-12, 1 - 1e-12), label_tensor)
@@ -116,6 +132,19 @@ def binary_metrics(labels: list[int], scores: np.ndarray) -> dict[str, float]:
         "auroc": float(roc_auc_score(label_array, scores)),
         "macro_f1": float(f1_score(label_array, predictions, average="macro")),
         "accuracy": float(accuracy_score(label_array, predictions)),
+    }
+
+
+def calibrate_oof_threshold(labels: list[int], scores: np.ndarray) -> dict[str, Any]:
+    """Choose a macro-F1 threshold from complete outer-train OOF predictions."""
+    if scores.shape != (len(labels),) or not np.isfinite(scores).all():
+        raise ValueError("OOF scores must contain one finite value per training row")
+    threshold, _ = choose_threshold(labels, scores, "valid_macro_f1")
+    return {
+        "strategy": "pooled_outer_train_scaffold_oof_macro_f1",
+        "threshold": threshold,
+        "fixed_0.5_metrics": binary_metrics(labels, scores),
+        "calibrated_metrics": binary_metrics(labels, scores, threshold=threshold),
     }
 
 
@@ -151,8 +180,21 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     train_path = args.data_dir / "train.jsonl"
     cache_path = args.embedding_cache_dir / "train.pt"
-    train = load_split(train_path)
-    embeddings = load_embedding_cache(cache_path, train.smiles, train.labels)
+    train = load_split(train_path, condition_field=args.condition_field)
+    molecule_embeddings = load_embedding_cache(cache_path, train.smiles, train.labels)
+    vocabulary = (
+        condition_vocabulary(train.conditions)
+        if train.conditions is not None
+        else None
+    )
+    embeddings = append_condition_one_hot(
+        molecule_embeddings, train.conditions, vocabulary
+    )
+    feature_contract = condition_feature_contract(
+        field=args.condition_field,
+        vocabulary=vocabulary,
+        molecule_embedding_dim=int(molecule_embeddings.shape[1]),
+    )
     groups = scaffold_groups(train.smiles)
     folds = make_scaffold_folds(train.labels, groups, n_folds=args.folds, seed=args.seed)
     device = torch.device(args.device)
@@ -161,6 +203,11 @@ def main() -> None:
     history = []
     labels_array = np.asarray(train.labels, dtype=np.int64)
     groups_array = np.asarray(groups, dtype=object)
+    oof_scores_by_epoch = {
+        epoch: np.full(len(train.labels), np.nan, dtype=np.float64)
+        for epoch in range(1, args.epochs + 1)
+    }
+    oof_fold = np.full(len(train.labels), -1, dtype=np.int64)
     for fold_index, (train_indices, valid_indices) in enumerate(folds):
         fold_seed = args.seed + fold_index
         set_seed(fold_seed)
@@ -185,7 +232,9 @@ def main() -> None:
             batch_size=args.eval_batch_size,
             shuffle=False,
         )
-        model, optimizer, scheduler, loss_fn = make_model(args, device)
+        model, optimizer, scheduler, loss_fn = make_model(
+            args, device, input_dim=embeddings.shape[1]
+        )
         fold_manifest.append(
             {
                 "fold": fold_index,
@@ -218,6 +267,8 @@ def main() -> None:
                 "valid": binary_metrics(inner_valid_labels, valid_scores),
             }
             history.append(row)
+            oof_scores_by_epoch[epoch_index + 1][valid_indices] = valid_scores
+            oof_fold[valid_indices] = fold_index
             print(
                 f"[minimol-cv] fold={fold_index + 1}/{args.folds} "
                 f"epoch={epoch_index + 1}/{args.epochs} "
@@ -227,15 +278,35 @@ def main() -> None:
             )
 
     selected_epoch, epoch_summary = select_epoch(history)
+    selected_oof_scores = oof_scores_by_epoch[selected_epoch]
+    threshold_calibration = calibrate_oof_threshold(
+        train.labels, selected_oof_scores
+    )
     history_path = args.output_dir / "fold_epoch_metrics.jsonl"
     with history_path.open("w", encoding="utf-8") as handle:
         for row in history:
             handle.write(json.dumps(row) + "\n")
     _write_json(args.output_dir / "epoch_summary.json", epoch_summary)
+    oof_path = args.output_dir / "selected_epoch_oof_predictions.jsonl"
+    with oof_path.open("w", encoding="utf-8") as handle:
+        for index, (label, score, fold_index) in enumerate(
+            zip(train.labels, selected_oof_scores, oof_fold, strict=True)
+        ):
+            row: dict[str, Any] = {
+                "train_row_index": index,
+                "fold": int(fold_index),
+                "Y": label,
+                "score": float(score),
+                "prediction": int(score >= threshold_calibration["threshold"]),
+            }
+            if args.condition_field is not None and train.conditions is not None:
+                row[args.condition_field] = train.conditions[index]
+            handle.write(json.dumps(row) + "\n")
     result = {
-        "method": "minimol_head_train_only_scaffold_cv.v1",
+        "method": "minimol_head_train_only_scaffold_cv.v2",
         "selection_metric": "mean inner-valid AUROC",
         "selected_epoch": selected_epoch,
+        "decision_threshold": threshold_calibration,
         "outer_valid_used_for_selection": False,
         "outer_test_used_for_selection": False,
         "data_dir": str(args.data_dir),
@@ -244,7 +315,9 @@ def main() -> None:
         "n_train": len(train.labels),
         "n_folds": args.folds,
         "cv_members_per_fold": 1,
+        "selected_epoch_oof_predictions": str(oof_path),
         "n_scaffolds": len(set(groups)),
+        "condition_features": feature_contract,
         "args": {
             key: str(value) if isinstance(value, Path) else value
             for key, value in vars(args).items()

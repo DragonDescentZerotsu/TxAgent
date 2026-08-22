@@ -29,9 +29,13 @@ from tools.chembl_tool.common.final_evidence_surface import (
     prepare_resumed_final_inputs,
 )
 from tools.chembl_tool.common.final_decision_prior import (
+    GENERAL_FINAL_DECISION_PROFILES,
     STANDARD_FINAL_DECISION,
     TrainRatioPrior,
     add_final_decision_profile_argument,
+    build_final_decision_prompt,
+    final_decision_allowed_values,
+    final_decision_validation_errors,
 )
 from tools.chembl_tool.common.identity_blind import (
     prepare_reasoning_retrieval,
@@ -49,8 +53,10 @@ from tools.chembl_tool.common.prompt_profile import (
     require_matching_prompt_profiles,
 )
 from tools.chembl_tool.common.reasoning_payload import (
+    attach_external_condition,
     clean_exact_match as _clean_exact_match,
     clean_shared_assay_context as _clean_shared_assay_context,
+    llm_evidence_query_payload as _llm_evidence_query_payload,
     llm_query_payload as _llm_query_payload,
     load_env_file as _load_env,
     read_jsonl_record as _read_jsonl_record,
@@ -84,12 +90,6 @@ from tools.chembl_tool.tasks.bbb_martins.prompt_profiles import (
     get_bbb_prompt_profile,
 )
 from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index, retrieve_neighbors
-from tools.chembl_tool.tasks.bbb_martins.final_decision_profiles import (
-    BBB_FINAL_DECISION_PROFILES,
-    bbb_final_decision_allowed_values,
-    bbb_final_decision_validation_errors,
-    build_bbb_final_decision_prompt,
-)
 
 
 DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
@@ -268,6 +268,7 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
     if retrieval is None:
         raise RuntimeError("Retrieval was not built or replayed.")
+    attach_external_condition(retrieval, query_record)
     if args.enable_chembl_exact_context and index is not None:
         _log("enriching retrieval with exact ChEMBL context")
         retrieval = enrich_retrieval_with_chembl_context(
@@ -462,7 +463,7 @@ def _run_parallel_reasoning(
             executor.submit(
                 _reason_one_group,
                 client,
-                _llm_query_payload(retrieval["query"]),
+                _llm_evidence_query_payload(retrieval["query"]),
                 group,
                 prompt_profile=prompt_profile,
             ): group["group_id"]
@@ -744,7 +745,7 @@ def _run_final_reasoning(
         compact_group_reasoning_outputs(group_outputs),
         surface=final_evidence_surface,
     )
-    decision_prompt = build_bbb_final_decision_prompt(
+    decision_prompt = build_final_decision_prompt(
         final_decision_profile,
         TRAIN_RATIO_PRIOR,
     )
@@ -761,7 +762,7 @@ def _run_final_reasoning(
             "content": json.dumps(
                 {
                     "task": "Final BBB prediction from analog evidence.",
-                        "query": _llm_query_payload(retrieval["query"]),
+                    "query": _llm_evidence_query_payload(retrieval["query"]),
                     "retrieval_coverage": retrieval["coverage"],
                     "single_molecule_analysis": {
                         "status": single_output.get("status"),
@@ -787,12 +788,12 @@ def _run_final_reasoning(
         required_fields=(*profile.final_required_fields, *decision_prompt.required_fields),
         allowed_values={
             **profile.final_allowed_values,
-            **bbb_final_decision_allowed_values(final_decision_profile),
+            **final_decision_allowed_values(final_decision_profile),
         },
         content_validator=lambda content: [
             *final_profile_validation_errors(content, profile=prompt_profile),
             *(
-                bbb_final_decision_validation_errors(
+                final_decision_validation_errors(
                     content,
                     profile=final_decision_profile,
                     prior=TRAIN_RATIO_PRIOR,
@@ -843,7 +844,7 @@ def build_group_prompt_payload(
         ],
         "instructions": list(profile.group_instructions),
         "required_json_schema": profile.group_schema,
-    })
+    }, evidence_prompt_profile=str(group.get("evidence_prompt_profile") or ""))
 
 
 # Historical internal callers keep working while external materializers use
@@ -1035,7 +1036,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     add_final_evidence_surface_argument(parser)
     add_final_decision_profile_argument(
         parser,
-        choices=BBB_FINAL_DECISION_PROFILES,
+        choices=GENERAL_FINAL_DECISION_PROFILES,
     )
     parser.add_argument(
         "--bbb-prompt-profile",

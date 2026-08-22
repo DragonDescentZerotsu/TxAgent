@@ -52,8 +52,10 @@ from tools.chembl_tool.common.prompt_profile import (
     require_matching_prompt_profiles,
 )
 from tools.chembl_tool.common.reasoning_payload import (
+    attach_external_condition,
     clean_exact_match as _clean_exact_match,
     clean_shared_assay_context as _clean_shared_assay_context,
+    llm_evidence_query_payload as _llm_evidence_query_payload,
     llm_query_payload as _llm_query_payload,
     load_env_file as _load_env,
     read_jsonl_record as _read_jsonl_record,
@@ -247,6 +249,7 @@ def main(argv: list[str] | None = None) -> int:
         _log(f"replaying frozen retrieval from {args.retrieval_replay_run_dir}")
     if retrieval.get("status") != "ok":
         raise SystemExit(json.dumps(retrieval.get("errors", []), ensure_ascii=False))
+    attach_external_condition(retrieval, query_record)
     if args.enable_chembl_exact_context and index is not None:
         _log("enriching retrieval with exact ChEMBL context")
         retrieval = enrich_retrieval_with_chembl_context(
@@ -419,7 +422,7 @@ def _run_parallel_reasoning(
             executor.submit(
                 _reason_one_group,
                 client,
-                _llm_query_payload(retrieval["query"]),
+                _llm_evidence_query_payload(retrieval["query"]),
                 group,
                 prompt_profile=prompt_profile,
             ): group["group_id"]
@@ -599,7 +602,7 @@ def _run_final_reasoning(
             "content": json.dumps(
                 {
                     "task": profile.final_task,
-                    "query": _llm_query_payload(retrieval["query"]),
+                    "query": _llm_evidence_query_payload(retrieval["query"]),
                     "retrieval_coverage": retrieval["coverage"],
                     "single_molecule_analysis": {
                         "status": single_output.get("status"),
@@ -710,7 +713,7 @@ def build_group_prompt_payload(
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
         "required_json_schema": GROUP_SCHEMA,
-    })
+    }, evidence_prompt_profile=str(group.get("evidence_prompt_profile") or ""))
 
 
 # Historical internal callers keep working while external materializers use
@@ -732,6 +735,11 @@ def _group_evidence_source(group: dict[str, Any]) -> str:
     if sources:
         return sources[0]
     return "ChEMBL"
+
+
+def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Compatibility adapter for legacy callers of the shared evidence view."""
+    return evidence_for_llm(row)
 
 
 def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:

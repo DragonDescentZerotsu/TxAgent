@@ -87,6 +87,7 @@ def prepare_harness_prefetched_retrieval(
     property_result = results[0]
     prefetched_properties = _compact_result(property_result, query_smiles)
     if identity_blind:
+        external_condition = str(query.get("external_condition") or "").strip()
         query.clear()
         query.update({
             "molecule_id": "query",
@@ -94,6 +95,8 @@ def prepare_harness_prefetched_retrieval(
             "tools_prefetched": True,
             "prefetched_molecule_properties": prefetched_properties,
         })
+        if external_condition:
+            query["external_condition"] = external_condition
     else:
         query["tools_prefetched"] = True
         query["prefetched_molecule_properties"] = prefetched_properties
@@ -265,6 +268,9 @@ def prepare_prefetched_final_retrieval(
 ) -> dict[str, Any]:
     """Restore prefetched query properties for a final-only retry."""
     output = deepcopy(retrieval)
+    external_condition = str(
+        (output.get("query") or {}).get("external_condition") or ""
+    ).strip()
     tool_results = ((single_output.get("llm") or {}).get("tool_results") or [])
     prefetched = tool_results[0] if tool_results else {}
     if identity_blind:
@@ -274,6 +280,8 @@ def prepare_prefetched_final_retrieval(
             "tools_prefetched": True,
             "prefetched_molecule_properties": prefetched,
         }
+        if external_condition:
+            output["query"]["external_condition"] = external_condition
         output.setdefault("experiment", {})["identity_blind"] = True
     else:
         output.setdefault("query", {})["tools_prefetched"] = True
@@ -296,14 +304,16 @@ def sanitize_identity_blind_branch_outputs(
 ) -> list[dict[str, Any]]:
     """Remove inferred source identities before downstream synthesis."""
     terms = _retrieval_sensitive_terms(retrieval)
-    sanitized = _replace_identity_terms(deepcopy(branch_outputs), terms)
-    serialized = str(sanitized)
-    leaks = [
-        term
-        for term in terms
-        if re.search(_identity_pattern(term), serialized, flags=re.IGNORECASE)
-    ]
-    if leaks:
+    pattern = _compile_identity_pattern(terms)
+    sanitized = _replace_identity_terms(branch_outputs, terms, pattern=pattern)
+    if pattern is not None and pattern.search(str(sanitized)):
+        # The combined check is the normal O(payload) path.  Preserve the
+        # historical diagnostic count only on the exceptional leak path.
+        leaks = [
+            term
+            for term in terms
+            if re.search(_identity_pattern(term), str(sanitized), flags=re.IGNORECASE)
+        ]
         raise ValueError(f"Identity-blind branch sanitization failed: terms={len(leaks)}")
     changed = sanitized != branch_outputs
     for branch in sanitized:
@@ -415,16 +425,40 @@ def _identity_terms(record: dict[str, Any]) -> list[str]:
     )
 
 
-def _replace_identity_terms(value: Any, terms: list[str]) -> Any:
+def _replace_identity_terms(
+    value: Any,
+    terms: list[str],
+    *,
+    pattern: re.Pattern[str] | None = None,
+) -> Any:
+    pattern = pattern if pattern is not None else _compile_identity_pattern(terms)
     if isinstance(value, str):
-        for term in terms:
-            value = re.sub(_identity_pattern(term), "[neighbor]", value, flags=re.IGNORECASE)
-        return value
+        return pattern.sub("[neighbor]", value) if pattern is not None else value
     if isinstance(value, list):
-        return [_replace_identity_terms(item, terms) for item in value]
+        return [
+            _replace_identity_terms(item, terms, pattern=pattern) for item in value
+        ]
     if isinstance(value, dict):
-        return {key: _replace_identity_terms(item, terms) for key, item in value.items()}
+        return {
+            key: _replace_identity_terms(item, terms, pattern=pattern)
+            for key, item in value.items()
+        }
     return value
+
+
+def _compile_identity_pattern(terms: list[str]) -> re.Pattern[str] | None:
+    """Compile one longest-first matcher instead of rescanning per identity.
+
+    Dense assay prompts can contain hundreds of source identities and hundreds
+    of kilobytes of trace text.  A single alternation preserves the existing
+    per-term boundary rules while making redaction linear in payload size.
+    """
+    if not terms:
+        return None
+    return re.compile(
+        "|".join(f"(?:{_identity_pattern(term)})" for term in terms),
+        flags=re.IGNORECASE,
+    )
 
 
 def assert_identity_blind_retrieval(
