@@ -13,20 +13,26 @@
 - [当前结果](RESULTS.md)：已完成 full run 的实测结果。
 - [Starling v4 结果总账](STARLING_BENCHMARK_RESULTS.md)：当前 random/scaffold lineage、跨模型、visible 和
   coverage-context 实验的唯一集中记录。
+- [Assay-level retrieval](ASSAY_LEVEL_RETRIEVAL.md)：与 group-level 平行的 context-level assay catalog、
+  relevance-prefix retrieval、current/default direct-heldout-filtered + query-time `scaffold_disjoint` 与 historical
+  reference-pool 合同、conditioned cumulative-family curve、无 summary 模型的 raw support cards、scaffold audit、
+  single/evidence-equivalent reuse、英文五-panel scaling figure 和实测结果。
+- [ClinTox clinical-trial-failure v1](../tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md)：独立
+  AACT/FDA source-reconstructed lineage、retrieval hierarchy、v3 prompt、DeepSeek 结果和 no-promotion 结论。
+- [外部 Starling Table 2 MiniMol 复现](../../../baselines/minimol/STARLING_TABLE2_REPRODUCTION.md)：released
+  CSV、作者补充的 `n_extractions` weighted-BCE 复现、结果和不可与当前 gold 混表的 lineage 边界。
+- [MiniMol 入口索引](../../../baselines/minimol/README.md)：共享 head/embedding runtime、current TxAgent
+  baselines、冻结 GPT-OSS-120B top-5 sensitivity 和外部 Table 2 lineage。
 - [KNN-Agent Router OOF 计划](ROUTER_OOF_IMPLEMENTATION_PLAN.md)：按 task 独立训练的 train-only OOF
   数据隔离、特征、nested evaluation、运行 gate 和当前执行状态。
 - [Trace 保留策略](TRACE_RETENTION.md)：最终 trace 的唯一目录、清理边界和一致性约束。
 - [Final evidence surface 诊断](FINAL_EVIDENCE_SURFACE_EXPERIMENT.md)：固定 retrieval/single/group 的
   summary/card final-only 消融、metadata census、输出 lineage 和已冻结的 no-go 结论。
 - [One-pass LoRA-RL](rl_lora/README.md)：single/group/final 融合、共享 reward/runtime、已停止的 hosted
-  120B 与当前本地 NeMo 20B；[one-pass reasoning 合同](rl_lora/ONE_PASS_REASONING.md) 单独记录
+  120B 与同样已停止的本地 NeMo 20B；[one-pass reasoning 合同](rl_lora/ONE_PASS_REASONING.md) 单独记录
   RL-specific prompt/data/evaluation lifecycle。
 - Train-ratio final-only 诊断：`run_train_ratio_prior_experiment.py` 负责 source/train contract、恢复运行和
   versioned output；`train_ratio_prior_analysis.py` 独立完成 paired statistics、trigger audit 和 copied-artifact parity。
-- BBB DeepSeek residual adjudication：`analyze_bbb_residual_adjudication.py` 汇总 Direct、标准
-  Full-mechanism、direct-anchored residual 和 override recheck，验证 final-only artifact parity 并执行
-  paired promotion gate；该 valid-only 方法线已终止且未读取 test。
-
 ## 当前 Starling gold lineages
 
 BBB 当前 paper-facing dataset 是 `experimental_meaningful_cns_access_v2`：3,667 parents，scaffold
@@ -35,6 +41,17 @@ permeability。Bioavailability 与 Skin 继续使用 scaffold-only `record_suppo
 1,674/209/209 和 1,966/245/245；Skin 每个 held-out split 只有 5 个 unavoidable singleton。旧 BBB
 `record_supported_v2`、`experimental_direct_cns_v1` 和第一版 `record_agreement70_split811_v1` 都只作 historical
 comparison；不合理的 exploratory `record_supported_v1` 已删除。
+
+ClinTox 是独立的 `clinical_trial_failure_v1`，不是第四个 Starling gold task。它从冻结 AACT
+toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators 构造 1,428 个 parent labels；Starling
+clinical/mechanistic rows 只用于 retrieval。构建、运行和审计入口为：
+
+```text
+tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
+tools/chembl_tool/tasks/clintox/starling_retrieval.py
+tools/chembl_tool/tasks/clintox/audit_clinical_trial_failure_agent.py
+tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+```
 
 ```text
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
@@ -151,12 +168,17 @@ tools/chembl_tool/common/starling/build_record_supported_benchmark.py
   record support 和 label balance，再最大化第一版 valid overlap。
 
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
-  读取 heldout union，从 inference evidence 删除全部 valid/test parents，构建 split-specific index。非默认
-  source lineage 通过 `--source-evidence INDEX_NAME=EVIDENCE_JSONL` 显式覆盖，frozen historical spec 不改写。
+  默认读取 heldout union，从 inference evidence 删除全部 valid/test parents，构建 train-reference index。
+  `--heldout-subsets test` 只用于已声明的 test post-selection sensitivity：删除 test parents、允许 valid
+  parents 进入 reference pool。两种 scope 会写入不同 index version/metadata；valid-only 或重复声明会拒绝，
+  `test valid` 会规范化为稳定的 `valid test` receipt。
+  非默认 source lineage 通过 `--source-evidence INDEX_NAME=EVIDENCE_JSONL` 显式覆盖，historical spec 不改写。
 
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
   当前正式 valid/test runner；默认 identity_blind + parent_disjoint、单一 128-slot global prompt pool，
-  valid 与 test root 隔离。
+  valid 与 test root 隔离。默认 `--reference-pool train` 会核验 index 确实排除了 valid+test；显式
+  `--reference-pool train_valid` 只允许 test，并核验 index 只排除 test。MiniMol descriptor 可通过
+  `--minimol-feature-root` 指向同一 scope 的 feature root。
 
 tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
   为新 lineage 新建 retrieval/manifest，再按 molecule key 严格复用兼容的 single/group/final stage。
@@ -167,10 +189,18 @@ tools/chembl_tool/paper_experiments/analyze_starling_direct_significance.py
 
 tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
   唯一 Starling model/visibility/dataset-lineage 总图入口；同 dataset 使用共享 baseline，不同 lineage 使用
-  `--baseline-display series` 和 `--baseline-series-group` 合并 visibility-duplicate baseline。
+  `--baseline-display series` 和 `--baseline-series-group` 合并 visibility-duplicate baseline；补充实验可用
+  `--experiment-legend` 增加清晰 legend，不新增一次性绘图模块。
 
 tools/chembl_tool/paper_experiments/starling_paired_figure.py
   总图的内部 paired-statistics TSV 校验和 CI/p-value SVG fragment；不是第二个 CLI 或独立图入口。
+
+Reference-pool 默认保持 train：index 排除 valid+test，KNN 只读 `train.jsonl`。只有已明确标为 test
+post-selection sensitivity 时，才组合使用 index builder 的 `--heldout-subsets test`、matrix 的
+`--reference-pool train_valid`，以及两个 KNN 的 `--reference-splits train valid`。这些入口都会记录 scope；
+matrix 还会读取 base-index metadata 反向核验。选择性删除 Bio valid-reference 的重跑没有新增 task-specific
+module：先从 frozen retrieval payload 确定变化 indices，再复用 matrix 的 `--indices` 与 shared prompt pool，
+最终只在 artifact analysis 合并未变化 predictions。
 
 tools/chembl_tool/paper_experiments/router_oof/
   独立的 train-only router 实验入口；不扩展正式 matrix 的 valid/test 枚举。它按 task 分别生成
@@ -431,6 +461,13 @@ Watchdog 完成计数不是简单统计 `final_reasoning_output.json`：它要�
 仍需用户批准。若长尾修复需要 600 秒 request timeout，必须在 watchdog 和 matrix 两边都显式传
 `--timeout-s 600`。
 
+同一入口也可监控其它支持 `--output-root` 且能从成功 stage 断点恢复的 Python launcher。使用
+`--launcher-module`、`--launcher-args-json` 和 `--completion-mode recursive_reasoning_runs`；通用完成 gate
+要求 single/final、精确 expected group set 全部成功，但不硬编码 task prediction 字段。正在运行且省略了
+`--output-root` 的 singleton launcher 只能显式加 `--allow-implicit-output-root` 后接管；watchdog 自身不会被
+误识别为 launcher。`--ssh-local-forward` 同时冻结重建用的 `-L` 参数和允许替换的 SSH tunnel 范围。
+Endpoint 必须连续达到 `--unhealthy-threshold` 次失败才会停止 launcher，避免一次短暂探测失败造成中断。
+
 V4 parent-disjoint 使用公共 identity normalizer、retrieval policy、top-k backfill 和 manifest provenance，
 但直接 fresh-run，不读取 operational retrieval，也不生成 reuse plan。汇总必须从最终 `retrieval.json`
 逐条验证 parent conflict=0、held-out overlap=0、threshold violation=0，并验证 identity-blind leak=0。
@@ -614,6 +651,10 @@ python -m tools.chembl_tool.paper_experiments.plot_starling_model_comparison \
 Analyzer 从 metrics 自动选择每个 task 的最高 macro-F1 agent，按 molecule+gold 严格对齐三个 baseline，运行
 100,000 次 one-sided paired permutation。JSON/TSV 同时保存 10,000 次 paired-bootstrap CI 和跨全部 9 项
 比较的 Holm p-value；图沿用历史约定显示 raw exploratory p-value，不能解释为 confirmatory inference。
+若 best agent 来自总图追加的 experiment TSV，而不是主 metrics series，使用
+`--agent-metrics <experiment_metrics.tsv> --agent-model <exact model_label>`；analyzer 仍从主 metrics 读取并
+校验同 task/split/subset 的三个 baseline。绘图器随后会反向校验所选 experiment row 的 model、method、n 和
+macro-F1，避免把未画出的条件或错位样本统计量放进图中。
 当前 `parent_disjoint` 不等于 scaffold-disjoint：它只排除 exact、same-connectivity 和 same-parent。外部
 ChEMBL 同-scaffold analog 可以进入检索，因此 ChEMBL 与 train-only scaffold KNN 的数据可见性不完全对称。
 共享 identity policy registry 另提供 opt-in `scaffold_disjoint`：在 `parent_disjoint` 上额外排除标准化 parent
@@ -715,6 +756,10 @@ MiniMol head 的 train-only scaffold CV 诊断入口为 `python -m baselines.min
 scheduler 修复、regularization sweep 和不替换 canonical baseline 的结论记录在
 `baselines/minimol/HEAD_TRAINING_DIAGNOSTICS.md`。该入口只读取 train embedding cache，不把 outer valid/test
 用于 epoch selection。
+
+MiniMol 入口总索引见 `baselines/minimol/README.md`。外部 Starling 论文 Table 2 的 released-CSV 复现使用
+独立的 `run_starling_table2.py` 和 output root；其任务定义与 split 不属于本项目当前 gold，结果不进入本页
+v4 总账或 canonical figures。
 
 MiniMol head 可重复传 `--reuse-embedding-cache-dir`，按 exact SMILES 从既有 molecule-only cache 复用
 embeddings；命中与未命中统计进入 `metrics.json`。valid-only run 的 canonical 指标键是

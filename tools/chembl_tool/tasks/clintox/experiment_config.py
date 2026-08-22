@@ -73,6 +73,49 @@ STARLING_RAW = SourceExperimentConfig(
     ),
 )
 
+STARLING = SourceExperimentConfig(
+    source_name="starling",
+    direct_groups=(
+        EvidenceGroupSpec(
+            "Direct.clinical_trial_failure",
+            "Direct",
+            "clinical_trial_failure",
+            source_groups=("Direct.clinical_trial_failure",),
+        ),
+    ),
+    mechanism_groups=(
+        EvidenceGroupSpec(
+            "Direct.clinical_trial_failure",
+            "Direct",
+            "clinical_trial_failure",
+            source_groups=("Direct.clinical_trial_failure",),
+        ),
+        EvidenceGroupSpec(
+            "Clinical.clinical_human_safety",
+            "Clinical",
+            "clinical_human_safety",
+            source_groups=("Mechanism.clinical_human_safety",),
+        ),
+        *(
+            EvidenceGroupSpec(
+                f"Mechanism.{family}",
+                "Mechanism",
+                family,
+                source_groups=(f"Mechanism.{family}",),
+            )
+            for family in (
+                "in_vivo_toxicology",
+                "organ_specific_toxicity",
+                "genotoxicity_carcinogenicity",
+                "cellular_stress_pathways",
+                "general_cytotoxicity",
+                "off_target_ddi_exposure",
+            )
+        ),
+    ),
+)
+
+
 CLINTOX_BASE = SourceExperimentConfig(
     source_name="clintox_base",
     direct_groups=(
@@ -134,6 +177,7 @@ STARLING_V7 = SourceExperimentConfig(
 
 SOURCES = {
     "chembl": CHEMBL,
+    "starling": STARLING,
     "starling_raw": STARLING_RAW,
     "clintox_base": CLINTOX_BASE,
     "starling_v7": STARLING_V7,

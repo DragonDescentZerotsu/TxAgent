@@ -14,11 +14,13 @@ from tools.chembl_tool.common.task_workflows.reasoning_stage_runtime import (
     SINGLE_STAGE,
     _canonical_group_outputs,
     _execute_final,
+    _hydrate_configured_branch_reuse,
     _invalidate_dependent_final,
     _merge_group_output,
     load_stage_state,
     prepare_stage_item,
     ready_stage_jobs,
+    synchronize_configured_single_reuse,
 )
 
 
@@ -269,6 +271,101 @@ def test_repaired_prerequisite_invalidates_stale_final_and_trace(tmp_path):
     (run_dir / "trace_messages.jsonl").write_text("{}\n", encoding="utf-8")
 
     _invalidate_dependent_final(run_dir)
+
+    assert not (run_dir / "final_reasoning_output.json").exists()
+    assert not (run_dir / "trace_messages.jsonl").exists()
+
+
+def test_hydrating_changed_frozen_single_invalidates_stale_final(tmp_path):
+    prepared = _prepared(tmp_path)
+    source_batch = tmp_path / "source"
+    prepared.args.single_analysis_source_batch = str(source_batch)
+    prepared.args.group_analysis_source_batch = ""
+    prepared.args.neighbor_context_profile = "standard"
+    source_run = source_batch / "runs" / "source_idx00000"
+    source_run.mkdir(parents=True)
+    (source_run / "single_molecule_reasoning_output.json").write_text(
+        json.dumps(
+            {
+                "status": "ok",
+                "analysis": "frozen",
+                "llm": {
+                    "content": {"reasoning_summary": "frozen"},
+                    "structured_output_validation": {"valid": True},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    run_dir = prepared.batch_run_root / "condition_idx00000"
+    run_dir.mkdir(parents=True)
+    (run_dir / "single_molecule_reasoning_output.json").write_text(
+        json.dumps(
+            {
+                "status": "ok",
+                "analysis": "stale",
+                "llm": {
+                    "content": {"reasoning_summary": "stale"},
+                    "structured_output_validation": {"valid": True},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (run_dir / "final_reasoning_output.json").write_text(
+        json.dumps({"status": "ok"}), encoding="utf-8"
+    )
+    (run_dir / "trace_messages.jsonl").write_text("{}\n", encoding="utf-8")
+
+    _hydrate_configured_branch_reuse(prepared, prepared.items[0], {}, run_dir)
+
+    assert json.loads(
+        (run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8")
+    )["analysis"] == "frozen"
+    assert not (run_dir / "final_reasoning_output.json").exists()
+    assert not (run_dir / "trace_messages.jsonl").exists()
+
+
+def test_changed_frozen_single_invalidates_final_before_prepare_overwrites_it(tmp_path):
+    prepared = _prepared(tmp_path)
+    source_batch = tmp_path / "source"
+    prepared.args.single_analysis_source_batch = str(source_batch)
+    source_run = source_batch / "runs" / "source_idx00000"
+    source_run.mkdir(parents=True)
+    (source_run / "single_molecule_reasoning_output.json").write_text(
+        json.dumps(
+            {
+                "status": "ok",
+                "llm": {
+                    "content": {"reasoning_summary": "frozen"},
+                    "structured_output_validation": {"valid": True},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    run_dir = prepared.batch_run_root / "condition_idx00000"
+    run_dir.mkdir(parents=True)
+    (run_dir / "single_molecule_reasoning_output.json").write_text(
+        json.dumps(
+            {
+                "status": "ok",
+                "llm": {
+                    "content": {"reasoning_summary": "stale"},
+                    "structured_output_validation": {"valid": True},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (run_dir / "final_reasoning_output.json").write_text(
+        json.dumps({"status": "ok"}), encoding="utf-8"
+    )
+    (run_dir / "trace_messages.jsonl").write_text("{}\n", encoding="utf-8")
+
+    synchronize_configured_single_reuse(
+        prepared, prepared.items[0], run_dir
+    )
 
     assert not (run_dir / "final_reasoning_output.json").exists()
     assert not (run_dir / "trace_messages.jsonl").exists()

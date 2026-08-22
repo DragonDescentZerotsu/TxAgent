@@ -8,93 +8,45 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import os
 import random
 from copy import deepcopy
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
-from torch.optim.lr_scheduler import LambdaLR
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from baselines.minimol.embedding_runtime import (
     DEFAULT_MINIMOL_SOURCE,
     create_featurizer,
     embed_smiles,
 )
+from baselines.minimol.condition_features import (
+    append_condition_one_hot,
+    condition_feature_contract,
+    condition_vocabulary,
+)
+from baselines.minimol.head_runtime import (
+    EmbeddingDataset,
+    evaluate_loss,
+    make_model,
+    predict_scores,
+    train_one_epoch,
+)
 
 DEFAULT_DATA_DIR = Path("data/processed/Bioavailability_Ma")
 DEFAULT_OUTPUT_DIR = Path("outputs/baselines/minimol/bioavailability_ma")
-
-
-class TaskHead(nn.Module):
-    def __init__(
-        self,
-        hidden_dim: int = 512,
-        input_dim: int = 512,
-        dropout: float = 0.1,
-        depth: int = 3,
-        combine: bool = True,
-    ) -> None:
-        super().__init__()
-        self.dense1 = nn.Linear(input_dim, hidden_dim)
-        self.dense2 = nn.Linear(hidden_dim, hidden_dim)
-        self.dense3 = nn.Linear(hidden_dim, hidden_dim)
-        self.final_dense = nn.Linear(input_dim + hidden_dim, 1) if combine else nn.Linear(hidden_dim, 1)
-        self.bn1 = nn.BatchNorm1d(hidden_dim)
-        self.bn2 = nn.BatchNorm1d(hidden_dim)
-        self.bn3 = nn.BatchNorm1d(hidden_dim)
-        self.dropout = nn.Dropout(dropout)
-        self.combine = combine
-        self.depth = depth
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        original_x = x
-
-        x = self.dense1(x)
-        x = self.bn1(x)
-        x = F.relu(x)
-        x = self.dropout(x)
-
-        x = self.dense2(x)
-        x = self.bn2(x)
-        x = F.relu(x)
-        x = self.dropout(x)
-
-        if self.depth == 4:
-            x = self.dense3(x)
-            x = self.bn3(x)
-            x = F.relu(x)
-            x = self.dropout(x)
-
-        x = torch.cat((x, original_x), dim=1) if self.combine else x
-        return self.final_dense(x)
-
-
-class EmbeddingDataset(Dataset):
-    def __init__(self, embeddings: torch.Tensor, labels: Iterable[int]) -> None:
-        self.embeddings = embeddings.float()
-        self.labels = torch.tensor(list(labels), dtype=torch.float32)
-
-    def __len__(self) -> int:
-        return int(self.labels.shape[0])
-
-    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
-        return self.embeddings[idx], self.labels[idx]
 
 
 @dataclass
 class SplitData:
     smiles: list[str]
     labels: list[int]
+    conditions: list[str] | None = None
 
 
 @dataclass
@@ -134,6 +86,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--threshold-strategy", choices=["fixed_0.5", "valid_macro_f1"], default="fixed_0.5")
     parser.add_argument(
+        "--decision-threshold",
+        type=float,
+        default=None,
+        help=(
+            "Optional train-only calibrated decision threshold. Supported with "
+            "--train-all; probabilities and AUROC are unchanged."
+        ),
+    )
+    parser.add_argument(
         "--evaluation-split",
         choices=("valid", "test"),
         default="test",
@@ -150,21 +111,37 @@ def parse_args() -> argparse.Namespace:
         help="Materialize validated embedding caches and exit without fitting a task head.",
     )
     parser.add_argument("--force-embed", action="store_true", help="Ignore cached MiniMol embeddings.")
+    parser.add_argument(
+        "--condition-field",
+        default=None,
+        help=(
+            "Optional categorical JSONL field appended to MiniMol embeddings as a "
+            "train-derived one-hot feature."
+        ),
+    )
     return parser.parse_args()
 
 
-def load_split(path: Path) -> SplitData:
+def load_split(path: Path, *, condition_field: str | None = None) -> SplitData:
     smiles: list[str] = []
     labels: list[int] = []
+    conditions: list[str] | None = [] if condition_field else None
     with path.open() as f:
         for line_number, line in enumerate(f, start=1):
             row = json.loads(line)
             try:
                 smiles.append(str(row["drug"]))
                 labels.append(int(row["Y"]))
+                if conditions is not None and condition_field is not None:
+                    value = str(row[condition_field]).strip()
+                    if not value:
+                        raise ValueError(
+                            f"{path}:{line_number} has an empty {condition_field!r}"
+                        )
+                    conditions.append(value)
             except KeyError as exc:
                 raise ValueError(f"{path}:{line_number} is missing required key {exc!s}") from exc
-    return SplitData(smiles=smiles, labels=labels)
+    return SplitData(smiles=smiles, labels=labels, conditions=conditions)
 
 
 def _json_safe(value):
@@ -288,68 +265,8 @@ def _load_reusable_embeddings(
     return registry, files
 
 
-def make_model(args: argparse.Namespace, device: torch.device) -> tuple[nn.Module, optim.Optimizer, LambdaLR, nn.Module]:
-    model = TaskHead(hidden_dim=args.hidden_dim, depth=args.depth, dropout=args.dropout, combine=True).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-    loss_fn = nn.BCELoss()
-
-    def lr_fn(epoch: int) -> float:
-        schedule_epoch = epoch + 1
-        if args.warmup > 0 and schedule_epoch <= args.warmup:
-            return schedule_epoch / args.warmup
-        denom = max(1, args.epochs - args.warmup)
-        decay_epoch = (
-            schedule_epoch - args.warmup
-            if args.warmup > 0
-            else epoch
-        )
-        decay_epoch = min(denom, max(0, decay_epoch))
-        return (1 + math.cos(math.pi * decay_epoch / denom)) / 2
-
-    scheduler = LambdaLR(optimizer, lr_lambda=lr_fn)
-    return model, optimizer, scheduler, loss_fn
-
-
-def train_one_epoch(
-    model: nn.Module,
-    loader: DataLoader,
-    optimizer: optim.Optimizer,
-    scheduler: LambdaLR,
-    loss_fn: nn.Module,
-    device: torch.device,
-) -> None:
-    model.train()
-    for inputs, targets in loader:
-        inputs = inputs.to(device)
-        targets = targets.to(device)
-        optimizer.zero_grad(set_to_none=True)
-        logits = model(inputs).squeeze(-1)
-        loss = loss_fn(torch.sigmoid(logits), targets)
-        loss.backward()
-        optimizer.step()
-    scheduler.step()
-
-
-def evaluate_loss(model: nn.Module, loader: DataLoader, loss_fn: nn.Module, device: torch.device) -> float:
-    model.eval()
-    total_loss = 0.0
-    with torch.no_grad():
-        for inputs, targets in loader:
-            inputs = inputs.to(device)
-            targets = targets.to(device)
-            logits = model(inputs).squeeze(-1)
-            total_loss += float(loss_fn(torch.sigmoid(logits), targets).item())
-    return total_loss / max(1, len(loader))
-
-
 def predict_proba(model: nn.Module, loader: DataLoader, device: torch.device) -> np.ndarray:
-    model.eval()
-    predictions: list[np.ndarray] = []
-    with torch.no_grad():
-        for inputs, _ in loader:
-            logits = model(inputs.to(device)).squeeze(-1)
-            predictions.append(torch.sigmoid(logits).detach().cpu().numpy())
-    return np.concatenate(predictions)
+    return predict_scores(model, loader, device, task_type="classification")
 
 
 def choose_threshold(y_true: list[int], y_score: np.ndarray, strategy: str) -> tuple[float, float]:
@@ -383,6 +300,11 @@ def evaluate_metrics(y_true: list[int], y_score: np.ndarray, threshold: float) -
 
 def main() -> None:
     args = parse_args()
+    if args.decision_threshold is not None:
+        if not args.train_all:
+            raise ValueError("--decision-threshold requires --train-all")
+        if not 0.0 <= args.decision_threshold <= 1.0:
+            raise ValueError("--decision-threshold must be between 0 and 1")
     if args.evaluation_split == "valid" and not args.train_all:
         raise ValueError("--evaluation-split valid requires --train-all to avoid validation selection leakage")
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -391,9 +313,20 @@ def main() -> None:
     os.environ.setdefault("MPLCONFIGDIR", str(matplotlib_cache_dir))
     device = torch.device(args.device)
 
-    train = load_split(args.data_dir / "train.jsonl")
-    valid = None if args.train_all else load_split(args.data_dir / "valid.jsonl")
-    test = load_split(args.data_dir / f"{args.evaluation_split}.jsonl")
+    train = load_split(
+        args.data_dir / "train.jsonl", condition_field=args.condition_field
+    )
+    valid = (
+        None
+        if args.train_all
+        else load_split(
+            args.data_dir / "valid.jsonl", condition_field=args.condition_field
+        )
+    )
+    test = load_split(
+        args.data_dir / f"{args.evaluation_split}.jsonl",
+        condition_field=args.condition_field,
+    )
 
     print(
         "[minimol] loaded splits: "
@@ -429,9 +362,30 @@ def main() -> None:
         )
         print("[minimol] embeddings-only cache materialization complete")
         return
-    train_embeddings = split_embeddings["train"]
-    valid_embeddings = split_embeddings.get("valid") if valid is not None else None
-    test_embeddings = split_embeddings[args.evaluation_split]
+    molecule_embedding_dim = int(split_embeddings["train"].shape[1])
+    vocabulary = (
+        condition_vocabulary(train.conditions)
+        if train.conditions is not None
+        else None
+    )
+    train_embeddings = append_condition_one_hot(
+        split_embeddings["train"], train.conditions, vocabulary
+    )
+    valid_embeddings = (
+        append_condition_one_hot(
+            split_embeddings["valid"], valid.conditions, vocabulary
+        )
+        if valid is not None
+        else None
+    )
+    test_embeddings = append_condition_one_hot(
+        split_embeddings[args.evaluation_split], test.conditions, vocabulary
+    )
+    feature_contract = condition_feature_contract(
+        field=args.condition_field,
+        vocabulary=vocabulary,
+        molecule_embedding_dim=molecule_embedding_dim,
+    )
 
     valid_loader = (
         DataLoader(
@@ -458,7 +412,9 @@ def main() -> None:
             shuffle=True,
             generator=generator,
         )
-        model, optimizer, scheduler, loss_fn = make_model(args, device)
+        model, optimizer, scheduler, loss_fn = make_model(
+            args, device, input_dim=train_embeddings.shape[1]
+        )
         best_epoch = -1
         best_valid_loss = float("inf")
         best_model = None
@@ -527,7 +483,11 @@ def main() -> None:
         valid_metrics_tuned = evaluate_metrics(valid.labels, valid_scores, valid_tuned_threshold)
         test_metrics_tuned = evaluate_metrics(test.labels, test_scores, valid_tuned_threshold)
     else:
-        threshold = 0.5
+        threshold = (
+            float(args.decision_threshold)
+            if args.decision_threshold is not None
+            else 0.5
+        )
         valid_macro_f1 = None
         valid_metrics = None
         valid_metrics_fixed = None
@@ -547,6 +507,7 @@ def main() -> None:
         "args": {key: _json_safe(value) for key, value in vars(args).items()},
         "splits": split_sizes,
         "evaluation_split": args.evaluation_split,
+        "condition_features": feature_contract,
         "embedding_reuse_manifest": (
             str(args.output_dir / "embedding_reuse_manifest.json")
             if (args.output_dir / "embedding_reuse_manifest.json").exists()
@@ -558,7 +519,20 @@ def main() -> None:
                 if args.train_all
                 else "lowest validation BCE loss per ensemble member"
             ),
-            "threshold_strategy": "fixed_0.5" if args.train_all else args.threshold_strategy,
+            "threshold_strategy": (
+                "configured_train_only_oof"
+                if args.decision_threshold is not None
+                else "fixed_0.5"
+                if args.train_all
+                else args.threshold_strategy
+            ),
+            "decision_threshold_source": (
+                "configured_train_only_oof"
+                if args.decision_threshold is not None
+                else "fixed_0.5"
+                if args.train_all
+                else args.threshold_strategy
+            ),
             "ensemble_valid_macro_f1_at_threshold": (
                 float(valid_macro_f1) if valid_macro_f1 is not None else None
             ),
@@ -581,8 +555,12 @@ def main() -> None:
         json.dump(output, f, indent=2)
         f.write("\n")
     with predictions_path.open("w") as f:
-        for smiles, label, score in zip(test.smiles, test.labels, test_scores):
+        for index, (smiles, label, score) in enumerate(
+            zip(test.smiles, test.labels, test_scores, strict=True)
+        ):
             row = {"drug": smiles, "Y": label, "score": float(score), "prediction": int(score >= threshold)}
+            if args.condition_field is not None and test.conditions is not None:
+                row[args.condition_field] = test.conditions[index]
             f.write(json.dumps(row) + "\n")
     torch.save(
         {
@@ -590,6 +568,7 @@ def main() -> None:
             "run_results": [asdict(result) for result in run_results],
             "threshold": threshold,
             "hparams": output["args"],
+            "condition_features": feature_contract,
         },
         checkpoint_path,
     )

@@ -10,6 +10,12 @@ from typing import Any
 from rdkit import Chem, DataStructs
 from rdkit.Chem import rdFingerprintGenerator
 
+from baselines.conditioned_knn import (
+    CONDITION_POLICIES,
+    NO_REPORTED_CONDITION,
+    benchmark_row_metadata,
+    select_conditioned_ranked_indices,
+)
 from tools.chembl_tool.common.neighbor_selection import (
     NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,
@@ -25,14 +31,32 @@ FP_BITS = 2048
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    train_path = args.data_dir / "train.jsonl"
+    _validate_reference_splits(args.reference_splits, args.evaluation_split)
+    reference_paths = [args.data_dir / f"{split}.jsonl" for split in args.reference_splits]
     test_path = args.data_dir / f"{args.evaluation_split}.jsonl"
-    train = _read_split(train_path)
+    reference = []
+    for split, path in zip(args.reference_splits, reference_paths, strict=True):
+        reference.extend(
+            {
+                **row,
+                "reference_split": split,
+                "reference_index": index,
+                "reference_path": path,
+            }
+            for index, row in enumerate(_read_split(path))
+        )
     test = _read_split(test_path)
     if args.k <= 0:
         raise ValueError("--k must be positive")
-    if len(train) < args.k:
-        raise ValueError(f"Training set has {len(train)} rows, fewer than k={args.k}")
+    if len(reference) < args.k:
+        raise ValueError(f"Reference pool has {len(reference)} rows, fewer than k={args.k}")
+    if (
+        args.condition_policy != "row_agnostic"
+        and args.neighbor_selector != SIMILARITY_SELECTOR
+    ):
+        raise ValueError(
+            "Condition-aware KNN currently requires --neighbor-selector similarity"
+        )
 
     generator = rdFingerprintGenerator.GetMorganGenerator(
         radius=FP_RADIUS,
@@ -40,15 +64,20 @@ def main(argv: list[str] | None = None) -> int:
         includeChirality=False,
         useBondTypes=True,
     )
-    train_fps = [
-        _fingerprint(row["drug"], generator, source=train_path, index=index)
-        for index, row in enumerate(train)
+    reference_fps = [
+        _fingerprint(
+            row["drug"],
+            generator,
+            source=row["reference_path"],
+            index=row["reference_index"],
+        )
+        for row in reference
     ]
 
     predictions = []
     for query_index, row in enumerate(test):
         query_fp = _fingerprint(row["drug"], generator, source=test_path, index=query_index)
-        similarities = DataStructs.BulkTanimotoSimilarity(query_fp, train_fps)
+        similarities = DataStructs.BulkTanimotoSimilarity(query_fp, reference_fps)
         candidates = [
             NeighborCandidate(
                 molecule_index=train_index,
@@ -58,12 +87,42 @@ def main(argv: list[str] | None = None) -> int:
             for train_index, similarity in enumerate(similarities)
             if args.min_similarity is None or similarity >= args.min_similarity
         ]
-        if len(candidates) < args.k:
+        candidates_by_index = {
+            candidate.molecule_index: candidate for candidate in candidates
+        }
+        if args.condition_policy == "row_agnostic":
+            selected_with_source = [
+                (candidate, "all_train_rows")
+                for candidate in select_neighbor_candidates(
+                    candidates,
+                    query_fingerprint=query_fp,
+                    candidate_fingerprints=reference_fps,
+                    top_k=args.k,
+                    selector=args.neighbor_selector,
+                )
+            ] if len(candidates) >= args.k else []
+        else:
+            ranked = sorted(
+                candidates,
+                key=lambda candidate: (-candidate.similarity, candidate.molecule_id),
+            )
+            selected_with_source = [
+                (candidates_by_index[index], source)
+                for index, source in select_conditioned_ranked_indices(
+                    [candidate.molecule_index for candidate in ranked],
+                    reference,
+                    row,
+                    k=args.k,
+                    policy=args.condition_policy,
+                )
+            ]
+        if len(selected_with_source) < args.k:
             predictions.append(
                 {
                     "query_index": query_index,
                     "drug": row["drug"],
                     "Y": row["Y"],
+                    **benchmark_row_metadata(row),
                     "prediction": None,
                     "score": None,
                     "correct": None,
@@ -73,21 +132,23 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             continue
-        selected = select_neighbor_candidates(
-            candidates,
-            query_fingerprint=query_fp,
-            candidate_fingerprints=train_fps,
-            top_k=args.k,
-            selector=args.neighbor_selector,
-        )
+        selected = [candidate for candidate, _ in selected_with_source]
         neighbors = [
             {
                 "train_index": candidate.molecule_index,
-                "drug": train[candidate.molecule_index]["drug"],
-                "Y": train[candidate.molecule_index]["Y"],
+                "reference_pool_index": candidate.molecule_index,
+                "reference_split": reference[candidate.molecule_index]["reference_split"],
+                "reference_index": reference[candidate.molecule_index]["reference_index"],
+                "drug": reference[candidate.molecule_index]["drug"],
+                "Y": reference[candidate.molecule_index]["Y"],
+                **benchmark_row_metadata(reference[candidate.molecule_index]),
                 "similarity": candidate.similarity,
+                "condition_group": reference[candidate.molecule_index].get(
+                    "condition_group", NO_REPORTED_CONDITION
+                ),
+                "selection_source": selection_source,
             }
-            for candidate in selected
+            for candidate, selection_source in selected_with_source
         ]
         score = sum(neighbor["Y"] for neighbor in neighbors) / args.k
         prediction = int(score >= 0.5)
@@ -96,6 +157,7 @@ def main(argv: list[str] | None = None) -> int:
                 "query_index": query_index,
                 "drug": row["drug"],
                 "Y": row["Y"],
+                **benchmark_row_metadata(row),
                 "prediction": prediction,
                 "score": score,
                 "correct": prediction == row["Y"],
@@ -103,7 +165,7 @@ def main(argv: list[str] | None = None) -> int:
                 "n_eligible_neighbors": len(candidates),
                 "retrieval_diagnostics": _retrieval_diagnostics(
                     query_fp,
-                    [train_fps[candidate.molecule_index] for candidate in selected],
+                    [reference_fps[candidate.molecule_index] for candidate in selected],
                     selected,
                 ),
                 "neighbors": neighbors,
@@ -117,6 +179,8 @@ def main(argv: list[str] | None = None) -> int:
     method = f"morgan_knn_k{args.k}"
     if args.neighbor_selector != SIMILARITY_SELECTOR:
         method += f"_{args.neighbor_selector}"
+    if args.condition_policy != "row_agnostic":
+        method += f"_{args.condition_policy}"
     if args.min_similarity is not None:
         threshold = str(args.min_similarity).replace(".", "p")
         method += f"_minsim{threshold}_supported"
@@ -127,13 +191,20 @@ def main(argv: list[str] | None = None) -> int:
             "k": args.k,
             "vote": "unweighted_majority",
             "score": "positive_neighbor_fraction",
-            "n_train": len(train),
+            "reference_splits": args.reference_splits,
+            "n_reference": len(reference),
+            "n_reference_by_split": {
+                split: sum(row["reference_split"] == split for row in reference)
+                for split in args.reference_splits
+            },
+            "n_train": sum(row["reference_split"] == "train" for row in reference),
             "n_test": len(test),
             "n_evaluation": len(test),
             "n_evaluated": len(evaluated_predictions),
             "n_skipped_insufficient_neighbors": len(test) - len(evaluated_predictions),
             "evaluation_coverage": len(evaluated_predictions) / len(test),
             "minimum_similarity": args.min_similarity,
+            "condition_policy": args.condition_policy,
             "neighbor_selector": selector_metadata(args.neighbor_selector),
             "retrieval_diagnostics": _mean_retrieval_diagnostics(evaluated_predictions),
             "fingerprint": {
@@ -160,7 +231,9 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps(
             {
                 "data_dir": str(args.data_dir),
-                "train_path": str(train_path),
+                "train_path": str(args.data_dir / "train.jsonl"),
+                "reference_splits": args.reference_splits,
+                "reference_paths": [str(path) for path in reference_paths],
                 "test_path": str(test_path),
                 "evaluation_path": str(test_path),
                 "evaluation_split": args.evaluation_split,
@@ -173,6 +246,7 @@ def main(argv: list[str] | None = None) -> int:
                         "vote",
                         "score",
                         "minimum_similarity",
+                        "condition_policy",
                         "neighbor_selector",
                         "fingerprint",
                     )
@@ -185,6 +259,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(json.dumps(metrics, indent=2), flush=True)
     return 0
+
+
+def _validate_reference_splits(reference_splits: list[str], evaluation_split: str) -> None:
+    allowed = (["train"], ["train", "valid"])
+    if reference_splits not in allowed:
+        raise ValueError(
+            "--reference-splits must be exactly 'train' or 'train valid'"
+        )
+    if reference_splits == ["train", "valid"] and evaluation_split != "test":
+        raise ValueError("train valid reference pool is allowed only for test evaluation")
 
 
 def _read_split(path: Path) -> list[dict[str, Any]]:
@@ -201,7 +285,22 @@ def _read_split(path: Path) -> list[dict[str, Any]]:
                 raise ValueError(f"{path}:{line_number} must contain drug and binary Y") from exc
             if label not in (0, 1):
                 raise ValueError(f"{path}:{line_number} has non-binary Y={label}")
-            rows.append({"drug": smiles, "Y": label})
+            rows.append(
+                {
+                    "drug": smiles,
+                    "Y": label,
+                    **{
+                        key: row[key]
+                        for key in (
+                            "condition_group",
+                            "condition_scope",
+                            "molecule_identity_key",
+                            "benchmark_row_id",
+                        )
+                        if key in row
+                    },
+                }
+            )
     return rows
 
 
@@ -322,6 +421,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         choices=("valid", "test"),
         default="test",
     )
+    parser.add_argument(
+        "--reference-splits",
+        nargs="+",
+        choices=("train", "valid"),
+        default=["train"],
+        help="Labeled reference splits. Use train valid only when evaluating test.",
+    )
     parser.add_argument("--k", type=int, default=3)
     parser.add_argument(
         "--neighbor-selector",
@@ -336,6 +442,15 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             "Optional eligibility threshold. Test rows with fewer than k eligible train "
             "neighbors are retained in predictions with status=insufficient_neighbors "
             "and excluded from supported-cohort metrics."
+        ),
+    )
+    parser.add_argument(
+        "--condition-policy",
+        choices=CONDITION_POLICIES,
+        default="row_agnostic",
+        help=(
+            "Conditioned benchmark retrieval policy. The default preserves the "
+            "historical row-level KNN behavior."
         ),
     )
     return parser.parse_args(argv)

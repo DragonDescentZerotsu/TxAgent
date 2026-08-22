@@ -102,6 +102,7 @@ STARLING = SourceExperimentConfig(
         )
         for group_id in (
             "Observed.direct_oral_bioavailability",
+            "Observed.nondirect_oral_bioavailability",
             "Observed.oral_auc_cmax_exposure",
             "Fa.absorption_solubility_permeability",
             "Fg.gut_wall_efflux_intestinal_metabolism",

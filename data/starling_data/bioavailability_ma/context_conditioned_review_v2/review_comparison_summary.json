@@ -1,0 +1,17 @@
+{
+  "n_queue": 2452,
+  "n_status_agreement": 2322,
+  "n_status_disagreement": 130,
+  "agreement_rate": 0.9469820554649266,
+  "consensus_status_counts": {
+    "accepted": 1990,
+    "needs_adjudication": 130,
+    "rejected": 332
+  },
+  "disagreement_directions": {
+    "rejected->accepted": 63,
+    "accepted->rejected": 67
+  },
+  "notice": "Agreement is a QA signal; conservative verdicts remain model-derived even if copied into the terminal benchmark ledger.",
+  "conservative_prereview_policy": "accept only when both independent semantic reviews accept; reject every disagreement and every unanimous rejection"
+}

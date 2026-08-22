@@ -151,3 +151,35 @@ def test_analysis_selects_best_agent_and_all_baselines(tmp_path, monkeypatch) ->
     assert output.with_suffix(".tsv").exists()
     assert output.with_suffix(".json").exists()
     assert output.with_suffix(".md").exists()
+
+    experiment_metrics = tmp_path / "experiment_metrics.tsv"
+    experiment_row = {
+        "benchmark_split": "scaffold",
+        "evaluation_subset": "valid",
+        "task": "bbb_martins",
+        "method": "deepseek_best",
+        "model_label": "DeepSeek-v4-pro",
+        "comparison_role": "candidate",
+        "macro_f1": "1.0",
+        "metrics_path": str(agent_best),
+    }
+    with experiment_metrics.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=list(experiment_row),
+            delimiter="\t",
+        )
+        writer.writeheader()
+        writer.writerow(experiment_row)
+
+    deepseek_result = analyze(
+        metrics,
+        tmp_path / "analysis" / "deepseek_paired",
+        agent_metrics_path=experiment_metrics,
+        agent_model="DeepSeek-v4-pro",
+        permutation_replicates=100,
+        bootstrap_replicates=100,
+    )
+
+    assert {row["agent_model"] for row in deepseek_result} == {"DeepSeek-v4-pro"}
+    assert {row["agent_method"] for row in deepseek_result} == {"deepseek_best"}

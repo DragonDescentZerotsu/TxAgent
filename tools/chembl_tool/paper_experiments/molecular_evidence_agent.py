@@ -150,6 +150,14 @@ EXPERIMENTS = [
         "clintox",
         "ClinTox",
         "outputs/chembl_tool/tasks/clintox/evidence_library/clintox_neighbor_index.pkl",
+        include_starling_direct=(
+            "outputs/chembl_tool/tasks/clintox/evidence_library/"
+            "starling_clinical_trial_failure_v1/starling_clintox_neighbor_index.pkl"
+        ),
+        include_starling_full=(
+            "outputs/chembl_tool/tasks/clintox/evidence_library/"
+            "starling_clinical_trial_failure_v1/starling_clintox_neighbor_index.pkl"
+        ),
     ),
     Experiment(
         "bioavailability_ma__none",
@@ -386,6 +394,10 @@ def _command(experiment: Experiment, args: argparse.Namespace) -> list[str]:
             )
             command.extend(["--retrieval-replay-source-batch", str(blind_batch)])
             command.extend(["--prefetched-tool-replay-source-batch", str(blind_batch)])
+    elif bool(getattr(args, "harness_prefetch_tools", False)):
+        # Keep query/neighbor identities visible while making tool execution
+        # deterministic for providers that do not reliably emit function calls.
+        command.append("--harness-prefetch-tools")
     if experiment.mode != "none":
         operational_root = experiment_run_root(
             visibility_mode,

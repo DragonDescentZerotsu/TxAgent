@@ -1,0 +1,14 @@
+{
+  "task": "Skin_Reaction",
+  "queue": "data/starling_data/skin_reaction/context_conditioned_review_v1/review_queue.jsonl",
+  "output": "data/starling_data/skin_reaction/context_conditioned_review_v1/model_prereview_round2.jsonl",
+  "model": "gpt-oss-120b",
+  "n_queue": 14059,
+  "n_reviewed_this_run": 235,
+  "status_counts": {
+    "accepted": 10056,
+    "rejected": 4003,
+    "error": 0
+  },
+  "notice": "Model-assisted pre-review only; not a final human review ledger."
+}

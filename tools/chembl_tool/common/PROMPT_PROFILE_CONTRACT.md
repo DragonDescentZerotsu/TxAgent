@@ -20,10 +20,8 @@ prompt_profile.py
 
 final_decision_prior.py
   An orthogonal final-only decision profile. `standard` is a strict no-op;
-  non-standard profiles must be explicit, versioned, and auditable. General
-  task CLIs expose only `standard` and `train_ratio_tiebreak_v1`; BBB also
-  exposes its historical `direct_anchored_residual_v1` and
-  `direct_override_recheck_v1` diagnostics.
+  non-standard profiles must be explicit, versioned, and auditable. Task CLIs
+  expose only `standard` and `train_ratio_tiebreak_v1`.
 
 tasks/<task>/prompt_profiles.py
   Task-local system roles, instructions, required schemas, allowed values,
@@ -48,6 +46,23 @@ batch lineage.
 Neither axis may change retrieval, evidence rows, gold labels, deterministic
 postprocessing, or the prediction after a valid model response.
 
+## Retrieval-declared evidence views
+
+`evidence_prompt_profile` is a separate retrieval-artifact property, not a task
+or final-decision profile. Ordinary group-level retrieval keeps the complete
+`minimal_evidence.v1` view. The current conditioned assay-flat lineage declares
+`assay_compact.raw_v3`: at most three representative record cards per
+assay×molecule, with endpoint/value/unit/species/conditions paired to complete
+raw support text. All selected card fields are kept without field-level
+truncation, and there is no summary-model dependency. Historical
+`assay_compact.v1` and summary-backed `assay_compact.v2` remain readable only
+for reproduction.
+
+Raw-v3 alone uses the DeepSeek 1,048,576-token transport contract and a
+900,000-token payload gate with 20,480 tokens reserved for completion. The
+legacy 400 KB group-prompt guard remains unchanged for every other evidence
+view.
+
 ## Current task defaults
 
 | Task | Historical profile | New-run default |
@@ -58,10 +73,6 @@ postprocessing, or the prediction after a valid model response.
 
 BBB v2/v3 and Skin v3 remain explicit historical/diagnostic opt-ins. They are
 not promoted defaults and do not authorize formal-test tuning.
-
-The two direct-anchored final-decision profiles are likewise BBB-only
-diagnostics. Their DeepSeek scaffold-valid promotion gate failed, so they are
-not defaults and must not be selected by Bioavailability or other task CLIs.
 
 ## Artifact requirements
 

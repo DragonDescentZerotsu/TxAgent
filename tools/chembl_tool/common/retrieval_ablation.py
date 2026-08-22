@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 from typing import Any
 
-from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.evidence_contract import evidence_for_group_llm
 
 
 def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
@@ -21,6 +21,7 @@ def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
         "query": {
             "input_smiles": query.get("input_smiles", ""),
             "canonical_smiles": query.get("canonical_smiles", ""),
+            "external_condition": query.get("external_condition", ""),
         },
         "groups": [
             {
@@ -29,7 +30,11 @@ def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
                 "endpoint_group": group.get("endpoint_group", ""),
                 **({"llm_neighbor_score_policy": score_policy} if score_visible else {}),
                 "neighbors": [
-                    _prompt_neighbor_contract(neighbor, score_visible=score_visible)
+                    _prompt_neighbor_contract(
+                        neighbor,
+                        group=group,
+                        score_visible=score_visible,
+                    )
                     for neighbor in group.get("neighbors") or []
                 ],
             }
@@ -41,14 +46,22 @@ def retrieval_prompt_contract(retrieval: dict[str, Any]) -> dict[str, Any]:
     return contract
 
 
-def _prompt_neighbor_contract(neighbor: dict[str, Any], *, score_visible: bool) -> dict[str, Any]:
+def _prompt_neighbor_contract(
+    neighbor: dict[str, Any],
+    *,
+    group: dict[str, Any],
+    score_visible: bool,
+) -> dict[str, Any]:
     payload = {
         "rank": neighbor.get("rank"),
         "molecule_chembl_id": neighbor.get("molecule_chembl_id", ""),
         "canonical_smiles": neighbor.get("canonical_smiles", ""),
         "similarity": neighbor.get("similarity"),
         "similarity_bucket": neighbor.get("similarity_bucket", ""),
-        "evidence_rows": [evidence_for_llm(row) for row in neighbor.get("evidence_rows") or []],
+        "evidence_rows": [
+            evidence_for_group_llm(row, group)
+            for row in neighbor.get("evidence_rows") or []
+        ],
     }
     if score_visible:
         payload["assay_transfer_score"] = round(float(neighbor["transfer_selection_score"]), 2)

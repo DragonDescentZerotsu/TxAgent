@@ -72,9 +72,16 @@ def allocate_scaffold_groups(
     *,
     target_size: int,
     seed: int = SEED,
+    optimize_record_support: bool = True,
+    exclude_empty_scaffold_from_heldout: bool = False,
 ) -> tuple[dict[str, str], dict[str, Any]]:
     groups = _scaffold_groups(rows, seed=seed)
-    candidates = [group for group in groups if group.size <= target_size]
+    candidates = [
+        group
+        for group in groups
+        if group.size <= target_size
+        and not (exclude_empty_scaffold_from_heldout and not group.scaffold)
+    ]
     if not candidates:
         raise ValueError("No scaffold group can enter the requested held-out split")
 
@@ -93,43 +100,47 @@ def allocate_scaffold_groups(
     integrality = np.ones(2 * n_groups)
     base_rows, base_low, base_high = _base_constraints(size, target_size)
 
-    total_singletons = np.r_[singletons, singletons]
-    stage1 = _solve(
-        total_singletons,
-        integrality,
-        binary_bounds,
-        base_rows,
-        base_low,
-        base_high,
-    )
-    minimum_singletons = int(round(total_singletons @ stage1))
-
     constraints = list(base_rows)
     low = list(base_low)
     high = list(base_high)
-    _append_equality(constraints, low, high, total_singletons, minimum_singletons)
+    minimum_singletons: int | None = None
+    singleton_imbalance: int | None = None
+    if optimize_record_support:
+        total_singletons = np.r_[singletons, singletons]
+        stage1 = _solve(
+            total_singletons,
+            integrality,
+            binary_bounds,
+            base_rows,
+            base_low,
+            base_high,
+        )
+        minimum_singletons = int(round(total_singletons @ stage1))
+        _append_equality(
+            constraints, low, high, total_singletons, minimum_singletons
+        )
 
-    # With the minimum total frozen, minimize valid/test singleton imbalance.
-    stage2 = _solve_with_absolute_difference(
-        integrality,
-        binary_bounds,
-        constraints,
-        low,
-        high,
-        np.r_[singletons, np.zeros(n_groups)],
-        np.r_[np.zeros(n_groups), singletons],
-    )
-    valid_singletons = int(round(singletons @ stage2[:n_groups]))
-    test_singletons = int(round(singletons @ stage2[n_groups:]))
-    singleton_imbalance = abs(valid_singletons - test_singletons)
-    _append_absolute_difference_bound(
-        constraints,
-        low,
-        high,
-        np.r_[singletons, np.zeros(n_groups)],
-        np.r_[np.zeros(n_groups), singletons],
-        singleton_imbalance,
-    )
+        # With the minimum total frozen, minimize valid/test singleton imbalance.
+        stage2 = _solve_with_absolute_difference(
+            integrality,
+            binary_bounds,
+            constraints,
+            low,
+            high,
+            np.r_[singletons, np.zeros(n_groups)],
+            np.r_[np.zeros(n_groups), singletons],
+        )
+        valid_singletons = int(round(singletons @ stage2[:n_groups]))
+        test_singletons = int(round(singletons @ stage2[n_groups:]))
+        singleton_imbalance = abs(valid_singletons - test_singletons)
+        _append_absolute_difference_bound(
+            constraints,
+            low,
+            high,
+            np.r_[singletons, np.zeros(n_groups)],
+            np.r_[np.zeros(n_groups), singletons],
+            singleton_imbalance,
+        )
 
     desired_positives = round(
         target_size * sum(int(row["Y"]) for row in rows) / len(rows)
@@ -191,6 +202,8 @@ def allocate_scaffold_groups(
             assignment[group.scaffold] = "test"
 
     audit = {
+        "record_support_objective_enabled": optimize_record_support,
+        "empty_scaffold_heldout_eligible": not exclude_empty_scaffold_from_heldout,
         "minimum_singletons_in_heldout": minimum_singletons,
         "minimum_singleton_imbalance": singleton_imbalance,
         "minimum_label_deviation": label_deviation,
@@ -198,6 +211,9 @@ def allocate_scaffold_groups(
         "maximum_prior_valid_reuse": maximum_prior_valid,
         "n_scaffold_groups": len(groups),
         "n_candidate_scaffold_groups": len(candidates),
+        "n_empty_scaffold_parents": sum(
+            group.size for group in groups if not group.scaffold
+        ),
     }
     return assignment, audit
 

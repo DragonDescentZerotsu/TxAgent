@@ -50,6 +50,13 @@ def test_hash_ignores_audit_policy_metadata_but_detects_neighbor_changes():
     assert retrieval_prompt_hash(baseline) != retrieval_prompt_hash(_retrieval("CHEMBL2"))
 
 
+def test_hash_detects_external_condition_changes():
+    baseline = _retrieval()
+    conditioned = _retrieval()
+    conditioned["query"]["external_condition"] = "Under a fasted state."
+    assert retrieval_prompt_hash(baseline) != retrieval_prompt_hash(conditioned)
+
+
 def test_changed_group_ids_is_branch_granular():
     assert changed_group_ids(_retrieval(), _retrieval("CHEMBL2")) == ["Direct.outcome"]
 

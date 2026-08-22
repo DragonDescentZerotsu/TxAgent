@@ -1,0 +1,309 @@
+{
+  "index_version": "clintox_starling_clinical_trial_failure_neighbor_index.v1",
+  "n_evidence_rows": 80039,
+  "n_index_molecules": 53820,
+  "groups": [
+    "Direct.clinical_trial_failure",
+    "Mechanism.cellular_stress_pathways",
+    "Mechanism.clinical_human_safety",
+    "Mechanism.general_cytotoxicity",
+    "Mechanism.genotoxicity_carcinogenicity",
+    "Mechanism.in_vivo_toxicology",
+    "Mechanism.off_target_ddi_exposure",
+    "Mechanism.organ_specific_toxicity"
+  ],
+  "fingerprint": {
+    "type": "RDKit-Morgan",
+    "radius": 2,
+    "n_bits": 2048,
+    "useFeatures": false,
+    "useChirality": false,
+    "useBondTypes": true
+  },
+  "source": {
+    "type": "starling_profile_index",
+    "dataset": "ClinTox strict-trial-failure analog evidence",
+    "source_version": "clintox_starling_clinical_trial_failure_retrieval.v1",
+    "gold_source_used_as_evidence": false,
+    "direct_gate_version": "literal_toxicity_trial_failure.v4",
+    "families": [
+      "clinical_human_safety",
+      "in_vivo_toxicology",
+      "organ_specific_toxicity",
+      "genotoxicity_carcinogenicity",
+      "cellular_stress_pathways",
+      "general_cytotoxicity",
+      "off_target_ddi_exposure"
+    ],
+    "exact_query_exclusion": true,
+    "required_query_time_policy": "parent_disjoint"
+  },
+  "source_stats": {
+    "source_receipt": {
+      "status": "verified",
+      "manifests": [
+        {
+          "manifest": "data/starling_data/clintox/clintox_base_v1/SOURCE_MANIFEST.json",
+          "manifest_sha256": "5d4341d1abdb3c4f8d4d2466eb5f485317b66a59618d61f5687aa61abc174658",
+          "n_files_verified": 2,
+          "files": [
+            {
+              "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+              "sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285"
+            },
+            {
+              "path": "data/starling_data/clintox/clintox_base_v1/extraction_guidance.json",
+              "sha256": "94b520acf0c58979580ba685e32a48d5c9f2853f7640e452e6c75adacd8dcb88"
+            }
+          ]
+        },
+        {
+          "manifest": "data/starling_data/clintox/raw_v1/SOURCE_MANIFEST.json",
+          "manifest_sha256": "409425ee6c99ce8c719247a9c0e4cbfef1558cad842e475c0fda2f3d65f82662",
+          "n_files_verified": 12,
+          "files": [
+            {
+              "path": "data/starling_data/clintox/raw_v1/nonclinical_in_vivo_toxicity/extractions.parquet",
+              "sha256": "89fcfd09669d08519861bcc90723bbbada34bac4a18480bce3120947a5615938"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/nonclinical_in_vivo_toxicity/extraction_guidance.json",
+              "sha256": "d7a71fcd3ab868abb9403341e87dd39a205c79cbabe2de9d4cf7f83d07ebbadc"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/organ_specific_toxicity/extractions.parquet",
+              "sha256": "5c15a8e12a92dd8adfdce21903acf86f45bdf376f4f34e5ee075438eaab42848"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/organ_specific_toxicity/extraction_guidance.json",
+              "sha256": "d2f4585c2488461ad089418a51d92150e5c073cb4653a2c8498737eb3e01ce2a"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/genotoxicity_carcinogenicity/extractions.parquet",
+              "sha256": "3b499789311c8ee3746f47276cdcd9a822b5835c7cf75ff170f5ad7267114328"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/genotoxicity_carcinogenicity/extraction_guidance.json",
+              "sha256": "f5b4f73e79456a8d73dba48a48d1367565e123552daa661e6bc5439b028166dc"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/cellular_stress/extractions.parquet",
+              "sha256": "909a6859ec26a55ba77ac148fa2f79e0df48c61ba41918c880f9ccfc429b6c90"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/cellular_stress/extraction_guidance.json",
+              "sha256": "4250d7ea0bae7ab4aa7056eaaf7ae94ae650787225aadc1ec060c2fc944234d4"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/general_cytotoxicity/extractions.parquet",
+              "sha256": "fc3183dde708cda5e47d7941f937633a09414b574d0d51279e6b03055b8a3ddb"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/general_cytotoxicity/extraction_guidance.json",
+              "sha256": "670643f5ebe7ae542fe8de5489e81f9fe8e72b9008b9dba6048977d25533f7da"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/off_target_ddi_exposure/extractions.parquet",
+              "sha256": "af15ebdb2e093082ff7ccede1db6efa2a5472e8c6ab96d67a585af792665886d"
+            },
+            {
+              "path": "data/starling_data/clintox/raw_v1/off_target_ddi_exposure/extraction_guidance.json",
+              "sha256": "e1506374463b3683132d908ebbb5a9463b07da19244cdfe02ba1791d264484c1"
+            }
+          ]
+        }
+      ]
+    },
+    "direct_gate": {
+      "status": "candidate_strict_literal_gate_pending_qa",
+      "gate_version": "literal_toxicity_trial_failure.v4",
+      "source_path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+      "source_sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285",
+      "n_source_rows_scanned": 338780,
+      "n_accepted_direct_rows": 338,
+      "n_unique_direct_smiles": 195,
+      "n_unique_direct_pmids": 289,
+      "decision_counts": {
+        "accept_literal_toxicity_trial_failure": 338,
+        "reject_efficacy_failure_not_toxicity_failure": 7,
+        "reject_failure_explicitly_not_toxicity_caused": 9,
+        "reject_missing_required_field": 24866,
+        "reject_needs_more_context": 14520,
+        "reject_negated_failure_event": 2638,
+        "reject_no_literal_toxicity_trial_failure": 290261,
+        "reject_patient_or_treatment_discontinuation": 6141
+      },
+      "qualifying_conditions_source_status": "column_unavailable",
+      "qa_sample_status": "pending_manual_review",
+      "n_qa_sample_rows": 120,
+      "paths": {
+        "accepted_claims": "data/starling_data/clintox/canonical_retrieval_v1/strict_direct_claims.parquet",
+        "qa_sample": "data/starling_data/clintox/canonical_retrieval_v1/strict_direct_qa_sample.parquet"
+      }
+    },
+    "clinical_base": {
+      "n_sources": 2,
+      "n_evidence_rows": 7619,
+      "sources": {
+        "clintox_literal_trial_failure": {
+          "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+          "n_input_rows": 338780,
+          "n_loaded_rows": 334,
+          "n_missing_smiles": 0,
+          "n_invalid_smiles": 4,
+          "n_low_confidence": 0,
+          "n_filtered_endpoint": 0,
+          "n_filtered_context": 0,
+          "n_filtered_record": 338442,
+          "record_filter_name": "literal_toxicity_trial_failure.v4",
+          "n_unique_smiles": 191,
+          "endpoint_field": "toxicity_outcome",
+          "endpoint_counts": {
+            "Associated with clinical-trial toxicities that led to discontinuation of its development (specific toxicity not described)": 3,
+            "Development discontinued because of an unacceptable toxicity profile": 2,
+            "Clinical development program was terminated due to toxicity": 2,
+            "Development halted due to elevated aminotransferase levels, suggesting liver toxicity": 2,
+            "Liver toxicity signal that resulted in discontinuation of development": 2,
+            "Development stopped after identification of unacceptable toxicity including phototoxicity, hypoglycaemia, thrombocytopenia and nephritis": 2,
+            "ALT elevation >3× ULN (hepatotoxicity); clinical development terminated after hepatotoxicity was observed with repeated use": 2,
+            "Development was terminated because of transaminase elevation (hepatotoxicity).": 2,
+            "Drug-related grade 3/4 adverse events in 8 of 9 patients; dose-limiting toxicities including dermatitis, hepatitis, QTc prolongation, and arthralgias; dose-limiting toxicity led to early trial closure": 2,
+            "Trial terminated early due to toxicities": 2,
+            "Clinical development terminated due to severe hepatotoxicity in clinical trials": 2,
+            "Phase 1 trial suspended for undisclosed complications related to safety (nature of toxicity not disclosed)": 1,
+            "DLTs experienced; in all but one patient the DLT was hepatotoxicity; fatal hepatorenal failure in one patient at 44 mg/m²; poorly tolerated at doses ≥44 mg/m²; most frequent events were gastrointestinal or nervous system events; study terminated due to severe hepatic toxicity": 1,
+            "Severe, unexpected dose-related hepatic toxicity; in one patient a liver biopsy showed microvesicular steatosis, periportal inflammation and signs of cholangitis without hepatocyte necrosis; toxicity became unacceptable at 44 mg/m² and led to discontinuation of clinical development": 1,
+            "Congestive heart failure / cardiotoxicity: three patients developed significant CHF on the dose-dense regimen; one patient's biopsy showed Grade II anthracycline (doxorubicin) toxicity; high cardiac toxicity rate led to trial closure. Minor hematologic toxicity (one patient required 2 units of packed red blood cells with doxorubicin).": 1,
+            "Reversible moderate to severe neurological toxicity manifested by dizziness and unsteady gait; moderate neurotoxicity persisted even after dose reduction; trial closed early due to significant neurotoxicity": 1,
+            "Dose-limiting toxicities of nausea/vomiting, hepatic dysfunction, and neuromyotoxicity at higher doses; moderate to severe muscle weakness with elevated creatine phosphokinase and aldolase associated with necrosis and type II muscle fiber atrophy; cardiac toxicity; cumulative fatigue and neuromuscular and cardiac toxicity precluded multiple cycles and led to discontinuation of clinical development": 1,
+            "Clinical development was discontinued because of severe adverse effects, including hemorrhagic cystitis": 1,
+            "DLTs at level 0 (G4 liver failure, G4 hyponatremia, G3 hyperglycemia, G3 rash and hyponatremia) leading to dose de-escalation; two further DLTs at DL-1 (G3 ALT, G3 neutropenia); grade 3+ hepatotoxicity in four of nine patients; overall grade 3+ toxicity rate of 78%; study prematurely closed due to toxicity": 1,
+            "Both phase 1 clinical trials were terminated due to off-target ophthalmological toxicity": 1,
+            "thrombocytopenia (abnormally low platelet levels); clinical development halted due to this off-target toxicity": 1,
+            "Reversible cardiac events in two patients: one with chest pain and decreased LVEF, one with asymptomatic increase in troponin (cardiotoxicity; further development stopped due to cardiac toxicities)": 1,
+            "Grade 3 dose-limiting toxicities of headache, vomiting and back pain in both patients at the 80 mg/week dose level; pain symptoms (headache, back pain, myalgia) were very common and seen in most patients from the first dose level; trial was prematurely terminated due to these severe toxicities and MTD/RP2D could not be identified; sufficient drug exposure to reach active doses could not be achieved.": 1,
+            "9/26 (35%) patients experienced severe adverse events leading to treatment discontinuation or death; toxicity-related treatment stops included febrile neutropenia, persistent neutropenia despite two dose reductions, grade 3 thrombocytopenia, asymptomatic LVEF decrease from 52 to 34%, grade 3 diarrhoea, and grade 3 asthenia; grade 3/4 toxicities included neutropenia, septic shock, heart failure, confusion, dyspnoea, nausea/vomiting, and diarrhoea; three toxic deaths (G4 neutropenia, G4 heart failure, septic shock); trial terminated due to unexpectedly high rate of severe adverse events": 1,
+            "Hepatotoxicity manifesting as increased alanine transaminase (ALT) elevations greater than 3x ULN, including several Hy's law cases; the phase III trial was terminated because of this toxicity": 1,
+            "Severe, reversible hepatotoxicity reported in all five treated patients; no antitumor activity seen; additional clinical studies halted because of the severity of the hepatotoxicity": 1,
+            "At 80 mg, DR-6MP was safe and well tolerated; reported AEs included drug-related gastrointestinal disorders, nausea, abdominal pain, decreased appetite, upper abdominal pain, and drug-induced hepatotoxicity (increase in LFTs necessitating dose reduction or study termination); two subjects who had stopped Purinethol due to hepatotoxicity were treated with DR-6MP on compassionate care and stabilized with normal LFTs.": 1,
+            "Reported clinical AEs included drug-related gastrointestinal disorders, nausea, abdominal pain, decreased appetite, upper abdominal pain, and drug-induced hepatotoxicity (increase in LFTs necessitating dose reduction or study termination); two subjects had to stop Purinethol treatment due to hepatotoxicity; reduced normal WBC levels relative to DR-6MP.": 1,
+            "Severe and prolonged immune-related adverse events when combined with nivolumab; grade ≥3 treatment-emergent AEs including neutropenia, alanine aminotransferase elevation, and liver-related AEs/hepatitis; one treatment-related death from interstitial lung disease occurred in the LET cohort; study terminated early due to safety concerns.": 1,
+            "High incidence of immune-related hepatotoxicity; in the abemaciclib plus nivolumab plus ET combination one patient developed fatal ILD; the study was terminated due to toxicity": 1,
+            "Higher incidence of severe toxicities versus low-dose arm leading to early trial closure; ≥ grade 2 leukopenia, ≥ grade 2 thrombocytopenia, ≥ grade 2 anemia, grade 2 renal toxicity (5 patients, all on high dose), one transient grade 3 serum creatinine increase, and grade 2 neurotoxicity; the study was closed early because of more episodes of severe toxicity in the high-dose cisplatin arm": 1,
+            "Severe CNS neurotoxicity including confusion and disorientation (lasting 4-7 days), stupor, visual/auditory hallucinations, and paranoid psychosis requiring haloperidol; the study was stopped early for accrual because of this toxicity": 1,
+            "Of 9 patients, 7 reported at least 1 side effect; 3 patients had akathisia within the first week (2 resolved, 1 led to study termination when it did not resolve with dose reduction); other mild-to-moderate side effects included headache, nausea, dizziness, tiredness and blurred vision, weight gain (10 lb), and increased anxiety; all side effects except weight gain resolved in the 8 patients who finished the study.": 1,
+            "Harmful effects (clinical toxicity) that led to the completion/termination of clinical development in Phase III trials for malaria": 1,
+            "Severe tenosynovitis in the levofloxacin arm; tenosynovitis persisted for 7 weeks in some patients although the clinical course was favorable in all cases; study was suspended due to this unexpected toxicity, and only 54.5% of randomized patients completed prophylaxis": 1,
+            "Trial prematurely closed for toxicity; dose-limiting toxicities (Grade 3 hepatic cytolysis and Grade 3 neutropenia) occurred, including after dose reduction": 1,
+            "Phase I/II trials terminated due to severe off-target toxicity (one case of heart failure); most common adverse effect neutropenia; most common grade 3/4 adverse events neutropenia and febrile neutropenia": 1,
+            "Severe thrombocytopenia, significant and possibly life-threatening Q-T prolongation, and profound fatigue; clinical development stopped due to severe and unexpected toxicity": 1,
+            "Clinical development was halted owing to unpredictable toxicity": 1,
+            "Trials terminated early due to overwhelming infectious complications and pulmonary and hepatic toxicity, thought to be immune-mediated": 1,
+            "Higher toxicity in the Buparlisib arm; trial stopped prematurely due to higher toxicity and lack of pathologic complete response benefit.": 1,
+            "Significant adverse events especially involving ocular function and neurological toxicity; clinical development stopped due to safety concern": 1,
+            "3 dose-limiting toxicities in 3 patients (G3 and G4 febrile neutropenia and G3 infection); study terminated early due to toxicities at doses below the anticipated exposure target": 1,
+            "Study terminated to new enrollment by the sponsor due to observed (actual) clinical toxicities when MK-5108 was combined with docetaxel in the CT arm at low MK-5108 doses; the toxicities prevented achievement of the targeted therapeutic exposure range.": 1,
+            "Dose reductions were required in 4/15 (27%) patients (all in cycle 2, one requiring a second reduction in cycle 3); cycle delays and dose holds were required for 11/15 (73%) patients and were most often related to liver toxicity; the study was terminated due to unacceptable frequency of dosing- schedule adjustments for hepatic toxicity. No DLTs were seen in any cohort.": 1,
+            "Dose reductions were required in 6/15 (40%) patients (five in cycle 2 and one in cycle 3); cycle delays and dose holds due to AEs were required for 11/15 (73%) patients, most often related to liver toxicity; the study was terminated due to unacceptable frequency of dosing-schedule adjustments for hepatic toxicity. No DLTs were seen in any cohort.": 1,
+            "Glomerulonephritis or nephropathy in 3 patients approximately 8 weeks post-treatment; 2 events judged as possibly related to pafuramidine; development program discontinued due to delayed post-treatment toxicity": 1,
+            "Dose-related and dose-limiting local toxicity with pain along the vein of injection and reversible erythema of the surrounding skin; one patient developed asymptomatic bradycardia (60 beats/min) with worsening bradycardia and dizziness requiring infusion interruption; mild leukopenia and reversible grade 1 increases in liver function values (alkaline phosphatase and glutamic pyruvic transaminase); possible neurological disturbances; study closed due to dose-limiting toxicity.": 1,
+            "MTD not reached at 80 mg/m² every 3 weeks (accrual continued); a phase I trial was stopped after 4 patients at 75 mg/m² every 3 weeks due to excessive toxicity; MTD was only 30 mg/m²/week in a Japanese phase I trial": 1,
+            "Study stopped due to unacceptable toxicity during dose-escalation; MTD not determined; all 19 patients experienced an AE; most considered treatment-related; SAEs, Grade>=3 AEs, DLT AEs, and AEs leading to discontinuation reported": 1
+          },
+          "n_evidence_rows": 191
+        },
+        "clintox_clinical_context": {
+          "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+          "n_input_rows": 338780,
+          "n_loaded_rows": 298336,
+          "n_missing_smiles": 0,
+          "n_invalid_smiles": 720,
+          "n_low_confidence": 0,
+          "n_filtered_endpoint": 0,
+          "n_filtered_context": 0,
+          "n_filtered_record": 39724,
+          "record_filter_name": "complete_non_direct_clinical_context.v1",
+          "n_unique_smiles": 7428,
+          "endpoint_field": "toxicity_category",
+          "endpoint_counts": {
+            "general_adverse_events": 79102,
+            "other": 49650,
+            "hematologic_toxicity": 28396,
+            "hepatotoxicity": 24690,
+            "cardiotoxicity": 22665,
+            "toxicity_absent": 22165,
+            "neurotoxicity": 21143,
+            "dermatologic_toxicity": 14626,
+            "gastrointestinal_toxicity": 14021,
+            "nephrotoxicity": 13316,
+            "metabolic_or_electrolyte_toxicity": 5096,
+            "ocular_toxicity": 1343,
+            "<missing>": 878,
+            "ototoxicity": 97,
+            "general": 84,
+            "general_toxicity": 67,
+            "cardiovascular_toxicity": 55,
+            "pulmonary_toxicity": 39,
+            "hematologic_toxicity; neurotoxicity": 30,
+            "hematologic_toxicity; gastrointestinal_toxicity": 24,
+            "otological_toxicity": 22,
+            "gastrointestinal_toxicity; hematologic_toxicity": 18,
+            "hematologic_toxicity; hepatotoxicity": 17,
+            "renal_toxicity": 16,
+            "null": 15,
+            "hepatotoxicity; hematologic_toxicity": 13,
+            "neurological_toxicity": 13,
+            "dermatologic_toxicity; gastrointestinal_toxicity": 12,
+            "neurotoxicity; hematologic_toxicity": 10,
+            "general_adverse_event": 10,
+            "hematologic_toxicity; cardiotoxicity": 9,
+            "hematologic_toxicity; nephrotoxicity": 9,
+            "metabolic_toxicity": 8,
+            "clinical_toxicity": 7,
+            "metabolic": 7,
+            "general_other": 7,
+            "metabolic_or_endocrine_toxicity": 7,
+            "neurologicity": 7,
+            "hypersensitivity": 6,
+            "neuropsychiatric_toxicity": 6,
+            "dermatologic": 6,
+            "nephrotoxicity; hepatotoxicity": 6,
+            "pulmonary": 6,
+            "bleeding/hemorrhage": 6,
+            "cardiovascular": 6,
+            "neurotoxicity; hematologic_toxicity; other": 5,
+            "dermatologic_toxicity; hepatotoxicity": 5,
+            "hematologic_toxicity; dermatologic_toxicity": 5,
+            "haematologic_toxicity": 5,
+            "hepatotoxicity; neurotoxicity": 5
+          },
+          "n_evidence_rows": 7428
+        }
+      }
+    },
+    "mechanisms": {
+      "mode": "verified_historical_catalog_reuse",
+      "path": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_raw_v1/03_evidence_catalog/evidence.jsonl",
+      "sha256": "061abf4baf11686a8b58c2324f4f54708df8327a791b65dbec29d9e71b62046f",
+      "n_evidence_rows": 72420
+    },
+    "group_counts": {
+      "Direct.clinical_trial_failure": 191,
+      "Mechanism.cellular_stress_pathways": 5020,
+      "Mechanism.clinical_human_safety": 15441,
+      "Mechanism.general_cytotoxicity": 18625,
+      "Mechanism.genotoxicity_carcinogenicity": 5440,
+      "Mechanism.in_vivo_toxicology": 12158,
+      "Mechanism.off_target_ddi_exposure": 7717,
+      "Mechanism.organ_specific_toxicity": 15447
+    }
+  },
+  "elapsed_s": 397.639,
+  "paths": {
+    "evidence_jsonl": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_clinical_trial_failure_v1/starling_clintox_evidence.jsonl",
+    "index_pkl": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_clinical_trial_failure_v1/starling_clintox_neighbor_index.pkl"
+  },
+  "canonical_root": "data/starling_data/clintox/canonical_retrieval_v1",
+  "direct_gate_status": "candidate_strict_literal_gate_pending_qa",
+  "gold_labels_created_from_starling_rows": 0
+}

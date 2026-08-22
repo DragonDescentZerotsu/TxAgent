@@ -88,3 +88,9 @@ def write_jsonl_atomic(path: Path, rows: list[dict[str, Any]]) -> None:
         with temporary.open("w", encoding="utf-8") as handle:
             for row in rows:
                 handle.write(json.dumps(row, ensure_ascii=False, default=str) + "\n")
+
+
+def read_jsonl(path: Path) -> list[dict[str, Any]]:
+    """Read non-empty JSONL records from ``path``."""
+    with path.open(encoding="utf-8") as handle:
+        return [json.loads(line) for line in handle if line.strip()]

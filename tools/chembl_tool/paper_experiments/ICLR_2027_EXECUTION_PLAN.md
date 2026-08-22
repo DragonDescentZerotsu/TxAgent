@@ -28,7 +28,8 @@ taxonomy。下文 `22 conditions / 6,887 sample-conditions` 只描述 historical
 GPT-OSS-120B BBB 4-condition/366-row valid，以及 Bio/Skin 各 4-condition valid bugfix matrix；Bio 还完成了
 `f20_evidence_calibrated_v2` 的 matched/full-pool fresh valid 对照，full-flat 和 full-mechanism paired CI 均高于
 0。2026-08-10 在设置冻结后首次运行 Bio full-flat/full-mechanism formal scaffold-test 和三项对应 baseline；
-BBB/Skin formal test 均未启动；BBB 在 E20 gate 失败后已停止且不再列为待办，Skin 仍需独立 gate。
+BBB/Skin formal test 均未启动。2026-08-13 另由用户明确授权完成三任务 DeepSeek train+valid-reference
+test sensitivity（E21），它不改变 BBB E20 no-promotion 或 Skin formal gate。
 record-supported-v2 GLM blind root 仍是 5,876/6,887 partial，visible 尚未启动，
 不得进入正式表。
 
@@ -86,10 +87,10 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | 实验 | 核心内容 | 对应贡献 | 优先级 | 当前状态 |
 |---|---|---|---|---|
 | E0 | 数据、same-parent relation、visibility 和运行完整性审计 | C1、C6 | P0 | 通用 identity/policy 和产物审计已实现；2026-07-23 valid 扩展矩阵为 3 x 26 条件和 22 个 parent-disjoint 条件，均 0 失败，prefetch 2,713 / 2,713 matched |
-| E1 | None vs direct retrieval | C1、C3 | P0 | historical v4 三模型 valid 已保留；current GPT-OSS-120B valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；Bio test 仅运行 none prerequisite，未运行 direct |
+| E1 | None vs direct retrieval | C1、C3 | P0 | historical v4 三模型 valid 已保留；current GPT-OSS-120B valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；DeepSeek E21 三任务 test sensitivity 已包含 none/direct，但不作为 formal train-only confirmation |
 | E2 | ChEMBL vs Starling | C2 | P0 | historical v4 source comparison 已保留；current split lineage 尚未完成跨 source/model confirmation |
 | E3 | Source-quality 人工 annotation | C2、C6 | P0 | 未开始 |
-| E4 | Flat vs mechanism | C3 | P0 | current GPT-OSS-120B valid 已完成；Bio formal test 已一次性完成，flat/mechanism 为 0.6663/0.6720，paired CI 跨0；BBB E20 no-go 后不跑 test，Skin 仍待独立 gate；historical 2026-08-06 V11 k=3 unique-molecule/r=5 validation ablation completed with zero failures |
+| E4 | Flat vs mechanism | C3 | P0 | GPT-OSS-120B valid and the one-shot Bio formal test are complete (flat/mechanism 0.6663/0.6720; paired CI crosses zero). BBB stopped after the E20 no-go and Skin still needs an independent gate. The historical V11 validation ablation completed without failures; DeepSeek E21 is post-selection test sensitivity only and does not alter the BBB/Skin formal gate. |
 | E5 | Deployment-visible agentic 补充矩阵与工具行为分析 | C4、C5 | P0 | historical v4 visible 各 22 条件已保留；current split lineage 尚未启动 visible |
 | E6 | Blind/visible 合同差异与细粒度 visibility attribution | C4、C5 | P1 精选条件 | GPT-OSS 两模型已有完整 blind/visible valid 对照，但同时改变 identity 与 tool execution；细粒度单因素 policy 未实现 |
 | E7 | Numeric vs non-numeric | C2 补充 | P1 | Bio 第一轮完成 |
@@ -103,9 +104,11 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | E15 | Matched train-label direct agent vs Morgan KNN | C1、C3、C6 | P0 诊断 | 三 task valid 820/820 完成并通过 parity/leak gate；无跨任务稳定优势，不运行 formal test |
 | E16 | BBB property-compatible analog selector | C1、C3、C6 | 已终止 | 唯一 0.02 matched-v3 valid 候选仅 +0.0012 macro-F1，CI 跨 0；不 promotion、不跑 test |
 | E17 | GPT-OSS-120B train-only LoRA-GRPO final-synthesis calibration | C1、C3、C5、C6 | P0 新实验 | 合同已冻结；node002 8×A100 完成 1-step NeMo RL LoRA 机械闭环，下一 gate 为 nonzero-advantage grpo-10；valid/test 尚未读取 |
-| E18 | GPT-OSS-120B one-pass full-flat LoRA-GRPO | C1、C3、C5、C6 | P0 新实验 | blind/visible-prefetched frozen-base 三任务 valid 已完成；SDK-default rank-32 all-module matched 三步 Tinker smoke 已通过，96 rollout 最大4,911、0 cap hit，曲线/W&B/checkpoint/valid-3 reload 均通过；待用户确认正式 Bio train，test 未读取 |
+| E18 | GPT-OSS one-pass full-flat LoRA-GRPO | C1、C3、C5、C6 | P0 新实验，当前停止 | blind/visible-prefetched frozen-base 三任务 valid 与双后端 bounded smoke 已完成；hosted 120B 正式任务由用户主动停止，本地 NeMo 20B Bio 正式任务在 step-174 metrics 后因 reward 无上升趋势和 policy-KL 不稳定主动停止，最后完整 checkpoint 为 step 160；尚未做 checkpoint-valid promotion，test 未读取，两个 backend 均不得自动恢复 |
 | E19 | Skin AOP source/topology-gated final-only integration | C3、C5、C6 | 已终止 | DeepSeek-v4-pro canonical-v3 MiniMol top-3 valid 完成零成本 materialization：78 个 direct=no_risk 中 75 个 AOP 为 non-voting，剩余 3 个均未同时通过 source-context 与 reactive-topology/activation-route gate；因此 0 fresh final、0 flip，macro-F1/accuracy 严格保持 0.641036/0.693878，promotion 失败，不读取 test |
 | E20 | BBB DeepSeek direct-anchored residual adjudication | C3、C5、C6 | 已终止 | 366 条 valid 零失败；Direct/standard mechanism/residual/recheck-hybrid macro-F1 为 0.7000/0.7184/0.7084/0.7109，hybrid delta CI `[-0.0186,+0.0412]`；gate 失败，不读取 test，BBB 方法开发停止 |
+| E21 | DeepSeek test post-selection reference-pool sensitivity | C1、C3、C5、C6 | 已完成，非 formal primary | train+valid-reference 的 12 个 BBB/Bio/Skin test 条件全部零失败；最佳分别为 Direct 0.6908、Full-flat 0.7392、None 0.6792。Bio 删除 valid-reference 后 Full-flat 为 0.7271，对 labeled-train Morgan KNN +0.0470，但 95% CI 跨0、双侧 p=0.2752、事后单侧 p=0.1380；不据此调整默认方法。 |
+| E22 | Skin outcome-calibrated multi-event causal-panel seed | C2、C3、C5、C6 | 已终止 | DeepSeek-v4-pro scaffold-valid label-blind seed 冻结 64 个 query；single/direct-group 64/64 复用，causal group/final 64/64 fresh、0 failure。合并回 245 条后 macro-F1 从 0.6410 降至 0.6151（delta -0.0259，95% CI [-0.0563,+0.0022]），10 flips 为 2 beneficial/8 harmful。55/64 causal branch 为 low-transferability、48/64 neutral；不启动 BBB seed，不读取 Skin test。 |
 
 ## 当前资产与缺口
 
@@ -115,15 +118,15 @@ deployment-visible agentic；valid 三套制度均为 26 个条件，共 78 个�
 | ChEMBL 四任务 evidence | 已有 direct/flat/mechanism | 需要冻结最终 source manifest | 数据冻结前 |
 | ChEMBL distance expansion | C-family tree ontology 已冻结；通用旧 config/validator、assay-manifest、superset index 和 cumulative retrieval prototype 已实现 | 需先升级 tree-node schema/retrieval；BBB v2 需重建，另外三任务 graph/mapping 与独立 batch/replay、汇总、绘图 runner 均缺失 | 数据冻结前 |
 | Bioavailability Starling | canonical direct v2、direct numeric/full、flat、mechanism 与 v4 held-out index 已冻结；full-flat/full-mechanism formal test 已完成 | source-quality 人工核验仍缺；direct test 未运行 | 数据冻结及 selected-condition test gate 已过 |
-| BBB Starling | experimental meaningful-CNS-access v2 gold、direct/full held-out index、coverage、baselines、GPT-OSS-120B 4-condition valid 与 DeepSeek E20 已完成 | source-quality 新数据仍缺；E20 gate 失败后不再开发、不读取 test | 方法线已终止 |
-| Skin Starling | record-supported-v2 gold/index 与 sensitization-aligned-v2 GPT-OSS-120B 4-condition valid 已完成 | 正式 test、跨模型与 source-quality 尚缺 | current valid gate 已过 |
+| BBB Starling | experimental meaningful-CNS-access v2 gold、direct/full held-out index、coverage、baselines、GPT-OSS-120B valid、DeepSeek E20 与 E21 sensitivity 已完成 | source-quality 新数据仍缺；E20 未 promotion，E21 不是 formal train-only test | 方法线已终止 |
+| Skin Starling | record-supported-v2 gold/index、sensitization-aligned-v2 GPT-OSS-120B valid 与 DeepSeek E21 sensitivity 已完成 | 正式 train-only test、跨模型 repeats 与 source-quality 尚缺 | current valid gate 已过 |
 | ClinTox Starling | 无与 toxicity-caused clinical-trial failure 同定义的 direct source，当前明确不构造 v4 split | 若未来新增 source 必须另做 ontology/source freeze，不能补几个 family 后混入当前 lineage | future lineage |
-| Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；current BBB/Bio/Skin valid indices 均通过 held-out/parent gate；Bio selected test 条件通过同一 gate | Skin formal test 仍需独立 lineage gate；BBB 已 gate-failed/no-test | 2026-08-23 |
-| Current blind main matrix | GPT-OSS-120B current valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；Bio selected test 条件已完成；BBB DeepSeek continuation 已 no-go；GLM record-v2 仍 partial | Skin formal test、跨模型、其余 repeats 和 release audit 待完成；BBB test 不再列为待办 | 2026-08-23 |
+| Retrieval entity relation | `operational` / `parent_disjoint` 公共 policy 已实现；current BBB/Bio/Skin valid indices 均通过 held-out/parent gate；train 与 test-only-excluded train+valid reference scope 现有显式 CLI/metadata 双向 gate | Skin formal test 仍需独立 lineage gate；DeepSeek E21 只能作为 post-selection sensitivity | 2026-08-23 |
+| Current blind main matrix | GPT-OSS-120B current valid 已按 BBB experimental-v2 与 Bio/Skin record-v2 分开完成；Bio selected formal test 与 DeepSeek E21 sensitivity 已完成；BBB DeepSeek method continuation 仍为 no-go；GLM record-v2 partial | Skin formal test、跨模型 repeats 和 release audit 待完成；BBB E21 不反向开启方法开发 | 2026-08-23 |
 | Visible deployment ablation | historical v4 三模型 22-condition visible 保留；current lineages 未启动 | 完整合同同时改变 identity 与 tool execution，不能当纯 visibility effect | current 待定 |
 | Source quality gold | 未建立 | 需要双人 annotation 和原始文献/assay 核验 | 2026-08-30 |
 | Learned baselines | 历史 strict-conflict baselines 已保留；current BBB experimental-v2 与 Bio/Skin record-v2 已有 lineage-matched MiniMol/Morgan/MiniMol-KNN；Bio formal test 三项 baseline 已完成 | 缺 Skin current formal test、ECFP RF/XGBoost、matched-neighbor retrieval-only vote 和独立第二 encoder；BBB 不再进入 test | 2026-08-16 |
-| Cross-model evidence | v4 scaffold-valid 已完成 GLM、GPT-OSS-20B 与 GPT-OSS-120B blind 同合同对照；BBB 已补 DeepSeek valid-only 诊断，Bio GPT-OSS-120B selected test 已完成 | 缺其它关键重复和 Skin formal test；BBB DeepSeek 未 promotion、不进入 test | 2026-08-23 |
+| Cross-model evidence | v4 scaffold-valid 已完成 GLM、GPT-OSS-20B 与 GPT-OSS-120B blind 同合同对照；DeepSeek E21 已完成三任务 test post-selection sensitivity，Bio 另有 train-reference selective rerun | E21 不是 formal train-only confirmation；仍缺关键 repeats 和 Skin formal test | 2026-08-23 |
 | Run-to-run variance | 当前每个条件一次 | 关键比较需至少 3 次独立生成 | 2026-08-30 |
 | Visibility failure audit | 第一轮已完成 | 需要第二 annotator 和 targeted causal ablation | 2026-08-30 |
 | 论文主文与图表 | 未开始正式写作 | 不能等所有实验结束后才写 | 第一版 2026-09-06 |
@@ -594,6 +597,10 @@ view、样本数、正负类分母和 paired bootstrap 区间。
 > 执行细节只保留作历史，不得启动 strict 四级 LLM curve。E12 主线改为
 > `RELEVANCE_DILUTION_EXPERIMENT_PLAN.md` 中的 controlled relevance-dilution prefixes；
 > strict H1 只作为 secondary analysis。
+
+2026-08-18 clarification：`ASSAY_LEVEL_RETRIEVAL.md` 的 Starling context-assay relevance curve 是独立诊断，
+用于测试 ranked assay information expansion；它不是本节要求的 ChEMBL-only D/C/H1/H2 source-distance E12，
+也不能用其 current partial valid metrics 将 E12 标为完成。
 
 2026-07-20 实现状态：BBB v2 先对 20,369 个 D/C assays 做 measured-state census，确认 tight-junction、
 efflux/influx abundance 和 functional PXR/CAR 已属于 base；因此 v1 对这些 node 的 extension mapping 作废。

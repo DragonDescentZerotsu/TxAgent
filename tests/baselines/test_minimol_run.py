@@ -12,7 +12,11 @@ from baselines.minimol.run_bioavailability_ma import (
     make_model,
     train_one_epoch,
 )
-from baselines.minimol.run_train_cv import make_scaffold_folds, select_epoch
+from baselines.minimol.run_train_cv import (
+    calibrate_oof_threshold,
+    make_scaffold_folds,
+    select_epoch,
+)
 
 
 def test_reusable_embeddings_are_indexed_by_exact_smiles(tmp_path):
@@ -62,6 +66,20 @@ def test_select_epoch_uses_valid_auroc_then_f1_then_earlier_epoch():
 
     assert selected == 2
     assert len(summary) == 3
+
+
+def test_oof_threshold_calibration_uses_all_train_rows_and_improves_macro_f1():
+    labels = [0, 0, 1, 1]
+    scores = torch.tensor([0.60, 0.70, 0.80, 0.90]).numpy()
+
+    calibration = calibrate_oof_threshold(labels, scores)
+
+    assert calibration["strategy"] == "pooled_outer_train_scaffold_oof_macro_f1"
+    assert calibration["threshold"] > 0.5
+    assert (
+        calibration["calibrated_metrics"]["macro_f1"]
+        > calibration["fixed_0.5_metrics"]["macro_f1"]
+    )
 
 
 def test_learning_rate_warms_up_and_steps_after_optimizer_update():

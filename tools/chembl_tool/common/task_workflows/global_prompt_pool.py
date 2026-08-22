@@ -37,6 +37,7 @@ from tools.chembl_tool.common.task_workflows.reasoning_stage_runtime import (
     load_stage_state,
     prepare_stage_item,
     ready_stage_jobs,
+    synchronize_configured_single_reuse,
 )
 
 
@@ -83,7 +84,27 @@ def run_global_prompt_pool(
     preparation_workers: int = 8,
 ) -> list[dict[str, Any]]:
     """Parse matrix batch commands, then use the canonical prepared-batch pool."""
-    prepared_by_name = {
+    prepared_by_name = prepare_batch_commands(
+        commands,
+        max_workers=max_workers,
+        max_stage_requeues=max_stage_requeues,
+    )
+    return run_prepared_prompt_pool(
+        prepared_by_name,
+        max_workers=max_workers,
+        max_stage_requeues=max_stage_requeues,
+        preparation_workers=preparation_workers,
+    )
+
+
+def prepare_batch_commands(
+    commands: list[BatchCommand],
+    *,
+    max_workers: int,
+    max_stage_requeues: int = 0,
+) -> dict[str, PreparedBatch]:
+    """Parse batch commands without starting retrieval preparation or LLM stages."""
+    return {
         spec.experiment_name: _prepare_command(
             spec,
             max_workers=max_workers,
@@ -91,12 +112,6 @@ def run_global_prompt_pool(
         )
         for spec in commands
     }
-    return run_prepared_prompt_pool(
-        prepared_by_name,
-        max_workers=max_workers,
-        max_stage_requeues=max_stage_requeues,
-        preparation_workers=preparation_workers,
-    )
 
 
 def run_prepared_prompt_pool(
@@ -213,6 +228,12 @@ def _initialize_pool_runtime(
     initial_stage_jobs: list[StageJob] = []
     for name, prepared in prepared_by_name.items():
         for item in prepared.items:
+            run_id = f"{prepared.batch_id}_idx{item.index:05d}"
+            synchronize_configured_single_reuse(
+                prepared,
+                item,
+                prepared.batch_run_root / run_id,
+            )
             complete = collect_completed_item(prepared, item)
             if complete is not None:
                 results[name].append(complete)

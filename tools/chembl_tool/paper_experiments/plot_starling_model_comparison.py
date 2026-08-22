@@ -78,6 +78,7 @@ class ExperimentMetric:
     method: str
     label: str
     macro_f1: float
+    n: int
     model_label: str
     source: Path
 
@@ -392,6 +393,7 @@ def _append_experiment_candidates(
                 .replace("Coverage retrieve + ", "Coverage · ")
                 .replace("coverage-aware context", "coverage-aware"),
                 macro_f1=float(row["macro_f1"]),
+                n=int(row_n),
                 model_label=row.get("model_label") or base_model_label,
                 source=path,
             )
@@ -655,6 +657,7 @@ def render(
     baseline_display: str = "shared",
     baseline_series_groups: tuple[str, ...] = (),
     single_series: bool = False,
+    experiment_legend: str | None = None,
 ) -> None:
     if paired_significance_display not in {"ci", "pvalue"}:
         raise ValueError(
@@ -869,7 +872,7 @@ def render(
         )
     if experiments:
         experiment_legend_x = auxiliary_legend_x + (300 if has_shared_baseline else 0)
-        experiment_legend = (
+        effective_experiment_legend = experiment_legend or (
             "Matched opt-in experiments"
             if show_experiment_model_label
             else f"Matched {next(iter(experiment_model_labels))} experiment"
@@ -880,7 +883,7 @@ def render(
                 svg_text(
                     experiment_legend_x + 42,
                     auxiliary_legend_y + 15,
-                    experiment_legend,
+                    effective_experiment_legend,
                     size=14,
                     weight=600,
                 ),
@@ -943,7 +946,13 @@ def render(
                 footer_y,
                 "Bar shade follows the legend"
                 + (" · Shared baselines are shown once" if has_shared_baseline else "")
-                + (" · Teal rows are matched opt-in experiments" if experiments else "")
+                + (
+                    f" · Teal rows: {experiment_legend}"
+                    if experiments and experiment_legend
+                    else " · Teal rows are matched opt-in experiments"
+                    if experiments
+                    else ""
+                )
                 + "."
                 + (
                     " · P-values are exploratory one-sided paired permutation tests."
@@ -1058,6 +1067,10 @@ def main() -> None:
         help="Header context line; repeat to add auditable dataset notes.",
     )
     parser.add_argument("--comparison-title")
+    parser.add_argument(
+        "--experiment-legend",
+        help="Override the legend text for appended experiment rows.",
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--png-output", type=Path)
     args = parser.parse_args()
@@ -1078,6 +1091,7 @@ def main() -> None:
         args.baseline_display,
         tuple(args.baseline_series_group),
         args.single_series,
+        args.experiment_legend,
     )
     print(args.output)
     if args.png_output is not None:

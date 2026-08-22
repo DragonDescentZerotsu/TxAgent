@@ -35,6 +35,7 @@ from tools.chembl_tool.common.task_workflows.analogous_flat_prompt import (
     reason_final as reason_analogous_flat_final,
     reason_group as reason_analogous_flat_group,
 )
+from tools.chembl_tool.common.reasoning_validation import validated_branch_content
 from tools.chembl_tool.common.retrieval_ablation import load_reusable_group_outputs
 from tools.chembl_tool.common.task_workflows.reasoning_batch import (
     BatchItem,
@@ -113,6 +114,11 @@ def prepare_stage_item(
             stderr_path.write_text("", encoding="utf-8")
             returncode = 0
         else:
+            synchronize_configured_single_reuse(
+                prepared,
+                item,
+                run_dir,
+            )
             command = _single_run_command(
                 prepared.config,
                 prepared.args,
@@ -446,6 +452,42 @@ def _configured_source_run_dir(source_batch_value: str, query_index: int) -> str
     return str(_source_run_dir(Path(source_batch_value), query_index))
 
 
+def synchronize_configured_single_reuse(
+    prepared: PreparedBatch,
+    item: BatchItem,
+    run_dir: Path,
+) -> None:
+    """Freeze a configured single checkpoint before completion detection."""
+    source_dir = _configured_source_run_dir(
+        getattr(prepared.args, "single_analysis_source_batch", ""),
+        item.index,
+    )
+    if not source_dir:
+        return
+    if not run_dir.is_dir() or not (
+        Path(source_dir) / "single_molecule_reasoning_output.json"
+    ).is_file():
+        return
+    source_output = load_frozen_single_analysis(source_dir)
+    if source_output is None:
+        return
+    target_path = run_dir / "single_molecule_reasoning_output.json"
+    target_output = _read_json(target_path) if target_path.is_file() else None
+    source_visible = (source_output.get("status"), validated_branch_content(source_output))
+    target_visible = (
+        (target_output or {}).get("status"),
+        validated_branch_content(target_output or {}),
+    )
+    _write_json_atomic(target_path, source_output)
+    if target_visible != source_visible:
+        _invalidate_dependent_final(run_dir)
+    manifest_path = run_dir / "manifest.json"
+    if manifest_path.is_file():
+        manifest = _read_json(manifest_path)
+        manifest["single_analysis_source_run_dir"] = source_dir
+        _write_json_atomic(manifest_path, manifest)
+
+
 def _hydrate_configured_branch_reuse(
     prepared: PreparedBatch,
     item: BatchItem,
@@ -453,19 +495,7 @@ def _hydrate_configured_branch_reuse(
     run_dir: Path,
 ) -> None:
     args = prepared.args
-    single_source = _configured_source_run_dir(
-        args.single_analysis_source_batch,
-        item.index,
-    )
-    if single_source and (
-        Path(single_source) / "single_molecule_reasoning_output.json"
-    ).exists():
-        single_output = load_frozen_single_analysis(single_source)
-        if single_output is not None:
-            _write_json_atomic(
-                run_dir / "single_molecule_reasoning_output.json",
-                single_output,
-            )
+    synchronize_configured_single_reuse(prepared, item, run_dir)
     group_source = _configured_source_run_dir(
         args.group_analysis_source_batch,
         item.index,
@@ -560,6 +590,11 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
     group_query = context["reasoning_retrieval"]["query"]
     if getattr(state.prepared.args, "disable_flat_tools", False):
         group_query = query_without_prefetched_tools(group_query)
+    group_query_payload = getattr(
+        module,
+        "_llm_evidence_query_payload",
+        module._llm_query_payload,
+    )
     if _analogous_flat(state):
         raw_output = reason_analogous_flat_group(
             client,
@@ -569,7 +604,7 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
     else:
         raw_output = module._reason_one_group(
             client,
-            module._llm_query_payload(group_query),
+            group_query_payload(group_query),
             group,
             **group_kwargs,
         )

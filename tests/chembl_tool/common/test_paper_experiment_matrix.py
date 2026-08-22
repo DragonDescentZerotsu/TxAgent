@@ -27,6 +27,7 @@ from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
     _paper_root_for_evaluation_subset,
     _validate_concurrency,
     _validate_inputs,
+    _validate_reference_pool,
     _validate_retrieval_ablation_args,
     _write_json_atomic,
     experiments_for_starling_benchmark,
@@ -39,6 +40,8 @@ from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import
     _apply_source_evidence_overrides,
     _collect_existing_index_meta,
     _load_existing_summary,
+    heldout_labels_path,
+    normalize_heldout_subsets,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     _group_prompt_payload,
@@ -57,7 +60,7 @@ from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library impor
 
 def test_frozen_matrix_has_unique_expected_conditions():
     names = [experiment.name for experiment in EXPERIMENTS]
-    assert len(names) == 26
+    assert len(names) == 29
     assert len(names) == len(set(names))
     assert "bioavailability_ma__starling_full_mechanism" in names
     assert "bbb_martins__starling_direct" in names
@@ -66,6 +69,9 @@ def test_frozen_matrix_has_unique_expected_conditions():
     assert "skin_reaction__starling_direct" in names
     assert "skin_reaction__starling_full_flat" in names
     assert "skin_reaction__starling_full_mechanism" in names
+    assert "clintox__starling_direct" in names
+    assert "clintox__starling_full_flat" in names
+    assert "clintox__starling_full_mechanism" in names
 
 
 def test_skin_defaults_use_canonical_direct_aop_source():
@@ -91,10 +97,11 @@ def test_skin_defaults_use_canonical_direct_aop_source():
 
 def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_indices():
     experiments = experiments_for_starling_benchmark("random")
-    assert len(experiments) == 22
+    assert len(experiments) == 29
     assert {experiment.task for experiment in experiments} == {
         "bbb_martins",
         "bioavailability_ma",
+        "clintox",
         "skin_reaction",
     }
     assert all("/random/test.jsonl" in experiment.input_jsonl for experiment in experiments)
@@ -104,9 +111,19 @@ def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_ind
     assert chembl.index == EXPERIMENTS[1].index
     assert "molecular_evidence_agent_starling_random_record_agreement70_split811_v1/evidence" in starling.index
     assert starling.index.endswith("bbb_starling_v7/08_neighbor_index")
-    v7_starling = [item for item in experiments if item.source == "starling"]
+    v7_starling = [
+        item
+        for item in experiments
+        if item.source == "starling" and item.task != "clintox"
+    ]
     assert all("starling_v7" in item.index for item in v7_starling)
     assert all("_v3" not in item.index and not item.index.endswith(".pkl") for item in v7_starling)
+    clintox = next(
+        item for item in experiments if item.name == "clintox__starling_direct"
+    )
+    assert clintox.index.endswith(
+        "clintox_starling_full/starling_clintox_neighbor_index.pkl"
+    )
 
 
 def test_query_only_none_does_not_require_its_placeholder_index(tmp_path):
@@ -200,6 +217,53 @@ def test_index_summary_can_be_rebuilt_after_parallel_partial_builds(tmp_path):
     assert collected == {"random": {"example": {"zero_parent_overlap": True}}}
 
 
+def test_heldout_subset_scope_is_canonical_and_rejects_duplicates(tmp_path):
+    assert normalize_heldout_subsets(["test", "valid"]) == ("valid", "test")
+    assert heldout_labels_path(tmp_path, "BBB_Martins", "scaffold", ["test"]).name == (
+        "test_molecule_labels.jsonl"
+    )
+    with pytest.raises(ValueError, match="Unsupported held-out subsets"):
+        normalize_heldout_subsets(["test", "test"])
+    with pytest.raises(ValueError, match="train pool"):
+        normalize_heldout_subsets(["valid"])
+
+
+@pytest.mark.parametrize(
+    ("reference_pool", "heldout_filename", "should_pass"),
+    [
+        ("train", "heldout_molecule_labels.jsonl", True),
+        ("train", "test_molecule_labels.jsonl", False),
+        ("train_valid", "test_molecule_labels.jsonl", True),
+        ("train_valid", "heldout_molecule_labels.jsonl", False),
+    ],
+)
+def test_matrix_reference_pool_matches_index_scope(
+    tmp_path,
+    reference_pool,
+    heldout_filename,
+    should_pass,
+):
+    index_path = tmp_path / "starling.pkl"
+    index_path.write_bytes(b"placeholder")
+    index_path.with_suffix(".meta.json").write_text(
+        json.dumps({"source": {"heldout_labels_jsonl": str(tmp_path / heldout_filename)}})
+    )
+    experiment = replace(
+        next(item for item in EXPERIMENTS if item.name == "bbb_martins__starling_direct"),
+        index=str(index_path),
+    )
+    args = argparse.Namespace(
+        reference_pool=reference_pool,
+        evaluation_subset="test",
+        retrieval_feature="morgan",
+    )
+    if should_pass:
+        _validate_reference_pool([experiment], args)
+    else:
+        with pytest.raises(SystemExit, match="requires an index excluding"):
+            _validate_reference_pool([experiment], args)
+
+
 def test_starling_minimol_matrix_uses_descriptors_and_isolated_output_root():
     experiments = experiments_for_starling_benchmark(
         "scaffold",
@@ -215,6 +279,21 @@ def test_starling_minimol_matrix_uses_descriptors_and_isolated_output_root():
     )
     assert paper_root_for_minimol_retrieval("scaffold").name == (
         "molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_minimol_retrieval"
+    )
+
+
+def test_starling_minimol_matrix_accepts_lineage_specific_feature_root(tmp_path):
+    feature_root = tmp_path / "current-minimol-features"
+    experiments = experiments_for_starling_benchmark(
+        "scaffold",
+        evaluation_subset="valid",
+        retrieval_feature="minimol",
+        minimol_feature_root=feature_root,
+    )
+
+    direct = next(item for item in experiments if item.name == "bbb_martins__chembl_direct")
+    assert direct.index == str(
+        feature_root / "scaffold/descriptors/bbb_martins__chembl_direct.json"
     )
 
 
@@ -432,7 +511,7 @@ def test_starling_matrix_enforces_single_endpoint_concurrency_budget():
     _validate_concurrency(accepted)
 
     rejected = parse_starling_args(
-        ["--benchmark-split", "random", "--parallelism", "501"]
+        ["--benchmark-split", "random", "--parallelism", "513"]
     )
     try:
         _validate_concurrency(rejected)
@@ -668,6 +747,7 @@ def test_skin_paper_view_excludes_standalone_weak_context_branch():
 def test_bioavailability_starling_mechanism_groups_are_reiterable():
     expected = [
         "Observed.direct_oral_bioavailability",
+        "Observed.nondirect_oral_bioavailability",
         "Observed.oral_auc_cmax_exposure",
         "Fa.absorption_solubility_permeability",
         "Fg.gut_wall_efflux_intestinal_metabolism",
@@ -724,6 +804,26 @@ def test_matrix_forwards_nondirect_filter_only_to_bioavailability_starling():
 
     assert "--exclude-nondirect-bioavailability-records" in _command(bio, args)
     assert "--exclude-nondirect-bioavailability-records" not in _command(bbb, args)
+
+
+def test_matrix_command_forwards_retrieval_count_and_threshold():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="GPT_OSS_LOCAL_API_KEY",
+        parallelism=8,
+        visibility_mode=IDENTITY_BLIND,
+        neighbor_identity_policy=PARENT_DISJOINT,
+        fresh_parent_disjoint=True,
+        paper_root="outputs/test-minimol-top5",
+        split="valid",
+        top_k_per_group=5,
+        min_similarity=0.0,
+    )
+
+    command = _command(EXPERIMENTS[1], args)
+
+    assert command[command.index("--top-k-per-group") + 1] == "5"
+    assert command[command.index("--min-similarity") + 1] == "0.0"
 
 
 def test_valid_split_changes_only_dataset_and_isolates_output_root():
@@ -858,6 +958,29 @@ def test_matched_prefetch_command_is_visible_but_disables_agentic_tool_choice():
     assert "--identity-blind" not in command
     assert "--harness-prefetch-tools" in command
     assert "runs_deployment_visible_prefetched" in command[command.index("--batch-root") + 1]
+
+
+def test_visible_parent_disjoint_can_prefetch_tools_without_hiding_structures():
+    args = argparse.Namespace(
+        python_executable="python",
+        api_key_env="OPENROUTER_API_KEY",
+        parallelism=2,
+        visibility_mode=DEPLOYMENT_VISIBLE,
+        neighbor_identity_policy=PARENT_DISJOINT,
+        fresh_parent_disjoint=True,
+        fresh_disjoint=True,
+        harness_prefetch_tools=True,
+        paper_root="/tmp/visible-prefetch-paper-root",
+        split="test",
+    )
+
+    command = _command(EXPERIMENTS[0], args)
+
+    assert "--identity-blind" not in command
+    assert "--harness-prefetch-tools" in command
+    assert "runs_deployment_visible_parent_disjoint" in command[
+        command.index("--batch-root") + 1
+    ]
 
 
 def test_deployment_prompt_hides_query_name_but_preserves_structures_and_neighbor_name():

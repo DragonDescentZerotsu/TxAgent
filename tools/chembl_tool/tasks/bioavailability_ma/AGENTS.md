@@ -225,7 +225,7 @@ The task wrapper declares only column mappings and group/role assignments:
 
 | Source | Group | Evidence role |
 |---|---|---|
-| `hf_bioavailability` rows with `direct` evidence scope | `Observed.direct_oral_bioavailability` | `direct_outcome` |
+| `hf_bioavailability` rows with `direct` evidence scope, including canonical direct v2 claims | `Observed.direct_oral_bioavailability` | `direct_outcome` |
 | `hf_bioavailability` rows with `nondirect` evidence scope | `Observed.nondirect_oral_bioavailability` | `surrogate_proxy` |
 | residual Oral_AUC-Cmax/relative/ambiguous rows | `Observed.oral_auc_cmax_exposure` | `surrogate_proxy` |
 | Fa parquet | `Fa.absorption_solubility_permeability` | `mechanistic_factor` |
@@ -234,6 +234,12 @@ The task wrapper declares only column mappings and group/role assignments:
 
 Fa/Fg/Fh form the task ontology, not a deterministic classifier. The LLM still produces the final prediction
 by synthesizing the group outputs.
+
+Conditioned assay-family curve 不得丢弃 nondirect HF group。该 source 没有原生 assay-system 字段，使用
+`build_nondirect_assay_context.py` 根据 report type、粗粒度 population 和 oral exposure mode 构建版本化、
+bounded、可解释的 assay-context overlay；不得按 PMID、molecule 或单条 record 建 assay。修复后的 family
+catalog/index 与 historical missing-nondirect artifacts 保持独立 lineage，完整路径和运行合同见
+`tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
 
 ## Source ingestion rules
 

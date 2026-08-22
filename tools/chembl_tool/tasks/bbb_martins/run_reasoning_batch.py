@@ -15,8 +15,8 @@ from tools.chembl_tool.common.task_workflows.reasoning_batch import (
     main as run_batch,
     prediction_to_label as _prediction_to_label,
 )
-from tools.chembl_tool.tasks.bbb_martins.final_decision_profiles import (
-    BBB_FINAL_DECISION_PROFILES,
+from tools.chembl_tool.common.final_decision_prior import (
+    GENERAL_FINAL_DECISION_PROFILES,
 )
 from tools.chembl_tool.tasks.bbb_martins.prompt_profiles import (
     BBB_PROMPT_PROFILES,
@@ -69,7 +69,7 @@ CONFIG = BatchConfig(
         "starling_normalized_v7/08_neighbor_index/scaffold"
     ),
     supports_final_decision_profiles=True,
-    final_decision_profile_choices=BBB_FINAL_DECISION_PROFILES,
+    final_decision_profile_choices=GENERAL_FINAL_DECISION_PROFILES,
     prompt_profile_option="--bbb-prompt-profile",
     prompt_profile_choices=BBB_PROMPT_PROFILES,
     default_prompt_profile=DEFAULT_BBB_PROMPT_PROFILE,

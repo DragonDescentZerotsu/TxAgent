@@ -13,7 +13,6 @@ from functools import partial
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.assay_reranking.v11 import (
     TEMPLATE_PROFILE as V11_TEMPLATE_PROFILE,
     V11CachedAssayReranker,
@@ -44,6 +43,7 @@ from tools.chembl_tool.common.experiment_retrieval import (
     EXPERIMENT_MODES,
     retrieve_experiment_view,
 )
+from tools.chembl_tool.common.evidence_contract import evidence_for_group_llm, evidence_for_llm
 from tools.chembl_tool.common.coverage_reasoning import (
     NEIGHBOR_CONTEXT_PROFILES,
     STANDARD_NEIGHBOR_CONTEXT,
@@ -89,8 +89,10 @@ from tools.chembl_tool.common.prompt_profile import (
     require_matching_prompt_profiles,
 )
 from tools.chembl_tool.common.reasoning_payload import (
+    attach_external_condition,
     clean_exact_match as _clean_exact_match,
     clean_shared_assay_context as _clean_shared_assay_context,
+    llm_evidence_query_payload as _llm_evidence_query_payload,
     llm_query_payload as _llm_query_payload,
     load_env_file as _load_env,
     read_jsonl_record as _read_jsonl_record,
@@ -571,6 +573,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         except ValueError as exc:
             raise SystemExit(str(exc)) from exc
+    attach_external_condition(retrieval, query_record)
     if args.enable_chembl_exact_context and index is not None:
         _log("enriching retrieval with exact ChEMBL context")
         retrieval = enrich_retrieval_with_chembl_context(
@@ -911,7 +914,7 @@ def _run_parallel_reasoning(
             executor.submit(
                 _reason_one_group,
                 client,
-                _llm_query_payload(
+                _llm_evidence_query_payload(
                     query_without_prefetched_tools(retrieval["query"])
                     if disable_flat_tools
                     else retrieval["query"]
@@ -1195,7 +1198,7 @@ def _run_final_reasoning(
                 "content": json.dumps(
                     {
                         "task": profile.final_task,
-                        "query": _llm_query_payload(retrieval["query"]),
+                        "query": _llm_evidence_query_payload(retrieval["query"]),
                         "retrieval_coverage": retrieval["coverage"],
                         "single_molecule_analysis": {
                             "status": single_output.get("status"),
@@ -1297,7 +1300,10 @@ def build_group_prompt_payload(
                     if include_query_tool_guidance
                     else {}
                 ),
-                "evidence_rows": [_clean_evidence_row(row) for row in neighbor["evidence_rows"]],
+                "evidence_rows": [
+                    evidence_for_group_llm(row, group)
+                    for row in neighbor["evidence_rows"]
+                ],
                 "shared_assay_context": _clean_shared_assay_context(neighbor.get("shared_assay_context") or {}),
             }
             for neighbor in group["neighbors"]
@@ -1342,7 +1348,7 @@ def build_group_prompt_payload(
             "Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.",
         ],
         "required_json_schema": GROUP_SCHEMA,
-    })
+    }, evidence_prompt_profile=str(group.get("evidence_prompt_profile") or ""))
 
 
 # Historical internal callers keep working while external materializers use
@@ -1350,15 +1356,13 @@ def build_group_prompt_payload(
 _group_prompt_payload = build_group_prompt_payload
 
 
-def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
-    return evidence_for_llm(row)
-
-
 def _group_evidence_source(group: dict[str, Any]) -> str:
     sources: list[str] = []
     for neighbor in group.get("neighbors", []):
         for row in neighbor.get("evidence_rows", []):
-            source = str(row.get("evidence_source") or "").strip()
+            evidence = row.get("minimal_evidence") or row
+            source = row.get("evidence_source") or (evidence.get("source") or {}).get("name")
+            source = str(source or "").strip()
             if source and source not in sources:
                 sources.append(source)
     if len(sources) > 1:
@@ -1366,6 +1370,11 @@ def _group_evidence_source(group: dict[str, Any]) -> str:
     if sources:
         return sources[0]
     return "ChEMBL"
+
+
+def _clean_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Compatibility adapter for legacy callers of the shared evidence view."""
+    return evidence_for_llm(row)
 
 
 def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
@@ -1377,7 +1386,8 @@ def _clean_query_chembl_context(context: dict[str, Any]) -> dict[str, Any]:
         "selected_molecule_chembl_id": context.get("selected_molecule_chembl_id", ""),
         "exact_matches": [_clean_exact_match(match) for match in context.get("exact_matches", [])],
         "bioavailability_relevant_evidence_rows": [
-            _clean_evidence_row(row) for row in context.get("bioavailability_relevant_evidence_rows", [])
+            evidence_for_llm(row)
+            for row in context.get("bioavailability_relevant_evidence_rows", [])
         ],
     }
 

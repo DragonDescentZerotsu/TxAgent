@@ -13,6 +13,10 @@ from typing import Any
 
 
 CONTRACT_VERSION = "minimal_evidence.v1"
+ASSAY_COMPACT_PROMPT_PROFILE = "assay_compact.v1"
+ASSAY_COMPACT_V2_PROMPT_PROFILE = "assay_compact.v2"
+ASSAY_RAW_CARD_PROMPT_PROFILE = "assay_compact.raw_v3"
+_LEGACY_ASSAY_FLAT_GROUP_ID = "Flat.assay_ranked_evidence"
 EVIDENCE_ROLES = {
     "direct_outcome",
     "surrogate_proxy",
@@ -52,7 +56,9 @@ def minimal_evidence_from_row(row: Mapping[str, Any]) -> dict[str, Any]:
         row.get("molecule_id"),
     )
     names = _string_list(row.get("source_molecule_names") or row.get("molecule_names"))
-    endpoint_name = _first_text(row.get("standard_type"), row.get("endpoint_group"), row.get("endpoint"))
+    endpoint_name = _first_text(
+        row.get("standard_type"), row.get("endpoint_group"), row.get("endpoint")
+    )
     evidence_text = _evidence_text(row)
     context_text = _context_text(row)
     uncertainty = _string_list(row.get("uncertainty"))
@@ -71,7 +77,9 @@ def minimal_evidence_from_row(row: Mapping[str, Any]) -> dict[str, Any]:
         "contract_version": CONTRACT_VERSION,
         "source": {
             "name": evidence_source,
-            "record_id": _first_text(row.get("source_record_id"), row.get("assay_chembl_id")),
+            "record_id": _first_text(
+                row.get("source_record_id"), row.get("assay_chembl_id")
+            ),
         },
         "molecule": {
             "id": molecule_id,
@@ -102,7 +110,9 @@ def minimal_evidence_from_row(row: Mapping[str, Any]) -> dict[str, Any]:
             "uncertainty": uncertainty,
         },
         "quality": {
-            "confidence": _json_scalar(row.get("confidence_score", row.get("confidence", ""))),
+            "confidence": _json_scalar(
+                row.get("confidence_score", row.get("confidence", ""))
+            ),
         },
         "provenance": {
             "assay_id": _text(row.get("assay_chembl_id")),
@@ -123,6 +133,193 @@ def attach_minimal_evidence(row: dict[str, Any]) -> dict[str, Any]:
 def evidence_for_llm(row: Mapping[str, Any]) -> dict[str, Any]:
     """Return only the compact, source-agnostic contract for an LLM prompt."""
     return minimal_evidence_from_row(row)
+
+
+def evidence_for_group_llm(
+    row: Mapping[str, Any],
+    group: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Select the prompt view declared by a retrieval group.
+
+    Ordinary group-level retrieval keeps the full minimal-evidence contract.
+    Dense assay-level replays use a bounded view.  The group-id fallback keeps
+    already materialized v1 assay replay artifacts readable.
+    """
+    profile = str(group.get("evidence_prompt_profile") or "")
+    if profile == ASSAY_COMPACT_V2_PROMPT_PROFILE:
+        return assay_evidence_for_llm_v2(row)
+    if profile == ASSAY_RAW_CARD_PROMPT_PROFILE:
+        return assay_evidence_for_llm_raw_cards(row)
+    if profile == ASSAY_COMPACT_PROMPT_PROFILE or (
+        not profile and group.get("group_id") == _LEGACY_ASSAY_FLAT_GROUP_ID
+    ):
+        return assay_evidence_for_llm(row)
+    if profile:
+        raise ValueError(f"Unsupported evidence prompt profile: {profile}")
+    return evidence_for_llm(row)
+
+
+def assay_evidence_for_llm(row: Mapping[str, Any]) -> dict[str, Any]:
+    """Return a bounded minimal-evidence view for dense flat assay prompts.
+
+    Every assay row remains present.  The bounded view removes redundant
+    molecule/group fields already carried by the outer neighbor and flat group,
+    and keeps a short source excerpt instead of repeating long normalized text.
+    """
+    evidence = minimal_evidence_from_row(row)
+    endpoint = evidence.get("endpoint") or {}
+    measurement = endpoint.get("measurement") or {}
+    annotations = evidence.get("annotations") or {}
+    scope = annotations.get("scope") or {}
+    provenance = evidence.get("provenance") or {}
+    compact = {
+        "contract_version": CONTRACT_VERSION,
+        "source": {
+            "name": _bounded_text((evidence.get("source") or {}).get("name"), 80)
+        },
+        "assay_id": _bounded_text(provenance.get("assay_id"), 120),
+        "endpoint": {
+            "name": _bounded_text(endpoint.get("name"), 200),
+            "measurement": {
+                "relation": _bounded_text(measurement.get("relation"), 24),
+                "value": _bounded_text(measurement.get("value"), 200),
+                "unit": _bounded_text(measurement.get("unit"), 80),
+            },
+        },
+        "text": {
+            "evidence_excerpt": _bounded_text(
+                (evidence.get("text") or {}).get("evidence"),
+                160,
+            ),
+        },
+        "annotations": {
+            "evidence_role": _bounded_text(annotations.get("evidence_role"), 40),
+            "scope": {
+                "assay_context": _bounded_list(scope.get("assay_context"), 1, 240),
+                "species_context": _bounded_list(scope.get("species_context"), 4, 80),
+                "qualifying_conditions": _bounded_list(
+                    scope.get("qualifying_conditions"), 4, 120
+                ),
+            },
+            "uncertainty": _bounded_list(annotations.get("uncertainty"), 4, 120),
+        },
+        "quality": {
+            "confidence": (evidence.get("quality") or {}).get("confidence", ""),
+        },
+        "provenance": {
+            "source_record_count": provenance.get("source_record_count", ""),
+        },
+    }
+    return _drop_empty(compact)
+
+
+def assay_evidence_for_llm_v2(row: Mapping[str, Any]) -> dict[str, Any]:
+    """Return historical summary-backed record cards for dense assay prompts."""
+    return _assay_record_cards(row, use_summary=True)
+
+
+def assay_evidence_for_llm_raw_cards(row: Mapping[str, Any]) -> dict[str, Any]:
+    """Return semantic record cards with complete representative support text."""
+    return _assay_record_cards(row, use_summary=False)
+
+
+def _assay_record_cards(
+    row: Mapping[str, Any],
+    *,
+    use_summary: bool,
+) -> dict[str, Any]:
+    """Build the shared v2/v3 assay card shape.
+
+    Unlike ``assay_compact.v1``, this view does not repeat contract boilerplate,
+    opaque assay identifiers, default role/transferability fields, confidence,
+    or extraction diagnostics.  It preserves the endpoint/value/unit/species/
+    condition/support pairing for each of at most three representative records.
+    The historical v2 profile requires frozen summaries for long support; the
+    current raw-v3 profile keeps every selected card field complete without
+    rewriting or field-level truncation.
+    """
+    examples = [
+        item
+        for item in row.get("source_record_examples") or []
+        if isinstance(item, Mapping)
+    ][:3]
+    cards = []
+    for example in examples:
+        raw_support = _text(example.get("support_text"))
+        summary = _text(example.get("support_summary"))
+        support = summary if use_summary and summary else raw_support
+        if use_summary and len(raw_support) > 320 and not summary:
+            raise ValueError(
+                "assay_compact.v2 requires a frozen support_summary when "
+                "support_text exceeds 320 characters"
+            )
+        cards.append(
+            _drop_empty(
+                {
+                    "endpoint": _assay_card_text(
+                        example.get("endpoint_type"), use_summary, 200
+                    ),
+                    "value": _assay_card_text(
+                        example.get("reported_value"), use_summary, 200
+                    ),
+                    "unit": _assay_card_text(
+                        example.get("reported_units"), use_summary, 80
+                    ),
+                    "species": _assay_card_text(
+                        example.get("species_context"), use_summary, 120
+                    ),
+                    "conditions": _assay_card_text(
+                        example.get("qualifying_conditions"), use_summary, 240
+                    ),
+                    "support": _bounded_text(support, 480) if use_summary else support,
+                }
+            )
+        )
+    if not cards:
+        evidence = minimal_evidence_from_row(row)
+        text = _text((evidence.get("text") or {}).get("evidence"))
+        if use_summary and len(text) > 320:
+            raise ValueError(
+                "assay_compact.v2 evidence without representative records "
+                "must not exceed 320 characters"
+            )
+        endpoint = evidence.get("endpoint") or {}
+        measurement = endpoint.get("measurement") or {}
+        cards = [
+            _drop_empty(
+                {
+                    "endpoint": _assay_card_text(
+                        endpoint.get("name"), use_summary, 200
+                    ),
+                    "value": _assay_card_text(
+                        measurement.get("value"), use_summary, 200
+                    ),
+                    "unit": _assay_card_text(
+                        measurement.get("unit"), use_summary, 80
+                    ),
+                    "support": text,
+                }
+            )
+        ]
+
+    scope = row.get("evidence_scope") or row.get("scope") or {}
+    assay_context = ""
+    if isinstance(scope, Mapping):
+        contexts = _string_list(scope.get("assay_context"))
+        assay_context = contexts[0] if contexts else ""
+    assay_context = assay_context or _text(row.get("target_pref_name"))
+    return _drop_empty(
+        {
+            "assay_context": _assay_card_text(assay_context, use_summary, 280),
+            "records": cards,
+            "source_record_count": _int_or_empty(row.get("source_record_count")),
+        }
+    )
+
+
+def _assay_card_text(value: Any, use_summary: bool, legacy_limit: int) -> str:
+    """Keep raw-v3 fields whole while preserving the frozen v2 bounds."""
+    return _bounded_text(value, legacy_limit) if use_summary else _text(value)
 
 
 def numeric_only_evidence_row(row: Mapping[str, Any]) -> dict[str, Any] | None:
@@ -182,7 +379,9 @@ def validate_minimal_evidence(record: Mapping[str, Any]) -> list[str]:
 def _sanitize_record(record: dict[str, Any]) -> dict[str, Any]:
     examples = record.get("examples")
     if isinstance(examples, Sequence) and not isinstance(examples, (str, bytes)):
-        record["examples"] = [_sanitize_mapping(item) for item in examples if isinstance(item, Mapping)]
+        record["examples"] = [
+            _sanitize_mapping(item) for item in examples if isinstance(item, Mapping)
+        ]
     annotations = record.get("annotations")
     if not isinstance(annotations, Mapping):
         record["annotations"] = {
@@ -199,7 +398,9 @@ def _safe_examples(row: Mapping[str, Any]) -> list[dict[str, Any]]:
         *(row.get("source_record_examples") or []),
         *(row.get("source_qualitative_examples") or []),
     ]
-    return [_sanitize_mapping(item) for item in examples if isinstance(item, Mapping)][:6]
+    return [_sanitize_mapping(item) for item in examples if isinstance(item, Mapping)][
+        :6
+    ]
 
 
 def _numeric_examples(row: Mapping[str, Any]) -> list[dict[str, Any]]:
@@ -222,7 +423,11 @@ def _numeric_examples(row: Mapping[str, Any]) -> list[dict[str, Any]]:
         *(row.get("source_qualitative_examples") or []),
     ]
     return [
-        {str(key): _json_scalar(value) for key, value in example.items() if str(key) in allowed_fields}
+        {
+            str(key): _json_scalar(value)
+            for key, value in example.items()
+            if str(key) in allowed_fields
+        }
         for example in examples
         if isinstance(example, Mapping)
     ][:6]
@@ -240,7 +445,9 @@ def _sanitize_mapping(value: Mapping[str, Any]) -> dict[str, Any]:
             output[key_text] = _sanitize_mapping(item)
         elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
             output[key_text] = [
-                _sanitize_mapping(entry) if isinstance(entry, Mapping) else _json_scalar(entry)
+                _sanitize_mapping(entry)
+                if isinstance(entry, Mapping)
+                else _json_scalar(entry)
                 for entry in item
             ]
         else:
@@ -325,7 +532,11 @@ def _scope(value: Any) -> dict[str, Any]:
 def _string_list(value: Any) -> list[str]:
     if value in (None, ""):
         return []
-    values = value if isinstance(value, Sequence) and not isinstance(value, (str, bytes)) else [value]
+    values = (
+        value
+        if isinstance(value, Sequence) and not isinstance(value, (str, bytes))
+        else [value]
+    )
     output = []
     for item in values:
         text = _text(item)
@@ -346,6 +557,33 @@ def _text(value: Any) -> str:
     if value is None:
         return ""
     return str(value).strip()
+
+
+def _bounded_text(value: Any, limit: int) -> str:
+    text = _text(value)
+    if len(text) <= limit:
+        return text
+    return text[: max(0, limit - 1)].rstrip() + "…"
+
+
+def _bounded_list(value: Any, limit: int, text_limit: int) -> list[str]:
+    return [_bounded_text(item, text_limit) for item in _string_list(value)[:limit]]
+
+
+def _drop_empty(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return {
+            key: cleaned
+            for key, item in value.items()
+            if (cleaned := _drop_empty(item)) not in (None, "", [], {})
+        }
+    if isinstance(value, list):
+        return [
+            cleaned
+            for item in value
+            if (cleaned := _drop_empty(item)) not in (None, "", [], {})
+        ]
+    return value
 
 
 def _json_scalar(value: Any) -> Any:

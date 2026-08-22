@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from tools.chembl_tool.common.starling import build_heldout_starling_index
 from tools.chembl_tool.common.starling.v7_benchmark_view import (
     ALL_PARENT_FILTER,
     ALL_SCAFFOLD_FILTER,
@@ -21,6 +22,7 @@ from tools.chembl_tool.common.starling.v7_benchmark_view import (
 DEFAULT_OUTPUT_ROOT = Path("outputs/paper")
 BENCHMARK_SPLITS = ("random", "scaffold")
 BENCHMARK_LINEAGE = "record_agreement70_split811_v1"
+HELDOUT_SUBSETS = ("valid", "test")
 
 INDEX_SPECS: tuple[dict[str, Any], ...] = (
     {
@@ -91,6 +93,17 @@ INDEX_SPECS: tuple[dict[str, Any], ...] = (
         "benchmark_splits": ("scaffold",),
         "default": False,
     },
+    {
+        "name": "clintox_starling_full",
+        "task": "ClinTox",
+        "source_evidence": (
+            "outputs/chembl_tool/tasks/clintox/evidence_library/"
+            "starling_clinical_trial_failure_v1/starling_clintox_evidence.jsonl"
+        ),
+        "evidence_filename": "starling_clintox_evidence.jsonl",
+        "index_filename": "starling_clintox_neighbor_index.pkl",
+        "meta_filename": "starling_clintox_neighbor_index.meta.json",
+    },
 )
 
 
@@ -107,6 +120,7 @@ def paper_root_for_benchmark_split(
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    heldout_subsets = normalize_heldout_subsets(args.heldout_subsets)
     splits = args.splits or list(BENCHMARK_SPLITS)
     specs = _apply_source_evidence_overrides(
         _select_specs(args.indices),
@@ -143,37 +157,53 @@ def main(argv: list[str] | None = None) -> int:
         for spec in specs:
             if split not in spec.get("benchmark_splits", BENCHMARK_SPLITS):
                 continue
-            heldout_path = (
-                Path(args.benchmark_data_root)
-                / spec["task"]
-                / split
-                / "heldout_molecule_labels.jsonl"
+            heldout_path = heldout_labels_path(
+                args.benchmark_data_root,
+                spec["task"],
+                split,
+                heldout_subsets,
             )
             out_dir = paper_root / "evidence" / spec["name"]
             print(f"[starling_benchmark_index] split={split} index={spec['name']}", flush=True)
-            policy_module = importlib.import_module(
-                f"tools.chembl_tool.tasks.{spec['task_id']}.starling_policy"
-            )
-            downstream_spec = None
-            if args.heldout_filter_mode == DIRECT_SOURCE_ONLY_FILTER:
-                downstream_module = importlib.import_module(
-                    f"tools.chembl_tool.tasks.{spec['task_id']}."
-                    "build_starling_downstream_artifacts"
+            if "normalized_root" in spec:
+                policy_module = importlib.import_module(
+                    f"tools.chembl_tool.tasks.{spec['task_id']}.starling_policy"
                 )
-                downstream_spec = downstream_module.get_spec()
-            meta = build_v7_benchmark_view(
-                policy=policy_module.POLICY,
-                normalized_root=spec["normalized_root"],
-                heldout_labels_jsonl=heldout_path,
-                out_dir=out_dir,
-                benchmark_split=split,
-                view=spec["view"],
-                heldout_filter_mode=args.heldout_filter_mode,
-                downstream_spec=downstream_spec,
-                paper_direct_source_rows=spec.get("paper_direct_source_rows"),
-                workers=args.workers,
-                progress_every=args.progress_every,
-            )
+                downstream_spec = None
+                if args.heldout_filter_mode == DIRECT_SOURCE_ONLY_FILTER:
+                    downstream_module = importlib.import_module(
+                        f"tools.chembl_tool.tasks.{spec['task_id']}."
+                        "build_starling_downstream_artifacts"
+                    )
+                    downstream_spec = downstream_module.get_spec()
+                meta = build_v7_benchmark_view(
+                    policy=policy_module.POLICY,
+                    normalized_root=spec["normalized_root"],
+                    heldout_labels_jsonl=heldout_path,
+                    out_dir=out_dir,
+                    benchmark_split=split,
+                    view=spec["view"],
+                    heldout_filter_mode=args.heldout_filter_mode,
+                    downstream_spec=downstream_spec,
+                    paper_direct_source_rows=spec.get("paper_direct_source_rows"),
+                    workers=args.workers,
+                    progress_every=args.progress_every,
+                )
+            else:
+                meta = build_heldout_starling_index(
+                    source_evidence_jsonl=spec["source_evidence"],
+                    heldout_labels_jsonl=heldout_path,
+                    out_dir=out_dir,
+                    index_version=(
+                        f"{spec['name']}.heldout_{'_'.join(heldout_subsets)}_{split}."
+                        f"{args.benchmark_lineage}.v1"
+                    ),
+                    evidence_filename=spec["evidence_filename"],
+                    index_filename=spec["index_filename"],
+                    meta_filename=spec["meta_filename"],
+                    workers=args.workers,
+                    progress_every=args.progress_every,
+                )
             split_results[spec["name"]] = meta
         results[split] = split_results
 
@@ -271,6 +301,42 @@ def _apply_source_evidence_overrides(
     return updated
 
 
+def heldout_labels_path(
+    benchmark_data_root: str | Path,
+    task: str,
+    split: str,
+    heldout_subsets: list[str] | tuple[str, ...],
+) -> Path:
+    """Resolve the benchmark identity file excluded from one reference pool."""
+    subsets = normalize_heldout_subsets(heldout_subsets)
+    split_dir = Path(benchmark_data_root) / task / split
+    if set(subsets) == set(HELDOUT_SUBSETS):
+        return split_dir / "heldout_molecule_labels.jsonl"
+    if len(subsets) == 1:
+        return split_dir / f"{subsets[0]}_molecule_labels.jsonl"
+    raise ValueError(f"Unsupported held-out subset combination: {subsets}")
+
+
+def normalize_heldout_subsets(
+    heldout_subsets: list[str] | tuple[str, ...],
+) -> tuple[str, ...]:
+    """Validate and canonicalize held-out subset names for stable receipts."""
+    requested = tuple(heldout_subsets)
+    if (
+        not requested
+        or len(requested) != len(set(requested))
+        or any(subset not in HELDOUT_SUBSETS for subset in requested)
+    ):
+        raise ValueError(f"Unsupported held-out subsets: {requested}")
+    normalized = tuple(subset for subset in HELDOUT_SUBSETS if subset in requested)
+    if normalized not in (HELDOUT_SUBSETS, ("test",)):
+        raise ValueError(
+            "Held-out scope must represent a train pool (valid test) or a "
+            "train+valid pool (test)"
+        )
+    return normalized
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--splits", nargs="*", choices=BENCHMARK_SPLITS, default=[])
@@ -301,6 +367,16 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             "direct_source_only removes held-out parents only from the task's "
             "declared direct label source and retains mechanism evidence; "
             f"{ALL_SCAFFOLD_FILTER} removes every held-out scaffold from all sources."
+        ),
+    )
+    parser.add_argument(
+        "--heldout-subsets",
+        nargs="+",
+        choices=HELDOUT_SUBSETS,
+        default=list(HELDOUT_SUBSETS),
+        help=(
+            "Evaluation subsets excluded from the retrieval reference pool. "
+            "Use 'test' for a post-selection train+valid test reference pool."
         ),
     )
     parser.add_argument("--workers", type=int, default=32)

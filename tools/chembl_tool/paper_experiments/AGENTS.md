@@ -31,6 +31,11 @@ DISTANCE_EXPANSION_DESIGN.md
   E12 的 D-root/C-family/H1/H2 tree 定义、flat 主曲线、tree-node mechanism supplementary、
   顺序 branch reuse、独立代码路径、资源控制、artifact contract 和回归 gate。
 
+ASSAY_LEVEL_RETRIEVAL.md
+  与 group-level 平行的 Starling context-assay ranking/prefix 实验；集中记录 train-only historical 与
+  historical direct-filtered/parent-disjoint、current direct-filtered/scaffold-disjoint 合同、泄漏审计、
+  调用复用策略、运行入口和结果状态。
+
 FINAL_EVIDENCE_SURFACE_EXPERIMENT.md
   E13 固定 retrieval/single/group 的 final-only surface 诊断、复现命令、metadata census 和 no-go 结论。
   Card surface 仅为可复现实验插件，不进入默认 prompt 或 formal test。
@@ -217,16 +222,21 @@ experiment TSV 的每个 task/split 必须有且仅有一个 `comparison_role=an
 5. 汇总器和图表必须按 benchmark lineage 分区，不得把 TDC、Starling-random 和
    Starling-scaffold sample-condition 合并成一个指标。
 
-`build_starling_benchmark_indices.py --heldout-filter-mode direct_source_only` 从既有 full-source Starling v7 rows
-中只删除 task 声明的 direct gold source 内对应 valid+test parents，然后重建 full index。其它 mechanism sources
-继续保留，包括 evaluation-parent mechanism records；这些 records 必须在 query time 通过 `parent_disjoint` 排除
-same-parent candidate。构建时必须用当前 normalizer 从 `drug` 重算 held-out parent key 并与 artifact 中保存的 key
-一致；无法解析 parent 的 direct-source row 采用保守排除。历史 `all_parents` mode 只用于复现旧 index contract。
-Each paper evidence view owns its Stage 06 records, Stage 07 molecule evidence, Stage 08 neighbor index,
-and Stage 09 audit manifests. New formal runs must use this lineage-local Stage 08 explicitly; task-local
-Stage 06-09 directories are historical compatibility artifacts, not current paper inputs.
-`starling_benchmark_matrix.py` 复用冻结的 GLM、prompt、retrieval mode、
-tool 和 batch pipeline，仅替换 test input、Starling index 与隔离 output root：
+Reference pools have two valid contracts. `train` is the default and excludes
+valid and test parents using `heldout_molecule_labels.jsonl`. `train_valid` is
+only a post-selection test sensitivity and excludes test parents using
+`test_molecule_labels.jsonl`. `--heldout-subsets`, the MiniMol feature builder,
+and `--reference-pool` must agree; the matrix verifies the recorded held-out
+scope before model calls.
+
+For v7 evidence, `--heldout-filter-mode direct_source_only` removes evaluation
+parents only from the task-declared direct gold source and retains mechanism
+records, which query-time `parent_disjoint` retrieval must still filter. The
+historical `all_parents` mode removes those parents from every source. Each
+paper evidence view owns its Stage 06 records, Stage 07 molecule evidence,
+Stage 08 neighbor index, and Stage 09 audits. The matrix reuses the frozen LLM,
+prompt, retrieval, tool, and batch pipeline while replacing only benchmark
+inputs, the Starling index, and the isolated output root:
 
 ```text
 outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/

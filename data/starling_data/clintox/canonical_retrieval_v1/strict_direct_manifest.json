@@ -1,0 +1,27 @@
+{
+  "status": "candidate_strict_literal_gate_pending_qa",
+  "gate_version": "literal_toxicity_trial_failure.v4",
+  "source_path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+  "source_sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285",
+  "n_source_rows_scanned": 338780,
+  "n_accepted_direct_rows": 338,
+  "n_unique_direct_smiles": 195,
+  "n_unique_direct_pmids": 289,
+  "decision_counts": {
+    "accept_literal_toxicity_trial_failure": 338,
+    "reject_efficacy_failure_not_toxicity_failure": 7,
+    "reject_failure_explicitly_not_toxicity_caused": 9,
+    "reject_missing_required_field": 24866,
+    "reject_needs_more_context": 14520,
+    "reject_negated_failure_event": 2638,
+    "reject_no_literal_toxicity_trial_failure": 290261,
+    "reject_patient_or_treatment_discontinuation": 6141
+  },
+  "qualifying_conditions_source_status": "column_unavailable",
+  "qa_sample_status": "pending_manual_review",
+  "n_qa_sample_rows": 120,
+  "paths": {
+    "accepted_claims": "data/starling_data/clintox/canonical_retrieval_v1/strict_direct_claims.parquet",
+    "qa_sample": "data/starling_data/clintox/canonical_retrieval_v1/strict_direct_qa_sample.parquet"
+  }
+}

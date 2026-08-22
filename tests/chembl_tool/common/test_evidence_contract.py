@@ -1,10 +1,199 @@
 from tools.chembl_tool.common.evidence_contract import (
     CONTRACT_VERSION,
+    ASSAY_COMPACT_PROMPT_PROFILE,
+    ASSAY_COMPACT_V2_PROMPT_PROFILE,
+    ASSAY_RAW_CARD_PROMPT_PROFILE,
+    assay_evidence_for_llm,
+    assay_evidence_for_llm_v2,
+    assay_evidence_for_llm_raw_cards,
     attach_minimal_evidence,
+    evidence_for_group_llm,
     evidence_for_llm,
     numeric_only_evidence_row,
     validate_minimal_evidence,
 )
+
+
+def test_dense_assay_view_keeps_assay_measurement_and_bounds_repeated_text():
+    row = {
+        "molecule_chembl_id": "M1",
+        "canonical_smiles": "CCO",
+        "assay_chembl_id": "ASSAY1",
+        "group_id": "Assay.ASSAY1",
+        "standard_type": "oral bioavailability",
+        "standard_value": "42",
+        "standard_units": "%",
+        "assay_description": "x" * 1000,
+        "evidence_source": "Starling",
+        "confidence_score": 0.9,
+        "source_record_count": 4,
+        "evidence_scope": {
+            "assay_context": ["in vivo oral study"],
+            "species_context": ["human"],
+        },
+        "relevance_score": 99,
+        "relevance_rank": 1,
+    }
+
+    compact = assay_evidence_for_llm(row)
+
+    assert compact["contract_version"] == CONTRACT_VERSION
+    assert compact["assay_id"] == "ASSAY1"
+    assert compact["endpoint"]["measurement"] == {"value": "42", "unit": "%"}
+    assert compact["annotations"]["scope"]["assay_context"] == ["in vivo oral study"]
+    assert len(compact["text"]["evidence_excerpt"]) == 160
+    assert compact["provenance"]["source_record_count"] == 4
+    assert "molecule" not in compact
+    assert "relevance" not in str(compact)
+
+
+def test_group_prompt_profile_isolated_from_standard_group_evidence():
+    row = {
+        "molecule_chembl_id": "M1",
+        "canonical_smiles": "CCO",
+        "assay_chembl_id": "A1",
+        "standard_type": "endpoint",
+        "standard_value": "1",
+        "assay_description": "evidence",
+        "evidence_source": "Starling",
+    }
+    standard = evidence_for_group_llm(row, {"group_id": "Mechanism.tier_1"})
+    compact = evidence_for_group_llm(
+        row,
+        {
+            "group_id": "Flat.assay_ranked_evidence",
+            "evidence_prompt_profile": ASSAY_COMPACT_PROMPT_PROFILE,
+        },
+    )
+
+    assert standard == evidence_for_llm(row)
+    assert standard["molecule"]["id"] == "M1"
+    assert "molecule" not in compact
+
+
+def test_assay_compact_v2_preserves_record_pairing_without_boilerplate():
+    row = {
+        "evidence_source": "Starling",
+        "target_pref_name": "oral exposure assay",
+        "source_record_count": 7,
+        "source_record_examples": [
+            {
+                "endpoint_type": "bioavailability",
+                "reported_value": "42",
+                "reported_units": "%",
+                "species_context": "human",
+                "qualifying_conditions": "fasted",
+                "support_text": "x" * 500,
+                "support_summary": "Bioavailability was 42% in fasted humans.",
+            },
+            {
+                "endpoint_type": "AUC",
+                "reported_value": "10",
+                "reported_units": "ng*h/mL",
+                "species_context": "rat",
+                "support_text": "AUC was 10 ng*h/mL in rats.",
+            },
+        ],
+    }
+
+    compact = assay_evidence_for_llm_v2(row)
+
+    assert compact == {
+        "assay_context": "oral exposure assay",
+        "records": [
+            {
+                "endpoint": "bioavailability",
+                "value": "42",
+                "unit": "%",
+                "species": "human",
+                "conditions": "fasted",
+                "support": "Bioavailability was 42% in fasted humans.",
+            },
+            {
+                "endpoint": "AUC",
+                "value": "10",
+                "unit": "ng*h/mL",
+                "species": "rat",
+                "support": "AUC was 10 ng*h/mL in rats.",
+            },
+        ],
+        "source_record_count": 7,
+    }
+    assert "contract_version" not in compact
+    assert "assay_id" not in compact
+
+
+def test_assay_compact_v2_refuses_unsummarized_long_support():
+    row = {
+        "source_record_examples": [
+            {"endpoint_type": "endpoint", "support_text": "x" * 321}
+        ]
+    }
+    try:
+        assay_evidence_for_llm_v2(row)
+    except ValueError as error:
+        assert "requires a frozen support_summary" in str(error)
+    else:
+        raise AssertionError("expected long unsummarized support to be rejected")
+
+
+def test_group_prompt_selects_assay_compact_v2_explicitly():
+    compact = evidence_for_group_llm(
+        {
+            "source_record_examples": [
+                {"endpoint_type": "endpoint", "support_text": "short support"}
+            ]
+        },
+        {"evidence_prompt_profile": ASSAY_COMPACT_V2_PROMPT_PROFILE},
+    )
+    assert compact["records"][0]["support"] == "short support"
+
+
+def test_assay_raw_cards_keep_all_selected_fields_complete_without_summary():
+    raw_support = "complete raw support " * 100
+    endpoint = "endpoint " * 100
+    value = "value " * 100
+    unit = "unit " * 100
+    species = "species " * 100
+    conditions = "conditions " * 100
+    assay_context = "assay context " * 100
+    row = {
+        "target_pref_name": assay_context,
+        "source_record_examples": [
+            {
+                "endpoint_type": endpoint,
+                "reported_value": value,
+                "reported_units": unit,
+                "species_context": species,
+                "qualifying_conditions": conditions,
+                "support_text": raw_support,
+                "support_summary": "historical summary",
+            }
+        ],
+    }
+
+    compact = assay_evidence_for_llm_raw_cards(row)
+    selected = evidence_for_group_llm(
+        row,
+        {"evidence_prompt_profile": ASSAY_RAW_CARD_PROMPT_PROFILE},
+    )
+
+    assert compact["records"][0]["support"] == raw_support.strip()
+    assert compact["records"][0]["endpoint"] == endpoint.strip()
+    assert compact["records"][0]["value"] == value.strip()
+    assert compact["records"][0]["unit"] == unit.strip()
+    assert compact["records"][0]["species"] == species.strip()
+    assert compact["records"][0]["conditions"] == conditions.strip()
+    assert compact["assay_context"] == assay_context.strip()
+    assert selected == compact
+
+
+def test_legacy_assay_replay_without_profile_keeps_compact_view():
+    compact = evidence_for_group_llm(
+        {"assay_chembl_id": "A1", "standard_type": "endpoint"},
+        {"group_id": "Flat.assay_ranked_evidence"},
+    )
+    assert compact["assay_id"] == "A1"
 
 
 def test_legacy_row_maps_to_minimal_contract_without_internal_direction_fields():
@@ -34,7 +223,11 @@ def test_legacy_row_maps_to_minimal_contract_without_internal_direction_fields()
     assert record["source"]["name"] == "ChEMBL"
     assert record["molecule"]["id"] == "CHEMBL1"
     assert record["group"]["id"] == "Tier 1.direct_outcome"
-    assert record["endpoint"]["measurement"] == {"relation": "=", "value": 0.8, "unit": "ratio"}
+    assert record["endpoint"]["measurement"] == {
+        "relation": "=",
+        "value": 0.8,
+        "unit": "ratio",
+    }
     assert record["annotations"]["transferability"] == "not_assessed"
     assert record["examples"] == [{"support_text": "reported"}]
     assert "evidence_direction" not in str(record)
@@ -58,7 +251,10 @@ def test_attach_preserves_source_row_and_adds_contract():
 
     assert attached is row
     assert attached["standard_type"] == "efflux ratio"
-    assert attached["minimal_evidence"]["annotations"]["evidence_role"] == "mechanistic_factor"
+    assert (
+        attached["minimal_evidence"]["annotations"]["evidence_role"]
+        == "mechanistic_factor"
+    )
     assert attached["minimal_evidence"]["annotations"]["scope"] == {"species": "human"}
 
 
@@ -95,5 +291,7 @@ def test_numeric_only_evidence_removes_text_and_qualitative_only_rows():
 
     assert numeric is not None
     assert numeric["minimal_evidence"]["text"] == {"evidence": "", "context": ""}
-    assert numeric["minimal_evidence"]["examples"] == [{"oral_bioavailability_value_percent": 42.0}]
+    assert numeric["minimal_evidence"]["examples"] == [
+        {"oral_bioavailability_value_percent": 42.0}
+    ]
     assert numeric_only_evidence_row({**row, "standard_value": "qualitative"}) is None

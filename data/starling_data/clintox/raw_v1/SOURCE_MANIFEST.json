@@ -1,0 +1,260 @@
+{
+  "archive": {
+    "provided_path": "/vast/projects/myatskar/lab/shared_docs/clintox_send.tar.gz",
+    "sha256": "5f34b79a9b8740ef2371b2f691644f52245bbc6903963abccc92e6000656170b",
+    "size": 391531824
+  },
+  "files": [
+    {
+      "archive_member": "clintox_send/v1/extractions.parquet",
+      "path": "data/starling_data/clintox/raw_v1/nonclinical_in_vivo_toxicity/extractions.parquet",
+      "sha256": "89fcfd09669d08519861bcc90723bbbada34bac4a18480bce3120947a5615938",
+      "size": 40040619,
+      "source_id": "nonclinical_in_vivo_toxicity"
+    },
+    {
+      "archive_member": "clintox_send/v1/extraction_guidance.json",
+      "path": "data/starling_data/clintox/raw_v1/nonclinical_in_vivo_toxicity/extraction_guidance.json",
+      "sha256": "d7a71fcd3ab868abb9403341e87dd39a205c79cbabe2de9d4cf7f83d07ebbadc",
+      "size": 7312,
+      "source_id": "nonclinical_in_vivo_toxicity"
+    },
+    {
+      "archive_member": "clintox_send/v2/extractions.parquet",
+      "path": "data/starling_data/clintox/raw_v1/organ_specific_toxicity/extractions.parquet",
+      "sha256": "5c15a8e12a92dd8adfdce21903acf86f45bdf376f4f34e5ee075438eaab42848",
+      "size": 78339102,
+      "source_id": "organ_specific_toxicity"
+    },
+    {
+      "archive_member": "clintox_send/v2/extraction_guidance.json",
+      "path": "data/starling_data/clintox/raw_v1/organ_specific_toxicity/extraction_guidance.json",
+      "sha256": "d2f4585c2488461ad089418a51d92150e5c073cb4653a2c8498737eb3e01ce2a",
+      "size": 6764,
+      "source_id": "organ_specific_toxicity"
+    },
+    {
+      "archive_member": "clintox_send/v3/extractions.parquet",
+      "path": "data/starling_data/clintox/raw_v1/genotoxicity_carcinogenicity/extractions.parquet",
+      "sha256": "3b499789311c8ee3746f47276cdcd9a822b5835c7cf75ff170f5ad7267114328",
+      "size": 72381604,
+      "source_id": "genotoxicity_carcinogenicity"
+    },
+    {
+      "archive_member": "clintox_send/v3/extraction_guidance.json",
+      "path": "data/starling_data/clintox/raw_v1/genotoxicity_carcinogenicity/extraction_guidance.json",
+      "sha256": "f5b4f73e79456a8d73dba48a48d1367565e123552daa661e6bc5439b028166dc",
+      "size": 7168,
+      "source_id": "genotoxicity_carcinogenicity"
+    },
+    {
+      "archive_member": "clintox_send/v4/extractions.parquet",
+      "path": "data/starling_data/clintox/raw_v1/cellular_stress/extractions.parquet",
+      "sha256": "909a6859ec26a55ba77ac148fa2f79e0df48c61ba41918c880f9ccfc429b6c90",
+      "size": 83097987,
+      "source_id": "cellular_stress"
+    },
+    {
+      "archive_member": "clintox_send/v4/extraction_guidance.json",
+      "path": "data/starling_data/clintox/raw_v1/cellular_stress/extraction_guidance.json",
+      "sha256": "4250d7ea0bae7ab4aa7056eaaf7ae94ae650787225aadc1ec060c2fc944234d4",
+      "size": 7752,
+      "source_id": "cellular_stress"
+    },
+    {
+      "archive_member": "clintox_send/v5/extractions.parquet",
+      "path": "data/starling_data/clintox/raw_v1/general_cytotoxicity/extractions.parquet",
+      "sha256": "fc3183dde708cda5e47d7941f937633a09414b574d0d51279e6b03055b8a3ddb",
+      "size": 37076896,
+      "source_id": "general_cytotoxicity"
+    },
+    {
+      "archive_member": "clintox_send/v5/extraction_guidance.json",
+      "path": "data/starling_data/clintox/raw_v1/general_cytotoxicity/extraction_guidance.json",
+      "sha256": "670643f5ebe7ae542fe8de5489e81f9fe8e72b9008b9dba6048977d25533f7da",
+      "size": 7758,
+      "source_id": "general_cytotoxicity"
+    },
+    {
+      "archive_member": "clintox_send/v6/extractions.parquet",
+      "path": "data/starling_data/clintox/raw_v1/off_target_ddi_exposure/extractions.parquet",
+      "sha256": "af15ebdb2e093082ff7ccede1db6efa2a5472e8c6ab96d67a585af792665886d",
+      "size": 81506186,
+      "source_id": "off_target_ddi_exposure"
+    },
+    {
+      "archive_member": "clintox_send/v6/extraction_guidance.json",
+      "path": "data/starling_data/clintox/raw_v1/off_target_ddi_exposure/extraction_guidance.json",
+      "sha256": "e1506374463b3683132d908ebbb5a9463b07da19244cdfe02ba1791d264484c1",
+      "size": 9924,
+      "source_id": "off_target_ddi_exposure"
+    }
+  ],
+  "known_missing_provenance": [
+    "upstream dataset revision",
+    "extraction model and software version",
+    "entity-mapping method",
+    "license"
+  ],
+  "raw_version": "starling_raw_v1",
+  "schema_version": "clintox_raw_source_manifest.v1",
+  "sources": [
+    {
+      "archive_version": "v1",
+      "columns": [
+        "paragraph_idx",
+        "support_text",
+        "global_identifier",
+        "evidence_type",
+        "endpoint_value",
+        "endpoint_unit",
+        "administered_dose",
+        "animal_context",
+        "exposure_context",
+        "observed_effect",
+        "qualifying_conditions",
+        "extra_details",
+        "confidence",
+        "needs_more_context",
+        "pmid",
+        "extraction_id",
+        "SMILES"
+      ],
+      "default_mechanism_family": "in_vivo_toxicology",
+      "n_rows": 345174,
+      "source_id": "nonclinical_in_vivo_toxicity",
+      "title": "Nonclinical in vivo toxicity"
+    },
+    {
+      "archive_version": "v2",
+      "columns": [
+        "paragraph_idx",
+        "support_text",
+        "global_identifier",
+        "organ_system",
+        "toxicity_endpoint",
+        "effect_status",
+        "evidence_context",
+        "biological_system",
+        "exposure_regimen",
+        "quantitative_result",
+        "qualifying_conditions",
+        "extra_details",
+        "confidence",
+        "needs_more_context",
+        "pmid",
+        "extraction_id",
+        "SMILES"
+      ],
+      "default_mechanism_family": "organ_specific_toxicity",
+      "n_rows": 720399,
+      "source_id": "organ_specific_toxicity",
+      "title": "Organ-specific toxicity"
+    },
+    {
+      "archive_version": "v3",
+      "columns": [
+        "paragraph_idx",
+        "support_text",
+        "global_identifier",
+        "evidence_category",
+        "assay_type",
+        "study_context",
+        "endpoint",
+        "result_direction",
+        "biological_system",
+        "exposure_conditions",
+        "qualifying_conditions",
+        "extra_details",
+        "confidence",
+        "needs_more_context",
+        "pmid",
+        "extraction_id",
+        "SMILES"
+      ],
+      "default_mechanism_family": "genotoxicity_carcinogenicity",
+      "n_rows": 641417,
+      "source_id": "genotoxicity_carcinogenicity",
+      "title": "Genotoxicity and carcinogenicity"
+    },
+    {
+      "archive_version": "v4",
+      "columns": [
+        "paragraph_idx",
+        "support_text",
+        "global_identifier",
+        "stress_endpoint",
+        "effect_direction",
+        "evidence_basis",
+        "mechanistic_effect",
+        "target_or_pathway",
+        "biological_model",
+        "dose_and_duration",
+        "qualifying_conditions",
+        "extra_details",
+        "confidence",
+        "needs_more_context",
+        "pmid",
+        "extraction_id",
+        "SMILES"
+      ],
+      "default_mechanism_family": "cellular_stress_pathways",
+      "n_rows": 611750,
+      "source_id": "cellular_stress",
+      "title": "Cellular stress"
+    },
+    {
+      "archive_version": "v5",
+      "columns": [
+        "paragraph_idx",
+        "support_text",
+        "global_identifier",
+        "cell_model",
+        "endpoint_type",
+        "result_value",
+        "result_unit",
+        "test_concentration",
+        "exposure_time_h",
+        "assay_method",
+        "qualifying_conditions",
+        "extra_details",
+        "confidence",
+        "needs_more_context",
+        "pmid",
+        "extraction_id",
+        "SMILES"
+      ],
+      "default_mechanism_family": "general_cytotoxicity",
+      "n_rows": 826011,
+      "source_id": "general_cytotoxicity",
+      "title": "General cytotoxicity"
+    },
+    {
+      "archive_version": "v6",
+      "columns": [
+        "paragraph_idx",
+        "support_text",
+        "global_identifier",
+        "evidence_type",
+        "target_or_endpoint",
+        "target_identifier",
+        "result_metric",
+        "result_value",
+        "result_unit",
+        "assay_context",
+        "qualifying_conditions",
+        "extra_details",
+        "confidence",
+        "needs_more_context",
+        "pmid",
+        "extraction_id",
+        "SMILES"
+      ],
+      "default_mechanism_family": "off_target_ddi_exposure",
+      "n_rows": 1267205,
+      "source_id": "off_target_ddi_exposure",
+      "title": "Off-target, DDI, and exposure liability"
+    }
+  ],
+  "structure_policy": "Exact raw files retain global_identifier; all derived artifacts ignore it and use only source SMILES."
+}

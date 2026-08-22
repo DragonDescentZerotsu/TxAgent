@@ -1,0 +1,9 @@
+condition_group,condition_scope,n_molecule_condition_rows,n_unique_parents,n_distinct_scaffolds,n_train,n_valid,n_test,n_y0,n_y1
+no_reported_external_condition,none_reported,2092,2092,1243,1674,209,209,577,1515
+co_treatment=rifampin,external,15,15,11,8,3,4,9,6
+disease=cirrhosis,external,38,38,32,30,4,4,1,37
+disease=cystic_fibrosis,external,14,14,14,9,1,4,4,10
+prandial_state=fasted,external,214,214,169,156,28,30,49,165
+prandial_state=fed_high_fat,external,9,9,9,6,1,2,3,6
+prandial_state=fed_unspecified,external,78,78,67,49,14,15,21,57
+release_profile=modified_release,external,29,29,21,26,2,1,5,24

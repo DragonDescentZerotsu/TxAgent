@@ -2,7 +2,12 @@ import json
 
 import pytest
 
-from baselines.structure_knn.run import _metrics, _roc_auc, main
+from baselines.conditioned_knn import select_conditioned_ranked_indices
+from baselines.structure_knn.run import (
+    _metrics,
+    _roc_auc,
+    main,
+)
 
 
 def _write_jsonl(path, rows):
@@ -28,6 +33,45 @@ def test_metrics_match_expected_confusion():
     assert metrics["accuracy"] == 0.5
     assert metrics["macro_f1"] == 0.5
     assert metrics["confusion_matrix"] == {"tn": 1, "fp": 1, "fn": 1, "tp": 1}
+
+
+def test_conditioned_selection_prefers_same_group_then_distinct_null_molecules():
+    reference = [
+        {"drug": "A", "Y": 0, "molecule_identity_key": "A", "condition_group": "no_reported_external_condition"},
+        {"drug": "A", "Y": 1, "molecule_identity_key": "A", "condition_group": "disease=x"},
+        {"drug": "B", "Y": 1, "molecule_identity_key": "B", "condition_group": "disease=x"},
+        {"drug": "C", "Y": 0, "molecule_identity_key": "C", "condition_group": "no_reported_external_condition"},
+        {"drug": "D", "Y": 1, "molecule_identity_key": "D", "condition_group": "disease=y"},
+    ]
+    selected = select_conditioned_ranked_indices(
+        [1, 0, 2, 4, 3],
+        reference,
+        {"condition_group": "disease=x"},
+        k=3,
+        policy="same_condition_then_null",
+    )
+    assert selected == [(1, "same_condition"), (2, "same_condition"), (3, "null_fallback")]
+
+
+def test_condition_agnostic_selection_deduplicates_and_prefers_null_label():
+    reference = [
+        {"drug": "A", "Y": 0, "molecule_identity_key": "A", "condition_group": "no_reported_external_condition"},
+        {"drug": "A", "Y": 1, "molecule_identity_key": "A", "condition_group": "disease=x"},
+        {"drug": "B", "Y": 1, "molecule_identity_key": "B", "condition_group": "disease=x"},
+        {"drug": "C", "Y": 0, "molecule_identity_key": "C", "condition_group": "no_reported_external_condition"},
+    ]
+    selected = select_conditioned_ranked_indices(
+        [1, 0, 2, 3],
+        reference,
+        {"condition_group": "disease=x"},
+        k=3,
+        policy="all_train_unique_molecules",
+    )
+    assert selected == [
+        (0, "all_train_unique_molecules"),
+        (2, "all_train_unique_molecules"),
+        (3, "all_train_unique_molecules"),
+    ]
 
 
 def test_runner_uses_three_train_neighbors(tmp_path):
@@ -101,6 +145,68 @@ def test_runner_can_evaluate_valid_split(tmp_path):
     assert metrics["n_evaluation"] == 1
     assert (output_dir / "valid_predictions.jsonl").exists()
     assert not (output_dir / "test_predictions.jsonl").exists()
+
+
+def test_runner_can_use_train_and_valid_as_test_reference_pool(tmp_path):
+    data_dir = tmp_path / "data"
+    output_dir = tmp_path / "output"
+    train = [
+        {"drug": "CCO", "Y": 0},
+        {"drug": "c1ccccc1", "Y": 0},
+        {"drug": "ClCCl", "Y": 0},
+    ]
+    valid = [{"drug": "CCCCO", "Y": 1}]
+    _write_jsonl(data_dir / "train.jsonl", train)
+    _write_jsonl(data_dir / "valid.jsonl", valid)
+    _write_jsonl(data_dir / "test.jsonl", [{"drug": "CCCO", "Y": 1}])
+
+    assert main(
+        [
+            "--data-dir", str(data_dir),
+            "--output-dir", str(output_dir),
+            "--reference-splits", "train", "valid",
+            "--k", "1",
+        ]
+    ) == 0
+    metrics = json.loads((output_dir / "metrics.json").read_text())
+    prediction = json.loads((output_dir / "test_predictions.jsonl").read_text())
+    assert metrics["reference_splits"] == ["train", "valid"]
+    assert metrics["n_reference_by_split"] == {"train": 3, "valid": 1}
+    assert metrics["n_train"] == 3
+    assert metrics["n_reference"] == 4
+    manifest = json.loads((output_dir / "manifest.json").read_text())
+    assert manifest["train_path"] == str(data_dir / "train.jsonl")
+    assert prediction["neighbors"][0]["reference_split"] == "valid"
+    assert prediction["neighbors"][0]["reference_pool_index"] == (
+        prediction["neighbors"][0]["train_index"]
+    )
+
+
+def test_runner_rejects_train_valid_reference_for_valid_evaluation(tmp_path):
+    with pytest.raises(ValueError, match="only for test"):
+        main(
+            [
+                "--data-dir", str(tmp_path),
+                "--output-dir", str(tmp_path / "output"),
+                "--evaluation-split", "valid",
+                "--reference-splits", "train", "valid",
+            ]
+        )
+
+
+@pytest.mark.parametrize(
+    "reference_splits",
+    [["valid"], ["valid", "train"], ["train", "train"]],
+)
+def test_runner_rejects_noncanonical_reference_pools(tmp_path, reference_splits):
+    with pytest.raises(ValueError, match="exactly 'train' or 'train valid'"):
+        main(
+            [
+                "--data-dir", str(tmp_path),
+                "--output-dir", str(tmp_path / "output"),
+                "--reference-splits", *reference_splits,
+            ]
+        )
 
 
 def test_runner_supports_query_feature_coverage_selection(tmp_path):

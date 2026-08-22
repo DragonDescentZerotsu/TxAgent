@@ -89,8 +89,12 @@ explicit human clinical toxicity rather than TDC/MoleculeNet CT_TOX. Its
 `record_supported_v2` scaffold split is 6,104/762/762 and remains
 `candidate_pending_qa` because the clinical source lacks
 `qualifying_conditions`. It must not be added to default paper matrices until
-that source-semantic limitation and the frozen gold QA gate are resolved. The
-shared protocol and builders are:
+that source-semantic limitation and the frozen gold QA gate are resolved.
+ClinTox also has a separate source-reconstructed `clinical_trial_failure_v1`
+benchmark built only from frozen AACT toxicity-failure positives and
+SWEETLEAD/FDA-approved comparators; broad Starling toxicity rows do not vote in
+that lineage. Keep both ClinTox lineages separate from the three promoted
+Starling gold lineages. The shared protocol and builders are:
 
 ```text
 tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
@@ -210,6 +214,12 @@ tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
 tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
 tools/chembl_tool/paper_experiments/watch_glm_tunnel_and_matrix.py
 tools/chembl_tool/paper_experiments/plot_starling_with_minimol_agent.py
+tools/chembl_tool/paper_experiments/run_minimol_valid_matrix_gpt_oss_120b.py
+tools/chembl_tool/paper_experiments/run_assay_retrieval_curve.py
+tools/chembl_tool/paper_experiments/build_assay_family_catalog.py
+tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py
+tools/chembl_tool/paper_experiments/audit_conditioned_assay_prompt_lengths.py
+tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py
 tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
 tools/chembl_tool/paper_experiments/analyze_coverage_selector_retrieval_changes.py
 tools/chembl_tool/paper_experiments/plot_coverage_selector_llm_matrix.py
@@ -219,8 +229,14 @@ tools/chembl_tool/paper_experiments/train_ratio_prior_analysis.py
 baselines/minimol/run_bioavailability_ma.py --train-all
 baselines/minimol/run_train_cv.py
 baselines/minimol/run_embedding_knn.py
+baselines/conditioned_knn.py
 baselines/structure_knn/run.py
 ```
+
+Conditioned cumulative-family 的 Bioavailability nondirect context overlay 与 ClinTox source-native support
+bridge 分别由 `tasks/bioavailability_ma/build_nondirect_assay_context.py` 和
+`tasks/clintox/build_flat_assay_support_evidence.py` 构建；两者只生成版本化 source artifacts，不复制 reasoning
+runner。完整合同、当前 valid 进度和复现命令统一见 `ASSAY_LEVEL_RETRIEVAL.md`。
 
 `plot_starling_model_comparison.py` 是 GPT-OSS-20B、GPT-OSS-120B、train-label baselines 和后续
 ablation 的唯一 Starling 总图入口。新增完整 model/visibility summary 通过可重复的
@@ -275,7 +291,10 @@ random/scaffold 分别按 valid+test union 的 `heldout_molecule_labels.jsonl` �
 
 旧 `data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
 `data/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` 是既有 TDC 实验的历史输入，不再代表上述
-三个已迁移 task 的当前 benchmark。历史结果和复现命令可以保留，但必须明确标注 TDC lineage。
+三个已迁移 task 的当前 benchmark；旧 ClinTox split 也不代表新的 parent-normalized reconstruction。
+ClinTox 当前严格 split 位于
+`data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/`。历史结果和复现命令可以保留，
+但必须明确标注 lineage。
 
 ## 设计原则
 
@@ -283,7 +302,16 @@ random/scaffold 分别按 valid+test union 的 `heldout_molecule_labels.jsonl` �
 2. ChEMBL neighbor retrieval 是 pipeline 的 evidence prefetch / context assembly 步骤，不是当前暴露给 LLM 的 function tool，也不是当前 FastAPI service tool。后续 pKa、logD、solubility、toxicity、target affinity、PK property 等模型才按通用 tool contract 接入。
 3. 长初始化模型要常驻。慢启动模型和大索引应在服务启动时加载，通过 FastAPI endpoint 调用，避免每个 query 反复初始化。
 4. evidence retrieval 只提供证据，不直接替代 reasoning。retrieval payload 必须保留 assay 描述、activity 数值、endpoint 语义、similarity 和不确定性。
-5. retrieval 单元优先是 molecule-level evidence，不是 assay-level evidence。assay 信息要保留，但 query-time ranking 应先找相似 molecule，再展开其 assay/activity evidence。
+5. 默认 production/group-level retrieval 单元仍优先是 molecule-level evidence：先找相似 molecule，再展开
+   assay/activity evidence。另有隔离的 Starling assay-level scaling experiment：先按冻结 biological relevance
+   选择 cumulative assay prefix、先删除 valid+test parents 的 direct-outcome rows，再从保留的 source records
+   检索 query-scaffold-disjoint molecules，并把相同 molecule 跨 assays 合并为一个 flat branch。该实验不得
+   改写 production family mapping；协议见
+   `tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
+   Conditioned cumulative-family assay experiments use `assay_compact.raw_v3`:
+   at most three representative record cards per assay×molecule with complete
+   raw card fields and support text. They do not apply field-level truncation
+   and do not require or call a support-summary model.
 6. LLM reasoning 分为并发证据分支和 final 汇总：single-molecule 分支判断理化性质先验；paper-facing
    group-level 分支按少量、数据源无关的 mechanism family 判断 analog transferability；final-level 汇总所有
    证据。细粒度 `Tier.endpoint_group` 只用于 source-local normalization、检索审计和 legacy native runner，
@@ -534,9 +562,11 @@ tools/chembl_tool/common/distance_index.py
 tools/chembl_tool/common/distance_retrieval.py
 tools/chembl_tool/common/scalar_knn.py
 tools/chembl_tool/common/starling/evidence_library.py
+tools/chembl_tool/common/starling/assay_catalog.py
 tools/chembl_tool/common/starling/benchmark_dataset.py
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
 tools/chembl_tool/common/starling/heldout_index.py
+tools/chembl_tool/common/assay_retrieval.py
 ```
 
 Artifact ownership is split at Stage 05. Task-level
@@ -673,13 +703,9 @@ reasoning_validation.py
 final_decision_prior.py
   提供显式 opt-in 的 final-stage decision profile。默认 `standard` 严格 no-op；
   `train_ratio_tiebreak_v1` 只允许 BBB/Bio final-only valid 诊断在真正 evidence tie 时使用 frozen train majority，
-  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。BBB 还保留
-  `direct_anchored_residual_v1` / `direct_override_recheck_v1` 历史诊断；它们不向 Bio CLI 暴露，valid gate 已失败，
-  不得成为默认或启动 formal test。任何 profile 都不得变成 batch quota。
-
-tasks/bbb_martins/final_decision_profiles.py
-  只拥有 BBB 的 direct-anchor、mechanism-weight 和 override/recheck prompt/schema/cross-field validation；公共
-  `final_decision_prior.py` 不包含 passive/efflux/influx 等 task 语义。该模块仅用于已失败的 E20 历史复现。
+  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。已失败的 BBB
+  `direct_anchored_residual_v1` / `direct_override_recheck_v1` 只保留冻结 artifacts 和 no-go 结论；专用实现已删除，
+  不得启动 formal test。任何 profile 都不得变成 batch quota。
 
 prompt_profile.py
   只负责 task prompt profile 的 manifest provenance、历史缺省映射和 branch-reuse 一致性 gate。具体 task
@@ -1507,103 +1533,39 @@ tools/chembl_tool/tasks/bbb_martins/
 
 ## ClinTox 代码入口
 
-ClinTox 的 task-specific 细节记录在：
+当前 canonical lineage、source contract、split、retrieval hierarchy、prompt、实验结果和 no-promotion
+结论统一记录在：
 
 ```text
 tools/chembl_tool/tasks/clintox/AGENTS.md
+tools/chembl_tool/tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md
 ```
 
-当前 ClinTox 状态是归档 / stress-test，而不是继续优化的主线任务。结论：
+当前 gold 是独立的 source-reconstructed `clinical_trial_failure_v1`，路径为
+`data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/`；旧
+`data/processed/ClinTox` 和早期 ChEMBL-native 结果只作 historical comparison。唯一 prompt profile 为
+`tdc_source_aligned_v3`，旧 profile 已删除且旧/unversioned branch 不得复用。核心入口：
 
 ```text
-ClinTox 可以复用当前 ChEMBL evidence retrieval + reasoning workflow，但不适合作为该系统的
-主要 benchmark 分类任务。
+tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
+  从冻结 AACT positive 与 SWEETLEAD/FDA comparator 构造 parent labels 和 scaffold split。
 
-核心原因是 label ontology 和 ChEMBL evidence ontology 不完全匹配：
-  ClinTox 的 Y=1/Y=0 是高层 clinical toxicity / clinical failure 类二分类；
-  ChEMBL 检索到的 evidence 更多是 heterogeneous toxicity liability，包括 hERG、5-HT2B、
-  CYP/transporter/DDI、cell viability、DILI、LD50、MTD、organ stress 等。
-
-这些 evidence 对 toxicity risk explanation 有价值，但很多并不等价于 ClinTox-positive。
-因此系统容易把机制性 liability 或 broad medicinal-chemistry risk 解释成 toxic，导致 FP 偏多。
-同时一些 ClinTox label 本身有边界噪声，例如 test set 中存在同 InChIKey connectivity
-但 label 相反的分子对。
-```
-
-已归档的主要结果：
-
-```text
-v7 full final-only, missing rerun 合并估计：
-  batch: outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_full_prompt_v7_final_only_from_v2
-  fill:  outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_full_prompt_v7_missing_rerun_from_v2
-  estimate: TN=220 FP=48 FN=12 TP=6, macro-F1 ~0.523, positive F1 ~0.167
-
-v8 keygroups smoke:
-  batch: outputs/chembl_tool/tasks/clintox/reasoning/batches/clintox_group_prompt_v8_keygroups_smoke
-  targeted 9 examples: TN=1 FP=3 FN=1 TP=4, macro-F1=0.50, positive recall=0.80
-
-keygroups 的含义：
-  手动只选择更接近 ClinTox label 的 high-value endpoint groups 进入 targeted smoke，
-  例如 clinical toxicity/MTD、in vivo toxicity/LD50/NOAEL、DILI、hepatic injury、
-  mitochondrial stress、DNA damage、general cytotoxicity，以及少量 off-target/CYP/transporter
-  作为背景。
-
-实验结论：
-  keygroups 能救回部分 positive examples（例如 idx73、idx250）并保住部分 TP
-  （例如 idx84、idx170），说明 final context selection/compression 是有效方向；
-  但 FP 仍然顽固（例如 idx40、idx56、idx65），idx124 仍不稳定。
-```
-
-后续维护原则：
-
-```text
-1. 保留 ClinTox 代码、AGENTS.md、audit 脚本和已产出的 batch 结果用于复现和案例分析。
-2. 不再继续围绕 ClinTox macro-F1 做 prompt 迭代，除非明确把目标改成 dataset-specific calibration。
-3. 如果未来重启 ClinTox，应优先做 final-context compression/filter，而不是继续堆 final prompt：
-   把 evidence 分成 direct severe clinical anchor、in vivo dose-limiting anchor、
-   mechanistic liability、weak/background context；机制性 liability 不能单独决定 toxic。
-4. ClinTox 更适合作为 toxicity evidence retrieval / mechanistic risk explanation 的 stress test，
-   不适合作为证明通用 workflow 有效性的主任务。主线任务应优先选择 label 与 ChEMBL evidence
-   语义更一致的 endpoint。
-```
-
-主要入口：
-
-```text
-tools/chembl_tool/tasks/clintox/constants.py
-  ClinTox label 和 prediction mapping。当前约定：Y=1 -> toxic，Y=0 -> non_toxic。
-
-tools/chembl_tool/tasks/clintox/rules.py
-  ClinTox assay screening 关键词、negative keywords、weak/context-dependent terms、
-  toxicology target genes 和 assay family 配置。
-
-tools/chembl_tool/tasks/clintox/scoring.py
-  ClinTox assay 保留/剔除和打分入口。screen_assays.py 和 rescore_outputs.py 都调用 scored_row()。
-
-tools/chembl_tool/tasks/clintox/endpoint_groups.py
-  ClinTox Tier.endpoint_group、evidence_direction、evidence_strength 和 endpoint assignment 规则。
-
-tools/chembl_tool/tasks/clintox/build_evidence_library.py
-  ClinTox evidence library 构建入口。默认读取 assay_screening/v6，输出
-  clintox_molecule_evidence.jsonl、clintox_neighbor_index.pkl 和 meta。
-
-tools/chembl_tool/tasks/clintox/retrieve_neighbors.py
-  ClinTox analog retrieval 入口。默认 top-k-per-group=3、min-similarity=0.3。
+tools/chembl_tool/tasks/clintox/starling_retrieval.py
+  构造独立 direct/clinical/mechanistic retrieval library；Starling rows 不参与 gold label。
 
 tools/chembl_tool/tasks/clintox/run_reasoning_pipeline.py
-  ClinTox 单分子 reasoning pipeline：retrieval prefetch、single-molecule branch、group-level
-  并发 reasoning、final summary、trace 保存，以及 final-only rerun。支持 `--groups` 做 targeted
-  endpoint-group smoke test。
-
 tools/chembl_tool/tasks/clintox/run_reasoning_batch.py
-  ClinTox 批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、
-  report、logs、runs 和 combined trace。
+  复用公共 retrieval/reasoning workflow；默认 current split、heldout-filtered index、v3 prompt 和
+  PARCC DeepSeek-V4-Flash tunnel。
 
-tools/chembl_tool/tasks/clintox/audit_reasoning_batch.py
-  ClinTox batch 诊断入口。读取已有 predictions/final/group 输出，不重跑 LLM；汇总 FP/FN/TP/TN、
-  evidence category、group evidence direction/confidence/transferability、service/group errors，以及
-  test set 中同 InChIKey connectivity 但 label 相反的分子对。默认输出到目标 batch 的 `audit/`。
+tools/chembl_tool/tasks/clintox/audit_clinical_trial_failure_agent.py
+  审计 direct provenance、coverage、label leak、structured retries 和 paired flips。
 ```
+
+2026-08-16 scaffold-valid 的 best 是 `none` macro-F1 `0.6198`；direct/full-flat/full-mechanism 均未
+通过 promotion gate。test 已经被查看，只保留 `post-test diagnostic`，不得作为新的 formal test，也不得继续在
+同一 valid/test 调 prompt 或 selector。broad toxicity evidence 适合 risk explanation，但不能冒充
+source-defined AACT association。
 
 ## Skin_Reaction 代码入口
 

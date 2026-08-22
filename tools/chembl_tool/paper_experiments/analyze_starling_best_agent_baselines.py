@@ -27,12 +27,22 @@ def analyze(
     metrics_path: Path,
     output_prefix: Path,
     *,
+    agent_metrics_path: Path | None = None,
+    agent_model: str | None = None,
     permutation_replicates: int = 100_000,
     bootstrap_replicates: int = 10_000,
     permutation_seed: int = 29,
     bootstrap_seed: int = 23,
 ) -> list[dict[str, Any]]:
     metric_rows = _read_tsv(metrics_path)
+    if (agent_metrics_path is None) != (agent_model is None):
+        raise ValueError("agent_metrics_path and agent_model must be provided together")
+    if agent_metrics_path is not None:
+        metric_rows = _merge_experiment_agents(
+            metric_rows,
+            _read_tsv(agent_metrics_path),
+            agent_model=agent_model,
+        )
     groups: dict[tuple[str, str, str], list[dict[str, str]]] = {}
     for row in metric_rows:
         key = (
@@ -116,6 +126,10 @@ def analyze(
             {
                 "schema_version": "starling_best_agent_all_baselines.v1",
                 "metrics": str(metrics_path),
+                "agent_metrics": (
+                    str(agent_metrics_path) if agent_metrics_path is not None else None
+                ),
+                "agent_model": agent_model,
                 "hypothesis": "best_valid_agent_macro_f1_greater_than_baseline",
                 "multiple_testing": "Holm adjustment across all plotted comparisons",
                 "comparisons": output_rows,
@@ -129,6 +143,42 @@ def analyze(
         _markdown(output_rows), encoding="utf-8"
     )
     return output_rows
+
+
+def _merge_experiment_agents(
+    base_rows: list[dict[str, str]],
+    experiment_rows: list[dict[str, str]],
+    *,
+    agent_model: str,
+) -> list[dict[str, str]]:
+    """Combine shared baselines with one plotted experiment-model family."""
+    baselines = [row for row in base_rows if row["method"] in BASELINE_METHOD_KEYS]
+    agents = [
+        {
+            **row,
+            "method_family": "molecular_evidence_agent",
+        }
+        for row in experiment_rows
+        if row.get("model_label") == agent_model
+        and row.get("comparison_role", "").lower() not in {"anchor", "control"}
+        and row["method"] != "morgan_standard"
+    ]
+    if not agents:
+        raise ValueError(f"No experiment agent rows matched model {agent_model!r}")
+    base_groups = {
+        (row["benchmark_split"], row.get("evaluation_subset") or "test", row["task"])
+        for row in baselines
+    }
+    agent_groups = {
+        (row["benchmark_split"], row.get("evaluation_subset") or "test", row["task"])
+        for row in agents
+    }
+    if agent_groups != base_groups:
+        raise ValueError(
+            "Experiment agent groups do not match baseline groups: "
+            f"agent={sorted(agent_groups)}, baseline={sorted(base_groups)}"
+        )
+    return [*baselines, *agents]
 
 
 def paired_macro_f1_significance(
@@ -341,6 +391,15 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--metrics", type=Path, required=True)
     parser.add_argument("--output-prefix", type=Path, required=True)
+    parser.add_argument(
+        "--agent-metrics",
+        type=Path,
+        help="Optional plotted experiment-metrics TSV containing the target agent model.",
+    )
+    parser.add_argument(
+        "--agent-model",
+        help="Exact model_label selected from --agent-metrics.",
+    )
     parser.add_argument("--permutation-replicates", type=int, default=100_000)
     parser.add_argument("--bootstrap-replicates", type=int, default=10_000)
     parser.add_argument("--permutation-seed", type=int, default=29)
@@ -353,6 +412,8 @@ def main(argv: list[str] | None = None) -> int:
     rows = analyze(
         args.metrics,
         args.output_prefix,
+        agent_metrics_path=args.agent_metrics,
+        agent_model=args.agent_model,
         permutation_replicates=args.permutation_replicates,
         bootstrap_replicates=args.bootstrap_replicates,
         permutation_seed=args.permutation_seed,
