@@ -360,6 +360,12 @@ def _append_conditioned_baselines(
     omissions: list[dict[str, Any]] = []
     for method, plot_label, relative_path in CONDITIONED_BASELINES:
         metrics_path = baseline_root / baseline_task / relative_path
+        if method == "minimol_head" and not metrics_path.is_file():
+            metrics_path = (
+                baseline_root
+                / baseline_task
+                / "minimol_head/final/metrics.json"
+            )
         metrics = _load_json(metrics_path)
         actual_n = _metric_n(metrics)
         if actual_n != expected_n:
@@ -1755,6 +1761,16 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--conditioned-progressive-task-root",
+        action="append",
+        default=[],
+        metavar="TASK=PATH",
+        help=(
+            "Override the progressive artifact root for one task in the unified "
+            "overview; repeat when current task lineages live in different roots."
+        ),
+    )
+    parser.add_argument(
         "--conditioned-progressive-baseline-root",
         action="append",
         default=[],
@@ -1788,6 +1804,9 @@ def main(argv: list[str] | None = None) -> int:
             "bioavailability_ma": source_purity_root,
             "skin_reaction": source_purity_root,
         }
+        progressive_roots.update(
+            _parse_task_path_overrides(args.conditioned_progressive_task_root)
+        )
         if not args.analysis_dir:
             analysis_dir = (
                 progressive_roots["bbb_martins"].parent

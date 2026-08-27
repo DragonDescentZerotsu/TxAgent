@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, Mapping
 
 from openai import OpenAI
 import requests
@@ -32,6 +32,7 @@ class OpenAICompatibleClient:
         reasoning_effort: str,
         enable_thinking: bool,
         transport_max_retries: int = TRANSPORT_MAX_RETRIES,
+        request_extra_body: Mapping[str, Any] | None = None,
     ):
         if transport_max_retries < 0:
             raise ValueError("transport_max_retries must be non-negative")
@@ -49,6 +50,7 @@ class OpenAICompatibleClient:
         self.max_tool_rounds = max_tool_rounds
         self.reasoning_effort = reasoning_effort
         self.enable_thinking = enable_thinking
+        self.request_extra_body = dict(request_extra_body or {})
 
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         response = self._create_completion(messages)
@@ -179,8 +181,11 @@ class OpenAICompatibleClient:
             kwargs["temperature"] = self.temperature
         if self.reasoning_effort:
             kwargs["reasoning_effort"] = self.reasoning_effort
+        extra_body = dict(getattr(self, "request_extra_body", {}) or {})
         if self.enable_thinking:
-            kwargs["extra_body"] = {"thinking": {"type": "enabled"}}
+            extra_body["thinking"] = {"type": "enabled"}
+        if extra_body:
+            kwargs["extra_body"] = extra_body
         if tools is not None:
             kwargs["tools"] = tools
         if tool_choice is not None:

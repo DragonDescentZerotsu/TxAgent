@@ -1519,8 +1519,18 @@ def _build_command(args: argparse.Namespace) -> None:
             if args.allowed_molecules_jsonl
             else ""
         ),
+        "allowed_molecules_jsonl": (
+            str(Path(args.allowed_molecules_jsonl).resolve())
+            if args.allowed_molecules_jsonl
+            else ""
+        ),
         "heldout_molecules_jsonl_sha256": (
             sha256_file(Path(args.heldout_molecules_jsonl))
+            if args.heldout_molecules_jsonl
+            else ""
+        ),
+        "heldout_molecules_jsonl": (
+            str(Path(args.heldout_molecules_jsonl).resolve())
             if args.heldout_molecules_jsonl
             else ""
         ),

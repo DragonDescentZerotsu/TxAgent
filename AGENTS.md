@@ -20,7 +20,7 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Starling 二分类 benchmark（2026-08-26）
+## 当前 Starling 二分类 benchmark（2026-08-27）
 
 BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
 records 构建。ClinTox 仍没有同定义的 Starling direct source，但 2026-08-15 起另有严格的 source-reconstructed
@@ -63,8 +63,8 @@ data:
 变为 8,268；独立重投票后只移除旧 train 的 Digoxin parent，3,666 个 shared parents 的 label 和 split 均
 不变。旧 v2 的 source review 继续作为 provenance，v3 migration receipt 固定记录这一差异。
 旧 `experimental_meaningful_cns_access_v2`、`experimental_direct_cns_v1` 与 BBB `record_supported_v2` 的 gold、indices、baselines、
-agent traces 和结果全部保留为 historical lineage，不得与新 BBB 结果混表。Bioavailability_Ma 与
-Skin_Reaction 当前仍使用 `record_supported_v2`。
+agent traces 和结果全部保留为 historical lineage，不得与新 BBB 结果混表。Bioavailability_Ma 当前恢复使用
+`record_supported_v2`；Skin_Reaction 仍使用 `record_supported_v2`。
 
 `record_agreement70_split811_v1` 使用同一批 accepted binary parents 生成 random/scaffold
 两个历史版本：
@@ -75,7 +75,7 @@ data/processed_starling/<Task>/scaffold/{train.jsonl,valid.jsonl,test.jsonl,...}
 ```
 
 parent label 继续使用 70% record-weighted agreement；同 PMID 的多条 accepted records 仍分别计票，精确
-tie 始终拒绝。Bioavailability/Skin 当前 paper-facing split 和 BBB historical comparison 使用
+tie 始终拒绝。Skin 当前 paper-facing split、Bioavailability historical comparison 和 BBB historical comparison 使用
 scaffold-only `record_supported_v2`：先严格保持
 Bemis–Murcko scaffold 不跨 train/valid/test，再用 lexicographic MILP 依次最小化 held-out singleton、
 valid/test singleton imbalance 和 label imbalance；在这些质量目标固定后才最大化第一版 valid molecule
@@ -99,12 +99,17 @@ data/processed_starling_record_supported_v2/<Task>/scaffold/{train,valid,test}.j
 `record_agreement70_split811_v1` 的数据和正式结果保留为第一版 historical comparison；已删除的
 `record_supported_v1` 是曾把过多 multi-record scaffold 留在 held-out 的 exploratory 版本，不得引用。
 
-Bioavailability 自 2026-08-01 使用 `bioavailability_canonical_direct.v2`：固定 revision 的 HF snapshot 与
-local oral-exposure extraction 中明确 absolute/oral-IV 的 rows 合并，跨来源同 parent+PMID 近等值 claim
-一对一去重；relative/ambiguous local bioavailability 只留在 residual inference evidence。Gold builder 与
-agent direct evidence 必须读取同一份
-`data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet`。旧 1,862-parent mixed-source
-和 1,828-parent strict-conflict 结果均为 historical lineage，不得与当前 2,092-parent build 混表。
+Bioavailability 当前 gold 恢复为 2,092-parent `record_supported_v2`，conditioned progressive 输入为
+`bioavailability_context_conditioned_selected_v1`（train/valid/test `1,958/262/269` parent-condition rows）；
+三组 identity/scaffold overlap 均为 0。当前 retrieval source 使用
+`bioavailability_source_family_purity.legacy_record_supported_v2_vote_pure.v1`：L1 精确等于旧 molecule-only
+adapter 与 selected-v1 condition review 实际接受的 voter source rows，旧 L1 中所有 nonvoters 下沉到 L2，
+measurement、support text、identity 和 retrieval eligibility 不变。
+
+`experimental_oral_bioavailability_v1` 与 conditioned-selected-v2 是 2026-08-27 完成但因 matched valid agent
+性能显著下降而明确拒绝的 candidate lineage；其专用 gold、baseline、source-purity-v2、traces、审计和构建入口
+均已删除，不得作为默认 benchmark、历史对照或与当前 2,092-parent lineage 混表，也不得在没有新方法决策时
+重新生成。1,862-parent mixed-source 和 1,828-parent strict-conflict 仍只作 historical lineage。
 Skin raw acquisition 保持不变；current inference source 默认为
 `skin_sensitization_direct_aop.v3` canonical partition：validated sensitization/contact-allergy final outcome 只进入
 direct，MIE/KE2/KE3/KE4 experimental evidence 只进入 AOP，photo hazard、irritation/corrosion、prediction-only
@@ -417,7 +422,8 @@ OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `
 
 ### 2026-08-01 起的新数据集正式运行默认
 
-Bioavailability/Skin 当前 `record_supported_v2`、BBB 新 `experimental_meaningful_cns_access_v3` 及其后的
+Bioavailability 当前 `record_supported_v2`、Skin 当前 `record_supported_v2`、BBB 当前
+`experimental_meaningful_cns_access_v3` 及其后的
 paper/Starling 实验统一冻结为：
 
 ```text
@@ -799,7 +805,8 @@ single-molecule、mechanism-family/flat/direct 和 final stages，并递归展�
 retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
 test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
 
-Bioavailability/Skin `record_supported_v2` 与 BBB `experimental_meaningful_cns_access_v3` 后续 paper-facing
+Bioavailability `record_supported_v2`、Skin `record_supported_v2` 与 BBB
+`experimental_meaningful_cns_access_v3` 后续 paper-facing
 structural-analog 主结果默认使用
 `identity_blind + parent_disjoint` fresh-run；不再先跑 operational，也不要求 operational diff/reuse plan。
 旧 lineage 的 operational -> parent-disjoint 流程及 same-parent 暴露统计只作为 historical sensitivity

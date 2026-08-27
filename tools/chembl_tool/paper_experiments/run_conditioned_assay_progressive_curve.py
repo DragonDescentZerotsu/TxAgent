@@ -33,6 +33,14 @@ from tools.chembl_tool.common.openai_reasoning_client import (
     OpenAICompatibleClient,
     ToolServiceClient,
 )
+from tools.chembl_tool.common.openai_provider_pool import (
+    OpenAIProviderPool,
+    ProviderPoolConfig,
+    ProviderPoolExhausted,
+    ProviderSpec,
+    load_env_file,
+    load_provider_pool_config,
+)
 from tools.chembl_tool.common.progressive_assay_reasoning import (
     PROGRESSIVE_PROTOCOL_VERSION,
     ProgressiveTaskContract,
@@ -61,7 +69,7 @@ from tools.chembl_tool.tasks.skin_reaction import experiment_config as skin_conf
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 BASE_URL = "http://127.0.0.1:50001/v1"
 DEFAULT_OUTPUT_ROOT = Path(
-    "outputs/paper/starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/"
+    "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/"
     "scaffold_valid_deepseek_v4_flash_0731"
 )
 ARCHIVED_SINGLE_CACHE_ROOT = Path(
@@ -76,6 +84,8 @@ IDENTITY_POLICY = "scaffold_disjoint"
 _MODEL_IDENTITY_ALIASES = {
     "deepseek-ai/deepseek-v4-flash-0731": "deepseek-v4-flash-0731",
     "deepseek/deepseek-v4-flash-0731": "deepseek-v4-flash-0731",
+    "deepseek/deepseek-v4-flash": "deepseek-v4-flash-0731",
+    "deepseek-v4-flash": "deepseek-v4-flash-0731",
 }
 
 
@@ -112,6 +122,23 @@ def _execution_provider(manifest: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _execution_provider_from_spec(
+    spec: ProviderSpec,
+    *,
+    transport_max_retries: int,
+) -> dict[str, Any]:
+    return {
+        "name": spec.name,
+        "model": spec.model,
+        "model_identity": _model_identity(spec.model),
+        "base_url": spec.base_url,
+        "api_key_env": spec.api_key_env,
+        "max_inflight": spec.max_inflight,
+        "timeout_s": spec.timeout_s,
+        "transport_max_retries": transport_max_retries,
+    }
+
+
 def _merge_resume_manifest(
     previous: Mapping[str, Any], current: Mapping[str, Any]
 ) -> dict[str, Any]:
@@ -131,9 +158,12 @@ def _merge_resume_manifest(
     providers = list(previous.get("execution_providers") or [])
     if not providers:
         providers.append(_execution_provider(previous))
-    current_provider = _execution_provider(current)
-    if current_provider not in providers:
-        providers.append(current_provider)
+    current_providers = list(current.get("execution_providers") or [])
+    if not current_providers:
+        current_providers.append(_execution_provider(current))
+    for current_provider in current_providers:
+        if current_provider not in providers:
+            providers.append(current_provider)
     merged["execution_providers"] = providers
     merged["last_resumed_at"] = _now()
     return merged
@@ -177,10 +207,10 @@ PROGRESSIVE_TASKS = {
         ),
         SOURCE_PURITY_ROOT
         / "indices/bioavailability_ma/"
-        "mechanism_tagged_v4_source_purity_v1/assay_neighbor_index.pkl",
+        "mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/assay_neighbor_index.pkl",
         SOURCE_PURITY_ROOT
-        / "family_catalogs_mechanism_tagged_v1/"
-        "bioavailability_ma_source_purity_v1/manifest.json",
+        / "family_catalogs/"
+        "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1/manifest.json",
     ),
     "skin_reaction": ProgressiveTaskSpec(
         Path(
@@ -531,28 +561,69 @@ def _none_state(
     }
 
 
-def _make_client(args: argparse.Namespace) -> OpenAICompatibleClient:
-    return OpenAICompatibleClient(
-        api_key=os.getenv(args.api_key_env) or "local-no-auth",
-        base_url=args.base_url,
-        model=args.model,
-        timeout_s=args.timeout_s,
-        max_tokens=args.max_tokens,
-        temperature=0.0,
-        tool_service_url=args.tool_service_url,
-        enable_group_tools=False,
-        max_tool_rounds=0,
-        reasoning_effort="",
-        enable_thinking=False,
-        transport_max_retries=args.transport_max_retries,
-    )
+def _resolve_provider_pool_config(args: argparse.Namespace) -> ProviderPoolConfig:
+    config_path = str(getattr(args, "provider_pool_config", "") or "").strip()
+    if config_path:
+        config = load_provider_pool_config(config_path)
+    else:
+        config = ProviderPoolConfig(
+            providers=(
+                ProviderSpec(
+                    name="single",
+                    base_url=args.base_url.rstrip("/"),
+                    model=args.model,
+                    api_key_env=args.api_key_env,
+                    max_inflight=args.parallelism,
+                ),
+            ),
+            max_failovers=0,
+        )
+    expected_identity = _model_identity(args.model)
+    for spec in config.providers:
+        if _model_identity(spec.model) != expected_identity:
+            raise ValueError(
+                f"provider {spec.name!r} model {spec.model!r} does not match "
+                f"run model identity {expected_identity!r}"
+            )
+        if config_path and spec.api_key_env and not os.getenv(spec.api_key_env):
+            raise ValueError(
+                f"provider {spec.name!r} is missing API key env {spec.api_key_env!r}"
+            )
+    return config
 
 
-def _run_query(args: argparse.Namespace, prepared_query: PreparedQuery) -> dict[str, Any]:
+def _make_client(
+    args: argparse.Namespace,
+    provider_config: ProviderPoolConfig,
+) -> OpenAIProviderPool:
+    def client_factory(spec: ProviderSpec) -> OpenAICompatibleClient:
+        return OpenAICompatibleClient(
+            api_key=os.getenv(spec.api_key_env) or "local-no-auth",
+            base_url=spec.base_url,
+            model=spec.model,
+            timeout_s=spec.timeout_s or args.timeout_s,
+            max_tokens=args.max_tokens,
+            temperature=0.0,
+            tool_service_url=args.tool_service_url,
+            enable_group_tools=False,
+            max_tool_rounds=0,
+            reasoning_effort="",
+            enable_thinking=False,
+            transport_max_retries=args.transport_max_retries,
+            request_extra_body=spec.request_extra_body,
+        )
+
+    return OpenAIProviderPool(provider_config, client_factory=client_factory)
+
+
+def _run_query(
+    args: argparse.Namespace,
+    prepared_query: PreparedQuery,
+    client: OpenAIProviderPool,
+) -> dict[str, Any]:
     task = prepared_query.task
     contract = _task_contract(task)
     levels = _levels(task)
-    client = _make_client(args)
     prior_state: dict[str, Any] | None = None
     n_calls = 0
     for level_row in levels:
@@ -620,8 +691,17 @@ def _run_query(args: argparse.Namespace, prepared_query: PreparedQuery) -> dict[
             card_id_to_alias[card_id]
             for card_id in map(str, prepared.get("new_card_ids") or [])
         }
+        execution_provider_attempts: list[dict[str, Any]] = []
+
+        def routed_chat_json(call_messages: list[dict[str, Any]]) -> dict[str, Any]:
+            routed_response = client.chat_json(call_messages)
+            execution_provider_attempts.extend(
+                routed_response.get("execution_provider_attempts") or []
+            )
+            return routed_response
+
         response = call_with_json_validation(
-            client.chat_json,
+            routed_chat_json,
             messages,
             required_fields=(
                 contract.prediction_field,
@@ -654,6 +734,7 @@ def _run_query(args: argparse.Namespace, prepared_query: PreparedQuery) -> dict[
             branch_name=f"{task} progressive level {level}",
             max_attempts=4,
         )
+        response["execution_provider_attempts"] = execution_provider_attempts
         n_calls += int((response.get("structured_output_validation") or {}).get("attempt_count") or 1)
         if not structured_response_is_valid(response):
             write_json_atomic(
@@ -700,10 +781,11 @@ def _run_query(args: argparse.Namespace, prepared_query: PreparedQuery) -> dict[
 def _run_query_safe(
     args: argparse.Namespace,
     prepared_query: PreparedQuery,
+    client: OpenAIProviderPool,
 ) -> dict[str, Any]:
     """Keep one transport/provider failure from terminating unrelated queries."""
     try:
-        result = _run_query(args, prepared_query)
+        result = _run_query(args, prepared_query, client)
         error_path = prepared_query.query_dir / "run_error.json"
         if result.get("status") == "ok" and error_path.is_file():
             write_json_atomic(
@@ -720,6 +802,8 @@ def _run_query_safe(
             "error": str(exc),
             "failed_at": _now(),
         }
+        if isinstance(exc, ProviderPoolExhausted):
+            error["execution_provider_attempts"] = exc.attempts
         write_json_atomic(prepared_query.query_dir / "run_error.json", error)
         return error
 
@@ -928,6 +1012,9 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
 
 
 def run(args: argparse.Namespace) -> int:
+    provider_config = _resolve_provider_pool_config(args)
+    if sum(spec.max_inflight for spec in provider_config.providers) > 512:
+        raise ValueError("provider pool capacity exceeds the global budget 512")
     records_by_task = _validate_inputs(args)
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
@@ -991,8 +1078,15 @@ def run(args: argparse.Namespace) -> int:
         "evaluation_indices_by_task": indices_by_task,
         "inputs": inputs,
         "started_at": _now(),
+        "provider_routing": provider_config.public_dict(),
     }
-    manifest["execution_providers"] = [_execution_provider(manifest)]
+    manifest["execution_providers"] = [
+        _execution_provider_from_spec(
+            spec,
+            transport_max_retries=args.transport_max_retries,
+        )
+        for spec in provider_config.providers
+    ]
     manifest_path = output_root / "experiment_manifest.json"
     if manifest_path.is_file():
         previous = _read_json(manifest_path)
@@ -1036,10 +1130,11 @@ def run(args: argparse.Namespace) -> int:
     if args.prepare_only:
         return 0
 
+    client = _make_client(args, provider_config)
     failed = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=min(args.parallelism, len(prepared_queries))) as pool:
         futures = [
-            pool.submit(_run_query_safe, args, prepared)
+            pool.submit(_run_query_safe, args, prepared, client)
             for prepared in prepared_queries
         ]
         for completed, future in enumerate(concurrent.futures.as_completed(futures), start=1):
@@ -1058,18 +1153,41 @@ def run(args: argparse.Namespace) -> int:
         )
     manifest["finished_at"] = _now()
     manifest["n_failed_queries"] = failed
+    manifest["provider_pool_final_snapshot"] = client.snapshot()
     write_json_atomic(manifest_path, manifest)
     return 1 if failed else 0
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--tasks", nargs="+", choices=TASK_NAMES, default=list(TASK_NAMES))
+    parser.add_argument(
+        "--tasks",
+        nargs="+",
+        choices=TASK_NAMES,
+        default=["bioavailability_ma"],
+        help=(
+            "Tasks to run. The default is the task matching the current v10 output root; "
+            "other tasks should use an explicit task and output root."
+        ),
+    )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--single-source-root", default=str(ARCHIVED_SINGLE_CACHE_ROOT))
     parser.add_argument("--model", default=MODEL)
     parser.add_argument("--base-url", default=BASE_URL)
     parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY")
+    parser.add_argument(
+        "--provider-pool-config",
+        default="",
+        help=(
+            "JSON provider-pool config. Each provider supplies its own base URL, "
+            "model alias, API-key env name, and max in-flight budget."
+        ),
+    )
+    parser.add_argument(
+        "--env-file",
+        default=".env",
+        help="Optional KEY=VALUE file used to resolve provider API-key env names.",
+    )
     parser.add_argument("--tool-service-url", default="http://127.0.0.1:8765")
     parser.add_argument("--parallelism", type=int, default=128)
     parser.add_argument("--preparation-workers", type=int, default=32)
@@ -1093,6 +1211,7 @@ def main(argv: list[str] | None = None) -> int:
         help="Diagnostic preparation only; formal inference requires visible prefetched tools.",
     )
     args = parser.parse_args(argv)
+    load_env_file(args.env_file)
     if args.parallelism < 1 or args.parallelism > 512:
         parser.error("--parallelism must be between 1 and the global endpoint budget 512")
     if args.preparation_workers < 1:

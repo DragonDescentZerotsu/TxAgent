@@ -107,3 +107,21 @@ def test_empty_reasoning_effort_omits_parameter_without_enabling_deepseek_thinki
 
     assert "reasoning_effort" not in captured
     assert "extra_body" not in captured
+
+
+def test_provider_specific_extra_body_is_forwarded_without_changing_messages():
+    client = _client()
+    client.temperature = 0.0
+    client.request_extra_body = {"reasoning": {"enabled": True}}
+    captured = {}
+    client.client = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=SimpleNamespace(
+                create=lambda **kwargs: captured.update(kwargs) or _response('{}')
+            )
+        )
+    )
+
+    client._create_completion([{"role": "user", "content": "analyze"}])
+
+    assert captured["extra_body"] == {"reasoning": {"enabled": True}}

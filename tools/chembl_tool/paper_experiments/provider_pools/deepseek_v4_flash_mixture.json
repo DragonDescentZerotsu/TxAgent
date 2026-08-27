@@ -1,0 +1,41 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "local_node002",
+      "base_url": "http://node002.cm.cluster:8000/v1",
+      "model": "deepseek-v4-flash",
+      "api_key_env": "",
+      "max_inflight": 64,
+      "initial_latency_s": 120,
+      "timeout_s": 360
+    },
+    {
+      "name": "parcc_tunnel",
+      "base_url": "http://127.0.0.1:50001/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "DEEPSEEK_API_KEY",
+      "max_inflight": 16,
+      "initial_latency_s": 120,
+      "timeout_s": 360
+    },
+    {
+      "name": "openrouter_mark_1",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "deepseek/deepseek-v4-flash",
+      "api_key_env": "OPENROUTER_API_KEY_Mark_1",
+      "max_inflight": 128,
+      "initial_latency_s": 120,
+      "timeout_s": 600,
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      }
+    }
+  ],
+  "failure_threshold": 3,
+  "cooldown_seconds": 60,
+  "max_failovers": 1,
+  "latency_ewma_alpha": 0.2
+}

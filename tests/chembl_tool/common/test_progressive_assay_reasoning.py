@@ -94,6 +94,12 @@ def test_deepseek_provider_aliases_share_reuse_identity():
     assert runner._model_identity(
         "deepseek-ai/DeepSeek-V4-Flash-0731"
     ) == runner._model_identity("deepseek/deepseek-v4-flash-0731")
+    assert runner._model_identity(
+        "deepseek/deepseek-v4-flash"
+    ) == runner._model_identity("deepseek/deepseek-v4-flash-0731")
+    assert runner._model_identity("deepseek-v4-flash") == runner._model_identity(
+        "deepseek/deepseek-v4-flash-0731"
+    )
     assert runner._model_identity("another/model") != runner._model_identity(
         "deepseek/deepseek-v4-flash-0731"
     )
@@ -526,6 +532,10 @@ def test_progressive_runner_isolates_purity_indices_from_historical_top20_runner
     assert not hasattr(runner, "TOP20_TASKS")
     for task in ("bbb_martins", "bioavailability_ma", "skin_reaction"):
         spec = runner.PROGRESSIVE_TASKS[task]
-        version = "source_purity_v5" if task == "bbb_martins" else "source_purity_v1"
+        version = {
+            "bbb_martins": "source_purity_v5",
+            "bioavailability_ma": "legacy_record_supported_v2_vote_pure_v1",
+            "skin_reaction": "source_purity_v1",
+        }[task]
         assert version in str(spec.index)
         assert version in str(spec.family_manifest)

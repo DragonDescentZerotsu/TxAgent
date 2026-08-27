@@ -1,10 +1,9 @@
-"""Build source-level family-purity overlays for conditioned assay retrieval.
+"""Shared builder for source-level family-purity overlays.
 
-The overlay changes only ``group_id`` and appends explicit audit provenance.
-It does not alter measurements, support text, molecule identity, retrieval
-eligibility, or any frozen benchmark labels.  Label-proximal overall oral-F
-records and validated final skin-sensitization assays are exposed at L1 even
-when their original extractor assigned them to a mechanistic source family.
+An overlay changes only ``group_id`` and appends explicit audit provenance. It
+does not alter measurements, support text, molecule identity, retrieval
+eligibility, or frozen benchmark labels. Task-specific classifiers decide the
+new family; this module only performs the auditable rewrite.
 """
 
 from __future__ import annotations
@@ -24,10 +23,6 @@ from tools.chembl_tool.common.json_utils import (
     write_json_atomic,
 )
 from tools.chembl_tool.common.source_family_purity import FamilyMove
-from tools.chembl_tool.tasks.bioavailability_ma.source_family_purity import (
-    DIRECT_GROUP as BIO_DIRECT_GROUP,
-    direct_like_bioavailability_reason,
-)
 from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
     direct_outcome_reason,
 )
@@ -53,10 +48,6 @@ class PuritySpec:
     classifier_columns: tuple[str, ...] = ()
 
 
-def _bio_reason(record: Mapping[str, Any]) -> str:
-    return direct_like_bioavailability_reason(record)
-
-
 def _skin_reason(record: Mapping[str, Any]) -> str:
     if _text(record.get("group_id")) != SKIN_AOP_GROUP:
         return ""
@@ -64,15 +55,6 @@ def _skin_reason(record: Mapping[str, Any]) -> str:
 
 
 SPECS = {
-    "bioavailability_ma": PuritySpec(
-        task="bioavailability_ma",
-        input_records=Path(
-            "outputs/paper/starling_conditioned_assay_family_curve_v1/"
-            "source_overlays/bioavailability_nondirect_assay_context_v1/records.parquet"
-        ),
-        direct_group=BIO_DIRECT_GROUP,
-        classify=_bio_reason,
-    ),
     "skin_reaction": PuritySpec(
         task="skin_reaction",
         input_records=Path(

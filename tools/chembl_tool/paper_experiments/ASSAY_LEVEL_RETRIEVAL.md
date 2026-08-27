@@ -11,7 +11,10 @@
 
 - BBB paper-facing gold 仍是 `experimental_meaningful_cns_access_v3`；本文的 BBB 曲线是隔离的
   gold-v4 / conditioned-v3 matched candidate。
-- Bioavailability 和 Skin 仍使用各自当前 conditioned `record_supported_v2` lineage。
+- Bioavailability 已恢复 `record_supported_v2` 与
+  `processed_starling_context_conditioned_selected_v1`；empirical-only
+  `experimental_oral_bioavailability_v1` / selected-v2 因 matched valid agent degradation 被拒绝，其专用代码、
+  数据和结果已删除。Skin 仍使用 conditioned `record_supported_v2` lineage。
 - ClinTox 没有合格 condition taxonomy，本轮不进入 progressive 曲线；既有 ClinTox pipeline 和
   historical controls 保持可复现，但不与三任务新图混表。
 
@@ -20,10 +23,12 @@
 | task | benchmark input | progressive protocol | source purity | n |
 |---|---|---|---|---:|
 | BBB | `processed_starling_context_conditioned_selected_v3` | `conditioned_assay_progressive_visible.v8` | `bbb_source_family_purity.v5` | 397 |
-| Bioavailability | `processed_starling_context_conditioned_selected_v1` | `conditioned_assay_progressive_visible.v7` | `source_family_purity.v1` | 262 |
+| Bioavailability | `processed_starling_context_conditioned_selected_v1` | `conditioned_assay_progressive_visible.v8` | `legacy_record_supported_v2_vote_pure.v1` | 262 |
 | Skin | `processed_starling_context_conditioned_selected_v1` | `conditioned_assay_progressive_visible.v7` | `source_family_purity.v1` | 246 |
 
-所有完成点均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731、零失败。
+三个任务均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731。Bioavailability 的
+262-query legacy-vote-pure v10 已通过 256-worker 共享 provider pool 完成（各 provider 的实际并发上限合计
+208），所有 level 均为零失败；empirical-v2 和旧 broad-L1 曲线均不是当前结果。
 
 ## Retrieval and leakage contract
 
@@ -64,6 +69,23 @@ Prompt profile 为 `progressive_compact_tools_short_aliases.v2`。Card 使用短
 endpoint、measurement、species、conditions、support text 和 provenance 保留，不调用 GPT-OSS summary，
 不做字段级截断。`reasoning_effort` 参数省略、provider thinking 保持默认，completion cap 为 20,480 tokens。
 
+### Multi-provider execution
+
+Progressive runner 可用一个共享的应用层 provider pool 混合本机、PARCC tunnel 与 OpenRouter。这里不用
+HAProxy 直接代理异构后端，因为三端具有不同 model alias、鉴权和 reasoning 参数。公共调度器位于
+`tools/chembl_tool/common/openai_provider_pool.py`，当前无密钥配置位于
+`provider_pools/deepseek_v4_flash_mixture.json`。
+
+调度是 work-conserving least-normalized-load：每端有独立 `max_inflight`，空闲 slot 按近期 latency EWMA
+动态接收下一条请求。连续 transport/429/5xx failure 会暂时熔断该端；一次调用最多 fail over 到一个尚未尝试
+的 provider。每端还可设置独立 timeout，使慢端长尾在有 checkpoint 的应用层转交给其它 provider。SDK
+transport retry 仍保持 0，避免不可见的重复长 generation。OpenRouter 显式发送
+`reasoning.enabled=true`；本机和 PARCC 保持 provider-default reasoning。
+
+每次真实调用在 level output 的 `llm.execution_provider_attempts` 保存 provider、requested/served model、
+request ID、latency 和失败链；manifest 只保存 API-key 环境变量名，不保存密钥。Resume 允许在相同 canonical
+model identity 下改变 execution provider，但 prompt、retrieval、max tokens 和其它语义合同仍必须完全一致。
+
 ## Source-family purity
 
 ### BBB v5
@@ -91,11 +113,16 @@ Gold-v4 本身来自 source-index 级 qualitative-direction review：批准 65 �
 train/valid/test 为 2,945/365/365；shared-parent label/split changes 均为 0，identity/scaffold overlap 为 0。
 Conditioned-v3 将其展开为 3,053/397/396 个 parent-condition rows，并保持 parent/scaffold disjoint。
 
-### Bioavailability and Skin
+### Bioavailability legacy-gold vote-pure v1 and Skin
 
-Bioavailability 六层累计 assays 为 `462 / 478 / 595 / 1,467 / 1,890 / 2,140`：direct oral F、non-direct
+Bioavailability 当前六层累计 assays 为 `35 / 478 / 595 / 1,467 / 1,890 / 2,140`：actual legacy-gold-voter oral F、non-direct
 bioavailability、oral AUC/Cmax exposure、absorption/solubility/permeability、gut-wall/efflux/metabolism、
 hepatic clearance/metabolic stability。L2 仍记为 indirect information，不能与 L1 合并描述成 direct。
+L1 membership 重放旧 `record_supported_v2` molecule-only adapter 与 selected-v1 condition review 的实际
+accepted votes，而不是 endpoint 关键词。全部 463,555 source rows 保留；L1 20,543 rows、L2 153,402 rows，
+L1 nonvoter=0、可映射 voter outside L1=0。相对旧 broad-L1 v1，106,963 条 L1 nonvoters 下沉 L2，710 条此前
+漏在 L2 的真实 voters 校正到 L1。被拒绝的 empirical-only candidate 及其专用 provenance 已删除，不属于
+当前维护范围。
 
 Skin 两层累计 assays 为 `530 / 1,219`：gold-compatible sensitization outcome 与 sensitization AOP evidence。
 LLNA final outcome 只能在 direct；MIE/KE evidence 只进入 AOP。
@@ -107,7 +134,7 @@ Macro-F1：
 | task | None | L1 | L2 | L3 | L4 | L5 | L6 |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | BBB | 0.6207 | 0.7314 | 0.7475 | 0.7475 | 0.7563 | **0.7563** | — |
-| Bioavailability | 0.5412 | 0.7517 | 0.7797 | 0.7797 | 0.7797 | 0.7797 | **0.7856** |
+| Bioavailability legacy vote-pure v1 | 0.6314 | 0.6900 | 0.7312 | 0.7378 | 0.7545 | 0.7545 | **0.7608** |
 | Skin | **0.6119** | 0.6004 | 0.5939 | — | — | — | — |
 
 最新 matched baselines：
@@ -123,7 +150,7 @@ Macro-F1：
 | task | molecules | cards | cards/molecule | prompt tokens/call | reasoning tokens/call |
 |---|---:|---:|---:|---:|---:|
 | BBB L5 | 10.61 | 25.43 | 2.32 | 16,257 | 4,898 |
-| Bioavailability L6 | 12.21 | 39.85 | 3.29 | 17,889 | 9,348 |
+| Bioavailability L6 | 10.87 | 35.05 | 3.10 | 15,985 | 2,534 |
 | Skin L2 | 6.02 | 15.91 | 2.13 | 10,168 | 8,832 |
 
 Prompt/reasoning 均只对实际模型调用求平均；carry-forward 和 reused-none checkpoints 不进入长度均值。
@@ -138,7 +165,13 @@ outputs/paper/
   starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/
   scaffold_valid_deepseek_v4_flash_0731/
 
-Bioavailability + Skin:
+Bioavailability current legacy-gold vote-pure rerun:
+
+outputs/paper/
+  starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/
+  scaffold_valid_deepseek_v4_flash_0731/
+
+Skin:
 outputs/paper/
   starling_conditioned_assay_progressive_visible_v7_source_purity_v1/
   scaffold_valid_deepseek_v4_flash_0731/
@@ -149,13 +182,14 @@ outputs/paper/
 ```text
 outputs/paper/starling_conditioned_assay_family_curve_v1/
   source_overlays/bbb_source_family_purity_v5/
-  source_overlays/source_family_purity_v1/{bioavailability_ma,skin_reaction}/
+  source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1/
+  source_overlays/source_family_purity_v1/skin_reaction/
+  family_catalogs/bioavailability_ma_legacy_record_supported_v2_vote_pure_v1/
   family_catalogs_mechanism_tagged_v1/
-    {bbb_martins_source_purity_v5,bioavailability_ma_source_purity_v1,
-     skin_reaction_source_purity_v1}/
+    {bbb_martins_source_purity_v5,skin_reaction_source_purity_v1}/
   indices/
     bbb_martins/mechanism_tagged_v4_source_purity_v5/
-    bioavailability_ma/mechanism_tagged_v4_source_purity_v1/
+    bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/
     skin_reaction/mechanism_tagged_v4_source_purity_v1/
 ```
 
@@ -163,11 +197,11 @@ outputs/paper/starling_conditioned_assay_family_curve_v1/
 
 ```text
 outputs/paper/
-  starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/
-  analysis/three_task_progressive_overview_bbb_v5_matched_baselines/
+  starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/
+  analysis/three_task_progressive_overview_current_matched_baselines/
     progressive_overview_metrics.tsv
     summary.json
-    figures/three_task_progressive_overview_bbb_v5_matched_baselines.{png,svg}
+    figures/three_task_progressive_overview_current_matched_baselines.{png,svg}
 ```
 
 Top-20 historical control 只在主目录保留 compact analysis 与 visible-standard `none` single-cache；其余完整
@@ -190,12 +224,17 @@ Gold/source datasets、migration receipts、current metrics/predictions 和最�
 progressive runner:
   tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py
 
+multi-provider scheduler/config:
+  tools/chembl_tool/common/openai_provider_pool.py
+  tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_mixture.json
+
 shared retrieval/state:
   tools/chembl_tool/common/assay_retrieval.py
   tools/chembl_tool/common/progressive_assay_reasoning.py
 
 source purity and audits:
   tools/chembl_tool/paper_experiments/build_bbb_source_family_purity.py
+  tools/chembl_tool/paper_experiments/build_bioavailability_vote_pure_source.py
   tools/chembl_tool/paper_experiments/build_conditioned_source_family_purity.py
   tools/chembl_tool/paper_experiments/audit_bbb_source_family_purity.py
   tools/chembl_tool/paper_experiments/analyze_source_family_purity_retrieval_changes.py
@@ -219,14 +258,31 @@ artifact root 分离，不能互相覆盖。
 
 ## Reproduction
 
-Resume/current runner（默认 output root 指向 v8/v5 successor；正式运行前应显式限制 tasks，避免把已冻结
-Bio/Skin v7 意外覆盖到新 root）：
+重建当前 Bioavailability vote-pure source overlay：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.paper_experiments.build_bioavailability_vote_pure_source
+```
+
+Resume 当前 Bioavailability v10（默认 task 与 output root 已配对，避免把 BBB/Skin 写入 Bio 目录）：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve \
-  --tasks bbb_martins \
+  --tasks bioavailability_ma \
   --parallelism 128
+```
+
+三端 mixture resume 使用同一 output root 和 checkpoint：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve \
+  --tasks bioavailability_ma \
+  --provider-pool-config \
+    tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_mixture.json \
+  --parallelism 256 --transport-max-retries 0
 ```
 
 重画当前完整图：
@@ -235,11 +291,21 @@ Bio/Skin v7 意外覆盖到新 root）：
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve \
   --conditioned-progressive-overview \
+  --conditioned-progressive-task-root \
+    bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/scaffold_valid_deepseek_v4_flash_0731 \
+  --conditioned-progressive-task-root \
+    bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731 \
+  --conditioned-progressive-task-root \
+    skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_v7_source_purity_v1/scaffold_valid_deepseek_v4_flash_0731 \
   --conditioned-progressive-baseline-root \
     bbb_martins=outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1 \
+  --conditioned-progressive-baseline-root \
+    bioavailability_ma=outputs/baselines/starling_conditioned_valid_v1 \
+  --conditioned-progressive-baseline-root \
+    skin_reaction=outputs/baselines/starling_conditioned_valid_v1 \
   --analysis-dir \
-    outputs/paper/starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/analysis/three_task_progressive_overview_bbb_v5_matched_baselines \
-  --output-stem three_task_progressive_overview_bbb_v5_matched_baselines
+    outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/analysis/three_task_progressive_overview_current_matched_baselines \
+  --output-stem three_task_progressive_overview_current_matched_baselines
 ```
 
 绘图器会校验 task/sample count、完整 agent metrics 和 `n_failed_runs=0`；baseline cohort 不匹配时默认报错，
@@ -255,4 +321,6 @@ Bio/Skin v7 意外覆盖到新 root）：
   artifacts/receipts，专用 launcher、causal-adoption wrapper 和绘图模式已从维护代码删除。
 - indirect-only cap-4 是历史诊断 artifact；专用 schedule/plot mode 已删除，不是当前 append-only evidence
   budget。
+- Bioavailability empirical-only gold/selected-v2/source-purity-v2/v9 是已拒绝且已删除的分支；当前代码不再提供
+  其构建或绘图入口。若未来重新提出该方法，必须作为新的版本化 candidate 从头审查，不能复用当前结果名称。
 - historical roots 在归档中保留 lineage；不得把其中指标与当前 BBB gold-v4 matched cohort 混表。

@@ -633,6 +633,37 @@ def test_progressive_agent_baseline_collector_supports_task_specific_roots(tmp_p
     assert {item["agent_n"] for item in omissions} == {2}
 
 
+def test_progressive_baseline_collector_accepts_current_minimol_head_path(tmp_path):
+    baseline_root = tmp_path / "baselines"
+    complete = {
+        "n_total": 2,
+        "n_evaluated": 2,
+        "macro_f1": 0.7,
+        "accuracy": 0.75,
+    }
+    for method, _, relative_path in plotter.CONDITIONED_BASELINES:
+        if method == "minimol_head":
+            relative_path = Path("minimol_head/final/metrics.json")
+        path = baseline_root / "Bioavailability_Ma" / relative_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(complete), encoding="utf-8")
+
+    rows: list[dict[str, object]] = []
+    omissions = plotter._append_conditioned_baselines(
+        rows,
+        task="bioavailability_ma",
+        task_label="Bioavailability",
+        baseline_task="Bioavailability_Ma",
+        baseline_root=baseline_root,
+        expected_n=2,
+    )
+
+    assert not omissions
+    assert len(rows) == len(plotter.CONDITIONED_BASELINES)
+    head = next(row for row in rows if row["method"] == "minimol_head")
+    assert head["metrics_path"].endswith("minimol_head/final/metrics.json")
+
+
 def test_parse_task_path_overrides():
     assert plotter._parse_task_path_overrides(
         ["bbb_martins=/tmp/bbb", "skin_reaction=/tmp/skin"]

@@ -33,9 +33,9 @@ TASKS = {
         "config_module": "tools.chembl_tool.tasks.bbb_martins.experiment_config",
     },
     "bioavailability_ma": {
-        "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bioavailability_nondirect_assay_context_v1/records.parquet",
+        "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1/records.parquet",
         "config_module": "tools.chembl_tool.tasks.bioavailability_ma.experiment_config",
-        "output_name": "bioavailability_ma_nondirect_context_v1",
+        "output_name": "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1",
     },
     "skin_reaction": {
         "records": "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet",

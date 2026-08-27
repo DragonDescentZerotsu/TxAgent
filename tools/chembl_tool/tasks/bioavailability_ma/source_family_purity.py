@@ -1,9 +1,8 @@
-"""Source-family purity rules for oral-bioavailability evidence.
+"""Record-level family rules for the current oral-bioavailability retrieval source.
 
-These rules are intentionally about evidence distance, not gold eligibility.
-An overall oral-F result is label-proximal even when it was extracted from a
-transporter, absorption, or clearance paper.  Population, condition, report
-type, and benchmark-vote eligibility remain separate downstream decisions.
+Only source records behind accepted ``record_supported_v2`` or selected-v1
+condition votes belong to L1. Other direct-like oral-F rows remain available as
+near-direct L2 evidence; mechanism rows keep their original families.
 """
 
 from __future__ import annotations
@@ -11,8 +10,14 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping
 
+from tools.chembl_tool.common.source_family_purity import FamilyMove
+
 
 DIRECT_GROUP = "Observed.direct_oral_bioavailability"
+NEAR_DIRECT_GROUP = "Observed.nondirect_oral_bioavailability"
+VOTE_PURITY_VERSION = (
+    "bioavailability_source_family_purity.legacy_record_supported_v2_vote_pure.v1"
+)
 
 _PERCENT = r"[-+]?\d+(?:\.\d+)?\s*%"
 _BIOAVAILABILITY_BEFORE_PERCENT = re.compile(
@@ -44,12 +49,7 @@ _QUALITATIVE_OVERALL_F = re.compile(
 
 
 def direct_like_bioavailability_reason(record: Mapping[str, Any]) -> str:
-    """Return why a row must be exposed at the direct-like L1 surface.
-
-    The function does not decide whether a row can vote in the gold benchmark.
-    In particular, relative/formulation/conditional F values are still moved to
-    L1 while retaining their original scope and condition fields for audit.
-    """
+    """Return why a nonvoter belongs in near-direct rather than a mechanism family."""
 
     if _text(record.get("group_id")) == DIRECT_GROUP:
         return ""
@@ -93,6 +93,56 @@ def direct_like_bioavailability_reason(record: Mapping[str, Any]) -> str:
     if _QUALITATIVE_OVERALL_F.search(combined):
         return "support_reports_qualitative_overall_bioavailability"
     return ""
+
+
+def upstream_record_key(record: Mapping[str, Any]) -> str:
+    """Map a normalized retrieval row to the canonical-source upstream ID."""
+
+    source = _text(record.get("source_id"))
+    if source == "hf_bioavailability":
+        record_id = _text(record.get("source_record_id"))
+        return f"hf:{record_id}" if record_id else ""
+    if source == "oral_exposure":
+        try:
+            source_index = int(record.get("source_row_number")) - 1
+        except (TypeError, ValueError):
+            return ""
+        extraction_id = _text(record.get("extraction_id"))
+        return f"local:{source_index}:{extraction_id}" if extraction_id else ""
+    return ""
+
+
+def vote_pure_family_move(
+    record: Mapping[str, Any],
+    voter_source_record_ids: set[str] | frozenset[str],
+) -> FamilyMove:
+    """Keep only actual gold-voter source records at L1.
+
+    Every old/direct-like L1 candidate that is not in the exact frozen vote
+    ledger moves to near-direct L2.  Mechanism rows that were never candidates
+    for L1 remain in their existing families.
+    """
+
+    original = _text(record.get("group_id"))
+    upstream_id = upstream_record_key(record)
+    if upstream_id and upstream_id in voter_source_record_ids:
+        if original == DIRECT_GROUP:
+            return FamilyMove(new_group="", reason="")
+        return FamilyMove(
+            new_group=DIRECT_GROUP,
+            reason="accepted_gold_vote_promoted_to_l1",
+        )
+    direct_like_reason = direct_like_bioavailability_reason(record)
+    if original == DIRECT_GROUP or direct_like_reason:
+        return FamilyMove(
+            new_group=NEAR_DIRECT_GROUP,
+            reason=(
+                "nonvoter_removed_from_l1"
+                if original == DIRECT_GROUP
+                else f"direct_like_nonvoter_to_l2:{direct_like_reason}"
+            ),
+        )
+    return FamilyMove(new_group="", reason="")
 
 
 def _text(value: Any) -> str:

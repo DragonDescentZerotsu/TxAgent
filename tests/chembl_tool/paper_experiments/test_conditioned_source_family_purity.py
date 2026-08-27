@@ -9,11 +9,13 @@ from tools.chembl_tool.paper_experiments.audit_source_family_purity_gold_impact 
     _vote,
 )
 from tools.chembl_tool.paper_experiments.build_conditioned_source_family_purity import (
-    BIO_DIRECT_GROUP,
     PURITY_VERSION,
     PuritySpec,
-    _bio_reason,
     build_overlay,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.source_family_purity import (
+    DIRECT_GROUP as BIO_DIRECT_GROUP,
+    direct_like_bioavailability_reason,
 )
 
 
@@ -46,7 +48,12 @@ def test_overlay_changes_only_family_and_appends_audit(tmp_path: Path):
         },
     ]
     pq.write_table(pa.Table.from_pylist(rows), source)
-    spec = PuritySpec("bioavailability_ma", source, BIO_DIRECT_GROUP, _bio_reason)
+    spec = PuritySpec(
+        "bioavailability_ma",
+        source,
+        BIO_DIRECT_GROUP,
+        direct_like_bioavailability_reason,
+    )
 
     manifest = build_overlay(spec, tmp_path / "out", batch_size=1)
     output = pq.read_table(tmp_path / "out" / "records.parquet").to_pylist()
