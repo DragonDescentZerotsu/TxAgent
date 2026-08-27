@@ -1,5 +1,6 @@
 import argparse
 import json
+from pathlib import Path
 
 import pytest
 
@@ -385,48 +386,263 @@ def test_conditioned_agent_inclusion_gate_requires_full_zero_failure_metrics():
     )
 
 
-def test_conditioned_comparison_ylim_is_shared_and_data_driven():
-    assert plotter._conditioned_comparison_ylim(
-        [{"macro_f1": 0.506}, {"macro_f1": 0.728}]
-    ) == (0.45, 0.8)
 
 
-def test_conditioned_paired_predictions_preserve_same_molecule_condition_rows(
-    tmp_path,
-):
-    agent_dir = tmp_path / "agent"
-    baseline_dir = tmp_path / "baseline"
-    agent_dir.mkdir()
-    baseline_dir.mkdir()
-    (agent_dir / "predictions.jsonl").write_text(
-        "\n".join(
+
+
+def test_progressive_resource_collector_separates_calls_from_carry_forward(tmp_path):
+    root = tmp_path / "progressive"
+    root.mkdir()
+    level_contract = {
+        "level": 1,
+        "endpoint_group": "direct_brain_exposure",
+        "cumulative_physical_assays": 5,
+    }
+    (root / "experiment_manifest.json").write_text(
+        json.dumps(
+            {
+                "experiment": "conditioned_assay_progressive_visible.v6",
+                "n_failed_queries": 0,
+                "tasks": ["bbb_martins"],
+                "evaluation_subset": "valid",
+                "visibility_mode": "deployment_visible_prefetched",
+                "reference_pool": "direct_only_heldout_filtered",
+                "neighbor_identity_policy": "scaffold_disjoint",
+                "selection": {},
+                "model": "model",
+                "reasoning_effort": "omitted",
+                "thinking": "provider_default",
+                "evaluation_indices_by_task": {"bbb_martins": [0, 1]},
+                "inputs": {"bbb_martins": {"levels": [level_contract]}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    metrics_dir = root / "bbb_martins/levels/level_1"
+    metrics_dir.mkdir(parents=True)
+    (metrics_dir / "metrics.json").write_text(
+        json.dumps(
+            {
+                "n_total": 2,
+                "n_successful": 2,
+                "n_failed_runs": 0,
+                "n_model_called": 1,
+                "macro_f1": 0.6,
+                "accuracy": 0.5,
+            }
+        ),
+        encoding="utf-8",
+    )
+    for query_index, (molecules, cards, status, called) in enumerate(
+        ((1, 2, "ok", True), (2, 3, "carried_forward", False))
+    ):
+        level_dir = (
+            root
+            / f"bbb_martins/queries/query_idx{query_index:05d}/levels/level_1"
+        )
+        level_dir.mkdir(parents=True)
+        (level_dir / "prepared.json").write_text(
             json.dumps(
-                {
-                    "query_index": index,
-                    "smiles": "CC",
-                    "label": label,
-                    "pred_label": prediction,
-                    "final_status": "ok",
-                }
-            )
-            for index, (label, prediction) in enumerate(((0, 0), (1, 1)))
+                {"n_active_molecules": molecules, "n_active_cards": cards}
+            ),
+            encoding="utf-8",
         )
-        + "\n",
-        encoding="utf-8",
-    )
-    (baseline_dir / "valid_predictions.jsonl").write_text(
-        "\n".join(
-            json.dumps({"drug": "CC", "Y": label, "prediction": 0})
-            for label in (0, 1)
+        output = {"status": status, "model_called": called}
+        if called:
+            output["llm"] = {
+                "reasoning_content": "x" * 400,
+                "usage": {
+                    "completion_tokens_details": {"reasoning_tokens": 0},
+                    "prompt_tokens": 200,
+                    "completion_tokens": 120,
+                },
+            }
+        (level_dir / "output.json").write_text(
+            json.dumps(output), encoding="utf-8"
         )
-        + "\n",
-        encoding="utf-8",
+
+    rows, summary = plotter.collect_conditioned_progressive_resource_data(
+        progressive_root=root
     )
 
-    labels, agent, baseline, _, _ = plotter._read_paired_conditioned_predictions(
-        agent_dir / "metrics.json", baseline_dir / "metrics.json"
+    assert len(rows) == 1
+    assert rows[0]["mean_active_molecules"] == 1.5
+    assert rows[0]["mean_active_record_cards"] == 2.5
+    assert rows[0]["mean_cards_per_active_molecule"] == 1.75
+    assert rows[0]["n_model_called"] == 1
+    assert rows[0]["model_call_fraction"] == 0.5
+    assert rows[0]["mean_reasoning_tokens_per_call"] == 0
+    assert rows[0]["mean_reasoning_tokens_per_query"] == 0
+    assert rows[0]["n_carried_forward"] == 1
+    assert summary["comparison_contract"]["reasoning_mode"][
+        "length_statistic"
+    ] == "mean reasoning tokens among actual model calls"
+
+    none_root = tmp_path / "none"
+    none_dir = none_root / "bbb_martins/none"
+    none_dir.mkdir(parents=True)
+    complete = {
+        "n_total": 2,
+        "n_successful": 2,
+        "n_evaluable": 2,
+        "n_failed_runs": 0,
+        "macro_f1": 0.55,
+        "accuracy": 0.5,
+    }
+    (none_dir / "metrics.json").write_text(
+        json.dumps(complete), encoding="utf-8"
+    )
+    baseline_root = tmp_path / "baselines"
+    for _, _, relative_path in plotter.CONDITIONED_BASELINES:
+        path = baseline_root / "BBB_Martins" / relative_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(complete), encoding="utf-8")
+
+    overview_rows, overview_summary = (
+        plotter.collect_conditioned_progressive_overview_data(
+            progressive_roots_by_task={"bbb_martins": root},
+            none_root=none_root,
+            baseline_root=baseline_root,
+        )
+    )
+    agent_level = next(
+        row
+        for row in overview_rows
+        if row["result_type"] == "agent_level" and row["level"] == 1
+    )
+    assert agent_level["mean_cards_per_active_molecule"] == 1.75
+    assert len(overview_rows) == 7
+    assert overview_summary["comparison_contract"]["figure"] == (
+        "conditioned_progressive_overview.v1"
+    )
+    overview_path = tmp_path / "overview.tsv"
+    plotter._write_tsv(overview_path, overview_rows)
+    assert "mean_cards_per_active_molecule" in overview_path.read_text(
+        encoding="utf-8"
+    ).splitlines()[0]
+
+
+def test_progressive_agent_baseline_collector_supports_task_specific_roots(tmp_path):
+    progressive_root = tmp_path / "progressive"
+    none_root = tmp_path / "none"
+    baseline_root = tmp_path / "baselines"
+    progressive_root.mkdir()
+    level_contract = {
+        "level": 1,
+        "endpoint_group": "direct_brain_exposure",
+        "cumulative_physical_assays": 5,
+    }
+    (progressive_root / "experiment_manifest.json").write_text(
+        json.dumps(
+            {
+                "experiment": "conditioned_assay_progressive_visible.v6",
+                "n_failed_queries": 0,
+                "tasks": ["bbb_martins"],
+                "evaluation_subset": "valid",
+                "visibility_mode": "deployment_visible_prefetched",
+                "reference_pool": "direct_only_heldout_filtered",
+                "neighbor_identity_policy": "scaffold_disjoint",
+                "selection": {},
+                "evaluation_indices_by_task": {"bbb_martins": [0, 1]},
+                "inputs": {"bbb_martins": {"levels": [level_contract]}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    complete = {
+        "n_total": 2,
+        "n_successful": 2,
+        "n_evaluable": 2,
+        "n_failed_runs": 0,
+        "macro_f1": 0.6,
+        "accuracy": 0.5,
+    }
+    level_dir = progressive_root / "bbb_martins/levels/level_1"
+    none_dir = none_root / "bbb_martins/none"
+    level_dir.mkdir(parents=True)
+    none_dir.mkdir(parents=True)
+    (level_dir / "metrics.json").write_text(
+        json.dumps({**complete, "macro_f1": 0.7}), encoding="utf-8"
+    )
+    (none_dir / "metrics.json").write_text(
+        json.dumps(complete), encoding="utf-8"
+    )
+    for _, _, relative_path in plotter.CONDITIONED_BASELINES:
+        path = baseline_root / "BBB_Martins" / relative_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(complete), encoding="utf-8")
+
+    rows, summary = plotter.collect_conditioned_progressive_agent_baseline_data(
+        progressive_roots_by_task={"bbb_martins": progressive_root},
+        none_root=none_root,
+        baseline_root=baseline_root,
     )
 
-    assert labels.tolist() == [0, 1]
-    assert agent.tolist() == [0, 1]
-    assert baseline.tolist() == [0, 0]
+    assert [row["result_type"] for row in rows[:2]] == [
+        "agent_level",
+        "agent_level",
+    ]
+    assert [row["level"] for row in rows[:2]] == [0, 1]
+    assert rows[1]["plot_label"] == "L1 (all)"
+    assert len([row for row in rows if row["result_type"] == "baseline"]) == 5
+    contract = summary["comparison_contract"]
+    assert contract["tasks"] == ["bbb_martins"]
+    assert contract["task_contracts"]["bbb_martins"]["n"] == 2
+
+    alternate_root = tmp_path / "alternate_baselines"
+    for _, _, relative_path in plotter.CONDITIONED_BASELINES:
+        path = alternate_root / "BBB_Martins" / relative_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps({**complete, "macro_f1": 0.8}), encoding="utf-8"
+        )
+    override_rows, override_summary = (
+        plotter.collect_conditioned_progressive_agent_baseline_data(
+            progressive_roots_by_task={"bbb_martins": progressive_root},
+            none_root=none_root,
+            baseline_root=baseline_root,
+            baseline_roots_by_task={"bbb_martins": alternate_root},
+        )
+    )
+    override_baselines = [
+        row for row in override_rows if row["result_type"] == "baseline"
+    ]
+    assert {row["macro_f1"] for row in override_baselines} == {0.8}
+    assert override_summary["comparison_contract"]["baseline_lineage_by_task"] == {
+        "bbb_martins": str(alternate_root)
+    }
+
+    mismatched = {**complete, "n_total": 3, "n_successful": 3, "n_evaluable": 3}
+    for _, _, relative_path in plotter.CONDITIONED_BASELINES:
+        path = baseline_root / "BBB_Martins" / relative_path
+        path.write_text(json.dumps(mismatched), encoding="utf-8")
+
+    omitted_rows, omitted_summary = (
+        plotter.collect_conditioned_progressive_agent_baseline_data(
+            progressive_roots_by_task={"bbb_martins": progressive_root},
+            none_root=none_root,
+            baseline_root=baseline_root,
+            omit_mismatched_baselines=True,
+        )
+    )
+    assert not [row for row in omitted_rows if row["result_type"] == "baseline"]
+    omissions = omitted_summary["comparison_contract"]["baseline_omissions"]
+    assert len(omissions) == len(plotter.CONDITIONED_BASELINES)
+    assert {item["reason"] for item in omissions} == {"sample_count_mismatch"}
+    assert {item["baseline_n"] for item in omissions} == {3}
+    assert {item["agent_n"] for item in omissions} == {2}
+
+
+def test_parse_task_path_overrides():
+    assert plotter._parse_task_path_overrides(
+        ["bbb_martins=/tmp/bbb", "skin_reaction=/tmp/skin"]
+    ) == {
+        "bbb_martins": Path("/tmp/bbb"),
+        "skin_reaction": Path("/tmp/skin"),
+    }
+    with pytest.raises(ValueError, match="known conditioned task"):
+        plotter._parse_task_path_overrides(["unknown=/tmp/value"])
+    with pytest.raises(ValueError, match="Duplicate"):
+        plotter._parse_task_path_overrides(
+            ["bbb_martins=/tmp/one", "bbb_martins=/tmp/two"]
+        )

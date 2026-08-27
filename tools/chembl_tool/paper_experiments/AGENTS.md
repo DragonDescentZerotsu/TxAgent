@@ -52,26 +52,26 @@ TRACE_RETENTION.md
 `analysis/report.md`，然后根据生成产物把已测结果同步到 `RESULTS.md`，最后更新
 `VISIBILITY_ANALYSIS.md` 等解释文档。当前生成器不会自动改写 `RESULTS.md`；不得只在聊天中保留结论。
 
-## 当前 scaffold benchmark 合同（2026-08-09）
+## 当前 scaffold benchmark 合同（2026-08-27）
 
-BBB 当前使用 `experimental_meaningful_cns_access_v2`，valid/test 各 366；Bioavailability 与 Skin 继续使用
+BBB paper-facing 当前使用 `experimental_meaningful_cns_access_v3`，valid/test 各 366；Bioavailability 与 Skin 继续使用
 `record_supported_v2`，分别各 209 和 245。BBB 目标是系统给药后 meaningful/adequate CNS access vs
 restricted/poor access，不是 passive-permeability label，也不是任意微量可检出。各 builder 在 scaffold 不跨
 split 的硬约束下，按顺序最小化
 held-out singleton、valid/test singleton imbalance、label imbalance，再最大化第一版 valid overlap。
-BBB valid/test 分别为 345 multi + 21 singleton 和 344 multi + 22 singleton；Bioavailability 的 held-out
+BBB v3 train/valid/test 为 2,934/366/366，valid/test 分别为 345 multi + 21 singleton 和 344 multi + 22 singleton；Bioavailability 的 held-out
 全是 multi-record parents；Skin 每个 held-out split 为
 240 multi-record + 5 singleton，这是精确 245/245 下的全局最小 singleton 解。三个 task 的 parent identity
 和 scaffold pairwise overlap 都是 0。
 
 ```text
 builder:
-  tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+  tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v3.py
   tools/chembl_tool/common/starling/build_record_supported_benchmark.py
 data:
-  data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/
+  data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/
   data/processed_starling_record_supported_v2/{Bioavailability_Ma,Skin_Reaction}/scaffold/
-held-out indices:
+historical v2 held-out indices:
   outputs/paper/molecular_evidence_agent_starling_scaffold_experimental_meaningful_cns_access_v2/
   outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/
 strict first-version reuse:
@@ -92,6 +92,11 @@ current diagnostic audits:
   tools/chembl_tool/paper_experiments/audit_skin_reasoning_bottleneck.py
   tools/chembl_tool/paper_experiments/audit_starling_trace_failure_causes.py
 ```
+
+隔离的 `experimental_meaningful_cns_access_v4` / conditioned-v3 candidate 已完成 matched baselines 与
+visible progressive valid，但未自动 promotion 为 paper-facing gold。它的 builder、migration receipt、source-family
+purity v5、五层结果和唯一重画命令统一记录在 `STARLING_BENCHMARK_PROTOCOL.md` 与
+`ASSAY_LEVEL_RETRIEVAL.md`；不得把 candidate 397-row 指标混入上面的 v3 366-row paper-facing lineage。
 
 `build_starling_benchmark_indices.py` 和 `starling_benchmark_matrix.py` 对非默认 lineage 必须显式传
 `--benchmark-data-root`、`--benchmark-lineage` 和 `--canonical-paper-root`；model/visibility 仍用独立
@@ -447,8 +452,8 @@ python -m tools.chembl_tool.paper_experiments.summarize_starling_benchmark \
 root 使用它。旧命令生成的空 `analysis_identity_blind_parent_disjoint/report.md` 不是 canonical v4 结果。
 显式 v4/valid summary 不会隐式加载 historical test baselines；需要 baseline 时必须传入同 lineage/subset roots。
 
-Historical combined v4 每个 split 恰有 22 个 identity-blind condition；current BBB experimental-v2 与
-Bio/Skin record-v2 已拆分，必须改为按 `lineage × task × declared conditions` 校验 expected set。所有 current
+Historical combined v4 每个 split 恰有 22 个 identity-blind condition；随后 BBB experimental-v2 与
+Bio/Skin record-v2 拆分，必须改为按 `lineage × task × declared conditions` 校验 expected set。所有该代
 run 仍同时审计 `n_failed`、`query_smiles_trace_leaks=0`、`visibility_contract_satisfied=true`、retained parent
 conflict=0 和 held-out overlap=0。正式 test 的默认完成 gate 仍是 `n_failed=0`。若遇到经过重试仍可确定为 non-retryable 的单样本
 失败，valid 诊断可以保留失败 trace，并用汇总器的 `count_as_incorrect_opposite_label` policy 计入分母；报告

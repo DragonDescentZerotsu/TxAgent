@@ -39,6 +39,7 @@ class ConditionedBenchmarkConfig:
     source_artifacts: tuple[Path, ...]
     row_id_prefix: str
     frozen_lineage: str
+    reference_conditioned_root: Path | None = None
     external_agreement_threshold: float = 0.60
     minimum_group_parents: int = 3
     minimum_group_scaffolds: int = 3
@@ -96,6 +97,9 @@ def build_reviewed_conditioned_benchmark(
         scaffold_assignment=scaffold_assignment,
         config=config,
     )
+    reference_conditioned_assignment = _reference_conditioned_assignments(
+        config.reference_conditioned_root
+    )
 
     external_rows: list[dict[str, Any]] = []
     group_rejected: list[dict[str, Any]] = []
@@ -113,11 +117,18 @@ def build_reviewed_conditioned_benchmark(
             continue
         parent = row["molecule_identity_key"]
         scaffold = row["bemis_murcko_scaffold"]
-        split = (
+        natural_split = (
             parent_assignment.get(parent)
             or scaffold_assignment.get(scaffold)
             or allocation[scaffold]
         )
+        split = reference_conditioned_assignment.get((parent, group), natural_split)
+        fixed_split = parent_assignment.get(parent) or scaffold_assignment.get(scaffold)
+        if fixed_split and split != fixed_split:
+            raise RuntimeError(
+                "reference conditioned split conflicts with the frozen parent/scaffold "
+                f"assignment for {(parent, group)}"
+            )
         external_rows.append(
             {
                 **row,
@@ -128,6 +139,26 @@ def build_reviewed_conditioned_benchmark(
                 ),
             }
         )
+    allocation_audit["reference_conditioned_root"] = (
+        str(config.reference_conditioned_root)
+        if config.reference_conditioned_root is not None
+        else None
+    )
+    allocation_audit["n_reference_conditioned_rows_reused"] = sum(
+        (row["molecule_identity_key"], row["condition_group"])
+        in reference_conditioned_assignment
+        for row in external_rows
+    )
+    allocation_audit["group_split_counts"] = {
+        group: {
+            split: sum(
+                row["condition_group"] == group and row["split"] == split
+                for row in external_rows
+            )
+            for split in SPLITS
+        }
+        for group in sorted(selected_groups)
+    }
 
     combined = {split: [] for split in SPLITS}
     for row in frozen_rows + external_rows:
@@ -205,6 +236,23 @@ def _published_review_scope(
         key: rows for key, rows in copied_votes.items() if key[1] in allowed
     }
     return scoped_audits, scoped_votes
+
+
+def _reference_conditioned_assignments(
+    root: Path | None,
+) -> dict[tuple[str, str], str]:
+    if root is None:
+        return {}
+    assignments: dict[tuple[str, str], str] = {}
+    for split in SPLITS:
+        for row in _read_jsonl(root / f"{split}_molecule_condition_labels.jsonl"):
+            if row.get("condition_group") == NO_REPORTED_CONDITION:
+                continue
+            key = (str(row["molecule_identity_key"]), str(row["condition_group"]))
+            prior = assignments.setdefault(key, split)
+            if prior != split:
+                raise RuntimeError(f"reference parent-condition crosses splits: {key}")
+    return assignments
 
 
 def validate_review_ledger(
@@ -401,7 +449,9 @@ def allocate_groups(
             vector = np.zeros(n_binary)
             for split_index in range(len(SPLITS)):
                 vector[split_index * n_scaffolds + index] = 1
-            constraints.append(vector); lower.append(1); upper.append(1)
+            constraints.append(vector)
+            lower.append(1)
+            upper.append(1)
         for group_index, group in enumerate(groups):
             y_index = n_scaffolds * len(SPLITS) + group_index
             for split_index, split in enumerate(SPLITS):
@@ -409,7 +459,9 @@ def allocate_groups(
                 for scaffold, scaffold_idx in scaffold_index.items():
                     vector[split_index * n_scaffolds + scaffold_idx] = novel[(group, scaffold)]
                 vector[y_index] = -1
-                constraints.append(vector); lower.append(-fixed[(group, split)]); upper.append(np.inf)
+                constraints.append(vector)
+                lower.append(-fixed[(group, split)])
+                upper.append(np.inf)
         result = milp(
             objective,
             integrality=np.ones(n_binary),
@@ -483,7 +535,9 @@ def _balanced_assignment(
         vector = np.zeros(n_variables)
         for split_index in range(len(SPLITS)):
             vector[split_index * n_scaffolds + index] = 1
-        constraints.append(vector); lower.append(1); upper.append(1)
+        constraints.append(vector)
+        lower.append(1)
+        upper.append(1)
     for group in sorted(selected_groups):
         for split_index, split in enumerate(SPLITS):
             vector = np.zeros(n_variables)
@@ -497,7 +551,9 @@ def _balanced_assignment(
                     fixed += 1
                 elif not prior:
                     vector[split_index * n_scaffolds + scaffold_index[scaffold]] += 1
-            constraints.append(vector); lower.append(1 - fixed); upper.append(np.inf)
+            constraints.append(vector)
+            lower.append(1 - fixed)
+            upper.append(np.inf)
     fixed_total = Counter()
     rows_per_scaffold = Counter()
     for row in selected_rows:
@@ -515,7 +571,9 @@ def _balanced_assignment(
         for sign in (1.0, -1.0):
             vector = sign * value
             vector[n_binary + split_index] = -1
-            constraints.append(vector); lower.append(-np.inf); upper.append(sign * target)
+            constraints.append(vector)
+            lower.append(-np.inf)
+            upper.append(sign * target)
     result = milp(
         objective,
         integrality=np.r_[np.ones(n_binary), np.zeros(len(SPLITS))],
@@ -568,7 +626,8 @@ def _frozen_assignments(rows: Sequence[Mapping[str, Any]]) -> tuple[dict[str, st
             raise RuntimeError(f"Frozen parent crosses splits: {parent}")
         if scaffold in scaffolds and scaffolds[scaffold] != split:
             raise RuntimeError(f"Frozen scaffold crosses splits: {scaffold}")
-        parents[parent] = split; scaffolds[scaffold] = split
+        parents[parent] = split
+        scaffolds[scaffold] = split
     return parents, scaffolds
 
 
@@ -598,7 +657,8 @@ def validate_split_integrity(combined: Mapping[str, Sequence[Mapping[str, Any]]]
                 raise RuntimeError(f"Parent crosses splits: {parent}")
             if scaffold in scaffolds and scaffolds[scaffold] != split:
                 raise RuntimeError(f"Scaffold crosses splits: {scaffold}")
-            parents[parent] = split; scaffolds[scaffold] = split
+            parents[parent] = split
+            scaffolds[scaffold] = split
 
 
 def summarize_groups(combined: Mapping[str, Sequence[Mapping[str, Any]]]) -> list[dict[str, Any]]:
@@ -768,7 +828,8 @@ def _write_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
         writer = csv.DictWriter(
             handle, fieldnames=list(rows[0]), lineterminator="\n"
         )
-        writer.writeheader(); writer.writerows(rows)
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def _row_id(prefix: str, parent: str, condition_group: str) -> str:

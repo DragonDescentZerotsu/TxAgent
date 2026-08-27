@@ -10,6 +10,12 @@ from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benc
     classify_scope,
     label_record,
 )
+from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v3 import (
+    label_record as label_record_v3,
+)
+from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v4 import (
+    label_record as label_record_v4,
+)
 
 
 def test_builder_rejects_revision_drift_and_partial_canonical_output() -> None:
@@ -108,6 +114,41 @@ def test_rejects_computational_logbb() -> None:
     )
     assert label is None
     assert reason == "computational_or_predicted_result"
+
+
+def test_v3_rejects_source_native_admet_prediction_without_changing_v2() -> None:
+    record = {
+        "bbb_permeability_label": "poor_penetration",
+        "quant_metric": "logBB",
+        "quant_value": "-1.2",
+        "assay_model": "ADME/T analysis",
+        "support_text": (
+            "Brain uptake was measured after oral dosing; the ADME/T analysis "
+            "reported LogBB = -1.2."
+        ),
+    }
+    assert label_record(record)[0] == 0
+    label, reason = label_record_v3(record)
+    assert label is None
+    assert reason == "computational_or_predicted_result"
+
+
+def test_v4_recovers_only_manually_approved_missing_direction_rows() -> None:
+    record = {
+        "bbb_permeability_label": None,
+        "quant_metric": "Kp,uu",
+        "quant_value": "very low",
+        "assay_model": "in vivo",
+        "support_text": "The unbound brain/blood ratio was very low in vivo.",
+    }
+    assert label_record_v3(record, source_index=5820)[0] is None
+    label, method = label_record_v4(record, source_index=5820)
+    assert label == 0
+    assert method.startswith("bbb_experimental_meaningful_cns_access_gold.v4:")
+
+    label, reason = label_record_v4(record, source_index=15600)
+    assert label is None
+    assert reason.startswith("metric_direction_review:manual_review_exclusion:")
 
 
 def test_rejects_calculated_logbb_without_prediction_keyword() -> None:

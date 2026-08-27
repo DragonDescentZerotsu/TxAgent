@@ -58,7 +58,18 @@ truncation, and there is no summary-model dependency. Historical
 `assay_compact.v1` and summary-backed `assay_compact.v2` remain readable only
 for reproduction.
 
-Raw-v3 alone uses the DeepSeek 1,048,576-token transport contract and a
+The opt-in fixed-molecule-budget diagnostic declares
+`assay_compact.mechanism_tagged_v4`. It keeps the same untruncated raw card
+fields as raw-v3 and adds one source-derived `evidence_family` value to each
+record card. This is biological provenance such as `direct_brain_exposure` or
+`efflux_transporter`; assay rank, relevance score, selector score, and benchmark
+label remain hidden. A physical assay that maps to several cumulative families
+may enter the candidate index once, but each of its cards is withheld until that
+card's own family level is visible. The diagnostic may additionally apply a
+global molecule cap and a per-molecule card cap after retrieval; neither cap
+changes the historical raw-v3 artifacts.
+
+Raw-v3 and mechanism-tagged-v4 use the DeepSeek 1,048,576-token transport contract and a
 900,000-token payload gate with 20,480 tokens reserved for completion. The
 legacy 400 KB group-prompt guard remains unchanged for every other evidence
 view.

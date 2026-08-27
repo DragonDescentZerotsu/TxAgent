@@ -1,0 +1,32 @@
+{
+  "review_contract": "conditioned_gold_record_review.v1",
+  "task": "ClinTox",
+  "proposal_version": "clintox_aact_external_condition_proposal.v3",
+  "n_candidates": 191,
+  "queue_path": "data/starling_data/clintox/context_conditioned_aact_review_v1/review_queue.jsonl",
+  "queue_sha256": "62d3e2cdbcfc408abdfad2ad37378038a61a6cb5a1dba38903abb3d5b6490678",
+  "proposal_audit": {
+    "path": "data/starling_data/clintox/context_conditioned_aact_review_v1/proposal_audit.jsonl",
+    "sha256": "a1342e2cb85e818093071cdf92be53af6c3d8c2a6e0bec8d547983250dac4f8d",
+    "n_rows": 26020
+  },
+  "source_artifacts": [
+    {
+      "path": "data/starling_data/clintox/tdc_clintox_v1/aacttox.csv.gz",
+      "sha256": "c132ee41f78b44f72c243643fc9e6676feaa6ff44e0178daaa0570525ec9489f"
+    },
+    {
+      "path": "data/starling_data/clintox/tdc_clintox_v1/AACT201603_pipe_delimited.tar.gz",
+      "sha256": "db0f974ff1218ff9741595c47bb2e78e66167d0d3cc5d9ecb3877feec0498394"
+    },
+    {
+      "path": "data/starling_data/clintox/tdc_clintox_v1/smiles_cache.csv.gz",
+      "sha256": "8d6f174ef7e44864ff17ae26c8681b69346bc1f6c5feefb19c56c138ebe28a7b"
+    },
+    {
+      "path": "data/starling_data/clintox/context_conditioned_aact_review_v1/frozen_candidate_source.parquet",
+      "sha256": "2b6dce2407b675a5a28a545e74a2e12d5df032ac358ed91766c0b068498dbef8"
+    }
+  ],
+  "policy": "Every queue row requires exactly one terminal accepted/rejected verdict; the benchmark builder rejects incomplete or stale ledgers."
+}

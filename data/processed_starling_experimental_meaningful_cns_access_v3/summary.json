@@ -1,0 +1,327 @@
+{
+  "lineage": "experimental_meaningful_cns_access_v3",
+  "gold_contract_version": "bbb_experimental_meaningful_cns_access_gold.v3",
+  "tasks": {
+    "bbb_martins": {
+      "task": "BBB_Martins",
+      "protocol_version": "starling_experimental_meaningful_cns_access_benchmark.v3",
+      "identity_normalizer_version": "rdkit_fragment_parent.v1",
+      "seed": 20260809,
+      "parent_label_policy": {
+        "method": "record_weighted_majority",
+        "agreement_formula": "max(n_label_0, n_label_1) / (n_label_0 + n_label_1)",
+        "agreement_threshold": 0.7,
+        "vote_unit": "accepted_source_record",
+        "tie_policy": "reject_exact_ties"
+      },
+      "split_size_policy": {
+        "formula": "preserve reference valid/test cohorts",
+        "target_valid_size": 366,
+        "target_test_size": 366
+      },
+      "n_source_rows_considered": 304845,
+      "n_source_rows_labeled_before_structure_normalization": 8268,
+      "source_rejection_counts": {
+        "computational_or_predicted_result": 12500,
+        "ex_vivo_only_result": 20,
+        "in_vitro_or_passive_permeability_result": 7217,
+        "indirect_outcome_inference": 249,
+        "interpretation_altering_qualifying_conditions": 98295,
+        "invalid_or_unresolved_smiles": 47,
+        "manual_source_exclusion:access_inferred_from_absent_brain_biomarker_effect": 1,
+        "manual_source_exclusion:access_inferred_from_absent_neurochemical_effect": 1,
+        "manual_source_exclusion:access_inferred_from_absent_recombination": 1,
+        "manual_source_exclusion:access_inferred_from_comparative_target_effect": 1,
+        "manual_source_exclusion:access_inferred_from_intracerebroventricular_vs_iv_effect": 1,
+        "manual_source_exclusion:access_inferred_from_pharmacodynamic_id50": 1,
+        "manual_source_exclusion:access_inferred_from_unspecified_in_vivo_activity": 1,
+        "manual_source_exclusion:active_metabolite_without_query_dosing": 1,
+        "manual_source_exclusion:autoradiography_claim_pmid_model_mismatch": 1,
+        "manual_source_exclusion:background_comparator_as_query_outcome": 1,
+        "manual_source_exclusion:bbb_access_inferred_only_from_in_vivo_activity": 1,
+        "manual_source_exclusion:cns_infection_altered_barrier_context": 1,
+        "manual_source_exclusion:combination_treatment_disease_context": 1,
+        "manual_source_exclusion:compound_class_to_query_attribution_ambiguity": 1,
+        "manual_source_exclusion:csf_compartment_ratio_not_systemic_access_endpoint": 1,
+        "manual_source_exclusion:efflux_ratio_proxy_without_cns_exposure": 1,
+        "manual_source_exclusion:endogenous_distribution_without_query_dosing": 1,
+        "manual_source_exclusion:endogenous_distribution_without_systemic_query_dosing": 1,
+        "manual_source_exclusion:endogenous_local_synthesis_without_systemic_query_outcome": 1,
+        "manual_source_exclusion:ex_vivo_human_brain_autoradiography": 1,
+        "manual_source_exclusion:ex_vivo_trace_without_systemic_query_dosing": 1,
+        "manual_source_exclusion:focal_ischemia_altered_barrier_context": 1,
+        "manual_source_exclusion:generic_radiotracer_capability_without_measured_uptake": 1,
+        "manual_source_exclusion:in_silico_logbb_source": 1,
+        "manual_source_exclusion:in_situ_perfusion_without_systemic_administration": 1,
+        "manual_source_exclusion:in_vivo_efflux_ratio_without_absolute_cns_access_outcome": 1,
+        "manual_source_exclusion:intracerebral_hemorrhage_altered_barrier_context": 1,
+        "manual_source_exclusion:intracranial_tumor_efficacy_inference": 1,
+        "manual_source_exclusion:irradiation_altered_barrier_context": 1,
+        "manual_source_exclusion:ischemic_altered_barrier_relative_pet_only": 1,
+        "manual_source_exclusion:lesion_model_with_bbb_leakage": 1,
+        "manual_source_exclusion:lovastatin_metabolite_and_in_vitro_pmid_mismatch": 1,
+        "manual_source_exclusion:low_brain_to_blood_signal_conflicts_with_meaningful_access_label": 1,
+        "manual_source_exclusion:malignant_glioma_altered_barrier_context": 1,
+        "manual_source_exclusion:meningitis_brain_graft_without_direct_query_pk": 1,
+        "manual_source_exclusion:metabolite_and_chronic_ischemia_context": 1,
+        "manual_source_exclusion:mixed_drug_clinical_relapse_inference": 1,
+        "manual_source_exclusion:mixed_extract_dosing_and_mptp_altered_context": 1,
+        "manual_source_exclusion:mixed_parent_metabolite_and_extrapolated_brain_level": 1,
+        "manual_source_exclusion:multi_compound_attribution_ambiguity": 1,
+        "manual_source_exclusion:multi_radioligand_attribution_ambiguity": 1,
+        "manual_source_exclusion:nanoformulation_route_species_pmid_mismatch": 1,
+        "manual_source_exclusion:parent_and_metabolite_brain_signal_unresolved": 1,
+        "manual_source_exclusion:parent_metabolite_quantitative_attribution_mismatch": 1,
+        "manual_source_exclusion:penetration_inferred_from_relative_ed50": 1,
+        "manual_source_exclusion:pet_use_and_lipophilicity_without_uptake_measurement": 1,
+        "manual_source_exclusion:pmid_mismatch_ceritinib_crizotinib_review": 1,
+        "manual_source_exclusion:pmid_mismatch_shp099_pharmacokinetics": 1,
+        "manual_source_exclusion:pmid_model_mismatch_autoradiography_claim": 1,
+        "manual_source_exclusion:pmid_query_claim_mismatch": 1,
+        "manual_source_exclusion:pmid_route_and_primary_experiment_mismatch_propanediol": 1,
+        "manual_source_exclusion:predicted_in_vitro_bbb_model": 1,
+        "manual_source_exclusion:qa_uncertain_alzheimer_surgical_barrier_context": 1,
+        "manual_source_exclusion:qa_uncertain_csf_measurement_context": 1,
+        "manual_source_exclusion:qa_uncertain_efflux_ratio_proxy_without_exposure": 1,
+        "manual_source_exclusion:qa_uncertain_formulation_aggregation": 1,
+        "manual_source_exclusion:qa_uncertain_logbb_experimental_provenance": 1,
+        "manual_source_exclusion:qa_uncertain_meaningful_access_label_direction": 1,
+        "manual_source_exclusion:qa_uncertain_measurement_provenance_pharmacodynamic_pmid": 1,
+        "manual_source_exclusion:qa_uncertain_neurodegeneration_model_context": 1,
+        "manual_source_exclusion:qa_uncertain_pet_metric_text_consistency": 1,
+        "manual_source_exclusion:qa_uncertain_preclinical_measurement_context": 1,
+        "manual_source_exclusion:qa_uncertain_prediction_paper_logbb_provenance": 1,
+        "manual_source_exclusion:qa_uncertain_prediction_paper_reference_value": 1,
+        "manual_source_exclusion:qa_uncertain_prodrug_generated_query_analyte": 1,
+        "manual_source_exclusion:qa_uncertain_secondary_background_provenance": 1,
+        "manual_source_exclusion:qa_uncertain_secondary_clinical_bbb_claim": 1,
+        "manual_source_exclusion:qa_uncertain_secondary_csf_claim_without_primary_measurement": 1,
+        "manual_source_exclusion:qa_uncertain_secondary_measurement_context": 1,
+        "manual_source_exclusion:qa_uncertain_secondary_or_predicted_logbb_metric": 1,
+        "manual_source_exclusion:qa_uncertain_transgenic_disease_model_context": 1,
+        "manual_source_exclusion:qa_uncertain_unbound_ratio_context": 1,
+        "manual_source_exclusion:qa_uncertain_zebrafish_systemic_route": 1,
+        "manual_source_exclusion:qualitative_label_conflicts_with_near_equal_brain_blood_concentrations": 1,
+        "manual_source_exclusion:query_analyte_mismatch_human_albumin": 1,
+        "manual_source_exclusion:query_analyte_pmid_mismatch_thyroxine_growth_hormone": 1,
+        "manual_source_exclusion:query_identity_mismatch_dexpramipexole_vs_dexamethasone": 1,
+        "manual_source_exclusion:query_identity_mismatch_selegiline": 1,
+        "manual_source_exclusion:query_not_systemically_dosed_brain_generated_metabolite": 1,
+        "manual_source_exclusion:query_pmid_evidence_mismatch_dopamine": 1,
+        "manual_source_exclusion:query_pmid_identity_mismatch_antisense": 1,
+        "manual_source_exclusion:query_pmid_mismatch_dopamine": 1,
+        "manual_source_exclusion:query_pmid_mismatch_jnj54175446": 1,
+        "manual_source_exclusion:query_radioligand_mismatch": 1,
+        "manual_source_exclusion:query_text_molecule_mismatch_mirex": 1,
+        "manual_source_exclusion:species_endpoint_pmid_mismatch_tolcapone": 1,
+        "manual_source_exclusion:systemic_claim_attached_to_in_vitro_slice_pmid": 1,
+        "manual_source_exclusion:transporter_efflux_proxy_without_cns_exposure": 1,
+        "manual_source_exclusion:transporter_inhibitor_cotreatment_context": 1,
+        "manual_source_exclusion:tuberculous_meningitis_altered_barrier_context": 1,
+        "manual_source_exclusion:uncontrolled_disease_and_indirect_serotonin_context": 1,
+        "manual_source_exclusion:unresolved_parent_and_metabolite_total_radioactivity": 1,
+        "no_direct_cns_outcome": 141522,
+        "no_explicit_binary_permeability_label": 7226,
+        "no_explicit_experimental_basis": 15227,
+        "non_systemic_or_altered_barrier_context": 3785,
+        "unsupported_metal_complex_identity": 10440,
+        "within_record_direction_conflict": 4
+      },
+      "n_parent_groups_with_any_label": 3879,
+      "n_parent_groups_with_label_conflict": 367,
+      "n_parent_groups_recovered_by_majority": 154,
+      "n_rejected_parent_groups": 213,
+      "parent_rejection_counts": {
+        "parent_record_agreement_below_threshold": 110,
+        "parent_record_label_tie": 103
+      },
+      "n_binary_molecules": 3666,
+      "all_label_counts": {
+        "0": 966,
+        "1": 2700
+      },
+      "n_unique_bemis_murcko_scaffolds": 2135,
+      "n_acyclic_molecules": 306,
+      "splits": {
+        "scaffold": {
+          "method": "preserved_scaffold_assignment_after_gold_revote",
+          "lineage": "experimental_meaningful_cns_access_v3",
+          "target_valid_size": 366,
+          "target_test_size": 366,
+          "actual_valid_size": 366,
+          "actual_test_size": 366,
+          "valid_size_shortfall": 0,
+          "test_size_shortfall": 0,
+          "optimization": {
+            "split_assignment_policy": "preserve_reference_for_surviving_parents",
+            "reference_split_root": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold",
+            "n_reference_parents": 3667,
+            "n_surviving_parents": 3666,
+            "n_removed_parents": 1,
+            "n_added_parents": 0
+          },
+          "n_train": 2934,
+          "train_label_counts": {
+            "0": 772,
+            "1": 2162
+          },
+          "train_record_tier_counts": {
+            "multi_record": 491,
+            "singleton": 2443
+          },
+          "n_train_scaffolds": 1544,
+          "n_valid": 366,
+          "valid_label_counts": {
+            "0": 97,
+            "1": 269
+          },
+          "valid_record_tier_counts": {
+            "multi_record": 344,
+            "singleton": 22
+          },
+          "n_valid_scaffolds": 305,
+          "n_test": 366,
+          "test_label_counts": {
+            "0": 97,
+            "1": 269
+          },
+          "test_record_tier_counts": {
+            "multi_record": 344,
+            "singleton": 22
+          },
+          "n_test_scaffolds": 286,
+          "pairwise_scaffold_overlap": {
+            "train_valid": 0,
+            "train_test": 0,
+            "valid_test": 0
+          },
+          "pairwise_identity_overlap": {
+            "train_valid": 0,
+            "train_test": 0,
+            "valid_test": 0
+          },
+          "train_valid_scaffold_overlap": 0,
+          "train_test_scaffold_overlap": 0,
+          "valid_test_scaffold_overlap": 0,
+          "train_valid_identity_overlap": 0,
+          "train_test_identity_overlap": 0,
+          "valid_test_identity_overlap": 0,
+          "paths": {
+            "train": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/train.jsonl",
+            "valid": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/valid.jsonl",
+            "test": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/test.jsonl",
+            "train_molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/train_molecule_labels.jsonl",
+            "valid_molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/valid_molecule_labels.jsonl",
+            "test_molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/test_molecule_labels.jsonl",
+            "heldout_molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/heldout_molecule_labels.jsonl"
+          }
+        }
+      },
+      "source_metadata": {
+        "dataset": "starling-labs/BBB",
+        "requested_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+        "resolved_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+        "split": "train",
+        "gold_contract": {
+          "version": "bbb_experimental_meaningful_cns_access_gold.v3",
+          "target": "experimentally supported meaningful CNS access after systemic administration",
+          "positive_label": "reported meaningful or adequate experimental CNS access",
+          "negative_label": "reported experimentally restricted or poor CNS access",
+          "included_endpoint_families": [
+            "brain_unbound",
+            "brain_systemic_ratio",
+            "brain_tissue",
+            "csf",
+            "pet_or_autoradiography",
+            "experimental_bbb_outcome"
+          ],
+          "excluded_from_gold": [
+            "computational predictions",
+            "PAMPA and cell-based in-vitro permeability",
+            "non-systemic CNS delivery",
+            "artificially disrupted or disease-altered barriers",
+            "indirect efficacy-only inference",
+            "unresolved parent/metabolite or query/analyte attribution"
+          ],
+          "label_rule": "use explicit qualitative bbb_permeability_label only after experimental outcome and provenance validation; low but nonzero exposure may remain restricted, and heterogeneous endpoints are not forced through one numeric threshold",
+          "mechanism_policy": "the outcome label is independent of passive diffusion, efflux, or influx mechanism; a mechanism-only proxy cannot vote without an eligible experimental CNS-access outcome",
+          "distribution_policy": "do not relabel, resample, or impose endpoint/mechanism quotas to make reasoning groups useful; audit downstream train-only evidence coverage separately after held-out exclusion",
+          "v3_change_from_v2": "exclude source-native ADME/T or TCMSP computational BBB predictions"
+        },
+        "benchmark_lineage": "experimental_meaningful_cns_access_v3"
+      },
+      "paths": {
+        "molecule_labels": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/molecule_labels.jsonl",
+        "conflicting_molecules": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/conflicting_molecules.jsonl",
+        "rejected_parent_molecules": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/rejected_parent_molecules.jsonl",
+        "source_rejection_examples": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/source_rejection_examples.jsonl",
+        "record_supported_scaffold_root": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold"
+      },
+      "record_support_policy": {
+        "record_tier": "multi_record iff source_record_count >= 2",
+        "heldout_objective": "preserve reference split for every surviving parent",
+        "reference_split_root": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold",
+        "target_valid_size": 366,
+        "target_test_size": 366
+      },
+      "gold_distribution": {
+        "record_tier_counts": {
+          "multi_record": 1179,
+          "singleton": 2487
+        },
+        "endpoint_families": {
+          "brain_tissue": {
+            "accepted_records": 3383,
+            "parent_molecules": 2159,
+            "y0_parents": 558,
+            "y1_parents": 1601
+          },
+          "csf": {
+            "accepted_records": 1327,
+            "parent_molecules": 562,
+            "y0_parents": 164,
+            "y1_parents": 398
+          },
+          "brain_systemic_ratio": {
+            "accepted_records": 1217,
+            "parent_molecules": 936,
+            "y0_parents": 258,
+            "y1_parents": 678
+          },
+          "pet_or_autoradiography": {
+            "accepted_records": 1044,
+            "parent_molecules": 661,
+            "y0_parents": 162,
+            "y1_parents": 499
+          },
+          "brain_unbound": {
+            "accepted_records": 186,
+            "parent_molecules": 136,
+            "y0_parents": 33,
+            "y1_parents": 103
+          },
+          "experimental_bbb_outcome": {
+            "accepted_records": 161,
+            "parent_molecules": 146,
+            "y0_parents": 19,
+            "y1_parents": 127
+          }
+        }
+      },
+      "artifact_sha256": {
+        "molecule_labels.jsonl": "ee1b6299232616b888d34ff9db703ff57ea940a52ea02f890d53dd7723e62d25",
+        "conflicting_molecules.jsonl": "94e1fc55a29a086dab131e87208b920fa33b4ee102bd9f4ffea5630ae5d38c4f",
+        "rejected_parent_molecules.jsonl": "406865deb572aa03a0081a209d3e7ed4058fe43668649d00e1cfc5bdcab44dd4",
+        "source_rejection_examples.jsonl": "2e8839f4e72d98c687b81994ecb58ef66312a3e20b25aa3eb8b86a409a54ce7b",
+        "scaffold/train.jsonl": "20ae1b95b129ada12a1d195bedd41d3d52112eeaa550f7418975f624541999e1",
+        "scaffold/valid.jsonl": "95afa6f02912f16ddd92a14f867fe7147e67c54d96ce15e0f0001eb630f2c532",
+        "scaffold/test.jsonl": "2d7181ec9a5b26dbc07e86132c551e7e7ae9b2c8f3aa11eb82b656a7004e8553",
+        "scaffold/train_molecule_labels.jsonl": "53cad900eb26fcb3017f124aed2ff958dab013fd22105f5641509d4bf750f3e2",
+        "scaffold/valid_molecule_labels.jsonl": "aa94b5e534fe1ce30866f8d9f1c43d236f340a244f4367f8f40b27912df82780",
+        "scaffold/test_molecule_labels.jsonl": "d2143438087624c63dddd7be9747c758893e18436e2a4a05cb46f3b149b39a07",
+        "scaffold/heldout_molecule_labels.jsonl": "f0a0e2ae3209eb6368af3fba07b23ba508551d3d574b3a4c03bcb49c735dfdd6"
+      },
+      "build_fingerprint": "ad700874c9bebe2dcbd0d529d6e9965d2393b2e6d4867b0b87b0f02531160a63"
+    }
+  }
+}

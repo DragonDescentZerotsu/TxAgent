@@ -31,12 +31,15 @@ class OpenAICompatibleClient:
         max_tool_rounds: int,
         reasoning_effort: str,
         enable_thinking: bool,
+        transport_max_retries: int = TRANSPORT_MAX_RETRIES,
     ):
+        if transport_max_retries < 0:
+            raise ValueError("transport_max_retries must be non-negative")
         self.client = OpenAI(
             api_key=api_key,
             base_url=base_url.rstrip("/"),
             timeout=timeout_s,
-            max_retries=TRANSPORT_MAX_RETRIES,
+            max_retries=transport_max_retries,
         )
         self.model = model
         self.max_tokens = max_tokens

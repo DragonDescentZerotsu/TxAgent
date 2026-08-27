@@ -1,0 +1,37 @@
+{
+  "old_gold_lineage": "experimental_meaningful_cns_access_v2",
+  "new_gold_lineage": "experimental_meaningful_cns_access_v3",
+  "old_binary_parents": 3667,
+  "new_binary_parents": 3666,
+  "shared_binary_parents": 3666,
+  "removed_binary_parents": 1,
+  "added_binary_parents": 0,
+  "shared_parent_label_changes": 0,
+  "shared_parent_split_changes": 0,
+  "removed_accepted_source_votes": 5,
+  "removed_source_record_ids": [
+    "row:168675",
+    "row:168676",
+    "row:168677",
+    "row:168678",
+    "row:168679"
+  ],
+  "vote_affected_parents": 5,
+  "vote_affected_parent_acceptance_losses": 1,
+  "split_overlap": {
+    "train": 2934,
+    "valid": 366,
+    "test": 366
+  },
+  "conditioned": {
+    "old_rows": 3835,
+    "new_rows": 3834,
+    "shared_rows": 3834,
+    "removed_rows": 1,
+    "added_rows": 0,
+    "shared_row_label_changes": 0,
+    "shared_row_split_changes": 0
+  },
+  "changed_gold_parents": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/changed_gold_parents.jsonl",
+  "affected_gold_vote_parents": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/affected_gold_vote_parents.jsonl"
+}

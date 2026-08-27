@@ -1,5 +1,8 @@
+import json
+
 from tools.chembl_tool.common.starling.build_record_supported_benchmark import (
     allocate_scaffold_groups,
+    build_task_preserving_split,
     target_eval_size,
 )
 
@@ -10,6 +13,7 @@ def _row(scaffold: str, label: int, records: int, identity: str, prior=False):
         "Y": label,
         "source_record_count": records,
         "molecule_identity_key": identity,
+        "drug": identity,
         "_prior_valid": prior,
     }
 
@@ -72,3 +76,58 @@ def test_scaffold_allocator_can_disable_record_support_and_keep_acyclic_train_on
     assert audit["empty_scaffold_heldout_eligible"] is False
     assert audit["minimum_singletons_in_heldout"] is None
     assert audit["n_empty_scaffold_parents"] == 1
+
+
+def test_preserved_split_can_inherit_new_parent_scaffolds(tmp_path):
+    reference = tmp_path / "reference"
+    source_root = tmp_path / "source"
+    output_root = tmp_path / "output"
+    source_task = source_root / "BBB_Martins"
+    source_task.mkdir(parents=True)
+    rows = {
+        "train": [_row("train-scaffold", 0, 2, "train-old")],
+        "valid": [_row("valid-scaffold", 1, 2, "valid-old")],
+        "test": [_row("test-scaffold", 0, 2, "test-old")],
+    }
+    reference.mkdir(parents=True)
+    for split, values in rows.items():
+        (reference / f"{split}_molecule_labels.jsonl").write_text(
+            "".join(json.dumps(row) + "\n" for row in values)
+        )
+    source_rows = [
+        *[row for values in rows.values() for row in values],
+        _row("test-scaffold", 1, 1, "test-new"),
+        _row("novel-scaffold", 0, 1, "train-new"),
+    ]
+    (source_task / "molecule_labels.jsonl").write_text(
+        "".join(json.dumps(row) + "\n" for row in source_rows)
+    )
+    (source_task / "summary.json").write_text(json.dumps({"paths": {}}))
+
+    summary = build_task_preserving_split(
+        "BBB_Martins",
+        source_root=source_root,
+        output_root=output_root,
+        reference_split_root=reference,
+        lineage="test-lineage",
+        protocol_version="test.v1",
+        allow_new_parents=True,
+    )
+
+    test_rows = {
+        json.loads(line)["molecule_identity_key"]
+        for line in (
+            output_root / "BBB_Martins/scaffold/test_molecule_labels.jsonl"
+        ).read_text().splitlines()
+    }
+    train_rows = {
+        json.loads(line)["molecule_identity_key"]
+        for line in (
+            output_root / "BBB_Martins/scaffold/train_molecule_labels.jsonl"
+        ).read_text().splitlines()
+    }
+    assert "test-new" in test_rows
+    assert "train-new" in train_rows
+    optimization = summary["splits"]["scaffold"]["optimization"]
+    assert optimization["n_added_parents"] == 2
+    assert optimization["added_parent_assignment_counts"] == {"test": 1, "train": 1}

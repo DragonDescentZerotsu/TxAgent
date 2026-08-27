@@ -8,9 +8,9 @@
 60% vote 和逐条 group/lineage artifact 合同，统一见
 [`REVIEWED_CONDITIONED_BENCHMARK.md`](REVIEWED_CONDITIONED_BENCHMARK.md)。两套 lineage 不得混称。
 
-## 当前 BBB experimental meaningful-CNS-access lineage（2026-08-09）
+## 当前 BBB experimental meaningful-CNS-access lineage（2026-08-26）
 
-BBB 当前 paper-facing gold 是 `experimental_meaningful_cns_access_v2`，不再把所有 Starling
+BBB 当前 paper-facing gold 是 `experimental_meaningful_cns_access_v3`，不再把所有 Starling
 `bbb_permeability_label` 无条件混成一个 TDC-compatible endpoint。目标定义为：**系统给药后是否有实验支持的
 meaningful/adequate CNS access，或相反的 restricted/poor access**。Positive 不要求 passive diffusion，也不等于
 任何微量 signal 可检出；低但非零 exposure 可以保留为 negative。
@@ -34,38 +34,86 @@ numeric threshold；通过 scope gate 后只使用 source 的明确 qualitative 
 聚合 parent。Gold 不按 passive/efflux/influx 或 endpoint family 设置配额，也不为了让某个 agent group 有用而
 重采样或改标签；这些 group 在 held-out-filtered train-only evidence index 上另做 coverage audit。
 
-正式 scaffold split 使用 lexicographic MILP 先最小化 held-out singleton，再最小化 valid/test singleton
-imbalance 和 label imbalance，最后确定性消除 tie。当前 build 为 3,667 parents，Y=0/Y=1 为
-`967/2,700`，train/valid/test 为 `2,935/366/366`；valid/test 分别有 21/22 singleton，且两者 label 均为
+v3 另外明确排除 source-native ADME/T/TCMSP computational prediction。它从 v2 的全部 source rows 独立
+重新判定和重投票，并为所有 surviving parents 保留 v2 scaffold assignment。当前 build 为 3,666 parents，
+Y=0/Y=1 为 `966/2,700`，train/valid/test 为 `2,934/366/366`；valid/test 分别有 21/22 singleton，且两者 label 均为
 `97/269`，identity/scaffold overlap 为 0。构建、审计和产物：
 
 ```text
-tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
-tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark_v3.py
+tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v3.py
+tools/chembl_tool/common/starling/audit_bbb_v3_migration.py
 tools/chembl_tool/common/starling/audit_bbb_experimental_meaningful_cns_access.py
-data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/
+data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/
 ```
 
-build fingerprint 为 `0a864e56c583f79768427dbb8c4f3e17f4fca43b2eab7d2e791ba3bb34c3eb91`。
-三名 `gpt-5.6-sol` reviewer 在多轮 replacement audit 中检查了 366 条 unique source records；当前 294 条
+迁移 receipt 记录 accepted source rows `8,273 → 8,268`，只移除旧 train 的 Digoxin parent；3,666 个
+shared parents 的 label 和 split changes 均为 0。v2 的三名 `gpt-5.6-sol` reviewer 在多轮 replacement audit
+中检查了 366 条 unique source records；294 条
 family×label 分层 deterministic sample 全部人工通过。主要排除项包括 prediction/in-vitro、altered barrier、
 间接 pharmacodynamic inference、query/analyte/PMID mismatch、parent/metabolite ambiguity、total-radioactivity
 attribution 和不受当前 small-molecule identity/tool contract 支持的 metal complex。该抽样不能替代未来双人原文
 annotation，因此当前状态是 reproducible high-precision build，不是最终 paper source-quality gold certification。
-旧 `experimental_direct_cns_v1`、BBB `record_agreement70_split811_v1` 和 `record_supported_v2` 保留为 historical lineage。
+旧 `experimental_meaningful_cns_access_v2`、`experimental_direct_cns_v1`、BBB
+`record_agreement70_split811_v1` 和 `record_supported_v2` 保留为 historical lineage。
 
 唯一重建和审计命令：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
-  python -m tools.chembl_tool.common.starling.build_bbb_experimental_meaningful_cns_access
+  python -m tools.chembl_tool.common.starling.build_bbb_experimental_meaningful_cns_access_v3
 
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
-  python -m tools.chembl_tool.common.starling.audit_bbb_experimental_meaningful_cns_access
+  python -m tools.chembl_tool.common.starling.audit_bbb_v3_migration
 ```
 
-第二条命令会重新生成 deterministic QA sample 并把人工状态设为 `pending`；只有读完 sample 后才可用
-`--mark-existing-review --manual-review-status passed` 标记通过，且 audit 会校验 build fingerprint。
+第二条命令逐 parent 比较 v2/v3 的 membership、label 和 split，并同时比较 conditioned v1/v2；它不能被
+retrieval-family audit 替代。若需要重新生成 source QA sample，仍显式运行 historical source audit 入口，
+不得据此覆盖 v3 migration receipt。
+
+## BBB experimental metric-direction review v4 candidate（2026-08-26）
+
+`experimental_meaningful_cns_access_v4` 是独立 candidate lineage，尚未替换 paper-facing v3。它只重审 v3
+中通过 direct-outcome 和 experimental-basis gates、但仅因缺少 `bbb_permeability_label` 被拒绝的 7,226 条
+source rows。不同 brain/CSF/PET measurements 不使用共享 numeric threshold；只有 source row 自身提供无歧义
+qualitative direction 才成为规则候选。规则在 1,418 条已有 explicit-label records 上逐规则回放，最终所有启用
+规则 disagreement 均为 0。
+
+规则提出 81 条 candidates，全部进行 source-index 级人工复核：16 条因 ex-vivo、metabolite/prodrug/analyte
+attribution、mechanism-only statement、pharmacodynamic proxy、disease context、late-timepoint 或 PET confounding
+被拒绝；65 条新增为 votes；其余 7,145 条继续是 non-voting retrieval evidence。审查绑定 frozen HF revision 和
+local Arrow SHA-256 `faa63a4e2ecc234691c86bc63c2cd3a69db82387cfe0687cc930d9a5e458709c`，candidate set
+发生漂移时构建直接失败。
+
+v4 重投票得到 3,675 binary parents，Y=0/Y=1 为 `975/2,700`，train/valid/test 为
+`2,945/365/365`。相对 v3 新增/移除 15/6 parents；3,660 个 shared binary parents 的 label flips 和 split
+changes 均为 0。所有 surviving v3 parents 保留原 split；新 parent 若 scaffold 已存在则继承该 split，全新
+scaffold 只进入 train。identity/scaffold overlap 均为 0。当前 v4 仅是 gold candidate；在相同 baseline 和
+agent matrix 重跑并完成 promotion gate 前，不与 v3 performance 混表。
+
+```text
+tools/chembl_tool/tasks/bbb_martins/experimental_metric_direction_review.py
+tools/chembl_tool/tasks/bbb_martins/experimental_metric_direction_review_adjudications.json
+tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark_v4.py
+tools/chembl_tool/common/starling/audit_bbb_experimental_metric_direction.py
+tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v4.py
+tools/chembl_tool/common/starling/audit_bbb_v4_migration.py
+data/starling_data/bbb_martins/experimental_metric_direction_review_v1/
+data/processed_starling_experimental_meaningful_cns_access_v4/BBB_Martins/
+```
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.common.starling.audit_bbb_experimental_metric_direction \
+  --source-arrow /path/to/pinned/bbb-train.arrow
+
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.common.starling.build_bbb_experimental_meaningful_cns_access_v4 \
+  --source-arrow /path/to/pinned/bbb-train.arrow
+
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.common.starling.audit_bbb_v4_migration
+```
 
 ## Parent record-majority policy
 

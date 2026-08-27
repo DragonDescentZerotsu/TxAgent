@@ -671,7 +671,6 @@ def _run_final_reasoning(
             retrieval,
             group_outputs,
         ),
-        branch_name="final",
     )
     return {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
 

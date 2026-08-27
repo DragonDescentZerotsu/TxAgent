@@ -1,5 +1,9 @@
 import json
 
+from tools.chembl_tool.common.evidence_contract import (
+    ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE,
+    evidence_for_group_llm,
+)
 from tools.chembl_tool.common.identity_blind import (
     find_identity_blind_leaks,
     prepare_harness_prefetched_retrieval,
@@ -125,6 +129,72 @@ def test_visible_prefetch_preserves_identity_but_matches_blind_tool_calls():
     assert visible["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "CHEMBL1"
     assert "VisibleNeighbor" in json.dumps(visible)
     assert blind["query"]["identity_hidden"] is True
+
+
+def test_visible_and_blind_prefetch_preserve_the_same_mechanism_cards():
+    retrieval = {
+        "query": {"input_smiles": "CCO", "canonical_smiles": "CCO"},
+        "groups": [
+            {
+                "group_id": "Assay.flat",
+                "evidence_prompt_profile": ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE,
+                "neighbors": [
+                    {
+                        "rank": 1,
+                        "molecule_chembl_id": "CHEMBL1",
+                        "canonical_smiles": "CCN",
+                        "evidence_rows": [
+                            {
+                                "source_record_examples": [
+                                    {
+                                        "endpoint_type": "brain exposure",
+                                        "reported_value": "2.1",
+                                        "reported_units": "brain/plasma ratio",
+                                        "support_text": "Measured brain exposure increased.",
+                                        "evidence_family": "direct_brain_exposure",
+                                        "evidence_family_level": 1,
+                                    },
+                                    {
+                                        "endpoint_type": "efflux ratio",
+                                        "reported_value": "4.2",
+                                        "support_text": "A transporter-dependent efflux signal was measured.",
+                                        "evidence_family": "efflux_transport",
+                                        "evidence_family_level": 2,
+                                    },
+                                ]
+                            }
+                        ],
+                    }
+                ],
+            }
+        ],
+    }
+
+    blind = prepare_harness_prefetched_retrieval(
+        retrieval, FakeToolService(), identity_blind=True
+    )
+    visible = prepare_harness_prefetched_retrieval(
+        retrieval, FakeToolService(), identity_blind=False
+    )
+    blind_group = blind["groups"][0]
+    visible_group = visible["groups"][0]
+    blind_card = evidence_for_group_llm(
+        blind_group["neighbors"][0]["evidence_rows"][0], blind_group
+    )
+    visible_card = evidence_for_group_llm(
+        visible_group["neighbors"][0]["evidence_rows"][0], visible_group
+    )
+
+    assert blind_card["records"] == visible_card["records"]
+    assert blind_card["molecule"] == {
+        "id": "neighbor_1_1",
+        "canonical_smiles": "",
+        "names": [],
+    }
+    assert [record["evidence_family"] for record in blind_card["records"]] == [
+        "direct_brain_exposure",
+        "efflux_transport",
+    ]
 
 
 def test_identity_blind_prefetch_redacts_backend_error_details():

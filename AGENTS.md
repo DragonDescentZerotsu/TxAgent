@@ -20,7 +20,7 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Starling 二分类 benchmark（2026-08-10）
+## 当前 Starling 二分类 benchmark（2026-08-26）
 
 BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
 records 构建。ClinTox 仍没有同定义的 Starling direct source，但 2026-08-15 起另有严格的 source-reconstructed
@@ -34,33 +34,35 @@ tools/chembl_tool/common/starling/benchmark_dataset.py
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
 
 task adapters:
-  tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
+  tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark_v3.py
   tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
   tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
 ```
 
-2026-08-09 BBB paper-facing gold 已从旧 TDC-compatible mixed-permeability lineage 迁移到
-`experimental_meaningful_cns_access_v2`。新任务预测系统给药后是否有实验支持的 meaningful/adequate CNS
+2026-08-26 BBB paper-facing gold 已更新为
+`experimental_meaningful_cns_access_v3`。新任务预测系统给药后是否有实验支持的 meaningful/adequate CNS
 access，而不是“任何可检出即 positive”或“只有 passive permeation 才 positive”。brain tissue、unbound brain、
 brain/systemic ratio、CSF、PET/autoradiography 和明确体内 BBB outcome 可进入 gold；PAMPA/细胞模型、计算预测、
 机制-only proxy、非系统 CNS 给药、人为/疾病改变屏障和间接疗效推断均拒绝。CSF 明确标为 proxy，不冒充脑实质。
 
 ```text
 adapter:
-  tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
+  tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark_v3.py
 builder:
-  tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+  tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v3.py
 audit:
+  tools/chembl_tool/common/starling/audit_bbb_v3_migration.py
   tools/chembl_tool/common/starling/audit_bbb_experimental_meaningful_cns_access.py
 data:
-  data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/
+  data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/
 ```
 
-当前 frozen BBB build 有 3,667 个 binary parents，train/valid/test 为 `2,935/366/366`；valid/test 分别为
+当前 frozen BBB v3 build 有 3,666 个 binary parents，train/valid/test 为 `2,934/366/366`；valid/test 分别为
 `345 multi-record + 21 singleton` 和 `344 + 22`，两者 Y=0/Y=1 均为 `97/269`，identity/scaffold overlap
-均为 0。8,273 条 accepted source rows 覆盖六种 outcome family；三名 `gpt-5.6-sol` reviewer 在多轮替换中
-人工检查了 366 条 unique source records，最终 294 条 deterministic family×label 分层 sample 全部通过。
-旧 exploratory `experimental_direct_cns_v1` 与 BBB `record_supported_v2` 的 gold、indices、baselines、
+均为 0。v3 排除 5 条 source-native ADME/T/TCMSP computational prediction votes，accepted rows 从 8,273
+变为 8,268；独立重投票后只移除旧 train 的 Digoxin parent，3,666 个 shared parents 的 label 和 split 均
+不变。旧 v2 的 source review 继续作为 provenance，v3 migration receipt 固定记录这一差异。
+旧 `experimental_meaningful_cns_access_v2`、`experimental_direct_cns_v1` 与 BBB `record_supported_v2` 的 gold、indices、baselines、
 agent traces 和结果全部保留为 historical lineage，不得与新 BBB 结果混表。Bioavailability_Ma 与
 Skin_Reaction 当前仍使用 `record_supported_v2`。
 
@@ -149,6 +151,7 @@ tools/chembl_tool/paper_experiments/run_minimol_valid_matrix_gpt_oss_120b.py
 tools/chembl_tool/paper_experiments/run_assay_retrieval_curve.py
 tools/chembl_tool/paper_experiments/build_assay_family_catalog.py
 tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py
+tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py
 tools/chembl_tool/paper_experiments/audit_conditioned_assay_prompt_lengths.py
 tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py
 tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
@@ -242,6 +245,23 @@ ClinTox 当前严格 split 位于
    at most three representative record cards per assay×molecule with complete
    raw card fields and support text. They do not apply field-level truncation
    and do not require or call a support-summary model.
+   The isolated visible progressive experiment now uses
+   `conditioned_assay_progressive_visible.v8`: candidate generation is global
+   molecule-similarity retrieval within each cumulative record-family pool,
+   without a per-assay neighbor cap. L1 selects at most 10 molecules; later
+   families append bounded new-molecule and active-molecule card deltas; all
+   prior cards remain visible. Assay identity remains card provenance and a
+   diversity tie-break only. Family assignment is record-level: a physical
+   assay may contribute cards to several levels, and its earliest level is only
+   catalog ordering/coverage metadata, never a visibility or retrieval gate.
+   BBB source-purity v5 restricts L1 to current accepted non-prediction voters
+   plus records that replay the experimental CNS-access gold contract; predicted
+   BBB outcomes and missing/generic proxies move to near-direct, while predicted
+   passive-permeability or efflux readouts remain in their mechanism family.
+   The v5 row ledger audits all 581,708 source records and rejects cross-family
+   efflux/influx precedence violations before an index can be published.
+   Its runner and artifacts must not replace the
+   cumulative-family or geometric assay-prefix pipelines.
 6. LLM reasoning 分为并发证据分支和 final 汇总：single-molecule 分支判断理化性质先验；paper-facing
    group-level 分支按少量、数据源无关的 mechanism family 判断 analog transferability；final-level 汇总所有
    证据。细粒度 `Tier.endpoint_group` 只用于 source-local normalization、检索审计和 legacy native runner，
@@ -397,7 +417,7 @@ OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `
 
 ### 2026-08-01 起的新数据集正式运行默认
 
-Bioavailability/Skin 当前 `record_supported_v2`、BBB 新 `experimental_meaningful_cns_access_v2` 及其后的
+Bioavailability/Skin 当前 `record_supported_v2`、BBB 新 `experimental_meaningful_cns_access_v3` 及其后的
 paper/Starling 实验统一冻结为：
 
 ```text
@@ -651,9 +671,10 @@ common/starling/build_record_supported_benchmark.py
   held-out singleton 和 valid/test imbalance，再优化 label balance，最后才最大化第一版 valid 复用。输出只含
   发生变化的 split/audit，根级 source rejection/conflict provenance 继续读取第一版目录，避免重复数据。
 
-common/starling/build_bbb_experimental_meaningful_cns_access.py / audit_bbb_experimental_meaningful_cns_access.py
-  当前 BBB `experimental_meaningful_cns_access_v2` 的唯一 build/audit 入口；source scope、parent aggregation、quality
-  scaffold split、endpoint-family distribution 和 deterministic manual-review sample 一次生成。
+common/starling/build_bbb_experimental_meaningful_cns_access_v3.py / audit_bbb_v3_migration.py
+  当前 BBB `experimental_meaningful_cns_access_v3` 的唯一 build/migration-audit 入口；重新做 source scope、parent
+  aggregation 和 70% vote，并保留 surviving v2 parents 的 scaffold split。v2 builder/source audit 仅用于
+  historical QA provenance，不得覆盖 v3 migration receipt。
 
 common/starling/heldout_index.py
   从 full-source Starling evidence rows 中按 `rdkit_fragment_parent.v1` 删除 valid+test parents，重建
@@ -778,7 +799,7 @@ single-molecule、mechanism-family/flat/direct 和 final stages，并递归展�
 retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
 test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
 
-Bioavailability/Skin `record_supported_v2` 与 BBB `experimental_meaningful_cns_access_v2` 后续 paper-facing
+Bioavailability/Skin `record_supported_v2` 与 BBB `experimental_meaningful_cns_access_v3` 后续 paper-facing
 structural-analog 主结果默认使用
 `identity_blind + parent_disjoint` fresh-run；不再先跑 operational，也不要求 operational diff/reuse plan。
 旧 lineage 的 operational -> parent-disjoint 流程及 same-parent 暴露统计只作为 historical sensitivity

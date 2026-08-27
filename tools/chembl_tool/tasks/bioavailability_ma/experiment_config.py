@@ -1,6 +1,11 @@
 """Paper-facing Bioavailability_Ma retrieval views."""
 
 from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
+from tools.chembl_tool.common.progressive_assay_reasoning import ProgressiveTaskContract
+from tools.chembl_tool.tasks.bioavailability_ma.prompt_profiles import (
+    DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    get_bioavailability_prompt_profile,
+)
 
 
 CHEMBL = SourceExperimentConfig(
@@ -99,6 +104,29 @@ STARLING = SourceExperimentConfig(
 
 SOURCES = {"chembl": CHEMBL, "starling": STARLING}
 
+PROGRESSIVE_ASSAY_LEVEL_DESCRIPTIONS = {
+    1: "Direct absolute oral bioavailability outcomes; closest to the F >= 20% benchmark label.",
+    2: "Nondirect oral-bioavailability evidence. This is indirect evidence even when its wording resembles the label.",
+    3: "Oral AUC or Cmax exposure evidence; indirect because exposure also depends on dose, formulation, clearance, and sampling.",
+    4: "Absorption, solubility, dissolution, or permeability evidence contributing to the absorbed fraction.",
+    5: "Gut-wall efflux and intestinal metabolism evidence contributing to presystemic loss.",
+    6: "Hepatic clearance and metabolic-stability evidence contributing to systemic availability.",
+}
+
 
 def get_source_config(source: str) -> SourceExperimentConfig:
     return SOURCES[source]
+
+
+def get_progressive_task_contract() -> ProgressiveTaskContract:
+    profile = get_bioavailability_prompt_profile(DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE)
+    return ProgressiveTaskContract(
+        task="bioavailability_ma",
+        endpoint_name="absolute oral bioavailability at the F >= 20% threshold",
+        label_scope=profile.label_scope,
+        prediction_field="bioavailability_prediction",
+        positive_prediction="high",
+        negative_prediction="low",
+        system_role=profile.final_system_role,
+        task_instructions=tuple(profile.final_instructions),
+    )

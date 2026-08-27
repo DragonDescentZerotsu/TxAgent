@@ -47,6 +47,27 @@ Bioavailability's earlier apparent 0.4748 regression was caused by evaluating
 the same scores at an uncalibrated threshold of 0.5, not by the condition feature
 or generic runner.
 
+### BBB gold-v4 candidate matched baselines
+
+The isolated `experimental_meaningful_cns_access_v4` /
+`context_conditioned_selected_v3` candidate uses 3,053 train rows and 397
+scaffold-valid rows. Its matched artifacts are under
+`outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1/BBB_Martins/`;
+the 398-row selected-v1 artifacts above remain historical and were not
+overwritten. All five candidate baselines evaluate all 397 rows:
+
+| method | Macro-F1 | accuracy | AUROC |
+|---|---:|---:|---:|
+| condition-aware MiniMol head | **0.6674** | 0.7053 | 0.7772 |
+| MiniMol KNN same-condition then null | 0.6071 | 0.6952 | 0.6717 |
+| MiniMol KNN all train | 0.5708 | 0.6650 | 0.6536 |
+| Morgan KNN same-condition then null | 0.5958 | 0.7078 | 0.6512 |
+| Morgan KNN all train | 0.6174 | 0.7204 | 0.6603 |
+
+The head reruns the same 5-fold train-only scaffold-CV contract, selects epoch
+3, and freezes the new pooled-OOF macro-F1 threshold at `0.62316`. Outer valid
+and test labels remain excluded from epoch and threshold selection.
+
 The training audit is in
 [`HEAD_TRAINING_DIAGNOSTICS.md`](HEAD_TRAINING_DIAGNOSTICS.md). Canonical
 paper-facing data lineages and metrics remain in

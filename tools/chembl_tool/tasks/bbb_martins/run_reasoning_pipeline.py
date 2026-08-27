@@ -101,7 +101,7 @@ DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
 _write_trace_jsonl = partial(write_trace_jsonl, prediction_field="bbb_prediction")
 TRAIN_RATIO_PRIOR = TrainRatioPrior(
-    dataset_lineage="experimental_meaningful_cns_access_v2",
+    dataset_lineage="experimental_meaningful_cns_access_v3",
     split="scaffold/train",
     positive_count=2162,
     negative_count=773,

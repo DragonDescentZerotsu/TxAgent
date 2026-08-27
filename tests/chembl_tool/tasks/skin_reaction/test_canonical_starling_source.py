@@ -11,6 +11,7 @@ from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
     REJECT_PARTITION,
     classify_aop_source_record,
     classify_direct_source_record,
+    direct_outcome_reason,
 )
 
 
@@ -116,6 +117,29 @@ def test_aop_source_moves_adverse_outcome_and_keeps_only_key_events():
     assert classify_aop_source_record(prediction).partition == REJECT_PARTITION
     assert classify_aop_source_record(condition_prediction).partition == REJECT_PARTITION
     assert classify_aop_source_record(integrated).partition == REJECT_PARTITION
+
+
+def test_direct_assay_result_is_detected_for_retrieval_purity_overlay():
+    llna_mislabeled_as_ke4 = {
+        "aop_event": "KE4_T_cell_activation",
+        "assay_type": "LLNA",
+        "result_label": "negative",
+        "support_text": "The local lymph node assay was negative.",
+    }
+    hclat = {
+        "aop_event": "KE3_dendritic_cell_activation",
+        "assay_type": "h-CLAT",
+        "result_label": "positive",
+        "support_text": "CD86 expression increased.",
+    }
+
+    assert (
+        direct_outcome_reason(llna_mislabeled_as_ke4)
+        == "validated_direct_assay_outcome_overrides_aop_tag"
+    )
+    assert classify_aop_source_record(llna_mislabeled_as_ke4).partition == AOP_PARTITION
+    assert direct_outcome_reason(hclat) == ""
+    assert classify_aop_source_record(hclat).partition == AOP_PARTITION
 
 
 def test_canonical_build_is_mutually_exclusive_and_deduplicates_cross_source():

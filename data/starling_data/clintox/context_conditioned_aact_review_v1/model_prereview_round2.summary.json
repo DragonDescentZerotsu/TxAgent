@@ -1,0 +1,14 @@
+{
+  "task": "ClinTox",
+  "queue": "data/starling_data/clintox/context_conditioned_aact_review_v1/review_queue.jsonl",
+  "output": "data/starling_data/clintox/context_conditioned_aact_review_v1/model_prereview_round2.jsonl",
+  "model": "gpt-oss-120b",
+  "n_queue": 191,
+  "n_reviewed_this_run": 91,
+  "status_counts": {
+    "accepted": 30,
+    "rejected": 147,
+    "error": 14
+  },
+  "notice": "Model-assisted pre-review only; not a final human review ledger."
+}
