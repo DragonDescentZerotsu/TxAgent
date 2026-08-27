@@ -110,10 +110,14 @@ categorical outcomes. A finite positive decimal with a nonempty source unit bypa
 all other numeric candidates use the task's frozen extraction. Stage 02 explodes every successful
 multi-quantity extraction into child records, without endpoint-compatibility filtering, while preserving
 the parent ID and original `measurement_text`/`unit_text`. Each extracted or bypassed tuple is then looked
-up by exact `(task, canonical_endpoint, input_unit)` in
-`common/starling/exact_measurement_unit_map.v1.json`. A rule either supplies a canonical unit, fixed-point
-scale, and numeric domain, or explicitly excludes the tuple. Missing and duplicate keys are build errors;
-runtime unit regexes, source-specific substitutions, and per-record corrections do not participate.
+up by exact `(task, canonical_endpoint, input_unit)` in the task-owned
+`data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json`. The shared Stage-02 loader owns
+the artifact schema and application, while each task owns its scientific entries and cache fingerprint.
+V2 stores identical decisions once with an explicit endpoint list; the loader expands them back to the
+same exact keys before application. A rule either
+supplies a canonical unit, fixed-point scale, and numeric domain, or explicitly excludes the tuple. Missing
+and duplicate keys are build errors; runtime unit regexes, source-specific substitutions, and per-record
+corrections do not participate.
 `relative`, `unsure`, `unavailable`, excluded, and domain-invalid quantities remain evidence with a null
 scalar. Variation is intentionally null. The downstream reviewed raw/log10 bucket transform remains in
 place. The older scalar/unit parsers and contextual normalization modules are retained only for historical
@@ -138,11 +142,12 @@ a residual-heterogeneity candidate for the continuous rows. The selected categor
 excluded from its categorical residual audit. Other untouched cleaned source fields may be evaluated for
 residual heterogeneity, and they do not silently create child buckets.
 
-Canonical measurement fields are exclusively the numerical assay-transfer contract. They are not retrieval
-presentation fields and must never be substituted into an LLM-visible source projection. Retrieval preserves
-the cleaned `measurement_text`, `unit_text`, support, and context fields; `retrieval_eligible` is decided
-independently by organization. A canonical scale change may alter assay-transfer values and buckets, but it
-must preserve the source projection, scalar null/non-null status, and retrieval membership.
+Before Stage 06, canonical measurement fields are exclusively the numerical assay-transfer contract and must
+not replace the cleaned measurement/unit in an LLM-visible source projection. Stage 06 creates a new aggregate
+that has no single source measurement: its LLM-visible value is therefore the canonical median, mode, or semantic
+synthesis, explicitly labeled with its aggregation method, support count, and uncertainty. The forward collapsed
+record retains only pair-defining or reviewed direct-condition context. Complete source context-value pairings
+remain in the retained Stage-05 inputs, and semantic groups also retain their submitted input in the Stage-06 audit cache.
 
 Measurement and unit canonicalization is an atomic, task-reviewed decision: never change a numeric value
 without changing its unit provenance in the same rule. The final tuple is composed in one fixed order:
@@ -165,11 +170,37 @@ only and its sidecar persists `measurement_kind`, `canonical_measurement_scale_i
 unordered outcomes remain evidence-only. A source with a controlled scale must include
 `canonical_measurement_scale_id` in its bucket identity, so incompatible scales cannot mix.
 Task schemas also declare eligible reference scopes. Unknown and comparator-relative measurements remain
-valid evidence records but are marked assay-transfer-ineligible and receive no pair-bucket key; accepted reference scope, and basis
-for tasks that use it, are part of the bucket key so different denominators cannot mix.
+valid evidence records. They receive explicit semantic units such as `free-text`, `relative-scalar`, or
+`unresolved-scalar`, and therefore a pair-bucket key, but remain assay-transfer-ineligible. Accepted reference
+scope, and basis for tasks that use it, are part of transferable bucket keys so different denominators cannot
+mix.
 
-Stage 05 validates and calibrates the bucket observed in Stage 04; it never creates child buckets or changes
-membership. Every bucket needs at least 25 records. Binary buckets must observe both declared levels;
+Stage 05 is the only row-deduplication boundary. It removes exact within-source semantic
+duplicates and conservatively supported cross-source duplicates while retaining complete
+retained/discarded lineage. Direct votes and direct residual rows remain separate, conflicting
+direct labels never merge, and `direct_record_mapping.parquet` retains every normalized row and
+physical vote-unit ID.
+
+Stage 06 is the canonical molecule-by-context record boundary. Indirect evidence collapses by
+`(pair_bucket_key, canonical_smiles)`. Physical direct-label sources are first mapped to `direct_vote` or
+`direct_residual`; both collapse by the task's reviewed condition key rather than by pair bucket, and neither
+is assay-transfer-eligible. The Stage-05 direct mapping audit retains whether each normalized row counted in
+the vote, why it was ignored, and its condition-key status, but this bookkeeping is not exposed to the reasoning LLM.
+The collapse uses the median for absolute continuous values, mode with full counts and null on ties for
+controlled categorical values, and a resumable DeepSeek Flash synthesis for relative, free-text, or mixed
+evidence. It consumes the retained Stage-05 rows and performs no row deduplication. No
+`canonical_claim_id` is persisted or used as a collapse key.
+Configured `group_id` values remain unchanged; `retrieval_source_id` alone distinguishes direct vote,
+direct residual, and indirect partitions. A collapsed record is constructed from an explicit output contract,
+never by copying one representative source row and replacing only its measurement.
+
+Unconditioned direct votes require 70% agreement and reviewed external-condition votes require 60%; ties or
+lower agreement become `direct_residual` conflict evidence rather than disappearing. One physical source row
+counts once even when Stage 02 expanded it into multiple normalized measurement children.
+
+Stage 07 validates and calibrates the indirect transferable buckets observed after Stage 06; it never creates
+child buckets or changes membership. Every bucket needs at least 20 unique collapsed molecule records. Binary
+buckets must observe both declared levels;
 ordinal buckets must observe at least three declared levels; every observed categorical level needs at least
 three records. Continuous residual heterogeneity uses the existing omega-squared audit. Binary and ordinal
 residual heterogeneity uses bias-corrected Cramér's V-squared, requires candidate levels with at least three
@@ -178,12 +209,12 @@ must not invalidate or remove an entire bucket. Valid buckets store a first-clas
 record-weighted sample SD with its ddof and source field. Valid continuous buckets additionally store the
 exact empirical value CDF as sorted support values, counts, and midranks. Valid ordinal buckets store a
 category-rank CDF over the complete declared domain; binary buckets retain explicit same/different semantics
-and do not publish a CDF. V7 Stage 05 does not store a raw-
+and do not publish a CDF. V7 Stage 07 does not store a raw-
 distance CDF, pair samples, transfer cutoff, Boolean label, or soft probability. Downstream code may use SD
 for standardized raw-distance calculations or use same-bucket empirical-CDF separation for
 location-sensitive geometry.
 
-Stage 05 explicitly persists `assay_transfer_bucket_eligible` and
+Stage 07 explicitly persists `assay_transfer_bucket_eligible` and
 `assay_transfer_bucket_ineligibility_reason`. This is global V7 bucket eligibility after Stage-04 row
 filtering and is separate from both row eligibility and any downstream release's train-only bucket gate.
 
@@ -198,13 +229,25 @@ tools/chembl_tool/common/starling/canonicalization_v7.py
   aliases that exist only in memory.
 
 tools/chembl_tool/common/starling/split_downstream.py
-  Builds split-independent Stage 04 pair buckets and Stage 05 distance calibration under the task
+  Builds split-independent Stage 04 pair buckets, Stage 05 deduplicated records, Stage 06 collapsed
+  records, and Stage 07 distance calibration under the task
   canonical root. Its historical complete Stage 04-09 transaction remains available only through
   `--legacy-task-local-downstream` for frozen-lineage reproduction.
 
 tools/chembl_tool/common/starling/v7_benchmark_view.py
-  Builds lineage-owned Stage 06 filtered records, Stage 07 molecule evidence, Stage 08 neighbor
+  Consumes canonical Stage 06 and builds lineage-owned Stage 06 filtered records, Stage 07 molecule evidence, Stage 08 neighbor
   indices, and Stage 09 audits under a paper experiment root.
+
+tools/chembl_tool/common/starling/record_collapse.py
+  Bounded-memory molecule-by-context aggregation and Stage-06 audit artifacts.
+
+tools/chembl_tool/common/starling/record_deduplication.py
+  Shared bounded-memory Stage-05 within-source and supported cross-source row deduplication,
+  direct-row mapping, and retained/discarded lineage. Task-specific direct-label adapters live in
+  each task's `direct_record_mapping.py`.
+
+tools/chembl_tool/common/starling/semantic_record_aggregation.py
+  Resumable DeepSeek Flash execution and validation for the shared Jinja aggregation prompt.
 
 tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py
   V7 bucket validation, continuous/categorical residual-heterogeneity audits, first-class sample SD, exact
@@ -232,22 +275,27 @@ tools/chembl_tool/tasks/<task>/starling_schema.py
   and cleaned variance candidates.
 ```
 
-The persisted v7 stages are `01_cleaned`, `02_canonicalized`, `03_records`, `04_pair_buckets`,
-`05_distance_calibration`, `06_remove_heldout_overlap`, `07_molecule_evidence`, `08_neighbor_index`, and
-`09_audits`. When integrating a new task,
+The persisted canonical v7 stages are `01_cleaned`, `02_canonicalized`, `03_records`, `04_pair_buckets`,
+`05_deduplicated_records`, `06_collapsed_records`, and `07_distance_calibration`. Lineage-specific paper roots separately own
+`06_records`, `07_molecule_evidence`, `08_neighbor_index`, and `09_audits`. When integrating a new task,
 write only the task policy and a small set of declarative/scientific modules. Do not copy staged
 construction, invalidation, resume validation, or manifest assembly logic.
 
+Each paper view builds one full neighbor index. Retrieval-source membership (`direct_vote`,
+`direct_residual`, or `indirect`) is persisted on evidence families and index membership; do not build a
+second source-specific index from the same collapsed records. Historical direct-numeric indices remain
+frozen artifacts and are not regenerated from the collapsed binary direct-outcome partition.
+
 `compact_persisted_records` removes `assay_tier`, `endpoint_group`, `evidence_role`, and `target_pref_name` because they are derivable. The evidence catalog must therefore accept a `family_resolver` and rederive these fields. Otherwise, a resumed `--from-stage index` build produces a different catalog from a complete build.
 
-`05_distance_calibration` is fit on the complete unfiltered record set in every task, held-out gold
+`07_distance_calibration` is fit on the complete unfiltered collapsed molecule set in every task, held-out gold
 included. This aggregate, label-free SD/empirical-CDF fit is the sole permitted use of benchmark-held-out source
 measurements before evaluation. Bucket geometry describes the assay landscape rather than any particular
 molecule set, so excluding gold molecules would bias the statistics without preventing prediction-time
-exposure. `06_remove_heldout_overlap` is the mandatory boundary: it drops held-out label-source records
-before molecule evidence and neighbor indices are built, which prevents those records from reaching a
+exposure. Paper-view `06_records` is the mandatory boundary: it drops both direct retrieval partitions for
+held-out parents before molecule evidence and neighbor indices are built, which prevents those records from reaching a
 prediction. Every task must follow this ordering and must not declare `heldout_sources` or a held-out key
-loader on its Stage-05 calibration.
+loader on its Stage-06 calibration.
 
 ## Normalization regression corpus
 

@@ -130,3 +130,8 @@ def test_manifest_versions_are_task_scoped():
     # Bioavailability-only keys must not leak into another task's manifest.
     assert "fg_scalar_rule_version" not in versions
     assert "report_type_normalization_version" not in versions
+
+
+def test_both_canonical_partition_sources_require_endpoint_identity():
+    required = set(POLICY.endpoint_identity_required_sources)
+    assert {"direct_skin_reaction", "sensitization_aop"} <= required

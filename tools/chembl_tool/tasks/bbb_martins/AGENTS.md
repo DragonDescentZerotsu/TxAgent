@@ -740,7 +740,7 @@ The complete layout is:
 The Stage-02/03 canonical measurement tuple is exclusively an assay-transfer numerical contract; retrieval
 and LLM evidence continue to use the cleaned source measurement, unit, and support projection. The shared
 parser, BBB endpoint/unit rules, source reconciliation, v7 projection, and frozen
-`data_processing/assay_transfer_measurements_v1/policy.json` compose one final measurement/unit/scalar
+`data_processing/assay_transfer_measurements_v2/policy.json` compose one final measurement/unit/scalar
 tuple. Stage 04 retains every record and marks reviewed unit defects `assay_transfer_eligible=false`; it
 does not delete them or change `retrieval_eligible`.
 

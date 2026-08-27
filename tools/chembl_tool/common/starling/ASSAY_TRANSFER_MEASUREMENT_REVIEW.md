@@ -22,7 +22,7 @@ python -m tools.chembl_tool.common.starling.audit_assay_transfer_retrieval_invar
 
 The final canonical tuple is composed through one pipeline, in this order: shared parsing and unit arithmetic;
 task endpoint standardization; source/context reconciliation; controlled encoding and task validity enrichment;
-the frozen assay-transfer base-unit correction; v7 canonical projection; and the frozen raw/log10 tail transform.
+the frozen assay-transfer base-unit correction; v7 canonical projection; and the frozen exact-axis raw/log10 transform.
 The pre-base pair is retained only to freeze retrieval deduplication identity. Stage 04 retains every record and adds
 `assay_transfer_eligible`/`assay_transfer_ineligibility_reason`; probable unit defects receive no bucket key
 but are not removed from the sidecar or from retrieval.
@@ -54,7 +54,25 @@ Scientific notation such as `10-6`, `10−6`, `10‐6`, or `10‑6` denotes the 
 unambiguously attached to the reported measurement. A support-text factor is applied once; already-scaled
 measurements are not scaled again.
 
-## Tail-candidate review protocol
+## Exact-axis review protocol
+
+V2 reviews every finite continuous Stage-03 pretransform row on the exact axis
+`(source_id, canonical_endpoint_name, assay_transfer_pretransform_unit_text,
+canonical_reference_scope)`. Each JSON decision records the complete affected-row count, minimum, maximum,
+and nonpositive count. Runtime lookup is exact: it uses no regex, dimensional inference, or unreviewed fallback.
+
+Positive physical amounts, concentrations, doses, exposures, times, permeabilities, fluxes, rates, clearances,
+AUC-like quantities, ratios, and folds use `log10`. Bounded percentages, fractions, probabilities, scores,
+ranks, indices, counts, pH, temperature, signed net quantities, and absolute changes remain raw. Explicit
+`log10`, `-log10`, natural-log, logit, and base-ambiguous log units remain distinct raw planes and are never
+logged again. A nonpositive value on an otherwise multiplicative axis remains in retrieval evidence but is
+explicitly assay-transfer-ineligible; the policy does not invent a finite replacement.
+
+Exact full pair-bucket decisions from V1 remain higher-priority overrides for previously reviewed scientific
+exceptions. Otherwise every finite continuous row from a task's declared sources must match a V2 axis decision,
+or the build fails closed.
+
+## Historical tail-candidate review protocol
 
 A positive continuous bucket with at least 25 records is reviewed when either its absolute raw skew is at
 least 2 or `log10(Q95 / median) >= 2`. Reviewers inspect the endpoint meaning, unit, raw and log summaries,
@@ -63,14 +81,21 @@ is the authority for `raw` versus `log10`.
 
 ## Dataset decisions
 
-Independent reviews used the same screen, then froze exact post-canonicalization pair-bucket keys in each
-task's `data_processing/assay_transfer_measurements_v1/policy.json`.
+The historical V1 review used the same screen, then froze exact post-canonicalization pair-bucket keys in each
+task's `data_processing/assay_transfer_measurements_v1/policy.json`. V2 preserves those overrides and adds the
+corpus-wide exact-axis mapping in `data_processing/assay_transfer_measurements_v2/policy.json`.
 
 | Task | reviewed major-tail buckets | `log10` | raw | reviewed unit-defect rows marked assay-transfer-ineligible |
 |---|---:|---:|---:|---:|
 | BBB Martins | 97 | 96 | 1 already-log permeability bucket | 18 |
 | Bioavailability_Ma | 224 | 222 | 2 bounded fraction buckets | 75 |
 | Skin_Reaction | 120 | 113 | 7 bounded applied-dose fraction buckets | 216 |
+
+| Task | V2 finite continuous rows reviewed | exact axes | `log10` axes | raw axes |
+|---|---:|---:|---:|---:|
+| BBB Martins | 61,406 | 8,627 | 7,133 | 1,494 |
+| Bioavailability_Ma | 259,513 | 3,019 | 2,657 | 362 |
+| Skin_Reaction | 184,898 | 4,644 | 3,526 | 1,118 |
 
 BBB's ordinary `10^-6` forms were already correct: 2,500 reviewed Stage-03 rows had a persisted `1e-6`
 notation factor. The BBB repairs instead address percent-to-ratio base normalization and 18 evidence-backed

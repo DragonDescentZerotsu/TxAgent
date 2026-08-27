@@ -24,6 +24,9 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
 from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
     RECORD_CONTRACT as BIO_CONTRACT,
 )
+from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
+    DEFAULT_SOURCE_VALUE_REPAIRS as BBB_SOURCE_VALUE_REPAIRS,
+)
 
 
 CORPUS_PATH = (
@@ -262,3 +265,45 @@ def test_reviewed_registry_rejects_support_text_repairs(tmp_path: Path) -> None:
             reviewed_repairs_path=repair_path,
             require_all_reviewed_repairs=False,
         )
+
+
+def test_scientific_scale_conflict_requires_and_accepts_review() -> None:
+    conflict = {
+        "cleaned_record_id": "0a3ab857",
+        "source_id": "passive_permeability",
+        "source_sha256": "1c1b602fe640666c4fb2e006c9712673ecba7ae097bbd7f3e027094762e7c5a2",
+        "source_row_number": 2468,
+        "source_record_id": "ext_1",
+        "measurement_text": "1e-05",
+        "unit_text": "10 × 10^-6 cm/s",
+        "support_text": "The PAMPA value was 10 × 10^-6 cm/s.",
+    }
+    with pytest.raises(ValueError, match="scientific factor"):
+        clean_source_values(
+            [dict(conflict)],
+            task_id="bbb_martins",
+            require_scientific_scale_review=True,
+        )
+
+    result = clean_source_values(
+        [dict(conflict)],
+        task_id="bbb_martins",
+        reviewed_repairs_path=BBB_SOURCE_VALUE_REPAIRS,
+        require_all_reviewed_repairs=False,
+        require_scientific_scale_review=True,
+    )
+    assert result.records[0]["measurement_text"] == "10"
+    assert result.manifest["scientific_scale_review"] == {
+        "n_candidates": 1,
+        "n_resolved_by_reviewed_repair": 1,
+        "n_unresolved": 0,
+        "all_candidates_resolved": True,
+    }
+
+    control = {**conflict, "measurement_text": "0.00039"}
+    control["support_text"] = "The permeability was 0.00039 × 10^-6 cm/s."
+    clean_source_values(
+        [control],
+        task_id="bbb_martins",
+        require_scientific_scale_review=True,
+    )

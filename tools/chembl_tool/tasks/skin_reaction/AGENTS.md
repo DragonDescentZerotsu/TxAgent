@@ -419,7 +419,7 @@ belongs to paper evidence views; the old complete Stage 04-09 transaction remain
 The current v7 tree uses `02_canonicalized` and `05_distance_calibration`. Canonical measurement/unit/scalar
 fields are exclusively the assay-transfer numerical contract; retrieval and LLM evidence use the cleaned
 source projection. The shared parser, Skin measurement semantics, contextual reconciliation, v7 projection,
-and frozen `data_processing/assay_transfer_measurements_v1/policy.json` compose the one final canonical
+and frozen `data_processing/assay_transfer_measurements_v2/policy.json` compose the one final canonical
 tuple. Stage 04 retains every record and is the sole assay-transfer eligibility and bucket-membership
 authority; reviewed unit defects are marked ineligible rather than deleted. Stage 05 uses rank geometry for the declared binary/ordinal scales, requires both
 binary levels or at least three ordinal levels with three records per observed level, and emits no transfer

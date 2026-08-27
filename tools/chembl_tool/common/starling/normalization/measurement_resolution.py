@@ -16,9 +16,10 @@ from ..measurement_routing import MEASUREMENT_ROUTING_VERSION
 
 
 RESOLUTION_APPLY_VERSION = "starling_measurement_resolution_apply.v2"
-EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v1"
+EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v2"
+_LEGACY_EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v1"
 DEFAULT_EXACT_UNIT_MAPPING = (
-    Path(__file__).resolve().parent.parent / "exact_measurement_unit_map.v1.json"
+    Path(__file__).resolve().parent.parent / "exact_measurement_unit_map.v2.json"
 )
 NOT_EXTRACTED = "not_extracted"
 MAPPING_COLUMNS = ("cleaned_record_id", "status", "measurements_json")
@@ -50,16 +51,33 @@ def load_exact_unit_mapping(
 ) -> dict[tuple[str, str, str], dict[str, Any]]:
     target = Path(path)
     payload = json.loads(target.read_text(encoding="utf-8"))
-    if payload.get("version") != EXACT_UNIT_MAPPING_VERSION:
+    version = payload.get("version")
+    if version not in {
+        _LEGACY_EXACT_UNIT_MAPPING_VERSION,
+        EXACT_UNIT_MAPPING_VERSION,
+    }:
         raise ValueError(f"unsupported exact unit mapping: {target}")
     mapping: dict[tuple[str, str, str], dict[str, Any]] = {}
     for entry in payload.get("entries", []):
-        key = tuple(
-            str(entry.get(field) or "")
-            for field in ("task", "canonical_endpoint", "input_unit")
+        task = str(entry.get("task") or "")
+        input_unit = str(entry.get("input_unit") or "")
+        endpoints = (
+            entry.get("canonical_endpoints")
+            if version == EXACT_UNIT_MAPPING_VERSION
+            else [entry.get("canonical_endpoint")]
         )
-        if not all(key) or key in mapping:
-            raise ValueError(f"invalid or duplicate exact unit key: {key}")
+        if not isinstance(endpoints, list):
+            raise ValueError(f"invalid exact unit endpoint group: {entry!r}")
+        endpoints = [str(endpoint or "") for endpoint in endpoints]
+        if (
+            not task
+            or not input_unit
+            or not endpoints
+            or not all(endpoints)
+            or endpoints != sorted(set(endpoints))
+        ):
+            raise ValueError(f"invalid exact unit endpoint group: {entry!r}")
+        context = (task, input_unit, endpoints)
         action = entry.get("action")
         domain = entry.get("domain") or "any"
         if action not in {"map", "exclude"} or domain not in {
@@ -67,17 +85,25 @@ def load_exact_unit_mapping(
             "nonnegative",
             "positive",
         }:
-            raise ValueError(f"invalid exact unit rule for {key}")
+            raise ValueError(f"invalid exact unit rule for {context!r}")
         if action == "map":
             if not entry.get("canonical_unit"):
-                raise ValueError(f"mapped exact unit rule has no output unit: {key}")
+                raise ValueError(
+                    f"mapped exact unit rule has no output unit: {context!r}"
+                )
             try:
                 scale = Decimal(str(entry.get("scale")))
             except InvalidOperation as error:
-                raise ValueError(f"invalid exact unit scale for {key}") from error
+                raise ValueError(f"invalid exact unit scale for {entry!r}") from error
             if not scale.is_finite() or scale <= 0:
-                raise ValueError(f"invalid exact unit scale for {key}")
-        mapping[key] = dict(entry)
+                raise ValueError(f"invalid exact unit scale for {entry!r}")
+        rule = dict(entry)
+        rule.pop("canonical_endpoints", None)
+        for endpoint in endpoints:
+            key = (task, endpoint, input_unit)
+            if key in mapping:
+                raise ValueError(f"invalid or duplicate exact unit key: {key}")
+            mapping[key] = {**rule, "canonical_endpoint": endpoint}
     return mapping
 
 

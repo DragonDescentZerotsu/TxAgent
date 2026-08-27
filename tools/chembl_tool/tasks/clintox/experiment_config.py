@@ -34,45 +34,6 @@ CHEMBL = SourceExperimentConfig(
     ),
 )
 
-STARLING_RAW = SourceExperimentConfig(
-    source_name="starling_raw",
-    direct_groups=(
-        EvidenceGroupSpec(
-            "Direct.human_organ_toxicity",
-            "Direct",
-            "clinical_human_safety",
-            source_groups=("Direct.human_organ_toxicity",),
-        ),
-    ),
-    mechanism_groups=(
-        EvidenceGroupSpec(
-            "Mechanism.clinical_human_safety",
-            "Mechanism",
-            "clinical_human_safety",
-            source_groups=(
-                "Direct.human_organ_toxicity",
-                "Context.human_organ_toxicity",
-            ),
-        ),
-        *(
-            EvidenceGroupSpec(
-                f"Mechanism.{family}",
-                "Mechanism",
-                family,
-                source_groups=(f"Mechanism.{family}",),
-            )
-            for family in (
-                "in_vivo_toxicology",
-                "organ_specific_toxicity",
-                "genotoxicity_carcinogenicity",
-                "cellular_stress_pathways",
-                "general_cytotoxicity",
-                "off_target_ddi_exposure",
-            )
-        ),
-    ),
-)
-
 STARLING = SourceExperimentConfig(
     source_name="starling",
     direct_groups=(
@@ -116,45 +77,15 @@ STARLING = SourceExperimentConfig(
 )
 
 
-CLINTOX_BASE = SourceExperimentConfig(
-    source_name="clintox_base",
-    direct_groups=(
-        EvidenceGroupSpec(
-            "Direct.human_clinical_toxicity",
-            "Direct",
-            "clinical_human_safety",
-            source_groups=("Direct.human_clinical_toxicity",),
-        ),
-    ),
-    # This source intentionally contains direct gold-eligible rows only. Using
-    # the same single family keeps full views executable without implying that
-    # a separate mechanism source was imported.
-    mechanism_groups=(
-        EvidenceGroupSpec(
-            "Direct.human_clinical_toxicity",
-            "Direct",
-            "clinical_human_safety",
-            source_groups=("Direct.human_clinical_toxicity",),
-        ),
-    ),
-)
-
 STARLING_V7 = SourceExperimentConfig(
     source_name="starling_v7",
-    direct_groups=(
-        EvidenceGroupSpec(
-            "Direct.human_clinical_toxicity",
-            "Direct",
-            "clinical_human_safety",
-            source_groups=("Direct.human_clinical_toxicity",),
-        ),
-    ),
+    direct_groups=(),
     mechanism_groups=(
         EvidenceGroupSpec(
-            "Mechanism.clinical_human_safety",
-            "Mechanism",
+            "Clinical.clinical_human_safety",
+            "Clinical",
             "clinical_human_safety",
-            source_groups=("Direct.human_clinical_toxicity",),
+            source_groups=("Clinical.clinical_human_safety",),
         ),
         *(
             EvidenceGroupSpec(
@@ -178,8 +109,6 @@ STARLING_V7 = SourceExperimentConfig(
 SOURCES = {
     "chembl": CHEMBL,
     "starling": STARLING,
-    "starling_raw": STARLING_RAW,
-    "clintox_base": CLINTOX_BASE,
     "starling_v7": STARLING_V7,
 }
 

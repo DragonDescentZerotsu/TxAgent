@@ -42,7 +42,7 @@ TOXICITY_CATEGORIES = frozenset(
 
 CONTROLLED_VOCABULARIES: dict[str, dict[str, frozenset[str]]] = {
     DIRECT_SOURCE_ID: {
-        "measurement_text": TOXICITY_CATEGORIES,
+        "endpoint_name": TOXICITY_CATEGORIES,
         "fda_approval_status": frozenset(
             {
                 "FDA_approved",
@@ -87,7 +87,7 @@ CONTROLLED_VOCABULARIES: dict[str, dict[str, frozenset[str]]] = {
                 "developmental",
             }
         ),
-        "measurement_text": frozenset(
+        "effect_status": frozenset(
             {"injury_observed", "no_injury_observed"}
         ),
         "evidence_context": frozenset(
@@ -218,10 +218,11 @@ def _encoding(
     scale_id: str,
     values: Mapping[str, float],
     unit: str,
+    input_field: str = "measurement_text",
 ) -> CategoricalEncoding | None:
     if str(record.get("source_id") or "") != source_id:
         return None
-    label = str(record.get("measurement_text") or "")
+    label = str(record.get(input_field) or "")
     value = values.get(label)
     if value is None:
         return None
@@ -230,36 +231,22 @@ def _encoding(
         value=value,
         unit=unit,
         measurement_text=render_measurement(value),
-        inputs={"measurement_text": label},
+        inputs={input_field: label},
     )
-
-
-def encode_human_toxicity(
-    record: Mapping[str, Any],
-) -> CategoricalEncoding | None:
-    label = str(record.get("measurement_text") or "")
-    values = (
-        {category: 1.0 for category in TOXICITY_CATEGORIES}
-        | {"toxicity_absent": 0.0}
-    )
-    return _encoding(
-        record,
-        source_id=DIRECT_SOURCE_ID,
-        scale_id="clintox_human_toxicity_binary.v1",
-        values=values,
-        unit=BINARY_OUTCOME_UNIT,
-    ) if label in TOXICITY_CATEGORIES else None
 
 
 def encode_organ_injury(
     record: Mapping[str, Any],
 ) -> CategoricalEncoding | None:
+    if str(record.get("measurement_text") or "").strip():
+        return None
     return _encoding(
         record,
         source_id="organ_specific_toxicity",
         scale_id="clintox_organ_injury_binary.v1",
         values={"no_injury_observed": 0.0, "injury_observed": 1.0},
         unit=BINARY_OUTCOME_UNIT,
+        input_field="effect_status",
     )
 
 
@@ -293,22 +280,9 @@ def encode_cellular_stress(
 
 CONTROLLED_MEASUREMENTS = (
     ControlledMeasurementSpec(
-        scale_id="clintox_human_toxicity_binary.v1",
-        source_id=DIRECT_SOURCE_ID,
-        input_fields=("measurement_text",),
-        encoder=encode_human_toxicity,
-        kind="binary",
-        parser_id="clintox.controlled_category.v1",
-        definition="toxicity_absent versus a declared human toxicity category",
-        categories=(
-            CanonicalCategory("toxicity_absent", 0, 0.0),
-            CanonicalCategory("toxicity_present", 1, 1.0),
-        ),
-    ),
-    ControlledMeasurementSpec(
         scale_id="clintox_organ_injury_binary.v1",
         source_id="organ_specific_toxicity",
-        input_fields=("measurement_text",),
+        input_fields=("effect_status",),
         encoder=encode_organ_injury,
         kind="binary",
         parser_id="clintox.controlled_category.v1",

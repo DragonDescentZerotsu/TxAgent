@@ -1,9 +1,8 @@
 """Paper retrieval views derived from canonical v7 records.
 
-Held-out filtering can remove exact parents, only a task's label-source rows,
-or every record sharing a validation/test scaffold. Bioavailability can also
-apply a versioned direct-claim partition and deduplication contract before the
-view is indexed; the normalized v7 source tree remains immutable.
+Held-out filtering can remove exact parents, both direct retrieval partitions,
+or every record sharing a validation/test scaffold. All current v7 paper views
+consume the canonical collapsed-record stage; no lineage owns a private dedup.
 """
 
 from __future__ import annotations
@@ -39,6 +38,7 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
     StarlingTaskPolicy,
 )
 from tools.chembl_tool.common.starling.split_downstream import (
+    COLLAPSED_RECORD_STAGE,
     SplitDownstreamSpec,
     evidence_catalog_projection_columns,
 )
@@ -49,8 +49,6 @@ RECORDS_MANIFEST_VERSION = "starling_v7_benchmark_records.v1"
 EVIDENCE_MANIFEST_VERSION = "starling_v7_benchmark_evidence.v1"
 AUDIT_VERSION = "starling_v7_benchmark_audit.v1"
 FULL_VIEW = "full"
-DIRECT_NUMERIC_VIEW = "direct_numeric"
-DIRECT_BIOAVAILABILITY_GROUP = "Observed.direct_oral_bioavailability"
 ALL_PARENT_FILTER = "all_parents"
 DIRECT_SOURCE_ONLY_FILTER = "direct_source_only"
 ALL_SCAFFOLD_FILTER = "all_scaffolds"
@@ -71,17 +69,20 @@ def build_v7_benchmark_view(
     view: str = FULL_VIEW,
     heldout_filter_mode: str = ALL_PARENT_FILTER,
     downstream_spec: SplitDownstreamSpec | None = None,
-    paper_direct_source_rows: str | Path | None = None,
     workers: int = 1,
     progress_every: int = 10_000,
     max_record_examples: int = 6,
 ) -> dict[str, Any]:
     """Build one self-contained compact index from canonical v7 records."""
     source_root = Path(normalized_root)
-    records_path = source_root / "03_records" / "records.parquet"
+    records_path = source_root / COLLAPSED_RECORD_STAGE / "records.parquet"
+    if not records_path.is_file():
+        raise FileNotFoundError(
+            f"canonical collapsed records are required before paper-view build: {records_path}"
+        )
     heldout_path = Path(heldout_labels_jsonl)
     target = Path(out_dir)
-    if view not in {FULL_VIEW, DIRECT_NUMERIC_VIEW}:
+    if view != FULL_VIEW:
         raise ValueError(f"unsupported v7 benchmark view: {view}")
     if heldout_filter_mode not in HELDOUT_FILTER_MODES:
         raise ValueError(f"unsupported held-out filter mode: {heldout_filter_mode}")
@@ -96,8 +97,6 @@ def build_v7_benchmark_view(
     schema = set(pq.read_schema(records_path).names)
     if "canonical_record_id" not in schema:
         raise ValueError(f"paper view requires v7 canonical records: {records_path}")
-    if view == DIRECT_NUMERIC_VIEW and policy.task_id != "bioavailability_ma":
-        raise ValueError("direct_numeric is defined only for Bioavailability_Ma")
 
     profile = policy.compact_profile_for_contract(policy.record_contract.version)
     columns = evidence_catalog_projection_columns(
@@ -111,33 +110,9 @@ def build_v7_benchmark_view(
         for field in source_fields
         if field in schema
     )
-    if paper_direct_source_rows is not None:
-        columns.update(
-            field
-            for field in (
-                "canonical_record_id",
-                "source_id",
-                "source_record_id",
-                "source_row_number",
-            )
-            if field in schema
-        )
     records = read_parquet_records(records_path, columns=sorted(columns))
     heldout_keys = load_heldout_identity_keys(heldout_path)
     heldout_scaffolds = _load_heldout_scaffolds(heldout_path)
-    direct_contract: dict[str, Any] | None = None
-    dedup_audit: list[dict[str, Any]] = []
-    if paper_direct_source_rows is not None:
-        if policy.task_id != "bioavailability_ma":
-            raise ValueError("the canonical direct contract is Bioavailability-only")
-        from tools.chembl_tool.tasks.bioavailability_ma.build_canonical_starling_source import (
-            apply_paper_direct_contract,
-        )
-
-        records, dedup_audit, direct_contract = apply_paper_direct_contract(
-            records,
-            direct_source_rows_path=paper_direct_source_rows,
-        )
     filtered, filter_stats = _filter_records(
         records,
         heldout_keys=heldout_keys,
@@ -163,12 +138,9 @@ def build_v7_benchmark_view(
     evidence_dir.mkdir(parents=True)
     audit_dir.mkdir(parents=True)
     records_file = records_dir / "records.parquet"
-    dedup_file = records_dir / "direct_claim_dedup.parquet"
     families_file = evidence_dir / "molecule_families.parquet"
     bridge_file = evidence_dir / "molecule_family_records.parquet"
     write_parquet(records_file, filtered)
-    if direct_contract is not None:
-        write_parquet(dedup_file, dedup_audit)
     write_parquet(families_file, families)
     write_parquet(bridge_file, bridge)
     records_manifest = {
@@ -192,18 +164,6 @@ def build_v7_benchmark_view(
         },
         "heldout_filter": filter_stats,
     }
-    if direct_contract is not None:
-        records_manifest["paper_direct_contract"] = {
-            **direct_contract,
-            "direct_source_rows": {
-                "path": str(paper_direct_source_rows),
-                "sha256": file_sha256(Path(paper_direct_source_rows)),
-            },
-            "dedup_audit": {
-                "path": "direct_claim_dedup.parquet",
-                "sha256": file_sha256(dedup_file),
-            },
-        }
     (records_dir / "manifest.json").write_text(
         json.dumps(records_manifest, ensure_ascii=False, indent=2, sort_keys=True)
         + "\n",
@@ -299,7 +259,6 @@ def build_v7_benchmark_view(
         "source_v7_records": index_manifest["source_v7_records"],
         "heldout_labels": index_manifest["heldout_labels"],
         "heldout_filter": filter_stats,
-        "paper_direct_contract": records_manifest.get("paper_direct_contract"),
         "records": len(filtered),
         "families": len(families),
         "record_references": len(bridge),
@@ -321,8 +280,6 @@ def build_v7_benchmark_view(
             "audit": file_sha256(audit_dir / "heldout_overlap.json"),
         },
     }
-    if direct_contract is not None:
-        manifest["files"]["direct_claim_dedup"] = file_sha256(dedup_file)
     (candidate / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -332,12 +289,9 @@ def build_v7_benchmark_view(
 
 
 def _view_predicate(view: str) -> Callable[[Mapping[str, Any]], bool]:
-    if view == FULL_VIEW:
-        return lambda record: True
-    return lambda record: (
-        str(record.get("group_id") or "") == DIRECT_BIOAVAILABILITY_GROUP
-        and record.get("finite_scalar_value") is not None
-    )
+    if view != FULL_VIEW:
+        raise ValueError(f"unsupported v7 benchmark view: {view}")
+    return lambda record: True
 
 
 def _filter_records(
@@ -500,6 +454,13 @@ def _in_heldout_filter_scope(
         return True
     if downstream_spec is None:
         raise ValueError("direct_source_only requires a downstream task specification")
+    if str(record.get("retrieval_source_id") or "") in {
+        "direct_vote",
+        "direct_residual",
+    }:
+        return True
+    if record.get("retrieval_source_id"):
+        return False
     if str(record.get("source_id") or "") != downstream_spec.filter_source_id:
         return False
     if not downstream_spec.filter_scope_field:
@@ -532,7 +493,6 @@ __all__ = [
     "ALL_PARENT_FILTER",
     "ALL_SCAFFOLD_FILTER",
     "DIRECT_SOURCE_ONLY_FILTER",
-    "DIRECT_NUMERIC_VIEW",
     "EVIDENCE_MANIFEST_VERSION",
     "FULL_VIEW",
     "HELDOUT_FILTER_MODES",

@@ -21,14 +21,12 @@ ARTIFACT_STAGES = (
     "02_canonicalized",
     "03_records",
     "04_pair_buckets",
-    "05_distance_calibration",
-    "06_remove_heldout_overlap",
-    "07_molecule_evidence",
-    "08_neighbor_index",
-    "09_audits",
+    "05_deduplicated_records",
+    "06_collapsed_records",
+    "07_distance_calibration",
 )
 PROFILE = StageArtifactStoreProfile(
-    store_version="skin_reaction.normalized_v7_store.v2",
+    store_version="skin_reaction.normalized_v7_store.v3",
     task_id="skin_reaction",
     stages=ARTIFACT_STAGES,
     local_root=Path(

@@ -95,9 +95,10 @@ data/starling_data/clintox/canonical_clinical_trial_failure_v1/
 ```
 
 They contain every source identity decision, parent labels, joined-reference
-reconciliation, a deterministic QA sample, and `clintox_base_v1` evidence
-coverage. The latter covers 1,128 of 1,428 labeled parents but is descriptive
-only: zero Starling rows create labels.
+reconciliation, a deterministic QA sample, `send_v2` human-clinical coverage,
+the nine-source Stage-1 inventory, and the frozen direct-residual candidate
+mapping. All literature coverage is descriptive: zero Starling rows create
+labels.
 
 The negative class is an approved-drug comparator, not proof that a molecule
 can never cause toxicity. The source snapshot is historical, and the upstream
@@ -105,23 +106,13 @@ dataset license is unspecified. Before retrieval evaluation, valid/test
 parents must be removed from every evidence index and retrieval must remain
 `parent_disjoint`.
 
-## Analog-evidence retrieval contract
+## Stage-1 evidence organization
 
-The strict benchmark labels and retrieval evidence are separate lineages.
-AACT/FDA source-role rows create labels but are never inserted into the
-retrieval library. The canonical retrieval inputs and direct-gate audit live
-under:
-
-```text
-data/starling_data/clintox/clintox_base_v1/
-data/starling_data/clintox/raw_v1/
-data/starling_data/clintox/canonical_retrieval_v1/
-```
-
-The retrieval hierarchy is:
+The strict benchmark labels and literature evidence are separate lineages.
+AACT/FDA rows are preserved as direct voting records. The seven independent
+`send_v2` datasets remain source-local and indirect:
 
 ```text
-Direct.clinical_trial_failure
 Clinical.clinical_human_safety
 Mechanism.in_vivo_toxicology
 Mechanism.organ_specific_toxicity
@@ -131,27 +122,18 @@ Mechanism.general_cytotoxicity
 Mechanism.off_target_ddi_exposure
 ```
 
-`Direct.clinical_trial_failure` requires literal trial-, recruitment-, or
-development-level stoppage caused by toxicity or a safety concern. Patient
-treatment discontinuation, dose reduction, DLT, organ injury, cytotoxicity,
-hERG/CYP/DDI, and other liabilities remain contextual: they may contribute to
-a molecular prediction but cannot be described as an observed trial-failure
-outcome. Historical `Direct.human_organ_toxicity` rows are explicitly demoted
-to `Mechanism.clinical_human_safety`.
+The historical `literal_toxicity_trial_failure.v4` gate identified 338 rows in
+the earlier clinical subset. Stage 1 reconciles those rows exactly to
+`send_v2/human_clinical_toxicity` and stores only a keyed
+`direct_residual_candidate` mapping. They remain indirect,
+`pending_manual_review`, and retrieval-ineligible. Running the same regex over
+the expanded source is not equivalent to the frozen mapping and must not
+silently broaden it.
 
-The direct gate remains `pending_manual_review`: `clintox_base_v1` lacks a
-`qualifying_conditions` column. Its deterministic accepted-claims parquet,
-fixed QA sample, decision counts, source hashes, and gate version are retained
-under `canonical_retrieval_v1`; this limitation is not converted into an empty
-condition field.
-
-The current `literal_toxicity_trial_failure.v4` gate accepts 338 source rows
-covering 195 unique source SMILES. Version 4 adds explicit coverage for plural
-`trials`/`studies` and reverse causal wording such as severe side effects
-leading to abandonment of further drug development. The full library contains
-80,039 evidence rows. After removing the valid+test parent union, the scaffold
-benchmark index contains 78,885 evidence rows over 53,449 molecules, with zero
-residual heldout-parent overlap.
+Stage 1 stops after source inventory, voting-record provenance, and light
+cleaning. Endpoint normalization, measurement/unit construction, clustering,
+pair buckets, collapse, heldout filtering, and retrieval indices are later
+contracts.
 
 ## Reasoning prompt
 

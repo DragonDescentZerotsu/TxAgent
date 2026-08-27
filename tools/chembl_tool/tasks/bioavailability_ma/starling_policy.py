@@ -25,9 +25,6 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
     StageDocuments,
     StarlingTaskPolicy,
 )
-from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
-    DEFAULT_EXACT_UNIT_MAPPING,
-)
 from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
     clean_source_values,
 )
@@ -95,8 +92,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
     EVIDENCE_SCOPE_VERSION,
     NORMALIZATION_DOMAIN_RULES_VERSION,
     NONDIRECT_EVIDENCE_SCOPE,
+    ORAL_DOSE_NORMALIZATION_VERSION,
     REPORT_TYPE_NORMALIZATION_VERSION,
     bioavailability_evidence_scope,
+    canonical_oral_dose,
     enrich_bioavailability_validity,
     normalize_bioavailability_report_type,
     validity_policy_manifest,
@@ -512,6 +511,7 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "endpoint_policy_version": ENDPOINT_POLICY_VERSION,
         "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
+        "oral_dose_normalization_version": ORAL_DOSE_NORMALIZATION_VERSION,
         "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
         "fg_target_alias_version": FG_TARGET_ALIAS_VERSION,
         "hf_source_classification_version": HF_SOURCE_CLASSIFICATION_VERSION,
@@ -727,6 +727,11 @@ def _enrich_record(
     reference = reference_attacher.attach(
         {**encoded_record, **validity}
     )
+    oral_dose = (
+        canonical_oral_dose(record.get("oral_dose"))
+        if source_id == "oral_exposure"
+        else {}
+    )
     return {
         **provenance,
         **measurement_extraction,
@@ -755,6 +760,7 @@ def _enrich_record(
         ),
         "canonical_measurement_target_id": measurement_target_id,
         **producer_fields,
+        **oral_dose,
         **validity,
         **reference,
     }
@@ -782,18 +788,21 @@ POLICY = StarlingTaskPolicy(
     census_extras=census_extras,
     smiles_mapping=smiles_mapping,
     scientific_assets=(
-        DEFAULT_EXACT_UNIT_MAPPING,
         DEFAULT_SOURCE_VALUE_REPAIRS,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         Path(__file__).parent
-        / "data_processing/assay_transfer_measurements_v1/policy.json",
+        / "data_processing/assay_transfer_measurements_v2/policy.json",
     ),
     assay_transfer_measurement_policy=(
         Path(__file__).parent
-        / "data_processing/assay_transfer_measurements_v1/policy.json"
+        / "data_processing/assay_transfer_measurements_v2/policy.json"
     ),
     reference_semantics_enabled=True,
     measurement_resolution_enabled=True,
+    exact_unit_mapping_path=(
+        Path(__file__).parent
+        / "data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json"
+    ),
     endpoint_identity_required_sources=("oral_exposure", "fa", "fg", "fh"),
     family_resolver_input_fields=(
         "canonical_bioavailability_evidence_scope",

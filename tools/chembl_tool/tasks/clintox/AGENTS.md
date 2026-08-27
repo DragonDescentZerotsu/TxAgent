@@ -48,12 +48,11 @@ Only frozen AACT/FDA source roles create labels. No Starling extraction,
 literature category, ChEMBL assay, majority vote, confidence threshold, or LLM
 output may create or change gold labels.
 
-Literature evidence is an independent retrieval lineage:
+Stage-1 literature sources are the immutable seven-source delivery:
 
 ```text
-data/starling_data/clintox/clintox_base_v1/
-data/starling_data/clintox/raw_v1/
-data/starling_data/clintox/canonical_retrieval_v1/
+data/starling_data/clintox/send_v2/
+data/starling_data/clintox/canonical_clinical_trial_failure_v1/
 ```
 
 Current retrieval hierarchy:
@@ -79,9 +78,17 @@ toxicity are context or mechanism evidence, not observed trial failure.
 `minimal_evidence.group.id`. A direct row never promotes adjacent contextual or
 mechanistic rows to direct evidence.
 
-The direct gate remains `pending_manual_review` because `clintox_base_v1` does
-not contain `qualifying_conditions`. Missing is not equivalent to empty. Keep
-that limitation explicit in manifests and reports.
+`human_clinical_toxicity` is indirect evidence. The 338 historical strict-gate
+matches are stored only as `direct_residual_candidate` audit mappings with
+`pending_manual_review`; they are not duplicated, promoted, or retrieval
+eligible. Missing `qualifying_conditions` is not equivalent to an empty field.
+
+Stage 1 stops after source inventory, gold-vote audit, and light cleaning.
+Stage 2 has frozen the source-local endpoint/measurement roles and may create
+the bounded, model-free gold-candidate and clustering review artifacts described
+in `CLINTOX_STARLING_NORMALIZED_V7.md`. Do not run model replay, full-corpus
+normalization/clustering, pair buckets, row deduplication, record collapse, or
+retrieval-index construction until the corresponding manual review gate passes.
 
 ## Prompt contract
 

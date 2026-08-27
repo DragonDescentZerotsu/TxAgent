@@ -619,11 +619,10 @@ class V11CachedAssayReranker:
                 assert self.catalog is not None
                 record = self.catalog.by_id[task.record_id]
                 canonical_endpoint_key = self.renderer.canonical_endpoint_key(record)
-                output.append({
-                    **candidate,
-                    "transfer_selection_score": score.transfer_probability,
-                    "transfer_winning_record_id": task.record_id,
-                    "transfer_winning_record": {
+                winning_record = _with_resolved_measurement_display(
+                    candidate,
+                    task.record_id,
+                    {
                         "record_id": task.record_id,
                         "canonical_endpoint_key": canonical_endpoint_key,
                         "canonical_smiles": record.get("canonical_smiles"),
@@ -634,6 +633,12 @@ class V11CachedAssayReranker:
                         "source_contract": record.get("source_contract"),
                         "source_fields": record.get("source_fields"),
                     },
+                )
+                output.append({
+                    **candidate,
+                    "transfer_selection_score": score.transfer_probability,
+                    "transfer_winning_record_id": task.record_id,
+                    "transfer_winning_record": winning_record,
                     "transfer_scored_record_count": 1,
                 })
         output.sort(key=lambda row: (
@@ -662,7 +667,11 @@ class V11CachedAssayReranker:
                 missing.append(molecule_id)
                 continue
             for scored in rows:
-                record = scored["payload"]
+                record = _with_resolved_measurement_display(
+                    candidate,
+                    str(scored["record_id"]),
+                    scored["payload"],
+                )
                 output.append(
                     {
                         **candidate,
@@ -695,6 +704,31 @@ class V11CachedAssayReranker:
         return self.rerank_records(
             query_smiles=query_smiles, group_id=group_id, candidates=candidates
         )
+
+
+def _with_resolved_measurement_display(
+    candidate: Mapping[str, Any],
+    record_id: str,
+    record: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Attach the hydrated display pair without changing a frozen score cache."""
+    output = dict(record)
+    if output.get("resolved_measurement_display"):
+        return output
+    for evidence in candidate.get("evidence_rows") or []:
+        record_ids = list(evidence.get("_representative_record_ids") or [])
+        if record_id not in record_ids:
+            continue
+        examples = list((evidence.get("minimal_evidence") or {}).get("examples") or [])
+        position = record_ids.index(record_id)
+        if position < len(examples) and examples[position].get(
+            "resolved_measurement_display"
+        ):
+            output["resolved_measurement_display"] = examples[position][
+                "resolved_measurement_display"
+            ]
+        break
+    return output
 
 
 def probability_from_logits(logit_a: float, logit_b: float) -> float:

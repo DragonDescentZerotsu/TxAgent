@@ -1,15 +1,17 @@
 You are consolidating experimental evidence for retrieval. All input records
-refer to the same molecule and the same pair bucket. Produce a compact,
-loss-aware synthesis of what the records report.
+refer to the same molecule and the same retrieval context: either one exact
+condition key for direct-outcome evidence or one pair bucket for indirect
+evidence. Produce a compact, loss-aware synthesis of what the records report.
 
 This is evidence aggregation, not prediction. Do not infer a benchmark label,
 molecular property, assay transferability, or an unreported experimental result.
 
 Shared identity
 - task: {{ task_id }}
-- source: {{ source_id }}
+- retrieval source: {{ retrieval_source_id }}
+- physical sources: {{ source_ids | tojson }}
 - canonical SMILES: {{ canonical_smiles }}
-- pair bucket: {{ pair_bucket | tojson }}
+- aggregation context: {{ aggregation_context | tojson }}
 
 Rules
 1. Use only the supplied records. Do not use outside chemical or biomedical

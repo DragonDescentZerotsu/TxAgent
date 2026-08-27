@@ -15,6 +15,9 @@ from tools.chembl_tool.common.starling.canonicalization_v7 import (
     SourceProfile,
     StarlingRecordContract,
 )
+from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+    EXACT_UNIT_MAPPING_VERSION,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.data_processing.auxiliary_mapping_helpers.reconciliation import (
     MAPPING_VERSION,
 )
@@ -27,6 +30,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
     EVIDENCE_SCOPE_VERSION,
+    ORAL_DOSE_NORMALIZATION_VERSION,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_reference_semantics import (
     MAPPING_VERSION as REFERENCE_SEMANTICS_VERSION,
@@ -99,13 +103,13 @@ def _base_dimensions(
             SOURCE_RULE_PAIR_PRODUCER_IDS[source_id],
             scalar_inputs,
             "deterministic_rule",
-            "starling_exact_measurement_units.v1",
+            EXACT_UNIT_MAPPING_VERSION,
         ),
         CanonicalProducerSpec(
             SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id],
             scalar_inputs,
             "frozen_extraction",
-            "starling_exact_measurement_units.v1",
+            EXACT_UNIT_MAPPING_VERSION,
         ),
     )
     dimensions = [
@@ -239,6 +243,15 @@ SOURCES = {
                 "biological_matrix",
                 ("study_context",),
                 "global_biological_matrix",
+            ),
+            CanonicalDimensionSpec(
+                "canonical_oral_dose_key",
+                "oral_dose",
+                ("oral_dose",),
+                "deterministic_rule",
+                ORAL_DOSE_NORMALIZATION_VERSION,
+                missing_policy="explicit_unknown",
+                legacy_value_field="canonical_oral_dose_key",
             ),
         ),
     ),
@@ -382,14 +395,15 @@ PAIR_BUCKETS = {
             "canonical_species_context",
             "canonical_biological_matrix",
             "canonical_reference_scope",
+            "canonical_oral_dose_key",
         ),
         variance_candidates=(
             "statistic_type",
-            "oral_dose",
             "comparator_exposure",
             "qualifying_conditions",
         ),
         eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
+        required_known_dimensions=("canonical_oral_dose_key",),
     ),
     "fa": PairBucketSpec(
         source_id="fa",

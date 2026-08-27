@@ -1,7 +1,8 @@
-"""Shared transactional stages 04-09 for split-aware Starling artifacts.
+"""Shared transactional canonical and paper-view Starling stages.
 
-V7 publishes distance calibration at Stage 05. Frozen v6 inputs continue to
-publish their historical assay-transfer policy at the historical stage name.
+Canonical v7 publishes pair buckets, row deduplication, record collapse, and
+distance calibration as Stages 04-07. Frozen task-local builds retain their
+historical stage names.
 """
 
 from __future__ import annotations
@@ -34,6 +35,13 @@ from tools.chembl_tool.common.starling.build_pair_bucket_transfer_policy import 
 from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration import (
     CALIBRATION_FILENAME,
 )
+from tools.chembl_tool.common.starling.final_endpoint_pruning import (
+    ARTIFACT_DIR as FINAL_ENDPOINT_PRUNING_DIR,
+    DECISIONS_FILENAME as FINAL_ENDPOINT_PRUNING_DECISIONS_FILENAME,
+    MANIFEST_FILENAME as FINAL_ENDPOINT_PRUNING_MANIFEST_FILENAME,
+    REVIEWS_FILENAME as FINAL_ENDPOINT_PRUNING_REVIEWS_FILENAME,
+    VERSION as FINAL_ENDPOINT_PRUNING_VERSION,
+)
 from tools.chembl_tool.common.starling.compact_artifacts import (
     CompactArtifactProfile,
     build_relational_evidence_catalog,
@@ -47,6 +55,9 @@ from tools.chembl_tool.common.starling.build_runtime import (
     cache_metadata_matches,
     parent_identity_map,
 )
+from tools.chembl_tool.common.starling.build_reference_semantics_mapping import (
+    TokenLedger,
+)
 from tools.chembl_tool.common.starling.heldout_index import load_heldout_identity_keys
 from tools.chembl_tool.common.starling.normalization.audit import (
     PARQUET_COMPRESSION_LEVEL,
@@ -55,14 +66,37 @@ from tools.chembl_tool.common.starling.normalization.audit import (
 )
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 from tools.chembl_tool.common.starling.normalization.task_policy import StarlingTaskPolicy
+from tools.chembl_tool.common.starling.record_collapse import (
+    MANIFEST_FILENAME as COLLAPSE_MANIFEST_FILENAME,
+    RECORDS_FILENAME as COLLAPSED_RECORDS_FILENAME,
+    SEMANTIC_FILENAME as COLLAPSE_SEMANTIC_FILENAME,
+    build_collapsed_record_stage,
+)
+from tools.chembl_tool.common.starling.record_deduplication import (
+    DIRECT_MAPPING_FILENAME as DEDUP_DIRECT_MAPPING_FILENAME,
+    DUPLICATES_FILENAME as DEDUP_DUPLICATES_FILENAME,
+    MANIFEST_FILENAME as DEDUP_MANIFEST_FILENAME,
+    PAIR_BUCKET_RECORDS_FILENAME as DEDUP_PAIR_BUCKET_RECORDS_FILENAME,
+    RECORDS_FILENAME as DEDUP_RECORDS_FILENAME,
+    build_deduplicated_record_stage,
+)
+from tools.chembl_tool.common.starling.semantic_record_aggregation import (
+    DEFAULT_BASE_URL as DEFAULT_SEMANTIC_AGGREGATION_BASE_URL,
+    DEFAULT_MODEL as DEFAULT_SEMANTIC_AGGREGATION_MODEL,
+    SemanticAggregationConfig,
+    TEMPLATE_PATH as SEMANTIC_AGGREGATION_TEMPLATE_PATH,
+)
 from tools.chembl_tool.common.task_workflows.evidence_library import (
     standardize_index_molecules,
 )
 
 
 PAIR_BUCKET_STAGE = "04_pair_buckets"
+DEDUPLICATED_RECORD_STAGE = "05_deduplicated_records"
+COLLAPSED_RECORD_STAGE = "06_collapsed_records"
 TRANSFER_POLICY_STAGE = "05_assay_transfer_policy"
 DISTANCE_CALIBRATION_STAGE = "05_distance_calibration"
+POST_COLLAPSE_DISTANCE_CALIBRATION_STAGE = "07_distance_calibration"
 HELDOUT_STAGE = "06_remove_heldout_overlap"
 MOLECULE_EVIDENCE_STAGE = "07_molecule_evidence"
 NEIGHBOR_INDEX_STAGE = "08_neighbor_index"
@@ -85,7 +119,9 @@ V7_DOWNSTREAM_STAGES = (
 )
 CANONICAL_V7_STAGES = (
     PAIR_BUCKET_STAGE,
-    DISTANCE_CALIBRATION_STAGE,
+    DEDUPLICATED_RECORD_STAGE,
+    COLLAPSED_RECORD_STAGE,
+    POST_COLLAPSE_DISTANCE_CALIBRATION_STAGE,
 )
 LINEAGE_VIEW_STAGES = (
     HELDOUT_STAGE,
@@ -130,6 +166,13 @@ class SplitDownstreamSpec:
     filter_scope_value: str = ""
     legacy_downstream_stages: tuple[str, ...] = DEFAULT_LEGACY_DOWNSTREAM_STAGES
     policy_statistics_scope: str = "complete_unfiltered_records"
+    collapse_records: bool = False
+    direct_mapping_builder: (
+        Callable[[Sequence[Mapping[str, Any]]], list[dict[str, Any]]] | None
+    ) = None
+    collapse_input_paths: tuple[str | Path, ...] = ()
+    final_endpoint_pruning: bool = False
+    direct_label_definition: str = ""
 
     @property
     def compact_profile(self) -> CompactArtifactProfile:
@@ -152,8 +195,23 @@ def build_canonical_artifacts(
     rebuild_request: Mapping[str, Any] | None = None,
     validation_level: str = "strict",
     cache_mode: str = "auto",
+    semantic_aggregation_base_url: str = DEFAULT_SEMANTIC_AGGREGATION_BASE_URL,
+    semantic_aggregation_api_key_env: str = "DEEPSEEK_API_KEY",
+    semantic_aggregation_model: str = DEFAULT_SEMANTIC_AGGREGATION_MODEL,
+    semantic_aggregation_provider: str = "openai-compatible",
+    semantic_aggregation_reasoning_effort: str = "",
+    semantic_aggregation_workers: int = 8,
+    semantic_aggregation_timeout_s: int = 900,
+    semantic_aggregation_max_tokens: int = 4096,
+    semantic_aggregation_max_new_groups: int | None = None,
+    semantic_aggregation_cache: str | Path | None = None,
+    semantic_aggregation_token_ledger: str | Path | None = None,
+    semantic_aggregation_budget_epoch: str = "",
+    semantic_aggregation_budget_max_tokens: int = 10_000_000,
+    semantic_aggregation_start_new_budget_epoch: bool = False,
+    defer_semantic_aggregation: bool = False,
 ) -> dict[str, Any]:
-    """Build split-independent Stage-04/05 artifacts under the canonical root."""
+    """Build split-independent pair, collapse, and calibration artifacts."""
     started = time.monotonic()
     root = Path(normalized_root)
     root.mkdir(parents=True, exist_ok=True)
@@ -161,14 +219,62 @@ def build_canonical_artifacts(
     if "canonical_record_id" not in pq.read_schema(records_path).names:
         raise ValueError("canonical-only downstream builds require v7 records")
     auxiliary_manifest = root / "02_canonicalized/auxiliary_mapping_manifest.json"
+    semantic_cache_input = (
+        Path(semantic_aggregation_cache)
+        if (
+            not defer_semantic_aggregation
+            and semantic_aggregation_cache
+            and Path(semantic_aggregation_cache).is_file()
+        )
+        else None
+    )
+    pruning_dir = root / FINAL_ENDPOINT_PRUNING_DIR
+    pruning_inputs = (
+        (
+            pruning_dir / FINAL_ENDPOINT_PRUNING_MANIFEST_FILENAME,
+            pruning_dir / FINAL_ENDPOINT_PRUNING_DECISIONS_FILENAME,
+            pruning_dir / FINAL_ENDPOINT_PRUNING_REVIEWS_FILENAME,
+        )
+        if getattr(spec, "final_endpoint_pruning", False)
+        else ()
+    )
+    collapse_inputs = (
+        (
+            *spec.collapse_input_paths,
+            SEMANTIC_AGGREGATION_TEMPLATE_PATH,
+            *((semantic_cache_input,) if semantic_cache_input else ()),
+            *pruning_inputs,
+        )
+        if getattr(spec, "collapse_records", False)
+        else ()
+    )
     inputs = _preflight_canonical_inputs(
         records_path=records_path,
         auxiliary_manifest=auxiliary_manifest,
+        extra_paths=collapse_inputs,
     )
     root_manifest_path = root / MANIFEST_FILENAME
     previous_manifest = root_manifest_path.read_bytes() if root_manifest_path.exists() else None
     manifest = json.loads(previous_manifest.decode()) if previous_manifest else {}
-    cache_args = SimpleNamespace(artifact_scope="canonical")
+    completed_stage = (
+        POST_COLLAPSE_DISTANCE_CALIBRATION_STAGE
+        if getattr(spec, "collapse_records", False)
+        else DISTANCE_CALIBRATION_STAGE
+    )
+    cache_args = SimpleNamespace(
+        artifact_scope="canonical",
+        semantic_aggregation_model=(
+            semantic_aggregation_model
+            if getattr(spec, "collapse_records", False)
+            else None
+        ),
+        defer_semantic_aggregation=defer_semantic_aggregation,
+        final_endpoint_pruning_version=(
+            FINAL_ENDPOINT_PRUNING_VERSION
+            if getattr(spec, "final_endpoint_pruning", False)
+            else None
+        ),
+    )
     digests = FileDigestCache()
     cached = manifest.get("canonical_artifact_build_cache")
     if (
@@ -178,7 +284,7 @@ def build_canonical_artifacts(
         and cache_metadata_matches(
             cached,
             task_id=spec.task_id,
-            completed_stage=DISTANCE_CALIBRATION_STAGE,
+            completed_stage=completed_stage,
             args=cache_args,
             digests=digests,
             scientific_assets=spec.policy.scientific_assets,
@@ -195,20 +301,84 @@ def build_canonical_artifacts(
 
     with tempfile.TemporaryDirectory(dir=root, prefix=".canonical-build-") as name:
         candidate = Path(name)
-        pair_metadata, transfer = _build_pair_and_transfer(
-            spec,
-            records_path=records_path,
-            auxiliary_manifest=auxiliary_manifest,
-            candidate=candidate,
-            published_root=root,
-            workers=workers,
-            v7=True,
-        )
+        if getattr(spec, "collapse_records", False):
+            api_key = os.environ.get(semantic_aggregation_api_key_env, "")
+            if (
+                not defer_semantic_aggregation
+                and semantic_aggregation_provider == "distillation"
+                and not semantic_aggregation_budget_epoch
+            ):
+                raise ValueError(
+                    "--semantic-aggregation-budget-epoch is required for "
+                    "distillation generation"
+                )
+            token_ledger = (
+                TokenLedger(
+                    Path(semantic_aggregation_token_ledger)
+                    if semantic_aggregation_token_ledger
+                    else root / ".semantic_record_aggregation_token_ledger.json",
+                    epoch=semantic_aggregation_budget_epoch,
+                    start_new_epoch=semantic_aggregation_start_new_budget_epoch,
+                    max_tokens=semantic_aggregation_budget_max_tokens,
+                )
+                if (
+                    not defer_semantic_aggregation
+                    and semantic_aggregation_provider == "distillation"
+                )
+                else None
+            )
+            semantic_config = (
+                SemanticAggregationConfig(
+                    api_key=api_key,
+                    base_url=semantic_aggregation_base_url,
+                    model=semantic_aggregation_model,
+                    provider=semantic_aggregation_provider,
+                    reasoning_effort=semantic_aggregation_reasoning_effort,
+                    workers=semantic_aggregation_workers,
+                    timeout_s=semantic_aggregation_timeout_s,
+                    max_tokens=semantic_aggregation_max_tokens,
+                    max_new_groups=semantic_aggregation_max_new_groups,
+                    cache_path=Path(semantic_aggregation_cache)
+                    if semantic_aggregation_cache
+                    else root / ".semantic_record_aggregation_cache.jsonl",
+                    token_ledger=token_ledger,
+                )
+                if not defer_semantic_aggregation
+                and (
+                    semantic_aggregation_provider == "distillation"
+                    or (api_key and semantic_aggregation_base_url)
+                )
+                else None
+            )
+            pair_metadata, collapse, transfer = _build_canonical_collapsed_stages(
+                spec,
+                records_path=records_path,
+                auxiliary_manifest=auxiliary_manifest,
+                candidate=candidate,
+                published_root=root,
+                workers=workers,
+                semantic_config=semantic_config,
+                semantic_model=semantic_aggregation_model,
+                semantic_cache_path=semantic_cache_input,
+                defer_semantic_aggregation=defer_semantic_aggregation,
+            )
+        else:
+            pair_metadata, transfer = _build_pair_and_transfer(
+                spec,
+                records_path=records_path,
+                auxiliary_manifest=auxiliary_manifest,
+                candidate=candidate,
+                published_root=root,
+                workers=workers,
+                v7=True,
+            )
+            collapse = None
         manifest.update(
             _canonical_manifest_update(
                 spec=spec,
                 pair_metadata=pair_metadata,
                 transfer=transfer,
+                collapse=collapse,
                 candidate=candidate,
                 rebuild_request=rebuild_request,
                 elapsed_s=round(time.monotonic() - started, 3),
@@ -224,7 +394,7 @@ def build_canonical_artifacts(
             manifest.pop(key, None)
         canonical_cache = build_cache_metadata(
             task_id=spec.task_id,
-            completed_stage=DISTANCE_CALIBRATION_STAGE,
+            completed_stage=completed_stage,
             args=cache_args,
             input_paths=inputs,
             output_paths=_canonical_output_paths(spec, candidate),
@@ -242,8 +412,124 @@ def build_canonical_artifacts(
         actual_manifest = root_manifest_path.read_bytes() if root_manifest_path.exists() else None
         if actual_manifest != previous_manifest:
             raise RuntimeError("root manifest changed during canonical candidate build")
-        _publish_canonical_candidate(root, candidate)
+        _publish_canonical_candidate(
+            root,
+            candidate,
+            stages=_canonical_stages(spec),
+        )
     return manifest
+
+
+def build_canonical_deduplicated_records(
+    spec: SplitDownstreamSpec,
+    *,
+    normalized_root: str | Path,
+) -> dict[str, Any]:
+    """Build the zero-cost canonical prefix through Stage 05."""
+    root = Path(normalized_root)
+    records_path = root / "03_records/records.parquet"
+    if "canonical_record_id" not in pq.read_schema(records_path).names:
+        raise ValueError("canonical row deduplication requires v7 records")
+    inputs = _preflight_canonical_inputs(
+        records_path=records_path,
+        auxiliary_manifest=root / "02_canonicalized/auxiliary_mapping_manifest.json",
+        extra_paths=getattr(spec, "collapse_input_paths", ()),
+    )
+    with tempfile.TemporaryDirectory(dir=root, prefix=".dedup-build-") as name:
+        candidate = Path(name)
+        pair_dir = candidate / PAIR_BUCKET_STAGE
+        dedup_dir = candidate / DEDUPLICATED_RECORD_STAGE
+        pair_metadata = spec.build_sidecar(records_path=records_path, out_dir=pair_dir)
+        pair_metadata = _project_paths(pair_metadata, candidate, root)
+        _write_json(
+            pair_dir / spec.pair_bucket_metadata_filename,
+            pair_metadata,
+        )
+        dedup = build_deduplicated_record_stage(
+            task_id=spec.task_id,
+            records_path=records_path,
+            pair_bucket_records_path=pair_dir / spec.pair_bucket_records_filename,
+            out_dir=dedup_dir,
+            direct_mapping_builder=spec.direct_mapping_builder,
+        )
+        dedup = _project_paths(dedup, candidate, root)
+        _write_json(dedup_dir / DEDUP_MANIFEST_FILENAME, dedup)
+        hashes = {
+            "pair_bucket_records": file_sha256(
+                pair_dir / spec.pair_bucket_records_filename
+            ),
+            "pair_bucket_metadata": file_sha256(
+                pair_dir / spec.pair_bucket_metadata_filename
+            ),
+            "deduplicated_records": file_sha256(dedup_dir / DEDUP_RECORDS_FILENAME),
+            "deduplicated_pair_bucket_records": file_sha256(
+                dedup_dir / DEDUP_PAIR_BUCKET_RECORDS_FILENAME
+            ),
+            "direct_record_mapping": file_sha256(
+                dedup_dir / DEDUP_DIRECT_MAPPING_FILENAME
+            ),
+            "row_duplicates": file_sha256(dedup_dir / DEDUP_DUPLICATES_FILENAME),
+            "deduplication_manifest": file_sha256(
+                dedup_dir / DEDUP_MANIFEST_FILENAME
+            ),
+        }
+        manifest = _read_json_if_present(root / MANIFEST_FILENAME)
+        manifest.update(
+            {
+                **spec.policy.manifest_versions(),
+                "pipeline_layout_version": spec.pipeline_layout_version,
+                "artifact_scope": "canonical_split_independent",
+                "completed_artifact_stages": [
+                    "01_cleaned",
+                    "02_canonicalized",
+                    "03_records",
+                    PAIR_BUCKET_STAGE,
+                    DEDUPLICATED_RECORD_STAGE,
+                ],
+                "canonical_scope": {
+                    "record_stage": "03_records",
+                    "pair_bucket_stage": PAIR_BUCKET_STAGE,
+                    "deduplicated_record_stage": DEDUPLICATED_RECORD_STAGE,
+                    "collapsed_record_stage": None,
+                    "distance_calibration_stage": None,
+                },
+                "canonical_stats": {
+                    "pair_buckets": pair_metadata["stats"]["buckets"],
+                    **dedup["summary"],
+                },
+                "canonical_artifact_hashes": hashes,
+            }
+        )
+        for key in ("canonical_artifact_build_cache", "record_build_cache"):
+            manifest.pop(key, None)
+        _write_json(candidate / MANIFEST_FILENAME, manifest)
+        _verify_inputs(inputs)
+        _publish_canonical_prefix(root, candidate)
+    return manifest
+
+
+def _read_json_if_present(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+
+
+def _publish_canonical_prefix(root: Path, candidate: Path) -> None:
+    historical = root / "historical/pre_unified_row_dedup"
+    for stage in (
+        PAIR_BUCKET_STAGE,
+        "05_collapsed_records",
+        "06_distance_calibration",
+    ):
+        active = root / stage
+        archived = historical / stage
+        if active.exists() and not archived.exists():
+            historical.mkdir(parents=True, exist_ok=True)
+            os.replace(active, archived)
+    for stage in (PAIR_BUCKET_STAGE, DEDUPLICATED_RECORD_STAGE):
+        active = root / stage
+        if active.exists():
+            shutil.rmtree(active)
+        os.replace(candidate / stage, active)
+    os.replace(candidate / MANIFEST_FILENAME, root / MANIFEST_FILENAME)
 
 
 def _compact_profile(
@@ -297,6 +583,156 @@ def _build_pair_and_transfer(
         transfer,
     )
     return pair_metadata, transfer
+
+
+def _build_canonical_collapsed_stages(
+    spec: SplitDownstreamSpec,
+    *,
+    records_path: Path,
+    auxiliary_manifest: Path,
+    candidate: Path,
+    published_root: Path,
+    workers: int,
+    semantic_config: SemanticAggregationConfig | None,
+    semantic_model: str,
+    semantic_cache_path: Path | None,
+    defer_semantic_aggregation: bool,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    pair_dir = candidate / PAIR_BUCKET_STAGE
+    dedup_dir = candidate / DEDUPLICATED_RECORD_STAGE
+    collapse_dir = candidate / COLLAPSED_RECORD_STAGE
+    calibration_dir = candidate / POST_COLLAPSE_DISTANCE_CALIBRATION_STAGE
+    pair_metadata = spec.build_sidecar(records_path=records_path, out_dir=pair_dir)
+    pair_metadata = _project_paths(pair_metadata, candidate, published_root)
+    pair_metadata_path = pair_dir / spec.pair_bucket_metadata_filename
+    _write_json(pair_metadata_path, pair_metadata)
+    dedup = build_deduplicated_record_stage(
+        task_id=spec.task_id,
+        records_path=records_path,
+        pair_bucket_records_path=pair_dir / spec.pair_bucket_records_filename,
+        out_dir=dedup_dir,
+        direct_mapping_builder=spec.direct_mapping_builder,
+    )
+    dedup = _project_paths(dedup, candidate, published_root)
+    _write_json(dedup_dir / DEDUP_MANIFEST_FILENAME, dedup)
+    record_contract = spec.policy.record_contract
+    if record_contract is None:
+        raise ValueError("record collapse requires a canonical record contract")
+    if not spec.direct_label_definition:
+        raise ValueError(f"{spec.task_id} collapse lacks a direct-label definition")
+    prompt_metadata_fields = {
+        "pmid",
+        "doi",
+        "extraction_id",
+        "global_identifier",
+        "paragraph_idx",
+        "confidence",
+        "smiles",
+        "source_smiles",
+        "source_id",
+        "source_name",
+        "source_record_id",
+        "source_row_number",
+        "source_index",
+        "skin_source",
+    }
+    semantic_source_columns = {}
+    for source_id, columns in spec.compact_profile.source_columns.items():
+        source = record_contract.sources[source_id]
+        excluded = prompt_metadata_fields | {
+            source.endpoint_field,
+            source.measurement_field,
+            source.unit_field,
+            source.smiles_field,
+            source.structure_identity_field,
+        }
+        semantic_source_columns[source_id] = tuple(
+            field for field in columns if field and field not in excluded
+        )
+    preserved_columns = {
+        *spec.policy.family_resolver_input_fields,
+        *(
+            field
+            for source in record_contract.sources.values()
+            for field in source.canonical_output_fields
+        ),
+    }
+    prior_semantic = (
+        published_root / COLLAPSED_RECORD_STAGE / COLLAPSE_SEMANTIC_FILENAME
+    )
+    collapse = build_collapsed_record_stage(
+        task_id=spec.task_id,
+        records_path=dedup_dir / DEDUP_RECORDS_FILENAME,
+        pair_bucket_records_path=dedup_dir / DEDUP_PAIR_BUCKET_RECORDS_FILENAME,
+        pair_bucket_metadata_path=pair_metadata_path,
+        out_dir=collapse_dir,
+        duplicate_lineage_path=dedup_dir / DEDUP_DUPLICATES_FILENAME,
+        semantic_source_columns=semantic_source_columns,
+        direct_label_definition=spec.direct_label_definition,
+        preserved_columns=sorted(preserved_columns),
+        semantic_config=semantic_config,
+        semantic_model=semantic_model,
+        prior_semantic_paths=(
+            prior_semantic,
+            *((semantic_cache_path,) if semantic_cache_path else ()),
+        ),
+        defer_semantic_aggregation=defer_semantic_aggregation,
+        final_endpoint_pruning_manifest_path=(
+            published_root
+            / FINAL_ENDPOINT_PRUNING_DIR
+            / FINAL_ENDPOINT_PRUNING_MANIFEST_FILENAME
+            if spec.final_endpoint_pruning
+            else None
+        ),
+    )
+    collapse = _project_paths(collapse, candidate, published_root)
+    collapsed_pair_metadata = spec.build_sidecar(
+        records_path=collapse_dir / COLLAPSED_RECORDS_FILENAME,
+        out_dir=collapse_dir,
+    )
+    collapsed_pair_metadata = _project_paths(
+        collapsed_pair_metadata, candidate, published_root
+    )
+    _write_json(
+        collapse_dir / spec.pair_bucket_metadata_filename,
+        collapsed_pair_metadata,
+    )
+    collapse["collapsed_pair_bucket"] = {
+        "records": spec.pair_bucket_records_filename,
+        "metadata": spec.pair_bucket_metadata_filename,
+        "buckets": collapsed_pair_metadata["stats"]["buckets"],
+    }
+    collapse["outputs"].update(
+        {
+            "pair_bucket_records": file_sha256(
+                collapse_dir / spec.pair_bucket_records_filename
+            ),
+            "pair_bucket_metadata": file_sha256(
+                collapse_dir / spec.pair_bucket_metadata_filename
+            ),
+        }
+    )
+    _write_json(collapse_dir / COLLAPSE_MANIFEST_FILENAME, collapse)
+    transfer_kwargs = {
+        "records_path": collapse_dir / COLLAPSED_RECORDS_FILENAME,
+        "pair_bucket_records_path": (
+            collapse_dir / spec.pair_bucket_records_filename
+        ),
+        "pair_bucket_metadata_path": (
+            collapse_dir / spec.pair_bucket_metadata_filename
+        ),
+        "auxiliary_manifest_path": auxiliary_manifest,
+        "out_dir": calibration_dir,
+    }
+    if "workers" in inspect.signature(spec.build_transfer_policy).parameters:
+        transfer_kwargs["workers"] = workers
+    transfer = spec.build_transfer_policy(**transfer_kwargs)
+    transfer = _project_paths(transfer, candidate, published_root)
+    write_deterministic_gzip(
+        calibration_dir / CALIBRATION_FILENAME,
+        transfer,
+    )
+    return pair_metadata, collapse, transfer
 
 
 def build_downstream_artifacts(
@@ -752,9 +1188,24 @@ def evidence_catalog_projection_columns(
         "confidence",
         "endpoint_name",
         "canonical_endpoint_name" if v7 else "canonical_endpoint",
+        "canonical_measurement_text",
+        "canonical_unit_text",
         "source_id",
         "source_name",
         "source_row_number",
+        "retrieval_source_id",
+        "collapsed_record_id",
+        "aggregation_method",
+        "aggregation_status",
+        "aggregate_counts_json",
+        "source_record_count",
+        "deduplicated_source_record_count",
+        "source_ids_json",
+        "pmids_json",
+        "condition_group",
+        "condition_scope",
+        "condition_key_status",
+        "condition_atoms_json",
         "assay_tier",
         "endpoint_group",
         "evidence_role",
@@ -928,15 +1379,23 @@ def _preflight_inputs(
 
 
 def _preflight_canonical_inputs(
-    *, records_path: Path, auxiliary_manifest: Path
+    *,
+    records_path: Path,
+    auxiliary_manifest: Path,
+    extra_paths: Sequence[str | Path] = (),
 ) -> dict[Path, str]:
     _require_file(records_path)
     _require_file(auxiliary_manifest)
     json.loads(auxiliary_manifest.read_text(encoding="utf-8"))
-    return {
+    inputs = {
         records_path: file_sha256(records_path),
         auxiliary_manifest: file_sha256(auxiliary_manifest),
     }
+    for raw_path in extra_paths:
+        path = Path(raw_path)
+        _require_file(path)
+        inputs[path] = file_sha256(path)
+    return inputs
 
 
 def _heldout_audit(
@@ -958,7 +1417,7 @@ def _heldout_audit(
         and calibration_pair_bucket_version != pair_bucket_version
     ):
         raise ValueError(
-            "Stage-04/Stage-05 pair-bucket contract mismatch: "
+            "Stage-04/Stage-07 pair-bucket contract mismatch: "
             f"{pair_bucket_version!r} != {calibration_pair_bucket_version!r}"
         )
     calibration_kind = (
@@ -1109,6 +1568,7 @@ def _canonical_manifest_update(
     *,
     spec: SplitDownstreamSpec,
     pair_metadata: Mapping[str, Any],
+    collapse: Mapping[str, Any] | None,
     transfer: Mapping[str, Any],
     candidate: Path,
     rebuild_request: Mapping[str, Any] | None,
@@ -1126,14 +1586,16 @@ def _canonical_manifest_update(
             "Stage-04/Stage-05 pair-bucket contract mismatch: "
             f"{pair_bucket_version!r} != {calibration_pair_bucket_version!r}"
         )
-    return {
+    stages = _canonical_stages(spec)
+    distance_stage = stages[-1]
+    update = {
         **spec.policy.manifest_versions(),
         "pipeline_layout_version": spec.pipeline_layout_version,
         "completed_artifact_stages": [
             "01_cleaned",
             "02_canonicalized",
             "03_records",
-            *CANONICAL_V7_STAGES,
+            *stages,
         ],
         "rebuild_request": dict(
             rebuild_request or {"from_stage": "index", "through_stage": "index"}
@@ -1142,12 +1604,35 @@ def _canonical_manifest_update(
         "canonical_scope": {
             "record_stage": "03_records",
             "pair_bucket_stage": PAIR_BUCKET_STAGE,
-            "distance_calibration_stage": DISTANCE_CALIBRATION_STAGE,
+            "deduplicated_record_stage": (
+                DEDUPLICATED_RECORD_STAGE
+                if getattr(spec, "collapse_records", False)
+                else None
+            ),
+            "collapsed_record_stage": (
+                COLLAPSED_RECORD_STAGE
+                if getattr(spec, "collapse_records", False)
+                else None
+            ),
+            "distance_calibration_stage": distance_stage,
             "benchmark_split": None,
             "heldout_filter": None,
         },
         "canonical_stats": {
             "pair_buckets": pair_metadata["stats"]["buckets"],
+            "collapsed_records": (
+                collapse["summary"]["collapsed_records"] if collapse else None
+            ),
+            "source_records_represented": (
+                collapse["summary"]["source_records_represented"]
+                if collapse
+                else None
+            ),
+            "final_endpoint_pruning_excluded_records": (
+                collapse["summary"]["final_endpoint_pruning_excluded_records"]
+                if collapse
+                else None
+            ),
             "calibration_valid_buckets": transfer["summary"][
                 "calibration_valid_buckets"
             ],
@@ -1155,6 +1640,15 @@ def _canonical_manifest_update(
         "canonical_artifact_hashes": _canonical_artifact_hashes(spec, candidate),
         "elapsed_canonical_s": elapsed_s,
     }
+    return update
+
+
+def _canonical_stages(spec: SplitDownstreamSpec) -> tuple[str, ...]:
+    return (
+        CANONICAL_V7_STAGES
+        if getattr(spec, "collapse_records", False)
+        else (PAIR_BUCKET_STAGE, DISTANCE_CALIBRATION_STAGE)
+    )
 
 
 def _canonical_artifact_hashes(
@@ -1167,10 +1661,45 @@ def _canonical_artifact_hashes(
         "pair_bucket_metadata": (
             root / PAIR_BUCKET_STAGE / spec.pair_bucket_metadata_filename
         ),
-        "distance_calibration": (
-            root / DISTANCE_CALIBRATION_STAGE / CALIBRATION_FILENAME
-        ),
+        "distance_calibration": root
+        / _canonical_stages(spec)[-1]
+        / CALIBRATION_FILENAME,
     }
+    if getattr(spec, "collapse_records", False):
+        paths.update(
+            {
+                "deduplicated_records": root
+                / DEDUPLICATED_RECORD_STAGE
+                / DEDUP_RECORDS_FILENAME,
+                "deduplicated_pair_bucket_records": root
+                / DEDUPLICATED_RECORD_STAGE
+                / DEDUP_PAIR_BUCKET_RECORDS_FILENAME,
+                "direct_record_mapping": root
+                / DEDUPLICATED_RECORD_STAGE
+                / DEDUP_DIRECT_MAPPING_FILENAME,
+                "row_duplicates": root
+                / DEDUPLICATED_RECORD_STAGE
+                / DEDUP_DUPLICATES_FILENAME,
+                "deduplication_manifest": root
+                / DEDUPLICATED_RECORD_STAGE
+                / DEDUP_MANIFEST_FILENAME,
+                "collapsed_records": root
+                / COLLAPSED_RECORD_STAGE
+                / COLLAPSED_RECORDS_FILENAME,
+                "semantic_aggregation": root
+                / COLLAPSED_RECORD_STAGE
+                / COLLAPSE_SEMANTIC_FILENAME,
+                "collapse_manifest": root
+                / COLLAPSED_RECORD_STAGE
+                / COLLAPSE_MANIFEST_FILENAME,
+                "collapsed_pair_bucket_records": root
+                / COLLAPSED_RECORD_STAGE
+                / spec.pair_bucket_records_filename,
+                "collapsed_pair_bucket_metadata": root
+                / COLLAPSED_RECORD_STAGE
+                / spec.pair_bucket_metadata_filename,
+            }
+        )
     return {key: file_sha256(path) for key, path in sorted(paths.items())}
 
 
@@ -1340,11 +1869,33 @@ def _downstream_output_paths(
 
 
 def _canonical_output_paths(spec: SplitDownstreamSpec, root: Path) -> list[Path]:
-    return [
+    paths = [
         root / PAIR_BUCKET_STAGE / spec.pair_bucket_records_filename,
         root / PAIR_BUCKET_STAGE / spec.pair_bucket_metadata_filename,
-        root / DISTANCE_CALIBRATION_STAGE / CALIBRATION_FILENAME,
+        root / _canonical_stages(spec)[-1] / CALIBRATION_FILENAME,
     ]
+    if getattr(spec, "collapse_records", False):
+        paths.extend(
+            root / DEDUPLICATED_RECORD_STAGE / filename
+            for filename in (
+                DEDUP_RECORDS_FILENAME,
+                DEDUP_PAIR_BUCKET_RECORDS_FILENAME,
+                DEDUP_DIRECT_MAPPING_FILENAME,
+                DEDUP_DUPLICATES_FILENAME,
+                DEDUP_MANIFEST_FILENAME,
+            )
+        )
+        paths.extend(
+            root / COLLAPSED_RECORD_STAGE / filename
+            for filename in (
+                COLLAPSED_RECORDS_FILENAME,
+                COLLAPSE_SEMANTIC_FILENAME,
+                COLLAPSE_MANIFEST_FILENAME,
+                spec.pair_bucket_records_filename,
+                spec.pair_bucket_metadata_filename,
+            )
+        )
+    return paths
 
 
 def _validate_canonical_candidate(
@@ -1362,15 +1913,35 @@ def _validate_canonical_candidate(
         if token in path.read_text(encoding="utf-8"):
             raise ValueError(f"candidate path leaked into published JSON: {path}")
     calibration_text = gzip.decompress(
-        (candidate / DISTANCE_CALIBRATION_STAGE / CALIBRATION_FILENAME).read_bytes()
+        (
+            candidate
+            / _canonical_stages(spec)[-1]
+            / CALIBRATION_FILENAME
+        ).read_bytes()
     ).decode("utf-8")
     if token in calibration_text:
         raise ValueError("candidate path leaked into distance calibration")
 
 
-def _publish_canonical_candidate(root: Path, candidate: Path) -> None:
-    """Publish Stage 04/05 and retire task-local lineage views atomically."""
-    stages = (*CANONICAL_V7_STAGES, *LINEAGE_VIEW_STAGES)
+def _publish_canonical_candidate(
+    root: Path,
+    candidate: Path,
+    *,
+    stages: Sequence[str] = CANONICAL_V7_STAGES,
+) -> None:
+    """Publish canonical stages and retire superseded/task-local stages atomically."""
+    active_stages = tuple(
+        dict.fromkeys(
+            (
+                PAIR_BUCKET_STAGE,
+                DEDUPLICATED_RECORD_STAGE,
+                COLLAPSED_RECORD_STAGE,
+                DISTANCE_CALIBRATION_STAGE,
+                POST_COLLAPSE_DISTANCE_CALIBRATION_STAGE,
+                *LINEAGE_VIEW_STAGES,
+            )
+        )
+    )
     backup = Path(tempfile.mkdtemp(dir=root, prefix=".canonical-backup-"))
     active_manifest = root / MANIFEST_FILENAME
     had_manifest = active_manifest.exists()
@@ -1379,12 +1950,12 @@ def _publish_canonical_candidate(root: Path, candidate: Path) -> None:
     moved: list[str] = []
     published: list[str] = []
     try:
-        for stage in stages:
+        for stage in active_stages:
             active = root / stage
             if active.exists():
                 os.replace(active, backup / stage)
                 moved.append(stage)
-        for stage in CANONICAL_V7_STAGES:
+        for stage in stages:
             os.replace(candidate / stage, root / stage)
             published.append(stage)
         os.replace(candidate / MANIFEST_FILENAME, active_manifest)
@@ -1533,6 +2104,8 @@ def _write_json(path: Path, value: Any) -> None:
 __all__ = [
     "AUDIT_STAGE",
     "CANONICAL_V7_STAGES",
+    "COLLAPSED_RECORD_STAGE",
+    "DEDUPLICATED_RECORD_STAGE",
     "DOWNSTREAM_STAGES",
     "EVIDENCE_BRIDGE_FILENAME",
     "EVIDENCE_FAMILIES_FILENAME",
@@ -1545,12 +2118,14 @@ __all__ = [
     "PAIR_BUCKET_RECORDS_FILENAME",
     "DEFAULT_LEGACY_DOWNSTREAM_STAGES",
     "DISTANCE_CALIBRATION_STAGE",
+    "POST_COLLAPSE_DISTANCE_CALIBRATION_STAGE",
     "LEGACY_DOWNSTREAM_STAGES",
     "LINEAGE_VIEW_STAGES",
     "SplitDownstreamSpec",
     "TRANSFER_POLICY_STAGE",
     "V7_DOWNSTREAM_STAGES",
     "build_canonical_artifacts",
+    "build_canonical_deduplicated_records",
     "build_downstream_artifacts",
     "build_split_downstream_artifacts",
     "build_filtered_molecule_evidence",

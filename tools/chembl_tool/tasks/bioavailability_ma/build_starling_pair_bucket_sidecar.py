@@ -82,12 +82,22 @@ def build_sidecar(
             if v7
             else None
         ),
+        required_known_fields_by_source=(
+            {
+                source: spec.required_known_dimensions
+                for source, spec in RECORD_CONTRACT.pair_buckets.items()
+                if spec.required_known_dimensions
+            }
+            if v7
+            else None
+        ),
         semantic_pair_bucket_sources=(
             POLICY.endpoint_identity_required_sources if v7 else ()
         ),
         assay_transfer_record_ineligibility=load_measurement_policy(
             POLICY.assay_transfer_measurement_policy
         ).get("record_ineligibility", {}),
+        canonical_record_contract=v7,
     )
     if not all(metadata["validations"].values()):
         raise ValueError(

@@ -385,6 +385,15 @@ def _assay_transfer_evidence_record(
         example = {
             "source_contract": source_contract,
             "source_fields": source_fields,
+            **(
+                {
+                    "resolved_measurement_display": selected_record[
+                        "resolved_measurement_display"
+                    ]
+                }
+                if selected_record.get("resolved_measurement_display")
+                else {}
+            ),
         }
     elif dataset == "Starling normalized oral bioavailability":
         raise ValueError(

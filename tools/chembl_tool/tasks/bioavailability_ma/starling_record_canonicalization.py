@@ -24,6 +24,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
 REPORT_TYPE_NORMALIZATION_VERSION = "bioavailability_report_type_normalization.v1"
 EVIDENCE_SCOPE_VERSION = "bioavailability_evidence_scope.v1"
 NORMALIZATION_DOMAIN_RULES_VERSION = "bioavailability_normalization_domains.v4"
+ORAL_DOSE_NORMALIZATION_VERSION = "bioavailability_oral_dose.v1"
 UNKNOWN_TOKEN = "__unknown__"
 DIRECT_EVIDENCE_SCOPE = "direct"
 NONDIRECT_EVIDENCE_SCOPE = "nondirect"
@@ -57,6 +58,23 @@ _PERCENT_ENDPOINTS = {
     "relative_bioavailability",
 }
 _DURATION_ENDPOINTS = {"metabolic_half_life", "tmax"}
+_DOSE = re.compile(
+    r"(?<![\w.])(?P<value>(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?|\.\d+)\s*"
+    r"(?P<unit>nmol|[µu]mol|mmol|mol|ng|[µu]g|mcg|mg|g)\b"
+    r"(?P<basis>\s*(?:/\s*(?:kg|m(?:2|²))|(?:kg|m(?:2|²))\s*(?:-1|−1|⁻¹)))?",
+    re.IGNORECASE,
+)
+_DOSE_FACTORS = {
+    "ng": ("mass", "mg", 1e-6),
+    "µg": ("mass", "mg", 1e-3),
+    "mcg": ("mass", "mg", 1e-3),
+    "mg": ("mass", "mg", 1.0),
+    "g": ("mass", "mg", 1e3),
+    "nmol": ("molar", "µmol", 1e-3),
+    "µmol": ("molar", "µmol", 1.0),
+    "mmol": ("molar", "µmol", 1e3),
+    "mol": ("molar", "µmol", 1e6),
+}
 
 # Qualifier vocabulary for every unit parsed by this task.
 _TASK_VOCAB = "bioavailability_ma"
@@ -94,6 +112,55 @@ def bioavailability_evidence_scope(value: Any) -> str:
         if report_type in DIRECT_REPORT_TYPES
         else NONDIRECT_EVIDENCE_SCOPE
     )
+
+
+def canonical_oral_dose(value: Any) -> dict[str, Any]:
+    """Normalize one unambiguous oral dose without interpreting a regimen."""
+    empty = {
+        "canonical_oral_dose_value": None,
+        "canonical_oral_dose_unit": None,
+        "canonical_oral_dose_quantity_kind": None,
+        "canonical_oral_dose_basis": None,
+        "canonical_oral_dose_key": UNKNOWN_TOKEN,
+        "canonical_oral_dose_mapping_status": "missing" if _is_null_like(value) else "unparsed",
+        "oral_dose_normalization_version": ORAL_DOSE_NORMALIZATION_VERSION,
+    }
+    if _is_null_like(value):
+        return empty
+    text = unicodedata.normalize("NFKC", str(value)).casefold().replace("μ", "µ")
+    matches = list(_DOSE.finditer(text))
+    if len(matches) != 1:
+        return empty
+    match = matches[0]
+    # A denominator other than kg or m2 is a concentration, not a dose.
+    if not match.group("basis") and text[match.end() :].lstrip().startswith("/"):
+        return empty
+    number = float(match.group("value").replace(",", ""))
+    unit = match.group("unit").casefold().replace("μ", "µ").replace("u", "µ")
+    quantity_kind, canonical_unit, factor = _DOSE_FACTORS[unit]
+    canonical_value = number * factor
+    if not math.isfinite(canonical_value) or canonical_value <= 0:
+        return {**empty, "canonical_oral_dose_mapping_status": "nonpositive"}
+    basis_text = re.sub(r"\s+", "", match.group("basis") or "").replace("−", "-")
+    basis = (
+        "per_kg"
+        if "kg" in basis_text
+        else "per_m2"
+        if "m2" in basis_text or "m²" in basis_text
+        else "absolute"
+    )
+    number_text = format(canonical_value, ".12g")
+    return {
+        "canonical_oral_dose_value": canonical_value,
+        "canonical_oral_dose_unit": canonical_unit,
+        "canonical_oral_dose_quantity_kind": quantity_kind,
+        "canonical_oral_dose_basis": basis,
+        "canonical_oral_dose_key": "|".join(
+            (quantity_kind, basis, canonical_unit, number_text)
+        ),
+        "canonical_oral_dose_mapping_status": "resolved",
+        "oral_dose_normalization_version": ORAL_DOSE_NORMALIZATION_VERSION,
+    }
 
 
 def enrich_bioavailability_validity(record: Mapping[str, Any]) -> dict[str, Any]:
@@ -243,9 +310,11 @@ def validity_policy_manifest() -> dict[str, Any]:
 
 __all__ = [
     "NORMALIZATION_DOMAIN_RULES_VERSION",
+    "ORAL_DOSE_NORMALIZATION_VERSION",
     "REPORT_TYPE_NORMALIZATION_VERSION",
     "UNKNOWN_TOKEN",
     "canonical_text",
+    "canonical_oral_dose",
     "enrich_bioavailability_validity",
     "normalization_validity_status",
     "normalize_bioavailability_report_type",

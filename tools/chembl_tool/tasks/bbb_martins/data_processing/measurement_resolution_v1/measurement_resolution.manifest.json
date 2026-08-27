@@ -2,7 +2,8 @@
   "api_base_url": "http://epyc-1-4:50000/v1",
   "assignment_method_counts": {
     "invalid_row_response:entry_without_a_unit:structural_retry": 20,
-    "model_single_pass": 113426,
+    "manual_review_override:bbb_biotin_micromolar_0001": 1,
+    "model_single_pass": 113425,
     "model_structural_retry": 2212
   },
   "cleaned_records_path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
@@ -20,8 +21,17 @@
   },
   "mapping_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
   "mapping_rows": 115658,
-  "mapping_sha256": "3984c2c17308d46449258c1d6cd0cb7672befdd9bfeaedf5afa6871dd2c0ec76",
+  "mapping_sha256": "e736b74465ea9a6d1f376770121fb36d2ff2f5c1be12a6ee1dcc9b52724a5d71",
   "mapping_version": "bbb_martins_measurement_resolution.v1",
+  "manual_review_overrides": [
+    {
+      "cleaned_record_id": "e645a589d696f2757ba0143654693c66117fe4ba070ce8dfeecba57fa1af6f67",
+      "evidence": "PMID 9679779 cites PMID 3098919, which reports an approximately 100 micromolar half-saturation concentration for BBB biotin transport.",
+      "original_measurements_json": "[{\"measurement\": \"100\", \"unit\": \"M\"}]",
+      "repair_id": "bbb_biotin_micromolar_0001",
+      "reviewed_measurements_json": "[{\"measurement\": \"100\", \"unit\": \"µM\"}]"
+    }
+  ],
   "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
   "prompt": {
     "batch_size": 10,

@@ -354,13 +354,41 @@ def test_compact_cache_reranks_without_catalog_or_candidate_jsonl(tmp_path: Path
         rows = reranker.rerank_records(
             query_smiles="CCN",
             group_id="Fa.absorption_solubility_permeability",
-            candidates=[{"molecule_chembl_id": "STARLING_1", "similarity": 0.4}],
+            candidates=[
+                {
+                    "molecule_chembl_id": "STARLING_1",
+                    "similarity": 0.4,
+                    "evidence_rows": [
+                        {
+                            "_representative_record_ids": ["record-1"],
+                            "minimal_evidence": {
+                                "examples": [
+                                    {
+                                        "resolved_measurement_display": {
+                                            "value": "42",
+                                            "unit": "mg/mL",
+                                            "origin": "llm",
+                                        }
+                                    }
+                                ]
+                            },
+                        }
+                    ],
+                }
+            ],
         )
     finally:
         reranker.cache.close()
     assert len(rows) == 1
     assert rows[0]["transfer_selection_score"] == pytest.approx(0.8)
-    assert rows[0]["transfer_winning_record"] == winning
+    assert rows[0]["transfer_winning_record"] == {
+        **winning,
+        "resolved_measurement_display": {
+            "value": "42",
+            "unit": "mg/mL",
+            "origin": "llm",
+        },
+    }
 
 
 def test_explicit_lineage_paths_resolve_paper_stage_layout(tmp_path: Path):
@@ -722,6 +750,11 @@ def test_skin_group_prompt_exposes_only_rounded_score_and_minimal_record():
                     "record_id": "record",
                     "source_contract": source_contract,
                     "source_fields": {"endpoint_name": "sensitization"},
+                    "resolved_measurement_display": {
+                        "value": "2.5",
+                        "unit": "µg/cm^2",
+                        "origin": "llm",
+                    },
                 },
                 "prefetched_comparisons": [],
                 "evidence_rows": [
@@ -743,6 +776,9 @@ def test_skin_group_prompt_exposes_only_rounded_score_and_minimal_record():
     assert payload["neighbors"][0]["assay_transfer_record"]["contract_version"] == (
         "minimal_evidence.v1"
     )
+    assert payload["neighbors"][0]["assay_transfer_record"]["examples"][0][
+        "resolved_measurement_display"
+    ]["unit"] == "µg/cm^2"
     assert "transfer_selection_score" not in str(payload)
     assert "uncalibrated" in str(payload)
 

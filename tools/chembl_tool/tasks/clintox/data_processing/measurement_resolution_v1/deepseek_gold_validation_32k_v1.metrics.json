@@ -1,0 +1,708 @@
+{
+  "error_class_counts": {
+    "bound_or_range_promoted": 5,
+    "status_or_pair:ok->ok": 1,
+    "status_or_pair:ok->unsure": 2,
+    "status_or_pair:relative->ok": 4,
+    "status_or_pair:unsure->ok": 8,
+    "status_or_pair:unsure->relative": 1
+  },
+  "gold_corpus_version": "clintox_measurement_resolution_gold.v1",
+  "gold_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/clintox/data_processing/stage2_review_v1/measurement_resolution_gold.jsonl",
+  "gold_sha256": "5ea50747fb08ba687119c59cace1c48c17042bf66509fe08801b14d8294e98e0",
+  "mapping_path": "tools/chembl_tool/tasks/clintox/data_processing/measurement_resolution_v1/deepseek_gold_validation_32k_v1.parquet",
+  "mapping_sha256": "6aef0aac9b68619fcfb76e5591f29744fe059d28c706c893d04ff633a5fc60d6",
+  "mismatches": [
+    {
+      "audit_case_id": "clintox:216a1558631a678cd2d2795958e0002da9d8ef59a08893fb1d91370e4dbf171a",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:ok->unsure",
+      "expected": {
+        "measurements": [
+          {
+            "expected_canonical_unit": "mol/L",
+            "expected_scalar": 0.001,
+            "measurement": "1",
+            "unit": "10^-3 mol/litre"
+          }
+        ],
+        "status": "ok"
+      },
+      "observed": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "raw_pair_exact": false,
+      "source_id": "nonclinical_in_vivo_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:2bfce7d8507a128e8a48889b9d0fd1be112f9ac19f931295d288beec8b04a274",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:relative->ok",
+      "expected": {
+        "measurements": [],
+        "status": "relative"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "6",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "off_target_ddi_exposure",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:32ba320dbd11ba3941b4f94c79296acfb0e96ce1a034bcffa805d533ba18b68f",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:relative->ok",
+      "expected": {
+        "measurements": [],
+        "status": "relative"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "2",
+            "unit": "fold"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "off_target_ddi_exposure",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:3ba072f0e43be6b3e722e4940e048e0dd6c1d0ed7ae473233a331a11b16873ae",
+      "canonical_exact": false,
+      "error_class": "bound_or_range_promoted",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "6.82",
+            "unit": "mM/L"
+          },
+          {
+            "measurement": "45.3",
+            "unit": "g/L"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "organ_specific_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:5bb152da0d36f3f3b14c1573d4a2e14fd706b0380a5a7dbed5e27554e6059c09",
+      "canonical_exact": false,
+      "error_class": "bound_or_range_promoted",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "56.3",
+            "unit": "%"
+          },
+          {
+            "measurement": "81.3",
+            "unit": "%"
+          },
+          {
+            "measurement": "75.0",
+            "unit": "%"
+          },
+          {
+            "measurement": "37.5",
+            "unit": "%"
+          },
+          {
+            "measurement": "25.0",
+            "unit": "%"
+          },
+          {
+            "measurement": "31.3",
+            "unit": "%"
+          },
+          {
+            "measurement": "25.0",
+            "unit": "%"
+          },
+          {
+            "measurement": "6.3",
+            "unit": "%"
+          },
+          {
+            "measurement": "6.3",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:60820c7db0d5ddfba43be98460d315adbb0e6f7b7f9ee36f6a2fb7acf0df2c88",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->ok",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "5.8",
+            "unit": "%"
+          },
+          {
+            "measurement": "4.1",
+            "unit": "%"
+          },
+          {
+            "measurement": "3.6",
+            "unit": "%"
+          },
+          {
+            "measurement": "4.5",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:60c71f7a0da0f69544ee618b9fb116ae32396d1148834fc526bb4e584cdddbb2",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:ok->ok",
+      "expected": {
+        "measurements": [
+          {
+            "expected_canonical_unit": "%",
+            "expected_scalar": 40.0,
+            "measurement": "40",
+            "unit": "%"
+          },
+          {
+            "expected_canonical_unit": "deaths",
+            "expected_scalar": 7.0,
+            "measurement": "7",
+            "unit": "deaths"
+          },
+          {
+            "expected_canonical_unit": "grade 5 SAE deaths",
+            "expected_scalar": 3.0,
+            "measurement": "3",
+            "unit": "grade 5 SAE deaths"
+          }
+        ],
+        "status": "ok"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "40",
+            "unit": "%"
+          },
+          {
+            "measurement": "7",
+            "unit": "deaths"
+          },
+          {
+            "measurement": "3",
+            "unit": "grade 5 SAEs"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": true
+    },
+    {
+      "audit_case_id": "clintox:6e9a941532789a4c1fad59e63db66d9b4566323330b95457b7ebbecbae908d8e",
+      "canonical_exact": false,
+      "error_class": "bound_or_range_promoted",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "51",
+            "unit": "%"
+          },
+          {
+            "measurement": "77",
+            "unit": "%"
+          },
+          {
+            "measurement": "66",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:7bf1f36611720d3fe36bb20ff174c630ad37fc9fb3d5edd926af9cae368dc512",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:relative->ok",
+      "expected": {
+        "measurements": [],
+        "status": "relative"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "76.3",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "organ_specific_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:827526c4b8ab9cf8728c4e7b930f6f4e9a936b825d9d30e61827db6da64598e3",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->ok",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "2.0",
+            "unit": "%"
+          },
+          {
+            "measurement": "0.5",
+            "unit": "%"
+          },
+          {
+            "measurement": "0.5",
+            "unit": "%"
+          },
+          {
+            "measurement": "0.5",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:852701d16ba3388f58d09a23ad908ebe7cbd8eaabf34c99d5a7d46344d0e846d",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->ok",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "4.8",
+            "unit": "%"
+          },
+          {
+            "measurement": "9.5",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:85d9c7ef284c2f8ee75f2d2025e93c4b954d7d354d0b644b293edb5e5c50158d",
+      "canonical_exact": false,
+      "error_class": "bound_or_range_promoted",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "62.1",
+            "unit": "%"
+          },
+          {
+            "measurement": "17.5",
+            "unit": "%"
+          },
+          {
+            "measurement": "14.4",
+            "unit": "%"
+          },
+          {
+            "measurement": "7.7",
+            "unit": "%"
+          },
+          {
+            "measurement": "4.9",
+            "unit": "%"
+          },
+          {
+            "measurement": "7.7",
+            "unit": "%"
+          },
+          {
+            "measurement": "6.7",
+            "unit": "%"
+          },
+          {
+            "measurement": "4.2",
+            "unit": "%"
+          },
+          {
+            "measurement": "2",
+            "unit": "cases"
+          },
+          {
+            "measurement": "1.4",
+            "unit": "%"
+          },
+          {
+            "measurement": "4.2",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:91454eaf491ce3b99ccc9250897783d37f29767c333aa7385c22ecf8619dc828",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->relative",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [],
+        "status": "relative"
+      },
+      "raw_pair_exact": false,
+      "source_id": "organ_specific_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:92164129e4cdc52d8e329e4ffbc62a480c3010c957cac718b359dd279a8dbee1",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->ok",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "100",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "off_target_ddi_exposure",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:9e86e2c5f7725d8d8264999e8795e4fd5d54b77753e5d75bd8691986419a735e",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->ok",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "3",
+            "unit": "cases"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:adaec6f83456ff626adf5f59cb8dc1fcd8b2fe9a91cf7602203fab365bea1d37",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->ok",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "1",
+            "unit": "patients"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "organ_specific_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:af9c7ca421858fffeb4b35b7101c3fcadd8b88708e1f13f85f0aa86d89d8696a",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->ok",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "0",
+            "unit": "participants"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "off_target_ddi_exposure",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:b4d69a6bbdeb4f2492799f5692dda6d9e24c5b14b8cac5f00a55828e17e28c85",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:unsure->ok",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "1",
+            "unit": "animals"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "organ_specific_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:d3b9297aaa8078cc3e330c42ae0cf068f6221683cb1b22f3220f6d5f95541476",
+      "canonical_exact": false,
+      "error_class": "bound_or_range_promoted",
+      "expected": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "43",
+            "unit": "%"
+          },
+          {
+            "measurement": "9.5",
+            "unit": "%"
+          },
+          {
+            "measurement": "27",
+            "unit": "%"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "human_clinical_toxicity",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:df11773c781cd37f926e1407972aa41fdf8880102d558ba608bb555745c79b74",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:relative->ok",
+      "expected": {
+        "measurements": [],
+        "status": "relative"
+      },
+      "observed": {
+        "measurements": [
+          {
+            "measurement": "10",
+            "unit": "fold"
+          }
+        ],
+        "status": "ok"
+      },
+      "raw_pair_exact": false,
+      "source_id": "off_target_ddi_exposure",
+      "status_exact": false
+    },
+    {
+      "audit_case_id": "clintox:e81bf7e392287375ecb692e9eb805e269de7899eb6c63a87ba0b6f20d7d9f653",
+      "canonical_exact": false,
+      "error_class": "status_or_pair:ok->unsure",
+      "expected": {
+        "measurements": [
+          {
+            "expected_canonical_unit": "/µL",
+            "expected_scalar": 3690000.0,
+            "measurement": "3.69",
+            "unit": "10^6/µl"
+          },
+          {
+            "expected_canonical_unit": "g/dL",
+            "expected_scalar": 6.7,
+            "measurement": "6.7",
+            "unit": "g/dl"
+          },
+          {
+            "expected_canonical_unit": "%",
+            "expected_scalar": 18.6,
+            "measurement": "18.6",
+            "unit": "%"
+          },
+          {
+            "expected_canonical_unit": "µg/dL",
+            "expected_scalar": 108.0,
+            "measurement": "108",
+            "unit": "µg/dl"
+          }
+        ],
+        "status": "ok"
+      },
+      "observed": {
+        "measurements": [],
+        "status": "unsure"
+      },
+      "raw_pair_exact": false,
+      "source_id": "nonclinical_in_vivo_toxicity",
+      "status_exact": false
+    }
+  ],
+  "overall": {
+    "canonical_accuracy": 0.895,
+    "canonical_exact": 179,
+    "n": 200,
+    "raw_pair_accuracy": 0.89,
+    "raw_pair_exact": 178,
+    "status_accuracy": 0.9,
+    "status_exact": 180
+  },
+  "per_source": {
+    "general_cytotoxicity": {
+      "canonical_accuracy": 1.0,
+      "canonical_exact": 21,
+      "n": 21,
+      "raw_pair_accuracy": 1.0,
+      "raw_pair_exact": 21,
+      "status_accuracy": 1.0,
+      "status_exact": 21
+    },
+    "genotoxicity_carcinogenicity": {
+      "canonical_accuracy": 1.0,
+      "canonical_exact": 22,
+      "n": 22,
+      "raw_pair_accuracy": 1.0,
+      "raw_pair_exact": 22,
+      "status_accuracy": 1.0,
+      "status_exact": 22
+    },
+    "human_clinical_toxicity": {
+      "canonical_accuracy": 0.75,
+      "canonical_exact": 27,
+      "n": 36,
+      "raw_pair_accuracy": 0.75,
+      "raw_pair_exact": 27,
+      "status_accuracy": 0.7777777777777778,
+      "status_exact": 28
+    },
+    "nonclinical_in_vivo_toxicity": {
+      "canonical_accuracy": 0.9512195121951219,
+      "canonical_exact": 39,
+      "n": 41,
+      "raw_pair_accuracy": 0.926829268292683,
+      "raw_pair_exact": 38,
+      "status_accuracy": 0.9512195121951219,
+      "status_exact": 39
+    },
+    "off_target_ddi_exposure": {
+      "canonical_accuracy": 0.8809523809523809,
+      "canonical_exact": 37,
+      "n": 42,
+      "raw_pair_accuracy": 0.8809523809523809,
+      "raw_pair_exact": 37,
+      "status_accuracy": 0.8809523809523809,
+      "status_exact": 37
+    },
+    "organ_specific_toxicity": {
+      "canonical_accuracy": 0.868421052631579,
+      "canonical_exact": 33,
+      "n": 38,
+      "raw_pair_accuracy": 0.868421052631579,
+      "raw_pair_exact": 33,
+      "status_accuracy": 0.868421052631579,
+      "status_exact": 33
+    }
+  },
+  "prompt_gate": {
+    "every_source_canonical_at_least_90pct": false,
+    "overall_canonical_at_least_95pct": false,
+    "passed": false,
+    "zero_bound_range_condition_or_exponent_errors": false
+  },
+  "replay": {
+    "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "prompt_sha256": {
+      "cellular_stress": "c047f1cee3f7bc6e332f69d145935738e117f6854f73cc4d31d23d39f6aadf34",
+      "general_cytotoxicity": "e5979ef74433b52a9b6e3bf0544efcd0b3b71447fffa4d19d5f8381c00e0e49b",
+      "genotoxicity_carcinogenicity": "80f4e7f16701bc577f18da0fb319fac78750205657cd82e49166a833a5f017bc",
+      "human_clinical_toxicity": "e5402338bfca8aa7a597bfe3e03becff78cab2d95907fbcedb87a3b86d906bde",
+      "nonclinical_in_vivo_toxicity": "4d50d3ef38ca17c65861a5882e021a06cb5725f37f5bd0bc4b3376a41deebed9",
+      "off_target_ddi_exposure": "4dc597babc381ea4814204b39cce93f08265164d1fa7c2ddfaf08c37fc3e903a",
+      "organ_specific_toxicity": "91ecad6eaf4dd0fea5d8d484b86c0447370815f7bd53e941d75df5e3d2e7bbba"
+    },
+    "prompt_version": "clintox_measurement_resolution_prompt.v4",
+    "rejected_rows": 0
+  },
+  "version": "clintox_measurement_resolution_gold_replay.v1"
+}

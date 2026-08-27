@@ -158,6 +158,9 @@ class StarlingTaskPolicy:
     assay_transfer_measurement_policy: Path | None = None
     # Stage 01 publishes the canonical endpoint and pre-LLM measurement route.
     measurement_resolution_enabled: bool = False
+    # Task-owned Stage-02 exact (endpoint, unit) decisions.  The shared loader
+    # owns the schema and application; the task owns the scientific entries.
+    exact_unit_mapping_path: Path | None = None
     # When enabled, Stage 02 publishes the frozen row-level reference
     # classification mapping and coverage as a first-class side artifact.
     reference_semantics_enabled: bool = False

@@ -1,0 +1,63 @@
+{
+  "api_base_url": "distillation_default",
+  "assignment_method_counts": {
+    "invalid_response_after_structural_retry": 200
+  },
+  "cleaned_records_path": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "4ed84b48665d35da9e3ab4d016c51bcc92c00aae3efa9f240f941cc14584666b",
+  "endpoint_profile": {
+    "path": "outputs/chembl_tool/tasks/clintox/evidence_library/starling_normalized_v7/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "68848f4f69ee48ee0cdb646802cf4af82c835ee52c139ca2cdca8eec5a6f2130",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "generation_version": "measurement_resolution_generation.v5",
+  "inference": {
+    "max_completion_tokens": 65536,
+    "reasoning_mode": "low",
+    "temperature": 1.0
+  },
+  "mapping_path": "tools/chembl_tool/tasks/clintox/data_processing/measurement_resolution_v1/gold_replay_clean_v8_gpt.parquet",
+  "mapping_rows": 200,
+  "mapping_sha256": "da53c141ab48525eef8f0fc111ad8b902b16b74872bc269d8fb5065f2e8edde3",
+  "mapping_version": "clintox_measurement_resolution.v1",
+  "model": "gpt-5.4-mini",
+  "prompt": {
+    "batch_size": 10,
+    "prompt_version": "clintox_measurement_resolution_prompt.v8",
+    "rendered_sha256": {
+      "cellular_stress": "427786e679a84960af6f181099e25a44b142bb79981fae685c1e74b8ea6c366d",
+      "general_cytotoxicity": "5b5fdf6ed44ab1a92f258ce0f1ffed4d473653b178500a638bd2a6b5e12b4484",
+      "genotoxicity_carcinogenicity": "6511133400e4a4234a74e8c5987d25cf157ebd31bba3b66ef72e62ecbf008162",
+      "human_clinical_toxicity": "fb552e2383b44d4ddd51e8268595431ef20861e88f7c24cf988950ae0953d322",
+      "nonclinical_in_vivo_toxicity": "4b9999d5c57682146d42a9343acfdeb733e0440454e88f95715c97fd1c99b2b9",
+      "off_target_ddi_exposure": "cc32b7ff66b3309819a3dd4afb5a722d36252274f655fead2a1636585656ce92",
+      "organ_specific_toxicity": "68d4d5bb5ccbd3d9414128c241f2d9c58d7dbbb452c7c8ad7054306fe4cc2183"
+    },
+    "source_instructions_sha256": {
+      "cellular_stress": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "general_cytotoxicity": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "genotoxicity_carcinogenicity": "7b61776c06174f199682eb22414a18d2a8c1132de3a71d4b809d33156ea3fe75",
+      "human_clinical_toxicity": "ce12db4b17ce3f5789eb803410d536b3f3dbdfd203af59d96a7499ff1fce27a9",
+      "nonclinical_in_vivo_toxicity": "ec9dee88ecbc3f9a704a6c9b9308aa20618f83fd85e2b2d2041495287dd3332c",
+      "off_target_ddi_exposure": "c8f893e3edda8ec890e6a38498c6a04d0bf9ae5d9caccb289a9f22037619cb11",
+      "organ_specific_toxicity": "982fa068cf9aca900290245b81c3317336fccfbdb78929da535f199df4ff0ba3"
+    },
+    "task_instructions_sha256": "f96f79e73022771e7513a72fb6354f69364d890b82b458fd68b955ae9faab7d2",
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/clintox/measurement_resolution_templates/measurement_resolution_v1.jinja",
+    "template_sha256": "5b3533d2ecb1fb258af8190244a0da8ee32c74dc5bae14b0b48d80218cc42f72"
+  },
+  "rejected_rows": 0,
+  "routing_version": "starling_measurement_routing.v3",
+  "status_counts": {
+    "ok": 0,
+    "relative": 0,
+    "unavailable": 0,
+    "unsure": 200
+  },
+  "task_id": "clintox",
+  "validations": {
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

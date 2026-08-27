@@ -14,6 +14,9 @@ from tools.chembl_tool.common.starling.canonicalization_v7 import (
     SourceProfile,
     StarlingRecordContract,
 )
+from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+    EXACT_UNIT_MAPPING_VERSION,
+)
 from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers.reconciliation import (
     MAPPING_VERSION,
 )
@@ -83,13 +86,13 @@ def _base_dimensions(
             SOURCE_RULE_PAIR_PRODUCER_IDS[source_id],
             measurement_inputs,
             "deterministic_rule",
-            "starling_exact_measurement_units.v1",
+            EXACT_UNIT_MAPPING_VERSION,
         ),
         CanonicalProducerSpec(
             SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id],
             measurement_inputs,
             "frozen_extraction",
-            "starling_exact_measurement_units.v1",
+            EXACT_UNIT_MAPPING_VERSION,
         ),
     )
     output = [

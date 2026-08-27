@@ -32,8 +32,8 @@ CANONICAL_ROOT = Path(
 AACT_SOURCE_PATH = SOURCE_ROOT / "aacttox.csv.gz"
 COMPARATOR_SOURCE_PATH = SOURCE_ROOT / "sweetfda_approved_processed.csv.gz"
 REFERENCE_SOURCE_PATH = SOURCE_ROOT / "clintox.csv.gz"
-STARLING_BASE_PATH = Path(
-    "data/starling_data/clintox/clintox_base_v1/extractions.parquet"
+SEND_V2_HUMAN_PATH = Path(
+    "data/starling_data/clintox/send_v2/human_clinical_toxicity/extractions.parquet"
 )
 
 SOURCE_SHA256 = {
@@ -41,8 +41,8 @@ SOURCE_SHA256 = {
     "sweetfda_approved_processed.csv.gz": "d79a9f6e7911241086ebcff50dcb4c86b547fb8005d1e19ce1f4617ed0cfafcb",
     "clintox.csv.gz": "2ee7050a830fe9ae7a8218e6577fa6f54284947034ff904b6d8204e993a297cc",
 }
-STARLING_BASE_SHA256 = (
-    "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285"
+SEND_V2_HUMAN_SHA256 = (
+    "e09d712cc87a12c0e72195b5050c8b82bc5e4908b84bd38f43a4a00753f4b157"
 )
 
 
@@ -262,8 +262,8 @@ def build_starling_coverage(
                 "molecule_identity_key": identity_key,
                 "drug": parent["drug"],
                 "Y": int(parent["Y"]),
-                "has_clintox_base_evidence": count > 0,
-                "clintox_base_source_row_count": count,
+                "has_human_clinical_toxicity_evidence": count > 0,
+                "human_clinical_toxicity_source_row_count": count,
             }
         )
     coverage = pd.DataFrame(rows)
@@ -272,8 +272,8 @@ def build_starling_coverage(
         subset = coverage[coverage["Y"] == label]
         by_label[str(label)] = {
             "n_parents": len(subset),
-            "n_with_clintox_base_evidence": int(
-                subset["has_clintox_base_evidence"].sum()
+            "n_with_human_clinical_toxicity_evidence": int(
+                subset["has_human_clinical_toxicity_evidence"].sum()
             ),
         }
     return {
@@ -282,8 +282,8 @@ def build_starling_coverage(
             "n_unique_starling_source_smiles": len(raw_counts),
             "n_invalid_unique_starling_source_smiles": invalid_unique,
             "n_starling_parent_identities": len(parent_row_counts),
-            "n_benchmark_parents_with_clintox_base_evidence": int(
-                coverage["has_clintox_base_evidence"].sum()
+            "n_benchmark_parents_with_human_clinical_toxicity_evidence": int(
+                coverage["has_human_clinical_toxicity_evidence"].sum()
             ),
             "coverage_by_label": by_label,
             "starling_rows_used_to_create_labels": 0,
@@ -388,8 +388,8 @@ __all__ = [
     "REFERENCE_SOURCE_PATH",
     "SOURCE_ROOT",
     "SOURCE_SHA256",
-    "STARLING_BASE_PATH",
-    "STARLING_BASE_SHA256",
+    "SEND_V2_HUMAN_PATH",
+    "SEND_V2_HUMAN_SHA256",
     "TASK_NAME",
     "build_canonical_frames",
     "build_starling_coverage",

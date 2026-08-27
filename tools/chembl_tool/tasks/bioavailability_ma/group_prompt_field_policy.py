@@ -96,6 +96,11 @@ DEFAULT_POLICY: dict[str, list[FieldSpec]] = {
 # Key by the neighbor `evidence_source` string. Each value is a partial policy:
 # only the record types you list override DEFAULT_POLICY; others fall back.
 _SOURCE_CONTRACT_RECORD_FIELDS = [
+    FieldSpec(
+        "resolved_measurement_display",
+        "resolved measurement (extracted scale)",
+        include=True,
+    ),
     FieldSpec("source_contract", "source-column contract", include=True),
     FieldSpec("source_fields", "source record", include=True),
 ]

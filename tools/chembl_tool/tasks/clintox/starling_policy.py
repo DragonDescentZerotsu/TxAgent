@@ -6,6 +6,7 @@ import argparse
 import json
 from collections import Counter, defaultdict
 from collections.abc import Mapping
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,9 @@ from tools.chembl_tool.common.starling.normalization.measurements import (
 from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
     clean_source_values,
 )
+from tools.chembl_tool.common.starling.measurement_routing import (
+    attach_stage1_routes,
+)
 from tools.chembl_tool.common.starling.normalization.task_policy import (
     NormalizationHooks,
     StageDocuments,
@@ -27,12 +31,6 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
 from tools.chembl_tool.common.starling.reference_semantics import (
     REFERENCE_SCOPE_ABSOLUTE,
     REFERENCE_SCOPE_UNKNOWN,
-)
-from tools.chembl_tool.tasks.clintox.clintox_base_benchmark import (
-    ADAPTER_VERSION as DIRECT_ADAPTER_VERSION,
-)
-from tools.chembl_tool.tasks.clintox.clintox_base_benchmark import (
-    is_direct_gold_scope,
 )
 from tools.chembl_tool.tasks.clintox.starling_categorical_response import (
     CATEGORICAL_RESPONSE_VERSION,
@@ -72,7 +70,7 @@ from tools.chembl_tool.tasks.clintox.starling_reference_semantics import (
 )
 from tools.chembl_tool.tasks.clintox.starling_source import (
     DEFAULT_DATA_ROOT,
-    DIRECT_SOURCE_ID,
+    HUMAN_CLINICAL_SOURCE_ID,
     SOURCE_RELEASE,
 )
 
@@ -83,7 +81,7 @@ DEFAULT_OUT_DIR = (
     "outputs/chembl_tool/tasks/clintox/evidence_library/starling_normalized_v7"
 )
 DEFAULT_BENCHMARK_SPLIT_ROOT = (
-    "data/processed_starling_record_supported_v2/ClinTox_Human_Toxicity"
+    "data/processed_clintox_clinical_trial_failure_v1/ClinTox"
 )
 
 SPACING_AND_SPELLING_VERSION = "clintox_endpoint_orthography.v1"
@@ -96,9 +94,9 @@ ASSAY_TRANSFER_MEASUREMENT_POLICY = (
 )
 
 EXPECTED_ENDPOINT_INVENTORIES = {
-    DIRECT_SOURCE_ID: {
-        "count": 1,
-        "sha256": "de0ed95fe5fd0b8b7c5989fb1cbad43db97a72d274d62f7d07bfdd5785484a54",
+    HUMAN_CLINICAL_SOURCE_ID: {
+        "count": 597,
+        "sha256": "e76a13050251dc6f45265380f388980b28cd4a5e9d91ab0de638433297822750",
     },
     "nonclinical_in_vivo_toxicity": {
         "count": 175,
@@ -121,19 +119,20 @@ EXPECTED_ENDPOINT_INVENTORIES = {
         "sha256": "30bbfac0302218f2bb6ef580bde3019d9f4f398fbb7ce32e3fdd73cc8b487653",
     },
     "off_target_ddi_exposure": {
-        "count": 109_612,
-        "sha256": "0bda2aea1bd98df54d101542096160ec151fbd7a0ea7ba6a3b3d8a1918c658e6",
+        "count": 147_512,
+        "sha256": "6eb7c98473f2a05e2ecff483d75a4c551fd9200a077df37d099a8cdd3f9eed74",
     },
 }
 
 _CONTEXT_OUTPUTS = {
-    DIRECT_SOURCE_ID: {"canonical_clinical_context": "clinical_context"},
+    HUMAN_CLINICAL_SOURCE_ID: {"canonical_clinical_context": "clinical_context"},
     "nonclinical_in_vivo_toxicity": {
         "canonical_animal_context": "animal_context",
         "canonical_exposure_context": "exposure_context",
     },
     "organ_specific_toxicity": {
         "canonical_organ_system": "organ_system",
+        "canonical_effect_status": "effect_status",
         "canonical_evidence_context": "evidence_context",
         "canonical_biological_system": "biological_system",
     },
@@ -154,7 +153,7 @@ _CONTEXT_OUTPUTS = {
     },
     "off_target_ddi_exposure": {
         "canonical_evidence_type": "evidence_type",
-        "canonical_result_metric": "result_metric",
+        "canonical_target": "target_or_endpoint",
         "canonical_assay_context": "assay_context",
     },
 }
@@ -164,7 +163,7 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--benchmark-split-root",
         default=DEFAULT_BENCHMARK_SPLIT_ROOT,
-        help="ClinTox record_supported_v2 task root used only by legacy Stage 06-09 builds.",
+        help="ClinTox clinical_trial_failure_v1 root used by post-Stage-1 builds.",
     )
 
 
@@ -187,9 +186,7 @@ def endpoint_inventory(
         endpoint_inventory_hash,
     )
 
-    values = sorted(
-        set(["human_clinical_toxicity"] if source_id == DIRECT_SOURCE_ID else endpoints)
-    )
+    values = sorted(set(endpoints))
     actual = {"count": len(values), "sha256": endpoint_inventory_hash(values)}
     expected = EXPECTED_ENDPOINT_INVENTORIES[source_id]
     if strict and actual != expected:
@@ -212,16 +209,14 @@ def family_assignment(
     record: Mapping[str, Any] | None = None,
 ) -> FamilyAssignment | None:
     del endpoint_name
-    row = record or {}
-    if source_id == DIRECT_SOURCE_ID:
-        if not _is_direct_gold_record(row):
-            return None
+    del record
+    if source_id == HUMAN_CLINICAL_SOURCE_ID:
         return FamilyAssignment(
-            "Direct.human_clinical_toxicity",
-            "Direct",
+            "Clinical.clinical_human_safety",
+            "Clinical",
             "clinical_human_safety",
-            "direct_outcome",
-            "human clinical toxicity",
+            "context_modifier",
+            "human clinical toxicity and safety",
         )
     families = {
         "nonclinical_in_vivo_toxicity": "in_vivo_toxicology",
@@ -240,20 +235,6 @@ def family_assignment(
         family,
         "mechanistic_factor",
         family.replace("_", " "),
-    )
-
-
-def _is_direct_gold_record(record: Mapping[str, Any]) -> bool:
-    return is_direct_gold_scope(
-        {
-            "toxicity_category": record.get("measurement_text"),
-            "toxicity_outcome": record.get("toxicity_outcome"),
-            "needs_more_context": record.get("needs_more_context"),
-            "SMILES": record.get("source_smiles") or record.get("smiles"),
-            "support_text": record.get("support_text"),
-            "pmid": record.get("pmid"),
-            "extraction_id": record.get("source_record_id"),
-        }
     )
 
 
@@ -389,7 +370,7 @@ def stage_documents(
 ) -> StageDocuments:
     del args, hooks
     vocabulary = _vocabulary_audit(normalized)
-    direct_source_audit = _direct_source_audit(normalized)
+    clinical_source_audit = _clinical_source_audit(normalized)
     semantics_audit = measurement_semantics_audit(normalized)
     reference_manifest = reference_semantics_manifest(normalized)
     output_fields = sorted(
@@ -399,17 +380,15 @@ def stage_documents(
     return StageDocuments(
         validity_policy={
             "version": VALIDITY_POLICY_VERSION,
-            "benchmark_status": "candidate_pending_qa",
-            "promotion_gate": "frozen 360-row category-stratified manual QA",
+            "benchmark_lineage": "clinical_trial_failure_v1",
             "qualifying_conditions": {
                 "status": "unavailable_in_source_schema",
                 "effect": "no qualifying-condition exclusion can be applied",
             },
-            "direct_source_scope_adapter": DIRECT_ADAPTER_VERSION,
-            "direct_source_non_gold_rows": "retained but not retrieval eligible",
+            "human_clinical_toxicity_role": "indirect",
             "controlled_categorical_response": CATEGORICAL_RESPONSE_POLICY.manifest(),
             "controlled_vocabulary_audit": vocabulary,
-            "direct_source_audit": direct_source_audit,
+            "human_clinical_source_audit": clinical_source_audit,
             "reference_semantics": {
                 "version": REFERENCE_SEMANTICS_VERSION,
                 "ambiguous_values": "unknown and excluded from pair buckets",
@@ -434,8 +413,8 @@ def stage_documents(
             "global_identifier_not_persisted": "global_identifier" not in persisted_columns,
             "off_schema_values_preserved_not_rewritten": True,
             "off_schema_values_excluded_from_pair_buckets": True,
-            "direct_retrieval_uses_gold_adapter_scope": True,
-            "direct_source_counts_match_frozen_base": direct_source_audit[
+            "human_clinical_source_is_not_gold": True,
+            "human_clinical_source_count_matches_delivery": clinical_source_audit[
                 "frozen_count_validation"
             ],
             "reference_semantics_present": all(
@@ -500,29 +479,19 @@ def _vocabulary_audit(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _direct_source_audit(records: list[dict[str, Any]]) -> dict[str, Any]:
-    base = [row for row in records if row.get("source_id") == DIRECT_SOURCE_ID]
-    scoped = [
-        row
-        for row in base
-        if row.get("group_id") == "Direct.human_clinical_toxicity"
+def _clinical_source_audit(records: list[dict[str, Any]]) -> dict[str, Any]:
+    base = [
+        row for row in records if row.get("source_id") == HUMAN_CLINICAL_SOURCE_ID
     ]
-    resolved = [row for row in scoped if row.get("canonical_smiles")]
-    full_source = len(base) == EXPECTED_SOURCE_ROWS[DIRECT_SOURCE_ID]
-    matches = (
-        len(scoped) == 511_805 and len(resolved) == 510_620
-        if full_source
-        else True
-    )
+    resolved = [row for row in base if row.get("canonical_smiles")]
+    full_source = len(base) == EXPECTED_SOURCE_ROWS[HUMAN_CLINICAL_SOURCE_ID]
     return {
         "source_rows": len(base),
-        "gold_adapter_scope_rows": len(scoped),
-        "gold_adapter_scope_resolved_structure_rows": len(resolved),
-        "expected_full_source_rows": EXPECTED_SOURCE_ROWS[DIRECT_SOURCE_ID],
-        "expected_full_gold_adapter_scope_rows": 511_805,
-        "expected_full_resolved_structure_rows": 510_620,
+        "source_role": "indirect",
+        "resolved_structure_rows": len(resolved),
+        "expected_full_source_rows": EXPECTED_SOURCE_ROWS[HUMAN_CLINICAL_SOURCE_ID],
         "bounded_build": not full_source,
-        "frozen_count_validation": matches,
+        "frozen_count_validation": not full_source or len(base) == 584_307,
     }
 
 
@@ -545,11 +514,11 @@ def _endpoint_registry(records: list[dict[str, Any]]) -> dict[str, Any]:
 
 def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
     versions = {
-        "benchmark_candidate_status": "candidate_pending_qa",
+        "benchmark_lineage": "clinical_trial_failure_v1",
         "source_release": SOURCE_RELEASE,
         "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
         "context_mapping_version": EXACT_CONTEXT_MAPPING_VERSION,
-        "direct_scope_adapter_version": DIRECT_ADAPTER_VERSION,
+        "human_clinical_toxicity_role": "indirect",
         "reference_semantics_version": REFERENCE_SEMANTICS_VERSION,
         "measurement_semantics_version": MEASUREMENT_SEMANTICS_VERSION,
         "spacing_and_spelling_version": SPACING_AND_SPELLING_VERSION,
@@ -584,7 +553,11 @@ def census_extras(records: list[dict[str, Any]]) -> dict[str, Any]:
 
 def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
     del args
-    return clean_source_values(records, task_id=TASK_ID)
+    result = clean_source_values(records, task_id=TASK_ID)
+    return replace(
+        result,
+        records=attach_stage1_routes(result.records, task=TASK_ID),
+    )
 
 
 _DATA_ROOT = Path(DEFAULT_STARLING_DATA_DIR)
@@ -624,6 +597,11 @@ POLICY = StarlingTaskPolicy(
         "toxicity_outcome",
         "needs_more_context",
         "pmid",
+    ),
+    measurement_resolution_enabled=True,
+    exact_unit_mapping_path=(
+        Path(__file__).parent
+        / "data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json"
     ),
 )
 

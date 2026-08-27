@@ -378,13 +378,13 @@ def test_required_known_dimension_excludes_unknown_without_dropping_record() -> 
     }
 
 
-def test_semantic_pair_bucket_uses_effective_unit_without_enabling_transfer() -> None:
+def test_semantic_pair_bucket_uses_canonical_unit_without_enabling_transfer() -> None:
     records = [
         {
             "canonical_record_id": "free-text",
             "source_id": "source",
             "canonical_endpoint_name": "outcome",
-            "canonical_unit_text": None,
+            "canonical_unit_text": "free-text",
             "canonicalization_status": "non_scalar_measurement",
             "canonical_smiles": "CCO",
             "retrieval_eligible": True,
@@ -394,7 +394,7 @@ def test_semantic_pair_bucket_uses_effective_unit_without_enabling_transfer() ->
             "canonical_record_id": "relative",
             "source_id": "source",
             "canonical_endpoint_name": "outcome",
-            "canonical_unit_text": None,
+            "canonical_unit_text": "relative-scalar",
             "canonicalization_status": "missing_canonical_unit",
             "canonical_smiles": "CCN",
             "retrieval_eligible": True,
@@ -404,7 +404,7 @@ def test_semantic_pair_bucket_uses_effective_unit_without_enabling_transfer() ->
             "canonical_record_id": "unresolved",
             "source_id": "source",
             "canonical_endpoint_name": "outcome",
-            "canonical_unit_text": None,
+            "canonical_unit_text": "unresolved-scalar",
             "canonicalization_status": "missing_canonical_unit",
             "canonical_smiles": "CCC",
             "retrieval_eligible": True,
@@ -414,7 +414,7 @@ def test_semantic_pair_bucket_uses_effective_unit_without_enabling_transfer() ->
             "canonical_record_id": "no-endpoint",
             "source_id": "source",
             "canonical_endpoint_name": None,
-            "canonical_unit_text": None,
+            "canonical_unit_text": "free-text",
             "canonicalization_status": "non_scalar_measurement",
             "canonical_smiles": "CCCC",
             "retrieval_eligible": False,
@@ -435,7 +435,7 @@ def test_semantic_pair_bucket_uses_effective_unit_without_enabling_transfer() ->
         source_required_fields={"source": ()},
         semantic_pair_bucket_sources=("source",),
     )
-    assert [row["pair_bucket_unit_text"] for row in rows] == [
+    assert [row["canonical_unit_text"] for row in rows] == [
         "free-text",
         "relative-scalar",
         "unresolved-scalar",

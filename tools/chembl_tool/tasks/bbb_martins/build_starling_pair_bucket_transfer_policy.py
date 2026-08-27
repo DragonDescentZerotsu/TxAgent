@@ -101,7 +101,8 @@ def build_pair_bucket_transfer_policy(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--records", default=str(DEFAULT_NORMALIZED_DIR / "03_records/records.parquet")
+        "--records",
+        default=str(DEFAULT_NORMALIZED_DIR / "06_collapsed_records/records.parquet"),
     )
     parser.add_argument(
         "--pair-bucket-records",
@@ -116,7 +117,7 @@ def main(argv: list[str] | None = None) -> int:
         default=str(DEFAULT_NORMALIZED_DIR / "02_canonicalized/auxiliary_mapping_manifest.json"),
     )
     parser.add_argument(
-        "--out-dir", default=str(DEFAULT_NORMALIZED_DIR / "05_distance_calibration")
+        "--out-dir", default=str(DEFAULT_NORMALIZED_DIR / "07_distance_calibration")
     )
     parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args(argv)

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from dataclasses import replace
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
@@ -14,7 +16,7 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
     StarlingTaskPolicy,
 )
 from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
-    DEFAULT_EXACT_UNIT_MAPPING,
+    EXACT_UNIT_MAPPING_VERSION,
     RESOLUTION_APPLY_VERSION,
 )
 from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
@@ -105,10 +107,31 @@ DEFAULT_STARLING_DATA_DIR = "data/starling_data/bbb_martins"
 DEFAULT_OUT_DIR = (
     "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7"
 )
+DEFAULT_SOURCE_VALUE_REPAIRS = (
+    Path(__file__).parent
+    / "data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl"
+)
+_KINETIC_ASSIGNMENT = re.compile(
+    r"(?<![A-Za-z0-9])(?P<symbol>K_?IN|kout|k1k2|k13|k10|k01|"
+    r"k[123](?:\*)?|ki|k\*)"
+    r"(?![A-Za-z0-9])[^;\n]{0,80}?(?:=|\bis\b)\s*"
+    r"(?P<value>[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)",
+    flags=re.IGNORECASE,
+)
+_KINETIC_SYMBOL = re.compile(
+    r"(?<![A-Za-z0-9])(?:K_?IN|kout|k1k2|k13|k10|k01|"
+    r"k[123](?:\*)?|ki|k\*)(?![A-Za-z0-9])",
+    flags=re.IGNORECASE,
+)
 
 
 def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
-    result = clean_source_values(records, task_id=TASK_ID)
+    result = clean_source_values(
+        records,
+        task_id=TASK_ID,
+        reviewed_repairs_path=DEFAULT_SOURCE_VALUE_REPAIRS,
+        require_scientific_scale_review=True,
+    )
     endpoint_mapping = Path(args.direct_endpoint_mapping)
     endpoint_normalizer = EndpointNormalizer(endpoint_mapping)
 
@@ -269,6 +292,28 @@ def _revalidate_assay_transfer_record(
         {**record, **validity}
     )
     return {**validity, **reference}
+
+
+def _kinetic_symbol(record: dict[str, Any]) -> str | None:
+    if (
+        record.get("source_id") != "influx_transport"
+        or record.get("canonical_endpoint") != "blood_to_brain_transport"
+        or record.get("canonical_unit") != "/min"
+    ):
+        return None
+    try:
+        value = Decimal(str(record["measurement_resolution_input_measurement"]))
+    except (InvalidOperation, KeyError, TypeError):
+        return None
+    text = str(record.get("measurement_text") or "")
+    for match in _KINETIC_ASSIGNMENT.finditer(text):
+        if Decimal(match.group("value")) == value:
+            return match.group("symbol").casefold().replace("_", "")
+    symbols = {
+        match.group(0).casefold().replace("_", "")
+        for match in _KINETIC_SYMBOL.finditer(text)
+    }
+    return next(iter(symbols)) if len(symbols) == 1 else None
 
 
 def attach_source_columns(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -484,10 +529,10 @@ def _enrich_record(
                 "exact_measurement_unit_map" if unit_decided else "none"
             ),
             "canonical_unit_rule_id": (
-                "starling_exact_measurement_units.v1" if unit_decided else None
+                EXACT_UNIT_MAPPING_VERSION if unit_decided else None
             ),
             "canonical_unit_policy_version": (
-                "starling_exact_measurement_units.v1"
+                EXACT_UNIT_MAPPING_VERSION
                 if unit_decided
                 else RESOLUTION_APPLY_VERSION
             ),
@@ -541,12 +586,12 @@ def _enrich_record(
                 else "none"
             ),
             "canonical_semantics_rule_id": (
-                "starling_exact_measurement_units.v1"
+                EXACT_UNIT_MAPPING_VERSION
                 if unit_decided
                 else RESOLUTION_APPLY_VERSION
             ),
             "canonical_semantics_policy_version": (
-                "starling_exact_measurement_units.v1"
+                EXACT_UNIT_MAPPING_VERSION
                 if unit_decided
                 else RESOLUTION_APPLY_VERSION
             ),
@@ -608,6 +653,7 @@ def _enrich_record(
         **producer_fields,
         **validity,
         **reference,
+        "canonical_kinetic_symbol": _kinetic_symbol(enriched),
     }
 
 
@@ -632,17 +678,20 @@ POLICY = StarlingTaskPolicy(
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
     scientific_assets=(
-        DEFAULT_EXACT_UNIT_MAPPING,
         DEFAULT_SEMANTICS_PATH,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         Path(__file__).parent
-        / "data_processing/assay_transfer_measurements_v1/policy.json",
+        / "data_processing/assay_transfer_measurements_v2/policy.json",
     ),
     assay_transfer_measurement_policy=(
         Path(__file__).parent
-        / "data_processing/assay_transfer_measurements_v1/policy.json"
+        / "data_processing/assay_transfer_measurements_v2/policy.json"
     ),
     measurement_resolution_enabled=True,
+    exact_unit_mapping_path=(
+        Path(__file__).parent
+        / "data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json"
+    ),
     reference_semantics_enabled=True,
     endpoint_identity_required_sources=(
         "passive_permeability",

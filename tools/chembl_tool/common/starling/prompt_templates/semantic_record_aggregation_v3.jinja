@@ -1,0 +1,36 @@
+Synthesize the experimental records below into one concise, self-contained summary.
+
+Use only the supplied evidence. The summary must identify the tested compound
+when available, the measured endpoint, the main experimental result, and any
+context needed to understand meaningful agreement, variation, or disagreement.
+Dose, formulation, species, assay conditions, timing, comparators, and other
+experimental context may be included when they help explain the findings.
+
+Do not predict an unreported result, invent or average numerical values, or
+mechanically restate every record. The summary must make sense without the
+original records or any bucket metadata. Keep it concise, but there is no fixed
+word limit. The summary must contain only the scientific evidence: never mention
+the direct-label task, the informativeness decision, missing direct-label data,
+or whether the evidence establishes or predicts the direct label.
+
+Direct-label task:
+{{ direct_label_definition }}
+
+Set direct_label_informativeness to "informative" only when these experimental
+results meaningfully help determine that direct label in either direction. Set
+it to "uninformative" when the evidence is indirect, incomplete, conflicting,
+out of scope, or unable to meaningfully constrain the label. Missing information
+is uncertainty, not negative evidence. Do not include this judgment in the
+scientific summary.
+
+Return exactly one JSON object with these two fields and no others:
+{
+  "summary": "the self-contained experimental synthesis",
+  "direct_label_informativeness": "informative or uninformative"
+}
+
+Experimental records:
+{% for record in records %}Record {{ loop.index }}:
+{% for field in record.fields %}{{ field.label }}: {{ field.value }}
+{% endfor %}
+{% endfor %}

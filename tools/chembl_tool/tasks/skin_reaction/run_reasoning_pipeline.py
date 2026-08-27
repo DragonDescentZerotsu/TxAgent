@@ -870,6 +870,11 @@ def _selected_assay_record(
     example = {
         "source_contract": selected.get("source_contract"),
         "source_fields": selected.get("source_fields"),
+        **(
+            {"resolved_measurement_display": selected["resolved_measurement_display"]}
+            if selected.get("resolved_measurement_display")
+            else {}
+        ),
     }
     return evidence_for_llm(
         {

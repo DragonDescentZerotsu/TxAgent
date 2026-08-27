@@ -34,18 +34,21 @@
     "1": 84
   },
   "n_train_scaffolds": 669,
+  "n_train_voting_records": 1207,
   "n_valid": 142,
   "valid_label_counts": {
     "0": 132,
     "1": 10
   },
   "n_valid_scaffolds": 57,
+  "n_valid_voting_records": 150,
   "n_test": 142,
   "test_label_counts": {
     "0": 132,
     "1": 10
   },
   "n_test_scaffolds": 43,
+  "n_test_voting_records": 148,
   "paths": {
     "train": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/train.jsonl",
     "valid": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/valid.jsonl",
@@ -53,6 +56,7 @@
     "train_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/train_molecule_labels.jsonl",
     "valid_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/valid_molecule_labels.jsonl",
     "test_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/test_molecule_labels.jsonl",
-    "heldout_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/heldout_molecule_labels.jsonl"
+    "heldout_molecule_labels": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/heldout_molecule_labels.jsonl",
+    "voting_records": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/voting_records.jsonl"
   }
 }

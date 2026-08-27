@@ -324,7 +324,7 @@ def test_compound_measurements_remain_one_intact_non_scalar_record(measurement):
     ) == []
 
 
-def test_normalization_accepts_qualitative_records_and_deduplicates_within_source():
+def test_normalization_accepts_qualitative_records_without_row_deduplication():
     rows = [
         {
             "smiles": "CCO",
@@ -376,13 +376,13 @@ def test_normalization_accepts_qualitative_records_and_deduplicates_within_sourc
     )
 
     assert result.stats["n_input_rows"] == 3
-    assert result.stats["n_records"] == 2
-    assert result.stats["n_duplicate_records_removed"] == 1
+    assert result.stats["n_records"] == 3
+    assert result.stats["n_duplicate_records_removed"] == 0
     qualitative = next(row for row in result.records if row["canonical_smiles"] == "CCO")
     assert qualitative["canonical_measurement"] == "high"
     assert qualitative["canonical_unit"] == "ng/mL"
     assert qualitative["is_absolute_and_continuous"] is False
-    assert qualitative["duplicate_group_size"] == 2
+    assert qualitative["duplicate_group_size"] == 1
     assert "kind" not in qualitative
     assert "value" not in qualitative
     assert "unit" not in qualitative

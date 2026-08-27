@@ -169,9 +169,12 @@ class OpenAICompatibleClient:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
-            "max_tokens": self.max_tokens,
             "response_format": {"type": "json_object"},
         }
+        token_parameter = (
+            "max_completion_tokens" if self.model.startswith("gpt-5") else "max_tokens"
+        )
+        kwargs[token_parameter] = self.max_tokens
         if self.temperature is not None:
             kwargs["temperature"] = self.temperature
         if self.reasoning_effort:

@@ -1,6 +1,6 @@
 # 冻结的全量实验结果
 
-主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-22。
+主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-26。
 
 本文件主体记录旧 TDC test/valid matrix。当前 Starling-held-out random/scaffold 的 frozen data 决策、
 formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind 进度、Skin trace audit
@@ -60,6 +60,99 @@ train-only scaffold CV/OOF 冻结，KNN 固定 `k=3`：
 | ClinTox | **0.6520** | 0.5744 | 0.5744 | **0.6520** | **0.6520** |
 
 完整 protocol、OOF thresholds、subgroup diagnosis 和 artifact roots 见 `baselines/minimol/README.md`。
+
+## E23 collapsed-assay Morgan neighbor validation (2026-08-26)
+
+This validation-only diagnostic uses the current scaffold splits for BBB_Martins, Bioavailability_Ma, and
+Skin_Reaction. Each numerical feature is one valid, assay-transfer-eligible indirect Stage 06
+`pair_bucket_key`; values use train-only standardization with a separate presence feature. Query-self uses the
+query molecule's own vector. Neighbor conditions use the unweighted mean of the top-K Morgan train vectors;
+the combined condition adds the neighbors' mean benchmark train label. The label-only row exactly reproduces
+traditional Morgan KNN. Train features use leave-one-out neighbors, all validation rows remain in the primary
+cohort, and no test split was read.
+
+| task | query-self | K | neighbor indirect | indirect + train label | label-only KNN |
+|---|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.4850 | 5 | 0.5604 | **0.6111** | **0.6137** |
+| BBB_Martins | 0.4850 | 10 | **0.5751** | 0.5816 | 0.5544 |
+| BBB_Martins | 0.4850 | 25 | 0.5304 | 0.5889 | 0.4582 |
+| Bioavailability_Ma | 0.5658 | 5 | 0.6098 | **0.6675** | **0.5789** |
+| Bioavailability_Ma | 0.5658 | 10 | 0.5597 | 0.5811 | 0.5258 |
+| Bioavailability_Ma | 0.5658 | 25 | **0.6134** | 0.6346 | 0.5258 |
+| Skin_Reaction | 0.5091 | 5 | 0.4674 | 0.5554 | **0.5141** |
+| Skin_Reaction | 0.5091 | 10 | 0.5267 | 0.5496 | 0.4824 |
+| Skin_Reaction | 0.5091 | 25 | **0.5389** | **0.5649** | 0.4998 |
+
+Values are macro-F1; bold marks the best K within each neighbor method and task, not a promoted setting.
+Query-self assay coverage was 7.65%/72.73%/30.61% for BBB/Bioavailability/Skin. The three tasks retained
+366/209/245 validation rows and exposed 148/8,248/855 train-observed assay features. The complete rerun was
+deterministic, and all nine label-only conditions matched `baselines.structure_knn.run` row-for-row. This first
+diagnostic reports all K values without selecting one and does not authorize a formal test run. Artifacts:
+
+```text
+outputs/paper/collapsed_assay_knn_v1/
+```
+
+### L1/L2/random-forest and presence ablation
+
+The frozen feature matrices and Morgan neighbors were reused without rebuilding the data. Balanced logistic
+regression used the same fixed `C=1` with either L2 or L1 regularization; random forest used 100 trees,
+balanced class weights, `max_features=sqrt`, and seed 0. Each model was evaluated with values only and with
+the assay-presence half of the vector. The table shows the descriptive best validation macro-F1 over the
+reported surfaces and K values for each model; it is not a selection result.
+
+| task | L2 best | L1 best | random forest best |
+|---|---:|---:|---:|
+| BBB_Martins | 0.6111, combined K=5 + presence | 0.6117, combined K=5 values only | **0.6223**, indirect K=10 + presence |
+| Bioavailability_Ma | **0.6675**, combined K=5 + presence | 0.6560, combined K=5 values only | 0.6446, indirect K=5 values only |
+| Skin_Reaction | 0.5710, combined K=25 values only | **0.5799**, combined K=25 + presence | 0.5695, combined K=25 + presence |
+
+Across the 21 matched task/surface/K comparisons, adding presence increased macro-F1 in 18/21 L2 rows
+(mean delta +0.0211), 13/21 L1 rows (+0.0057), and 11/21 random-forest rows (+0.0117). L1 was effectively
+tied with L2 for values-only inputs (mean L1-minus-L2 delta +0.0008; 10/21 wins), but was lower with presence
+(mean -0.0146; 7/21 wins). Random-forest presence effects were unstable: its delta ranged from -0.0823 to
++0.2497. These are unweighted descriptive averages across heterogeneous tasks and conditions, not uncertainty
+estimates. All 126 aggregate rows were reproduced exactly, L2-with-presence matched the original experiment,
+and no test split was read. Full condition-level artifacts:
+
+```text
+outputs/paper/collapsed_assay_model_ablation_v1/
+```
+
+### Train-only four-fold K selection
+
+K was selected independently for each presence-enabled learned condition and for direct-label KNN from
+`{3,5,10,15,25}`. Selection used pooled macro-F1 over deterministic four-fold train OOF predictions. Each
+fold kept a nonempty Bemis–Murcko scaffold intact, treated each acyclic parent as its own group, refit the
+assay catalog and scaling on fold-reference rows only, and retrieved neighbors only from that reference set.
+Exact ties would choose the smaller K.
+
+| task | indirect L2 | indirect RF | indirect + labels L2 | indirect + labels RF | direct-label KNN |
+|---|---:|---:|---:|---:|---:|
+| BBB_Martins | 25 | 10 | 5 | 10 | 3 |
+| Bioavailability_Ma | 25 | 25 | 25 | 25 | 3 |
+| Skin_Reaction | 25 | 25 | 25 | 10 | 3 |
+
+After writing the train-OOF selections, each learned condition was refit on the complete train split and
+evaluated once on scaffold-valid. Query-self is K-independent. Values below are validation macro-F1; the K in
+parentheses was selected without reading validation.
+
+| task | query self L2 | query self RF | indirect L2 | indirect RF | indirect + labels L2 | indirect + labels RF | direct-label KNN |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.4850 | 0.4758 | 0.5304 (25) | **0.6223 (10)** | 0.6111 (5) | 0.5847 (10) | 0.5896 (3) |
+| Bioavailability_Ma | 0.5658 | 0.5331 | 0.6134 (25) | 0.5920 (25) | **0.6346 (25)** | 0.5637 (25) | 0.5856 (3) |
+| Skin_Reaction | 0.5091 | 0.5194 | 0.5389 (25) | 0.5221 (25) | **0.5649 (25)** | 0.4879 (10) | 0.5201 (3) |
+
+All 6,575 train rows appeared in exactly one OOF fold, all 820 validation rows were retained per condition,
+fold-group overlap was zero, and existing K=5/10/25 results matched the prior ablation. The full OOF curves,
+assignments, selections, predictions, hashes, and report are in:
+
+```text
+outputs/paper/collapsed_assay_k_selection_cv_v1/
+```
+
+This remains a validation-only diagnostic. ClinTox and all test splits were not read, and no formal test run is
+authorized from these results.
 
 同一轮代码整理登记了已完成的 GPT-OSS-120B MiniMol `top_k=5, min_similarity=0` valid sensitivity：
 BBB/Bio/Skin 的 Starling direct macro-F1 为 `0.652832/0.594314/0.599776`，full-flat 为

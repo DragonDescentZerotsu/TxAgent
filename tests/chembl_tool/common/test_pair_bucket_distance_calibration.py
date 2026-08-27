@@ -141,6 +141,35 @@ def test_distance_calibration_worker_count_preserves_exact_entries() -> None:
     assert parallel == serial
 
 
+def test_postcollapse_calibration_uses_twenty_molecules_and_no_variance_probe() -> None:
+    frame = pd.DataFrame(
+        {
+            "pair_bucket_key": "collapsed-bucket",
+            "source_id": "direct_bbb",
+            "measurement_kind": "continuous",
+            "canonical_measurement_scale_id": None,
+            "canonical_category_id": None,
+            "canonical_category_rank": None,
+            "finite_scalar_value": [float(index + 1) for index in range(20)],
+            "canonical_record_id": [f"record-{index:03d}" for index in range(20)],
+            "collapsed_record_id": [f"collapsed-{index:03d}" for index in range(20)],
+        }
+    )
+
+    entry = _build_calibration_entries(
+        frame,
+        spec=BUILD_SPEC,
+        record_contract=BBB_RECORD_CONTRACT,
+        minimum_samples=20,
+        workers=1,
+    )["collapsed-bucket"]
+
+    assert entry["minimum_support_met"] is True
+    assert entry["calibration_valid"] is True
+    assert entry["residual_heterogeneity_gate"]["evaluated"] is False
+    assert entry["residual_heterogeneity_gate"]["candidate_column"] == "__none__"
+
+
 def _continuous_entry(values: list[float], *, key: str = "continuous") -> dict:
     frame = pd.DataFrame(
         {

@@ -828,6 +828,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--max-completion-tokens", type=int, default=MAX_COMPLETION_TOKENS
     )
     parser.add_argument(
+        "--request-timeout-s",
+        type=float,
+        default=600,
+        help="per-attempt timeout for an OpenAI-compatible endpoint",
+    )
+    parser.add_argument(
         "--inventory-only",
         action="store_true",
         help="print the plan and exit before loading the prompt or the ledger",
@@ -963,6 +969,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.api_key_env and not api_key:
             raise SystemExit(f"missing API key environment variable {args.api_key_env}")
         http_client = DefaultHttpxClient(
+            timeout=args.request_timeout_s,
             limits=Limits(
                 max_connections=args.workers,
                 max_keepalive_connections=args.workers,

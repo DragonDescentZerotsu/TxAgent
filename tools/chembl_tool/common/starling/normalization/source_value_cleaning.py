@@ -14,6 +14,7 @@ import re
 from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
@@ -41,6 +42,15 @@ _REPAIR_KEYS = frozenset(
 )
 _DECIMAL_COMMA = re.compile(
     r"(?<![\w,])(?P<integer>[+-]?\d+),(?P<fraction>\d+)(?![\w,])"
+)
+_POWER_OF_TEN_UNIT = re.compile(
+    r"10\s*(?:\^|\*\*)?\s*[+\-−–]?\s*\d+", flags=re.IGNORECASE
+)
+_SCIENTIFIC_VALUE = re.compile(
+    r"(?P<coefficient>[+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*"
+    r"(?:[x×*·]\s*)?10\s*(?:\^|\*\*)?\s*"
+    r"(?P<exponent>[+\-−–]\s*\d+)",
+    flags=re.IGNORECASE,
 )
 _MIXED_TRAILING_DECIMAL_RANGE = re.compile(
     r"^\s*[+-]?\d+\s*(?:-|‐|–|—|−|to)\s*"
@@ -170,6 +180,7 @@ def clean_source_values(
     task_id: str,
     reviewed_repairs_path: str | Path | None = None,
     require_all_reviewed_repairs: bool = True,
+    require_scientific_scale_review: bool = False,
 ) -> SourceValueCleaningResult:
     """Return cleaned records and a complete field-level change audit."""
     repairs = load_reviewed_repairs(reviewed_repairs_path, task_id=task_id)
@@ -177,6 +188,8 @@ def clean_source_values(
     applied_repairs: set[str] = set()
     output: list[dict[str, Any]] = []
     audit: list[dict[str, Any]] = []
+    scale_candidates = 0
+    unresolved_scale_candidates: list[str] = []
 
     for source_record in records:
         # Builder-owned rows are mutable dictionaries.  Reuse them so a full
@@ -199,6 +212,8 @@ def clean_source_values(
             audit.append(
                 _audit_row(record, "measurement_text", before, after, rule_id)
             )
+        scale_candidate = _has_scientific_scale_conflict(record)
+        scale_candidates += scale_candidate
 
         row_key = (
             str(record.get("source_id") or ""),
@@ -235,6 +250,10 @@ def clean_source_values(
                     )
                 )
             applied_repairs.add(repair.repair_id)
+        if scale_candidate and _has_scientific_scale_conflict(record):
+            unresolved_scale_candidates.append(
+                str(record.get("cleaned_record_id") or record.get("source_record_id") or "")
+            )
         if record.get("support_text") != original_support_text:
             raise ValueError(
                 "source-value cleaning modified immutable support_text for "
@@ -246,6 +265,12 @@ def clean_source_values(
     if require_all_reviewed_repairs and unapplied:
         raise ValueError(
             "reviewed source-value repairs were not applied: " + ", ".join(unapplied)
+        )
+    if require_scientific_scale_review and unresolved_scale_candidates:
+        raise ValueError(
+            f"{len(unresolved_scale_candidates)} source value(s) already include the "
+            "scientific factor retained in their unit; add reviewed repairs; "
+            f"first={unresolved_scale_candidates[0]}"
         )
 
     changed_records = {str(row["cleaned_record_id"]) for row in audit}
@@ -261,6 +286,14 @@ def clean_source_values(
         "n_field_changes": len(audit),
         "rule_counts": dict(sorted(rule_counts.items())),
         "field_counts": dict(sorted(field_counts.items())),
+        "scientific_scale_review": {
+            "n_candidates": scale_candidates,
+            "n_resolved_by_reviewed_repair": (
+                scale_candidates - len(unresolved_scale_candidates)
+            ),
+            "n_unresolved": len(unresolved_scale_candidates),
+            "all_candidates_resolved": not unresolved_scale_candidates,
+        },
         "support_text_policy": {
             "version": SUPPORT_TEXT_POLICY_VERSION,
             "mode": "immutable_after_ingestion",
@@ -297,6 +330,27 @@ def _clean_measurement(
         return cleaned, steps
     steps.append((DECIMAL_COMMA_RULE, cleaned, candidate))
     return candidate, steps
+
+
+def _has_scientific_scale_conflict(record: Mapping[str, Any]) -> bool:
+    """Flag a nonzero value that support text already expresses with its unit scale."""
+    unit = str(record.get("unit_text") or "")
+    if _POWER_OF_TEN_UNIT.search(unit) is None:
+        return False
+    try:
+        value = Decimal(str(record.get("measurement_text") or "").strip())
+    except (InvalidOperation, ValueError):
+        return False
+    if not value.is_finite() or value == 0:
+        return False
+    for match in _SCIENTIFIC_VALUE.finditer(str(record.get("support_text") or "")):
+        exponent = match.group("exponent").replace("−", "-").replace("–", "-")
+        expressed = Decimal(match.group("coefficient")).scaleb(
+            int(exponent.replace(" ", ""))
+        )
+        if expressed == value:
+            return True
+    return False
 
 
 def _is_uncorroborated_mixed_range(value: str, support_text: Any) -> bool:

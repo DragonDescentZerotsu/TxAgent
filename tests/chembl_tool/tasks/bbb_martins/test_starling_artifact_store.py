@@ -41,3 +41,26 @@ def test_stage_store_packages_verifies_and_restores(tmp_path):
     assert (restored / "01_cleaned/value.txt").read_text(encoding="utf-8") == "value-0\n"
     assert (restored / "manifest.json").read_text(encoding="utf-8") == '{"complete": true}\n'
     verify_local(profile, local_root=restored)
+
+
+def test_repack_drops_legacy_stages_outside_the_current_profile(tmp_path):
+    local = tmp_path / "local"
+    tracked = tmp_path / "tracked"
+    stage = local / "01_cleaned"
+    stage.mkdir(parents=True)
+    (stage / "value.txt").write_text("current\n", encoding="utf-8")
+    tracked.mkdir()
+    (tracked / "manifest.json").write_text(
+        '{"stages":{"09_audits":{"obsolete":true}}}\n', encoding="utf-8"
+    )
+    profile = StageArtifactStoreProfile(
+        store_version="test.v2",
+        task_id="bbb_martins",
+        stages=("01_cleaned",),
+        local_root=local,
+        tracked_root=tracked,
+    )
+
+    manifest = package_stages(profile)
+
+    assert list(manifest["stages"]) == ["01_cleaned"]

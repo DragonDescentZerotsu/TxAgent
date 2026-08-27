@@ -1,0 +1,96 @@
+{
+  "schema_version": "clintox_stage1_source_inventory.v1",
+  "benchmark_lineage": "clinical_trial_failure_v1",
+  "source_separation": "records remain in their provenance source",
+  "cross_source_deduplication": false,
+  "sources": [
+    {
+      "source_id": "aacttox",
+      "path": "data/starling_data/clintox/tdc_clintox_v1/aacttox.csv.gz",
+      "sha256": "c132ee41f78b44f72c243643fc9e6676feaa6ff44e0178daaa0570525ec9489f",
+      "rows": 112,
+      "label_eligible_rows": 112,
+      "task_relation": "direct_vote"
+    },
+    {
+      "source_id": "sweetfda",
+      "path": "data/starling_data/clintox/tdc_clintox_v1/sweetfda_approved_processed.csv.gz",
+      "sha256": "d79a9f6e7911241086ebcff50dcb4c86b547fb8005d1e19ce1f4617ed0cfafcb",
+      "rows": 1397,
+      "label_eligible_rows": 1393,
+      "task_relation": "direct_vote"
+    },
+    {
+      "source_id": "human_clinical_toxicity",
+      "path": "data/starling_data/clintox/send_v2/human_clinical_toxicity/extractions.parquet",
+      "sha256": "e09d712cc87a12c0e72195b5050c8b82bc5e4908b84bd38f43a4a00753f4b157",
+      "rows": 584307,
+      "task_relation": "indirect",
+      "direct_residual_candidate_rows": 338,
+      "direct_residual_review_status": "pending_manual_review"
+    },
+    {
+      "source_id": "nonclinical_in_vivo_toxicity",
+      "path": "data/starling_data/clintox/send_v2/nonclinical_in_vivo_toxicity/extractions.parquet",
+      "sha256": "923c9b43ecf4513c1fe2ed130472117b088981b07d8d2d07d12b1946a64256dc",
+      "rows": 578856,
+      "task_relation": "indirect"
+    },
+    {
+      "source_id": "organ_specific_toxicity",
+      "path": "data/starling_data/clintox/send_v2/organ_specific_toxicity/extractions.parquet",
+      "sha256": "d1c43db1e666ce253586cf52dfac8fd6de9320c639463a8ab3a84b1e7a70c0f6",
+      "rows": 674318,
+      "task_relation": "indirect"
+    },
+    {
+      "source_id": "genotoxicity_carcinogenicity",
+      "path": "data/starling_data/clintox/send_v2/genotoxicity_carcinogenicity/extractions.parquet",
+      "sha256": "99a5eca0e26b97211ce2e980cd481529d2d4d7f534520918a4ce6c5f2d43193a",
+      "rows": 570749,
+      "task_relation": "indirect"
+    },
+    {
+      "source_id": "cellular_stress",
+      "path": "data/starling_data/clintox/send_v2/cellular_stress/extractions.parquet",
+      "sha256": "5f1aae6e9f3a9d5b23d7ec1cfb46a7e18f09fdf8ba5bd8cca6957095de3cf3d9",
+      "rows": 526737,
+      "task_relation": "indirect"
+    },
+    {
+      "source_id": "general_cytotoxicity",
+      "path": "data/starling_data/clintox/send_v2/general_cytotoxicity/extractions.parquet",
+      "sha256": "d6716731c1a283b00dc1b09dfbecaabe9045ed1765132ba736d4b0144537a99a",
+      "rows": 807290,
+      "task_relation": "indirect"
+    },
+    {
+      "source_id": "off_target_ddi_exposure",
+      "path": "data/starling_data/clintox/send_v2/off_target_ddi_exposure/extractions.parquet",
+      "sha256": "c16b8051e2543ab73d47a40ad1d737b26a513f0c588f42d1c72479a5009ea2d1",
+      "rows": 1104657,
+      "task_relation": "indirect"
+    }
+  ],
+  "counts": {
+    "source_datasets": 9,
+    "source_rows": 4848423,
+    "direct_vote_rows": 1505,
+    "excluded_direct_source_rows": 4,
+    "indirect_rows": 4846914,
+    "direct_residual_candidate_rows": 338
+  },
+  "direct_residual_candidates": {
+    "membership": "frozen historical strict-gate rows exactly reconciled to send_v2",
+    "source_role": "indirect",
+    "retrieval_eligible": false,
+    "review_status": "pending_manual_review",
+    "gate_version": "literal_toxicity_trial_failure.v4"
+  },
+  "historical_clintox_base_v1": {
+    "ingested_as_source": false,
+    "purpose": "freeze and reconcile the 338 residual candidates only",
+    "path": "data/starling_data/clintox/clintox_base_v1/extractions.parquet",
+    "sha256": "472b5239e38c59f91d1a60eece7caf7c37a83f3b00b785f9ead59a460b83c285"
+  }
+}

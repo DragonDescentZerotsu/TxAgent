@@ -9,7 +9,7 @@ from typing import Any
 SOURCE_STAGE_VERSION = "starling_source_snapshot.v1"
 CLEANING_STAGE_VERSION = "starling_record_cleaning.v9"
 NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v16"
-ORGANIZATION_STAGE_VERSION = "starling_record_organization.v9"
+ORGANIZATION_STAGE_VERSION = "starling_record_organization.v10"
 
 NORMALIZED_RECORD_VERSION = "starling_normalized_record.v6"
 NORMALIZED_ARTIFACT_VERSION = "starling_normalized_evidence.v6"

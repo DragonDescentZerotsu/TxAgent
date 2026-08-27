@@ -11,7 +11,9 @@ from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import 
 from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
     _endpoint_registry,
     _enrich_record,
+    _kinetic_symbol,
 )
+from tools.chembl_tool.tasks.bbb_martins.starling_schema import RECORD_CONTRACT
 
 
 class _NoAuxiliary:
@@ -196,6 +198,33 @@ def test_endpoint_registry_ignores_measurement_encoding():
             "version": "test",
         }
     ]
+
+
+def test_influx_kinetic_symbol_separates_k1_k2_and_k3() -> None:
+    base = {
+        "source_id": "influx_transport",
+        "canonical_endpoint": "blood_to_brain_transport",
+        "canonical_unit": "/min",
+        "measurement_text": (
+            "K1 = 0.186 ml/g/min; k2 = 0.363 min-1; k3 = 0.257 min-1"
+        ),
+    }
+    assert _kinetic_symbol(
+        {**base, "measurement_resolution_input_measurement": "0.363"}
+    ) == "k2"
+    assert _kinetic_symbol(
+        {**base, "measurement_resolution_input_measurement": "0.257"}
+    ) == "k3"
+    assert _kinetic_symbol(
+        {
+            **base,
+            "measurement_text": "k1 = 0.008 ± 0.003 min^-1",
+            "measurement_resolution_input_measurement": "0.008",
+        }
+    ) == "k1"
+    assert "canonical_kinetic_symbol" in RECORD_CONTRACT.pair_buckets[
+        "influx_transport"
+    ].canonical_dimensions
 
 
 def test_missing_bbb_endpoint_uses_only_approved_structured_fallbacks():

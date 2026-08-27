@@ -24,7 +24,7 @@ from tools.chembl_tool.tasks.clintox.starling_reference_semantics import (
 from tools.chembl_tool.tasks.clintox.starling_source import DIRECT_SOURCE_ID
 
 TASK_ID = "clintox"
-ENDPOINT_VERSION = "clintox_endpoint_name.v1"
+ENDPOINT_VERSION = "clintox_endpoint_name.v2"
 MEASUREMENT_VERSION = MEASUREMENT_SEMANTICS_VERSION
 CONTEXT_VERSION = "clintox_exact_source_context.v1"
 REFERENCE_VERSION = REFERENCE_SEMANTICS_VERSION
@@ -41,6 +41,11 @@ def _base_dimensions(source_id: str) -> tuple[CanonicalDimensionSpec, ...]:
     measurement_version = (
         CATEGORICAL_RESPONSE_VERSION if categorical else MEASUREMENT_VERSION
     )
+    measurement_inputs = (
+        ("measurement_text", "effect_status")
+        if source_id == "organ_specific_toxicity"
+        else ("measurement_text",)
+    )
     dimensions = [
         CanonicalDimensionSpec(
             "canonical_endpoint_name",
@@ -53,7 +58,7 @@ def _base_dimensions(source_id: str) -> tuple[CanonicalDimensionSpec, ...]:
         CanonicalDimensionSpec(
             "canonical_measurement_text",
             "measurement",
-            ("measurement_text",),
+            measurement_inputs,
             measurement_method,
             measurement_version,
             atomic_group="canonical_measurement_unit_pair",
@@ -63,7 +68,7 @@ def _base_dimensions(source_id: str) -> tuple[CanonicalDimensionSpec, ...]:
         CanonicalDimensionSpec(
             "canonical_unit_text",
             "unit",
-            ("measurement_text", "unit_text"),
+            (*measurement_inputs, "unit_text"),
             measurement_method,
             measurement_version,
             atomic_group="canonical_measurement_unit_pair",
@@ -84,7 +89,7 @@ def _base_dimensions(source_id: str) -> tuple[CanonicalDimensionSpec, ...]:
             CanonicalDimensionSpec(
                 "canonical_measurement_scale_id",
                 "measurement_scale",
-                ("measurement_text",),
+                measurement_inputs,
                 "controlled_encoder",
                 CATEGORICAL_RESPONSE_VERSION,
                 legacy_value_field="categorical_encoder_id",
@@ -138,8 +143,8 @@ SOURCES = {
     DIRECT_SOURCE_ID: SourceProfile(
         source_id=DIRECT_SOURCE_ID,
         source_columns=SOURCE_COLUMNS[DIRECT_SOURCE_ID],
-        endpoint_constant="human_clinical_toxicity",
-        measurement_field="toxicity_category",
+        endpoint_field="toxicity_category",
+        measurement_field="outcome_measure",
         smiles_field="SMILES",
         canonical_dimensions=(
             *_base_dimensions(DIRECT_SOURCE_ID),
@@ -171,11 +176,12 @@ SOURCES = {
         source_id="organ_specific_toxicity",
         source_columns=SOURCE_COLUMNS["organ_specific_toxicity"],
         endpoint_field="toxicity_endpoint",
-        measurement_field="effect_status",
+        measurement_field="quantitative_result",
         smiles_field="SMILES",
         canonical_dimensions=(
             *_base_dimensions("organ_specific_toxicity"),
             _context("canonical_organ_system", "organ_system", "organ_system"),
+            _context("canonical_effect_status", "effect_status", "effect_status"),
             _context(
                 "canonical_evidence_context",
                 "evidence_context",
@@ -247,14 +253,14 @@ SOURCES = {
     "off_target_ddi_exposure": SourceProfile(
         source_id="off_target_ddi_exposure",
         source_columns=SOURCE_COLUMNS["off_target_ddi_exposure"],
-        endpoint_field="target_or_endpoint",
+        endpoint_field="result_metric",
         measurement_field="result_value",
         unit_field="result_unit",
         smiles_field="SMILES",
         canonical_dimensions=(
             *_base_dimensions("off_target_ddi_exposure"),
             _context("canonical_evidence_type", "evidence_type", "evidence_type"),
-            _context("canonical_result_metric", "result_metric", "result_metric"),
+            _context("canonical_target", "target", "target_or_endpoint"),
             _context("canonical_assay_context", "assay_context", "assay_context"),
         ),
     ),
@@ -272,17 +278,13 @@ PAIR_BUCKETS = {
         canonical_dimensions=(
             "canonical_endpoint_name",
             "canonical_unit_text",
-            "canonical_measurement_scale_id",
             "canonical_clinical_context",
             *_REFERENCE_FIELDS,
         ),
         variance_candidates=("dose_or_exposure", "fda_approval_status"),
         eligible_reference_scopes=("not_applicable",),
         reference_basis_required=True,
-        required_known_dimensions=(
-            "canonical_measurement_scale_id",
-            *_REFERENCE_FIELDS,
-        ),
+        required_known_dimensions=_REFERENCE_FIELDS,
     ),
     "nonclinical_in_vivo_toxicity": PairBucketSpec(
         source_id="nonclinical_in_vivo_toxicity",
@@ -309,6 +311,7 @@ PAIR_BUCKETS = {
             "canonical_unit_text",
             "canonical_measurement_scale_id",
             "canonical_organ_system",
+            "canonical_effect_status",
             "canonical_evidence_context",
             "canonical_biological_system",
             *_REFERENCE_FIELDS,
@@ -317,7 +320,6 @@ PAIR_BUCKETS = {
         eligible_reference_scopes=("not_applicable",),
         reference_basis_required=True,
         required_known_dimensions=(
-            "canonical_measurement_scale_id",
             *_REFERENCE_FIELDS,
         ),
     ),
@@ -384,7 +386,7 @@ PAIR_BUCKETS = {
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_evidence_type",
-            "canonical_result_metric",
+            "canonical_target",
             "canonical_assay_context",
             *_REFERENCE_FIELDS,
         ),

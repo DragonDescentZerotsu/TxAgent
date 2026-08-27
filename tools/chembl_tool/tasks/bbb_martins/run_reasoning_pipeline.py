@@ -1088,6 +1088,15 @@ def _selected_assay_record(
                 {
                     "source_contract": selected.get("source_contract"),
                     "source_fields": selected.get("source_fields"),
+                    **(
+                        {
+                            "resolved_measurement_display": selected[
+                                "resolved_measurement_display"
+                            ]
+                        }
+                        if selected.get("resolved_measurement_display")
+                        else {}
+                    ),
                 }
             ],
         }
@@ -1098,6 +1107,11 @@ def _selected_assay_record(
         "mechanism_family": normalized.get("group") or {},
         "endpoint": (normalized.get("endpoint") or {}).get("name", ""),
         "source_fields": example.get("source_fields") or {},
+        **(
+            {"resolved_measurement_display": example["resolved_measurement_display"]}
+            if example.get("resolved_measurement_display")
+            else {}
+        ),
     }
 
 

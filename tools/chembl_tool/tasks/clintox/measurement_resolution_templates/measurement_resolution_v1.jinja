@@ -1,0 +1,62 @@
+You extract measurement values from the ClinTox evidence library. Each row is one claim from one source. Solve concisely.
+
+You receive {"rows": [...]} with at most {{ batch_size }} rows. Each row has an `id`, `canonical_endpoint_name`, and these fields: {{ row_fields | join(", ") }}. Rows sharing a canonical endpoint are contiguous. Return exactly one result per id, in the same order. Resolve every row from its own fields only.
+
+## Canonical endpoint context
+
+The blocks below summarize rows that deterministic code parsed for the canonical endpoints in this request. Use them only to understand how an endpoint is normally reported. They may clarify a unit convention or a reference defined by the endpoint, but never override conflicting row text.
+
+{% if endpoint_profiles %}
+{% for profile in endpoint_profiles %}
+{{ profile }}
+
+{% endfor %}
+{% else %}
+No reliable deterministic endpoint summary is available for this request.
+{% endif %}
+
+## Result
+
+Return one outer object containing all row results:
+
+  {"rows": [{"id": "<row id>",
+             "status": "ok" | "unsure" | "relative" | "unavailable",
+             "measurements": [{"measurement": "<plain decimal coefficient>", "unit": "<complete unit>"}]}]}
+
+Only `ok` carries measurements; all other statuses return `[]`.
+
+  ok           at least one resolved point quantity measuring the canonical endpoint
+  relative     a selected number defined only against an experiment-specific reference outside the endpoint
+  unsure       no unambiguous point and complete unit can be resolved
+  unavailable  no numeric measurement of the canonical endpoint
+
+`unsure` and `relative` are valid answers. Prefer them over guessing.
+
+## Value and unit
+
+`measurement` is one plain decimal coefficient: optional sign, digits, and optional decimal point. Remove spread around a point (`8 +/- 1.5` -> `8`). Never return words, inequalities, arithmetic, fractions, `e` notation, or a power of ten in `measurement`.
+
+Put every explicitly printed scale in `unit`: `3.16 x 10^-6 mg/L` becomes measurement `3.16`, unit `10^-6 mg/L`; a value printed only as `10^-3 mol/L` becomes measurement `1`, unit `10^-3 mol/L`. Keep an already expanded decimal unchanged. Never infer a scale, convert, rescale, round, or compute.
+
+`unit` is the shortest complete unit explicitly stated. Do not append source context such as route, species, tissue, dose, arm, or time. Preserve a named denominator or readout reference when it is part of the unit.
+{% if has_unit_column %}
+The unit column may supply the complete unit. If measurement and unit conflict, return `unsure`; do not silently repair either one from the endpoint profile.
+{% else %}
+This source has no separate unit column. Read the nearest complete unit from measurement or support. If none is stated and the endpoint does not define a dimensionless ratio, return `unsure`.
+{% endif %}
+
+Never turn a bound, range, or explicit fraction into a point: `<0.1`, `>30%`, `10-20`, `up to 7`, and `2/16` are `unsure`. A central point followed by spread or a confidence interval remains a point.
+
+## References and several quantities
+
+A ratio or percent is not automatically relative. It is `ok` when the canonical endpoint or named readout defines its reference. It is `relative` when the number is defined only against an experiment-specific control, comparator, baseline, genotype, or another compound.
+
+If a row states a relative comparison and a separate absolute endpoint point, return the absolute point and ignore the comparison. A dose, concentration, duration, sample size, p-value, or comparator value is context, not an endpoint outcome.
+
+`measurement_text` selects the target. Use support only to recover its unit and reference semantics. Do not add support-only quantities. If multiple same-unit values remain for different outcomes, arms, grades, tissues, or times, return `unsure`; do not salvage a subset. If clearly selected endpoint outcomes have different complete units, return each in source order. Preserve qualifiers that distinguish count units, including severity and event type.
+
+{{ task_instructions }}
+{% if source_instructions %}
+
+{{ source_instructions }}
+{% endif %}

@@ -37,7 +37,7 @@ def _args(*, legacy: bool) -> SimpleNamespace:
 
 
 @pytest.mark.parametrize("module", BUILDERS)
-def test_normalized_v7_builder_defaults_to_canonical_stage_05(
+def test_normalized_v7_builder_defaults_to_canonical_stage_07(
     monkeypatch, module
 ):
     calls: list[str] = []
@@ -58,7 +58,7 @@ def test_normalized_v7_builder_defaults_to_canonical_stage_05(
 
 
 @pytest.mark.parametrize("module", BUILDERS)
-def test_normalized_v7_builder_requires_explicit_legacy_flag_for_stage_06_09(
+def test_normalized_v7_builder_requires_explicit_legacy_task_local_stages(
     monkeypatch, module
 ):
     calls: list[str] = []
@@ -87,6 +87,7 @@ def test_canonical_publication_retires_task_local_lineage_views(tmp_path):
     root.mkdir()
     for stage in (
         *split_downstream.CANONICAL_V7_STAGES,
+        split_downstream.DISTANCE_CALIBRATION_STAGE,
         *split_downstream.LINEAGE_VIEW_STAGES,
     ):
         directory = root / stage
@@ -112,10 +113,11 @@ def test_canonical_publication_retires_task_local_lineage_views(tmp_path):
         not (root / stage).exists()
         for stage in split_downstream.LINEAGE_VIEW_STAGES
     )
+    assert not (root / split_downstream.DISTANCE_CALIBRATION_STAGE).exists()
     assert not list(root.glob(".canonical-backup-*"))
 
 
-def test_canonical_builder_publishes_only_stage_04_05(tmp_path):
+def test_noncollapse_canonical_builder_retains_legacy_stage_04_05_layout(tmp_path):
     records_dir = tmp_path / "03_records"
     records_dir.mkdir()
     pd.DataFrame([{"canonical_record_id": "record-1"}]).to_parquet(
@@ -168,10 +170,8 @@ def test_canonical_builder_publishes_only_stage_04_05(tmp_path):
         "05_distance_calibration",
     ]
     assert manifest["canonical_artifact_hashes"]
-    assert all(
-        (tmp_path / stage).is_dir()
-        for stage in split_downstream.CANONICAL_V7_STAGES
-    )
+    assert (tmp_path / "04_pair_buckets").is_dir()
+    assert (tmp_path / "05_distance_calibration").is_dir()
     assert all(
         not (tmp_path / stage).exists()
         for stage in split_downstream.LINEAGE_VIEW_STAGES

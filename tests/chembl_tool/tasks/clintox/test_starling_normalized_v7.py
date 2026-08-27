@@ -8,7 +8,6 @@ from pathlib import Path
 
 from tools.chembl_tool.paper_experiments.build_starling_benchmark_indices import (
     INDEX_SPECS,
-    _select_specs,
 )
 from tools.chembl_tool.tasks.clintox.build_normalized_starling_evidence_library import (
     ARTIFACT_STAGES,
@@ -32,6 +31,13 @@ from tools.chembl_tool.tasks.clintox.starling_normalization_sources import (
 from tools.chembl_tool.tasks.clintox.starling_measurement_semantics import (
     load_measurement_semantics_policy,
     resolve_measurement_pair,
+)
+from tools.chembl_tool.tasks.clintox.starling_measurement_resolution import (
+    BATCH_SIZE,
+    SOURCE_IDS as MEASUREMENT_SOURCE_IDS,
+    prompt_manifest,
+    prompt_row_fields,
+    render_prompt,
 )
 from tools.chembl_tool.common.starling.normalization.measurements import (
     normalize_measurement_and_unit,
@@ -59,24 +65,42 @@ def test_seven_source_contract_is_pinned_and_excludes_global_identifier():
     assert all(profile.structure_mode == "direct" for profile in source_profiles(Path("root")))
 
 
+def test_stage2_endpoint_and_measurement_roles_are_source_faithful():
+    profiles = {profile.source_id: profile for profile in source_profiles(Path("root"))}
+    assert (profiles[DIRECT_SOURCE_ID].endpoint_field, profiles[DIRECT_SOURCE_ID].measurement_field) == (
+        "toxicity_category",
+        "outcome_measure",
+    )
+    assert profiles["organ_specific_toxicity"].measurement_field == "quantitative_result"
+    assert profiles["off_target_ddi_exposure"].endpoint_field == "result_metric"
+    assert set(MEASUREMENT_SOURCE_IDS) == set(EXPECTED_SOURCE_ROWS)
+    assert BATCH_SIZE == 10
+    assert "unit_text" not in prompt_row_fields(DIRECT_SOURCE_ID)
+    assert "unit_text" in prompt_row_fields("general_cytotoxicity")
+    assert "Never invent a unit" in render_prompt("general_cytotoxicity")
+    assert 'Return one outer object containing all row results' in render_prompt(
+        "general_cytotoxicity"
+    )
+    assert "categorical call" in render_prompt("genotoxicity_carcinogenicity")
+    assert "categorical call" not in render_prompt("general_cytotoxicity")
+    assert "serum drug concentration" in render_prompt(DIRECT_SOURCE_ID)
+    assert "/clintox/measurement_resolution_templates/" in prompt_manifest()[
+        "template_path"
+    ]
+    assert not any(
+        term in render_prompt(DIRECT_SOURCE_ID)
+        for term in ("BBB substrate relationship", "brain/plasma", "CSF/plasma", "Papp")
+    )
+
+
 def test_controlled_encoders_are_fail_closed():
-    positive = CATEGORICAL_POLICY.apply(
+    assert not CATEGORICAL_POLICY.apply(
         {
             "source_id": DIRECT_SOURCE_ID,
             "measurement_text": "hepatotoxicity",
             "finite_scalar_value": None,
         }
     )
-    negative = CATEGORICAL_POLICY.apply(
-        {
-            "source_id": DIRECT_SOURCE_ID,
-            "measurement_text": "toxicity_absent",
-            "finite_scalar_value": None,
-        }
-    )
-    assert positive["finite_scalar_value"] == 1.0
-    assert negative["finite_scalar_value"] == 0.0
-    assert positive["categorical_encoder_id"] == "clintox_human_toxicity_binary.v1"
     assert not CATEGORICAL_POLICY.apply(
         {
             "source_id": DIRECT_SOURCE_ID,
@@ -87,12 +111,12 @@ def test_controlled_encoders_are_fail_closed():
     assert controlled_vocabulary_violations(
         {
             "source_id": DIRECT_SOURCE_ID,
-            "measurement_text": "toxicity suspected",
+            "endpoint_name": "toxicity suspected",
         }
-    ) == ("measurement_text",)
+    ) == ("endpoint_name",)
 
 
-def test_direct_family_reuses_the_frozen_gold_adapter_scope():
+def test_human_clinical_source_is_always_indirect():
     accepted = {
         "measurement_text": "cardiotoxicity",
         "toxicity_outcome": "grade 3 cardiac toxicity",
@@ -104,12 +128,12 @@ def test_direct_family_reuses_the_frozen_gold_adapter_scope():
     }
     assert family_assignment(
         DIRECT_SOURCE_ID, "human_clinical_toxicity", accepted
-    ).group_id == "Direct.human_clinical_toxicity"
+    ).group_id == "Clinical.clinical_human_safety"
     assert family_assignment(
         DIRECT_SOURCE_ID,
         "human_clinical_toxicity",
         {**accepted, "toxicity_outcome": None},
-    ) is None
+    ).group_id == "Clinical.clinical_human_safety"
     assert family_assignment(
         "organ_specific_toxicity", "liver injury", {}
     ).group_id == "Mechanism.organ_specific_toxicity"
@@ -359,21 +383,16 @@ def test_measurement_unit_manual_audits_are_complete():
 
 def test_scaffold_only_paper_view_is_registered_without_changing_defaults():
     spec = get_spec()
-    assert spec.filter_source_id == DIRECT_SOURCE_ID
+    assert spec.filter_source_id == "clinical_trial_failure"
     assert spec.benchmark_splits == ("scaffold",)
-    assert [item["name"] for item in INDEX_SPECS if item["task_id"] == "clintox"] == [
-        "clintox_starling_v7"
-    ]
-    assert "clintox_starling_v7" not in {
-        item["name"] for item in _select_specs([])
-    }
-    selected = _select_specs(["clintox_starling_v7"])[0]
-    assert selected["benchmark_splits"] == ("scaffold",)
+    assert all(
+        item.get("task") != "ClinTox_Human_Toxicity" for item in INDEX_SPECS
+    )
 
 
 def test_public_source_and_artifact_contracts():
     source = get_source_config("starling_v7")
-    assert len(source.direct_groups) == 1
+    assert len(source.direct_groups) == 0
     assert len(source.mechanism_groups) == 7
     assert ARTIFACT_STAGES == (
         "01_cleaned",
@@ -384,3 +403,6 @@ def test_public_source_and_artifact_contracts():
     )
     assert PROFILE.stages == ARTIFACT_STAGES
     assert POLICY.manifest_versions()["source_release"] == SOURCE_RELEASE
+    assert POLICY.manifest_versions()["benchmark_lineage"] == (
+        "clinical_trial_failure_v1"
+    )

@@ -466,6 +466,9 @@ def _validated_source_projection(value: Mapping[str, Any]) -> dict[str, Any]:
     if contract.get("contract_version") not in {
         "source_column_contract.v1",
         "source_column_contract.v2",
+        "collapsed_record_prompt.v1",
+        "collapsed_record_prompt.v2",
+        "collapsed_record_prompt.v3",
     }:
         raise ValueError("unsupported source-column contract version")
     allowed = contract.get("source_or_simply_cleaned")

@@ -47,13 +47,15 @@ from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
 
 
 CALIBRATION_FILENAME = "pair_bucket_distance_calibration.json.gz"
-CALIBRATION_VERSION = "pair_bucket_distance_calibration.v3"
-PREVIOUS_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v2"
+CALIBRATION_VERSION = "pair_bucket_distance_calibration.v4"
+PREVIOUS_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v3"
+V2_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v2"
 LEGACY_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v1"
 VALUE_CDF_VERSION = "empirical_value_cdf.v1"
 CATEGORY_CDF_VERSION = "empirical_category_rank_cdf.v1"
 LEGACY_DISTANCE_PERCENTILE_KNOTS = 101
-MINIMUM_BUCKET_RECORDS = 25
+MINIMUM_BUCKET_RECORDS = 20
+LEGACY_MINIMUM_BUCKET_RECORDS = 25
 MINIMUM_CATEGORICAL_CRAMERS_V_SQUARED = 0.20
 
 
@@ -66,12 +68,10 @@ def build_pair_bucket_distance_calibration(
     pair_bucket_metadata_path: str | Path,
     auxiliary_manifest_path: str | Path,
     out_dir: str | Path,
-    minimum_samples: int = MINIMUM_BUCKET_RECORDS,
+    minimum_samples: int | None = None,
     workers: int = 1,
 ) -> dict[str, Any]:
     """Materialize first-class SD and empirical CDF metadata per Stage-04 bucket."""
-    if minimum_samples != MINIMUM_BUCKET_RECORDS:
-        raise ValueError("the v7 calibration contract requires exactly 25 records")
     records_path = Path(records_path)
     bucket_path = Path(pair_bucket_records_path)
     metadata_path = Path(pair_bucket_metadata_path)
@@ -83,14 +83,19 @@ def build_pair_bucket_distance_calibration(
     auxiliary_metadata = json.loads(auxiliary_path.read_text(encoding="utf-8"))
     _validate_global_context_contract(spec, bucket_metadata, auxiliary_metadata)
 
-    candidate_columns = sorted(
-        {
-            field
-            for bucket in record_contract.pair_buckets.values()
-            for field in bucket.variance_candidates
-        }
-    )
     schema = set(pq.read_schema(records_path).names)
+    collapsed = "collapsed_record_id" in schema
+    candidate_columns = (
+        []
+        if collapsed
+        else sorted(
+            {
+                field
+                for bucket in record_contract.pair_buckets.values()
+                for field in bucket.variance_candidates
+            }
+        )
+    )
     required = {
         "canonical_record_id",
         "finite_scalar_value",
@@ -102,35 +107,66 @@ def build_pair_bucket_distance_calibration(
     }
     if spec.profile.heldout_sources:
         required.add(spec.heldout_identity_column)
+    expected_minimum = (
+        MINIMUM_BUCKET_RECORDS if collapsed else LEGACY_MINIMUM_BUCKET_RECORDS
+    )
+    if minimum_samples is None:
+        minimum_samples = expected_minimum
+    if minimum_samples != expected_minimum:
+        unit = "molecule" if collapsed else "source"
+        raise ValueError(
+            f"the v7 calibration contract requires exactly {expected_minimum} "
+            f"{unit} records"
+        )
+    if collapsed:
+        required.update(
+            {
+                "collapsed_record_id",
+                "canonical_smiles",
+                "retrieval_source_id",
+                "pair_bucket_key",
+                "assay_transfer_eligible",
+                "source_id",
+            }
+        )
     missing = required - schema
     if missing:
         raise ValueError(f"v7 calibration records lack columns: {sorted(missing)}")
     records = pd.read_parquet(records_path, columns=sorted(required))
-    buckets = pd.read_parquet(bucket_path)
     if not records["canonical_record_id"].is_unique:
         raise ValueError("finalized canonical_record_id values must be unique")
-    if not buckets["canonical_record_id"].is_unique:
-        raise ValueError("pair-bucket canonical_record_id values must be unique")
-    if len(records) != len(buckets):
-        raise ValueError("record/pair-bucket coverage mismatch")
-    joined = buckets.merge(
-        records,
-        on="canonical_record_id",
-        how="left",
-        validate="one_to_one",
-        indicator=True,
-        suffixes=("_bucket", ""),
-    )
-    if not (joined["_merge"] == "both").all():
-        raise ValueError("one or more pair-bucket rows lack a finalized record")
-    eligibility_field = (
-        "assay_transfer_eligible"
-        if "assay_transfer_eligible" in joined.columns
-        else "bucket_eligible"
-    )
-    rows = joined[
-        joined[eligibility_field].astype(bool) & joined["pair_bucket_key"].notna()
-    ].copy()
+    if collapsed:
+        rows = records[
+            (records["retrieval_source_id"] == "indirect")
+            & records["assay_transfer_eligible"].astype(bool)
+            & records["pair_bucket_key"].notna()
+        ].copy()
+        if rows.duplicated(["pair_bucket_key", "canonical_smiles"]).any():
+            raise ValueError("post-collapse calibration repeats a molecule within a pair bucket")
+    else:
+        buckets = pd.read_parquet(bucket_path)
+        if not buckets["canonical_record_id"].is_unique:
+            raise ValueError("pair-bucket canonical_record_id values must be unique")
+        if len(records) != len(buckets):
+            raise ValueError("record/pair-bucket coverage mismatch")
+        joined = buckets.merge(
+            records,
+            on="canonical_record_id",
+            how="left",
+            validate="one_to_one",
+            indicator=True,
+            suffixes=("_bucket", ""),
+        )
+        if not (joined["_merge"] == "both").all():
+            raise ValueError("one or more pair-bucket rows lack a finalized record")
+        eligibility_field = (
+            "assay_transfer_eligible"
+            if "assay_transfer_eligible" in joined.columns
+            else "bucket_eligible"
+        )
+        rows = joined[
+            joined[eligibility_field].astype(bool) & joined["pair_bucket_key"].notna()
+        ].copy()
     heldout_audit = _remove_heldout(spec, rows)
     if heldout_audit is not None:
         rows = rows.loc[~heldout_audit.pop("_drop_mask")].copy()
@@ -176,11 +212,25 @@ def build_pair_bucket_distance_calibration(
             "binary_and_ordinal_standard_deviation_value_field": (
                 "canonical_category_rank"
             ),
-            "canonical_measurement_scope": "assay_transfer_only_not_retrieval_presentation",
+            "canonical_measurement_scope": (
+                "canonical_post_collapse_aggregate_is_retrieval_visible"
+                if collapsed
+                else "legacy_assay_transfer_only"
+            ),
             "assay_transfer_bucket_eligibility_scope": (
-                "global_stage05_after_row_eligibility_and_heldout_removal"
+                "global_stage06_after_molecule_context_collapse_before_paper_views"
+            ),
+            "calibration_record_unit": (
+                "one_collapsed_molecule_pair_bucket_record"
+                if collapsed
+                else "legacy_source_record"
             ),
             "residual_heterogeneity_changes_validity": False,
+            "residual_heterogeneity_scope": (
+                "not_applicable_after_context_collapse"
+                if collapsed
+                else "legacy_precollapse_variance_candidates"
+            ),
             "raw_distance_cdf_emitted": False,
             "continuous_value_cdf": (
                 "exact empirical midrank CDF over finite_scalar_value"
@@ -205,6 +255,9 @@ def build_pair_bucket_distance_calibration(
         },
         "validation_contract": {
             "minimum_bucket_records": minimum_samples,
+            "minimum_bucket_records_unit": (
+                "unique_collapsed_molecules" if collapsed else "legacy_source_records"
+            ),
             "binary": "all declared levels observed; every observed level has >=3 records",
             "ordinal": (
                 "at least three declared levels observed; every observed level "
@@ -375,7 +428,7 @@ def _build_calibration_entry(
     positive_sd = bool(
         sample_sd is not None and math.isfinite(sample_sd) and sample_sd > 0
     )
-    if support_met:
+    if support_met and "collapsed_record_id" not in group.columns:
         variance_gate = (
             _select_categorical_variance_candidate(
                 group,
@@ -880,6 +933,7 @@ def validate_pair_bucket_distance_calibration(
     version = payload.get("calibration_version")
     if version not in {
         LEGACY_CALIBRATION_VERSION,
+        V2_CALIBRATION_VERSION,
         PREVIOUS_CALIBRATION_VERSION,
         CALIBRATION_VERSION,
     }:
@@ -922,7 +976,8 @@ def validate_pair_bucket_distance_calibration(
             _validate_standard_deviation_entry(
                 str(key),
                 entry,
-                require_bucket_eligibility=version == CALIBRATION_VERSION,
+                require_bucket_eligibility=version
+                in {PREVIOUS_CALIBRATION_VERSION, CALIBRATION_VERSION},
             )
             _validate_value_cdf_entry(str(key), entry)
             _validate_category_cdf_entry(
@@ -1142,6 +1197,7 @@ __all__ = [
     "CALIBRATION_VERSION",
     "LEGACY_CALIBRATION_VERSION",
     "LEGACY_DISTANCE_PERCENTILE_KNOTS",
+    "LEGACY_MINIMUM_BUCKET_RECORDS",
     "MINIMUM_BUCKET_RECORDS",
     "VALUE_CDF_VERSION",
     "build_pair_bucket_distance_calibration",

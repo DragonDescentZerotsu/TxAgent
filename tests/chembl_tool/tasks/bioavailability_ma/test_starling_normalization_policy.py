@@ -1,4 +1,5 @@
 import gzip
+import hashlib
 import json
 from types import SimpleNamespace
 
@@ -13,10 +14,11 @@ from tools.chembl_tool.common.starling.normalized_evidence import (
 from tools.chembl_tool.common.starling.normalization.measurements import (
     parse_point_measurement,
 )
-from tools.chembl_tool.common.task_workflows.retrieve_neighbors import load_index
 from tools.chembl_tool.common.starling import (
     build_normalized_evidence_library as staged_builder,
+    record_collapse,
 )
+from tools.chembl_tool.common.starling.semantic_record_aggregation import render_prompt
 from tools.chembl_tool.tasks.bioavailability_ma import (
     build_normalized_starling_evidence_library as normalized_builder,
 )
@@ -457,7 +459,33 @@ def test_original_hf_source_is_one_batch_with_row_scopes(tmp_path):
     }
 
 
-def test_versioned_builder_schema_manifest_and_restart(tmp_path):
+def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
+    def fake_semantic_aggregation(groups, **_kwargs):
+        return [
+            {
+                "group_id": group_id,
+                "prompt_sha256": hashlib.sha256(
+                    render_prompt(payload).encode()
+                ).hexdigest(),
+                "requested_model": "test-double",
+                "response": {
+                    "schema_version": "semantic_record_aggregation.v2",
+                    "evidence_pattern": "insufficient",
+                    "summary": None,
+                    "findings": [],
+                    "conflicts": [],
+                    "limitations": ["Synthetic restart-test response."],
+                },
+                "usage": {},
+                "input": dict(payload),
+            }
+            for group_id, payload in sorted(groups.items())
+        ]
+
+    # This test covers staged build/restart integrity, not model semantics.
+    monkeypatch.setattr(
+        record_collapse, "aggregate_semantic_groups", fake_semantic_aggregation
+    )
     data_dir = tmp_path / "sources"
     source_rows = {
         "Oral_AUC-Cmax_Exposure": {
@@ -703,24 +731,15 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         out_dir / normalized_builder.RECORDS_FILENAME,
         out_dir / "04_pair_buckets/pair_bucket_records.parquet",
         out_dir / "04_pair_buckets/pair_bucket_metadata.json",
-        out_dir / "05_distance_calibration/pair_bucket_distance_calibration.json.gz",
-        out_dir / "06_remove_heldout_overlap/random/records.parquet",
-        out_dir / "06_remove_heldout_overlap/scaffold/records.parquet",
-        out_dir / normalized_builder.EVIDENCE_FAMILIES_TEMPLATE.format(
-            benchmark_split="random"
-        ),
-        out_dir / normalized_builder.EVIDENCE_BRIDGE_TEMPLATE.format(
-            benchmark_split="random"
-        ),
-        out_dir / normalized_builder.INDEX_MOLECULES_TEMPLATE.format(
-            benchmark_split="random"
-        ),
-        out_dir / normalized_builder.INDEX_FINGERPRINTS_TEMPLATE.format(
-            benchmark_split="random"
-        ),
-        out_dir / normalized_builder.INDEX_MEMBERSHIP_TEMPLATE.format(
-            benchmark_split="random"
-        ),
+        out_dir / "05_deduplicated_records/records.parquet",
+        out_dir / "05_deduplicated_records/pair_bucket_records.parquet",
+        out_dir / "05_deduplicated_records/direct_record_mapping.parquet",
+        out_dir / "05_deduplicated_records/duplicates.parquet",
+        out_dir / "05_deduplicated_records/manifest.json",
+        out_dir / "06_collapsed_records/records.parquet",
+        out_dir / "06_collapsed_records/semantic_aggregation.jsonl",
+        out_dir / "06_collapsed_records/manifest.json",
+        out_dir / "07_distance_calibration/pair_bucket_distance_calibration.json.gz",
         out_dir / normalized_builder.MANIFEST_FILENAME,
         out_dir / normalized_builder.VALIDITY_POLICY_FILENAME,
         out_dir / normalized_builder.AUXILIARY_MAPPING_MANIFEST_FILENAME,
@@ -728,7 +747,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     preserved_bytes = {path: path.read_bytes() for path in preserved_paths}
     with gzip.open(
         out_dir
-        / "05_distance_calibration/pair_bucket_distance_calibration.json.gz",
+        / "07_distance_calibration/pair_bucket_distance_calibration.json.gz",
         "rt",
         encoding="utf-8",
     ) as handle:
@@ -748,34 +767,9 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
         for field in forbidden_calibration_fields
     )
 
-    runtime_index = load_index(out_dir / "08_neighbor_index/random")
-    examples = [
-        example
-        for groups in runtime_index["evidence_by_molecule_group"].values()
-        for evidence_rows in groups.values()
-        for evidence in evidence_rows
-        for example in evidence["source_record_examples"]
-    ]
-    assert examples
-    assert any(
-        any(value not in (None, "") for value in example["source_fields"].values())
-        for example in examples
-    )
-    fg_examples = [
-        example
-        for example in examples
-        if example["source_fields"].get("substrate_status") == "substrate"
-    ]
-    assert fg_examples
-    assert fg_examples[0]["source_fields"]["transporter_or_enzyme"] == (
-        "P-gp/ABCB1"
-    )
-    assert not {
-        "categorical_encoder_id",
-        "canonical_category_id",
-        "canonical_category_rank",
-        "finite_scalar_value",
-    } & set(fg_examples[0]["source_fields"])
+    # Paper-view records, evidence, and indices are lineage-owned and must not
+    # be published under the split-independent canonical root.
+    assert not (out_dir / "08_neighbor_index").exists()
 
     changed_mapping = tmp_path / "changed-mapping.parquet"
     changed = pd.read_parquet(mapping)
@@ -837,11 +831,9 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path):
     }
     assert {
         "04_pair_buckets",
-        "05_distance_calibration",
-        "06_remove_heldout_overlap",
-        "07_molecule_evidence",
-        "08_neighbor_index",
-        "09_audits",
+        "05_deduplicated_records",
+        "06_collapsed_records",
+        "07_distance_calibration",
     } <= set(restarted["invalidated_artifacts"])
     assert all(
         not (out_dir / directory).exists()

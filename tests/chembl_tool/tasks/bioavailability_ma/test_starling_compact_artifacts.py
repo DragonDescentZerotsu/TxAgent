@@ -18,7 +18,13 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts
 )
 
 
-def _record(record_id: str, value: str) -> dict:
+def _record(
+    record_id: str,
+    value: str,
+    *,
+    mapped: bool = True,
+    origin: str = "llm",
+) -> dict:
     row = {column: None for column in SOURCE_COLUMNS["hf_bioavailability"]}
     row.update(
         {
@@ -38,6 +44,10 @@ def _record(record_id: str, value: str) -> dict:
             "canonical_bioavailability_evidence_scope": "direct",
             "canonical_endpoint": "oral_bioavailability",
             "finite_scalar_value": float(value),
+            "measurement_unit_mapping_status": "mapped" if mapped else "excluded",
+            "measurement_resolution_input_measurement": value,
+            "measurement_resolution_input_unit": "10^-6 cm/s",
+            "measurement_resolution_origin": origin,
             "confidence": 0.9,
             "retrieval_eligible": True,
             "oral_bioavailability_value": value,
@@ -50,7 +60,13 @@ def _record(record_id: str, value: str) -> dict:
 
 
 def test_compact_catalog_and_index_hydrate_referenced_records(tmp_path):
-    records = compact_persisted_records([_record("record-1", "40"), _record("record-2", "50")])
+    records = compact_persisted_records(
+        [
+            _record("record-1", "40"),
+            _record("record-2", "50", mapped=False),
+            _record("record-3", "60", origin="source_exact"),
+        ]
+    )
     assert not (set(records[0]) & BANNED_PERSISTED_FIELDS)
 
     root = tmp_path / "starling_normalized_v6"
@@ -72,12 +88,27 @@ def test_compact_catalog_and_index_hydrate_referenced_records(tmp_path):
     index = load_compact_neighbor_index(index_dir)
     result = retrieve_neighbors("CCN", index, min_similarity=0.0)
     evidence = result["groups"][0]["neighbors"][0]["evidence_rows"][0]
-    assert evidence["source_record_count"] == 2
+    assert evidence["source_record_count"] == 3
     assert "normalized_records" not in evidence
     examples = evidence["minimal_evidence"]["examples"]
     assert examples[0]["source_fields"]["support_text"].startswith("paid evidence")
     assert examples[0]["source_contract"]["source_or_simply_cleaned"]["support_text"] is True
-    assert evidence["_representative_record_ids"] == ["record-1", "record-2"]
+    assert examples[0]["resolved_measurement_display"] == {
+        "value": "40",
+        "unit": "10^-6 cm/s",
+        "origin": "llm",
+    }
+    assert "resolved_measurement_display" not in examples[1]
+    assert examples[2]["resolved_measurement_display"] == {
+        "value": "60",
+        "unit": "10^-6 cm/s",
+        "origin": "source_exact",
+    }
+    assert evidence["_representative_record_ids"] == [
+        "record-1",
+        "record-2",
+        "record-3",
+    ]
     assert "_representative_record_ids" not in str(evidence_for_llm(evidence))
 
 

@@ -66,7 +66,7 @@ from tools.chembl_tool.common.units import canonicalize_unit
 
 
 PROFILE_VERSION = "starling_endpoint_unit_profile.v2"
-SUPPORTED_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+SUPPORTED_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction", "clintox")
 MAX_EXAMPLE_CANDIDATES_PER_UNIT = 4
 MAX_SUPPORT_TEXT_CHARS = 300
 

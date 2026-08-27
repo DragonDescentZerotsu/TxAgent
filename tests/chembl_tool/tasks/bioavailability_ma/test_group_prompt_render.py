@@ -6,6 +6,7 @@ import pytest
 
 from tools.chembl_tool.tasks.bioavailability_ma import group_prompt_field_policy as policy
 from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
+    _assay_transfer_evidence_record,
     build_group_messages,
     group_output_schema_provenance,
     group_output_validation,
@@ -90,6 +91,32 @@ def test_morgan_is_text_not_json_and_shows_records():
     # The record's support text and endpoint appear; the duplicated text.evidence blob does not.
     assert "polarized transport observed" in content
     assert "blob" not in content
+
+
+def test_normalized_record_shows_the_resolved_extraction_pair():
+    rendered = dict(
+        _assay_transfer_evidence_record(
+            {
+                "source_contract": {
+                    "contract_version": "source_column_contract.v1",
+                    "source_or_simply_cleaned": {"measurement_text": True},
+                },
+                "source_fields": {"measurement_text": "4.2 × 10^-6"},
+                "resolved_measurement_display": {
+                    "value": "4.2",
+                    "unit": "10^-6 cm/s",
+                    "origin": "llm",
+                },
+            },
+            "Starling normalized oral bioavailability",
+            _group([]),
+        )
+    )
+
+    assert rendered["resolved measurement (extracted scale)"] == (
+        "value: 4.2; unit: 10^-6 cm/s; origin: llm"
+    )
+    assert "source record" in rendered
 
 
 @pytest.mark.parametrize("prompt_format", ["morganfingerprint", "assay_transfer_tool"])
@@ -589,10 +616,14 @@ def test_included_fields_style_and_prefix_matching():
     indist = "starling-in-distribution/Fg"
     full_specs = policy.included_fields("morganfingerprint.record", indist, "full")
     keys = [k for k, _ in full_specs]
-    assert keys == ["source_contract", "source_fields"]
+    assert keys == [
+        "resolved_measurement_display",
+        "source_contract",
+        "source_fields",
+    ]
     # legacy uses the same contract and cannot expose canonical scoring fields.
     legacy_specs = policy.included_fields("morganfingerprint.record", indist, "legacy")
-    assert [k for k, _ in legacy_specs] == ["source_contract", "source_fields"]
+    assert [k for k, _ in legacy_specs] == keys
     # unknown source under `full` falls back to the legacy policy
     unknown = policy.included_fields("morganfingerprint.record", "some-other-source/Fg", "full")
     assert [k for k, _ in unknown] == [

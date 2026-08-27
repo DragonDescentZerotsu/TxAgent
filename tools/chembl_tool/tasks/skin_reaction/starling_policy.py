@@ -23,7 +23,7 @@ from tools.chembl_tool.common.starling.normalization.task_policy import (
     StarlingTaskPolicy,
 )
 from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
-    DEFAULT_EXACT_UNIT_MAPPING,
+    EXACT_UNIT_MAPPING_VERSION,
     RESOLUTION_APPLY_VERSION,
 )
 from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
@@ -83,6 +83,11 @@ from tools.chembl_tool.tasks.skin_reaction.starling_record_canonicalization impo
     NORMALIZATION_DOMAIN_RULES_VERSION,
     enrich_skin_reaction_validity,
     validity_policy_manifest,
+)
+from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+    PARTITION_AUDIT_PATH,
+    REJECT_PARTITION,
+    partition_for_record,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_reference_semantics import (
     DEFAULT_MAPPING_PATH as DEFAULT_REFERENCE_SEMANTICS_MAPPING,
@@ -460,8 +465,8 @@ def _enrich_record(
     semantic = semantic or (
         {
             "measurement_semantics_status": "exact_measurement_unit_map",
-            "measurement_semantics_rule_id": "starling_exact_measurement_units.v1",
-            "measurement_semantics_policy_version": "starling_exact_measurement_units.v1",
+            "measurement_semantics_rule_id": EXACT_UNIT_MAPPING_VERSION,
+            "measurement_semantics_policy_version": EXACT_UNIT_MAPPING_VERSION,
             "measurement_numeric_domain": record.get("measurement_numeric_domain"),
         }
         if mapped
@@ -505,7 +510,7 @@ def _enrich_record(
                 else "valid" if mapped else "exact_measurement_excluded"
             ),
             "normalization_domain_rules_version": (
-                "starling_exact_measurement_units.v1"
+                EXACT_UNIT_MAPPING_VERSION
                 if mapped
                 else RESOLUTION_APPLY_VERSION
             ),
@@ -526,6 +531,21 @@ def _enrich_record(
         )
     reference = reference_attacher.attach(
         {**record, **auxiliary, **semantic, **encoded, **validity}
+    )
+    partition = partition_for_record(record)
+    partition_fields = (
+        {
+            "canonical_sensitization_partition": partition.partition,
+            "canonical_sensitization_partition_reason": partition.reason,
+            "canonical_sensitization_aop_event": partition.aop_event or None,
+            "retrieval_exclusion_reason": (
+                f"canonical_skin_partition_reject:{partition.reason}"
+                if partition.partition == REJECT_PARTITION
+                else None
+            ),
+        }
+        if partition is not None
+        else {}
     )
     return {
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
@@ -549,6 +569,7 @@ def _enrich_record(
         **semantic,
         **validity,
         **reference,
+        **partition_fields,
     }
 
 
@@ -573,21 +594,27 @@ POLICY = StarlingTaskPolicy(
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
     scientific_assets=(
-        DEFAULT_EXACT_UNIT_MAPPING,
         DEFAULT_REGISTRY_PATH,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         DEFAULT_MAPPING_PATH,
+        PARTITION_AUDIT_PATH,
         AUXILIARY_PROMPT_REGISTRY_PATH,
         Path(__file__).parent
-        / "data_processing/assay_transfer_measurements_v1/policy.json",
+        / "data_processing/assay_transfer_measurements_v2/policy.json",
     ),
     assay_transfer_measurement_policy=(
         Path(__file__).parent
-        / "data_processing/assay_transfer_measurements_v1/policy.json"
+        / "data_processing/assay_transfer_measurements_v2/policy.json"
     ),
+    family_resolver_input_fields=("canonical_sensitization_partition",),
     reference_semantics_enabled=True,
     measurement_resolution_enabled=True,
+    exact_unit_mapping_path=(
+        Path(__file__).parent
+        / "data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json"
+    ),
     endpoint_identity_required_sources=(
+        "direct_skin_reaction",
         "sensitization_aop",
         "phototoxicity_irritation_local_damage",
         "skin_exposure",

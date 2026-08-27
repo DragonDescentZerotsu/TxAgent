@@ -1,4 +1,4 @@
-"""Layers 4-5: record deduplication and molecule-level organization."""
+"""Stage-03 record organization and historical deduplication helpers."""
 
 from __future__ import annotations
 
@@ -113,10 +113,12 @@ def deduplicate_within_source(
             "__unknown_endpoint__",
         }
         source_id = str(record.get("source_id") or "")
+        explicit_exclusion = str(record.get("retrieval_exclusion_reason") or "")
         retrieval_eligible = bool(
             record.get("canonical_smiles")
             and record.get("group_id")
             and (source_id not in endpoint_required or endpoint_resolved)
+            and not explicit_exclusion
         )
         record.update(
             {
@@ -128,7 +130,7 @@ def deduplicate_within_source(
                 "organization_status": (
                     "retrieval_eligible"
                     if retrieval_eligible
-                    else (
+                    else explicit_exclusion or (
                         str(record.get("structure_status") or "unresolved")
                         if not record.get("canonical_smiles")
                         else (
@@ -150,11 +152,64 @@ def organize_normalized_records(
     endpoint_identity_required_sources: Sequence[str] = (),
     reuse_mutable_records: bool = False,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
-    records, duplicates = deduplicate_within_source(
-        normalized_records,
-        endpoint_identity_required_sources=endpoint_identity_required_sources,
-        reuse_mutable_records=reuse_mutable_records,
-    )
+    """Annotate every normalized row without changing row cardinality."""
+    endpoint_required = set(endpoint_identity_required_sources)
+    records: list[dict[str, Any]] = []
+    for source in normalized_records:
+        record = (
+            source
+            if reuse_mutable_records and isinstance(source, dict)
+            else dict(source)
+        )
+        endpoint = str(
+            record.get("canonical_endpoint")
+            or record.get("canonical_endpoint_name")
+            or ""
+        ).strip().casefold()
+        endpoint_resolved = endpoint not in {
+            "",
+            "missing_endpoint",
+            "unknown",
+            "__unknown__",
+            "__unknown_endpoint__",
+        }
+        source_id = str(record.get("source_id") or "")
+        explicit_exclusion = str(record.get("retrieval_exclusion_reason") or "")
+        retrieval_eligible = bool(
+            record.get("canonical_smiles")
+            and record.get("group_id")
+            and (source_id not in endpoint_required or endpoint_resolved)
+            and not explicit_exclusion
+        )
+        record.update(
+            {
+                "organization_version": ORGANIZATION_STAGE_VERSION,
+                "duplicate_group_id": stable_id(
+                    "organized_row", record.get("normalized_record_id")
+                ),
+                "duplicate_group_size": 1,
+                "duplicate_source_record_ids": json.dumps(
+                    [str(record.get("source_record_id") or "")],
+                    ensure_ascii=False,
+                ),
+                "retrieval_eligible": retrieval_eligible,
+                "organization_status": (
+                    "retrieval_eligible"
+                    if retrieval_eligible
+                    else explicit_exclusion or (
+                        str(record.get("structure_status") or "unresolved")
+                        if not record.get("canonical_smiles")
+                        else (
+                            "unresolved_mechanism_family"
+                            if not record.get("group_id")
+                            else "missing_endpoint_identity"
+                        )
+                    )
+                ),
+            }
+        )
+        records.append(record)
+    duplicates: list[dict[str, Any]] = []
     exclusions = [
         {
             "normalized_record_id": record.get("normalized_record_id"),
@@ -164,14 +219,16 @@ def organize_normalized_records(
             "source_record_id": record.get("source_record_id"),
             "structure_status": record.get("structure_status"),
             "organization_status": record.get("organization_status"),
+            "retrieval_exclusion_reason": record.get("retrieval_exclusion_reason"),
         }
         for record in records
         if not record.get("retrieval_eligible")
     ]
     stats = {
-        "n_normalized_records_before_deduplication": len(normalized_records),
+        "n_normalized_records": len(normalized_records),
         "n_records": len(records),
         "n_duplicates_removed": len(duplicates),
+        "row_deduplication_deferred": True,
         "n_retrieval_eligible": sum(bool(row.get("retrieval_eligible")) for row in records),
         "n_organization_exclusions": len(exclusions),
         "n_missing_endpoint_identity": sum(

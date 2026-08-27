@@ -83,18 +83,12 @@ tools/chembl_tool/tasks/skin_reaction/
 ## Current Starling binary benchmarks (2026-08-17)
 
 BBB_Martins, Bioavailability_Ma, and Skin_Reaction have promoted Starling
-benchmarks. ClinTox now also has a separate Starling
-`ClinTox_Human_Toxicity` candidate built from `clintox_send_v2`; it predicts
-explicit human clinical toxicity rather than TDC/MoleculeNet CT_TOX. Its
-`record_supported_v2` scaffold split is 6,104/762/762 and remains
-`candidate_pending_qa` because the clinical source lacks
-`qualifying_conditions`. It must not be added to default paper matrices until
-that source-semantic limitation and the frozen gold QA gate are resolved.
-ClinTox also has a separate source-reconstructed `clinical_trial_failure_v1`
+benchmarks. ClinTox uses the source-reconstructed `clinical_trial_failure_v1`
 benchmark built only from frozen AACT toxicity-failure positives and
-SWEETLEAD/FDA-approved comparators; broad Starling toxicity rows do not vote in
-that lineage. Keep both ClinTox lineages separate from the three promoted
-Starling gold lineages. The shared protocol and builders are:
+SWEETLEAD/FDA-approved comparators; broad Starling toxicity rows do not vote.
+The failed `ClinTox_Human_Toxicity` candidate and its derived artifacts were
+removed. `send_v2/human_clinical_toxicity` remains an indirect evidence source.
+The shared protocol and builders are:
 
 ```text
 tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
@@ -104,7 +98,6 @@ tools/chembl_tool/common/starling/build_benchmark_datasets.py
 task adapters:
   tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
   tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
-  tools/chembl_tool/tasks/clintox/clintox_base_benchmark.py
   tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
 ```
 

@@ -1,10 +1,33 @@
 import pytest
 
 from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
+    canonical_oral_dose,
     enrich_bioavailability_validity,
     normalization_validity_status,
     normalize_bioavailability_report_type,
 )
+
+
+@pytest.mark.parametrize(
+    ("raw", "key", "value"),
+    [
+        ("10 mg/kg oral", "mass|per_kg|mg|10", 10.0),
+        ("200 µg oral misoprostol", "mass|absolute|mg|0.2", 0.2),
+        ("26.6 µmol kg−1", "molar|per_kg|µmol|26.6", 26.6),
+    ],
+)
+def test_oral_dose_normalization_uses_exact_quantity_unit_and_basis(raw, key, value):
+    result = canonical_oral_dose(raw)
+    assert result["canonical_oral_dose_mapping_status"] == "resolved"
+    assert result["canonical_oral_dose_key"] == key
+    assert result["canonical_oral_dose_value"] == value
+
+
+@pytest.mark.parametrize("raw", [None, "10 mg/mL", "800 mg PO and 400 mg IV"])
+def test_oral_dose_normalization_fails_closed(raw):
+    result = canonical_oral_dose(raw)
+    assert result["canonical_oral_dose_key"] == "__unknown__"
+    assert result["canonical_oral_dose_mapping_status"] != "resolved"
 
 
 def _record(

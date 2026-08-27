@@ -1,0 +1,60 @@
+You are consolidating experimental evidence for retrieval. All records refer to
+the same molecule and the same canonical retrieval context: either one reviewed
+condition key for direct evidence or one pair bucket for indirect evidence.
+
+Use all supplied metadata to judge agreement, but the forward summary must
+describe only the bucket-level experimental result. Non-key dose, formulation,
+species, assay, timing, comparator, and other incidental context is audit
+evidence and must not appear in the summary.
+
+This is evidence aggregation, not prediction. Do not infer a benchmark label,
+molecular property, transferability, or an unreported result.
+
+Shared identity
+- task: {{ task_id }}
+- retrieval source: {{ retrieval_source_id }}
+- physical sources: {{ source_ids | tojson }}
+- canonical SMILES: {{ canonical_smiles }}
+- canonical aggregation context: {{ aggregation_context | tojson }}
+
+Rules
+1. Use only the supplied records and never reason from the SMILES.
+2. Use non-key context only to determine whether reports agree, vary by context,
+   or conflict. Do not carry that context into the summary.
+3. Do not average, vote, or invent a scalar.
+4. Records from one PMID are related reports, not independent replications.
+5. Findings and conflicts are audit-only and must cite their supporting record
+   IDs; cite PMIDs when available.
+6. If a conclusion depends on non-key context, set evidence_pattern to
+   context_dependent and summarize only that the bucket has no universal result.
+7. If no interpretable claim remains, return evidence_pattern="insufficient",
+   summary=null, and empty findings/conflicts.
+8. Return at most six findings, four conflicts, and four limitations.
+
+"evidence_pattern" must be exactly one of "consistent", "context_dependent",
+"mixed_or_conflicting", or "insufficient".
+
+Return exactly one JSON object:
+{
+  "schema_version": "semantic_record_aggregation.v2",
+  "evidence_pattern": "context_dependent",
+  "summary": "two to five context-free factual sentences, or null",
+  "findings": [
+    {
+      "finding": "one experimentally supported audit finding",
+      "conditions": ["audit-only conditions needed to interpret it"],
+      "record_ids": ["canonical record IDs"],
+      "pmids": ["supporting PMIDs, when available"]
+    }
+  ],
+  "conflicts": [
+    {
+      "description": "the unresolved disagreement",
+      "record_ids": ["canonical record IDs on the relevant sides"]
+    }
+  ],
+  "limitations": ["material evidence limitations only"]
+}
+
+Input records
+{{ records | tojson(indent=2) }}

@@ -34,6 +34,11 @@ def test_bbb_group_prompt_exposes_endpoint_distinct_record_bundle():
             "source_or_simply_cleaned": {"endpoint_name": True},
         },
         "source_fields": {"endpoint_name": "BBB permeability"},
+        "resolved_measurement_display": {
+            "value": "4.2",
+            "unit": "10^-6 cm/s",
+            "origin": "llm",
+        },
     }
     group = {
         "group_id": "direct_bbb",
@@ -70,6 +75,9 @@ def test_bbb_group_prompt_exposes_endpoint_distinct_record_bundle():
     payload = _group_prompt_payload({"identity_hidden": True}, group)
     records = payload["neighbors"][0]["assay_transfer_records"]
     assert [record["assay_transfer_score"] for record in records] == [0.9, 0.8]
+    assert records[0]["assay_transfer_record"]["resolved_measurement_display"][
+        "unit"
+    ] == "10^-6 cm/s"
     assert "BBB probabilities" in " ".join(payload["instructions"])
 
 

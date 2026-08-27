@@ -39,9 +39,15 @@ def write_parquet(path: str | Path, rows: Sequence[Mapping[str, Any]]) -> None:
         (start, min(start + PARQUET_BATCH_ROWS, len(rows)))
         for start in range(0, len(rows), PARQUET_BATCH_ROWS)
     ]
-    schemas = [
-        pa.Table.from_pylist(list(rows[start:stop])).schema for start, stop in slices
-    ]
+    schemas = []
+    for start, stop in slices:
+        chunk = list(rows[start:stop])
+        columns = [str(key) for key in chunk[0]]
+        columns.extend(
+            sorted({str(key) for row in chunk for key in row} - set(columns))
+        )
+        chunk[0] = {column: chunk[0].get(column) for column in columns}
+        schemas.append(pa.Table.from_pylist(chunk).schema)
     schema = pa.unify_schemas(schemas, promote_options="permissive")
     with pq.ParquetWriter(
         target,

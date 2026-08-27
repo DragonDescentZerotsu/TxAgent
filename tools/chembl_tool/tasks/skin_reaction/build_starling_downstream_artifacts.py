@@ -8,7 +8,9 @@ from typing import Any
 from tools.chembl_tool.common.starling import split_downstream as _shared
 from tools.chembl_tool.common.starling.split_downstream import (
     AUDIT_STAGE,
-    DISTANCE_CALIBRATION_STAGE,
+    COLLAPSED_RECORD_STAGE,
+    DEDUPLICATED_RECORD_STAGE,
+    POST_COLLAPSE_DISTANCE_CALIBRATION_STAGE as DISTANCE_CALIBRATION_STAGE,
     DOWNSTREAM_STAGES,
     FILTERED_RECORDS_FILENAME,
     HELDOUT_STAGE,
@@ -26,13 +28,17 @@ from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_sidecar im
 from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
     build_pair_bucket_transfer_policy,
 )
+from tools.chembl_tool.tasks.skin_reaction.direct_record_mapping import (
+    DIRECT_MAPPING_INPUTS,
+    build_direct_record_mapping,
+)
 from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
     SKIN_REACTION_V7_PAIR_BUCKET_VERSION,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_policy import POLICY
 
 
-PIPELINE_LAYOUT_VERSION = "skin_reaction.normalized_v7_layout.v1"
+PIPELINE_LAYOUT_VERSION = "skin_reaction.normalized_v7_layout.v2"
 HELDOUT_OVERLAP_VERSION = "skin_reaction.remove_heldout_overlap.v1"
 BENCHMARK_SPLITS = ("random", "scaffold")
 DEFAULT_SPLIT_ROOT = "data/processed_starling/Skin_Reaction"
@@ -59,6 +65,14 @@ def _spec() -> SplitDownstreamSpec:
         build_transfer_policy=build_pair_bucket_transfer_policy,
         exclusions_filename=EXCLUSIONS_FILENAME,
         legacy_downstream_stages=LEGACY_DOWNSTREAM_STAGES,
+        collapse_records=True,
+        final_endpoint_pruning=True,
+        direct_mapping_builder=build_direct_record_mapping,
+        collapse_input_paths=tuple(DIRECT_MAPPING_INPUTS),
+        direct_label_definition=(
+            "Whether the molecule is a skin sensitizer or produces contact-allergy "
+            "outcomes (positive) versus a non-sensitizer (negative)."
+        ),
     )
 
 
@@ -93,6 +107,8 @@ def _publish_downstream_candidate(root: Path, candidate_root: Path) -> None:
 __all__ = [
     "AUDIT_STAGE",
     "BENCHMARK_SPLITS",
+    "COLLAPSED_RECORD_STAGE",
+    "DEDUPLICATED_RECORD_STAGE",
     "DEFAULT_SPLIT_ROOT",
     "DOWNSTREAM_STAGES",
     "DISTANCE_CALIBRATION_STAGE",

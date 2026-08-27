@@ -17,10 +17,21 @@ from typing import Any
 from tools.chembl_tool.common.starling.pair_buckets import raw_pair_bucket_key
 
 
-POLICY_VERSION = "assay_transfer_canonical_measurement.v1"
+POLICY_VERSION = "assay_transfer_canonical_measurement.v2"
+LEGACY_POLICY_VERSION = "assay_transfer_canonical_measurement.v1"
 CANONICAL_TUPLE_CONTRACT_VERSION = "assay_transfer_canonical_tuple.v1"
 LOG10_TRANSFORM = "log10.v1"
 RAW_TRANSFORM = "raw.v1"
+DISPLAY_IDENTITY = "identity.v1"
+DISPLAY_INVERSE_LOG10 = "inverse_log10.v1"
+DISPLAY_RELATIVE = "relative_scalar.v1"
+DISPLAY_SEMANTIC = "semantic.v1"
+AXIS_KEY_FIELDS = (
+    "source_id",
+    "canonical_endpoint_name",
+    "assay_transfer_pretransform_unit_text",
+    "canonical_reference_scope",
+)
 _PERCENT_UNIT_TARGETS = {
     "%": (0.01, "ratio"),
     "%/d": (0.01, "ratio/d"),
@@ -46,7 +57,8 @@ _FACTOR_RE = re.compile(
 
 def load_measurement_policy(path: str | Path) -> dict[str, Any]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    if payload.get("contract_version") != POLICY_VERSION:
+    contract_version = payload.get("contract_version")
+    if contract_version not in {LEGACY_POLICY_VERSION, POLICY_VERSION}:
         raise ValueError(f"unsupported assay-transfer measurement policy: {path}")
     decisions = payload.get("bucket_decisions")
     if not isinstance(decisions, Mapping):
@@ -59,6 +71,40 @@ def load_measurement_policy(path: str | Path) -> dict[str, Any]:
     }
     if invalid:
         raise ValueError(f"invalid assay-transfer bucket decisions: {sorted(invalid)}")
+    axis_decisions = payload.get("axis_decisions", {})
+    if not isinstance(axis_decisions, Mapping):
+        raise ValueError("axis_decisions must be a mapping")
+    invalid_axes = {
+        key: value
+        for key, value in axis_decisions.items()
+        if not isinstance(value, Mapping)
+        or value.get("transform") not in {"raw", "log10"}
+    }
+    if invalid_axes:
+        raise ValueError(f"invalid assay-transfer axis decisions: {sorted(invalid_axes)}")
+    invalid_axis_keys = []
+    for key in axis_decisions:
+        try:
+            values = json.loads(key)
+        except (TypeError, json.JSONDecodeError):
+            values = None
+        if not isinstance(values, list) or len(values) != len(AXIS_KEY_FIELDS) or any(
+            not isinstance(value, str) for value in values
+        ):
+            invalid_axis_keys.append(key)
+    if invalid_axis_keys:
+        raise ValueError(f"invalid assay-transfer axis keys: {invalid_axis_keys}")
+    required_sources = payload.get("axis_decision_required_sources", [])
+    if not isinstance(required_sources, list) or any(
+        not isinstance(source, str) or not source for source in required_sources
+    ):
+        raise ValueError("axis_decision_required_sources must be a list of source IDs")
+    if contract_version == POLICY_VERSION and not axis_decisions:
+        raise ValueError("v2 assay-transfer measurement policy lacks axis_decisions")
+    if contract_version == POLICY_VERSION and payload.get("axis_key_fields") != list(
+        AXIS_KEY_FIELDS
+    ):
+        raise ValueError("v2 assay-transfer measurement policy has wrong axis_key_fields")
     if not isinstance(payload.get("record_corrections", {}), Mapping):
         raise ValueError("record_corrections must be a mapping")
     ineligibility = payload.get("record_ineligibility", {})
@@ -97,18 +143,42 @@ def finalize_assay_transfer_measurement(
         or projected.get("canonicalization_status")
         or ""
     )
-    decision = (
-        policy["bucket_decisions"].get(raw_key, {"transform": "raw"})
-        if validity in {"", "valid"}
-        else {"transform": "raw"}
-    )
+    axis_key = assay_transfer_axis_key(updated_projected)
+    decision_key = raw_key
+    if validity in {"", "valid"}:
+        decision = policy["bucket_decisions"].get(raw_key)
+        if decision is None:
+            decision = policy.get("axis_decisions", {}).get(axis_key)
+            decision_key = axis_key
+        if (
+            decision is None
+            and kind == "continuous"
+            and scalar is not None
+            and str(updated_projected.get("source_id") or "")
+            in policy.get("axis_decision_required_sources", ())
+        ):
+            raise ValueError(f"continuous axis lacks an exact policy decision: {axis_key}")
+        decision = decision or {"transform": "raw"}
+    else:
+        decision = {"transform": "raw"}
     transform = str(decision["transform"])
     if transform == "log10":
         if kind != "continuous" or scalar is None or scalar <= 0:
-            raise ValueError(f"log10 policy targets an invalid record in {raw_key}")
+            record_id = str(
+                updated_projected.get("canonical_record_id")
+                or updated_projected.get("normalized_record_id")
+                or ""
+            )
+            if scalar is not None and scalar <= 0 and record_id in policy.get(
+                "record_ineligibility", {}
+            ):
+                transform = "raw"
+            else:
+                raise ValueError(f"log10 policy targets an invalid record in {decision_key}")
+    if transform == "log10":
         unit = str(updated_projected.get("canonical_unit_text") or "")
         if unit.startswith(("log10(", "-log10(")):
-            raise ValueError(f"log10 policy would double-transform {raw_key}")
+            raise ValueError(f"log10 policy would double-transform {decision_key}")
         scalar = math.log10(scalar)
         _set_log_value(updated_working, updated_projected, scalar, unit)
     elif (
@@ -128,7 +198,7 @@ def finalize_assay_transfer_measurement(
         "assay_transfer_transform_id": (
             LOG10_TRANSFORM if transform == "log10" else RAW_TRANSFORM
         ),
-        "assay_transfer_policy_key": raw_key,
+        "assay_transfer_policy_key": decision_key,
         "assay_transfer_pretransform_measurement_text": pretransform_measurement,
         "assay_transfer_pretransform_scalar_value": pretransform_scalar,
         "assay_transfer_pretransform_unit_text": pretransform_unit,
@@ -138,6 +208,17 @@ def finalize_assay_transfer_measurement(
     updated_working.update(provenance)
     updated_projected.update(provenance)
     return updated_working, updated_projected
+
+
+def assay_transfer_axis_key(record: Mapping[str, Any]) -> str:
+    """Return the exact scientific axis used by the v2 transform policy."""
+    values = [
+        str(record.get("source_id") or ""),
+        str(record.get("canonical_endpoint_name") or ""),
+        str(record.get("canonical_unit_text") or ""),
+        str(record.get("canonical_reference_scope") or "__unknown__"),
+    ]
+    return json.dumps(values, ensure_ascii=False, separators=(",", ":"))
 
 
 def canonicalize_assay_transfer_base(
@@ -367,6 +448,66 @@ def _format_number(value: float) -> str:
     return format(value, ".12g")
 
 
+def display_measurement_tuple(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Return a readable view without changing the canonical scientific tuple."""
+    unit = str(record.get("canonical_unit_text") or "")
+    kind = str(record.get("measurement_kind") or "")
+    scalar = _finite(record.get("finite_scalar_value"))
+    text = record.get("canonical_measurement_text")
+    if unit.startswith("log10(") and unit.endswith(")") and scalar is not None:
+        display_scalar = display_scalar_value(scalar, DISPLAY_INVERSE_LOG10)
+        return {
+            "display_measurement_text": (
+                _format_number(display_scalar) if display_scalar is not None else text
+            ),
+            "display_scalar_value": display_scalar,
+            "display_unit_text": unit[6:-1] or None,
+            "display_transform_id": DISPLAY_INVERSE_LOG10,
+        }
+    if unit == "relative-scalar":
+        return {
+            "display_measurement_text": (
+                f"{_format_number(scalar)}× relative to comparator"
+                if scalar is not None
+                else text
+            ),
+            "display_scalar_value": scalar,
+            "display_unit_text": None,
+            "display_transform_id": DISPLAY_RELATIVE,
+        }
+    if unit in {"free-text", "unresolved-scalar"} or kind in {
+        "semantic",
+        "non_scalar",
+        "binary",
+        "ordinal",
+    }:
+        return {
+            "display_measurement_text": text,
+            "display_scalar_value": scalar if kind not in {"semantic", "non_scalar"} else None,
+            "display_unit_text": None,
+            "display_transform_id": DISPLAY_SEMANTIC,
+        }
+    return {
+        "display_measurement_text": text or (_format_number(scalar) if scalar is not None else None),
+        "display_scalar_value": scalar,
+        "display_unit_text": unit or None,
+        "display_transform_id": DISPLAY_IDENTITY,
+    }
+
+
+def display_scalar_value(value: Any, transform_id: str) -> float | None:
+    scalar = _finite(value)
+    if scalar is None:
+        return None
+    if transform_id != DISPLAY_INVERSE_LOG10:
+        return scalar
+    try:
+        output = 10.0**scalar
+    except OverflowError:
+        return None
+    return output if math.isfinite(output) else None
+
+
 def _finite(value: Any) -> float | None:
     if value is None:
         return None
@@ -385,10 +526,17 @@ def _scientific_factor_present(value: str) -> bool:
 
 __all__ = [
     "CANONICAL_TUPLE_CONTRACT_VERSION",
+    "DISPLAY_IDENTITY",
+    "DISPLAY_INVERSE_LOG10",
+    "DISPLAY_RELATIVE",
+    "DISPLAY_SEMANTIC",
     "LOG10_TRANSFORM",
     "POLICY_VERSION",
     "RAW_TRANSFORM",
+    "assay_transfer_axis_key",
     "canonicalize_assay_transfer_base",
+    "display_measurement_tuple",
+    "display_scalar_value",
     "finalize_assay_transfer_measurement",
     "load_measurement_policy",
     "validate_final_assay_transfer_measurements",

@@ -49,14 +49,14 @@ from tools.chembl_tool.tasks.clintox.starling_policy import (
     POLICY,
 )
 from tools.chembl_tool.tasks.clintox.starling_schema import RECORD_CONTRACT
-from tools.chembl_tool.tasks.clintox.starling_source import DIRECT_SOURCE_ID
 
 PAIR_BUCKET_VERSION = "clintox_pair_buckets.v8"
 DISTANCE_PROFILE_VERSION = "clintox_distance_calibration_profile.v2"
 PIPELINE_LAYOUT_VERSION = "clintox.normalized_v7_layout.v2"
 HELDOUT_OVERLAP_VERSION = "clintox.remove_heldout_direct_overlap.v2"
 BENCHMARK_SPLITS = ("scaffold",)
-EXCLUSIONS_FILENAME = "excluded_human_clinical_toxicity_records.parquet"
+EXCLUSIONS_FILENAME = "excluded_clinical_trial_failure_records.parquet"
+GOLD_FILTER_SOURCE_ID = "clinical_trial_failure"
 LEGACY_DOWNSTREAM_STAGES = (
     "04_evidence_catalog",
     "05_neighbor_index",
@@ -73,7 +73,6 @@ TRANSFER_PROFILE = TransferPolicyProfile(
     },
     minimum_distinct_levels=3,
     minimum_distinct_levels_by_scale={
-        "clintox_human_toxicity_binary.v1": 2,
         "clintox_organ_injury_binary.v1": 2,
         "clintox_genotoxicity_binary.v1": 2,
     },
@@ -189,7 +188,7 @@ def _spec() -> SplitDownstreamSpec:
         pipeline_layout_version=PIPELINE_LAYOUT_VERSION,
         heldout_overlap_version=HELDOUT_OVERLAP_VERSION,
         pair_bucket_version=PAIR_BUCKET_VERSION,
-        filter_source_id=DIRECT_SOURCE_ID,
+        filter_source_id=GOLD_FILTER_SOURCE_ID,
         benchmark_splits=BENCHMARK_SPLITS,
         build_sidecar=build_sidecar,
         build_transfer_policy=build_distance_calibration,

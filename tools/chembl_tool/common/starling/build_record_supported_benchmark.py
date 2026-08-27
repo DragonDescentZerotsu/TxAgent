@@ -33,7 +33,6 @@ TASKS = (
     "BBB_Martins",
     "Bioavailability_Ma",
     "Skin_Reaction",
-    "ClinTox_Human_Toxicity",
 )
 DEFAULT_TASKS = ("BBB_Martins", "Bioavailability_Ma", "Skin_Reaction")
 SEED = 20260807
@@ -461,18 +460,9 @@ def build_task(
             "bbb_eval_cap": 500,
             "bioavailability_and_skin_ratio": "approximately 8:1:1",
             "prior_valid_reuse_tiebreak": True,
-            **(
-                {"clintox_human_toxicity_ratio": "approximately 8:1:1"}
-                if task == "ClinTox_Human_Toxicity"
-                else {}
-            ),
         },
         "split_size_policy": {
-            "formula": (
-                "floor(0.1*n)"
-                if task == "ClinTox_Human_Toxicity"
-                else "BBB min(500, floor(0.1*n)); Bioavailability/Skin floor(0.1*n)"
-            ),
+            "formula": "BBB min(500, floor(0.1*n)); Bioavailability/Skin floor(0.1*n)",
             "target_valid_size": target,
             "target_test_size": target,
         },

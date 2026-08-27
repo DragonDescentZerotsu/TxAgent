@@ -15,6 +15,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
 
 
 def _record(
@@ -129,7 +130,7 @@ def test_unknown_fields_match_unknown_and_sources_remain_distinct():
     assert all(metadata["validations"].values())
 
 
-def test_oral_exposure_dose_is_metadata_not_a_bucket_boundary():
+def test_legacy_oral_exposure_dose_is_not_a_v6_bucket_boundary():
     records = [
         _record(
             1,
@@ -161,6 +162,13 @@ def test_oral_exposure_dose_is_metadata_not_a_bucket_boundary():
     ]
     assert rows[0]["pair_bucket_key"] == rows[1]["pair_bucket_key"]
     assert metadata["stats"]["buckets"] == 1
+
+
+def test_v7_oral_exposure_requires_the_canonical_exact_dose_key():
+    spec = RECORD_CONTRACT.pair_buckets["oral_exposure"]
+    assert "canonical_oral_dose_key" in spec.canonical_dimensions
+    assert spec.required_known_dimensions == ("canonical_oral_dose_key",)
+    assert "oral_dose" not in spec.variance_candidates
 
 
 @pytest.mark.parametrize(
@@ -233,7 +241,6 @@ def test_standalone_builder_writes_exactly_two_files_without_rewriting_v5(tmp_pa
         "source_id",
         "canonical_endpoint",
         "canonical_unit",
-        "pair_bucket_unit_text",
         "canonical_pair_fields_json",
         "pair_bucket_key",
         "assay_transfer_eligible",

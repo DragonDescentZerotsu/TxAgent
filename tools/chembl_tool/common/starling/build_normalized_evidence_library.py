@@ -58,7 +58,6 @@ from tools.chembl_tool.common.starling.normalization.audit import (
     write_parquet,
 )
 from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
-    DEFAULT_EXACT_UNIT_MAPPING,
     EXACT_UNIT_MAPPING_VERSION,
     RESOLUTION_APPLY_VERSION,
     apply_measurement_resolution,
@@ -130,10 +129,21 @@ def _measurement_resolution_mapping(args: argparse.Namespace) -> Path | None:
     return Path(path) if path else None
 
 
+def _exact_unit_mapping(policy: StarlingTaskPolicy) -> Path | None:
+    path = policy.exact_unit_mapping_path
+    if policy.measurement_resolution_enabled and path is None:
+        raise ValueError(
+            f"{policy.task_id} enables measurement resolution without an "
+            "exact unit mapping"
+        )
+    return Path(path) if path is not None else None
+
+
 def _measurement_resolution_manifest(
     policy: StarlingTaskPolicy, args: argparse.Namespace
 ) -> dict[str, Any]:
     mapping = _measurement_resolution_mapping(args)
+    unit_mapping = _exact_unit_mapping(policy)
     enabled = policy.measurement_resolution_enabled
     return {
         "enabled": enabled,
@@ -141,9 +151,9 @@ def _measurement_resolution_manifest(
         "frozen_extraction_loaded": mapping is not None,
         "apply_version": RESOLUTION_APPLY_VERSION,
         "exact_unit_mapping_version": EXACT_UNIT_MAPPING_VERSION,
-        "exact_unit_mapping_path": str(DEFAULT_EXACT_UNIT_MAPPING),
+        "exact_unit_mapping_path": str(unit_mapping) if unit_mapping else None,
         "exact_unit_mapping_sha256": (
-            file_sha256(DEFAULT_EXACT_UNIT_MAPPING) if enabled else None
+            file_sha256(unit_mapping) if enabled and unit_mapping else None
         ),
         "legacy_parser_active": not enabled,
     }
@@ -154,8 +164,9 @@ def _scientific_assets(
 ) -> tuple[Path, ...]:
     assets = [Path(path) for path in policy.scientific_assets]
     if policy.measurement_resolution_enabled:
-        if DEFAULT_EXACT_UNIT_MAPPING not in assets:
-            assets.append(DEFAULT_EXACT_UNIT_MAPPING)
+        unit_mapping = _exact_unit_mapping(policy)
+        if unit_mapping not in assets:
+            assets.append(unit_mapping)
         mapping = _measurement_resolution_mapping(args)
         if mapping is not None:
             assets.append(mapping)
@@ -288,7 +299,12 @@ STAGE_UPSTREAM_INPUTS = {
 }
 RECORD_DEPENDENT_DIRECTORIES = (
     "04_pair_buckets",
+    "05_deduplicated_records",
+    "05_collapsed_records",
+    "06_collapsed_records",
     "05_distance_calibration",
+    "06_distance_calibration",
+    "07_distance_calibration",
     "05_assay_transfer_policy",
     "06_remove_heldout_overlap",
     "07_molecule_evidence",
@@ -553,9 +569,6 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
         cleaned = cleaned_persisted
         if cleaned and policy.record_contract:
             cleaned = [policy.record_contract.inflate_cleaned(row) for row in cleaned]
-            _restore_v7_cleaned_structures(
-                policy, args, cleaned, source_inventory=source_inventory
-            )
 
     if final_stage == STAGES.index("clean"):
         return _finish_partial(
@@ -576,9 +589,14 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                 cleaned = [
                     policy.record_contract.inflate_cleaned(row) for row in cleaned
                 ]
-                _restore_v7_cleaned_structures(
-                    policy, args, cleaned, source_inventory=source_inventory
-                )
+        if policy.record_contract:
+            # Stage 01 intentionally omits private structure helpers.  Restore
+            # them at the single Stage-02 boundary for both fresh and resumed
+            # builds so molecular retrieval eligibility cannot depend on the
+            # builder's restart point.
+            _restore_v7_cleaned_structures(
+                policy, args, cleaned, source_inventory=source_inventory
+            )
         cleaned_parent_count = len(cleaned)
         resolution_mapping = _measurement_resolution_mapping(args)
         measurement_resolution_audit = (
@@ -586,6 +604,7 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                 cleaned,
                 mapping_path=resolution_mapping,
                 task=policy.task_id,
+                unit_mapping_path=_exact_unit_mapping(policy),
                 allow_partial=args.allow_partial_measurement_resolution,
             )
             if policy.measurement_resolution_enabled
@@ -717,7 +736,11 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                         else {}
                     ),
                     **(
-                        {"exact_measurement_unit_map": DEFAULT_EXACT_UNIT_MAPPING}
+                        {
+                            "exact_measurement_unit_map": _exact_unit_mapping(
+                                policy
+                            )
+                        }
                         if measurement_resolution_audit and resolution_mapping
                         else {}
                     ),
@@ -889,6 +912,11 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                 row_counts=organization_stats,
                 validations={
                     "cross_source_deduplication": False,
+                    "row_deduplication": False,
+                    "row_cardinality_preserved": (
+                        organization_stats["n_records"]
+                        == organization_stats["n_normalized_records"]
+                    ),
                     "unusable_structures_retained_in_records": True,
                 },
             )
@@ -907,9 +935,10 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
             ]
         duplicates = read_parquet_records(out_dir / DUPLICATES_FILENAME)
         organization_stats = {
-            "n_normalized_records_before_deduplication": len(records) + len(duplicates),
+            "n_normalized_records": len(records),
             "n_records": len(records),
             "n_duplicates_removed": len(duplicates),
+            "row_deduplication_deferred": True,
             "n_retrieval_eligible": sum(
                 bool(row.get("retrieval_eligible")) for row in records
             ),
@@ -1495,10 +1524,31 @@ def _invalidate_downstream_artifacts(
     if stage == "clean":
         targets.extend(out_dir / filename for filename in LEGACY_FLAT_ARTIFACTS)
     invalidated: list[str] = []
+    historical = out_dir / "historical/pre_unified_row_dedup"
+    historical_names = {
+        "04_pair_buckets",
+        "05_collapsed_records",
+        "06_distance_calibration",
+    }
+    legacy_collapsed_layout = any(
+        (out_dir / name).exists()
+        for name in ("05_collapsed_records", "06_distance_calibration")
+    )
     for target in targets:
         if not target.exists():
             continue
         relative = str(target.relative_to(out_dir))
+        if (
+            target.name in historical_names
+            and (target.name != "04_pair_buckets" or legacy_collapsed_layout)
+            and not (historical / target.name).exists()
+        ):
+            historical.mkdir(parents=True, exist_ok=True)
+            os.replace(target, historical / target.name)
+            invalidated.append(
+                f"{relative} -> historical/pre_unified_row_dedup/{target.name}"
+            )
+            continue
         if target.is_dir():
             shutil.rmtree(target)
         else:
@@ -1695,7 +1745,7 @@ def parse_args(
         action="store_true",
         help=(
             "Reproduce historical task-local Stages 06-09. By default v7 task "
-            "wrappers stop at split-independent Stage 05; current benchmark "
+            "wrappers stop at split-independent Stage 07; current benchmark "
             "views belong under lineage-specific paper roots."
         ),
     )
@@ -1713,6 +1763,54 @@ def parse_args(
         choices=("auto", "off"),
         default="auto",
         help="reuse a complete content-matched build, or force recomputation",
+    )
+    parser.add_argument(
+        "--semantic-aggregation-base-url",
+        default="http://127.0.0.1:50001/v1",
+        help="OpenAI-compatible LLM endpoint for Stage-06 semantic groups",
+    )
+    parser.add_argument(
+        "--semantic-aggregation-api-key-env",
+        default="DEEPSEEK_API_KEY",
+        help="environment variable containing the semantic aggregation API key",
+    )
+    parser.add_argument(
+        "--semantic-aggregation-model",
+        default="deepseek-ai/DeepSeek-V4-Flash-0731",
+    )
+    parser.add_argument(
+        "--semantic-aggregation-provider",
+        choices=("openai-compatible", "distillation"),
+        default="openai-compatible",
+    )
+    parser.add_argument("--semantic-aggregation-reasoning-effort", default="")
+    parser.add_argument("--semantic-aggregation-workers", type=int, default=8)
+    parser.add_argument("--semantic-aggregation-timeout-s", type=int, default=900)
+    parser.add_argument("--semantic-aggregation-max-tokens", type=int, default=4096)
+    parser.add_argument("--semantic-aggregation-max-new-groups", type=int)
+    parser.add_argument(
+        "--semantic-aggregation-cache",
+        type=Path,
+        help="optional resumable JSONL cache; defaults inside the normalized root",
+    )
+    parser.add_argument("--semantic-aggregation-token-ledger", type=Path)
+    parser.add_argument("--semantic-aggregation-budget-epoch", default="")
+    parser.add_argument(
+        "--semantic-aggregation-budget-max-tokens",
+        type=int,
+        default=10_000_000,
+    )
+    parser.add_argument(
+        "--semantic-aggregation-start-new-budget-epoch",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--defer-semantic-aggregation",
+        action="store_true",
+        help=(
+            "Publish Stage 06/07 with semantic groups as retrieval-ineligible "
+            "pending shells and make no semantic LLM calls"
+        ),
     )
     if policy.measurement_resolution_enabled:
         default_mapping = importlib.import_module(
@@ -1741,6 +1839,13 @@ def parse_args(
         parser.error("--from-stage cannot be later than --through-stage")
     if args.max_rows_per_source and args.strict_endpoint_inventory:
         parser.error("bounded source runs require --no-strict-endpoint-inventory")
+    if (
+        args.semantic_aggregation_max_new_groups is not None
+        and args.semantic_aggregation_max_new_groups < 1
+    ):
+        parser.error("--semantic-aggregation-max-new-groups must be positive")
+    if args.semantic_aggregation_budget_max_tokens < 1:
+        parser.error("--semantic-aggregation-budget-max-tokens must be positive")
     if policy.validate_arguments is not None:
         policy.validate_arguments(parser, args)
     return args

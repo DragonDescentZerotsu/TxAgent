@@ -19,6 +19,9 @@ from tools.chembl_tool.common.starling.canonicalization_v7 import (
 from tools.chembl_tool.common.starling.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
 )
+from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+    EXACT_UNIT_MAPPING_VERSION,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
     MAPPING_VERSION as MEASUREMENT_RESOLUTION_VERSION,
 )
@@ -51,6 +54,7 @@ SMILES_VERSION = "rdkit_standardized_source_smiles.v1"
 MEASUREMENT_ATOMIC_GROUP = "canonical_measurement_unit_pair"
 ENDPOINT_PRODUCER_FIELD = "canonical_endpoint_producer_id"
 PAIR_PRODUCER_FIELD = "canonical_pair_producer_id"
+KINETIC_SYMBOL_VERSION = "bbb_kinetic_symbol.v1"
 
 SOURCE_ENDPOINT_PRODUCER_IDS = {
     "direct_bbb": "bbb.direct_endpoint_map.v1",
@@ -119,13 +123,13 @@ def _base_dimensions(
             SOURCE_RULE_PAIR_PRODUCER_IDS[source_id],
             scalar_inputs,
             "deterministic_rule",
-            f"{MEASUREMENT_ROUTING_VERSION}+starling_exact_measurement_units.v1",
+            f"{MEASUREMENT_ROUTING_VERSION}+{EXACT_UNIT_MAPPING_VERSION}",
         ),
         CanonicalProducerSpec(
             SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id],
             extraction_inputs,
             "frozen_extraction",
-            f"{MEASUREMENT_RESOLUTION_VERSION}+starling_exact_measurement_units.v1",
+            f"{MEASUREMENT_RESOLUTION_VERSION}+{EXACT_UNIT_MAPPING_VERSION}",
         ),
     )
     dimensions = [
@@ -376,6 +380,13 @@ SOURCES = {
                 ("transport_mechanism",),
                 "canonical_transport_mechanism",
             ),
+            CanonicalDimensionSpec(
+                "canonical_kinetic_symbol",
+                "kinetic_symbol",
+                ("measurement_text", "support_text"),
+                "deterministic_rule",
+                KINETIC_SYMBOL_VERSION,
+            ),
         ),
     ),
 }
@@ -436,6 +447,7 @@ PAIR_BUCKETS = {
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_transport_mechanism",
+            "canonical_kinetic_symbol",
             "canonical_reference_scope",
             "canonical_reference_basis",
         ),

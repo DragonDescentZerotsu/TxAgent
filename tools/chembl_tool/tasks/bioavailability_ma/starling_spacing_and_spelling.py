@@ -115,6 +115,16 @@ def family_assignment(
 ) -> FamilyAssignment | None:
     """Map source records to the five stable retrieval families without changing endpoints."""
     endpoint = (clean_text(endpoint_name) or "").casefold()
+    if str((record or {}).get("group_id") or "") == (
+        "Observed.direct_oral_bioavailability"
+    ):
+        return FamilyAssignment(
+            "Observed.direct_oral_bioavailability",
+            "Observed",
+            "direct_oral_bioavailability",
+            "direct_outcome",
+            "oral bioavailability",
+        )
     if source_id == "hf_bioavailability":
         record = record or {}
         scope = str(

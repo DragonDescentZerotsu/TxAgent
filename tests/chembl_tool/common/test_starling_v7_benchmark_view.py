@@ -7,8 +7,8 @@ import pandas as pd
 from tools.chembl_tool.common.starling.v7_benchmark_view import (
     ALL_SCAFFOLD_FILTER,
     DIRECT_SOURCE_ONLY_FILTER,
-    DIRECT_NUMERIC_VIEW,
     FULL_VIEW,
+    _filter_records,
     build_v7_benchmark_view,
 )
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
@@ -19,15 +19,36 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_downstream_artifa
     get_spec as get_bioavailability_downstream_spec,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import POLICY
+from tools.chembl_tool.tasks.skin_reaction.build_starling_downstream_artifacts import (
+    get_spec as get_skin_downstream_spec,
+)
 
 
 def _record(record_id: str, smiles: str, group_id: str, value):
+    direct = "direct" in group_id and "nondirect" not in group_id
     row = {
         "canonical_record_id": record_id,
+        "collapsed_record_id": record_id,
         "retrieval_eligible": True,
+        "retrieval_source_id": "direct_vote" if direct else "indirect",
         "canonical_smiles": smiles,
         "group_id": group_id,
         "finite_scalar_value": value,
+        "canonical_measurement_text": str(value) if value is not None else None,
+        "canonical_unit_text": "%" if value is not None else None,
+        "display_measurement_text": str(value) if value is not None else None,
+        "display_scalar_value": value,
+        "display_unit_text": "%" if value is not None else None,
+        "display_transform_id": "identity.v1",
+        "measurement_unit_mapping_status": "mapped",
+        "measurement_resolution_input_measurement": "source value",
+        "measurement_resolution_input_unit": "source unit",
+        "measurement_resolution_origin": "llm",
+        "aggregation_method": "direct_binary_vote" if direct else "semantic_llm",
+        "aggregation_status": "valid",
+        "aggregate_counts_json": '{"1":2}' if direct else "{}",
+        "source_record_count": 2 if direct else 1,
+        "deduplicated_source_record_count": 1,
         "confidence": 0.9,
         "endpoint_name": "oral_bioavailability",
         "canonical_endpoint_name": "oral_bioavailability",
@@ -35,10 +56,10 @@ def _record(record_id: str, smiles: str, group_id: str, value):
         "source_name": "HF",
         "source_row_number": int(record_id[-1]),
         "bioavailability_report_type": (
-            "absolute" if "direct" in group_id and "nondirect" not in group_id else "relative_comparison"
+            "absolute" if direct else "relative_comparison"
         ),
         "canonical_bioavailability_evidence_scope": (
-            "direct" if "direct" in group_id and "nondirect" not in group_id else "nondirect"
+            "direct" if direct else "nondirect"
         ),
         "oral_bioavailability_value": str(value or "relative"),
         "support_text": "example",
@@ -62,7 +83,7 @@ def _record(record_id: str, smiles: str, group_id: str, value):
 
 def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
     normalized_root = tmp_path / "v7"
-    records_dir = normalized_root / "03_records"
+    records_dir = normalized_root / "06_collapsed_records"
     records_dir.mkdir(parents=True)
     records = [
         _record("record-1", "CCO", "Observed.nondirect_oral_bioavailability", None),
@@ -89,10 +110,35 @@ def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
         "CCN",
         "CCC",
     }
-    assert set(load_index(full_dir / "08_neighbor_index")["group_to_molecule_indices"]) == {
+    loaded = load_index(full_dir / "08_neighbor_index")
+    assert set(loaded["group_to_molecule_indices"]) == {
         "Observed.direct_oral_bioavailability",
         "Observed.nondirect_oral_bioavailability",
     }
+    direct_evidence = next(
+        evidence[0]
+        for by_group in loaded["evidence_by_molecule_group"].values()
+        for group_id, evidence in by_group.items()
+        if group_id == "Observed.direct_oral_bioavailability"
+    )
+    direct_measurement = direct_evidence["minimal_evidence"]["examples"][0][
+        "source_fields"
+    ]["aggregated_measurement"]
+    assert direct_evidence["retrieval_source_ids"] == ["direct_vote"]
+    assert direct_measurement["method"] == "consensus"
+    assert "category_counts" not in direct_measurement
+    source_projection = direct_evidence["minimal_evidence"]["examples"][0][
+        "source_fields"
+    ]
+    assert "resolved_measurement_display" not in direct_evidence[
+        "minimal_evidence"
+    ]["examples"][0]
+    assert source_projection["canonical_context"] == {
+        "condition_atoms": [],
+        "condition_group": "",
+        "condition_scope": "",
+    }
+    assert "reported_conditions" not in source_projection
     assert (full_dir / "06_records/manifest.json").is_file()
     assert (full_dir / "07_molecule_evidence/manifest.json").is_file()
     assert (full_dir / "09_audits/heldout_overlap.json").is_file()
@@ -110,24 +156,9 @@ def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
         "../07_molecule_evidence/manifest.json"
     )
 
-    direct_dir = tmp_path / "direct"
-    direct = build_v7_benchmark_view(
-        policy=POLICY,
-        normalized_root=normalized_root,
-        heldout_labels_jsonl=heldout,
-        out_dir=direct_dir,
-        benchmark_split="random",
-        view=DIRECT_NUMERIC_VIEW,
-    )
-    direct_rows = pd.read_parquet(direct_dir / "06_records/records.parquet")
-    assert direct["records"] == 1
-    assert direct_rows["group_id"].tolist() == ["Observed.direct_oral_bioavailability"]
-    assert direct_rows["finite_scalar_value"].tolist() == [42.0]
-
-
 def test_v7_direct_source_view_retains_heldout_mechanism_records(tmp_path):
     normalized_root = tmp_path / "v7"
-    records_dir = normalized_root / "03_records"
+    records_dir = normalized_root / "06_collapsed_records"
     records_dir.mkdir(parents=True)
     records = [
         _record("record-1", "CCO", "Observed.direct_oral_bioavailability", 40.0),
@@ -184,7 +215,7 @@ def test_v7_direct_source_view_retains_heldout_mechanism_records(tmp_path):
 
 def test_v7_all_scaffold_filter_applies_to_every_source(tmp_path):
     normalized_root = tmp_path / "v7"
-    records_dir = normalized_root / "03_records"
+    records_dir = normalized_root / "06_collapsed_records"
     records_dir.mkdir(parents=True)
     hf = _record("record-1", "Nc1ccccc1", "Observed.direct_oral_bioavailability", 40.0)
     oral = _record("record-2", "Cc1ccccc1", "Observed.oral_auc_cmax_exposure", None)
@@ -219,3 +250,29 @@ def test_v7_all_scaffold_filter_applies_to_every_source(tmp_path):
     assert heldout_filter["source_counts"]["hf_bioavailability"]["excluded_heldout"] == 1
     assert heldout_filter["source_counts"]["oral_exposure"]["excluded_heldout"] == 1
     assert heldout_filter["source_counts"]["fa"]["excluded_heldout"] == 1
+
+
+def test_skin_direct_filter_uses_partition_after_cross_source_collapse():
+    direct = {
+        **_record("record-1", "CCO", "Direct.skin_reaction", 1.0),
+        "source_id": "multi_source",
+        "retrieval_source_id": "direct_vote",
+    }
+    mechanism = {
+        **_record("record-2", "CCO", "Mechanism.sensitization_aop", None),
+        "source_id": "sensitization_aop",
+        "retrieval_source_id": "indirect",
+    }
+
+    kept, audit = _filter_records(
+        [direct, mechanism],
+        heldout_keys={"LFQSCWFLJHTTHZ-UHFFFAOYSA-N"},
+        heldout_scaffolds=set(),
+        view_predicate=lambda _record: True,
+        heldout_filter_mode=DIRECT_SOURCE_ONLY_FILTER,
+        downstream_spec=get_skin_downstream_spec(),
+    )
+
+    assert [row["canonical_record_id"] for row in kept] == ["record-2"]
+    assert audit["n_excluded_heldout_records"] == 1
+    assert audit["n_retained_heldout_nonfilter_records"] == 1

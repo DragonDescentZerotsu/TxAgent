@@ -95,6 +95,7 @@ def build_sidecar(
         assay_transfer_record_ineligibility=load_measurement_policy(
             POLICY.assay_transfer_measurement_policy
         ).get("record_ineligibility", {}),
+        canonical_record_contract=v7,
     )
     if not all(metadata["validations"].values()):
         raise ValueError(

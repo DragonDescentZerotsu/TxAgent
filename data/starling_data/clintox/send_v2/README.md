@@ -15,7 +15,7 @@ Archive SHA-256: `bf6da36bf2ac347d4763e5c3a234292c7f5c04576cccc4b75f6a4741246ac4
 | `off_target_ddi_exposure` | 1,104,657 | 1,098,331 | 6,326 |
 
 All source rows contain a nonempty `SMILES`. Invalid structures remain auditable and fail closed.
-The clinical source lacks `qualifying_conditions`; the benchmark therefore remains `candidate_pending_qa`.
+The clinical source lacks `qualifying_conditions`; it remains indirect evidence and does not define the benchmark label.
 
 The exact supplied archive is tracked as verified sub-100 MB parts under
 `artifacts/chembl_tool/tasks/clintox/clintox_send_v2_source/`. Extracted

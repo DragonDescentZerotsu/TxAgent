@@ -50,7 +50,7 @@ from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRAC
 
 DEFAULT_PAIR_BUCKET_DIR = DEFAULT_NORMALIZED_DIR / "04_pair_buckets"
 DEFAULT_LEGACY_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "05_assay_transfer_policy"
-DEFAULT_V7_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "05_distance_calibration"
+DEFAULT_V7_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "07_distance_calibration"
 DEFAULT_OUTPUT_DIR = DEFAULT_LEGACY_OUTPUT_DIR
 DEFAULT_AUXILIARY_MANIFEST = (
     DEFAULT_NORMALIZED_DIR / "02_canonicalized/auxiliary_mapping_manifest.json"
@@ -79,7 +79,7 @@ def build_pair_bucket_transfer_policy(
     pair_bucket_metadata_path: str | Path,
     auxiliary_manifest_path: str | Path,
     out_dir: str | Path,
-    minimum_samples: int = MIN_ASSAY_TRANSFER_SAMPLES,
+    minimum_samples: int | None = None,
     workers: int = 1,
 ) -> dict[str, Any]:
     metadata = json.loads(Path(pair_bucket_metadata_path).read_text(encoding="utf-8"))
@@ -123,7 +123,11 @@ def build_pair_bucket_transfer_policy(
         pair_bucket_metadata_path=pair_bucket_metadata_path,
         auxiliary_manifest_path=auxiliary_manifest_path,
         out_dir=out_dir,
-        minimum_samples=minimum_samples,
+        minimum_samples=(
+            MIN_ASSAY_TRANSFER_SAMPLES
+            if minimum_samples is None
+            else minimum_samples
+        ),
     )
 
 
@@ -131,7 +135,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--records",
-        default=str(DEFAULT_NORMALIZED_DIR / "03_records/records.parquet"),
+        default=str(DEFAULT_NORMALIZED_DIR / "06_collapsed_records/records.parquet"),
     )
     parser.add_argument(
         "--pair-bucket-records",
@@ -147,7 +151,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help=(
             "Output directory. By default, v7 metadata publishes beside the input as "
-            "05_distance_calibration and frozen v6 metadata uses 05_assay_transfer_policy."
+            "07_distance_calibration and frozen v6 metadata uses 05_assay_transfer_policy."
         ),
     )
     parser.add_argument("--workers", type=int, default=1)
@@ -201,7 +205,7 @@ def resolve_output_dir(
     metadata_path = Path(pair_bucket_metadata_path)
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     stage = (
-        "05_distance_calibration"
+        "07_distance_calibration"
         if metadata.get("contract_version") == RECORD_CONTRACT.version
         else "05_assay_transfer_policy"
     )

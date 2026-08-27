@@ -1,195 +1,142 @@
-# ClinTox send_v2 normalized evidence lineage
+# ClinTox source preparation and normalized v7 status
 
-The active ClinTox data pipeline is rebuilt exclusively from
-`/vast/projects/myatskar/lab/shared_docs/clintox_send_v2.tar.gz` (SHA-256
-`bf6da36bf2ac347d4763e5c3a234292c7f5c04576cccc4b75f6a4741246ac4ea`).
-The immutable source import is `data/starling_data/clintox/send_v2/`.
-For repository portability, the exact supplied archive is tracked as verified
-90 MB parts under
-`artifacts/chembl_tool/tasks/clintox/clintox_send_v2_source/`; the extracted
-Parquets are byte-identical local restores rather than duplicate Git blobs.
+ClinTox uses `clinical_trial_failure_v1` as its only benchmark. Frozen AACT
+toxicity-failure rows and SWEETLEAD/FDA comparator rows define the label;
+Starling literature records never vote.
 
-The release contains 4,846,914 rows across one direct human-clinical source
-and six mechanism sources. Every row has a nonempty `SMILES`; 4,816,479
-structures normalize successfully and 30,435 fail closed. There is no global
-identifier in the delivery, and the pipeline does not synthesize one.
+## Stage 1 source contract
 
-## Scope and ownership
-
-Task-owned canonical evidence stops at Stage 05:
+The source-reconstructed gold and benchmark live under:
 
 ```text
-outputs/chembl_tool/tasks/clintox/evidence_library/starling_normalized_v7/
-  01_cleaned/
-  02_canonicalized/
-  03_records/
-  04_pair_buckets/
-  05_distance_calibration/
+data/starling_data/clintox/canonical_clinical_trial_failure_v1/
+data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/
 ```
 
-Benchmark-dependent evidence belongs to the paper lineage:
+The seven independent literature sources remain under:
 
 ```text
-outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/
-  evidence/clintox_starling_v7/
-    06_records/
-    07_molecule_evidence/
-    08_neighbor_index/
-    09_audits/
+data/starling_data/clintox/send_v2/<source_id>/extractions.parquet
 ```
 
-Stage 06 removes held-out parent rows only from
-`human_clinical_toxicity`, the direct label source. Mechanism rows remain
-available; query-time retrieval must still use `parent_disjoint`.
+`human_clinical_toxicity` is an indirect clinical-safety source. The frozen
+338-row strict trial-failure subset is represented by
+`direct_residual_candidates.parquet`, which points back to the corresponding
+`send_v2` rows without copying them. These mappings remain
+`pending_manual_review` and are not retrieval eligible.
 
-The earlier `clintox_base_v1` and `starling_raw_v1` data pipelines are
-superseded and are not active inputs. Existing model results are retained as
-historical artifacts, but results whose manifests do not pin `clintox_send_v2`
-and the current Stage-08 index are incompatible with this lineage.
+The benchmark split publishes `voting_records.jsonl`. Each eligible AACT/FDA
+source row retains its record vote, split, final parent label, and whether the
+record vote agrees with that final label. Invalid source structures remain in
+the canonical source audit and do not vote.
 
-## Candidate gold split
+## Light cleaning boundary
 
-The direct adapter defines a new task: explicit human clinical toxicity
-category versus exact `toxicity_absent`. It is not the TDC/MoleculeNet CT_TOX
-clinical-trial-failure task.
-
-The adapter yields 7,628 binary parent molecules: 755 negative and 6,873
-positive. The `record_supported_v2` scaffold split contains 6,104 train, 762
-valid, and 762 test parents. Valid and test each contain only multi-record
-parents; parent-identity and Bemis-Murcko scaffold overlap are both zero.
-
-This split remains `candidate_pending_qa`. The supplied direct schema lacks
-`qualifying_conditions`, so that semantic exclusion cannot be reconstructed.
-The frozen measurement/unit audit does not promote the benchmark; the
-category-stratified direct-source QA gate still applies.
-
-The 2026-08-18 manual review failed that gate. Of 360 frozen source records,
-252 passed, 96 failed, and 12 were uncertain: 108/360 (30.0%) were therefore
-non-passing. The proposed positive class had 252 pass, 74 fail, and 4
-uncertain records. None of the 30 proposed `toxicity_absent` records passed;
-22 failed and 8 were uncertain. The largest failure modes were unresolved
-combination/comparator attribution (27), formulation or entity mismatch (22),
-wrong outcome direction (21), and endpoint-limited absence incorrectly
-treated as global safety (17).
-
-The frozen 7,628-parent split is consequently diagnostic only. It must not be
-used for paper-facing training, validation, or test. The source must first be
-re-adjudicated across all direct records for entity alignment, causal
-attribution, outcome direction, and material qualifiers. Failed sampled rows
-must not be deleted or replaced, and audit-specific keyword filters are not a
-valid correction.
-
-The durable audit contract is:
-
-```text
-tools/chembl_tool/tasks/clintox/data_processing/gold_qa_v1/
-  REVIEW_PROTOCOL.md
-  reextraction_contract_v1.json
-  reviewed_rows.tsv
-  summary.json
-```
-
-`clintox_base build-benchmark` now revalidates the pinned sample and
-synchronizes the failed gate into `CANDIDATE_STATUS.json` and the runtime QA
-receipt. A corrected gold and dependent held-out evidence view have not been
-built because there is not yet a source-wide adjudication policy to build them
-from.
-
-## Canonical measurement and unit policy
-
-Shared parsing and conversion live in
-`tools/chembl_tool/common/starling/assay_transfer_measurements.py` and
-`tools/chembl_tool/common/units.py`. ClinTox-specific selectors, exact aliases,
-domains, reference semantics, and fail-closed rules live in:
-
-```text
-tools/chembl_tool/tasks/clintox/starling_measurement_semantics.py
-tools/chembl_tool/tasks/clintox/starling_reference_semantics.py
-tools/chembl_tool/tasks/clintox/data_processing/canonicalization_v7/
-tools/chembl_tool/tasks/clintox/data_processing/assay_transfer_measurements_v2/
-```
-
-Important policy boundaries:
-
-- A measurement and its unit are normalized only as one recognized atomic
-  pair. Unknown, comparator-relative, or malformed forms remain source-visible
-  but are ineligible for scalar transfer.
-- Shared percent-rate parsing converts `%/wk` to `ratio/wk`; it does not treat
-  percent-of-cells, dose-qualified percentages, or duration annotations as a
-  rate.
-- A point value explicitly outside its source interval fails closed.
-- A plain point estimate whose support text reports a censored value is not
-  transferred as exact.
-- Reviewed log transforms apply only to valid positive scalars. Retrieval
-  eligibility and original source fields are invariant.
-
-The frozen v2 transfer policy contains 1,437 reviewed buckets: 1,410 `log10`
-and 27 `raw`. It has 54 record-level exclusions: 53 source points outside
-their own reported intervals and one implausible literal `6×10^12 nM`
-concentration.
-
-## Frozen measurement/unit audit and build receipt
-
-The three manual audits are complete with zero failures:
-
-- main measurement/unit sample: 360/360 pass;
-- censored-support sample: 72/72 pass;
-- source point/interval consistency sample: 112/112 pass.
-
-The current canonical build contains:
-
-| Stage | Receipt |
-|---|---:|
-| cleaned rows | 4,846,914 |
-| organized records | 4,846,810 |
-| retrieval-eligible records | 4,744,068 |
-| assay-transfer-eligible records | 3,050,084 |
-| assay-transfer-excluded records | 1,796,726 |
-| pair buckets | 1,749,120 |
-| pairable buckets | 250,531 |
-| calibration-valid buckets | 4,301 |
-
-Stage-03 SHA-256 is
-`99bbe9013737b475aa69d98565901a805cf867d8a03802e17d7e74970ed155a8`.
-Stage-04 records SHA-256 is
-`dc99a4500f69ac74912f528a5492bc570633d92973fc1b14233d3c141632cd5a`.
-Stage-05 SHA-256 is
-`28c9df737acf70f0982d20aa5f8321b9ad6209a42c42cbe12c8915b9fc8f3803`.
-
-The scaffold benchmark view contains 4,584,827 Stage-06 records, 192,605
-molecule-family evidence rows, and 136,369 indexed molecule rows across seven
-groups. It matches all 1,524 held-out parents in the direct filter scope and
-removes 159,181 direct records. The direct group has zero held-out parent
-overlap. Mechanism evidence intentionally retains 1,296 held-out parent
-identities; runtime `parent_disjoint` filtering is therefore mandatory. The
-Stage-08 manifest SHA-256 is
-`fd1b60fa44d864accb64677f2132970425f42d11b6f02accd8ff805843e36a6b`.
-
-The assay-transfer rebuild restores its pre-transform tuple from immutable
-Stage 02 before applying the frozen policy. This makes Stage 03 idempotent and
-keeps retrieval content unchanged; the final retrieval-invariance digest is
-`dc12b3d198827f5b86d2c3f014f03ae2befc70ec889d5d67a2b4a8e9cf45eb41`.
-
-## Rebuild commands
-
-These artifacts were built on `dgx018` from
-`/vast/projects/myatskar/design-documents/joseph/TxAgent` with system Python
-3.12.3:
+The shared normalized-v7 builder may run only through `clean` for Stage 1:
 
 ```bash
-/usr/bin/python -m tools.chembl_tool.tasks.clintox.starling_source_artifact_store \
-  restore-source
-
-/usr/bin/python -m tools.chembl_tool.tasks.clintox.build_normalized_starling_evidence_library \
-  --from-stage clean --through-stage distance --workers 16 \
-  --progress-every 100000 --cache-mode off
-
-/usr/bin/python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
-  --indices clintox_starling_v7 --splits scaffold \
-  --benchmark-data-root data/processed_starling_record_supported_v2 \
-  --benchmark-lineage record_supported_v2 \
-  --heldout-filter-mode direct_source_only --workers 32
+python -m tools.chembl_tool.tasks.clintox.build_normalized_starling_evidence_library \
+  --from-stage source --through-stage clean
 ```
 
-These commands build evidence artifacts only. They do not promote the
-candidate or authorize a formal model matrix.
+This performs source-faithful whitespace/null cleaning, stable record
+identification, and structure resolution. It preserves source IDs, source
+columns, invalid rows, source hashes, and row counts.
+
+Stage 1 does not decide canonical endpoints, construct measurements or units,
+cluster fields, deduplicate sources, form pair buckets, collapse records, or
+build retrieval indices. Existing ClinTox v7 artifacts from the removed
+`ClinTox_Human_Toxicity` candidate are incompatible and must not be reused.
+
+## Stage 2 contract and current gate
+
+The endpoint-defining fields are now frozen source by source:
+
+| source | endpoint | measurement | context kept separate |
+|---|---|---|---|
+| `human_clinical_toxicity` | `toxicity_category` | `outcome_measure` | clinical context |
+| `nonclinical_in_vivo_toxicity` | `evidence_type` | `endpoint_value` + `endpoint_unit` | animal context |
+| `organ_specific_toxicity` | `toxicity_endpoint` | quantitative result | organ system and effect status |
+| `genotoxicity_carcinogenicity` | `endpoint` | `result_direction` | evidence category and assay type |
+| `cellular_stress` | `stress_endpoint` | `effect_direction` | evidence basis |
+| `general_cytotoxicity` | `endpoint_type` | `result_value` + `result_unit` | assay method |
+| `off_target_ddi_exposure` | `result_metric` | `result_value` + `result_unit` | target and evidence type |
+
+Implementation lives in `starling_normalization_sources.py`,
+`starling_schema.py`, `starling_categorical_response.py`, and
+`starling_measurement_resolution.py`. The measurement prompt uses
+`gpt-5.4-mini`, batches 10 rows, and forbids invented units.
+
+`build_stage2_review_samples.py` creates bounded review inputs and scores frozen
+gold replays
+under `data_processing/stage2_review_v1/`:
+
+- `measurement_resolution_gold_candidates.jsonl`: 350 deterministic cases,
+  50 per source, stratified by measurement form. This remains the immutable
+  sampling ledger.
+- `measurement_resolution_endpoint_review.jsonl`: the production-visible
+  endpoint view, with all 350 sampled IDs excluded from profile examples.
+- `measurement_resolution_gold.jsonl`: the frozen 350-case
+  Codex-subagent-adjudicated gold. It contains 278 resolver expectations and
+  72 controlled categorical expectations; two independent reviews are embedded
+  per case, 32 resolver disagreements and 12 scope cases were adjudicated, and
+  no model output was used as label evidence.
+- `cluster_pilot.json`: frequent-500 plus stable-tail-1500 samples for each of
+  15 endpoint/context namespaces, MiniLM target 50 and maximum 75 clusters,
+  with at most 10 representative clusters marked for review.
+
+The gold audit found five deterministic routing conflicts: three exact accepts
+whose support makes them bounded, relative, or exposure-only, and two rejected
+rows with a selected relative quantity. The current router remains unchanged;
+the conflicts are explicit gold diagnostics.
+
+The frozen 200-row extraction replay uses `gpt-5.4-mini`. Minimal prompt
+iterations improved canonical case accuracy from 81.5% (v2) to 87.0% (v3)
+and 92.5% (v4). Later additions plateaued at 92.5% (v5) and regressed to
+89.5% (v6); replacing the mature shared template with a compact ClinTox
+template regressed to 86.5% with four rejected rows (v7). Those branches were
+not promoted.
+
+Prompt v4 is the retained implementation and canonical replay. Its per-source
+canonical accuracy is 100.0% general cytotoxicity, 100.0% genotoxicity, 86.1%
+human clinical, 95.1% nonclinical in vivo, 88.1% off-target/DDI, and 92.1%
+organ-specific. It still fails the frozen gate: overall accuracy is below 95%,
+human clinical and off-target/DDI are below 90%, and two bound/range errors
+remain. The complete receipt and mismatches are in
+`data_processing/measurement_resolution_v1/gold_replay.metrics.json`.
+
+An independent DeepSeek validation used the same frozen prompt and endpoint
+profiles with `deepseek-ai/DeepSeek-V4-Flash-0731` and a 32,768-token
+completion/reasoning allowance. All 25 batches were structurally valid with no
+rejected rows. Canonical agreement over the 200 extraction cases was 89.5%:
+100.0% general cytotoxicity, 100.0% genotoxicity, 75.0% human clinical, 95.1%
+nonclinical in vivo, 88.1% off-target/DDI, and 86.8% organ-specific. The receipt
+and 21 disagreements are in
+`data_processing/measurement_resolution_v1/deepseek_gold_validation_32k_v1.metrics.json`.
+
+Those disagreements were checked against the blind endpoint cards and both
+embedded reviews. GPT matched the gold on 14 of 21. The seven disagreements
+shared by both models were retained after endpoint review: four are fractions
+or ambiguous multi-value selectors, two are experiment-relative changes, and
+one requires a more specific severity-qualified count unit. No gold label was
+changed. The full 350-card endpoint view also reconciles exactly with the gold:
+IDs, endpoints, resolver inputs, profile blocks, and review provenance match;
+the 72 categorical expectations reproduce from the controlled encoder; and all
+five deterministic routing conflicts remain explicitly reviewed.
+
+No full-corpus LLM normalization or clustering has been run. Full measurement
+resolution must wait for a newly frozen prompt to pass this gold gate;
+cluster names/mappings must wait for representative-cluster review. Only after
+those gates pass should Stage 02 canonicalization and later Stage 04/05
+pair-bucket/dedup artifacts be materialized for all 4,846,914 rows.
+
+## Build and validation
+
+```bash
+python -m tools.chembl_tool.tasks.clintox.build_clinical_trial_failure_benchmark
+pytest -q tests/chembl_tool/tasks/clintox
+```
+
+The source inventory must reconcile nine provenance sources: two gold sources
+and seven `send_v2` evidence sources. The 338 residual candidates overlap the
+human clinical source and therefore do not increase the source-row total.

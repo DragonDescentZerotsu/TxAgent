@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import json
 
+from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+    load_exact_unit_mapping,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
     POLICY as BBB_POLICY,
     endpoint_inventory as bbb_endpoint_inventory,
@@ -12,6 +15,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_trans
 from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
     RECORD_CONTRACT as BIOAVAILABILITY_RECORD_CONTRACT,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
+    POLICY as BIOAVAILABILITY_POLICY,
+)
+from tools.chembl_tool.tasks.clintox.starling_policy import POLICY as CLINTOX_POLICY
 from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
     resolve_output_dir as resolve_skin_output_dir,
 )
@@ -32,7 +39,7 @@ def test_standalone_calibration_defaults_follow_contract_version(tmp_path) -> No
         metadata.write_text(
             json.dumps({"contract_version": contract.version}), encoding="utf-8"
         )
-        assert resolver(metadata, explicit=None) == root / "05_distance_calibration"
+        assert resolver(metadata, explicit=None) == root / "07_distance_calibration"
 
         metadata.write_text(
             json.dumps({"contract_version": "frozen-v6"}), encoding="utf-8"
@@ -50,14 +57,35 @@ def test_bbb_endpoint_inventory_points_to_v7_registry() -> None:
     )
 
 
-def test_task_policies_declare_complete_scientific_asset_inventories() -> None:
+def test_task_policies_declare_additional_scientific_assets() -> None:
     assert [path.name for path in BBB_POLICY.scientific_assets] == [
         "measurement_semantics.v1.json",
         "reference_semantics_prompts.json",
+        "policy.json",
     ]
     assert [path.name for path in SKIN_POLICY.scientific_assets] == [
         "measurement_semantics.json",
         "reference_semantics_prompts.json",
         "globally_reconciled_auxiliary_value_mapping.json",
+        "partition_audit.parquet",
         "auxiliary_value_prompts.json",
+        "policy.json",
     ]
+
+
+def test_exact_unit_mappings_are_task_owned() -> None:
+    policies = (
+        BBB_POLICY,
+        BIOAVAILABILITY_POLICY,
+        SKIN_POLICY,
+        CLINTOX_POLICY,
+    )
+    paths = set()
+    for policy in policies:
+        path = policy.exact_unit_mapping_path
+        assert path is not None
+        assert path.parents[2].name == policy.task_id
+        assert path not in paths
+        paths.add(path)
+        mapping = load_exact_unit_mapping(path)
+        assert all(key[0] == policy.task_id for key in mapping)

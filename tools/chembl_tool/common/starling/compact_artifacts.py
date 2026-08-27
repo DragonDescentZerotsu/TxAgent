@@ -20,6 +20,10 @@ import numpy as np
 from rdkit import DataStructs
 
 from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
+from tools.chembl_tool.common.starling.assay_transfer_measurements import (
+    DISPLAY_INVERSE_LOG10,
+    display_scalar_value,
+)
 from tools.chembl_tool.common.starling.evidence_library import starling_molecule_id
 from tools.chembl_tool.common.starling.normalization.audit import write_parquet
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256, stable_id
@@ -140,9 +144,13 @@ def build_relational_evidence_catalog(
             record_id: rank
             for rank, record_id in enumerate(representative_ids, start=1)
         }
+        source_record_count = sum(
+            int(record.get("source_record_count") or 1) for record in group_records
+        )
         scalar_count = sum(
-            record.get("finite_scalar_value") is not None
+            int(record.get("source_record_count") or 1)
             for record in group_records
+            if record.get("finite_scalar_value") is not None
         )
         confidences = [
             float(record["confidence"])
@@ -154,7 +162,22 @@ def build_relational_evidence_catalog(
             for record in group_records
         )
         source_ids = sorted(
-            {str(record.get("source_id") or "") for record in group_records}
+            {
+                source_id
+                for record in group_records
+                for source_id in (
+                    _json_list(record.get("source_ids_json"))
+                    or [str(record.get("source_id") or "")]
+                )
+                if source_id
+            }
+        )
+        retrieval_source_ids = sorted(
+            {
+                str(record.get("retrieval_source_id") or "")
+                for record in group_records
+                if record.get("retrieval_source_id")
+            }
         )
         source_names = sorted(
             {
@@ -174,13 +197,15 @@ def build_relational_evidence_catalog(
                 "endpoint_group": family_fields["endpoint_group"],
                 "evidence_role": family_fields["evidence_role"],
                 "target_pref_name": family_fields["target_pref_name"],
-                "source_record_count": len(group_records),
+                "source_record_count": source_record_count,
+                "collapsed_record_count": len(group_records),
                 "source_numeric_record_count": scalar_count,
-                "source_qualitative_record_count": len(group_records) - scalar_count,
+                "source_qualitative_record_count": source_record_count - scalar_count,
                 "median_confidence": (
                     round(statistics.median(confidences), 4) if confidences else None
                 ),
                 "source_ids": source_ids,
+                "retrieval_source_ids": retrieval_source_ids,
                 "source_names": source_names,
                 "endpoint_counts": [
                     {"endpoint": endpoint, "count": count}
@@ -188,7 +213,7 @@ def build_relational_evidence_catalog(
                 ],
                 "uncertainty": (
                     ["qualitative_or_non_scalar_records_present"]
-                    if scalar_count != len(group_records)
+                    if scalar_count != source_record_count
                     else []
                 ),
             }
@@ -276,6 +301,12 @@ def write_compact_neighbor_index(
         )
         for family in families
     }
+    retrieval_sources_by_evidence = {
+        str(family["evidence_id"]): _list_value(
+            family.get("retrieval_source_ids")
+        )
+        for family in families
+    }
     molecules: list[dict[str, Any]] = []
     for molecule_index, molecule in enumerate(index["molecules"]):
         identity = dict(molecule.get("molecule_identity") or {})
@@ -304,6 +335,9 @@ def write_compact_neighbor_index(
                     "molecule_index": molecule_index,
                     "molecule_id": molecule_id,
                     "evidence_id": evidence_ids[(molecule_id, group_id)],
+                    "retrieval_source_ids": retrieval_sources_by_evidence[
+                        evidence_ids[(molecule_id, group_id)]
+                    ],
                 }
             )
 
@@ -620,7 +654,25 @@ def _hydrate_family_evidence(
 ) -> dict[str, Any]:
     examples: list[dict[str, Any]] = []
     for record in representatives:
-        projection = profile.llm_source_projection(record)
+        projection = (
+            _collapsed_source_projection(record)
+            if record.get("collapsed_record_id")
+            else profile.llm_source_projection(record)
+        )
+        display = None
+        if (
+            not record.get("collapsed_record_id")
+            and record.get("measurement_unit_mapping_status") == "mapped"
+        ):
+            value = record.get("measurement_resolution_input_measurement")
+            unit = record.get("measurement_resolution_input_unit")
+            origin = record.get("measurement_resolution_origin")
+            if value not in (None, "") and unit not in (None, "") and origin:
+                display = {
+                    "value": str(value),
+                    "unit": str(unit),
+                    "origin": str(origin),
+                }
         examples.append(
             {
                 "source_contract": {
@@ -629,6 +681,11 @@ def _hydrate_family_evidence(
                     if key != "source_fields"
                 },
                 "source_fields": projection["source_fields"],
+                **(
+                    {"resolved_measurement_display": display}
+                    if display is not None
+                    else {}
+                ),
             }
         )
     source_names = [str(value) for value in _list_value(family.get("source_names"))]
@@ -663,6 +720,7 @@ def _hydrate_family_evidence(
         "transferability": "not_assessed",
         "uncertainty": _list_value(family.get("uncertainty")),
         "source_record_count": family.get("source_record_count"),
+        "retrieval_source_ids": _list_value(family.get("retrieval_source_ids")),
         "source_numeric_record_count": family.get("source_numeric_record_count"),
         "source_qualitative_record_count": family.get(
             "source_qualitative_record_count"
@@ -696,6 +754,34 @@ def _load_representative_records(
         for column in (
             record_id_field,
             "source_id",
+            "collapsed_record_id",
+            "retrieval_source_id",
+            "aggregation_method",
+            "aggregation_status",
+            "aggregate_counts_json",
+            "aggregate_min",
+            "aggregate_q1",
+            "aggregate_q3",
+            "aggregate_max",
+            "measurement_unit_mapping_status",
+            "measurement_resolution_input_measurement",
+            "measurement_resolution_input_unit",
+            "measurement_resolution_origin",
+            "canonical_endpoint_name",
+            "canonical_measurement_text",
+            "canonical_unit_text",
+            "finite_scalar_value",
+            "condition_group",
+            "condition_scope",
+            "condition_key_status",
+            "condition_atoms_json",
+            "canonical_pair_fields_json",
+            "display_measurement_text",
+            "display_scalar_value",
+            "display_unit_text",
+            "display_transform_id",
+            "source_record_count",
+            "deduplicated_source_record_count",
             *sorted({field for fields in source_columns.values() for field in fields}),
         )
         if column in available
@@ -715,6 +801,97 @@ def _load_representative_records(
             f"first={missing[0]}"
         )
     return output
+
+
+def _collapsed_source_projection(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Expose aggregate evidence without direct-vote or rejection bookkeeping."""
+    retrieval_source = str(record.get("retrieval_source_id") or "")
+    evidence_partition = {
+        "direct_vote": "direct_outcome",
+        "direct_residual": "contextual_direct_outcome",
+        "indirect": "indirect_experimental_evidence",
+    }.get(retrieval_source, "experimental_evidence")
+    counts = _json_object(record.get("aggregate_counts_json"))
+    direct = retrieval_source in {"direct_vote", "direct_residual"}
+    method = record.get("aggregation_method")
+    if direct and method == "direct_binary_vote":
+        method = "consensus"
+    measurement = {
+        "value": record.get("display_measurement_text"),
+        "numeric_value": record.get("display_scalar_value"),
+        "unit": record.get("display_unit_text"),
+        "method": method,
+        "status": record.get("aggregation_status"),
+        "range": {
+            "minimum": display_scalar_value(
+                record.get("aggregate_min"), str(record.get("display_transform_id") or "")
+            ),
+            "q1": display_scalar_value(
+                record.get("aggregate_q1"), str(record.get("display_transform_id") or "")
+            ),
+            "q3": display_scalar_value(
+                record.get("aggregate_q3"), str(record.get("display_transform_id") or "")
+            ),
+            "maximum": display_scalar_value(
+                record.get("aggregate_max"), str(record.get("display_transform_id") or "")
+            ),
+        }
+        if record.get("aggregate_min") is not None
+        else None,
+    }
+    if record.get("display_transform_id") == DISPLAY_INVERSE_LOG10:
+        measurement["aggregation_scale"] = "log10"
+    if not direct:
+        measurement["category_counts"] = counts or None
+    pair_context = _json_object(record.get("canonical_pair_fields_json"))
+    source_fields = {
+        "evidence_partition": evidence_partition,
+        "endpoint": record.get("canonical_endpoint_name"),
+        "aggregated_measurement": measurement,
+        "canonical_context": (
+            {
+                "condition_group": record.get("condition_group"),
+                "condition_scope": record.get("condition_scope"),
+                "condition_atoms": _json_list(record.get("condition_atoms_json")),
+            }
+            if direct
+            else {
+                "pair_fields": pair_context,
+            }
+        ),
+        "source_record_count": record.get("source_record_count"),
+    }
+    return {
+        "contract_version": "collapsed_record_prompt.v3",
+        "source_id": str(record.get("source_id") or ""),
+        "source_name": "collapsed normalized experimental evidence",
+        "source_or_simply_cleaned": {key: True for key in source_fields},
+        "source_fields": source_fields,
+    }
+
+
+def _json_object(value: Any) -> dict[str, Any]:
+    if isinstance(value, Mapping):
+        return dict(value)
+    if not isinstance(value, str) or not value:
+        return {}
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError:
+        return {}
+    return dict(parsed) if isinstance(parsed, Mapping) else {}
+
+
+def _json_list(value: Any) -> list[str]:
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return [str(item) for item in value]
+    if not isinstance(value, str) or not value:
+        return []
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError:
+        return []
+    return [str(item) for item in parsed] if isinstance(parsed, list) else []
 
 
 def _clean_nan_values(row: Mapping[str, Any]) -> dict[str, Any]:

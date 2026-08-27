@@ -383,7 +383,7 @@ one pre-deduplication record for every `cleaned_record_id`. It owns the atomic `
 `canonical_unit` pair and scalar metadata for assay transfer; organization independently owns within-source
 deduplication and retrieval eligibility. These canonical numeric fields are never retrieval presentation.
 For v7, the shared parser, Bioavailability endpoint/unit and contextual reconciliation rules, v7 projection,
-and frozen `data_processing/assay_transfer_measurements_v1/policy.json` compose the one final persisted
+and frozen `data_processing/assay_transfer_measurements_v2/policy.json` compose the one final persisted
 measurement/unit/scalar tuple. Stage 04 retains every record; reviewed unit defects are annotated
 `assay_transfer_eligible=false` and receive no bucket key, without changing retrieval eligibility.
 Cleaning also promotes cleaned source-facing context columns and

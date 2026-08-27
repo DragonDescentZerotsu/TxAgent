@@ -12,7 +12,6 @@ from tools.chembl_tool.common.starling import build_heldout_starling_index
 from tools.chembl_tool.common.starling.v7_benchmark_view import (
     ALL_PARENT_FILTER,
     ALL_SCAFFOLD_FILTER,
-    DIRECT_NUMERIC_VIEW,
     DIRECT_SOURCE_ONLY_FILTER,
     FULL_VIEW,
     HELDOUT_FILTER_MODES,
@@ -36,36 +35,12 @@ INDEX_SPECS: tuple[dict[str, Any], ...] = (
         "view": FULL_VIEW,
     },
     {
-        "name": "bioavailability_starling_v7_direct_numeric",
-        "task": "Bioavailability_Ma",
-        "task_id": "bioavailability_ma",
-        "normalized_root": (
-            "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-            "starling_normalized_v7"
-        ),
-        "view": DIRECT_NUMERIC_VIEW,
-    },
-    {
         "name": "bioavailability_starling_v7",
         "task": "Bioavailability_Ma",
         "task_id": "bioavailability_ma",
         "normalized_root": (
             "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
             "starling_normalized_v7"
-        ),
-        "view": FULL_VIEW,
-    },
-    {
-        "name": "bioavailability_starling_v7_direct_dedup_scaffold_disjoint_v1",
-        "task": "Bioavailability_Ma",
-        "task_id": "bioavailability_ma",
-        "normalized_root": (
-            "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-            "starling_normalized_v7"
-        ),
-        "paper_direct_source_rows": (
-            "data/starling_data/bioavailability_ma/canonical_direct_v2/"
-            "direct_source_rows.parquet"
         ),
         "view": FULL_VIEW,
     },
@@ -78,20 +53,6 @@ INDEX_SPECS: tuple[dict[str, Any], ...] = (
             "starling_normalized_v7"
         ),
         "view": FULL_VIEW,
-    },
-    {
-        "name": "clintox_starling_v7",
-        "task": "ClinTox_Human_Toxicity",
-        "task_id": "clintox",
-        "normalized_root": (
-            "outputs/chembl_tool/tasks/clintox/evidence_library/"
-            "starling_normalized_v7"
-        ),
-        "view": FULL_VIEW,
-        # ClinTox has only the candidate record_supported_v2 scaffold split.
-        # Keep it selectable without changing the established default matrix.
-        "benchmark_splits": ("scaffold",),
-        "default": False,
     },
     {
         "name": "clintox_starling_full",
@@ -185,7 +146,6 @@ def main(argv: list[str] | None = None) -> int:
                     view=spec["view"],
                     heldout_filter_mode=args.heldout_filter_mode,
                     downstream_spec=downstream_spec,
-                    paper_direct_source_rows=spec.get("paper_direct_source_rows"),
                     workers=args.workers,
                     progress_every=args.progress_every,
                 )

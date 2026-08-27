@@ -104,6 +104,15 @@ _STAGE1_DERIVED_FIELDS = frozenset(
 )
 
 
+def _has_text(value: Any) -> bool:
+    return value is not None and str(value).strip().casefold() not in {
+        "",
+        "nan",
+        "none",
+        "null",
+    }
+
+
 @dataclass(frozen=True)
 class CanonicalProducerSpec:
     """One declared way to produce a canonical dimension.
@@ -771,6 +780,18 @@ class StarlingRecordContract:
         output["measurement_kind"] = (
             scale.kind if scale is not None else _measurement_kind(record)
         )
+        if not _has_text(output.get("canonical_unit_text")):
+            scope = str(output.get("canonical_reference_scope") or "")
+            if scope in {
+                "comparator_relative",
+                "standardized_control_ratio",
+                "endpoint_defined_ratio",
+            }:
+                output["canonical_unit_text"] = "relative-scalar"
+            elif output["measurement_kind"] == "non_scalar":
+                output["canonical_unit_text"] = "free-text"
+            else:
+                output["canonical_unit_text"] = "unresolved-scalar"
         output["canonical_measurement_scale_id"] = scale_id or None
         category = (
             scale.category_for_value(record.get("finite_scalar_value"))

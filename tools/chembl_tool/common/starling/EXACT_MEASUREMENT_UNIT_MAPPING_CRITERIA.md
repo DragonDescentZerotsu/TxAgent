@@ -1,8 +1,10 @@
 # Exact measurement unit mapping criteria
 
-This document defines how to build and review
-`exact_measurement_unit_map.v1.json`. The production map is intentionally only
-an exact lookup table; this document is the reproducible human-review rubric.
+This document defines how to build and review each task-owned
+`data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json`.
+The shared loader owns the schema and application; each task owns its mapping
+entries and review audit. A production map is intentionally only an exact
+lookup table; this document is the reproducible human-review rubric.
 
 ## Scope
 
@@ -11,6 +13,10 @@ Stage 02 applies one rule to each successful numeric tuple using the exact key:
 ```text
 (task, canonical_endpoint, input_unit)
 ```
+
+V2 may store several `canonical_endpoints` together when their complete rules
+are identical. The loader expands each group back to these exact keys; grouping
+does not create wildcard endpoint matching or change measurement behavior.
 
 The input may be a finite positive source value that bypassed extraction or a
 quantity returned by the frozen LLM extraction. Every successful multi-quantity
@@ -109,8 +115,8 @@ For each task:
 7. Remove task entries with no active source-exact or successful extracted
    tuples. An inactive legacy rule has no current evidence and a future unseen
    key should fail closed for review.
-8. Sort the complete production entries deterministically by task, endpoint,
-   and input unit.
+8. Sort grouped production entries and each explicit endpoint list
+   deterministically.
 
 The reviewer should retain a task-specific audit artifact containing the full
 affected rows, source joins, decision, exclusion category when applicable, and
@@ -121,7 +127,7 @@ runtime mapping.
 
 A mapping is ready only when all of the following hold:
 
-- The JSON version is `starling_exact_measurement_units.v1`, it loads through
+- The JSON version is `starling_exact_measurement_units.v2`, it loads through
   `load_exact_unit_mapping`, and it has no empty or duplicate exact keys.
 - The task's map keys equal its complete active key set after inactive entries
   are pruned. Missing active keys are build errors.

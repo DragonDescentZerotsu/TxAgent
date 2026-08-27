@@ -10,6 +10,7 @@ import pytest
 
 from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
     apply_measurement_resolution,
+    load_exact_unit_mapping,
 )
 from tools.chembl_tool.common.starling.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
@@ -33,12 +34,14 @@ def _mapping(tmp_path, rows):
     return path
 
 
-def _units(tmp_path, entries):
+def _units(
+    tmp_path,
+    entries,
+    version="starling_exact_measurement_units.v1",
+):
     path = tmp_path / "exact_units.json"
     path.write_text(
-        json.dumps(
-            {"version": "starling_exact_measurement_units.v1", "entries": entries}
-        )
+        json.dumps({"version": version, "entries": entries})
     )
     return path
 
@@ -53,6 +56,30 @@ def _unit(endpoint, input_unit, canonical_unit, scale="1", domain="any"):
         "scale": scale,
         "domain": domain,
     }
+
+
+def test_grouped_v2_rules_expand_to_exact_keys(tmp_path) -> None:
+    path = _units(
+        tmp_path,
+        [
+            {
+                "task": "test_task",
+                "canonical_endpoints": ["pampa", "permeability"],
+                "input_unit": "10^-6 cm/s",
+                "action": "map",
+                "canonical_unit": "cm/s",
+                "scale": "0.000001",
+                "domain": "nonnegative",
+            }
+        ],
+        version="starling_exact_measurement_units.v2",
+    )
+    mapping = load_exact_unit_mapping(path)
+    assert set(mapping) == {
+        ("test_task", "pampa", "10^-6 cm/s"),
+        ("test_task", "permeability", "10^-6 cm/s"),
+    }
+    assert all(rule["canonical_unit"] == "cm/s" for rule in mapping.values())
 
 
 def _row(record_id, measurement, unit="raw unit"):

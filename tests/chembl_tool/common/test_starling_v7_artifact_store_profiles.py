@@ -27,6 +27,17 @@ EXPECTED_STAGES = (
     "02_canonicalized",
     "03_records",
     "04_pair_buckets",
+    "05_deduplicated_records",
+    "06_collapsed_records",
+    "07_distance_calibration",
+)
+
+EXPECTED_LEGACY_STAGES = (
+    "00_source",
+    "01_cleaned",
+    "02_canonicalized",
+    "03_records",
+    "04_pair_buckets",
     "05_distance_calibration",
     "06_remove_heldout_overlap",
     "07_molecule_evidence",
@@ -46,21 +57,13 @@ def test_all_v7_artifact_profiles_cover_the_complete_stage_layout():
         assert profile.stages == EXPECTED_STAGES
         assert profile.local_root.name == "starling_normalized_v7"
         assert profile.tracked_root.name == "starling_normalized_v7"
-        assert profile.store_version.endswith(".normalized_v7_store.v2")
+        assert profile.store_version.endswith(".normalized_v7_store.v3")
 
 
-def test_current_build_boundary_stops_at_split_independent_stage_05():
-    canonical = (
-        "00_source",
-        "01_cleaned",
-        "02_canonicalized",
-        "03_records",
-        "04_pair_buckets",
-        "05_distance_calibration",
-    )
-    assert BBB_CANONICAL_STAGES == canonical
-    assert BIO_CANONICAL_STAGES == canonical
-    assert SKIN_CANONICAL_STAGES == canonical
-    assert BBB_LEGACY_STAGES == EXPECTED_STAGES
-    assert BIO_LEGACY_STAGES == EXPECTED_STAGES
-    assert SKIN_LEGACY_STAGES == EXPECTED_STAGES
+def test_current_build_boundary_stops_at_split_independent_stage_06():
+    assert BBB_CANONICAL_STAGES == EXPECTED_STAGES
+    assert BIO_CANONICAL_STAGES == EXPECTED_STAGES
+    assert SKIN_CANONICAL_STAGES == EXPECTED_STAGES
+    assert BBB_LEGACY_STAGES == EXPECTED_LEGACY_STAGES
+    assert BIO_LEGACY_STAGES == EXPECTED_LEGACY_STAGES
+    assert SKIN_LEGACY_STAGES == EXPECTED_LEGACY_STAGES

@@ -20,6 +20,12 @@ from tools.chembl_tool.common.starling.normalization.cleaning import (
 )
 from tools.chembl_tool.common.starling.normalization.contracts import FamilyAssignment
 from tools.chembl_tool.common.starling.normalization.measurements import EndpointOrthography
+from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+    AOP_PARTITION,
+    DIRECT_PARTITION,
+    REJECT_PARTITION,
+    partition_for_record,
+)
 
 
 SPACING_AND_SPELLING_VERSION = "skin_reaction_spacing_and_spelling.v1"
@@ -139,8 +145,9 @@ def family_assignment(
     record: Mapping[str, Any] | None = None,
 ) -> FamilyAssignment | None:
     """Map source records to the four stable retrieval families without changing endpoints."""
-    del endpoint_name, record
-    if source_id == "direct_skin_reaction":
+    del endpoint_name
+    record = record or {}
+    if str(record.get("group_id") or "") == "Direct.skin_reaction":
         return FamilyAssignment(
             "Direct.skin_reaction",
             "Tier 1",
@@ -148,7 +155,29 @@ def family_assignment(
             "direct_outcome",
             "skin reaction",
         )
-    if source_id == "sensitization_aop":
+    partition = str(record.get("canonical_sensitization_partition") or "")
+    if (
+        not partition
+        and source_id in {"direct_skin_reaction", "sensitization_aop"}
+        and record.get("source_row_number") is not None
+    ):
+        decision = partition_for_record(record)
+        partition = decision.partition if decision else ""
+    if partition == REJECT_PARTITION:
+        return None
+    if partition == DIRECT_PARTITION or (
+        not partition and source_id == "direct_skin_reaction"
+    ):
+        return FamilyAssignment(
+            "Direct.skin_reaction",
+            "Tier 1",
+            "direct_skin_reaction",
+            "direct_outcome",
+            "skin reaction",
+        )
+    if partition == AOP_PARTITION or (
+        not partition and source_id == "sensitization_aop"
+    ):
         return FamilyAssignment(
             "Mechanism.sensitization_aop",
             "Tier 2",

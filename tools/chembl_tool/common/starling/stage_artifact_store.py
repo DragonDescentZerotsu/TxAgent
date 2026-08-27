@@ -38,7 +38,11 @@ def package_stages(
     selected = _validated_stages(profile, stages)
     destination_root.mkdir(parents=True, exist_ok=True)
     existing = _read_json(destination_root / "manifest.json")
-    manifests = dict(existing.get("stages") or {})
+    manifests = {
+        stage: metadata
+        for stage, metadata in (existing.get("stages") or {}).items()
+        if stage in profile.stages
+    }
     for stage in selected:
         source = source_root / stage
         if not source.is_dir():
@@ -86,7 +90,7 @@ def package_stages(
         "part_size_limit": part_size,
         "local_layout": list(profile.stages),
         "root_file": root_file,
-        "stages": {key: manifests[key] for key in sorted(manifests)},
+        "stages": {key: manifests[key] for key in profile.stages if key in manifests},
     }
     _write_json(destination_root / "manifest.json", payload)
     return payload

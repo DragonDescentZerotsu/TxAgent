@@ -20,7 +20,7 @@ Y=1 requires membership in the frozen AACT-derived toxicity-failed-trial list. Y
 
 ## Starling evidence coverage (not labels)
 
-- benchmark parents with clintox_base_v1 evidence: 1,128
+- benchmark parents with send_v2 human clinical evidence: 1,200
 - Starling rows used to create labels: 0
 
 ## Leakage boundary

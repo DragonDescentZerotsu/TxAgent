@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 import re
 from typing import Any, Mapping
+
+import pyarrow.parquet as pq
 
 from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
     is_tdc_skin_sensitization_scope,
@@ -40,6 +43,7 @@ AOP_EVENTS = frozenset(
         "KE4_T_cell_activation",
     }
 )
+CANONICAL_SOURCE_IDS = frozenset({"direct_skin_reaction", "sensitization_aop"})
 
 
 @dataclass(frozen=True)
@@ -47,6 +51,53 @@ class PartitionDecision:
     partition: str
     reason: str
     aop_event: str = ""
+
+
+def partition_record_id(record: Mapping[str, Any]) -> str:
+    source_id = str(record.get("source_id") or "")
+    if source_id not in CANONICAL_SOURCE_IDS:
+        return ""
+    return f"{source_id}:{int(record.get('source_row_number') or 0) - 1}"
+
+
+def partition_for_record(record: Mapping[str, Any]) -> PartitionDecision | None:
+    """Return the frozen canonical partition for either acquisition source."""
+    record_id = partition_record_id(record)
+    if not record_id:
+        return None
+    try:
+        return load_partition_audit()[record_id]
+    except KeyError as exc:
+        raise ValueError(f"Skin row lacks canonical partition: {record_id}") from exc
+
+
+@lru_cache(maxsize=1)
+def load_partition_audit() -> dict[str, PartitionDecision]:
+    table = pq.read_table(
+        PARTITION_AUDIT_PATH,
+        columns=[
+            "source_record_id",
+            "partition",
+            "partition_reason",
+            "canonical_aop_event",
+        ],
+    )
+    output: dict[str, PartitionDecision] = {}
+    for row in table.to_pylist():
+        record_id = str(row["source_record_id"])
+        partition = str(row["partition"])
+        if record_id in output or partition not in {
+            DIRECT_PARTITION,
+            AOP_PARTITION,
+            REJECT_PARTITION,
+        }:
+            raise ValueError(f"invalid canonical Skin partition row: {record_id}")
+        output[record_id] = PartitionDecision(
+            partition,
+            str(row.get("partition_reason") or ""),
+            str(row.get("canonical_aop_event") or ""),
+        )
+    return output
 
 
 _PHOTO_RE = re.compile(

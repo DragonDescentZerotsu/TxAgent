@@ -1,4 +1,4 @@
-"""Import and validate the active seven-source ClinTox Starling delivery."""
+"""Import and validate the immutable seven-source ClinTox send_v2 delivery."""
 
 from __future__ import annotations
 
@@ -23,7 +23,9 @@ ARCHIVE_SHA256 = "bf6da36bf2ac347d4763e5c3a234292c7f5c04576cccc4b75f6a4741246ac4
 SOURCE_RELEASE = "clintox_send_v2"
 DEFAULT_ARCHIVE = Path("/vast/projects/myatskar/lab/shared_docs/clintox_send_v2.tar.gz")
 DEFAULT_DATA_ROOT = Path("data/starling_data/clintox/send_v2")
-DIRECT_SOURCE_ID = "human_clinical_toxicity"
+HUMAN_CLINICAL_SOURCE_ID = "human_clinical_toxicity"
+# Historical name retained for callers that use it only as a source identifier.
+DIRECT_SOURCE_ID = HUMAN_CLINICAL_SOURCE_ID
 
 
 @dataclass(frozen=True)
@@ -43,7 +45,7 @@ COMMON_SUFFIX = (
 )
 SOURCE_SPECS = (
     SourceSpec(
-        "base", DIRECT_SOURCE_ID, "Human clinical toxicity", 584_307,
+        "base", HUMAN_CLINICAL_SOURCE_ID, "Human clinical toxicity", 584_307,
         "e09d712cc87a12c0e72195b5050c8b82bc5e4908b84bd38f43a4a00753f4b157",
         "94b520acf0c58979580ba685e32a48d5c9f2853f7640e452e6c75adacd8dcb88",
         (
@@ -243,7 +245,7 @@ def _manifest(
         "raw_policy": "Archive members are copied byte-for-byte; derived artifacts never modify them.",
         "structure_policy": "Only source SMILES is used; no global identifier fallback is permitted.",
         "qualifying_conditions": {
-            DIRECT_SOURCE_ID: "unavailable_in_source_schema",
+            HUMAN_CLINICAL_SOURCE_ID: "unavailable_in_source_schema",
             "other_sources": "source_visible_when_reported",
         },
         "known_missing_provenance": [
@@ -269,7 +271,7 @@ def _readme(manifest: dict[str, Any]) -> str:
     )
     rows.extend([
         "", "All source rows contain a nonempty `SMILES`. Invalid structures remain auditable and fail closed.",
-        "The clinical source lacks `qualifying_conditions`; the benchmark therefore remains `candidate_pending_qa`.", "",
+        "The clinical source lacks `qualifying_conditions`; it remains indirect evidence.", "",
         "The exact supplied archive is tracked as verified sub-100 MB parts under",
         "`artifacts/chembl_tool/tasks/clintox/clintox_send_v2_source/`.",
         "Restore a fresh checkout with `python -m tools.chembl_tool.tasks.clintox.starling_source_artifact_store restore-source`.", "",
@@ -315,6 +317,7 @@ if __name__ == "__main__":
 
 __all__ = [
     "ARCHIVE_SHA256", "DEFAULT_ARCHIVE", "DEFAULT_DATA_ROOT", "DIRECT_SOURCE_ID",
+    "HUMAN_CLINICAL_SOURCE_ID",
     "EXPECTED_SOURCE_ROWS", "EXPECTED_SOURCE_SHA256", "SOURCE_COLUMNS",
     "SOURCE_RELEASE", "SOURCE_SPECS", "import_archive", "main",
 ]

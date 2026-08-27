@@ -107,3 +107,22 @@ def test_empty_reasoning_effort_omits_parameter_without_enabling_deepseek_thinki
 
     assert "reasoning_effort" not in captured
     assert "extra_body" not in captured
+
+
+def test_gpt5_uses_max_completion_tokens():
+    client = _client()
+    client.model = "gpt-5.4-mini-2026-03-17"
+    client.temperature = None
+    captured = {}
+    client.client = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=SimpleNamespace(
+                create=lambda **kwargs: captured.update(kwargs) or _response("{}")
+            )
+        )
+    )
+
+    client._create_completion([{"role": "user", "content": "analyze"}])
+
+    assert captured["max_completion_tokens"] == 100
+    assert "max_tokens" not in captured

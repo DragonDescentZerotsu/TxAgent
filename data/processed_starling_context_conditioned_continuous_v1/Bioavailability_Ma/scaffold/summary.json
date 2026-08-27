@@ -1,0 +1,59 @@
+{
+  "schema_version": "context_conditioned_bioavailability_continuous.v1",
+  "task": "Bioavailability_Ma",
+  "source_gold": "processed_starling_context_conditioned_selected_v1",
+  "official_test_policy": "sealed_not_read_or_emitted",
+  "value_policy": {
+    "fit_split": "v7_train_96",
+    "positive_threshold_percent": 20.0,
+    "class_means": {
+      "0": 7.255403316708229,
+      "1": 63.74669490610835
+    },
+    "observed_record_counts": {
+      "0": 1604,
+      "1": 9266
+    }
+  },
+  "inputs": {
+    "train": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processed_starling_context_conditioned_selected_v1/Bioavailability_Ma/scaffold/train_molecule_condition_labels.jsonl",
+      "sha256": "555a8d3e60f80d38f5c2541d98ca836f0fec33d7a50e3e7212143665a1662906"
+    },
+    "valid": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processed_starling_context_conditioned_selected_v1/Bioavailability_Ma/scaffold/valid_molecule_condition_labels.jsonl",
+      "sha256": "474abd2b404fa21301200b209f1733ec4bf07c4aea259b4f36d954bb278a479f"
+    },
+    "reviews": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processed_starling_context_conditioned_selected_v1/Bioavailability_Ma/scaffold/source_condition_review.jsonl",
+      "sha256": "29e1206015e07b146043a00198ed294975732241fe32f7365c9f6ebeecf62242"
+    },
+    "base_votes": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/record_supported_v2_processed/Bioavailability_Ma/scaffold/voting_records.jsonl",
+      "sha256": "f271843fd7be36f5aae8adfc53f58f90663ffca67c4ca438457736c779be7514"
+    },
+    "source_records": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/context_conditioned/artifacts/continuous_source_v1/bioavailability_ma/records.parquet",
+      "sha256": "e7ecfb1f9e1531956c470d952ac19034f35aa61e00c748e2d8acb5206f43b5b1"
+    },
+    "v7_splits": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/context_conditioned/artifacts/v7/splits/Bioavailability_Ma/vote_mean/rows.parquet",
+      "sha256": "75d943051dee23fe8a6df0f55a9c9ccf10f379a34f90d626f8c90996c25e252d"
+    }
+  },
+  "counts": {
+    "train_nodes": 1958,
+    "valid_nodes": 262,
+    "voting_records": 15482,
+    "record_types": {
+      "continuous_only": 1390,
+      "imputed_only": 343,
+      "mixed": 487
+    }
+  },
+  "artifacts": {
+    "train_molecule_condition_labels.jsonl": "6db4b5bbe96e94e17c0c73e779ca1e760b4e02f321103651b242820450ab4a9b",
+    "valid_molecule_condition_labels.jsonl": "2526c4b233972d95d91584e009c9bce417da8ef382c4865584b69f14dc8124f8",
+    "voting_records.jsonl": "11b6c62a8e5aaa06ed760551e5337e3ec515be608b00b1bd42d5fca7e257e839"
+  }
+}
