@@ -40,7 +40,11 @@ from tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch import (
 LOGGER = logging.getLogger("resumable_tunnel_watchdog")
 MATRIX_MODULE = "tools.chembl_tool.paper_experiments.starling_benchmark_matrix"
 DEFAULT_PYTHON = "/data1/tianang/anaconda3/envs/vllm/bin/python"
-COMPLETION_MODES = ("starling_matrix", "recursive_reasoning_runs")
+COMPLETION_MODES = (
+    "starling_matrix",
+    "recursive_reasoning_runs",
+    "progressive_level_outputs",
+)
 TASK_BATCH_CONFIGS = {
     "bbb_martins": BBB_BATCH_CONFIG,
     "bioavailability_ma": BIOAVAILABILITY_BATCH_CONFIG,
@@ -249,6 +253,24 @@ def count_recursive_reasoning_results(
         for final_path in output_root.glob(f"{run_glob}/final_reasoning_output.json")
         if final_path.is_file()
     )
+
+
+def count_progressive_level_outputs(output_root: Path) -> int:
+    """Count durable progressive checkpoints, including zero-call carry-forward levels."""
+    complete_statuses = {"ok", "carried_forward", "reused_none"}
+    complete = 0
+    for path in output_root.glob("*/queries/query_idx*/levels/level_*/output.json"):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            continue
+        if payload.get("status") not in complete_statuses:
+            continue
+        state = payload.get("state")
+        if not isinstance(state, dict) or not state.get("decision_summary"):
+            continue
+        complete += 1
+    return complete
 
 
 def _batch_dirs(output_root: Path) -> Iterable[Path]:
@@ -672,6 +694,8 @@ def start_matrix(args: argparse.Namespace) -> int:
 
 
 def _count_completed(args: argparse.Namespace, output_root: Path) -> int:
+    if args.completion_mode == "progressive_level_outputs":
+        return count_progressive_level_outputs(output_root)
     if args.completion_mode == "recursive_reasoning_runs":
         return count_recursive_reasoning_results(output_root, args.reasoning_run_glob)
     return count_final_results(

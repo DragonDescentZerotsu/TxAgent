@@ -1,9 +1,10 @@
-"""Build cumulative mechanism-family membership for physical Starling assays.
+"""Build record-family membership plus physical-assay provenance for Starling.
 
-An assay that appears in more than one family is assigned to the earliest
-cumulative level, so it is retrieved at most once.  The full family membership
-is retained for overlap auditing; neither family names nor levels are copied to
-the LLM evidence payload.
+``first_level`` is an assay-level ordering and coverage-summary field, not a
+unique family assignment.  Each source group keeps its own family level in
+``source_families`` so mechanism-tagged indexes can expose individual records
+only at their proper level. Physical assay identity remains useful for card
+provenance, exact deduplication, and diversity-aware card selection.
 """
 
 from __future__ import annotations
@@ -17,7 +18,11 @@ from typing import Any
 
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic, write_jsonl_atomic
+from tools.chembl_tool.common.json_utils import (
+    sha256_file,
+    write_json_atomic,
+    write_jsonl_atomic,
+)
 from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
 
 
@@ -28,9 +33,9 @@ TASKS = {
         "config_module": "tools.chembl_tool.tasks.bbb_martins.experiment_config",
     },
     "bioavailability_ma": {
-        "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bioavailability_nondirect_assay_context_v1/records.parquet",
+        "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1/records.parquet",
         "config_module": "tools.chembl_tool.tasks.bioavailability_ma.experiment_config",
-        "output_name": "bioavailability_ma_nondirect_context_v1",
+        "output_name": "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1",
     },
     "skin_reaction": {
         "records": "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet",
@@ -55,8 +60,11 @@ _CLINTOX_SOURCE_LEVELS = {
 
 def _build_clintox_catalog(
     catalog_path: Path,
+    config_name: str = "STARLING",
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    config = importlib.import_module(TASKS["clintox"]["config_module"]).STARLING
+    config = getattr(
+        importlib.import_module(TASKS["clintox"]["config_module"]), config_name
+    )
     source_rows = [json.loads(line) for line in catalog_path.open() if line.strip()]
     rows = []
     for source in source_rows:
@@ -71,9 +79,20 @@ def _build_clintox_catalog(
                 "selection_rank": 0,
                 "first_level": level,
                 "first_family_id": family.group_id,
+                "first_endpoint_group": family.endpoint_group,
                 "family_levels": [level],
                 "family_ids": [family.group_id],
+                "family_endpoint_groups": [family.endpoint_group],
                 "source_groups": list(family.source_groups),
+                "source_families": [
+                    {
+                        "source_group_id": source_group,
+                        "level": level,
+                        "family_id": family.group_id,
+                        "endpoint_group": family.endpoint_group,
+                    }
+                    for source_group in family.source_groups
+                ],
                 "record_count": int(source.get("record_count") or 0),
             }
         )
@@ -87,9 +106,20 @@ def _build_clintox_catalog(
             "selection_rank": 0,
             "first_level": 2,
             "first_family_id": clinical_family.group_id,
+            "first_endpoint_group": clinical_family.endpoint_group,
             "family_levels": [2],
             "family_ids": [clinical_family.group_id],
+            "family_endpoint_groups": [clinical_family.endpoint_group],
             "source_groups": list(clinical_family.source_groups),
+            "source_families": [
+                {
+                    "source_group_id": source_group,
+                    "level": 2,
+                    "family_id": clinical_family.group_id,
+                    "endpoint_group": clinical_family.endpoint_group,
+                }
+                for source_group in clinical_family.source_groups
+            ],
             "record_count": 0,
         }
     )
@@ -118,19 +148,28 @@ def _build_clintox_catalog(
         "records_sha256": sha256_file(catalog_path),
         "assay_definition": "source-native assay field; one explicit clinical-context unit",
         "overlap_policy": "source-native assay ids are disjoint; assign each to one family level",
-        "n_allowed_source_records": sum(int(row.get("record_count") or 0) for row in rows),
+        "n_allowed_source_records": sum(
+            int(row.get("record_count") or 0) for row in rows
+        ),
         "n_physical_assays": len(rows),
         "n_multi_family_assays": 0,
         "levels": levels,
-        "overlap_patterns": {str(level): level_counts[level] for level in sorted(level_counts)},
+        "overlap_patterns": {
+            str(level): level_counts[level] for level in sorted(level_counts)
+        },
         "llm_visible": False,
     }
 
 
-def build_catalog(task: str, records_path: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def build_catalog(
+    task: str,
+    records_path: Path,
+    *,
+    config_name: str = "STARLING",
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     if task == "clintox":
-        return _build_clintox_catalog(records_path)
-    config = importlib.import_module(TASKS[task]["config_module"]).STARLING
+        return _build_clintox_catalog(records_path, config_name)
+    config = getattr(importlib.import_module(TASKS[task]["config_module"]), config_name)
     frame = pq.read_table(
         records_path,
         columns=[
@@ -147,7 +186,9 @@ def build_catalog(task: str, records_path: Path) -> tuple[list[dict[str, Any]], 
     for level, spec in enumerate(config.mechanism_groups, start=1):
         source_groups = spec.resolve(available_groups)
         if not source_groups:
-            raise ValueError(f"{task} family {spec.group_id} resolves to no source groups")
+            raise ValueError(
+                f"{task} family {spec.group_id} resolves to no source groups"
+            )
         levels.append(
             {
                 "level": level,
@@ -185,6 +226,16 @@ def build_catalog(task: str, records_path: Path) -> tuple[list[dict[str, Any]], 
         )
         overlap_patterns[tuple(family_levels)] += 1
         earliest = family_levels[0]
+        source_families = [
+            {
+                "source_group_id": source_group,
+                "level": level,
+                "family_id": levels[level - 1]["family_id"],
+                "endpoint_group": levels[level - 1]["endpoint_group"],
+            }
+            for source_group in source_groups
+            for level in source_group_to_levels[source_group]
+        ]
         rows.append(
             {
                 "catalog_version": VERSION,
@@ -194,9 +245,16 @@ def build_catalog(task: str, records_path: Path) -> tuple[list[dict[str, Any]], 
                 "selection_rank": 0,
                 "first_level": earliest,
                 "first_family_id": levels[earliest - 1]["family_id"],
+                "first_endpoint_group": levels[earliest - 1]["endpoint_group"],
                 "family_levels": family_levels,
-                "family_ids": [levels[level - 1]["family_id"] for level in family_levels],
+                "family_ids": [
+                    levels[level - 1]["family_id"] for level in family_levels
+                ],
+                "family_endpoint_groups": [
+                    levels[level - 1]["endpoint_group"] for level in family_levels
+                ],
                 "source_groups": source_groups,
+                "source_families": source_families,
                 "record_count": int(len(group)),
             }
         )
@@ -213,6 +271,7 @@ def build_catalog(task: str, records_path: Path) -> tuple[list[dict[str, Any]], 
     manifest = {
         "catalog_version": VERSION,
         "task": task,
+        "config_name": config_name,
         "records": str(records_path.resolve()),
         "records_sha256": sha256_file(records_path),
         "assay_definition": (
@@ -220,6 +279,16 @@ def build_catalog(task: str, records_path: Path) -> tuple[list[dict[str, Any]], 
             "when assay context is missing"
         ),
         "overlap_policy": "assign each physical assay to its earliest cumulative family level",
+        "progressive_overlap_policy": (
+            "source records retain their own family levels; first_level is only "
+            "assay catalog ordering and coverage summary in the v8 progressive view"
+        ),
+        "family_assignment_unit": "source_record",
+        "assay_identity_role": "provenance, exact deduplication, and card diversity",
+        "first_level_role": (
+            "legacy cumulative-family assignment; catalog ordering and physical-assay "
+            "coverage summary only in the v8 progressive view"
+        ),
         "n_allowed_source_records": int(len(frame)),
         "n_physical_assays": len(rows),
         "n_multi_family_assays": sum(len(row["family_levels"]) > 1 for row in rows),
@@ -235,17 +304,40 @@ def build_catalog(task: str, records_path: Path) -> tuple[list[dict[str, Any]], 
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--tasks", nargs="+", choices=sorted(TASKS), default=sorted(TASKS))
+    parser.add_argument(
+        "--tasks", nargs="+", choices=sorted(TASKS), default=sorted(TASKS)
+    )
     parser.add_argument(
         "--output-root",
         default="outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs",
     )
+    parser.add_argument(
+        "--records",
+        help="Override the records parquet when exactly one task is selected.",
+    )
+    parser.add_argument(
+        "--output-name",
+        help="Override the output directory name when exactly one task is selected.",
+    )
+    parser.add_argument(
+        "--config-name",
+        default="STARLING",
+        help="SourceExperimentConfig attribute in the task experiment_config module.",
+    )
     args = parser.parse_args(argv)
+    if (args.records or args.output_name) and len(args.tasks) != 1:
+        parser.error("--records/--output-name require exactly one --tasks value")
     output_root = Path(args.output_root)
     for task in args.tasks:
-        records_path = Path(TASKS[task]["records"])
-        rows, manifest = build_catalog(task, records_path)
-        output_dir = output_root / str(TASKS[task].get("output_name") or task)
+        records_path = Path(args.records or TASKS[task]["records"])
+        rows, manifest = build_catalog(
+            task,
+            records_path,
+            config_name=args.config_name,
+        )
+        output_dir = output_root / str(
+            args.output_name or TASKS[task].get("output_name") or task
+        )
         output_dir.mkdir(parents=True, exist_ok=True)
         catalog_path = output_dir / "family_assays.jsonl"
         write_jsonl_atomic(catalog_path, rows)

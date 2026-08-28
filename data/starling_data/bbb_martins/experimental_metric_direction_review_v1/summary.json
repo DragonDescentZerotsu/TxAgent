@@ -1,0 +1,136 @@
+{
+  "review_version": "bbb_experimental_metric_direction_review.v1",
+  "source": {
+    "dataset": "starling-labs/BBB",
+    "revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+    "local_arrow": "/data1/tianang/cache/datasets/starling-labs___bbb/default/0.0.0/f50c638621fcc2dedfc9e00f7074f867640efc1b/bbb-train.arrow",
+    "local_arrow_sha256": "faa63a4e2ecc234691c86bc63c2cd3a69db82387cfe0687cc930d9a5e458709c"
+  },
+  "v3_contract_version": "bbb_experimental_meaningful_cns_access_gold.v3",
+  "n_source_rows_considered": 304845,
+  "n_missing_direction_rows": 7226,
+  "proposed_review_label_counts": {
+    "0": 63,
+    "1": 18,
+    "unresolved": 7145
+  },
+  "proposed_rule_counts": {
+    "explicit_negative_failed_entry": 1,
+    "explicit_negative_outcome": 8,
+    "explicit_positive_modified_entry": 1,
+    "explicit_positive_outcome": 5,
+    "no_unambiguous_qualitative_direction": 7142,
+    "qualified_or_conflicting_direction": 3,
+    "qualitative_value_negative": 29,
+    "qualitative_value_not_detected": 25,
+    "qualitative_value_positive": 12
+  },
+  "candidate_review_label_counts": {
+    "0": 51,
+    "1": 14,
+    "unresolved": 7161
+  },
+  "candidate_rule_counts": {
+    "manual_review_approved:explicit_negative_outcome": 5,
+    "manual_review_approved:explicit_positive_outcome": 4,
+    "manual_review_approved:qualitative_value_negative": 28,
+    "manual_review_approved:qualitative_value_not_detected": 18,
+    "manual_review_approved:qualitative_value_positive": 10,
+    "manual_review_exclusion:brain_and_serum_both_undetected_no_systemic_exposure_challenge": 1,
+    "manual_review_exclusion:ex_vivo_model_not_systemic_cns_access": 1,
+    "manual_review_exclusion:late_timepoint_non_detection_after_rapid_elimination": 1,
+    "manual_review_exclusion:mci_or_alzheimer_disease_context_not_molecule_only": 1,
+    "manual_review_exclusion:mechanism_qualified_no_simple_diffusion_not_overall_access_direction": 1,
+    "manual_review_exclusion:minimal_is_measurement_descriptor_not_reliable_direction": 1,
+    "manual_review_exclusion:mixed_patient_pairs_not_uniformly_undetected": 1,
+    "manual_review_exclusion:pet_target_density_confounds_low_uptake_with_bbb_access": 1,
+    "manual_review_exclusion:pharmacodynamic_eye_movement_proxy_not_measured_cns_exposure": 1,
+    "manual_review_exclusion:post_infection_context_not_encoded_in_condition_field": 1,
+    "manual_review_exclusion:prodrug_analyte_attribution_and_active_exclusion_conflict": 1,
+    "manual_review_exclusion:progressive_cns_disease_context_confounds_molecule_only_outcome": 1,
+    "manual_review_exclusion:query_analyte_is_component_of_injected_mixture": 1,
+    "manual_review_exclusion:radioactive_metabolite_confounds_kpuu_direction": 2,
+    "manual_review_exclusion:radiotracer_metabolic_degradation_confounds_parent_brain_uptake": 1,
+    "no_unambiguous_qualitative_direction": 7142,
+    "qualified_or_conflicting_direction": 3
+  },
+  "candidate_endpoint_counts": {
+    "brain_systemic_ratio": 1706,
+    "brain_tissue": 2473,
+    "brain_unbound": 487,
+    "csf": 2116,
+    "experimental_bbb_outcome": 4,
+    "pet_or_autoradiography": 440
+  },
+  "explicit_label_rule_validation": {
+    "explicit_negative_failed_entry": {
+      "agree": 67,
+      "total": 67,
+      "agreement": 1.0
+    },
+    "explicit_negative_outcome": {
+      "agree": 408,
+      "total": 408,
+      "agreement": 1.0
+    },
+    "explicit_positive_modified_entry": {
+      "agree": 463,
+      "total": 463,
+      "agreement": 1.0
+    },
+    "explicit_positive_outcome": {
+      "agree": 426,
+      "total": 426,
+      "agreement": 1.0
+    },
+    "qualitative_value_negative": {
+      "agree": 30,
+      "total": 30,
+      "agreement": 1.0
+    },
+    "qualitative_value_not_detected": {
+      "agree": 4,
+      "total": 4,
+      "agreement": 1.0
+    },
+    "qualitative_value_positive": {
+      "agree": 20,
+      "total": 20,
+      "agreement": 1.0
+    }
+  },
+  "n_explicit_label_disagreements": 0,
+  "manual_review": {
+    "n_proposed_rows_reviewed": 81,
+    "n_manual_exclusions": 16,
+    "n_manual_approvals": 65,
+    "manual_exclusion_reasons": {
+      "ex_vivo_model_not_systemic_cns_access": 1,
+      "radioactive_metabolite_confounds_kpuu_direction": 2,
+      "prodrug_analyte_attribution_and_active_exclusion_conflict": 1,
+      "brain_and_serum_both_undetected_no_systemic_exposure_challenge": 1,
+      "mechanism_qualified_no_simple_diffusion_not_overall_access_direction": 1,
+      "mixed_patient_pairs_not_uniformly_undetected": 1,
+      "post_infection_context_not_encoded_in_condition_field": 1,
+      "pharmacodynamic_eye_movement_proxy_not_measured_cns_exposure": 1,
+      "progressive_cns_disease_context_confounds_molecule_only_outcome": 1,
+      "late_timepoint_non_detection_after_rapid_elimination": 1,
+      "pet_target_density_confounds_low_uptake_with_bbb_access": 1,
+      "mci_or_alzheimer_disease_context_not_molecule_only": 1,
+      "query_analyte_is_component_of_injected_mixture": 1,
+      "minimal_is_measurement_descriptor_not_reliable_direction": 1,
+      "radiotracer_metabolic_degradation_confounds_parent_brain_uptake": 1
+    }
+  },
+  "review_policy": {
+    "recovered_scope": "only v3-eligible experimental outcome rows rejected solely for missing bbb_permeability_label",
+    "direction_policy": "recover only an unambiguous qualitative direction stated in the row itself; do not threshold heterogeneous numeric endpoints",
+    "unresolved_policy": "retain as non-voting evidence"
+  },
+  "artifacts": {
+    "record_review_ledger": "data/starling_data/bbb_martins/experimental_metric_direction_review_v1/record_review_ledger.jsonl",
+    "record_review_ledger_sha256": "a223863930a06242891eff49bd9e50db3101b09df1e8430ffd7175f385fb36c8",
+    "explicit_label_disagreements": "data/starling_data/bbb_martins/experimental_metric_direction_review_v1/explicit_label_disagreements.jsonl",
+    "explicit_label_disagreements_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

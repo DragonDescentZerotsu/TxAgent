@@ -248,12 +248,12 @@ def test_corrected_profile_and_tool_free_policy_propagate_to_molecule_runner():
     assert "--disable-group-tools" in command
 
 
-def test_in_distribution_threshold_and_prompt_format_propagate_to_pipeline():
+def test_starling_threshold_and_prompt_format_propagate_to_pipeline():
     args = _parse_batch_args(
         CONFIG,
         [
             "--experiment-mode", "full_mechanism",
-            "--retrieval-source", "starling_in_distribution",
+            "--retrieval-source", "starling",
             "--retrieval-strategy", "assay_transfer_tool",
             "--assay-transfer-min-score", "0.5",
             "--enable-assay-transfer-scores",
@@ -348,7 +348,7 @@ def test_matched_preflight_source_requires_identical_retrieval_configuration():
             "--experiment-mode",
             "full_mechanism",
             "--retrieval-source",
-            "starling_in_distribution",
+            "starling",
             "--retrieval-strategy",
             "assay_transfer_tool",
             "--enable-assay-transfer-scores",
@@ -369,9 +369,6 @@ def test_matched_preflight_source_requires_identical_retrieval_configuration():
         "indices": indices,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
-        "exclude_nondirect_bioavailability_records": (
-            args.exclude_nondirect_bioavailability_records
-        ),
         "retrieval_reranker": "assay_transfer",
             "enable_assay_transfer_scores": args.enable_assay_transfer_scores,
             "assay_transfer_min_score": args.assay_transfer_min_score,

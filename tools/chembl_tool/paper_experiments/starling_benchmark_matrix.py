@@ -271,17 +271,6 @@ def main(argv: list[str] | None = None) -> int:
         "top_k_per_group": args.top_k_per_group,
         "min_similarity": args.min_similarity,
         "tool_service_url": args.tool_service_url,
-        "exclude_nondirect_bioavailability_records": (
-            bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
-        ),
-        "nondirect_bioavailability_evidence_policy": {
-            "default_policy": "include",
-            "runtime_exclusion": bool(
-                getattr(args, "exclude_nondirect_bioavailability_records", False)
-            ),
-            "filter_stage": "before_neighbor_ranking_and_top_k",
-            "scope": "bioavailability_ma Starling retrieval conditions only",
-        },
         "paper_root": str(paper_root),
         "canonical_paper_root": str(custom_canonical_root),
         "single_analysis_root": str(getattr(args, "single_analysis_root", "")),
@@ -409,14 +398,6 @@ def _validate_retrieval_ablation_args(args: argparse.Namespace) -> None:
     if (nonstandard_selector_or_context or nonstandard_retrieval_shape) and not args.output_root:
         raise SystemExit(
             "Non-standard retrieval settings require an explicit --output-root."
-        )
-    if (
-        bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
-        and not args.output_root
-    ):
-        raise SystemExit(
-            "--exclude-nondirect-bioavailability-records requires an explicit "
-            "--output-root to prevent --skip-existing reuse."
         )
     if (
         args.retrieval_feature != MORGAN_RETRIEVAL_FEATURE
@@ -671,14 +652,6 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=CANONICAL_MIN_SIMILARITY,
     )
     parser.add_argument("--tool-service-url", default=DEFAULT_TOOL_SERVICE_URL)
-    parser.add_argument(
-        "--exclude-nondirect-bioavailability-records",
-        action="store_true",
-        help=(
-            "Bioavailability Starling only: exclude retained relative/apparent "
-            "HF records before neighbor ranking and top-k selection."
-        ),
-    )
     parser.add_argument(
         "--single-analysis-root",
         default="",

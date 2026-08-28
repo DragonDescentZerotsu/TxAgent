@@ -39,7 +39,6 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank 
 from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_assay_transfer_rerank_catalog import (
     DEFAULT_CANDIDATE_MANIFEST,
     build_candidate_scoped_catalog,
-    build_manifest_for_prebuilt_catalog,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import get_source_config
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import load_index
@@ -54,22 +53,6 @@ DEFAULT_INDEX = (
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
-    if args.reuse_prebuilt_catalog and args.reuse_frozen_flat_artifacts:
-        raise SystemExit(
-            "--reuse-prebuilt-catalog and --reuse-frozen-flat-artifacts are mutually exclusive"
-        )
-    if args.retrieval_source == "starling_in_distribution":
-        if not args.reuse_prebuilt_catalog:
-            raise SystemExit(
-                "starling_in_distribution requires --reuse-prebuilt-catalog"
-            )
-        if args.assay_transfer_template_profile not in {
-            V6_5_TEMPLATE_PROFILE,
-            V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE,
-        }:
-            raise SystemExit(
-                "starling_in_distribution requires a v6.5 query-context-copy template profile"
-            )
     if not args.reuse_frozen_flat_artifacts and _catalog_is_flat(Path(args.rerank_catalog)):
         raise SystemExit(
             "The supplied flat catalog and condition manifest are immutable. Pass "
@@ -91,32 +74,6 @@ def main(argv: list[str] | None = None) -> int:
             "candidate_manifest": args.candidate_manifest,
         }
         print("[assay_transfer_precompute] reusing immutable flat catalog and candidate manifest", file=sys.stderr, flush=True)
-    elif args.reuse_prebuilt_catalog:
-        if not Path(args.rerank_catalog).is_file():
-            raise SystemExit("--reuse-prebuilt-catalog requires an existing catalog")
-        frozen = build_manifest_for_prebuilt_catalog(
-            records=records,
-            indices=indices,
-            smiles_field=args.smiles_field,
-            index=index,
-            catalog_path=Path(args.rerank_catalog),
-            manifest_output=Path(args.candidate_manifest),
-            experiment_mode=args.experiment_mode,
-            top_k_per_group=args.top_k_per_group,
-            min_similarity=args.min_similarity,
-            neighbor_identity_policy=args.neighbor_identity_policy,
-            initial_morgan_filter=args.assay_transfer_initial_morgan_filter,
-            index_path=args.index,
-            condition_id=args.condition_id,
-            template_profile=args.assay_transfer_template_profile,
-        )
-        print(
-            f"[assay_transfer_precompute] froze prebuilt-catalog manifest "
-            f"queries={frozen['n_queries']} groups={frozen['n_groups']} "
-            f"candidates={frozen['n_candidates']}",
-            file=sys.stderr,
-            flush=True,
-        )
     else:
         frozen = build_candidate_scoped_catalog(
             records=records,
@@ -169,9 +126,6 @@ def main(argv: list[str] | None = None) -> int:
         force_rescore=args.force_rescore,
         template_profile=args.assay_transfer_template_profile,
         retrieval_source=args.retrieval_source,
-        exclude_nondirect_bioavailability_records=(
-            args.exclude_nondirect_bioavailability_records
-        ),
     )
     print(
         f"[assay_transfer_precompute] queries={len(indices)} prompts_to_score={len(tasks)} "
@@ -279,17 +233,11 @@ def collect_prompt_tasks(
     force_rescore: bool,
     template_profile: str = DEFAULT_TEMPLATE_PROFILE,
     retrieval_source: str = "starling",
-    exclude_nondirect_bioavailability_records: bool = False,
 ) -> tuple[AssayTransferCachedReranker, list[PromptTask]]:
     if experiment_mode not in {"direct", "full_flat", "full_mechanism"}:
         raise ValueError("Assay-transfer reranking requires direct, full_flat, or full_mechanism mode")
     index = load_index(Path(index_path))
-    config = get_source_config(
-        retrieval_source,
-        exclude_nondirect_bioavailability_records=(
-            exclude_nondirect_bioavailability_records
-        ),
-    )
+    config = get_source_config(retrieval_source)
     reranker = AssayTransferCachedReranker(
         catalog_path=catalog_path,
         cache_path=cache_path,
@@ -299,9 +247,6 @@ def collect_prompt_tasks(
         allow_missing=True,
         candidate_manifest_path=candidate_manifest_path,
         template_profile=template_profile,
-        exclude_nondirect_bioavailability_records=(
-            exclude_nondirect_bioavailability_records
-        ),
     )
     for ordinal, index_value in enumerate(indices, start=1):
         query_smiles = str(records[index_value].get(smiles_field) or "")
@@ -355,19 +300,13 @@ def preflight_cache_coverage(
     assay_transfer_diversity_score_slack: float = 0.0,
     assay_transfer_selection_unit: str = ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
     assay_transfer_records_per_molecule: int = ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
-    exclude_nondirect_bioavailability_records: bool = False,
 ) -> dict[str, Any]:
     from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_prompt_policy import (
         prepare_assay_transfer_selected_neighbors,
     )
 
     index = load_index(Path(index_path))
-    config = get_source_config(
-        retrieval_source,
-        exclude_nondirect_bioavailability_records=(
-            exclude_nondirect_bioavailability_records
-        ),
-    )
+    config = get_source_config(retrieval_source)
     reranker = AssayTransferCachedReranker(
         catalog_path=catalog_path,
         cache_path=cache_path,
@@ -376,9 +315,6 @@ def preflight_cache_coverage(
         model_revision=model_revision,
         candidate_manifest_path=candidate_manifest_path,
         template_profile=template_profile,
-        exclude_nondirect_bioavailability_records=(
-            exclude_nondirect_bioavailability_records
-        ),
     )
     n_unscoreable_selected_dropped = 0
     n_below_min_score_dropped = 0
@@ -448,9 +384,6 @@ def preflight_cache_coverage(
             "cache_version_validation": version_validation,
             "provenance": reranker.provenance(),
             "assay_transfer_min_score": assay_transfer_min_score,
-            "exclude_nondirect_bioavailability_records": (
-                exclude_nondirect_bioavailability_records
-            ),
         }
         result.update(
             {
@@ -836,13 +769,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--index", default=DEFAULT_INDEX)
     parser.add_argument(
         "--retrieval-source",
-        choices=["starling", "starling_in_distribution"],
+        choices=["starling"],
         default="starling",
-    )
-    parser.add_argument(
-        "--exclude-nondirect-bioavailability-records",
-        action="store_true",
-        help="Exclude retained relative/apparent HF records before candidate ranking.",
     )
     parser.add_argument("--experiment-mode", choices=["direct", "full_flat", "full_mechanism"], default="full_mechanism")
     parser.add_argument("--neighbor-identity-policy", choices=["operational", "parent_disjoint"], default="operational")
@@ -883,13 +811,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Use an existing immutable flat catalog/condition manifest and score only missing prompts.",
     )
     parser.add_argument(
-        "--reuse-prebuilt-catalog",
-        action="store_true",
-        help="Keep an existing source-native catalog immutable and freeze only its condition manifest.",
-    )
-    parser.add_argument(
         "--condition-id",
-        default="validation__starling_in_distribution__parent_disjoint__r100_c100_min0__v6_5",
+        default="validation__starling__parent_disjoint__r100_c100_min0",
     )
     parser.add_argument("--rerank-devices", default="0,1")
     parser.add_argument("--rerank-workers-per-device", type=int, default=1)

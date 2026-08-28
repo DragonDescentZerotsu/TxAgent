@@ -19,12 +19,6 @@ from typing import Any
 
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-import numpy as np
-
-from tools.chembl_tool.paper_experiments.analyze_starling_best_agent_baselines import (
-    holm_adjust,
-    paired_macro_f1_significance,
-)
 
 
 @dataclass(frozen=True)
@@ -79,9 +73,33 @@ CONDITIONED_BASELINES = (
     ),
 )
 
-
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _parse_task_path_overrides(values: list[str]) -> dict[str, Path]:
+    """Parse repeatable TASK=PATH CLI overrides without hiding bad task names."""
+    overrides: dict[str, Path] = {}
+    for value in values:
+        task, separator, raw_path = value.partition("=")
+        if not separator or task not in CONDITIONED_TASK_SPECS or not raw_path:
+            raise ValueError(
+                "Task path overrides must use a known conditioned task as "
+                f"TASK=PATH; received {value!r}"
+            )
+        if task in overrides:
+            raise ValueError(f"Duplicate task path override: {task}")
+        overrides[task] = Path(raw_path)
+    return overrides
+
+
+def _reasoning_tokens_from_usage(usage: dict[str, Any]) -> int | None:
+    """Read normalized or OpenAI-compatible nested reasoning-token usage."""
+    value = usage.get("reasoning_tokens")
+    if value is None:
+        details = usage.get("completion_tokens_details") or {}
+        value = details.get("reasoning_tokens")
+    return None if value is None else int(value)
 
 
 def _prefixes_by_task(manifest: dict[str, Any]) -> dict[str, list[int]]:
@@ -278,8 +296,15 @@ def incomplete_curve_conditions(
 def _write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
     if not rows:
         return
+    fieldnames: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        for key in row:
+            if key not in seen:
+                seen.add(key)
+                fieldnames.append(key)
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), delimiter="\t")
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -311,29 +336,300 @@ def _agent_metric_issue(metrics: dict[str, Any], expected_n: int) -> str:
     return ""
 
 
-def collect_conditioned_agent_baseline_data(
+def _complete_agent_metric_issue(metrics: dict[str, Any], expected_n: int) -> str:
+    """Require complete successful coverage, not merely a zero failure counter."""
+    issue = _agent_metric_issue(metrics, expected_n)
+    if issue:
+        return issue
+    for field in ("n_successful", "n_evaluable"):
+        if metrics.get(field) is not None and int(metrics[field]) != expected_n:
+            return f"{field}={int(metrics[field])}, expected={expected_n}"
+    return ""
+
+
+def _append_conditioned_baselines(
+    rows: list[dict[str, Any]],
     *,
-    agent_root: Path,
-    bio_agent_root: Path,
+    task: str,
+    task_label: str,
+    baseline_task: str,
     baseline_root: Path,
+    expected_n: int,
+    omit_sample_count_mismatch: bool = False,
+) -> list[dict[str, Any]]:
+    omissions: list[dict[str, Any]] = []
+    for method, plot_label, relative_path in CONDITIONED_BASELINES:
+        metrics_path = baseline_root / baseline_task / relative_path
+        if method == "minimol_head" and not metrics_path.is_file():
+            metrics_path = (
+                baseline_root
+                / baseline_task
+                / "minimol_head/final/metrics.json"
+            )
+        metrics = _load_json(metrics_path)
+        actual_n = _metric_n(metrics)
+        if actual_n != expected_n:
+            if omit_sample_count_mismatch:
+                omissions.append(
+                    {
+                        "task": task,
+                        "method": method,
+                        "reason": "sample_count_mismatch",
+                        "baseline_n": actual_n,
+                        "agent_n": expected_n,
+                        "metrics_path": str(metrics_path),
+                    }
+                )
+                continue
+            raise ValueError(
+                f"Baseline sample-count mismatch for {task}/{method}: "
+                f"{actual_n} != {expected_n}"
+            )
+        if metrics.get("n_evaluated") is not None and int(
+            metrics["n_evaluated"]
+        ) != expected_n:
+            raise ValueError(f"Incomplete baseline coverage for {task}/{method}")
+        rows.append(
+            {
+                "task": task,
+                "task_label": task_label,
+                "result_type": "baseline",
+                "method": method,
+                "plot_label": plot_label,
+                "level": "",
+                "assay_count": "",
+                "macro_f1": _metric_value(metrics, "macro_f1"),
+                "accuracy": _metric_value(metrics, "accuracy"),
+                "n": actual_n,
+                "metrics_path": str(metrics_path),
+            }
+        )
+    return omissions
+
+
+
+
+
+
+def collect_conditioned_progressive_resource_data(
+    *,
+    progressive_root: Path | None = None,
+    progressive_roots_by_task: dict[str, Path] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Collect complete conditioned-family agent levels and current baselines."""
-    agent_manifest = _load_json(agent_root / "experiment_manifest.json")
-    bio_manifest = _load_json(bio_agent_root / "experiment_manifest.json")
+    """Collect performance and prompt-resource statistics by task lineage."""
+    if (progressive_root is None) == (progressive_roots_by_task is None):
+        raise ValueError(
+            "Provide exactly one of progressive_root or progressive_roots_by_task"
+        )
+    if progressive_root is not None:
+        manifest = _load_json(progressive_root / "experiment_manifest.json")
+        roots_by_task = {task: progressive_root for task in manifest["tasks"]}
+    else:
+        roots_by_task = dict(progressive_roots_by_task or {})
+    if not roots_by_task:
+        raise ValueError("At least one progressive task root is required")
+
     rows: list[dict[str, Any]] = []
-    omitted: list[dict[str, Any]] = []
+    task_contracts: dict[str, Any] = {}
+    manifests: list[dict[str, Any]] = []
+    for task, task_root in roots_by_task.items():
+        manifest = _load_json(task_root / "experiment_manifest.json")
+        manifests.append(manifest)
+        if manifest.get("experiment") not in {
+            "conditioned_assay_progressive_visible.v6",
+            "conditioned_assay_progressive_visible.v7",
+            "conditioned_assay_progressive_visible.v8",
+        }:
+            raise ValueError(f"Not a progressive experiment: {task_root}")
+        if task not in manifest.get("tasks", []):
+            raise ValueError(f"Task {task} is absent from {task_root}")
+        if int(manifest.get("n_failed_queries") or 0):
+            raise ValueError(
+                f"Progressive run has failed queries for {task}: "
+                f"{manifest['n_failed_queries']}"
+            )
+        expected_indices = [
+            int(value) for value in manifest["evaluation_indices_by_task"][task]
+        ]
+        expected_n = len(expected_indices)
+        task_label = CONDITIONED_TASK_SPECS[task][0]
+        for level_row in manifest["inputs"][task]["levels"]:
+            level = int(level_row["level"])
+            metrics_path = (
+                task_root / task / "levels" / f"level_{level}" / "metrics.json"
+            )
+            metrics = _load_json(metrics_path)
+            issue = _complete_agent_metric_issue(metrics, expected_n)
+            if issue:
+                raise ValueError(f"Incomplete progressive metric for {task}/L{level}: {issue}")
 
-    for task, (task_label, baseline_task) in CONDITIONED_TASK_SPECS.items():
-        task_agent_root = agent_root / task
-        level_manifest = agent_manifest
-        if task == "bioavailability_ma":
-            task_agent_root = bio_agent_root / task
-            level_manifest = bio_manifest
+            active_molecules: list[int] = []
+            active_cards: list[int] = []
+            cards_per_molecule: list[float] = []
+            reasoning_tokens: list[int] = []
+            reasoning_chars: list[int] = []
+            prompt_tokens: list[int] = []
+            completion_tokens: list[int] = []
+            missing_reasoning_usage = 0
+            statuses: dict[str, int] = {}
+            for query_index in expected_indices:
+                level_dir = (
+                    task_root
+                    / task
+                    / "queries"
+                    / f"query_idx{query_index:05d}"
+                    / "levels"
+                    / f"level_{level}"
+                )
+                prepared = _load_json(level_dir / "prepared.json")
+                output = _load_json(level_dir / "output.json")
+                n_molecules = int(prepared["n_active_molecules"])
+                n_cards = int(prepared["n_active_cards"])
+                active_molecules.append(n_molecules)
+                active_cards.append(n_cards)
+                cards_per_molecule.append(
+                    n_cards / n_molecules if n_molecules else 0.0
+                )
+                status = str(output["status"])
+                statuses[status] = statuses.get(status, 0) + 1
+                if output.get("model_called") is not True:
+                    continue
+                usage = output.get("llm", {}).get("usage") or {}
+                reasoning_text = str(output.get("llm", {}).get("reasoning_content") or "")
+                reasoning_token_count = _reasoning_tokens_from_usage(usage)
+                if reasoning_token_count is None:
+                    missing_reasoning_usage += 1
+                    reasoning_token_count = 0
+                reasoning_tokens.append(reasoning_token_count)
+                reasoning_chars.append(len(reasoning_text))
+                prompt_tokens.append(int(usage.get("prompt_tokens") or 0))
+                completion_tokens.append(int(usage.get("completion_tokens") or 0))
 
-        none_path = agent_root / task / "none" / "metrics.json"
+            n_model_called = len(reasoning_tokens)
+            if n_model_called != int(metrics["n_model_called"]):
+                raise ValueError(
+                    f"Progressive call-count mismatch for {task}/L{level}: "
+                    f"{n_model_called} != {metrics['n_model_called']}"
+                )
+            if missing_reasoning_usage:
+                raise ValueError(f"Missing reasoning tokens for {task}/L{level}")
+
+            rows.append(
+                {
+                    "task": task,
+                    "task_label": task_label,
+                    "level": level,
+                    "family": str(level_row["endpoint_group"]),
+                    "cumulative_assays": int(level_row["cumulative_physical_assays"]),
+                    "n_queries": expected_n,
+                    "macro_f1": _metric_value(metrics, "macro_f1"),
+                    "accuracy": _metric_value(metrics, "accuracy"),
+                    "mean_active_molecules": mean(active_molecules),
+                    "mean_active_record_cards": mean(active_cards),
+                    "mean_cards_per_active_molecule": mean(cards_per_molecule),
+                    "n_model_called": n_model_called,
+                    "model_call_fraction": n_model_called / expected_n,
+                    "n_carried_forward": statuses.get("carried_forward", 0),
+                    "n_reused_none": statuses.get("reused_none", 0),
+                    "mean_reasoning_tokens_per_call": mean(reasoning_tokens),
+                    "mean_reasoning_tokens_per_query": sum(reasoning_tokens)
+                    / expected_n,
+                    "mean_reasoning_chars_per_call": mean(reasoning_chars),
+                    "mean_prompt_tokens_per_call": mean(prompt_tokens),
+                    "mean_completion_tokens_per_call": mean(completion_tokens),
+                    "metrics_path": str(metrics_path),
+                }
+            )
+
+        task_contracts[task] = {
+            "progressive_root": str(task_root),
+            "experiment": manifest["experiment"],
+            "evaluation_subset": manifest["evaluation_subset"],
+            "visibility_mode": manifest["visibility_mode"],
+            "reference_pool": manifest["reference_pool"],
+            "neighbor_identity_policy": manifest["neighbor_identity_policy"],
+            "selection": manifest["selection"],
+            "agent_model": manifest["model"],
+            "n": expected_n,
+        }
+
+    first_manifest = manifests[0]
+
+    return rows, {
+        "comparison_contract": {
+            "experiment": first_manifest["experiment"],
+            "evaluation_subset": first_manifest["evaluation_subset"],
+            "visibility_mode": first_manifest["visibility_mode"],
+            "reference_pool": first_manifest["reference_pool"],
+            "neighbor_identity_policy": first_manifest["neighbor_identity_policy"],
+            "selection": first_manifest["selection"],
+            "agent_model": first_manifest["model"],
+            "reasoning_mode": {
+                "reasoning_effort": first_manifest["reasoning_effort"],
+                "thinking": first_manifest["thinking"],
+                "length_statistic": "mean reasoning tokens among actual model calls",
+            },
+            "active_evidence_statistic": (
+                "mean cumulative active molecules and per-query record-cards-per-active-"
+                "molecule across all queries at each level"
+            ),
+            "progressive_root": (
+                str(progressive_root) if progressive_root is not None else ""
+            ),
+            "task_contracts": task_contracts,
+        },
+        "rows": rows,
+    }
+
+
+def collect_conditioned_progressive_agent_baseline_data(
+    *,
+    progressive_roots_by_task: dict[str, Path],
+    none_root: Path,
+    baseline_root: Path,
+    baseline_roots_by_task: dict[str, Path] | None = None,
+    omit_mismatched_baselines: bool = False,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Collect mixed-lineage progressive curves with matched current baselines."""
+    tasks = tuple(progressive_roots_by_task)
+    if not tasks or any(task not in CONDITIONED_TASK_SPECS for task in tasks):
+        raise ValueError("Progressive task roots must use known conditioned tasks")
+
+    rows: list[dict[str, Any]] = []
+    contracts: dict[str, Any] = {}
+    baseline_omissions: list[dict[str, Any]] = []
+    effective_baseline_roots: dict[str, str] = {}
+    for task, progressive_root in progressive_roots_by_task.items():
+        manifest = _load_json(progressive_root / "experiment_manifest.json")
+        if manifest.get("experiment") not in {
+            "conditioned_assay_progressive_visible.v6",
+            "conditioned_assay_progressive_visible.v7",
+            "conditioned_assay_progressive_visible.v8",
+        }:
+            raise ValueError(f"Not a supported progressive experiment: {progressive_root}")
+        if task not in manifest.get("tasks", []):
+            raise ValueError(f"Task {task} is absent from {progressive_root}")
+        if int(manifest.get("n_failed_queries") or 0):
+            raise ValueError(
+                f"Progressive run has failed queries for {task}: "
+                f"{manifest['n_failed_queries']}"
+            )
+
+        expected_indices = [
+            int(value) for value in manifest["evaluation_indices_by_task"][task]
+        ]
+        expected_n = len(expected_indices)
+        task_label, baseline_task = CONDITIONED_TASK_SPECS[task]
+        task_baseline_root = (baseline_roots_by_task or {}).get(task, baseline_root)
+        effective_baseline_roots[task] = str(task_baseline_root)
+        matched_none_path = progressive_root / task / "none" / "metrics.json"
+        none_path = (
+            matched_none_path
+            if matched_none_path.is_file()
+            else none_root / task / "none" / "metrics.json"
+        )
         none_metrics = _load_json(none_path)
-        expected_n = _metric_n(none_metrics)
-        issue = _agent_metric_issue(none_metrics, expected_n)
+        issue = _complete_agent_metric_issue(none_metrics, expected_n)
         if issue:
             raise ValueError(f"Incomplete no-retrieval metric for {task}: {issue}")
         rows.append(
@@ -352,52 +648,31 @@ def collect_conditioned_agent_baseline_data(
             }
         )
 
-        levels = list(level_manifest["levels_by_task"][task])
+        levels = list(manifest["inputs"][task]["levels"])
         final_level = int(levels[-1]["level"])
-        for level in levels:
-            level_number = int(level["level"])
-            assay_count = int(level["cumulative_physical_assays"])
+        for level_row in levels:
+            level = int(level_row["level"])
             metrics_path = (
-                task_agent_root
-                / f"family_level_{level_number}_top{assay_count}"
-                / "metrics.json"
+                progressive_root / task / "levels" / f"level_{level}" / "metrics.json"
             )
-            if not metrics_path.is_file():
-                omitted.append(
-                    {
-                        "task": task,
-                        "level": level_number,
-                        "assay_count": assay_count,
-                        "reason": "metrics_missing",
-                        "metrics_path": str(metrics_path),
-                    }
-                )
-                continue
             metrics = _load_json(metrics_path)
-            issue = _agent_metric_issue(metrics, expected_n)
+            issue = _complete_agent_metric_issue(metrics, expected_n)
             if issue:
-                omitted.append(
-                    {
-                        "task": task,
-                        "level": level_number,
-                        "assay_count": assay_count,
-                        "reason": issue,
-                        "metrics_path": str(metrics_path),
-                    }
+                raise ValueError(
+                    f"Incomplete progressive metric for {task}/L{level}: {issue}"
                 )
-                continue
-            plot_label = f"L{level_number}"
-            if level_number == final_level:
+            plot_label = f"L{level}"
+            if level == final_level:
                 plot_label += " (all)"
             rows.append(
                 {
                     "task": task,
                     "task_label": task_label,
                     "result_type": "agent_level",
-                    "method": f"family_level_{level_number}",
+                    "method": f"progressive_level_{level}",
                     "plot_label": plot_label,
-                    "level": level_number,
-                    "assay_count": assay_count,
+                    "level": level,
+                    "assay_count": int(level_row["cumulative_physical_assays"]),
                     "macro_f1": _metric_value(metrics, "macro_f1"),
                     "accuracy": _metric_value(metrics, "accuracy"),
                     "n": expected_n,
@@ -405,176 +680,432 @@ def collect_conditioned_agent_baseline_data(
                 }
             )
 
-        for method, plot_label, relative_path in CONDITIONED_BASELINES:
-            metrics_path = baseline_root / baseline_task / relative_path
-            metrics = _load_json(metrics_path)
-            actual_n = _metric_n(metrics)
-            if actual_n != expected_n:
-                raise ValueError(
-                    f"Baseline sample-count mismatch for {task}/{method}: "
-                    f"{actual_n} != {expected_n}"
-                )
-            if metrics.get("n_evaluated") is not None and int(
-                metrics["n_evaluated"]
-            ) != expected_n:
-                raise ValueError(f"Incomplete baseline coverage for {task}/{method}")
-            rows.append(
-                {
-                    "task": task,
-                    "task_label": task_label,
-                    "result_type": "baseline",
-                    "method": method,
-                    "plot_label": plot_label,
-                    "level": "",
-                    "assay_count": "",
-                    "macro_f1": _metric_value(metrics, "macro_f1"),
-                    "accuracy": _metric_value(metrics, "accuracy"),
-                    "n": actual_n,
-                    "metrics_path": str(metrics_path),
-                }
+        baseline_omissions.extend(
+            _append_conditioned_baselines(
+                rows,
+                task=task,
+                task_label=task_label,
+                baseline_task=baseline_task,
+                baseline_root=task_baseline_root,
+                expected_n=expected_n,
+                omit_sample_count_mismatch=omit_mismatched_baselines,
             )
+        )
+        contracts[task] = {
+            "progressive_root": str(progressive_root),
+            "experiment": manifest["experiment"],
+            "evaluation_subset": manifest["evaluation_subset"],
+            "visibility_mode": manifest["visibility_mode"],
+            "reference_pool": manifest["reference_pool"],
+            "neighbor_identity_policy": manifest["neighbor_identity_policy"],
+            "selection": manifest["selection"],
+            "n": expected_n,
+        }
 
-    summary = {
+    return rows, {
         "comparison_contract": {
-            "evaluation_subset": "scaffold-valid",
-            "agent_model": agent_manifest["model"],
-            "visibility_mode": agent_manifest["visibility_mode"],
-            "reference_pool": agent_manifest["reference_pool"],
-            "neighbor_identity_policy": agent_manifest["neighbor_identity_policy"],
-            "top_k_per_assay": agent_manifest["top_k_per_assay"],
-            "min_similarity": agent_manifest["min_similarity"],
-            "conditioned_tasks": [
-                "bbb_martins",
-                "bioavailability_ma",
-                "skin_reaction",
-            ],
-            "unconditioned_task": "clintox",
-            "agent_inclusion_gate": "complete evaluation n and n_failed_runs=0",
-            "bioavailability_agent_lineage": str(bio_agent_root),
+            "tasks": list(tasks),
+            "task_contracts": contracts,
+            "none_lineage": str(none_root),
             "baseline_lineage": str(baseline_root),
+            "baseline_lineage_by_task": effective_baseline_roots,
+            "agent_inclusion_gate": (
+                "complete n_total, n_successful, n_evaluable, and n_failed_runs=0"
+            ),
+            "baseline_methods": [method for method, _, _ in CONDITIONED_BASELINES],
+            "baseline_omissions": baseline_omissions,
         },
-        "omitted_agent_levels": omitted,
         "rows": rows,
     }
-    return rows, summary
 
 
-def _read_paired_conditioned_predictions(
-    agent_metrics_path: Path,
-    baseline_metrics_path: Path,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, Path, Path]:
-    """Align conditioned predictions by benchmark row order, not unique SMILES."""
-    agent_path = agent_metrics_path.parent / "predictions.jsonl"
-    baseline_path = baseline_metrics_path.parent / "valid_predictions.jsonl"
-    agent_rows = [
-        json.loads(line)
-        for line in agent_path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
-    baseline_rows = [
-        json.loads(line)
-        for line in baseline_path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
-    if len(agent_rows) != len(baseline_rows):
-        raise ValueError(f"Prediction-count mismatch: {agent_path} vs {baseline_path}")
-    for index, (agent, baseline) in enumerate(
-        zip(agent_rows, baseline_rows, strict=True)
-    ):
-        if (
-            int(agent["query_index"]) != index
-            or agent.get("final_status", agent.get("status")) != "ok"
-            or baseline.get("status", "ok") != "ok"
-            or agent["smiles"] != baseline["drug"]
-            or int(agent["label"]) != int(baseline["Y"])
-        ):
-            raise ValueError(
-                f"Prediction alignment failed at row {index}: "
-                f"{agent_path} vs {baseline_path}"
+def collect_conditioned_progressive_overview_data(
+    *,
+    progressive_roots_by_task: dict[str, Path],
+    none_root: Path,
+    baseline_root: Path,
+    baseline_roots_by_task: dict[str, Path] | None = None,
+    omit_mismatched_baselines: bool = False,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Collect one table for progressive performance, baselines, and resources."""
+    rows, performance_summary = collect_conditioned_progressive_agent_baseline_data(
+        progressive_roots_by_task=progressive_roots_by_task,
+        none_root=none_root,
+        baseline_root=baseline_root,
+        baseline_roots_by_task=baseline_roots_by_task,
+        omit_mismatched_baselines=omit_mismatched_baselines,
+    )
+    resource_rows, resource_summary = collect_conditioned_progressive_resource_data(
+        progressive_roots_by_task=progressive_roots_by_task,
+    )
+    resource_by_level = {
+        (str(row["task"]), int(row["level"])): row for row in resource_rows
+    }
+    merged: list[dict[str, Any]] = []
+    for row in rows:
+        item = dict(row)
+        if row["result_type"] == "agent_level" and int(row["level"]) > 0:
+            resource = resource_by_level[(str(row["task"]), int(row["level"]))]
+            if abs(float(resource["macro_f1"]) - float(row["macro_f1"])) > 1e-12:
+                raise ValueError(
+                    f"Progressive metric mismatch for {row['task']}/L{row['level']}"
+                )
+            for key, value in resource.items():
+                if key not in item or key == "metrics_path":
+                    item[key] = value
+        elif row["result_type"] == "agent_level":
+            item.update(
+                {
+                    "mean_active_molecules": 0.0,
+                    "mean_active_record_cards": 0.0,
+                    "mean_cards_per_active_molecule": 0.0,
+                    "n_model_called": "",
+                    "model_call_fraction": "",
+                    "mean_prompt_tokens_per_call": "",
+                    "mean_reasoning_tokens_per_call": "",
+                }
             )
-    return (
-        np.asarray([row["label"] for row in agent_rows], dtype=np.int8),
-        np.asarray([row["pred_label"] for row in agent_rows], dtype=np.int8),
-        np.asarray([row["prediction"] for row in baseline_rows], dtype=np.int8),
-        agent_path,
-        baseline_path,
+        merged.append(item)
+
+    return merged, {
+        "comparison_contract": {
+            "figure": "conditioned_progressive_overview.v1",
+            "performance": performance_summary["comparison_contract"],
+            "resources": resource_summary["comparison_contract"],
+            "cards_per_molecule_statistic": (
+                "mean over queries of active record cards divided by active molecules; "
+                "queries with zero active molecules contribute zero"
+            ),
+            "prompt_and_reasoning_statistic": (
+                "mean tokens among actual DeepSeek model calls; carry-forward and "
+                "reused-none checkpoints are excluded"
+            ),
+        },
+        "rows": merged,
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+def plot_conditioned_progressive_overview(
+    *,
+    rows: list[dict[str, Any]],
+    output_svg: Path,
+    output_png: Path,
+    tasks: tuple[str, ...] = ("bbb_martins", "bioavailability_ma", "skin_reaction"),
+) -> None:
+    """Plot performance, baselines, retrieval volume, and token use together."""
+    plt.rcParams.update(
+        {
+            "font.family": "DejaVu Sans",
+            "font.size": 9.0,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "svg.fonttype": "none",
+        }
+    )
+    fig, axes = plt.subplots(5, len(tasks), figsize=(18.5, 21.5), squeeze=False)
+    baseline_styles = {
+        "minimol_head": ("D", "#D89C21", "#D89C21"),
+        "minimol_knn_condition": ("s", "#666666", "#666666"),
+        "minimol_knn_all": ("s", "white", "#666666"),
+        "morgan_knn_condition": ("^", "#666666", "#666666"),
+        "morgan_knn_all": ("^", "white", "#666666"),
+    }
+    baseline_ticks = {
+        "minimol_head": "MM\nhead",
+        "minimol_knn_condition": "MM KNN\ncond.",
+        "minimol_knn_all": "MM KNN\nall",
+        "morgan_knn_condition": "Morgan\ncond.",
+        "morgan_knn_all": "Morgan\nall",
+    }
+    resource_specs = (
+        (
+            "mean_active_molecules",
+            "B  Mean retrieved molecules",
+            "Active molecules/query",
+            lambda value: f"{value:.1f}",
+            1.18,
+        ),
+        (
+            "mean_cards_per_active_molecule",
+            "C  Mean cards per molecule",
+            "Record cards/molecule",
+            lambda value: f"{value:.2f}",
+            1.18,
+        ),
+        (
+            "mean_prompt_tokens_per_call",
+            "D  Prompt length",
+            "Prompt tokens/call (k)",
+            lambda value: f"{value / 1000:.1f}k",
+            1.2,
+        ),
+        (
+            "mean_reasoning_tokens_per_call",
+            "E  Reasoning length",
+            "Reasoning tokens/call (k)",
+            lambda value: f"{value / 1000:.1f}k",
+            1.2,
+        ),
     )
 
-
-def collect_conditioned_best_significance(
-    rows: list[dict[str, Any]],
-    *,
-    permutation_replicates: int = 100_000,
-    bootstrap_replicates: int = 10_000,
-) -> list[dict[str, Any]]:
-    """Compare each valid-selected best agent with its best current baseline."""
-    output: list[dict[str, Any]] = []
-    for task, (task_label, _) in CONDITIONED_TASK_SPECS.items():
+    for column, task in enumerate(tasks):
         task_rows = [row for row in rows if row["task"] == task]
-        agent = max(
+        agent_rows = sorted(
             (row for row in task_rows if row["result_type"] == "agent_level"),
-            key=lambda row: float(row["macro_f1"]),
+            key=lambda row: int(row["level"]),
         )
-        baseline = max(
-            (row for row in task_rows if row["result_type"] == "baseline"),
-            key=lambda row: float(row["macro_f1"]),
+        baseline_by_method = {
+            str(row["method"]): row
+            for row in task_rows
+            if row["result_type"] == "baseline"
+        }
+        baseline_rows = [
+            baseline_by_method[method]
+            for method, _, _ in CONDITIONED_BASELINES
+            if method in baseline_by_method
+        ]
+        if not agent_rows:
+            raise ValueError(f"No progressive agent rows for {task}")
+        color = TASK_SPECS[task].color
+
+        ax = axes[0, column]
+        agent_x = list(range(len(agent_rows)))
+        baseline_start = len(agent_rows) + 0.75
+        baseline_x = [
+            baseline_start + 0.82 * index for index in range(len(baseline_rows))
+        ]
+        agent_values = [float(row["macro_f1"]) for row in agent_rows]
+        ax.plot(
+            agent_x,
+            agent_values,
+            color=color,
+            marker=TASK_SPECS[task].marker,
+            linewidth=2.4,
+            markersize=6.5,
+            markeredgecolor="white",
+            markeredgewidth=0.7,
+            zorder=3,
         )
-        labels, agent_values, baseline_values, agent_path, baseline_path = (
-            _read_paired_conditioned_predictions(
-                Path(agent["metrics_path"]), Path(baseline["metrics_path"])
+        for x_value, value in zip(agent_x, agent_values, strict=True):
+            ax.annotate(
+                f"{value:.3f}",
+                (x_value, value),
+                xytext=(0, 7),
+                textcoords="offset points",
+                ha="center",
+                fontsize=7.2,
+                color=color,
+            )
+        for index, (x_value, row) in enumerate(
+            zip(baseline_x, baseline_rows, strict=True)
+        ):
+            marker, face, edge = baseline_styles[str(row["method"])]
+            value = float(row["macro_f1"])
+            ax.scatter(
+                [x_value],
+                [value],
+                marker=marker,
+                s=58,
+                facecolor=face,
+                edgecolor=edge,
+                linewidth=1.25,
+                zorder=3,
+            )
+            ax.annotate(
+                f"{value:.3f}",
+                (x_value, value),
+                xytext=(0, 7 if index % 2 == 0 else -11),
+                textcoords="offset points",
+                ha="center",
+                va="bottom" if index % 2 == 0 else "top",
+                fontsize=6.9,
+                color="#444444",
+            )
+        all_values = agent_values + [float(row["macro_f1"]) for row in baseline_rows]
+        lower = max(0.0, math.floor((min(all_values) - 0.02) * 50) / 50)
+        upper = min(1.0, math.ceil((max(all_values) + 0.02) * 50) / 50)
+        ax.set_ylim(lower, upper)
+        right_limit = baseline_x[-1] + 0.55 if baseline_x else len(agent_rows) - 0.45
+        ax.set_xlim(-0.55, right_limit)
+        if baseline_x:
+            ax.axvline(
+                len(agent_rows) - 0.12,
+                color="#C8C8C8",
+                linewidth=1,
+                linestyle="--",
+            )
+        else:
+            ax.text(
+                0.99,
+                0.12,
+                "Matched baselines pending",
+                transform=ax.transAxes,
+                ha="right",
+                va="top",
+                fontsize=7.2,
+                color="#777777",
+            )
+        labels = [
+            "None"
+            if int(row["level"]) == 0
+            else (
+                f"L{int(row['level'])}\n"
+                + (
+                    f"{int(row['assay_count']) / 1000:.1f}k"
+                    if int(row["assay_count"]) >= 1000
+                    else f"{int(row['assay_count']):,}"
+                )
+            )
+            for row in agent_rows
+        ] + [baseline_ticks[str(row["method"])] for row in baseline_rows]
+        ax.set_xticks(agent_x + baseline_x, labels=labels)
+        ax.tick_params(axis="x", labelrotation=0, labelsize=6.8)
+        ax.set_title(
+            f"{CONDITIONED_TASK_SPECS[task][0]}  (n={agent_rows[0]['n']})",
+            fontsize=13,
+            fontweight="bold",
+        )
+        ax.text(
+            0.99,
+            0.03,
+            "Focused y-axis",
+            transform=ax.transAxes,
+            ha="right",
+            fontsize=7.2,
+            color="#777777",
+        )
+        ax.grid(axis="y", color="#E1E1E1", linewidth=0.8)
+        if column == 0:
+            ax.set_ylabel("A  Macro-F1")
+
+        level_rows = [row for row in agent_rows if int(row["level"]) > 0]
+        x_values = [int(row["level"]) for row in level_rows]
+        for row_index, (field, panel_label, ylabel, formatter, padding) in enumerate(
+            resource_specs,
+            start=1,
+        ):
+            ax = axes[row_index, column]
+            raw_values = [float(row[field]) for row in level_rows]
+            plot_values = (
+                [value / 1000 for value in raw_values]
+                if field in {
+                    "mean_prompt_tokens_per_call",
+                    "mean_reasoning_tokens_per_call",
+                }
+                else raw_values
+            )
+            ax.plot(
+                x_values,
+                plot_values,
+                color=color,
+                marker=TASK_SPECS[task].marker,
+                linewidth=2.2,
+                markersize=6.2,
+                markeredgecolor="white",
+                markeredgewidth=0.7,
+                zorder=3,
+            )
+            for x_value, raw_value, plot_value in zip(
+                x_values, raw_values, plot_values, strict=True
+            ):
+                ax.annotate(
+                    formatter(raw_value),
+                    (x_value, plot_value),
+                    xytext=(0, 7),
+                    textcoords="offset points",
+                    ha="center",
+                    fontsize=7.2,
+                    color=color,
+                )
+            maximum = max(plot_values) if plot_values else 0.0
+            ax.set_ylim(0, maximum * padding if maximum else 1.0)
+            ax.set_xlim(0.65, max(x_values) + 0.35)
+            ax.set_xticks(x_values, [f"L{level}" for level in x_values])
+            ax.grid(axis="y", color="#E1E1E1", linewidth=0.8)
+            if column == 0:
+                ax.set_ylabel(f"{panel_label}\n{ylabel}")
+            if row_index == len(resource_specs):
+                ax.set_xlabel("Progressive assay-family level")
+
+    fig.suptitle(
+        "Progressive agent performance, retrieval context, and inference length",
+        fontsize=17,
+        fontweight="bold",
+        x=0.055,
+        ha="left",
+    )
+    fig.text(
+        0.055,
+        0.958,
+        "Scaffold validation · visible append-only DeepSeek-V4-Flash updates · task-specific source-purity contracts · latest complete three-task runs",
+        fontsize=10,
+        color="#555555",
+    )
+    legend_handles = [
+        Line2D([0], [0], color="#444444", marker="o", linewidth=2.2, label="Progressive agent / None")
+    ]
+    for method, label, _ in CONDITIONED_BASELINES:
+        marker, face, edge = baseline_styles[method]
+        legend_handles.append(
+            Line2D(
+                [0],
+                [0],
+                marker=marker,
+                linestyle="none",
+                markerfacecolor=face,
+                markeredgecolor=edge,
+                label=label,
             )
         )
-        stats = paired_macro_f1_significance(
-            labels,
-            agent_values,
-            baseline_values,
-            permutation_replicates=permutation_replicates,
-            bootstrap_replicates=bootstrap_replicates,
-            permutation_seed=29,
-            bootstrap_seed=23,
-        )
-        if (
-            abs(stats["agent_macro_f1"] - float(agent["macro_f1"])) > 5e-6
-            or abs(stats["baseline_macro_f1"] - float(baseline["macro_f1"]))
-            > 5e-6
-        ):
-            raise ValueError(f"Prediction-derived metrics disagree for {task}")
-        output.append(
-            {
-                "task": task,
-                "task_label": task_label,
-                "agent_method": agent["method"],
-                "agent_label": agent["plot_label"],
-                "baseline_method": baseline["method"],
-                "baseline_label": baseline["plot_label"],
-                **stats,
-                "alternative": "best_agent_greater_than_best_baseline",
-                "analysis_status": "exploratory_post_selection_on_valid",
-                "agent_predictions": str(agent_path),
-                "baseline_predictions": str(baseline_path),
-            }
-        )
-    adjusted = holm_adjust([float(row["p_value_one_sided"]) for row in output])
-    for row, value in zip(output, adjusted, strict=True):
-        row["p_value_one_sided_holm_four_tasks"] = value
-    return output
+    fig.legend(
+        handles=legend_handles,
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.026),
+        ncol=3,
+        frameon=False,
+        fontsize=8.5,
+    )
+    fig.text(
+        0.055,
+        0.066,
+        "None is the matched no-retrieval DeepSeek result; shown baseline points use the latest sample-count-matched condition-aware MiniMol head and k=3 MiniMol/Morgan KNN receipts. "
+        "\n"
+        "Molecules and cards/molecule are cumulative active evidence averaged over all queries. Prompt and reasoning lengths are means among actual model calls only; carry-forward and reused-none checkpoints are excluded.",
+        fontsize=8.2,
+        color="#555555",
+        linespacing=1.4,
+    )
+    fig.subplots_adjust(
+        left=0.075,
+        right=0.985,
+        top=0.93,
+        bottom=0.12,
+        hspace=0.52,
+        wspace=0.22,
+    )
+    output_svg.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_svg, bbox_inches="tight")
+    fig.savefig(output_png, dpi=220, bbox_inches="tight")
+    plt.close(fig)
 
 
-def _conditioned_comparison_ylim(rows: list[dict[str, Any]]) -> tuple[float, float]:
-    values = [float(row["macro_f1"]) for row in rows]
-    lower = max(0.0, math.floor((min(values) - 0.025) * 20) / 20)
-    upper = min(1.0, math.ceil((max(values) + 0.025) * 20) / 20)
-    return lower, upper
-
-
-def plot_conditioned_agent_baseline_comparison(
+def plot_conditioned_progressive_resources(
     *,
     rows: list[dict[str, Any]],
-    significance_rows: list[dict[str, Any]],
     output_svg: Path,
     output_png: Path,
 ) -> None:
-    """Plot completed family levels beside matched current valid baselines."""
+    """Plot progressive performance and cumulative context-resource use."""
     plt.rcParams.update(
         {
             "font.family": "DejaVu Sans",
@@ -584,145 +1115,110 @@ def plot_conditioned_agent_baseline_comparison(
             "svg.fonttype": "none",
         }
     )
-    fig, axes = plt.subplots(2, 2, figsize=(15.2, 10.4), sharey=True)
-    y_limits = _conditioned_comparison_ylim(rows)
-    significance_by_task = {row["task"]: row for row in significance_rows}
-    marker_styles = {
-        "minimol_head": ("D", "#D89C21", "#D89C21"),
-        "minimol_knn_condition": ("s", "#666666", "#666666"),
-        "minimol_knn_all": ("s", "white", "#666666"),
-        "morgan_knn_condition": ("^", "#666666", "#666666"),
-        "morgan_knn_all": ("^", "white", "#666666"),
+    fig, axes = plt.subplots(2, 2, figsize=(14.8, 9.8), sharex=True)
+    panels = (
+        (axes[0, 0], "macro_f1", "A  Predictive performance", "Macro-F1"),
+        (
+            axes[0, 1],
+            "mean_active_molecules",
+            "B  Active molecule context",
+            "Mean active molecules per query",
+        ),
+        (
+            axes[1, 0],
+            "mean_active_record_cards",
+            "C  Active evidence-record context",
+            "Mean active record cards per query",
+        ),
+        (
+            axes[1, 1],
+            "mean_reasoning_tokens_per_call",
+            "D  DeepSeek reasoning length",
+            "Mean reasoning tokens per model call (k)",
+        ),
+    )
+    annotation_offsets = {
+        "bbb_martins": (0, 8, "center"),
+        "bioavailability_ma": (0, -15, "center"),
+        "skin_reaction": (-8, 8, "right"),
     }
 
-    for ax, task in zip(axes.flat, CONDITIONED_TASK_SPECS, strict=True):
-        task_rows = [row for row in rows if row["task"] == task]
-        agent_rows = sorted(
-            (row for row in task_rows if row["result_type"] == "agent_level"),
-            key=lambda row: int(row["level"]),
-        )
-        baseline_rows = [
-            next(
-                row
-                for row in task_rows
-                if row["result_type"] == "baseline" and row["method"] == method
+    for ax, field, title, ylabel in panels:
+        for task in ("bbb_martins", "bioavailability_ma", "skin_reaction"):
+            task_rows = sorted(
+                (row for row in rows if row["task"] == task),
+                key=lambda row: int(row["level"]),
             )
-            for method, _, _ in CONDITIONED_BASELINES
-        ]
-        agent_x = list(range(len(agent_rows)))
-        baseline_start = len(agent_rows) + 0.9
-        baseline_x = [baseline_start + index for index in range(len(baseline_rows))]
-        ax.plot(
-            agent_x,
-            [row["macro_f1"] for row in agent_rows],
-            color="#1666A8",
-            marker="o",
-            markersize=7,
-            linewidth=2.4,
-            zorder=3,
-        )
-        for x, row in zip(agent_x, agent_rows, strict=True):
-            ax.annotate(
-                f"{row['macro_f1']:.3f}",
-                (x, row["macro_f1"]),
-                xytext=(0, 7),
-                textcoords="offset points",
-                ha="center",
-                fontsize=8,
-                color="#0E4F82",
+            spec = TASK_SPECS[task]
+            x_values = [int(row["level"]) for row in task_rows]
+            raw_values = [float(row[field]) for row in task_rows]
+            y_values = (
+                [value / 1000 for value in raw_values]
+                if field == "mean_reasoning_tokens_per_call"
+                else raw_values
             )
-        for index, (x, row) in enumerate(
-            zip(baseline_x, baseline_rows, strict=True)
-        ):
-            marker, face, edge = marker_styles[row["method"]]
-            ax.scatter(
-                [x],
-                [row["macro_f1"]],
-                marker=marker,
-                s=70,
-                facecolor=face,
-                edgecolor=edge,
-                linewidth=1.4,
+            ax.plot(
+                x_values,
+                y_values,
+                color=spec.color,
+                marker=spec.marker,
+                markersize=6.5,
+                linewidth=2.2,
+                markeredgecolor="white",
+                markeredgewidth=0.7,
+                label=spec.label,
                 zorder=3,
             )
-            ax.annotate(
-                f"{row['macro_f1']:.3f}",
-                (x, row["macro_f1"]),
-                xytext=(0, 7 if index % 2 == 0 else -12),
-                textcoords="offset points",
-                ha="center",
-                va="bottom" if index % 2 == 0 else "top",
-                fontsize=7.7,
-                color="#444444",
-            )
+            dx, dy, ha = annotation_offsets[task]
+            for x_value, y_value in zip(x_values, y_values, strict=True):
+                if field == "macro_f1":
+                    label = f"{y_value:.3f}"
+                elif field == "mean_reasoning_tokens_per_call":
+                    label = f"{y_value:.1f}k"
+                else:
+                    label = f"{y_value:.1f}"
+                ax.annotate(
+                    label,
+                    (x_value, y_value),
+                    xytext=(dx, dy),
+                    textcoords="offset points",
+                    ha=ha,
+                    va="bottom" if dy >= 0 else "top",
+                    fontsize=7.6,
+                    color=spec.color,
+                )
 
-        labels = [
-            f"{row['plot_label']}\n{int(row['assay_count']):,} assays"
-            for row in agent_rows
-        ] + [
-            row["plot_label"].replace(" ", "\n", 1) for row in baseline_rows
+        values = [
+            float(row[field]) / 1000
+            if field == "mean_reasoning_tokens_per_call"
+            else float(row[field])
+            for row in rows
         ]
-        ticks = agent_x + baseline_x
-        ax.axvline(
-            len(agent_rows) - 0.05,
-            color="#C8C8C8",
-            linewidth=1,
-            linestyle="--",
-        )
-        ax.set_xticks(ticks, labels=labels)
-        ax.tick_params(axis="x", labelrotation=34, labelsize=7.4)
-        ax.set_xlim(-0.6, baseline_x[-1] + 0.6)
-        ax.set_ylim(*y_limits)
+        if field == "macro_f1":
+            lower = max(0.0, math.floor((min(values) - 0.015) * 50) / 50)
+            upper = min(1.0, math.ceil((max(values) + 0.015) * 50) / 50)
+            ax.set_ylim(lower, upper)
+            ax.text(
+                0.99,
+                0.03,
+                "Focused y-axis",
+                transform=ax.transAxes,
+                ha="right",
+                fontsize=7.5,
+                color="#777777",
+            )
+        else:
+            ax.set_ylim(0, max(values) * 1.18)
+        ax.set_title(title, loc="left", fontsize=12, fontweight="bold")
+        ax.set_ylabel(ylabel)
+        ax.set_xticks(range(1, 7), [f"L{level}" for level in range(1, 7)])
+        ax.set_xlim(0.7, 6.3)
         ax.grid(axis="y", color="#E1E1E1", linewidth=0.8)
-        ax.set_title(
-            f"{CONDITIONED_TASK_SPECS[task][0]}  (n={agent_rows[0]['n']})",
-            loc="left",
-            fontsize=12,
-            fontweight="bold",
-        )
-        ax.text(
-            0.01,
-            0.02,
-            "Agent levels" if task != "clintox" else "Agent levels (unconditioned task)",
-            transform=ax.transAxes,
-            fontsize=8,
-            color="#666666",
-        )
-        ax.text(
-            0.985,
-            0.02,
-            "Train-label baselines",
-            transform=ax.transAxes,
-            ha="right",
-            fontsize=8,
-            color="#666666",
-        )
-        significance = significance_by_task[task]
-        ax.text(
-            0.985,
-            0.96,
-            (
-                f"Best agent vs best baseline: one-sided p="
-                f"{significance['p_value_one_sided']:.3f}\n"
-                f"Holm (4 tasks)={significance['p_value_one_sided_holm_four_tasks']:.3f}"
-            ),
-            transform=ax.transAxes,
-            ha="right",
-            va="top",
-            fontsize=8.1,
-            color="#444444",
-            bbox={
-                "boxstyle": "square,pad=0.35",
-                "facecolor": "white",
-                "edgecolor": "#BBBBBB",
-                "linewidth": 0.8,
-            },
-        )
 
-    for ax in axes[:, 0]:
-        ax.set_ylabel("Macro-F1")
+    for ax in axes[1, :]:
+        ax.set_xlabel("Progressive assay-family level")
     fig.suptitle(
-        "Conditioned assay-family agent levels and current baselines",
+        "Progressive assay-family performance and resource use",
         fontsize=16,
         fontweight="bold",
         x=0.06,
@@ -731,47 +1227,50 @@ def plot_conditioned_agent_baseline_comparison(
     fig.text(
         0.06,
         0.925,
-        "Scaffold validation · complete zero-failure DeepSeek levels only · KNN uses k=3 train references",
+        "Scaffold validation · visible append-only updates · L1 direct evidence followed by task-specific indirect families",
         fontsize=9.5,
         color="#555555",
     )
     fig.legend(
         handles=[
-            Line2D([0], [0], color="#1666A8", marker="o", linewidth=2.4, label="Agent level"),
-            Line2D([0], [0], marker="D", linestyle="none", markerfacecolor="#D89C21", markeredgecolor="#D89C21", label="MiniMol trained head"),
-            Line2D([0], [0], marker="s", linestyle="none", markerfacecolor="#666666", markeredgecolor="#666666", label="MiniMol KNN condition-first"),
-            Line2D([0], [0], marker="s", linestyle="none", markerfacecolor="white", markeredgecolor="#666666", label="MiniMol KNN all train"),
-            Line2D([0], [0], marker="^", linestyle="none", markerfacecolor="#666666", markeredgecolor="#666666", label="Morgan KNN condition-first"),
-            Line2D([0], [0], marker="^", linestyle="none", markerfacecolor="white", markeredgecolor="#666666", label="Morgan KNN all train"),
+            Line2D(
+                [0],
+                [0],
+                color=TASK_SPECS[task].color,
+                marker=TASK_SPECS[task].marker,
+                linewidth=2.2,
+                label=TASK_SPECS[task].label,
+            )
+            for task in ("bbb_martins", "bioavailability_ma", "skin_reaction")
         ],
         loc="lower center",
-        bbox_to_anchor=(0.5, 0.015),
+        bbox_to_anchor=(0.5, 0.018),
         ncol=3,
         frameon=False,
-        fontsize=8.6,
     )
     fig.text(
         0.06,
-        0.066,
-        "BBB, Bioavailability, and Skin expose non-null query conditions; ClinTox has no condition taxonomy. "
-        "Bioavailability uses the corrected non-direct assay-context lineage. P-values are exploratory paired "
-        "permutation tests after valid-set method selection; incomplete later levels are omitted.",
-        fontsize=8.2,
+        0.062,
+        "Molecules and record cards are cumulative active evidence averaged over every query at that level. "
+        "Reasoning length is averaged only over actual DeepSeek calls; carry-forward and reused-none checkpoints are excluded. "
+        "Exact call counts, call fractions, prompt tokens, and amortized reasoning tokens are in the companion TSV.",
+        fontsize=8.1,
         color="#555555",
     )
     fig.subplots_adjust(
-        left=0.07,
+        left=0.08,
         right=0.985,
         top=0.88,
-        bottom=0.22,
-        hspace=0.52,
-        wspace=0.12,
+        bottom=0.15,
+        hspace=0.34,
+        wspace=0.19,
     )
     output_svg.parent.mkdir(parents=True, exist_ok=True)
-    output_png.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_svg, bbox_inches="tight")
     fig.savefig(output_png, dpi=220, bbox_inches="tight")
     plt.close(fig)
+
+
 
 
 def collect_relevance_decay_data(
@@ -1208,30 +1707,85 @@ def build_parser() -> argparse.ArgumentParser:
         help="Plot cumulative mean relevance from frozen assay rankings without requiring LLM metrics.",
     )
     parser.add_argument(
-        "--conditioned-family-baselines",
+        "--conditioned-progressive-performance-resources",
         action="store_true",
         help=(
-            "Plot all complete conditioned assay-family agent levels beside the "
-            "current matched MiniMol and Morgan baselines."
+            "Plot progressive performance, active molecules, active record "
+            "cards, and reasoning-token length."
         ),
     )
     parser.add_argument(
-        "--conditioned-agent-root",
-        default=(
-            "outputs/paper/starling_conditioned_assay_family_curve_v1/"
-            "scaffold_valid_epyc_deepseek_v4_flash_0731"
+        "--conditioned-progressive-overview",
+        action="store_true",
+        help=(
+            "Plot one unified three-task figure containing progressive performance, "
+            "None, current baselines, active molecules, cards per molecule, prompt "
+            "tokens, and reasoning tokens."
         ),
     )
     parser.add_argument(
-        "--conditioned-bio-agent-root",
-        default=(
-            "outputs/paper/starling_conditioned_assay_family_curve_v1/"
-            "scaffold_valid_epyc_deepseek_v4_flash_0731_bio_nondirect_context_v1"
+        "--omit-mismatched-progressive-baselines",
+        action="store_true",
+        help=(
+            "For progressive overview figures, omit baseline points whose "
+            "evaluation sample count does not match the agent cohort. The "
+            "omissions remain explicit in the analysis summary."
         ),
     )
     parser.add_argument(
         "--conditioned-baseline-root",
         default="outputs/baselines/starling_conditioned_valid_v1",
+    )
+    parser.add_argument(
+        "--conditioned-progressive-root",
+        default=(
+            "outputs/paper/"
+            "starling_conditioned_assay_progressive_visible_v7_source_purity_v1/"
+            "scaffold_valid_deepseek_v4_flash_0731"
+        ),
+    )
+    parser.add_argument(
+        "--conditioned-progressive-bbb-root",
+        default=(
+            "outputs/paper/"
+            "starling_conditioned_assay_progressive_visible_v8_global_molecule_"
+            "source_purity_v5/scaffold_valid_deepseek_v4_flash_0731"
+        ),
+    )
+    parser.add_argument(
+        "--conditioned-progressive-source-purity-root",
+        default=(
+            "outputs/paper/"
+            "starling_conditioned_assay_progressive_visible_v7_source_purity_v1/"
+            "scaffold_valid_deepseek_v4_flash_0731"
+        ),
+    )
+    parser.add_argument(
+        "--conditioned-progressive-task-root",
+        action="append",
+        default=[],
+        metavar="TASK=PATH",
+        help=(
+            "Override the progressive artifact root for one task in the unified "
+            "overview; repeat when current task lineages live in different roots."
+        ),
+    )
+    parser.add_argument(
+        "--conditioned-progressive-baseline-root",
+        action="append",
+        default=[],
+        metavar="TASK=PATH",
+        help=(
+            "Override the baseline artifact root for one progressive task; "
+            "repeat for multiple tasks. Other tasks use --conditioned-baseline-root."
+        ),
+    )
+    parser.add_argument(
+        "--conditioned-none-agent-root",
+        default=(
+            "outputs/paper/starling_conditioned_assay_family_curve_v1/"
+            "scaffold_valid_epyc_deepseek_v4_flash_0731"
+        ),
     )
     return parser
 
@@ -1240,23 +1794,34 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     output_root = Path(args.output_root)
     analysis_dir = Path(args.analysis_dir) if args.analysis_dir else output_root / "analysis"
-    if args.conditioned_family_baselines:
-        agent_root = Path(args.conditioned_agent_root)
+    if args.conditioned_progressive_overview:
+        source_purity_root = Path(args.conditioned_progressive_source_purity_root)
+        baseline_roots_by_task = _parse_task_path_overrides(
+            args.conditioned_progressive_baseline_root
+        )
+        progressive_roots = {
+            "bbb_martins": Path(args.conditioned_progressive_bbb_root),
+            "bioavailability_ma": source_purity_root,
+            "skin_reaction": source_purity_root,
+        }
+        progressive_roots.update(
+            _parse_task_path_overrides(args.conditioned_progressive_task_root)
+        )
         if not args.analysis_dir:
-            analysis_dir = agent_root / "analysis" / "agent_baseline_comparison"
-        rows, summary = collect_conditioned_agent_baseline_data(
-            agent_root=agent_root,
-            bio_agent_root=Path(args.conditioned_bio_agent_root),
+            analysis_dir = (
+                progressive_roots["bbb_martins"].parent
+                / "analysis"
+                / "three_task_progressive_overview"
+            )
+        rows, summary = collect_conditioned_progressive_overview_data(
+            progressive_roots_by_task=progressive_roots,
+            none_root=Path(args.conditioned_none_agent_root),
             baseline_root=Path(args.conditioned_baseline_root),
+            baseline_roots_by_task=baseline_roots_by_task,
+            omit_mismatched_baselines=args.omit_mismatched_progressive_baselines,
         )
-        significance_rows = collect_conditioned_best_significance(rows)
-        summary["best_agent_vs_best_baseline_significance"] = significance_rows
         analysis_dir.mkdir(parents=True, exist_ok=True)
-        _write_tsv(analysis_dir / "conditioned_agent_baseline_metrics.tsv", rows)
-        _write_tsv(
-            analysis_dir / "conditioned_best_agent_vs_baseline_significance.tsv",
-            significance_rows,
-        )
+        _write_tsv(analysis_dir / "progressive_overview_metrics.tsv", rows)
         (analysis_dir / "summary.json").write_text(
             json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -1265,11 +1830,47 @@ def main(argv: list[str] | None = None) -> int:
         output_stem = (
             args.output_stem
             if args.output_stem != "assay_retrieval_scaling"
-            else "conditioned_agent_baseline_comparison"
+            else "three_task_progressive_overview"
         )
-        plot_conditioned_agent_baseline_comparison(
+        plot_conditioned_progressive_overview(
             rows=rows,
-            significance_rows=significance_rows,
+            output_svg=figure_dir / f"{output_stem}.svg",
+            output_png=figure_dir / f"{output_stem}.png",
+            tasks=tuple(progressive_roots),
+        )
+        print(
+            json.dumps(
+                {
+                    "analysis_dir": str(analysis_dir),
+                    "n_metric_rows": len(rows),
+                    "tasks": list(progressive_roots),
+                    "figure": str(figure_dir / f"{output_stem}.png"),
+                },
+                indent=2,
+            )
+        )
+        return 0
+    if args.conditioned_progressive_performance_resources:
+        progressive_root = Path(args.conditioned_progressive_root)
+        if not args.analysis_dir:
+            analysis_dir = progressive_root / "analysis" / "performance_resources"
+        rows, summary = collect_conditioned_progressive_resource_data(
+            progressive_root=progressive_root,
+        )
+        analysis_dir.mkdir(parents=True, exist_ok=True)
+        _write_tsv(analysis_dir / "progressive_level_metrics.tsv", rows)
+        (analysis_dir / "summary.json").write_text(
+            json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        figure_dir = analysis_dir / "figures"
+        output_stem = (
+            args.output_stem
+            if args.output_stem != "assay_retrieval_scaling"
+            else "progressive_performance_resources"
+        )
+        plot_conditioned_progressive_resources(
+            rows=rows,
             output_svg=figure_dir / f"{output_stem}.svg",
             output_png=figure_dir / f"{output_stem}.png",
         )
@@ -1277,10 +1878,8 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps(
                 {
                     "analysis_dir": str(analysis_dir),
-                    "n_metric_rows": len(rows),
-                    "n_omitted_agent_levels": len(
-                        summary["omitted_agent_levels"]
-                    ),
+                    "n_task_levels": len(rows),
+                    "n_model_calls": sum(int(row["n_model_called"]) for row in rows),
                 },
                 indent=2,
             )

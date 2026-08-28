@@ -1,5 +1,10 @@
 # ICLR 2027 论文实验执行计划
 
+> 状态说明（2026-08-27）：本文件保留项目执行史、E 编号和 promotion gates；其中 2026-08-01 至
+> 2026-08-13 的“current”措辞属于当时快照。当前 paper-facing benchmark 以
+> `STARLING_BENCHMARK_RESULTS.md` 顶部为准，conditioned progressive 合同和最终 valid 曲线以
+> `ASSAY_LEVEL_RETRIEVAL.md` 为准。
+
 ## 目标与使用方式
 
 本文档是从 2026-07-12 开始、面向 ICLR 2027 main conference 投稿的项目级执行计划。它回答：
@@ -23,7 +28,7 @@ reasoning-enabled runs produced long group-request timeouts. Outer launcher fan-
 
 这一决策覆盖下文基于 2026-07 operational/deployment-visible 矩阵的“主表”措辞，但不删除历史结果或 relation
 taxonomy。下文 `22 conditions / 6,887 sample-conditions` 只描述 historical combined v4 contract，不能继续
-作为 current release gate。当前 lineage 已拆分：BBB 使用 `experimental_meaningful_cns_access_v2`，Bio/Skin
+作为 current release gate。当时 lineage 已拆分：BBB 使用 `experimental_meaningful_cns_access_v2`，Bio/Skin
 使用 `record_supported_v2`；完整性必须按 `lineage × task × declared conditions` 分别检查。当前已完成
 GPT-OSS-120B BBB 4-condition/366-row valid，以及 Bio/Skin 各 4-condition valid bugfix matrix；Bio 还完成了
 `f20_evidence_calibrated_v2` 的 matched/full-pool fresh valid 对照，full-flat 和 full-mechanism paired CI 均高于

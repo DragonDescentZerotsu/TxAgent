@@ -477,6 +477,151 @@ def build_task(
     return task_summary
 
 
+def build_task_preserving_split(
+    task: str,
+    *,
+    source_root: Path,
+    output_root: Path,
+    reference_split_root: Path,
+    lineage: str,
+    protocol_version: str,
+    seed: int = SEED,
+    allow_new_parents: bool = False,
+    new_parent_default_split: str = "train",
+) -> dict[str, Any]:
+    """Rebuild labels while preserving every surviving parent split assignment.
+
+    When explicitly enabled, a new parent inherits the reference assignment of
+    its scaffold. A genuinely new scaffold goes to train by default, so no
+    existing held-out cohort or scaffold boundary is perturbed.
+    """
+
+    if new_parent_default_split not in {"train", "valid", "test"}:
+        raise ValueError("new_parent_default_split must name a benchmark split")
+
+    source_task = source_root / task
+    source_labels = _read_jsonl(source_task / "molecule_labels.jsonl")
+    reference_assignment: dict[str, str] = {}
+    reference_scaffold_assignment: dict[str, str] = {}
+    for split in ("train", "valid", "test"):
+        for row in _read_jsonl(reference_split_root / f"{split}_molecule_labels.jsonl"):
+            reference_assignment[str(row["molecule_identity_key"])] = split
+            scaffold = str(row.get("bemis_murcko_scaffold") or "")
+            previous = reference_scaffold_assignment.setdefault(scaffold, split)
+            if previous != split:
+                raise RuntimeError(
+                    f"reference split violates scaffold disjointness for {scaffold!r}"
+                )
+    new_keys = {str(row["molecule_identity_key"]) for row in source_labels}
+    added = sorted(new_keys - set(reference_assignment))
+    if added and not allow_new_parents:
+        raise ValueError(
+            "split preservation requires no new parent identities; "
+            f"found {len(added)}"
+        )
+
+    split_rows: dict[str, list[dict[str, Any]]] = {
+        name: [] for name in ("train", "valid", "test")
+    }
+    scaffold_assignment: dict[str, str] = {}
+    added_assignment_counts: Counter[str] = Counter()
+    for row in source_labels:
+        scaffold = str(row.get("bemis_murcko_scaffold") or "")
+        identity_key = str(row["molecule_identity_key"])
+        if identity_key in reference_assignment:
+            split = reference_assignment[identity_key]
+        else:
+            split = reference_scaffold_assignment.get(
+                scaffold, new_parent_default_split
+            )
+            added_assignment_counts[split] += 1
+        prior = scaffold_assignment.setdefault(scaffold, split)
+        if prior != split:
+            raise RuntimeError(
+                f"reference split violates scaffold disjointness for {scaffold!r}"
+            )
+        split_assignments = dict(row.get("split_assignments") or {})
+        split_assignments["scaffold"] = split
+        split_rows[split].append(
+            {
+                **row,
+                "split": split,
+                "split_policy": lineage,
+                "split_assignments": split_assignments,
+            }
+        )
+    for values in split_rows.values():
+        values.sort(key=lambda row: str(row["molecule_identity_key"]))
+
+    task_root = output_root / task
+    split_root = task_root / "scaffold"
+    for split, values in split_rows.items():
+        write_jsonl_atomic(
+            split_root / f"{split}.jsonl",
+            [{"drug": row["drug"], "Y": int(row["Y"])} for row in values],
+        )
+        write_jsonl_atomic(split_root / f"{split}_molecule_labels.jsonl", values)
+    write_jsonl_atomic(
+        split_root / "heldout_molecule_labels.jsonl",
+        split_rows["valid"] + split_rows["test"],
+    )
+
+    target = len(split_rows["valid"])
+    reference_keys = set(reference_assignment)
+    optimization = {
+        "split_assignment_policy": (
+            "preserve_reference_and_inherit_scaffold_for_new_parents"
+            if added
+            else "preserve_reference_for_surviving_parents"
+        ),
+        "reference_split_root": str(reference_split_root),
+        "n_reference_parents": len(reference_keys),
+        "n_surviving_reference_parents": len(new_keys & reference_keys),
+        "n_output_parents": len(new_keys),
+        "n_removed_parents": len(reference_keys - new_keys),
+        "n_added_parents": len(added),
+        "added_parent_assignment_counts": dict(sorted(added_assignment_counts.items())),
+        "new_parent_default_split": new_parent_default_split,
+    }
+    split_summary = _split_summary(
+        split_rows,
+        target,
+        optimization,
+        split_root,
+        lineage=lineage,
+    )
+    split_summary["method"] = (
+        "preserved_scaffold_assignment_with_new_parent_inheritance_after_gold_revote"
+        if added
+        else "preserved_scaffold_assignment_after_gold_revote"
+    )
+
+    source_summary = json.loads((source_task / "summary.json").read_text())
+    task_summary = {
+        **source_summary,
+        "protocol_version": protocol_version,
+        "seed": seed,
+        "record_support_policy": {
+            "record_tier": "multi_record iff source_record_count >= 2",
+            "heldout_objective": "preserve reference split for every surviving parent",
+            "reference_split_root": str(reference_split_root),
+        },
+        "split_size_policy": {
+            "formula": "preserve reference valid/test cohorts",
+            "target_valid_size": len(split_rows["valid"]),
+            "target_test_size": len(split_rows["test"]),
+        },
+        "splits": {"scaffold": split_summary},
+        "paths": {
+            **source_summary.get("paths", {}),
+            "record_supported_scaffold_root": str(split_root),
+        },
+    }
+    write_json_atomic(split_root / "summary.json", split_summary)
+    write_json_atomic(task_root / "summary.json", task_summary)
+    return task_summary
+
+
 def _split_summary(
     split_rows: dict[str, list[dict[str, Any]]],
     target: int,

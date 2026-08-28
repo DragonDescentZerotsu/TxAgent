@@ -93,7 +93,7 @@ def test_dataset_constants_are_not_claimed_as_source_visible() -> None:
 
 def test_inflate_cleaned_restores_sparse_source_shape_after_parquet_resume() -> None:
     resumed = {
-        "source_id": "clintox_base_v1",
+        "source_id": "human_clinical_toxicity",
         "endpoint_name": "human_clinical_toxicity",
         "measurement_text": "toxicity_absent",
         "unit_text": None,

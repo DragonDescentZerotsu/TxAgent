@@ -7,7 +7,7 @@ eligible only when it reports an experimentally observed brain/CSF outcome.
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 import json
 from pathlib import Path
@@ -243,6 +243,8 @@ def load_label_decisions(
     *,
     revision: str = SOURCE_REVISION,
     max_rows: int = 0,
+    label_decider: Callable[..., tuple[int | None, str]] | None = None,
+    contract_version: str = CONTRACT_VERSION,
 ) -> tuple[Iterable[LabelDecision], dict[str, Any]]:
     """Load the frozen source and lazily apply the experimental outcome contract."""
     from datasets import load_dataset
@@ -252,13 +254,32 @@ def load_label_decisions(
     if max_rows:
         dataset = dataset.select(range(min(max_rows, len(dataset))))
     resolved_revision = HfApi().dataset_info(SOURCE_DATASET, revision=revision).sha
+    return label_decisions_from_rows(
+        dataset,
+        requested_revision=revision,
+        resolved_revision=resolved_revision,
+        label_decider=label_decider,
+        contract_version=contract_version,
+    )
+
+
+def label_decisions_from_rows(
+    rows: Iterable[Mapping[str, Any]],
+    *,
+    requested_revision: str = SOURCE_REVISION,
+    resolved_revision: str,
+    label_decider: Callable[..., tuple[int | None, str]] | None = None,
+    contract_version: str = CONTRACT_VERSION,
+) -> tuple[Iterable[LabelDecision], dict[str, Any]]:
+    """Apply the contract to an already opened copy of the frozen source."""
+
     metadata = {
         "dataset": SOURCE_DATASET,
-        "requested_revision": revision,
+        "requested_revision": requested_revision,
         "resolved_revision": resolved_revision,
         "split": "train",
         "gold_contract": {
-            "version": CONTRACT_VERSION,
+            "version": contract_version,
             "target": "experimentally supported meaningful CNS access after systemic administration",
             "positive_label": "reported meaningful or adequate experimental CNS access",
             "negative_label": "reported experimentally restricted or poor CNS access",
@@ -296,7 +317,14 @@ def load_label_decisions(
             ),
         },
     }
-    return (_label_record(index, row) for index, row in enumerate(dataset)), metadata
+    decision_fn = label_decider or label_record
+    return (
+        (
+            _label_record(index, row, label_decider=decision_fn)
+            for index, row in enumerate(rows)
+        ),
+        metadata,
+    )
 
 
 def classify_scope(
@@ -413,8 +441,13 @@ def label_record(
     return label, f"{CONTRACT_VERSION}:{scope.endpoint_family}:{scope.basis}"
 
 
-def _label_record(index: int, row: Mapping[str, Any]) -> LabelDecision:
-    label, method = label_record(row, source_index=index)
+def _label_record(
+    index: int,
+    row: Mapping[str, Any],
+    *,
+    label_decider: Callable[..., tuple[int | None, str]] = label_record,
+) -> LabelDecision:
+    label, method = label_decider(row, source_index=index)
     if label is None:
         return rejected(
             method,

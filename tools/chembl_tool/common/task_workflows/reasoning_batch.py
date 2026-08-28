@@ -89,7 +89,6 @@ class BatchConfig:
     default_group_prompt_version: str = ""
     group_prompt_provenance: Callable[..., dict[str, Any]] | None = None
     supports_shared_retrieval_contract: bool = True
-    supports_nondirect_bioavailability_filter: bool = False
     supports_analogous_reasoning_only: bool = False
     analogous_reasoning_modes: tuple[str, ...] = ("full_mechanism",)
     final_prompt_provenance: Callable[..., dict[str, Any]] | None = None
@@ -208,7 +207,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
     if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
         if config.rerank_preflight is None:
             raise SystemExit(f"Pipeline {config.pipeline_module} does not support assay-transfer reranking")
-        if args.retrieval_source not in {"starling", "starling_in_distribution"}:
+        if args.retrieval_source != "starling":
             raise SystemExit(
                 "assay_transfer reranking is enabled only for Starling retrieval"
             )
@@ -268,12 +267,6 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
                     args.assay_transfer_records_per_molecule
                 ),
             )
-            if config.supports_nondirect_bioavailability_filter:
-                rerank_preflight_kwargs[
-                    "exclude_nondirect_bioavailability_records"
-                ] = bool(
-                    getattr(args, "exclude_nondirect_bioavailability_records", False)
-                )
             rerank_preflight = config.rerank_preflight(**rerank_preflight_kwargs)
             _release_preflight_memory()
     manifest = {
@@ -293,9 +286,6 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "model": args.model,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
-        "exclude_nondirect_bioavailability_records": (
-            bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
-        ),
         "retrieval_strategy": args.retrieval_strategy,
         "retrieval_reranker": "assay_transfer" if is_assay_transfer else "none",
         "assay_transfer_profile": args.assay_transfer_profile,
@@ -550,9 +540,6 @@ def _validate_reused_rerank_preflight(
         "indices": indices,
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
-        "exclude_nondirect_bioavailability_records": (
-            bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
-        ),
         "retrieval_reranker": (
             "assay_transfer"
             if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
@@ -792,11 +779,6 @@ def _single_run_command(
                 args.neighbor_context_profile,
             ]
         )
-    if (
-        config.supports_nondirect_bioavailability_filter
-        and bool(getattr(args, "exclude_nondirect_bioavailability_records", False))
-    ):
-        command.append("--exclude-nondirect-bioavailability-records")
     if args.assay_transfer_min_score is not None:
         command.extend(
             ["--assay-transfer-min-score", str(args.assay_transfer_min_score)]
@@ -1303,17 +1285,6 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         default="native",
     )
     parser.add_argument("--retrieval-source", default="chembl")
-    if config.supports_nondirect_bioavailability_filter:
-        parser.add_argument(
-            "--exclude-nondirect-bioavailability-records",
-            action="store_true",
-            help=(
-                "Exclude retained relative/apparent Bioavailability HF records "
-                "before neighbor ranking and top-k selection."
-            ),
-        )
-    else:
-        parser.set_defaults(exclude_nondirect_bioavailability_records=False)
     parser.add_argument(
         "--neighbor-identity-policy",
         choices=NEIGHBOR_IDENTITY_POLICIES,
@@ -1622,14 +1593,6 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     args.groups = _normalize_group_args(args.groups)
     args.tier1_replacement_groups = _normalize_group_args(args.tier1_replacement_groups)
     args.final_only_groups = _normalize_group_args(args.final_only_groups)
-    if args.exclude_nondirect_bioavailability_records and (
-        not args.retrieval_source.startswith("starling")
-        or args.experiment_mode not in {"direct", "full_flat", "full_mechanism"}
-    ):
-        parser.error(
-            "--exclude-nondirect-bioavailability-records requires a Starling "
-            "direct, full_flat, or full_mechanism retrieval run"
-        )
     if args.final_only_groups and not args.final_only_source_batch:
         parser.error("--final-only-groups requires --final-only-source-batch")
     if args.max_stage_requeues < 0:
@@ -1847,10 +1810,9 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
             "--enable-assay-transfer-scores requires --experiment-mode "
             "full_flat or full_mechanism"
         )
-    if args.retrieval_source not in {"starling", "starling_in_distribution"}:
+    if args.retrieval_source != "starling":
         raise SystemExit(
-            "--enable-assay-transfer-scores requires --retrieval-source "
-            "starling or starling_in_distribution"
+            "--enable-assay-transfer-scores requires --retrieval-source starling"
         )
     if not is_assay_transfer:
         raise SystemExit(

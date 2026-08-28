@@ -460,6 +460,19 @@ def test_original_hf_source_is_one_batch_with_row_scopes(tmp_path):
 
 
 def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
+    from dataclasses import replace
+
+    from tools.chembl_tool.tasks.bioavailability_ma import (
+        build_starling_downstream_artifacts as downstream_builder,
+    )
+
+    original_spec = downstream_builder._spec
+    monkeypatch.setattr(
+        downstream_builder,
+        "_spec",
+        lambda: replace(original_spec(), final_endpoint_pruning=False),
+    )
+
     def fake_semantic_aggregation(groups, **_kwargs):
         return [
             {
@@ -491,6 +504,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
         "Oral_AUC-Cmax_Exposure": {
             "global_identifier": "SMILES:1",
             "extraction_id": "q1",
+            "support_text": "The oral AUC was 5.0 µg/mL·h.",
             "exposure_measure": "AUC",
             "parameter_value": 5.0,
             "parameter_units": "µg/mL·h",
@@ -498,6 +512,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
         "Fa": {
             "global_identifier": "SMILES:2",
             "extraction_id": "q2",
+            "support_text": "The reported solubility was 2 µM.",
             "endpoint_category": "solubidity",
             "reported_value": "2",
             "reported_units": "µM",
@@ -505,6 +520,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
         "Fg": {
             "global_identifier": "SMILES:3",
             "extraction_id": "q3",
+            "support_text": "The molecule was reported as a P-gp substrate.",
             "gut_wall_process": "intestinal_metabolism",
             "measured_value": "substrate",
             "substrate_status": "substrate",
@@ -513,6 +529,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
         "Fh": {
             "global_identifier": "SMILES:4",
             "extraction_id": "q4",
+            "support_text": "The metabolic half-life was 2 h.",
             "metric_type": "metabolic_half_life",
             "reported_value": "2",
             "reported_units": "h",
@@ -538,6 +555,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
                 **{column: None for column in HF_BIOAVAILABILITY_SOURCE_COLUMNS},
                 "source_index": 0,
                 "smiles": "CCBr",
+                "support_text": "Absolute oral bioavailability was 40%.",
                 "oral_bioavailability_value": "40%",
                 "bioavailability_report_type": "absolute",
             },
@@ -545,6 +563,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
                 **{column: None for column in HF_BIOAVAILABILITY_SOURCE_COLUMNS},
                 "source_index": 1,
                 "smiles": "CCI",
+                "support_text": "Relative oral bioavailability was two-fold.",
                 "oral_bioavailability_value": "2 fold",
                 "bioavailability_report_type": "relative_comparison",
             },
@@ -623,7 +642,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
     assert nondirect["measurement_resolution_route"] == "extract"
     assert nondirect["measurement_resolution_status"] == "not_extracted"
     assert pd.isna(nondirect["canonical_measurement_text"])
-    assert pd.isna(nondirect["canonical_unit_text"])
+    assert nondirect["canonical_unit_text"] == "free-text"
     encoded_fg = records[records["source_id"] == "fg"].iloc[0]
     assert encoded_fg["canonical_endpoint_name"] == "intestinal_metabolism"
     assert encoded_fg["canonical_measurement_scale_id"] == (

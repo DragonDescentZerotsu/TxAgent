@@ -267,6 +267,60 @@ def classify_aop_source_record(record: Mapping[str, Any]) -> PartitionDecision:
     return PartitionDecision(REJECT_PARTITION, "integrated_or_unresolved_endpoint")
 
 
+def direct_outcome_reason(record: Mapping[str, Any]) -> str:
+    """Identify a measured final sensitization outcome in any source schema.
+
+    This deliberately takes precedence over an AOP-event tag.  LLNA, GPMT,
+    Buehler, HRIPT/RIPT, and validated human patch outcomes remain direct even
+    when an upstream extraction also labels lymphocyte activation as KE4.
+    """
+
+    assay = _join_fields(
+        record,
+        "canonical_assay_type",
+        "canonical_assay_or_test",
+        "assay_type",
+        "assay_or_test",
+        "canonical_assay_context",
+    )
+    direct_assay = bool(_DIRECT_ASSAY_RE.search(assay))
+    # The override is intentionally assay-anchored.  Generic prose such as
+    # "skin sensitization" also occurs in h-CLAT/DPRA model summaries and is
+    # not sufficient to turn a mechanistic record into a final-outcome row.
+    if not direct_assay:
+        return ""
+
+    label = " | ".join(
+        _text(record.get(field))
+        for field in (
+            "result_label",
+            "outcome_label",
+            "canonical_measurement_text",
+            "measurement_text",
+            "support_text",
+        )
+    )
+    usable_label = bool(
+        re.search(
+            r"\b(?:positive|negative|weak positive|sensiti[sz]er|non[- ]?sensiti[sz]er|"
+            r"no (?:skin )?sensiti[sz]ation|did not (?:induce|show|produce).{0,30}sensiti[sz])\b",
+            label,
+            re.IGNORECASE,
+        )
+    )
+    quantitative_llna = bool(
+        direct_assay
+        and re.search(
+            r"\b(?:stimulation index|\bsi\b|ec3|lymph node (?:weight|proliferation))\b.{0,80}\d",
+            label,
+            re.IGNORECASE,
+        )
+    )
+    if not (usable_label or quantitative_llna):
+        return ""
+    return "validated_direct_assay_outcome_overrides_aop_tag"
+
+
 def infer_aop_event(assay: Any) -> str:
     text = _normalized_assay_text(assay)
     for event, pattern in _AOP_ASSAY_PATTERNS:

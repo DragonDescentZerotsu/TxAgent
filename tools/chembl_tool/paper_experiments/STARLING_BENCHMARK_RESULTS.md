@@ -1,11 +1,20 @@
 # Starling benchmark：当前决策、结果与入口
 
-更新时间：2026-08-18。
+更新时间：2026-08-27。
 
 本文件是 Starling benchmark 迁移和实验的集中总账。BBB 当前 paper-facing gold 是
-`experimental_meaningful_cns_access_v2`；Bioavailability/Skin 仍为 scaffold-only `record_supported_v2`。旧 BBB
-`record_supported_v2`、第一版 `record_agreement70_split811_v1` 和 TDC `test`/`valid` 结果均保留为
+`experimental_meaningful_cns_access_v3`；Bioavailability/Skin 仍为 scaffold-only `record_supported_v2`。BBB v3
+从 v2 独立重投票并移除 5 条 computational votes；只移除旧 train 的 Digoxin，shared parent label/split
+changes 为 0，valid/test 仍各 366。旧 BBB `experimental_meaningful_cns_access_v2`、`record_supported_v2`、
+第一版 `record_agreement70_split811_v1` 和 TDC `test`/`valid` 结果均保留为
 historical comparison，不得跨 lineage 混表。
+
+隔离的 BBB gold-v4 / conditioned-v3 candidate 已完成 matched baselines 和
+`bbb_source_family_purity.v5` visible-progressive valid。它不自动替换 paper-facing gold-v3，但在自己的
+397-row cohort 内已经是完整、零失败的结果，不能再描述为“等待重跑”。三任务当前 progressive best
+macro-F1 为 BBB `0.7563`、Bioavailability `0.7856`、Skin `0.6119`；matched MiniMol-head 分别为
+`0.6674/0.5872/0.6030`。完整 level 曲线、resource statistics、row ledger、artifact roots 和唯一绘图入口见
+`ASSAY_LEVEL_RETRIEVAL.md`。
 
 ## Historical train-only assay-level retrieval scaling（2026-08-17，scaffold-valid）
 
@@ -27,22 +36,22 @@ assay points 来自 PARCC `DeepSeek-V4-Flash-0731`，故 delta 是 descriptive h
 endpoint-matched model comparison。完整 pipeline、英文图、retrieval-volume 曲线和维护入口见
 `ASSAY_LEVEL_RETRIEVAL.md`。
 
-## Current direct-only-heldout-filtered assay curve（2026-08-18 checkpoint）
+## Historical direct-only-heldout-filtered assay curve（2026-08-18 checkpoint）
 
-Current v2 不再把全部 reference molecules 限制为 train。它从 Stage-03 eligible records 中只删除 heldout
+当时的 v2 不再把全部 reference molecules 限制为 train。它从 Stage-03 eligible records 中只删除 heldout
 parents 的 benchmark-defining direct rows，保留 non-direct rows；query-time 仍对所有 sources 执行
 `identity_blind + parent_disjoint`。三个 index 的 heldout direct overlap 和所有 replay 的 query-parent overlap
 均为 0。默认 19-condition schedule 删除与 all 过密的 BBB Top-20,480 和 Bio Top-1,280，并通过完整-batch
 skip、跨 prefix single reuse、evidence-equivalent carry-forward 和 stage checkpoint 恢复减少调用。
 
-当前仅 BBB Top-5/20/80/320/1,280/5,120 完整，macro-F1 为
+该 checkpoint 仅 BBB Top-5/20/80/320/1,280/5,120 完整，macro-F1 为
 `0.646214/0.641403/0.648371/0.680329/0.724722/0.763566`，每点均 366/366、0 failed；BBB all、Bio 和 Skin
 尚未形成完整 metrics，不能做最终 task-best 或 group-level comparison。完整 source-filter 计数、reuse caveat、
 命令和 artifact roots 统一见 `ASSAY_LEVEL_RETRIEVAL.md`，避免在总账重复维护运行细节。
 
 ## GPT-OSS-120B MiniMol top-5/no-threshold sensitivity（2026-08-16，scaffold-valid）
 
-冻结 launcher 对三个 current lineages 串行调用共享 matrix；MiniMol cosine retrieval 使用
+冻结 launcher 对三个当时的 current lineages 串行调用共享 matrix；MiniMol cosine retrieval 使用
 `top_k_per_group=5`、`min_similarity=0`、identity-blind、parent-disjoint，并只运行 Starling direct/full-flat。
 
 | task | direct | full-flat | n | failures |
@@ -95,7 +104,7 @@ outputs/paper/starling_benchmark_results_scaffold_current_latest_valid_multimode
 pool 后的性能；它不是 train-only formal primary，也不覆盖下文 GPT-OSS/GLM 的冻结结论。Agent 的 canonical
 Starling index 删除全部 test parents，但仍保留现有合同允许的 non-heldout residual inference evidence，不能将其
 简称为“只含 labeled train+valid”；Morgan/MiniMol KNN 则严格只读取 labeled train+valid JSONL。三 task 继续使用
-各自 current lineage 与默认 prompt：BBB `experimental_meaningful_cns_access_v2`，Bio/Skin
+各自当时的 lineage 与默认 prompt：BBB `experimental_meaningful_cns_access_v2`，Bio/Skin
 `record_supported_v2`。执行为 official DeepSeek API、`deepseek-v4-pro`、identity-blind、parent-disjoint、
 全局并发 256；BBB/Bio 用 Morgan，Skin 按默认使用 MiniMol cosine，均为 `k=3, min_similarity=0.3`。
 

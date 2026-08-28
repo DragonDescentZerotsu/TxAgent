@@ -1,10 +1,12 @@
 from argparse import Namespace
+import json
 from pathlib import Path
 
 import tools.chembl_tool.paper_experiments.watch_glm_tunnel_and_matrix as watchdog
 from tools.chembl_tool.paper_experiments.watch_glm_tunnel_and_matrix import (
     _run_root_name,
     count_final_results,
+    count_progressive_level_outputs,
     count_recursive_reasoning_results,
     find_launcher_pids,
     launcher_command,
@@ -178,6 +180,21 @@ def test_recursive_counter_uses_complete_batch_metrics(tmp_path: Path) -> None:
     )
 
     assert count_recursive_reasoning_results(tmp_path) == 3
+
+
+def test_progressive_counter_requires_complete_state(tmp_path: Path) -> None:
+    level_root = tmp_path / "task" / "queries" / "query_idx00000" / "levels"
+    for level, payload in {
+        1: {"status": "ok", "state": {"decision_summary": "initial"}},
+        2: {"status": "carried_forward", "state": {"decision_summary": "same"}},
+        3: {"status": "error", "state": {"decision_summary": "failed"}},
+        4: {"status": "ok", "state": {}},
+    }.items():
+        path = level_root / f"level_{level}" / "output.json"
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps(payload), encoding="utf-8")
+
+    assert count_progressive_level_outputs(tmp_path) == 2
 
 
 def test_find_launcher_pids_can_attach_to_implicit_default_root(

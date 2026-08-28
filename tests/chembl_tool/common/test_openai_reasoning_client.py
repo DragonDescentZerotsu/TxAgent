@@ -126,3 +126,21 @@ def test_gpt5_uses_max_completion_tokens():
 
     assert captured["max_completion_tokens"] == 100
     assert "max_tokens" not in captured
+
+
+def test_provider_specific_extra_body_is_forwarded_without_changing_messages():
+    client = _client()
+    client.temperature = 0.0
+    client.request_extra_body = {"reasoning": {"enabled": True}}
+    captured = {}
+    client.client = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=SimpleNamespace(
+                create=lambda **kwargs: captured.update(kwargs) or _response('{}')
+            )
+        )
+    )
+
+    client._create_completion([{"role": "user", "content": "analyze"}])
+
+    assert captured["extra_body"] == {"reasoning": {"enabled": True}}

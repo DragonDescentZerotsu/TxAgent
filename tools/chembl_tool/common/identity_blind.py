@@ -20,7 +20,10 @@ from tools.chembl_tool.common.coverage_reasoning import (
     attach_mmp_coverage_ledger,
     attach_neighbor_context,
 )
-from tools.chembl_tool.common.evidence_contract import evidence_for_llm
+from tools.chembl_tool.common.evidence_contract import (
+    evidence_for_group_llm,
+    evidence_for_llm,
+)
 from tools.chembl_tool.common.openai_reasoning_client import ToolServiceClient
 
 
@@ -139,7 +142,12 @@ def prepare_harness_prefetched_retrieval(
                 neighbor["standard_inchi_key"] = ""
                 neighbor["identity_blind_alias"] = alias
                 neighbor["evidence_rows"] = [
-                    {"minimal_evidence": _redact_evidence_identity(evidence_for_llm(row), alias)}
+                    {
+                        "prompt_evidence": _redact_evidence_identity(
+                            evidence_for_group_llm(row, group),
+                            alias,
+                        )
+                    }
                     for row in neighbor.get("evidence_rows") or []
                 ]
     experiment = output.setdefault("experiment", {})

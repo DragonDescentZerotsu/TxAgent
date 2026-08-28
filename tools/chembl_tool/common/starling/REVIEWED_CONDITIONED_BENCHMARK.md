@@ -17,22 +17,28 @@ and `test.jsonl` explicitly records `condition_group`; the detailed
 
 ## Current selected lineages
 
-Published data use one root and one version:
+Published data use one root for Bioavailability/Skin; BBB uses a v2 sibling
+because its null-group source was independently revoted under the v3 gold contract:
 
 ```text
 data/processed_starling_context_conditioned_selected_v1/<Task>/scaffold/
+data/processed_starling_context_conditioned_selected_v2/BBB_Martins/scaffold/
 ```
 
 | Task | Frozen null-group source | Selected external groups |
 |---|---|---|
 | Bioavailability_Ma | `record_supported_v2` over `bioavailability_canonical_direct.v2` | `prandial_state=fasted`; `prandial_state=fed_unspecified`; `prandial_state=fed_high_fat`; `co_treatment=rifampin`; `disease=cirrhosis`; `disease=cystic_fibrosis`; `release_profile=modified_release` |
-| BBB_Martins | `experimental_meaningful_cns_access_v2` | `barrier_state=disrupted`; `co_treatment=cyclosporine`; `disease=meningitis_unspecified`; `disease=bacterial_meningitis`; `disease=pneumococcal_meningitis`; `disease=tuberculous_meningitis`; `disease=brain_tumor_or_glioma`; `disease=cerebral_ischemia` |
+| BBB_Martins | `experimental_meaningful_cns_access_v3` | `barrier_state=disrupted`; `co_treatment=cyclosporine`; `disease=meningitis_unspecified`; `disease=bacterial_meningitis`; `disease=pneumococcal_meningitis`; `disease=tuberculous_meningitis`; `disease=brain_tumor_or_glioma`; `disease=cerebral_ischemia` |
 | Skin_Reaction | `record_supported_v2` | `disease=atopic_dermatitis` |
 
 The null group is always `no_reported_external_condition`. It is a statement
 about reported external context, not proof that no unreported context existed.
 The older `processed_starling_context_conditioned_reviewed_v1` root is the
 broader exploratory group inventory and is not the selected benchmark.
+BBB selected v2 reuses the same accepted external-condition review and every surviving
+parent-condition split assignment. Relative to BBB selected v1 it removes only the
+Digoxin null-group train row; all 3,834 shared rows retain label and split, and valid/test
+minimal inputs are byte-identical.
 
 ClinTox remains on the frozen unconditioned `clinical_trial_failure_v1`
 benchmark. `tasks/clintox/context_conditioned_benchmark.py` preserves the

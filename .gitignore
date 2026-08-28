@@ -3,6 +3,7 @@
 __pycache__/
 *.py[cod]
 outputs/
+.scratch/
 
 # ClinTox send_v2 is tracked as its exact supplied archive split into verified
 # sub-100 MB parts. These byte-identical extracted Parquets are local restores.

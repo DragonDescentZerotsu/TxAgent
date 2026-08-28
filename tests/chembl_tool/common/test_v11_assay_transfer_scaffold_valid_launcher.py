@@ -64,7 +64,6 @@ def test_launcher_builds_exact_v11_k3_commands(tmp_path):
         assert "--skip-existing" in command
         assert "--assay-transfer-min-score" not in command
         assert "--single-analysis-source-batch" not in command
-        assert "--exclude-nondirect-bioavailability-records" not in command
 
     bbb = next(value for key, value in commands.items() if key.startswith("bbb_martins"))
     bio = next(value for key, value in commands.items() if key.startswith("bioavailability"))

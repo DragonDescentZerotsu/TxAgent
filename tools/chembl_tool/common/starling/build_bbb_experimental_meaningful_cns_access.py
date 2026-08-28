@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from tools.chembl_tool.common.starling.benchmark_dataset import build_benchmark_dataset
-from tools.chembl_tool.common.starling.build_record_supported_benchmark import build_task
+from tools.chembl_tool.common.starling.build_record_supported_benchmark import (
+    build_task,
+    build_task_preserving_split,
+)
 from tools.chembl_tool.common.json_utils import atomic_output_path, write_json_atomic
 from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
     CONTRACT_VERSION,
@@ -32,30 +36,57 @@ SOURCE_ARTIFACT_NAMES = (
 )
 
 
+@dataclass(frozen=True)
+class BBBGoldBuildSpec:
+    lineage: str
+    protocol_version: str
+    contract_version: str
+    default_output_root: Path
+    preserve_split_root: Path | None = None
+    allow_new_parents_in_preserved_split: bool = False
+
+
+V2_BUILD_SPEC = BBBGoldBuildSpec(
+    lineage=LINEAGE,
+    protocol_version=PROTOCOL_VERSION,
+    contract_version=CONTRACT_VERSION,
+    default_output_root=DEFAULT_OUTPUT_ROOT,
+)
+
+
 def main(argv: list[str] | None = None) -> int:
-    args = _parse_args(argv)
-    _validate_build_scope(args)
+    args = _parse_args(argv, default_output_root=V2_BUILD_SPEC.default_output_root)
+    _validate_build_scope(args, V2_BUILD_SPEC)
     decisions, metadata = load_label_decisions(
         revision=args.bbb_revision,
         max_rows=args.max_rows,
     )
-    return _run_build(args, decisions, metadata)
+    return run_build(args, decisions, metadata, spec=V2_BUILD_SPEC)
 
 
-def _validate_build_scope(args: argparse.Namespace) -> None:
+def _validate_build_scope(
+    args: argparse.Namespace,
+    spec: BBBGoldBuildSpec = V2_BUILD_SPEC,
+) -> None:
     if args.bbb_revision != SOURCE_REVISION:
         raise ValueError(
             "The manual source exclusions are bound to the frozen BBB source revision; "
             f"expected {SOURCE_REVISION}."
         )
-    if args.max_rows and Path(args.output_root) == DEFAULT_OUTPUT_ROOT:
+    if args.max_rows and Path(args.output_root) == spec.default_output_root:
         raise ValueError(
             "A partial --max-rows build requires an explicit non-canonical --output-root."
         )
 
 
-def _run_build(args: argparse.Namespace, decisions, metadata) -> int:
-    metadata = {**metadata, "benchmark_lineage": LINEAGE}
+def run_build(
+    args: argparse.Namespace,
+    decisions,
+    metadata,
+    *,
+    spec: BBBGoldBuildSpec,
+) -> int:
+    metadata = {**metadata, "benchmark_lineage": spec.lineage}
     output_root = Path(args.output_root)
     with TemporaryDirectory(prefix="bbb_meaningful_cns_access_build_") as temporary:
         temporary_root = Path(temporary)
@@ -78,13 +109,22 @@ def _run_build(args: argparse.Namespace, decisions, metadata) -> int:
             source_path = source_task_root / artifact_name
             with atomic_output_path(task_root / artifact_name) as temporary_path:
                 temporary_path.write_bytes(source_path.read_bytes())
-        summary = build_task(
-            "BBB_Martins",
-            source_root=temporary_root,
-            output_root=output_root,
-            lineage=LINEAGE,
-            protocol_version=PROTOCOL_VERSION,
-            seed=args.seed,
+        build_kwargs = {
+            "source_root": temporary_root,
+            "output_root": output_root,
+            "lineage": spec.lineage,
+            "protocol_version": spec.protocol_version,
+            "seed": args.seed,
+        }
+        summary = (
+            build_task_preserving_split(
+                "BBB_Martins",
+                reference_split_root=spec.preserve_split_root,
+                allow_new_parents=spec.allow_new_parents_in_preserved_split,
+                **build_kwargs,
+            )
+            if spec.preserve_split_root is not None
+            else build_task("BBB_Martins", **build_kwargs)
         )
 
     summary["paths"].update(
@@ -94,22 +134,19 @@ def _run_build(args: argparse.Namespace, decisions, metadata) -> int:
         }
     )
     summary.pop("cross_method_eval_identity_overlap", None)
-    summary["record_support_policy"] = {
-        "record_tier": "multi_record iff source_record_count >= 2",
-        "heldout_objective": (
-            "lexicographically minimize held-out singleton parents before "
-            "label imbalance and deterministic tie-breaking"
-        ),
-        "target_valid_size": summary["split_size_policy"]["target_valid_size"],
-        "target_test_size": summary["split_size_policy"]["target_test_size"],
-    }
+    summary["record_support_policy"].update(
+        {
+            "target_valid_size": summary["split_size_policy"]["target_valid_size"],
+            "target_test_size": summary["split_size_policy"]["target_test_size"],
+        }
+    )
     summary["gold_distribution"] = _gold_distribution(output_root / "BBB_Martins")
     summary["artifact_sha256"] = _artifact_hashes(output_root / "BBB_Martins")
     summary["build_fingerprint"] = hashlib.sha256(
         json.dumps(
             {
-                "contract": CONTRACT_VERSION,
-                "lineage": LINEAGE,
+                "contract": spec.contract_version,
+                "lineage": spec.lineage,
                 "artifacts": summary["artifact_sha256"],
             },
             sort_keys=True,
@@ -118,10 +155,10 @@ def _run_build(args: argparse.Namespace, decisions, metadata) -> int:
     ).hexdigest()
     write_json_atomic(output_root / "BBB_Martins" / "summary.json", summary)
     with atomic_output_path(output_root / "BBB_Martins" / "report_zh.md") as temporary:
-        temporary.write_text(_render_report(summary), encoding="utf-8")
+        temporary.write_text(_render_report(summary, spec), encoding="utf-8")
     root_summary = {
-        "lineage": LINEAGE,
-        "gold_contract_version": CONTRACT_VERSION,
+        "lineage": spec.lineage,
+        "gold_contract_version": spec.contract_version,
         "tasks": {"bbb_martins": summary},
     }
     write_json_atomic(output_root / "summary.json", root_summary)
@@ -129,15 +166,15 @@ def _run_build(args: argparse.Namespace, decisions, metadata) -> int:
     return 0
 
 
-def _render_report(summary: dict) -> str:
+def _render_report(summary: dict, spec: BBBGoldBuildSpec) -> str:
     split = summary["splits"]["scaffold"]
     rejection_counts = summary["source_rejection_counts"]
     return "\n".join(
         [
             "# BBB experimental meaningful-CNS-access gold build",
             "",
-            f"- lineage: `{LINEAGE}`",
-            f"- gold contract: `{CONTRACT_VERSION}`",
+            f"- lineage: `{spec.lineage}`",
+            f"- gold contract: `{spec.contract_version}`",
             f"- frozen source rows: {summary['n_source_rows_considered']:,}",
             f"- accepted experimental source rows: "
             f"{summary['n_source_rows_labeled_before_structure_normalization']:,}",
@@ -256,9 +293,14 @@ def _artifact_hashes(task_root: Path) -> dict[str, str]:
     }
 
 
-def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+def _parse_args(
+    argv: list[str] | None,
+    *,
+    default_output_root: Path = DEFAULT_OUTPUT_ROOT,
+    allow_source_arrow: bool = False,
+) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
+    parser.add_argument("--output-root", default=str(default_output_root))
     parser.add_argument("--bbb-revision", default=SOURCE_REVISION)
     parser.add_argument("--max-rows", type=int, default=0)
     parser.add_argument("--max-eval-size", type=int, default=500)
@@ -267,6 +309,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--agreement-threshold", type=float, default=0.70)
     parser.add_argument("--seed", type=int, default=20260809)
     parser.add_argument("--max-rejection-examples", type=int, default=20)
+    if allow_source_arrow:
+        parser.add_argument(
+            "--source-arrow",
+            default="",
+            help="Offline copy of the pinned Hugging Face Arrow split.",
+        )
     return parser.parse_args(argv)
 
 

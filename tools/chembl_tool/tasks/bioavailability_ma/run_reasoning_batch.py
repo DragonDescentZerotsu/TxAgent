@@ -57,7 +57,6 @@ CONFIG = BatchConfig(
     rerank_preflight=rerank_preflight,
     supports_assay_transfer_scores=True,
     supports_retrieval_strategy=True,
-    supports_nondirect_bioavailability_filter=True,
     supports_analogous_reasoning_only=True,
     analogous_reasoning_modes=("full_flat", "full_mechanism"),
     final_prompt_provenance=final_prompt_provenance,

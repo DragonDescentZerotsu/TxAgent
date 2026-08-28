@@ -1,0 +1,400 @@
+{
+  "task": "BBB_Martins",
+  "lineage": "bbb_meaningful_cns_access_context_conditioned_selected_v3",
+  "protocol_version": "bbb_context_conditioned_selected.v3",
+  "generated_at": "2026-08-27T00:45:32.547766+00:00",
+  "seed": 20260818,
+  "source_artifacts": [
+    {
+      "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/frozen_candidate_source.parquet",
+      "sha256": "67219971dc7a949bae294d9d0755b191ddaa481881e7e1c67cfbd8c1be9cd61b"
+    },
+    {
+      "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/review_queue.jsonl",
+      "sha256": "e998b978464a2df6d31369568c7ea0f51c6beb397a09122e413280af038ef611"
+    },
+    {
+      "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/review_queue_manifest.json",
+      "sha256": "ad325c3b566e7ce62e8ad8813165c8b3c8bd40af01138e224e8bc821505517d3"
+    },
+    {
+      "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/model_prereview.jsonl",
+      "sha256": "c690987e6b601e88dc5cc02993392a1aaf6495cbacc78a1b911c794201e32f81"
+    },
+    {
+      "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/model_prereview_round2.jsonl",
+      "sha256": "3c9d34c8bb1ddfa860559d43bdca016a8d422cd148cbf963d885901a345addbf"
+    },
+    {
+      "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/review_comparison_summary.json",
+      "sha256": "79b7536cfd4920a95ff7d5082821337ab594b31c76fc10770d250da94a183ea5"
+    },
+    {
+      "path": "data/starling_data/bbb_martins/context_conditioned_review_v1/review_verdicts.jsonl",
+      "sha256": "6697da6ef4688679e7cc637a94139a527f925fe0ee4e9c663e53bd2e1ee5c35c"
+    }
+  ],
+  "frozen_molecule_only_source": {
+    "path": "data/processed_starling_experimental_meaningful_cns_access_v4/BBB_Martins/scaffold",
+    "lineage": "experimental_meaningful_cns_access_v4",
+    "n_rows": 3675,
+    "split_sha256": {
+      "train": "08a176298b84c88455dd2ca368f629fcb4b233d1842eb68f43a9eef4f9ae466e",
+      "valid": "b8b98922a1b68c6cf8bda1e34b1b3226554602c56f9c0c2469b603d5cefa3c6c",
+      "test": "ebd43817d2e4403097ea275a7f3843cc62ec5640be7875a7dc77850fee3d7318"
+    },
+    "preservation_policy": "labels and split assignments copied without modification"
+  },
+  "label_policy": {
+    "gold_unit": "parent_molecule_x_exact_condition_signature",
+    "none_reported_group": "no_reported_external_condition",
+    "external_condition_agreement_threshold": 0.6,
+    "tie_policy": "reject exact ties",
+    "review_policy": "reuse frozen dual semantic condition review; independently revalidate accepted endpoint rows against BBB gold v4"
+  },
+  "group_gate": {
+    "minimum_accepted_parents": 3,
+    "minimum_distinct_scaffolds": 3,
+    "minimum_per_split": 1,
+    "task_semantic_excluded_groups": [],
+    "condition_group_allowlist": [
+      "barrier_state=disrupted",
+      "co_treatment=cyclosporine",
+      "disease=meningitis_unspecified",
+      "disease=bacterial_meningitis",
+      "disease=pneumococcal_meningitis",
+      "disease=tuberculous_meningitis",
+      "disease=brain_tumor_or_glioma",
+      "disease=cerebral_ischemia"
+    ],
+    "preallocation": {
+      "barrier_state=disrupted": {
+        "accepted_parents": 17,
+        "distinct_scaffolds": 14,
+        "label_counts": {
+          "1": 17
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "co_treatment=cyclosporine": {
+        "accepted_parents": 16,
+        "distinct_scaffolds": 15,
+        "label_counts": {
+          "1": 11,
+          "0": 5
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=bacterial_meningitis": {
+        "accepted_parents": 13,
+        "distinct_scaffolds": 13,
+        "label_counts": {
+          "1": 11,
+          "0": 2
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=brain_tumor_or_glioma": {
+        "accepted_parents": 37,
+        "distinct_scaffolds": 30,
+        "label_counts": {
+          "1": 30,
+          "0": 7
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=cerebral_ischemia": {
+        "accepted_parents": 10,
+        "distinct_scaffolds": 10,
+        "label_counts": {
+          "1": 8,
+          "0": 2
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=meningitis_unspecified": {
+        "accepted_parents": 56,
+        "distinct_scaffolds": 46,
+        "label_counts": {
+          "1": 49,
+          "0": 7
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=pneumococcal_meningitis": {
+        "accepted_parents": 10,
+        "distinct_scaffolds": 9,
+        "label_counts": {
+          "1": 9,
+          "0": 1
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=tuberculous_meningitis": {
+        "accepted_parents": 9,
+        "distinct_scaffolds": 9,
+        "label_counts": {
+          "1": 8,
+          "0": 1
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      }
+    },
+    "allocation": {
+      "method": "frozen_parent_scaffold_plus_milp_group_coverage",
+      "seed": 20260818,
+      "n_candidate_groups": 8,
+      "n_selected_groups": 8,
+      "selected_groups": [
+        "barrier_state=disrupted",
+        "co_treatment=cyclosporine",
+        "disease=bacterial_meningitis",
+        "disease=brain_tumor_or_glioma",
+        "disease=cerebral_ischemia",
+        "disease=meningitis_unspecified",
+        "disease=pneumococcal_meningitis",
+        "disease=tuberculous_meningitis"
+      ],
+      "n_novel_scaffolds": 28,
+      "group_split_counts": {
+        "barrier_state=disrupted": {
+          "train": 11,
+          "valid": 3,
+          "test": 3
+        },
+        "co_treatment=cyclosporine": {
+          "train": 9,
+          "valid": 4,
+          "test": 3
+        },
+        "disease=bacterial_meningitis": {
+          "train": 7,
+          "valid": 3,
+          "test": 3
+        },
+        "disease=brain_tumor_or_glioma": {
+          "train": 23,
+          "valid": 6,
+          "test": 8
+        },
+        "disease=cerebral_ischemia": {
+          "train": 8,
+          "valid": 1,
+          "test": 1
+        },
+        "disease=meningitis_unspecified": {
+          "train": 36,
+          "valid": 13,
+          "test": 7
+        },
+        "disease=pneumococcal_meningitis": {
+          "train": 7,
+          "valid": 1,
+          "test": 2
+        },
+        "disease=tuberculous_meningitis": {
+          "train": 7,
+          "valid": 1,
+          "test": 1
+        }
+      },
+      "group_exclusion_reasons": {},
+      "reference_conditioned_root": "data/processed_starling_context_conditioned_selected_v2/BBB_Martins/scaffold",
+      "n_reference_conditioned_rows_reused": 168
+    }
+  },
+  "counts": {
+    "n_full_review_ledger_records": 2466,
+    "n_published_group_review_records": 447,
+    "n_reviewed_source_records": 447,
+    "n_review_accepted": 307,
+    "n_review_rejected": 140,
+    "n_frozen_no_reported_rows": 3675,
+    "n_added_external_condition_rows": 168,
+    "n_total_benchmark_rows": 3843,
+    "n_unique_parents": 3732,
+    "n_external_groups": 8,
+    "n_parent_conditions_accepted_before_group_gate": 168,
+    "n_parent_conditions_rejected_by_vote": 4,
+    "n_parent_conditions_rejected_by_group_gate": 0
+  },
+  "review": {
+    "reviewer_counts": {
+      "dual_semantic_prereview_unanimity_v1": 447
+    },
+    "status_counts": {
+      "accepted": 307,
+      "rejected": 140
+    },
+    "reason_counts": {
+      "dual_semantic_review_unanimous_accept": 307,
+      "dual_semantic_review_not_unanimously_accepted": 140
+    }
+  },
+  "splits": {
+    "train": {
+      "n_rows": 3053,
+      "n_unique_parents": 2994,
+      "n_no_reported": 2945,
+      "n_external": 108,
+      "label_counts": {
+        "0": 794,
+        "1": 2259
+      }
+    },
+    "valid": {
+      "n_rows": 397,
+      "n_unique_parents": 369,
+      "n_no_reported": 365,
+      "n_external": 32,
+      "label_counts": {
+        "0": 104,
+        "1": 293
+      }
+    },
+    "test": {
+      "n_rows": 393,
+      "n_unique_parents": 369,
+      "n_no_reported": 365,
+      "n_external": 28,
+      "label_counts": {
+        "1": 291,
+        "0": 102
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train_valid": 0,
+    "train_test": 0,
+    "valid_test": 0
+  },
+  "group_distribution": [
+    {
+      "condition_group": "no_reported_external_condition",
+      "condition_scope": "none_reported",
+      "n_molecule_condition_rows": 3675,
+      "n_unique_parents": 3675,
+      "n_distinct_scaffolds": 2142,
+      "n_train": 2945,
+      "n_valid": 365,
+      "n_test": 365,
+      "n_y0": 975,
+      "n_y1": 2700
+    },
+    {
+      "condition_group": "barrier_state=disrupted",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 17,
+      "n_unique_parents": 17,
+      "n_distinct_scaffolds": 14,
+      "n_train": 11,
+      "n_valid": 3,
+      "n_test": 3,
+      "n_y0": 0,
+      "n_y1": 17
+    },
+    {
+      "condition_group": "co_treatment=cyclosporine",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 16,
+      "n_unique_parents": 16,
+      "n_distinct_scaffolds": 15,
+      "n_train": 9,
+      "n_valid": 4,
+      "n_test": 3,
+      "n_y0": 5,
+      "n_y1": 11
+    },
+    {
+      "condition_group": "disease=bacterial_meningitis",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 13,
+      "n_unique_parents": 13,
+      "n_distinct_scaffolds": 13,
+      "n_train": 7,
+      "n_valid": 3,
+      "n_test": 3,
+      "n_y0": 2,
+      "n_y1": 11
+    },
+    {
+      "condition_group": "disease=brain_tumor_or_glioma",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 37,
+      "n_unique_parents": 37,
+      "n_distinct_scaffolds": 30,
+      "n_train": 23,
+      "n_valid": 6,
+      "n_test": 8,
+      "n_y0": 7,
+      "n_y1": 30
+    },
+    {
+      "condition_group": "disease=cerebral_ischemia",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 10,
+      "n_unique_parents": 10,
+      "n_distinct_scaffolds": 10,
+      "n_train": 8,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 2,
+      "n_y1": 8
+    },
+    {
+      "condition_group": "disease=meningitis_unspecified",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 56,
+      "n_unique_parents": 56,
+      "n_distinct_scaffolds": 46,
+      "n_train": 36,
+      "n_valid": 13,
+      "n_test": 7,
+      "n_y0": 7,
+      "n_y1": 49
+    },
+    {
+      "condition_group": "disease=pneumococcal_meningitis",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 10,
+      "n_unique_parents": 10,
+      "n_distinct_scaffolds": 9,
+      "n_train": 7,
+      "n_valid": 1,
+      "n_test": 2,
+      "n_y0": 1,
+      "n_y1": 9
+    },
+    {
+      "condition_group": "disease=tuberculous_meningitis",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 9,
+      "n_unique_parents": 9,
+      "n_distinct_scaffolds": 9,
+      "n_train": 7,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 1,
+      "n_y1": 8
+    }
+  ],
+  "paths": {
+    "root": "data/processed_starling_context_conditioned_selected_v3/BBB_Martins/scaffold",
+    "group_distribution": "data/processed_starling_context_conditioned_selected_v3/BBB_Martins/scaffold/group_distribution.csv",
+    "source_condition_review": "data/processed_starling_context_conditioned_selected_v3/BBB_Martins/scaffold/source_condition_review.jsonl"
+  },
+  "n_previously_accepted_condition_rows_rejected_by_v4": 0
+}

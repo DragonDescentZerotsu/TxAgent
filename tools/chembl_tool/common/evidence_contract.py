@@ -16,6 +16,7 @@ CONTRACT_VERSION = "minimal_evidence.v1"
 ASSAY_COMPACT_PROMPT_PROFILE = "assay_compact.v1"
 ASSAY_COMPACT_V2_PROMPT_PROFILE = "assay_compact.v2"
 ASSAY_RAW_CARD_PROMPT_PROFILE = "assay_compact.raw_v3"
+ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE = "assay_compact.mechanism_tagged_v4"
 _LEGACY_ASSAY_FLAT_GROUP_ID = "Flat.assay_ranked_evidence"
 EVIDENCE_ROLES = {
     "direct_outcome",
@@ -145,11 +146,16 @@ def evidence_for_group_llm(
     Dense assay-level replays use a bounded view.  The group-id fallback keeps
     already materialized v1 assay replay artifacts readable.
     """
+    pre_rendered = row.get("prompt_evidence")
+    if isinstance(pre_rendered, Mapping):
+        return deepcopy(dict(pre_rendered))
     profile = str(group.get("evidence_prompt_profile") or "")
     if profile == ASSAY_COMPACT_V2_PROMPT_PROFILE:
         return assay_evidence_for_llm_v2(row)
     if profile == ASSAY_RAW_CARD_PROMPT_PROFILE:
         return assay_evidence_for_llm_raw_cards(row)
+    if profile == ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE:
+        return assay_evidence_for_llm_mechanism_tagged(row)
     if profile == ASSAY_COMPACT_PROMPT_PROFILE or (
         not profile and group.get("group_id") == _LEGACY_ASSAY_FLAT_GROUP_ID
     ):
@@ -223,10 +229,18 @@ def assay_evidence_for_llm_raw_cards(row: Mapping[str, Any]) -> dict[str, Any]:
     return _assay_record_cards(row, use_summary=False)
 
 
+def assay_evidence_for_llm_mechanism_tagged(
+    row: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Return raw record cards with their source mechanism-family provenance."""
+    return _assay_record_cards(row, use_summary=False, include_family=True)
+
+
 def _assay_record_cards(
     row: Mapping[str, Any],
     *,
     use_summary: bool,
+    include_family: bool = False,
 ) -> dict[str, Any]:
     """Build the shared v2/v3 assay card shape.
 
@@ -253,28 +267,23 @@ def _assay_record_cards(
                 "assay_compact.v2 requires a frozen support_summary when "
                 "support_text exceeds 320 characters"
             )
-        cards.append(
-            _drop_empty(
-                {
-                    "endpoint": _assay_card_text(
-                        example.get("endpoint_type"), use_summary, 200
-                    ),
-                    "value": _assay_card_text(
-                        example.get("reported_value"), use_summary, 200
-                    ),
-                    "unit": _assay_card_text(
-                        example.get("reported_units"), use_summary, 80
-                    ),
-                    "species": _assay_card_text(
-                        example.get("species_context"), use_summary, 120
-                    ),
-                    "conditions": _assay_card_text(
-                        example.get("qualifying_conditions"), use_summary, 240
-                    ),
-                    "support": _bounded_text(support, 480) if use_summary else support,
-                }
-            )
-        )
+        card = {
+            "endpoint": _assay_card_text(
+                example.get("endpoint_type"), use_summary, 200
+            ),
+            "value": _assay_card_text(example.get("reported_value"), use_summary, 200),
+            "unit": _assay_card_text(example.get("reported_units"), use_summary, 80),
+            "species": _assay_card_text(
+                example.get("species_context"), use_summary, 120
+            ),
+            "conditions": _assay_card_text(
+                example.get("qualifying_conditions"), use_summary, 240
+            ),
+            "support": _bounded_text(support, 480) if use_summary else support,
+        }
+        if include_family:
+            card["evidence_family"] = _text(example.get("evidence_family"))
+        cards.append(_drop_empty(card))
     if not cards:
         evidence = minimal_evidence_from_row(row)
         text = _text((evidence.get("text") or {}).get("evidence"))
@@ -285,22 +294,17 @@ def _assay_record_cards(
             )
         endpoint = evidence.get("endpoint") or {}
         measurement = endpoint.get("measurement") or {}
-        cards = [
-            _drop_empty(
-                {
-                    "endpoint": _assay_card_text(
-                        endpoint.get("name"), use_summary, 200
-                    ),
-                    "value": _assay_card_text(
-                        measurement.get("value"), use_summary, 200
-                    ),
-                    "unit": _assay_card_text(
-                        measurement.get("unit"), use_summary, 80
-                    ),
-                    "support": text,
-                }
-            )
-        ]
+        card = {
+            "endpoint": _assay_card_text(endpoint.get("name"), use_summary, 200),
+            "value": _assay_card_text(measurement.get("value"), use_summary, 200),
+            "unit": _assay_card_text(measurement.get("unit"), use_summary, 80),
+            "support": text,
+        }
+        if include_family:
+            family = row.get("assay_retrieval") or {}
+            if isinstance(family, Mapping):
+                card["evidence_family"] = _text(family.get("first_endpoint_group"))
+        cards = [_drop_empty(card)]
 
     scope = row.get("evidence_scope") or row.get("scope") or {}
     assay_context = ""

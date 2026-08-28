@@ -278,68 +278,6 @@ def test_best_record_aggregation_and_deterministic_molecule_tie_breaking(tmp_pat
     assert winning["canonical_smiles"] == "CCN"
 
 
-def test_nondirect_policy_filters_assay_transfer_catalog_records(tmp_path):
-    catalog = tmp_path / "catalog.jsonl"
-    cache_path = tmp_path / "scores.sqlite3"
-    records = []
-    for record_id, report_type in (
-        ("direct", "unspecified"),
-        ("nondirect", "relative_comparison"),
-        ("scope-flagged-nondirect", "unspecified"),
-    ):
-        record = _record(
-            record_id,
-            smiles="CCN",
-            concept="oral_bioavailability",
-        )
-        record["template_id"] = "oral_bioavailability_intern_mcqa_v3"
-        record["source_fields"] = {
-            "bioavailability_report_type": report_type
-        }
-        if record_id == "scope-flagged-nondirect":
-            record["canonical_bioavailability_evidence_scope"] = "nondirect"
-        records.append(record)
-    _write_catalog(catalog, records)
-    candidate = [_candidate("A", "CCN", 0.9)]
-
-    included = AssayTransferCachedReranker(
-        catalog_path=catalog,
-        cache_path=cache_path,
-        cache_mode="read_write",
-        allow_missing=True,
-    )
-    included_tasks = included.tasks_for_candidates(
-        query_smiles="CCO",
-        group_id="Observed.direct_oral_bioavailability",
-        candidates=candidate,
-    )
-    included.cache.close()
-
-    excluded = AssayTransferCachedReranker(
-        catalog_path=catalog,
-        cache_path=cache_path,
-        cache_mode="read_only",
-        allow_missing=True,
-        exclude_nondirect_bioavailability_records=True,
-    )
-    excluded_tasks = excluded.tasks_for_candidates(
-        query_smiles="CCO",
-        group_id="Observed.direct_oral_bioavailability",
-        candidates=candidate,
-    )
-    assert excluded.provenance()[
-        "exclude_nondirect_bioavailability_records"
-    ] is True
-    excluded.cache.close()
-
-    assert [task.record_id for task in included_tasks["A"]] == [
-        "direct",
-        "nondirect",
-        "scope-flagged-nondirect",
-    ]
-    assert [task.record_id for task in excluded_tasks["A"]] == ["direct"]
-
-
 def test_rerank_records_selects_top_records_across_molecules(tmp_path):
     catalog = tmp_path / "catalog.jsonl"
     cache_path = tmp_path / "scores.sqlite3"

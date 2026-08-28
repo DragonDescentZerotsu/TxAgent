@@ -1,6 +1,11 @@
 """Paper-facing Bioavailability_Ma retrieval views."""
 
 from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
+from tools.chembl_tool.common.progressive_assay_reasoning import ProgressiveTaskContract
+from tools.chembl_tool.tasks.bioavailability_ma.prompt_profiles import (
+    DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    get_bioavailability_prompt_profile,
+)
 
 
 DIRECT_ORAL_BIOAVAILABILITY_GROUP = "Observed.direct_oral_bioavailability"
@@ -77,13 +82,10 @@ STARLING = SourceExperimentConfig(
     source_name="starling",
     direct_groups=(
         EvidenceGroupSpec(
-            DIRECT_ORAL_BIOAVAILABILITY_GROUP,
+            "Observed.direct_oral_bioavailability",
             "Observed",
             "direct_oral_bioavailability",
-            source_groups=(
-                DIRECT_ORAL_BIOAVAILABILITY_GROUP,
-                NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
-            ),
+            source_groups=("Observed.direct_oral_bioavailability",),
         ),
     ),
     mechanism_groups=tuple(
@@ -91,14 +93,7 @@ STARLING = SourceExperimentConfig(
             group_id,
             group_id.split(".", 1)[0],
             group_id.split(".", 1)[1],
-            source_groups=(
-                (
-                    DIRECT_ORAL_BIOAVAILABILITY_GROUP,
-                    NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
-                )
-                if group_id == DIRECT_ORAL_BIOAVAILABILITY_GROUP
-                else (group_id,)
-            ),
+            source_groups=(group_id,),
         )
         for group_id in (
             "Observed.direct_oral_bioavailability",
@@ -111,85 +106,31 @@ STARLING = SourceExperimentConfig(
     ),
 )
 
-STARLING_EXCLUDING_NONDIRECT = SourceExperimentConfig(
-    source_name="starling",
-    direct_groups=(
-        EvidenceGroupSpec(
-            DIRECT_ORAL_BIOAVAILABILITY_GROUP,
-            "Observed",
-            "direct_oral_bioavailability",
-            source_groups=(DIRECT_ORAL_BIOAVAILABILITY_GROUP,),
-        ),
-    ),
-    mechanism_groups=tuple(
-        EvidenceGroupSpec(
-            group.group_id,
-            group.tier,
-            group.endpoint_group,
-            source_groups=(DIRECT_ORAL_BIOAVAILABILITY_GROUP,)
-            if group.group_id == DIRECT_ORAL_BIOAVAILABILITY_GROUP
-            else group.source_groups,
-        )
-        for group in STARLING.mechanism_groups
-    ),
-)
+SOURCES = {"chembl": CHEMBL, "starling": STARLING}
 
-# In-distribution retrieval over the starling normalized (hf_cleaned) molecules. The
-# neighbor index already keys on the five paper group_ids, so the group mapping is
-# identical to STARLING; only the source name (and the index/catalog paths) differ.
-STARLING_IN_DISTRIBUTION = SourceExperimentConfig(
-    source_name="starling_in_distribution",
-    direct_groups=STARLING.direct_groups,
-    mechanism_groups=STARLING.mechanism_groups,
-)
-
-# Retrieval over the policy-decoupled starling_normalized_v5 evidence library. Its
-# neighbor index is re-aggregated to the same five paper group_ids as the legacy
-# factor library, so the group mapping is identical to STARLING; only the source
-# name (and the index/evidence paths) differ.
-STARLING_V5 = SourceExperimentConfig(
-    source_name="starling_v5",
-    direct_groups=STARLING.direct_groups,
-    mechanism_groups=STARLING.mechanism_groups,
-)
-
-# Compact normalized-v6 uses a relational Parquet/NPZ index.  Its loader
-# hydrates representative evidence from finalized record references once at
-# startup, while preserving the same five paper-facing groups.
-STARLING_V6 = SourceExperimentConfig(
-    source_name="starling_v6",
-    direct_groups=STARLING.direct_groups,
-    mechanism_groups=STARLING.mechanism_groups,
-)
-
-SOURCES = {
-    "chembl": CHEMBL,
-    "starling": STARLING,
-    "starling_in_distribution": STARLING_IN_DISTRIBUTION,
-    "starling_v5": STARLING_V5,
-    "starling_v6": STARLING_V6,
+PROGRESSIVE_ASSAY_LEVEL_DESCRIPTIONS = {
+    1: "Direct absolute oral bioavailability outcomes; closest to the F >= 20% benchmark label.",
+    2: "Nondirect oral-bioavailability evidence. This is indirect evidence even when its wording resembles the label.",
+    3: "Oral AUC or Cmax exposure evidence; indirect because exposure also depends on dose, formulation, clearance, and sampling.",
+    4: "Absorption, solubility, dissolution, or permeability evidence contributing to the absorbed fraction.",
+    5: "Gut-wall efflux and intestinal metabolism evidence contributing to presystemic loss.",
+    6: "Hepatic clearance and metabolic-stability evidence contributing to systemic availability.",
 }
 
-# Retrieval sources whose molecules come from the starling assay-transfer data and are
-# therefore eligible for assay-transfer scoring.
-STARLING_RETRIEVAL_SOURCES = frozenset({"starling", "starling_in_distribution"})
+
+def get_source_config(source: str) -> SourceExperimentConfig:
+    return SOURCES[source]
 
 
-def get_source_config(
-    source: str,
-    *,
-    exclude_nondirect_bioavailability_records: bool = False,
-) -> SourceExperimentConfig:
-    if not exclude_nondirect_bioavailability_records:
-        return SOURCES[source]
-    if not source.startswith("starling"):
-        raise ValueError(
-            "--exclude-nondirect-bioavailability-records is only valid for a "
-            "Starling retrieval source"
-        )
-    base = STARLING_EXCLUDING_NONDIRECT
-    return SourceExperimentConfig(
-        source_name=SOURCES[source].source_name,
-        direct_groups=base.direct_groups,
-        mechanism_groups=base.mechanism_groups,
+def get_progressive_task_contract() -> ProgressiveTaskContract:
+    profile = get_bioavailability_prompt_profile(DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE)
+    return ProgressiveTaskContract(
+        task="bioavailability_ma",
+        endpoint_name="absolute oral bioavailability at the F >= 20% threshold",
+        label_scope=profile.label_scope,
+        prediction_field="bioavailability_prediction",
+        positive_prediction="high",
+        negative_prediction="low",
+        system_role=profile.final_system_role,
+        task_instructions=tuple(profile.final_instructions),
     )

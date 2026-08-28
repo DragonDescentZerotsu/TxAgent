@@ -851,7 +851,6 @@ def _run_final_reasoning(
         messages,
         required_fields=profile.final_required_fields,
         allowed_values=profile.final_allowed_values,
-        branch_name="final",
     )
     output = {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
     if surface_audit is not None:

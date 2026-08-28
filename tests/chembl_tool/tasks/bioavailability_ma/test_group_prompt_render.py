@@ -153,13 +153,11 @@ def test_flat_no_tools_text_prompt_omits_tool_guidance():
     assert "properties_compare" not in messages[1]["content"]
 
 
-def test_starling_v5_evidence_row_renders_non_blank_endpoint_value_unit():
-    """Regression guard: normalized Starling example dicts must use the same
-    endpoint_type/reported_value/reported_units keys as the legacy factor library,
-    so the morganfingerprint field policy doesn't render blank fields for v5 rows."""
+def test_normalized_starling_evidence_row_renders_non_blank_endpoint_value_unit():
+    """Normalized Starling rows retain endpoint, value, and unit fields."""
     profile = NormalizedSourceProfile(
-        source_id="v5_test",
-        source_name="test/starling_v5",
+        source_id="v7_test",
+        source_name="test/starling_v7",
         endpoint_field="kind",
         measurement_field="value",
         unit_field="unit",

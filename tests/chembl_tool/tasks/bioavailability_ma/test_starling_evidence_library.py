@@ -7,7 +7,6 @@ from tools.chembl_tool.common.experiment_retrieval import retrieve_experiment_vi
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
     NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
     STARLING,
-    STARLING_EXCLUDING_NONDIRECT,
 )
 from tools.chembl_tool.tasks.bioavailability_ma import build_starling_evidence_library as direct_builder
 from tools.chembl_tool.tasks.bioavailability_ma import build_starling_factor_evidence_library as factor_builder
@@ -353,7 +352,7 @@ def test_direct_numeric_count_gate_validates_zero_and_allows_explicit_opt_out() 
     )
 
 
-def test_nondirect_group_is_removed_before_morgan_top_k() -> None:
+def test_direct_mode_excludes_nondirect_group_before_morgan_top_k() -> None:
     direct = _minimal_index_row(
         "STARLING_DIRECT", "CCCCO", "Observed.direct_oral_bioavailability"
     )
@@ -362,7 +361,7 @@ def test_nondirect_group_is_removed_before_morgan_top_k() -> None:
     )
     index = build_neighbor_index([direct, nondirect])
 
-    included = retrieve_experiment_view(
+    result = retrieve_experiment_view(
         "CCO",
         index,
         mode="direct",
@@ -370,17 +369,8 @@ def test_nondirect_group_is_removed_before_morgan_top_k() -> None:
         top_k_per_group=1,
         min_similarity=0.0,
     )
-    excluded = retrieve_experiment_view(
-        "CCO",
-        index,
-        mode="direct",
-        config=STARLING_EXCLUDING_NONDIRECT,
-        top_k_per_group=1,
-        min_similarity=0.0,
-    )
-    assert included["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "STARLING_NONDIRECT"
-    assert excluded["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "STARLING_DIRECT"
-    assert excluded["groups"][0]["source_group_ids"] == [
+    assert result["groups"][0]["neighbors"][0]["molecule_chembl_id"] == "STARLING_DIRECT"
+    assert result["groups"][0]["source_group_ids"] == [
         "Observed.direct_oral_bioavailability"
     ]
 

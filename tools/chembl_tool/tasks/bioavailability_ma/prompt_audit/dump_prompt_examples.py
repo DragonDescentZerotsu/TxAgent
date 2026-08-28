@@ -28,9 +28,6 @@ from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank 
     V6_5_NO_QUERY_EXTRA_DETAILS_TEMPLATE_PROFILE,
     V6_5_TEMPLATE_PROFILE,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.reranking.build_starling_in_distribution_library import (
-    in_distribution_catalog_record,
-)
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     final_messages,
     legacy_group_messages,
@@ -67,11 +64,7 @@ def _scoring_pair_example(*, profile: str, label: str) -> str:
     """
     pair = json.loads(SCORING_RECORD_PATH.read_text(encoding="utf-8"))
     source_record = pair["retrieval_record"]
-    catalog_record = (
-        source_record
-        if source_record.get("record_type") == "assay_record"
-        else in_distribution_catalog_record(source_record)
-    )
+    catalog_record = source_record
     prompt = AssayTransferPromptRenderer(profile=profile).render(
         catalog_record, pair["query_smiles"]
     )

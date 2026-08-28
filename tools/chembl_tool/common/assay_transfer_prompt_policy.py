@@ -25,10 +25,9 @@ def validate_scored_neighbors_configuration(
             "--enable-assay-transfer-scores requires --experiment-mode "
             "full_flat or full_mechanism"
         )
-    if retrieval_source not in {"starling", "starling_in_distribution"}:
+    if retrieval_source != "starling":
         raise ValueError(
-            "--enable-assay-transfer-scores requires --retrieval-source "
-            "starling or starling_in_distribution"
+            "--enable-assay-transfer-scores requires --retrieval-source starling"
         )
     if retrieval_reranker != "assay_transfer":
         raise ValueError("--enable-assay-transfer-scores requires assay_transfer retrieval")

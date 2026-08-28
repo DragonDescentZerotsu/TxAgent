@@ -35,12 +35,19 @@
   versioned output；`train_ratio_prior_analysis.py` 独立完成 paired statistics、trigger audit 和 copied-artifact parity。
 ## 当前 Starling gold lineages
 
-BBB 当前 paper-facing dataset 是 `experimental_meaningful_cns_access_v2`：3,667 parents，scaffold
-train/valid/test 为 2,935/366/366，目标是系统给药后的 meaningful/adequate CNS access，而不是 mixed passive
-permeability。Bioavailability 与 Skin 继续使用 scaffold-only `record_supported_v2`，分别为
+BBB 当前 paper-facing dataset 是 `experimental_meaningful_cns_access_v3`：3,666 parents，scaffold
+train/valid/test 为 2,934/366/366。v3 从 v2 独立重投票并排除 5 条 source-native computational votes；只移除
+旧 train 的 Digoxin，shared-parent label/split changes 为 0。目标仍是系统给药后的 meaningful/adequate CNS
+access，而不是 mixed passive permeability。Bioavailability 与 Skin 继续使用 scaffold-only `record_supported_v2`，分别为
 1,674/209/209 和 1,966/245/245；Skin 每个 held-out split 只有 5 个 unavoidable singleton。旧 BBB
-`record_supported_v2`、`experimental_direct_cns_v1` 和第一版 `record_agreement70_split811_v1` 都只作 historical
-comparison；不合理的 exploratory `record_supported_v1` 已删除。
+`experimental_meaningful_cns_access_v2`、`record_supported_v2`、`experimental_direct_cns_v1` 和第一版
+`record_agreement70_split811_v1` 都只作 historical comparison；不合理的 exploratory `record_supported_v1`
+已删除。
+
+另有隔离的 BBB `experimental_meaningful_cns_access_v4` / conditioned-v3 candidate。它已完成 397-row
+scaffold-valid matched baselines 与 visible progressive v8/source-purity-v5 curve，但不自动替换 paper-facing
+v3。三任务最终 progressive 结果、资源统计和入口只维护在 `ASSAY_LEVEL_RETRIEVAL.md`；不要再引用
+2026-08-22 的未完成 cumulative-family checkpoint 作为 current curve。
 
 ClinTox 是独立的 `clinical_trial_failure_v1`，不是第四个 Starling gold task。它从冻结 AACT
 toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators 构造 1,428 个 parent labels；Starling
@@ -55,7 +62,8 @@ tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 
 ```text
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
-tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v3.py
+tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v4.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
@@ -403,8 +411,8 @@ python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
 transport timeout 时，才用 `--timeout-s 600` 重新启动 matrix 做 targeted repair（matrix 内置
 `--skip-existing`），不能借此改变 prompt、证据或其它 inference setting。
 
-当前正式 root 按 task lineage 分开：BBB 使用 `experimental_meaningful_cns_access_v2`，Bioavailability/Skin
-使用 `record_supported_v2`；各自的 agent batch 均位于对应 root 的
+这一历史 group-level 正式 root 按当时 task lineage 分开：BBB 使用 `experimental_meaningful_cns_access_v2`，
+Bioavailability/Skin 使用 `record_supported_v2`；各自的 agent batch 均位于对应 root 的
 `runs_identity_blind_parent_disjoint/`。先在 valid 做 completeness/contract 检查，冻结设置后再运行 test；
 test 不用于模型、prompt、threshold 或 label-policy 选择。
 
@@ -623,7 +631,7 @@ summary，再用同一绘图器的 `--single-series` 模式绘制一个 latest a
 failure gate。额外 condition 的既有 metrics 可用显式
 `--condition-metrics task__condition=metrics.json` 纳入，输出会保留原 artifact path。
 
-当前 BBB experimental-v2、Bio f20-v2、Skin aligned-v2 的合并 summary 已包含同 setting 的 9 个 ChEMBL
+这一历史 BBB experimental-v2、Bio f20-v2、Skin aligned-v2 合并 summary 已包含同 setting 的 9 个 ChEMBL
 conditions。ChEMBL matrix artifact root 为
 `outputs/paper/molecular_evidence_agent_chembl_scaffold_current_latest_valid_gpt_oss_120b/`；三个 task 合计
 `2460/2460` final 完整。合并 summary 与图位于：

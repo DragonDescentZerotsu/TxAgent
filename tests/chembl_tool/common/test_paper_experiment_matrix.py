@@ -783,29 +783,6 @@ def test_matrix_command_freezes_glm_and_identity_conditions():
     )
 
 
-def test_matrix_forwards_nondirect_filter_only_to_bioavailability_starling():
-    args = argparse.Namespace(
-        python_executable="python",
-        api_key_env="GLM_API_KEY",
-        parallelism=2,
-        visibility_mode="identity_blind",
-        exclude_nondirect_bioavailability_records=True,
-    )
-    bio = next(
-        experiment
-        for experiment in EXPERIMENTS
-        if experiment.name == "bioavailability_ma__starling_full_mechanism"
-    )
-    bbb = next(
-        experiment
-        for experiment in EXPERIMENTS
-        if experiment.name == "bbb_martins__starling_full_mechanism"
-    )
-
-    assert "--exclude-nondirect-bioavailability-records" in _command(bio, args)
-    assert "--exclude-nondirect-bioavailability-records" not in _command(bbb, args)
-
-
 def test_matrix_command_forwards_retrieval_count_and_threshold():
     args = argparse.Namespace(
         python_executable="python",
