@@ -18,7 +18,10 @@ from tools.chembl_tool.common.starling.normalization.measurements import (
 )
 
 
-ENDPOINT_NORMALIZATION_VERSION = "bbb_martins_endpoint_normalization.v2"
+ENDPOINT_NORMALIZATION_VERSION = "bbb_martins_endpoint_normalization.v3"
+DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID = (
+    "bbb.direct.permeability_label_endpoint.v1"
+)
 PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID = (
     "bbb.passive.interpretation_endpoint.v1"
 )
@@ -481,7 +484,15 @@ def alternate_endpoint_fields(record: Mapping[str, Any]) -> dict[str, Any]:
         return {}
 
     source_id = str(record.get("source_id") or "")
-    if source_id == "passive_permeability":
+    if (
+        source_id == "direct_bbb"
+        and record.get("categorical_encoder_id") == "bbb_permeability_binary.v1"
+    ):
+        endpoint = "bbb_permeability_outcome"
+        source_field = "bbb_permeability_label"
+        producer_id = DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID
+        rule_id = "direct_permeability_label_outcome"
+    elif source_id == "passive_permeability":
         label = _snake(record.get("passive_bbb_interpretation"))
         if label not in {"permeable_or_high", "impermeable_or_low"}:
             return {}
@@ -528,6 +539,7 @@ __all__ = [
     "APPROVED_DIRECT_ENDPOINT_V1_MAPPING",
     "DIRECT_ENDPOINT_MAPPING_VERSION",
     "DIRECT_ENDPOINT_MAPPING_V2_VERSION",
+    "DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID",
     "EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID",
     "ENDPOINT_NORMALIZATION_VERSION",
     "ENDPOINT_SOURCE_FIELD",

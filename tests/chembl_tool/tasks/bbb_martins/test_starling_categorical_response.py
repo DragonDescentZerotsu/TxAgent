@@ -4,6 +4,7 @@ from tools.chembl_tool.tasks.bbb_martins.starling_categorical_response import (
     encoding_policy_manifest,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
+    DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID,
     EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID,
     PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID,
     alternate_endpoint_fields,
@@ -97,11 +98,10 @@ def test_real_scalar_always_precedes_categorical_anchor():
     )
 
 
-def test_manifest_freezes_encoder_key_boundary_without_owning_the_endpoint():
+def test_manifest_freezes_encoder_key_boundary():
     manifest = encoding_policy_manifest()
     assert manifest["encoder_id_is_part_of_the_pair_bucket_key"] is True
     assert manifest["parseable_unresolved_unit_measurement_precedence"] is True
-    assert "semantic_endpoint_by_encoder" not in manifest
 
 
 def test_parseable_numeric_with_unresolved_unit_is_not_overwritten_by_binary_anchor():
@@ -153,17 +153,22 @@ def test_exact_exclusion_and_unresolved_extraction_keep_distinct_provenance():
     assert unresolved["canonical_quantity_kind"] == "unresolved_measurement"
 
 
-def test_categorical_measurement_preserves_source_endpoint_and_provenance():
+def test_direct_categorical_measurement_supplies_reviewed_endpoint():
     source = _direct_normalized_record()
     enriched = _enrich_record(source, _NoAuxiliary(), _NoReference())
-    assert "canonical_endpoint" not in enriched
-    assert {**source, **enriched}["canonical_endpoint"] == "missing_endpoint"
+    assert enriched["canonical_endpoint"] == "bbb_permeability_outcome"
     assert enriched["canonical_measurement"] == "1"
     assert enriched["canonical_unit"] == BINARY_OUTCOME_UNIT
-    assert enriched["canonical_endpoint_source_field"] == "quant_metric"
-    assert enriched["canonical_endpoint_policy_status"] == "unchanged"
-    assert enriched["canonical_endpoint_rule_id"] == "direct_missing_endpoint"
-    assert enriched["canonical_endpoint_producer_id"] == "bbb.direct_endpoint_map.v1"
+    assert enriched["canonical_endpoint_source_field"] == "bbb_permeability_label"
+    assert enriched["canonical_endpoint_policy_status"] == (
+        "reviewed_structured_fallback"
+    )
+    assert enriched["canonical_endpoint_rule_id"] == (
+        "direct_permeability_label_outcome"
+    )
+    assert enriched["canonical_endpoint_producer_id"] == (
+        DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID
+    )
     assert enriched["canonical_pair_producer_id"] == "bbb_permeability_binary.v1"
 
 
@@ -228,6 +233,13 @@ def test_influx_kinetic_symbol_separates_k1_k2_and_k3() -> None:
 
 
 def test_missing_bbb_endpoint_uses_only_approved_structured_fallbacks():
+    direct = alternate_endpoint_fields(
+        {
+            "source_id": "direct_bbb",
+            "canonical_endpoint": "missing_endpoint",
+            "categorical_encoder_id": "bbb_permeability_binary.v1",
+        }
+    )
     passive = alternate_endpoint_fields(
         {
             "source_id": "passive_permeability",
@@ -242,6 +254,10 @@ def test_missing_bbb_endpoint_uses_only_approved_structured_fallbacks():
             "interaction_conclusion": "transporter_limited_brain_exposure",
         }
     )
+    assert direct["canonical_endpoint"] == "bbb_permeability_outcome"
+    assert direct["canonical_endpoint_producer_id"] == (
+        DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID
+    )
     assert passive["canonical_endpoint"] == "passive_bbb_permeability_outcome"
     assert passive["canonical_endpoint_producer_id"] == (
         PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID
@@ -251,6 +267,13 @@ def test_missing_bbb_endpoint_uses_only_approved_structured_fallbacks():
     )
     assert efflux["canonical_endpoint_producer_id"] == (
         EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID
+    )
+    assert not alternate_endpoint_fields(
+        {
+            "source_id": "direct_bbb",
+            "canonical_endpoint": "missing_endpoint",
+            "bbb_transport_label": "efflux_substrate",
+        }
     )
     assert not alternate_endpoint_fields(
         {

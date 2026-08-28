@@ -96,6 +96,29 @@ def test_unresolved_unit_is_retained_in_sidecar_but_not_bucketed():
     assert rows[0]["bucket_exclusion_reason"] == "missing_canonical_unit"
 
 
+def test_unresolved_endpoint_sentinel_is_not_bucketed():
+    records = [
+        _record(
+            "d",
+            "direct_bbb",
+            "missing_endpoint",
+            "binary_outcome_class",
+            categorical_encoder_id="bbb_permeability_binary.v1",
+            global_context="in vivo",
+            global_species_context="rat",
+            retrieval_eligible=True,
+        )
+    ]
+
+    rows, _ = materialize_pair_buckets(
+        records, source_required_fields=SOURCE_PAIR_FIELDS
+    )
+
+    assert rows[0]["bucket_eligible"] is False
+    assert rows[0]["pair_bucket_key"] is None
+    assert rows[0]["bucket_exclusion_reason"] == "missing_canonical_endpoint"
+
+
 def test_source_alias_provenance_is_fail_closed_per_source():
     columns = [
         "confidence",

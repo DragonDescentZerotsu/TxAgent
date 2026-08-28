@@ -16,7 +16,7 @@ from tools.chembl_tool.common.starling.reference_semantics import (
     reference_exclusion_reason,
 )
 
-PAIR_BUCKET_CONTRACT_VERSION = "source_aware_pair_bucket.v5"
+PAIR_BUCKET_CONTRACT_VERSION = "source_aware_pair_bucket.v6"
 UNKNOWN_TOKEN = "__unknown__"
 
 
@@ -444,7 +444,7 @@ def _exclusion_reason(
     status = str(record.get(validity_field) or "")
     if status != "valid":
         return status or f"missing_{validity_field}"
-    if not endpoint:
+    if not _endpoint_is_resolved(endpoint):
         # Name the field that was actually missing, so a source using a
         # substituted bucket endpoint does not report a misleading reason.
         return f"missing_{endpoint_field}"

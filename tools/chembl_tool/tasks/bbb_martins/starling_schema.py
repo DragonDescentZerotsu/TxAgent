@@ -33,6 +33,7 @@ from tools.chembl_tool.tasks.bbb_martins.starling_categorical_response import (
     MEASUREMENT_SCALES,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
+    DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID,
     EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID,
     ENDPOINT_NORMALIZATION_VERSION,
     PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID,
@@ -85,6 +86,14 @@ def _base_dimensions(
     endpoint_method: str,
 ) -> tuple[CanonicalDimensionSpec, ...]:
     endpoint_producer_variants = {
+        "direct_bbb": (
+            CanonicalProducerSpec(
+                DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID,
+                ("bbb_permeability_label",),
+                "controlled_encoder",
+                ENDPOINT_NORMALIZATION_VERSION,
+            ),
+        ),
         "passive_permeability": (
             CanonicalProducerSpec(
                 PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID,
