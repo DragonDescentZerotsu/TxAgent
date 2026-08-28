@@ -569,14 +569,16 @@ def _decorate(
             output["assay_transfer_ineligibility_reason"] = (
                 "direct_binary_vote_not_assay_transferable"
             )
+        elif not base_pair_key:
+            output["retrieval_eligible"] = False
+            output["organization_status"] = "missing_pair_bucket"
+            output["assay_transfer_eligible"] = False
+            output["assay_transfer_ineligibility_reason"] = "missing_pair_bucket"
         elif condition_status not in TRUSTED_DIRECT_CONDITION_STATUSES:
             output["assay_transfer_eligible"] = False
             output["assay_transfer_ineligibility_reason"] = (
                 "untrusted_direct_condition_key"
             )
-        elif not base_pair_key and bool(output.get("assay_transfer_eligible")):
-            output["assay_transfer_eligible"] = False
-            output["assay_transfer_ineligibility_reason"] = "missing_pair_bucket"
         elif not bool(output.get("assay_transfer_eligible")) and not _text(
             output.get("assay_transfer_ineligibility_reason")
         ):

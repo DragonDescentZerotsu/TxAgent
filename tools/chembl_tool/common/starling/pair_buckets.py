@@ -137,6 +137,7 @@ def materialize_pair_buckets(
     source_counts: dict[str, Counter[str]] = defaultdict(Counter)
     unknown_counts: Counter[str] = Counter()
     field_counts: Counter[str] = Counter()
+    semantic_bucket_expectations: list[bool] = []
     v7 = (
         canonical_record_contract
         if canonical_record_contract is not None
@@ -256,6 +257,7 @@ def materialize_pair_buckets(
             and retrieval_eligible
             and _endpoint_is_resolved(endpoint)
         )
+        semantic_bucket_expectations.append(semantic_bucket_eligible)
         if collapsed:
             bucket_key = str(record.get("pair_bucket_key") or "") or None
         else:
@@ -406,10 +408,10 @@ def materialize_pair_buckets(
             ),
             "retrieval_eligible_semantic_records_have_exactly_one_bucket": all(
                 bool(row["pair_bucket_key"])
-                for row, record in zip(output, records, strict=True)
-                if row["source_id"] in semantic_sources
-                and not record.get("collapsed_record_id")
-                and bool(record.get("retrieval_eligible"))
+                for row, record, expected in zip(
+                    output, records, semantic_bucket_expectations, strict=True
+                )
+                if not record.get("collapsed_record_id") and expected
             ),
             "retrieval_ineligible_semantic_records_have_no_bucket": all(
                 not row["pair_bucket_key"]

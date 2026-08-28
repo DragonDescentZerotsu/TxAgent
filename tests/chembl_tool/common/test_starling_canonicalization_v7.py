@@ -429,6 +429,15 @@ def test_semantic_pair_bucket_uses_canonical_unit_without_enabling_transfer() ->
             "retrieval_eligible": False,
             "organization_status": "unresolved_mechanism_family",
         },
+        {
+            "canonical_record_id": "direct-vote-without-endpoint",
+            "source_id": "source",
+            "canonical_endpoint_name": None,
+            "canonical_unit_text": "free-text",
+            "canonicalization_status": "non_scalar_measurement",
+            "canonical_smiles": "CCCCCC",
+            "retrieval_eligible": True,
+        },
     ]
     rows, audit = materialize_pair_buckets(
         records,
@@ -441,11 +450,13 @@ def test_semantic_pair_bucket_uses_canonical_unit_without_enabling_transfer() ->
         "unresolved-scalar",
         "free-text",
         "%",
+        "free-text",
     ]
     assert all(row["pair_bucket_key"] for row in rows[:3])
     assert all(not row["assay_transfer_eligible"] for row in rows)
     assert rows[3]["pair_bucket_key"] is None
     assert rows[4]["pair_bucket_key"] is None
+    assert rows[5]["pair_bucket_key"] is None
     assert all(audit["validations"].values())
 
 

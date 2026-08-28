@@ -759,13 +759,25 @@ def test_direct_residual_absolute_axes_collapse_without_llm(tmp_path, monkeypatc
 def test_direct_pair_buckets_add_conditions_and_transfer_residuals(tmp_path):
     records = [
         _record(record_id, "direct", "CCO", "continuous", value=value)
-        for record_id, value in (("r1", 10.0), ("r2", 20.0), ("r3", 30.0), ("r4", 40.0))
+        for record_id, value in (
+            ("r1", 10.0),
+            ("r2", 20.0),
+            ("r3", 30.0),
+            ("r4", 40.0),
+            ("r5", 50.0),
+        )
     ]
     sidecar = [
         {
             "canonical_record_id": row["canonical_record_id"],
-            "pair_bucket_key": '["direct","test_endpoint","mg/L"]',
-            "canonical_pair_fields_json": '{}',
+            "pair_bucket_key": (
+                None
+                if row["canonical_record_id"] == "r5"
+                else '["direct","test_endpoint","mg/L"]'
+            ),
+            "canonical_pair_fields_json": (
+                None if row["canonical_record_id"] == "r5" else '{}'
+            ),
             "assay_transfer_eligible": True,
             "assay_transfer_ineligibility_reason": None,
         }
@@ -776,6 +788,7 @@ def test_direct_pair_buckets_add_conditions_and_transfer_residuals(tmp_path):
         "r2": ("no_reported_external_condition", "none_reported"),
         "r3": ("disease=cancer", "accepted_unselected"),
         "r4": ("disease=cancer", "proposed_rejected"),
+        "r5": ("no_reported_external_condition", "none_reported"),
     }
 
     def residual_mapping(rows):
@@ -828,6 +841,10 @@ def test_direct_pair_buckets_add_conditions_and_transfer_residuals(tmp_path):
     assert deduplicated.loc[3, "assay_transfer_eligible"] == False  # noqa: E712
     assert deduplicated.loc[3, "assay_transfer_ineligibility_reason"] == (
         "untrusted_direct_condition_key"
+    )
+    assert deduplicated.loc[4, "retrieval_eligible"] == False  # noqa: E712
+    assert deduplicated.loc[4, "assay_transfer_ineligibility_reason"] == (
+        "missing_pair_bucket"
     )
 
     build_collapsed_record_stage(
