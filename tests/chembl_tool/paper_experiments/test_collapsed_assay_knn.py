@@ -74,7 +74,13 @@ def test_stage06_filter_and_parent_median(tmp_path) -> None:
                 _stage06_row("CCO", 3.0),
                 _stage06_row("CCO", 100.0, assay_transfer_eligible=False),
                 _stage06_row("CCN", 7.0, aggregation_method="categorical_mode"),
-                _stage06_row("CCC", 9.0, retrieval_source_id="direct_vote"),
+                _stage06_row(
+                    "CCC",
+                    9.0,
+                    retrieval_source_id="direct_vote",
+                    assay_transfer_eligible=False,
+                ),
+                _stage06_row("CCO", 5.0, retrieval_source_id="direct_residual"),
             ]
         ),
         path,
@@ -83,16 +89,20 @@ def test_stage06_filter_and_parent_median(tmp_path) -> None:
     parent_key = identity.parent_inchi_key or identity.parent_smiles
     assays, stats = load_numeric_assays(path, {parent_key})
 
-    assert assays == {parent_key: {"assay": 2.0}}
-    assert stats["eligible_rows_read"] == 2
-    assert stats["parent_assay_collisions_collapsed_by_median"] == 1
+    assert assays == {parent_key: {"assay": 3.0}}
+    assert stats["eligible_rows_read"] == 3
+    assert stats["parent_assay_collisions_collapsed_by_median"] == 2
 
 
 def test_categorical_mode_one_hot_and_tie_drop(tmp_path) -> None:
     path = tmp_path / "records.parquet"
     rows = [
         _stage06_row(
-            "CCO", 0.0, aggregation_method="categorical_mode", canonical_category_id="positive"
+            "CCO",
+            0.0,
+            aggregation_method="categorical_mode",
+            canonical_category_id="positive",
+            retrieval_source_id="direct_residual",
         ),
         _stage06_row(
             "CCO", 0.0, aggregation_method="categorical_mode", canonical_category_id="positive"

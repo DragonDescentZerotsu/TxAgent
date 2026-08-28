@@ -19,13 +19,22 @@ import pyarrow.parquet as pq
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 
 
-DEDUPLICATION_VERSION = "starling_record_deduplication.v2"
+DEDUPLICATION_VERSION = "starling_record_deduplication.v3"
 RECORDS_FILENAME = "records.parquet"
 PAIR_BUCKET_RECORDS_FILENAME = "pair_bucket_records.parquet"
 DIRECT_MAPPING_FILENAME = "direct_record_mapping.parquet"
 DUPLICATES_FILENAME = "duplicates.parquet"
 MANIFEST_FILENAME = "manifest.json"
 DIRECT_RETRIEVAL_SOURCES = frozenset({"direct_vote", "direct_residual"})
+TRUSTED_DIRECT_CONDITION_STATUSES = frozenset(
+    {"selected_reviewed", "accepted_unselected", "none_reported"}
+)
+_PAIR_BUCKET_FIELD_TYPES = {
+    "pair_bucket_key": pa.string(),
+    "canonical_pair_fields_json": pa.string(),
+    "assay_transfer_eligible": pa.bool_(),
+    "assay_transfer_ineligibility_reason": pa.string(),
+}
 SUPPORT_JACCARD_MINIMUM = 0.80
 _TOKEN = re.compile(r"[a-z0-9]+")
 _CONTEXT_FIELDS = (
@@ -163,6 +172,7 @@ def build_deduplicated_record_stage(
             "direct_partitions_kept_separate": True,
             "conflicting_direct_labels_merge": False,
             "direct_mapping_grain": "normalized_row_with_physical_vote_unit_id",
+            "direct_pair_bucket": "stage04_pair_bucket_plus_reviewed_condition_group",
         },
         "inputs": {
             "records": {"path": str(source_path), "sha256": file_sha256(source_path)},
@@ -390,7 +400,11 @@ def _write_retained_records(
     record_writer = sidecar_writer = None
     retained = 0
     record_schema = _retained_record_schema(records_path, sidecar_path)
-    sidecar_schema = pq.read_schema(sidecar_path)
+    sidecar_fields = {field.name: field for field in pq.read_schema(sidecar_path)}
+    for name, data_type in _PAIR_BUCKET_FIELD_TYPES.items():
+        if name not in sidecar_fields or pa.types.is_null(sidecar_fields[name].type):
+            sidecar_fields[name] = pa.field(name, data_type)
+    sidecar_schema = pa.schema(sidecar_fields.values())
     try:
         for records, sidecars in _aligned_batches(records_path, sidecar_path):
             mappings = direct_mapping_builder(records) if direct_mapping_builder else []
@@ -411,8 +425,22 @@ def _write_retained_records(
                 record_id = str(record["canonical_record_id"])
                 if record_id not in retained_ids:
                     continue
-                kept_records.append(_decorate(record, sidecar, mapping_by_id.get(record_id)))
-                kept_sidecars.append(sidecar)
+                decorated = _decorate(record, sidecar, mapping_by_id.get(record_id))
+                kept_records.append(decorated)
+                kept_sidecars.append(
+                    {
+                        **sidecar,
+                        **{
+                            field: decorated.get(field)
+                            for field in (
+                                "pair_bucket_key",
+                                "canonical_pair_fields_json",
+                                "assay_transfer_eligible",
+                                "assay_transfer_ineligibility_reason",
+                            )
+                        },
+                    }
+                )
             if not kept_records:
                 continue
             record_table = pa.Table.from_pylist(kept_records, schema=record_schema)
@@ -443,6 +471,7 @@ def _retained_record_schema(records_path: Path, sidecar_path: Path) -> pa.Schema
         if field.name != "canonical_record_id":
             fields.setdefault(field.name, field)
     appended = {
+        **_PAIR_BUCKET_FIELD_TYPES,
         "retrieval_source_id": pa.string(),
         "direct_vote_label": pa.int64(),
         "direct_vote_unit_id": pa.string(),
@@ -454,7 +483,8 @@ def _retained_record_schema(records_path: Path, sidecar_path: Path) -> pa.Schema
         "direct_residual_endpoint_name": pa.string(),
     }
     for name, data_type in appended.items():
-        fields.setdefault(name, pa.field(name, data_type))
+        if name not in fields or pa.types.is_null(fields[name].type):
+            fields[name] = pa.field(name, data_type)
     return pa.schema(fields.values())
 
 
@@ -490,22 +520,69 @@ def _decorate(
     if mapping is None:
         output["retrieval_source_id"] = "indirect"
     else:
+        condition_group = str(mapping["condition_group"])
+        condition_status = str(mapping["condition_key_status"])
+        condition_identity = (
+            condition_group
+            if condition_status in TRUSTED_DIRECT_CONDITION_STATUSES
+            else f"untrusted:{record['canonical_record_id']}"
+        )
         output.update(
             {
                 "retrieval_source_id": mapping["retrieval_source_id"],
                 "direct_vote_label": mapping.get("direct_vote_label"),
                 "direct_vote_unit_id": mapping.get("direct_vote_unit_id")
                 or f"{record.get('source_id')}:row:{int(record.get('source_row_number') or 0)}",
-                "condition_group": mapping["condition_group"],
+                "condition_group": condition_group,
                 "condition_atoms": mapping["condition_atoms"],
                 "condition_scope": mapping["condition_scope"],
-                "condition_key_status": mapping["condition_key_status"],
+                "condition_key_status": condition_status,
                 "direct_group_id": mapping.get("direct_group_id"),
                 "direct_residual_endpoint_name": mapping.get(
                     "direct_residual_endpoint_name"
                 ),
             }
         )
+        base_pair_key = _text(output.get("pair_bucket_key"))
+        if base_pair_key:
+            try:
+                base_identity = json.loads(base_pair_key)
+            except json.JSONDecodeError:
+                base_identity = base_pair_key
+            try:
+                pair_fields = json.loads(
+                    str(output.get("canonical_pair_fields_json") or "{}")
+                )
+            except json.JSONDecodeError as error:
+                raise ValueError("direct pair-bucket fields are not valid JSON") from error
+            if not isinstance(pair_fields, dict):
+                raise ValueError("direct pair-bucket fields must be a JSON object")
+            pair_fields["canonical_direct_condition_group"] = condition_group
+            output["pair_bucket_key"] = _json_dump(
+                [*base_identity, condition_identity]
+                if isinstance(base_identity, list)
+                else [base_identity, condition_identity]
+            )
+            output["canonical_pair_fields_json"] = _json_dump(pair_fields)
+        if mapping["retrieval_source_id"] == "direct_vote":
+            output["assay_transfer_eligible"] = False
+            output["assay_transfer_ineligibility_reason"] = (
+                "direct_binary_vote_not_assay_transferable"
+            )
+        elif condition_status not in TRUSTED_DIRECT_CONDITION_STATUSES:
+            output["assay_transfer_eligible"] = False
+            output["assay_transfer_ineligibility_reason"] = (
+                "untrusted_direct_condition_key"
+            )
+        elif not base_pair_key and bool(output.get("assay_transfer_eligible")):
+            output["assay_transfer_eligible"] = False
+            output["assay_transfer_ineligibility_reason"] = "missing_pair_bucket"
+        elif not bool(output.get("assay_transfer_eligible")) and not _text(
+            output.get("assay_transfer_ineligibility_reason")
+        ):
+            output["assay_transfer_ineligibility_reason"] = (
+                "ineligible_source_pair_bucket"
+            )
     return output
 
 

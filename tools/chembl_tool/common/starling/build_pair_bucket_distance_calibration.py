@@ -1,7 +1,8 @@
 """Build v7 pair-bucket SD and empirical-CDF geometry without transfer targets.
 
-Stage 04 is the sole authority for bucket membership and measurement kind.
-This module only validates whether the observed bucket can support a distance
+Stage 04 defines source-specific bucket membership and measurement kind. Stage
+05 may refine direct-residual membership with its reviewed condition key. This
+module only validates whether the resulting bucket can support a distance
 scale, audits residual heterogeneity in untouched source fields, and stores a
 first-class sample SD, an exact value CDF for valid continuous buckets, and an
 exact category-rank CDF for valid ordinal buckets. It never emits a pair label,
@@ -47,8 +48,9 @@ from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
 
 
 CALIBRATION_FILENAME = "pair_bucket_distance_calibration.json.gz"
-CALIBRATION_VERSION = "pair_bucket_distance_calibration.v4"
-PREVIOUS_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v3"
+CALIBRATION_VERSION = "pair_bucket_distance_calibration.v5"
+PREVIOUS_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v4"
+V3_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v3"
 V2_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v2"
 LEGACY_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v1"
 VALUE_CDF_VERSION = "empirical_value_cdf.v1"
@@ -137,8 +139,7 @@ def build_pair_bucket_distance_calibration(
         raise ValueError("finalized canonical_record_id values must be unique")
     if collapsed:
         rows = records[
-            (records["retrieval_source_id"] == "indirect")
-            & records["assay_transfer_eligible"].astype(bool)
+            records["assay_transfer_eligible"].astype(bool)
             & records["pair_bucket_key"].notna()
         ].copy()
         if rows.duplicated(["pair_bucket_key", "canonical_smiles"]).any():
@@ -201,7 +202,11 @@ def build_pair_bucket_distance_calibration(
         "record_contract_version": record_contract.version,
         "pair_bucket_version": spec.pair_bucket_version,
         "semantics": {
-            "pair_bucket_membership_authority": "04_pair_buckets",
+            "pair_bucket_membership_authority": (
+                "stage04_source_bucket_with_stage05_direct_condition_refinement"
+                if collapsed
+                else "04_pair_buckets"
+            ),
             "calibration_changes_membership": False,
             "pair_labels_emitted": False,
             "transfer_cutoff_emitted": False,
@@ -934,6 +939,7 @@ def validate_pair_bucket_distance_calibration(
     if version not in {
         LEGACY_CALIBRATION_VERSION,
         V2_CALIBRATION_VERSION,
+        V3_CALIBRATION_VERSION,
         PREVIOUS_CALIBRATION_VERSION,
         CALIBRATION_VERSION,
     }:
@@ -977,7 +983,11 @@ def validate_pair_bucket_distance_calibration(
                 str(key),
                 entry,
                 require_bucket_eligibility=version
-                in {PREVIOUS_CALIBRATION_VERSION, CALIBRATION_VERSION},
+                in {
+                    V3_CALIBRATION_VERSION,
+                    PREVIOUS_CALIBRATION_VERSION,
+                    CALIBRATION_VERSION,
+                },
             )
             _validate_value_cdf_entry(str(key), entry)
             _validate_category_cdf_entry(

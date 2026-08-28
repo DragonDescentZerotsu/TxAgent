@@ -13,6 +13,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_sidec
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
+    BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
@@ -169,6 +170,42 @@ def test_v7_oral_exposure_requires_the_canonical_exact_dose_key():
     assert "canonical_oral_dose_key" in spec.canonical_dimensions
     assert spec.required_known_dimensions == ("canonical_oral_dose_key",)
     assert "oral_dose" not in spec.variance_candidates
+
+
+def test_v7_hf_semantic_rows_keep_a_nontransferable_pair_bucket(tmp_path):
+    records = [
+        {
+            "canonical_record_id": f"record-{number}",
+            "source_id": "hf_bioavailability",
+            "canonical_endpoint_name": "oral_bioavailability",
+            "canonical_unit_text": "free-text",
+            "canonicalization_status": status,
+            "retrieval_eligible": True,
+            "canonical_smiles": "CCO",
+            "canonical_bioavailability_report_type": "relative_comparison",
+            "canonical_bioavailability_evidence_scope": "nondirect",
+        }
+        for number, status in enumerate(
+            ("exact_measurement_excluded", "non_scalar_measurement"), start=1
+        )
+    ]
+    records_path = tmp_path / "records.parquet"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+
+    metadata = build_sidecar(records_path=records_path, out_dir=tmp_path / "pairs")
+    sidecar = pd.read_parquet(tmp_path / "pairs/pair_bucket_records.parquet")
+
+    assert metadata["contract_version"] == BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION
+    assert metadata["semantic_pair_bucket_sources"] == [
+        "fa",
+        "fg",
+        "fh",
+        "hf_bioavailability",
+        "oral_exposure",
+    ]
+    assert sidecar["pair_bucket_key"].nunique() == 1
+    assert sidecar["pair_bucket_key"].notna().all()
+    assert not sidecar["assay_transfer_eligible"].any()
 
 
 @pytest.mark.parametrize(

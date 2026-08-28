@@ -16,6 +16,7 @@ from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration im
     _score_categorical_candidate,
     _select_categorical_variance_candidate,
     _value_cdf,
+    build_pair_bucket_distance_calibration,
     calibration_standard_deviation,
     category_cdf_percentile,
     category_cdf_separation,
@@ -168,6 +169,80 @@ def test_postcollapse_calibration_uses_twenty_molecules_and_no_variance_probe() 
     assert entry["calibration_valid"] is True
     assert entry["residual_heterogeneity_gate"]["evaluated"] is False
     assert entry["residual_heterogeneity_gate"]["candidate_column"] == "__none__"
+
+
+def test_postcollapse_calibration_includes_eligible_direct_residuals(tmp_path) -> None:
+    bucket = json.dumps(
+        [
+            "direct_bbb",
+            "brain_uptake",
+            "mg/L",
+            "encoder",
+            "context",
+            "species",
+            "no_reported_external_condition",
+        ]
+    )
+    records = pd.DataFrame(
+        {
+            "canonical_record_id": [f"record-{index:03d}" for index in range(20)],
+            "collapsed_record_id": [f"collapsed-{index:03d}" for index in range(20)],
+            "canonical_smiles": ["C" * (index + 1) for index in range(20)],
+            "retrieval_source_id": "direct_residual",
+            "pair_bucket_key": bucket,
+            "assay_transfer_eligible": True,
+            "source_id": "direct_bbb",
+            "finite_scalar_value": [float(index + 1) for index in range(20)],
+            "measurement_kind": "continuous",
+            "canonical_measurement_scale_id": None,
+            "canonical_category_id": None,
+            "canonical_category_rank": None,
+        }
+    )
+    records_path = tmp_path / "records.parquet"
+    sidecar_path = tmp_path / "pair_bucket_records.parquet"
+    metadata_path = tmp_path / "pair_bucket_metadata.json"
+    auxiliary_path = tmp_path / "auxiliary_manifest.json"
+    records.to_parquet(records_path, index=False)
+    records[["canonical_record_id", "pair_bucket_key"]].to_parquet(
+        sidecar_path, index=False
+    )
+    metadata_path.write_text(
+        json.dumps(
+            {
+                "contract_version": BUILD_SPEC.pair_bucket_version,
+                "source_required_fields": {
+                    source: list(fields)
+                    for source, fields in BUILD_SPEC.source_pair_fields.items()
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    auxiliary_path.write_text(
+        json.dumps(
+            {
+                "mapping_version": BUILD_SPEC.auxiliary_mapping_version,
+                "attachment_version": BUILD_SPEC.auxiliary_attachment_version,
+                "output_fields": list(BUILD_SPEC.required_auxiliary_output_fields),
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    payload = build_pair_bucket_distance_calibration(
+        spec=BUILD_SPEC,
+        record_contract=BBB_RECORD_CONTRACT,
+        records_path=records_path,
+        pair_bucket_records_path=sidecar_path,
+        pair_bucket_metadata_path=metadata_path,
+        auxiliary_manifest_path=auxiliary_path,
+        out_dir=tmp_path / "calibration",
+        workers=1,
+    )
+
+    assert list(payload["buckets"]) == [bucket]
+    assert payload["buckets"][bucket]["calibration_valid"] is True
 
 
 def _continuous_entry(values: list[float], *, key: str = "continuous") -> dict:

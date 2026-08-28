@@ -126,8 +126,7 @@ def load_categorical_assays(
     if missing:
         raise ValueError(f"{path} lacks required columns: {sorted(missing)}")
     predicate = (
-        (ds.field("retrieval_source_id") == "indirect")
-        & (ds.field("aggregation_method") == "categorical_mode")
+        (ds.field("aggregation_method") == "categorical_mode")
         & (ds.field("aggregation_status") == "valid")
         & (ds.field("assay_transfer_eligible") == True)  # noqa: E712
         & ds.field("pair_bucket_key").is_valid()

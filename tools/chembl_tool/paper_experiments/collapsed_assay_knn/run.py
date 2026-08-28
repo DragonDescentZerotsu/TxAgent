@@ -72,7 +72,7 @@ TASKS = {
 REQUIRED_STAGE06_VALIDATIONS = (
     "configured_group_ids_preserved",
     "direct_and_indirect_grouping_are_disjoint",
-    "direct_records_are_not_assay_transferable",
+    "transfer_eligibility_matches_measurement_contract",
     "one_output_per_molecule_context",
     "pending_semantic_records_are_not_retrieval_eligible",
 )
@@ -122,8 +122,7 @@ def load_numeric_assays(
     if missing:
         raise ValueError(f"{path} lacks required columns: {sorted(missing)}")
     predicate = (
-        (ds.field("retrieval_source_id") == "indirect")
-        & (ds.field("aggregation_method") == "continuous_median")
+        (ds.field("aggregation_method") == "continuous_median")
         & (ds.field("aggregation_status") == "valid")
         & (ds.field("assay_transfer_eligible") == True)  # noqa: E712
         & ds.field("pair_bucket_key").is_valid()
@@ -627,7 +626,7 @@ def run(output_dir: Path, tasks: list[str], k_values: tuple[int, ...]) -> None:
             "selection_policy": "report_only_no_promotion",
             "feature_contract": {
                 "source": "canonical_stage06_collapsed_records",
-                "partition": "indirect",
+                "partition": "assay_transfer_eligible",
                 "measurement": "valid_assay_transfer_eligible_continuous_median",
                 "feature_key": "pair_bucket_key",
                 "value": "train_standardized_finite_scalar_value_zero_when_missing",

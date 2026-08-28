@@ -179,17 +179,19 @@ Stage 05 is the only row-deduplication boundary. It removes exact within-source 
 duplicates and conservatively supported cross-source duplicates while retaining complete
 retained/discarded lineage. Direct votes and direct residual rows remain separate, conflicting
 direct labels never merge, and `direct_record_mapping.parquet` retains every normalized row and
-physical vote-unit ID.
+physical vote-unit ID. Every mapped direct-source row extends its source-specific Stage-04 pair
+bucket with the reviewed condition group. Unresolved or rejected condition proposals remain
+auditable singleton contexts and are not assay-transfer candidates.
 
 Stage 06 is the canonical molecule-by-context record boundary. Indirect evidence collapses by
 `(pair_bucket_key, canonical_smiles)`. Physical direct-label sources are first mapped to `direct_vote` or
-`direct_residual`; both collapse by the task's reviewed condition key rather than by pair bucket, and neither
-is assay-transfer-eligible. The Stage-05 direct mapping audit retains whether each normalized row counted in
+`direct_residual`. Direct votes collapse by the task's reviewed condition key and are never assay-transfer
+eligible. Absolute continuous and controlled categorical direct residuals collapse by their conditioned
+`(pair_bucket_key, canonical_smiles)` and follow the same assay-transfer rules as indirect assays. The Stage-05 direct mapping audit retains whether each normalized row counted in
 the vote, why it was ignored, and its condition-key status, but this bookkeeping is not exposed to the reasoning LLM.
 The collapse uses the median for axis-compatible absolute continuous values and mode with full counts and null on ties for
-axis-compatible controlled categorical values. Direct residuals are split before aggregation: absolute continuous rows use
-the canonical endpoint/unit axis plus the reviewed condition key, while categorical rows use the controlled scale plus that
-condition key. Incompatible deterministic axes therefore become separate collapsed records and never use LLM synthesis.
+axis-compatible controlled categorical values. Incompatible deterministic axes occupy different pair buckets and never use
+LLM synthesis.
 A singleton semantic group uses its exact support text as the canonical collapsed value; multi-record relative, free-text,
 and other genuinely semantic groups use resumable LLM synthesis. A
 separate batched classifier assigns direct-label informativeness after collapse: semantic evidence has one
@@ -204,7 +206,8 @@ Unconditioned direct votes require 70% agreement and reviewed external-condition
 lower agreement become `direct_residual` conflict evidence rather than disappearing. One physical source row
 counts once even when Stage 02 expanded it into multiple normalized measurement children.
 
-Stage 07 validates and calibrates the indirect transferable buckets observed after Stage 06; it never creates
+Stage 07 validates and calibrates every transferable bucket observed after Stage 06 regardless of retrieval-source
+provenance; it never creates
 child buckets or changes membership. Every bucket needs at least 20 unique collapsed molecule records. Binary
 buckets must observe both declared levels;
 ordinal buckets must observe at least three declared levels; every observed categorical level needs at least

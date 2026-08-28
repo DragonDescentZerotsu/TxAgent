@@ -48,11 +48,14 @@ from tools.chembl_tool.common.starling.semantic_record_aggregation import (
 )
 
 
-COLLAPSE_VERSION = "starling_record_collapse.v10"
+COLLAPSE_VERSION = "starling_record_collapse.v11"
 RECORDS_FILENAME = "records.parquet"
 SEMANTIC_FILENAME = "semantic_aggregation.jsonl"
 MANIFEST_FILENAME = "manifest.json"
 DIRECT_RETRIEVAL_SOURCES = frozenset({"direct_vote", "direct_residual"})
+TRANSFERABLE_AGGREGATION_METHODS = frozenset(
+    {"continuous_median", "categorical_mode"}
+)
 UNCONDITIONED_AGREEMENT_THRESHOLD = 0.70
 CONDITIONED_AGREEMENT_THRESHOLD = 0.60
 _BASE_COLUMNS = {
@@ -208,22 +211,15 @@ def build_collapsed_record_stage(
             "direct_vote": ["canonical_smiles", "condition_group"],
             "direct_residual_absolute_continuous": [
                 "canonical_smiles",
-                "condition_group",
-                "condition_key_status",
-                "canonical_endpoint_name",
-                "canonical_unit_text",
-                "canonical_measurement_scale_id",
+                "pair_bucket_key",
             ],
             "direct_residual_controlled_categorical": [
                 "canonical_smiles",
-                "condition_group",
-                "condition_key_status",
-                "canonical_measurement_scale_id",
+                "pair_bucket_key",
             ],
             "direct_residual_semantic": [
                 "canonical_smiles",
-                "condition_group",
-                "condition_key_status",
+                "pair_bucket_key",
             ],
             "indirect": ["canonical_smiles", "pair_bucket_key"],
         },
@@ -316,8 +312,8 @@ def build_collapsed_record_stage(
                 "configured_group_ids_preserved"
             ],
             "representative_context_discarded": True,
-            "direct_records_are_not_assay_transferable": output_stats[
-                "direct_records_are_not_assay_transferable"
+            "transfer_eligibility_matches_measurement_contract": output_stats[
+                "transfer_eligibility_matches_measurement_contract"
             ],
             "deterministic_direct_residuals_never_use_semantic_aggregation": (
                 output_stats[
@@ -583,7 +579,7 @@ def _write_collapsed_outputs(
     informativeness_counts: Counter[str] = Counter()
     source_records_represented = 0
     collapsed_ids: set[str] = set()
-    direct_transfer_valid = True
+    transfer_contract_valid = True
     deterministic_residual_routing_valid = True
     configured_groups_preserved = True
     pending_retrieval_valid = True
@@ -670,8 +666,11 @@ def _write_collapsed_outputs(
                     str(collapsed["direct_label_informativeness"])
                 ] += 1
             source_records_represented += int(collapsed["source_record_count"])
-            if collapsed["retrieval_source_id"] in DIRECT_RETRIEVAL_SOURCES:
-                direct_transfer_valid &= not bool(collapsed["assay_transfer_eligible"])
+            if bool(collapsed["assay_transfer_eligible"]):
+                transfer_contract_valid &= bool(collapsed.get("pair_bucket_key"))
+                transfer_contract_valid &= method in TRANSFERABLE_AGGREGATION_METHODS
+                transfer_contract_valid &= collapsed["aggregation_status"] == "valid"
+                transfer_contract_valid &= collapsed["retrieval_source_id"] != "direct_vote"
             configured_groups_preserved &= not str(collapsed["group_id"]).startswith(
                 ("direct_vote.", "direct_residual.")
             )
@@ -733,7 +732,7 @@ def _write_collapsed_outputs(
         "source_records_represented": source_records_represented,
         "semantic_token_usage": dict(sorted(semantic_usage.items())),
         "semantic_models": dict(sorted(semantic_models.items())),
-        "direct_records_are_not_assay_transferable": direct_transfer_valid,
+        "transfer_eligibility_matches_measurement_contract": transfer_contract_valid,
         "deterministic_direct_residuals_never_use_semantic_aggregation": (
             deterministic_residual_routing_valid
         ),
@@ -897,13 +896,18 @@ def _collapse_group_key(record: Mapping[str, Any]) -> str:
     if source == "direct_vote":
         identity = [source, smiles, str(record["condition_group"])]
     elif source == "direct_residual":
-        identity = [
-            source,
-            smiles,
-            str(record["condition_group"]),
-            str(record["condition_key_status"]),
-            *_direct_residual_axis(record),
-        ]
+        pair_bucket = _text(record.get("pair_bucket_key"))
+        identity = (
+            [source, smiles, pair_bucket]
+            if pair_bucket
+            else [
+                source,
+                smiles,
+                str(record["condition_group"]),
+                str(record["condition_key_status"]),
+                *_direct_residual_axis(record),
+            ]
+        )
     else:
         identity = [source, smiles, str(record["pair_bucket_key"])]
     return hashlib.sha256("\0".join(identity).encode()).hexdigest()
@@ -1010,7 +1014,11 @@ def _aggregate_group(
         raise ValueError(f"collapse group spans configured group IDs: {group_key}")
     group_id = next(iter(group_ids))
     smiles = _one_value(group, "canonical_smiles", group_key)
-    pair_context = _pair_context(group[0]) if retrieval_source == "indirect" else {}
+    pair_context = (
+        _pair_context(group[0])
+        if retrieval_source != "direct_vote" and _text(group[0].get("pair_bucket_key"))
+        else {}
+    )
     if retrieval_source == "direct_vote":
         collapsed_endpoint = group_id
     elif retrieval_source == "direct_residual":
@@ -1049,12 +1057,14 @@ def _aggregate_group(
             ),
             "pair_bucket_key": (
                 _one_value(group, "pair_bucket_key", group_key)
-                if retrieval_source == "indirect"
+                if retrieval_source != "direct_vote"
+                and _text(group[0].get("pair_bucket_key"))
                 else None
             ),
             "canonical_pair_fields_json": (
                 _common_value(group, "canonical_pair_fields_json")
-                if retrieval_source == "indirect"
+                if retrieval_source != "direct_vote"
+                and _text(group[0].get("pair_bucket_key"))
                 else None
             ),
         }
@@ -1204,7 +1214,10 @@ def _aggregate_group(
         }
     )
     transfer_eligible = bool(
-        retrieval_source == "indirect"
+        method in TRANSFERABLE_AGGREGATION_METHODS
+        and status == "valid"
+        and retrieval_source != "direct_vote"
+        and _text(output.get("pair_bucket_key"))
         and all(bool(row.get("assay_transfer_eligible")) for row in group)
     )
     vote_units = {
@@ -1244,11 +1257,17 @@ def _aggregate_group(
                 if status == "pending_semantic_aggregation"
                 else None
                 if transfer_eligible
+                else "conflicting_collapsed_measurement"
+                if status != "valid"
+                else "direct_binary_vote_not_assay_transferable"
+                if method == "direct_binary_vote"
+                else "non_deterministic_measurement"
+                if method not in TRANSFERABLE_AGGREGATION_METHODS
                 else transfer_reasons[0]
-                if retrieval_source == "indirect" and len(transfer_reasons) == 1
+                if len(transfer_reasons) == 1
                 else "mixed_or_ineligible_source_records"
-                if retrieval_source == "indirect"
-                else "direct_or_contextual_outcome_not_assay_transferable"
+                if transfer_reasons
+                else "missing_pair_bucket"
             ),
         }
     )

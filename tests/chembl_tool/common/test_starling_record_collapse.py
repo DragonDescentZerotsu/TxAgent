@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from tools.chembl_tool.common.starling.record_collapse import (
+    _aggregate_group,
     _aggregation_method,
     _collapse_group_key,
     _semantic_payload,
@@ -755,11 +756,114 @@ def test_direct_residual_absolute_axes_collapse_without_llm(tmp_path, monkeypatc
     assert percent_uptake["is_absolute_and_continuous"] == True  # noqa: E712
 
 
-def test_direct_residual_categorical_key_uses_reviewed_scale():
+def test_direct_pair_buckets_add_conditions_and_transfer_residuals(tmp_path):
+    records = [
+        _record(record_id, "direct", "CCO", "continuous", value=value)
+        for record_id, value in (("r1", 10.0), ("r2", 20.0), ("r3", 30.0), ("r4", 40.0))
+    ]
+    sidecar = [
+        {
+            "canonical_record_id": row["canonical_record_id"],
+            "pair_bucket_key": '["direct","test_endpoint","mg/L"]',
+            "canonical_pair_fields_json": '{}',
+            "assay_transfer_eligible": True,
+            "assay_transfer_ineligibility_reason": None,
+        }
+        for row in records
+    ]
+    condition_by_id = {
+        "r1": ("no_reported_external_condition", "none_reported"),
+        "r2": ("no_reported_external_condition", "none_reported"),
+        "r3": ("disease=cancer", "accepted_unselected"),
+        "r4": ("disease=cancer", "proposed_rejected"),
+    }
+
+    def residual_mapping(rows):
+        return [
+            {
+                "canonical_record_id": row["canonical_record_id"],
+                "source_id": row["source_id"],
+                "source_record_id": row["source_record_id"],
+                "direct_vote_status": "ignored",
+                "direct_vote_reason": "test",
+                "direct_vote_label": None,
+                "direct_vote_unit_id": f"direct:{row['source_row_number']}",
+                "condition_group": condition_by_id[row["canonical_record_id"]][0],
+                "condition_atoms": [],
+                "condition_scope": "external",
+                "condition_key_status": condition_by_id[row["canonical_record_id"]][1],
+                "retrieval_source_id": "direct_residual",
+                "direct_group_id": "Observed.direct",
+                "dedup_status": "pending",
+            }
+            for row in rows
+        ]
+
+    records_path = tmp_path / "records.parquet"
+    sidecar_path = tmp_path / "pair_bucket_records.parquet"
+    metadata_path = tmp_path / "pair_bucket_metadata.json"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+    pd.DataFrame(sidecar).to_parquet(sidecar_path, index=False)
+    metadata_path.write_text("{}\n", encoding="utf-8")
+    build_deduplicated_record_stage(
+        task_id="test_task",
+        records_path=records_path,
+        pair_bucket_records_path=sidecar_path,
+        out_dir=tmp_path / "deduplicated",
+        direct_mapping_builder=residual_mapping,
+    )
+
+    deduplicated = pd.read_parquet(tmp_path / "deduplicated/records.parquet")
+    deduplicated_sidecar = pd.read_parquet(
+        tmp_path / "deduplicated/pair_bucket_records.parquet"
+    )
+    assert deduplicated["pair_bucket_key"].tolist() == deduplicated_sidecar[
+        "pair_bucket_key"
+    ].tolist()
+    assert deduplicated.loc[0, "pair_bucket_key"] == deduplicated.loc[1, "pair_bucket_key"]
+    assert deduplicated.loc[2, "pair_bucket_key"] != deduplicated.loc[3, "pair_bucket_key"]
+    assert json.loads(deduplicated.loc[2, "canonical_pair_fields_json"])[
+        "canonical_direct_condition_group"
+    ] == "disease=cancer"
+    assert deduplicated.loc[3, "assay_transfer_eligible"] == False  # noqa: E712
+    assert deduplicated.loc[3, "assay_transfer_ineligibility_reason"] == (
+        "untrusted_direct_condition_key"
+    )
+
+    build_collapsed_record_stage(
+        task_id="test_task",
+        records_path=tmp_path / "deduplicated/records.parquet",
+        pair_bucket_records_path=tmp_path / "deduplicated/pair_bucket_records.parquet",
+        pair_bucket_metadata_path=metadata_path,
+        out_dir=tmp_path / "collapsed",
+        duplicate_lineage_path=tmp_path / "deduplicated/duplicates.parquet",
+    )
+    collapsed = pd.read_parquet(tmp_path / "collapsed/records.parquet")
+    shared = collapsed[collapsed["source_record_count"] == 2].iloc[0]
+    assert shared["finite_scalar_value"] == 15.0
+    assert shared["assay_transfer_eligible"] == True  # noqa: E712
+    assert shared["retrieval_source_id"] == "direct_residual"
+    singleton_eligibility = dict(
+        collapsed[collapsed["source_record_count"] == 1][
+            ["finite_scalar_value", "assay_transfer_eligible"]
+        ].itertuples(index=False, name=None)
+    )
+    assert singleton_eligibility == {30.0: True, 40.0: False}
+
+
+def test_direct_residual_categorical_key_uses_pair_bucket_and_transfers():
     condition = {
         "retrieval_source_id": "direct_residual",
         "condition_group": "no_reported_external_condition",
         "condition_key_status": "none_reported",
+        "condition_atoms": [],
+        "condition_scope": "none_reported",
+        "group_id": "Observed.direct",
+        "direct_group_id": "Observed.direct",
+        "pair_bucket_key": "categorical-bucket",
+        "canonical_pair_fields_json": "{}",
+        "assay_transfer_eligible": True,
+        "assay_transfer_ineligibility_reason": None,
     }
     first = {
         **_record("r1", "source_a", "CCO", "binary", category="positive"),
@@ -770,7 +874,7 @@ def test_direct_residual_categorical_key_uses_reviewed_scale():
     same_scale = {
         **_record("r2", "source_b", "CCO", "binary", category="positive"),
         **condition,
-        "canonical_endpoint_name": "assay_b",
+        "canonical_endpoint_name": "assay_a",
         "canonical_measurement_scale_id": "binary_scale",
     }
     different_scale = {
@@ -778,11 +882,24 @@ def test_direct_residual_categorical_key_uses_reviewed_scale():
         **condition,
         "canonical_endpoint_name": "assay_a",
         "canonical_measurement_scale_id": "different_binary_scale",
+        "pair_bucket_key": "different-categorical-bucket",
     }
 
     assert _collapse_group_key(first) == _collapse_group_key(same_scale)
     assert _collapse_group_key(first) != _collapse_group_key(different_scale)
     assert _aggregation_method([first, same_scale]) == "categorical_mode"
+    collapsed = _aggregate_group(
+        "test_task",
+        _collapse_group_key(first),
+        [first, same_scale],
+        method="categorical_mode",
+        semantic=None,
+        dedup_lineage={},
+        preserved_columns=(),
+    )
+    assert collapsed["canonical_category_id"] == "positive"
+    assert collapsed["pair_bucket_key"] == "categorical-bucket"
+    assert collapsed["assay_transfer_eligible"] is True
 
 
 def test_multi_record_relative_direct_residual_stays_semantic():
