@@ -407,7 +407,9 @@ def _build_calibration_entry(
     record_contract: StarlingRecordContract,
     minimum_samples: int,
 ) -> dict[str, Any]:
-    source_id = _one(group["source_id"], key, "source_id")
+    source_id = _calibration_source_id(
+        group["source_id"], key=key, record_contract=record_contract
+    )
     kind = _one(group["measurement_kind"], key, "measurement_kind")
     scale_values = _unique_text(group["canonical_measurement_scale_id"])
     if len(scale_values) > 1:
@@ -1195,6 +1197,29 @@ def _one(values: pd.Series, key: str, field: str) -> str:
     if len(unique) != 1:
         raise ValueError(f"pair bucket {key!r} spans {field}: {unique}")
     return unique[0]
+
+
+def _calibration_source_id(
+    values: pd.Series,
+    *,
+    key: str,
+    record_contract: StarlingRecordContract,
+) -> str:
+    """Resolve the scientific source while preserving multi-source lineage."""
+    observed = _unique_text(values)
+    if len(observed) == 1 and observed[0] != "multi_source":
+        return observed[0]
+    try:
+        bucket_source = str(json.loads(key)[0])
+    except (IndexError, TypeError, ValueError, json.JSONDecodeError) as error:
+        raise ValueError(
+            f"pair bucket {key!r} spans source_id: {observed}"
+        ) from error
+    if bucket_source not in record_contract.sources or any(
+        source not in {bucket_source, "multi_source"} for source in observed
+    ):
+        raise ValueError(f"pair bucket {key!r} spans source_id: {observed}")
+    return bucket_source
 
 
 def _unique_text(values: pd.Series) -> list[str]:

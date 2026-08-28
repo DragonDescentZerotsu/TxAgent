@@ -269,6 +269,46 @@ def _continuous_entry(values: list[float], *, key: str = "continuous") -> dict:
     )[key]
 
 
+def test_multi_source_lineage_uses_pair_bucket_scientific_source():
+    key = json.dumps(
+        [
+            "direct_bbb",
+            "permeability",
+            "cm/s",
+            "encoder",
+            "context",
+            "species",
+            "no_reported_external_condition",
+        ],
+        separators=(",", ":"),
+    )
+    frame = pd.DataFrame(
+        {
+            "pair_bucket_key": key,
+            "source_id": ["direct_bbb"] * 24 + ["multi_source"],
+            "measurement_kind": "continuous",
+            "canonical_measurement_scale_id": None,
+            "canonical_category_id": None,
+            "canonical_category_rank": None,
+            "finite_scalar_value": [float(index + 1) for index in range(25)],
+            "canonical_record_id": [f"record-{index:03d}" for index in range(25)],
+            "bbb_transport_label": None,
+            "qualifying_conditions": None,
+        }
+    )
+
+    entry = _build_calibration_entries(
+        frame,
+        spec=BUILD_SPEC,
+        record_contract=BBB_RECORD_CONTRACT,
+        minimum_samples=25,
+        workers=1,
+    )[key]
+
+    assert entry["source_id"] == "direct_bbb"
+    assert entry["calibration_valid"] is True
+
+
 def _ordinal_entry(*, key: str = "ordinal") -> dict:
     category_ids = ["grade_0"] * 5 + ["grade_1"] * 10 + ["grade_2"] * 10
     ranks = [0] * 5 + [1] * 10 + [2] * 10
