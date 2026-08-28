@@ -1812,6 +1812,11 @@ def parse_args(
             "pending shells and make no semantic LLM calls"
         ),
     )
+    parser.add_argument(
+        "--collapsed-informativeness-dir",
+        type=Path,
+        help="complete collapsed-informativeness artifact for Stage 06",
+    )
     if policy.measurement_resolution_enabled:
         default_mapping = importlib.import_module(
             f"tools.chembl_tool.tasks.{policy.task_id}.starling_measurement_resolution"

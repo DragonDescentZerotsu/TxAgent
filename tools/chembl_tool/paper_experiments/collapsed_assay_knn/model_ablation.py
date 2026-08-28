@@ -63,7 +63,9 @@ def load_neighbor_label_scores(
     )
 
 
-def build_model(model_family: str) -> Any:
+def build_model(
+    model_family: str, *, rf_params: dict[str, int | None] | None = None
+) -> Any:
     if model_family == "logistic_l2":
         return LogisticRegression(
             C=1.0,
@@ -83,10 +85,13 @@ def build_model(model_family: str) -> Any:
             random_state=RANDOM_SEED,
         )
     if model_family == "random_forest":
+        params = rf_params or {}
         return RandomForestClassifier(
             n_estimators=100,
             class_weight="balanced",
             max_features="sqrt",
+            max_depth=params.get("max_depth"),
+            min_samples_leaf=int(params.get("min_samples_leaf", 1)),
             random_state=RANDOM_SEED,
             n_jobs=8,
         )
@@ -100,8 +105,9 @@ def fit_predict(
     valid_matrix: sparse.csr_matrix,
     *,
     deterministic_rf_scores: bool = False,
+    rf_params: dict[str, int | None] | None = None,
 ) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
-    model = build_model(model_family)
+    model = build_model(model_family, rf_params=rf_params)
     model.fit(train_matrix, train_labels)
     if model_family == "random_forest" and deterministic_rf_scores:
         model.n_jobs = 1
@@ -116,6 +122,8 @@ def fit_predict(
     else:
         details = {
             "n_estimators": len(model.estimators_),
+            "max_depth": model.max_depth,
+            "min_samples_leaf": model.min_samples_leaf,
             "nonzero_feature_importances": int(np.count_nonzero(model.feature_importances_)),
         }
     return predictions, scores, details

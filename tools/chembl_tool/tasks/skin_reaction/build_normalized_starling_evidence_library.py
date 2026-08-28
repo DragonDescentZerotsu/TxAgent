@@ -147,12 +147,16 @@ def main(argv: list[str] | None = None) -> int:
         "semantic_aggregation_budget_max_tokens": getattr(args, "semantic_aggregation_budget_max_tokens", 10_000_000),
         "semantic_aggregation_start_new_budget_epoch": getattr(args, "semantic_aggregation_start_new_budget_epoch", False),
         "defer_semantic_aggregation": getattr(args, "defer_semantic_aggregation", False),
+        "collapsed_informativeness_dir": getattr(
+            args, "collapsed_informativeness_dir", None
+        ),
     }
     if args.legacy_task_local_downstream:
         for key in tuple(common):
             if key.startswith("semantic_aggregation_"):
                 common.pop(key)
         common.pop("defer_semantic_aggregation", None)
+        common.pop("collapsed_informativeness_dir", None)
         build_downstream_artifacts(
             **common,
             benchmark_split_root=args.benchmark_split_root,

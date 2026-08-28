@@ -15,12 +15,24 @@ from tools.chembl_tool.common.starling.record_collapse import (
 from tools.chembl_tool.common.starling.record_deduplication import (
     build_deduplicated_record_stage,
 )
+from tools.chembl_tool.common.starling.collapsed_informativeness import (
+    CACHE_VERSION as INFORMATIVENESS_CACHE_VERSION,
+    TEMPLATE_PATH as INFORMATIVENESS_TEMPLATE_PATH,
+    VERSION as INFORMATIVENESS_VERSION,
+    Batch as InformativenessBatch,
+    build_views as build_informativeness_views,
+    render_batch as render_informativeness_batch,
+    seed_exact_requests,
+    validate_response as validate_informativeness_response,
+)
+from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 from tools.chembl_tool.common.starling.pair_buckets import materialize_pair_buckets
 from tools.chembl_tool.common.starling.semantic_record_aggregation import (
     SemanticAggregationBudgetExhausted,
     SemanticAggregationConfig,
     _run_one,
     aggregate_semantic_groups,
+    match_semantic_cache_row,
     render_prompt,
     validate_semantic_response,
 )
@@ -225,23 +237,15 @@ def test_row_dedup_does_not_collapse_distinct_within_source_contexts(tmp_path):
     assert len(pd.read_parquet(tmp_path / "dedup/records.parquet")) == 2
 
 
-def test_semantic_response_is_a_summary_and_binary_informativeness_flag():
-    response = {
-        "summary": "The reported result was consistent.",
-        "direct_label_informativeness": "informative",
-    }
+def test_semantic_response_is_summary_only_and_rejects_internal_names():
+    response = {"summary": "The reported result was consistent."}
     assert validate_semantic_response(response) == response
-    with pytest.raises(ValueError, match="direct_label_informativeness"):
+    with pytest.raises(ValueError, match="fields differ"):
         validate_semantic_response(
-            {**response, "direct_label_informativeness": "uncertain"}
+            {**response, "direct_label_informativeness": "informative"}
         )
-    with pytest.raises(ValueError, match="informativeness judgment"):
-        validate_semantic_response(
-            {
-                **response,
-                "summary": "The assay does not address the direct outcome.",
-            }
-        )
+    with pytest.raises(ValueError, match="internal structure identifier"):
+        validate_semantic_response({"summary": "Compound SMILES:123 was active."})
 
 
 def test_semantic_prompt_keeps_only_scientific_source_fields():
@@ -262,7 +266,6 @@ def test_semantic_prompt_keeps_only_scientific_source_fields():
         "test_task",
         "group-key",
         [record],
-        direct_label_definition="Whether the direct outcome is positive or negative.",
         semantic_source_columns={
             "source_a": (
                 "positive_count",
@@ -283,7 +286,7 @@ def test_semantic_prompt_keeps_only_scientific_source_fields():
     assert fields["Oral dose"] == "10 mg/kg"
     assert fields["Formulation or solid form"] == "lipid formulation"
     assert "Positive count: 3" in prompt
-    assert "Whether the direct outcome is positive or negative." in prompt
+    assert "direct-label" not in prompt
     assert "assay_transfer_eligible" not in prompt
     assert "canonical_smiles" not in prompt
     assert "group-key" not in prompt
@@ -298,7 +301,224 @@ def test_semantic_prompt_keeps_only_scientific_source_fields():
         )
 
 
-def test_invalid_cached_summary_is_treated_as_missing(tmp_path):
+def test_deterministic_informativeness_uses_complete_representative_and_two_views(
+    tmp_path,
+):
+    records = [
+        {
+            **_record("r1", "source_a", "CCO", "continuous", value=10.0),
+            "support_text": "Measured after oral dosing.",
+            "oral_dose": "10 mg/kg",
+            "confidence": 0.4,
+        },
+        {
+            **_record("r2", "source_a", "CCO", "continuous", value=20.0),
+            "support_text": "Measured.",
+            "oral_dose": None,
+            "confidence": 0.9,
+        },
+    ]
+    sidecar = [
+        {
+            "canonical_record_id": row["canonical_record_id"],
+            "pair_bucket_key": "continuous-bucket",
+            "canonical_pair_fields_json": '{"species":"rat"}',
+            "assay_transfer_eligible": True,
+            "assay_transfer_ineligibility_reason": None,
+        }
+        for row in records
+    ]
+    records_path = tmp_path / "records.parquet"
+    sidecar_path = tmp_path / "sidecar.parquet"
+    metadata_path = tmp_path / "metadata.json"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+    pd.DataFrame(sidecar).to_parquet(sidecar_path, index=False)
+    metadata_path.write_text("{}\n", encoding="utf-8")
+    build_collapsed_record_stage(
+        task_id="test_task",
+        records_path=records_path,
+        pair_bucket_records_path=sidecar_path,
+        pair_bucket_metadata_path=metadata_path,
+        out_dir=tmp_path / "baseline",
+        semantic_source_columns={"source_a": ("support_text", "oral_dose")},
+        direct_label_definition="Whether the direct outcome is positive.",
+    )
+    collapsed = pd.read_parquet(tmp_path / "baseline/records.parquet").iloc[0].to_dict()
+    joined = []
+    for record, bucket in zip(records, sidecar, strict=True):
+        joined.append({**record, **bucket, "retrieval_source_id": "indirect"})
+    views = build_informativeness_views(
+        collapsed,
+        joined,
+        {"source_a": ("support_text", "oral_dose")},
+        direct_label_definition="Whether the direct outcome is positive.",
+    )
+    representative, collapsed_view = views
+    assert representative["representative_record_id"] == "r1"
+    assert all(field["label"] != "Molecule" for field in representative["fields"])
+    assert {field["label"] for field in collapsed_view["fields"]} >= {
+        "Endpoint",
+        "Result",
+        "Species",
+    }
+    assert all(
+        field["label"] not in {"Observed range", "Interquartile range"}
+        for field in collapsed_view["fields"]
+    )
+    batch = InformativenessBatch(
+        "test_task", tuple(views), "Whether the direct outcome is positive."
+    )
+    prompt = render_informativeness_batch(batch)
+    assert "Measured after oral dosing." in prompt
+    assert "Observed range" not in prompt
+    assert "CCO" not in prompt
+    response = validate_informativeness_response(
+        {"items": [
+            {"id": "0", "informativeness": "informative"},
+            {"id": "1", "informativeness": "uninformative"},
+        ]},
+        2,
+    )
+
+    artifact = tmp_path / "informativeness"
+    artifact.mkdir()
+    payloads = artifact / "payloads.jsonl"
+    payloads.write_text(
+        "".join(json.dumps(view) + "\n" for view in views), encoding="utf-8"
+    )
+    request = {
+        "cache_version": INFORMATIVENESS_CACHE_VERSION,
+        "task_id": "test_task",
+        "model": "gpt-5.6-luna",
+        "template_sha256": file_sha256(INFORMATIVENESS_TEMPLATE_PATH),
+        "items": [
+            {
+                "view_id": view["view_id"],
+                "group_id": view["group_id"],
+                "view": view["view"],
+                "payload_sha256": view["payload_sha256"],
+                "representative_record_id": view["representative_record_id"],
+                "informativeness": result["informativeness"],
+            }
+            for view, result in zip(views, response, strict=True)
+        ],
+    }
+    requests = artifact / "requests.jsonl"
+    requests.write_text(json.dumps(request) + "\n", encoding="utf-8")
+    (artifact / "manifest.json").write_text(
+        json.dumps(
+            {
+                "version": INFORMATIVENESS_VERSION,
+                "task_id": "test_task",
+                "status": "complete",
+                "target_groups": 1,
+                "target_views": 2,
+                "template_sha256": file_sha256(INFORMATIVENESS_TEMPLATE_PATH),
+                "requests_sha256": file_sha256(requests),
+                "payloads_sha256": file_sha256(payloads),
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest = build_collapsed_record_stage(
+        task_id="test_task",
+        records_path=records_path,
+        pair_bucket_records_path=sidecar_path,
+        pair_bucket_metadata_path=metadata_path,
+        out_dir=tmp_path / "attached",
+        semantic_source_columns={"source_a": ("support_text", "oral_dose")},
+        direct_label_definition="Whether the direct outcome is positive.",
+        collapsed_informativeness_dir=artifact,
+    )
+    attached = pd.read_parquet(tmp_path / "attached/records.parquet").iloc[0]
+    assert attached["direct_label_informativeness"] == "uninformative"
+    assert attached["representative_direct_label_informativeness"] == "informative"
+    assert attached["informativeness_representative_record_id"] == "r1"
+    assert attached["direct_label_informativeness_model"] == "gpt-5.6-luna"
+    assert attached["retrieval_eligible"] == collapsed["retrieval_eligible"]
+    assert manifest["summary"]["collapsed_informativeness_flag_pairs"] == {
+        "informative -> uninformative": 1
+    }
+
+
+def test_semantic_informativeness_uses_only_the_collapsed_view():
+    collapsed = {
+        "collapse_group_key": "group",
+        "aggregation_method": "semantic_support_passthrough",
+        "canonical_endpoint_name": "oral exposure",
+        "display_measurement_text": "Exposure increased after oral dosing.",
+        "display_unit_text": None,
+        "canonical_pair_fields_json": '{"species":"rat"}',
+        "source_record_count": 1,
+        "aggregate_counts_json": "{}",
+    }
+    views = build_informativeness_views(
+        collapsed,
+        [],
+        {},
+        direct_label_definition="Whether oral bioavailability is high.",
+    )
+
+    assert len(views) == 1
+    assert views[0]["view"] == "collapsed"
+    assert views[0]["representative_record_id"] is None
+    assert {field["label"] for field in views[0]["fields"]} >= {
+        "Endpoint",
+        "Result",
+        "Species",
+    }
+
+
+def test_informativeness_pilot_seed_reuses_only_exact_payloads_and_model(tmp_path):
+    target = tmp_path / "target"
+    target.mkdir()
+    (target / "payloads.jsonl").write_text(
+        json.dumps({"view_id": "exact", "payload_sha256": "hash-a"}) + "\n"
+        + json.dumps({"view_id": "changed", "payload_sha256": "hash-b"}) + "\n",
+        encoding="utf-8",
+    )
+    (target / "requests.jsonl").touch()
+    prior = tmp_path / "prior.jsonl"
+    prior.write_text(
+        json.dumps(
+            {
+                "cache_version": INFORMATIVENESS_CACHE_VERSION,
+                "task_id": "test_task",
+                "batch_id": "pilot",
+                "model": "gpt-5.4-mini",
+                "template_sha256": file_sha256(INFORMATIVENESS_TEMPLATE_PATH),
+                "items": [
+                    {
+                        "view_id": "exact",
+                        "group_id": "group-a",
+                        "view": "collapsed",
+                        "payload_sha256": "hash-a",
+                        "representative_record_id": None,
+                        "informativeness": "informative",
+                    },
+                    {
+                        "view_id": "changed",
+                        "group_id": "group-b",
+                        "view": "collapsed",
+                        "payload_sha256": "stale-hash",
+                        "representative_record_id": None,
+                        "informativeness": "uninformative",
+                    },
+                ],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    assert seed_exact_requests(target, prior, model="gpt-5.4-mini") == 1
+    assert seed_exact_requests(target, prior, model="gpt-5.4-mini") == 0
+    seeded = json.loads((target / "requests.jsonl").read_text(encoding="utf-8"))
+    assert [item["view_id"] for item in seeded["items"]] == ["exact"]
+    assert seeded["seeded_from"] == str(prior)
+
+
+def test_structurally_valid_cached_summary_is_reused(tmp_path):
     payload = _semantic_test_payload("group")
     prompt = render_prompt(payload)
     row = _semantic_cache_row("group", payload, prompt, "test-model")
@@ -307,12 +527,39 @@ def test_invalid_cached_summary_is_treated_as_missing(tmp_path):
     cache_path = tmp_path / "cache.jsonl"
     cache_path.write_text(json.dumps(row) + "\n", encoding="utf-8")
 
-    with pytest.raises(RuntimeError, match="require LLM aggregation"):
-        aggregate_semantic_groups(
-            {"group": payload},
-            config=None,
-            prior_paths=(cache_path,),
-        )
+    result = aggregate_semantic_groups(
+        {"group": payload}, config=None, prior_paths=(cache_path,)
+    )
+    assert result[0]["response"]["summary"].startswith("This evidence")
+
+
+def test_legacy_prompt_cache_is_not_reused():
+    payload = _semantic_test_payload("group")
+    prompt_sha256 = hashlib.sha256(render_prompt(payload).encode()).hexdigest()
+    legacy = _semantic_cache_row("group", payload, "old prompt", "test-model")
+    legacy["input"] = json.loads(json.dumps(payload))
+    legacy["input"]["records"][0]["fields"].extend(
+        [
+            {"label": "Source index", "value": "42"},
+            {"label": "Skin source", "value": "legacy"},
+            {"label": "Molecule", "value": "SMILES: CCO"},
+        ]
+    )
+    matched = match_semantic_cache_row(
+        legacy,
+        payload=payload,
+        prompt_sha256=prompt_sha256,
+        expected_model="test-model",
+    )
+    assert matched is None
+    changed = json.loads(json.dumps(legacy))
+    changed["input"]["records"][0]["fields"][0]["value"] = "different result"
+    assert match_semantic_cache_row(
+        changed,
+        payload=payload,
+        prompt_sha256=prompt_sha256,
+        expected_model="test-model",
+    ) is None
 
 
 def test_single_relative_scalar_does_not_require_an_llm(tmp_path):
@@ -324,7 +571,7 @@ def test_single_relative_scalar_does_not_require_an_llm(tmp_path):
     assert _aggregation_method([record]) == "single_record_passthrough"
     assert _aggregation_method(
         [{**record, "finite_scalar_value": None, "measurement_kind": "semantic"}]
-    ) == "semantic_llm"
+    ) == "semantic_support_passthrough"
     records_path = tmp_path / "records.parquet"
     sidecar_path = tmp_path / "pair_bucket_records.parquet"
     metadata_path = tmp_path / "pair_bucket_metadata.json"
@@ -355,6 +602,71 @@ def test_single_relative_scalar_does_not_require_an_llm(tmp_path):
     assert collapsed["aggregation_method"] == "single_record_passthrough"
     assert collapsed["canonical_measurement_text"] == "2"
     assert collapsed["display_measurement_text"] == "2× relative to comparator"
+
+
+def test_direct_residual_mixed_measurement_axes_require_semantic_aggregation():
+    first = {
+        **_record("r1", "source_a", "CCO", "continuous", value=0.5),
+        "retrieval_source_id": "direct_residual",
+        "canonical_endpoint_name": "brain_uptake",
+        "canonical_unit_text": "%",
+    }
+    same_axis = {
+        **_record("r2", "source_a", "CCO", "continuous", value=0.7),
+        "retrieval_source_id": "direct_residual",
+        "canonical_endpoint_name": "brain_uptake",
+        "canonical_unit_text": "%",
+    }
+    mixed_axis = {
+        **_record("r3", "source_a", "CCO", "continuous", value=-0.2),
+        "retrieval_source_id": "direct_residual",
+        "canonical_endpoint_name": "whole_brain_uptake",
+        "canonical_unit_text": "log10(%ID/g)",
+    }
+
+    assert _aggregation_method([first, same_axis]) == "continuous_median"
+    assert _aggregation_method([first, mixed_axis]) == "semantic_llm"
+
+
+def test_single_semantic_record_uses_support_text_without_llm(tmp_path, monkeypatch):
+    record = _record(
+        "r1",
+        "source_a",
+        "CCO",
+        "semantic",
+        support="J3V (SMILES:3818410) showed a short half-life.",
+    )
+    records_path = tmp_path / "records.parquet"
+    sidecar_path = tmp_path / "pair_bucket_records.parquet"
+    metadata_path = tmp_path / "pair_bucket_metadata.json"
+    pd.DataFrame([record]).to_parquet(records_path, index=False)
+    pd.DataFrame([{
+        "canonical_record_id": "r1",
+        "pair_bucket_key": "semantic-bucket",
+        "canonical_pair_fields_json": "{}",
+        "assay_transfer_eligible": False,
+        "assay_transfer_ineligibility_reason": "free_text",
+    }]).to_parquet(sidecar_path, index=False)
+    metadata_path.write_text("{}\n", encoding="utf-8")
+    monkeypatch.setattr(
+        "tools.chembl_tool.common.starling.record_collapse.aggregate_semantic_groups",
+        lambda *args, **kwargs: pytest.fail("singleton semantic record called the LLM"),
+    )
+
+    manifest = build_collapsed_record_stage(
+        task_id="test_task",
+        records_path=records_path,
+        pair_bucket_records_path=sidecar_path,
+        pair_bucket_metadata_path=metadata_path,
+        out_dir=tmp_path / "collapsed",
+    )
+
+    collapsed = pd.read_parquet(tmp_path / "collapsed/records.parquet").iloc[0]
+    assert manifest["summary"]["semantic_groups"] == 0
+    assert collapsed["aggregation_method"] == "semantic_support_passthrough"
+    assert collapsed["canonical_measurement_text"] == record["support_text"]
+    assert collapsed["display_measurement_text"] == "J3V showed a short half-life."
+    assert collapsed["pair_bucket_key"] == "semantic-bucket"
 
 
 def test_deferred_semantic_shell_is_hidden_and_can_be_attached_from_cache(
@@ -413,29 +725,22 @@ def test_deferred_semantic_shell_is_hidden_and_can_be_attached_from_cache(
     )
 
     deferred = pd.read_parquet(tmp_path / "deferred/records.parquet").iloc[0]
-    pending = json.loads(
+    semantic = json.loads(
         (tmp_path / "deferred/semantic_aggregation.jsonl").read_text()
     )
     assert manifest["summary"]["semantic_groups"] == 1
-    assert manifest["summary"]["semantic_groups_completed"] == 0
-    assert manifest["summary"]["semantic_groups_pending"] == 1
-    assert deferred["aggregation_status"] == "pending_semantic_aggregation"
-    assert deferred["retrieval_eligible"] == False  # noqa: E712
+    assert manifest["summary"]["semantic_groups_completed"] == 1
+    assert manifest["summary"]["semantic_groups_pending"] == 0
+    assert deferred["aggregation_status"] == "valid"
+    assert deferred["retrieval_eligible"] == True  # noqa: E712
     assert deferred["assay_transfer_eligible"] == False  # noqa: E712
-    assert pd.isna(deferred["canonical_measurement_text"])
+    assert deferred["canonical_measurement_text"] == "A result was reported."
     assert deferred["canonical_unit_text"] == "free-text"
     assert pd.isna(deferred["display_unit_text"])
     assert pd.isna(deferred["finite_scalar_value"])
     assert pd.isna(deferred["direct_label_informativeness"])
-    assert set(pending) == {
-        "canonical_source_record_ids",
-        "group_id",
-        "prompt_sha256",
-        "requested_model",
-        "status",
-        "template_sha256",
-    }
-    assert pending["canonical_source_record_ids"] == ["r1", "r2"]
+    assert semantic["group_id"] == group_key
+    assert semantic["input"]["canonical_source_record_ids"] == ["r1", "r2"]
 
     with pytest.raises(RuntimeError, match="require LLM aggregation"):
         build_collapsed_record_stage(
@@ -461,7 +766,7 @@ def test_deferred_semantic_shell_is_hidden_and_can_be_attached_from_cache(
     assert attached["retrieval_eligible"] == True  # noqa: E712
     assert attached["aggregation_status"] == "valid"
     assert attached["canonical_measurement_text"] == "A result was reported."
-    assert attached["direct_label_informativeness"] == "informative"
+    assert pd.isna(attached["direct_label_informativeness"])
     assert attached["display_measurement_text"] == "A result was reported."
 
 
@@ -552,15 +857,12 @@ def test_semantic_responses_are_cached_as_each_request_finishes(tmp_path, monkey
     def fake_run_one(group_id, payload, prompt, config):
         return {
             "group_id": group_id,
-            "schema_version": "semantic_record_aggregation.v3",
+            "schema_version": "semantic_record_aggregation.v4",
             "prompt_sha256": "test",
             "requested_model": config.model,
             "served_model": config.model,
             "usage": {},
-            "response": {
-                "summary": "Reports conflict.",
-                "direct_label_informativeness": "uninformative",
-            },
+            "response": {"summary": "Reports conflict."},
             "input": dict(payload),
         }
 
@@ -606,15 +908,12 @@ def test_successful_semantic_responses_survive_a_sibling_failure(
             raise TimeoutError("test timeout")
         return {
             "group_id": group_id,
-            "schema_version": "semantic_record_aggregation.v3",
+            "schema_version": "semantic_record_aggregation.v4",
             "prompt_sha256": "test",
             "requested_model": config.model,
             "served_model": config.model,
             "usage": {},
-            "response": {
-                "summary": "A result was reported.",
-                "direct_label_informativeness": "informative",
-            },
+            "response": {"summary": "A result was reported."},
             "input": dict(payload),
         }
 
@@ -639,10 +938,7 @@ def test_successful_semantic_responses_survive_a_sibling_failure(
 
 def test_semantic_retry_includes_the_invalid_response(monkeypatch):
     calls = []
-    valid = {
-        "summary": "A result was reported.",
-        "direct_label_informativeness": "informative",
-    }
+    valid = {"summary": "A result was reported."}
 
     class FakeClient:
         def __init__(self, **kwargs):
@@ -703,10 +999,7 @@ def test_semantic_groups_run_smallest_prompt_first(tmp_path, monkeypatch):
 
 
 def test_distillation_usage_is_charged_to_the_token_ledger(monkeypatch):
-    valid = {
-        "summary": "A result was reported.",
-        "direct_label_informativeness": "informative",
-    }
+    valid = {"summary": "A result was reported."}
 
     class FakeLedger:
         completed = None
@@ -803,15 +1096,12 @@ def test_budget_exhaustion_preserves_completed_rows(tmp_path, monkeypatch):
 def _semantic_cache_row(group_id, payload, prompt, model):
     return {
         "group_id": group_id,
-        "schema_version": "semantic_record_aggregation.v3",
+        "schema_version": "semantic_record_aggregation.v4",
         "prompt_sha256": "test",
         "requested_model": model,
         "served_model": model,
         "usage": {},
-        "response": {
-            "summary": "A result was reported.",
-            "direct_label_informativeness": "informative",
-        },
+        "response": {"summary": "A result was reported."},
         "input": dict(payload),
     }
 

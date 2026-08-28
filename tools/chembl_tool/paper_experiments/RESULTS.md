@@ -61,7 +61,7 @@ train-only scaffold CV/OOF 冻结，KNN 固定 `k=3`：
 
 完整 protocol、OOF thresholds、subgroup diagnosis 和 artifact roots 见 `baselines/minimol/README.md`。
 
-## E23 collapsed-assay Morgan neighbor validation (2026-08-26)
+## E23 collapsed-assay Morgan neighbor validation (2026-08-27)
 
 This validation-only diagnostic uses the current scaffold splits for BBB_Martins, Bioavailability_Ma, and
 Skin_Reaction. Each numerical feature is one valid, assay-transfer-eligible indirect Stage 06
@@ -119,40 +119,166 @@ and no test split was read. Full condition-level artifacts:
 outputs/paper/collapsed_assay_model_ablation_v1/
 ```
 
-### Train-only four-fold K selection
+### Train-only five-fold K/RF selection with categorical assays
 
-K was selected independently for each presence-enabled learned condition and for direct-label KNN from
-`{3,5,10,15,25}`. Selection used pooled macro-F1 over deterministic four-fold train OOF predictions. Each
-fold kept a nonempty Bemis–Murcko scaffold intact, treated each acyclic parent as its own group, refit the
-assay catalog and scaling on fold-reference rows only, and retrieved neighbors only from that reference set.
-Exact ties would choose the smaller K.
+The current v4 sweep selects from K=`{3,5,10,15,25,40}` using pooled macro-F1 over deterministic five-fold
+train OOF predictions. L2 uses numerical values only; RF retains numerical presence indicators and jointly
+selects `max_depth in {None,20}` and `min_samples_leaf in {1,5}`. Query-self RF selects only its RF profile.
+Each fold keeps scaffold/acyclic-parent groups intact and fits numerical scaling plus numerical/categorical
+catalogs only on its reference rows. Exact ties prefer smaller K, larger leaves, then finite depth.
 
-| task | indirect L2 | indirect RF | indirect + labels L2 | indirect + labels RF | direct-label KNN |
-|---|---:|---:|---:|---:|---:|
-| BBB_Martins | 25 | 10 | 5 | 10 | 3 |
-| Bioavailability_Ma | 25 | 25 | 25 | 25 | 3 |
-| Skin_Reaction | 25 | 25 | 25 | 10 | 3 |
+Categorical rows must be valid, indirect, assay-transfer-eligible `categorical_mode` records. Features are
+one-hot `(pair_bucket_key, canonical_category_id)` pairs averaged over the top-K neighbors. Normalized
+parent/assay collisions use an unweighted category mode; exact ties are dropped. Full-train categorical
+catalogs contain 16,386/1,766/11,896 features for BBB/Bioavailability/Skin, with 5/1/138 tied cells dropped.
 
-After writing the train-OOF selections, each learned condition was refit on the complete train split and
-evaluated once on scaffold-valid. Query-self is K-independent. Values below are validation macro-F1; the K in
-parentheses was selected without reading validation.
-
-| task | query self L2 | query self RF | indirect L2 | indirect RF | indirect + labels L2 | indirect + labels RF | direct-label KNN |
+| task | indirect L2 | indirect RF | indirect + labels L2 | indirect + labels RF | indirect + categorical L2 | indirect + categorical RF | direct-label KNN |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| BBB_Martins | 0.4850 | 0.4758 | 0.5304 (25) | **0.6223 (10)** | 0.6111 (5) | 0.5847 (10) | 0.5896 (3) |
-| Bioavailability_Ma | 0.5658 | 0.5331 | 0.6134 (25) | 0.5920 (25) | **0.6346 (25)** | 0.5637 (25) | 0.5856 (3) |
-| Skin_Reaction | 0.5091 | 0.5194 | 0.5389 (25) | 0.5221 (25) | **0.5649 (25)** | 0.4879 (10) | 0.5201 (3) |
+| BBB_Martins | 25 | 40 | 5 | 5 | 25 | 25 | 3 |
+| Bioavailability_Ma | 40 | 40 | 40 | 25 | 40 | 25 | 3 |
+| Skin_Reaction | 25 | 40 | 3 | 3 | 3 | 3 | 5 |
 
-All 6,575 train rows appeared in exactly one OOF fold, all 820 validation rows were retained per condition,
-fold-group overlap was zero, and existing K=5/10/25 results matched the prior ablation. The full OOF curves,
-assignments, selections, predictions, hashes, and report are in:
+RF profiles are reported separately from K:
+
+| task | query-self RF | indirect RF | indirect + labels RF | indirect + categorical RF |
+|---|---|---|---|---|
+| BBB_Martins | depth=20, leaf=5 | depth=20, leaf=5 | depth=None, leaf=1 | depth=20, leaf=5 |
+| Bioavailability_Ma | depth=20, leaf=1 | depth=20, leaf=5 | depth=None, leaf=5 | depth=None, leaf=5 |
+| Skin_Reaction | depth=20, leaf=5 | depth=20, leaf=5 | depth=None, leaf=5 | depth=20, leaf=1 |
+
+After selections were persisted, each condition was refit on complete train and evaluated once on
+scaffold-valid. Values are macro-F1; selected K values are in the separate table above.
+
+| task | query self L2 | query self RF | indirect L2 | indirect RF | indirect + labels L2 | indirect + labels RF | indirect + categorical L2 | indirect + categorical RF | direct-label KNN |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.4732 | 0.4508 | 0.5092 | 0.5419 | **0.6095** | 0.5180 | 0.5797 | 0.5813 | 0.5896 |
+| Bioavailability_Ma | 0.5523 | 0.5505 | 0.5646 | 0.6079 | **0.6132** | 0.6020 | 0.5683 | 0.5673 | 0.5856 |
+| Skin_Reaction | 0.4944 | 0.5200 | 0.4978 | 0.4845 | **0.5267** | 0.4723 | 0.4801 | 0.4917 | 0.5141 |
+
+Relative to v3, direct-label KNN is unchanged. The largest positive shared-condition deltas are BBB indirect
+RF `+0.0385`, Bioavailability indirect+labels RF `+0.0383`, and Skin indirect L2 `+0.0303`; the largest loss is
+Skin indirect+labels RF `-0.0972`. The new categorical surface helps BBB but is not consistently beneficial
+across tasks. All 6,575 train rows appear once per OOF candidate, all 820 validation rows are retained, and
+fold-group overlap is zero. V1-v3 remain frozen historical diagnostics.
 
 ```text
-outputs/paper/collapsed_assay_k_selection_cv_v1/
+outputs/paper/collapsed_assay_k_selection_cv_v4/
 ```
 
-This remains a validation-only diagnostic. ClinTox and all test splits were not read, and no formal test run is
-authorized from these results.
+This remains validation-only. ClinTox and all test splits were not read, and no formal test run is authorized.
+
+### Repeated-CV feature and aggregation selection v5.1
+
+The v5.1 follow-up replaces the single five-fold partition with three repeated five-fold scaffold partitions.
+It selects assay K from `{3,5,10,25,40}` and balanced-LR `C` from `{0.1,1,10}` by mean pooled OOF macro-F1;
+the standard error across repeats is reported but does not override the winner. LR remains value-only.
+Canonical label KNN stays fixed at K=3, while combined models explicitly compare a fixed-K3 label score with
+a same-K label score. Numerical aggregations include the original all-K mean, an observed-only per-assay
+mean, and a similarity-weighted observed-only mean. Retained categorical distributions are normalized within
+each assay and require train support of at least two.
+
+| task | canonical KNN | v4 best LR | retained v5.1 LR | delta | recipe | assay K | label K | C |
+|---|---:|---:|---:|---:|---|---:|---:|---:|
+| BBB_Martins | 0.5896 | 0.6095 | **0.6095** | +0.0000 | all-K mean + same-K label | 5 | 5 | 1.0 |
+| Bioavailability_Ma | 0.5856 | 0.6132 | **0.6874** | +0.0742 | all-K mean + fixed-K3 label | 40 | 3 | 0.1 |
+| Skin_Reaction | 0.5201 | 0.5267 | **0.5455** | +0.0188 | observed-only mean | 40 | n/a | 1.0 |
+
+The two-profile RF follow-up retains numerical neighbor-coverage fractions and compares flexible
+`depth=None, leaf=1` with regularized `depth=20, leaf=5`. Its best validation macro-F1 is
+`0.5862/0.5943/0.5423`, below retained LR on every task. Similarity weighting and the categorical expansion
+also fail to beat the retained numerical LR recipe on any task. Recipe retention is exploratory and
+validation-guided because valid has been examined repeatedly; no test split was read or authorized.
+
+```text
+outputs/paper/collapsed_assay_feature_selection_v5_1/
+outputs/paper/collapsed_assay_feature_selection_rf_v5_1/
+```
+
+### Unified observed-only strategy v6
+
+V6 reduces the feature ladder to one numerical aggregation rule. It first selects a task-level direct-label
+K from `{3,5,10,25,40}` by mean macro-F1 across three repeated five-fold train-only scaffold partitions,
+then freezes it. All neighbor numerical surfaces use observed-only per-assay means. The combined surface
+uses the frozen label K and independently selects an assay K. LR is value-only and selects
+`C in {0.1,1,10}`; RF retains numerical coverage fractions and selects between `depth=None, leaf=1` and
+`depth=20, leaf=5`. The categorical surface contains within-assay category distributions but no direct-label
+feature.
+
+Validation macro-F1:
+
+| task | query self LR | query self RF | neighbor indirect LR | neighbor indirect RF | indirect + labels LR | indirect + labels RF | indirect + categorical LR | indirect + categorical RF | direct-label KNN |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.4607 | 0.4508 | 0.5118 | 0.4944 | 0.5857 | 0.5396 | 0.5329 | 0.5765 | 0.5896 |
+| Bioavailability_Ma | 0.5703 | 0.5621 | 0.5666 | 0.5752 | 0.5850 | 0.5920 | 0.5716 | 0.5794 | 0.5856 |
+| Skin_Reaction | 0.5103 | 0.5457 | 0.5455 | 0.4907 | 0.5244 | 0.4958 | 0.5549 | 0.5192 | 0.5141 |
+
+The selected direct-label K is `3/3/5` for BBB/Bioavailability/Skin. Assay K, LR C, and RF profiles are
+reported separately in the artifact tables rather than embedded in the score table. All 366/209/245
+validation rows are retained. This remains exploratory validation-only work; ClinTox and all test splits were
+not read.
+
+```text
+outputs/paper/collapsed_assay_unified_observed_only_v6/
+```
+
+### Filtered observed-continuous/all-neighbor-categorical strategy v7
+
+V7 retains only nonzero-variance numerical features and categorical assay-category features with train
+support at least two. Continuous neighbor values use observed-only means; categorical one-hot values average
+over all K neighbors, treating missing categorical assays as zero. Uniform and Morgan-similarity weighting are
+selected with a tied choice for both blocks. The task-level standalone direct-label K is selected first, then
+combined models compare that frozen K with their assay K. Direct-label votes remain unweighted.
+
+Validation macro-F1:
+
+| task | canonical label KNN | self LR | self RF | indirect LR | indirect RF | indirect + direct labels LR | indirect + direct labels RF | indirect + categorical + direct LR | indirect + categorical + direct RF |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.5896 | 0.4607 | 0.4508 | 0.5118 | 0.4944 | **0.6072** | 0.5884 | 0.5975 | 0.5307 |
+| Bioavailability_Ma | 0.5856 | 0.5703 | 0.5621 | 0.5666 | 0.5673 | 0.5850 | 0.5981 | **0.6103** | 0.5943 |
+| Skin_Reaction | 0.5141 | 0.5103 | **0.5457** | 0.5455 | 0.4907 | 0.4975 | 0.4958 | 0.5046 | 0.5378 |
+
+The standalone label K is `3/3/5` for BBB/Bioavailability/Skin. Filtered full-train catalogs contain
+`53/2404/387` numerical and `3187/437/3903` categorical features. All K, weighting, label-mode, LR C, and RF
+profile selections are stored separately from the score table. All 366/209/245 validation rows are retained;
+ClinTox and all test splits were not read.
+
+```text
+outputs/paper/collapsed_assay_filtered_observed_weighting_v7/
+```
+
+### V7 minimum feature-support refits
+
+The complete v7 selection was repeated with the minimum reference-train support
+raised from 2 to 6 and 10. The threshold is applied independently inside every
+train-only fold to both numerical assays and categorical assay-category columns;
+all K, weighting, label-mode, LR C, and RF profile choices are therefore reselected
+rather than reused from the support-2 run.
+
+Support 6 validation macro-F1:
+
+| task | canonical label KNN | self LR | self RF | indirect LR | indirect RF | indirect + direct labels LR | indirect + direct labels RF | indirect + categorical + direct LR | indirect + categorical + direct RF |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.5896 | 0.4719 | 0.4304 | 0.5341 | 0.5342 | **0.6117** | 0.5475 | 0.5869 | 0.5516 |
+| Bioavailability_Ma | 0.5856 | 0.5967 | 0.5682 | 0.5757 | 0.5428 | 0.5826 | 0.5682 | 0.5826 | **0.5997** |
+| Skin_Reaction | 0.5141 | 0.4849 | 0.5103 | **0.5389** | 0.4652 | 0.4857 | 0.4815 | 0.5070 | 0.5292 |
+
+Support 10 validation macro-F1:
+
+| task | canonical label KNN | self LR | self RF | indirect LR | indirect RF | indirect + direct labels LR | indirect + direct labels RF | indirect + categorical + direct LR | indirect + categorical + direct RF |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| BBB_Martins | 0.5896 | 0.4325 | 0.4418 | 0.5242 | 0.5288 | **0.6117** | 0.5383 | 0.5731 | 0.5304 |
+| Bioavailability_Ma | 0.5856 | **0.6005** | 0.5645 | 0.5497 | 0.5997 | 0.5897 | 0.5894 | 0.5788 | 0.5496 |
+| Skin_Reaction | 0.5141 | 0.5077 | 0.5084 | 0.5180 | 0.4629 | 0.5016 | 0.4818 | 0.4928 | **0.5304** |
+
+Support 6 retains `6/576/149` numerical and `291/76/765` categorical
+features for BBB/Bioavailability/Skin; support 10 retains `2/303/110` and
+`125/41/360`, respectively. The standalone label K remains `3/3/5`, all
+`366/209/245` validation rows are retained, and neither ClinTox nor test is read.
+
+```text
+outputs/paper/collapsed_assay_filtered_observed_weighting_support6_v7/
+outputs/paper/collapsed_assay_filtered_observed_weighting_support10_v7/
+```
 
 同一轮代码整理登记了已完成的 GPT-OSS-120B MiniMol `top_k=5, min_similarity=0` valid sensitivity：
 BBB/Bio/Skin 的 Starling direct macro-F1 为 `0.652832/0.594314/0.599776`，full-flat 为

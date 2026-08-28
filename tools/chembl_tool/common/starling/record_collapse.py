@@ -6,7 +6,6 @@ import hashlib
 import itertools
 import json
 import math
-import re
 import sqlite3
 import statistics
 import tempfile
@@ -22,6 +21,11 @@ import pyarrow.parquet as pq
 from tools.chembl_tool.common.starling.assay_transfer_measurements import (
     display_measurement_tuple,
 )
+from tools.chembl_tool.common.starling.collapsed_informativeness import (
+    build_views as build_informativeness_views,
+    is_target_record as is_informativeness_target,
+    load_complete_judgments,
+)
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 from tools.chembl_tool.common.starling.final_endpoint_pruning import (
     load_final_endpoint_pruning,
@@ -35,12 +39,13 @@ from tools.chembl_tool.common.starling.semantic_record_aggregation import (
     TEMPLATE_PATH,
     aggregate_semantic_groups,
     load_semantic_cache,
+    match_semantic_cache_row,
     render_prompt,
-    validate_semantic_response,
+    sanitize_semantic_prompt_text,
 )
 
 
-COLLAPSE_VERSION = "starling_record_collapse.v6"
+COLLAPSE_VERSION = "starling_record_collapse.v9"
 RECORDS_FILENAME = "records.parquet"
 SEMANTIC_FILENAME = "semantic_aggregation.jsonl"
 MANIFEST_FILENAME = "manifest.json"
@@ -82,15 +87,6 @@ _BASE_COLUMNS = {
     "condition_key_status",
     "direct_group_id",
 }
-_PARENTHETICAL_SMILES_RE = re.compile(
-    r"\(\s*SMILES\s*:\s*[^\s)]+\s*\)", re.IGNORECASE
-)
-_COMPOUND_SMILES_RE = re.compile(
-    r"\bcompound\s+(?:identified\s+as\s+)?SMILES\s*:\s*\S+", re.IGNORECASE
-)
-_SMILES_RE = re.compile(r"\bSMILES\s*:\s*\S+", re.IGNORECASE)
-
-
 def build_collapsed_record_stage(
     *,
     task_id: str,
@@ -107,6 +103,7 @@ def build_collapsed_record_stage(
     prior_semantic_paths: Sequence[str | Path] = (),
     defer_semantic_aggregation: bool = False,
     final_endpoint_pruning_manifest_path: str | Path | None = None,
+    collapsed_informativeness_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """Collapse retrieval-eligible rows by direct condition or indirect bucket."""
     source_path = Path(records_path)
@@ -170,8 +167,14 @@ def build_collapsed_record_stage(
         semantic_model=semantic_model,
         prior_semantic_paths=prior_semantic_paths,
         defer_semantic_aggregation=defer_semantic_aggregation,
-        direct_label_definition=direct_label_definition,
         semantic_source_columns=source_columns,
+    )
+    informativeness = (
+        load_complete_judgments(
+            collapsed_informativeness_dir, task_id=task_id
+        )
+        if collapsed_informativeness_dir is not None
+        else None
     )
     records_file = target / RECORDS_FILENAME
     semantic_file = target / SEMANTIC_FILENAME
@@ -185,6 +188,9 @@ def build_collapsed_record_stage(
         preserved_columns=preserved_columns,
         defer_semantic_aggregation=defer_semantic_aggregation,
         semantic_model=semantic_model,
+        semantic_source_columns=source_columns,
+        direct_label_definition=direct_label_definition,
+        collapsed_informativeness=informativeness,
     )
     connection.close()
     work_dir.cleanup()
@@ -206,7 +212,9 @@ def build_collapsed_record_stage(
             "continuous_absolute": "median",
             "controlled_categorical": "mode_with_full_counts_null_on_tie",
             "single_relative_or_unresolved_scalar": "numeric_passthrough",
-            "free_text_or_multi_relative": "llm_loss_aware_summary",
+            "single_semantic": "support_text_passthrough",
+            "multi_semantic": "llm_loss_aware_summary",
+            "mixed_axis_direct_residual": "llm_loss_aware_summary",
             "direct_unconditioned_agreement_threshold": UNCONDITIONED_AGREEMENT_THRESHOLD,
             "direct_conditioned_agreement_threshold": CONDITIONED_AGREEMENT_THRESHOLD,
         },
@@ -229,6 +237,19 @@ def build_collapsed_record_stage(
             "pair_bucket_records": {"path": str(bucket_path), "sha256": file_sha256(bucket_path)},
             "pair_bucket_metadata": {"path": str(metadata_path), "sha256": file_sha256(metadata_path)},
             "final_endpoint_pruning": pruning_input,
+            "collapsed_informativeness": (
+                {
+                    "path": str(collapsed_informativeness_dir),
+                    "manifest_sha256": file_sha256(
+                        Path(collapsed_informativeness_dir) / "manifest.json"
+                    ),
+                    "requests_sha256": file_sha256(
+                        Path(collapsed_informativeness_dir) / "requests.jsonl"
+                    ),
+                }
+                if collapsed_informativeness_dir is not None
+                else None
+            ),
         },
         "summary": {
             "input_records": stream_stats["input_records"],
@@ -239,6 +260,7 @@ def build_collapsed_record_stage(
             "semantic_groups": semantic_stats["total"],
             "semantic_groups_completed": semantic_stats["completed"],
             "semantic_groups_pending": semantic_stats["pending"],
+            "semantic_groups_reused_exact": semantic_stats["reused_exact"],
             "final_endpoint_pruning_excluded_records": len(pruned_record_ids),
             "excluded_reason_counts": stream_stats["excluded_reason_counts"],
             "aggregation_method_counts": output_stats[
@@ -249,6 +271,18 @@ def build_collapsed_record_stage(
                 "source_records_represented"
             ],
             "semantic_token_usage": output_stats["semantic_token_usage"],
+            "collapsed_informativeness_target_views": output_stats[
+                "collapsed_informativeness_target_views"
+            ],
+            "collapsed_informativeness_attached_views": output_stats[
+                "collapsed_informativeness_attached_views"
+            ],
+            "collapsed_informativeness_model_counts": output_stats[
+                "collapsed_informativeness_model_counts"
+            ],
+            "collapsed_informativeness_flag_pairs": output_stats[
+                "collapsed_informativeness_flag_pairs"
+            ],
         },
         "outputs": {
             RECORDS_FILENAME: file_sha256(records_file),
@@ -269,6 +303,11 @@ def build_collapsed_record_stage(
             "pending_semantic_records_are_not_retrieval_eligible": output_stats[
                 "pending_semantic_records_are_not_retrieval_eligible"
             ],
+            "collapsed_informativeness_complete_when_requested": (
+                collapsed_informativeness_dir is None
+                or output_stats["collapsed_informativeness_attached_views"]
+                == output_stats["collapsed_informativeness_target_views"]
+            ),
         },
     }
     (target / MANIFEST_FILENAME).write_text(
@@ -394,17 +433,17 @@ def _materialize_semantic_responses(
     semantic_model: str | None,
     prior_semantic_paths: Sequence[str | Path],
     defer_semantic_aggregation: bool,
-    direct_label_definition: str,
     semantic_source_columns: Mapping[str, Sequence[str]],
 ) -> dict[str, int]:
     cache_paths: tuple[str | Path | None, ...] = (
         *prior_semantic_paths,
         semantic_config.cache_path if semantic_config else None,
     )
-    prior = {} if defer_semantic_aggregation else load_semantic_cache(cache_paths)
+    prior = load_semantic_cache(cache_paths)
     expected_model = semantic_config.model if semantic_config else semantic_model
     batch_size = max(32, semantic_config.workers if semantic_config else 32)
     semantic_count = 0
+    reuse_counts: Counter[str] = Counter()
 
     for group_key, group in _iter_retained_groups(connection):
         if _aggregation_method(group) != "semantic_llm":
@@ -413,22 +452,22 @@ def _materialize_semantic_responses(
             task_id,
             group_key,
             group,
-            direct_label_definition=direct_label_definition,
             semantic_source_columns=semantic_source_columns,
         )
         prompt_sha256 = hashlib.sha256(render_prompt(payload).encode()).hexdigest()
-        cached = prior.get(group_key)
-        if (
-            cached
-            and cached.get("prompt_sha256") == prompt_sha256
-            and cached.get("requested_model") == expected_model
-        ):
-            validate_semantic_response(cached.get("response"))
+        cached = match_semantic_cache_row(
+            prior.get(group_key),
+            payload=payload,
+            prompt_sha256=prompt_sha256,
+            expected_model=expected_model,
+        )
+        if cached:
             connection.execute(
                 "INSERT OR REPLACE INTO semantic VALUES (?, ?)",
                 (group_key, _json_dump(cached)),
             )
             semantic_count += 1
+            reuse_counts["exact"] += 1
             continue
         rendered = render_prompt(payload)
         connection.execute(
@@ -449,6 +488,7 @@ def _materialize_semantic_responses(
             "total": semantic_count + pending_count,
             "completed": semantic_count,
             "pending": pending_count,
+            "reused_exact": reuse_counts["exact"],
         }
     if pending_count and semantic_config is None:
         raise RuntimeError(
@@ -494,6 +534,7 @@ def _materialize_semantic_responses(
         "total": semantic_count,
         "completed": semantic_count,
         "pending": 0,
+        "reused_exact": reuse_counts["exact"],
     }
 
 
@@ -508,6 +549,9 @@ def _write_collapsed_outputs(
     preserved_columns: Sequence[str],
     defer_semantic_aggregation: bool,
     semantic_model: str | None,
+    semantic_source_columns: Mapping[str, Sequence[str]],
+    direct_label_definition: str,
+    collapsed_informativeness: Mapping[str, Mapping[str, Any]] | None,
 ) -> dict[str, Any]:
     records_jsonl = records_file.with_suffix(".jsonl")
     method_counts: Counter[str] = Counter()
@@ -518,6 +562,10 @@ def _write_collapsed_outputs(
     direct_transfer_valid = True
     configured_groups_preserved = True
     pending_retrieval_valid = True
+    informativeness_targets = 0
+    informativeness_attached = 0
+    informativeness_models: Counter[str] = Counter()
+    informativeness_pairs: Counter[str] = Counter()
     with records_jsonl.open("w", encoding="utf-8") as handle:
         for group_key, group in _iter_retained_groups(connection):
             method = _aggregation_method(group)
@@ -534,6 +582,51 @@ def _write_collapsed_outputs(
                 preserved_columns=preserved_columns,
                 allow_pending_semantic=defer_semantic_aggregation,
             )
+            if is_informativeness_target(collapsed):
+                views = build_informativeness_views(
+                    collapsed,
+                    group,
+                    semantic_source_columns,
+                    direct_label_definition=direct_label_definition,
+                    task_id=task_id,
+                )
+                informativeness_targets += len(views)
+                if collapsed_informativeness is not None:
+                    judgments = {}
+                    for view in views:
+                        judgment = collapsed_informativeness.get(view["view_id"])
+                        if judgment is None:
+                            raise ValueError(
+                                "collapsed informativeness lacks view "
+                                + view["view_id"]
+                            )
+                        if judgment.get("payload_sha256") != view["payload_sha256"]:
+                            raise ValueError(
+                                "collapsed informativeness payload mismatch: "
+                                + view["view_id"]
+                            )
+                        judgments[view["view"]] = judgment
+                        informativeness_attached += 1
+                        informativeness_models[str(judgment["model"])] += 1
+                    collapsed_judgment = judgments["collapsed"]
+                    collapsed["direct_label_informativeness"] = collapsed_judgment[
+                        "informativeness"
+                    ]
+                    collapsed["direct_label_informativeness_model"] = (
+                        collapsed_judgment["model"]
+                    )
+                    representative = judgments.get("representative")
+                    if representative is not None:
+                        collapsed["representative_direct_label_informativeness"] = (
+                            representative["informativeness"]
+                        )
+                        collapsed["informativeness_representative_record_id"] = (
+                            representative["representative_record_id"]
+                        )
+                        informativeness_pairs[
+                            f"{representative['informativeness']} -> "
+                            f"{collapsed_judgment['informativeness']}"
+                        ] += 1
             collapsed_id = str(collapsed["canonical_record_id"])
             if not collapsed_id or collapsed_id in collapsed_ids:
                 raise ValueError("collapsed canonical record IDs must be nonempty and unique")
@@ -593,6 +686,11 @@ def _write_collapsed_outputs(
         records_jsonl, records_file, empty_schema=empty_records_schema
     )
     records_jsonl.unlink()
+    if (
+        collapsed_informativeness is not None
+        and informativeness_attached != len(collapsed_informativeness)
+    ):
+        raise ValueError("collapsed informativeness cache contains unused views")
     return {
         "collapsed_records": len(collapsed_ids),
         "aggregation_method_counts": dict(sorted(method_counts.items())),
@@ -606,6 +704,14 @@ def _write_collapsed_outputs(
         "direct_records_are_not_assay_transferable": direct_transfer_valid,
         "configured_group_ids_preserved": configured_groups_preserved,
         "pending_semantic_records_are_not_retrieval_eligible": pending_retrieval_valid,
+        "collapsed_informativeness_target_views": informativeness_targets,
+        "collapsed_informativeness_attached_views": informativeness_attached,
+        "collapsed_informativeness_model_counts": dict(
+            sorted(informativeness_models.items())
+        ),
+        "collapsed_informativeness_flag_pairs": dict(
+            sorted(informativeness_pairs.items())
+        ),
     }
 
 
@@ -725,6 +831,9 @@ def _empty_collapsed_schema(
         "aggregation_method": pa.string(),
         "aggregation_status": pa.string(),
         "direct_label_informativeness": pa.string(),
+        "representative_direct_label_informativeness": pa.string(),
+        "informativeness_representative_record_id": pa.string(),
+        "direct_label_informativeness_model": pa.string(),
         "aggregate_counts_json": pa.string(),
         "source_record_count": pa.int64(),
         "deduplicated_source_record_count": pa.int64(),
@@ -764,11 +873,17 @@ def _collapse_group_key(record: Mapping[str, Any]) -> str:
 
 
 def _aggregation_method(group: Sequence[Mapping[str, Any]]) -> str:
-    if str(group[0]["retrieval_source_id"]) == "direct_vote":
+    retrieval_source = str(group[0]["retrieval_source_id"])
+    if retrieval_source == "direct_vote":
         return "direct_binary_vote"
-    if all(_text(row.get("canonical_category_id")) for row in group):
+    shared_axis = retrieval_source != "direct_residual" or _shared_measurement_axis(
+        group
+    )
+    if shared_axis and all(
+        _text(row.get("canonical_category_id")) for row in group
+    ):
         return "categorical_mode"
-    if all(
+    if shared_axis and all(
         str(row.get("measurement_kind") or "") == "continuous"
         and _finite(row.get("finite_scalar_value"))
         and str(row.get("canonical_unit_text") or "")
@@ -778,7 +893,25 @@ def _aggregation_method(group: Sequence[Mapping[str, Any]]) -> str:
         return "continuous_median"
     if len(group) == 1 and _finite(group[0].get("finite_scalar_value")):
         return "single_record_passthrough"
+    if len(group) == 1:
+        return "semantic_support_passthrough"
     return "semantic_llm"
+
+
+def _shared_measurement_axis(group: Sequence[Mapping[str, Any]]) -> bool:
+    """Require direct-residual medians and modes to compare like with like."""
+    if len(group) == 1:
+        return True
+    axes = {
+        (
+            _text(row.get("canonical_endpoint_name")),
+            _text(row.get("canonical_unit_text")),
+            _text(row.get("canonical_measurement_scale_id")),
+        )
+        for row in group
+    }
+    endpoint, unit, _ = next(iter(axes)) if len(axes) == 1 else ("", "", "")
+    return len(axes) == 1 and bool(endpoint and unit)
 
 
 def _aggregate_group(
@@ -873,6 +1006,9 @@ def _aggregate_group(
             "aggregate_q1": None,
             "aggregate_q3": None,
             "direct_label_informativeness": None,
+            "representative_direct_label_informativeness": None,
+            "informativeness_representative_record_id": None,
+            "direct_label_informativeness_model": None,
         }
     )
     if method == "direct_binary_vote":
@@ -962,7 +1098,15 @@ def _aggregate_group(
         value = float(record["finite_scalar_value"])
         output["finite_scalar_value"] = value
         output["canonical_measurement_text"] = format(value, ".12g")
-    else:
+    elif method == "semantic_support_passthrough":
+        support_text = _text(group[0].get("support_text"))
+        if not support_text:
+            raise ValueError(
+                f"singleton semantic group lacks support_text: {group_key}"
+            )
+        output["canonical_measurement_text"] = support_text
+        output["measurement_kind"] = "semantic"
+    elif method == "semantic_llm":
         if semantic is None:
             if not allow_pending_semantic:
                 raise ValueError(
@@ -972,11 +1116,14 @@ def _aggregate_group(
         else:
             semantic_response = dict(semantic["response"])
             output["canonical_measurement_text"] = semantic_response.get("summary")
-            output["direct_label_informativeness"] = semantic_response[
-                "direct_label_informativeness"
-            ]
         output["measurement_kind"] = "semantic"
+    else:
+        raise ValueError(f"unknown aggregation method: {method}")
     output.update(display_measurement_tuple(output))
+    if method == "semantic_support_passthrough":
+        output["display_measurement_text"] = sanitize_semantic_prompt_text(
+            output["canonical_measurement_text"]
+        )
     collapsed_id = hashlib.sha256(
         f"{task_id}\0{group_key}".encode()
     ).hexdigest()
@@ -1063,13 +1210,11 @@ def _semantic_payload(
     group_key: str,
     group: Sequence[Mapping[str, Any]],
     *,
-    direct_label_definition: str = "the task's direct binary outcome",
     semantic_source_columns: Mapping[str, Sequence[str]] | None = None,
 ) -> dict[str, Any]:
     del task_id, group_key
     source_columns = semantic_source_columns or {}
     return {
-        "direct_label_definition": direct_label_definition,
         "canonical_source_record_ids": sorted(
             str(row["canonical_record_id"]) for row in group
         ),
@@ -1087,39 +1232,37 @@ def _semantic_record(
     record: Mapping[str, Any], context_columns: Sequence[str]
 ) -> dict[str, Any]:
     display = display_measurement_tuple(record)
+    result = (
+        record.get("canonical_category_id")
+        if str(record.get("measurement_kind") or "")
+        in {"binary", "categorical", "ordinal"}
+        and _text(record.get("canonical_category_id"))
+        else display.get("display_measurement_text")
+    )
     fields: list[dict[str, str]] = []
     seen: set[str] = set()
     for label, key, value in (
         ("Molecule", "molecule_name", record.get("molecule_name")),
         ("Endpoint", "canonical_endpoint_name", record.get("canonical_endpoint_name")),
-        ("Result", "display_measurement_text", display.get("display_measurement_text")),
+        ("Result", "display_measurement_text", result),
         ("Unit", "display_unit_text", display.get("display_unit_text")),
     ):
-        text = _prompt_text(value)
+        text = sanitize_semantic_prompt_text(
+            value, omit_structure_only=key == "molecule_name"
+        )
         if text:
             fields.append({"label": label, "value": text})
             seen.add(key)
     for key in context_columns:
         if key in seen:
             continue
-        text = _prompt_text(record.get(key))
+        text = sanitize_semantic_prompt_text(record.get(key))
         if text:
             fields.append(
                 {"label": str(key).replace("_", " ").capitalize(), "value": text}
             )
             seen.add(key)
     return {"fields": fields}
-
-
-def _prompt_text(value: Any) -> str:
-    """Remove structure identifiers from otherwise useful scientific text."""
-    text = _text(value)
-    if not text:
-        return ""
-    text = _PARENTHETICAL_SMILES_RE.sub("", text)
-    text = _COMPOUND_SMILES_RE.sub("the tested compound", text)
-    text = _SMILES_RE.sub("the tested compound", text)
-    return " ".join(text.split())
 
 
 def _pair_context(record: Mapping[str, Any]) -> Any:

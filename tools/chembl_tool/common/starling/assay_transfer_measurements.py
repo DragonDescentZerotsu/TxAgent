@@ -24,6 +24,7 @@ LOG10_TRANSFORM = "log10.v1"
 RAW_TRANSFORM = "raw.v1"
 DISPLAY_IDENTITY = "identity.v1"
 DISPLAY_INVERSE_LOG10 = "inverse_log10.v1"
+DISPLAY_INVERSE_LOGIT = "inverse_logit.v1"
 DISPLAY_RELATIVE = "relative_scalar.v1"
 DISPLAY_SEMANTIC = "semantic.v1"
 AXIS_KEY_FIELDS = (
@@ -464,6 +465,16 @@ def display_measurement_tuple(record: Mapping[str, Any]) -> dict[str, Any]:
             "display_unit_text": unit[6:-1] or None,
             "display_transform_id": DISPLAY_INVERSE_LOG10,
         }
+    if unit == "logit_response" and kind == "continuous" and scalar is not None:
+        display_scalar = display_scalar_value(scalar, DISPLAY_INVERSE_LOGIT)
+        return {
+            "display_measurement_text": (
+                _format_number(display_scalar) if display_scalar is not None else text
+            ),
+            "display_scalar_value": display_scalar,
+            "display_unit_text": "fraction",
+            "display_transform_id": DISPLAY_INVERSE_LOGIT,
+        }
     if unit == "relative-scalar":
         return {
             "display_measurement_text": (
@@ -499,6 +510,12 @@ def display_scalar_value(value: Any, transform_id: str) -> float | None:
     scalar = _finite(value)
     if scalar is None:
         return None
+    if transform_id == DISPLAY_INVERSE_LOGIT:
+        return (
+            1.0 / (1.0 + math.exp(-scalar))
+            if scalar >= 0
+            else math.exp(scalar) / (1.0 + math.exp(scalar))
+        )
     if transform_id != DISPLAY_INVERSE_LOG10:
         return scalar
     try:

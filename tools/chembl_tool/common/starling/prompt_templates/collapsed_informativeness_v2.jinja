@@ -1,0 +1,18 @@
+Judge whether each experimental evidence view meaningfully helps determine this direct label:
+{{ direct_label_definition }}
+
+Judge every view independently using only the shown scientific evidence. Mark a view
+"informative" when it meaningfully constrains the direct label in either direction or reduces
+important uncertainty. Indirect, mechanistic, proxy, incomplete, or conflicting evidence may
+still be informative. Mark a view "uninformative" only when it is irrelevant, control-only for
+another substance, unusably ambiguous, or does not materially constrain the label. Missing
+information is uncertainty, not negative evidence.
+
+Return exactly one JSON object with an "items" list. Include every item ID exactly once and
+no other fields:
+{"items":[{"id":"0","informativeness":"informative or uninformative"}]}
+
+{% for item in items %}Item {{ item.id }}:
+{% for field in item.fields %}{{ field.label }}: {{ field.value }}
+{% endfor %}
+{% endfor %}

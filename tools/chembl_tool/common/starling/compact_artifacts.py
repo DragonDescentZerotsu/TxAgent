@@ -22,6 +22,7 @@ from rdkit import DataStructs
 from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
 from tools.chembl_tool.common.starling.assay_transfer_measurements import (
     DISPLAY_INVERSE_LOG10,
+    DISPLAY_INVERSE_LOGIT,
     display_scalar_value,
 )
 from tools.chembl_tool.common.starling.evidence_library import starling_molecule_id
@@ -841,6 +842,8 @@ def _collapsed_source_projection(record: Mapping[str, Any]) -> dict[str, Any]:
     }
     if record.get("display_transform_id") == DISPLAY_INVERSE_LOG10:
         measurement["aggregation_scale"] = "log10"
+    elif record.get("display_transform_id") == DISPLAY_INVERSE_LOGIT:
+        measurement["aggregation_scale"] = "logit"
     if not direct:
         measurement["category_counts"] = counts or None
     pair_context = _json_object(record.get("canonical_pair_fields_json"))

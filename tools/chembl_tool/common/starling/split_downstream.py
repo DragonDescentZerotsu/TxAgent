@@ -42,6 +42,10 @@ from tools.chembl_tool.common.starling.final_endpoint_pruning import (
     REVIEWS_FILENAME as FINAL_ENDPOINT_PRUNING_REVIEWS_FILENAME,
     VERSION as FINAL_ENDPOINT_PRUNING_VERSION,
 )
+from tools.chembl_tool.common.starling.collapsed_informativeness import (
+    TEMPLATE_PATH as COLLAPSED_INFORMATIVENESS_TEMPLATE_PATH,
+    VERSION as COLLAPSED_INFORMATIVENESS_VERSION,
+)
 from tools.chembl_tool.common.starling.compact_artifacts import (
     CompactArtifactProfile,
     build_relational_evidence_catalog,
@@ -210,6 +214,7 @@ def build_canonical_artifacts(
     semantic_aggregation_budget_max_tokens: int = 10_000_000,
     semantic_aggregation_start_new_budget_epoch: bool = False,
     defer_semantic_aggregation: bool = False,
+    collapsed_informativeness_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """Build split-independent pair, collapse, and calibration artifacts."""
     started = time.monotonic()
@@ -222,11 +227,24 @@ def build_canonical_artifacts(
     semantic_cache_input = (
         Path(semantic_aggregation_cache)
         if (
-            not defer_semantic_aggregation
-            and semantic_aggregation_cache
+            semantic_aggregation_cache
             and Path(semantic_aggregation_cache).is_file()
         )
         else None
+    )
+    informativeness_dir = (
+        Path(collapsed_informativeness_dir)
+        if collapsed_informativeness_dir is not None
+        else None
+    )
+    informativeness_inputs = (
+        (
+            informativeness_dir / "manifest.json",
+            informativeness_dir / "requests.jsonl",
+            COLLAPSED_INFORMATIVENESS_TEMPLATE_PATH,
+        )
+        if informativeness_dir is not None
+        else ()
     )
     pruning_dir = root / FINAL_ENDPOINT_PRUNING_DIR
     pruning_inputs = (
@@ -243,6 +261,7 @@ def build_canonical_artifacts(
             *spec.collapse_input_paths,
             SEMANTIC_AGGREGATION_TEMPLATE_PATH,
             *((semantic_cache_input,) if semantic_cache_input else ()),
+            *informativeness_inputs,
             *pruning_inputs,
         )
         if getattr(spec, "collapse_records", False)
@@ -269,6 +288,11 @@ def build_canonical_artifacts(
             else None
         ),
         defer_semantic_aggregation=defer_semantic_aggregation,
+        collapsed_informativeness_version=(
+            COLLAPSED_INFORMATIVENESS_VERSION
+            if informativeness_dir is not None
+            else None
+        ),
         final_endpoint_pruning_version=(
             FINAL_ENDPOINT_PRUNING_VERSION
             if getattr(spec, "final_endpoint_pruning", False)
@@ -361,6 +385,7 @@ def build_canonical_artifacts(
                 semantic_model=semantic_aggregation_model,
                 semantic_cache_path=semantic_cache_input,
                 defer_semantic_aggregation=defer_semantic_aggregation,
+                collapsed_informativeness_dir=informativeness_dir,
             )
         else:
             pair_metadata, transfer = _build_pair_and_transfer(
@@ -597,6 +622,7 @@ def _build_canonical_collapsed_stages(
     semantic_model: str,
     semantic_cache_path: Path | None,
     defer_semantic_aggregation: bool,
+    collapsed_informativeness_dir: Path | None,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     pair_dir = candidate / PAIR_BUCKET_STAGE
     dedup_dir = candidate / DEDUPLICATED_RECORD_STAGE
@@ -677,6 +703,7 @@ def _build_canonical_collapsed_stages(
             *((semantic_cache_path,) if semantic_cache_path else ()),
         ),
         defer_semantic_aggregation=defer_semantic_aggregation,
+        collapsed_informativeness_dir=collapsed_informativeness_dir,
         final_endpoint_pruning_manifest_path=(
             published_root
             / FINAL_ENDPOINT_PRUNING_DIR

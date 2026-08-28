@@ -45,6 +45,27 @@ def test_display_tuple_reverses_only_explicit_canonical_log10() -> None:
     assert display["display_transform_id"] == "inverse_log10.v1"
     assert display_scalar_value(-6.0, "inverse_log10.v1") == pytest.approx(1e-6)
 
+
+def test_continuous_logit_response_has_fraction_display():
+    display = display_measurement_tuple(
+        {
+            "canonical_measurement_text": "0",
+            "canonical_unit_text": "logit_response",
+            "measurement_kind": "continuous",
+            "finite_scalar_value": 0.0,
+        }
+    )
+
+    assert display == {
+        "display_measurement_text": "0.5",
+        "display_scalar_value": 0.5,
+        "display_unit_text": "fraction",
+        "display_transform_id": "inverse_logit.v1",
+    }
+    assert display_scalar_value(-1.0986122886681098, "inverse_logit.v1") == pytest.approx(
+        0.25
+    )
+
     pka = display_measurement_tuple(
         {
             "canonical_measurement_text": "7.4",

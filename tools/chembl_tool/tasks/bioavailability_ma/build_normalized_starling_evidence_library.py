@@ -184,6 +184,9 @@ def main(argv: list[str] | None = None) -> int:
             defer_semantic_aggregation=getattr(
                 args, "defer_semantic_aggregation", False
             ),
+            collapsed_informativeness_dir=getattr(
+                args, "collapsed_informativeness_dir", None
+            ),
         )
     except (SemanticAggregationBudgetExhausted, SemanticAggregationLimitReached) as exc:
         print(str(exc), flush=True)

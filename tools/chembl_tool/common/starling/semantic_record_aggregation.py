@@ -23,18 +23,26 @@ from tools.chembl_tool.common.starling.build_reference_semantics_mapping import 
 )
 
 
-SCHEMA_VERSION = "semantic_record_aggregation.v3"
+SCHEMA_VERSION = "semantic_record_aggregation.v4"
 DEFAULT_MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 DEFAULT_BASE_URL = "http://127.0.0.1:50001/v1"
-TEMPLATE_PATH = Path(__file__).parent / "prompt_templates/semantic_record_aggregation_v3.jinja"
-INFORMATIVENESS_VALUES = {"informative", "uninformative"}
-_SUMMARY_JUDGMENT_RE = re.compile(
-    r"\b(?:direct[- ]label|informativeness|"
-    r"does not (?:address|establish|determine|predict|directly constrain)|"
-    r"cannot (?:establish|determine|predict)|"
-    r"not sufficient to (?:establish|determine|predict))\b",
+TEMPLATE_PATH = Path(__file__).parent / "prompt_templates/semantic_record_aggregation_v4.jinja"
+_PARENTHETICAL_SMILES_RE = re.compile(
+    r"\(\s*(?:global_identifier\s*:\s*)?SMILES\s*:\s*[^\s)]+\s*\)",
     re.IGNORECASE,
 )
+_COMPOUND_SMILES_RE = re.compile(
+    r"\bcompound\s+(?:identified\s+as\s+)?SMILES\s*:\s*\S+", re.IGNORECASE
+)
+_IDENTIFIED_AS_SMILES_RE = re.compile(
+    r"\s+(?:is\s+)?identified\s+as\s+SMILES\s*:\s*\S+", re.IGNORECASE
+)
+_SMILES_RE = re.compile(r"\bSMILES\s*:\s*\S+", re.IGNORECASE)
+_GLOBAL_IDENTIFIER_RE = re.compile(r"\bglobal_identifier\s*:\s*\S+", re.IGNORECASE)
+_INTERNAL_IDENTIFIER_RE = re.compile(
+    r"\b(?:SMILES|global_identifier)\s*:", re.IGNORECASE
+)
+_TASK_JUDGMENT_RE = re.compile(r"\b(?:direct[- ]label|informativeness)\b", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -78,18 +86,14 @@ def aggregate_semantic_groups(
         prompt = rendered[group_id]
         prompt_sha256 = _sha256(prompt)
         prior = cached.get(group_id)
-        reusable = (
-            prior
-            and prior.get("prompt_sha256") == prompt_sha256
-            and (config is None or prior.get("requested_model") == config.model)
+        reusable = match_semantic_cache_row(
+            prior,
+            payload=payload,
+            prompt_sha256=prompt_sha256,
+            expected_model=config.model if config else None,
         )
         if reusable:
-            try:
-                validate_semantic_response(prior.get("response"))
-            except ValueError:
-                reusable = False
-        if reusable:
-            output[group_id] = {**prior, "input": dict(payload)}
+            output[group_id] = reusable
         else:
             missing[group_id] = payload
     if missing and config is None:
@@ -169,19 +173,24 @@ def aggregate_semantic_groups(
 
 
 def render_prompt(payload: Mapping[str, Any]) -> str:
+    return _prompt_template().render(**payload)
+
+
+@lru_cache(maxsize=1)
+def _prompt_template() -> Any:
     environment = Environment(
         loader=FileSystemLoader(str(TEMPLATE_PATH.parent)),
         undefined=StrictUndefined,
         autoescape=False,
         keep_trailing_newline=True,
     )
-    return environment.get_template(TEMPLATE_PATH.name).render(**payload)
+    return environment.get_template(TEMPLATE_PATH.name)
 
 
 def validate_semantic_response(response: Any) -> dict[str, Any]:
     if not isinstance(response, Mapping):
         raise ValueError("semantic aggregation response must be a JSON object")
-    required = {"summary", "direct_label_informativeness"}
+    required = {"summary"}
     if set(response) != required:
         raise ValueError(
             "semantic aggregation response fields differ from the contract: "
@@ -190,14 +199,64 @@ def validate_semantic_response(response: Any) -> dict[str, Any]:
     summary = response["summary"]
     if not isinstance(summary, str) or not summary.strip():
         raise ValueError("semantic summary must be nonempty text")
-    if _SUMMARY_JUDGMENT_RE.search(summary):
-        raise ValueError(
-            "semantic summary contains the direct-label informativeness judgment"
-        )
-    informativeness = response["direct_label_informativeness"]
-    if informativeness not in INFORMATIVENESS_VALUES:
-        raise ValueError("invalid direct_label_informativeness")
-    return {"summary": summary.strip(), "direct_label_informativeness": informativeness}
+    summary = summary.strip()
+    if _INTERNAL_IDENTIFIER_RE.search(summary):
+        raise ValueError("semantic summary contains an internal structure identifier")
+    if _TASK_JUDGMENT_RE.search(summary):
+        raise ValueError("semantic summary contains a task judgment")
+    return {"summary": summary}
+
+
+def sanitize_semantic_prompt_text(
+    value: Any, *, omit_structure_only: bool = False
+) -> str:
+    """Remove structure identifiers while preserving scientific prose."""
+    if value is None or (isinstance(value, float) and value != value):
+        return ""
+    text = str(value).strip()
+    if text.casefold() in {
+        "",
+        "nan",
+        "none",
+        "null",
+        "unknown",
+        "__unknown__",
+        "not applicable",
+        "not_applicable",
+    }:
+        return ""
+    text = _PARENTHETICAL_SMILES_RE.sub("", text)
+    text = _COMPOUND_SMILES_RE.sub("the tested compound", text)
+    text = _IDENTIFIED_AS_SMILES_RE.sub("", text)
+    text = _SMILES_RE.sub("the tested compound", text)
+    text = _GLOBAL_IDENTIFIER_RE.sub("the tested compound", text)
+    text = " ".join(text.split())
+    if omit_structure_only and text.casefold() == "the tested compound":
+        return ""
+    return text
+
+
+def match_semantic_cache_row(
+    cached: Mapping[str, Any] | None,
+    *,
+    payload: Mapping[str, Any],
+    prompt_sha256: str,
+    expected_model: str | None,
+) -> dict[str, Any] | None:
+    """Accept only an exact v4 payload, prompt, and model match."""
+    if not cached or (
+        expected_model is not None and cached.get("requested_model") != expected_model
+    ):
+        return None
+    if cached.get("schema_version") != SCHEMA_VERSION:
+        return None
+    try:
+        validate_semantic_response(cached.get("response"))
+    except ValueError:
+        return None
+    if cached.get("prompt_sha256") != prompt_sha256 or cached.get("input") != payload:
+        return None
+    return {**cached, "input": dict(payload)}
 
 
 def _run_one(
@@ -414,6 +473,8 @@ __all__ = [
     "SemanticAggregationLimitReached",
     "aggregate_semantic_groups",
     "load_semantic_cache",
+    "match_semantic_cache_row",
     "render_prompt",
+    "sanitize_semantic_prompt_text",
     "validate_semantic_response",
 ]

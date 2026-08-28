@@ -186,9 +186,12 @@ Stage 06 is the canonical molecule-by-context record boundary. Indirect evidence
 `direct_residual`; both collapse by the task's reviewed condition key rather than by pair bucket, and neither
 is assay-transfer-eligible. The Stage-05 direct mapping audit retains whether each normalized row counted in
 the vote, why it was ignored, and its condition-key status, but this bookkeeping is not exposed to the reasoning LLM.
-The collapse uses the median for absolute continuous values, mode with full counts and null on ties for
-controlled categorical values, and a resumable DeepSeek Flash synthesis for relative, free-text, or mixed
-evidence. It consumes the retained Stage-05 rows and performs no row deduplication. No
+The collapse uses the median for axis-compatible absolute continuous values and mode with full counts and null on ties for
+axis-compatible controlled categorical values. A singleton semantic group uses its exact support text as the canonical
+collapsed value; multi-record relative, free-text, mixed groups, and direct-residual groups spanning incompatible endpoint/unit/scale axes use resumable LLM synthesis. A
+separate batched classifier assigns direct-label informativeness after collapse: semantic evidence has one
+collapsed view, while deterministic evidence compares independent representative and collapsed views. It
+consumes the retained Stage-05 rows and performs no row deduplication. No
 `canonical_claim_id` is persisted or used as a collapse key.
 Configured `group_id` values remain unchanged; `retrieval_source_id` alone distinguishes direct vote,
 direct residual, and indirect partitions. A collapsed record is constructed from an explicit output contract,
