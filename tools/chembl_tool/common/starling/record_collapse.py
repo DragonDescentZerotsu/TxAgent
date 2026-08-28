@@ -27,6 +27,9 @@ from tools.chembl_tool.common.starling.collapsed_informativeness import (
     load_complete_judgments,
 )
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+from tools.chembl_tool.common.starling.normalization.organization import (
+    is_absolute_continuous,
+)
 from tools.chembl_tool.common.starling.final_endpoint_pruning import (
     load_final_endpoint_pruning,
 )
@@ -45,7 +48,7 @@ from tools.chembl_tool.common.starling.semantic_record_aggregation import (
 )
 
 
-COLLAPSE_VERSION = "starling_record_collapse.v9"
+COLLAPSE_VERSION = "starling_record_collapse.v10"
 RECORDS_FILENAME = "records.parquet"
 SEMANTIC_FILENAME = "semantic_aggregation.jsonl"
 MANIFEST_FILENAME = "manifest.json"
@@ -65,6 +68,7 @@ _BASE_COLUMNS = {
     "group_id",
     "canonical_endpoint_name",
     "finite_scalar_value",
+    "is_absolute_and_continuous",
     "variation_value",
     "measurement_kind",
     "canonical_measurement_scale_id",
@@ -86,6 +90,7 @@ _BASE_COLUMNS = {
     "condition_scope",
     "condition_key_status",
     "direct_group_id",
+    "direct_residual_endpoint_name",
 }
 def build_collapsed_record_stage(
     *,
@@ -201,7 +206,21 @@ def build_collapsed_record_stage(
         "task_id": task_id,
         "grouping_contract": {
             "direct_vote": ["canonical_smiles", "condition_group"],
-            "direct_residual": [
+            "direct_residual_absolute_continuous": [
+                "canonical_smiles",
+                "condition_group",
+                "condition_key_status",
+                "canonical_endpoint_name",
+                "canonical_unit_text",
+                "canonical_measurement_scale_id",
+            ],
+            "direct_residual_controlled_categorical": [
+                "canonical_smiles",
+                "condition_group",
+                "condition_key_status",
+                "canonical_measurement_scale_id",
+            ],
+            "direct_residual_semantic": [
                 "canonical_smiles",
                 "condition_group",
                 "condition_key_status",
@@ -214,7 +233,7 @@ def build_collapsed_record_stage(
             "single_relative_or_unresolved_scalar": "numeric_passthrough",
             "single_semantic": "support_text_passthrough",
             "multi_semantic": "llm_loss_aware_summary",
-            "mixed_axis_direct_residual": "llm_loss_aware_summary",
+            "mixed_axis_direct_residual": "separate_deterministic_groups",
             "direct_unconditioned_agreement_threshold": UNCONDITIONED_AGREEMENT_THRESHOLD,
             "direct_conditioned_agreement_threshold": CONDITIONED_AGREEMENT_THRESHOLD,
         },
@@ -300,6 +319,11 @@ def build_collapsed_record_stage(
             "direct_records_are_not_assay_transferable": output_stats[
                 "direct_records_are_not_assay_transferable"
             ],
+            "deterministic_direct_residuals_never_use_semantic_aggregation": (
+                output_stats[
+                    "deterministic_direct_residuals_never_use_semantic_aggregation"
+                ]
+            ),
             "pending_semantic_records_are_not_retrieval_eligible": output_stats[
                 "pending_semantic_records_are_not_retrieval_eligible"
             ],
@@ -560,6 +584,7 @@ def _write_collapsed_outputs(
     source_records_represented = 0
     collapsed_ids: set[str] = set()
     direct_transfer_valid = True
+    deterministic_residual_routing_valid = True
     configured_groups_preserved = True
     pending_retrieval_valid = True
     informativeness_targets = 0
@@ -569,6 +594,13 @@ def _write_collapsed_outputs(
     with records_jsonl.open("w", encoding="utf-8") as handle:
         for group_key, group in _iter_retained_groups(connection):
             method = _aggregation_method(group)
+            if (
+                str(group[0]["retrieval_source_id"]) == "direct_residual"
+                and method == "semantic_llm"
+            ):
+                deterministic_residual_routing_valid &= all(
+                    _direct_residual_axis(row)[0] == "semantic" for row in group
+                )
             semantic_row = connection.execute(
                 "SELECT payload FROM semantic WHERE group_key=?", (group_key,)
             ).fetchone()
@@ -702,6 +734,9 @@ def _write_collapsed_outputs(
         "semantic_token_usage": dict(sorted(semantic_usage.items())),
         "semantic_models": dict(sorted(semantic_models.items())),
         "direct_records_are_not_assay_transferable": direct_transfer_valid,
+        "deterministic_direct_residuals_never_use_semantic_aggregation": (
+            deterministic_residual_routing_valid
+        ),
         "configured_group_ids_preserved": configured_groups_preserved,
         "pending_semantic_records_are_not_retrieval_eligible": pending_retrieval_valid,
         "collapsed_informativeness_target_views": informativeness_targets,
@@ -819,6 +854,7 @@ def _empty_collapsed_schema(
         "canonical_measurement_text": pa.string(),
         "canonical_unit_text": pa.string(),
         "finite_scalar_value": pa.float64(),
+        "is_absolute_and_continuous": pa.bool_(),
         "display_measurement_text": pa.string(),
         "display_scalar_value": pa.float64(),
         "display_unit_text": pa.string(),
@@ -866,6 +902,7 @@ def _collapse_group_key(record: Mapping[str, Any]) -> str:
             smiles,
             str(record["condition_group"]),
             str(record["condition_key_status"]),
+            *_direct_residual_axis(record),
         ]
     else:
         identity = [source, smiles, str(record["pair_bucket_key"])]
@@ -876,14 +913,31 @@ def _aggregation_method(group: Sequence[Mapping[str, Any]]) -> str:
     retrieval_source = str(group[0]["retrieval_source_id"])
     if retrieval_source == "direct_vote":
         return "direct_binary_vote"
-    shared_axis = retrieval_source != "direct_residual" or _shared_measurement_axis(
-        group
-    )
-    if shared_axis and all(
+    if retrieval_source == "direct_residual":
+        axes = {_direct_residual_axis(row) for row in group}
+        if len(axes) != 1:
+            raise ValueError("direct-residual collapse group spans measurement axes")
+        axis_kind = next(iter(axes))[0]
+        if axis_kind == "controlled_categorical":
+            if not all(_text(row.get("canonical_category_id")) for row in group):
+                raise ValueError("controlled categorical group has an unencoded row")
+            return "categorical_mode"
+        if axis_kind == "absolute_continuous":
+            if not all(
+                is_absolute_continuous(row)
+                and _finite(row.get("finite_scalar_value"))
+                for row in group
+            ):
+                raise ValueError("absolute continuous group has a non-scalar row")
+            return "continuous_median"
+        if len(group) == 1 and _finite(group[0].get("finite_scalar_value")):
+            return "single_record_passthrough"
+        return "semantic_support_passthrough" if len(group) == 1 else "semantic_llm"
+    if all(
         _text(row.get("canonical_category_id")) for row in group
     ):
         return "categorical_mode"
-    if shared_axis and all(
+    if all(
         str(row.get("measurement_kind") or "") == "continuous"
         and _finite(row.get("finite_scalar_value"))
         and str(row.get("canonical_unit_text") or "")
@@ -898,20 +952,28 @@ def _aggregation_method(group: Sequence[Mapping[str, Any]]) -> str:
     return "semantic_llm"
 
 
-def _shared_measurement_axis(group: Sequence[Mapping[str, Any]]) -> bool:
-    """Require direct-residual medians and modes to compare like with like."""
-    if len(group) == 1:
-        return True
-    axes = {
-        (
-            _text(row.get("canonical_endpoint_name")),
-            _text(row.get("canonical_unit_text")),
-            _text(row.get("canonical_measurement_scale_id")),
+def _direct_residual_axis(record: Mapping[str, Any]) -> tuple[str, ...]:
+    category = _text(record.get("canonical_category_id"))
+    if category:
+        scale = _text(record.get("canonical_measurement_scale_id"))
+        if not scale:
+            raise ValueError("controlled direct residual lacks a measurement scale")
+        return "controlled_categorical", scale
+    if is_absolute_continuous(record):
+        endpoint = _text(
+            record.get("direct_residual_endpoint_name")
+            or record.get("canonical_endpoint_name")
         )
-        for row in group
-    }
-    endpoint, unit, _ = next(iter(axes)) if len(axes) == 1 else ("", "", "")
-    return len(axes) == 1 and bool(endpoint and unit)
+        unit = _text(record.get("canonical_unit_text"))
+        if not endpoint or not unit or not _finite(record.get("finite_scalar_value")):
+            raise ValueError("absolute direct residual lacks a canonical axis")
+        return (
+            "absolute_continuous",
+            endpoint,
+            unit,
+            _text(record.get("canonical_measurement_scale_id")),
+        )
+    return ("semantic",)
 
 
 def _aggregate_group(
@@ -949,6 +1011,18 @@ def _aggregate_group(
     group_id = next(iter(group_ids))
     smiles = _one_value(group, "canonical_smiles", group_key)
     pair_context = _pair_context(group[0]) if retrieval_source == "indirect" else {}
+    if retrieval_source == "direct_vote":
+        collapsed_endpoint = group_id
+    elif retrieval_source == "direct_residual":
+        collapsed_endpoint = (
+            _common_value(group, "direct_residual_endpoint_name")
+            or _common_value(group, "canonical_endpoint_name")
+            or group_id
+        )
+    else:
+        collapsed_endpoint = _one_value(
+            group, "canonical_endpoint_name", group_key
+        )
     output = {
         field: _common_value(group, field)
         for field in preserved_columns
@@ -962,16 +1036,8 @@ def _aggregate_group(
             "source_id": (
                 next(iter(source_ids)) if len(source_ids) == 1 else "multi_source"
             ),
-            "endpoint_name": (
-                group_id
-                if retrieval_source in DIRECT_RETRIEVAL_SOURCES
-                else _one_value(group, "canonical_endpoint_name", group_key)
-            ),
-            "canonical_endpoint_name": (
-                group_id
-                if retrieval_source in DIRECT_RETRIEVAL_SOURCES
-                else _one_value(group, "canonical_endpoint_name", group_key)
-            ),
+            "endpoint_name": collapsed_endpoint,
+            "canonical_endpoint_name": collapsed_endpoint,
             "canonical_unit_text": (
                 "binary_outcome"
                 if method == "direct_binary_vote"
@@ -1009,6 +1075,7 @@ def _aggregate_group(
             "representative_direct_label_informativeness": None,
             "informativeness_representative_record_id": None,
             "direct_label_informativeness_model": None,
+            "is_absolute_and_continuous": False,
         }
     )
     if method == "direct_binary_vote":
@@ -1093,11 +1160,13 @@ def _aggregate_group(
         output["aggregate_max"] = max(values)
         output["aggregate_q1"] = float(np.quantile(values, 0.25))
         output["aggregate_q3"] = float(np.quantile(values, 0.75))
+        output["is_absolute_and_continuous"] = True
     elif method == "single_record_passthrough":
         record = group[0]
         value = float(record["finite_scalar_value"])
         output["finite_scalar_value"] = value
         output["canonical_measurement_text"] = format(value, ".12g")
+        output["is_absolute_and_continuous"] = is_absolute_continuous(record)
     elif method == "semantic_support_passthrough":
         support_text = _text(group[0].get("support_text"))
         if not support_text:

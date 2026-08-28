@@ -89,16 +89,21 @@ def build_direct_record_mapping(
                 or (claim or {}).get("classification_reason")
                 or "not_a_canonical_direct_claim"
             )
-        output.append(
-            direct_mapping_row(
-                record,
-                condition=condition,
-                counted=counted,
-                reason=reason,
-                label=label,
-                group_id=DIRECT_GROUP_ID,
-            )
+        mapping = direct_mapping_row(
+            record,
+            condition=condition,
+            counted=counted,
+            reason=reason,
+            label=label,
+            group_id=DIRECT_GROUP_ID,
         )
+        if (
+            mapping["retrieval_source_id"] == "direct_residual"
+            and str(record.get("canonical_endpoint_name") or "")
+            in {"bioavailability", "oral_bioavailability"}
+        ):
+            mapping["direct_residual_endpoint_name"] = "oral_bioavailability"
+        output.append(mapping)
     return output
 
 

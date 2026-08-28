@@ -19,7 +19,7 @@ import pyarrow.parquet as pq
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 
 
-DEDUPLICATION_VERSION = "starling_record_deduplication.v1"
+DEDUPLICATION_VERSION = "starling_record_deduplication.v2"
 RECORDS_FILENAME = "records.parquet"
 PAIR_BUCKET_RECORDS_FILENAME = "pair_bucket_records.parquet"
 DIRECT_MAPPING_FILENAME = "direct_record_mapping.parquet"
@@ -64,6 +64,8 @@ _CANDIDATE_FIELDS = frozenset(
         "canonical_measurement_text",
         "measurement_text",
         "canonical_unit_text",
+        "canonical_measurement_scale_id",
+        "direct_residual_endpoint_name",
         "canonical_endpoint_name",
         "endpoint_name",
         "canonical_category_id",
@@ -449,6 +451,7 @@ def _retained_record_schema(records_path: Path, sidecar_path: Path) -> pa.Schema
         "condition_scope": pa.string(),
         "condition_key_status": pa.string(),
         "direct_group_id": pa.string(),
+        "direct_residual_endpoint_name": pa.string(),
     }
     for name, data_type in appended.items():
         fields.setdefault(name, pa.field(name, data_type))
@@ -498,6 +501,9 @@ def _decorate(
                 "condition_scope": mapping["condition_scope"],
                 "condition_key_status": mapping["condition_key_status"],
                 "direct_group_id": mapping.get("direct_group_id"),
+                "direct_residual_endpoint_name": mapping.get(
+                    "direct_residual_endpoint_name"
+                ),
             }
         )
     return output
@@ -545,9 +551,12 @@ def _dedup_context_key(record: Mapping[str, Any]) -> str:
 
 def _measurement_signature(record: Mapping[str, Any]) -> tuple[Any, ...]:
     kind = str(record.get("measurement_kind") or "")
+    scale = _normalized_text(record.get("canonical_measurement_scale_id"))
     unit = _normalized_text(record.get("canonical_unit_text"))
     endpoint = _normalized_text(
-        record.get("canonical_endpoint_name") or record.get("endpoint_name")
+        record.get("direct_residual_endpoint_name")
+        or record.get("canonical_endpoint_name")
+        or record.get("endpoint_name")
     )
     if record.get("direct_vote_label") in {0, 1}:
         value: Any = ("direct_label", int(record["direct_vote_label"]))
@@ -566,7 +575,7 @@ def _measurement_signature(record: Mapping[str, Any]) -> tuple[Any, ...]:
                 record.get("canonical_measurement_text") or record.get("measurement_text")
             ),
         )
-    return kind, endpoint, unit, value
+    return kind, endpoint, unit, scale, value
 
 
 def _dedup_match(

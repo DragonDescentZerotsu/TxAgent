@@ -92,7 +92,9 @@ def build_sidecar(
             else None
         ),
         semantic_pair_bucket_sources=(
-            POLICY.endpoint_identity_required_sources if v7 else ()
+            (*POLICY.endpoint_identity_required_sources, "hf_bioavailability")
+            if v7
+            else ()
         ),
         assay_transfer_record_ineligibility=load_measurement_policy(
             POLICY.assay_transfer_measurement_policy

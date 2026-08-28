@@ -237,6 +237,43 @@ def test_row_dedup_does_not_collapse_distinct_within_source_contexts(tmp_path):
     assert len(pd.read_parquet(tmp_path / "dedup/records.parquet")) == 2
 
 
+def test_row_dedup_keeps_incompatible_categorical_scales(tmp_path):
+    records = [
+        {
+            **_record("r1", "source_a", "CCO", "binary", category="positive"),
+            "canonical_measurement_scale_id": "scale_a",
+        },
+        {
+            **_record("r2", "source_a", "CCO", "binary", category="positive"),
+            "canonical_measurement_scale_id": "scale_b",
+        },
+    ]
+    sidecar = [
+        {
+            "canonical_record_id": row["canonical_record_id"],
+            "pair_bucket_key": "same-bucket",
+            "canonical_pair_fields_json": "{}",
+            "assay_transfer_eligible": False,
+            "assay_transfer_ineligibility_reason": "categorical",
+        }
+        for row in records
+    ]
+    records_path = tmp_path / "records.parquet"
+    sidecar_path = tmp_path / "sidecar.parquet"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+    pd.DataFrame(sidecar).to_parquet(sidecar_path, index=False)
+
+    manifest = build_deduplicated_record_stage(
+        task_id="test_task",
+        records_path=records_path,
+        pair_bucket_records_path=sidecar_path,
+        out_dir=tmp_path / "dedup",
+    )
+
+    assert manifest["summary"]["duplicates_removed"] == 0
+    assert len(pd.read_parquet(tmp_path / "dedup/records.parquet")) == 2
+
+
 def test_semantic_response_is_summary_only_and_rejects_internal_names():
     response = {"summary": "The reported result was consistent."}
     assert validate_semantic_response(response) == response
@@ -604,28 +641,165 @@ def test_single_relative_scalar_does_not_require_an_llm(tmp_path):
     assert collapsed["display_measurement_text"] == "2× relative to comparator"
 
 
-def test_direct_residual_mixed_measurement_axes_require_semantic_aggregation():
+def test_direct_residual_group_key_separates_deterministic_measurement_axes():
+    condition = {
+        "condition_group": "no_reported_external_condition",
+        "condition_key_status": "none_reported",
+    }
     first = {
         **_record("r1", "source_a", "CCO", "continuous", value=0.5),
+        **condition,
         "retrieval_source_id": "direct_residual",
         "canonical_endpoint_name": "brain_uptake",
         "canonical_unit_text": "%",
     }
     same_axis = {
         **_record("r2", "source_a", "CCO", "continuous", value=0.7),
+        **condition,
         "retrieval_source_id": "direct_residual",
         "canonical_endpoint_name": "brain_uptake",
         "canonical_unit_text": "%",
     }
     mixed_axis = {
         **_record("r3", "source_a", "CCO", "continuous", value=-0.2),
+        **condition,
         "retrieval_source_id": "direct_residual",
         "canonical_endpoint_name": "whole_brain_uptake",
         "canonical_unit_text": "log10(%ID/g)",
     }
 
+    assert _collapse_group_key(first) == _collapse_group_key(same_axis)
+    assert _collapse_group_key(first) != _collapse_group_key(mixed_axis)
     assert _aggregation_method([first, same_axis]) == "continuous_median"
-    assert _aggregation_method([first, mixed_axis]) == "semantic_llm"
+    with pytest.raises(ValueError, match="spans measurement axes"):
+        _aggregation_method([first, mixed_axis])
+    bioavailability = {
+        **first,
+        "canonical_endpoint_name": "bioavailability",
+        "direct_residual_endpoint_name": "oral_bioavailability",
+    }
+    oral_bioavailability = {
+        **same_axis,
+        "canonical_endpoint_name": "oral_bioavailability",
+        "direct_residual_endpoint_name": "oral_bioavailability",
+    }
+    assert _collapse_group_key(bioavailability) == _collapse_group_key(
+        oral_bioavailability
+    )
+    assert _aggregation_method(
+        [bioavailability, oral_bioavailability]
+    ) == "continuous_median"
+
+
+def test_direct_residual_absolute_axes_collapse_without_llm(tmp_path, monkeypatch):
+    records = []
+    for record_id, source_id, endpoint, unit, value in (
+        ("r1", "source_a", "brain_uptake", "%", 10.0),
+        ("r2", "source_b", "brain_uptake", "%", 20.0),
+        ("r3", "source_a", "brain_uptake", "log10(%ID/g)", -1.0),
+        ("r4", "source_a", "brain_concentration", "%", 30.0),
+    ):
+        records.append(
+            {
+                **_record(record_id, source_id, "CCO", "continuous", value=value),
+                "retrieval_source_id": "direct_residual",
+                "group_id": "Observed.direct",
+                "direct_group_id": "Observed.direct",
+                "canonical_endpoint_name": endpoint,
+                "canonical_unit_text": unit,
+                "condition_group": "no_reported_external_condition",
+                "condition_atoms": [],
+                "condition_scope": "none_reported",
+                "condition_key_status": "none_reported",
+            }
+        )
+    sidecar = [
+        {
+            "canonical_record_id": row["canonical_record_id"],
+            "pair_bucket_key": None,
+            "canonical_pair_fields_json": None,
+            "assay_transfer_eligible": False,
+            "assay_transfer_ineligibility_reason": "direct_outcome",
+        }
+        for row in records
+    ]
+    records_path = tmp_path / "records.parquet"
+    sidecar_path = tmp_path / "pair_bucket_records.parquet"
+    metadata_path = tmp_path / "pair_bucket_metadata.json"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+    pd.DataFrame(sidecar).to_parquet(sidecar_path, index=False)
+    metadata_path.write_text("{}\n", encoding="utf-8")
+    monkeypatch.setattr(
+        "tools.chembl_tool.common.starling.record_collapse.aggregate_semantic_groups",
+        lambda *args, **kwargs: pytest.fail("absolute direct residual called the LLM"),
+    )
+
+    manifest = build_collapsed_record_stage(
+        task_id="test_task",
+        records_path=records_path,
+        pair_bucket_records_path=sidecar_path,
+        pair_bucket_metadata_path=metadata_path,
+        out_dir=tmp_path / "collapsed",
+    )
+
+    collapsed = pd.read_parquet(tmp_path / "collapsed/records.parquet")
+    percent_uptake = collapsed[
+        (collapsed["canonical_endpoint_name"] == "brain_uptake")
+        & (collapsed["canonical_unit_text"] == "%")
+    ].iloc[0]
+    assert len(collapsed) == 3
+    assert manifest["summary"]["semantic_groups"] == 0
+    assert set(collapsed["aggregation_method"]) == {"continuous_median"}
+    assert percent_uptake["finite_scalar_value"] == 15.0
+    assert percent_uptake["source_id"] == "multi_source"
+    assert percent_uptake["is_absolute_and_continuous"] == True  # noqa: E712
+
+
+def test_direct_residual_categorical_key_uses_reviewed_scale():
+    condition = {
+        "retrieval_source_id": "direct_residual",
+        "condition_group": "no_reported_external_condition",
+        "condition_key_status": "none_reported",
+    }
+    first = {
+        **_record("r1", "source_a", "CCO", "binary", category="positive"),
+        **condition,
+        "canonical_endpoint_name": "assay_a",
+        "canonical_measurement_scale_id": "binary_scale",
+    }
+    same_scale = {
+        **_record("r2", "source_b", "CCO", "binary", category="positive"),
+        **condition,
+        "canonical_endpoint_name": "assay_b",
+        "canonical_measurement_scale_id": "binary_scale",
+    }
+    different_scale = {
+        **_record("r3", "source_b", "CCO", "binary", category="positive"),
+        **condition,
+        "canonical_endpoint_name": "assay_a",
+        "canonical_measurement_scale_id": "different_binary_scale",
+    }
+
+    assert _collapse_group_key(first) == _collapse_group_key(same_scale)
+    assert _collapse_group_key(first) != _collapse_group_key(different_scale)
+    assert _aggregation_method([first, same_scale]) == "categorical_mode"
+
+
+def test_multi_record_relative_direct_residual_stays_semantic():
+    records = [
+        {
+            **_record(record_id, "source_a", "CCO", "continuous", value=value),
+            "is_absolute_and_continuous": False,
+            "retrieval_source_id": "direct_residual",
+            "condition_group": "no_reported_external_condition",
+            "condition_key_status": "none_reported",
+            "canonical_unit_text": "%",
+        }
+        for record_id, value in (("r1", 20.0), ("r2", 30.0))
+    ]
+
+    assert _collapse_group_key(records[0]) == _collapse_group_key(records[1])
+    assert _aggregation_method(records) == "semantic_llm"
 
 
 def test_single_semantic_record_uses_support_text_without_llm(tmp_path, monkeypatch):
@@ -1142,6 +1316,7 @@ def _record(
         "group_id": "Observed.direct" if source_id == "direct" else "Observed.indirect",
         "measurement_kind": kind,
         "finite_scalar_value": value,
+        "is_absolute_and_continuous": kind == "continuous" and value is not None,
         "variation_value": None,
         "canonical_measurement_scale_id": "test_scale" if category else None,
         "canonical_category_id": category,

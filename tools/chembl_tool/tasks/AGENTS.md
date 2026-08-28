@@ -187,8 +187,11 @@ Stage 06 is the canonical molecule-by-context record boundary. Indirect evidence
 is assay-transfer-eligible. The Stage-05 direct mapping audit retains whether each normalized row counted in
 the vote, why it was ignored, and its condition-key status, but this bookkeeping is not exposed to the reasoning LLM.
 The collapse uses the median for axis-compatible absolute continuous values and mode with full counts and null on ties for
-axis-compatible controlled categorical values. A singleton semantic group uses its exact support text as the canonical
-collapsed value; multi-record relative, free-text, mixed groups, and direct-residual groups spanning incompatible endpoint/unit/scale axes use resumable LLM synthesis. A
+axis-compatible controlled categorical values. Direct residuals are split before aggregation: absolute continuous rows use
+the canonical endpoint/unit axis plus the reviewed condition key, while categorical rows use the controlled scale plus that
+condition key. Incompatible deterministic axes therefore become separate collapsed records and never use LLM synthesis.
+A singleton semantic group uses its exact support text as the canonical collapsed value; multi-record relative, free-text,
+and other genuinely semantic groups use resumable LLM synthesis. A
 separate batched classifier assigns direct-label informativeness after collapse: semantic evidence has one
 collapsed view, while deterministic evidence compares independent representative and collapsed views. It
 consumes the retained Stage-05 rows and performs no row deduplication. No
