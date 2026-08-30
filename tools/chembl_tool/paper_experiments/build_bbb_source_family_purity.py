@@ -42,10 +42,10 @@ from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import (
 
 DEFAULT_OUTPUT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/"
-    "source_overlays/bbb_source_family_purity_v4"
+    "source_overlays/bbb_source_family_purity_v5"
 )
 DEFAULT_GOLD_MIGRATION = (
-    DEFAULT_GOLD_ROOT / "migration_from_v2.json"
+    DEFAULT_GOLD_ROOT / "migration_from_v3.json"
 )
 
 
@@ -200,7 +200,7 @@ def finalize_manifest(
     gold_root: Path = DEFAULT_GOLD_ROOT,
     conditioned_root: Path | None = None,
     gold_migration_path: Path = DEFAULT_GOLD_MIGRATION,
-    gold_contract_name: str = "v3",
+    gold_contract_name: str = "v4",
 ) -> dict:
     decision_fn, gold_lineage = _gold_contract(gold_contract_name)
     gold_indices = load_gold_vote_source_indices(
@@ -396,7 +396,7 @@ def build(
     gold_root: Path = DEFAULT_GOLD_ROOT,
     conditioned_root: Path | None = None,
     gold_migration_path: Path = DEFAULT_GOLD_MIGRATION,
-    gold_contract_name: str = "v3",
+    gold_contract_name: str = "v4",
     purity_version: str = PURITY_VERSION,
 ) -> dict:
     decision_fn, _ = _gold_contract(gold_contract_name)
@@ -437,7 +437,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--gold-root", default=str(DEFAULT_GOLD_ROOT))
     parser.add_argument("--conditioned-root", default=str(DEFAULT_CONDITIONED_ROOT))
     parser.add_argument("--gold-migration", default=str(DEFAULT_GOLD_MIGRATION))
-    parser.add_argument("--gold-contract", choices=("v3", "v4"), default="v3")
+    parser.add_argument("--gold-contract", choices=("v3", "v4"), default="v4")
     parser.add_argument("--purity-version", default=PURITY_VERSION)
     parser.add_argument("--finalize-only", action="store_true")
     args = parser.parse_args(argv)

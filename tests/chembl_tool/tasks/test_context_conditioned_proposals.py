@@ -1,9 +1,8 @@
 from tools.chembl_tool.common.starling.external_condition import propose_pattern_condition
-from tools.chembl_tool.tasks.bbb_martins.context_conditioned_benchmark import (
+from tools.chembl_tool.tasks.bbb_martins.prepare_condition_review import (
     RULES as BBB_RULES,
     _remove_non_conditions as _remove_bbb_non_conditions,
 )
-from tools.chembl_tool.tasks.clintox.context_conditioned_benchmark import RULES as CLINTOX_RULES
 from tools.chembl_tool.common.starling.external_condition import ConditionAtom
 from tools.chembl_tool.tasks.skin_reaction.context_conditioned_benchmark import (
     RULES as SKIN_RULES,
@@ -17,13 +16,6 @@ def _atoms(text: str, rules) -> set[str]:
 
 def test_stage_iv_is_not_intravenous_route() -> None:
     assert "route=intravenous" not in _atoms("stage IV brain tumor", BBB_RULES)
-    assert "route=intravenous" not in _atoms("phase IV breast cancer", CLINTOX_RULES)
-
-
-def test_nsclc_is_not_small_cell_lung_cancer() -> None:
-    atoms = _atoms("advanced non-small-cell lung cancer", CLINTOX_RULES)
-    assert "disease=nsclc" in atoms
-    assert "disease=small_cell_lung_cancer" not in atoms
 
 
 def test_skin_ethanol_extract_is_not_a_vehicle() -> None:

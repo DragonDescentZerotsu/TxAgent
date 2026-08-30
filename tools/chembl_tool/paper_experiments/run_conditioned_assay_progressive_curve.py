@@ -61,6 +61,7 @@ from tools.chembl_tool.common.reasoning_validation import (
     call_with_json_validation,
     structured_response_is_valid,
 )
+from tools.chembl_tool.common.starling.conditioned_benchmark import split_path
 from tools.chembl_tool.tasks.bbb_martins import experiment_config as bbb_config
 from tools.chembl_tool.tasks.bioavailability_ma import experiment_config as bio_config
 from tools.chembl_tool.tasks.skin_reaction import experiment_config as skin_config
@@ -189,10 +190,7 @@ class ProgressiveTaskSpec:
 
 PROGRESSIVE_TASKS = {
     "bbb_martins": ProgressiveTaskSpec(
-        Path(
-            "data/processed_starling_context_conditioned_selected_v3/"
-            "BBB_Martins/scaffold/valid.jsonl"
-        ),
+        split_path("bbb_martins", "valid"),
         SOURCE_PURITY_ROOT
         / "indices/bbb_martins/"
         "mechanism_tagged_v4_source_purity_v5/assay_neighbor_index.pkl",
@@ -201,10 +199,7 @@ PROGRESSIVE_TASKS = {
         "bbb_martins_source_purity_v5/manifest.json",
     ),
     "bioavailability_ma": ProgressiveTaskSpec(
-        Path(
-            "data/processed_starling_context_conditioned_selected_v1/"
-            "Bioavailability_Ma/scaffold/valid.jsonl"
-        ),
+        split_path("bioavailability_ma", "valid"),
         SOURCE_PURITY_ROOT
         / "indices/bioavailability_ma/"
         "mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/assay_neighbor_index.pkl",
@@ -213,10 +208,7 @@ PROGRESSIVE_TASKS = {
         "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1/manifest.json",
     ),
     "skin_reaction": ProgressiveTaskSpec(
-        Path(
-            "data/processed_starling_context_conditioned_selected_v1/"
-            "Skin_Reaction/scaffold/valid.jsonl"
-        ),
+        split_path("skin_reaction", "valid"),
         SOURCE_PURITY_ROOT
         / "indices/skin_reaction/"
         "mechanism_tagged_v4_source_purity_v1/assay_neighbor_index.pkl",

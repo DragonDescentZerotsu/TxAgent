@@ -25,23 +25,21 @@ reader 将四类数据构建成一个 molecule-level index，供 Starling direct
 和 reasoning workflow：给定 query molecule，从 ChEMBL 中检索与皮肤不良反应判断相关的相似分子实验读数，
 再由 reasoning LLM 判断这些 analog evidence 是否能 transfer 到 query molecule。
 
-当前 paper-facing Starling gold benchmark：
+当前唯一 condition-aware Starling gold benchmark：
 
 ```text
-data/processed_starling_record_supported_v2/Skin_Reaction/scaffold/{train.jsonl,valid.jsonl,test.jsonl}
+data/conditioned_benchmark/Skin_Reaction/scaffold/{train.jsonl,valid.jsonl,test.jsonl}
 
 fields:
   drug: query SMILES
   Y: Skin_Reaction label
 ```
 
-当前 frozen build 有 2,456 个 binary parents，train/valid/test 为 1,966/245/245。旧
-`data/processed_starling/Skin_Reaction/{random,scaffold}` 属于 `record_agreement70_split811_v1` historical
-comparison。冲突 parent 按 accepted source records 计算 70% agreement，同 PMID 多条 record 分别计票，
-精确 tie 拒绝。当前 v2 正式运行前必须按 scaffold valid+test union 的 `heldout_molecule_labels.jsonl`
-重建 train-only retrieval index；historical v1 的两个 split 仍各自使用对应 union，不能跨 lineage 复用。
-构建命令和审计协议见
-`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
+当前 build 有 2,491 个 molecule-condition rows，train/valid/test 为 1,997/246/248；旧 molecule-only 和
+selected-vN 路径只是 migration provenance。冲突 parent 按 accepted source records 计算 70% agreement，
+同 PMID 多条 record 分别计票，精确 tie 拒绝。正式运行前必须按 scaffold valid+test union 的 heldout
+detailed labels 重建 train-only retrieval index。统一合同见
+`tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md`。
 
 当前二分类约定：
 

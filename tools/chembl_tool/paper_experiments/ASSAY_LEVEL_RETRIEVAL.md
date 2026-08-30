@@ -1,34 +1,35 @@
 # Starling assay-level retrieval
 
-更新时间：2026-08-27。
+更新时间：2026-08-28。
 
 本文档只维护当前合同、最终 valid 结果、可复现入口和历史边界。逐次 smoke、失败重试、endpoint
 切换和被替代的 trace 不在这里重复记录；它们已集中归档，避免主输出目录继续膨胀。
 
 ## Canonical snapshot
 
-当前 paper-facing gold 与 conditioned progressive 实验不是同一个 promotion 决策：
+当前 gold 统一属于 Conditioned Benchmark：
 
-- BBB paper-facing gold 仍是 `experimental_meaningful_cns_access_v3`；本文的 BBB 曲线是隔离的
-  gold-v4 / conditioned-v3 matched candidate。
-- Bioavailability 已恢复 `record_supported_v2` 与
-  `processed_starling_context_conditioned_selected_v1`；empirical-only
-  `experimental_oral_bioavailability_v1` / selected-v2 因 matched valid agent degradation 被拒绝，其专用代码、
-  数据和结果已删除。Skin 仍使用 conditioned `record_supported_v2` lineage。
-- ClinTox 没有合格 condition taxonomy，本轮不进入 progressive 曲线；既有 ClinTox pipeline 和
-  historical controls 保持可复现，但不与三任务新图混表。
+```text
+data/conditioned_benchmark/<Task>/scaffold/
+```
+
+历史的 molecule-only、BBB gold-vN 和 selected-vN 名称只出现在 migration receipt 中，不再作为 runner
+输入或结果标签。ClinTox 没有合格 external-condition taxonomy，因此全部使用 null condition；它仍是统一
+四任务 benchmark 的一部分，但当前 progressive 曲线只包含 BBB、Bioavailability 和 Skin。
 
 当前三任务 valid artifact：
 
-| task | benchmark input | progressive protocol | source purity | n |
-|---|---|---|---|---:|
-| BBB | `processed_starling_context_conditioned_selected_v3` | `conditioned_assay_progressive_visible.v8` | `bbb_source_family_purity.v5` | 397 |
-| Bioavailability | `processed_starling_context_conditioned_selected_v1` | `conditioned_assay_progressive_visible.v8` | `legacy_record_supported_v2_vote_pure.v1` | 262 |
-| Skin | `processed_starling_context_conditioned_selected_v1` | `conditioned_assay_progressive_visible.v7` | `source_family_purity.v1` | 246 |
+机器可读 current index：`current_conditioned_results.json`。其中旧版本串只作为已经完成的 artifact storage
+pointer；benchmark identity 始终是 `conditioned_benchmark`。
 
-三个任务均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731。Bioavailability 的
-262-query legacy-vote-pure v10 已通过 256-worker 共享 provider pool 完成（各 provider 的实际并发上限合计
-208），所有 level 均为零失败；empirical-v2 和旧 broad-L1 曲线均不是当前结果。
+| task | benchmark input | progressive protocol | source contract | n |
+|---|---|---|---|---:|
+| BBB | `conditioned_benchmark/BBB_Martins` | append-only progressive | audited BBB family purity | 397 |
+| Bioavailability | `conditioned_benchmark/Bioavailability_Ma` | append-only progressive | direct voter-pure L1 | 262 |
+| Skin | `conditioned_benchmark/Skin_Reaction` | append-only progressive | sensitization direct/AOP | 246 |
+
+三个任务均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731。当前完整曲线均为
+零失败。旧 broad-L1、被拒绝的 empirical Bioavailability 和早期 progressive curves 不是当前结果。
 
 ## Retrieval and leakage contract
 
@@ -118,7 +119,7 @@ Conditioned-v3 将其展开为 3,053/397/396 个 parent-condition rows，并保�
 Bioavailability 当前六层累计 assays 为 `35 / 478 / 595 / 1,467 / 1,890 / 2,140`：actual legacy-gold-voter oral F、non-direct
 bioavailability、oral AUC/Cmax exposure、absorption/solubility/permeability、gut-wall/efflux/metabolism、
 hepatic clearance/metabolic stability。L2 仍记为 indirect information，不能与 L1 合并描述成 direct。
-L1 membership 重放旧 `record_supported_v2` molecule-only adapter 与 selected-v1 condition review 的实际
+L1 membership 重放当前 benchmark provenance 中 null-condition 与 reviewed external-condition 的实际
 accepted votes，而不是 endpoint 关键词。全部 463,555 source rows 保留；L1 20,543 rows、L2 153,402 rows，
 L1 nonvoter=0、可映射 voter outside L1=0。相对旧 broad-L1 v1，106,963 条 L1 nonvoters 下沉 L2，710 条此前
 漏在 L2 的真实 voters 校正到 L1。被拒绝的 empirical-only candidate 及其专用 provenance 已删除，不属于

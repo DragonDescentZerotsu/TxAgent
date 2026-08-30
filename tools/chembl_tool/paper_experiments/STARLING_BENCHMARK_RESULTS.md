@@ -1,20 +1,16 @@
-# Starling benchmark：当前决策、结果与入口
+# Starling benchmark：历史结果总账
 
-更新时间：2026-08-27。
+更新时间：2026-08-28。
 
-本文件是 Starling benchmark 迁移和实验的集中总账。BBB 当前 paper-facing gold 是
-`experimental_meaningful_cns_access_v3`；Bioavailability/Skin 仍为 scaffold-only `record_supported_v2`。BBB v3
-从 v2 独立重投票并移除 5 条 computational votes；只移除旧 train 的 Digoxin，shared parent label/split
-changes 为 0，valid/test 仍各 366。旧 BBB `experimental_meaningful_cns_access_v2`、`record_supported_v2`、
-第一版 `record_agreement70_split811_v1` 和 TDC `test`/`valid` 结果均保留为
-historical comparison，不得跨 lineage 混表。
+本文件保留历史 Starling 数据迁移和实验，不再定义 current gold。当前四任务唯一评估入口是
+`data/conditioned_benchmark/<Task>/scaffold/`；统一合同见
+`common/starling/CONDITIONED_BENCHMARK.md`，机器可读 current metrics 见
+`current_conditioned_results.json`。历史 molecule-only、gold-vN、selected-vN、TDC test/valid 和下文旧矩阵
+不得作为新的 runner defaults。
 
-隔离的 BBB gold-v4 / conditioned-v3 candidate 已完成 matched baselines 和
-`bbb_source_family_purity.v5` visible-progressive valid。它不自动替换 paper-facing gold-v3，但在自己的
-397-row cohort 内已经是完整、零失败的结果，不能再描述为“等待重跑”。三任务当前 progressive best
-macro-F1 为 BBB `0.7563`、Bioavailability `0.7856`、Skin `0.6119`；matched MiniMol-head 分别为
-`0.6674/0.5872/0.6030`。完整 level 曲线、resource statistics、row ledger、artifact roots 和唯一绘图入口见
-`ASSAY_LEVEL_RETRIEVAL.md`。
+三任务当前 progressive best macro-F1 为 BBB `0.7563`、Bioavailability `0.7608`、Skin `0.6119`；matched
+MiniMol-head 分别为 `0.6674/0.5872/0.6030`。完整 level 曲线、resource statistics、row ledger、artifact
+roots 和唯一绘图入口见 `ASSAY_LEVEL_RETRIEVAL.md`。
 
 ## Historical train-only assay-level retrieval scaling（2026-08-17，scaffold-valid）
 
@@ -1198,7 +1194,7 @@ ClinTox:
   不从 Starling toxicity rows 构造 gold split。独立 `clinical_trial_failure_v1` 从冻结
   AACT toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators 重建 source-defined
   parent labels；clinical/mechanistic Starling rows 只用于 retrieval。该 lineage 的 DeepSeek v3
-  结果见 `tools/chembl_tool/tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md`，不得混入本表三项
+  结果见 `tools/chembl_tool/tasks/clintox/CLINTOX_BENCHMARK.md`，不得混入本表三项
   Starling gold 汇总。
 ```
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from tools.chembl_tool.common.task_workflows.reasoning_batch import BatchConfig, main as run_batch
+from tools.chembl_tool.common.starling.conditioned_benchmark import split_path
 from tools.chembl_tool.tasks.clintox.prompt_profiles import (
     CLINTOX_PROMPT_PROFILES,
     DEFAULT_CLINTOX_PROMPT_PROFILE,
@@ -11,9 +12,7 @@ from tools.chembl_tool.tasks.clintox.prompt_profiles import (
 
 CONFIG = BatchConfig(
     description=__doc__ or "",
-    default_input=(
-        "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/test.jsonl"
-    ),
+    default_input=str(split_path("clintox", "test")),
     default_batch_root=(
         "outputs/chembl_tool/tasks/clintox/reasoning/clinical_trial_failure_v1/batches"
     ),

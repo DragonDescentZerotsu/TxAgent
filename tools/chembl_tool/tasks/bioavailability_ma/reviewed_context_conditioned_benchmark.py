@@ -20,6 +20,7 @@ from tools.chembl_tool.common.starling.reviewed_conditioned_benchmark import (
     ConditionedBenchmarkConfig,
     build_reviewed_conditioned_benchmark,
 )
+from tools.chembl_tool.common.starling.conditioned_benchmark import BUILD_ROOT, CONTRACT
 from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     DIRECT_CLAIMS_PATH,
     DIRECT_REPORT_TYPES,
@@ -35,17 +36,14 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
 
 
 PROPOSAL_VERSION = "bioavailability_external_condition_proposal.v6"
-LINEAGE = "bioavailability_context_conditioned_selected_v1"
+LINEAGE = CONTRACT
 FROZEN_ROOT = Path(
     "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold"
 )
 REVIEW_ROOT = Path(
     "data/starling_data/bioavailability_ma/context_conditioned_review_v2"
 )
-OUTPUT_ROOT = Path(
-    "data/processed_starling_context_conditioned_selected_v1/"
-    "Bioavailability_Ma/scaffold"
-)
+OUTPUT_ROOT = BUILD_ROOT / "Bioavailability_Ma/scaffold"
 
 CORE_EXTERNAL_CONDITION_GROUPS = (
     "prandial_state=fasted",

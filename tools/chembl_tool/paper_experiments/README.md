@@ -11,13 +11,15 @@
 - [Skin Reaction trace casebook](reports/skin_reaction_visibility_trace_casebook/index.html)：可直接分享的
   中英文静态案例报告，右上角按钮切换语言。
 - [当前结果](RESULTS.md)：已完成 full run 的实测结果。
-- [Starling v4 结果总账](STARLING_BENCHMARK_RESULTS.md)：当前 random/scaffold lineage、跨模型、visible 和
+- [`current_conditioned_results.json`](current_conditioned_results.json)：当前三任务 progressive curves、
+  matched baselines、input hashes 与 artifact pointers 的唯一机器可读索引。
+- [Starling 历史结果总账](STARLING_BENCHMARK_RESULTS.md)：历史 random/scaffold lineages、跨模型、visible 和
   coverage-context 实验的唯一集中记录。
 - [Assay-level retrieval](ASSAY_LEVEL_RETRIEVAL.md)：与 group-level 平行的 context-level assay catalog、
   relevance-prefix retrieval、current/default direct-heldout-filtered + query-time `scaffold_disjoint` 与 historical
   reference-pool 合同、conditioned cumulative-family curve、无 summary 模型的 raw support cards、scaffold audit、
   single/evidence-equivalent reuse、英文五-panel scaling figure 和实测结果。
-- [ClinTox clinical-trial-failure v1](../tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md)：独立
+- [ClinTox benchmark](../tasks/clintox/CLINTOX_BENCHMARK.md)：独立
   AACT/FDA source-reconstructed lineage、retrieval hierarchy、v3 prompt、DeepSeek 结果和 no-promotion 结论。
 - [外部 Starling Table 2 MiniMol 复现](../../../baselines/minimol/STARLING_TABLE2_REPRODUCTION.md)：released
   CSV、作者补充的 `n_extractions` weighted-BCE 复现、结果和不可与当前 gold 混表的 lineage 边界。
@@ -33,31 +35,29 @@
   RL-specific prompt/data/evaluation lifecycle。
 - Train-ratio final-only 诊断：`run_train_ratio_prior_experiment.py` 负责 source/train contract、恢复运行和
   versioned output；`train_ratio_prior_analysis.py` 独立完成 paired statistics、trigger audit 和 copied-artifact parity。
-## 当前 Starling gold lineages
+## 当前 Conditioned Benchmark
 
-BBB 当前 paper-facing dataset 是 `experimental_meaningful_cns_access_v3`：3,666 parents，scaffold
-train/valid/test 为 2,934/366/366。v3 从 v2 独立重投票并排除 5 条 source-native computational votes；只移除
-旧 train 的 Digoxin，shared-parent label/split changes 为 0。目标仍是系统给药后的 meaningful/adequate CNS
-access，而不是 mixed passive permeability。Bioavailability 与 Skin 继续使用 scaffold-only `record_supported_v2`，分别为
-1,674/209/209 和 1,966/245/245；Skin 每个 held-out split 只有 5 个 unavoidable singleton。旧 BBB
-`experimental_meaningful_cns_access_v2`、`record_supported_v2`、`experimental_direct_cns_v1` 和第一版
-`record_agreement70_split811_v1` 都只作 historical comparison；不合理的 exploratory `record_supported_v1`
-已删除。
+BBB、Bioavailability、Skin 和 ClinTox 只有一个活跃评估根：
 
-另有隔离的 BBB `experimental_meaningful_cns_access_v4` / conditioned-v3 candidate。它已完成 397-row
-scaffold-valid matched baselines 与 visible progressive v8/source-purity-v5 curve，但不自动替换 paper-facing
-v3。三任务最终 progressive 结果、资源统计和入口只维护在 `ASSAY_LEVEL_RETRIEVAL.md`；不要再引用
-2026-08-22 的未完成 cumulative-family checkpoint 作为 current curve。
+```text
+data/conditioned_benchmark/<Task>/scaffold/
+```
 
-ClinTox 是独立的 `clinical_trial_failure_v1`，不是第四个 Starling gold task。它从冻结 AACT
-toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators 构造 1,428 个 parent labels；Starling
-clinical/mechanistic rows 只用于 retrieval。构建、运行和审计入口为：
+任务级 molecule-only、gold-vN、selected-vN 和 ClinTox source-build 名称只作为 migration provenance，不是
+并列 paper datasets。四任务统一 schema、split sizes、scientific target 和旧路径 hash audit 见
+`../common/starling/CONDITIONED_BENCHMARK.md` 与 `data/conditioned_benchmark/migration_receipt.json`。
+
+三任务最终 progressive 结果、资源统计和入口只维护在 `ASSAY_LEVEL_RETRIEVAL.md`；不要再引用未完成的
+cumulative-family checkpoint 作为 current curve。ClinTox 保留冻结 AACT toxicity-failure positives 与
+SWEETLEAD/FDA-approved comparators 的 source contract，Starling clinical/mechanistic rows 只用于 retrieval。
+当前构建、运行和审计入口为：
 
 ```text
 tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
 tools/chembl_tool/tasks/clintox/starling_retrieval.py
 tools/chembl_tool/tasks/clintox/audit_clinical_trial_failure_agent.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
+tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
 ```
 
 ```text
@@ -167,12 +167,12 @@ tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
   比较 50/60/70/80/90% record agreement 下的 keep/reject、label、record 和 publication 分布。
 
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
-  唯一正式 gold builder：70% record-majority、精确 tie 拒绝、random/scaffold 8:1:1 split，并生成
+  历史 molecule-only builder：70% record-majority、精确 tie 拒绝、random/scaffold 8:1:1 split，并生成
   valid+test union 的 heldout audit artifact。
 
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
-  从冻结的 accepted binary parents 构造当前 scaffold-only v2；lexicographic MILP 先优化 held-out
-  record support 和 label balance，再最大化第一版 valid overlap。
+  构造 Bioavailability/Skin molecule-only source lineage；当前 Conditioned Benchmark publication 将其作为
+  provenance 输入而不是 evaluation root。
 
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
   默认读取 heldout union，从 inference evidence 删除全部 valid/test parents，构建 train-reference index。

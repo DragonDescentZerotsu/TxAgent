@@ -49,13 +49,12 @@ from baselines.minimol.head_runtime import (
 from tools.chembl_tool.tasks.bioavailability_ma.condition_ontology import (
     NO_REPORTED_CONDITION,
 )
+from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
 
 
-DEFAULT_DATA_DIR = Path(
-    "data/processed_starling_context_conditioned_selected_v1/Bioavailability_Ma/scaffold"
-)
+DEFAULT_DATA_DIR = task_root("bioavailability_ma")
 DEFAULT_OUTPUT_DIR = Path(
-    "outputs/baselines/bioavailability_context_conditioned_selected_v1/scaffold_test"
+    "outputs/baselines/conditioned_benchmark/Bioavailability_Ma/scaffold_test"
 )
 DEFAULT_OLD_CACHE = Path(
     "outputs/baselines/minimol_embedding_cache_starling_record_supported_v2/"
@@ -657,7 +656,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     manifest = {
-        "lineage": "bioavailability_context_conditioned_selected_v1",
+        "lineage": "conditioned_benchmark",
         "evaluation_split": args.evaluation_split,
         "data_dir": str(args.data_dir),
         "input_sha256": {

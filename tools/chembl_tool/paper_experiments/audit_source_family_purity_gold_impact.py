@@ -369,11 +369,7 @@ def _conditioned_valid_membership(task: str) -> dict[str, list[int]]:
         "bioavailability_ma": "Bioavailability_Ma",
         "skin_reaction": "Skin_Reaction",
     }[task]
-    path = (
-        Path("data/processed_starling_context_conditioned_selected_v1")
-        / task_dir
-        / "scaffold/valid.jsonl"
-    )
+    path = Path("data/conditioned_benchmark") / task_dir / "scaffold/valid.jsonl"
     membership: dict[str, list[int]] = defaultdict(list)
     for index, row in enumerate(read_jsonl(path)):
         key = _parent_key(_text(row.get("drug")))

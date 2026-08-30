@@ -21,6 +21,7 @@ from tools.chembl_tool.common.json_utils import (
 from tools.chembl_tool.common.starling.build_record_supported_benchmark import (
     allocate_scaffold_groups,
 )
+from tools.chembl_tool.common.starling.conditioned_benchmark import BUILD_ROOT
 from tools.chembl_tool.tasks.clintox.clinical_trial_failure_benchmark import (
     AACT_SOURCE_PATH,
     CANONICAL_ROOT,
@@ -40,7 +41,7 @@ from tools.chembl_tool.tasks.clintox.clinical_trial_failure_benchmark import (
 
 SOURCE_REVISION = "61620011ac2d376606219e2f3fa539139f80d385"
 PROTOCOL_VERSION = "clintox_clinical_trial_failure_benchmark.v1"
-DEFAULT_OUTPUT_ROOT = Path("data/processed_clintox_clinical_trial_failure_v1")
+DEFAULT_OUTPUT_ROOT = BUILD_ROOT
 SEED = 20260815
 EVAL_FRACTION = 0.10
 

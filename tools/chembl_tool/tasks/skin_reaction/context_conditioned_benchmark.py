@@ -25,19 +25,18 @@ from tools.chembl_tool.common.starling.reviewed_conditioned_benchmark import (
     ConditionedBenchmarkConfig,
     build_reviewed_conditioned_benchmark,
 )
+from tools.chembl_tool.common.starling.conditioned_benchmark import BUILD_ROOT, CONTRACT
 from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import DIRECT_RECORDS_PATH
 from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import label_record
 
 
 PROPOSAL_VERSION = "skin_external_condition_proposal.v2"
 LINEAGE = "skin_sensitization_context_conditioned_v1"
-SELECTED_LINEAGE = "skin_sensitization_context_conditioned_selected_v1"
+SELECTED_LINEAGE = CONTRACT
 FROZEN_ROOT = Path("data/processed_starling_record_supported_v2/Skin_Reaction/scaffold")
 REVIEW_ROOT = Path("data/starling_data/skin_reaction/context_conditioned_review_v1")
 OUTPUT_ROOT = Path("data/processed_starling_context_conditioned_reviewed_v1/Skin_Reaction/scaffold")
-SELECTED_OUTPUT_ROOT = Path(
-    "data/processed_starling_context_conditioned_selected_v1/Skin_Reaction/scaffold"
-)
+SELECTED_OUTPUT_ROOT = BUILD_ROOT / "Skin_Reaction/scaffold"
 SELECTED_EXTERNAL_CONDITION_GROUPS = ("disease=atopic_dermatitis",)
 
 

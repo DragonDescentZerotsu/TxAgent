@@ -1,9 +1,10 @@
 # ICLR 2027 论文实验执行计划
 
 > 状态说明（2026-08-27）：本文件保留项目执行史、E 编号和 promotion gates；其中 2026-08-01 至
-> 2026-08-13 的“current”措辞属于当时快照。当前 paper-facing benchmark 以
-> `STARLING_BENCHMARK_RESULTS.md` 顶部为准，conditioned progressive 合同和最终 valid 曲线以
-> `ASSAY_LEVEL_RETRIEVAL.md` 为准。
+> 2026-08-13 的“current”措辞属于当时快照。当前 benchmark 以
+> `../common/starling/CONDITIONED_BENCHMARK.md` 为准，current metrics 以
+> `current_conditioned_results.json` 为准，conditioned progressive 合同和最终 valid 曲线以
+> `ASSAY_LEVEL_RETRIEVAL.md` 为准。`STARLING_BENCHMARK_RESULTS.md` 仅作历史总账。
 
 ## 目标与使用方式
 

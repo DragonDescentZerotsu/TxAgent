@@ -20,102 +20,43 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Starling 二分类 benchmark（2026-08-27）
+## 当前 Conditioned Benchmark（2026-08-28）
 
-BBB_Martins、Bioavailability_Ma 和 Skin_Reaction 的当前 gold benchmark 已改为从 Starling direct
-records 构建。ClinTox 仍没有同定义的 Starling direct source，但 2026-08-15 起另有严格的 source-reconstructed
-`clinical_trial_failure_v1` benchmark：它只从冻结 AACT toxicity-failure positives 和 SWEETLEAD/FDA-approved
-comparators 构造 parent labels，不允许 broad Starling toxicity rows 投票。该 lineage 与三个 Starling gold
-lineage 分开维护。Starling 公共协议和入口为：
+四个任务只有一个活跃评估入口：
 
 ```text
-tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
-tools/chembl_tool/common/starling/benchmark_dataset.py
-tools/chembl_tool/common/starling/build_benchmark_datasets.py
-
-task adapters:
-  tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark_v3.py
-  tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
-  tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
+data/conditioned_benchmark/<Task>/scaffold/
 ```
 
-2026-08-26 BBB paper-facing gold 已更新为
-`experimental_meaningful_cns_access_v3`。新任务预测系统给药后是否有实验支持的 meaningful/adequate CNS
-access，而不是“任何可检出即 positive”或“只有 passive permeation 才 positive”。brain tissue、unbound brain、
-brain/systemic ratio、CSF、PET/autoradiography 和明确体内 BBB outcome 可进入 gold；PAMPA/细胞模型、计算预测、
-机制-only proxy、非系统 CNS 给药、人为/疾病改变屏障和间接疗效推断均拒绝。CSF 明确标为 proxy，不冒充脑实质。
+不要在 runner、baseline 或结果图中直接引用历史的 molecule-only、`selected_vN`、BBB gold-vN 或
+ClinTox source-build 路径。它们只用于 source provenance；原路径与当前数据的逐 split hash/行级等价关系统一
+记录在 `data/conditioned_benchmark/migration_receipt.json`。公共路径常量、发布入口和完整合同为：
 
 ```text
-adapter:
-  tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark_v3.py
-builder:
-  tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v3.py
-audit:
-  tools/chembl_tool/common/starling/audit_bbb_v3_migration.py
-  tools/chembl_tool/common/starling/audit_bbb_experimental_meaningful_cns_access.py
-data:
-  data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/
+tools/chembl_tool/common/starling/conditioned_benchmark.py
+tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
+tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md
 ```
 
-当前 frozen BBB v3 build 有 3,666 个 binary parents，train/valid/test 为 `2,934/366/366`；valid/test 分别为
-`345 multi-record + 21 singleton` 和 `344 + 22`，两者 Y=0/Y=1 均为 `97/269`，identity/scaffold overlap
-均为 0。v3 排除 5 条 source-native ADME/T/TCMSP computational prediction votes，accepted rows 从 8,273
-变为 8,268；独立重投票后只移除旧 train 的 Digoxin parent，3,666 个 shared parents 的 label 和 split 均
-不变。旧 v2 的 source review 继续作为 provenance，v3 migration receipt 固定记录这一差异。
-旧 `experimental_meaningful_cns_access_v2`、`experimental_direct_cns_v1` 与 BBB `record_supported_v2` 的 gold、indices、baselines、
-agent traces 和结果全部保留为 historical lineage，不得与新 BBB 结果混表。Bioavailability_Ma 当前恢复使用
-`record_supported_v2`；Skin_Reaction 仍使用 `record_supported_v2`。
+| task | train / valid / test | 当前 target |
+|---|---:|---|
+| BBB_Martins | 3,053 / 397 / 393 | experimentally meaningful systemic CNS access |
+| Bioavailability_Ma | 1,958 / 262 / 269 | oral bioavailability under the reported condition |
+| ClinTox | 1,144 / 142 / 142 | clinical-trial toxicity failure versus approved comparator |
+| Skin_Reaction | 1,997 / 246 / 248 | skin sensitization/contact allergy |
 
-`record_agreement70_split811_v1` 使用同一批 accepted binary parents 生成 random/scaffold
-两个历史版本：
+所有 split 行使用统一的 molecule-condition schema。没有外部 condition 的行使用
+`no_reported_external_condition`，prompt renderer 对它不输出 condition 句子；ClinTox 因没有合格的外部
+condition，全部采用该值。四任务 train/valid/test 的 parent identity 和 Bemis-Murcko scaffold overlap 均为 0。
 
-```text
-data/processed_starling/<Task>/random/{train.jsonl,valid.jsonl,test.jsonl,...}
-data/processed_starling/<Task>/scaffold/{train.jsonl,valid.jsonl,test.jsonl,...}
-```
+BBB、Bioavailability 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；ClinTox
+只补 condition schema，ordered `(drug, Y)` 和 split 不变。已有 prediction 只能在 manifest input hash 与
+migration receipt 匹配时复用，不能仅凭旧目录名复用。
 
-parent label 继续使用 70% record-weighted agreement；同 PMID 的多条 accepted records 仍分别计票，精确
-tie 始终拒绝。Skin 当前 paper-facing split、Bioavailability historical comparison 和 BBB historical comparison 使用
-scaffold-only `record_supported_v2`：先严格保持
-Bemis–Murcko scaffold 不跨 train/valid/test，再用 lexicographic MILP 依次最小化 held-out singleton、
-valid/test singleton imbalance 和 label imbalance；在这些质量目标固定后才最大化第一版 valid molecule
-复用。BBB valid/test 各最多 500；Bioavailability 和 Skin 目标为总 parent 的 10%/10%，train 使用其余
-parents。frozen v2 build（BBB 行自 2026-08-09 起只作 historical comparison）：
-
-| task | binary parents | train / valid / test | valid multi/single | test multi/single | valid/test Y=0,Y=1 |
-|---|---:|---:|---:|---:|---:|
-| BBB_Martins | 19,425 | 18,425 / 500 / 500 | 500 / 0 | 500 / 0 | 139,361 / 139,361 |
-| Bioavailability_Ma | 2,092 | 1,674 / 209 / 209 | 209 / 0 | 209 / 0 | 58,151 / 58,151 |
-| Skin_Reaction | 2,456 | 1,966 / 245 / 245 | 240 / 5 | 240 / 5 | 73,172 / 73,172 |
-
-三项任务的 train/valid/test parent identity 和 scaffold overlap 均为 0。Skin 的 10 个 held-out singleton
-是同时满足精确 245/245 和 scaffold-disjoint 的全局最小值，并均衡为 valid/test 各 5 个。数据入口和根目录：
-
-```text
-tools/chembl_tool/common/starling/build_record_supported_benchmark.py
-data/processed_starling_record_supported_v2/<Task>/scaffold/{train,valid,test}.jsonl
-```
-
-`record_agreement70_split811_v1` 的数据和正式结果保留为第一版 historical comparison；已删除的
-`record_supported_v1` 是曾把过多 multi-record scaffold 留在 held-out 的 exploratory 版本，不得引用。
-
-Bioavailability 当前 gold 恢复为 2,092-parent `record_supported_v2`，conditioned progressive 输入为
-`bioavailability_context_conditioned_selected_v1`（train/valid/test `1,958/262/269` parent-condition rows）；
-三组 identity/scaffold overlap 均为 0。当前 retrieval source 使用
-`bioavailability_source_family_purity.legacy_record_supported_v2_vote_pure.v1`：L1 精确等于旧 molecule-only
-adapter 与 selected-v1 condition review 实际接受的 voter source rows，旧 L1 中所有 nonvoters 下沉到 L2，
-measurement、support text、identity 和 retrieval eligibility 不变。
-
-`experimental_oral_bioavailability_v1` 与 conditioned-selected-v2 是 2026-08-27 完成但因 matched valid agent
-性能显著下降而明确拒绝的 candidate lineage；其专用 gold、baseline、source-purity-v2、traces、审计和构建入口
-均已删除，不得作为默认 benchmark、历史对照或与当前 2,092-parent lineage 混表，也不得在没有新方法决策时
-重新生成。1,862-parent mixed-source 和 1,828-parent strict-conflict 仍只作 historical lineage。
-Skin raw acquisition 保持不变；current inference source 默认为
-`skin_sensitization_direct_aop.v3` canonical partition：validated sensitization/contact-allergy final outcome 只进入
-direct，MIE/KE2/KE3/KE4 experimental evidence 只进入 AOP，photo hazard、irritation/corrosion、prediction-only
-和 integrated/unresolved rows 全部拒绝。默认构建入口会先验证 canonical manifest 与 direct/AOP parquet 的
-SHA-256，再生成两-family evidence/index；historical `broad_skin_reaction_v1` 和
-`sensitization_contact_allergy_v2` 只能显式选择，不得与 canonical v3 混表。
+Task-specific source voting 和 review 仍保留在各 task 模块中。BBB 的 direct gold 只接受系统给药后的实验性
+meaningful CNS access；Bioavailability 的 L1 只包含实际 voter rows；Skin direct 只接受 sensitization/contact-
+allergy final outcome；ClinTox 只由冻结 AACT toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators
+构造 label，broad Starling toxicity rows 不投票。版本化 source/retrieval contracts 属于 provenance，不是第二套 gold。
 
 当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
 MiniMol embedding cosine KNN、MiniMol/cosine agent retrieval、blind 进度、Skin retrieval degradation、
@@ -222,17 +163,15 @@ Duo approval 仍由用户完成。
   python -m tools.chembl_tool.common.starling.build_benchmark_datasets
 ```
 
-split 中的 `train.jsonl` / `valid.jsonl` / `test.jsonl` 仍只含 `drug` 和 `Y`。label provenance、source row
-accept/reject reason、parent identity 和冲突记录保存在同目录 audit artifacts。正式评估前必须针对
-random/scaffold 分别按 valid+test union 的 `heldout_molecule_labels.jsonl` 重建 train-only retrieval index；现有从 full
-Starling source 构建的 evidence index 不能直接用于新 benchmark。
+当前 split 使用统一 condition-aware schema。label provenance、source review、parent identity 和冲突记录
+保存在同目录 audit artifacts。正式评估前必须针对 valid+test union 的 heldout detailed labels 重建
+train-only retrieval index；现有从 full Starling source 构建的 evidence index 不能直接用于当前 benchmark。
 
 旧 `data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
 `data/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` 是既有 TDC 实验的历史输入，不再代表上述
 三个已迁移 task 的当前 benchmark；旧 ClinTox split 也不代表新的 parent-normalized reconstruction。
-ClinTox 当前严格 split 位于
-`data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/`。历史结果和复现命令可以保留，
-但必须明确标注 lineage。
+ClinTox 当前严格 split 位于 `data/conditioned_benchmark/ClinTox/scaffold/`。历史结果和复现命令可以保留，
+但必须明确标注 historical lineage。
 
 ## 设计原则
 
@@ -420,11 +359,9 @@ reasoning，provider 返回的 `reasoning_content` 或 `reasoning` 仍写入 tra
 
 OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `reasoning`；共享 client 两者都接受。
 
-### 2026-08-01 起的新数据集正式运行默认
+### 当前 Conditioned Benchmark 正式运行默认
 
-Bioavailability 当前 `record_supported_v2`、Skin 当前 `record_supported_v2`、BBB 当前
-`experimental_meaningful_cns_access_v3` 及其后的
-paper/Starling 实验统一冻结为：
+四任务统一读取 `data/conditioned_benchmark/<Task>/scaffold/`，并冻结为：
 
 ```text
 endpoint: http://127.0.0.1:50000/v1
@@ -677,10 +614,10 @@ common/starling/build_record_supported_benchmark.py
   held-out singleton 和 valid/test imbalance，再优化 label balance，最后才最大化第一版 valid 复用。输出只含
   发生变化的 split/audit，根级 source rejection/conflict provenance 继续读取第一版目录，避免重复数据。
 
-common/starling/build_bbb_experimental_meaningful_cns_access_v3.py / audit_bbb_v3_migration.py
-  当前 BBB `experimental_meaningful_cns_access_v3` 的唯一 build/migration-audit 入口；重新做 source scope、parent
-  aggregation 和 70% vote，并保留 surviving v2 parents 的 scaffold split。v2 builder/source audit 仅用于
-  historical QA provenance，不得覆盖 v3 migration receipt。
+common/starling/publish_conditioned_benchmark.py / conditioned_benchmark.py
+  当前四任务唯一 publication/path 入口；source-specific builders 先写入 `data/.build/conditioned_benchmark_sources/`，
+  publisher 再统一 schema、paths、hash receipt。版本化 BBB build/migration scripts 只作 source QA provenance，
+  不得成为 runner input。
 
 common/starling/heldout_index.py
   从 full-source Starling evidence rows 中按 `rdkit_fragment_parent.v1` 删除 valid+test parents，重建
@@ -884,11 +821,10 @@ train.jsonl / valid.jsonl / test.jsonl
   Y: 0/1 label
 ```
 
-下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前
-`record_supported_v2` 位于 `data/processed_starling_record_supported_v2/<Task>/scaffold/`，并已完成
-scaffold-valid MiniMol `--train-all` head、Morgan KNN 和 MiniMol embedding KNN。该诊断不读取或调参于
-test；正式 test 前仍须冻结所有设置。不同 lineage 的结果写入 model/split-specific 隔离 output roots，
-不能覆盖或混表。
+下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前 baseline 统一读取
+`data/conditioned_benchmark/<Task>/scaffold/`，并按 condition-aware cohort 运行 MiniMol head、Morgan KNN
+和 MiniMol embedding KNN。历史 molecule-only baseline 不得与当前 cohort 混表。该诊断不读取或调参于
+test；正式 test 前仍须冻结所有设置。
 
 上一版 strict-conflict formal Starling baseline 使用 `--train-all`：
 不读取 `valid.jsonl`，每个
@@ -1482,12 +1418,12 @@ tools/chembl_tool/tasks/bbb_martins/
 
 ```text
 tools/chembl_tool/tasks/clintox/AGENTS.md
-tools/chembl_tool/tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md
+tools/chembl_tool/tasks/clintox/CLINTOX_BENCHMARK.md
 ```
 
-当前 gold 是独立的 source-reconstructed `clinical_trial_failure_v1`，路径为
-`data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/`；旧
-`data/processed/ClinTox` 和早期 ChEMBL-native 结果只作 historical comparison。唯一 prompt profile 为
+当前 gold 的 scientific source contract 是 source-reconstructed clinical-trial failure，活跃评估路径为
+`data/conditioned_benchmark/ClinTox/scaffold/`；旧 `data/processed/ClinTox`、source-build 路径和早期
+ChEMBL-native 结果只作 historical provenance。唯一 prompt profile 为
 `tdc_source_aligned_v3`，旧 profile 已删除且旧/unversioned branch 不得复用。核心入口：
 
 ```text

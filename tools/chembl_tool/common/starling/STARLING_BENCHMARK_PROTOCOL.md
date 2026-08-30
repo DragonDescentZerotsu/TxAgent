@@ -1,12 +1,17 @@
 # Starling 二分类 benchmark 构建协议
 
+> 当前评估入口（2026-08-28）只有
+> `data/conditioned_benchmark/<Task>/scaffold/`。本文后续的版本化路径只记录 source-voting 与 migration
+> 历史，不是 runner 默认值。统一 schema、任务 sizes 和逐 split hash 见
+> `CONDITIONED_BENCHMARK.md` 与 `data/conditioned_benchmark/migration_receipt.json`。
+
 本协议用于把 Starling direct literature records 转成冻结 task contract 下的二分类
 `train.jsonl` / `valid.jsonl` / `test.jsonl`。它与 Starling evidence retrieval index 分离：benchmark builder
 负责 gold-label 构建，`minimal_evidence.v1` 继续只负责 inference-time evidence。
 
-在冻结 molecule-only gold 之上增加 exact external-condition groups 的当前规则、allowlist、
-60% vote 和逐条 group/lineage artifact 合同，统一见
-[`REVIEWED_CONDITIONED_BENCHMARK.md`](REVIEWED_CONDITIONED_BENCHMARK.md)。两套 lineage 不得混称。
+在 source molecule-only votes 之上增加 exact external-condition groups 的 review、allowlist、60% vote 和
+逐条 audit 合同，统一见 [`REVIEWED_CONDITIONED_BENCHMARK.md`](REVIEWED_CONDITIONED_BENCHMARK.md)。发布后
+它们是同一 Conditioned Benchmark 的 provenance，不是两套活跃 lineages。
 
 ## 当前 BBB experimental meaningful-CNS-access lineage（2026-08-26）
 
@@ -67,7 +72,8 @@ annotation，因此当前状态是 reproducible high-precision build，不是最
   python -m tools.chembl_tool.common.starling.audit_bbb_v3_migration
 ```
 
-第二条命令逐 parent 比较 v2/v3 的 membership、label 和 split，并同时比较 conditioned v1/v2；它不能被
+第二条命令逐 parent 比较 v2/v3 的 membership、label 和 split；当前 conditioned benchmark 的逐 split
+迁移等价性统一记录在 `data/conditioned_benchmark/migration_receipt.json`。该审计不能被
 retrieval-family audit 替代。若需要重新生成 source QA sample，仍显式运行 historical source audit 入口，
 不得据此覆盖 v3 migration receipt。
 
@@ -238,11 +244,11 @@ skin exposure 不等于这个 label。
 
 TDC ClinTox positive 表示冻结 AACT toxicity-failure-associated source class；不是任意 in vitro liability，
 也不是对每条试验重新完成的 molecule-causality adjudication。不从 Starling free text 或 heterogeneous
-liability records 构造 ClinTox label。独立的 `clinical_trial_failure_v1` lineage 从冻结 AACT
-toxicity-failure source 和 SWEETLEAD/FDA-approved comparator 重建原任务语义，路径为
-`data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/`；它不是 Starling gold lineage，
-不得与本协议的三个 Starling task 混称为同源数据。Starling clinical/mechanistic rows 只进入独立
-retrieval library，不参与 gold 投票。
+liability records 构造 ClinTox label。其 source contract 从冻结 AACT toxicity-failure source 和
+SWEETLEAD/FDA-approved comparator 重建原任务语义；活跃评估路径为
+`data/conditioned_benchmark/ClinTox/scaffold/`。它与三个 Starling-voted tasks 的 source provenance 不同，
+但共享 Conditioned Benchmark 的评估 schema。Starling clinical/mechanistic rows 只进入 retrieval library，
+不参与 gold 投票。
 
 ## Free-text 到 binary label 的精确规则
 

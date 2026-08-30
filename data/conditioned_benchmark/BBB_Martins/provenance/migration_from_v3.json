@@ -1,0 +1,20 @@
+{
+  "old_gold_lineage": "experimental_meaningful_cns_access_v3",
+  "new_gold_lineage": "experimental_meaningful_cns_access_v4",
+  "old_binary_parents": 3666,
+  "new_binary_parents": 3675,
+  "shared_binary_parents": 3660,
+  "removed_binary_parents": 6,
+  "added_binary_parents": 15,
+  "shared_parent_label_changes": 0,
+  "shared_parent_split_changes": 0,
+  "reviewed_source_votes_added": 65,
+  "reviewed_vote_affected_parent_groups": 56,
+  "split_overlap": {
+    "train": 2931,
+    "valid": 365,
+    "test": 364
+  },
+  "changed_gold_parents": "data/processed_starling_experimental_meaningful_cns_access_v4/BBB_Martins/changed_gold_parents.jsonl",
+  "reviewed_vote_affected_parents": "data/processed_starling_experimental_meaningful_cns_access_v4/BBB_Martins/reviewed_vote_affected_parents.jsonl"
+}

@@ -33,18 +33,16 @@ parent-level 0/1 冲突按 accepted source record 计算 70% agreement；同 PMI
 这里的 benchmark label conversion 与下文禁止的 inference-time Starling label policy 是两回事；
 它不能进入 LLM prompt 或改变有效 prediction。
 
-当前 paper-facing canonical-direct v2 build 位于：
+唯一活跃 condition-aware build 位于：
 
 ```text
-data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/
+data/conditioned_benchmark/Bioavailability_Ma/scaffold/
 ```
 
-共有 2,092 个 binary parents；train/valid/test 为 1,674/209/209。旧
-`data/processed_starling/Bioavailability_Ma/{random,scaffold}` 属于 `record_agreement70_split811_v1`
-historical comparison。公共构建/审计协议见
-`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。当前 v2 正式运行前必须按 scaffold 的
-valid+test union `heldout_molecule_labels.jsonl` 重建 train-only retrieval index；historical v1 的两个 split
-仍各自使用对应 union，不能跨 lineage 复用。
+共有 2,489 个 molecule-condition rows；train/valid/test 为 1,958/262/269，其中 2,092 个 null-condition
+rows、397 个 reviewed external-condition rows。旧 molecule-only 和 selected-vN 名称只保留在 migration
+receipt，不是第二套 gold。公共合同见 `tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md`。正式运行
+前必须按 scaffold valid+test union 的 heldout detailed labels 重建 retrieval index。
 
 Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，不是 LLM function tool。
 

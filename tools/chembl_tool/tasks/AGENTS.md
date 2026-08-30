@@ -99,10 +99,13 @@ tools/chembl_tool/common/starling/build_benchmark_datasets.py
   第一版 `record_agreement70_split811_v1` random/scaffold historical build CLI。
 
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
-  Bioavailability/Skin 当前 `record_supported_v2` scaffold-only quality split builder。
+  Bioavailability/Skin molecule-only source-lineage builder；不是活跃评估入口。
 
 tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
-  BBB 当前 `experimental_meaningful_cns_access_v2` build/audit orchestration。
+  BBB source voting/build audit orchestration；不是活跃评估入口。
+
+tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
+  将四任务 source builds 发布为唯一 Conditioned Benchmark，并固定 migration/hash audit。
 
 tools/chembl_tool/tasks/<task>/starling_benchmark.py
   只声明该 task 的 source、endpoint/scope/population、单位/threshold 和 free-text 到 label 的保守映射。
@@ -113,17 +116,17 @@ supporting passage 当作无条件 keyword vote，也不得在 adapter 内复制
 公共层按 `rdkit_fragment_parent.v1` 聚合 accepted records；多数 label 占比达到 70% 且不是精确 tie
 时接受，否则写入 reject audit。同 PMID 的多条 accepted records 仍分别计票。
 
-当前 paper-facing roots 为：
+当前唯一 paper-facing roots 为：
 
 ```text
-data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/
-data/processed_starling_record_supported_v2/{Bioavailability_Ma,Skin_Reaction}/scaffold/
+data/conditioned_benchmark/{BBB_Martins,Bioavailability_Ma,ClinTox,Skin_Reaction}/scaffold/
 ```
 
 当前 builder 先保证 Bemis–Murcko scaffold 不跨 split，再按冻结的 lexicographic quality 目标
 构建 train/valid/test。`heldout_molecule_labels.jsonl` 是 valid+test union 的 train-only retrieval-index
 exclusion contract；在 parent overlap 和 scaffold overlap 审计均为零前，不得启动正式评估。
-`data/processed_starling/<Task>/{random,scaffold}` 只是第一版 historical lineage，不得与当前结果混表。
+旧 molecule-only、selected-vN 和 `data/processed_starling/<Task>/{random,scaffold}` 只作 source provenance，
+不得作为 runner 输入或与当前结果混表。
 完整规则、当前 frozen counts 和运行命令见
 `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
 

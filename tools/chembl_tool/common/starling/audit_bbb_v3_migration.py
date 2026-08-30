@@ -15,14 +15,6 @@ V2_GOLD = Path(
 V3_GOLD = Path(
     "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins"
 )
-V1_CONDITIONED = Path(
-    "data/processed_starling_context_conditioned_selected_v1/BBB_Martins/scaffold"
-)
-V2_CONDITIONED = Path(
-    "data/processed_starling_context_conditioned_selected_v2/BBB_Martins/scaffold"
-)
-
-
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
@@ -57,15 +49,6 @@ def _split_by_identity(root: Path) -> dict[str, str]:
     for split in ("train", "valid", "test"):
         for row in _read_jsonl(root / "scaffold" / f"{split}_molecule_labels.jsonl"):
             output[str(row["molecule_identity_key"])] = split
-    return output
-
-
-def _conditioned_by_key(root: Path) -> dict[tuple[str, str], dict[str, Any]]:
-    output: dict[tuple[str, str], dict[str, Any]] = {}
-    for split in ("train", "valid", "test"):
-        for row in _read_jsonl(root / f"{split}_molecule_condition_labels.jsonl"):
-            key = (str(row["molecule_identity_key"]), str(row["condition_group"]))
-            output[key] = {**row, "split": split}
     return output
 
 
@@ -109,19 +92,6 @@ def audit(output_path: Path) -> dict[str, Any]:
         for key in vote_affected_keys
     ]
 
-    old_conditioned = _conditioned_by_key(V1_CONDITIONED)
-    new_conditioned = _conditioned_by_key(V2_CONDITIONED)
-    shared_conditioned = set(old_conditioned) & set(new_conditioned)
-    conditioned_label_changes = sorted(
-        key
-        for key in shared_conditioned
-        if int(old_conditioned[key]["Y"]) != int(new_conditioned[key]["Y"])
-    )
-    conditioned_split_changes = sorted(
-        key
-        for key in shared_conditioned
-        if old_conditioned[key]["split"] != new_conditioned[key]["split"]
-    )
     changed_rows = [
         {
             "molecule_identity_key": key,
@@ -171,15 +141,6 @@ def audit(output_path: Path) -> dict[str, Any]:
                 for key in shared
             )
             for split in ("train", "valid", "test")
-        },
-        "conditioned": {
-            "old_rows": len(old_conditioned),
-            "new_rows": len(new_conditioned),
-            "shared_rows": len(shared_conditioned),
-            "removed_rows": len(set(old_conditioned) - set(new_conditioned)),
-            "added_rows": len(set(new_conditioned) - set(old_conditioned)),
-            "shared_row_label_changes": len(conditioned_label_changes),
-            "shared_row_split_changes": len(conditioned_split_changes),
         },
         "changed_gold_parents": str(changed_path),
         "affected_gold_vote_parents": str(vote_affected_path),

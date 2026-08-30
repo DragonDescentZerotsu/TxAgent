@@ -19,6 +19,7 @@ import re
 from typing import Any, Callable, Iterable, Mapping
 
 from tools.chembl_tool.common.source_family_purity import FamilyMove
+from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
 from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v3 import (
     label_record,
 )
@@ -32,7 +33,7 @@ NEAR_DIRECT_GROUP = "Proxy.central_functional_access"
 PASSIVE_GROUP = "Mechanism.passive_permeability"
 EFFLUX_GROUP = "Mechanism.efflux_transport"
 INFLUX_GROUP = "Mechanism.influx_transport"
-PURITY_VERSION = "bbb_source_family_purity.v4"
+PURITY_VERSION = "bbb_source_family_purity.v5"
 REVIEW_VERSION = "bbb_near_direct_record_review.v2"
 
 DEFAULT_RECORDS = Path(
@@ -43,12 +44,8 @@ DEFAULT_REVIEW_LEDGER = Path(
     "data/starling_data/bbb_martins/source_family_purity_v2/"
     "near_direct_record_review.jsonl"
 )
-DEFAULT_GOLD_ROOT = Path(
-    "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins"
-)
-DEFAULT_CONDITIONED_ROOT = Path(
-    "data/processed_starling_context_conditioned_selected_v2/BBB_Martins/scaffold"
-)
+DEFAULT_GOLD_ROOT = task_root("bbb_martins").parent / "provenance"
+DEFAULT_CONDITIONED_ROOT = task_root("bbb_martins")
 
 CLASSIFIER_COLUMNS = (
     "group_id",
