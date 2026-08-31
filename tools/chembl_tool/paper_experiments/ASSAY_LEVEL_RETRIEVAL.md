@@ -31,6 +31,34 @@ pointer；benchmark identity 始终是 `conditioned_benchmark`。
 三个任务均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731。当前完整曲线均为
 零失败。旧 broad-L1、被拒绝的 empirical Bioavailability 和早期 progressive curves 不是当前结果。
 
+### Normalized-v7 progressive input
+
+The normalized-v7 transition is a separate, not-yet-evaluated evidence lineage:
+
+```text
+outputs/paper/molecular_evidence_agent_starling_scaffold_conditioned_benchmark/evidence/
+  bbb_starling_v7/{06_records,07_molecule_evidence,08_neighbor_index,09_audits}/
+  bioavailability_starling_v7/{06_records,07_molecule_evidence,08_neighbor_index,09_audits}/
+```
+
+Stage 06 replaces only reconstructed `direct_vote` rows with the canonical
+training molecule-condition labels. It preserves `direct_residual` and
+`indirect` records, and the inserted gold rows have no pair bucket and are not
+assay-transfer eligible. Stage 07 groups records by molecule and biological
+group; Stage 08 is loaded directly by `run_conditioned_assay_progressive_curve.py`
+when `--evidence-root` points to the directory above. The runner exposes BBB as
+four cumulative levels and Bioavailability as six cumulative levels.
+
+```bash
+python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
+  --splits scaffold \
+  --indices bbb_starling_v7 bioavailability_starling_v7 \
+  --benchmark-data-root data/conditioned_benchmark \
+  --benchmark-lineage conditioned_benchmark \
+  --heldout-filter-mode direct_source_only \
+  --gold-swap-direct-votes
+```
+
 ## Retrieval and leakage contract
 
 三个任务共享以下合同：

@@ -71,28 +71,29 @@ def _clean(value: Any) -> str:
 
 
 def _card_surface(example: Mapping[str, Any], row: Mapping[str, Any]) -> dict[str, Any]:
+    card = example.get("_progressive_card") or example
     scope = row.get("evidence_scope") or {}
-    assay_context = _clean(example.get("assay_context"))
+    assay_context = _clean(card.get("assay_context"))
     if not assay_context:
         contexts = scope.get("assay_context") or []
         assay_context = _clean(contexts[0]) if contexts else _clean(row.get("target_pref_name"))
-    species = _clean(example.get("species_context"))
+    species = _clean(card.get("species_context"))
     if not species:
         species_values = scope.get("species_context") or []
         species = _clean(species_values[0]) if species_values else _clean(row.get("organism"))
-    conditions = _clean(example.get("qualifying_conditions"))
+    conditions = _clean(card.get("qualifying_conditions"))
     if not conditions:
         condition_values = scope.get("qualifying_conditions") or []
         conditions = _clean(condition_values[0]) if condition_values else ""
     return {
         "evidence_family": _clean(example.get("evidence_family")),
         "assay_context": assay_context,
-        "endpoint": _clean(example.get("endpoint_type")) or _clean(row.get("standard_type")),
-        "reported_value": _clean(example.get("reported_value")) or _clean(row.get("standard_value")),
-        "reported_unit": _clean(example.get("reported_units")) or _clean(row.get("standard_units")),
+        "endpoint": _clean(card.get("endpoint_type")) or _clean(row.get("standard_type")),
+        "reported_value": _clean(card.get("reported_value")) or _clean(row.get("standard_value")),
+        "reported_unit": _clean(card.get("reported_units")) or _clean(row.get("standard_units")),
         "species": species,
         "qualifying_conditions": conditions,
-        "support_text": _clean(example.get("support_text")) or _clean(row.get("assay_description")),
+        "support_text": _clean(card.get("support_text")) or _clean(row.get("assay_description")),
     }
 
 

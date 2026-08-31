@@ -222,6 +222,61 @@ def test_v7_direct_source_view_retains_heldout_mechanism_records(tmp_path):
     )
 
 
+def test_v7_gold_swap_preserves_residuals_and_replaces_only_votes(tmp_path):
+    normalized_root = tmp_path / "v7"
+    vote = _record("record-1", "CCN", "Observed.direct_oral_bioavailability", 42.0)
+    residual = _record("record-2", "CCO", "Observed.direct_oral_bioavailability", 18.0)
+    residual["retrieval_source_id"] = "direct_residual"
+    indirect = _record("record-3", "CCC", "Observed.nondirect_oral_bioavailability", None)
+    _write_stage3(normalized_root, [vote, residual, indirect])
+    heldout = tmp_path / "heldout.jsonl"
+    heldout.write_text(json.dumps({"drug": "CCO", "Y": 0}) + "\n", encoding="utf-8")
+    train = tmp_path / "train.jsonl"
+    train.write_text(
+        json.dumps(
+            {
+                "drug": "CCCl",
+                "Y": 1,
+                "benchmark_row_id": "gold-1",
+                "condition_group": "fed=true",
+                "condition_scope": "external",
+                "condition_atoms": ["fed=true"],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    output = tmp_path / "gold-swap"
+    manifest = build_v7_benchmark_view(
+        policy=POLICY,
+        normalized_root=normalized_root,
+        heldout_labels_jsonl=heldout,
+        train_labels_jsonl=train,
+        out_dir=output,
+        benchmark_split="scaffold",
+        heldout_filter_mode=DIRECT_SOURCE_ONLY_FILTER,
+        downstream_spec=get_bioavailability_downstream_spec(),
+    )
+
+    rows = pd.read_parquet(output / "06_records/records.parquet")
+    assert len(rows) == 3
+    assert {"record-2", "record-3"} <= set(rows["canonical_record_id"])
+    sources = rows.set_index("canonical_record_id")["retrieval_source_id"].to_dict()
+    assert sources["record-2"] == "direct_residual"
+    assert sources["record-3"] == "indirect"
+    gold = rows[rows["source_id"] == "conditioned_benchmark_gold"].iloc[0]
+    assert gold["canonical_smiles"] == "CCCl"
+    assert gold["condition_group"] == "fed=true"
+    assert pd.isna(gold["pair_bucket_key"])
+    assert not gold["assay_transfer_eligible"]
+    audit = manifest["gold_label_swap_for_direct_labels"]
+    assert audit["removed_reconstructed_direct_vote_records"] == 1
+    assert audit["inserted_gold_training_records"] == 1
+    assert audit["preserved_direct_residual_records"] == 1
+    assert audit["preserved_indirect_records"] == 1
+
+
 def test_v7_all_scaffold_filter_applies_to_every_source(tmp_path):
     normalized_root = tmp_path / "v7"
     hf = _record("record-1", "Nc1ccccc1", "Observed.direct_oral_bioavailability", 40.0)

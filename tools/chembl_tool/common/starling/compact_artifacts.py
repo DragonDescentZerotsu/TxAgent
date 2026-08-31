@@ -674,6 +674,25 @@ def _hydrate_family_evidence(
                     "unit": str(unit),
                     "origin": str(origin),
                 }
+        condition_group = record.get("condition_group")
+        if condition_group == "no_reported_external_condition":
+            condition_group = None
+        progressive_card = {
+            "endpoint_type": record.get("canonical_endpoint_name")
+            or record.get("endpoint_name"),
+            "reported_value": record.get("display_measurement_text")
+            or record.get("canonical_measurement_text"),
+            "reported_units": record.get("display_unit_text")
+            or record.get("canonical_unit_text"),
+            "assay_context": record.get("canonical_assay_context")
+            or record.get("assay_model")
+            or record.get("study_context"),
+            "species_context": record.get("canonical_species_context")
+            or record.get("species"),
+            "qualifying_conditions": record.get("qualifying_conditions")
+            or (condition_group if record.get("collapsed_record_id") else None),
+            "support_text": record.get("support_text"),
+        }
         examples.append(
             {
                 "source_contract": {
@@ -687,6 +706,11 @@ def _hydrate_family_evidence(
                     if display is not None
                     else {}
                 ),
+                "_progressive_card": {
+                    key: value
+                    for key, value in progressive_card.items()
+                    if value not in (None, "")
+                },
             }
         )
     source_names = [str(value) for value in _list_value(family.get("source_names"))]

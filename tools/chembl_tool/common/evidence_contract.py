@@ -28,6 +28,7 @@ EVIDENCE_ROLES = {
 TRANSFERABILITY_STATES = {"not_assessed", "high", "moderate", "low", "not_applicable"}
 
 _PRIVATE_EXAMPLE_FIELDS = {
+    "_progressive_card",
     "pmid",
     "pmids",
     "source_pmids",

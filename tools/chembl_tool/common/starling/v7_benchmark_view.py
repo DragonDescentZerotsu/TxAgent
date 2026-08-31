@@ -39,6 +39,7 @@ from tools.chembl_tool.common.starling.normalization.audit import (
     write_parquet,
 )
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+from tools.chembl_tool.common.starling.normalization.cleaning import stable_id
 from tools.chembl_tool.common.starling.normalization.organization import (
     is_retrieval_eligible,
 )
@@ -72,6 +73,7 @@ def build_v7_benchmark_view(
     policy: StarlingTaskPolicy,
     normalized_root: str | Path,
     heldout_labels_jsonl: str | Path,
+    train_labels_jsonl: str | Path | None = None,
     out_dir: str | Path,
     benchmark_split: str,
     view: str = FULL_VIEW,
@@ -94,6 +96,7 @@ def build_v7_benchmark_view(
             policy=policy,
             normalized_root=source_root,
             heldout_labels_jsonl=heldout_labels_jsonl,
+            train_labels_jsonl=train_labels_jsonl,
             out_dir=out_dir,
             benchmark_split=benchmark_split,
             view=view,
@@ -110,6 +113,7 @@ def _build_v7_benchmark_view(
     policy: StarlingTaskPolicy,
     normalized_root: str | Path,
     heldout_labels_jsonl: str | Path,
+    train_labels_jsonl: str | Path | None = None,
     out_dir: str | Path,
     benchmark_split: str,
     view: str = FULL_VIEW,
@@ -182,6 +186,13 @@ def _build_v7_benchmark_view(
         heldout_filter_mode=heldout_filter_mode,
         downstream_spec=downstream_spec,
     )
+    gold_swap = None
+    if train_labels_jsonl is not None:
+        filtered, gold_swap = _swap_direct_votes_for_gold(
+            filtered,
+            Path(train_labels_jsonl),
+            task_id=policy.task_id,
+        )
     families, bridge = build_relational_evidence_catalog(
         filtered,
         max_record_examples=max_record_examples,
@@ -226,6 +237,7 @@ def _build_v7_benchmark_view(
             "sha256": file_sha256(heldout_path),
         },
         "heldout_filter": filter_stats,
+        **({"gold_label_swap_for_direct_labels": gold_swap} if gold_swap else {}),
     }
     (records_dir / "manifest.json").write_text(
         json.dumps(records_manifest, ensure_ascii=False, indent=2, sort_keys=True)
@@ -273,6 +285,7 @@ def _build_v7_benchmark_view(
                 "path": str(heldout_path),
                 "sha256": file_sha256(heldout_path),
             },
+            **({"gold_label_swap_for_direct_labels": gold_swap} if gold_swap else {}),
             "identity_normalizer_version": IDENTITY_NORMALIZER_VERSION,
         }
     )
@@ -292,6 +305,7 @@ def _build_v7_benchmark_view(
         "view": view,
         "heldout_filter_mode": heldout_filter_mode,
         "heldout_filter": filter_stats,
+        **({"gold_label_swap_for_direct_labels": gold_swap} if gold_swap else {}),
         "index_validation": validation,
         "validations": {
             "zero_filter_scope_parent_overlap": filter_stats[
@@ -319,6 +333,7 @@ def _build_v7_benchmark_view(
         "source_v7_records": index_manifest["source_v7_records"],
         "heldout_labels": index_manifest["heldout_labels"],
         "heldout_filter": filter_stats,
+        **({"gold_label_swap_for_direct_labels": gold_swap} if gold_swap else {}),
         "records": len(filtered),
         "families": len(families),
         "record_references": len(bridge),
@@ -352,6 +367,121 @@ def _view_predicate(view: str) -> Callable[[Mapping[str, Any]], bool]:
     if view != FULL_VIEW:
         raise ValueError(f"unsupported v7 benchmark view: {view}")
     return lambda record: True
+
+
+def _swap_direct_votes_for_gold(
+    records: list[dict[str, Any]],
+    train_labels_path: Path,
+    *,
+    task_id: str,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Replace reconstructed direct votes with frozen training labels only."""
+    if not train_labels_path.is_file():
+        raise FileNotFoundError(train_labels_path)
+    direct_votes = [
+        row for row in records if row.get("retrieval_source_id") == "direct_vote"
+    ]
+    direct_groups = {str(row.get("group_id") or "") for row in direct_votes}
+    direct_groups.discard("")
+    if len(direct_groups) != 1:
+        raise ValueError(
+            f"gold swap requires exactly one direct group, found {sorted(direct_groups)}"
+        )
+    direct_group = next(iter(direct_groups))
+    retained = [
+        row for row in records if row.get("retrieval_source_id") != "direct_vote"
+    ]
+    preserved_counts = Counter(
+        str(row.get("retrieval_source_id") or "") for row in retained
+    )
+    labels = [
+        json.loads(line)
+        for line in train_labels_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    benchmark_ids = [str(row.get("benchmark_row_id") or "") for row in labels]
+    if not labels or any(not value for value in benchmark_ids):
+        raise ValueError("training gold rows require benchmark_row_id")
+    if len(benchmark_ids) != len(set(benchmark_ids)):
+        raise ValueError("training gold contains duplicate benchmark_row_id values")
+
+    endpoint, outcomes = {
+        "bbb_martins": (
+            "meaningful_systemic_cns_access",
+            {0: "restricted or poor CNS access", 1: "meaningful CNS access"},
+        ),
+        "bioavailability_ma": (
+            "oral_bioavailability_f20",
+            {0: "oral bioavailability below 20%", 1: "oral bioavailability at least 20%"},
+        ),
+    }.get(task_id, ("direct_outcome", {0: "negative", 1: "positive"}))
+    synthetic = []
+    for position, label in enumerate(labels, start=1):
+        outcome = int(label.get("Y"))
+        if outcome not in {0, 1}:
+            raise ValueError("training gold labels must be binary")
+        benchmark_id = str(label["benchmark_row_id"])
+        smiles = str(
+            (label.get("molecule_identity") or {}).get("canonical_smiles")
+            or label.get("drug")
+            or ""
+        )
+        if not smiles:
+            raise ValueError(f"training gold row lacks a molecule: {benchmark_id}")
+        condition_atoms = list(label.get("condition_atoms") or [])
+        record_id = stable_id("conditioned_benchmark_gold", task_id, benchmark_id)
+        synthetic.append(
+            {
+                "canonical_record_id": record_id,
+                "collapsed_record_id": record_id,
+                "source_id": "conditioned_benchmark_gold",
+                "source_name": "conditioned benchmark training label",
+                "source_row_number": position,
+                "source_record_id": benchmark_id,
+                "canonical_smiles": smiles,
+                "group_id": direct_group,
+                "retrieval_eligible": True,
+                "retrieval_source_id": "direct_vote",
+                "canonicalization_status": "valid",
+                "canonical_endpoint_name": endpoint,
+                "endpoint_name": endpoint,
+                "canonical_measurement_text": outcomes[outcome],
+                "canonical_unit_text": "binary_outcome",
+                "direct_vote_label": outcome,
+                "direct_vote_unit_id": f"conditioned_benchmark:{benchmark_id}",
+                "condition_group": label.get("condition_group"),
+                "condition_scope": label.get("condition_scope"),
+                "condition_key_status": "gold_training_label",
+                "condition_atoms": condition_atoms,
+                "condition_atoms_json": json.dumps(condition_atoms, separators=(",", ":")),
+                "pair_bucket_key": None,
+                "bucket_eligible": False,
+                "bucket_exclusion_reason": "frozen_direct_gold_label",
+                "assay_transfer_eligible": False,
+                "assay_transfer_ineligibility_reason": "frozen_direct_gold_label",
+                "aggregation_method": "direct_binary_vote",
+                "aggregation_status": "consensus",
+                "aggregate_counts_json": json.dumps({str(outcome): 1}),
+                "display_measurement_text": outcomes[outcome],
+                "display_unit_text": "binary_outcome",
+                "source_record_count": int(label.get("source_record_count") or 1),
+                "deduplicated_source_record_count": 1,
+            }
+        )
+    output = retained + synthetic
+    return output, {
+        "version": "gold_label_swap_for_direct_labels.v1",
+        "train_labels": {
+            "path": str(train_labels_path),
+            "sha256": file_sha256(train_labels_path),
+        },
+        "direct_group_id": direct_group,
+        "removed_reconstructed_direct_vote_records": len(direct_votes),
+        "inserted_gold_training_records": len(synthetic),
+        "preserved_direct_residual_records": preserved_counts["direct_residual"],
+        "preserved_indirect_records": preserved_counts["indirect"],
+        "output_records": len(output),
+    }
 
 
 def _filter_records(
@@ -514,10 +644,7 @@ def _in_heldout_filter_scope(
         return True
     if downstream_spec is None:
         raise ValueError("direct_source_only requires a downstream task specification")
-    if str(record.get("retrieval_source_id") or "") in {
-        "direct_vote",
-        "direct_residual",
-    }:
+    if str(record.get("retrieval_source_id") or "") == "direct_vote":
         return True
     if record.get("retrieval_source_id"):
         return False

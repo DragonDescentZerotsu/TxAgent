@@ -20,9 +20,11 @@ from functools import lru_cache
 from typing import Any, Mapping
 
 from tools.chembl_tool.common.assay_retrieval import (
+    ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE,
     build_family_molecule_prefix_view,
     retrieve_family_molecule_prefixes,
 )
+from tools.chembl_tool.common.task_workflows.retrieve_neighbors import load_index
 from tools.chembl_tool.common.json_utils import (
     read_jsonl,
     sha256_file,
@@ -218,6 +220,23 @@ PROGRESSIVE_TASKS = {
     ),
 }
 
+V7_PROGRESSIVE_GROUPS = {
+    "bbb_martins": (
+        ("Tier 1.starling_direct_bbb_evidence", "direct_brain_exposure"),
+        ("Mechanism.passive_permeability", "passive_permeability"),
+        ("Mechanism.efflux_transport", "efflux_transport"),
+        ("Mechanism.influx_transport", "influx_transport"),
+    ),
+    "bioavailability_ma": (
+        ("Observed.direct_oral_bioavailability", "direct_oral_bioavailability"),
+        ("Observed.nondirect_oral_bioavailability", "nondirect_oral_bioavailability"),
+        ("Observed.oral_auc_cmax_exposure", "oral_auc_cmax_exposure"),
+        ("Fa.absorption_solubility_permeability", "fa"),
+        ("Fg.gut_wall_efflux_intestinal_metabolism", "fg"),
+        ("Fh.hepatic_clearance_metabolic_stability", "fh"),
+    ),
+}
+
 
 @dataclass(frozen=True)
 class PreparedQuery:
@@ -237,6 +256,13 @@ def _read_json(path: Path) -> dict[str, Any]:
 def _levels(task: str) -> list[dict[str, Any]]:
     manifest = _read_json(PROGRESSIVE_TASKS[task].family_manifest)
     levels = [dict(row) for row in manifest.get("levels") or []]
+    if not levels and task in V7_PROGRESSIVE_GROUPS:
+        levels = [
+            {"level": level, "source_group_id": group_id, "endpoint_group": endpoint}
+            for level, (group_id, endpoint) in enumerate(
+                V7_PROGRESSIVE_GROUPS[task], start=1
+            )
+        ]
     for row in levels:
         level = int(row["level"])
         endpoint = str(row.get("endpoint_group") or "")
@@ -249,6 +275,58 @@ def _levels(task: str) -> list[dict[str, Any]]:
     if [int(row["level"]) for row in levels] != list(range(1, len(levels) + 1)):
         raise ValueError(f"{task} has a non-contiguous family-level catalog")
     return levels
+
+
+def _load_progressive_index(task: str) -> dict[str, Any]:
+    path = PROGRESSIVE_TASKS[task].index
+    if not path.is_dir():
+        with path.open("rb") as handle:
+            return pickle.load(handle)
+    index = load_index(path)
+    group_levels = {
+        group_id: (level, endpoint)
+        for level, (group_id, endpoint) in enumerate(
+            V7_PROGRESSIVE_GROUPS[task], start=1
+        )
+    }
+    for molecule_groups in index.get("evidence_by_molecule_group", {}).values():
+        for group_id, rows in molecule_groups.items():
+            if group_id not in group_levels:
+                raise ValueError(f"{task} compact index has unmapped group {group_id!r}")
+            level, endpoint = group_levels[group_id]
+            for row in rows:
+                for example in row.get("source_record_examples") or []:
+                    example["evidence_family"] = endpoint
+                    example["evidence_family_level"] = level
+    index["source"] = {
+        **dict(index.get("source") or {}),
+        "evidence_prompt_profile": ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE,
+    }
+    return index
+
+
+def _configure_v7_paths(args: argparse.Namespace) -> None:
+    if not args.evidence_root:
+        return
+    benchmark_root = Path(args.benchmark_data_root)
+    evidence_root = Path(args.evidence_root)
+    task_directories = {
+        "bbb_martins": "BBB_Martins",
+        "bioavailability_ma": "Bioavailability_Ma",
+    }
+    index_names = {
+        "bbb_martins": "bbb_starling_v7",
+        "bioavailability_ma": "bioavailability_starling_v7",
+    }
+    for task in args.tasks:
+        if task not in index_names:
+            raise ValueError(f"compact normalized-v7 progressive mode does not support {task}")
+        index_dir = evidence_root / index_names[task] / "08_neighbor_index"
+        PROGRESSIVE_TASKS[task] = ProgressiveTaskSpec(
+            benchmark_root / task_directories[task] / "scaffold" / "valid.jsonl",
+            index_dir,
+            index_dir / "manifest.json",
+        )
 
 
 def _task_contract(task: str) -> ProgressiveTaskContract:
@@ -943,26 +1021,39 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
     for task in args.tasks:
         spec = PROGRESSIVE_TASKS[task]
         for path in (spec.input_jsonl, spec.index, spec.family_manifest):
-            if not path.is_file():
+            if not path.exists():
                 raise FileNotFoundError(path)
-        manifest = _read_json(spec.index.with_name("manifest.json"))
-        expected = {
-            "reference_pool": REFERENCE_POOL,
-            "neighbor_identity_policy_default": IDENTITY_POLICY,
-            "n_direct_heldout_records_after_filter": 0,
-        }
-        if task in {"bioavailability_ma", "skin_reaction"}:
-            expected.update(
-                {
-                    "filter_source_id": "",
-                    "filter_scope_field": "group_id",
-                    "filter_scope_value": (
-                        "Observed.direct_oral_bioavailability"
-                        if task == "bioavailability_ma"
-                        else "Direct.skin_reaction"
-                    ),
-                }
-            )
+        manifest = _read_json(
+            spec.index / "manifest.json"
+            if spec.index.is_dir()
+            else spec.index.with_name("manifest.json")
+        )
+        if spec.index.is_dir():
+            expected = {
+                "task_id": task,
+                "heldout_filter_mode": "direct_source_only",
+            }
+            swap = manifest.get("gold_label_swap_for_direct_labels") or {}
+            if swap.get("version") != "gold_label_swap_for_direct_labels.v1":
+                raise ValueError(f"{task} compact index lacks the direct gold swap")
+        else:
+            expected = {
+                "reference_pool": REFERENCE_POOL,
+                "neighbor_identity_policy_default": IDENTITY_POLICY,
+                "n_direct_heldout_records_after_filter": 0,
+            }
+            if task in {"bioavailability_ma", "skin_reaction"}:
+                expected.update(
+                    {
+                        "filter_source_id": "",
+                        "filter_scope_field": "group_id",
+                        "filter_scope_value": (
+                            "Observed.direct_oral_bioavailability"
+                            if task == "bioavailability_ma"
+                            else "Direct.skin_reaction"
+                        ),
+                    }
+                )
         for field, value in expected.items():
             if manifest.get(field) != value:
                 raise ValueError(f"{task} index has wrong {field}: {manifest.get(field)!r}")
@@ -1019,7 +1110,12 @@ def run(args: argparse.Namespace) -> int:
             "input_jsonl": str(PROGRESSIVE_TASKS[task].input_jsonl),
             "input_sha256": sha256_file(PROGRESSIVE_TASKS[task].input_jsonl),
             "index": str(PROGRESSIVE_TASKS[task].index),
-            "index_sha256": sha256_file(PROGRESSIVE_TASKS[task].index),
+            "index_sha256": sha256_file(
+                PROGRESSIVE_TASKS[task].index
+                / "manifest.json"
+                if PROGRESSIVE_TASKS[task].index.is_dir()
+                else PROGRESSIVE_TASKS[task].index
+            ),
             "family_manifest": str(PROGRESSIVE_TASKS[task].family_manifest),
             "family_manifest_sha256": sha256_file(
                 PROGRESSIVE_TASKS[task].family_manifest
@@ -1088,8 +1184,7 @@ def run(args: argparse.Namespace) -> int:
     prepared_queries: list[PreparedQuery] = []
     for task in args.tasks:
         spec = PROGRESSIVE_TASKS[task]
-        with spec.index.open("rb") as handle:
-            index = pickle.load(handle)
+        index = _load_progressive_index(task)
         index = build_family_molecule_prefix_view(
             index,
             levels=[int(row["level"]) for row in _levels(task)],
@@ -1163,6 +1258,19 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
+    parser.add_argument(
+        "--benchmark-data-root",
+        default="data/conditioned_benchmark",
+        help="Canonical root containing <Task>/scaffold/valid.jsonl.",
+    )
+    parser.add_argument(
+        "--evidence-root",
+        default="",
+        help=(
+            "Optional paper evidence directory containing bbb_starling_v7 and "
+            "bioavailability_starling_v7 compact Stage-08 indices."
+        ),
+    )
     parser.add_argument("--single-source-root", default=str(ARCHIVED_SINGLE_CACHE_ROOT))
     parser.add_argument("--model", default=MODEL)
     parser.add_argument("--base-url", default=BASE_URL)
@@ -1203,6 +1311,7 @@ def main(argv: list[str] | None = None) -> int:
         help="Diagnostic preparation only; formal inference requires visible prefetched tools.",
     )
     args = parser.parse_args(argv)
+    _configure_v7_paths(args)
     load_env_file(args.env_file)
     if args.parallelism < 1 or args.parallelism > 512:
         parser.error("--parallelism must be between 1 and the global endpoint budget 512")

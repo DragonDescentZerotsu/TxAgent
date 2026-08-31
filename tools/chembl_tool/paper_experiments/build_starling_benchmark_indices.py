@@ -141,6 +141,14 @@ def main(argv: list[str] | None = None) -> int:
                     policy=policy_module.POLICY,
                     normalized_root=spec["normalized_root"],
                     heldout_labels_jsonl=heldout_path,
+                    train_labels_jsonl=(
+                        Path(args.benchmark_data_root)
+                        / spec["task"]
+                        / split
+                        / "train_molecule_condition_labels.jsonl"
+                        if args.gold_swap_direct_votes
+                        else None
+                    ),
                     out_dir=out_dir,
                     benchmark_split=split,
                     view=spec["view"],
@@ -271,9 +279,11 @@ def heldout_labels_path(
     subsets = normalize_heldout_subsets(heldout_subsets)
     split_dir = Path(benchmark_data_root) / task / split
     if set(subsets) == set(HELDOUT_SUBSETS):
-        return split_dir / "heldout_molecule_labels.jsonl"
+        detailed = split_dir / "heldout_molecule_condition_labels.jsonl"
+        return detailed if detailed.is_file() else split_dir / "heldout_molecule_labels.jsonl"
     if len(subsets) == 1:
-        return split_dir / f"{subsets[0]}_molecule_labels.jsonl"
+        detailed = split_dir / f"{subsets[0]}_molecule_condition_labels.jsonl"
+        return detailed if detailed.is_file() else split_dir / f"{subsets[0]}_molecule_labels.jsonl"
     raise ValueError(f"Unsupported held-out subset combination: {subsets}")
 
 
@@ -318,6 +328,14 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Root containing <Task>/<split>/heldout_molecule_labels.jsonl.",
     )
     parser.add_argument("--benchmark-lineage", default=BENCHMARK_LINEAGE)
+    parser.add_argument(
+        "--gold-swap-direct-votes",
+        action="store_true",
+        help=(
+            "Replace reconstructed direct_vote rows with the canonical training "
+            "molecule-condition labels; direct_residual and indirect rows are preserved."
+        ),
+    )
     parser.add_argument(
         "--heldout-filter-mode",
         choices=HELDOUT_FILTER_MODES,
