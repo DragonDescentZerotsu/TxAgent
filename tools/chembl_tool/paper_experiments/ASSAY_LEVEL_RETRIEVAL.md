@@ -1,6 +1,6 @@
 # Starling assay-level retrieval
 
-更新时间：2026-08-28。
+Updated: 2026-08-31.
 
 本文档只维护当前合同、最终 valid 结果、可复现入口和历史边界。逐次 smoke、失败重试、endpoint
 切换和被替代的 trace 不在这里重复记录；它们已集中归档，避免主输出目录继续膨胀。
@@ -57,6 +57,53 @@ python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
   --benchmark-lineage conditioned_benchmark \
   --heldout-filter-mode direct_source_only \
   --gold-swap-direct-votes
+```
+
+### Gold-only L1 inference on normalized-v7 Stage 06
+
+Two held-out valid runs now exercise the progressive harness directly on the
+inserted conditioned gold-training rows. Both use the same frozen V9 top-75
+candidate cache, current Stage-06 rows, at most 10 unique parent molecules, and
+at most 4 condition cards per parent. They do not expose normalized-v7
+`direct_residual` rows:
+
+| task | inserted gold | preserved direct residual | preserved indirect | removed reconstructed votes |
+|---|---:|---:|---:|---:|
+| BBB | 3,053 | 294,282 | 197,589 | 5,661 |
+| Bioavailability | 1,958 | 146,344 | 272,543 | 14,393 |
+| Skin | 1,997 | 15,930 | 488,160 | 33,701 |
+
+- `morgan + standalone` reranks the cache by Morgan parent/context order, omits
+  both the main-scaffold query prior and V9 transfer scores.
+- `v9 + fresh prior` reranks by frozen V9 transfer likelihood, displays that
+  likelihood as context transferability rather than a label probability, and
+  reuses a fresh same-checkpoint `none` branch from the main inference scaffold.
+
+All runs used `nvidia/DeepSeek-V4-Flash-NVFP4` and the 2,048-request endpoint
+ceiling. The query-prior branch and both L1 branches completed all 905 queries
+without a failed reasoning call.
+
+| task | n | fresh prior macro-F1 | Morgan standalone macro-F1 | V9 + prior macro-F1 |
+|---|---:|---:|---:|---:|
+| BBB | 397 | 0.5440 | 0.6954 | 0.6489 |
+| Bioavailability | 262 | 0.5743 | 0.6872 | 0.6707 |
+| Skin | 246 | 0.6240 | 0.6006 | 0.6445 |
+
+These are two different visibility interventions, not a controlled V9-versus-
+Morgan ranking ablation. BBB cache reconciliation dropped 4 obsolete training
+record IDs (71 ranking rows affecting 69 current queries) and ignored 1 obsolete
+query; Bioavailability and Skin required no stale-row filtering. Three V9
+queries had an unavailable `properties_compare` result from MolGpKa graph-index
+errors; the prompts marked those comparisons unavailable and all three reasoning
+calls completed successfully.
+
+```text
+fresh main-scaffold prior:
+  outputs/paper/starling_conditioned_gold_l1_deepseek_v4_flash_nvfp4_query_prior/
+Morgan standalone:
+  outputs/paper/starling_conditioned_gold_l1_morgan_standalone_deepseek_v4_flash_nvfp4_lineage_v1/
+V9 plus fresh prior:
+  outputs/paper/starling_conditioned_gold_l1_v9_with_prior_deepseek_v4_flash_nvfp4_lineage_v1/
 ```
 
 ## Retrieval and leakage contract

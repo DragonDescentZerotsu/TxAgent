@@ -372,6 +372,36 @@ def test_starling_matrix_provenance_hashes_split_inputs(tmp_path):
     assert len(bbb["heldout_molecule_labels_sha256"]) == 64
 
 
+def test_starling_matrix_accepts_conditioned_provenance_names(tmp_path):
+    experiment = next(
+        item for item in experiments_for_starling_benchmark("scaffold")
+        if item.task == "bbb_martins"
+    )
+    split_dir = tmp_path / "BBB_Martins" / "scaffold"
+    split_dir.mkdir(parents=True)
+    (split_dir / "summary.json").write_text(
+        json.dumps({"benchmark": "conditioned_benchmark", "contract": "conditioned_benchmark.v1"})
+    )
+    for subset in ("valid", "test"):
+        (split_dir / f"{subset}.jsonl").write_text('{"drug":"CCO","Y":1}\n')
+        (split_dir / f"{subset}_molecule_condition_labels.jsonl").write_text(
+            '{"drug":"CCO","Y":1,"condition_group":"none"}\n'
+        )
+    (split_dir / "heldout_molecule_condition_labels.jsonl").write_text(
+        '{"drug":"CCO","Y":1,"condition_group":"none"}\n'
+    )
+
+    provenance = _benchmark_provenance(
+        "scaffold", [experiment], data_root=tmp_path
+    )["bbb_martins"]
+    assert provenance["benchmark"] == "conditioned_benchmark"
+    assert provenance["contract"] == "conditioned_benchmark.v1"
+    assert provenance["task_summary_path"] == str(split_dir / "summary.json")
+    assert provenance["heldout_molecule_labels_jsonl"].endswith(
+        "heldout_molecule_condition_labels.jsonl"
+    )
+
+
 def test_starling_matrix_accepts_manifest_only_mode():
     from tools.chembl_tool.paper_experiments.starling_benchmark_matrix import (
         _parse_args as parse_starling_args,
@@ -516,9 +546,21 @@ def test_starling_matrix_enforces_single_endpoint_concurrency_budget():
     try:
         _validate_concurrency(rejected)
     except SystemExit as error:
-        assert "exceeds the frozen endpoint budget" in str(error)
+        assert "exceeds the configured endpoint budget" in str(error)
     else:
         raise AssertionError("Expected an over-budget launcher shape to be rejected")
+
+    deepseek = parse_starling_args(
+        [
+            "--benchmark-split",
+            "random",
+            "--parallelism",
+            "2048",
+            "--endpoint-concurrency-budget",
+            "2048",
+        ]
+    )
+    _validate_concurrency(deepseek)
 
 
 def test_starling_valid_root_is_isolated_from_formal_test_root(tmp_path):

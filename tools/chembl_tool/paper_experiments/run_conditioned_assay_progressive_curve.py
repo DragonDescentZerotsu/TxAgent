@@ -12,12 +12,15 @@ import argparse
 import concurrent.futures
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
 import pickle
 from functools import lru_cache
 from typing import Any, Mapping
+
+import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.assay_retrieval import (
     ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE,
@@ -56,6 +59,7 @@ from tools.chembl_tool.common.progressive_assay_reasoning import (
     restore_card_ids,
     select_initial_evidence,
     select_progressive_delta,
+    stable_analog_id,
     state_from_content,
 )
 from tools.chembl_tool.common.reasoning_payload import external_condition_sentence
@@ -80,9 +84,14 @@ ARCHIVED_SINGLE_CACHE_ROOT = Path(
     "scaffold_valid_top20_control_matrix_deepseek_v4_flash_0731_v1/"
     "visible_standard"
 )
+DEFAULT_V9_RANKING_ROOT = Path(
+    "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/results/"
+    "starling_benchmark/2026-08-31/context_conditioned_v1_gold_valid_top75_direct"
+)
 TASK_NAMES = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 REFERENCE_POOL = "direct_only_heldout_filtered"
 IDENTITY_POLICY = "scaffold_disjoint"
+MAX_ENDPOINT_CONCURRENCY_BUDGET = 2048
 
 _MODEL_IDENTITY_ALIASES = {
     "deepseek-ai/deepseek-v4-flash-0731": "deepseek-v4-flash-0731",
@@ -235,6 +244,16 @@ V7_PROGRESSIVE_GROUPS = {
         ("Fg.gut_wall_efflux_intestinal_metabolism", "fg"),
         ("Fh.hepatic_clearance_metabolic_stability", "fh"),
     ),
+    "skin_reaction": (
+        ("Direct.skin_reaction", "direct_skin_sensitization"),
+        ("Mechanism.sensitization_aop", "sensitisation_aop"),
+    ),
+}
+
+TASK_DATA_DIRECTORIES = {
+    "bbb_martins": "BBB_Martins",
+    "bioavailability_ma": "Bioavailability_Ma",
+    "skin_reaction": "Skin_Reaction",
 }
 
 
@@ -253,7 +272,7 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _levels(task: str) -> list[dict[str, Any]]:
+def _levels(task: str, max_level: int = 0) -> list[dict[str, Any]]:
     manifest = _read_json(PROGRESSIVE_TASKS[task].family_manifest)
     levels = [dict(row) for row in manifest.get("levels") or []]
     if not levels and task in V7_PROGRESSIVE_GROUPS:
@@ -274,7 +293,7 @@ def _levels(task: str) -> list[dict[str, Any]]:
         ].PROGRESSIVE_ASSAY_LEVEL_DESCRIPTIONS[level]
     if [int(row["level"]) for row in levels] != list(range(1, len(levels) + 1)):
         raise ValueError(f"{task} has a non-contiguous family-level catalog")
-    return levels
+    return levels[:max_level] if max_level else levels
 
 
 def _load_progressive_index(task: str) -> dict[str, Any]:
@@ -313,10 +332,12 @@ def _configure_v7_paths(args: argparse.Namespace) -> None:
     task_directories = {
         "bbb_martins": "BBB_Martins",
         "bioavailability_ma": "Bioavailability_Ma",
+        "skin_reaction": "Skin_Reaction",
     }
     index_names = {
         "bbb_martins": "bbb_starling_v7",
         "bioavailability_ma": "bioavailability_starling_v7",
+        "skin_reaction": "skin_reaction_starling_v7",
     }
     for task in args.tasks:
         if task not in index_names:
@@ -340,9 +361,19 @@ def _query_dir(output_root: Path, task: str, query_index: int) -> Path:
     return output_root / task / "queries" / f"query_idx{query_index:05d}"
 
 
+def _single_batch_dir(task: str, single_root: Path) -> Path:
+    for name in ("none", f"{task}__none"):
+        path = single_root / task / name
+        if path.is_dir():
+            return path
+    return single_root / task / "none"
+
+
 def _source_run_dir(task: str, query_index: int, single_root: Path) -> Path:
-    batch = single_root / task / "none"
-    return batch / "runs" / f"none_idx{query_index:05d}"
+    runs = _single_batch_dir(task, single_root) / "runs"
+    current = runs / f"{task}__none_idx{query_index:05d}"
+    archived = runs / f"none_idx{query_index:05d}"
+    return current if current.is_dir() else archived
 
 
 def _stable_query_key(record: Mapping[str, Any]) -> tuple[str, str]:
@@ -356,7 +387,7 @@ def _stable_query_key(record: Mapping[str, Any]) -> tuple[str, str]:
 @lru_cache(maxsize=None)
 def _single_source_index(task: str, single_root_text: str) -> dict[tuple[str, str], int]:
     single_root = Path(single_root_text)
-    manifest = _read_json(single_root / task / "none" / "manifest.json")
+    manifest = _read_json(_single_batch_dir(task, single_root) / "manifest.json")
     input_path = Path(str(manifest.get("input_jsonl") or ""))
     if not input_path.is_file():
         raise FileNotFoundError(f"reusable single input is unavailable: {input_path}")
@@ -370,6 +401,176 @@ def _single_source_index(task: str, single_root_text: str) -> dict[tuple[str, st
             raise ValueError(f"duplicate reusable single identity: {key}")
         mapping[key] = index
     return mapping
+
+
+def _gold_l1_candidates(
+    *,
+    task: str,
+    records: list[dict[str, Any]],
+    ranking_root: Path,
+    ranking: str,
+    benchmark_root: Path,
+) -> tuple[dict[str, dict[str, dict[str, Any]]], dict[str, Any]]:
+    task_cache = ranking_root / task
+    config_path = task_cache / "config.json"
+    manifest_path = task_cache / "manifest.json"
+    rankings_path = task_cache / "rankings.parquet"
+    config = _read_json(config_path)
+    cache_manifest = _read_json(manifest_path)
+    if cache_manifest.get("schema_version") != "context_conditioned_gold_valid_ranking_cache.v1":
+        raise ValueError(f"{task} has an incompatible V9 ranking cache")
+    if cache_manifest.get("status") != "complete":
+        raise ValueError(f"{task} V9 ranking cache is incomplete")
+    cache_output = cache_manifest.get("output") or {}
+    if cache_output.get("rankings_sha256") != sha256_file(rankings_path):
+        raise ValueError(f"{task} V9 rankings hash disagrees with manifest")
+    cache_input = cache_manifest.get("input") or {}
+    if (
+        config.get("manifest_sha256") != cache_input.get("manifest_sha256")
+        or config.get("parquet_sha256") != cache_input.get("parquet_sha256")
+    ):
+        raise ValueError(f"{task} V9 input lineage disagrees between config and manifest")
+    cache_model = cache_manifest.get("model") or {}
+    if (
+        config.get("model_id") != cache_model.get("id")
+        or config.get("model_revision") != cache_model.get("revision")
+    ):
+        raise ValueError(f"{task} V9 model lineage disagrees between config and manifest")
+
+    stage6_dir = PROGRESSIVE_TASKS[task].index.parent / "06_records"
+    stage6_manifest_path = stage6_dir / "manifest.json"
+    stage6_records_path = stage6_dir / "records.parquet"
+    stage6_manifest = _read_json(stage6_manifest_path)
+    stage6_records_sha256 = sha256_file(stage6_records_path)
+    if (stage6_manifest.get("records_file") or {}).get("sha256") != stage6_records_sha256:
+        raise ValueError(f"{task} Stage 06 records hash disagrees with manifest")
+    swap = stage6_manifest.get("gold_label_swap_for_direct_labels") or {}
+    if swap.get("version") != "gold_label_swap_for_direct_labels.v1":
+        raise ValueError(f"{task} Stage 06 lacks the direct gold swap")
+    gold_rows = pq.read_table(
+        stage6_records_path,
+        filters=[("source_id", "=", "conditioned_benchmark_gold")],
+    ).to_pylist()
+    gold_by_id = {str(row["source_record_id"]): row for row in gold_rows}
+
+    data_dir = benchmark_root / TASK_DATA_DIRECTORIES[task] / "scaffold"
+    train_rows = read_jsonl(data_dir / "train_molecule_condition_labels.jsonl")
+    train_by_id = {str(row["benchmark_row_id"]): row for row in train_rows}
+    train_ids = set(train_by_id)
+    if set(gold_by_id) != train_ids:
+        raise ValueError(f"{task} Stage 06 gold rows do not exactly match conditioned training labels")
+
+    ranking_rows = pq.read_table(rankings_path).to_pylist()
+    current_by_id = {str(row["benchmark_row_id"]): row for row in records}
+    current_ids = set(current_by_id)
+    cache_query_ids = {str(row["query_record_id"]) for row in ranking_rows}
+    missing = current_ids - cache_query_ids
+    if missing:
+        raise ValueError(f"{task} V9 cache misses {len(missing)} current valid queries")
+    retrieval_ids = {str(row["retrieval_record_id"]) for row in ranking_rows}
+    stale_retrieval_ids = retrieval_ids - train_ids
+    stale_rows = [
+        row
+        for row in ranking_rows
+        if str(row["retrieval_record_id"]) in stale_retrieval_ids
+    ]
+
+    family = _levels(task, 1)[0]["endpoint_group"]
+    candidates: dict[str, dict[str, dict[str, Any]]] = {
+        query_id: {} for query_id in current_ids
+    }
+    for row in ranking_rows:
+        query_id = str(row["query_record_id"])
+        if query_id not in candidates or str(row["retrieval_record_id"]) in stale_retrieval_ids:
+            continue
+        current = current_by_id[query_id]
+        if (
+            str(current.get("molecule_identity_key")) != str(row["query_molecule_identity_key"])
+            or str(current.get("condition_group")) != str(row["query_condition_group"])
+        ):
+            raise ValueError(f"{task} V9 row disagrees with current query identity: {query_id}")
+        record_id = str(row["retrieval_record_id"])
+        gold = gold_by_id[record_id]
+        training = train_by_id[record_id]
+        if (
+            str(training.get("molecule_identity_key"))
+            != str(row["retrieval_molecule_identity_key"])
+            or str(training.get("condition_group")) != str(row["retrieval_condition_group"])
+        ):
+            raise ValueError(f"{task} V9 row disagrees with current gold identity: {record_id}")
+        parent = str(row["retrieval_molecule_identity_key"])
+        analog_id = stable_analog_id(
+            {"standard_inchi_key": parent, "canonical_smiles": row["retrieval_smiles"]}
+        )
+        analog_rank = (
+            int(row["model_rank"])
+            if ranking == "v9"
+            else int(row["retrieval_parent_rank"])
+        )
+        analog = candidates[query_id].setdefault(
+            analog_id,
+            {
+                "analog_id": analog_id,
+                "canonical_smiles": str(row["retrieval_smiles"]),
+                "similarity": float(row["morgan_tanimoto_similarity"]),
+                "molecule_relation": "structural_analog",
+                "_selection_rank": analog_rank,
+                "cards": {},
+            },
+        )
+        analog["_selection_rank"] = min(int(analog["_selection_rank"]), analog_rank)
+        card_rank = (
+            int(row["model_rank"])
+            if ranking == "v9"
+            else int(row["retrieval_parent_context_index"])
+        )
+        card_id = "card_" + hashlib.sha256(
+            f"{task}:conditioned_gold:{record_id}".encode("utf-8")
+        ).hexdigest()[:16]
+        card = {
+            "card_id": card_id,
+            "evidence_family": family,
+            "assay_context": "conditioned benchmark training label",
+            "endpoint": str(gold.get("canonical_endpoint_name") or gold.get("endpoint_name") or ""),
+            "reported_value": str(gold.get("canonical_measurement_text") or ""),
+            "reported_unit": str(gold.get("canonical_unit_text") or ""),
+            "qualifying_conditions": (
+                ""
+                if gold.get("condition_group") == "no_reported_external_condition"
+                else str(gold.get("condition_group") or "")
+            ),
+            "support_text": "Frozen conditioned benchmark training outcome.",
+            "_assay_key": str(gold.get("condition_group") or record_id),
+            "_selection_rank": card_rank,
+        }
+        if ranking == "v9":
+            card["transfer_likelihood"] = round(float(row["prob_transfer"]), 2)
+        analog["cards"][card_id] = card
+
+    if any(not rows for rows in candidates.values()):
+        raise ValueError(f"{task} has a current valid query without gold L1 candidates")
+    return candidates, {
+        "schema_version": cache_manifest["schema_version"],
+        "ranking": ranking,
+        "config": str(config_path),
+        "config_sha256": sha256_file(config_path),
+        "manifest": str(manifest_path),
+        "manifest_sha256": sha256_file(manifest_path),
+        "rankings": str(rankings_path),
+        "rankings_sha256": sha256_file(rankings_path),
+        "model": cache_manifest.get("model"),
+        "n_current_queries": len(current_ids),
+        "n_extra_cache_queries_ignored": len(cache_query_ids - current_ids),
+        "n_stale_retrieval_records_dropped": len(stale_retrieval_ids),
+        "n_stale_ranking_rows_dropped": len(stale_rows),
+        "n_queries_affected_by_stale_retrieval_rows": len(
+            {str(row["query_record_id"]) for row in stale_rows} & current_ids
+        ),
+        "n_gold_training_rows": len(train_ids),
+        "stage6_manifest": str(stage6_manifest_path),
+        "stage6_manifest_sha256": sha256_file(stage6_manifest_path),
+        "stage6_records_sha256": stage6_records_sha256,
+    }
 
 
 def _load_reused_query_prior(
@@ -471,9 +672,14 @@ def _prepare_query(
     task: str,
     query_index: int,
     record: Mapping[str, Any],
-    index: Mapping[str, Any],
+    index: Mapping[str, Any] | None,
+    levels: list[dict[str, Any]],
+    gold_l1_candidates: Mapping[str, Mapping[str, Any]] | None,
     output_root: Path,
     single_root: Path,
+    query_prior_mode: str,
+    l1_source: str,
+    l1_ranking: str,
     tool_service_url: str,
     timeout_s: int,
     prefetch_tools: bool,
@@ -486,38 +692,60 @@ def _prepare_query(
             manifest.get("status") == "ok"
             and manifest.get("protocol") == PROGRESSIVE_PROTOCOL_VERSION
             and bool(manifest.get("tool_prefetch_complete")) is prefetch_tools
+            and manifest.get("query_prior_mode") == query_prior_mode
+            and manifest.get("l1_source") == l1_source
+            and manifest.get("l1_ranking") == l1_ranking
         ):
             return PreparedQuery(task, query_index, query_dir)
 
     query_smiles = str(record.get("drug") or "")
-    levels = _levels(task)
-    query_prior, query_tool_summary, none_final, single_source_index = _load_reused_query_prior(
-        task, record, single_root
-    )
-    level_ids = [int(row["level"]) for row in levels]
-    retrievals = retrieve_family_molecule_prefixes(
-        query_smiles,
-        index,
-        levels=level_ids,
-        min_similarity=0.3,
-        neighbor_identity_policy=IDENTITY_POLICY,
-    )
+    if query_prior_mode == "fresh":
+        query_prior, query_tool_summary, none_final, single_source_index = _load_reused_query_prior(
+            task, record, single_root
+        )
+    else:
+        query_prior, query_tool_summary, none_final, single_source_index = {}, {}, {}, None
     cumulative_by_level: dict[int, dict[str, dict[str, Any]]] = {}
     retrieval_audits: dict[int, dict[str, Any]] = {}
-    for level_row in levels:
-        level = int(level_row["level"])
-        retrieval = retrievals[level]
-        if retrieval.get("status") != "ok":
-            raise RuntimeError(f"{task} query {query_index} level {level} retrieval failed")
-        cumulative = extract_cumulative_evidence(retrieval)
-        cumulative_by_level[level] = cumulative
-        retrieval_audits[level] = {
-            **dict(retrieval.get("coverage") or {}),
+    if gold_l1_candidates is not None:
+        cumulative = {
+            key: json.loads(json.dumps(value, ensure_ascii=False))
+            for key, value in gold_l1_candidates.items()
+        }
+        cumulative_by_level[1] = cumulative
+        retrieval_audits[1] = {
+            "candidate_source": "conditioned_gold_training_labels",
+            "ranking": l1_ranking,
             "n_cumulative_visible_molecules": len(cumulative),
             "n_cumulative_visible_cards": sum(
                 len(row.get("cards") or {}) for row in cumulative.values()
             ),
         }
+    else:
+        if index is None:
+            raise ValueError("normalized-v7 retrieval requires an index")
+        level_ids = [int(row["level"]) for row in levels]
+        retrievals = retrieve_family_molecule_prefixes(
+            query_smiles,
+            index,
+            levels=level_ids,
+            min_similarity=0.3,
+            neighbor_identity_policy=IDENTITY_POLICY,
+        )
+        for level_row in levels:
+            level = int(level_row["level"])
+            retrieval = retrievals[level]
+            if retrieval.get("status") != "ok":
+                raise RuntimeError(f"{task} query {query_index} level {level} retrieval failed")
+            cumulative = extract_cumulative_evidence(retrieval)
+            cumulative_by_level[level] = cumulative
+            retrieval_audits[level] = {
+                **dict(retrieval.get("coverage") or {}),
+                "n_cumulative_visible_molecules": len(cumulative),
+                "n_cumulative_visible_cards": sum(
+                    len(row.get("cards") or {}) for row in cumulative.values()
+                ),
+            }
 
     snapshots: dict[int, dict[str, dict[str, Any]]] = {}
     selection_audits: dict[int, dict[str, Any]] = {}
@@ -561,6 +789,9 @@ def _prepare_query(
         new_ids = current_ids - previous_ids
         prepared = {
             "protocol": PROGRESSIVE_PROTOCOL_VERSION,
+            "query_prior_mode": query_prior_mode,
+            "l1_source": l1_source,
+            "l1_ranking": l1_ranking,
             "task": task,
             "query_index": query_index,
             "benchmark_row_id": record.get("benchmark_row_id"),
@@ -597,6 +828,9 @@ def _prepare_query(
         {
             "status": "ok",
             "protocol": PROGRESSIVE_PROTOCOL_VERSION,
+            "query_prior_mode": query_prior_mode,
+            "l1_source": l1_source,
+            "l1_ranking": l1_ranking,
             "task": task,
             "query_index": query_index,
             "n_levels": len(levels),
@@ -693,7 +927,7 @@ def _run_query(
 ) -> dict[str, Any]:
     task = prepared_query.task
     contract = _task_contract(task)
-    levels = _levels(task)
+    levels = _levels(task, args.max_level)
     prior_state: dict[str, Any] | None = None
     n_calls = 0
     for level_row in levels:
@@ -713,6 +947,8 @@ def _run_query(
             )
         if not prepared.get("should_call_model"):
             if prior_state is None:
+                if args.query_prior == "none":
+                    raise ValueError(f"standalone L1 has no visible evidence: {level_dir}")
                 state = _none_state(
                     contract=contract,
                     level=level,
@@ -742,7 +978,7 @@ def _run_query(
             current_level=level,
             query_smiles=prepared["query_smiles"],
             condition_sentence=prepared["condition_sentence"],
-            query_prior=prepared["query_prior"],
+            query_prior=prepared["query_prior"] or None,
             query_tool_summary=prepared.get("query_tool_summary") or {},
             active=active,
             prior_state=prior_state,
@@ -932,43 +1168,46 @@ def _summarize_task(
     records: list[dict[str, Any]],
     indices: list[int],
     output_root: Path,
+    max_level: int,
+    query_prior_mode: str,
 ) -> None:
     contract = _task_contract(task)
-    none_predictions = []
-    for query_index in indices:
-        prepared_path = (
-            _query_dir(output_root, task, query_index)
-            / "levels"
-            / "level_1"
-            / "prepared.json"
+    if query_prior_mode == "fresh":
+        none_predictions = []
+        for query_index in indices:
+            prepared_path = (
+                _query_dir(output_root, task, query_index)
+                / "levels"
+                / "level_1"
+                / "prepared.json"
+            )
+            prepared = _read_json(prepared_path)
+            none_final = prepared.get("reused_none_final") or {}
+            content = ((none_final.get("llm") or {}).get("content") or {})
+            prediction = content.get(contract.prediction_field)
+            pred_label = _prediction_to_label(contract, prediction)
+            label = records[query_index].get("Y")
+            none_predictions.append(
+                {
+                    "index": query_index,
+                    "label": label,
+                    contract.prediction_field: prediction,
+                    "pred_label": pred_label,
+                    "correct": pred_label == label if pred_label is not None else None,
+                    "confidence": content.get("confidence"),
+                    "status": none_final.get("status"),
+                    "model_called": False,
+                    "source": str(prepared_path),
+                }
+            )
+        _write_prediction_summary(
+            task=task,
+            predictions=none_predictions,
+            summary_dir=output_root / task / "none",
+            metric_fields={"level": 0, "family": "none", "reuse": "stable parent-condition identity"},
         )
-        prepared = _read_json(prepared_path)
-        none_final = prepared.get("reused_none_final") or {}
-        content = ((none_final.get("llm") or {}).get("content") or {})
-        prediction = content.get(contract.prediction_field)
-        pred_label = _prediction_to_label(contract, prediction)
-        label = records[query_index].get("Y")
-        none_predictions.append(
-            {
-                "index": query_index,
-                "label": label,
-                contract.prediction_field: prediction,
-                "pred_label": pred_label,
-                "correct": pred_label == label if pred_label is not None else None,
-                "confidence": content.get("confidence"),
-                "status": none_final.get("status"),
-                "model_called": False,
-                "source": str(prepared_path),
-            }
-        )
-    _write_prediction_summary(
-        task=task,
-        predictions=none_predictions,
-        summary_dir=output_root / task / "none",
-        metric_fields={"level": 0, "family": "none", "reuse": "stable parent-condition identity"},
-    )
 
-    for level_row in _levels(task):
+    for level_row in _levels(task, max_level):
         level = int(level_row["level"])
         predictions = []
         for query_index in indices:
@@ -1057,47 +1296,48 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
         for field, value in expected.items():
             if manifest.get(field) != value:
                 raise ValueError(f"{task} index has wrong {field}: {manifest.get(field)!r}")
-        source_run = _source_run_dir(task, 0, Path(args.single_source_root))
-        if not source_run.parent.is_dir():
-            raise FileNotFoundError(source_run.parent)
-        single_manifest_path = Path(args.single_source_root) / task / "none" / "manifest.json"
-        single_manifest = _read_json(single_manifest_path)
-        reusable_model = str(single_manifest.get("model") or "")
-        if _model_identity(reusable_model) != _model_identity(args.model):
-            raise ValueError(
-                f"{task} reusable single batch has wrong model: {reusable_model!r}"
-            )
-        expected_single = {
-            "visibility_mode": "deployment_visible_prefetched",
-            "identity_blind": False,
-            "harness_prefetch_tools": True,
-        }
-        for field, value in expected_single.items():
-            if single_manifest.get(field) != value:
+        if args.query_prior == "fresh":
+            batch_dir = _single_batch_dir(task, Path(args.single_source_root))
+            if not (batch_dir / "runs").is_dir():
+                raise FileNotFoundError(batch_dir / "runs")
+            single_manifest_path = batch_dir / "manifest.json"
+            single_manifest = _read_json(single_manifest_path)
+            reusable_model = str(single_manifest.get("model") or "")
+            if _model_identity(reusable_model) != _model_identity(args.model):
                 raise ValueError(
-                    f"{task} reusable single batch has wrong {field}: "
-                    f"{single_manifest.get(field)!r}"
+                    f"{task} reusable single batch has wrong model: {reusable_model!r}"
                 )
-        source_input = Path(str(single_manifest.get("input_jsonl") or ""))
-        if not source_input.is_file():
-            raise FileNotFoundError(source_input)
-        if len(read_jsonl(source_input)) != int(single_manifest.get("n_items") or -1):
-            raise ValueError(f"{task} reusable single source input count mismatch")
-        current_keys = {_stable_query_key(row) for row in read_jsonl(spec.input_jsonl)}
-        reusable_keys = set(_single_source_index(task, str(Path(args.single_source_root))))
-        missing_keys = current_keys - reusable_keys
-        if missing_keys:
-            raise ValueError(
-                f"{task} has {len(missing_keys)} rows without stable-identity single reuse"
-            )
+            expected_single = {
+                "visibility_mode": "deployment_visible_prefetched",
+                "identity_blind": False,
+                "harness_prefetch_tools": True,
+            }
+            for field, value in expected_single.items():
+                if single_manifest.get(field) != value:
+                    raise ValueError(
+                        f"{task} reusable single batch has wrong {field}: "
+                        f"{single_manifest.get(field)!r}"
+                    )
+            source_input = Path(str(single_manifest.get("input_jsonl") or ""))
+            if not source_input.is_file():
+                raise FileNotFoundError(source_input)
+            if len(read_jsonl(source_input)) != int(single_manifest.get("n_items") or -1):
+                raise ValueError(f"{task} reusable single source input count mismatch")
+            current_keys = {_stable_query_key(row) for row in read_jsonl(spec.input_jsonl)}
+            reusable_keys = set(_single_source_index(task, str(Path(args.single_source_root))))
+            missing_keys = current_keys - reusable_keys
+            if missing_keys:
+                raise ValueError(
+                    f"{task} has {len(missing_keys)} rows without stable-identity single reuse"
+                )
         records_by_task[task] = read_jsonl(spec.input_jsonl)
     return records_by_task
 
 
 def run(args: argparse.Namespace) -> int:
     provider_config = _resolve_provider_pool_config(args)
-    if sum(spec.max_inflight for spec in provider_config.providers) > 512:
-        raise ValueError("provider pool capacity exceeds the global budget 512")
+    if sum(spec.max_inflight for spec in provider_config.providers) > args.endpoint_concurrency_budget:
+        raise ValueError("provider pool capacity exceeds the configured endpoint budget")
     records_by_task = _validate_inputs(args)
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
@@ -1105,6 +1345,19 @@ def run(args: argparse.Namespace) -> int:
         task: _selected_indices(args, len(records_by_task[task]))
         for task in args.tasks
     }
+    gold_candidates_by_task: dict[str, dict[str, dict[str, dict[str, Any]]]] = {}
+    ranking_audits: dict[str, dict[str, Any]] = {}
+    if args.l1_source == "gold_train":
+        for task in args.tasks:
+            candidates, audit = _gold_l1_candidates(
+                task=task,
+                records=records_by_task[task],
+                ranking_root=Path(args.v9_ranking_root),
+                ranking=args.l1_ranking,
+                benchmark_root=Path(args.benchmark_data_root),
+            )
+            gold_candidates_by_task[task] = candidates
+            ranking_audits[task] = audit
     inputs = {
         task: {
             "input_jsonl": str(PROGRESSIVE_TASKS[task].input_jsonl),
@@ -1120,10 +1373,16 @@ def run(args: argparse.Namespace) -> int:
             "family_manifest_sha256": sha256_file(
                 PROGRESSIVE_TASKS[task].family_manifest
             ),
-            "single_source_manifest_sha256": sha256_file(
-                Path(args.single_source_root) / task / "none" / "manifest.json"
+            "single_source_manifest_sha256": (
+                sha256_file(
+                    _single_batch_dir(task, Path(args.single_source_root))
+                    / "manifest.json"
+                )
+                if args.query_prior == "fresh"
+                else None
             ),
-            "levels": _levels(task),
+            "levels": _levels(task, args.max_level),
+            "l1_ranking_cache": ranking_audits.get(task),
         }
         for task in args.tasks
     }
@@ -1132,31 +1391,48 @@ def run(args: argparse.Namespace) -> int:
         "evaluation_subset": "valid",
         "tasks": args.tasks,
         "visibility_mode": "deployment_visible_prefetched",
-        "reference_pool": REFERENCE_POOL,
+        "reference_pool": (
+            "conditioned_gold_train" if args.l1_source == "gold_train" else REFERENCE_POOL
+        ),
         "neighbor_identity_policy": IDENTITY_POLICY,
-        "min_similarity": 0.3,
+        "min_similarity": None if args.l1_source == "gold_train" else 0.3,
         "candidate_generation": {
             "unit": "molecule",
-            "scope": "cumulative record-family pool",
-            "ranking": "global Morgan similarity",
+            "scope": (
+                "V9 top-75 conditioned gold-training pool"
+                if args.l1_source == "gold_train"
+                else "cumulative record-family pool"
+            ),
+            "ranking": args.l1_ranking,
             "per_assay_neighbor_cap": None,
             "assay_role": "card provenance and diversity only",
         },
         "selection": {
-            "level_1": "top 10 molecules by Morgan similarity; at most 4 cards per molecule",
+            "level_1": f"top 10 molecules by {args.l1_ranking}; at most 4 cards per molecule",
             "later_new_pool": "top 3 previously unseen molecules; at most 2 newly unlocked cards each",
             "later_augmentation_pool": "top 3 already-active molecules; at most 2 newly unlocked cards each",
             "slot_borrowing": False,
             "append_only": True,
             "cumulative_per_molecule_card_cap": None,
         },
-        "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+        "prompt_profile": (
+            "progressive_compact_tools_short_aliases.gold_l1.v1"
+            if args.l1_source == "gold_train"
+            else "progressive_compact_tools_short_aliases.v2"
+        ),
         "condition_policy": "natural-language sentence for non-null group; omit null group",
-        "single_reuse_root": str(Path(args.single_source_root)),
+        "query_prior_mode": args.query_prior,
+        "single_reuse_root": (
+            str(Path(args.single_source_root)) if args.query_prior == "fresh" else None
+        ),
+        "l1_source": args.l1_source,
+        "l1_ranking": args.l1_ranking,
+        "max_level": args.max_level,
         "model": args.model,
         "model_identity": _model_identity(args.model),
         "base_url": args.base_url,
         "parallelism": args.parallelism,
+        "endpoint_concurrency_budget": args.endpoint_concurrency_budget,
         "max_tokens": args.max_tokens,
         "temperature": 0.0,
         "thinking": "provider_default",
@@ -1184,11 +1460,13 @@ def run(args: argparse.Namespace) -> int:
     prepared_queries: list[PreparedQuery] = []
     for task in args.tasks:
         spec = PROGRESSIVE_TASKS[task]
-        index = _load_progressive_index(task)
-        index = build_family_molecule_prefix_view(
-            index,
-            levels=[int(row["level"]) for row in _levels(task)],
-        )
+        levels = _levels(task, args.max_level)
+        index = None
+        if args.l1_source == "normalized_v7":
+            index = build_family_molecule_prefix_view(
+                _load_progressive_index(task),
+                levels=[int(row["level"]) for row in levels],
+            )
         records = records_by_task[task]
         indices = indices_by_task[task]
         with concurrent.futures.ThreadPoolExecutor(max_workers=min(args.preparation_workers, len(indices))) as pool:
@@ -1199,8 +1477,17 @@ def run(args: argparse.Namespace) -> int:
                     query_index=query_index,
                     record=records[query_index],
                     index=index,
+                    levels=levels,
+                    gold_l1_candidates=(
+                        gold_candidates_by_task[task][str(records[query_index]["benchmark_row_id"])]
+                        if args.l1_source == "gold_train"
+                        else None
+                    ),
                     output_root=output_root,
                     single_root=Path(args.single_source_root),
+                    query_prior_mode=args.query_prior,
+                    l1_source=args.l1_source,
+                    l1_ranking=args.l1_ranking,
                     tool_service_url=args.tool_service_url,
                     timeout_s=args.timeout_s,
                     prefetch_tools=not args.skip_tool_prefetch,
@@ -1237,6 +1524,8 @@ def run(args: argparse.Namespace) -> int:
             records=records,
             indices=indices_by_task[task],
             output_root=output_root,
+            max_level=args.max_level,
+            query_prior_mode=args.query_prior,
         )
     manifest["finished_at"] = _now()
     manifest["n_failed_queries"] = failed
@@ -1268,8 +1557,33 @@ def main(argv: list[str] | None = None) -> int:
         default="",
         help=(
             "Optional paper evidence directory containing bbb_starling_v7 and "
-            "bioavailability_starling_v7 compact Stage-08 indices."
+            "bioavailability_starling_v7 and skin_reaction_starling_v7 compact indices."
         ),
+    )
+    parser.add_argument(
+        "--l1-source",
+        choices=("normalized_v7", "gold_train"),
+        default="normalized_v7",
+        help="Use the full normalized-v7 direct family or the matched conditioned gold-training L1 pool.",
+    )
+    parser.add_argument(
+        "--l1-ranking",
+        choices=("morgan", "v9"),
+        default="morgan",
+        help="Rank the matched gold L1 candidates by Morgan parent rank or frozen V9 transfer score.",
+    )
+    parser.add_argument("--v9-ranking-root", default=str(DEFAULT_V9_RANKING_ROOT))
+    parser.add_argument(
+        "--query-prior",
+        choices=("fresh", "none"),
+        default="fresh",
+        help="Reuse a freshly generated same-checkpoint main-scaffold prior, or run standalone L1.",
+    )
+    parser.add_argument(
+        "--max-level",
+        type=int,
+        default=0,
+        help="Stop after this progressive level; 0 runs every configured level.",
     )
     parser.add_argument("--single-source-root", default=str(ARCHIVED_SINGLE_CACHE_ROOT))
     parser.add_argument("--model", default=MODEL)
@@ -1290,6 +1604,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--tool-service-url", default="http://127.0.0.1:8765")
     parser.add_argument("--parallelism", type=int, default=128)
+    parser.add_argument(
+        "--endpoint-concurrency-budget",
+        type=int,
+        default=512,
+        help="Explicit endpoint-wide in-flight ceiling; the DeepSeek dgx025 service supports 2048.",
+    )
     parser.add_argument("--preparation-workers", type=int, default=32)
     parser.add_argument("--max-tokens", type=int, default=20_480)
     parser.add_argument("--timeout-s", type=int, default=900)
@@ -1313,12 +1633,23 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     _configure_v7_paths(args)
     load_env_file(args.env_file)
-    if args.parallelism < 1 or args.parallelism > 512:
-        parser.error("--parallelism must be between 1 and the global endpoint budget 512")
+    if not 1 <= args.endpoint_concurrency_budget <= MAX_ENDPOINT_CONCURRENCY_BUDGET:
+        parser.error(f"--endpoint-concurrency-budget must be between 1 and {MAX_ENDPOINT_CONCURRENCY_BUDGET}")
+    if args.parallelism < 1 or args.parallelism > args.endpoint_concurrency_budget:
+        parser.error("--parallelism must be positive and not exceed --endpoint-concurrency-budget")
     if args.preparation_workers < 1:
         parser.error("--preparation-workers must be positive")
     if args.transport_max_retries < 0:
         parser.error("--transport-max-retries must be non-negative")
+    if args.max_level < 0:
+        parser.error("--max-level must be non-negative")
+    if args.l1_source == "gold_train":
+        if not args.evidence_root:
+            parser.error("--l1-source gold_train requires --evidence-root")
+        if args.max_level != 1:
+            parser.error("--l1-source gold_train requires --max-level 1")
+    elif args.l1_ranking != "morgan":
+        parser.error("--l1-ranking v9 requires --l1-source gold_train")
     if args.skip_tool_prefetch and not args.prepare_only:
         parser.error("--skip-tool-prefetch is allowed only with --prepare-only")
     return run(args)

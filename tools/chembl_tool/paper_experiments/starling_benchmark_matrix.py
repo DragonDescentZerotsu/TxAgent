@@ -80,6 +80,7 @@ DEFAULT_BENCHMARK_DATA_ROOT = Path("data/processed_starling")
 EVALUATION_SUBSETS = ("valid", "test")
 REFERENCE_POOLS = ("train", "train_valid")
 DEFAULT_ENDPOINT_CONCURRENCY_BUDGET = 512
+MAX_ENDPOINT_CONCURRENCY_BUDGET = 2048
 DEFAULT_LAUNCHER_PARALLELISM = 128
 CANONICAL_TOP_K_PER_GROUP = 3
 CANONICAL_MIN_SIMILARITY = 0.3
@@ -278,7 +279,7 @@ def main(argv: list[str] | None = None) -> int:
         "temperature": 0.0,
         "max_tokens": 20480,
         "timeout_s": args.timeout_s,
-        "endpoint_concurrency_budget": DEFAULT_ENDPOINT_CONCURRENCY_BUDGET,
+        "endpoint_concurrency_budget": args.endpoint_concurrency_budget,
         "parallelism": args.parallelism,
         "global_pool_parallelism": args.parallelism,
         "retrieval_preparation_workers": args.retrieval_preparation_workers,
@@ -368,12 +369,18 @@ def _validate_concurrency(args: argparse.Namespace) -> None:
         raise SystemExit("--parallelism must be positive")
     if getattr(args, "max_stage_requeues", 0) < 0:
         raise SystemExit("--max-stage-requeues must be non-negative")
-    requested = args.parallelism
-    if requested > DEFAULT_ENDPOINT_CONCURRENCY_BUDGET:
+    budget = int(args.endpoint_concurrency_budget)
+    if not 1 <= budget <= MAX_ENDPOINT_CONCURRENCY_BUDGET:
         raise SystemExit(
-            "Requested concurrency exceeds the frozen endpoint budget: "
+            "Configured endpoint budget must be between 1 and "
+            f"{MAX_ENDPOINT_CONCURRENCY_BUDGET}"
+        )
+    requested = args.parallelism
+    if requested > budget:
+        raise SystemExit(
+            "Requested concurrency exceeds the configured endpoint budget: "
             f"{requested} > "
-            f"{DEFAULT_ENDPOINT_CONCURRENCY_BUDGET}"
+            f"{budget}"
         )
 
 
@@ -483,11 +490,13 @@ def _benchmark_provenance(
         split_dir = task_dir / split
         task_summary_path = task_dir / "summary.json"
         split_summary_path = split_dir / "summary.json"
+        if not task_summary_path.is_file() and split_summary_path.is_file():
+            task_summary_path = split_summary_path
         valid_path = split_dir / "valid.jsonl"
         test_path = split_dir / "test.jsonl"
-        valid_labels_path = split_dir / "valid_molecule_labels.jsonl"
-        test_labels_path = split_dir / "test_molecule_labels.jsonl"
-        heldout_path = split_dir / "heldout_molecule_labels.jsonl"
+        valid_labels_path = _condition_aware_labels_path(split_dir, "valid")
+        test_labels_path = _condition_aware_labels_path(split_dir, "test")
+        heldout_path = _condition_aware_labels_path(split_dir, "heldout")
         required = (
             task_summary_path,
             split_summary_path,
@@ -507,6 +516,8 @@ def _benchmark_provenance(
         split_summary = json.loads(split_summary_path.read_text(encoding="utf-8"))
         provenance[task] = {
             "data_name": data_name,
+            "benchmark": task_summary.get("benchmark"),
+            "contract": task_summary.get("contract"),
             "protocol_version": task_summary.get("protocol_version"),
             "identity_normalizer_version": task_summary.get(
                 "identity_normalizer_version"
@@ -532,6 +543,11 @@ def _benchmark_provenance(
             "heldout_molecule_labels_sha256": _sha256_file(heldout_path),
         }
     return provenance
+
+
+def _condition_aware_labels_path(split_dir: Path, subset: str) -> Path:
+    detailed = split_dir / f"{subset}_molecule_condition_labels.jsonl"
+    return detailed if detailed.is_file() else split_dir / f"{subset}_molecule_labels.jsonl"
 
 
 def _matrix_manifest_path(
@@ -662,6 +678,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--parallelism",
         type=int,
         default=DEFAULT_LAUNCHER_PARALLELISM,
+    )
+    parser.add_argument(
+        "--endpoint-concurrency-budget",
+        type=int,
+        default=DEFAULT_ENDPOINT_CONCURRENCY_BUDGET,
+        help="Explicit endpoint-wide in-flight ceiling; defaults to the frozen paper budget.",
     )
     parser.add_argument("--retrieval-preparation-workers", type=int, default=8)
     parser.add_argument(

@@ -90,6 +90,18 @@ def test_single_reuse_is_resolved_by_parent_condition_not_query_index(tmp_path):
     assert mapping[("PARENT-B", "null")] == 0
 
 
+def test_single_reuse_accepts_current_and_archived_run_directory_names(tmp_path):
+    batch = tmp_path / "bbb_martins" / "bbb_martins__none"
+    batch.mkdir(parents=True)
+    current = batch / "runs" / "bbb_martins__none_idx00001"
+    current.mkdir(parents=True)
+    assert runner._source_run_dir("bbb_martins", 1, tmp_path) == current
+
+    archived = batch / "runs" / "none_idx00002"
+    archived.mkdir()
+    assert runner._source_run_dir("bbb_martins", 2, tmp_path) == archived
+
+
 def test_deepseek_provider_aliases_share_reuse_identity():
     assert runner._model_identity(
         "deepseek-ai/DeepSeek-V4-Flash-0731"
@@ -249,6 +261,44 @@ def test_prompt_is_visible_append_only_and_hides_internal_source_ids():
     assert "Use general medicinal-chemistry knowledge" in messages[0]["content"]
     assert "Ground every compound-specific empirical claim" in messages[0]["content"]
     assert "identity_and_selection" not in prompt["protocol"]
+
+
+def test_gold_l1_rank_controls_selection_and_standalone_prompt_omits_prior():
+    cumulative = extract_cumulative_evidence(
+        _retrieval(
+            [
+                _neighbor("HIGH_SIMILARITY", 0.9, [_row("a", "direct", 1, "high")]),
+                _neighbor("V9_FIRST", 0.4, [_row("b", "direct", 1, "first")]),
+            ]
+        )
+    )
+    by_smiles = {row["canonical_smiles"]: row for row in cumulative.values()}
+    by_smiles["HIGH_SIMILARITY"]["_selection_rank"] = 1
+    by_smiles["V9_FIRST"]["_selection_rank"] = 0
+    card = next(iter(by_smiles["V9_FIRST"]["cards"].values()))
+    card["_selection_rank"] = 0
+    card["transfer_likelihood"] = 0.87
+
+    active, _ = select_initial_evidence(cumulative, molecule_limit=1, card_limit=4)
+    selected = next(iter(active.values()))
+    assert selected["canonical_smiles"] == "V9_FIRST"
+    assert next(iter(selected["cards"].values()))["transfer_likelihood"] == 0.87
+
+    messages = build_progressive_messages(
+        contract=_contract(),
+        levels=[{"level": 1, "endpoint_group": "direct", "description": "direct"}],
+        current_level=1,
+        query_smiles="QUERY",
+        condition_sentence="",
+        query_prior=None,
+        query_tool_summary=None,
+        active=active,
+        prior_state=None,
+    )
+    prompt = json.loads(messages[1]["content"])
+    assert "query_prior" not in prompt
+    assert prompt["active_evidence"][0]["evidence_cards"][0]["transfer_likelihood"] == 0.87
+    assert "neither the query label probability" in prompt["protocol"]["transfer_likelihood_rule"]
 
 
 def test_prompt_uses_stable_short_aliases_and_compact_prior_state():

@@ -157,13 +157,19 @@ def extract_cumulative_evidence(retrieval: Mapping[str, Any]) -> dict[str, dict[
 
 
 def _analog_order(analog: Mapping[str, Any]) -> tuple[Any, ...]:
-    return (-float(analog.get("similarity") or 0.0), str(analog.get("analog_id") or ""))
+    selection_rank = analog.get("_selection_rank")
+    if selection_rank is not None:
+        return (0, float(selection_rank), str(analog.get("analog_id") or ""))
+    return (1, -float(analog.get("similarity") or 0.0), str(analog.get("analog_id") or ""))
 
 
 _NUMERIC_PATTERN = re.compile(r"[-+]?\d")
 
 
 def _card_order(card: Mapping[str, Any]) -> tuple[Any, ...]:
+    selection_rank = card.get("_selection_rank")
+    if selection_rank is not None:
+        return (0, float(selection_rank), str(card.get("card_id") or ""))
     value = _clean(card.get("reported_value"))
     support = _clean(card.get("support_text"))
     confidence = card.get("_confidence")
@@ -172,6 +178,7 @@ def _card_order(card: Mapping[str, Any]) -> tuple[Any, ...]:
     except (TypeError, ValueError):
         confidence_value = -1.0
     return (
+        1,
         -int(bool(support) and bool(value)),
         -int(bool(_NUMERIC_PATTERN.search(value))),
         -int(bool(value)),
@@ -223,6 +230,7 @@ def _public_card(card: Mapping[str, Any], *, level: int) -> dict[str, Any]:
             "species": card.get("species"),
             "qualifying_conditions": card.get("qualifying_conditions"),
             "support_text": card.get("support_text"),
+            "transfer_likelihood": card.get("transfer_likelihood"),
             "first_seen_level": level,
         }.items()
         if value not in (None, "")
@@ -245,7 +253,8 @@ def select_initial_evidence(
         analog_id = str(analog["analog_id"])
         selected[analog_id] = {
             **{key: analog.get(key) for key in (
-                "analog_id", "canonical_smiles", "similarity", "similarity_bucket", "molecule_relation"
+                "analog_id", "canonical_smiles", "similarity", "similarity_bucket", "molecule_relation",
+                "_selection_rank",
             )},
             "first_seen_level": level,
             "cards": {str(card["card_id"]): _public_card(card, level=level) for card in cards},
@@ -525,7 +534,7 @@ def build_progressive_messages(
     current_level: int,
     query_smiles: str,
     condition_sentence: str,
-    query_prior: Mapping[str, Any],
+    query_prior: Mapping[str, Any] | None,
     query_tool_summary: Mapping[str, Any] | None,
     active: Mapping[str, Mapping[str, Any]],
     prior_state: Mapping[str, Any] | None,
@@ -584,8 +593,13 @@ def build_progressive_messages(
                 "deterministically recorded as not_used by the workflow. Repeated records are not independent votes."
             ),
             "claim_rule": (
-                "Every evidence-card claim must cite its card IDs. A claim based only on query_prior may use an "
-                "empty card_ids list, but must say explicitly that it is a query-property prior rather than experimental evidence."
+                "Every evidence-card claim must cite its card IDs."
+                + (
+                    " A claim based only on query_prior may use an empty card_ids list, but must say explicitly "
+                    "that it is a query-property prior rather than experimental evidence."
+                    if query_prior
+                    else ""
+                )
             ),
             "update_rule": (
                 "Judge endpoint-to-task relevance, direction, species/condition compatibility, formulation or route "
@@ -622,7 +636,6 @@ def build_progressive_messages(
             "new_card_ids": new_ids,
         },
         "query": {"canonical_smiles": query_smiles},
-        "query_prior": dict(query_prior),
         "active_evidence": render_active_evidence(
             active,
             current_level=current_level,
@@ -633,8 +646,19 @@ def build_progressive_messages(
     }
     if condition_sentence:
         payload["query"]["external_condition"] = condition_sentence
+    if query_prior:
+        payload["query_prior"] = dict(query_prior)
     if query_tool_summary:
         payload["query"]["molecule_property_tool_summary"] = _compact_tool_summary(query_tool_summary)
+    if any(
+        card.get("transfer_likelihood") is not None
+        for analog in active.values()
+        for card in (analog.get("cards") or {}).values()
+    ):
+        payload["protocol"]["transfer_likelihood_rule"] = (
+            "transfer_likelihood is the frozen V9 estimate that this training record's context transfers "
+            "to the query. It is neither the query label probability nor an independent endpoint vote."
+        )
     if prior_state is not None:
         payload["prior_state"] = _render_prior_state(
             prior_state,
